@@ -124,6 +124,12 @@
 
 .uploadBlurb {
   padding-left: 10px;
+  padding-right: 10px;
+  width: 100%;
+}
+
+.uploadBlurb .Header {
+  width: 100%;
 }
 
 .uploadBlurb .TitleLeft {
@@ -149,14 +155,17 @@
 }
 
 .uploadBlurb .Contents {
+  width: 100%;
   background: url(/images/item/blue_diagonals.png) repeat;
 }
 
 .uploadBlurb .Contents .Table {
+  width: 100%;
   background: url(/images/item/upload_swirl.png) no-repeat right;
 }
 
 .uploadBlurb .Contents .Table .Pitch {
+  width: 100%;
   padding: 10px;
   padding-left: 20px;
   font-size: 14px;

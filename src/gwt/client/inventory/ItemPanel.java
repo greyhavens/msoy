@@ -10,7 +10,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -62,28 +62,33 @@ public class ItemPanel extends VerticalPanel
         _contents.addStyleName("inventoryContents");
 
         // this will allow us to create new items
-        _upload = new FlexTable();
+        _upload = new VerticalPanel();
+        _upload.setSpacing(0);
         _upload.setStyleName("uploadBlurb");
-        _upload.setCellSpacing(0);
-        _upload.setCellPadding(0);
 
-        _upload.getFlexCellFormatter().setStyleName(0, 0, "TitleLeft");
-        _upload.getFlexCellFormatter().setStyleName(0, 1, "TitleCenter");
-        _upload.getFlexCellFormatter().setStyleName(0, 2, "TitleRight");
-        _upload.setText(0, 1, CInventory.dmsgs.getString("itemUploadTitle" + type));
+        Grid header = new Grid(1, 3);
+        header.setStyleName("Header");
+        header.setCellSpacing(0);
+        header.setCellPadding(0);
+        header.getCellFormatter().setStyleName(0, 0, "TitleLeft");
+        header.getCellFormatter().setStyleName(0, 1, "TitleCenter");
+        header.getCellFormatter().setStyleName(0, 2, "TitleRight");
+        header.setText(0, 1, CInventory.dmsgs.getString("itemUploadTitle" + type));
+        _upload.add(header);
 
-        _upload.getFlexCellFormatter().setColSpan(1, 0, 3);
-        _upload.getFlexCellFormatter().setStyleName(1, 0, "Contents");
-        FlexTable contents = new FlexTable(); // yay for non-tabular UI designs!
-        _upload.setWidget(1, 0, contents);
-
+        VerticalPanel cwrap = new VerticalPanel();
+        cwrap.setStyleName("Contents");
+        _upload.add(cwrap);
+        
+        Grid contents = new Grid(1, 2); 
         contents.setStyleName("Table");
         contents.setCellSpacing(0);
         contents.setCellPadding(0);
-        contents.getFlexCellFormatter().setStyleName(0, 0, "Pitch");
-        contents.getFlexCellFormatter().setStyleName(0, 1, "Upload");
-        contents.getFlexCellFormatter().setHorizontalAlignment(0, 1, ALIGN_RIGHT);
-        contents.getFlexCellFormatter().setVerticalAlignment(0, 1, ALIGN_MIDDLE);
+        contents.getCellFormatter().setStyleName(0, 0, "Pitch");
+        contents.getCellFormatter().setStyleName(0, 1, "Upload");
+        contents.getCellFormatter().setHorizontalAlignment(0, 1, ALIGN_RIGHT);
+        contents.getCellFormatter().setVerticalAlignment(0, 1, ALIGN_MIDDLE);
+        cwrap.add(contents);
 
         // add the various "why to upload" pitches
         contents.setHTML(0, 0, CInventory.dmsgs.getString("itemUploadPitch" + type + "a") + "<br>" +
@@ -240,7 +245,7 @@ public class ItemPanel extends VerticalPanel
 
     protected PagedGrid _contents;
     protected Button _create, _next, _prev;
-    protected FlexTable _upload;
+    protected VerticalPanel _upload;
 
     protected byte _type;
     protected int _startPage;

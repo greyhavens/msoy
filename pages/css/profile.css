@@ -8,19 +8,23 @@
   width: 100%;
 }
 
-.blurbBox .HeaderLeft {
+.blurbBox .blurbBoxHeader { 
+  width: 100%;
+}
+
+.blurbBox .blurbBoxHeader .HeaderLeft {
   width: 33px;
   height: 27px;
   background: url(/images/profile/box_left.png);
 }
 
-.blurbBox .HeaderRight {
+.blurbBox .blurbBoxHeader .HeaderRight {
   width: 31px;
   height: 27px;
   background: url(/images/profile/box_right.png);
 }
 
-.blurbBox .Header {
+.blurbBox .blurbBoxHeader .Header {
   background: url(/images/profile/box_tile.png);
   color: #EAF4F8;
   text-align: center;

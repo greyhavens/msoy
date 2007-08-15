@@ -5,7 +5,7 @@ package client.profile;
 
 import client.profile.HoodBlurb;
 
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 
@@ -16,7 +16,7 @@ import com.threerings.msoy.data.all.MemberName;
 /**
  * Contains a chunk of content that a user would want to display on their personal page.
  */
-public abstract class Blurb extends FlexTable
+public abstract class Blurb extends Grid
 {
     /**
      * Creates the appropriate UI for the specified type of blurb.
@@ -51,16 +51,23 @@ public abstract class Blurb extends FlexTable
 
     protected Blurb ()
     {
+        super(2, 1);
         setCellPadding(0);
         setCellSpacing(0);
         setStyleName("blurbBox");
-        getFlexCellFormatter().setStyleName(0, 0, "HeaderLeft");
-        setWidget(0, 1, _header = new Label("Header"));
-        getFlexCellFormatter().setStyleName(0, 1, "Header");
-        getFlexCellFormatter().setStyleName(0, 2, "HeaderRight");
+
+        Grid header = new Grid(1, 3);
+        header.setCellPadding(0);
+        header.setCellSpacing(0);
+        header.setStyleName("blurbBoxHeader");
+        header.getCellFormatter().setStyleName(0, 0, "HeaderLeft");
+        header.setWidget(0, 1, _header = new Label("Header"));
+        header.getCellFormatter().setStyleName(0, 1, "Header");
+        header.getCellFormatter().setStyleName(0, 2, "HeaderRight");
+        setWidget(0, 0, header);
+        
         setWidget(1, 0, createContent());
-        getFlexCellFormatter().setColSpan(1, 0, 3);
-        getFlexCellFormatter().setStyleName(1, 0, "Content");
+        getCellFormatter().setStyleName(1, 0, "Content");
     }
 
     /**
