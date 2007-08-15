@@ -186,8 +186,10 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         SessionRecord session = load(SessionRecord.class, sessionToken);
-        return (session == null) ? null :
-            load(MemberRecord.class, session.memberId);
+        if (session.expires.getTime() < System.currentTimeMillis()) {
+            session = null;
+        }
+        return (session == null) ? null : load(MemberRecord.class, session.memberId);
     }
 
     /**

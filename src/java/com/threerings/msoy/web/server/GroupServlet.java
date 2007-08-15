@@ -161,7 +161,8 @@ public class GroupServlet extends MsoyServiceServlet
         WebIdent ident, final int memberId, final boolean canInvite)
         throws ServiceException
     {
-        int requesterId = getMemberId(ident);
+        MemberRecord reqrec = getAuthedUser(ident);
+        int requesterId = (reqrec == null) ? 0 : reqrec.memberId;
 
         try {
             List<GroupMembership> result = new ArrayList<GroupMembership>();

@@ -132,7 +132,8 @@ public class ItemServlet extends MsoyServiceServlet
     {
         final ServletWaiter<ItemDetail> waiter = new ServletWaiter<ItemDetail>(
             "loadItem[" + item + "]");
-        final int memberId = getMemberId(ident);
+        MemberRecord mrec = getAuthedUser(ident);
+        final int memberId = (mrec == null) ? 0 : mrec.memberId;
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.itemMan.getItemDetail(item, memberId, waiter);
@@ -242,12 +243,12 @@ public class ItemServlet extends MsoyServiceServlet
     public Collection<TagHistory> getRecentTags (WebIdent ident)
         throws ServiceException
     {
-        final int memberId = getMemberId(ident);
+        final MemberRecord mrec = requireAuthedUser(ident);
         final ServletWaiter<Collection<TagHistory>> waiter =
-            new ServletWaiter<Collection<TagHistory>>("getTagHistory[" + memberId + "]");
+            new ServletWaiter<Collection<TagHistory>>("getTagHistory[" + mrec.memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.getRecentTags(memberId, waiter);
+                MsoyServer.itemMan.getRecentTags(mrec.memberId, waiter);
             }
         });
         return waiter.waitForResult();

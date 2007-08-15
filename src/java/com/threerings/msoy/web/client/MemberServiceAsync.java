@@ -46,7 +46,7 @@ public interface MemberServiceAsync
     public void getMyWhirled (WebIdent ident, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link MemberService#getInvitationStatus}.
+     * The asynchronous version of {@link MemberService#getInvitationsStatus}.
      */
     public void getInvitationsStatus (WebIdent ident, AsyncCallback callback);
 

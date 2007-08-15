@@ -77,8 +77,9 @@ public class MemberServlet extends MsoyServiceServlet
     public boolean getFriendStatus (WebIdent ident, final int memberId)
         throws ServiceException
     {
+        final MemberRecord memrec = requireAuthedUser(ident);
         try {
-            return MsoyServer.memberRepo.getFriendStatus(getMemberId(ident), memberId);
+            return MsoyServer.memberRepo.getFriendStatus(memrec.memberId, memberId);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getFriendStatus failed [for=" + memberId + "].", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
@@ -295,20 +296,21 @@ public class MemberServlet extends MsoyServiceServlet
     public MemberInvites getInvitationsStatus (WebIdent ident)
         throws ServiceException
     {
-        int memberId = getMemberId(ident);
+        MemberRecord mrec = requireAuthedUser(ident);
 
         try {
             MemberInvites result = new MemberInvites();
-            result.availableInvitations = MsoyServer.memberRepo.getInvitesGranted(memberId);
+            result.availableInvitations = MsoyServer.memberRepo.getInvitesGranted(mrec.memberId);
             ArrayList<Invitation> pending = new ArrayList<Invitation>();
-            for (InvitationRecord iRec : MsoyServer.memberRepo.loadPendingInvites(memberId)) {
+            for (InvitationRecord iRec : MsoyServer.memberRepo.loadPendingInvites(mrec.memberId)) {
                 pending.add(iRec.toInvitationObject());
             }
             result.pendingInvitations = pending;
             result.serverUrl = ServerConfig.getServerURL() + "/#invite-";
             return result;
+
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getInvitationsStatus failed [id=" + memberId +"]", pe);
+            log.log(Level.WARNING, "getInvitationsStatus failed [id=" + mrec.memberId +"]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }

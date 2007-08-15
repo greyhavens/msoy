@@ -37,8 +37,30 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     public static MemberRecord getAuthedUser (WebIdent ident)
         throws ServiceException
     {
-        Integer memberId = (ident == null) ? null : _members.get(ident.token);
-        if (memberId != null && memberId == ident.memberId) {
+        if (ident == null) {
+            return null;
+        }
+
+        // if we don't have a session token -> member id mapping, then...
+        Integer memberId = _members.get(ident.token);
+        if (memberId == null) {
+            // ...try looking up this session token, they may have originally authenticated with
+            // another server and then started talking to us
+            try {
+                MemberRecord mrec = MsoyServer.memberRepo.loadMemberForSession(ident.token);
+                if (mrec == null || mrec.memberId != ident.memberId) {
+                    return null;
+                }
+                mapUser(ident.token, mrec);
+                return mrec;
+            } catch (PersistenceException pe) {
+                log.log(Level.WARNING, "Failed to load session [tok=" + ident.token + "].", pe);
+                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            }
+        }
+
+        // otherwise we already have a valid session token -> member id mapping, so use it
+        if (memberId == ident.memberId) {
             try {
                 return MsoyServer.memberRepo.loadMember(memberId);
             } catch (PersistenceException pe) {
@@ -46,6 +68,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
                 throw new ServiceException(ServiceException.INTERNAL_ERROR);
             }
         }
+
         return null;
     }
 
@@ -64,32 +87,6 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         }
         return mrec;
     }
-    
-    /**
-     * Returns the member id of the client that provided the supplied ident or -1 if the ident is
-     * null. Throws a session expired exception if the ident is expired.
-     */
-    protected int getMemberId (WebIdent ident)
-        throws ServiceException
-    {
-        if (ident == null) {
-            return -1;
-        }
-        Integer memberId = _members.get(ident.token);
-        if (memberId != null) {
-            return memberId;
-        }
-        throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
-    }
-
-    /**
-     * Called when a user logs on or refreshes their credentials to map the user's record by their
-     * session token.
-     */
-    protected void mapUser (WebCreds creds, MemberRecord record)
-    {
-        _members.put(creds.token, record.memberId);
-    }
 
     /**
      * A convenience method to record that a user took an action, and potentially award them flow
@@ -103,6 +100,15 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         if (flowRec != null) {
             MemberManager.queueFlowUpdated(flowRec);
         }
+    }
+
+    /**
+     * Called when a user logs on or refreshes their credentials to map the user's record by their
+     * session token.
+     */
+    protected static void mapUser (String ident, MemberRecord record)
+    {
+        _members.put(ident, record.memberId);
     }
 
     /** Contains a mapping of authenticated members. */
