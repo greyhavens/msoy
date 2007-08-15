@@ -385,8 +385,22 @@ public class RoomManager extends SpotSceneManager
 //            return;
 //        }
 
-        // TODO: verify that the caller is in the scene with this item, that the memory does not
-        // exdeed legal size, other item specific restrictions
+
+        // TODO: verify that the caller is in the scene with this item, other item specific
+        // restrictions
+
+        // verify that the memory does not exdeed legal size
+        int totalSize = 0;
+        for (MemoryEntry rent : _roomObj.memories) {
+            if (rent.item.equals(entry.item) && !rent.key.equals(entry.key)) {
+                totalSize += rent.getSize();
+            }
+        }
+        if (totalSize + entry.getSize() > MAX_MEMORY_SIZE) {
+            log.info("Rejecting memory update as too large [otherSize=" + totalSize +
+                     ", newEntrySize=" + entry.getSize() + "].");
+            return; // no feedback, just don't update it
+        }
 
         // mark it as modified and update the room object; we'll save it when we unload the room
         entry.modified = true;
@@ -517,7 +531,7 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
-     * performs the given updates.
+     * Performs the given updates.
      */
     protected void doRoomUpdate (SceneUpdate[] updates, MemberObject user)
     {
@@ -901,4 +915,7 @@ public class RoomManager extends SpotSceneManager
 
     /** The next id to use for an effect. */
     protected short _nextEffectId;
+
+    /** The maximum size of an entity's memory, including all keys and values. */
+    protected static final int MAX_MEMORY_SIZE = 4096;
 }

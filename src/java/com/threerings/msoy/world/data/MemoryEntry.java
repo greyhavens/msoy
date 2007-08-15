@@ -26,16 +26,19 @@ public class MemoryEntry
      * unloaded. */
     public transient boolean modified;
 
-    // from interface DSet.Entry
-    public Comparable getKey ()
+    /**
+     * Returns the size in bytes of this entry's key and value. The key size assumes one byte per
+     * character which is an approximation, but is fine for our memory size limitation purposes.
+     */
+    public int getSize ()
     {
-        return this;
+        return key.length() + value.length;
     }
 
     /**
-     * Get a special key for use when removing this entry from a DSet.
-     * Maybe this is early optimization, but I hate that otherwise we're sending down
-     * the entire entry when we want to remove it!
+     * Get a special key for use when removing this entry from a DSet.  Maybe this is early
+     * optimization, but I hate that otherwise we're sending down the entire entry when we want to
+     * remove it!
      */
     public Comparable getRemoveKey ()
     {
@@ -44,6 +47,12 @@ public class MemoryEntry
         other.key = this.key;
         // other.value == null
         return other;
+    }
+
+    // from interface DSet.Entry
+    public Comparable getKey ()
+    {
+        return this;
     }
 
     // from interface Comparable<MemoryEntry>
