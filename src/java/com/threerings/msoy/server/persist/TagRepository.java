@@ -324,6 +324,7 @@ public abstract class TagRepository extends DepotRepository
     {
         classes.add(createTagRecord().getClass());
         classes.add(createTagHistoryRecord().getClass());
+        classes.add(TagNameRecord.class);
     }
 
     protected Class<TagRecord> _tagClass;
