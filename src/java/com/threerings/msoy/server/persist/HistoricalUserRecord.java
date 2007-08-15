@@ -52,7 +52,7 @@ public class HistoricalUserRecord extends PersistentRecord
     public int userId;
 
     /** The user's chosen username. */
-    @Column(length=24)
+    @Column(length=128)
     public String username;
 
     /** The date this record was created. */
