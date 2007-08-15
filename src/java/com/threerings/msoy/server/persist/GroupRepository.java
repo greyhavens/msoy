@@ -26,6 +26,7 @@ import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.SelectClause;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
@@ -107,12 +108,13 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         ArrayList<Integer> groupIds = new ArrayList<Integer>();
-        for (GroupTagRecord tagRec : findAll(GroupTagRecord.class,
-            new Where(GroupTagRecord.TAG_ID_C, _tagRepo.getOrCreateTag(tag).tagId))) {
+        int tagId = _tagRepo.getOrCreateTag(tag).tagId;
+        Where where = new Where(new ColumnExp(GroupTagRecord.class, GroupTagRecord.TAG_ID), tagId);
+        for (GroupTagRecord tagRec : findAll(GroupTagRecord.class, where)) {
             groupIds.add(tagRec.targetId);
         }
-        return findAll(GroupRecord.class, new Where(new In(
-            GroupRecord.class, GroupRecord.GROUP_ID, groupIds)));
+        return findAll(GroupRecord.class,
+                       new Where(new In(GroupRecord.class, GroupRecord.GROUP_ID, groupIds)));
     }
 
     /**
