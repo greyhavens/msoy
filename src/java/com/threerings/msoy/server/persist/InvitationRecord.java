@@ -10,6 +10,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
+import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
@@ -71,8 +72,8 @@ public class InvitationRecord extends PersistentRecord
         new ColumnExp(InvitationRecord.class, VIEWED);
     // AUTO-GENERATED: FIELDS END
 
-    /** Increment this value if you modify the definition of this persistent
-     * object in a way that will result in a change to its SQL counterpart. */
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 3;
 
     /** The email address we're sending this invitation to. */
@@ -93,6 +94,7 @@ public class InvitationRecord extends PersistentRecord
     public Timestamp issued;
 
     /** The time that this invitation was first viewed. */
+    @Column(nullable=true)
     public Timestamp viewed;
 
     /** A blank constructor used when loading records from the database. */
