@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Where;
@@ -31,6 +32,10 @@ public class MemoryRepository extends DepotRepository
     public MemoryRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        // TEMP
+        ctx.registerMigration(MemoryRecord.class, new EntityMigration.Retype(2, "datumValue"));
+        // END TEMP
     }
 
     /**

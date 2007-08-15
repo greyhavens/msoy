@@ -5,9 +5,10 @@ package com.threerings.msoy.world.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.data.MemoryEntry;
@@ -50,7 +51,7 @@ public class MemoryRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The type of the item for which we're storing a memory datum. */
     @Id public byte itemType;
@@ -62,6 +63,7 @@ public class MemoryRecord extends PersistentRecord
     @Id public String datumKey;
 
     /** A serialized representation of this datum's value. */
+    @Column(length=4096)
     public byte[] datumValue;
 
     /** Used when loading instances from the repository. */
