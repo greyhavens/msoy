@@ -15,6 +15,7 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.parlor.game.data.GameCodes;
@@ -59,8 +60,8 @@ public class MsoyGameRegistry
 
         // start up our servers after the rest of server initialization is completed (and we know
         // that we're listening for client connections)
-        MsoyServer.invoker.postUnit(new Invoker.Unit("startGameServers") {
-            public boolean invoke () {
+        MsoyServer.omgr.postRunnable(new PresentsDObjectMgr.LongRunnable() {
+            public void run () {
                 // start up our game server handlers (and hence our game servers)
                 for (int ii = 0; ii < _handlers.length; ii++) {
                     int port = ServerConfig.gameServerPort + ii;
@@ -71,7 +72,6 @@ public class MsoyGameRegistry
                                 "[port=" + port + "].", e);
                     }
                 }
-                return false;
             }
         });
     }
