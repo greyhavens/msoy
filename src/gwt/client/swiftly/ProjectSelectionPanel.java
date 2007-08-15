@@ -3,10 +3,9 @@
 
 package client.swiftly;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import client.shell.Application;
 import client.util.ClickCallback;
@@ -125,20 +124,13 @@ public class ProjectSelectionPanel extends FlexTable
      */
     protected void loadRemixableProjects ()
     {
+        _remixableProjects = new ArrayList();
         CSwiftly.swiftlysvc.getRemixableProjects(CSwiftly.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
-                Iterator iter = ((List)result).iterator();
-                if (!iter.hasNext()) {
-                    _remixableProjectsPanel.add(new Label(CSwiftly.msgs.noRemixableProjects()));
-                } else {
-                    _remixableProjects = new HashMap();
-                    while (iter.hasNext()) {
-                        SwiftlyProject project = (SwiftlyProject)iter.next();
-                        _remixableProjects.put(new Integer(project.projectId), project);
-                    }
-                    displayRemixableProjects();
-                }
+                _remixableProjects.addAll((List)result);
+                displayRemixableProjects();
             }
+
             public void onFailure (Throwable caught) {
                 CSwiftly.log("loadRemixableProjects failed", caught);
                 _remixableProjectsPanel.add(new Label(CSwiftly.serverError(caught)));
@@ -152,7 +144,12 @@ public class ProjectSelectionPanel extends FlexTable
     protected void displayRemixableProjects ()
     {
         _remixableProjectsPanel.clear();
-        Iterator iter = _remixableProjects.values().iterator();
+        Iterator iter = _remixableProjects.iterator();
+        if (!iter.hasNext()) {
+            _remixableProjectsPanel.add(new Label(CSwiftly.msgs.noRemixableProjects()));
+            return;
+        }
+
         while (iter.hasNext()) {
             SwiftlyProject project = (SwiftlyProject)iter.next();
             Hyperlink projectLink = Application.createLink(
@@ -166,20 +163,13 @@ public class ProjectSelectionPanel extends FlexTable
      */
     protected void loadMembersProjects ()
     {
+        _membersProjects = new ArrayList();
         CSwiftly.swiftlysvc.getMembersProjects(CSwiftly.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
-                Iterator iter = ((List)result).iterator();
-                if (!iter.hasNext()) {
-                    _membersProjectsPanel.add(new Label(CSwiftly.msgs.noMembersProjects()));
-                } else {
-                    _membersProjects = new HashMap();
-                    while (iter.hasNext()) {
-                        SwiftlyProject project = (SwiftlyProject)iter.next();
-                        _membersProjects.put(new Integer(project.projectId), project);
-                    }
-                    displayMembersProjects();
-                }
+                _membersProjects.addAll((List)result);
+                displayMembersProjects();
             }
+
             public void onFailure (Throwable caught) {
                 CSwiftly.log("loadMembersProjects failed", caught);
                 _membersProjectsPanel.add(new Label(CSwiftly.serverError(caught)));
@@ -193,7 +183,12 @@ public class ProjectSelectionPanel extends FlexTable
     protected void displayMembersProjects ()
     {
         _membersProjectsPanel.clear();
-        Iterator iter = _membersProjects.values().iterator();
+        Iterator iter = _membersProjects.iterator();
+        if (!iter.hasNext()) {
+            _membersProjectsPanel.add(new Label(CSwiftly.msgs.noMembersProjects()));
+            return;
+        }
+
         while (iter.hasNext()) {
             SwiftlyProject project = (SwiftlyProject)iter.next();
             HorizontalPanel projectInfo = new HorizontalPanel();
@@ -211,11 +206,11 @@ public class ProjectSelectionPanel extends FlexTable
     /**
      * Called after a project has been removed on the back end to update the project display.
      */
-    protected void projectWasRemoved (Integer projectId)
+    protected void projectWasRemoved (SwiftlyProject project)
     {
-        _remixableProjects.remove(projectId);
+        _remixableProjects.remove(project);
         displayRemixableProjects();
-        _membersProjects.remove(projectId);
+        _membersProjects.remove(project);
         displayMembersProjects();
     }
 
@@ -241,7 +236,7 @@ public class ProjectSelectionPanel extends FlexTable
                                 new AsyncCallback() {
                                 public void onSuccess (Object result)
                                 {
-                                    panel.projectWasRemoved(new Integer(project.projectId));
+                                    panel.projectWasRemoved(project);
                                 }
                                 public void onFailure (Throwable caught)
                                 {
@@ -258,8 +253,8 @@ public class ProjectSelectionPanel extends FlexTable
 
     protected VerticalPanel _membersProjectsPanel;
     protected VerticalPanel _remixableProjectsPanel;
-    protected Map _membersProjects;
-    protected Map _remixableProjects;
+    protected List _membersProjects;
+    protected List _remixableProjects;
 
     protected ListBox _projectTypes;
     protected CheckBox _remixable;

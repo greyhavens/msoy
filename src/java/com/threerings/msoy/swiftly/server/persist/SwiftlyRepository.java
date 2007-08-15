@@ -15,6 +15,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Logic.And;
@@ -39,7 +40,8 @@ public class SwiftlyRepository extends DepotRepository
     {
         return findAll(SwiftlyProjectRecord.class,
             new Where(new And(new Equals(SwiftlyProjectRecord.REMIXABLE_C, true),
-                new Equals(SwiftlyProjectRecord.DELETED_C, false))));
+                new Equals(SwiftlyProjectRecord.DELETED_C, false))),
+                OrderBy.descending(SwiftlyProjectRecord.CREATION_DATE_C));
     }
 
     /**
@@ -50,11 +52,11 @@ public class SwiftlyRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(SwiftlyProjectRecord.class,
-                       new Join(SwiftlyProjectRecord.PROJECT_ID_C,
-                                SwiftlyCollaboratorsRecord.PROJECT_ID_C),
-                       new Where(new And(
-                                     new Equals(SwiftlyCollaboratorsRecord.MEMBER_ID_C, memberId),
-                                     new Equals(SwiftlyProjectRecord.DELETED_C, false))));
+            new Join(SwiftlyProjectRecord.PROJECT_ID_C, SwiftlyCollaboratorsRecord.PROJECT_ID_C),
+                new Where(new And(
+                    new Equals(SwiftlyCollaboratorsRecord.MEMBER_ID_C, memberId),
+                    new Equals(SwiftlyProjectRecord.DELETED_C, false))),
+                    OrderBy.descending(SwiftlyProjectRecord.CREATION_DATE_C));
     }
 
     /**
@@ -221,6 +223,7 @@ public class SwiftlyRepository extends DepotRepository
     /**
      * Fetches the collaborators for a given project.
      */
+    // TODO: sort these in a predictable manner
     public List<MemberRecord> getCollaborators (int projectId)
         throws PersistenceException
     {

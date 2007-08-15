@@ -8,7 +8,7 @@ import com.threerings.msoy.web.client.SwiftlyServiceAsync;
 import client.shell.CShell;
 
 /**
- * Extends {@link CShell} and provides game-specific services.
+ * Extends {@link CShell} and provides Swiftly-specific services.
  */
 public class CSwiftly extends CShell
 {
