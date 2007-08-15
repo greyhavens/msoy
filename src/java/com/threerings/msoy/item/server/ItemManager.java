@@ -695,11 +695,6 @@ public class ItemManager
     /**
      * Get the details of specified item: display-friendly names of creator and owner and the
      * rating given to this item by the member specified by memberId.
-     *
-     * TODO: This method re-reads an ItemRecord that the caller of the function almost certainly
-     * already has, which seems kind of wasteful.  On the other hand, transmitting that entire Item
-     * over the wire seems wasteful, too, and sending in ownerId and creatorId by themselves seems
-     * cheesy. If we were to cache ItemRecords in the repository, this would be fine. Will we?
      */
     public void getItemDetail (final ItemIdent ident, final int memberId,
                                ResultListener<ItemDetail> lner)
