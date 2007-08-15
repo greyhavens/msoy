@@ -147,7 +147,7 @@ public class ItemServlet extends MsoyServiceServlet
     {
         final MemberRecord memrec = requireAuthedUser(ident);
         final ServletWaiter<Avatar> waiter = new ServletWaiter<Avatar>(
-            "scaleAvatar[" + avatarId + ", " + newScale + "]");
+            "scaleAvatar[" + memrec.memberId + ", " + avatarId + ", " + newScale + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.itemMan.scaleAvatar(memrec.memberId, avatarId, newScale, waiter);
