@@ -92,8 +92,8 @@ public class CatalogPanel extends VerticalPanel
                 CatalogListing.SORT_BY_LIST_DATE,
                 CatalogListing.SORT_BY_PRICE_ASC,
                 CatalogListing.SORT_BY_PRICE_DESC },
-            2); // index of CatalogListing.SORT_BY_PRICE_ASC
-        _sortBy = CatalogListing.SORT_BY_PRICE_ASC;
+            0); // index of CatalogListing.SORT_BY_RATING
+        _sortBy = CatalogListing.SORT_BY_RATING;
         _header.setWidget(0, 1, _searchSortPanel);
         _header.setText(1, 0, CCatalog.msgs.catalogNoFilter());
     }
