@@ -31,6 +31,78 @@ public class DocumentRecord extends ItemRecord
     /** The qualified column identifier for the {@link #docMimeType} field. */
     public static final ColumnExp DOC_MIME_TYPE_C =
         new ColumnExp(DocumentRecord.class, DOC_MIME_TYPE);
+
+    /** The qualified column identifier for the {@link #itemId} field. */
+    public static final ColumnExp ITEM_ID_C =
+        new ColumnExp(DocumentRecord.class, ITEM_ID);
+
+    /** The qualified column identifier for the {@link #parentId} field. */
+    public static final ColumnExp PARENT_ID_C =
+        new ColumnExp(DocumentRecord.class, PARENT_ID);
+
+    /** The qualified column identifier for the {@link #flagged} field. */
+    public static final ColumnExp FLAGGED_C =
+        new ColumnExp(DocumentRecord.class, FLAGGED);
+
+    /** The qualified column identifier for the {@link #creatorId} field. */
+    public static final ColumnExp CREATOR_ID_C =
+        new ColumnExp(DocumentRecord.class, CREATOR_ID);
+
+    /** The qualified column identifier for the {@link #ownerId} field. */
+    public static final ColumnExp OWNER_ID_C =
+        new ColumnExp(DocumentRecord.class, OWNER_ID);
+
+    /** The qualified column identifier for the {@link #rating} field. */
+    public static final ColumnExp RATING_C =
+        new ColumnExp(DocumentRecord.class, RATING);
+
+    /** The qualified column identifier for the {@link #used} field. */
+    public static final ColumnExp USED_C =
+        new ColumnExp(DocumentRecord.class, USED);
+
+    /** The qualified column identifier for the {@link #location} field. */
+    public static final ColumnExp LOCATION_C =
+        new ColumnExp(DocumentRecord.class, LOCATION);
+
+    /** The qualified column identifier for the {@link #lastTouched} field. */
+    public static final ColumnExp LAST_TOUCHED_C =
+        new ColumnExp(DocumentRecord.class, LAST_TOUCHED);
+
+    /** The qualified column identifier for the {@link #name} field. */
+    public static final ColumnExp NAME_C =
+        new ColumnExp(DocumentRecord.class, NAME);
+
+    /** The qualified column identifier for the {@link #description} field. */
+    public static final ColumnExp DESCRIPTION_C =
+        new ColumnExp(DocumentRecord.class, DESCRIPTION);
+
+    /** The qualified column identifier for the {@link #mature} field. */
+    public static final ColumnExp MATURE_C =
+        new ColumnExp(DocumentRecord.class, MATURE);
+
+    /** The qualified column identifier for the {@link #thumbMediaHash} field. */
+    public static final ColumnExp THUMB_MEDIA_HASH_C =
+        new ColumnExp(DocumentRecord.class, THUMB_MEDIA_HASH);
+
+    /** The qualified column identifier for the {@link #thumbMimeType} field. */
+    public static final ColumnExp THUMB_MIME_TYPE_C =
+        new ColumnExp(DocumentRecord.class, THUMB_MIME_TYPE);
+
+    /** The qualified column identifier for the {@link #thumbConstraint} field. */
+    public static final ColumnExp THUMB_CONSTRAINT_C =
+        new ColumnExp(DocumentRecord.class, THUMB_CONSTRAINT);
+
+    /** The qualified column identifier for the {@link #furniMediaHash} field. */
+    public static final ColumnExp FURNI_MEDIA_HASH_C =
+        new ColumnExp(DocumentRecord.class, FURNI_MEDIA_HASH);
+
+    /** The qualified column identifier for the {@link #furniMimeType} field. */
+    public static final ColumnExp FURNI_MIME_TYPE_C =
+        new ColumnExp(DocumentRecord.class, FURNI_MIME_TYPE);
+
+    /** The qualified column identifier for the {@link #furniConstraint} field. */
+    public static final ColumnExp FURNI_CONSTRAINT_C =
+        new ColumnExp(DocumentRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1 +

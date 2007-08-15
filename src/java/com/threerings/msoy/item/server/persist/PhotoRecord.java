@@ -53,6 +53,78 @@ public class PhotoRecord extends ItemRecord
     /** The qualified column identifier for the {@link #photoHeight} field. */
     public static final ColumnExp PHOTO_HEIGHT_C =
         new ColumnExp(PhotoRecord.class, PHOTO_HEIGHT);
+
+    /** The qualified column identifier for the {@link #itemId} field. */
+    public static final ColumnExp ITEM_ID_C =
+        new ColumnExp(PhotoRecord.class, ITEM_ID);
+
+    /** The qualified column identifier for the {@link #parentId} field. */
+    public static final ColumnExp PARENT_ID_C =
+        new ColumnExp(PhotoRecord.class, PARENT_ID);
+
+    /** The qualified column identifier for the {@link #flagged} field. */
+    public static final ColumnExp FLAGGED_C =
+        new ColumnExp(PhotoRecord.class, FLAGGED);
+
+    /** The qualified column identifier for the {@link #creatorId} field. */
+    public static final ColumnExp CREATOR_ID_C =
+        new ColumnExp(PhotoRecord.class, CREATOR_ID);
+
+    /** The qualified column identifier for the {@link #ownerId} field. */
+    public static final ColumnExp OWNER_ID_C =
+        new ColumnExp(PhotoRecord.class, OWNER_ID);
+
+    /** The qualified column identifier for the {@link #rating} field. */
+    public static final ColumnExp RATING_C =
+        new ColumnExp(PhotoRecord.class, RATING);
+
+    /** The qualified column identifier for the {@link #used} field. */
+    public static final ColumnExp USED_C =
+        new ColumnExp(PhotoRecord.class, USED);
+
+    /** The qualified column identifier for the {@link #location} field. */
+    public static final ColumnExp LOCATION_C =
+        new ColumnExp(PhotoRecord.class, LOCATION);
+
+    /** The qualified column identifier for the {@link #lastTouched} field. */
+    public static final ColumnExp LAST_TOUCHED_C =
+        new ColumnExp(PhotoRecord.class, LAST_TOUCHED);
+
+    /** The qualified column identifier for the {@link #name} field. */
+    public static final ColumnExp NAME_C =
+        new ColumnExp(PhotoRecord.class, NAME);
+
+    /** The qualified column identifier for the {@link #description} field. */
+    public static final ColumnExp DESCRIPTION_C =
+        new ColumnExp(PhotoRecord.class, DESCRIPTION);
+
+    /** The qualified column identifier for the {@link #mature} field. */
+    public static final ColumnExp MATURE_C =
+        new ColumnExp(PhotoRecord.class, MATURE);
+
+    /** The qualified column identifier for the {@link #thumbMediaHash} field. */
+    public static final ColumnExp THUMB_MEDIA_HASH_C =
+        new ColumnExp(PhotoRecord.class, THUMB_MEDIA_HASH);
+
+    /** The qualified column identifier for the {@link #thumbMimeType} field. */
+    public static final ColumnExp THUMB_MIME_TYPE_C =
+        new ColumnExp(PhotoRecord.class, THUMB_MIME_TYPE);
+
+    /** The qualified column identifier for the {@link #thumbConstraint} field. */
+    public static final ColumnExp THUMB_CONSTRAINT_C =
+        new ColumnExp(PhotoRecord.class, THUMB_CONSTRAINT);
+
+    /** The qualified column identifier for the {@link #furniMediaHash} field. */
+    public static final ColumnExp FURNI_MEDIA_HASH_C =
+        new ColumnExp(PhotoRecord.class, FURNI_MEDIA_HASH);
+
+    /** The qualified column identifier for the {@link #furniMimeType} field. */
+    public static final ColumnExp FURNI_MIME_TYPE_C =
+        new ColumnExp(PhotoRecord.class, FURNI_MIME_TYPE);
+
+    /** The qualified column identifier for the {@link #furniConstraint} field. */
+    public static final ColumnExp FURNI_CONSTRAINT_C =
+        new ColumnExp(PhotoRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 3 +

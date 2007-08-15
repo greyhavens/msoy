@@ -6,7 +6,6 @@ package com.threerings.msoy.server.persist;
 import java.sql.Timestamp;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 
@@ -24,37 +23,17 @@ public abstract class TagHistoryRecord extends PersistentRecord
     /** The column identifier for the {@link #targetId} field. */
     public static final String TARGET_ID = "targetId";
 
-    /** The qualified column identifier for the {@link #targetId} field. */
-    public static final ColumnExp TARGET_ID_C =
-        new ColumnExp(TagHistoryRecord.class, TARGET_ID);
-
     /** The column identifier for the {@link #tagId} field. */
     public static final String TAG_ID = "tagId";
-
-    /** The qualified column identifier for the {@link #tagId} field. */
-    public static final ColumnExp TAG_ID_C =
-        new ColumnExp(TagHistoryRecord.class, TAG_ID);
 
     /** The column identifier for the {@link #memberId} field. */
     public static final String MEMBER_ID = "memberId";
 
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(TagHistoryRecord.class, MEMBER_ID);
-
     /** The column identifier for the {@link #action} field. */
     public static final String ACTION = "action";
 
-    /** The qualified column identifier for the {@link #action} field. */
-    public static final ColumnExp ACTION_C =
-        new ColumnExp(TagHistoryRecord.class, ACTION);
-
     /** The column identifier for the {@link #time} field. */
     public static final String TIME = "time";
-
-    /** The qualified column identifier for the {@link #time} field. */
-    public static final ColumnExp TIME_C =
-        new ColumnExp(TagHistoryRecord.class, TIME);
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;

@@ -11,7 +11,6 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.Transient;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
 
@@ -32,65 +31,29 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     /** The column identifier for the {@link #item} field. */
     public static final String ITEM = "item";
 
-    /** The qualified column identifier for the {@link #item} field. */
-    public static final ColumnExp ITEM_C =
-        new ColumnExp(CatalogRecord.class, ITEM);
-
     /** The column identifier for the {@link #itemId} field. */
     public static final String ITEM_ID = "itemId";
-
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(CatalogRecord.class, ITEM_ID);
 
     /** The column identifier for the {@link #listedDate} field. */
     public static final String LISTED_DATE = "listedDate";
 
-    /** The qualified column identifier for the {@link #listedDate} field. */
-    public static final ColumnExp LISTED_DATE_C =
-        new ColumnExp(CatalogRecord.class, LISTED_DATE);
-
     /** The column identifier for the {@link #flowCost} field. */
     public static final String FLOW_COST = "flowCost";
-
-    /** The qualified column identifier for the {@link #flowCost} field. */
-    public static final ColumnExp FLOW_COST_C =
-        new ColumnExp(CatalogRecord.class, FLOW_COST);
 
     /** The column identifier for the {@link #goldCost} field. */
     public static final String GOLD_COST = "goldCost";
 
-    /** The qualified column identifier for the {@link #goldCost} field. */
-    public static final ColumnExp GOLD_COST_C =
-        new ColumnExp(CatalogRecord.class, GOLD_COST);
-
     /** The column identifier for the {@link #rarity} field. */
     public static final String RARITY = "rarity";
-
-    /** The qualified column identifier for the {@link #rarity} field. */
-    public static final ColumnExp RARITY_C =
-        new ColumnExp(CatalogRecord.class, RARITY);
 
     /** The column identifier for the {@link #purchases} field. */
     public static final String PURCHASES = "purchases";
 
-    /** The qualified column identifier for the {@link #purchases} field. */
-    public static final ColumnExp PURCHASES_C =
-        new ColumnExp(CatalogRecord.class, PURCHASES);
-
     /** The column identifier for the {@link #returns} field. */
     public static final String RETURNS = "returns";
 
-    /** The qualified column identifier for the {@link #returns} field. */
-    public static final ColumnExp RETURNS_C =
-        new ColumnExp(CatalogRecord.class, RETURNS);
-
     /** The column identifier for the {@link #repriceCounter} field. */
     public static final String REPRICE_COUNTER = "repriceCounter";
-
-    /** The qualified column identifier for the {@link #repriceCounter} field. */
-    public static final ColumnExp REPRICE_COUNTER_C =
-        new ColumnExp(CatalogRecord.class, REPRICE_COUNTER);
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 4;

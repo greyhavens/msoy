@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 
 import com.threerings.msoy.item.data.all.Pet;
@@ -15,6 +16,80 @@ import com.threerings.msoy.item.data.all.Item;
 @TableGenerator(name="itemId", pkColumnValue="PET")
 public class PetRecord extends ItemRecord
 {
+    // AUTO-GENERATED: FIELDS START
+    /** The qualified column identifier for the {@link #itemId} field. */
+    public static final ColumnExp ITEM_ID_C =
+        new ColumnExp(PetRecord.class, ITEM_ID);
+
+    /** The qualified column identifier for the {@link #parentId} field. */
+    public static final ColumnExp PARENT_ID_C =
+        new ColumnExp(PetRecord.class, PARENT_ID);
+
+    /** The qualified column identifier for the {@link #flagged} field. */
+    public static final ColumnExp FLAGGED_C =
+        new ColumnExp(PetRecord.class, FLAGGED);
+
+    /** The qualified column identifier for the {@link #creatorId} field. */
+    public static final ColumnExp CREATOR_ID_C =
+        new ColumnExp(PetRecord.class, CREATOR_ID);
+
+    /** The qualified column identifier for the {@link #ownerId} field. */
+    public static final ColumnExp OWNER_ID_C =
+        new ColumnExp(PetRecord.class, OWNER_ID);
+
+    /** The qualified column identifier for the {@link #rating} field. */
+    public static final ColumnExp RATING_C =
+        new ColumnExp(PetRecord.class, RATING);
+
+    /** The qualified column identifier for the {@link #used} field. */
+    public static final ColumnExp USED_C =
+        new ColumnExp(PetRecord.class, USED);
+
+    /** The qualified column identifier for the {@link #location} field. */
+    public static final ColumnExp LOCATION_C =
+        new ColumnExp(PetRecord.class, LOCATION);
+
+    /** The qualified column identifier for the {@link #lastTouched} field. */
+    public static final ColumnExp LAST_TOUCHED_C =
+        new ColumnExp(PetRecord.class, LAST_TOUCHED);
+
+    /** The qualified column identifier for the {@link #name} field. */
+    public static final ColumnExp NAME_C =
+        new ColumnExp(PetRecord.class, NAME);
+
+    /** The qualified column identifier for the {@link #description} field. */
+    public static final ColumnExp DESCRIPTION_C =
+        new ColumnExp(PetRecord.class, DESCRIPTION);
+
+    /** The qualified column identifier for the {@link #mature} field. */
+    public static final ColumnExp MATURE_C =
+        new ColumnExp(PetRecord.class, MATURE);
+
+    /** The qualified column identifier for the {@link #thumbMediaHash} field. */
+    public static final ColumnExp THUMB_MEDIA_HASH_C =
+        new ColumnExp(PetRecord.class, THUMB_MEDIA_HASH);
+
+    /** The qualified column identifier for the {@link #thumbMimeType} field. */
+    public static final ColumnExp THUMB_MIME_TYPE_C =
+        new ColumnExp(PetRecord.class, THUMB_MIME_TYPE);
+
+    /** The qualified column identifier for the {@link #thumbConstraint} field. */
+    public static final ColumnExp THUMB_CONSTRAINT_C =
+        new ColumnExp(PetRecord.class, THUMB_CONSTRAINT);
+
+    /** The qualified column identifier for the {@link #furniMediaHash} field. */
+    public static final ColumnExp FURNI_MEDIA_HASH_C =
+        new ColumnExp(PetRecord.class, FURNI_MEDIA_HASH);
+
+    /** The qualified column identifier for the {@link #furniMimeType} field. */
+    public static final ColumnExp FURNI_MIME_TYPE_C =
+        new ColumnExp(PetRecord.class, FURNI_MIME_TYPE);
+
+    /** The qualified column identifier for the {@link #furniConstraint} field. */
+    public static final ColumnExp FURNI_CONSTRAINT_C =
+        new ColumnExp(PetRecord.class, FURNI_CONSTRAINT);
+    // AUTO-GENERATED: FIELDS END
+
     public static final int SCHEMA_VERSION = 1 +
         BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 

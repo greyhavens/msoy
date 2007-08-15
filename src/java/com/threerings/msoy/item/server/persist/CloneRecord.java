@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
-import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 @Entity(indices={
     @Index(name="ixOwner", fields={ CloneRecord.OWNER_ID }),
@@ -21,65 +20,29 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
     /** The column identifier for the {@link #itemId} field. */
     public static final String ITEM_ID = "itemId";
 
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(CloneRecord.class, ITEM_ID);
-
     /** The column identifier for the {@link #originalItemId} field. */
     public static final String ORIGINAL_ITEM_ID = "originalItemId";
-
-    /** The qualified column identifier for the {@link #originalItemId} field. */
-    public static final ColumnExp ORIGINAL_ITEM_ID_C =
-        new ColumnExp(CloneRecord.class, ORIGINAL_ITEM_ID);
 
     /** The column identifier for the {@link #ownerId} field. */
     public static final String OWNER_ID = "ownerId";
 
-    /** The qualified column identifier for the {@link #ownerId} field. */
-    public static final ColumnExp OWNER_ID_C =
-        new ColumnExp(CloneRecord.class, OWNER_ID);
-
     /** The column identifier for the {@link #purchaseTime} field. */
     public static final String PURCHASE_TIME = "purchaseTime";
-
-    /** The qualified column identifier for the {@link #purchaseTime} field. */
-    public static final ColumnExp PURCHASE_TIME_C =
-        new ColumnExp(CloneRecord.class, PURCHASE_TIME);
 
     /** The column identifier for the {@link #flowPaid} field. */
     public static final String FLOW_PAID = "flowPaid";
 
-    /** The qualified column identifier for the {@link #flowPaid} field. */
-    public static final ColumnExp FLOW_PAID_C =
-        new ColumnExp(CloneRecord.class, FLOW_PAID);
-
     /** The column identifier for the {@link #goldPaid} field. */
     public static final String GOLD_PAID = "goldPaid";
-
-    /** The qualified column identifier for the {@link #goldPaid} field. */
-    public static final ColumnExp GOLD_PAID_C =
-        new ColumnExp(CloneRecord.class, GOLD_PAID);
 
     /** The column identifier for the {@link #used} field. */
     public static final String USED = "used";
 
-    /** The qualified column identifier for the {@link #used} field. */
-    public static final ColumnExp USED_C =
-        new ColumnExp(CloneRecord.class, USED);
-
     /** The column identifier for the {@link #location} field. */
     public static final String LOCATION = "location";
 
-    /** The qualified column identifier for the {@link #location} field. */
-    public static final ColumnExp LOCATION_C =
-        new ColumnExp(CloneRecord.class, LOCATION);
-
     /** The column identifier for the {@link #lastTouched} field. */
     public static final String LAST_TOUCHED = "lastTouched";
-
-    /** The qualified column identifier for the {@link #lastTouched} field. */
-    public static final ColumnExp LAST_TOUCHED_C =
-        new ColumnExp(CloneRecord.class, LAST_TOUCHED);
     // AUTO-GENERATED: FIELDS END
 
     public static final int BASE_SCHEMA_VERSION = 5;
