@@ -42,8 +42,7 @@ public abstract class TagRecord extends PersistentRecord
     @Id
     public int tagId;
 
-     /** The ID of the tagged target. */
+    /** The ID of the tagged target. */
     @Id
     public int targetId;
-
 }
