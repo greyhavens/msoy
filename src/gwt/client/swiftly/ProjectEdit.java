@@ -3,10 +3,9 @@
 
 package client.swiftly;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import client.shell.Application;
 import client.util.BorderedDialog;
@@ -148,7 +147,7 @@ public class ProjectEdit extends BorderedDialog
 
     protected void loadCollaborators ()
     {
-        _collaborators = new HashSet();
+        _collaborators = new ArrayList();
         CSwiftly.swiftlysvc.getProjectCollaborators(CSwiftly.ident, _project.projectId,
             new AsyncCallback() {
             public void onSuccess (Object result) {
@@ -238,7 +237,7 @@ public class ProjectEdit extends BorderedDialog
      */
     protected void loadFriends ()
     {
-        _friends = new HashSet();
+        _friends = new ArrayList();
         CSwiftly.swiftlysvc.getFriends(CSwiftly.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _friends.addAll((List)result);
@@ -339,8 +338,8 @@ public class ProjectEdit extends BorderedDialog
 
     protected SwiftlyProject _project;
     protected ProjectEditListener _listener;
-    protected Set _collaborators;
-    protected Set _friends;
+    protected List _collaborators;
+    protected List _friends;
     protected boolean _amOwner;
 
     protected CheckBox _remixable;
