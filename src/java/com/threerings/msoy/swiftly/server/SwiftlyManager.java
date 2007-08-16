@@ -16,7 +16,6 @@ import com.samskivert.util.SerialExecutor;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.swiftly.client.SwiftlyService;
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
@@ -24,6 +23,8 @@ import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -60,7 +61,7 @@ public class SwiftlyManager
 
     // from interface SwiftlyProvider
     public void enterProject (final ClientObject caller, final int projectId,
-                              final SwiftlyService.ResultListener listener)
+                              final ResultListener listener)
         throws InvocationException
     {
         ProjectRoomManager curmgr = _managers.get(projectId);
@@ -143,7 +144,7 @@ public class SwiftlyManager
                 // rely on all the service checks we have in the manager to protect us.
 
                 // all the necessary bits of data have been loaded, initialize the room manager
-                mgr.init(_project, _collaborators, _storage, new SwiftlyService.ConfirmListener() {
+                mgr.init(_project, _collaborators, _storage, new ConfirmListener() {
                     public void requestProcessed ()
                     {
                         listener.requestProcessed(mgr.getPlaceObject().getOid());

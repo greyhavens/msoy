@@ -37,7 +37,6 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PetRecord;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.swiftly.client.SwiftlyService;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
@@ -75,7 +74,7 @@ public class ProjectRoomManager extends PlaceManager
      * Called by the {@link SwiftlyManager} after creating this project room manager.
      */
     public void init (final SwiftlyProject project, final List<MemberName> collaborators,
-                      ProjectStorage storage, final SwiftlyService.ConfirmListener listener)
+                      ProjectStorage storage, final ConfirmListener listener)
     {
         _storage = storage;
         _resultItems = new HashMap<MemberName, Integer>();
