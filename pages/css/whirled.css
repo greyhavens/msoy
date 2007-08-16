@@ -1,0 +1,66 @@
+/**
+ * $Id$
+ *
+ * Styles for MyWhirled and The Whirled.
+ */
+
+.PeopleContainer .PageHeader {
+  background-image: url(/images/whirled/people_tile.png);
+  height: 20px;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.PlacesContainer, .GamesContainer {
+  width: 264px;
+}
+
+.PlacesContainer .HeaderLeft, .PlacesContainer .HeaderRight {
+  background-image: url(/images/whirled/places_star.png);
+  width: 20px;
+  height: 20px;
+}
+
+.PlacesContainer .Header {
+  background-image: url(/images/whirled/places_tile.png);
+  height: 20px;
+}
+
+.PlacesContainer .HeaderCenter {
+  width: 100%;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+}
+
+.GamesContainer {
+  margin-left: auto;
+}
+
+.GamesContainer .HeaderLeft, .GamesContainer .HeaderRight {
+  background-image: url(/images/whirled/games_star.png);
+  width: 20px;
+  height: 20px;
+}
+
+.GamesContainer .Header {
+  background-image: url(/images/whirled/games_tile.png);
+  height: 20px;
+}
+
+.GamesContainer .HeaderCenter {
+  width: 100%;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+}
+
+.SceneList {
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+  border-bottom: 1px dotted;
+  width: 264px;
+  height: 245px;
+}

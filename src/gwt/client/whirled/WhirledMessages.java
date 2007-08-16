@@ -8,25 +8,25 @@ package client.whirled;
 public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "My Online Friends".
+   * Translated "My Friends Online".
    * 
-   * @return translated "My Online Friends"
+   * @return translated "My Friends Online"
    * @gwt.key headerPeople
    */
   String headerPeople();
 
   /**
-   * Translated "Active Games".
+   * Translated "My Active Games".
    * 
-   * @return translated "Active Games"
+   * @return translated "My Active Games"
    * @gwt.key headerGames
    */
   String headerGames();
 
   /**
-   * Translated "My Friend''s Locations".
+   * Translated "My Popular Places".
    * 
-   * @return translated "My Friend''s Locations"
+   * @return translated "My Popular Places"
    * @gwt.key headerRooms
    */
   String headerRooms();

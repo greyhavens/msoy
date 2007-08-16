@@ -8,12 +8,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.user.client.DOM;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -43,8 +46,6 @@ public class MyWhirled extends FlexTable
                 _friendLocations = new HashMap();
                 fillFriendLocations(data.rooms);
                 fillFriendLocations(data.games);
-                _rooms.setModel(new SimpleDataModel(data.rooms), 0);
-                _games.setModel(new SimpleDataModel(data.games), 0);
                 _people.setModel(new SimpleDataModel(data.people), 0);
             }
             public void onFailure (Throwable caught) {
@@ -57,39 +58,13 @@ public class MyWhirled extends FlexTable
     {
         int row = 0;
 
-        setWidget(row++, 0, _errorContainer = new HorizontalPanel());
+        getFlexCellFormatter().setRowSpan(row, 0, 3);
+        // TODO add column view of my profile pic, my rooms and active chats
+        
+        setWidget(row++, 1, _errorContainer = new HorizontalPanel());
 
-        setWidget(row++, 0, _rooms = new PagedGrid(ROOMS_ROWS, ROOMS_COLUMS) {
-            protected Widget createWidget (Object item) {
-                return new SceneWidget((SceneCard) item);
-            }
-            protected String getEmptyMessage () {
-                return CWhirled.msgs.noRooms();
-            }
-            protected String getHeaderText (int start, int limit, int total) {
-                return CWhirled.msgs.headerRooms();
-            }
-            protected boolean alwaysDisplayHeader () {
-                return true;
-            }
-        });
-
-        setWidget(row++, 0, _games = new PagedGrid(GAMES_ROWS, GAMES_COLUMS) {
-            protected Widget createWidget (Object item) {
-                return new SceneWidget((SceneCard) item);
-            }
-            protected String getEmptyMessage () {
-                return CWhirled.msgs.noGames();
-            }
-            protected String getHeaderText (int start, int limit, int total) {
-                return CWhirled.msgs.headerGames();
-            }
-            protected boolean alwaysDisplayHeader () {
-                return true;
-            }
-        });
-
-        setWidget(row++, 0, _people = new PagedGrid(PEOPLE_ROWS, PEOPLE_COLUMS) {
+        getFlexCellFormatter().setColSpan(row, 1, 2);
+        setWidget(row++, 1, _people = new PagedGrid(PEOPLE_ROWS, PEOPLE_COLUMS) {
             protected Widget createWidget (Object item) {
                 return new PersonWidget((MemberCard) item, _friendLocations);
             }
@@ -103,6 +78,46 @@ public class MyWhirled extends FlexTable
                 return true;
             }
         });
+        _people.addStyleName("PeopleContainer");
+        _people.setWidth("539px");
+
+        VerticalPanel placesContainer = new VerticalPanel();
+        setWidget(row, 1, placesContainer);
+        placesContainer.setStyleName("PlacesContainer");
+        HorizontalPanel header = new HorizontalPanel();
+        header.setStyleName("Header");
+        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        Label star = new Label();
+        star.setStyleName("HeaderLeft");
+        header.add(star);
+        Label title = new Label(CWhirled.msgs.headerRooms());
+        title.setStyleName("HeaderCenter");
+        header.add(title);
+        header.setCellWidth(title, "100%");
+        star = new Label();
+        star.setStyleName("HeaderRight");
+        header.add(star);
+        placesContainer.add(header);
+        placesContainer.add(_places = new SceneList(SceneCard.ROOM));
+        
+        VerticalPanel gamesContainer = new VerticalPanel();
+        setWidget(row++, 2, gamesContainer);
+        gamesContainer.setStyleName("GamesContainer");
+        header = new HorizontalPanel();
+        header.setStyleName("Header");
+        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        star = new Label();
+        star.setStyleName("HeaderLeft");
+        header.add(star);
+        title = new Label(CWhirled.msgs.headerGames());
+        title.setStyleName("HeaderCenter");
+        header.add(title);
+        header.setCellWidth(title, "100%");
+        star = new Label();
+        star.setStyleName("HeaderRight");
+        header.add(star);
+        gamesContainer.add(header);
+        gamesContainer.add(_games = new SceneList(SceneCard.GAME));
     }
 
     protected void fillFriendLocations (List scenes) {
@@ -115,6 +130,17 @@ public class MyWhirled extends FlexTable
             while (friendIter.hasNext()) {
                 _friendLocations.put(friendIter.next(), text);
             }
+        }
+    }
+
+    protected static class SceneList extends ScrollPanel
+    {
+        public SceneList (int sceneType)
+        {
+            setStyleName("SceneList");
+            setAlwaysShowScrollBars(true);
+            // why the hell doesn't GWT support only scrolling in one direction?
+            DOM.setStyleAttribute(getElement(), "overflowX", "hidden");
         }
     }
 
@@ -157,16 +183,12 @@ public class MyWhirled extends FlexTable
         }
     }
 
-    protected static final int ROOMS_ROWS = 1;
-    protected static final int ROOMS_COLUMS = 2;
-    protected static final int GAMES_ROWS = 1;
-    protected static final int GAMES_COLUMS = 2;
     protected static final int PEOPLE_ROWS = 1;
     protected static final int PEOPLE_COLUMS = 2;
 
-    protected PagedGrid _rooms;
-    protected PagedGrid _games;
     protected PagedGrid _people;
+    protected SceneList _places;
+    protected SceneList _games;
 
     protected HorizontalPanel _errorContainer;
 
