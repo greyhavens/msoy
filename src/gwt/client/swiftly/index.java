@@ -3,18 +3,16 @@
 
 package client.swiftly;
 
+import client.shell.Page;
+import client.util.MsoyUI;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Label;
-
 import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.client.SwiftlyServiceAsync;
-
 import com.threerings.msoy.web.data.ConnectConfig;
-
-import client.shell.Page;
-import client.util.MsoyUI;
 
 /**
  * Displays a page that allows a player to launch swiftly for a given project.
@@ -62,7 +60,15 @@ public class index extends Page
         if (CSwiftly.ident == null) {
             setContent(MsoyUI.createLabel(CSwiftly.msgs.indexLogon(), "infoLabel"));
             return;
-        } 
+        }
+
+        // XXX TEMP while swiftly is broken on whirled1/2 display a message only
+        if (true) {
+            setContent(MsoyUI.createLabel("Ouch! Swiftly is experiencing growing pains as we " +
+                "continue our efforts to scale Whirled. Please bear with us while we finish our " +
+                "work.", "infoLabel"));
+            return;
+        }
 
         setPageTitle(CSwiftly.msgs.projectsTitle());
         if (args.length() == 0) {
@@ -79,7 +85,7 @@ public class index extends Page
                         setContentStretchHeight(true);
                     } catch (NumberFormatException e) {
                         // display an error message if the supplied projectId did not parse
-                        setContent(new Label(CSwiftly.msgs.invalidProjectId(args))); 
+                        setContent(new Label(CSwiftly.msgs.invalidProjectId(args)));
                     }
                 }
                 public void onFailure (Throwable cause) {
