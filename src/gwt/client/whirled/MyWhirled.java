@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -58,8 +59,40 @@ public class MyWhirled extends FlexTable
     {
         int row = 0;
 
+        setCellPadding(0);
+        setCellSpacing(0);
+
         getFlexCellFormatter().setRowSpan(row, 0, 3);
-        // TODO add column view of my profile pic, my rooms and active chats
+        getFlexCellFormatter().setStyleName(row, 0, "MePanelContainer");
+        VerticalPanel mePanel = new VerticalPanel();
+        mePanel.setStyleName("MePanel");
+        setWidget(row, 0, mePanel);
+        HTML description = new HTML(CWhirled.msgs.myWhirledDescription());
+        description.setStyleName("Description");
+        mePanel.add(description);
+        mePanel.add(_pictureBox = new VerticalPanel());
+        _pictureBox.addStyleName("borderedBox");
+        _pictureBox.add(new Label("TESTING")); // TEMP
+        HorizontalPanel header = new HorizontalPanel();
+        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        header.setStyleName("SectionHeaderContainer");
+        Label title = new Label(CWhirled.msgs.headerRooms());
+        title.setStyleName("SectionHeader");
+        header.add(title);
+        mePanel.add(header);
+        mePanel.add(_roomsBox = new VerticalPanel());
+        _roomsBox.addStyleName("borderedBox");
+        _roomsBox.add(new Label("TESTING")); // TEMP
+        header = new HorizontalPanel();
+        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        header.setStyleName("SectionHeaderContainer");
+        title = new Label(CWhirled.msgs.headerChats());
+        title.setStyleName("SectionHeader");
+        header.add(title);
+        mePanel.add(header);
+        mePanel.add(_chatsBox = new VerticalPanel());
+        _chatsBox.addStyleName("borderedBox");
+        _chatsBox.add(new Label("TESTING")); // TEMP
         
         setWidget(row++, 1, _errorContainer = new HorizontalPanel());
 
@@ -84,13 +117,13 @@ public class MyWhirled extends FlexTable
         VerticalPanel placesContainer = new VerticalPanel();
         setWidget(row, 1, placesContainer);
         placesContainer.setStyleName("PlacesContainer");
-        HorizontalPanel header = new HorizontalPanel();
+        header = new HorizontalPanel();
         header.setStyleName("Header");
         header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         Label star = new Label();
         star.setStyleName("HeaderLeft");
         header.add(star);
-        Label title = new Label(CWhirled.msgs.headerRooms());
+        title = new Label(CWhirled.msgs.headerPlaces());
         title.setStyleName("HeaderCenter");
         header.add(title);
         header.setCellWidth(title, "100%");
@@ -189,6 +222,10 @@ public class MyWhirled extends FlexTable
     protected PagedGrid _people;
     protected SceneList _places;
     protected SceneList _games;
+
+    protected VerticalPanel _pictureBox;
+    protected VerticalPanel _roomsBox;
+    protected VerticalPanel _chatsBox;
 
     protected HorizontalPanel _errorContainer;
 

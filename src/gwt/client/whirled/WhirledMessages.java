@@ -8,36 +8,20 @@ package client.whirled;
 public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "My Friends Online".
+   * Translated "What''s going <br/>on in My Whirled <br/>right now.".
    * 
-   * @return translated "My Friends Online"
-   * @gwt.key headerPeople
+   * @return translated "What''s going <br/>on in My Whirled <br/>right now."
+   * @gwt.key myWhirledDescription
    */
-  String headerPeople();
-
-  /**
-   * Translated "My Active Games".
-   * 
-   * @return translated "My Active Games"
-   * @gwt.key headerGames
-   */
-  String headerGames();
+  String myWhirledDescription();
 
   /**
    * Translated "My Popular Places".
    * 
    * @return translated "My Popular Places"
-   * @gwt.key headerRooms
+   * @gwt.key headerPlaces
    */
-  String headerRooms();
-
-  /**
-   * Translated "Playin'' {0}".
-   * 
-   * @return translated "Playin'' {0}"
-   * @gwt.key inGame
-   */
-  String inGame(String arg0);
+  String headerPlaces();
 
   /**
    * Translated "My Whirled".
@@ -48,12 +32,12 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String titleMyWhirled();
 
   /**
-   * Translated "Chillin'' in {0}".
+   * Translated "Whirledwide".
    * 
-   * @return translated "Chillin'' in {0}"
-   * @gwt.key inRoom
+   * @return translated "Whirledwide"
+   * @gwt.key titleWhirledwide
    */
-  String inRoom(String arg0);
+  String titleWhirledwide();
 
   /**
    * Translated "Nobody Playing Games".
@@ -62,14 +46,6 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key noGames
    */
   String noGames();
-
-  /**
-   * Translated "Whirledwide".
-   * 
-   * @return translated "Whirledwide"
-   * @gwt.key titleWhirledwide
-   */
-  String titleWhirledwide();
 
   /**
    * Translated "No Online Friends".
@@ -86,4 +62,52 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key noRooms
    */
   String noRooms();
+
+  /**
+   * Translated "My Active Games".
+   * 
+   * @return translated "My Active Games"
+   * @gwt.key headerGames
+   */
+  String headerGames();
+
+  /**
+   * Translated "My Friends Online".
+   * 
+   * @return translated "My Friends Online"
+   * @gwt.key headerPeople
+   */
+  String headerPeople();
+
+  /**
+   * Translated "My Rooms".
+   * 
+   * @return translated "My Rooms"
+   * @gwt.key headerRooms
+   */
+  String headerRooms();
+
+  /**
+   * Translated "Active Chats".
+   * 
+   * @return translated "Active Chats"
+   * @gwt.key headerChats
+   */
+  String headerChats();
+
+  /**
+   * Translated "Playin'' {0}".
+   * 
+   * @return translated "Playin'' {0}"
+   * @gwt.key inGame
+   */
+  String inGame(String arg0);
+
+  /**
+   * Translated "Chillin'' in {0}".
+   * 
+   * @return translated "Chillin'' in {0}"
+   * @gwt.key inRoom
+   */
+  String inRoom(String arg0);
 }
