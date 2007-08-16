@@ -7,7 +7,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -110,6 +112,11 @@ public class SwiftlyEditor extends PlacePanel
         add(_contentPane);
 
         initFileTypes();
+
+        // setup the list of access listeners and add the various components
+        _accessListeners = new HashSet<AccessControlListener>();
+        addAccessControlListener(_toolbar);
+        addAccessControlListener(_projectPanel);
     }
 
     @Override // from Component
@@ -196,6 +203,14 @@ public class SwiftlyEditor extends PlacePanel
         // add line numbers
         scroller.setRowHeaderView(new Gutter(textPane, scroller));
 
+        // disable editing if the user does not have write access on the project
+        if (!_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
+            textPane.setEditable(false);
+        }
+
+        // add the text pane to the tab components container listeners
+        _editorTabs.addContainerListener(textPane);
+
         // add the tab
         _editorTabs.addEditorTab(scroller, pathElement);
 
@@ -240,6 +255,18 @@ public class SwiftlyEditor extends PlacePanel
         if (comp instanceof ChangeListener) {
             _roomObj.removeListener((ChangeListener)comp);
         }
+    }
+
+    /** Should be called when an AccessControlListener component is add from the UI. */
+    public void addAccessControlListener (AccessControlListener listener)
+    {
+        _accessListeners.add(listener);
+    }
+
+    /** Should be called when an AccessControlListener component is removed from the UI. */
+    public void removeAccessControlListener (AccessControlListener listener)
+    {
+        _accessListeners.remove(listener);
     }
 
     public AbstractAction createCloseCurrentTabAction ()
@@ -376,6 +403,7 @@ public class SwiftlyEditor extends PlacePanel
             final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
             // Re-bind transient instance variables
             element.lazarus(_roomObj.pathElements);
+
         } else if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
             updateEditorAccess();
         }
@@ -388,6 +416,7 @@ public class SwiftlyEditor extends PlacePanel
             final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
             // Re-bind transient instance variables
             element.lazarus(_roomObj.pathElements);
+
         } else if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
             updateEditorAccess();
         }
@@ -400,6 +429,7 @@ public class SwiftlyEditor extends PlacePanel
         // ever happen.
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             // final int elementId = (Integer)event.getKey();
+
         } else if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
             updateEditorAccess();
         }
@@ -437,10 +467,16 @@ public class SwiftlyEditor extends PlacePanel
     protected void updateEditorAccess ()
     {
         if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
-            // TODO: enable all the write functionality.
+            // TODO add feedback, such as an icon, to indicate the editor is in write mode
+            for (AccessControlListener listener : _accessListeners) {
+                listener.setWriteAccess();
+            }
 
         } else if (_roomObj.hasReadAccess(_ctx.getMemberObject().memberName)) {
-            // TODO: disable all the write functionality.
+            // TODO add feedback, such as an icon, to indicate the editor is in read-only mode
+            for (AccessControlListener listener : _accessListeners) {
+                listener.setReadOnlyAccess();
+            }
 
         } else {
             // the user no longer has access to anything, log them off.
@@ -461,6 +497,9 @@ public class SwiftlyEditor extends PlacePanel
 
     /** A list of files that can be created by this SwiftlyDocumentEditor. */
     protected ArrayList<SwiftlyDocumentEditor.FileTypes> _createableFileTypes;
+
+    /** A set of components listening for access control change events. */
+    protected Set<AccessControlListener> _accessListeners;
 
     protected SwiftlyContext _ctx;
     protected ProjectRoomController _ctrl;

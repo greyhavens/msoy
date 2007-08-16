@@ -7,6 +7,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -51,9 +53,10 @@ import sdoc.SyntaxEditorKit;
 import sdoc.SyntaxSupport;
 
 public class SwiftlyTextPane extends JEditorPane
-    implements DocumentUpdateListener, SetListener, PositionableComponent
+    implements DocumentUpdateListener, SetListener, PositionableComponent, AccessControlListener,
+        ContainerListener
 {
-    public static final int PRINT_MARGIN_WIDTH = 100; 
+    public static final int PRINT_MARGIN_WIDTH = 100;
 
     public SwiftlyTextPane (SwiftlyContext ctx, SwiftlyEditor editor, SwiftlyTextDocument document)
     {
@@ -88,7 +91,7 @@ public class SwiftlyTextPane extends JEditorPane
         support.highlightCurrent(false);
         getDocument().putProperty(SyntaxDocument.tabSizeAttribute, new Integer(4));
         // TODO: use the SyntaxSupport anti alias font business
-        
+
         // initialize the SyntaxDocument
         _syntaxDoc = (SyntaxDocument) getDocument();
         _syntaxDoc.addUndoableEditListener(new UndoHandler());
@@ -98,11 +101,36 @@ public class SwiftlyTextPane extends JEditorPane
         loadDocumentText();
     }
 
+    // from AccessControlListener
+    public void setWriteAccess ()
+    {
+        setEditable(true);
+    }
+
+    // from AccessControlListener
+    public void setReadOnlyAccess ()
+    {
+        setEditable(false);
+    }
+
+    // from ContainerListener
+    public void componentAdded (ContainerEvent e)
+    {
+        _editor.addAccessControlListener(this);
+    }
+
+    // from ContainerListener
+    public void componentRemoved (ContainerEvent e)
+    {
+        e.getContainer().removeContainerListener(this);
+        _editor.removeAccessControlListener(this);
+    }
+
     // from DocumentUpdateListener
     public void documentUpdated (DocumentUpdatedEvent event) {
         // only apply the document changes if the event is for this textpane's document
         // and we were not the sender
-        if (event.getDocumentId() == _document.documentId && 
+        if (event.getDocumentId() == _document.documentId &&
             event.getEditorOid() != _ctx.getClient().getClientOid()) {
             loadDocumentText();
         }

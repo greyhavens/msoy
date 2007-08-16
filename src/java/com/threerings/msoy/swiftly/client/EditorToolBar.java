@@ -14,6 +14,7 @@ import javax.swing.SwingConstants;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class EditorToolBar extends JToolBar
+    implements AccessControlListener
 {
     public EditorToolBar (ProjectRoomController ctrl, SwiftlyContext ctx, SwiftlyEditor editor)
     {
@@ -22,11 +23,25 @@ public class EditorToolBar extends JToolBar
         _editor = editor;
 
         // TODO tooltips with keyboard shortcuts
-        add(createButton(_ctrl.buildAction, BUILD_ICON));
-        add(createButton(_ctrl.buildExportAction, PREVIEW_ICON));
-        add(createButton(_editor.createShowConsoleAction(), CONSOLE_ICON));
+        add(_buildButton = createButton(_ctrl.buildAction, BUILD_ICON));
+        add(_buildExportButton = createButton(_ctrl.buildExportAction, PREVIEW_ICON));
+        add(_consoleButton = createButton(_editor.createShowConsoleAction(), CONSOLE_ICON));
 
         setFloatable(false);
+    }
+
+    // from AccessControlListener
+    public void setWriteAccess ()
+    {
+        _buildButton.setEnabled(true);
+        _buildExportButton.setEnabled(true);
+    }
+
+    // from AccessControlListener
+    public void setReadOnlyAccess ()
+    {
+        _buildButton.setEnabled(false);
+        _buildExportButton.setEnabled(false);
     }
 
     protected JButton createButton (Action action, String icon)
@@ -49,4 +64,8 @@ public class EditorToolBar extends JToolBar
     protected ProjectRoomController _ctrl;
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
+
+    protected JButton _buildButton;
+    protected JButton _buildExportButton;
+    protected JButton _consoleButton;
 }

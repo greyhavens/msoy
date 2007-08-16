@@ -47,11 +47,13 @@ public class TabbedEditor extends JTabbedPane
 
     /**
      * Adds a {@link TabbedEditorComponent} to the tabbed panel.
-     * @param the {@link TabbedEditorComponent} to load into a new editor tab.
+     * @param tab the {@link TabbedEditorComponent} to load into a new editor tab.
+     * @param pathElement the {@link PathElement} being displayed in a new tab.
      */
     public void addEditorTab (TabbedEditorComponent tab, PathElement pathElement)
     {
         Component comp = tab.getComponent();
+
         // add the tab
         add(comp);
         // select the newly opened tab

@@ -7,7 +7,7 @@ import java.awt.Component;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 
-/** 
+/**
  * Any {@link Component} wanting to be edited in the {@link TabbedEditor} must implement this
  * interface.
  */

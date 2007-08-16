@@ -4,12 +4,10 @@
 package com.threerings.msoy.swiftly.client;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -23,16 +21,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
-
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
-import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.PathElementTreeNode;
@@ -40,12 +34,12 @@ import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.ProjectTreeModel;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
-
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.client.InvocationService.InvocationListener;
+import com.threerings.util.MessageBundle;
 
 public class ProjectPanel extends JPanel
-    implements TreeSelectionListener, TreeModelListener
+    implements TreeSelectionListener, TreeModelListener, AccessControlListener
 {
     public ProjectPanel (SwiftlyContext ctx, SwiftlyEditor editor)
     {
@@ -54,11 +48,21 @@ public class ProjectPanel extends JPanel
         _editor = editor;
         _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
+        // setup the actions
+        _addFileAction = createAddFileAction();
         _uploadFileAction = createUploadFileAction();
         _deleteFileAction = createDeleteFileAction();
         _renameFileAction = createRenameFileAction();
 
-        setupToolbar();
+        // setup the toolbar
+        _toolbar.add(createButton(_addFileAction));
+        _toolbar.add(createButton(_uploadFileAction));
+        _toolbar.add(createButton(_deleteFileAction));
+        _toolbar.setFloatable(false);
+
+        // disable all actions initially
+        setActionsEnabled(false);
+
         add(_toolbar, BorderLayout.PAGE_START);
         setupPopup();
         add(_scrollPane, BorderLayout.CENTER);
@@ -86,7 +90,21 @@ public class ProjectPanel extends JPanel
         ToolTipManager.sharedInstance().registerComponent(_tree);
 
         _scrollPane.getViewport().setView(_tree);
-        setToolbarEnabled(false);
+        setActionsEnabled(false);
+    }
+
+    // from AccessControlListener
+    public void setWriteAccess ()
+    {
+        setActionsEnabled(true);
+        _tree.setEditable(true);
+    }
+
+    // from AccessControlListener
+    public void setReadOnlyAccess ()
+    {
+        setActionsEnabled(false);
+        _tree.setEditable(false);
     }
 
     // from interface TreeSelectionListener
@@ -297,11 +315,12 @@ public class ProjectPanel extends JPanel
             // TODO oh god we have to remove all the tabs associated with this directory
             // soo.. every tab that has a common parent id() ?
         }
-        _roomObj.service.deletePathElement(_ctx.getClient(), element.elementId, 
+        _roomObj.service.deletePathElement(_ctx.getClient(), element.elementId,
             new ConfirmListener () {
             public void requestProcessed () {
-                // disable the toolbar and unset the selected node
-                setToolbarEnabled(false);
+                // disable the delete and rename actions and unset the selected node
+                _deleteFileAction.setEnabled(false);
+                _renameFileAction.setEnabled(false);
                 _selectedNode = null;
             }
             public void requestFailed (String reason) {
@@ -321,16 +340,6 @@ public class ProjectPanel extends JPanel
         return parentElement;
     }
 
-    protected void setupToolbar ()
-    {
-        _toolbar.add(createButton(createAddFileAction()));
-        _toolbar.add(createButton(_uploadFileAction));
-        _toolbar.add(createButton(_deleteFileAction));
-
-        _toolbar.setFloatable(false);
-        setToolbarEnabled(false);
-    }
-
     protected JButton createButton (Action action)
     {
         JButton button = new JButton(action);
@@ -346,11 +355,12 @@ public class ProjectPanel extends JPanel
         _popup.add(_renameFileAction);
     }
 
-    protected void setToolbarEnabled (boolean value)
+    protected void setActionsEnabled (boolean value)
     {
-        for (Component button : _toolbar.getComponents()) {
-            button.setEnabled(value);
-        }
+        _addFileAction.setEnabled(value);
+        _uploadFileAction.setEnabled(value);
+        _deleteFileAction.setEnabled(value);
+        _renameFileAction.setEnabled(value);
     }
 
     protected PathElementTreeNode getSelectedNode ()
@@ -365,23 +375,26 @@ public class ProjectPanel extends JPanel
 
     protected void setSelectedNode (PathElementTreeNode node)
     {
-        // if this is the first selection enable the buttons
-        if (_selectedNode == null) {
-            setToolbarEnabled(true);
+        // if this is the first selection enable the buttons if the user has write access
+        if (_selectedNode == null && _roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
+            setActionsEnabled(true);
         }
 
         PathElement element = node.getElement();
         // TODO: revist this code. cleanup at the very least
         // if the selected node is the root or the project template, disable delete and rename
-        if (_roomObj.project.getTemplateSourceName().equals(element.getName()) ||
-            element.getType() == PathElement.Type.ROOT) {
-            _deleteFileAction.setEnabled(false);
-            _renameFileAction.setEnabled(false);
-            _tree.setEditable(false);
-        } else {
-            _deleteFileAction.setEnabled(true);
-            _renameFileAction.setEnabled(true);
-            _tree.setEditable(true);
+        // only if the user has write access on the project
+        if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
+            if (_roomObj.project.getTemplateSourceName().equals(element.getName()) ||
+                    element.getType() == PathElement.Type.ROOT) {
+                _deleteFileAction.setEnabled(false);
+                _renameFileAction.setEnabled(false);
+                _tree.setEditable(false);
+            } else {
+                _deleteFileAction.setEnabled(true);
+                _renameFileAction.setEnabled(true);
+                _tree.setEditable(true);
+            }
         }
 
         _selectedNode = node;
@@ -426,6 +439,7 @@ public class ProjectPanel extends JPanel
 
     protected JTree _tree;
     protected JToolBar _toolbar = new JToolBar();
+    protected Action _addFileAction;
     protected Action _uploadFileAction;
     protected Action _deleteFileAction;
     protected Action _renameFileAction;
