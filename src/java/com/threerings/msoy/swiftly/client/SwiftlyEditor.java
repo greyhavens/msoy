@@ -59,10 +59,6 @@ public class SwiftlyEditor extends PlacePanel
         _ctrl = ctrl;
         _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
-        // setup the path to the avatar viewer using the client version
-        _avatarViewerPath = "/clients/" + _ctx.getClient().getVersion() +
-                            "/avatarviewer.swf?avatar=";
-
         setLayout(new VGroupLayout(
                       GroupLayout.STRETCH, GroupLayout.STRETCH, 5, GroupLayout.TOP));
         // let's not jam ourselves up against the edges of the window
@@ -511,6 +507,4 @@ public class SwiftlyEditor extends PlacePanel
     protected Console _console;
     protected EditorToolBar _toolbar;
     protected ProjectPanel _projectPanel;
-
-    protected String _avatarViewerPath;
 }

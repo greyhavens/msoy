@@ -57,7 +57,7 @@ import static com.threerings.msoy.Log.log;
 
 /**
  * Handles the subversion-based project repository.
- * @todo: Factor out re-usable SVNEditor functionality to a seperate class.
+ * TODO: Factor out re-usable SVNEditor functionality to a separate class.
  */
 public class ProjectSVNStorage
     implements ProjectStorage
@@ -209,10 +209,10 @@ public class ProjectSVNStorage
 
 
     // from interface ProjectStorage
-    // Recurse over the entirity of the subversion repository, building a list
+    // Recurse over the entirety of the subversion repository, building a list
     // of project path elements.
     // TODO: Extend the Swiftly client to support readdir()-style functionality instead of this
-    // sillyness.
+    // silliness.
     public List<PathElement> getProjectTree ()
         throws ProjectStorageException
     {
