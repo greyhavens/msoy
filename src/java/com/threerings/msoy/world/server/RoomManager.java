@@ -38,7 +38,7 @@ import com.threerings.whirled.spot.server.SpotSceneManager;
 import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
-import com.threerings.msoy.data.SceneBookmarkEntry;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;

@@ -31,6 +31,7 @@ import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 
 import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -94,11 +95,8 @@ public class MsoyClientResolver extends CrowdClientResolver
 //         MsoyServer.memberRepo.getFlowRepository().expireFlow(member, dT); // modifies member.flow
 // END TEMP
 
-// TEMP: not currently used, do we really need this database hit every time they logon?
-//         userObj.ownedScenes = new DSet<SceneBookmarkEntry>(
-//             MsoyServer.sceneRepo.getOwnedScenes(
-//                 MsoySceneModel.OWNER_TYPE_MEMBER, member.memberId).iterator()));
-// END TEMP
+        userObj.ownedScenes = new DSet<SceneBookmarkEntry>(
+            MsoyServer.sceneRepo.getOwnedScenes(member.memberId).iterator());
 
         // fill in this member's raw friends list; the friend manager will update it later
         userObj.friends = new DSet<FriendEntry>(MsoyServer.memberRepo.loadFriends(member.memberId));

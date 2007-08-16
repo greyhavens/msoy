@@ -1,15 +1,16 @@
 //
 // $Id$
 
-package com.threerings.msoy.data;
+package com.threerings.msoy.data.all;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.presents.dobj.DSet;
 
 /**
  * Does something extraordinary.
  */
 public class SceneBookmarkEntry
-    implements Comparable, DSet.Entry
+    implements Comparable, DSet.Entry, IsSerializable
 {
     /** The scene id being represented. */
     public int sceneId;
@@ -35,7 +36,7 @@ public class SceneBookmarkEntry
     // from DSet.Entry
     public Comparable getKey ()
     {
-        return sceneId;
+        return new Integer(sceneId);
     }
 
     // from Comparable
@@ -45,20 +46,20 @@ public class SceneBookmarkEntry
         return this.sceneId - that.sceneId;
     }
 
-    @Override
+    // @Override // from Object
     public boolean equals (Object other)
     {
         return (other instanceof SceneBookmarkEntry) &&
             ((SceneBookmarkEntry) other).sceneId == this.sceneId;
     }
 
-    @Override
+    // @Override // from Object
     public int hashCode ()
     {
         return sceneId;
     }
 
-    @Override
+    // @Override // from Object
     public String toString ()
     {
         return sceneName;

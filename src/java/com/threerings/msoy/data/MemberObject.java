@@ -27,6 +27,7 @@ import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
 import com.threerings.msoy.game.data.GameMemberInfo;
 import com.threerings.msoy.game.data.GameSummary;
@@ -469,10 +470,10 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setRecentScenes (DSet<com.threerings.msoy.data.SceneBookmarkEntry> value)
+    public void setRecentScenes (DSet<com.threerings.msoy.data.all.SceneBookmarkEntry> value)
     {
         requestAttributeChange(RECENT_SCENES, value, this.recentScenes);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.SceneBookmarkEntry> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.SceneBookmarkEntry> clone =
             (value == null) ? null : value.typedClone();
         this.recentScenes = clone;
     }
@@ -517,10 +518,10 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setOwnedScenes (DSet<com.threerings.msoy.data.SceneBookmarkEntry> value)
+    public void setOwnedScenes (DSet<com.threerings.msoy.data.all.SceneBookmarkEntry> value)
     {
         requestAttributeChange(OWNED_SCENES, value, this.ownedScenes);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.SceneBookmarkEntry> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.SceneBookmarkEntry> clone =
             (value == null) ? null : value.typedClone();
         this.ownedScenes = clone;
     }

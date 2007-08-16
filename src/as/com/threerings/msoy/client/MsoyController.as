@@ -48,13 +48,11 @@ import com.threerings.whirled.data.SceneObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.SceneBookmarkEntry;
-
-import com.threerings.msoy.chat.client.ChatControl;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
 import com.threerings.msoy.chat.client.ChatControl;
 import com.threerings.msoy.chat.client.MsoyChatDirector;

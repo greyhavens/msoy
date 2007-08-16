@@ -4,6 +4,7 @@
 package client.shell;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
@@ -27,6 +28,8 @@ import client.util.MsoyUI;
 import client.util.events.FlashEvents;
 import client.util.events.FriendEvent;
 import client.util.events.FriendsListener;
+import client.util.events.SceneBookmarkEvent;
+import client.util.events.SceneBookmarkListener;
 
 /**
  * Displays our navigation headers.
@@ -40,13 +43,28 @@ public class NaviPanel extends FlexTable
         setCellSpacing(0);
         _status = status;
 
-        // register to hear about friend additions and removals
+        // register to hear about data additions and removals
         FlashEvents.addListener(new FriendsListener() {
             public void friendAdded (FriendEvent event) {
                 _friends.add(event.getFriend());
             }
             public void friendRemoved (FriendEvent event) {
                 _friends.remove(event.getFriend());
+            }
+        });
+        FlashEvents.addListener(new SceneBookmarkListener() {
+            public void sceneAdded (SceneBookmarkEvent event) {
+                _scenes.add(new SceneData(event.getSceneName(), event.getSceneId()));
+            }
+            public void sceneRemoved (SceneBookmarkEvent event) {
+                Iterator iter = _scenes.iterator();
+                while (iter.hasNext()) {
+                    SceneData candidate = (SceneData)iter.next();
+                    if (candidate.id == event.getSceneId()) {
+                        iter.remove();
+                        break;
+                    }
+                }
             }
         });
     }
@@ -90,6 +108,15 @@ public class NaviPanel extends FlexTable
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "My Whirled", "world", "p");
                 addLink(menu, "My Home", "world", "m" + creds.getMemberId());
+                if (_scenes.size() > 0) {
+                    MenuBar smenu = new MenuBar(true);
+                    Iterator siter = _scenes.iterator();
+                    while (siter.hasNext()) {
+                        SceneData data = (SceneData)siter.next();
+                        addLink(smenu, data.name, "world", "s" + data.id);
+                    }
+                    menu.addItem("My Rooms", smenu);
+                }
                 if (_friends.size() > 0) {
                     MenuBar fmenu = new MenuBar(true);
                     for (int ii = 0, ll = _friends.size(); ii < ll; ii++) {
@@ -206,6 +233,7 @@ public class NaviPanel extends FlexTable
 
         setText(0, menuidx++, ""); // clear the last menu
         _friends.clear();
+        _scenes.clear();
     }
 
     protected void setMenu (int menuidx, final String ident, String text, ClickListener listener)
@@ -265,6 +293,17 @@ public class NaviPanel extends FlexTable
         protected abstract void populateMenu (Widget sender, MenuBar menu);
     }
 
+    protected class SceneData {
+        String name;
+        int id;
+
+        public SceneData (String name, int id)
+        {
+            this.name = name;
+            this.id = id;
+        }
+    };
+    
     protected StatusPanel _status;
     protected Label _loglbl, _melbl;
 
@@ -273,4 +312,7 @@ public class NaviPanel extends FlexTable
 
     /** Our friends. */
     protected ArrayList _friends = new ArrayList();
+
+    /** Owned scenes. */
+    protected ArrayList _scenes = new ArrayList(); // of SceneData
 }

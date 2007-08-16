@@ -19,6 +19,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
@@ -26,6 +27,7 @@ import com.threerings.msoy.web.data.WebCreds;
 import client.util.MsoyUI;
 import client.util.events.FlashEvents;
 import client.util.events.FriendEvent;
+import client.util.events.SceneBookmarkEvent;
 import client.util.events.StatusChangeEvent;
 import client.util.events.StatusChangeListener;
 
@@ -184,10 +186,16 @@ public class StatusPanel extends FlexTable
         FlashEvents.dispatchEvent(
             new StatusChangeEvent(StatusChangeEvent.MAIL, data.newMailCount, 0));
 
-        // notify listeners of our friends
+        // notify listeners of our friends and scenes
         for (int ii = 0, ll = data.friends.size(); ii < ll; ii++) {
             FriendEntry entry = (FriendEntry)data.friends.get(ii);
             FlashEvents.dispatchEvent(new FriendEvent(FriendEvent.FRIEND_ADDED, entry.name));
+        }
+        for (int ii = 0, ll = data.scenes.size(); ii < ll; ii++) {
+            SceneBookmarkEntry entry = (SceneBookmarkEntry)data.scenes.get(ii);
+            FlashEvents.dispatchEvent(new SceneBookmarkEvent(
+                                          SceneBookmarkEvent.SCENEBOOKMARK_ADDED,
+                                          entry.sceneName, entry.sceneId));
         }
     }
 

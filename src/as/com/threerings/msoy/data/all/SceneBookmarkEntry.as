@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.data {
+package com.threerings.msoy.data.all {
 
 import com.threerings.util.Comparable;
 import com.threerings.util.Hashable;

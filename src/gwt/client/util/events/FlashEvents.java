@@ -96,6 +96,8 @@ public class FlashEvents
             return PetEvent.NAME;
         } else if (listener instanceof FriendsListener) {
             return FriendEvent.NAME;
+        } else if (listener instanceof SceneBookmarkListener) {
+            return SceneBookmarkEvent.NAME;
         } else {
             CShell.log("Requested name for unknown listener '" + listener + "'?!");
             return null;
@@ -116,6 +118,8 @@ public class FlashEvents
             return new PetEvent();
         } else if (FriendEvent.NAME.equals(eventName)) {
             return new FriendEvent();
+        } else if (SceneBookmarkEvent.NAME.equals(eventName)) {
+            return new SceneBookmarkEvent();
         } else {
             CShell.log("Requested event for unknown name '" + eventName + "'?!");
             return null;

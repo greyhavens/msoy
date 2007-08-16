@@ -378,6 +378,14 @@ public class WebUserServlet extends MsoyServiceServlet
             data.friends = new ArrayList<Object>();
         }
 
+        // load up their scenes list
+        try {
+            data.scenes = MsoyServer.sceneRepo.getOwnedScenes(mrec.memberId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load scene list [id=" + mrec.memberId + "].", pe);
+            data.scenes = new ArrayList<Object>();
+        }
+
         return data;
     }
 

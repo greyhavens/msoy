@@ -32,4 +32,11 @@ public class SessionData implements IsSerializable
      * @gwt.typeArgs <com.threerings.msoy.data.all.FriendEntry>
      */
     public List friends;
+
+    /**
+     * This member's owned scenes at the time of logon.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.data.all.SceneBookmarkEntry>
+     */
+    public List scenes;
 }

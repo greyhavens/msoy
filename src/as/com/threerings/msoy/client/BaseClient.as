@@ -39,13 +39,13 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.ChannelName;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.SceneBookmarkEntry;
 
 /**
  * A client shared by both our virtual world and header incarnations.
@@ -283,6 +283,7 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.msoy.client.BaseClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
 class StatusUpdater implements AttributeChangeListener, SetListener
 {
@@ -308,6 +309,10 @@ class StatusUpdater implements AttributeChangeListener, SetListener
             var entry :FriendEntry = (event.getEntry() as FriendEntry);
             _client.dispatchEventToGWT(
                 FRIEND_EVENT, [FRIEND_ADDED, entry.name.toString(), entry.name.getMemberId()]);
+        } else if (event.getName() == MemberObject.OWNED_SCENES) {
+            var scene :SceneBookmarkEntry = (event.getEntry() as SceneBookmarkEntry);
+            _client.dispatchEventToGWT(
+                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_ADDED, scene.sceneName, scene.sceneId]);
         }
     }
 
@@ -319,6 +324,10 @@ class StatusUpdater implements AttributeChangeListener, SetListener
         if (event.getName() == MemberObject.FRIENDS) {
             var memberId :int = int(event.getKey());
             _client.dispatchEventToGWT(FRIEND_EVENT, [FRIEND_REMOVED, "", memberId]);
+        } else if (event.getName() == MemberObject.OWNED_SCENES) {
+            var sceneId :int = int(event.getKey());
+            _client.dispatchEventToGWT(
+                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_REMOVED, "", sceneId]);
         }
     }
 
@@ -353,6 +362,10 @@ class StatusUpdater implements AttributeChangeListener, SetListener
     protected static const FRIEND_EVENT :String = "friend";
     protected static const FRIEND_ADDED :int = 1;
     protected static const FRIEND_REMOVED :int = 2;
+
+    protected static const SCENEBOOKMARK_EVENT :String = "sceneBookmark";
+    protected static const SCENEBOOKMARK_ADDED :int = 1;
+    protected static const SCENEBOOKMARK_REMOVED :int = 2;
 
     protected var _client :BaseClient;
 }

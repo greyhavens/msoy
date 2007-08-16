@@ -25,8 +25,7 @@ import com.threerings.whirled.server.persist.SceneUpdateMarshaller;
 import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
-import com.threerings.msoy.data.SceneBookmarkEntry;
-
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.DecorRecord;
@@ -82,6 +81,15 @@ public class MsoySceneRepository extends DepotRepository
             marks.add(new SceneBookmarkEntry(scene.sceneId, scene.name, 0L));
         }
         return marks;
+    }
+
+    /**
+     * Retrieve a list of all the member scenes that the user directly owns.
+     */
+    public ArrayList<SceneBookmarkEntry> getOwnedScenes (int memberId)
+        throws PersistenceException
+    {
+        return getOwnedScenes(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
     }
 
     /**
