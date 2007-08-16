@@ -94,14 +94,14 @@ public class ProjectPanel extends JPanel
     }
 
     // from AccessControlListener
-    public void setWriteAccess ()
+    public void writeAccessGranted ()
     {
         setActionsEnabled(true);
         _tree.setEditable(true);
     }
 
     // from AccessControlListener
-    public void setReadOnlyAccess ()
+    public void readOnlyAccessGranted ()
     {
         setActionsEnabled(false);
         _tree.setEditable(false);

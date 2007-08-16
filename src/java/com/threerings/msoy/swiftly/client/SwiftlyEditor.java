@@ -204,12 +204,11 @@ public class SwiftlyEditor extends PlacePanel
         scroller.setRowHeaderView(new Gutter(textPane, scroller));
 
         // disable editing if the user does not have write access on the project
-        if (!_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
-            textPane.setEditable(false);
+        if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
+            textPane.writeAccessGranted();
+        } else {
+            textPane.readOnlyAccessGranted();
         }
-
-        // add the text pane to the tab components container listeners
-        _editorTabs.addContainerListener(textPane);
 
         // add the tab
         _editorTabs.addEditorTab(scroller, pathElement);
@@ -469,13 +468,13 @@ public class SwiftlyEditor extends PlacePanel
         if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
             // TODO add feedback, such as an icon, to indicate the editor is in write mode
             for (AccessControlListener listener : _accessListeners) {
-                listener.setWriteAccess();
+                listener.writeAccessGranted();
             }
 
         } else if (_roomObj.hasReadAccess(_ctx.getMemberObject().memberName)) {
             // TODO add feedback, such as an icon, to indicate the editor is in read-only mode
             for (AccessControlListener listener : _accessListeners) {
-                listener.setReadOnlyAccess();
+                listener.readOnlyAccessGranted();
             }
 
         } else {

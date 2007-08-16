@@ -31,14 +31,14 @@ public class EditorToolBar extends JToolBar
     }
 
     // from AccessControlListener
-    public void setWriteAccess ()
+    public void writeAccessGranted ()
     {
         _buildButton.setEnabled(true);
         _buildExportButton.setEnabled(true);
     }
 
     // from AccessControlListener
-    public void setReadOnlyAccess ()
+    public void readOnlyAccessGranted ()
     {
         _buildButton.setEnabled(false);
         _buildExportButton.setEnabled(false);

@@ -7,8 +7,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -20,23 +18,20 @@ import javax.swing.JEditorPane;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Element;
-
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Element;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
-import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.EntryRemovedEvent;
-import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.SetListener;
+import sdoc.SyntaxDocument;
+import sdoc.SyntaxEditorKit;
+import sdoc.SyntaxSupport;
 
 import com.threerings.msoy.swiftly.data.DocumentUpdateListener;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
@@ -45,16 +40,14 @@ import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
-
+import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.SetListener;
 import com.threerings.util.MessageBundle;
 
-import sdoc.SyntaxDocument;
-import sdoc.SyntaxEditorKit;
-import sdoc.SyntaxSupport;
-
 public class SwiftlyTextPane extends JEditorPane
-    implements DocumentUpdateListener, SetListener, PositionableComponent, AccessControlListener,
-        ContainerListener
+    implements DocumentUpdateListener, SetListener, PositionableComponent, AccessControlListener
 {
     public static final int PRINT_MARGIN_WIDTH = 100;
 
@@ -102,27 +95,28 @@ public class SwiftlyTextPane extends JEditorPane
     }
 
     // from AccessControlListener
-    public void setWriteAccess ()
+    public void writeAccessGranted ()
     {
         setEditable(true);
     }
 
     // from AccessControlListener
-    public void setReadOnlyAccess ()
+    public void readOnlyAccessGranted ()
     {
         setEditable(false);
     }
 
-    // from ContainerListener
-    public void componentAdded (ContainerEvent e)
+    @Override // from JComponent
+    public void addNotify ()
     {
+        super.addNotify();
         _editor.addAccessControlListener(this);
     }
 
-    // from ContainerListener
-    public void componentRemoved (ContainerEvent e)
+    @Override // from JComponent
+    public void removeNotify ()
     {
-        e.getContainer().removeContainerListener(this);
+        super.removeNotify();
         _editor.removeAccessControlListener(this);
     }
 
