@@ -32,7 +32,7 @@ public class MemoryEntry
      */
     public int getSize ()
     {
-        return key.length() + (value == null ? 0 : value.length);
+        return (value == null) ? 0 : (key.length() + value.length);
     }
 
     /**
