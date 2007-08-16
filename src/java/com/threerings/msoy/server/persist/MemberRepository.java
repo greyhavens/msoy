@@ -128,11 +128,14 @@ public class MemberRepository extends DepotRepository
     public int getActivePopulationCount ()
         throws PersistenceException
     {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -60); // TODO: unmagick
+        Date when = new Date(cal.getTimeInMillis());
         MemberCountRecord record = load (
             MemberCountRecord.class,
             new FromOverride(MemberRecord.class),
             new Where(new GreaterThan(MemberRecord.LAST_SESSION_C,
-                                      new LiteralExp("SUBDATE(CURDATE(), 60)"))),
+                                      new LiteralExp("'" + when + "'"))), // TODO: DateExp?
             new FieldOverride(MemberCountRecord.POPULATION, new LiteralExp("COUNT(*)")));
         return record.population;
     }
