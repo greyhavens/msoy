@@ -19,6 +19,8 @@ import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 
@@ -82,12 +84,13 @@ public /*abstract*/ class BaseClient extends Client
             log.info("Unable to configure external functions.");
         }
 
-        // allow connecting to the game server
-        Security.loadPolicyFile("http://" + getServerHost(stage) + "/crossdomain.xml");
-        // and the media server if it differs from the game server
+        // allow connecting the media server if it differs from the game server
         if (DeploymentConfig.mediaURL.indexOf(DeploymentConfig.serverHost) == -1) {
             Security.loadPolicyFile(DeploymentConfig.mediaURL + "crossdomain.xml");
         }
+
+        // prior to logging on to a server, set up our security policy for that server
+        addClientObserver(new ClientAdapter(clientWillLogon));
 
         // configure our server and port info and logon
         setServer(getServerHost(stage), getServerPorts(stage));
@@ -167,6 +170,15 @@ public /*abstract*/ class BaseClient extends Client
     public function isEmbedded () :Boolean
     {
         return _embedded;
+    }
+
+    /**
+     * Called just before we logon to a server.
+     */
+    protected function clientWillLogon (event :ClientEvent) :void
+    {
+        // TODO: track who we've already policied?
+        Security.loadPolicyFile("http://" + getHostname() + "/crossdomain.xml");
     }
 
     /**
