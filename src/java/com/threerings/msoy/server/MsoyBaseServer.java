@@ -139,12 +139,8 @@ public abstract class MsoyBaseServer extends WhirledServer
         statRepo = new StatRepository(perCtx);
         gameCookieRepo = new GameCookieRepository(perCtx);
 
-        // TODO: the runtime configuration stuff needs to be made peer aware and then the game
-        // servers need to subscribe to their world server's runtime config bits; all of which will
-        // be complicated and fiddly; yay!
-
         // create and set up our configuration registry and admin service
-        confReg = new DatabaseConfigRegistry(perCtx, invoker);
+        confReg = createConfigRegistry();
         AdminProvider.init(invmgr, confReg);
 
         // now initialize our runtime configuration, postponing the remaining server initialization
@@ -198,6 +194,12 @@ public abstract class MsoyBaseServer extends WhirledServer
         throws Exception
     {
     }
+
+    /**
+     * Creates the admin config registry for use by this server.
+     */
+    protected abstract ConfigRegistry createConfigRegistry ()
+        throws Exception;
 
     /** The connection provider used to access our JDBC databases. Don't use this; rather use
      * {@link #perCtx}. */

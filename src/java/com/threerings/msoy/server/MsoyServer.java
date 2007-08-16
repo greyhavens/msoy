@@ -28,6 +28,9 @@ import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
+import com.threerings.admin.server.ConfigRegistry;
+import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
+
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.ezgame.server.DictionaryManager;
 import com.threerings.parlor.game.server.GameManager;
@@ -80,7 +83,7 @@ public class MsoyServer extends MsoyBaseServer
     public static MsoyAdminManager adminMan = new MsoyAdminManager();
 
     /** Manages interactions with our peer servers. */
-    public static MsoyPeerManager peerMan;
+    public static MsoyPeerManager peerMan = new MsoyPeerManager();
 
     /** Our runtime member manager. */
     public static MemberManager memberMan = new MemberManager();
@@ -255,10 +258,6 @@ public class MsoyServer extends MsoyBaseServer
         groupRepo = new GroupRepository(perCtx);
         swiftlyRepo = new SwiftlyRepository(perCtx);
 
-        // start up our peer manager
-        log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
-        peerMan = new MsoyPeerManager(perCtx, invoker);
-
         // initialize the swiftly invoker
         swiftlyInvoker = new Invoker("swiftly_invoker", omgr);
         swiftlyInvoker.setDaemon(true);
@@ -281,6 +280,13 @@ public class MsoyServer extends MsoyBaseServer
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to stop http server.", e);
         }
+    }
+
+    @Override // from MsoyBaseServer
+    protected ConfigRegistry createConfigRegistry ()
+        throws Exception
+    {
+        return new PeeredDatabaseConfigRegistry(perCtx, invoker, peerMan);
     }
 
     @Override // from WhirledServer
@@ -324,16 +330,18 @@ public class MsoyServer extends MsoyBaseServer
     protected void finishInit ()
         throws Exception
     {
-        // intialize various services
+        // initialize our authenticator
         author.init();
+
+        // start up our peer manager
+        log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
+        peerMan.init(perCtx, invoker, ServerConfig.nodeName, ServerConfig.sharedSecret,
+                     ServerConfig.backChannelHost, ServerConfig.serverHost, getListenPorts()[0]);
+
+        // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
         adminMan.init(this);
-        if (peerMan != null) {
-            peerMan.init(ServerConfig.nodeName, ServerConfig.sharedSecret,
-                         ServerConfig.backChannelHost, ServerConfig.serverHost,
-                         getListenPorts()[0]);
-        }
         memberMan.init(memberRepo, groupRepo);
         friendMan.init();
         groupMan.init(groupRepo, memberRepo);

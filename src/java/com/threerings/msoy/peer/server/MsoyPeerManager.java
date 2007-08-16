@@ -68,12 +68,6 @@ public class MsoyPeerManager extends CrowdPeerManager
         return new NodeObject.Lock("ChannelHost", HostedChannel.getKey(channel));
     }
 
-    public MsoyPeerManager (PersistenceContext perCtx, Invoker invoker)
-        throws PersistenceException
-    {
-        super(perCtx, invoker);
-    }
-
     /**
      * Returns the location of the specified member, or null if they are not online on any peer.
      */

@@ -19,6 +19,9 @@ import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 
+import com.threerings.admin.server.ConfigRegistry;
+import com.threerings.admin.server.DatabaseConfigRegistry;
+
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.server.PlaceRegistry;
@@ -144,6 +147,14 @@ public class MsoyGameServer extends MsoyBaseServer
         worldClient.init(this, _listenPort);
 
         log.info("Game server initialized.");
+    }
+
+    @Override // from MsoyBaseServer
+    protected ConfigRegistry createConfigRegistry ()
+        throws Exception
+    {
+        // TODO: the game servers probably need to hear about changes to runtime config bits
+        return new DatabaseConfigRegistry(perCtx, invoker);
     }
 
     @Override // from WhirledServer
