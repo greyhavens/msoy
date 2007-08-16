@@ -120,7 +120,7 @@ public class MsoyAdminManager
         }
 
         protected void broadcast (String message) {
-            MsoyServer.chatprov.broadcast(null, MsoyCodes.GENERAL_MSGS, message, true);
+            MsoyServer.chatprov.broadcast(null, MsoyCodes.GENERAL_MSGS, message, true, false);
         }
 
         protected int getDayFrequency () {
