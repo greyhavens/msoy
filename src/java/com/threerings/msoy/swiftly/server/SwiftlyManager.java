@@ -143,8 +143,17 @@ public class SwiftlyManager
                 // rely on all the service checks we have in the manager to protect us.
 
                 // all the necessary bits of data have been loaded, initialize the room manager
-                mgr.init(_project, _collaborators, _storage);
-                listener.requestProcessed(mgr.getPlaceObject().getOid());
+                mgr.init(_project, _collaborators, _storage, new SwiftlyService.ConfirmListener() {
+                    public void requestProcessed ()
+                    {
+                        listener.requestProcessed(mgr.getPlaceObject().getOid());
+                    }
+
+                    public void requestFailed (String cause)
+                    {
+                        listener.requestFailed(SwiftlyCodes.E_INTERNAL_ERROR);
+                    }
+                });
             }
 
             protected SwiftlyProject _project;

@@ -37,6 +37,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PetRecord;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.swiftly.client.SwiftlyService;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
@@ -73,8 +74,8 @@ public class ProjectRoomManager extends PlaceManager
     /**
      * Called by the {@link SwiftlyManager} after creating this project room manager.
      */
-    public void init (final SwiftlyProject project,
-                      final List<MemberName> collaborators, ProjectStorage storage)
+    public void init (final SwiftlyProject project, final List<MemberName> collaborators,
+                      ProjectStorage storage, final SwiftlyService.ConfirmListener listener)
     {
         _storage = storage;
         _resultItems = new HashMap<MemberName, Integer>();
@@ -95,17 +96,24 @@ public class ProjectRoomManager extends PlaceManager
                     // Okay, so it's not really a tree, but hey ...
                     // Load the file list from the provided storage instance.
                     _projectTree = _storage.getProjectTree();
-                    return true;
+
                 } catch (ProjectStorageException pse) {
-                    // TODO: Handle this how?
-                    log.log(Level.WARNING,
-                        "Loading project tree failed. [project=" + project + "].", pse);
-                    return false;
+                    _error = pse;
                 }
+
+                return true;
             }
 
             @Override
             public void handleResult () {
+                if (_error != null) {
+                    log.log(Level.WARNING,
+                        "Loading project tree failed. [project=" + project + "].", _error);
+                    listener.requestFailed(SwiftlyCodes.E_INTERNAL_ERROR);
+                    shutdown();
+                    return;
+                }
+
                 for (PathElement element : _projectTree) {
                     _roomObj.addPathElement(element);
                 }
@@ -114,9 +122,12 @@ public class ProjectRoomManager extends PlaceManager
 
                 // set the list of collaborators in the dobj as well
                 _roomObj.setCollaborators(new DSet<MemberName>(collaborators));
+
+                listener.requestProcessed();
             }
 
             protected List<PathElement> _projectTree;
+            protected Exception _error;
         });
     }
 

@@ -228,6 +228,7 @@ public class ProjectSVNStorage
                 throw new ProjectStorageException.InternalError(
                     "The subversion root path is not a directory");
             }
+
         } catch (SVNException svne) {
             throw new ProjectStorageException.InternalError(
                 "Unable to stat() the project root path: " + svne, svne);
@@ -241,6 +242,7 @@ public class ProjectSVNStorage
             // Root element must be added by the caller.
             elements.add(root);
             return elements;
+
         } catch (SVNException svne) {
             throw new ProjectStorageException.InternalError("A subversion failure occured while recursing over the directory tree: " + svne, svne);
         }
