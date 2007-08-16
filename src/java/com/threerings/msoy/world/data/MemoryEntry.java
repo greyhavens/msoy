@@ -32,6 +32,7 @@ public class MemoryEntry
      */
     public int getSize ()
     {
+        // null valued entries are scheduled for removal, so don't count their size at all
         return (value == null) ? 0 : (key.length() + value.length);
     }
 
