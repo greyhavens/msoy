@@ -80,7 +80,7 @@ public class LocalProjectBuilder
 
             // Run the process and gather output
             proc = procBuilder.start();
-            // block this thread until the build thread finishes
+            // block this thread until the compiler thread finishes
             proc.waitFor();
 
             stdout = proc.getInputStream();
@@ -117,7 +117,7 @@ public class LocalProjectBuilder
 
         } catch (InterruptedException ie) {
             throw new ProjectBuilderException.InternalError(
-                "Failed to finish build process, Process interrupted: " + ie, ie);
+                "Failed to finish build process. Process interrupted. " + ie, ie);
         }
     }
 
