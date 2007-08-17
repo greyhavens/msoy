@@ -29,6 +29,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.Whirled;
 
@@ -45,9 +46,15 @@ public class MyWhirled extends FlexTable
             public void onSuccess (Object result) {
                 Whirled data = (Whirled) result;
                 _friendLocations = new HashMap();
-                fillFriendLocations(data.rooms);
+                fillFriendLocations(data.places);
                 fillFriendLocations(data.games);
                 _people.setModel(new SimpleDataModel(data.people), 0);
+                
+                MediaDesc photo = data.photo == null ? Profile.DEFAULT_PHOTO : data.photo;
+                _pictureBox.add(MediaUtil.createMediaView(photo, 
+                    // HALF_THUMBNAIL is too small and THUMBNAIL is too big... do something custom
+                    (int)(MediaDesc.THUMBNAIL_WIDTH * 0.65), 
+                    (int)(MediaDesc.THUMBNAIL_HEIGHT * 0.65)));
             }
             public void onFailure (Throwable caught) {
                 _errorContainer.add(new Label(CWhirled.serverError(caught)));
@@ -71,8 +78,11 @@ public class MyWhirled extends FlexTable
         description.setStyleName("Description");
         mePanel.add(description);
         mePanel.add(_pictureBox = new VerticalPanel());
+        _pictureBox.setStyleName("PictureBox");
         _pictureBox.addStyleName("borderedBox");
-        _pictureBox.add(new Label("TESTING")); // TEMP
+        _pictureBox.setSpacing(0);
+        _pictureBox.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        _pictureBox.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
         HorizontalPanel header = new HorizontalPanel();
         header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         header.setStyleName("SectionHeaderContainer");
@@ -82,7 +92,6 @@ public class MyWhirled extends FlexTable
         mePanel.add(header);
         mePanel.add(_roomsBox = new VerticalPanel());
         _roomsBox.addStyleName("borderedBox");
-        _roomsBox.add(new Label("TESTING")); // TEMP
         header = new HorizontalPanel();
         header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         header.setStyleName("SectionHeaderContainer");
@@ -92,7 +101,6 @@ public class MyWhirled extends FlexTable
         mePanel.add(header);
         mePanel.add(_chatsBox = new VerticalPanel());
         _chatsBox.addStyleName("borderedBox");
-        _chatsBox.add(new Label("TESTING")); // TEMP
         
         setWidget(row++, 1, _errorContainer = new HorizontalPanel());
 

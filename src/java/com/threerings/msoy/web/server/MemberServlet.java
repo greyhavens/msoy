@@ -212,18 +212,20 @@ public class MemberServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser(ident);
         final List<FriendEntry> friends;
+        ProfileRecord profile;
 
         try {
             friends = MsoyServer.memberRepo.loadFriends(memrec.memberId);
+            profile = MsoyServer.profileRepo.loadProfile(memrec.memberId);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Fetching friend list failed! [memberId=" + 
+            log.log(Level.WARNING, "Fetching friend list or profile failed! [memberId=" + 
                 memrec.memberId + "]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         // filter out who's not online on the dobj thread
         final HashIntMap<MemberCard> onlineFriends = new HashIntMap<MemberCard>();
-        final HashIntMap<ArrayList<Integer>> rooms = new HashIntMap<ArrayList<Integer>>();
+        final HashIntMap<ArrayList<Integer>> places = new HashIntMap<ArrayList<Integer>>();
         final HashIntMap<ArrayList<Integer>> games = new HashIntMap<ArrayList<Integer>>();
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
             "getMyWhirled [memberId=" + memrec.memberId + "]");
@@ -247,10 +249,10 @@ public class MemberServlet extends MsoyServiceServlet
                                     continue;
                                 }
 
-                                ArrayList<Integer> list = rooms.get(memLoc.sceneId);
+                                ArrayList<Integer> list = places.get(memLoc.sceneId);
                                 if (list == null) {
                                     list = new ArrayList<Integer>();
-                                    rooms.put(memLoc.sceneId, list);
+                                    places.put(memLoc.sceneId, list);
                                 }
                                 list.add(memberCard.name.getMemberId());
                             }
@@ -274,11 +276,11 @@ public class MemberServlet extends MsoyServiceServlet
 
         // flesh out profile data for the online friends
         try {
-            for (ProfileRecord profile : MsoyServer.profileRepo.loadProfiles(
+            for (ProfileRecord friendProfile : MsoyServer.profileRepo.loadProfiles(
                     onlineFriends.intKeySet().toIntArray())) {
-                MemberCard card = onlineFriends.get(profile.memberId);
-                card.photo = profile.getPhoto();
-                card.headline = profile.headline;
+                MemberCard card = onlineFriends.get(friendProfile.memberId);
+                card.photo = friendProfile.getPhoto();
+                card.headline = friendProfile.headline;
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to fill member cards", pe);
@@ -286,9 +288,10 @@ public class MemberServlet extends MsoyServiceServlet
         }
 
         Whirled mywhirled = new Whirled();
-        mywhirled.rooms = getRoomSceneCards(rooms);
+        mywhirled.places = getRoomSceneCards(places);
         mywhirled.games = getGameSceneCards(games);
         mywhirled.people = new ArrayList<MemberCard>(onlineFriends.values());
+        mywhirled.photo = profile.photoHash == null ? null : profile.getPhoto();
         return mywhirled;
     }
 
