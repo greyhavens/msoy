@@ -66,14 +66,6 @@ public class EditorToolBar extends JToolBar
         }
 
         _progress.setVisible(true);
-
-        // if time is 0, show an indeterminate progress bar as we have no idea how long
-        // this task will take
-        if (time == 0) {
-            _progress.setIndeterminate(true);
-            return;
-        }
-
         _progress.setMaximum(time);
         _progress.setIndeterminate(false);
         _timer = new Timer(TIMER_INTERVAL, new ActionListener() {
