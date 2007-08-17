@@ -396,8 +396,10 @@ public class SwiftlyEditor extends PlacePanel
             } else {
                 _toolbar.stopProgress();
             }
-            _ctrl.buildAction.setEnabled(!_roomObj.building);
-            _ctrl.buildExportAction.setEnabled(!_roomObj.building);
+            if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
+                _ctrl.buildAction.setEnabled(!_roomObj.building);
+                _ctrl.buildExportAction.setEnabled(!_roomObj.building);
+            }
 
         // the project has been loaded or changed. tell the project panel to make the project tree
         } else if (event.getName().equals(ProjectRoomObject.PROJECT)) {

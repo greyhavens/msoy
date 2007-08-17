@@ -11,11 +11,13 @@ import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class EditorToolBar extends JToolBar
@@ -31,13 +33,18 @@ public class EditorToolBar extends JToolBar
         add(_buildButton = createButton(_ctrl.buildAction, BUILD_ICON));
         add(_buildExportButton = createButton(_ctrl.buildExportAction, PREVIEW_ICON));
         add(_consoleButton = createButton(_editor.createShowConsoleAction(), CONSOLE_ICON));
+        add(Box.createHorizontalGlue());
 
         _timer = new Timer(TIMER_INTERVAL, this);
         _progress = new JProgressBar();
         _progress.setVisible(false);
-        _progress.setMinimum(0);
-        add(Box.createHorizontalGlue());
         add(_progress);
+
+        _readOnly = new JLabel();
+        _readOnly.setIcon(new ImageIcon(getClass().getResource(READ_ONLY_ICON)));
+        _readOnly.setToolTipText(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.tooltip.read_only"));
+        _readOnly.setVisible(false);
+        add(_readOnly);
 
         setFloatable(false);
     }
@@ -47,6 +54,7 @@ public class EditorToolBar extends JToolBar
     {
         _buildButton.setEnabled(true);
         _buildExportButton.setEnabled(true);
+        _readOnly.setVisible(false);
     }
 
     // from AccessControlListener
@@ -54,10 +62,11 @@ public class EditorToolBar extends JToolBar
     {
         _buildButton.setEnabled(false);
         _buildExportButton.setEnabled(false);
+        _readOnly.setVisible(true);
     }
 
     /**
-     * Called by the progress bar timer;
+     * Called by the progress bar timer.
      */
     public void actionPerformed (ActionEvent e)
     {
@@ -110,6 +119,7 @@ public class EditorToolBar extends JToolBar
     protected static final String BUILD_ICON = "/rsrc/icons/swiftly/build.png";
     protected static final String PREVIEW_ICON = "/rsrc/icons/swiftly/preview.png";
     protected static final String CONSOLE_ICON = "/rsrc/icons/swiftly/console.png";
+    protected static final String READ_ONLY_ICON = "/rsrc/icons/swiftly/readonly.png";
 
     protected static final int TIMER_INTERVAL = 1000;
 
@@ -120,6 +130,7 @@ public class EditorToolBar extends JToolBar
     protected JButton _buildButton;
     protected JButton _buildExportButton;
     protected JButton _consoleButton;
+    protected JLabel _readOnly;
     protected JProgressBar _progress;
     protected final Timer _timer;
     protected long _startTime;
