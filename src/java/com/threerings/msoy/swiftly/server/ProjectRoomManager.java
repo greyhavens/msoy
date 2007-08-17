@@ -40,7 +40,6 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
-import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
 import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
@@ -82,6 +81,9 @@ public class ProjectRoomManager extends PlaceManager
         // References to our on-disk SDKs
         File flexSdk = new File(ServerConfig.serverRoot + FLEX_SDK);
         File whirledSdk = new File(ServerConfig.serverRoot + WHIRLED_SDK);
+
+        // Setup the svn executor.
+        _svnExecutor = new SerialExecutor(MsoyServer.omgr);
 
         // Setup the builder.
         _builder = new LocalProjectBuilder(
@@ -323,7 +325,7 @@ public class ProjectRoomManager extends PlaceManager
         _roomObj.setBuilding(true);
 
         BuildProjectTask buildTask = new BuildProjectTask(_roomObj.project, listener);
-        MsoyServer.swiftlyMan.svnExecutor.addTask(new CommitProjectTask(buildTask, listener));
+        _svnExecutor.addTask(new CommitProjectTask(buildTask, listener));
     }
 
     // from interface ProjectRoomProvider
@@ -347,7 +349,7 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         BuildProjectTask buildTask = new BuildProjectTask(_roomObj.project, exportData, listener);
-        MsoyServer.swiftlyMan.svnExecutor.addTask(new CommitProjectTask(buildTask, listener));
+        _svnExecutor.addTask(new CommitProjectTask(buildTask, listener));
     }
 
     // from interface ProjectRoomProvider
@@ -400,13 +402,11 @@ public class ProjectRoomManager extends PlaceManager
             // let's try to pull the resolved document from the room object. this may return null
             // in which case the InsertFileUploadTask will load it from the repository
             SwiftlyDocument doc = _roomObj.getDocument(element);
-            MsoyServer.swiftlyMan.svnExecutor.addTask(
-                new InsertFileUploadTask(uploadFile, element, doc, listener));
+            _svnExecutor.addTask(new InsertFileUploadTask(uploadFile, element, doc, listener));
 
         // otherwise this is a new file
         } else {
-            MsoyServer.swiftlyMan.svnExecutor.addTask(
-                new InsertFileUploadTask(uploadFile, listener));
+            _svnExecutor.addTask(new InsertFileUploadTask(uploadFile, listener));
         }
     }
 
@@ -555,14 +555,12 @@ public class ProjectRoomManager extends PlaceManager
             }
 
         };
-        MsoyServer.swiftlyMan.svnExecutor.addTask(new CommitProjectTask(listener));
+        _svnExecutor.addTask(new CommitProjectTask(listener));
     }
 
     /** Handles a request to commit our project. */
     protected class CommitProjectTask implements SerialExecutor.ExecutorTask
     {
-        public final int projectId;
-
         /**
          * Only commit the project, do not perform a build.
          */
@@ -570,6 +568,7 @@ public class ProjectRoomManager extends PlaceManager
         {
             this(null, listener);
         }
+
         /**
          * Commit the project, then perform a build.
          */
@@ -578,17 +577,12 @@ public class ProjectRoomManager extends PlaceManager
             _buildTask = buildTask;
             _listener = listener;
             // take a snapshot of certain items while we're on the dobj thread
-            this.projectId = ((ProjectRoomConfig)_config).projectId;
             _allDocs = _roomObj.documents.toArray(new SwiftlyDocument[_roomObj.documents.size()]);
         }
 
         public boolean merge (SerialExecutor.ExecutorTask other)
         {
-            // we don't want more than one pending commit for a project
-            if (other instanceof CommitProjectTask) {
-                return this.projectId == ((CommitProjectTask)other).projectId;
-            }
-            return false;
+            return true;
         }
 
         public long getTimeout ()
@@ -1080,6 +1074,10 @@ public class ProjectRoomManager extends PlaceManager
 
     /** Server-root relative path to the server build directory. */
     protected static final String LOCAL_BUILD_DIRECTORY = "/data/swiftly/build";
+
+    /** This is used to execute potentially long running svn operations serially on a separate
+     * thread so that they do not interfere with normal server operation. */
+    protected SerialExecutor _svnExecutor;
 
     /** Cache the memberId to build result itemId mapping used for exporting results */
     protected Map<MemberName, Integer> _resultItems;

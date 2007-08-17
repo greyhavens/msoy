@@ -39,10 +39,6 @@ public class SwiftlyManager
      * thread so that they do not interfere with normal server operation. */
     public SerialExecutor buildExecutor;
 
-    /** This is used to execute potentially long running svn operations serially on a separate
-     * thread so that they do not interfere with normal server operation. */
-    public SerialExecutor svnExecutor;
-
     /**
      * Configures us with our repository.
      */
@@ -53,7 +49,6 @@ public class SwiftlyManager
 
         // create our executors
         buildExecutor = new SerialExecutor(MsoyServer.omgr);
-        svnExecutor = new SerialExecutor(MsoyServer.omgr);
 
         // register to be informed when the server shuts down
         MsoyServer.registerShutdowner(this);
