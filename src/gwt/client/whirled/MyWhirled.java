@@ -85,6 +85,7 @@ public class MyWhirled extends FlexTable
         mePanel.add(_roomsBox = new VerticalPanel());
         _roomsBox.setStyleName("RoomsBox");
         _roomsBox.addStyleName("borderedBox");
+        _roomsBox.setSpacing(3);
         header = new HorizontalPanel();
         header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         header.setStyleName("SectionHeaderContainer");
@@ -93,8 +94,9 @@ public class MyWhirled extends FlexTable
         header.add(title);
         mePanel.add(header);
         mePanel.add(_chatsBox = new VerticalPanel());
-        _roomsBox.setStyleName("RoomsBox");
+        _chatsBox.setStyleName("ChatsBox");
         _chatsBox.addStyleName("borderedBox");
+        _chatsBox.setSpacing(3);
         
         setWidget(row++, 1, _errorContainer = new HorizontalPanel());
 
@@ -170,9 +172,23 @@ public class MyWhirled extends FlexTable
         // show the player's rooms in purchased order by doing an ascending sort on the sceneIds
         Object[] sceneIds = myWhirled.ownedRooms.keySet().toArray();
         Arrays.sort(sceneIds);
+        // TODO: if a user has too many rooms, we need to scroll the _roomsBox vertically, 
+        // instead of letting it grow indefinitely
         for (int ii = 0; ii < sceneIds.length; ii++) {
             _roomsBox.add(Application.createLink((String)(myWhirled.ownedRooms.get(sceneIds[ii])),
                                                  "world", "s" + sceneIds[ii]));
+        }
+
+        if (myWhirled.chats == null || myWhirled.chats.size() == 0) {
+            _chatsBox.add(new Label(CWhirled.msgs.noChats()));
+        } else {
+            // show group chats in group-created order by sorting on group ids
+            Object[] chatIds = myWhirled.chats.keySet().toArray();
+            Arrays.sort(chatIds);
+            for (int ii = 0; ii < chatIds.length; ii++) {
+                _chatsBox.add(Application.createLink((String)(myWhirled.chats.get(chatIds[ii])),
+                                                     "world", "c" + chatIds[ii]));
+            }
         }
     }
 

@@ -49,4 +49,11 @@ public class Whirled
      * @gwt.typeArgs <java.lang.Integer,java.lang.String>
      */
     public Map ownedRooms;
+
+    /**
+     * The list of active group chats this player is a member of.
+     *
+     * @gwt.typeArgs <java.lang.Integer,java.lang.String>
+     */
+    public Map chats;
 }

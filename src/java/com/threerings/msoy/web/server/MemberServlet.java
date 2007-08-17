@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntIntMap;
 
@@ -32,6 +33,7 @@ import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -41,6 +43,7 @@ import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
+import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.MemberLocation;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -216,12 +219,17 @@ public class MemberServlet extends MsoyServiceServlet
         final List<FriendEntry> friends;
         ProfileRecord profile;
         HashMap<Integer, String> ownedRooms = new HashMap<Integer, String>();
+        final ArrayIntSet groupMemberships = new ArrayIntSet();
 
         try {
             friends = MsoyServer.memberRepo.loadFriends(memrec.memberId);
             profile = MsoyServer.profileRepo.loadProfile(memrec.memberId);
             for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(memrec.memberId)) {
                 ownedRooms.put(scene.sceneId, scene.sceneName);
+            }
+            for (GroupMembershipRecord groupMembershipRec : 
+                    MsoyServer.groupRepo.getMemberships(memrec.memberId)) {
+                groupMemberships.add(groupMembershipRec.groupId);
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Fetching friend list, profile, or room list failed! " +
@@ -233,6 +241,7 @@ public class MemberServlet extends MsoyServiceServlet
         final HashIntMap<MemberCard> onlineFriends = new HashIntMap<MemberCard>();
         final HashIntMap<ArrayList<Integer>> places = new HashIntMap<ArrayList<Integer>>();
         final HashIntMap<ArrayList<Integer>> games = new HashIntMap<ArrayList<Integer>>();
+        final HashMap<Integer, String> chats = new HashMap<Integer, String>();
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
             "getMyWhirled [memberId=" + memrec.memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
@@ -269,6 +278,17 @@ public class MemberServlet extends MsoyServiceServlet
                                     games.put(game.placeId, new ArrayList<Integer>());
                                 }
                             }
+
+                            // check if any of our groups have a chat hosted here...
+                            for (HostedChannel chat : mnobj.hostedChannels) {
+                                if (chat.channel.type == ChatChannel.GROUP_CHANNEL) {
+                                    GroupName group = (GroupName) chat.channel.ident;
+                                    if (groupMemberships.contains(group.getGroupId())) {
+                                        chats.put(group.getGroupId(), "" + group);
+                                        groupMemberships.remove(group.getGroupId());
+                                    }
+                                }
+                            }
                         }
                     });
                     waiter.requestCompleted(null);
@@ -299,6 +319,7 @@ public class MemberServlet extends MsoyServiceServlet
         mywhirled.people = new ArrayList<MemberCard>(onlineFriends.values());
         mywhirled.photo = profile.photoHash == null ? null : profile.getPhoto();
         mywhirled.ownedRooms = ownedRooms;
+        mywhirled.chats = chats;
         return mywhirled;
     }
 

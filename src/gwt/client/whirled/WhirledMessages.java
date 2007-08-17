@@ -80,6 +80,14 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String headerPeople();
 
   /**
+   * Translated "No active group chats".
+   * 
+   * @return translated "No active group chats"
+   * @gwt.key noChats
+   */
+  String noChats();
+
+  /**
    * Translated "My Rooms".
    * 
    * @return translated "My Rooms"

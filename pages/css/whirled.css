@@ -122,8 +122,8 @@
 }
 
 .MePanel .RoomsBox, .MePanel .ChatsBox {
-  padding: 2px 3px 2px 3px;
   font-size: 10px;
+  color: #A9A8AD;
 }
 
 .MePanel a {
