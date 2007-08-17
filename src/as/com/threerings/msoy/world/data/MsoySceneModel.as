@@ -231,7 +231,7 @@ public class MsoySceneModel extends SceneModel
     {
         var decor :Decor = new Decor();
         decor.itemId = 0; // doesn't correspond to an object
-        decor.furniMedia = new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.DECOR, Item.FURNI_MEDIA);
+        decor.furniMedia = new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.DECOR, Item.MAIN_MEDIA);
         decor.type = Decor.IMAGE_OVERLAY;
         decor.depth = 400;
         decor.width = 800;
