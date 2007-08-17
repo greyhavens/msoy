@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.swiftly.client;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +39,7 @@ public class EditorToolBar extends JToolBar
         _timer = new Timer(TIMER_INTERVAL, this);
         _progress = new JProgressBar();
         _progress.setVisible(false);
+        _progress.setMaximumSize(new Dimension(120, 15));
         add(_progress);
 
         _readOnly = new JLabel();
