@@ -36,6 +36,9 @@ public class ProjectRoomObject extends PlaceObject
     public static final String SERVICE = "service";
     // AUTO-GENERATED: FIELDS END
 
+    /** Used to send access control change event messages. */
+    public static final String ACCESS_CONTROL_CHANGE = "access_control_change";
+
     /** The SwiftlyProject being edited. */
     public SwiftlyProject project;
 

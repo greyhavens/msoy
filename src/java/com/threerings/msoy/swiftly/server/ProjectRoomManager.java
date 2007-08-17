@@ -122,6 +122,9 @@ public class ProjectRoomManager extends PlaceManager
                 // set the list of collaborators in the dobj as well
                 _roomObj.setCollaborators(new DSet<MemberName>(collaborators));
 
+                // the project and collaborators have changed, send out an access control change
+                _roomObj.postMessage(ProjectRoomObject.ACCESS_CONTROL_CHANGE);
+
                 listener.requestProcessed();
             }
 
@@ -412,8 +415,8 @@ public class ProjectRoomManager extends PlaceManager
      */
     public void addCollaborator (MemberName name, ResultListener<Void> lner)
     {
-
         _roomObj.addToCollaborators(name);
+        _roomObj.postMessage(ProjectRoomObject.ACCESS_CONTROL_CHANGE);
         lner.requestCompleted(null);
     }
 
@@ -423,6 +426,7 @@ public class ProjectRoomManager extends PlaceManager
     public void removeCollaborator (MemberName name, ResultListener<Void> lner)
     {
         _roomObj.removeFromCollaborators(name.getKey());
+        _roomObj.postMessage(ProjectRoomObject.ACCESS_CONTROL_CHANGE);
         _resultItems.remove(name);
         lner.requestCompleted(null);
     }
@@ -433,6 +437,7 @@ public class ProjectRoomManager extends PlaceManager
     public void updateProject (ResultListener<Void> lner, final SwiftlyProject project)
     {
         _roomObj.setProject(project);
+        _roomObj.postMessage(ProjectRoomObject.ACCESS_CONTROL_CHANGE);
         lner.requestCompleted(null);
     }
 

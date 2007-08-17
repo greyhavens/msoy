@@ -46,11 +46,13 @@ import com.threerings.presents.dobj.ChangeListener;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
 import com.threerings.util.MessageBundle;
 
 public class SwiftlyEditor extends PlacePanel
-    implements SwiftlyDocumentEditor, AttributeChangeListener, SetListener
+    implements SwiftlyDocumentEditor, AttributeChangeListener, MessageListener, SetListener
 {
     public SwiftlyEditor (ProjectRoomController ctrl, SwiftlyContext ctx)
     {
@@ -346,6 +348,7 @@ public class SwiftlyEditor extends PlacePanel
 
         // if we have already resolved the project, load it into the project panel
         // otherwise we'll wait for the message that the project has been resolved later
+        // we will also check access as we have entered the room for the first time
         if (_roomObj.project != null) {
             _projectPanel.setProject(_roomObj);
             updateEditorAccess();
@@ -369,7 +372,15 @@ public class SwiftlyEditor extends PlacePanel
         // TODO: shutdown the project panel?
     }
 
-    // from interface AttributeChangeListener
+    // from MessageListener
+    public void messageReceived (MessageEvent event)
+    {
+        if (event.getName().equals(ProjectRoomObject.ACCESS_CONTROL_CHANGE)) {
+            updateEditorAccess();
+        }
+    }
+
+    // from AttributeChangeListener
     public void attributeChanged (AttributeChangedEvent event)
     {
         if (event.getName().equals(ProjectRoomObject.RESULT)) {
@@ -389,14 +400,8 @@ public class SwiftlyEditor extends PlacePanel
             _ctrl.buildExportAction.setEnabled(!_roomObj.building);
 
         // the project has been loaded or changed. tell the project panel to make the project tree
-        // and adjust the editor for any access changes.
         } else if (event.getName().equals(ProjectRoomObject.PROJECT)) {
             _projectPanel.setProject(_roomObj);
-            updateEditorAccess();
-
-        // the collaborators have been changed. adjust the editor for any access changes
-        } else if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
-            updateEditorAccess();
         }
     }
 
@@ -407,9 +412,6 @@ public class SwiftlyEditor extends PlacePanel
             final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
             // Re-bind transient instance variables
             element.lazarus(_roomObj.pathElements);
-
-        } else if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
-            updateEditorAccess();
         }
     }
 
@@ -420,9 +422,6 @@ public class SwiftlyEditor extends PlacePanel
             final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
             // Re-bind transient instance variables
             element.lazarus(_roomObj.pathElements);
-
-        } else if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
-            updateEditorAccess();
         }
     }
 
@@ -433,9 +432,6 @@ public class SwiftlyEditor extends PlacePanel
         // ever happen.
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             // final int elementId = (Integer)event.getKey();
-
-        } else if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
-            updateEditorAccess();
         }
     }
 
