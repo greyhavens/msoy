@@ -51,6 +51,7 @@ import com.threerings.msoy.data.MsoyCredentials;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
@@ -562,6 +563,24 @@ public class MsoyController extends Controller
 
         } else if (null != params["worldGame"]) {
             handleJoinWorldGame(int(params["worldGame"]));
+
+        } else if (null != params["groupChat"]) {
+            var group :GroupName = new GroupName(null, int(params["groupChat"]));
+            // get the real GroupName, complete with text name
+            var groupMembership :GroupMembership = 
+                _ctx.getMemberObject().groups.get(group) as GroupMembership;
+            if (groupMembership != null) {
+                handleOpenChannel(groupMembership.group);
+            }
+
+            // fix the URL
+            if (_ctx.getGameDirector().getGameConfig() != null) {
+                // For now, leave the URL alone if we're in a game.
+            } else if (_ctx.getSceneDirector().getScene() != null) {
+                displayPageGWT("world", "s" + _ctx.getSceneDirector().getScene().getId());
+            } else {
+                displayPageGWT("world", "m" + _ctx.getMemberObject().getMemberId());
+            }
 
         } else if (null != params["sceneId"]) {
             var sceneId :int = int(params["sceneId"]);

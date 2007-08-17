@@ -78,6 +78,10 @@ public class index extends Page
                 // go to a specific member's home
                 WorldClient.displayFlash("location=" + token.substring(1));
 
+            } else if (token.startsWith("c")) {
+                // join a group chat
+                WorldClient.displayFlash("groupChat=" + token.substring(1));
+
             } else if (token.startsWith("p") || CWorld.ident != null) {
                 // display popular places by request or if we're logged in
                 displayHotSpots(_entryCounter);
