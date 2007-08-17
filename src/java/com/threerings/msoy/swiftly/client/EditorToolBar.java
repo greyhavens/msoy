@@ -19,7 +19,7 @@ import javax.swing.Timer;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class EditorToolBar extends JToolBar
-    implements AccessControlListener
+    implements AccessControlListener, ActionListener
 {
     public EditorToolBar (ProjectRoomController ctrl, SwiftlyContext ctx, SwiftlyEditor editor)
     {
@@ -32,6 +32,7 @@ public class EditorToolBar extends JToolBar
         add(_buildExportButton = createButton(_ctrl.buildExportAction, PREVIEW_ICON));
         add(_consoleButton = createButton(_editor.createShowConsoleAction(), CONSOLE_ICON));
 
+        _timer = new Timer(TIMER_INTERVAL, this);
         _progress = new JProgressBar();
         _progress.setVisible(false);
         _progress.setMinimum(0);
@@ -56,6 +57,18 @@ public class EditorToolBar extends JToolBar
     }
 
     /**
+     * Called by the progress bar timer;
+     */
+    public void actionPerformed (ActionEvent e)
+    {
+        long value = System.currentTimeMillis() - _startTime;
+        _progress.setValue((int)value);
+        if (_progress.getPercentComplete() >= 100) {
+            stopProgress();
+        }
+    }
+
+    /**
      * Display a progress bar for a task taking the number of milliseconds supplied.
      */
     public void showProgress (final int time)
@@ -67,19 +80,8 @@ public class EditorToolBar extends JToolBar
 
         _progress.setVisible(true);
         _progress.setMaximum(time);
-        _progress.setIndeterminate(false);
-        _timer = new Timer(TIMER_INTERVAL, new ActionListener() {
-            public void actionPerformed(ActionEvent A) {
-                int value = (time / (time / TIMER_INTERVAL)) * _count;
-                _progress.setValue(value);
-                _count++;
-                if (_progress.getPercentComplete() >= 100) {
-                    stopProgress();
-                }
-            }
-            protected int _count = 1;
-        });
-        _timer.start();
+        _startTime = System.currentTimeMillis();
+        _timer.restart();
     }
 
     /**
@@ -87,9 +89,7 @@ public class EditorToolBar extends JToolBar
      */
     public void stopProgress ()
     {
-        if (_timer != null) {
-            _timer.stop();
-        }
+        _timer.stop();
         _progress.setVisible(false);
         _progress.setValue(0);
     }
@@ -121,5 +121,6 @@ public class EditorToolBar extends JToolBar
     protected JButton _buildExportButton;
     protected JButton _consoleButton;
     protected JProgressBar _progress;
-    protected Timer _timer;
+    protected final Timer _timer;
+    protected long _startTime;
 }
