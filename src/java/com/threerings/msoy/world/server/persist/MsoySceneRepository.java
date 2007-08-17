@@ -107,7 +107,7 @@ public class MsoySceneRepository extends DepotRepository
         return names;
     }
 
-    // documentation inherited from interface SceneRepository
+    // from interface SceneRepository
     public void applyAndRecordUpdate (SceneModel model, SceneUpdate update)
         throws PersistenceException
     {
@@ -122,21 +122,14 @@ public class MsoySceneRepository extends DepotRepository
         _accumulator.add(model.sceneId, update);
     }
 
-    // documentation inherited from interface SceneRepository
+    // from interface SceneRepository
     public UpdateList loadUpdates (int sceneId)
         throws PersistenceException, NoSuchSceneException
     {
-        UpdateList list = new UpdateList();
-        for (SceneUpdateRecord record : findAll(
-                 SceneUpdateRecord.class, new Where(SceneUpdateRecord.SCENE_ID_C, sceneId),
-                 OrderBy.ascending(SceneUpdateRecord.SCENE_VERSION_C))) {
-            list.addUpdate(_updateMarshaller.decodeUpdate(
-                               sceneId, record.sceneVersion, record.updateType, record.data));
-        }
-        return list;
+        return new UpdateList(); // we don't do scene updates
     }
 
-    // documentation inherited from interface SceneRepository
+    // from interface SceneRepository
     public SceneModel loadSceneModel (int sceneId)
         throws PersistenceException, NoSuchSceneException
     {
@@ -200,14 +193,11 @@ public class MsoySceneRepository extends DepotRepository
                 "Requested to apply unknown update to scene repo [update=" + update + "].");
         }
 
-        // finally, update the scene version (which will already be the new version because the
-        // update has been applied)
+        // update the scene version (which will already be the new version because the update has
+        // been applied)
         int newversion = update.getSceneVersion() + 1;
         updateVersion(sceneId, newversion);
         log.info("Updated version of " + sceneId + " to " + newversion + ".");
-
-        // record the update itself
-        insertSceneUpdate(update);
     }
 
     /**
@@ -336,32 +326,6 @@ public class MsoySceneRepository extends DepotRepository
         return scene.sceneId;
     }
 
-    /**
-     * Records a scene update to the update table.
-     */
-    protected void insertSceneUpdate (final SceneUpdate update)
-        throws PersistenceException
-    {
-        // first insert the current update
-        SceneUpdateRecord record = new SceneUpdateRecord();
-        record.sceneId = update.getSceneId();
-        record.sceneVersion = update.getSceneVersion();
-        record.updateType = _updateMarshaller.getUpdateType(update);
-        if (record.updateType == -1) {
-            String errmsg = "Can't insert update of unknown type [update=" + update +
-                ", updateClass=" + update.getClass() + "]";
-            throw new PersistenceException(errmsg);
-        }
-        record.data = _updateMarshaller.persistUpdate(update);
-        insert(record);
-
-        // then prune the older updates
-        int minVersion = update.getSceneVersion() - MAX_UPDATES_PER_SCENE;
-        deleteAll(SceneUpdateRecord.class,
-                  new Where(new LessThan(SceneUpdateRecord.SCENE_VERSION_C, minVersion)),
-                  null); // TODO: cache invalidator
-    }
-
     protected void checkCreateStockScene (SceneRecord.Stock stock)
         throws PersistenceException
     {
@@ -395,7 +359,6 @@ public class MsoySceneRepository extends DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(SceneRecord.class);
-        classes.add(SceneUpdateRecord.class);
         classes.add(SceneFurniRecord.class);
     }
 
