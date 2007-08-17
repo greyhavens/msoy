@@ -55,6 +55,7 @@ public class LocalProjectBuilder
             ProcessBuilder procBuilder;
             InputStream stdout;
             BufferedReader bufferedOutput;
+            StringBuffer rawOutput;
             BuildResult result = new BuildResult();
             String line;
 
@@ -82,8 +83,10 @@ public class LocalProjectBuilder
 
             stdout = proc.getInputStream();
             bufferedOutput = new BufferedReader(new InputStreamReader(stdout));
+            rawOutput = new StringBuffer();
 
             while ((line = bufferedOutput.readLine()) != null) {
+                rawOutput.append(line);
                 CompilerOutput output = new FlexCompilerOutput(line);
                 switch (output.getLevel()) {
                 case IGNORE:
@@ -95,7 +98,14 @@ public class LocalProjectBuilder
                 result.appendOutput(output);
             }
 
-            result.setOutputFile(new File(buildRoot, _project.getOutputFileName()));
+            // if we had a successful build yet did not generate a build result, throw exception
+            File outputFile = new File(buildRoot, _project.getOutputFileName());
+            if (result.buildSuccessful() && !outputFile.exists()) {
+                throw new ProjectBuilderException("Successful build did not produce a build " +
+                    "result. [output=" + rawOutput + "].");
+            }
+
+            result.setOutputFile(outputFile);
 
             return result;
 
