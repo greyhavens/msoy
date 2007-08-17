@@ -48,15 +48,19 @@ public class BasePanel extends VBox
     {
         _applyButton = new CommandButton();
         _applyButton.label = Msgs.EDITING.get("b.apply_changes");
+        _applyButton.styleName = "roomEditPanelButton";
+        _applyButton.height = 20;
         _applyButton.setCallback(applyChanges);
         _cancelButton = new CommandButton();
         _cancelButton.label = Msgs.EDITING.get("b.revert_changes");
+        _cancelButton.styleName = "roomEditPanelButton";
+        _cancelButton.height = 20;
         _cancelButton.setCallback(revertChanges);
 
-        var buttons :HBox = new HBox();
-        buttons.addChild(_applyButton);
-        buttons.addChild(_cancelButton);
-        return buttons;
+        _buttons = new HBox();
+        _buttonsEnabled = false;
+        setChanged(true);
+        return _buttons;
     }
 
     // @Override from superclass
@@ -96,13 +100,17 @@ public class BasePanel extends VBox
     }
 
     /** Enables or disables the "apply" and "cancel" buttons, based on UI changes. */
-    protected function setChanged (changed :Boolean) :void
+    protected function setChanged (newValue :Boolean) :void
     {
-        if (_applyButton != null) {
-            _applyButton.enabled = changed;
+        if (_applyButton == null || _cancelButton == null) {
+            return; // not initialized yet!
         }
-        if (_cancelButton != null) {
-            _cancelButton.enabled = changed;
+
+        if (newValue != _buttonsEnabled) {
+            var fn :Function = newValue ? _buttons.addChild : _buttons.removeChild;
+            fn(_applyButton);
+            fn(_cancelButton);
+            _buttonsEnabled = newValue;
         }
     }
 
@@ -120,9 +128,10 @@ public class BasePanel extends VBox
 
     protected var _furniData :FurniData;
     protected var _controller :RoomEditorController;
+    protected var _buttons :HBox;
+    protected var _buttonsEnabled :Boolean;
     protected var _applyButton :CommandButton;
     protected var _cancelButton :CommandButton;
-
 }
 
 }

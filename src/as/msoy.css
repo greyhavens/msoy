@@ -504,6 +504,11 @@ Window {
   disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_undo_disabled.png");
 }
 
+.roomEditPanelButton { 
+  paddingBottom: 0;
+  right: 0;
+}
+
 .roomEditLabel {
     color: #000000;
     themeColor: #54a9da;

@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.world.client.editor {
 
-import flash.events.TextEvent;
+import flash.events.Event;
 
 import mx.binding.utils.BindingUtils;
 import mx.containers.Grid;
@@ -49,6 +49,8 @@ public class RoomPanel extends BasePanel
 
         addChild(_name = new TextInput());
         _name.percentWidth = 100;
+
+        addChild(makePanelButtons());
     }
 
     // @Override from superclass
@@ -56,7 +58,7 @@ public class RoomPanel extends BasePanel
     {
         super.childrenCreated();
 
-        _name.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
+        _name.addEventListener(Event.CHANGE, changedHandler);
         _name.addEventListener(FlexEvent.ENTER, applyHandler);
     }
 

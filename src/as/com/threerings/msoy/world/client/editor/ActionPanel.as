@@ -5,7 +5,6 @@ package com.threerings.msoy.world.client.editor {
 
 import flash.events.Event;
 import flash.events.MouseEvent;
-import flash.events.TextEvent;
 
 import mx.binding.utils.BindingUtils;
 import mx.containers.Grid;
@@ -135,7 +134,7 @@ public class ActionPanel extends BasePanel
             GridUtil.addRow(dgrid, _debug);
         }
 
-        // addChild(makePanelButtons());
+        addChild(makePanelButtons());
     }
 
     // @Override from superclass
@@ -200,7 +199,7 @@ public class ActionPanel extends BasePanel
         GridUtil.addRow(grid, Msgs.EDITING.get("l.url"));
         GridUtil.addRow(grid, _url = new TextInput());
 
-        _url.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
+        _url.addEventListener(Event.CHANGE, changedHandler);
         _url.addEventListener(FlexEvent.ENTER, applyHandler);
 
         return grid;
@@ -223,7 +222,7 @@ public class ActionPanel extends BasePanel
         GridUtil.addRow(grid, Msgs.EDITING.get("l.help_tab"));
         GridUtil.addRow(grid, _helpTabAction = new TextInput());
 
-        _helpTabAction.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
+        _helpTabAction.addEventListener(Event.CHANGE, changedHandler);
         _helpTabAction.addEventListener(FlexEvent.ENTER, applyHandler);
 
         return grid;

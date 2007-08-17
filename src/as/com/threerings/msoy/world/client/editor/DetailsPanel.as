@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.world.client.editor {
 
-import flash.events.TextEvent;
+import flash.events.Event;
 
 import mx.containers.Grid;
 import mx.containers.VBox;
@@ -102,7 +102,7 @@ public class DetailsPanel extends BasePanel
         GridUtil.addRow(grid, Msgs.EDITING.get("l.location"), _locx, _locy, _locz);
         GridUtil.addRow(grid, Msgs.EDITING.get("l.scale"), _scalex, _scaley);
 
-        // addChild(makePanelButtons());
+        addChild(makePanelButtons());
     }
 
     // @Override from superclass
@@ -111,7 +111,7 @@ public class DetailsPanel extends BasePanel
         super.childrenCreated();
 
         _all.forEach(function (input :TextInput, ... rest) :void {
-                input.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
+                input.addEventListener(Event.CHANGE, changedHandler);
                 input.addEventListener(FlexEvent.ENTER, applyHandler);
             });
     }
