@@ -12,7 +12,9 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
+import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
@@ -29,7 +31,11 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.data.PeerGameMarshaller;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.peer.server.PeerGameDispatcher;
+import com.threerings.msoy.peer.server.PeerGameProvider;
 
 import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.GameSummary;
@@ -41,7 +47,7 @@ import static com.threerings.msoy.Log.log;
  * they host lobbies and games.
  */
 public class MsoyGameRegistry
-    implements MsoyGameProvider, GameServerProvider, MsoyServer.Shutdowner
+    implements MsoyGameProvider, GameServerProvider, MsoyServer.Shutdowner, PeerGameProvider
 {
     /** The invocation services group for game server services. */
     public static final String GAME_SERVER_GROUP = "game_server";
@@ -57,6 +63,10 @@ public class MsoyGameRegistry
 
         // register to hear when the server is shutdown
         MsoyServer.registerShutdowner(this);
+
+        // register and initialize our peer game service
+        ((MsoyNodeObject)MsoyServer.peerMan.getNodeObject()).setPeerGameService(
+            (PeerGameMarshaller)invmgr.registerDispatcher(new PeerGameDispatcher(this)));
 
         // start up our servers after the rest of server initialization is completed (and we know
         // that we're listening for client connections)
@@ -163,8 +173,8 @@ public class MsoyGameRegistry
         log.warning("Game cleared by unknown handler? [port=" + port + ", id=" + gameId + "].");
     }
 
-    // from interface GameServerProvider
-    public void reportFlowAward (ClientObject caller, int memberId, int deltaFlow)
+    // from interface GameServerProvider and PeerGameProvider
+    public void reportFlowAward (ClientObject caller, final int memberId, final int deltaFlow)
     {
         if (!checkCallerAccess(caller, "reportFlowAward(" + memberId + ", " + deltaFlow + ")")) {
             return;
@@ -176,7 +186,15 @@ public class MsoyGameRegistry
             mobj.setAccFlow(mobj.flow + deltaFlow);
 
         } else {
-            // TODO: locate the peer that is hosting this member and forward the flow update there
+            // locate the peer that is hosting this member and forward the flow update there
+            MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+                public void invoke (Client client, NodeObject nodeobj) {
+                    MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+                    if (msnobj.memberLocs.containsKey(memberId)) {
+                        msnobj.peerGameService.reportFlowAward(client, memberId, deltaFlow);
+                    }
+                }
+            });
         }
     }
 

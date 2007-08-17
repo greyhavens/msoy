@@ -27,6 +27,9 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /** The field name of the <code>peerChatService</code> field. */
     public static final String PEER_CHAT_SERVICE = "peerChatService";
+
+    /** The field name of the <code>peerGameService</code> field. */
+    public static final String PEER_GAME_SERVICE = "peerGameService";
     // AUTO-GENERATED: FIELDS END
 
     /** Contains info on all scenes hosted by this server. */
@@ -43,6 +46,9 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /** Dispatches chat channel modifications between proxies and hosts. */
     public PeerChatMarshaller peerChatService;
+
+    /** Dispatches game-related peer notifications. */
+    public PeerGameMarshaller peerGameService;
     
     // AUTO-GENERATED: METHODS START
     /**
@@ -251,6 +257,22 @@ public class MsoyNodeObject extends CrowdNodeObject
         requestAttributeChange(
             PEER_CHAT_SERVICE, value, ovalue);
         this.peerChatService = value;
+    }
+
+    /**
+     * Requests that the <code>peerGameService</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setPeerGameService (PeerGameMarshaller value)
+    {
+        PeerGameMarshaller ovalue = this.peerGameService;
+        requestAttributeChange(
+            PEER_GAME_SERVICE, value, ovalue);
+        this.peerGameService = value;
     }
     // AUTO-GENERATED: METHODS END
 }
