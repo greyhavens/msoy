@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +50,7 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.Group;
@@ -213,13 +215,17 @@ public class MemberServlet extends MsoyServiceServlet
         MemberRecord memrec = requireAuthedUser(ident);
         final List<FriendEntry> friends;
         ProfileRecord profile;
+        HashMap<Integer, String> ownedRooms = new HashMap<Integer, String>();
 
         try {
             friends = MsoyServer.memberRepo.loadFriends(memrec.memberId);
             profile = MsoyServer.profileRepo.loadProfile(memrec.memberId);
+            for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(memrec.memberId)) {
+                ownedRooms.put(scene.sceneId, scene.sceneName);
+            }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Fetching friend list or profile failed! [memberId=" + 
-                memrec.memberId + "]", pe);
+            log.log(Level.WARNING, "Fetching friend list, profile, or room list failed! " +
+                "[memberId=" + memrec.memberId + "]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
@@ -292,6 +298,7 @@ public class MemberServlet extends MsoyServiceServlet
         mywhirled.games = getGameSceneCards(games);
         mywhirled.people = new ArrayList<MemberCard>(onlineFriends.values());
         mywhirled.photo = profile.photoHash == null ? null : profile.getPhoto();
+        mywhirled.ownedRooms = ownedRooms;
         return mywhirled;
     }
 

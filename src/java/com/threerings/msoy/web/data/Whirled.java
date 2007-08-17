@@ -46,7 +46,7 @@ public class Whirled
     /**
      * The list of rooms owned by this person.
      *
-     * @gwt.typeArgs <java.lang.Integer,com.threerings.msoy.web.data.SceneCard>
+     * @gwt.typeArgs <java.lang.Integer,java.lang.String>
      */
     public Map ownedRooms;
 }

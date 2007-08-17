@@ -3,6 +3,7 @@
 
 package client.whirled;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +37,8 @@ import com.threerings.msoy.web.data.Whirled;
 import client.util.FlashClients;
 import client.util.MediaUtil;
 
+import client.shell.Application;
+
 public class MyWhirled extends FlexTable
 {
     public MyWhirled ()
@@ -44,17 +47,7 @@ public class MyWhirled extends FlexTable
 
         CWhirled.membersvc.getMyWhirled(CWhirled.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
-                Whirled data = (Whirled) result;
-                _friendLocations = new HashMap();
-                fillFriendLocations(data.places);
-                fillFriendLocations(data.games);
-                _people.setModel(new SimpleDataModel(data.people), 0);
-                
-                MediaDesc photo = data.photo == null ? Profile.DEFAULT_PHOTO : data.photo;
-                _pictureBox.add(MediaUtil.createMediaView(photo, 
-                    // HALF_THUMBNAIL is too small and THUMBNAIL is too big... do something custom
-                    (int)(MediaDesc.THUMBNAIL_WIDTH * 0.65), 
-                    (int)(MediaDesc.THUMBNAIL_HEIGHT * 0.65)));
+                fillUi((Whirled) result);
             }
             public void onFailure (Throwable caught) {
                 _errorContainer.add(new Label(CWhirled.serverError(caught)));
@@ -80,7 +73,6 @@ public class MyWhirled extends FlexTable
         mePanel.add(_pictureBox = new VerticalPanel());
         _pictureBox.setStyleName("PictureBox");
         _pictureBox.addStyleName("borderedBox");
-        _pictureBox.setSpacing(0);
         _pictureBox.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         _pictureBox.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
         HorizontalPanel header = new HorizontalPanel();
@@ -91,6 +83,7 @@ public class MyWhirled extends FlexTable
         header.add(title);
         mePanel.add(header);
         mePanel.add(_roomsBox = new VerticalPanel());
+        _roomsBox.setStyleName("RoomsBox");
         _roomsBox.addStyleName("borderedBox");
         header = new HorizontalPanel();
         header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
@@ -100,6 +93,7 @@ public class MyWhirled extends FlexTable
         header.add(title);
         mePanel.add(header);
         mePanel.add(_chatsBox = new VerticalPanel());
+        _roomsBox.setStyleName("RoomsBox");
         _chatsBox.addStyleName("borderedBox");
         
         setWidget(row++, 1, _errorContainer = new HorizontalPanel());
@@ -159,6 +153,27 @@ public class MyWhirled extends FlexTable
         header.add(star);
         gamesContainer.add(header);
         gamesContainer.add(_games = new SceneList(SceneCard.GAME));
+    }
+
+    protected void fillUi (Whirled myWhirled) 
+    {
+        _friendLocations = new HashMap();
+        fillFriendLocations(myWhirled.places);
+        fillFriendLocations(myWhirled.games);
+        _people.setModel(new SimpleDataModel(myWhirled.people), 0);
+                
+        MediaDesc photo = myWhirled.photo == null ? Profile.DEFAULT_PHOTO : myWhirled.photo;
+        _pictureBox.add(MediaUtil.createMediaView(photo, 
+            // HALF_THUMBNAIL is too small and THUMBNAIL is too big... do something custom
+            (int)(MediaDesc.THUMBNAIL_WIDTH * 0.65), (int)(MediaDesc.THUMBNAIL_HEIGHT * 0.65)));
+
+        // show the player's rooms in purchased order by doing an ascending sort on the sceneIds
+        Object[] sceneIds = myWhirled.ownedRooms.keySet().toArray();
+        Arrays.sort(sceneIds);
+        for (int ii = 0; ii < sceneIds.length; ii++) {
+            _roomsBox.add(Application.createLink((String)(myWhirled.ownedRooms.get(sceneIds[ii])),
+                                                 "world", "s" + sceneIds[ii]));
+        }
     }
 
     protected void fillFriendLocations (List scenes) {
