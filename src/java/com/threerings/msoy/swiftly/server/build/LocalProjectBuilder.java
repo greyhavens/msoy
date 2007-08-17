@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
 
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
@@ -55,7 +56,7 @@ public class LocalProjectBuilder
             ProcessBuilder procBuilder;
             InputStream stdout;
             BufferedReader bufferedOutput;
-            StringBuffer rawOutput;
+            LinkedList<String> outputQueue;
             BuildResult result = new BuildResult();
             String line;
 
@@ -80,15 +81,14 @@ public class LocalProjectBuilder
 
             // Run the process and gather output
             proc = procBuilder.start();
-            // block this thread until the compiler thread finishes
-            proc.waitFor();
 
             stdout = proc.getInputStream();
             bufferedOutput = new BufferedReader(new InputStreamReader(stdout));
-            rawOutput = new StringBuffer();
+            outputQueue = new LinkedList<String>();
 
             while ((line = bufferedOutput.readLine()) != null) {
-                rawOutput.append(line);
+                // store the raw compiler output in a queue used for logging/debugging
+                outputQueue.add(line);
                 CompilerOutput output = new FlexCompilerOutput(line);
                 switch (output.getLevel()) {
                 case IGNORE:
@@ -98,13 +98,26 @@ public class LocalProjectBuilder
                     break;
                 }
                 result.appendOutput(output);
+                // trim the output queue so that massive amounts of output do not fill up memory
+                if (outputQueue.size() > MAX_QUEUE_SIZE) {
+                    outputQueue.removeFirst();
+                }
+            }
+
+            // block this thread until the compiler thread finishes
+            int exitCode = proc.waitFor();
+
+            // if we had a successful build yet had a non 0 exit code, something wacky happened
+            if (result.buildSuccessful() && exitCode > 0) {
+                throw new ProjectBuilderException("Successful build returned non-zero exit " +
+                    "value. [output=" + outputQueue + "].");
             }
 
             // if we had a successful build yet did not generate a build result, throw exception
             File outputFile = new File(buildRoot, _project.getOutputFileName());
             if (result.buildSuccessful() && !outputFile.exists()) {
                 throw new ProjectBuilderException("Successful build did not produce a build " +
-                    "result. [output=" + rawOutput + "].");
+                    "result. [output=" + outputQueue + "].");
             }
 
             result.setOutputFile(outputFile);
@@ -120,6 +133,9 @@ public class LocalProjectBuilder
                 "Failed to finish build process. Process interrupted. " + ie, ie);
         }
     }
+
+    /** The maximum number of lines to store in the local process output queue */
+    protected static final int MAX_QUEUE_SIZE = 40;
 
     /** Reference to our project. */
     protected SwiftlyProject _project;
