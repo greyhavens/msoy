@@ -31,6 +31,16 @@ public class BuildResult
         return _outputFile;
     }
 
+    /** Set the time, in milliseconds, that the full build task took. */
+    public void setBuildTime (long time) {
+        _buildTime = time;
+    }
+
+    public long getBuildTime ()
+    {
+        return _buildTime;
+    }
+
     /** Return the build compiler's output, in the order it was received. */
     public List<CompilerOutput> getOutput () {
         return _output;
@@ -53,9 +63,12 @@ public class BuildResult
 
     /** All compiler output. */
     protected List<CompilerOutput> _output;
-    
+
     /** Did the build succeed. */
     protected boolean _buildSuccess = true;
+
+    /** The time, in milliseconds, that the full build task took. */
+    protected long _buildTime;
 
     /** The build output file. */
     protected transient File _outputFile;

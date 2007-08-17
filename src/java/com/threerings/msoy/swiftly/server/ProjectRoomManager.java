@@ -594,6 +594,7 @@ public class ProjectRoomManager extends PlaceManager
         // this is called on the executor thread and can go hog wild with the blocking
         public void executeTask ()
         {
+            _startTime = System.currentTimeMillis();
             try {
                 // commit each swiftly document in the project that has changed
                 for (SwiftlyDocument doc : _allDocs) {
@@ -627,6 +628,7 @@ public class ProjectRoomManager extends PlaceManager
 
             // if the commit worked, run the build if instructed
             if (buildRequested()) {
+                _buildTask.setStartTime(_startTime);
                 MsoyServer.swiftlyMan.buildExecutor.addTask(_buildTask);
 
             } else {
@@ -651,6 +653,7 @@ public class ProjectRoomManager extends PlaceManager
         protected final BuildProjectTask _buildTask;
         protected final ConfirmListener _listener;
         protected Throwable _error;
+        protected long _startTime;
     }
 
     /** Handles a request to build our project. */
@@ -740,9 +743,6 @@ public class ProjectRoomManager extends PlaceManager
                 return;
             }
 
-            // Provide build output
-            _roomObj.setResult(_result);
-
             if (_result.buildSuccessful() && exportResult()) {
                 // inform the item manager of the new or updated item
                 if (_record.itemId == 0) {
@@ -754,6 +754,12 @@ public class ProjectRoomManager extends PlaceManager
                 _resultItems.put(_exportData.member, _exportData.buildResultItemId);
             }
 
+            // set the full time of the task [including commit] in the result
+            _result.setBuildTime(System.currentTimeMillis() - _startTime);
+
+            // Provide build output to the room
+            _roomObj.setResult(_result);
+
             // inform the listener that the build service call worked. the caller will need to
             // check if the build succeeded using the room object.
             _listener.requestProcessed();
@@ -763,6 +769,11 @@ public class ProjectRoomManager extends PlaceManager
         public void timedOut ()
         {
             _listener.requestFailed("e.build_timed_out");
+        }
+
+        public void setStartTime(long time)
+        {
+            _startTime = time;
         }
 
         /**
@@ -898,6 +909,7 @@ public class ProjectRoomManager extends PlaceManager
         protected ItemRecord _record;
         protected File _buildDir;
         protected Throwable _error;
+        protected long _startTime;
     }
 
     /** Handles inserting the upload file data into svn and the room object. */

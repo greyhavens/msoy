@@ -376,6 +376,15 @@ public class SwiftlyEditor extends PlacePanel
             displayBuildResult();
 
         } else if (event.getName().equals(ProjectRoomObject.BUILDING)) {
+            if (_roomObj.building) {
+                if (_roomObj.result != null) {
+                    _toolbar.showProgress((int)_roomObj.result.getBuildTime());
+                } else {
+                    _toolbar.showProgress(DEFAULT_BUILD_TIME);
+                }
+            } else {
+                _toolbar.stopProgress();
+            }
             _ctrl.buildAction.setEnabled(!_roomObj.building);
             _ctrl.buildExportAction.setEnabled(!_roomObj.building);
 
@@ -489,6 +498,9 @@ public class SwiftlyEditor extends PlacePanel
         }
         _console.displayCompilerOutput(_roomObj.result.getOutput());
     }
+
+    /** The first build will be guessed to be 6 seconds. */
+    protected static final int DEFAULT_BUILD_TIME = 6000;
 
     /** A list of files that can be created by this SwiftlyDocumentEditor. */
     protected ArrayList<SwiftlyDocumentEditor.FileTypes> _createableFileTypes;
