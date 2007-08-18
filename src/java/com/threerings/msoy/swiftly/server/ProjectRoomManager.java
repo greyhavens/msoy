@@ -536,6 +536,10 @@ public class ProjectRoomManager extends PlaceManager
     {
         super.didShutdown();
         onShutdownCommit();
+
+        // TODO: wait for our svn serial executor to finish, but timeout if it takes more than 10
+        // seconds or so
+
         MsoyServer.swiftlyMan.projectDidShutdown(this);
     }
 
@@ -628,7 +632,7 @@ public class ProjectRoomManager extends PlaceManager
             // if the commit worked, run the build if instructed
             if (buildRequested()) {
                 _buildTask.setStartTime(_startTime);
-                MsoyServer.swiftlyMan.buildExecutor.addTask(_buildTask);
+                MsoyServer.swiftlyMan.buildExecutor.execute(_buildTask);
 
             } else {
                 _listener.requestProcessed();
@@ -656,10 +660,8 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     /** Handles a request to build our project. */
-    protected class BuildProjectTask implements SerialExecutor.ExecutorTask
+    protected class BuildProjectTask implements Runnable
     {
-        public final int projectId;
-
         public BuildProjectTask (SwiftlyProject project, ConfirmListener listener)
         {
             this(project, null, listener);
@@ -668,34 +670,20 @@ public class ProjectRoomManager extends PlaceManager
         public BuildProjectTask (SwiftlyProject project, ExportData exportData,
                                  ConfirmListener listener)
         {
+            _project = project;
             _exportData = exportData;
             _listener = listener;
-            this.projectId = project.projectId;
         }
 
-        public boolean merge (SerialExecutor.ExecutorTask other)
-        {
-            // we don't want more than one pending build for a project
-            if (other instanceof BuildProjectTask) {
-                return this.projectId == ((BuildProjectTask)other).projectId;
-            }
-            return false;
-        }
-
-        public long getTimeout ()
-        {
-            return 60 * 1000L; // 60 seconds is all you get kid
-        }
-
-        // this is called on the executor thread and can go hog wild with the blocking
-        public void executeTask ()
+        // from Runnable
+        public void run ()
         {
             try {
                 // Get the local build directory
                 File topBuildDir = new File(ServerConfig.serverRoot + LOCAL_BUILD_DIRECTORY);
 
                 // Create a temporary build directory
-                _buildDir = File.createTempFile("localbuilder", String.valueOf(projectId),
+                _buildDir = File.createTempFile("localbuilder", String.valueOf(_project.projectId),
                     topBuildDir);
                 _buildDir.delete();
                 if (_buildDir.mkdirs() != true) {
@@ -727,6 +715,13 @@ public class ProjectRoomManager extends PlaceManager
                     log.log(Level.WARNING,
                         "Failed to delete temporary build results directory.", ioe);
                 }
+
+                // deal with post processing the build on the dobject thread
+                MsoyServer.omgr.postRunnable(new Runnable() {
+                    public void run() {
+                        resultReceived();
+                    }
+                });
             }
         }
 
@@ -902,6 +897,7 @@ public class ProjectRoomManager extends PlaceManager
             }
         }
 
+        protected final SwiftlyProject _project;
         protected final ExportData _exportData;
         protected final ConfirmListener _listener;
         protected BuildResult _result;

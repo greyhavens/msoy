@@ -8,11 +8,13 @@ import static com.threerings.msoy.Log.log;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.SerialExecutor;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -35,9 +37,9 @@ import com.threerings.presents.server.InvocationManager;
 public class SwiftlyManager
     implements SwiftlyProvider, MsoyServer.Shutdowner
 {
-    /** This is used to execute potentially long running project builds serially on a separate
-     * thread so that they do not interfere with normal server operation. */
-    public SerialExecutor buildExecutor;
+    /** This thread pool is used to execute potentially long running project builds on separate
+     * threads so that they do not interfere with normal server operation. */
+    public ExecutorService buildExecutor;
 
     /**
      * Configures us with our repository.
@@ -48,7 +50,7 @@ public class SwiftlyManager
         invmgr.registerDispatcher(new SwiftlyDispatcher(this), SwiftlyCodes.SWIFTLY_GROUP);
 
         // create our executors
-        buildExecutor = new SerialExecutor(MsoyServer.omgr);
+        buildExecutor = Executors.newFixedThreadPool(MAX_BUILD_THREADS);
 
         // register to be informed when the server shuts down
         MsoyServer.registerShutdowner(this);
@@ -167,8 +169,13 @@ public class SwiftlyManager
             mgr.shutdown();
         }
 
-        // TODO: wait for our serial executors to finish, but timeout if they take more than 90
-        // seconds or so
+        // shutdown the build executor and give it 20 seconds to complete running builds.
+        buildExecutor.shutdown();
+        try {
+            buildExecutor.awaitTermination(20L, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            // So we got interrupted. Let's just let the server shutdown at this point.
+        }
     }
 
     /**
@@ -188,6 +195,9 @@ public class SwiftlyManager
         ProjectRoomConfig config = (ProjectRoomConfig)mgr.getConfig();
         _managers.remove(config.projectId);
     }
+
+    /** Maxiumum number of concurrent builds. */
+    protected static final int MAX_BUILD_THREADS = 5;
 
     /** Maintains a mapping of resolved projects. */
     protected HashMap<Integer,ProjectRoomManager> _managers =

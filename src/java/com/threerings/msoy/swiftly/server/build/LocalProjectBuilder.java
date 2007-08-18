@@ -110,7 +110,7 @@ public class LocalProjectBuilder
             // if we had a successful build yet had a non 0 exit code, something wacky happened
             if (result.buildSuccessful() && exitCode > 0) {
                 throw new ProjectBuilderException("Successful build returned non-zero exit " +
-                    "value. [output=" + outputQueue + "].");
+                    "value. [code=" + exitCode + ",output=" + outputQueue + "].");
             }
 
             // if we had a successful build yet did not generate a build result, throw exception
