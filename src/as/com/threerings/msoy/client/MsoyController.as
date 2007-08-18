@@ -412,7 +412,21 @@ public class MsoyController extends Controller
      */
     public function handleGoMemberScene (memberId :int) :void
     {
-        _ctx.getWorldDirector().goToMemberScene(memberId);
+        // rather than just going straight to the member scene, handle it through GWT if we can
+        // so that we update the URL.
+        if (inGWTApp()) {
+            var msvc :MemberService = 
+                _ctx.getClient().requireService(MemberService) as MemberService;
+            msvc.getCurrentSceneId(_ctx.getClient(), memberId, new ResultWrapper(
+                function (cause :String) :void {
+                    _ctx.displayFeedback(null, cause);
+                },
+                function (sceneId :int) :void {
+                    displayPageGWT("world", "s" + sceneId);
+                }));
+        } else {
+            _ctx.getWorldDirector().goToMemberScene(memberId);
+        }
     }
 
     /**

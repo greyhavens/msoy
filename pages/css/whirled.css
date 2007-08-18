@@ -129,3 +129,13 @@
 .MePanel a {
   color: #A9A8AD;
 }
+
+.PersonWidget img {
+  cursor: pointer;
+}
+
+.PersonWidget .NameLabel {
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}

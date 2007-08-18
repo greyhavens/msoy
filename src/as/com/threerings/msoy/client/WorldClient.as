@@ -277,7 +277,6 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("usePet", externalUsePet);
         ExternalInterface.addCallback("removePet", externalRemovePet);
         ExternalInterface.addCallback("getPets", externalGetPets);
-        ExternalInterface.addCallback("goMemberScene", externalGoMemberScene);
 
         try {
             _embedded = !(ExternalInterface.call("helloWhirled") as Boolean);
@@ -506,11 +505,6 @@ public class WorldClient extends BaseClient
         } else {
             return [];
         }
-    }
-
-    protected function externalGoMemberScene (memberId :int) :void
-    {
-        _wctx.getMsoyController().handleGoMemberScene(memberId);
     }
 
     protected var _wctx :WorldContext;

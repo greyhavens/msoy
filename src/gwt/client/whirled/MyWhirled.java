@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -38,6 +39,7 @@ import client.util.FlashClients;
 import client.util.MediaUtil;
 
 import client.shell.Application;
+import client.shell.WorldClient;
 
 public class MyWhirled extends FlexTable
 {
@@ -103,7 +105,7 @@ public class MyWhirled extends FlexTable
         getFlexCellFormatter().setColSpan(row, 1, 2);
         setWidget(row++, 1, _people = new PagedGrid(PEOPLE_ROWS, PEOPLE_COLUMS) {
             protected Widget createWidget (Object item) {
-                return new PersonWidget((MemberCard) item, _friendLocations);
+                return new PersonWidget((MemberCard) item);
             }
             protected String getEmptyMessage () {
                 return CWhirled.msgs.noPeople();
@@ -159,9 +161,6 @@ public class MyWhirled extends FlexTable
 
     protected void fillUi (Whirled myWhirled) 
     {
-        _friendLocations = new HashMap();
-        fillFriendLocations(myWhirled.places);
-        fillFriendLocations(myWhirled.games);
         _people.setModel(new SimpleDataModel(myWhirled.people), 0);
                 
         MediaDesc photo = myWhirled.photo == null ? Profile.DEFAULT_PHOTO : myWhirled.photo;
@@ -188,19 +187,6 @@ public class MyWhirled extends FlexTable
             for (int ii = 0; ii < chatIds.length; ii++) {
                 _chatsBox.add(Application.createLink((String)(myWhirled.chats.get(chatIds[ii])),
                                                      "world", "c" + chatIds[ii]));
-            }
-        }
-    }
-
-    protected void fillFriendLocations (List scenes) {
-        Iterator sceneIter = scenes.iterator();
-        while (sceneIter.hasNext()) {
-            SceneCard card = (SceneCard) sceneIter.next();
-            String text = card.sceneType == SceneCard.ROOM ? 
-                CWhirled.msgs.inRoom("" + card.name) : CWhirled.msgs.inGame("" + card.name);
-            Iterator friendIter = card.friends.iterator();
-            while (friendIter.hasNext()) {
-                _friendLocations.put(friendIter.next(), text);
             }
         }
     }
@@ -236,27 +222,33 @@ public class MyWhirled extends FlexTable
         }
     }
 
-    protected static class PersonWidget extends HorizontalPanel
+    protected static class PersonWidget extends VerticalPanel
     {
-        public PersonWidget (final MemberCard card, Map friendLocations)
+        public PersonWidget (final MemberCard card)
         {
-            add(MediaUtil.createMediaView(card.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
+            setStyleName("PersonWidget");
+            setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
 
-            VerticalPanel text = new VerticalPanel();
-            Label nameLabel = new Label("" + card.name);
-            nameLabel.addClickListener(new ClickListener() {
+            ClickListener goToFriend = new ClickListener() {
                 public void onClick (Widget sender) {
-                    FlashClients.goMemberScene(card.name.getMemberId());
+                    WorldClient.displayFlash("memberScene=" + card.name.getMemberId());
                 }
-            });
-            text.add(nameLabel);
-            text.add(new Label("" + friendLocations.get(new Integer(card.name.getMemberId()))));
-            add(text);
+            };
+
+            Widget pic = MediaUtil.createMediaView(card.photo, MediaDesc.HALF_THUMBNAIL_SIZE);
+            if (pic instanceof Image) {
+                ((Image) pic).addClickListener(goToFriend);
+            }
+            add(pic);
+            Label nameLabel = new Label("" + card.name);
+            nameLabel.addClickListener(goToFriend);
+            nameLabel.setStyleName("NameLabel");
+            add(nameLabel);
         }
     }
 
-    protected static final int PEOPLE_ROWS = 1;
-    protected static final int PEOPLE_COLUMS = 2;
+    protected static final int PEOPLE_ROWS = 4;
+    protected static final int PEOPLE_COLUMS = 6;
 
     protected PagedGrid _people;
     protected SceneList _places;
@@ -267,6 +259,4 @@ public class MyWhirled extends FlexTable
     protected VerticalPanel _chatsBox;
 
     protected HorizontalPanel _errorContainer;
-
-    protected HashMap _friendLocations;
 }
