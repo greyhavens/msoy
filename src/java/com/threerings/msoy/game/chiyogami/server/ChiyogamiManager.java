@@ -111,7 +111,8 @@ public class ChiyogamiManager extends GameManager
 
         PlayerRec perf = _playerPerfs.get(player.getOid());
         if (perf == null) {
-            log.warning("Received performance report from non-player [who=" + player.who() + "].");
+            log.warning("Received performance report from non-player [where=" + where() +
+                        ", who=" + player.who() + "].");
             return;
         }
 
@@ -452,8 +453,8 @@ public class ChiyogamiManager extends GameManager
         // add the boss to the room
         MsoyServer.screg.moveTo(_bossObj, _sceneId, -1, new SceneMoveAdapter() {
             public void requestFailed (String reason) {
-                log.warning("Boss failed to enter scene [scene=" + _sceneId +
-                            ", reason=" + reason + "].");
+                log.warning("Boss failed to enter scene [where=" + where() +
+                            ", scene=" + _sceneId + ", reason=" + reason + "].");
                 // TODO: shutdown? freakout? call the Elite Beat Agents?
             }
         });
@@ -725,7 +726,7 @@ public class ChiyogamiManager extends GameManager
         String error = _roomMgr.changeLocation(body, new MsoyLocation(x, 0, z, orient));
         if (error != null) {
             // this shouldn't happen
-            log.warning("Error moving body [e=" + error + "].");
+            log.warning("Error moving body [where=" + where() + ", e=" + error + "].");
         }
     }
 
@@ -793,7 +794,12 @@ public class ChiyogamiManager extends GameManager
     protected void updatePlayerState (BodyObject player, long now)
     {
         PlayerRec perf = _playerPerfs.get(player.getOid());
-        updatePlayerState(player, perf.calculateScore(now));
+        if (perf == null) {
+            log.warning("Missing perf record for player [where=" + where () +
+                        ", who=" + player.who() + "].");
+        } else {
+            updatePlayerState(player, perf.calculateScore(now));
+        }
     }
 
     protected void updatePlayerState (BodyObject player, float score)
@@ -916,7 +922,8 @@ public class ChiyogamiManager extends GameManager
                     MsoyServer.worldGameReg.leaveWorldGame(
                         (MemberObject) MsoyServer.omgr.getObject(oid));
                 } catch (InvocationException ie) {
-                    log.warning("Error removing user from chiyogami game: " + ie);
+                    log.warning("Error removing user from chiyogami game [where=" + where() +
+                                ", error=" + ie + "].");
                 }
             }
         }
