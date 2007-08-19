@@ -740,13 +740,16 @@ public abstract class ItemRepository<
         allClauses[0] = where;
         allClauses[1] = new Join(
             getItemClass(), ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID);
-        allClauses[2] = new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID);
-        allClauses[3] = new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID);
+        allClauses[2] = new FieldOverride(
+            ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID);
+        allClauses[3] = new FieldOverride(
+            ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID);
         allClauses[4] = new FieldOverride(
             ItemRecord.OWNER_ID, getCloneClass(), CloneRecord.OWNER_ID);
         allClauses[5] = new FieldOverride(
-            ItemRecord.LOCATION, getItemClass(), CloneRecord.LOCATION);
-        allClauses[6] = new FieldOverride(ItemRecord.USED, getItemClass(), CloneRecord.USED);
+            ItemRecord.LOCATION, getCloneClass(), CloneRecord.LOCATION);
+        allClauses[6] = new FieldOverride(
+            ItemRecord.USED, getCloneClass(), CloneRecord.USED);
         allClauses[7] = new FieldOverride(
             ItemRecord.LAST_TOUCHED, getCloneClass(), CloneRecord.LAST_TOUCHED);
         System.arraycopy(clauses, 0, allClauses, OUR_CLAUSE_COUNT, clauses.length);
