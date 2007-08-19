@@ -49,7 +49,7 @@ public class SwiftlyManager
         // register ourselves as handling the Swiftly invocation service
         invmgr.registerDispatcher(new SwiftlyDispatcher(this), SwiftlyCodes.SWIFTLY_GROUP);
 
-        // create our executors
+        // create our build thread pool
         buildExecutor = Executors.newFixedThreadPool(MAX_BUILD_THREADS);
 
         // register to be informed when the server shuts down
@@ -92,8 +92,8 @@ public class SwiftlyManager
                     SwiftlyProjectRecord projectRecord =
                         MsoyServer.swiftlyRepo.loadProject(projectId);
                     if (projectRecord == null) {
-                        throw new PersistenceException("Failed to load project record [projectId=" +
-                            projectId + "].");
+                        throw new PersistenceException("Failed to load project record " +
+                            "[projectId=" + projectId + "].");
                     }
                     _project = projectRecord.toSwiftlyProject();
 

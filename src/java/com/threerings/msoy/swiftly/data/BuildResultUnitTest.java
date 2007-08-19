@@ -7,6 +7,8 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import com.threerings.msoy.data.all.MemberName;
+
 public class BuildResultUnitTest extends TestCase
 {
     public BuildResultUnitTest (String name)
@@ -18,10 +20,10 @@ public class BuildResultUnitTest extends TestCase
     {
         CompilerOutput output = new FlexCompilerOutput("Awesome",
             CompilerOutput.Level.INFO, "file.as", 27, 5);
-        BuildResult result = new BuildResult();
+        BuildResult result = new BuildResult(new MemberName());
 
         result.appendOutput(output);
-        
+
         for (CompilerOutput testOutput : result.getOutput()) {
             assertEquals(testOutput, output);
         }
@@ -31,7 +33,7 @@ public class BuildResultUnitTest extends TestCase
     {
         CompilerOutput output = new FlexCompilerOutput("Awesome",
             CompilerOutput.Level.ERROR, "file.as", 27, 5);
-        BuildResult result = new BuildResult();
+        BuildResult result = new BuildResult(new MemberName());
 
         assertEquals(true, result.buildSuccessful());
         result.appendOutput(output);
@@ -40,7 +42,7 @@ public class BuildResultUnitTest extends TestCase
 
     public void testSetBuildOutputFile ()
     {
-        BuildResult result = new BuildResult();
+        BuildResult result = new BuildResult(new MemberName());
         File outputFile = new File("/tmp/nonexistent");
 
         result.setOutputFile(outputFile);

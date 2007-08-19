@@ -7,6 +7,7 @@ import java.applet.AppletContext;
 
 import com.threerings.crowd.util.CrowdContext;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.swiftly.client.SimpleProgressBar;
 import com.threerings.util.MessageManager;
 
 /**
@@ -33,4 +34,13 @@ public interface SwiftlyContext extends CrowdContext
 
     /** Displays an error level message to the user. */
     public void showErrorMessage (String message);
+
+    /** Show a progress bar for the supplied number of milliseconds. */
+    public void showProgress (int time);
+
+    /** Tell the progress bar to stop displaying progress. */
+    public void stopProgress ();
+
+    /** Return the progress bar defined in this context */
+    public SimpleProgressBar getProgressBar ();
 }

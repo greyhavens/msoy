@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
@@ -37,7 +38,7 @@ public class LocalProjectBuilder
         _whirledSDK = whirledSDK;
     }
 
-    public BuildResult build (File buildRoot)
+    public BuildResult build (File buildRoot, MemberName member)
         throws ProjectBuilderException
     {
         // Export the project data
@@ -57,7 +58,7 @@ public class LocalProjectBuilder
             InputStream stdout;
             BufferedReader bufferedOutput;
             LinkedList<String> outputQueue;
-            BuildResult result = new BuildResult();
+            BuildResult result = new BuildResult(member);
             String line;
 
             // Refer the to "Using the Flex Compilers" documentation

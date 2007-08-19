@@ -320,11 +320,10 @@ public class ProjectRoomManager extends PlaceManager
     {
         // check that the caller has the correct permissions to perform this action
         requireWritePermissions(caller);
+        MemberObject memobj = (MemberObject)caller;
 
-        // inform all the clients that a build is starting
-        _roomObj.setBuilding(true);
-
-        BuildProjectTask buildTask = new BuildProjectTask(_roomObj.project, listener);
+        BuildProjectTask buildTask = new BuildProjectTask(
+            _roomObj.project, memobj.memberName, listener);
         _svnExecutor.addTask(new CommitProjectTask(buildTask, listener));
     }
 
@@ -336,9 +335,6 @@ public class ProjectRoomManager extends PlaceManager
         requireWritePermissions(caller);
         MemberObject memobj = (MemberObject)caller;
 
-        // inform all the clients that a build is starting
-        _roomObj.setBuilding(true);
-
         ExportData exportData = null;
         // look up the build result id if we have already resolved it
         Integer resultId = _resultItems.get(memobj.memberName);
@@ -348,7 +344,8 @@ public class ProjectRoomManager extends PlaceManager
             exportData = new ExportData(_roomObj.project, memobj.memberName, resultId.intValue());
         }
 
-        BuildProjectTask buildTask = new BuildProjectTask(_roomObj.project, exportData, listener);
+        BuildProjectTask buildTask = new BuildProjectTask(
+            _roomObj.project, memobj.memberName, exportData, listener);
         _svnExecutor.addTask(new CommitProjectTask(buildTask, listener));
     }
 
@@ -662,15 +659,17 @@ public class ProjectRoomManager extends PlaceManager
     /** Handles a request to build our project. */
     protected class BuildProjectTask implements Runnable
     {
-        public BuildProjectTask (SwiftlyProject project, ConfirmListener listener)
+        public BuildProjectTask (SwiftlyProject project, MemberName member,
+                                 ConfirmListener listener)
         {
-            this(project, null, listener);
+            this(project, member, null, listener);
         }
 
-        public BuildProjectTask (SwiftlyProject project, ExportData exportData,
+        public BuildProjectTask (SwiftlyProject project, MemberName member, ExportData exportData,
                                  ConfirmListener listener)
         {
             _project = project;
+            _member = member;
             _exportData = exportData;
             _listener = listener;
         }
@@ -693,7 +692,7 @@ public class ProjectRoomManager extends PlaceManager
                 }
 
                 // build the project
-                _result = _builder.build(_buildDir);
+                _result = _builder.build(_buildDir, _member);
 
                 // Only publish the result if the build succeeded and the caller asked
                 if (_result.buildSuccessful() && exportResult()) {
@@ -728,9 +727,6 @@ public class ProjectRoomManager extends PlaceManager
         // this is called back on the dobj thread and must only report results
         public void resultReceived ()
         {
-            // Inform the clients that the build is finished
-            _roomObj.setBuilding(false);
-
             if (_error != null) {
                 log.log(Level.WARNING, "Project build failed.", _error);
                 _listener.requestFailed("e.build_failed_unexpected");
@@ -745,14 +741,19 @@ public class ProjectRoomManager extends PlaceManager
                     MsoyServer.itemMan.itemUpdated(_record);
                 }
                 // update the build result id cache
-                _resultItems.put(_exportData.member, _exportData.buildResultItemId);
+                _resultItems.put(_member, _exportData.buildResultItemId);
             }
 
             // set the full time of the task [including commit] in the result
+            // TODO: this should probably ignore time waiting in line for the thread pool
             _result.setBuildTime(System.currentTimeMillis() - _startTime);
 
             // Provide build output to the room
-            _roomObj.setResult(_result);
+            if (_roomObj.findResultForMember(_member) != null) {
+                _roomObj.updateResults(_result);
+            } else {
+                _roomObj.addToResults(_result);
+            }
 
             // inform the listener that the build service call worked. the caller will need to
             // check if the build succeeded using the room object.
@@ -898,6 +899,7 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         protected final SwiftlyProject _project;
+        protected final MemberName _member;
         protected final ExportData _exportData;
         protected final ConfirmListener _listener;
         protected BuildResult _result;
@@ -1018,7 +1020,6 @@ public class ProjectRoomManager extends PlaceManager
 
         public final int projectId;
         public final int memberId;
-        public final MemberName member;
         public final String projectName;
         public final int projectType;
         public int buildResultItemId;
@@ -1038,7 +1039,6 @@ public class ProjectRoomManager extends PlaceManager
             this.projectType = project.projectType;
 
             this.memberId = member.getMemberId();
-            this.member = member;
             this.buildResultItemId = buildResultItemId;
         }
 

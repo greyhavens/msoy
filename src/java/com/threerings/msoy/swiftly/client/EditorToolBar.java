@@ -3,26 +3,21 @@
 
 package com.threerings.msoy.swiftly.client;
 
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import javax.swing.Timer;
 
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class EditorToolBar extends JToolBar
-    implements AccessControlListener, ActionListener
+    implements AccessControlListener
 {
     public EditorToolBar (ProjectRoomController ctrl, SwiftlyContext ctx, SwiftlyEditor editor)
     {
@@ -36,11 +31,8 @@ public class EditorToolBar extends JToolBar
         add(_consoleButton = createButton(_editor.createShowConsoleAction(), CONSOLE_ICON));
         add(Box.createHorizontalGlue());
 
-        _timer = new Timer(TIMER_INTERVAL, this);
-        _progress = new JProgressBar();
-        _progress.setVisible(false);
-        _progress.setMaximumSize(new Dimension(120, 15));
-        add(_progress);
+
+        add(_ctx.getProgressBar());
 
         _readOnly = new JLabel();
         _readOnly.setIcon(new ImageIcon(getClass().getResource(READ_ONLY_ICON)));
@@ -67,44 +59,6 @@ public class EditorToolBar extends JToolBar
         _readOnly.setVisible(true);
     }
 
-    /**
-     * Called by the progress bar timer.
-     */
-    public void actionPerformed (ActionEvent e)
-    {
-        long value = System.currentTimeMillis() - _startTime;
-        _progress.setValue((int)value);
-        if (_progress.getPercentComplete() >= 100) {
-            stopProgress();
-        }
-    }
-
-    /**
-     * Display a progress bar for a task taking the number of milliseconds supplied.
-     */
-    public void showProgress (final int time)
-    {
-        // if the time is less than our timer interval, no point in showing the progress bar
-        if (time < TIMER_INTERVAL) {
-            return;
-        }
-
-        _progress.setVisible(true);
-        _progress.setMaximum(time);
-        _startTime = System.currentTimeMillis();
-        _timer.restart();
-    }
-
-    /**
-     * Stop displaying the progress bar.
-     */
-    public void stopProgress ()
-    {
-        _timer.stop();
-        _progress.setVisible(false);
-        _progress.setValue(0);
-    }
-
     protected JButton createButton (Action action, String icon)
     {
         JButton button = new JButton(action);
@@ -123,8 +77,6 @@ public class EditorToolBar extends JToolBar
     protected static final String CONSOLE_ICON = "/rsrc/icons/swiftly/console.png";
     protected static final String READ_ONLY_ICON = "/rsrc/icons/swiftly/readonly.png";
 
-    protected static final int TIMER_INTERVAL = 1000;
-
     protected ProjectRoomController _ctrl;
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
@@ -133,7 +85,4 @@ public class EditorToolBar extends JToolBar
     protected JButton _buildExportButton;
     protected JButton _consoleButton;
     protected JLabel _readOnly;
-    protected JProgressBar _progress;
-    protected final Timer _timer;
-    protected long _startTime;
 }

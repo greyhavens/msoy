@@ -4,6 +4,7 @@
 package com.threerings.msoy.swiftly.client;
 
 import java.awt.event.ActionEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
@@ -12,13 +13,12 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
-
-import com.threerings.presents.client.InvocationService.ConfirmListener;
-import com.threerings.util.MessageBundle;
-
+import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.util.MessageBundle;
 
 /**
  * Wires up all the necessary bits when we enter our project room.
@@ -75,14 +75,15 @@ public class ProjectRoomController extends PlaceController
      */
     protected void buildProject ()
     {
-        disableBuild();
+        buildStarted();
         _roomObj.service.buildProject(_ctx.getClient(), new ConfirmListener () {
             public void requestProcessed ()
             {
-                // Success will be handled with the room object result field.
+                buildFinished();
             }
             public void requestFailed (String reason) {
                 _ctx.showErrorMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
+                buildFinished();
             }
         });
 
@@ -93,30 +94,54 @@ public class ProjectRoomController extends PlaceController
      */
     protected void buildAndExport ()
     {
-       disableBuild();
+       buildStarted();
         _roomObj.service.buildAndExportProject(_ctx.getClient(), new ConfirmListener() {
             public void requestProcessed () {
-                // inform just this user that the build result was exported if the build succeeded
-                if (_roomObj.result.buildSuccessful()) {
+                BuildResult result = _roomObj.findResultForMember(
+                    _ctx.getMemberObject().memberName);
+                if (result.buildSuccessful()) {
                     _ctx.showInfoMessage(_msgs.get("m.build_export_succeeded"));
                 }
+                buildFinished();
             }
             public void requestFailed (String reason) {
                 _ctx.showErrorMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
+                buildFinished();
             }
         });
     }
 
     /**
-     * Disable the build actions while a build is happening. Enabling will be handled by watching
-     * the _roomObj.building field in SwiftlyEditor.
+     * Disable the build actions while a build is happening.
      */
-    protected void disableBuild ()
+    protected void buildStarted ()
     {
         // disable the action on this client
         buildAction.setEnabled(false);
         buildExportAction.setEnabled(false);
+        BuildResult result = _roomObj.findResultForMember(_ctx.getMemberObject().memberName);
+        if (result != null) {
+            _ctx.showProgress((int)result.getBuildTime());
+        } else {
+            _ctx.showProgress(DEFAULT_BUILD_TIME);
+        }
     }
+
+    /**
+     * Enable the build actions when a build is finished.
+     */
+    protected void buildFinished ()
+    {
+        // enable the action on this client if the user has write access
+        if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
+            buildAction.setEnabled(true);
+            buildExportAction.setEnabled(true);
+        }
+        _ctx.stopProgress();
+    }
+
+    /** The first build will be guessed to be 6 seconds. */
+    protected static final int DEFAULT_BUILD_TIME = 6000;
 
     protected SwiftlyContext _ctx;
     protected MessageBundle _msgs;

@@ -243,6 +243,9 @@ public class SwiftlyApplet extends JApplet
         UIManager.put("swing.boldMetal", Boolean.FALSE);
         // remove the borders from the splitpane so we can add our own later
         UIManager.put("SplitPaneDivider.border", new BasicBorders.MarginBorder());
+
+        // create the progress bar after the UI has been changed
+        _progress = new SimpleProgressBar();
     }
 
     protected class SwiftlyContextImpl implements SwiftlyContext
@@ -295,6 +298,19 @@ public class SwiftlyApplet extends JApplet
         public void showErrorMessage (String message) {
             _notifier.showError(message);
         }
+
+        public void showProgress (int time)
+        {
+            _progress.showProgress(time);
+        }
+        public void stopProgress ()
+        {
+            _progress.stopProgress();
+        }
+        public SimpleProgressBar getProgressBar ()
+        {
+            return _progress;
+        }
     }
 
     protected SwiftlyContext _ctx = new SwiftlyContextImpl();
@@ -307,6 +323,7 @@ public class SwiftlyApplet extends JApplet
     protected ChatDirector _chatdtr;
     protected AppletContext _appletContext;
     protected PassiveNotifier _notifier;
+    protected SimpleProgressBar _progress;
 
     protected int _projectId;
 

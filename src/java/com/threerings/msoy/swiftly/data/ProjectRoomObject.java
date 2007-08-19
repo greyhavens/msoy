@@ -26,11 +26,8 @@ public class ProjectRoomObject extends PlaceObject
     /** The field name of the <code>collaborators</code> field. */
     public static final String COLLABORATORS = "collaborators";
 
-    /** The field name of the <code>result</code> field. */
-    public static final String RESULT = "result";
-
-    /** The field name of the <code>building</code> field. */
-    public static final String BUILDING = "building";
+    /** The field name of the <code>results</code> field. */
+    public static final String RESULTS = "results";
 
     /** The field name of the <code>service</code> field. */
     public static final String SERVICE = "service";
@@ -51,11 +48,8 @@ public class ProjectRoomObject extends PlaceObject
     /** All the collaborators for this project. */
     public DSet<MemberName> collaborators = new DSet<MemberName>();
 
-    /** The build result. */
-    public BuildResult result;
-
-    /** True if a build is happening. */
-    public boolean building;
+    /** All the build results for the collaborators of this project. */
+    public DSet<BuildResult> results = new DSet<BuildResult>();
 
     /** Provides invocation services. */
     public ProjectRoomMarshaller service;
@@ -119,6 +113,22 @@ public class ProjectRoomObject extends PlaceObject
         for (PathElement elem : pathElements) {
             if (elem.getAbsolutePath().equals(path)) {
                 return elem;
+            }
+        }
+
+        // return null if we did not find the element
+        return null;
+    }
+
+    /**
+     * Find the BuildResult for a given MemberName..
+     * Return the result if found, null otherwise
+     */
+    public BuildResult findResultForMember (MemberName member)
+    {
+        for (BuildResult result : results) {
+            if (result.getMember().equals(member)) {
+                return result;
             }
         }
 
@@ -349,35 +359,51 @@ public class ProjectRoomObject extends PlaceObject
     }
 
     /**
-     * Requests that the <code>result</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
+     * Requests that the specified entry be added to the
+     * <code>results</code> set. The set will not change until the event is
+     * actually propagated through the system.
      */
-    public void setResult (BuildResult value)
+    public void addToResults (BuildResult elem)
     {
-        BuildResult ovalue = this.result;
-        requestAttributeChange(
-            RESULT, value, ovalue);
-        this.result = value;
+        requestEntryAdd(RESULTS, results, elem);
     }
 
     /**
-     * Requests that the <code>building</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>results</code> set. The set will not change until the
+     * event is actually propagated through the system.
      */
-    public void setBuilding (boolean value)
+    public void removeFromResults (Comparable key)
     {
-        boolean ovalue = this.building;
-        requestAttributeChange(
-            BUILDING, Boolean.valueOf(value), Boolean.valueOf(ovalue));
-        this.building = value;
+        requestEntryRemove(RESULTS, results, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>results</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateResults (BuildResult elem)
+    {
+        requestEntryUpdate(RESULTS, results, elem);
+    }
+
+    /**
+     * Requests that the <code>results</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setResults (DSet<com.threerings.msoy.swiftly.data.BuildResult> value)
+    {
+        requestAttributeChange(RESULTS, value, this.results);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.swiftly.data.BuildResult> clone =
+            (value == null) ? null : value.typedClone();
+        this.results = clone;
     }
 
     /**

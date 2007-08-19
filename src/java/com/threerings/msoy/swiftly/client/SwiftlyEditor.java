@@ -31,6 +31,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.micasa.client.ChatPanel;
 import com.threerings.micasa.client.OccupantList;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
@@ -383,26 +384,8 @@ public class SwiftlyEditor extends PlacePanel
     // from AttributeChangeListener
     public void attributeChanged (AttributeChangedEvent event)
     {
-        if (event.getName().equals(ProjectRoomObject.RESULT)) {
-            displayBuildResult();
-
-        } else if (event.getName().equals(ProjectRoomObject.BUILDING)) {
-            if (_roomObj.building) {
-                if (_roomObj.result != null) {
-                    _toolbar.showProgress((int)_roomObj.result.getBuildTime());
-                } else {
-                    _toolbar.showProgress(DEFAULT_BUILD_TIME);
-                }
-            } else {
-                _toolbar.stopProgress();
-            }
-            if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
-                _ctrl.buildAction.setEnabled(!_roomObj.building);
-                _ctrl.buildExportAction.setEnabled(!_roomObj.building);
-            }
-
         // the project has been loaded or changed. tell the project panel to make the project tree
-        } else if (event.getName().equals(ProjectRoomObject.PROJECT)) {
+        if (event.getName().equals(ProjectRoomObject.PROJECT)) {
             _projectPanel.setProject(_roomObj);
         }
     }
@@ -414,6 +397,12 @@ public class SwiftlyEditor extends PlacePanel
             final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
             // Re-bind transient instance variables
             element.lazarus(_roomObj.pathElements);
+
+        } else if (event.getName().equals(ProjectRoomObject.RESULTS)) {
+            final BuildResult result = (BuildResult)event.getEntry();
+            if (result.getMember().equals(_ctx.getMemberObject().memberName)) {
+                displayBuildResult(result);
+            }
         }
     }
 
@@ -424,6 +413,12 @@ public class SwiftlyEditor extends PlacePanel
             final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
             // Re-bind transient instance variables
             element.lazarus(_roomObj.pathElements);
+
+        } else if (event.getName().equals(ProjectRoomObject.RESULTS)) {
+            final BuildResult result = (BuildResult)event.getEntry();
+            if (result.getMember().equals(_ctx.getMemberObject().memberName)) {
+                displayBuildResult(result);
+            }
         }
     }
 
@@ -434,6 +429,9 @@ public class SwiftlyEditor extends PlacePanel
         // ever happen.
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             // final int elementId = (Integer)event.getKey();
+
+        } else if (event.getName().equals(ProjectRoomObject.RESULTS)) {
+            // nada
         }
     }
 
@@ -487,18 +485,15 @@ public class SwiftlyEditor extends PlacePanel
     }
 
     /** Displays the build result on the console */
-    protected void displayBuildResult ()
+    protected void displayBuildResult (BuildResult result)
     {
-        if (_roomObj.result.buildSuccessful()) {
+        if (result.buildSuccessful()) {
             _ctx.showInfoMessage(_msgs.get("m.build_succeeded"));
         } else {
             _ctx.showErrorMessage(_msgs.get("m.build_failed"));
         }
-        _console.displayCompilerOutput(_roomObj.result.getOutput());
+        _console.displayCompilerOutput(result.getOutput());
     }
-
-    /** The first build will be guessed to be 6 seconds. */
-    protected static final int DEFAULT_BUILD_TIME = 6000;
 
     /** A list of files that can be created by this SwiftlyDocumentEditor. */
     protected ArrayList<SwiftlyDocumentEditor.FileTypes> _createableFileTypes;
