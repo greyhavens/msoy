@@ -53,10 +53,10 @@ public class DecorViewerComp extends Canvas
                 ExternalInterface.addCallback("updateParameters", updateParameters);
                 ExternalInterface.addCallback("updateMedia", updateMedia);
             } catch (err :Error) {
-                log.warning("External interface initialization failed: " + err);
+                dlog("External interface initialization failed: " + err);
             }
         } else {
-            log.warning("External interface not available!");
+            dlog("External interface not available!");
         }
     }
 
@@ -230,7 +230,7 @@ public class DecorViewerComp extends Canvas
             try {
                 ExternalInterface.call("updateDecorInit");
             } catch (e :Error) {
-                log.warning("Unable to initialize updates with Javascript: " + e);
+                dlog("Unable to initialize updates with Javascript: " + e);
             }
         } 
 
@@ -355,11 +355,11 @@ public class DecorViewerComp extends Canvas
      */
     public function refreshPreview () :void
     {
-        // redraw the room backdrop
+        // redraw the backdrop image
         _backdrop.update(_decor);
         _backdrop.drawRoom(
             _backdropCanvas.graphics, _backdropCanvas.width, _backdropCanvas.height, true, false);
-
+        
         // scale the preview box. ideally, we want a 50% scaling factor, but if that's too big,
         // just shrink the whole thing to fit.
         var scale :Number = 0.5;
@@ -397,11 +397,11 @@ public class DecorViewerComp extends Canvas
                     "updateDecor", _decor.width, _decor.height, _decor.depth, _decor.horizon,
                     _decor.type, _decor.offsetX, _decor.offsetY, _decor.hideWalls);
             } catch (e :Error) {
-                log.warning("Unable to send update to Javascript: " + e);
+                dlog("Unable to send update to Javascript: " + e);
             }
         } else {
-            log.warning("External interface not available, " +
-                        "while trying to send an update to Javascript");
+            dlog("External interface not available, " +
+                 "while trying to send an update to Javascript");
         }
     }
 
@@ -453,16 +453,24 @@ public class DecorViewerComp extends Canvas
     protected function rollOutHandler (event :MouseEvent) :void
     {
         // fake rollouts can happen when the mouse lands on a loader or some other piece of media
-        // that the mx framework doesn't like. we sort these out in a painful, manual way. :)
-        
-        if (event.relatedObject is Application || event.relatedObject is UIComponent) {
-            // it's a real rollout. hide the custom pointer and show the standard one.
-            _mouseDownAnchor = null;
-            if (_pointer != null) {
-                _pointer.visible = false;
-            }
-            Mouse.show();
+        // that the mx framework doesn't like. we sort these out manually.
+        if (! (event.relatedObject is Application || event.relatedObject is UIComponent)) {
+            return;
         }
+
+        // kluge warning: some versions of the flash player also trigger an erroneous rollout
+        // when we add the mouse cursor bitmap right underneath the mouse pointer (even though
+        // the bitmap is a child object, and shouldn't cause a rollout, just a mouseout). 
+        if (event.relatedObject == _pointer) {
+            return;
+        }
+
+        // it's a real rollout. hide the custom pointer and show the standard one.
+        _mouseDownAnchor = null;
+        if (_pointer != null) {
+            _pointer.visible = false;
+        }
+        Mouse.show();
     }
 
     protected function mouseDownHandler (event :MouseEvent) :void
