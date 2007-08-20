@@ -110,7 +110,12 @@ public class MsoyGameRegistry
                 _game = (grec == null) ? null : (Game)grec.toItem();
             }
             public void handleSuccess () {
-                lockGame(_game, (MsoyGameService.LocationListener)_listener);
+                if (_game == null) {
+                    log.warning("Requested to locate unknown game [id=" + gameId + "].");
+                    _listener.requestFailed(GameCodes.INTERNAL_ERROR);
+                } else {
+                    lockGame(_game, (MsoyGameService.LocationListener)_listener);
+                }
             }
             protected Game _game;
         });
