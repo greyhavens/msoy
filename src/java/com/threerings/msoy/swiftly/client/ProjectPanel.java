@@ -113,7 +113,8 @@ public class ProjectPanel extends JPanel
             return;
         }
 
-        setSelectedNode(node);
+        // the selection has changed, update any actions
+        updateActions();
 
         PathElement element = getSelectedPathElement();
         if (element.getType() == PathElement.Type.FILE) {
@@ -316,7 +317,6 @@ public class ProjectPanel extends JPanel
         _roomObj.service.deletePathElement(_ctx.getClient(), element.elementId,
             new ConfirmListener () {
             public void requestProcessed () {
-                _selectedNode = null;
                 updateActions();
             }
             public void requestFailed (String reason) {
@@ -395,18 +395,18 @@ public class ProjectPanel extends JPanel
 
     protected PathElementTreeNode getSelectedNode ()
     {
-        return _selectedNode;
+        if (_tree.getSelectionPath() == null) {
+            return null;
+        }
+        return (PathElementTreeNode)_tree.getSelectionPath().getLastPathComponent();
     }
 
     protected PathElement getSelectedPathElement ()
     {
-        return _selectedNode == null ? null : (PathElement)_selectedNode.getUserObject();
-    }
-
-    protected void setSelectedNode (PathElementTreeNode node)
-    {
-        _selectedNode = node;
-        updateActions();
+        if (getSelectedNode() == null) {
+            return null;
+        }
+        return getSelectedNode().getElement();
     }
 
     protected class PopupListener extends MouseAdapter
@@ -444,7 +444,6 @@ public class ProjectPanel extends JPanel
     protected MessageBundle _msgs;
     protected ProjectRoomObject _roomObj;
     protected ProjectTreeModel _treeModel;
-    protected PathElementTreeNode _selectedNode;
 
     protected JTree _tree;
     protected JToolBar _toolbar = new JToolBar();
