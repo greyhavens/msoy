@@ -107,6 +107,7 @@
 
 .itemDetailPanel .Details {
   padding-top: 20px;
+  width: 250px;
 }
 
 .itemDetailPanel .Details td {
