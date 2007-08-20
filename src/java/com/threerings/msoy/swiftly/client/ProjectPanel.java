@@ -316,11 +316,8 @@ public class ProjectPanel extends JPanel
         _roomObj.service.deletePathElement(_ctx.getClient(), element.elementId,
             new ConfirmListener () {
             public void requestProcessed () {
-                // disable the delete, new and rename actions and unset the selected node
-                _deleteFileAction.setEnabled(false);
-                _renameFileAction.setEnabled(false);
-                _addFileAction.setEnabled(false);
                 _selectedNode = null;
+                updateActions();
             }
             public void requestFailed (String reason) {
                 _ctx.showErrorMessage(_msgs.get(reason));
