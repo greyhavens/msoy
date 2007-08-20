@@ -90,6 +90,11 @@ public /*abstract*/ class Item
      * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public var ownerId :int;
 
+    /** Either the item id of the catalog prototype created from this mutable item (and ownerId !=
+     * 0), or the item id of the mutable item from which this catalog prototype was created (and
+     * ownerId == 0), or zero. */
+    public var catalogId :int;
+
     /** The current rating of this item, either 0 or between 1 and 5. */
     public var rating :Number;
 
@@ -316,6 +321,7 @@ public /*abstract*/ class Item
         out.writeByte(flagged);
         out.writeInt(creatorId);
         out.writeInt(ownerId);
+        out.writeInt(catalogId);
         out.writeFloat(rating);
         out.writeByte(used);
         out.writeInt(location);
@@ -335,6 +341,7 @@ public /*abstract*/ class Item
         flagged = ins.readByte();
         creatorId = ins.readInt();
         ownerId = ins.readInt();
+        catalogId = ins.readInt();
         rating = ins.readFloat();
         used = ins.readByte();
         location = ins.readInt();

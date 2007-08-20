@@ -38,6 +38,10 @@ public class ToyRecord extends ItemRecord
     public static final ColumnExp OWNER_ID_C =
         new ColumnExp(ToyRecord.class, OWNER_ID);
 
+    /** The qualified column identifier for the {@link #catalogId} field. */
+    public static final ColumnExp CATALOG_ID_C =
+        new ColumnExp(ToyRecord.class, CATALOG_ID);
+
     /** The qualified column identifier for the {@link #rating} field. */
     public static final ColumnExp RATING_C =
         new ColumnExp(ToyRecord.class, RATING);

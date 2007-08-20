@@ -107,8 +107,8 @@ public abstract class ItemRepository<
     }
 
     /**
-     * Loads an item with the specified identifier. Returns null if no item
-     * exists with that identifier.
+     * Loads an item with the specified identifier. Returns null if no item exists with that
+     * identifier.
      */
     public T loadOriginalItem (int itemId)
         throws PersistenceException
@@ -117,11 +117,13 @@ public abstract class ItemRepository<
     }
 
     /**
-     * Loads the clone with the given identifier. Returns null if no clone
-     * exists with that identifier.
+     * Loads the clone with the given identifier. Returns null if no clone exists with that
+     * identifier.
      */
     public T loadClone (int cloneId) throws PersistenceException
     {
+        log.info("Loading clone " + cloneId + "...");
+
         CLT cloneRecord = load(getCloneClass(), cloneId);
         if (cloneRecord == null) {
             return null;
@@ -528,8 +530,44 @@ public abstract class ItemRepository<
         record.rarity = rarity;
         record.purchases = record.returns = 0;
         priceRecord(record, true);
-        // and insert it - done!
         insert(record);
+
+        // wire this listed item up to the original that created it
+        if (listItem.catalogId != 0) {
+            noteListing(listItem.catalogId, listItem.itemId);
+        }
+
+        return record;
+    }
+
+    /**
+     * Updates the specified catalog listing to reference a new listed item.
+     */
+    public CatalogRecord updateListing (int oldItemId, ItemRecord listItem, long updateTime)
+        throws PersistenceException
+    {
+        // we're changing the primary key of the catalog record, so we load it, remove it, update
+        // the primary key and then reinsert (which plays nice with the cache)
+        CAT record = loadListing(oldItemId);
+        if (record == null) {
+            throw new PersistenceException("Missing old listing for update [oldId=" + oldItemId +
+                                           ", newId=" + listItem.itemId + "].");
+        }
+        delete(getCatalogClass(), oldItemId);
+
+        // clear out the old catalog prototype's connection to the original item
+        noteListing(oldItemId, 0);
+
+        record.item = listItem;
+        record.itemId = listItem.itemId;
+        // TOOD updatedDate?: record.listedDate = new Timestamp(updateTime);
+        insert(record);
+
+        // wire this listed item up to the original that created it
+        if (listItem.catalogId != 0) {
+            noteListing(listItem.catalogId, listItem.itemId);
+        }
+
         return record;
     }
 
@@ -537,9 +575,14 @@ public abstract class ItemRepository<
      * Removes the listing for the specified item from the catalog, returns true if a listing was
      * found and removed, false otherwise.
      */
-    public boolean removeListing  (int itemId)
+    public boolean removeListing (int itemId)
         throws PersistenceException
     {
+        // clear out the catalog id of the original item from which this listing was created
+        T listedItem = loadItem(itemId);
+        if (listedItem != null && listedItem.catalogId != 0) {
+            noteListing(listedItem.catalogId, 0);
+        }
         return delete(getCatalogClass(), itemId) > 0;
     }
 
@@ -673,6 +716,16 @@ public abstract class ItemRepository<
         }
     }
 
+    /**
+     * Notes that the specified original item is now associated with the specified catalog listed
+     * item (which may be zero to clear out a listing link).
+     */
+    protected void noteListing (int originalItemId, int catalogId)
+        throws PersistenceException
+    {
+        updatePartial(getItemClass(), originalItemId, ItemRecord.CATALOG_ID, catalogId);
+    }
+
     protected void priceRecord (CAT record, boolean always)
         throws PersistenceException
     {
@@ -735,7 +788,9 @@ public abstract class ItemRepository<
     protected List<T> loadClonedItems (Where where, QueryClause... clauses)
         throws PersistenceException
     {
-        final int OUR_CLAUSE_COUNT = 8;
+        log.info("Loading clones " + where + "...");
+
+        final int OUR_CLAUSE_COUNT = 9;
         QueryClause[] allClauses = new QueryClause[clauses.length + OUR_CLAUSE_COUNT];
         allClauses[0] = where;
         allClauses[1] = new Join(
@@ -752,6 +807,7 @@ public abstract class ItemRepository<
             ItemRecord.USED, getCloneClass(), CloneRecord.USED);
         allClauses[7] = new FieldOverride(
             ItemRecord.LAST_TOUCHED, getCloneClass(), CloneRecord.LAST_TOUCHED);
+        allClauses[8] = new FieldOverride(ItemRecord.CATALOG_ID, "0");
         System.arraycopy(clauses, 0, allClauses, OUR_CLAUSE_COUNT, clauses.length);
 
         return findAll(getItemClass(), allClauses);

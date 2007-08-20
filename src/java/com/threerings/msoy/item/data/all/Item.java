@@ -80,7 +80,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      * all digital items. Each type of item has its own identifier space. */
     public int itemId;
 
-    /** The item ID from which this object was cloned, or 0 if this is not a clone. */
+    /** The item id from which this object was cloned, or 0 if this is not a clone. */
     public int parentId;
 
     /** A bit-mask of flags that we need to know about every digital item without doing further
@@ -93,6 +93,11 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     /** The member id of the member that owns this item, or 0 if it's not in any inventory;
      * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public int ownerId;
+
+    /** The item id of the catalog prototype created from this mutable item (ownerId != 0), or the
+     * item id of the mutable item from which this catalog prototype was created (ownerId == 0), or
+     * zero. */
+    public int catalogId;
 
     /** The current rating of this item, either 0 or between 1 and 5. */
     public float rating;

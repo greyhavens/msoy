@@ -60,6 +60,9 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The column identifier for the {@link #ownerId} field. */
     public static final String OWNER_ID = "ownerId";
 
+    /** The column identifier for the {@link #catalogId} field. */
+    public static final String CATALOG_ID = "catalogId";
+
     /** The column identifier for the {@link #rating} field. */
     public static final String RATING = "rating";
 
@@ -100,7 +103,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public static final String FURNI_CONSTRAINT = "furniConstraint";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int BASE_SCHEMA_VERSION = 10;
+    public static final int BASE_SCHEMA_VERSION = 11;
     public static final int BASE_MULTIPLIER = 1000;
 
     public static ItemRecord newRecord (Item item) {
@@ -128,9 +131,8 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         throw new RuntimeException("Unknown item type: " + item);
     }
 
-    /** This item's unique identifier. <em>Note:</em> this identifier is not
-     * globally unique among all digital items. Each type of item has its own
-     * identifier space. */
+    /** This item's unique identifier. <em>Note:</em> this identifier is not globally unique among
+     * all digital items. Each type of item has its own identifier space. */
     @Id
     @GeneratedValue(generator="itemId", strategy=GenerationType.TABLE, allocationSize=1)
     public int itemId;
@@ -140,8 +142,8 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     @Computed(required=false)
     public int parentId = 0;
 
-    /** A bit-mask of flags that we need to know about every digital item
-     * without doing further database lookups or network requests. */
+    /** A bit-mask of flags that we need to know about every digital item without doing further
+     * database lookups or network requests. */
     public byte flagged;
 
     /** The member id of the member that created this item. */
@@ -150,6 +152,11 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The member id of the member that owns this item, or 0 if it's not in any inventory;
      * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public int ownerId;
+
+    /** Either the item id of the catalog prototype created from this mutable item (ownerId != 0),
+     * or the item id of the mutable item from which this catalog prototype was created (and
+     * ownerId == 0), or zero. */
+    public int catalogId;
 
     /** The current rating of this item, from 1 to 5. */
     public float rating;
@@ -172,8 +179,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** Whether or not this item represents mature content. */
     public boolean mature;
 
-    /** A hash code identifying the media used to display this item's thumbnail
-     * representation. */
+    /** A hash code identifying the media used to display this item's thumbnail representation. */
     @Column(nullable=true)
     public byte[] thumbMediaHash;
 
@@ -183,8 +189,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The size constraint on the {@link #thumbMediaHash} media. */
     public byte thumbConstraint;
 
-    /** A hash code identifying the media used to display this item's furniture
-     * representation. */
+    /** A hash code identifying the media used to display this item's furniture representation. */
     @Column(nullable=true)
     public byte[] furniMediaHash;
 
@@ -205,6 +210,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
         itemId = item.itemId;
         ownerId = item.ownerId;
+        catalogId = item.catalogId;
         parentId = item.parentId;
         rating = item.rating;
         creatorId = item.creatorId;
@@ -285,6 +291,9 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         this.parentId = this.itemId;
         this.itemId = clone.itemId;
 
+        // clear out our catalog id; clones are never catalog originals
+        this.catalogId = 0;
+
         this.ownerId = clone.ownerId;
         this.used = clone.used;
         this.location = clone.location;
@@ -299,6 +308,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         Item item = createItem();
         item.itemId = itemId;
         item.ownerId = ownerId;
+        item.catalogId = catalogId;
         item.parentId = parentId;
         item.rating = rating;
         item.used = used;

@@ -170,87 +170,26 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public CatalogListing listItem (WebIdent ident, final ItemIdent item, String descrip,
-                                    final int rarity, boolean list)
+    public CatalogListing listItem (WebIdent ident, ItemIdent item, String descrip, int rarity,
+                                    boolean list)
         throws ServiceException
     {
-        final MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser(ident);
 
         // locate the appropriate repository
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.type);
         try {
+            // load a copy of the original item
+            ItemRecord listItem = repo.loadOriginalItem(item.itemId);
+            if (listItem == null) {
+                log.warning("Can't find item to list [item= " + item + ", list=" + list + "]");
+                throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            }
+
             if (list) {
-                final int price;
-                // TEMP: admins don't have to pay to list; when this gets factored into
-                // FinancialAction then admins/support can not pay for anything
-                // FURTHER TEMP: item listing is currently disabled for everyone
-                price = 0;
-                /*if (mrec.isAdmin()) {
-                    price = 0;
-                } else {
-                    switch (rarity) {
-                    case CatalogListing.RARITY_PLENTIFUL:
-                        price = 100; break;
-                    case CatalogListing.RARITY_COMMON:
-                        price = 200; break;
-                    case CatalogListing.RARITY_NORMAL:
-                        price = 300; break;
-                    case CatalogListing.RARITY_UNCOMMON:
-                        price = 400; break;
-                    case CatalogListing.RARITY_RARE:
-                        price = 500; break;
-                    default:
-                        log.warning("Unknown rarity [item=" + item + ", rarity=" + rarity + "]");
-                        throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
-                    }
-                }
-                if (mrec.flow < price) {
-                    throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
-                }*/
-
-                // load a copy of the original item
-                ItemRecord listItem = repo.loadOriginalItem(item.itemId);
-                if (listItem == null) {
-                    log.warning("Can't find item to list [item= " + item + "]");
-                    throw new ServiceException(ItemCodes.INTERNAL_ERROR);
-                }
-                if (listItem.ownerId != mrec.memberId) {
-                    log.warning("Member requested to list unowned item [who=" + mrec.accountName +
-                                ", item="+ item + "].");
-                    throw new ServiceException(ItemCodes.ACCESS_DENIED);
-                }
-                // reset any important bits
-                listItem.clearForListing();
-
-                // use the updated description
-                listItem.description = descrip;
-
-                // acquire a current timestamp
-                long now = System.currentTimeMillis();
-
-                // then insert the record as the immutable copy we list (filling in its itemId)
-                repo.insertOriginalItem(listItem);
-
-                // then copy tags from original to immutable
-                repo.getTagRepository().copyTags(item.itemId, listItem.itemId, mrec.memberId, now);
-
-                // and finally create & insert the catalog record
-                CatalogRecord record = repo.insertListing(listItem, rarity, now);
-
-                String details = item.type + " " + item.itemId + " " + rarity;
-                if (price > 0) {
-                    MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
-                        mrec.memberId, price, UserAction.LISTED_ITEM, details);
-                    MemberManager.queueFlowUpdated(flowRec);
-                } else {
-                    logUserAction(mrec, UserAction.LISTED_ITEM, details);
-                }
-
-                return record.toListing();
-
+                return listItem(mrec, repo, item, listItem, descrip, rarity);
             } else {
-                // TODO: validate ownership
-                return repo.removeListing(item.itemId) ? new CatalogListing() : null;
+                return delistItem(mrec, repo, item, listItem) ? new CatalogListing() : null;
             }
 
         } catch (PersistenceException pe) {
@@ -331,5 +270,127 @@ public class CatalogServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Load popular tags failed [type=" + type + "].", pe);
         }
         return result;
+    }
+
+    /**
+     * Helper function for {@link #listItem}.
+     */
+    protected CatalogListing listItem (MemberRecord mrec, ItemRepository<ItemRecord, ?, ?, ?> repo,
+                                       ItemIdent item, ItemRecord listItem,
+                                       String descrip, int rarity)
+        throws PersistenceException, ServiceException
+    {
+        if (listItem.ownerId != mrec.memberId) {
+            log.warning("Member requested to list unowned item [who=" + mrec.accountName +
+                        ", item=" + item + "].");
+            throw new ServiceException(ItemCodes.ACCESS_DENIED);
+        }
+
+        // reset any important bits
+        listItem.clearForListing();
+
+        // note this item's old catalog id and configure its new one
+        int oldItemId = listItem.catalogId;
+        listItem.catalogId = item.itemId;
+
+        // use the updated description
+        listItem.description = descrip;
+
+        // acquire a current timestamp
+        long now = System.currentTimeMillis();
+        CatalogRecord record;
+
+        // if this item is already listed in the catalog, we want to update the listing
+        // instead of creating it anew
+        if (oldItemId != 0) {
+            log.info("Updating listing " + oldItemId + " for " + item + ".");
+            // create a new immutable catalog prototype item
+            repo.insertOriginalItem(listItem);
+
+            // update the catalog listing
+            record = repo.updateListing(oldItemId, listItem, now);
+
+            String details = item.type + " " + item.itemId;
+            logUserAction(mrec, UserAction.UPDATED_LISTING, details);
+
+        } else {
+            log.info("Creating listing for " + item + ".");
+            // compute and check that they have the listing cost
+            int price = getCheckListingPrice(mrec, rarity);
+
+            // create a new immutable catalog prototype item
+            repo.insertOriginalItem(listItem);
+
+            // then copy tags from original to immutable
+            repo.getTagRepository().copyTags(
+                item.itemId, listItem.itemId, mrec.memberId, now);
+
+            // and finally create & insert the catalog record
+            record = repo.insertListing(listItem, rarity, now);
+
+            String details = item.type + " " + item.itemId + " " + rarity;
+            if (price > 0) {
+                MemberFlowRecord flowRec =
+                    MsoyServer.memberRepo.getFlowRepository().spendFlow(
+                        mrec.memberId, price, UserAction.LISTED_ITEM, details);
+                MemberManager.queueFlowUpdated(flowRec);
+            } else {
+                logUserAction(mrec, UserAction.LISTED_ITEM, details);
+            }
+        }
+
+        return record.toListing();
+    }
+
+    /**
+     * Helper function for {@link #listItem}.
+     */
+    protected boolean delistItem (MemberRecord mrec, ItemRepository<ItemRecord, ?, ?, ?> repo,
+                                  ItemIdent item, ItemRecord listItem)
+        throws PersistenceException, ServiceException
+    {
+        if (listItem.creatorId != mrec.memberId) {
+            log.warning("Member requested to delist unowned item [who=" + mrec.accountName +
+                        ", item=" + item + "].");
+            throw new ServiceException(ItemCodes.ACCESS_DENIED);
+        }
+        return repo.removeListing(item.itemId);
+    }
+
+    /**
+     * Helper function for {@link #listItem}.
+     */
+    protected int getCheckListingPrice (MemberRecord mrec, int rarity)
+        throws ServiceException
+    {
+        // TEMP: admins don't have to pay to list; when this gets factored into
+        // FinancialAction then admins/support can not pay for anything
+        if (mrec.isAdmin()) {
+            return 0;
+        }
+
+        int price;
+//         switch (rarity) {
+//         case CatalogListing.RARITY_PLENTIFUL:
+//             price = 100; break;
+//         case CatalogListing.RARITY_COMMON:
+//             price = 200; break;
+//         case CatalogListing.RARITY_NORMAL:
+//             price = 300; break;
+//         case CatalogListing.RARITY_UNCOMMON:
+//             price = 400; break;
+//         case CatalogListing.RARITY_RARE:
+//             price = 500; break;
+//         default:
+//             log.warning("Unknown rarity [rarity=" + rarity + "]");
+//             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+//         }
+        // FURTHER TEMP: item listing fee is currently disabled for everyone
+        price = 0;
+
+        if (mrec.flow < price) {
+            throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
+        }
+        return price;
     }
 }

@@ -71,10 +71,18 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _buttons.add(button);
         }
 
-        if (_item.parentId == 0) {
+        if (_item.catalogId != 0 || _item.parentId == 0) {
+            String tip, butlbl;
+            if (_item.catalogId != 0) {
+                tip = CInventory.msgs.detailUplistTip();
+                butlbl = CInventory.msgs.detailUplist();
+            } else {
+                tip = CInventory.msgs.detailListTip();
+                butlbl = CInventory.msgs.detailList();
+            }
             _details.add(WidgetUtil.makeShim(1, 10));
-            _details.add(new Label(CInventory.msgs.detailListTip()));
-            button = new Button(CInventory.msgs.detailList(), new ClickListener() {
+            _details.add(new Label(tip));
+            button = new Button(butlbl, new ClickListener() {
                 public void onClick (Widget sender) {
                     new DoListItemPopup(_item).show();
                 }

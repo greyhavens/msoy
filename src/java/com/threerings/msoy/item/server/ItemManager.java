@@ -857,6 +857,9 @@ public class ItemManager
                 if (item.used != 0) {
                     throw new InvocationException(ItemCodes.E_ITEM_IN_USE);
                 }
+                if (item.catalogId != 0) {
+                    throw new InvocationException(ItemCodes.E_ITEM_LISTED);
+                }
                 repo.deleteItem(ident.itemId);
                 return null;
             }
