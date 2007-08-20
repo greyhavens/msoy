@@ -62,6 +62,9 @@ public class SwiftlyEditor extends PlacePanel
         _ctrl = ctrl;
         _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
+        // setup the list of access listeners
+        _accessListeners = new HashSet<AccessControlListener>();
+
         setLayout(new VGroupLayout(
                       GroupLayout.STRETCH, GroupLayout.STRETCH, 5, GroupLayout.TOP));
         // let's not jam ourselves up against the edges of the window
@@ -111,11 +114,6 @@ public class SwiftlyEditor extends PlacePanel
         add(_contentPane);
 
         initFileTypes();
-
-        // setup the list of access listeners and add the various components
-        _accessListeners = new HashSet<AccessControlListener>();
-        addAccessControlListener(_toolbar);
-        addAccessControlListener(_projectPanel);
     }
 
     @Override // from Component

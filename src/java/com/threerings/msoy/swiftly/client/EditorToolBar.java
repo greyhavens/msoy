@@ -31,7 +31,6 @@ public class EditorToolBar extends JToolBar
         add(_consoleButton = createButton(_editor.createShowConsoleAction(), CONSOLE_ICON));
         add(Box.createHorizontalGlue());
 
-
         add(_ctx.getProgressBar());
 
         _readOnly = new JLabel();
@@ -39,6 +38,9 @@ public class EditorToolBar extends JToolBar
         _readOnly.setToolTipText(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.tooltip.read_only"));
         _readOnly.setVisible(false);
         add(_readOnly);
+
+        // add the toolbar as an access control listener
+        _editor.addAccessControlListener(this);
 
         setFloatable(false);
     }

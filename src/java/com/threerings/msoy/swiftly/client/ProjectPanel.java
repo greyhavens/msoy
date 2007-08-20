@@ -63,6 +63,9 @@ public class ProjectPanel extends JPanel
         // disable all actions initially
         setActionsEnabled(false);
 
+        // add the project panel as an access control listener
+        _editor.addAccessControlListener(this);
+
         add(_toolbar, BorderLayout.PAGE_START);
         setupPopup();
         add(_scrollPane, BorderLayout.CENTER);
