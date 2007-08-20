@@ -122,8 +122,6 @@ public abstract class ItemRepository<
      */
     public T loadClone (int cloneId) throws PersistenceException
     {
-        log.info("Loading clone " + cloneId + "...");
-
         CLT cloneRecord = load(getCloneClass(), cloneId);
         if (cloneRecord == null) {
             return null;
@@ -788,8 +786,6 @@ public abstract class ItemRepository<
     protected List<T> loadClonedItems (Where where, QueryClause... clauses)
         throws PersistenceException
     {
-        log.info("Loading clones " + where + "...");
-
         final int OUR_CLAUSE_COUNT = 9;
         QueryClause[] allClauses = new QueryClause[clauses.length + OUR_CLAUSE_COUNT];
         allClauses[0] = where;
