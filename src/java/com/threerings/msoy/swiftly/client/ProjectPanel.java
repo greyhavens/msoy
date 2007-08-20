@@ -60,9 +60,6 @@ public class ProjectPanel extends JPanel
         _toolbar.add(createButton(_deleteFileAction));
         _toolbar.setFloatable(false);
 
-        // disable all actions initially
-        setActionsEnabled(false);
-
         // add the project panel as an access control listener
         _editor.addAccessControlListener(this);
 
@@ -93,21 +90,19 @@ public class ProjectPanel extends JPanel
         ToolTipManager.sharedInstance().registerComponent(_tree);
 
         _scrollPane.getViewport().setView(_tree);
-        setActionsEnabled(false);
+        updateActions();
     }
 
     // from AccessControlListener
     public void writeAccessGranted ()
     {
-        setActionsEnabled(true);
-        _tree.setEditable(true);
+        updateActions();
     }
 
     // from AccessControlListener
     public void readOnlyAccessGranted ()
     {
-        setActionsEnabled(false);
-        _tree.setEditable(false);
+        updateActions();
     }
 
     // from interface TreeSelectionListener
@@ -321,9 +316,10 @@ public class ProjectPanel extends JPanel
         _roomObj.service.deletePathElement(_ctx.getClient(), element.elementId,
             new ConfirmListener () {
             public void requestProcessed () {
-                // disable the delete and rename actions and unset the selected node
+                // disable the delete, new and rename actions and unset the selected node
                 _deleteFileAction.setEnabled(false);
                 _renameFileAction.setEnabled(false);
+                _addFileAction.setEnabled(false);
                 _selectedNode = null;
             }
             public void requestFailed (String reason) {
@@ -358,12 +354,46 @@ public class ProjectPanel extends JPanel
         _popup.add(_renameFileAction);
     }
 
-    protected void setActionsEnabled (boolean value)
+    /**
+     * Called whenever a user action should change which actions are enabled.
+     */
+    protected void updateActions ()
     {
-        _addFileAction.setEnabled(value);
-        _uploadFileAction.setEnabled(value);
-        _deleteFileAction.setEnabled(value);
-        _renameFileAction.setEnabled(value);
+        // if the user does not have write access disable all actions
+        if (!_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
+            _addFileAction.setEnabled(false);
+            _uploadFileAction.setEnabled(false);
+            _deleteFileAction.setEnabled(false);
+            _renameFileAction.setEnabled(false);
+            _tree.setEditable(false);
+        }
+
+        PathElement element = getSelectedPathElement();
+        // if no element is selected, disable everything but file upload
+        if (element == null) {
+            _addFileAction.setEnabled(false);
+            _uploadFileAction.setEnabled(true);
+            _deleteFileAction.setEnabled(false);
+            _renameFileAction.setEnabled(false);
+            _tree.setEditable(false);
+
+        // if the selected node is the root or the project template, disable delete and rename
+        } else if (_roomObj.project.getTemplateSourceName().equals(element.getName()) ||
+                element.getType() == PathElement.Type.ROOT) {
+            _addFileAction.setEnabled(true);
+            _uploadFileAction.setEnabled(true);
+            _deleteFileAction.setEnabled(false);
+            _renameFileAction.setEnabled(false);
+            _tree.setEditable(false);
+
+        // else enable all the actions
+        } else {
+            _addFileAction.setEnabled(true);
+            _uploadFileAction.setEnabled(true);
+            _deleteFileAction.setEnabled(true);
+            _renameFileAction.setEnabled(true);
+            _tree.setEditable(true);
+        }
     }
 
     protected PathElementTreeNode getSelectedNode ()
@@ -378,29 +408,8 @@ public class ProjectPanel extends JPanel
 
     protected void setSelectedNode (PathElementTreeNode node)
     {
-        // if this is the first selection enable the buttons if the user has write access
-        if (_selectedNode == null && _roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
-            setActionsEnabled(true);
-        }
-
-        PathElement element = node.getElement();
-        // TODO: revist this code. cleanup at the very least
-        // if the selected node is the root or the project template, disable delete and rename
-        // only if the user has write access on the project
-        if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
-            if (_roomObj.project.getTemplateSourceName().equals(element.getName()) ||
-                    element.getType() == PathElement.Type.ROOT) {
-                _deleteFileAction.setEnabled(false);
-                _renameFileAction.setEnabled(false);
-                _tree.setEditable(false);
-            } else {
-                _deleteFileAction.setEnabled(true);
-                _renameFileAction.setEnabled(true);
-                _tree.setEditable(true);
-            }
-        }
-
         _selectedNode = node;
+        updateActions();
     }
 
     protected class PopupListener extends MouseAdapter
