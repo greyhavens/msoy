@@ -57,7 +57,6 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 import com.threerings.msoy.item.data.ItemCodes;
 
 import com.threerings.msoy.item.server.persist.AudioRepository;
-import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
@@ -448,8 +447,8 @@ public class ItemManager
     }
 
     /**
-     * Update an item in its owner's cache, if the item was modified persistently
-     * by an entity outside of this manager.
+     * Update an item in its owner's cache, if the item was modified persistently by an entity
+     * outside of this manager.
      */
     public void updateUserCache (Item item)
     {
@@ -634,38 +633,6 @@ public class ItemManager
     }
 
     /**
-     * Request to scale the specified avatar, as long as the owner matches.
-     */
-    public void scaleAvatar (
-        final int ownerId, final int avatarId, final float newScale,
-        ResultListener<Avatar> lner)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Avatar>("scaleAvatar", lner) {
-            public Avatar invokePersistResult () throws Exception {
-                // load it out, which we need to do anyway
-                AvatarRecord avatar = _avatarRepo.loadItem(avatarId);
-                // verify that it exists and the user owns it
-                if (avatar == null || avatar.ownerId != ownerId) {
-                    throw new Exception("Not in inventory");
-                }
-
-                // update the scale
-                avatar.scale = newScale;
-                _avatarRepo.updateScale(avatarId, newScale);
-
-                return (Avatar) avatar.toItem();
-            }
-
-            public void handleSuccess () {
-                super.handleSuccess();
-
-                // update the user's cache
-                updateUserCache(null, _result);
-            }
-        });
-    }
-
-    /**
      * Informs the runtime world that an item was created and inserted into the database.
      */
     public void itemCreated (ItemRecord record)
@@ -697,44 +664,11 @@ public class ItemManager
     }
 
     /**
-     * Get the details of specified item: display-friendly names of creator and owner and the
-     * rating given to this item by the member specified by memberId.
+     * Informs the runtime world that an item was deleted from the database.
      */
-    public void getItemDetail (final ItemIdent ident, final int memberId,
-                               ResultListener<ItemDetail> lner)
+    public void itemDeleted (ItemRecord record)
     {
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
-        if (repo == null) {
-            return;
-        }
-
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ItemDetail>("getItemDetail", lner) {
-            public ItemDetail invokePersistResult () throws PersistenceException {
-                ItemRecord record = repo.loadItem(ident.itemId);
-                if (record == null) {
-                    throw new PersistenceException(
-                        "Cannot load details of non-existent item [ident=" + ident + "]");
-                }
-
-                ItemDetail detail = new ItemDetail();
-                detail.item = record.toItem();
-                RatingRecord<ItemRecord> rr = repo.getRating(ident.itemId, memberId);
-                detail.memberRating = (rr == null) ? 0 : rr.rating;
-                MemberRecord memRec = MsoyServer.memberRepo.loadMember(record.creatorId);
-                detail.creator = memRec.getName();
-                if (record.ownerId != 0) {
-                    memRec = MsoyServer.memberRepo.loadMember(record.ownerId);
-                    if (memRec != null) {
-                        detail.owner = memRec.getName();
-                    } else {
-                        log.warning("Item missing owner " + record + ".");
-                    }
-                } else {
-                    detail.owner = null;
-                }
-                return detail;
-            }
-        });
+        deleteFromUserCache(record.ownerId, new ItemIdent(record.getType(), record.itemId));
     }
 
     /**
@@ -764,108 +698,8 @@ public class ItemManager
     }
 
     /**
-     * Remix a clone, turning it back into a full-featured original.
+     * Fetches the tags for a given item.
      */
-    public void remixItem (final ItemIdent ident, ResultListener<Item> lner)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
-        if (repo == null) {
-            return;
-        }
-
-        // and perform the remixing
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>("remixItem", lner) {
-            public Item invokePersistResult () throws PersistenceException {
-                // load a copy of the clone to modify
-                ItemRecord item = repo.loadClone(ident.itemId);
-                if (item == null) {
-                    throw new PersistenceException("Can't find item [item=" + ident + "]");
-                }
-                // TODO: make sure we should not use the original creator here make it ours
-                item.creatorId = item.ownerId;
-                // let the object forget whence it came
-                int originalId = item.parentId;
-                item.parentId = 0;
-                item.used = Item.UNUSED;
-                item.location = 0;
-                // insert it as a genuinely new item
-                item.itemId = 0;
-                repo.insertOriginalItem(item, false);
-                // delete the old clone
-                repo.deleteItem(ident.itemId);
-                // copy tags from the original to the new item
-                repo.getTagRepository().copyTags(
-                    originalId, item.itemId, item.ownerId, System.currentTimeMillis());
-                return item.toItem();
-            }
-
-            public void handleSuccess () {
-                super.handleSuccess();
-                updateUserCache(null, _result);
-            }
-        });
-    }
-
-    /**
-     * Deletes an item from the specified member's inventory. If the item is successfully deleted,
-     * null will be returned to the listener. If the item cannot be deleted due to access or other
-     * restrictions, an {@link InvocationException} will be delivered to the listener.
-     */
-    public void deleteItemFor (final int memberId, final ItemIdent ident,
-                               ResultListener<Void> lner)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
-        if (repo == null) {
-            return;
-        }
-
-        log.info("Deleting " + ident + " for " + memberId + ".");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("deleteItem", lner) {
-            public Void invokePersistResult () throws Exception {
-                ItemRecord item = repo.loadItem(ident.itemId);
-                if (item == null) {
-                    throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
-                }
-                if (item.ownerId != memberId) {
-                    throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
-                }
-                if (item.used != 0) {
-                    throw new InvocationException(ItemCodes.E_ITEM_IN_USE);
-                }
-                if (item.catalogId != 0) {
-                    throw new InvocationException(ItemCodes.E_ITEM_LISTED);
-                }
-                repo.deleteItem(ident.itemId);
-                return null;
-            }
-            public void handleSuccess () {
-                // remove the item from their inventory
-                deleteFromUserCache(memberId, ident);
-                super.handleSuccess();
-            }
-        });
-    }
-
-    /** Fetch the rating a user has given an item, or 0. */
-    public void getRating (final ItemIdent ident, final int memberId, ResultListener<Byte> lner)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
-        if (repo == null) {
-            return;
-        }
-
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Byte>("getRating", lner) {
-            public Byte invokePersistResult () throws PersistenceException {
-                RatingRecord<ItemRecord> record = repo.getRating(ident.itemId, memberId);
-                return record != null ? record.rating : 0;
-            }
-        });
-    }
-
-    /** Fetch the tags for a given item. */
     public void getTags (final ItemIdent ident, ResultListener<Collection<String>> lner)
     {
         // locate the appropriate repository
@@ -978,7 +812,7 @@ public class ItemManager
             return;
         }
 
-        // and perform the remixing
+        // and perform the tagging
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<TagHistory>("tagItem", lner) {
             public TagHistory invokePersistResult () throws PersistenceException {
                 long now = System.currentTimeMillis();
@@ -1271,6 +1105,7 @@ public class ItemManager
                         }
                     }
                 }
+
             } finally {
                 memObj.commitTransaction();
             }

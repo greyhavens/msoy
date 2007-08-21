@@ -50,11 +50,6 @@ public interface ItemServiceAsync
     public void deleteItem (WebIdent ident, ItemIdent item, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link ItemService#getRating}.
-     */
-    public void getRating (WebIdent ident, ItemIdent item, int memberId, AsyncCallback callback);
-
-    /**
      * The asynchronous version of {@link ItemService#rateItem}.
      */
     public void rateItem (WebIdent ident, ItemIdent item, byte rating, AsyncCallback callback);

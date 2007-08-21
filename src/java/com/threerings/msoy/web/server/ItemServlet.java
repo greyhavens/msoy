@@ -24,9 +24,12 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
+import com.threerings.msoy.item.server.persist.AvatarRecord;
+import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.RatingRecord;
 
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.data.MailFolder;
@@ -127,74 +130,167 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public ItemDetail loadItemDetail (WebIdent ident, final ItemIdent item)
+    public ItemDetail loadItemDetail (WebIdent ident, final ItemIdent iident)
         throws ServiceException
     {
-        final ServletWaiter<ItemDetail> waiter = new ServletWaiter<ItemDetail>(
-            "loadItem[" + item + "]");
         MemberRecord mrec = getAuthedUser(ident);
-        final int memberId = (mrec == null) ? 0 : mrec.memberId;
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.getItemDetail(item, memberId, waiter);
+        int memberId = (mrec == null) ? 0 : mrec.memberId;
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
+
+        try {
+            ItemRecord record = repo.loadItem(iident.itemId);
+            if (record == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
-        });
-        return waiter.waitForResult();
+
+            // the detail contains the item...
+            ItemDetail detail = new ItemDetail();
+            detail.item = record.toItem();
+
+            // its ratings...
+            RatingRecord<ItemRecord> rr = repo.getRating(iident.itemId, mrec.memberId);
+            detail.memberRating = (rr == null) ? 0 : rr.rating;
+
+            // the creator's name
+            MemberRecord crrec = MsoyServer.memberRepo.loadMember(record.creatorId);
+            if (crrec == null) {
+                log.warning("Item missing creator " + record + ".");
+            } else {
+                detail.creator = crrec.getName();
+            }
+
+            // and the owner's name
+            if (record.ownerId != 0) {
+                crrec = MsoyServer.memberRepo.loadMember(record.ownerId);
+                if (crrec != null) {
+                    detail.owner = crrec.getName();
+                } else {
+                    log.warning("Item missing owner " + record + ".");
+                }
+            }
+
+            return detail;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load item detail [id=" + iident + "].", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService
-    public void scaleAvatar (WebIdent ident, final int avatarId, final float newScale)
+    public void scaleAvatar (WebIdent ident, int avatarId, float newScale)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(ident);
-        final ServletWaiter<Avatar> waiter = new ServletWaiter<Avatar>(
-            "scaleAvatar[" + memrec.memberId + ", " + avatarId + ", " + newScale + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.scaleAvatar(memrec.memberId, avatarId, newScale, waiter);
+        MemberRecord memrec = requireAuthedUser(ident);
+
+        AvatarRepository repo = MsoyServer.itemMan.getAvatarRepository();
+        try {
+            final AvatarRecord avatar = repo.loadItem(avatarId);
+            if (avatar == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
-        });
-        waiter.waitForResult();
+            if (avatar.ownerId != memrec.memberId) {
+                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            }
+
+            avatar.scale = newScale;
+            repo.updateScale(avatarId, newScale);
+
+            // let the item manager know that we've updated this item
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.itemMan.itemUpdated(avatar);
+                }
+            });
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to scale avatar [for=" + memrec.memberId +
+                    ", aid=" + avatarId + ", scale=" + newScale + "].", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService
-    public Item remixItem (WebIdent ident, final ItemIdent item)
+    public Item remixItem (WebIdent ident, final ItemIdent iident)
         throws ServiceException
     {
-        final ServletWaiter<Item> waiter = new ServletWaiter<Item>("remixItem[" + item + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.remixItem(item, waiter);
+        MemberRecord memrec = requireAuthedUser(ident);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
+
+        try {
+            // load a copy of the clone to modify
+            final ItemRecord item = repo.loadClone(iident.itemId);
+            if (item == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
-        });
-        return waiter.waitForResult();
+            if (item.ownerId != memrec.memberId) {
+                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            }
+            // TODO: make sure item is remixable
+
+            // prep the item for remixing and insert it as a new original item
+            int originalId = item.parentId;
+            item.prepareForRemixing();
+            repo.insertOriginalItem(item, false);
+
+            // delete the old clone
+            repo.deleteItem(iident.itemId);
+
+            // copy tags from the original to the new item
+            repo.getTagRepository().copyTags(
+                originalId, item.itemId, item.ownerId, System.currentTimeMillis());
+
+            // let the item manager know that we've created a new item
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.itemMan.itemCreated(item);
+                }
+            });
+
+            return item.toItem();
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to remix item [item=" + iident +
+                    ", for=" + memrec.memberId + "]", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService
-    public void deleteItem (final WebIdent ident, final ItemIdent item)
+    public void deleteItem (final WebIdent ident, final ItemIdent iident)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(ident);
-        final ServletWaiter<Void> waiter = new ServletWaiter<Void>("deleteItem[" + item + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.deleteItemFor(memrec.memberId, item, waiter);
-            }
-        });
-        waiter.waitForResult();
-    }
+        MemberRecord memrec = requireAuthedUser(ident);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
 
-    // from interface ItemService
-    public byte getRating (WebIdent ident, final ItemIdent item, final int memberId)
-        throws ServiceException
-    {
-        final ServletWaiter<Byte> waiter = new ServletWaiter<Byte>("getRating[" + item + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.getRating(item, memberId, waiter);
+        try {
+            final ItemRecord item = repo.loadItem(iident.itemId);
+            if (item == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
-        });
-        return waiter.waitForResult();
+            if (item.ownerId != memrec.memberId) {
+                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            }
+            if (item.used != 0) {
+                throw new ServiceException(ItemCodes.E_ITEM_IN_USE);
+            }
+            if (item.catalogId != 0) {
+                throw new ServiceException(ItemCodes.E_ITEM_LISTED);
+            }
+            repo.deleteItem(iident.itemId);
+
+            // let the item manager know that we've deleted this item
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.itemMan.itemDeleted(item);
+                }
+            });
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to delete item [item=" + iident +
+                    ", for=" + memrec.memberId + "]", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService

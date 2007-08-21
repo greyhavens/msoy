@@ -74,12 +74,6 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Fetches the rating somebody gave something, or 0.
-     */
-    public byte getRating (WebIdent ident, ItemIdent item, int memberId)
-        throws ServiceException;
-
-    /**
      * Awards an item a rating from 1 to 5.
      *
      * @return the new average rating for the item.
