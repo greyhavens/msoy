@@ -63,7 +63,7 @@ public class ItemServlet extends MsoyServiceServlet
         final ItemRecord record = ItemRecord.newRecord(item);
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.getType());
         try {
-            repo.insertOriginalItem(record);
+            repo.insertOriginalItem(record, false);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to create item " + item + ".", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);

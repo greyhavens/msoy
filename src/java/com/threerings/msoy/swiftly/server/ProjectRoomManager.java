@@ -858,7 +858,7 @@ public class ProjectRoomManager extends PlaceManager
                 _record = ItemRecord.newRecord(item);
 
                 // insert the new item into the repository
-                repo.insertOriginalItem(_record);
+                repo.insertOriginalItem(_record, false);
 
                 // update the collaborator record with the new itemId
                 _exportData.buildResultItemId = _record.itemId;

@@ -305,7 +305,7 @@ public class CatalogServlet extends MsoyServiceServlet
         if (oldItemId != 0) {
             log.info("Updating listing " + oldItemId + " for " + item + ".");
             // create a new immutable catalog prototype item
-            repo.insertOriginalItem(listItem);
+            repo.insertOriginalItem(listItem, true);
 
             // update the catalog listing
             record = repo.updateListing(oldItemId, listItem, now);
@@ -319,7 +319,7 @@ public class CatalogServlet extends MsoyServiceServlet
             int price = getCheckListingPrice(mrec, rarity);
 
             // create a new immutable catalog prototype item
-            repo.insertOriginalItem(listItem);
+            repo.insertOriginalItem(listItem, true);
 
             // then copy tags from original to immutable
             repo.getTagRepository().copyTags(

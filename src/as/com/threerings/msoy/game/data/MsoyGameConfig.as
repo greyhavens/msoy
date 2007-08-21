@@ -34,7 +34,7 @@ public class MsoyGameConfig extends ToyBoxGameConfig
     public function init (game :Game, gameDef :GameDefinition) :void
     {
         this.name = game.name;
-        _gameId = game.getPrototypeId();
+        _gameId = game.gameId;
         _gameDef = gameDef;
     }
 

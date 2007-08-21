@@ -97,10 +97,15 @@ public class GameRepository extends ItemRepository<
     // END TEMP
 
     @Override // from ItemRepository
-    public void insertOriginalItem (GameRecord item)
+    public void insertOriginalItem (GameRecord item, boolean catalogListing)
         throws PersistenceException
     {
-        super.insertOriginalItem(item);
+        super.insertOriginalItem(item, catalogListing);
+
+        // sanity check
+        if (catalogListing && item.gameId == 0) {
+            log.warning("Listing game with no assigned game id " + item + ".");
+        }
 
         // if this item did not yet have a game id, create a new game detail record and wire it up
         if (item.gameId == 0) {
@@ -108,6 +113,10 @@ public class GameRepository extends ItemRepository<
             gdr.sourceItemId = item.itemId;
             insert(gdr);
             updatePartial(getItemClass(), item.itemId, GameRecord.GAME_ID, gdr.gameId);
+
+        } else if (catalogListing) {
+            updatePartial(GameDetailRecord.class, item.gameId,
+                          GameDetailRecord.LISTED_ITEM_ID, item.itemId);
         }
     }
 

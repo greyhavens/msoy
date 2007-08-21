@@ -483,7 +483,7 @@ public abstract class ItemRepository<
      * Inserts the supplied item into the database. The {@link ItemRecord#itemId} and the
      * {@link ItemRecord#lastTouched) fields will be filled in as a result of this call.
      */
-    public void insertOriginalItem (T item)
+    public void insertOriginalItem (T item, boolean catalogListing)
         throws PersistenceException
     {
         if (item.itemId != 0) {

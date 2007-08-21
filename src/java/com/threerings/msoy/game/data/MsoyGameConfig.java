@@ -24,7 +24,7 @@ public class MsoyGameConfig extends ToyBoxGameConfig
     public void init (Game game, GameDefinition gameDef)
     {
         this.name = game.name;
-        _gameId = game.getPrototypeId();
+        _gameId = game.gameId;
         _gameDef = gameDef;
     }
 
