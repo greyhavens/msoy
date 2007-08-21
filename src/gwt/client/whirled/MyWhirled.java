@@ -209,7 +209,11 @@ public class MyWhirled extends FlexTable
                     Object id = friendIter.next();
                     List entry = (List) _peopleAttributes.get(id);
                     if (entry != null) {
-                        entry.add(card.sceneType == SceneCard.ROOM ? "Room" : "Game");
+                        // we look at index 1 for the style to add to the name label - if there
+                        // is already something there, this should replace it, but List.set()
+                        // will throw IndexOutOfBoundsException if the index isn't already in the
+                        // list.
+                        entry.add(1, card.sceneType == SceneCard.ROOM ? "Room" : "Game");
                     }
                 }
             }
@@ -266,7 +270,7 @@ public class MyWhirled extends FlexTable
             VerticalPanel sceneContainer = new VerticalPanel();
             sceneContainer.setStyleName("SceneListContainer");
             sceneContainer.setSpacing(0);
-            // sort by number of friends in the room, desc
+            // sort by number of friends in the room, then total population, desc
             Object[] sceneArray = scenes.toArray();
             Arrays.sort(sceneArray, new Comparator() {
                 public int compare (Object o1, Object o2) {
@@ -276,7 +280,11 @@ public class MyWhirled extends FlexTable
 
                     SceneCard s1 = (SceneCard) o1;
                     SceneCard s2 = (SceneCard) o2;
-                    return s2.friends.size() - s1.friends.size();
+                    if (s2.friends.size() == s1.friends.size()) {
+                        return s2.population - s1.population;
+                    } else {
+                        return s2.friends.size() - s1.friends.size();
+                    }
                 } 
                 public boolean equals (Object obj) {
                     return obj == this;

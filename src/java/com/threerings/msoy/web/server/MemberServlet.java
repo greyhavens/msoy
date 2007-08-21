@@ -272,12 +272,23 @@ public class MemberServlet extends MsoyServiceServlet
                                     continue;
                                 }
 
-                                ArrayList<Integer> list = places.get(memLoc.sceneId);
-                                if (list == null) {
-                                    list = new ArrayList<Integer>();
-                                    places.put(memLoc.sceneId, list);
+                                if (memLoc.sceneId != 0) {
+                                    ArrayList<Integer> list = places.get(memLoc.sceneId);
+                                    if (list == null) {
+                                        list = new ArrayList<Integer>();
+                                        places.put(memLoc.sceneId, list);
+                                    }
+                                    list.add(memberCard.name.getMemberId());
+                                } 
+
+                                if (memLoc.gameId != 0) {
+                                    ArrayList<Integer> list = games.get(memLoc.gameId);
+                                    if (list == null) {
+                                        list = new ArrayList<Integer>();
+                                        games.put(memLoc.gameId, list);
+                                    }
+                                    list.add(memberCard.name.getMemberId());
                                 }
-                                list.add(memberCard.name.getMemberId());
                             }
 
                             // for now, we're going to list all active games...
