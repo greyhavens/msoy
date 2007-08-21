@@ -30,6 +30,17 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.world.server.persist.SceneRecord;
+
+import com.threerings.msoy.peer.data.HostedChannel;
+import com.threerings.msoy.peer.data.HostedGame;
+import com.threerings.msoy.peer.data.MemberLocation;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
@@ -37,18 +48,8 @@ import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.world.server.persist.SceneRecord;
 import com.threerings.msoy.server.util.MailSender;
 
-import com.threerings.msoy.person.server.persist.ProfileRecord;
-
-import com.threerings.msoy.peer.data.HostedChannel;
-import com.threerings.msoy.peer.data.HostedGame;
-import com.threerings.msoy.peer.data.MemberLocation;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-
-import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;
@@ -56,15 +57,16 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.data.Group;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.SceneCard;
-import com.threerings.msoy.web.data.InvitationResults;
-import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.Whirled;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
@@ -139,7 +141,7 @@ public class MemberServlet extends MsoyServiceServlet
     public List loadInventory (WebIdent ident, final byte type)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser(ident);
 
         // convert the string they supplied to an item enumeration
         if (Item.getClassForType(type) == null) {
@@ -148,22 +150,28 @@ public class MemberServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
-        // load their inventory via the item manager
-        final ServletWaiter<ArrayList<Item>> waiter = new ServletWaiter<ArrayList<Item>>(
-            "loadInventory[" + memrec.memberId + ", " + type + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.loadInventory(memrec.memberId, type, waiter);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        try {
+            ArrayList<Item> items = new ArrayList<Item>();
+            for (ItemRecord record : repo.loadOriginalItems(memrec.memberId)) {
+                items.add(record.toItem());
             }
-        });
-        ArrayList<Item> result = waiter.waitForResult();
-        // when Item becomes a type-safe Comparable this Comparator can go away
-        Collections.sort(result, new Comparator<Item>() {
-            public int compare (Item one, Item two) {
-                return one.compareTo(two);
+            for (ItemRecord record : repo.loadClonedItems(memrec.memberId)) {
+                items.add(record.toItem());
             }
-        });
-        return result;
+
+            // when Item becomes a type-safe Comparable this Comparator can go away
+            Collections.sort(items, new Comparator<Item>() {
+                public int compare (Item one, Item two) {
+                    return one.compareTo(two);
+                }
+            });
+            return items;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "loadInventory failed [for=" + memrec.memberId + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from MemberService

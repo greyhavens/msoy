@@ -738,33 +738,6 @@ public class ItemManager
     }
 
     /**
-     * Loads up the inventory of items of the specified type for the specified member.
-     */
-    public void loadInventory (
-        final int memberId, byte type, ResultListener<ArrayList<Item>> lner)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, lner);
-        if (repo == null) {
-            return;
-        }
-
-        // and load their items; notifying the listener on success or failure
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<ArrayList<Item>>("loadInventory", lner) {
-            public ArrayList<Item> invokePersistResult () throws PersistenceException {
-                Collection<ItemRecord> list = repo.loadOriginalItems(memberId);
-                list.addAll(repo.loadClonedItems(memberId));
-                ArrayList<Item> newList = new ArrayList<Item>(list.size());
-                for (ItemRecord record : list) {
-                    newList.add(record.toItem());
-                }
-                return newList;
-            }
-        });
-    }
-
-    /**
      * Load at most maxCount recently-touched items from the specified user's inventory.
      */
     public void loadRecentlyTouched (
@@ -818,7 +791,7 @@ public class ItemManager
                 item.location = 0;
                 // insert it as a genuinely new item
                 item.itemId = 0;
-                repo.insertOriginalItem(item);
+                repo.insertOriginalItem(item, false);
                 // delete the old clone
                 repo.deleteItem(ident.itemId);
                 // copy tags from the original to the new item
