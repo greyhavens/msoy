@@ -303,7 +303,6 @@ public class CatalogServlet extends MsoyServiceServlet
         // if this item is already listed in the catalog, we want to update the listing
         // instead of creating it anew
         if (oldItemId != 0) {
-            log.info("Updating listing " + oldItemId + " for " + item + ".");
             // create a new immutable catalog prototype item
             repo.insertOriginalItem(listItem, true);
 
@@ -320,7 +319,6 @@ public class CatalogServlet extends MsoyServiceServlet
             logUserAction(mrec, UserAction.UPDATED_LISTING, details);
 
         } else {
-            log.info("Creating listing for " + item + ".");
             // compute and check that they have the listing cost
             int price = getCheckListingPrice(mrec, rarity);
 
