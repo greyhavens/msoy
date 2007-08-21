@@ -20,6 +20,10 @@ public class Game extends Item
     /** The primary game media. */
     public MediaDesc gameMedia;
 
+    /** A unique identifier assigned to this game and preserved across new versions of the game
+     * item so that ratings and lobbies and content packs all reference the same "game". */
+    public int gameId;
+
     // @Override from Item
     public byte getType ()
     {

@@ -49,13 +49,13 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
     public static final int BASE_MULTIPLIER = 1000;
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
-    /** This clone's ID, unique relative all items of the same type. */
+    /** This clone's id, unique relative to all items of the same type. */
     @Id
-    @GeneratedValue(
-        generator="cloneId", strategy=GenerationType.TABLE, allocationSize=-1, initialValue=-1)
+    @GeneratedValue(generator="cloneId", strategy=GenerationType.TABLE, allocationSize=-1,
+                    initialValue=-1)
     public int itemId;
 
-    /** The ID of the immutable item from which this was cloned. */
+    /** The id of the immutable item from which this was cloned. */
     public int originalItemId;
 
     /** The owner of this clone. */

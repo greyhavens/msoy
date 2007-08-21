@@ -19,6 +19,10 @@ public class Game extends Item
     /** The game media. */
     public var gameMedia :MediaDesc;
 
+    /** A unique identifier assigned to this game and preserved across new versions of the game
+     * item so that ratings and lobbies and content packs all reference the same "game". */
+    public var gameId :int;
+
     override public function getType () :int
     {
         return GAME;
@@ -40,6 +44,7 @@ public class Game extends Item
 
         out.writeField(config);
         out.writeObject(gameMedia);
+        out.writeInt(gameId);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -48,6 +53,7 @@ public class Game extends Item
 
         config = (ins.readField(String) as String);
         gameMedia = (ins.readObject() as MediaDesc);
+        gameId = ins.readInt();
     }
 }
 }

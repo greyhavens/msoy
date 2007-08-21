@@ -134,6 +134,10 @@ public class ItemManager
 
         _listRepo = new ItemListRepository(ctx);
 
+        // TEMP
+        _gameRepo.assignGameIds();
+        // ENDTEMP
+
         // register our invocation service
         MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), MsoyCodes.WORLD_GROUP);
     }
@@ -561,8 +565,8 @@ public class ItemManager
                     if (furni.itemType == Item.NOT_A_TYPE) {
                         // it's only legal to add props that were already there
                         if (props == null || !props.contains(furni.id)) {
-                            lner.requestFailed(
-                                new Exception("Furni added with invalid item source."));
+                            lner.requestFailed(new Exception("Furni added with invalid item " +
+                                                             "source " + furni + "."));
                             return;
                         }
                         continue;

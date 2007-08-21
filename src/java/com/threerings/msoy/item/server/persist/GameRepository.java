@@ -3,11 +3,25 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.util.Set;
+
+import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
+
+// TEMP
+import java.util.HashMap;
+import java.util.Map;
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.Tuple;
+import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.operator.Conditionals;
+import static com.threerings.msoy.Log.log;
+// END TEMP
 
 /**
  * Manages the persistent store of {@link Game} items.
@@ -33,39 +47,140 @@ public class GameRepository extends ItemRepository<
         super(ctx);
     }
 
-    @Override
+    // TEMP
+    public void assignGameIds ()
+        throws PersistenceException
+    {
+        HashMap<String,Tuple<GameDetailRecord,ArrayIntSet>> mapping =
+            new HashMap<String,Tuple<GameDetailRecord,ArrayIntSet>>();
+        for (GameRecord record : findAll(getItemClass(), new Where(GameRecord.GAME_ID_C, 0))) {
+            String name = record.name;
+            int idx;
+            // hackery for known names
+            if ((idx = name.indexOf(" v1.")) != -1) {
+                name = name.substring(0, idx);
+            } else if ((idx = name.indexOf(" v0.")) != -1) {
+                name = name.substring(0, idx);
+            } else if ((idx = name.indexOf(" 1.")) != -1) {
+                name = name.substring(0, idx);
+            } else if ((idx = name.indexOf(" v.")) != -1) {
+                name = name.substring(0, idx);
+            } else if ((idx = name.indexOf(" 2007")) != -1) {
+                name = name.substring(0, idx);
+            }
+            Tuple<GameDetailRecord,ArrayIntSet> info = mapping.get(name);
+            if (info == null) {
+                info = new Tuple<GameDetailRecord,ArrayIntSet>(
+                    new GameDetailRecord(), new ArrayIntSet());
+                mapping.put(name, info);
+            }
+            if (record.ownerId == 0 && record.itemId > info.left.listedItemId) {
+                info.left.listedItemId = record.itemId;
+            }
+            if (record.ownerId != 0 && (info.left.sourceItemId == 0 ||
+                                        record.itemId < info.left.sourceItemId)) {
+                info.left.sourceItemId = record.itemId;
+            }
+            info.right.add(record.itemId);
+        }
+        for (Map.Entry<String,Tuple<GameDetailRecord,ArrayIntSet>> entry : mapping.entrySet()) {
+            GameDetailRecord gdr = entry.getValue().left;
+            insert(gdr);
+            log.info("Mapping " + gdr + " -> " + entry.getValue().right);
+            updatePartial(getItemClass(),
+                          new Where(new Conditionals.In(GameRecord.ITEM_ID_C,
+                                                        entry.getValue().right)), null,
+                          GameRecord.GAME_ID, gdr.gameId);
+        }
+        // TODO: set the GAME_GAME_ID counter to nextGameId
+    }
+    // END TEMP
+
+    @Override // from ItemRepository
+    public void insertOriginalItem (GameRecord item)
+        throws PersistenceException
+    {
+        super.insertOriginalItem(item);
+
+        // if this item did not yet have a game id, create a new game detail record and wire it up
+        if (item.gameId == 0) {
+            GameDetailRecord gdr = new GameDetailRecord();
+            gdr.sourceItemId = item.itemId;
+            insert(gdr);
+            updatePartial(getItemClass(), item.itemId, GameRecord.GAME_ID, gdr.gameId);
+        }
+    }
+
+    @Override // from ItemRepository
+    public void deleteItem (int itemId)
+        throws PersistenceException
+    {
+        // if we're deleting an original item; we need to potentially delete or update its
+        // associated game detail record
+        GameDetailRecord gdr = null;
+        if (itemId > 0) {
+            GameRecord item = load(getItemClass(), itemId);
+            if (item != null && item.gameId != 0) {
+                gdr = load(GameDetailRecord.class, item.gameId);
+            }
+            if (gdr.sourceItemId == itemId) {
+                gdr.sourceItemId = 0;
+                if (gdr.listedItemId == 0) {
+                    delete(gdr);
+                } else {
+                    update(gdr);
+                }
+            }
+            // this should never happen as catalog originals are not (currently) deleted
+            if (gdr.listedItemId == itemId) {
+                log.warning("Deleting listed item for game?! " + gdr + ".");
+            }
+        }
+
+        // now go ahead and do the standard item deletion
+        super.deleteItem(itemId);
+    }
+
+    @Override // from ItemRepository
     protected Class<GameRecord> getItemClass ()
     {
         return GameRecord.class;
     }
     
-    @Override
+    @Override // from ItemRepository
     protected Class<GameCatalogRecord> getCatalogClass ()
     {
         return GameCatalogRecord.class;
     }
 
-    @Override
+    @Override // from ItemRepository
     protected Class<GameCloneRecord> getCloneClass ()
     {
         return GameCloneRecord.class;
     }
     
-    @Override
+    @Override // from ItemRepository
     protected Class<GameRatingRecord> getRatingClass ()
     {
         return GameRatingRecord.class;
     }
 
-    @Override
+    @Override // from ItemRepository
     protected TagRecord createTagRecord ()
     {
         return new GameTagRecord();
     }
 
-    @Override
+    @Override // from ItemRepository
     protected TagHistoryRecord createTagHistoryRecord ()
     {
         return new GameTagHistoryRecord();
+    }
+
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        super.getManagedRecords(classes);
+        classes.add(GameDetailRecord.class);
     }
 }

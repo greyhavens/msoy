@@ -5,6 +5,8 @@ package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.Column;
+import com.samskivert.jdbc.depot.annotation.GeneratedValue;
+import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -39,6 +41,13 @@ public class GameRecord extends ItemRecord
     /** The qualified column identifier for the {@link #gameMimeType} field. */
     public static final ColumnExp GAME_MIME_TYPE_C =
         new ColumnExp(GameRecord.class, GAME_MIME_TYPE);
+
+    /** The column identifier for the {@link #gameId} field. */
+    public static final String GAME_ID = "gameId";
+
+    /** The qualified column identifier for the {@link #gameId} field. */
+    public static final ColumnExp GAME_ID_C =
+        new ColumnExp(GameRecord.class, GAME_ID);
 
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
@@ -117,8 +126,7 @@ public class GameRecord extends ItemRecord
         new ColumnExp(GameRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 7 +
-        BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 8;
 
     /** The XML game configuration. */
     @Column(type="TEXT")
@@ -129,6 +137,12 @@ public class GameRecord extends ItemRecord
 
     /** The MIME type of the {@link #gameMediaHash} media. */
     public byte gameMimeType;
+
+    /** A unique identifier assigned to this game and preserved across new versions of the game
+     * item so that ratings and lobbies and content packs all reference the same "game". */
+    @TableGenerator(name="gameId", pkColumnValue="GAME_GAME_ID")
+    @GeneratedValue(generator="gameId", strategy=GenerationType.TABLE, allocationSize=1)
+    public int gameId;
 
     public GameRecord ()
     {
@@ -144,6 +158,7 @@ public class GameRecord extends ItemRecord
             gameMediaHash = game.gameMedia.hash;
             gameMimeType = game.gameMedia.mimeType;
         }
+        gameId = game.gameId;
     }
 
     @Override // from Item
@@ -157,8 +172,9 @@ public class GameRecord extends ItemRecord
     {
         Game object = new Game();
         object.config = config;
-        object.gameMedia = gameMediaHash == null ? null :
+        object.gameMedia = (gameMediaHash == null) ? null :
             new MediaDesc(gameMediaHash, gameMimeType);
+        object.gameId = gameId;
         return object;
     }
 
