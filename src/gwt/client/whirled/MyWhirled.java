@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -74,9 +75,16 @@ public class MyWhirled extends FlexTable
         VerticalPanel mePanel = new VerticalPanel();
         mePanel.setStyleName("MePanel");
         setWidget(row, 0, mePanel);
-        HTML description = new HTML(CWhirled.msgs.myWhirledDescription());
-        description.setStyleName("Description");
-        mePanel.add(description);
+        VerticalPanel descriptionPanel = new VerticalPanel();
+        descriptionPanel.setStyleName("Description");
+        descriptionPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
+        descriptionPanel.add(new HTML(CWhirled.msgs.myWhirledDescription()));
+        Hyperlink whirledwideLink = 
+            Application.createLink(CWhirled.msgs.titleWhirledwide(), "whirled", "whirledwide");
+        whirledwideLink.setStyleName("Whirledwide");
+        descriptionPanel.add(whirledwideLink);
+        descriptionPanel.add(new HTML(CWhirled.msgs.whirledwideDescription()));
+        mePanel.add(descriptionPanel);
         mePanel.add(_pictureBox = new VerticalPanel());
         _pictureBox.setStyleName("PictureBox");
         _pictureBox.addStyleName("borderedBox");

@@ -110,4 +110,12 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key population
    */
   String population(String arg0);
+
+  /**
+   * Translated "What''s new and<br/>exciting in the<br/>Whirled at large.".
+   * 
+   * @return translated "What''s new and<br/>exciting in the<br/>Whirled at large."
+   * @gwt.key whirledwideDescription
+   */
+  String whirledwideDescription();
 }

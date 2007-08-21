@@ -30,6 +30,7 @@ public class index extends MsgsEntryPoint
             setContent(new MyWhirled());
         } else if ("whirledwide".equals(token)) {
             setPageTitle(CWhirled.msgs.titleWhirledwide());
+            setContent(new Whirledwide());
         }
     }
 
