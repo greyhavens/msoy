@@ -104,9 +104,9 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String headerChats();
 
   /**
-   * Translated "{0} here: ".
+   * Translated "Pop. {0}, including: ".
    * 
-   * @return translated "{0} here: "
+   * @return translated "Pop. {0}, including: "
    * @gwt.key population
    */
   String population(String arg0);

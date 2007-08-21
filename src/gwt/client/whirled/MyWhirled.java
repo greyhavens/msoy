@@ -283,7 +283,10 @@ public class MyWhirled extends FlexTable
 
             ClickListener goToScene = new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(Application.createLinkToken("world", "s" + scene.sceneId));
+                    String token = scene.sceneType == SceneCard.ROOM ?
+                        Application.createLinkToken("world", "s" + scene.sceneId) :
+                        Application.createLinkToken("game", "" + scene.sceneId);
+                    History.newItem(token);
                 }
             };
 
@@ -310,8 +313,8 @@ public class MyWhirled extends FlexTable
             nameLabel.setStyleName("SceneName");
             nameLabel.addClickListener(goToScene);
             text.add(nameLabel);
-            String peopleList = "";
             Iterator peopleIter = scene.friends.iterator();
+            String peopleList = "";
             while (peopleIter.hasNext()) {
                 List attrs = (List) peopleAttributes.get(peopleIter.next());
                 if (attrs == null) {
@@ -325,14 +328,13 @@ public class MyWhirled extends FlexTable
                     peopleList += ".";
                 }
             }
-            if (peopleList.length() > 45) {
-                peopleList = peopleList.substring(0, 42) + "...";
+            if (peopleList.length() > 50) {
+                peopleList = peopleList.substring(0, 47) + "...";
             }
             // Its a little silly that GWT has no way to string together some <span>s
-            HTML population = 
-                new HTML("<span class='PopulationCount'>" + 
+            HTML population = new HTML(
                 CWhirled.msgs.population("" + Math.max(scene.population, scene.friends.size())) + 
-                "</span><span class='PopulationList>" + peopleList + "</span>");
+                "<span class='PopulationList>" + peopleList + "</span>");
             text.add(population);
             add(text);
         }

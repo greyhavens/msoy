@@ -176,22 +176,22 @@
 
 .SceneWidget .LogoContainer img {
   display: block;
+  cursor: pointer;
 }
 
 .SceneWidget .Text {
   width: 183px;
-  padding: 5px 15px 5px 15px;
+  padding: 3px 22px 2px 12px;
   text-align: left;
+  font-size: 10px;
 }
 
 .SceneWidget .SceneName {
   font-size: 12px;
   font-weight: bold;
   text-decoration: underline;
-}
-
-.SceneWidget .PopulationCount {
-  font-size: 10px;
+  cursor: pointer;
+  margin-bottom: 2px;
 }
 
 .SceneWidget .PopulationList {
