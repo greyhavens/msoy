@@ -958,45 +958,6 @@ public class ItemManager
     }
 
     /**
-     * Records the specified member's rating of an item.
-     */
-    public void rateItem (final ItemIdent ident, final int memberId, final byte rating,
-                          ResultListener<Float> lner)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
-        if (repo == null) {
-            return;
-        }
-
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Float>("rateItem", lner) {
-            public Float invokePersistResult () throws PersistenceException {
-                ItemRecord item = repo.loadItem(ident.itemId);
-                if (item == null) {
-                    throw new PersistenceException("Can't find item [item=" + ident + "]");
-                }
-
-                int originalId;
-                if (item.parentId != 0) {
-                    // it's a clone: use the parent ID
-                    originalId = item.parentId;
-                } else {
-                    // not a clone; make sure we're not trying to rate a mutable
-                    if (item.ownerId != 0) {
-                        throw new PersistenceException(
-                            "Can't rate mutable object [item=" + ident + "]");
-                    }
-                    // and use our real ID
-                    originalId = ident.itemId;
-                }
-
-                // record this player's rating and obtain the new summarized rating
-                return repo.rateItem(originalId, memberId, rating);
-            }
-        });
-    }
-
-    /**
      * Add the specified tag to the specified item or remove it. Return a tag history object if the
      * tag did not already exist.
      */

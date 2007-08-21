@@ -198,17 +198,41 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public float rateItem (final WebIdent ident, final ItemIdent item, final byte rating)
+    public float rateItem (WebIdent ident, ItemIdent iident, byte rating)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(ident);
-        final ServletWaiter<Float> waiter = new ServletWaiter<Float>("rateItem[" + item + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.rateItem(item, memrec.memberId, rating, waiter);
+        MemberRecord memrec = requireAuthedUser(ident);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
+
+        try {
+            ItemRecord item = repo.loadItem(iident.itemId);
+            if (item == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
-        });
-        return waiter.waitForResult();
+
+            int originalId;
+            if (item.parentId != 0) {
+                // it's a clone: use the parent id
+                originalId = item.parentId;
+            } else {
+                // not a clone; make sure we're not trying to rate a mutable
+                if (item.ownerId != 0) {
+                    log.warning("Can't rate mutable item [id=" + iident + ", rating=" + rating +
+                                ", for=" + memrec.memberId + "].");
+                    throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+                }
+                // and use our real ID
+                originalId = iident.itemId;
+            }
+
+            // record this player's rating and obtain the new summarized rating
+            return repo.rateItem(originalId, memrec.memberId, rating);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to rate item [item=" + iident +
+                    ", rating=" + rating + ", for=" + memrec.memberId + "]", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService
@@ -309,7 +333,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public void setMature (WebIdent ident, ItemIdent iid, boolean value)
+    public void setMature (WebIdent ident, ItemIdent iident, boolean value)
         throws ServiceException
     {
         MemberRecord mRec = requireAuthedUser(ident);
@@ -317,12 +341,12 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
 
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
         try {
-            ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iid.type);
             // TODO: If things get really tight, this could use updatePartial() later.
-            ItemRecord item = repo.loadItem(iid.itemId);
+            ItemRecord item = repo.loadItem(iident.itemId);
             if (item == null) {
-                log.warning("Missing item for setFlags() [item=" + iid + ", value=" + value + "].");
+                log.warning("Missing item for setFlags [id=" + iident + ", value=" + value + "].");
                 throw new ServiceException(ItemCodes.INTERNAL_ERROR);
             }
             item.mature = value;
@@ -330,22 +354,22 @@ public class ItemServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING,
-                "Failed to set flags [item=" + iid + ", value=" + value + "]", pe);
+                "Failed to set flags [item=" + iident + ", value=" + value + "]", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
 
     // from interface ItemService
-    public void setFlags (WebIdent ident, ItemIdent iid, byte mask, byte value)
+    public void setFlags (WebIdent ident, ItemIdent iident, byte mask, byte value)
         throws ServiceException
     {
         requireAuthedUser(ident);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
         try {
-            ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iid.type);
             // TODO: If things get really tight, this could use updatePartial() later.
-            ItemRecord item = repo.loadItem(iid.itemId);
+            ItemRecord item = repo.loadItem(iident.itemId);
             if (item == null) {
-                log.warning("Missing item for setFlags() [item=" + iid + ", mask=" + mask +
+                log.warning("Missing item for setFlags() [item=" + iident + ", mask=" + mask +
                             ", value=" + value + "].");
                 throw new ServiceException(ItemCodes.INTERNAL_ERROR);
             }
@@ -353,7 +377,7 @@ public class ItemServlet extends MsoyServiceServlet
             repo.updateOriginalItem(item);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to set flags [item=" + iid + ", mask=" + mask +
+            log.log(Level.WARNING, "Failed to set flags [item=" + iident + ", mask=" + mask +
                     ", value=" + value + "]", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
