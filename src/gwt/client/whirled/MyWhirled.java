@@ -4,6 +4,8 @@
 package client.whirled;
 
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +37,8 @@ import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.Whirled;
+
+import com.threerings.msoy.data.all.MemberName;
 
 import client.util.FlashClients;
 import client.util.MediaUtil;
@@ -100,6 +104,8 @@ public class MyWhirled extends FlexTable
         _chatsBox.setStyleName("ChatsBox");
         _chatsBox.addStyleName("borderedBox");
         _chatsBox.setSpacing(3);
+
+        _peopleAttributes = new HashMap();
         
         setWidget(row++, 1, _errorContainer = new HorizontalPanel());
 
@@ -111,7 +117,7 @@ public class MyWhirled extends FlexTable
                     shim.setStyleName("PersonWidget");
                     return shim;
                 } else {
-                    return new PersonWidget((MemberCard) item);
+                    return new PersonWidget((MemberCard) item, _peopleAttributes);
                 }
             }
             protected String getEmptyMessage () {
@@ -167,13 +173,55 @@ public class MyWhirled extends FlexTable
 
     protected void fillUi (Whirled myWhirled) 
     {
-        // ensure that the list has PEOPLE_COLUMNS entries for spacing reasons
-        while (myWhirled.people.size() < PEOPLE_COLUMNS) {
-            myWhirled.people.add(null);
+        List people = myWhirled.people;
+        Object[] peopleArray = people.toArray();
+        // sort alphabetically
+        Arrays.sort(peopleArray, new Comparator() {
+            public int compare (Object o1, Object o2) {
+                if (!(o1 instanceof MemberCard) || !(o2 instanceof MemberCard)) {
+                    return 0;
+                }
+
+                MemberCard m1 = (MemberCard) o1;
+                MemberCard m2 = (MemberCard) o2;
+                return ("" + m1.name).compareTo("" + m2.name);
+            }
+            public boolean equals (Object obj) {
+                return obj == this;
+            }
+        });
+        for (int ii = 0; ii < peopleArray.length; ii++) {
+            MemberName person = ((MemberCard) peopleArray[ii]).name;
+            ArrayList list = new ArrayList();
+            list.add("" + person);
+            _peopleAttributes.put(new Integer(person.getMemberId()), list);
         }
-        _people.setModel(new SimpleDataModel(myWhirled.people), 0);
-        _places.populate(myWhirled.places);
-        _games.populate(myWhirled.games);
+        people = Arrays.asList(peopleArray);
+
+        // populate _peopleAttributes with scene type info
+        List[] scenes = { myWhirled.places, myWhirled.games };
+        for (int ii = 0; ii < scenes.length; ii++) {
+            Iterator sceneIter = scenes[ii].iterator();
+            while (sceneIter.hasNext()) {
+                SceneCard card = (SceneCard) sceneIter.next();
+                Iterator friendIter = card.friends.iterator();
+                while (friendIter.hasNext()) {
+                    Object id = friendIter.next();
+                    List entry = (List) _peopleAttributes.get(id);
+                    if (entry != null) {
+                        entry.add(card.sceneType == SceneCard.ROOM ? "Room" : "Game");
+                    }
+                }
+            }
+        }
+
+        // ensure that the list has PEOPLE_COLUMNS entries for spacing reasons
+        while (people.size() < PEOPLE_COLUMNS) {
+            people.add(null);
+        }
+        _people.setModel(new SimpleDataModel(people), 0);
+        _places.populate(myWhirled.places, _peopleAttributes);
+        _games.populate(myWhirled.games, _peopleAttributes);
                 
         MediaDesc photo = myWhirled.photo == null ? Profile.DEFAULT_PHOTO : myWhirled.photo;
         _pictureBox.add(MediaUtil.createMediaView(photo, 
@@ -213,14 +261,14 @@ public class MyWhirled extends FlexTable
             DOM.setStyleAttribute(getElement(), "overflowX", "hidden");
         }
 
-        public void populate (List scenes) 
+        public void populate (List scenes, Map peopleAttributes)
         {
             VerticalPanel sceneContainer = new VerticalPanel();
             sceneContainer.setStyleName("SceneListContainer");
             sceneContainer.setSpacing(0);
             Iterator iter = scenes.iterator();
             while (iter.hasNext()) {
-                sceneContainer.add(new SceneWidget((SceneCard) iter.next()));
+                sceneContainer.add(new SceneWidget((SceneCard) iter.next(), peopleAttributes));
             }
             setWidget(sceneContainer);
         }
@@ -228,10 +276,10 @@ public class MyWhirled extends FlexTable
 
     protected static class SceneWidget extends HorizontalPanel
     {
-        public SceneWidget (final SceneCard scene)
+        public SceneWidget (final SceneCard scene, Map peopleAttributes)
         {
             setStyleName("SceneWidget");
-            setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
 
             ClickListener goToScene = new ClickListener() {
                 public void onClick (Widget sender) {
@@ -239,6 +287,10 @@ public class MyWhirled extends FlexTable
                 }
             };
 
+            HorizontalPanel logoContainer = new HorizontalPanel();
+            logoContainer.setStyleName("LogoContainer");
+            logoContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+            logoContainer.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
             Widget logo = null;
             if (scene.logo != null) {
                 logo = MediaUtil.createMediaView(scene.logo, MediaDesc.HALF_THUMBNAIL_SIZE);
@@ -249,22 +301,46 @@ public class MyWhirled extends FlexTable
             if (logo instanceof Image) {
                 ((Image) logo).addClickListener(goToScene);
             }
-            add(logo);
+            logoContainer.add(logo);
+            add(logoContainer);
 
             VerticalPanel text = new VerticalPanel();
+            text.setStyleName("Text");
             Label nameLabel = new Label("" + scene.name);
+            nameLabel.setStyleName("SceneName");
             nameLabel.addClickListener(goToScene);
             text.add(nameLabel);
-            // TODO make sure population is greater than the number of friends we have in this scene
-            Label populationLabel = new Label("Population: " + scene.population);
-            text.add(populationLabel);
+            String peopleList = "";
+            Iterator peopleIter = scene.friends.iterator();
+            while (peopleIter.hasNext()) {
+                List attrs = (List) peopleAttributes.get(peopleIter.next());
+                if (attrs == null) {
+                    continue;
+                }
+
+                peopleList += "" + attrs.get(0);
+                if (peopleIter.hasNext()) {
+                    peopleList += ", ";
+                } else {
+                    peopleList += ".";
+                }
+            }
+            if (peopleList.length() > 45) {
+                peopleList = peopleList.substring(0, 42) + "...";
+            }
+            // Its a little silly that GWT has no way to string together some <span>s
+            HTML population = 
+                new HTML("<span class='PopulationCount'>" + 
+                CWhirled.msgs.population("" + Math.max(scene.population, scene.friends.size())) + 
+                "</span><span class='PopulationList>" + peopleList + "</span>");
+            text.add(population);
             add(text);
         }
     }
 
     protected static class PersonWidget extends VerticalPanel
     {
-        public PersonWidget (final MemberCard card)
+        public PersonWidget (final MemberCard card, Map peopleAttributes)
         {
             setStyleName("PersonWidget");
             setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
@@ -283,6 +359,10 @@ public class MyWhirled extends FlexTable
             Label nameLabel = new Label("" + card.name);
             nameLabel.addClickListener(goToFriend);
             nameLabel.setStyleName("NameLabel");
+            List attrs = (List) peopleAttributes.get(new Integer(card.name.getMemberId()));
+            if (attrs != null && attrs.size() >= 2) {
+                nameLabel.addStyleName("" + attrs.get(1));
+            }
             add(nameLabel);
         }
     }
@@ -299,4 +379,8 @@ public class MyWhirled extends FlexTable
     protected VerticalPanel _chatsBox;
 
     protected HorizontalPanel _errorContainer;
+
+    /** Map of member Ids to a List of attributes for the person.  This list is currently first 
+     * the member's name as a string, then second a style name to apply to their name label. */
+    protected Map _peopleAttributes;
 }

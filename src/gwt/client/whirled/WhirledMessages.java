@@ -16,12 +16,52 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String myWhirledDescription();
 
   /**
-   * Translated "My Friends Online".
+   * Translated "My Popular Places".
    * 
-   * @return translated "My Friends Online"
-   * @gwt.key headerPeople
+   * @return translated "My Popular Places"
+   * @gwt.key headerPlaces
    */
-  String headerPeople();
+  String headerPlaces();
+
+  /**
+   * Translated "My Whirled".
+   * 
+   * @return translated "My Whirled"
+   * @gwt.key titleMyWhirled
+   */
+  String titleMyWhirled();
+
+  /**
+   * Translated "Whirledwide".
+   * 
+   * @return translated "Whirledwide"
+   * @gwt.key titleWhirledwide
+   */
+  String titleWhirledwide();
+
+  /**
+   * Translated "Nobody Playing Games".
+   * 
+   * @return translated "Nobody Playing Games"
+   * @gwt.key noGames
+   */
+  String noGames();
+
+  /**
+   * Translated "No Online Friends".
+   * 
+   * @return translated "No Online Friends"
+   * @gwt.key noPeople
+   */
+  String noPeople();
+
+  /**
+   * Translated "No Friends in Rooms".
+   * 
+   * @return translated "No Friends in Rooms"
+   * @gwt.key noRooms
+   */
+  String noRooms();
 
   /**
    * Translated "My Active Games".
@@ -30,6 +70,14 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key headerGames
    */
   String headerGames();
+
+  /**
+   * Translated "My Friends Online".
+   * 
+   * @return translated "My Friends Online"
+   * @gwt.key headerPeople
+   */
+  String headerPeople();
 
   /**
    * Translated "No active group chats".
@@ -56,50 +104,10 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String headerChats();
 
   /**
-   * Translated "My Popular Places".
+   * Translated "{0} here: ".
    * 
-   * @return translated "My Popular Places"
-   * @gwt.key headerPlaces
+   * @return translated "{0} here: "
+   * @gwt.key population
    */
-  String headerPlaces();
-
-  /**
-   * Translated "My Whirled".
-   * 
-   * @return translated "My Whirled"
-   * @gwt.key titleMyWhirled
-   */
-  String titleMyWhirled();
-
-  /**
-   * Translated "Nobody Playing Games".
-   * 
-   * @return translated "Nobody Playing Games"
-   * @gwt.key noGames
-   */
-  String noGames();
-
-  /**
-   * Translated "Whirledwide".
-   * 
-   * @return translated "Whirledwide"
-   * @gwt.key titleWhirledwide
-   */
-  String titleWhirledwide();
-
-  /**
-   * Translated "No Online Friends".
-   * 
-   * @return translated "No Online Friends"
-   * @gwt.key noPeople
-   */
-  String noPeople();
-
-  /**
-   * Translated "No Friends in Rooms".
-   * 
-   * @return translated "No Friends in Rooms"
-   * @gwt.key noRooms
-   */
-  String noRooms();
+  String population(String arg0);
 }
