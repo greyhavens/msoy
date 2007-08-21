@@ -8,6 +8,7 @@ import java.util.Iterator;
 import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneImpl;
@@ -58,6 +59,51 @@ public class MsoyScene extends SceneImpl
         return hasRights;
     }
 
+    /**
+     * Can the specified member enter the scene?
+     */
+    public boolean canEnter (MemberObject member)
+    {
+        int sceneOwner = _model.ownerId;
+        boolean hasRights = false;
+        boolean groupScene = (_model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
+
+        switch (_model.accessControl) {
+        case MsoySceneModel.ACCESS_EVERYONE:
+            hasRights = true;
+            break;
+
+        case MsoySceneModel.ACCESS_OWNER_ONLY:
+            hasRights = (groupScene ?
+                         member.isGroupManager(sceneOwner) : member.getMemberId() == sceneOwner);
+            break;
+
+        case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
+            hasRights = (groupScene ?
+                         member.isGroupMember(sceneOwner) : member.getMemberId() == sceneOwner);
+
+            if (! hasRights && ! groupScene) {
+                // iterate over friends, see if any one of them owns the scene
+                for (FriendEntry friend : member.friends) {
+                    if (friend.getMemberId() == sceneOwner) {
+                        hasRights = true;
+                        break;
+                    }
+                }
+            }
+            break;
+        }
+
+        if (! hasRights && member.tokens.isSupport()) {
+            log.info("Allowing support+ to enter scene which they otherwise couldn't enter " +
+                     "[sceneId=" + getId() + ", sceneName=\"" + getName() + "\", accessControl=" +
+                     _model.accessControl + "].");
+            return true;
+        }
+
+        return hasRights;
+    }
+    
     /**
      * Returns the type of the scene.
      */

@@ -14,6 +14,7 @@ import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.client.persist.SceneRepository;
 
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -91,6 +92,7 @@ public class MsoySceneDirector extends SceneDirector
     override public function requestFailed (reason :String) :void
     {
         _departingPortalId = -1;
+        (_ctx as WorldContext).displayFeedback(MsoyCodes.GENERAL_MSGS, reason);
         super.requestFailed(reason);
     }
 

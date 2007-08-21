@@ -326,6 +326,18 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
+     * Validates the member against the scene's access control flag.
+     * If not successful, throws the invocation exception, with failure reason in the message.
+     */
+    public void validateEntranceAction (BodyObject body)
+        throws InvocationException
+    {
+        if (!((MsoyScene) _scene).canEnter((MemberObject)body)) {
+            throw new InvocationException(RoomCodes.E_ENTRANCE_DENIED);
+        } 
+    }
+
+    /**
      * reclaim an item from this room.
      */
     public void reclaimItem (ItemIdent item, MemberObject user)

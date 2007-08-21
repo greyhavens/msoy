@@ -11,6 +11,13 @@ public class RoomCodes
     /** A message event type dispatched on the room object. */
     public static const SPRITE_MESSAGE :String = "sprMsg";
 
+    /** An error (sort of) reported when an entity requests control but is already being controlled
+     * by another client. */
+    public static const E_ALREADY_CONTROLLED :String = "e.already_controlled";
+
+    /** Error reported when the entity is denied entrance to a scene. */
+    public static const E_ENTRANCE_DENIED :String = "e.entrance_denied";
+    
     /** A room layer that is in front of normal furniture and such. */
     public static const FOREGROUND_EFFECT_LAYER :int = 0;
 

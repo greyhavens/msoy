@@ -403,6 +403,18 @@ Window {
   verticalAlign: "middle";
 } 
 
+.roomEditAccessButtons {
+  buttonStyleName: "roomEditAccessButtonStyle";
+  buttonWidth: 23;
+  buttonHeight: 23;
+  horizontalGap: 0;
+}
+
+.roomEditAccessButtonStyle {
+  paddingBottom: 0;
+  fillAlphas: 0.6, 0.4, 0.6, 0.4;
+}
+
 .roomEditContents {  
   paddingBottom: 5;
   paddingTop: 5;

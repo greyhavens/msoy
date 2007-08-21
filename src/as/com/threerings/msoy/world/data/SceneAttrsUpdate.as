@@ -22,6 +22,9 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new name. */
     public var name :String;
 
+    /** New access control info. */
+    public var accessControl :int;
+    
     /** Full description of the new decor. */
     public var decor :Decor;
     
@@ -37,6 +40,7 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         var mmodel :MsoySceneModel = (model as MsoySceneModel);
         mmodel.name = name;
+        mmodel.accessControl = accessControl;
         mmodel.decor = decor;
         mmodel.audioData = (audioData.clone() as AudioData);
         mmodel.entrance = entrance;
@@ -47,6 +51,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         super.writeObject(out);
 
         out.writeField(name);
+        out.writeByte(accessControl);
         out.writeObject(decor);
         out.writeObject(audioData);
         out.writeObject(entrance);
@@ -57,6 +62,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         super.readObject(ins);
 
         name = (ins.readField(String) as String);
+        accessControl = ins.readByte();
         decor = (ins.readObject() as Decor);
         audioData = (ins.readObject() as AudioData);
         entrance = (ins.readObject() as MsoyLocation);

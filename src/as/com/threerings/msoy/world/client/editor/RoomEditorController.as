@@ -441,6 +441,8 @@ public class RoomEditorController
         if (_edit.target != null) {
             var sprites :HashMap = _view.getFurniSprites();
             setTarget(sprites.get(_edit.target.getFurniData().id) as FurniSprite);
+        } else {
+            targetSpriteUpdated();
         }
     }
 

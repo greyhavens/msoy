@@ -30,6 +30,20 @@ public class MsoySceneModel extends SceneModel
     /** Constant for Group room owners **/
     public static const OWNER_TYPE_GROUP :int = 2;
 
+    /** Access control constant, denotes that anyone can enter this scene. */
+    public static const ACCESS_EVERYONE :int = 0;
+
+    /** Access control constant, denotes that only the scene owner and friends
+     *  (or group manager and members, in case of a group scene) can enter this scene. */ 
+    public static const ACCESS_OWNER_AND_FRIENDS :int = 1;
+    
+    /** Access control constant, denotes that only the scene owner (or group manager,
+     *  in case of a group scene) can enter this scene. */
+    public static const ACCESS_OWNER_ONLY :int = 2;
+
+    /** Access control, as one of the ACCESS constants. Limits who can enter the scene. */
+    public var accessControl :int;
+    
     /** The type of owner that owns this scene. */
     public var ownerType :int;
 
@@ -179,7 +193,7 @@ public class MsoySceneModel extends SceneModel
     override public function clone () :Object
     {
         var model :MsoySceneModel = (super.clone() as MsoySceneModel);
-
+        model.accessControl = accessControl;
         model.ownerType = ownerType;
         model.ownerId = ownerId;
         model.furnis = (furnis.clone() as TypedArray);
@@ -194,6 +208,7 @@ public class MsoySceneModel extends SceneModel
     {
         super.writeObject(out);
 
+        out.writeByte(accessControl);
         out.writeByte(ownerType);
         out.writeInt(ownerId);
         out.writeObject(furnis);
@@ -207,6 +222,7 @@ public class MsoySceneModel extends SceneModel
     {
         super.readObject(ins);
 
+        accessControl = ins.readByte();
         ownerType = ins.readByte();
         ownerId = ins.readInt();
         furnis = (ins.readObject() as TypedArray);

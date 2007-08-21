@@ -66,6 +66,13 @@ public class SceneRecord extends PersistentRecord
     public static final ColumnExp SCENE_ID_C =
         new ColumnExp(SceneRecord.class, SCENE_ID);
 
+    /** The column identifier for the {@link #accessControl} field. */
+    public static final String ACCESS_CONTROL = "accessControl";
+
+    /** The qualified column identifier for the {@link #accessControl} field. */
+    public static final ColumnExp ACCESS_CONTROL_C =
+        new ColumnExp(SceneRecord.class, ACCESS_CONTROL);
+
     /** The column identifier for the {@link #ownerType} field. */
     public static final String OWNER_TYPE = "ownerType";
 
@@ -153,12 +160,15 @@ public class SceneRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The unique identifier for this scene. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY, initialValue=6)
     public int sceneId; // initialValue=6 accounts for stock scenes
 
+    /** Access control information. See {@link MsoySceneModel}. */
+    public byte accessControl;
+    
     /** Whether this scene is owned by a member or a group. See {@link MsoySceneModel}. */
     public byte ownerType;
 
@@ -208,6 +218,7 @@ public class SceneRecord extends PersistentRecord
         if (model.sceneId > 0) {
             sceneId = model.sceneId;
         }
+        accessControl = model.accessControl;
         ownerType = model.ownerType;
         ownerId = model.ownerId;
         version = model.version;
@@ -231,6 +242,7 @@ public class SceneRecord extends PersistentRecord
     {
         MsoySceneModel model = new MsoySceneModel();
         model.sceneId = sceneId;
+        model.accessControl = accessControl;
         model.ownerType = ownerType;
         model.ownerId = ownerId;
         model.version = version;

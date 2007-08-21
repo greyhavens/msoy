@@ -237,6 +237,7 @@ public class MsoySceneRepository extends DepotRepository
         updatePartial(
             SceneRecord.class, sceneId,
             SceneRecord.NAME, update.name,
+            SceneRecord.ACCESS_CONTROL, update.accessControl,
             SceneRecord.DECOR_ID, update.decor.itemId,
             SceneRecord.AUDIO_ID, update.audioData.itemId,
             SceneRecord.AUDIO_MEDIA_HASH, SceneUtil.flattenMediaDesc(update.audioData.media),
@@ -287,6 +288,7 @@ public class MsoySceneRepository extends DepotRepository
         }
 
         // fill in our new bits and write out our new scene
+        record.accessControl = MsoySceneModel.ACCESS_EVERYONE;
         record.ownerType = ownerType;
         record.ownerId = ownerId;
         record.name = roomName;
