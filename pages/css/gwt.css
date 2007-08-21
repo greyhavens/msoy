@@ -103,9 +103,13 @@ a:visited {
 }
 
 .msoyHeader .Logo {
-  background: url(/images/header/header_logo.png) no-repeat;
   width: 124px;
   height: 50px;
+  cursor: pointer;
+}
+
+.msoyHeader .Logo img {
+  display: block;
 }
 
 .msoyHeader .Navi {

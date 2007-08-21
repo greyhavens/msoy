@@ -14,9 +14,12 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
@@ -122,6 +125,19 @@ public class Application
         RootPanel status = RootPanel.get("status");
         if (status != null) {
             status.add(_status);
+        }
+
+        // add the logo, with link to My Whirled/Whirledwide
+        Image logo = new Image("/images/header/header_logo.png");
+        logo.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                boolean loggedIn = CShell.creds != null;
+                History.newItem(createLinkToken("whirled", loggedIn ? "mywhirled" : "whirledwide"));
+            }
+        });
+        RootPanel logoPanel = RootPanel.get("logo");
+        if (logoPanel != null) {
+            logoPanel.add(logo);
         }
 
         // create our standard navigation panel
