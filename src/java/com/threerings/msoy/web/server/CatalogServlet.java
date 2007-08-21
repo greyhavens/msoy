@@ -310,6 +310,9 @@ public class CatalogServlet extends MsoyServiceServlet
             // then copy tags from the old listing to the new one
             repo.getTagRepository().copyTags(oldItemId, listItem.itemId, mrec.memberId, now);
 
+            // reassign ratings from the old prototype
+            repo.reassignRatings(oldItemId, listItem.itemId);
+
             // update the catalog listing
             record = repo.updateListing(oldItemId, listItem, now);
 

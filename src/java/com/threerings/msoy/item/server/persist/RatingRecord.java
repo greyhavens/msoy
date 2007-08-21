@@ -14,7 +14,6 @@ import com.threerings.io.Streamable;
  * Represents a member's rating of an item.
  */
 @Entity
-@Table
 public abstract class RatingRecord<T extends ItemRecord> extends PersistentRecord
     implements Streamable
 {
@@ -31,15 +30,14 @@ public abstract class RatingRecord<T extends ItemRecord> extends PersistentRecor
 
     public static final int SCHEMA_VERSION = 1;
 
-    /** The ID of the tagged item. */
+    /** The id of the tagged item. */
     @Id
     public int itemId;
 
-    /** The ID of the rating member. */
+    /** The id of the rating member. */
     @Id
     public int memberId;
-    
+
     /** The rating, from 1 to 5 */
     public byte rating;
-    
 }

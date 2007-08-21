@@ -655,7 +655,7 @@ public abstract class ItemRepository<
     /**
      * Insert/update a rating row, calculate the new rating and finally update the item's rating.
      */
-    public float rateItem (final int itemId, int memberId, byte rating)
+    public float rateItem (int itemId, int memberId, byte rating)
         throws PersistenceException
     {
         // first create a new rating record
@@ -678,13 +678,40 @@ public abstract class ItemRepository<
                  new FieldOverride("count", "count(*)"),
                  new FieldOverride("sum", "sum(" + RatingRecord.RATING + ")"),
                  new FromOverride(getRatingClass()),
-                 new Where(new ColumnExp(getRatingClass(), RatingRecord.ITEM_ID), itemId));
+                 new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId));
 
         float newRating = (float) ((average.count == 0) ? 0.0 : average.sum/average.count);
         // and then smack the new value into the item using yummy depot code
         updatePartial(getItemClass(), itemId, ItemRecord.RATING, newRating,
                       ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
         return newRating;
+    }
+
+    /**
+     * Transfers rating records from one record to another. This is used when a catalog listing is
+     * updated to migrate the players' individual rating records from the old prototype item to the
+     * new one.
+     *
+     * <p> Note: this destabilizes the rating of the abandoned previous listing, but that rating is
+     * meaningless anyway since the item is no longer in the catalog. Ratings should really be on
+     * listings not items, but that's a giant fiasco we don't want to deal with.
+     */
+    public void reassignRatings (final int oldItemId, int newItemId)
+        throws PersistenceException
+    {
+        // TODO: this cache eviction might be slow :)
+        CacheInvalidator invalidator = new CacheInvalidator() {
+            public void invalidate (PersistenceContext ctx) {
+                ctx.cacheTraverse(
+                    getRatingClass(), new PersistenceContext.CacheEvictionFilter<RT>() {
+                    protected boolean testForEviction (Serializable key, RT record) {
+                        return (record.itemId == oldItemId);
+                    }
+                });
+            }
+        };
+        updatePartial(getRatingClass(), new Where(getRatingColumn(RatingRecord.ITEM_ID), oldItemId),
+                      invalidator, RatingRecord.ITEM_ID, newItemId);
     }
 
     /**
