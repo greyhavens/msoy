@@ -30,6 +30,7 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.SimpleCacheKey;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.clause.FieldDefinition;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
@@ -136,7 +137,7 @@ public class MemberRepository extends DepotRepository
             new FromOverride(MemberRecord.class),
             new Where(new GreaterThan(MemberRecord.LAST_SESSION_C,
                                       new LiteralExp("'" + when + "'"))), // TODO: DateExp?
-            new FieldOverride(MemberCountRecord.POPULATION, new LiteralExp("COUNT(*)")));
+            new FieldDefinition(MemberCountRecord.POPULATION, new LiteralExp("COUNT(*)")));
         return record.population;
     }
 
@@ -651,9 +652,9 @@ public class MemberRepository extends DepotRepository
                        new Join(MemberRecord.MEMBER_ID_C, InviterRecord.MEMBER_ID_C).
                             setType(Join.Type.LEFT_OUTER),
                        new Where(MemberRecord.INVITING_FRIEND_ID_C, memberId),
-                       new FieldOverride(MemberInviteStatusRecord.INVITES_GRANTED,
+                       new FieldDefinition(MemberInviteStatusRecord.INVITES_GRANTED,
                             InviterRecord.INVITES_GRANTED_C),
-                       new FieldOverride(MemberInviteStatusRecord.INVITES_SENT,
+                       new FieldDefinition(MemberInviteStatusRecord.INVITES_SENT,
                             InviterRecord.INVITES_SENT_C));
     }
 

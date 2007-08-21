@@ -17,7 +17,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.MultiKey;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.clause.FieldOverride;
+import com.samskivert.jdbc.depot.clause.FieldDefinition;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.OrderBy;
@@ -62,8 +62,8 @@ public class MailRepository extends DepotRepository
             new Where(MailMessageRecord.OWNER_ID_C, memberId,
                       MailMessageRecord.FOLDER_ID_C, folderId),
             new FromOverride(MailMessageRecord.class),
-            new FieldOverride(MailCountRecord.UNREAD, MailMessageRecord.UNREAD_C),
-            new FieldOverride(MailCountRecord.COUNT, "count(*)"),
+            new FieldDefinition(MailCountRecord.UNREAD, MailMessageRecord.UNREAD_C),
+            new FieldDefinition(MailCountRecord.COUNT, "count(*)"),
             new GroupBy(MailMessageRecord.UNREAD_C));
         for (MailCountRecord record : records) {
             if (record.unread) {

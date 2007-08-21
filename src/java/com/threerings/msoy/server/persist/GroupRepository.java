@@ -20,7 +20,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.clause.FieldOverride;
+import com.samskivert.jdbc.depot.clause.FieldDefinition;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.OrderBy;
@@ -267,7 +267,7 @@ public class GroupRepository extends DepotRepository
     {
         GroupMembershipCount count =
             load(GroupMembershipCount.class, new Where(GroupMembershipRecord.GROUP_ID_C, groupId),
-                 new FieldOverride(GroupMembershipCount.COUNT, "count(*)"),
+                 new FieldDefinition(GroupMembershipCount.COUNT, "count(*)"),
                  new FromOverride(GroupMembershipRecord.class));
         if (count == null) {
             throw new PersistenceException("Group not found [groupId=" + groupId + "]");
@@ -315,8 +315,8 @@ public class GroupRepository extends DepotRepository
             new SelectClause<GroupMembershipCount>(
                     GroupMembershipCount.class,
                     new String[] { GroupMembershipCount.COUNT },
-                    new FieldOverride(GroupMembershipCount.COUNT,
-                                      new FunctionExp("COUNT", new LiteralExp("*"))),
+                    new FieldDefinition(GroupMembershipCount.COUNT,
+                                        new FunctionExp("COUNT", new LiteralExp("*"))),
                     new FromOverride(GroupMembershipRecord.class),
                     new Where(GroupMembershipRecord.GROUP_ID_C, groupId)));
         updateLiteral(GroupRecord.class, groupId, fieldMap);

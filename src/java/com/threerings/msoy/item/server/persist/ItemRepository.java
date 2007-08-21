@@ -28,6 +28,7 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.clause.FieldDefinition;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
@@ -675,8 +676,8 @@ public abstract class ItemRepository<
 
         RatingAverageRecord average =
             load(RatingAverageRecord.class,
-                 new FieldOverride("count", "count(*)"),
-                 new FieldOverride("sum", "sum(" + RatingRecord.RATING + ")"),
+                 new FieldDefinition("count", "count(*)"),
+                 new FieldDefinition("sum", "sum(" + RatingRecord.RATING + ")"),
                  new FromOverride(getRatingClass()),
                  new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId));
 
@@ -818,10 +819,10 @@ public abstract class ItemRepository<
         allClauses[0] = where;
         allClauses[1] = new Join(
             getItemClass(), ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID);
-        allClauses[2] = new FieldOverride(
-            ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID);
-        allClauses[3] = new FieldOverride(
+        allClauses[2] = new FieldDefinition(
             ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID);
+        allClauses[3] = new FieldOverride(
+            ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID);
         allClauses[4] = new FieldOverride(
             ItemRecord.OWNER_ID, getCloneClass(), CloneRecord.OWNER_ID);
         allClauses[5] = new FieldOverride(
