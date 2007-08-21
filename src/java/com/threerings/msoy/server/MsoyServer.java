@@ -350,7 +350,7 @@ public class MsoyServer extends MsoyBaseServer
         itemMan.init(perCtx);
         swiftlyMan.init(invmgr);
         petMan.init(invmgr);
-        gameReg.init(invmgr, itemMan.getGameRepository());
+        gameReg.init(invmgr, itemMan.getGameRepository(), _transitRepo);
         worldGameReg.init(invmgr);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {

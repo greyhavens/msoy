@@ -133,10 +133,6 @@ public class ItemManager
 
         _listRepo = new ItemListRepository(ctx);
 
-        // TEMP
-        _gameRepo.assignGameIds();
-        // ENDTEMP
-
         // register our invocation service
         MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), MsoyCodes.WORLD_GROUP);
     }

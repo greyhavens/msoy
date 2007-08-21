@@ -14,12 +14,20 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 
 // TEMP
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntIntMap;
 import com.samskivert.util.Tuple;
+import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals;
+import com.threerings.ezgame.server.persist.GameCookieRecord;
+import com.threerings.parlor.rating.server.persist.RatingRecord;
+import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.server.persist.SceneFurniRecord;
 import static com.threerings.msoy.Log.log;
 // END TEMP
 
@@ -48,9 +56,12 @@ public class GameRepository extends ItemRepository<
     }
 
     // TEMP
-    public void assignGameIds ()
+    public void bigGameIdMigration ()
         throws PersistenceException
     {
+        final boolean TESTING = false;
+
+        // compute the set of all "games" (which may encompass items)
         HashMap<String,Tuple<GameDetailRecord,ArrayIntSet>> mapping =
             new HashMap<String,Tuple<GameDetailRecord,ArrayIntSet>>();
         for (GameRecord record : findAll(getItemClass(), new Where(GameRecord.GAME_ID_C, 0))) {
@@ -83,19 +94,103 @@ public class GameRepository extends ItemRepository<
             }
             info.right.add(record.itemId);
         }
+
+        int tempGameId = 0; // TESTING
+
+        // create detail records for all games
+        IntIntMap toGameId = new IntIntMap();
+        ArrayList<GameDetailRecord> gdrs = new ArrayList<GameDetailRecord>();
         for (Map.Entry<String,Tuple<GameDetailRecord,ArrayIntSet>> entry : mapping.entrySet()) {
             GameDetailRecord gdr = entry.getValue().left;
-            insert(gdr);
+            if (TESTING) {
+                gdr.gameId = ++tempGameId;
+            } else {
+                insert(gdr);
+            }
+            gdrs.add(gdr);
+
             log.info("Mapping " + gdr + " -> " + entry.getValue().right);
             if (gdr.sourceItemId != 0) {
                 entry.getValue().right.remove(gdr.sourceItemId);
-                updatePartial(getItemClass(), gdr.sourceItemId, GameRecord.GAME_ID, -gdr.gameId);
+                toGameId.put(gdr.sourceItemId, -gdr.gameId);
+                if (!TESTING) {
+                    updatePartial(
+                        getItemClass(), gdr.sourceItemId, GameRecord.GAME_ID, -gdr.gameId);
+                }
             }
             if (entry.getValue().right.size() > 0) {
-                updatePartial(getItemClass(),
-                              new Where(new Conditionals.In(GameRecord.ITEM_ID_C,
-                                                            entry.getValue().right)), null,
-                              GameRecord.GAME_ID, gdr.gameId);
+                for (int itemId : entry.getValue().right.toIntArray()) {
+                    toGameId.put(itemId, gdr.gameId);
+                }
+                if (!TESTING) {
+                    updatePartial(getItemClass(),
+                                  new Where(new Conditionals.In(GameRecord.ITEM_ID_C,
+                                                                entry.getValue().right)), null,
+                                  GameRecord.GAME_ID, gdr.gameId);
+                }
+            }
+        }
+
+        // renumber all game cookie records (collisions will be deleted)
+        Collection<GameCookieRecord> cookies = findAll(GameCookieRecord.class);
+        if (!TESTING) {
+            for (GameCookieRecord gcr : cookies) {
+                delete(gcr);
+            }
+        }
+        for (GameCookieRecord gcr : cookies) {
+            log.info("Moving " + gcr.gameId + ":" + gcr.userId + " to " + toGameId.get(gcr.gameId));
+            gcr.gameId = toGameId.get(gcr.gameId);
+            if (!TESTING) {
+                try {
+                    insert(gcr);
+                } catch (DuplicateKeyException dke) {
+                    log.info("Dropping " + gcr.gameId + ":" + gcr.userId + " due to duplication.");
+                    // no problem
+                }
+            }
+        }
+
+        // renumber all rating records (collisions will be deleted)
+        Collection<RatingRecord> ratings = findAll(RatingRecord.class);
+        if (!TESTING) {
+            for (RatingRecord rr : ratings) {
+                delete(rr);
+            }
+        }
+        for (RatingRecord rr : ratings) {
+            log.info("Moving " + rr.gameId + ":" + rr.playerId + " to " + toGameId.get(rr.gameId));
+            rr.gameId = toGameId.get(rr.gameId);
+            if (!TESTING) {
+                try {
+                    insert(rr);
+                } catch (DuplicateKeyException dke) {
+                    log.info("Dropping " + rr.gameId + ":" + rr.playerId + " due to duplication.");
+                    // no problem
+                }
+            }
+        }
+
+        // update all game items placed into scenes
+        Where where = new Where(SceneFurniRecord.ACTION_TYPE_C, FurniData.ACTION_LOBBY_GAME);
+        for (SceneFurniRecord sfr : findAll(SceneFurniRecord.class, where)) {
+            int didx = (sfr.actionData == null) ? -1 : sfr.actionData.indexOf(":");
+            if (didx == -1) {
+                log.warning("Unable to update game furni record " + sfr.actionData + ".");
+                continue;
+            }
+            int gameId;
+            try {
+                gameId = Integer.parseInt(sfr.actionData.substring(0, didx));
+            } catch (Throwable t) {
+                log.warning("Unable to parse game furni record id " + sfr.actionData + ".");
+                continue;
+            }
+            String actionData = toGameId.get(gameId) + sfr.actionData.substring(didx);
+            log.info("Switching " + sfr.actionData + " to " + actionData);
+            sfr.actionData = actionData;
+            if (!TESTING) {
+                update(sfr);
             }
         }
     }

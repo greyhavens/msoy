@@ -3,9 +3,11 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.TransitionRepository;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
@@ -28,6 +30,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
@@ -55,7 +58,8 @@ public class MsoyGameRegistry
     /**
      * Initializes this registry.
      */
-    public void init (InvocationManager invmgr, GameRepository gameRepo)
+    public void init (InvocationManager invmgr, GameRepository gameRepo, TransitionRepository xrepo)
+        throws PersistenceException
     {
         _gameRepo = gameRepo;
         invmgr.registerDispatcher(new MsoyGameDispatcher(this), MsoyCodes.GAME_GROUP);
@@ -82,6 +86,13 @@ public class MsoyGameRegistry
                                 "[port=" + port + "].", e);
                     }
                 }
+            }
+        });
+
+        // TEMP: migrate game item ids to game ids in various places
+        xrepo.transition(getClass(), "20070821-iid-gid", new TransitionRepository.Transition() {
+            public void run () throws PersistenceException {
+                _gameRepo.bigGameIdMigration();
             }
         });
     }
