@@ -25,7 +25,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
- * Wrap a FileItem and provide useful methods for dealing with uploaded file data.
+ * Wrap various file objects and provide useful methods for dealing with uploaded file data.
  */
 public abstract class UploadFile
 {

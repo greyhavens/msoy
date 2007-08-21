@@ -35,7 +35,8 @@ public class BuildResult
     }
 
     /** Set compiler output file path. */
-    public void setOutputFile (File path) {
+    public void setOutputFile (File path)
+    {
         _outputFile = path;
     }
 
@@ -45,7 +46,8 @@ public class BuildResult
     }
 
     /** Set the time, in milliseconds, that the full build task took. */
-    public void setBuildTime (long time) {
+    public void setBuildTime (long time)
+    {
         _buildTime = time;
     }
 
@@ -60,12 +62,14 @@ public class BuildResult
     }
 
     /** Return the build compiler's output, in the order it was received. */
-    public List<CompilerOutput> getOutput () {
+    public List<CompilerOutput> getOutput ()
+    {
         return _output;
     }
 
     /** Append a parsed compiler statement to the build output. */
-    public void appendOutput (CompilerOutput output) {
+    public void appendOutput (CompilerOutput output)
+    {
         // If we get an error message, the build failed.
         if (output.getLevel() == CompilerOutput.Level.ERROR) {
             _buildSuccess = false;
@@ -75,7 +79,8 @@ public class BuildResult
     }
 
     /** Returns true if the build succeeded. */
-    public boolean buildSuccessful () {
+    public boolean buildSuccessful ()
+    {
         return _buildSuccess;
     }
 

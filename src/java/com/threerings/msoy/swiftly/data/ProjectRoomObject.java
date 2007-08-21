@@ -55,6 +55,19 @@ public class ProjectRoomObject extends PlaceObject
     public ProjectRoomMarshaller service;
 
     /**
+     * Throws a RuntimeException if the thread calling this method is not on the thread that
+     * created this distributed object.
+     */
+    public void enforceThreadSafety ()
+    {
+        // Enforce access only on the distributed object thread.
+        if (!Thread.currentThread().equals(_dobjThread)) {
+            throw new RuntimeException(
+                "Attempted access of ProjectRoomObject from non-dobject thread.");
+        }
+    }
+
+    /**
      * Adds a new path element to the project's distributed state, assigning a unique identifier to
      * it and then adding it to the distributed state.
      */
@@ -134,6 +147,42 @@ public class ProjectRoomObject extends PlaceObject
 
         // return null if we did not find the element
         return null;
+    }
+
+    /**
+     *  Publish the supplied BuildResult into the room object
+     */
+    public void publishBuildResult (final BuildResult result)
+    {
+        if (findResultForMember(result.getMember()) != null) {
+            updateResults(result);
+        } else {
+            addToResults(result);
+        }
+    }
+
+    /**
+     *  Publish the supplied SwiftlyDocument into the room object
+     */
+    public void publishSwiftlyDocument (final SwiftlyDocument doc)
+    {
+        if (doc.documentId == 0) {
+            addSwiftlyDocument(doc);
+        } else {
+            updateDocuments(doc);
+        }
+    }
+
+    /**
+     *  Publish the supplied PathElement into the room object
+     */
+    public void publishPathElement (final PathElement element)
+    {
+        if (element.elementId == 0) {
+            addPathElement(element);
+        } else {
+            updatePathElements(element);
+        }
     }
 
     /**
@@ -428,4 +477,7 @@ public class ProjectRoomObject extends PlaceObject
 
     /** Used to assign unique identifiers to documents. */
     protected transient int _nextDocumentId;
+
+    /** Stores the thread this distributes object was created on for thread safety enforcement. */
+    protected final transient Thread _dobjThread = Thread.currentThread();
 }

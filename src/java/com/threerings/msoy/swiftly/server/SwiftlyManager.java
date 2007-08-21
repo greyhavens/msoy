@@ -196,7 +196,7 @@ public class SwiftlyManager
         _managers.remove(config.projectId);
     }
 
-    /** Maxiumum number of concurrent builds. */
+    /** Maximum number of concurrent builds. */
     protected static final int MAX_BUILD_THREADS = 5;
 
     /** Maintains a mapping of resolved projects. */

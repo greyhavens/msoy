@@ -388,7 +388,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
                     return;
                 }
 
-                manager.updateProject(waiter, project);
+                manager.updateProject(project, waiter);
             }
         });
 
