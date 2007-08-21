@@ -274,11 +274,23 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /**
      * Clears out any fields that should be reset when listing this item in the catalog.
      */
-    public void clearForListing ()
+    public void prepareForListing ()
     {
-        ownerId = 0;
         itemId = 0;
+        ownerId = 0;
         used = 0;
+        location = 0;
+    }
+
+    /**
+     * Clears out any fields that should be reset when remixing an item.
+     */
+    public void prepareForRemixing ()
+    {
+        itemId = 0;
+        parentId = 0;
+        creatorId = ownerId; // TODO: preserve creator?
+        used = Item.UNUSED;
         location = 0;
     }
 

@@ -287,7 +287,7 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // reset any important bits
-        listItem.clearForListing();
+        listItem.prepareForListing();
 
         // note this item's old catalog id and configure its new one
         int oldItemId = listItem.catalogId;
@@ -306,6 +306,9 @@ public class CatalogServlet extends MsoyServiceServlet
             log.info("Updating listing " + oldItemId + " for " + item + ".");
             // create a new immutable catalog prototype item
             repo.insertOriginalItem(listItem, true);
+
+            // then copy tags from the old listing to the new one
+            repo.getTagRepository().copyTags(oldItemId, listItem.itemId, mrec.memberId, now);
 
             // update the catalog listing
             record = repo.updateListing(oldItemId, listItem, now);

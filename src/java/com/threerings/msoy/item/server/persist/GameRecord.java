@@ -149,16 +149,23 @@ public class GameRecord extends ItemRecord
         super();
     }
 
-    protected GameRecord (Game game)
+    @Override // from ItemRecord
+    public void prepareForListing ()
     {
-        super(game);
+        super.prepareForListing();
 
-        config = game.config;
-        if (game.gameMedia != null) {
-            gameMediaHash = game.gameMedia.hash;
-            gameMimeType = game.gameMedia.mimeType;
-        }
-        gameId = game.gameId;
+        // the original from which this game is being listed will have -gameId as its game
+        // identifier because it is an original; all non-originals will use the positive id
+        gameId = Math.abs(gameId);
+    }
+
+    @Override // from ItemRecord
+    public void prepareForRemixing ()
+    {
+        super.prepareForListing();
+
+        // clear out our game id; this is now a totally separate game
+        gameId = 0;
     }
 
     @Override // from Item
@@ -176,6 +183,18 @@ public class GameRecord extends ItemRecord
             new MediaDesc(gameMediaHash, gameMimeType);
         object.gameId = gameId;
         return object;
+    }
+
+    protected GameRecord (Game game)
+    {
+        super(game);
+
+        config = game.config;
+        if (game.gameMedia != null) {
+            gameMediaHash = game.gameMedia.hash;
+            gameMimeType = game.gameMedia.mimeType;
+        }
+        gameId = game.gameId;
     }
 
     // AUTO-GENERATED: METHODS START
