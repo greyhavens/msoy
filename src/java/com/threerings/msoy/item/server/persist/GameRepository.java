@@ -101,6 +101,22 @@ public class GameRepository extends ItemRepository<
     }
     // END TEMP
 
+    /**
+     * Loads the appropriate {@link GameRecord} for the specified game id. If the id is negative,
+     * the source item record will be loaded, if positive, the listed item record will be loaded.
+     * May return null if the game id is unknown or no valid listed or source item record is
+     * available.
+     */
+    public GameRecord loadGameRecord (int gameId)
+        throws PersistenceException
+    {
+        GameDetailRecord gdr = load(GameDetailRecord.class, Math.abs(gameId));
+        if (gdr == null) {
+            return null;
+        }
+        return loadItem(gameId < 0 ? gdr.sourceItemId : gdr.listedItemId);
+    }
+
     @Override // from ItemRepository
     public void insertOriginalItem (GameRecord item, boolean catalogListing)
         throws PersistenceException

@@ -75,7 +75,7 @@ public class LobbyRegistry
 
         MsoyServer.invoker.postUnit(new RepositoryUnit() {
             public void invokePersist () throws PersistenceException {
-                GameRecord rec = _gameRepo.loadItem(gameId);
+                GameRecord rec = _gameRepo.loadGameRecord(gameId);
                 _game = (rec == null) ? null : (Game)rec.toItem();
             }
 

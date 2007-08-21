@@ -106,7 +106,7 @@ public class MsoyGameRegistry
         // we're going to need the Game item to finish resolution
         MsoyServer.invoker.postUnit(new PersistingUnit("locateGame", listener) {
             public void invokePersistent () throws PersistenceException {
-                GameRecord grec = _gameRepo.loadItem(gameId);
+                GameRecord grec = _gameRepo.loadGameRecord(gameId);
                 _game = (grec == null) ? null : (Game)grec.toItem();
             }
             public void handleSuccess () {
