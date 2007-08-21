@@ -80,7 +80,7 @@ public class index extends Page
                 launchGame((LaunchConfig)result, gameOid);
             }
             public void onFailure (Throwable cause) {
-                CGame.serverError(cause);
+                MsoyUI.error(CGame.serverError(cause));
             }
         });
     }

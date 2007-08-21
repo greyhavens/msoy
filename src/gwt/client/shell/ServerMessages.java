@@ -26,6 +26,7 @@ public interface ServerMessages extends ConstantsWithLookup
     public String duplicate_permaname ();
     public String version_mismatch ();
 
+    public String no_such_item ();
     public String item_in_use ();
     public String item_listed ();
 
