@@ -14,11 +14,12 @@ import com.threerings.msoy.game.xml.MsoyGameParser;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 
-import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -48,11 +49,11 @@ public class GameServlet extends MsoyServiceServlet
         try {
             itemRec = repo.loadOriginalItem(gameId);
             if (itemRec == null) {
-                return null;
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load game record [gameId=" + gameId + "]", pe);
-            throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
         final Game game = (Game)itemRec.toItem();
 
@@ -91,7 +92,7 @@ public class GameServlet extends MsoyServiceServlet
         default:
             log.warning("Requested config for game of unknown media type " +
                         "[id=" + gameId + ", media=" + game.gameMedia + "].");
-            return null;
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
         // we have to proxy game jar files through the game server due to the applet sandbox
