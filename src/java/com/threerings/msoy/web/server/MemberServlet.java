@@ -313,9 +313,11 @@ public class MemberServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
+        PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+
         Whirled mywhirled = new Whirled();
-        mywhirled.places = getRoomSceneCards(places);
-        mywhirled.games = getGameSceneCards(games);
+        mywhirled.places = getRoomSceneCards(places, pps);
+        mywhirled.games = getGameSceneCards(games, pps);
         mywhirled.people = new ArrayList<MemberCard>(onlineFriends.values());
         mywhirled.photo = profile.photoHash == null ? null : profile.getPhoto();
         mywhirled.ownedRooms = ownedRooms;
@@ -403,7 +405,8 @@ public class MemberServlet extends MsoyServiceServlet
     /**
      * fills an array list of SceneCards, using the map to fill up the SceneCard's friends list.
      */
-    protected ArrayList<SceneCard> getRoomSceneCards (HashIntMap<ArrayList<Integer>> map)
+    protected ArrayList<SceneCard> getRoomSceneCards (HashIntMap<ArrayList<Integer>> map,
+                                                      PopularPlacesSnapshot pps)
         throws ServiceException
     {
         HashIntMap<SceneCard> cards = new HashIntMap<SceneCard>();
@@ -420,6 +423,9 @@ public class MemberServlet extends MsoyServiceServlet
                 card.name = sceneRec.name;
                 card.sceneType = SceneCard.ROOM;
                 card.friends = map.get(card.sceneId);
+                PopularPlacesSnapshot.Place snap = pps.getScene(sceneRec.sceneId);
+                // if the snapshot is out of date, the display will be made sane in GWT.
+                card.population = snap == null ? 0 : snap.population;
                 cards.put(card.sceneId, card);
                 if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
                     groupIds.put(sceneRec.ownerId, sceneRec.sceneId);
@@ -459,7 +465,8 @@ public class MemberServlet extends MsoyServiceServlet
     /**
      * fills an array list of SceneCards, using the map to fill up the SceneCard's friends list.
      */
-    protected ArrayList<SceneCard> getGameSceneCards (HashIntMap<ArrayList<Integer>> map)
+    protected ArrayList<SceneCard> getGameSceneCards (HashIntMap<ArrayList<Integer>> map,
+                                                      PopularPlacesSnapshot pps)
         throws ServiceException
     {
         ArrayList<SceneCard> cards = new ArrayList<SceneCard>();
@@ -475,6 +482,9 @@ public class MemberServlet extends MsoyServiceServlet
                 card.logo = gameRec.thumbMediaHash == null ? null : 
                     new MediaDesc(gameRec.thumbMediaHash, gameRec.thumbMimeType, 
                                   gameRec.thumbConstraint);
+                PopularPlacesSnapshot.Place snap = pps.getGame(gameRec.itemId);
+                // if the snapshot is out of date, the display will be made sane in GWT.
+                card.population = snap == null ? 0 : snap.population;
                 cards.add(card);
             }
         } catch (PersistenceException pe) {

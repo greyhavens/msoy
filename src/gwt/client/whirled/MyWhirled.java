@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.History;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -103,9 +104,15 @@ public class MyWhirled extends FlexTable
         setWidget(row++, 1, _errorContainer = new HorizontalPanel());
 
         getFlexCellFormatter().setColSpan(row, 1, 2);
-        setWidget(row++, 1, _people = new PagedGrid(PEOPLE_ROWS, PEOPLE_COLUMS) {
+        setWidget(row++, 1, _people = new PagedGrid(PEOPLE_ROWS, PEOPLE_COLUMNS) {
             protected Widget createWidget (Object item) {
-                return new PersonWidget((MemberCard) item);
+                if (item == null) {
+                    Label shim = new Label();
+                    shim.setStyleName("PersonWidget");
+                    return shim;
+                } else {
+                    return new PersonWidget((MemberCard) item);
+                }
             }
             protected String getEmptyMessage () {
                 return CWhirled.msgs.noPeople();
@@ -118,7 +125,6 @@ public class MyWhirled extends FlexTable
             }
         });
         _people.addStyleName("PeopleContainer");
-        _people.setWidth("539px");
 
         VerticalPanel placesContainer = new VerticalPanel();
         setWidget(row, 1, placesContainer);
@@ -161,7 +167,13 @@ public class MyWhirled extends FlexTable
 
     protected void fillUi (Whirled myWhirled) 
     {
+        // ensure that the list has PEOPLE_COLUMNS entries for spacing reasons
+        while (myWhirled.people.size() < PEOPLE_COLUMNS) {
+            myWhirled.people.add(null);
+        }
         _people.setModel(new SimpleDataModel(myWhirled.people), 0);
+        _places.populate(myWhirled.places);
+        _games.populate(myWhirled.games);
                 
         MediaDesc photo = myWhirled.photo == null ? Profile.DEFAULT_PHOTO : myWhirled.photo;
         _pictureBox.add(MediaUtil.createMediaView(photo, 
@@ -200,25 +212,53 @@ public class MyWhirled extends FlexTable
             // why the hell doesn't GWT support only scrolling in one direction?
             DOM.setStyleAttribute(getElement(), "overflowX", "hidden");
         }
+
+        public void populate (List scenes) 
+        {
+            VerticalPanel sceneContainer = new VerticalPanel();
+            sceneContainer.setStyleName("SceneListContainer");
+            sceneContainer.setSpacing(0);
+            Iterator iter = scenes.iterator();
+            while (iter.hasNext()) {
+                sceneContainer.add(new SceneWidget((SceneCard) iter.next()));
+            }
+            setWidget(sceneContainer);
+        }
     }
 
     protected static class SceneWidget extends HorizontalPanel
     {
-        public SceneWidget (SceneCard scene)
+        public SceneWidget (final SceneCard scene)
         {
-            if (scene.logo != null) {
-                add(MediaUtil.createMediaView(scene.logo, MediaDesc.HALF_THUMBNAIL_SIZE));
-            } else if (scene.sceneType == SceneCard.GAME) {
-                MediaDesc logo = Item.getDefaultThumbnailMediaFor(Item.GAME);
-                add(MediaUtil.createMediaView(logo, MediaDesc.HALF_THUMBNAIL_SIZE));
-            }
-            Label nameLabel = new Label("" + scene.name);
-            nameLabel.addClickListener(new ClickListener() {
+            setStyleName("SceneWidget");
+            setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+
+            ClickListener goToScene = new ClickListener() {
                 public void onClick (Widget sender) {
-                    // TODO
+                    History.newItem(Application.createLinkToken("world", "s" + scene.sceneId));
                 }
-            });
-            add(nameLabel);
+            };
+
+            Widget logo = null;
+            if (scene.logo != null) {
+                logo = MediaUtil.createMediaView(scene.logo, MediaDesc.HALF_THUMBNAIL_SIZE);
+            } else if (scene.sceneType == SceneCard.GAME) {
+                MediaDesc gameLogo = Item.getDefaultThumbnailMediaFor(Item.GAME);
+                logo = MediaUtil.createMediaView(gameLogo, MediaDesc.HALF_THUMBNAIL_SIZE);
+            }
+            if (logo instanceof Image) {
+                ((Image) logo).addClickListener(goToScene);
+            }
+            add(logo);
+
+            VerticalPanel text = new VerticalPanel();
+            Label nameLabel = new Label("" + scene.name);
+            nameLabel.addClickListener(goToScene);
+            text.add(nameLabel);
+            // TODO make sure population is greater than the number of friends we have in this scene
+            Label populationLabel = new Label("Population: " + scene.population);
+            text.add(populationLabel);
+            add(text);
         }
     }
 
@@ -248,7 +288,7 @@ public class MyWhirled extends FlexTable
     }
 
     protected static final int PEOPLE_ROWS = 4;
-    protected static final int PEOPLE_COLUMS = 6;
+    protected static final int PEOPLE_COLUMNS = 6;
 
     protected PagedGrid _people;
     protected SceneList _places;

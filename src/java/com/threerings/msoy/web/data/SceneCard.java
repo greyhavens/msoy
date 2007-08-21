@@ -29,6 +29,9 @@ public class SceneCard
     /** The scene's name. */
     public String name;
 
+    /** The scene's population (as of the last snapshot calculation - may be out of date). */
+    public int population;
+
     /**
      * If this scene is owned by a group, this is the group's logo, if by a person, this is
      * their profile pic.
