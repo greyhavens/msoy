@@ -16,10 +16,9 @@ import com.threerings.msoy.game.data.MsoyMatchConfig;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -44,22 +43,22 @@ public class GameServlet extends MsoyServiceServlet
         // TODO: validate this user's ident
 
         // load up the metadata for this game
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(Item.GAME);
-        ItemRecord itemRec;
+        GameRepository repo = MsoyServer.itemMan.getGameRepository();
+        GameRecord grec;
         try {
-            itemRec = repo.loadOriginalItem(gameId);
-            if (itemRec == null) {
+            grec = repo.loadGameRecord(gameId);
+            if (grec == null) {
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load game record [gameId=" + gameId + "]", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
-        final Game game = (Game)itemRec.toItem();
+        final Game game = (Game)grec.toItem();
 
         // create a launch config record for the game
         LaunchConfig config = new LaunchConfig();
-        config.gameId = game.itemId;
+        config.gameId = game.gameId;
 
         MsoyMatchConfig match;
         try {
