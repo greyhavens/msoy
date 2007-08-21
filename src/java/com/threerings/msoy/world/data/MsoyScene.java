@@ -89,7 +89,7 @@ public class MsoyScene extends SceneImpl
                 hasRights = (member.getMemberId() == sceneOwner);
                 break;
             case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
-                hasRights = member.isFriend(sceneOwner) || (member.getMemberId() == sceneOwner);
+                hasRights = (member.getMemberId() == sceneOwner) || member.isFriend(sceneOwner);
                 break;
             }
         }
