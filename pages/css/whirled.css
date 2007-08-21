@@ -96,9 +96,10 @@
 }
 
 .MePanel .borderedBox {
-  width: 118px;
+  width: 119px;
   border-left: 1px dotted;
   border-right: 1px dotted;
+  border-color: black;
   /** We can't scale background images, so here we're tiling it across the top, then filling in
    * the rest with the gradient's end color. */
   background-image: url(/images/whirled/bg_gradient.png);
@@ -109,7 +110,10 @@
 .MePanel .SectionHeaderContainer {
   background-image: url(/images/whirled/default_tile.png);
   height: 20px;
-  width: 118px;
+  width: 119px;
+  border-left: 1px solid;
+  border-right: 1px solid;
+  border-color: #1D6393;
 }
 
 .MePanel .SectionHeader {
