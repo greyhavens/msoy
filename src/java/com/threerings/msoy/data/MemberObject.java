@@ -185,6 +185,14 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
+     * Returns true if the specified member is our friend.
+     */
+    public boolean isFriend (int memberId)
+    {
+        return friends.containsKey(memberId);
+    }
+
+    /**
      * Is this user a member of the specified group?
      */
     public boolean isGroupMember (int groupId)

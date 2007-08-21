@@ -7,13 +7,13 @@ import java.util.Iterator;
 
 import com.threerings.crowd.data.PlaceConfig;
 
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneImpl;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotScene;
+
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.item.data.all.Decor;
 
 import static com.threerings.msoy.Log.log;
 
@@ -66,38 +66,38 @@ public class MsoyScene extends SceneImpl
     {
         int sceneOwner = _model.ownerId;
         boolean hasRights = false;
-        boolean groupScene = (_model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
 
-        switch (_model.accessControl) {
-        case MsoySceneModel.ACCESS_EVERYONE:
-            hasRights = true;
-            break;
-
-        case MsoySceneModel.ACCESS_OWNER_ONLY:
-            hasRights = (groupScene ?
-                         member.isGroupManager(sceneOwner) : member.getMemberId() == sceneOwner);
-            break;
-
-        case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
-            hasRights = (groupScene ?
-                         member.isGroupMember(sceneOwner) : member.getMemberId() == sceneOwner);
-
-            if (! hasRights && ! groupScene) {
-                // iterate over friends, see if any one of them owns the scene
-                for (FriendEntry friend : member.friends) {
-                    if (friend.getMemberId() == sceneOwner) {
-                        hasRights = true;
-                        break;
-                    }
-                }
+        if (_model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+            switch (_model.accessControl) {
+            case MsoySceneModel.ACCESS_EVERYONE:
+                hasRights = true;
+                break;
+            case MsoySceneModel.ACCESS_OWNER_ONLY:
+                hasRights = member.isGroupManager(sceneOwner);
+                break;
+            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
+                hasRights = member.isGroupMember(sceneOwner);
+                break;
             }
-            break;
+
+        } else {
+            switch (_model.accessControl) {
+            case MsoySceneModel.ACCESS_EVERYONE:
+                hasRights = true;
+                break;
+            case MsoySceneModel.ACCESS_OWNER_ONLY:
+                hasRights = (member.getMemberId() == sceneOwner);
+                break;
+            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
+                hasRights = member.isFriend(sceneOwner) || (member.getMemberId() == sceneOwner);
+                break;
+            }
         }
 
         if (! hasRights && member.tokens.isSupport()) {
             log.info("Allowing support+ to enter scene which they otherwise couldn't enter " +
-                     "[sceneId=" + getId() + ", sceneName=\"" + getName() + "\", accessControl=" +
-                     _model.accessControl + "].");
+                     "[sceneId=" + getId() + ", sceneName=\"" + getName() +
+                     "\", accessControl=" + _model.accessControl + "].");
             return true;
         }
 
