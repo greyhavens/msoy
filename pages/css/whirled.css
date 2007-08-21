@@ -76,6 +76,7 @@
 }
 
 .MePanel .Description {
+  width: 119px;
   background-color: #B5C9D4;
   border-bottom: 1px dotted;
   font-size: 10px;
