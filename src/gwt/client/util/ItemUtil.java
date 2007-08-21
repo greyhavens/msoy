@@ -59,7 +59,7 @@ public class ItemUtil
     public static void addItemSpecificButtons (Item item, HorizontalPanel panel)
     {
         if (item instanceof Game) {
-            final String token = Application.createLinkToken("game", "" + item.getPrototypeId());
+            final String token = Application.createLinkToken("game", "" + ((Game)item).gameId);
             panel.add(new Button(CShell.cmsgs.detailPlay(), new ClickListener() {
                 public void onClick (Widget sender) {
                     History.newItem(token);

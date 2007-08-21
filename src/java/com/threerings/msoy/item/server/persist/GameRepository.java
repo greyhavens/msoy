@@ -87,12 +87,17 @@ public class GameRepository extends ItemRepository<
             GameDetailRecord gdr = entry.getValue().left;
             insert(gdr);
             log.info("Mapping " + gdr + " -> " + entry.getValue().right);
-            updatePartial(getItemClass(),
-                          new Where(new Conditionals.In(GameRecord.ITEM_ID_C,
-                                                        entry.getValue().right)), null,
-                          GameRecord.GAME_ID, gdr.gameId);
+            if (gdr.sourceItemId != 0) {
+                entry.getValue().right.remove(gdr.sourceItemId);
+                updatePartial(getItemClass(), gdr.sourceItemId, GameRecord.GAME_ID, -gdr.gameId);
+            }
+            if (entry.getValue().right.size() > 0) {
+                updatePartial(getItemClass(),
+                              new Where(new Conditionals.In(GameRecord.ITEM_ID_C,
+                                                            entry.getValue().right)), null,
+                              GameRecord.GAME_ID, gdr.gameId);
+            }
         }
-        // TODO: set the GAME_GAME_ID counter to nextGameId
     }
     // END TEMP
 
@@ -112,7 +117,8 @@ public class GameRepository extends ItemRepository<
             GameDetailRecord gdr = new GameDetailRecord();
             gdr.sourceItemId = item.itemId;
             insert(gdr);
-            updatePartial(getItemClass(), item.itemId, GameRecord.GAME_ID, gdr.gameId);
+            // source games use -gameId to differentiate themselves from all non-source games
+            updatePartial(getItemClass(), item.itemId, GameRecord.GAME_ID, -gdr.gameId);
 
         } else if (catalogListing) {
             updatePartial(GameDetailRecord.class, item.gameId,
