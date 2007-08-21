@@ -299,16 +299,23 @@ public class CatalogServlet extends MsoyServiceServlet
         // acquire a current timestamp
         long now = System.currentTimeMillis();
         CatalogRecord record;
+        int price = 0;
+
+        // if this is a new listing, compute and check that they have the listing cost
+        if (oldItemId == 0) {
+            price = getCheckListingPrice(mrec, rarity);
+        }
+
+        // create a new immutable catalog prototype item
+        repo.insertOriginalItem(listItem, true);
+
+        // copy tags from the old listing (or the original) item to the new listing item
+        int oldTagId = (oldItemId == 0) ? item.itemId : oldItemId;
+        repo.getTagRepository().copyTags(oldTagId, listItem.itemId, mrec.memberId, now);
 
         // if this item is already listed in the catalog, we want to update the listing
         // instead of creating it anew
         if (oldItemId != 0) {
-            // create a new immutable catalog prototype item
-            repo.insertOriginalItem(listItem, true);
-
-            // then copy tags from the old listing to the new one
-            repo.getTagRepository().copyTags(oldItemId, listItem.itemId, mrec.memberId, now);
-
             // reassign ratings from the old prototype
             repo.reassignRatings(oldItemId, listItem.itemId);
 
@@ -319,24 +326,13 @@ public class CatalogServlet extends MsoyServiceServlet
             logUserAction(mrec, UserAction.UPDATED_LISTING, details);
 
         } else {
-            // compute and check that they have the listing cost
-            int price = getCheckListingPrice(mrec, rarity);
-
-            // create a new immutable catalog prototype item
-            repo.insertOriginalItem(listItem, true);
-
-            // then copy tags from original to immutable
-            repo.getTagRepository().copyTags(
-                item.itemId, listItem.itemId, mrec.memberId, now);
-
             // and finally create & insert the catalog record
             record = repo.insertListing(listItem, rarity, now);
 
             String details = item.type + " " + item.itemId + " " + rarity;
             if (price > 0) {
-                MemberFlowRecord flowRec =
-                    MsoyServer.memberRepo.getFlowRepository().spendFlow(
-                        mrec.memberId, price, UserAction.LISTED_ITEM, details);
+                MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
+                    mrec.memberId, price, UserAction.LISTED_ITEM, details);
                 MemberManager.queueFlowUpdated(flowRec);
             } else {
                 logUserAction(mrec, UserAction.LISTED_ITEM, details);
