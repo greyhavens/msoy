@@ -266,9 +266,24 @@ public class MyWhirled extends FlexTable
             VerticalPanel sceneContainer = new VerticalPanel();
             sceneContainer.setStyleName("SceneListContainer");
             sceneContainer.setSpacing(0);
-            Iterator iter = scenes.iterator();
-            while (iter.hasNext()) {
-                sceneContainer.add(new SceneWidget((SceneCard) iter.next(), peopleAttributes));
+            // sort by number of friends in the room, desc
+            Object[] sceneArray = scenes.toArray();
+            Arrays.sort(sceneArray, new Comparator() {
+                public int compare (Object o1, Object o2) {
+                    if (!(o1 instanceof SceneCard) || !(o2 instanceof SceneCard)) {
+                        return 0;
+                    }
+
+                    SceneCard s1 = (SceneCard) o1;
+                    SceneCard s2 = (SceneCard) o2;
+                    return s2.friends.size() - s1.friends.size();
+                } 
+                public boolean equals (Object obj) {
+                    return obj == this;
+                }
+            });
+            for (int ii = 0; ii < sceneArray.length; ii++) {
+                sceneContainer.add(new SceneWidget((SceneCard) sceneArray[ii], peopleAttributes));
             }
             setWidget(sceneContainer);
         }
