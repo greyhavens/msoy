@@ -56,6 +56,14 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String noPeople();
 
   /**
+   * Translated "Top Games".
+   * 
+   * @return translated "Top Games"
+   * @gwt.key headerTopGames
+   */
+  String headerTopGames();
+
+  /**
    * Translated "No Friends in Rooms".
    * 
    * @return translated "No Friends in Rooms"
@@ -110,6 +118,14 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key population
    */
   String population(String arg0);
+
+  /**
+   * Translated "Players".
+   * 
+   * @return translated "Players"
+   * @gwt.key headerPlayers
+   */
+  String headerPlayers();
 
   /**
    * Translated "What''s new and<br/>exciting in the<br/>Whirled at large.".

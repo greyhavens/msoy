@@ -4,6 +4,7 @@
  * Styles for MyWhirled and The Whirled.
  */
 
+/**********  My Whirled ************/
 .PeopleContainer, .PlacesContainer, .GamesContainer {
   margin: 7px;
 }
@@ -213,4 +214,71 @@
 .SceneWidget .PopulationList {
   font-size: 10px;
   color: #A9A8AD;
+}
+
+
+
+/**********  Whirledwide  ************/
+.TopGamesContainer {
+  width: 124;
+}
+
+.TopGamesContainer .HeaderLeft, .TopGamesContainer .HeaderRight {
+  background-image: url(/images/whirled/games_star.png);
+  width: 20px;
+  height: 20px;
+}
+
+.TopGamesContainer .Header {
+  background-image: url(/images/whirled/games_tile.png);
+  height: 20px;
+}
+
+.TopGamesContainer .HeaderCenter {
+  width: 100%;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+}
+
+.TopGamesList {
+  height: 500px;
+  width: 124px;
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+  border-bottom: 1px dotted;
+  background-color: #DCDCDC;
+}
+
+.PlayersContainer {
+  width: 124px;
+}
+
+.PlayersContainer .HeaderLeft, .PlayersContainer .HeaderRight {
+  background-image: url(/images/whirled/people_star.png);
+  width: 20px;
+  height: 20px;
+}
+
+.PlayersContainer .Header {
+  background-image: url(/images/whirled/people_tile.png);
+  height: 20px;
+}
+
+.PlayersContainer .HeaderCenter {
+  width: 100%;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+}
+
+.PlayersList {
+  height: 500px;
+  width: 124px;
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+  border-bottom: 1px dotted;
+  background-color: #DCDCDC;
 }
