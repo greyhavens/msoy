@@ -464,7 +464,4 @@ public class ProjectRoomObject extends PlaceObject
 
     /** Used to assign unique identifiers to documents. */
     protected transient int _nextDocumentId;
-
-    /** Stores the thread this distributes object was created on for thread safety enforcement. */
-    protected final transient Thread _dobjThread = Thread.currentThread();
 }
