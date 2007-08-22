@@ -47,8 +47,9 @@ public class BuildUtil
             // build the project
             result = builder.build(buildDir, task.getMember());
 
-            // let the build task do any result processing while the build artifact still exists
-            if (result.buildSuccessful()) {
+            // let the build task do any result processing while the build artifact still exists,
+            // if a build artifact was created
+            if (result.getOutputFile().exists()) {
                 task.processArtifact(result.getOutputFile());
             }
 
