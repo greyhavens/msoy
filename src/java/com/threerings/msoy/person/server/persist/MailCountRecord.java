@@ -11,7 +11,7 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 /**
  * A computed entity that receives the count(*) results for read and unread messages in a folder.
  */
-@Computed
+@Computed(shadowOf=MailMessageRecord.class)
 @Entity
 public class MailCountRecord extends PersistentRecord
 {
@@ -35,5 +35,6 @@ public class MailCountRecord extends PersistentRecord
     public boolean unread;
 
     /** The number of messages that are unread (or read). */
+    @Computed(fieldDefinition="count(*)")
     public int count;
 }

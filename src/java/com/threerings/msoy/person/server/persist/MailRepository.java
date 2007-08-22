@@ -61,9 +61,6 @@ public class MailRepository extends DepotRepository
             MailCountRecord.class,
             new Where(MailMessageRecord.OWNER_ID_C, memberId,
                       MailMessageRecord.FOLDER_ID_C, folderId),
-            new FromOverride(MailMessageRecord.class),
-            new FieldDefinition(MailCountRecord.UNREAD, MailMessageRecord.UNREAD_C),
-            new FieldDefinition(MailCountRecord.COUNT, "count(*)"),
             new GroupBy(MailMessageRecord.UNREAD_C));
         for (MailCountRecord record : records) {
             if (record.unread) {
