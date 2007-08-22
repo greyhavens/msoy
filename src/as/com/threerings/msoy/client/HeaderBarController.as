@@ -6,31 +6,24 @@ package com.threerings.msoy.client {
 import flash.events.Event;
 
 import mx.containers.TitleWindow;
-
 import mx.controls.Button;
 import mx.controls.Text;
 import mx.controls.TextArea;
-
 import mx.core.Application;
-
 import mx.managers.PopUpManager;
 
 import com.threerings.util.Controller;
 
-import com.threerings.crowd.client.LocationAdapter;
-import com.threerings.crowd.client.PlaceController;
-import com.threerings.crowd.data.PlaceObject;
-
 import com.threerings.presents.client.ResultWrapper;
+
+import com.threerings.crowd.client.LocationAdapter;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.whirled.data.Scene;
 
 import com.threerings.msoy.client.MemberService;
-
 import com.threerings.msoy.game.data.MsoyGameConfig;
-
 import com.threerings.msoy.ui.FloatingPanel;
-
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 public class HeaderBarController extends Controller
@@ -39,12 +32,9 @@ public class HeaderBarController extends Controller
     {
         _ctx = ctx;
         _headerBar = headerBar;
-
         setControlledPanel(headerBar);
-        
-        _ctx.getLocationDirector().addLocationObserver(new LocationAdapter(null, 
-            this.locationChanged, null));
-
+        _ctx.getLocationDirector().addLocationObserver(
+            new LocationAdapter(null, this.locationChanged, null));
         _headerBar.addEventListener(Event.ADDED_TO_STAGE, function (evt :Event) :void {
             _ctx.getWorldClient().setWindowTitle(_headerBar.getLocationText());
         });
@@ -62,12 +52,12 @@ public class HeaderBarController extends Controller
 
             var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
             if (model != null) {
-                var svc :MemberService = 
+                var svc :MemberService =
                     _ctx.getClient().requireService(MemberService) as MemberService;
                 if (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                     svc.getDisplayName(_ctx.getClient(), model.ownerId, new ResultWrapper(
                         function (cause :String) :void {
-                            Log.getLog(this).debug("failed to retrieve member owner name: " + 
+                            Log.getLog(this).debug("failed to retrieve member owner name: " +
                                 cause);
                             _headerBar.setOwnerLink("");
                         },
@@ -79,7 +69,7 @@ public class HeaderBarController extends Controller
                 } else if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
                     svc.getGroupName(_ctx.getClient(), model.ownerId, new ResultWrapper(
                         function (cause :String) :void {
-                            Log.getLog(this).debug("failed to retrieve group owner name: " + 
+                            Log.getLog(this).debug("failed to retrieve group owner name: " +
                                 cause);
                             _headerBar.setOwnerLink("");
                         },
@@ -92,15 +82,16 @@ public class HeaderBarController extends Controller
                     _headerBar.setOwnerLink("");
                 }
             }
+
         } else {
             // For now we can embed scenes with game lobbies attached, but not game instances -
             // when we have a unique URL for game instance locations, then we can embed those
             // locations as well, and have the embedded page bring the game lobby attached to the
             // default game room.
             _headerBar.setEmbedLinkButtonVisible(false);
-            var ctrl :PlaceController = _ctx.getLocationDirector().getPlaceController();
-            if (ctrl != null && ctrl.getPlaceConfig() is MsoyGameConfig) {
-                var name :String = (ctrl.getPlaceConfig() as MsoyGameConfig).name;
+            var cfg :MsoyGameConfig = _ctx.getGameDirector().getGameConfig();
+            if (cfg != null) {
+                var name :String = cfg.name;
                 _ctx.getWorldClient().setWindowTitle(name);
                 _headerBar.setLocationText(name);
                 _headerBar.setOwnerLink("");
