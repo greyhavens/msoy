@@ -3,8 +3,10 @@
 
 package com.threerings.msoy.world.client {
 
+import com.threerings.io.TypedArray;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
+import com.threerings.util.ResultListener;
 
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.data.PlaceConfig;
@@ -85,41 +87,32 @@ public class MsoySceneDirector extends SceneDirector
     // from SceneDirector
     override public function moveSucceeded (placeId :int, config :PlaceConfig) :void
     {
+        var wctx :WorldContext = _ctx as WorldContext;
+        var data :MsoyPendingData = _pendingData as MsoyPendingData;
+        if (data != null && data.message != null) {
+            wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, data.message);
+        }
+
         super.moveSucceeded(placeId, config);
+
         // tell our controller to update the URL of the browser to reflect our new location
-        (_ctx as WorldContext).getMsoyController().wentToScene(_sceneId);
+        wctx.getMsoyController().wentToScene(_sceneId);
     }
 
     // from SceneDirector
     override public function requestFailed (reason :String) :void
     {
+        // remember which scene we came from, possibly on another peer
+        var pendingPreviousScene :int = _pendingData != null ?
+            (_pendingData as MsoyPendingData).previousSceneId : -1;
+
         _departingPortalId = -1;
         super.requestFailed(reason);
-
-        var wctx :WorldContext = _ctx as WorldContext;
-        var ctrl :MsoyController = wctx.getMsoyController();
-        wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, reason);
-
-        if (reason != RoomCodes.E_ENTRANCE_DENIED) {
-            return; // we're done
-        }
+        (_ctx as WorldContext).displayFeedback(MsoyCodes.GENERAL_MSGS, reason);
 
         // let's deal with the player getting bumped back from a locked scene
-        if (_sceneId != -1) {
-            // we tried to move from one scene to another - update the URL to the old scene id
-            ctrl.wentToScene(_sceneId);
-            return;
-        }
-
-        // this is the first place we've tried, and it's locked - go back home
-        var memberId :int = wctx.getMemberObject().memberName.getMemberId();
-        if (memberId != 0) {
-            log.info("Scene locked, returning home [memberId=" + memberId + "].");
-            ctrl.handleGoMemberHome(memberId);
-        } else {
-            // this is a guest, they don't have a home. drop them into the common area.
-            var commonAreaId :int = 1; // = SceneRecord.PUBLIC_ROOM.getSceneId() on the server
-            ctrl.handleGoScene(commonAreaId);
+        if (reason == RoomCodes.E_ENTRANCE_DENIED) {
+            bounceBack(_sceneId, pendingPreviousScene, reason);
         }
     }
 
@@ -130,27 +123,40 @@ public class MsoySceneDirector extends SceneDirector
     }
 
     // from SceneDirector
+    override public function prepareMoveTo (sceneId :int, rl :ResultListener) :Boolean
+    {
+        var result :Boolean = super.prepareMoveTo(sceneId, rl);
+        if (result) {
+            // super creates a pending request - fill it in with extra data
+            var data :MsoyPendingData = _pendingData as MsoyPendingData;
+            data.previousSceneId = _sceneId;
+            data.message = _postMoveMessage;
+            _postMoveMessage = null;
+        }
+        return result;
+    }
+
+    // from SceneDirector
     override protected function sendMoveRequest () :void
     {
+        var data :MsoyPendingData = _pendingData as MsoyPendingData;
+        
         // check the version of our cached copy of the scene to which we're requesting to move; if
         // we were unable to load it, assume a cached version of zero
         var sceneVers :int = 0;
-        if (_pendingData.model != null) {
-            sceneVers = _pendingData.model.version;
+        if (data.model != null) {
+            sceneVers = data.model.version;
         }
-
-        // extract our destination location from the pending data
-        var destLoc :MsoyLocation = (_pendingData as MsoyPendingData).destLoc;
 
         // note: _departingPortalId is only needed *before* a server switch, so we intentionally
         // allow it to get cleared out in the clientDidLogoff() call that happens as we're
         // switching from one server to another
 
         // issue a moveTo request
-        log.info("Issuing moveTo(" + _pendingData.sceneId + ", " + sceneVers + ", " +
-                 _departingPortalId + ", " + destLoc + ").");
-        _msservice.moveTo(_wctx.getClient(), _pendingData.sceneId, sceneVers,
-                          _departingPortalId, destLoc, this);
+        log.info("Issuing moveTo(" + data.previousSceneId + "->" + data.sceneId + ", " +
+                 sceneVers + ", " + _departingPortalId + ", " + data.destLoc + ").");
+        _msservice.moveTo(
+            _wctx.getClient(), data.sceneId, sceneVers, _departingPortalId, data.destLoc, this);
     }
 
     // documentation inherited
@@ -168,6 +174,43 @@ public class MsoySceneDirector extends SceneDirector
         _msservice = (client.requireService(MsoySceneService) as MsoySceneService);
     }
 
+    /**
+     * Do whatever cleanup is appropriate after we failed to enter a locked room.
+     */
+    protected function bounceBack (localSceneId :int, remoteSceneId :int, reason :String) :void
+    {
+        var wctx :WorldContext = _ctx as WorldContext;
+        var ctrl :MsoyController = wctx.getMsoyController();
+        
+        // if we tried to move from one scene to another on the same peer, there's nothing to clean
+        // up, just update the URL to make GWT happy
+        if (localSceneId != -1) {
+            ctrl.wentToScene(localSceneId);
+            return;
+        }
+
+        // if we came here from a scene on another peer, let's go back there
+        if (remoteSceneId != -1) {
+            log.info("Returning to remote scene [sceneId=" + remoteSceneId + "].");
+            _postMoveMessage = reason; // remember the error message
+            ctrl.handleGoScene(remoteSceneId);
+            return;
+        }
+
+        // we have nowhere to go back. let's just go home.
+        var memberId :int = wctx.getMemberObject().memberName.getMemberId();
+        if (memberId != 0) {
+            log.info("Scene locked, returning home [memberId=" + memberId + "].");
+            ctrl.handleGoMemberHome(memberId);
+            return;
+        }
+
+        // we're a guest and don't have a home! just go to the generic public area.
+        var commonAreaId :int = 1; // = SceneRecord.PUBLIC_ROOM.getSceneId() 
+        ctrl.handleGoScene(commonAreaId);
+    }
+    
+    protected var _postMoveMessage :String;
     protected var _msservice :MsoySceneService;
     protected var _departingPortalId :int = -1;
 }
