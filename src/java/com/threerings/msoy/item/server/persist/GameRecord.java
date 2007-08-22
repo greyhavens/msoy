@@ -5,8 +5,6 @@ package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.Column;
-import com.samskivert.jdbc.depot.annotation.GeneratedValue;
-import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -126,7 +124,7 @@ public class GameRecord extends ItemRecord
         new ColumnExp(GameRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 8;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 9;
 
     /** The XML game configuration. */
     @Column(type="TEXT")
@@ -140,8 +138,6 @@ public class GameRecord extends ItemRecord
 
     /** A unique identifier assigned to this game and preserved across new versions of the game
      * item so that ratings and lobbies and content packs all reference the same "game". */
-    @TableGenerator(name="gameId", pkColumnValue="GAME_GAME_ID")
-    @GeneratedValue(generator="gameId", strategy=GenerationType.TABLE, allocationSize=1)
     public int gameId;
 
     public GameRecord ()
