@@ -20,15 +20,11 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.clause.FieldDefinition;
-import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.SelectClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.samskivert.jdbc.depot.expression.FunctionExp;
-import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
@@ -266,9 +262,7 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         GroupMembershipCount count =
-            load(GroupMembershipCount.class, new Where(GroupMembershipRecord.GROUP_ID_C, groupId),
-                 new FieldDefinition(GroupMembershipCount.COUNT, "count(*)"),
-                 new FromOverride(GroupMembershipRecord.class));
+            load(GroupMembershipCount.class, new Where(GroupMembershipRecord.GROUP_ID_C, groupId));
         if (count == null) {
             throw new PersistenceException("Group not found [groupId=" + groupId + "]");
         }
@@ -315,9 +309,6 @@ public class GroupRepository extends DepotRepository
             new SelectClause<GroupMembershipCount>(
                     GroupMembershipCount.class,
                     new String[] { GroupMembershipCount.COUNT },
-                    new FieldDefinition(GroupMembershipCount.COUNT,
-                                        new FunctionExp("COUNT", new LiteralExp("*"))),
-                    new FromOverride(GroupMembershipRecord.class),
                     new Where(GroupMembershipRecord.GROUP_ID_C, groupId)));
         updateLiteral(GroupRecord.class, groupId, fieldMap);
     }
