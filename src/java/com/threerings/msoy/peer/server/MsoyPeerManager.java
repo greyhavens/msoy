@@ -178,7 +178,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Called by the GameServerRegistry when we have established a new game server to host a
+     * Called by the MsoyGameRegistry when we have established a new game server to host a
      * particular game.
      */ 
     public void gameDidStartup (int gameId, String name, int port)
@@ -190,7 +190,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Called by the GameServerRegistry when a game server has been shutdown.
+     * Called by the MsoyGameRegistry when a game server has been shutdown.
      */
     public void gameDidShutdown (int gameId)
     {
