@@ -18,6 +18,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.RoomCodes;
 
 /**
  * Handles custom scene traversal and extra bits for Whirled.
@@ -92,8 +93,24 @@ public class MsoySceneDirector extends SceneDirector
     override public function requestFailed (reason :String) :void
     {
         _departingPortalId = -1;
-        (_ctx as WorldContext).displayFeedback(MsoyCodes.GENERAL_MSGS, reason);
         super.requestFailed(reason);
+
+        var wctx :WorldContext = _ctx as WorldContext;
+        wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, reason);
+
+        // if the scene was locked, the player might have tried to enter there directly
+        // from the my whirled view, not from another scene, in which case we need to deal with it
+        if (reason == RoomCodes.E_ENTRANCE_DENIED) {
+            if (_sceneId == -1) {
+                // this is the first place we've tried, and it's locked - go back home
+                var memberId :int = wctx.getMemberObject().memberName.getMemberId();
+                log.info("Scene locked, returning home [memberId=" + memberId + "].");
+                wctx.getMsoyController().handleGoMemberHome(memberId);
+            } else {
+                // we tried to move from one scene to another - update the URL to the old scene id
+                wctx.getMsoyController().wentToScene(_sceneId);
+            } 
+        }
     }
 
     // from SceneDirector
