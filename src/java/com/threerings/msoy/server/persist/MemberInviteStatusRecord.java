@@ -76,9 +76,11 @@ public class MemberInviteStatusRecord extends PersistentRecord
     public int invitingFriendId;
 
     /** See {@InviterRecord#invitesGranted}. */
+    @Computed(shadowOf=InviterRecord.class)
     public int invitesGranted;
 
     /** See {@InviterRecord#invitesSent}. */
+    @Computed(shadowOf=InviterRecord.class)
     public int invitesSent;
 
     public MemberInviteStatus toWebObject ()

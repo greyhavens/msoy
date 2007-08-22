@@ -648,14 +648,9 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(MemberInviteStatusRecord.class,
-                       new FromOverride(MemberRecord.class),
                        new Join(MemberRecord.MEMBER_ID_C, InviterRecord.MEMBER_ID_C).
                             setType(Join.Type.LEFT_OUTER),
-                       new Where(MemberRecord.INVITING_FRIEND_ID_C, memberId),
-                       new FieldDefinition(MemberInviteStatusRecord.INVITES_GRANTED,
-                            InviterRecord.INVITES_GRANTED_C),
-                       new FieldDefinition(MemberInviteStatusRecord.INVITES_SENT,
-                            InviterRecord.INVITES_SENT_C));
+                       new Where(MemberRecord.INVITING_FRIEND_ID_C, memberId));
     }
 
     /**
