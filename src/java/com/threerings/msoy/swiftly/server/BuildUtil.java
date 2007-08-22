@@ -34,8 +34,8 @@ public class BuildUtil
                 new File(ServerConfig.serverRoot + ProjectRoomManager.LOCAL_BUILD_DIRECTORY);
 
             // Create a temporary build directory
-            buildDir = File.createTempFile("localbuilder", String.valueOf(task.getProjectId()),
-                topBuildDir);
+            buildDir = File.createTempFile(
+                "localbuilder", "_" + String.valueOf(task.getProjectId()), topBuildDir);
             buildDir.delete();
             if (buildDir.mkdirs() != true) {
                 // This should -never- happen, try to exit gracefully.
