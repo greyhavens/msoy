@@ -27,9 +27,6 @@ import com.threerings.util.StringUtil;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
 
-import com.threerings.crowd.client.LocationAdapter;
-import com.threerings.crowd.data.PlaceObject;
-
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.data.ChatCodes;
 
@@ -65,8 +62,6 @@ public class ChatControl extends HBox
 
         this.height = height;
         styleName = "chatControl";
-
-        _locObs = new LocationAdapter(null, locationDidChange);
 
         addChild(_txt = new ChatInput());
         _txt.height = height;
@@ -118,14 +113,10 @@ public class ChatControl extends HBox
             callLater(function () :void {
                 _txt.setFocus();
             });
-
-            _ctx.getLocationDirector().addLocationObserver(_locObs);
             _controls.push(this);
 
         } else {
             _curLine = _txt.text;
-
-            _ctx.getLocationDirector().removeLocationObserver(_locObs);
             ArrayUtil.removeAll(_controls, this);
         }
     }
@@ -150,31 +141,11 @@ public class ChatControl extends HBox
         _txt.text = "";
     }
 
-    /**
-     * Routed from our LocationAdapter, we observe the entry or exit from places.
-     */
-    protected function locationDidChange (plobj :PlaceObject) :void
-    {
-        updateTarget();
-    }
-
-    /**
-     * Called to update the text we display in our target button.
-     */
-    protected function updateTarget () :void
-    {
-        var plobj :PlaceObject = _ctx.getLocationDirector().getPlaceObject();
-        _txt.enabled = (plobj != null);
-    }
-
     /** Our client-side context. */
     protected var _ctx :WorldContext;
 
     /** The director to which we are sending chat requests. */
     protected var _chatDtr :ChatDirector;
-
-    /** Our location observer. */
-    protected var _locObs :LocationAdapter;
 
     /** The place where the user may enter chat. */
     protected var _txt :ChatInput;
