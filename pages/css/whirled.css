@@ -203,6 +203,11 @@
   font-size: 10px;
 }
 
+.Fake {
+  font-size: 12px;
+  padding: 5px;
+}
+
 .SceneWidget .SceneName {
   font-size: 12px;
   font-weight: bold;

@@ -16,6 +16,14 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String myWhirledDescription();
 
   /**
+   * Translated "You currently have no popular places.  <a href="/#{0}">Visit your home</a> or <a href="/#{1}">check Whirledwide</a> to get started!".
+   * 
+   * @return translated "You currently have no popular places.  <a href="/#{0}">Visit your home</a> or <a href="/#{1}">check Whirledwide</a> to get started!"
+   * @gwt.key emptyPopularPlaces
+   */
+  String emptyPopularPlaces(String arg0,  String arg1);
+
+  /**
    * Translated "My Popular Places".
    * 
    * @return translated "My Popular Places"
@@ -118,6 +126,14 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key population
    */
   String population(String arg0);
+
+  /**
+   * Translated "You currently have no active games.  <a href="/#{0}">Check Whirledwide</a> to see what other people are playing!".
+   * 
+   * @return translated "You currently have no active games.  <a href="/#{0}">Check Whirledwide</a> to see what other people are playing!"
+   * @gwt.key emptyActiveGames
+   */
+  String emptyActiveGames(String arg0);
 
   /**
    * Translated "Players".

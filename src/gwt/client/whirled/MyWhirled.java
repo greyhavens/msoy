@@ -267,6 +267,7 @@ public class MyWhirled extends FlexTable
     {
         public SceneList (int sceneType)
         {
+            _sceneType = sceneType;
             setStyleName("SceneList");
             setAlwaysShowScrollBars(true);
             // why the hell doesn't GWT support only scrolling in one direction?
@@ -278,6 +279,12 @@ public class MyWhirled extends FlexTable
             VerticalPanel sceneContainer = new VerticalPanel();
             sceneContainer.setStyleName("SceneListContainer");
             sceneContainer.setSpacing(0);
+            setWidget(sceneContainer);
+            if (scenes.size() == 0) {
+                showEmptyEntry(sceneContainer);
+                return;
+            }
+
             // sort by number of friends in the room, then total population, desc
             Object[] sceneArray = scenes.toArray();
             Arrays.sort(sceneArray, new Comparator() {
@@ -301,8 +308,32 @@ public class MyWhirled extends FlexTable
             for (int ii = 0; ii < sceneArray.length; ii++) {
                 sceneContainer.add(new SceneWidget((SceneCard) sceneArray[ii], peopleAttributes));
             }
-            setWidget(sceneContainer);
         }
+
+        /**
+         * adds the empty list entry to this SceneList so that the list is never completely empty,
+         * which is so sad.
+         */
+        protected void showEmptyEntry (VerticalPanel sceneContainer) 
+        {
+            HorizontalPanel fakeSceneWidget = new HorizontalPanel();
+            fakeSceneWidget.setStyleName("SceneWidget");
+            fakeSceneWidget.addStyleName("Fake");
+            fakeSceneWidget.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            fakeSceneWidget.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+            sceneContainer.add(fakeSceneWidget);
+
+            if (_sceneType == SceneCard.ROOM) {
+                fakeSceneWidget.add(new HTML(CWhirled.msgs.emptyPopularPlaces(
+                    Application.createLinkToken("world", "m" + CWhirled.creds.getMemberId()),
+                    Application.createLinkToken("whirled", "whirledwide"))));
+            } else if (_sceneType == SceneCard.GAME) {
+                fakeSceneWidget.add(new HTML(CWhirled.msgs.emptyActiveGames(
+                    Application.createLinkToken("whirled", "whirledwide"))));
+            }
+        }
+
+        protected int _sceneType;
     }
 
     protected static class SceneWidget extends HorizontalPanel
