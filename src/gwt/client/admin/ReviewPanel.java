@@ -9,17 +9,13 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -30,49 +26,32 @@ import client.util.BorderedDialog;
 import client.util.BorderedPopup;
 import client.util.ClickCallback;
 import client.util.MediaUtil;
+import client.util.MsoyUI;
+import client.util.RowPanel;
 
 /**
  * An interface for dealing with flagged items: mark them mature if they were flagged thus,
  * or delete them, or simply remove the flags.
  */
-public class ReviewPopup extends BorderedDialog
+public class ReviewPanel extends VerticalPanel
     implements EditorHost
 {
-    /**
-     * Constructs a new {@link ReviewPopup}.
-     */
-    public ReviewPopup ()
+    public ReviewPanel ()
     {
-        super(false, true);
+        setStyleName("reviewPanel");
 
-        _dock.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+        add(_centerContent = new FlexTable());
+        add(_status = new Label());
 
-        _header.add(createTitleLabel(CAdmin.msgs.reviewTitle(), null));
-
-        HorizontalPanel buttonRow = new HorizontalPanel();
-        buttonRow.setSpacing(10);
-
+        RowPanel buttons = new RowPanel();
         Button reloadButton = new Button(CAdmin.msgs.reviewReload());
         reloadButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 refresh();
             }
         });
-        buttonRow.add(reloadButton);
-
-        Button dismissButton = new Button(CAdmin.msgs.reviewDismiss());
-        dismissButton.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                hide();
-            }
-        });
-        buttonRow.add(dismissButton);
-        _footer.add(buttonRow);
-
-        _status = new Label();
-        _dock.add(_status, DockPanel.SOUTH);
-        _centerContent = new FlexTable();
-        _dock.add(_centerContent, DockPanel.CENTER);
+        buttons.add(reloadButton);
+        add(buttons);
 
         refresh();
     }
@@ -87,12 +66,6 @@ public class ReviewPopup extends BorderedDialog
     public void setStatus (String string)
     {
         _status.setText(string);
-    }
-
-    // @Override
-    protected Widget createContents ()
-    {
-        return _dock = new DockPanel();
     }
 
     // clears the UI and repopuplates the list
@@ -117,15 +90,13 @@ public class ReviewPopup extends BorderedDialog
             _centerContent.setWidget(0, 0, new Label(CAdmin.msgs.reviewNoItems()));
             return;
         }
+
         int row = 0;
         Iterator i = list.iterator();
         while (i.hasNext()) {
             ItemDetail itemDetail = (ItemDetail) i.next();
-
-            // thumbnail to the left
             _centerContent.setWidget(row, 0, MediaUtil.createMediaView(
                 itemDetail.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE));
-
             _centerContent.setWidget(row, 1, new ItemBits(itemDetail));
             row ++;
         }
@@ -143,24 +114,20 @@ public class ReviewPopup extends BorderedDialog
         {
             _item = detail.item;
 
-            // first a horizontal line with item name & creator nam
-            HorizontalPanel line = new HorizontalPanel();
+            // TODO: say what flags are set on it
 
             // the name popups an item inspector
-            InlineLabel nameLabel = new InlineLabel(_item.name);
-            nameLabel.addClickListener(new ClickListener() {
+            String name = _item.name + " - " + detail.creator.toString();
+            add(MsoyUI.createActionLabel(name, new ClickListener() {
                 public void onClick (Widget sender) {
-                    new AdminItemPopup(_item, ReviewPopup.this).show();
+                    new AdminItemPopup(_item, ReviewPanel.this).show();
                 }
-            });
-            line.add(nameLabel);
-            line.add(new InlineLabel("  - " + detail.creator.toString()));
-            add(line);
+            }));
 
             add(new Label(_item.description));
 
             // then a row of action buttons
-            line = new HorizontalPanel();
+            RowPanel line = new RowPanel();
 
             // TODO: Let's nix 'delist' for a bit and see if we need it later.
 //          if (item.ownerId == 0) {
@@ -279,8 +246,7 @@ public class ReviewPopup extends BorderedDialog
                 };
                 _yesButton.addClickListener(listener);
                 noButton.addClickListener(listener);
-                HorizontalPanel buttons = new HorizontalPanel();
-                buttons.setSpacing(10);
+                RowPanel buttons = new RowPanel();
                 buttons.add(_yesButton);
                 buttons.add(noButton);
                 content.add(buttons);
@@ -336,7 +302,6 @@ public class ReviewPopup extends BorderedDialog
         protected Item _item;
     }
 
-    protected DockPanel _dock;
     protected FlexTable _centerContent;
     protected Label _status;
 }

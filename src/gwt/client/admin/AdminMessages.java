@@ -264,9 +264,9 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String invitesToAll();
 
   /**
-   * Translated "Review Flagged Items".
+   * Translated "Flagged Items".
    * 
-   * @return translated "Review Flagged Items"
+   * @return translated "Flagged Items"
    * @gwt.key reviewTitle
    */
   String reviewTitle();
@@ -318,14 +318,6 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key invitesIssueButton
    */
   String invitesIssueButton();
-
-  /**
-   * Translated "Dismiss".
-   * 
-   * @return translated "Dismiss"
-   * @gwt.key reviewDismiss
-   */
-  String reviewDismiss();
 
   /**
    * Translated "Players with no inviter".

@@ -32,8 +32,16 @@ public class index extends EditemEntryPoint
     {
         if (CAdmin.ident == null) {
             setContent(MsoyUI.createLabel(CAdmin.msgs.indexLogon(), "infoLabel"));
-        } else if (token != null && token.startsWith("browser") && CAdmin.isAdmin()) {
+
+        } else if (!CAdmin.isSupport() && !CAdmin.isAdmin()) {
+            setContent(MsoyUI.createLabel(CAdmin.msgs.lackPrivileges(), "infoLabel"));
+
+        } else if (token != null && token.startsWith("browser")) {
             displayPlayerBrowser(token.length() > 8 ? token.substring(8) : "");
+
+        } else if (token != null && token.startsWith("review")) {
+            displayFlaggedItemReview();
+
         } else {
             displayDashboard();
         }
@@ -60,12 +68,8 @@ public class index extends EditemEntryPoint
 
     protected void displayDashboard ()
     {
-        if (CAdmin.creds.isSupport) {
-            setPageTitle(CAdmin.msgs.title());
-            setContent(new DashboardPanel());
-        } else {
-            setContent(MsoyUI.createLabel(CAdmin.msgs.lackPrivileges(), "infoLabel"));
-        }
+        setPageTitle(CAdmin.msgs.title());
+        setContent(new DashboardPanel());
     }
 
     protected void displayPlayerBrowser (String memberIdString)
@@ -84,6 +88,12 @@ public class index extends EditemEntryPoint
         } 
         setContent(_playerBrowser);
         _playerBrowser.displayPlayersInvitedBy(memberId);
+    }
+
+    protected void displayFlaggedItemReview ()
+    {
+        setPageTitle(CAdmin.msgs.reviewTitle());
+        setContent(new ReviewPanel());
     }
 
     protected PlayerBrowserPanel _playerBrowser;

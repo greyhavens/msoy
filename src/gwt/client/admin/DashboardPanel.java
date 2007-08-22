@@ -55,7 +55,7 @@ public class DashboardPanel extends FlexTable
         }
         controls.add(new Button(CAdmin.msgs.reviewButton(), new ClickListener() {
             public void onClick (Widget sender) {
-                new ReviewPopup().show();
+                History.newItem(Application.createLinkToken("admin", "review"));
             }
         }));
 

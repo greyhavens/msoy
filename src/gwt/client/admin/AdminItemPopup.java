@@ -17,7 +17,7 @@ import com.threerings.msoy.item.data.all.Item;
  */
 public class AdminItemPopup extends BaseItemDetailPopup
 {
-    public AdminItemPopup (Item item, ReviewPopup parent)
+    public AdminItemPopup (Item item, ReviewPanel parent)
     {
         super(item);
         _parent = parent;
@@ -43,6 +43,6 @@ public class AdminItemPopup extends BaseItemDetailPopup
         }
     }
 
-    protected ReviewPopup _parent;
+    protected ReviewPanel _parent;
     protected Label _status;
 }
