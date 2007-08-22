@@ -117,8 +117,11 @@ public class CatalogServlet extends MsoyServiceServlet
 
         try {
             final CatalogRecord<ItemRecord> listing = repo.loadListing(item.itemId);
-            final int flowCost = mrec.isAdmin() ? 0 : listing.flowCost;
+            if (listing == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            }
 
+            final int flowCost = mrec.isAdmin() ? 0 : listing.flowCost;
             if (mrec.flow < flowCost) {
                 throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
             }
