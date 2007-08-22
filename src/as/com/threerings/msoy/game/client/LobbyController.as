@@ -51,7 +51,6 @@ public class LobbyController extends Controller implements Subscriber
         _gctx = gctx;
         _liaison = liaison;
 
-        Log.getLog(this).info("Subscribing to lobby object " + oid + ".");
         _subscriber = new SafeSubscriber(oid, this)
         _subscriber.subscribe(_gctx.getDObjectManager());
 
