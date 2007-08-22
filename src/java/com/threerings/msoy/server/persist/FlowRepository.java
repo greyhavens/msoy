@@ -393,6 +393,7 @@ public class FlowRepository extends DepotRepository
         classes.add(DailyFlowRecord.class);
         classes.add(MemberFlowRecord.class);
         classes.add(MemberActionLogRecord.class);
+        classes.add(MemberActionSummaryRecord.class);
     }
 
     /** Minutes in a day. */
