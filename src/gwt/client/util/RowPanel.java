@@ -13,9 +13,10 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
  */
 public class RowPanel extends HorizontalPanel
 {
-    protected void adopt (Widget w, Element container)
+    // @Override // from ComplexPanel
+    protected void add (Widget child, Element container)
     {
-        super.adopt(w, container);
+        super.add(child, container);
         setStyleName(container, "rowPanelCell", true);
     }
 }
