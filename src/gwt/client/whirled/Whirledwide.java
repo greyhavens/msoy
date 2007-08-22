@@ -3,11 +3,19 @@
 
 package client.whirled;
 
+import com.google.gwt.user.client.History;
+
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import client.shell.Application;
+
+import com.threerings.msoy.item.data.all.Item;
 
 public class Whirledwide extends FlexTable
 {
@@ -21,7 +29,7 @@ public class Whirledwide extends FlexTable
         int row = 0;
 
         setCellPadding(0);
-        setCellSpacing(7);
+        setCellSpacing(5);
         
         getFlexCellFormatter().setRowSpan(row, 0, 4);
         VerticalPanel topGamesContainer = new VerticalPanel();
@@ -41,7 +49,21 @@ public class Whirledwide extends FlexTable
         star.setStyleName("HeaderRight");
         header.add(star);
         topGamesContainer.add(header);
-        topGamesContainer.add(_topGames = new GamesList());
+        topGamesContainer.add(_topGames = new VerticalPanel());
+        _topGames.setStyleName("TopGamesList");
+        HorizontalPanel allGames = new HorizontalPanel();
+        allGames.setStyleName("AllGames");
+        allGames.setHorizontalAlignment(HorizontalPanel.ALIGN_RIGHT);
+        allGames.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        Image allGamesImage = new Image("/images/whirled/all_games.png");
+        allGamesImage.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                History.newItem(Application.createLinkToken("catalog", "" + Item.GAME));
+            }
+        });
+        allGames.add(allGamesImage);
+        topGamesContainer.add(allGames);
+
 
         getFlexCellFormatter().setRowSpan(row, 2, 4);
         VerticalPanel playersContainer = new VerticalPanel();
@@ -61,28 +83,13 @@ public class Whirledwide extends FlexTable
         star.setStyleName("HeaderRight");
         header.add(star);
         playersContainer.add(header);
-        playersContainer.add(_players = new PlayersList());
+        playersContainer.add(_players = new VerticalPanel());
+        _players.setStyleName("PlayersList");
         
         VerticalPanel featuredPlace = new VerticalPanel();
         setWidget(row++, 1, featuredPlace);
         featuredPlace.add(new Image("/images/whirled/featured_places.jpg"));
         featuredPlace.add(_featuredPlace = new FeaturedPlaceView());
-    }
-
-    protected static class GamesList extends VerticalPanel
-    {
-        public GamesList () 
-        {
-            setStyleName("TopGamesList");
-        }
-    }
-
-    protected static class PlayersList extends VerticalPanel
-    {
-        public PlayersList ()
-        {
-            setStyleName("PlayersList");
-        }
     }
 
     protected static class FeaturedPlacesList extends HorizontalPanel
@@ -99,8 +106,8 @@ public class Whirledwide extends FlexTable
         }
     }
 
-    protected GamesList _topGames;
-    protected PlayersList _players;
+    protected VerticalPanel _topGames;
+    protected VerticalPanel _players;
     protected FeaturedPlaceView _featuredPlace;
     protected FeaturedPlacesList _featuredPlaces;
 }

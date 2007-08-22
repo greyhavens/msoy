@@ -243,12 +243,26 @@
 }
 
 .TopGamesList {
-  height: 500px;
   width: 124px;
+  height: 480px;
   border-left: 1px dotted;
   border-right: 1px dotted;
-  border-bottom: 1px dotted;
   background-color: #DCDCDC;
+}
+
+.AllGames {
+  width: 124px;
+  height: 20px;
+  background-color: #84939F;
+  border-bottom: 1px dotted;
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+  padding: 3px 2px 1px 1px;
+}
+
+.AllGames img {
+  display: block;
+  cursor: pointer;
 }
 
 .PlayersContainer {
