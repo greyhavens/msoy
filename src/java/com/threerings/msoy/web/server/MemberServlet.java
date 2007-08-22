@@ -356,10 +356,9 @@ public class MemberServlet extends MsoyServiceServlet
         // don't fill in info that is unneeded, like population
         try {
             ArrayList<SceneCard> games = new ArrayList<SceneCard>();
-            ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(Item.GAME);
 
             // fetch catalog records and loop over them
-            for (CatalogRecord record : repo.loadCatalog(
+            for (CatalogRecord record : MsoyServer.itemMan.getGameRepository().loadCatalog(
                 CatalogListing.SORT_BY_RATING, false, null, 0, 0, 0, 9)) {
                 // TODO
             }
@@ -520,17 +519,18 @@ public class MemberServlet extends MsoyServiceServlet
         ArrayList<SceneCard> cards = new ArrayList<SceneCard>();
 
         try {
-            for (GameRecord gameRec : MsoyServer.itemMan.getGameRepository().loadItems(
-                    map.intKeySet().toIntArray())) {
+            for (int gameId : map.intKeySet()) {
+                GameRecord gameRec = 
+                    MsoyServer.itemMan.getGameRepository().loadGameRecord(gameId);
                 SceneCard card = new SceneCard();
-                card.sceneId = gameRec.itemId;
+                card.sceneId = gameId;
                 card.name = gameRec.name;
                 card.sceneType = SceneCard.GAME;
-                card.friends = map.get(card.sceneId);
+                card.friends = map.get(gameId);
                 card.logo = gameRec.thumbMediaHash == null ? null : 
                     new MediaDesc(gameRec.thumbMediaHash, gameRec.thumbMimeType, 
                                   gameRec.thumbConstraint);
-                PopularPlacesSnapshot.Place snap = pps.getGame(gameRec.itemId);
+                PopularPlacesSnapshot.Place snap = pps.getGame(gameId);
                 // if the snapshot is out of date, the display will be made sane in GWT.
                 card.population = snap == null ? 0 : snap.population;
                 cards.add(card);
