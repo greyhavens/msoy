@@ -14,10 +14,10 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 
-public abstract class CommonBuildTask
+public abstract class AbstractBuildTask
     implements Runnable
 {
-    public CommonBuildTask (ProjectRoomManager manager, MemberName member,
+    public AbstractBuildTask (ProjectRoomManager manager, MemberName member,
                             ConfirmListener listener)
     {
         _manager = manager;

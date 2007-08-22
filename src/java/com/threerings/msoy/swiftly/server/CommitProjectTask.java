@@ -27,7 +27,7 @@ public class CommitProjectTask
     /**
      * Commit the project, then perform a build.
      */
-    public CommitProjectTask (ProjectRoomManager manager, CommonBuildTask buildTask,
+    public CommitProjectTask (ProjectRoomManager manager, AbstractBuildTask buildTask,
                               ConfirmListener listener)
     {
         _manager = manager;
@@ -108,7 +108,7 @@ public class CommitProjectTask
     protected final ArrayList<SwiftlyDocument> _modDocs = new ArrayList<SwiftlyDocument>();
 
     protected final ProjectRoomManager _manager;
-    protected final CommonBuildTask _buildTask;
+    protected final AbstractBuildTask _buildTask;
     protected final ConfirmListener _listener;
     protected Throwable _error;
 }

@@ -22,7 +22,7 @@ public class BuildUtil
      * Build the project and return the result. Handle any errors encountered.
      * @throws IOException, ProjectBuilderException, PersistenceException
      */
-    public static BuildResult buildProject (CommonBuildTask task, ProjectBuilder builder)
+    public static BuildResult buildProject (AbstractBuildTask task, ProjectBuilder builder)
         throws IOException, ProjectBuilderException, PersistenceException
     {
         final BuildResult result;

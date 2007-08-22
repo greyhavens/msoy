@@ -29,7 +29,7 @@ import com.threerings.msoy.web.server.UploadUtil;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 
 /** Handles a request to build our project. */
-public class BuildAndExportTask extends CommonBuildTask
+public class BuildAndExportTask extends AbstractBuildTask
 {
    public BuildAndExportTask (ProjectRoomManager manager, MemberName member,
                               ConfirmListener listener)

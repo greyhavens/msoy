@@ -10,7 +10,7 @@ import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 
 /** Handles a request to build our project. */
-public class BuildTask extends CommonBuildTask
+public class BuildTask extends AbstractBuildTask
 {
     public BuildTask (ProjectRoomManager manager, MemberName member, ConfirmListener listener)
     {

@@ -305,7 +305,7 @@ public class ProjectRoomManager extends PlaceManager
         requireWritePermissions(caller);
         MemberObject memobj = (MemberObject)caller;
 
-        BuildTask buildTask = new BuildTask(this, memobj.memberName, listener);
+        AbstractBuildTask buildTask = new BuildTask(this, memobj.memberName, listener);
         _svnExecutor.addTask(new CommitProjectTask(this, buildTask, listener));
     }
 
@@ -317,7 +317,7 @@ public class ProjectRoomManager extends PlaceManager
         requireWritePermissions(caller);
         MemberObject memobj = (MemberObject)caller;
 
-        BuildAndExportTask buildTask = new BuildAndExportTask(this, memobj.memberName, listener);
+        AbstractBuildTask buildTask = new BuildAndExportTask(this, memobj.memberName, listener);
         _svnExecutor.addTask(new CommitProjectTask(this, buildTask, listener));
     }
 
