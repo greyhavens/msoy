@@ -46,7 +46,8 @@ public class TagPopularityRecord extends PersistentRecord
 
     /** The actual tag. */
     public String tag;
-    
+
     /** The number of target that reference this tag. */
+    @Computed(fieldDefinition="count(*)")
     public int count;
 }

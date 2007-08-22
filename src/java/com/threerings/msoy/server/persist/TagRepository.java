@@ -100,8 +100,7 @@ public abstract class TagRepository extends DepotRepository
                        new FromOverride(getTagClass()),
                        new Limit(0, rows),
                        new Join(getTagColumn(TagRecord.TAG_ID), TagNameRecord.TAG_ID_C),
-                       new FieldDefinition(TagPopularityRecord.COUNT, "count(*)"),
-                       OrderBy.descending(new LiteralExp("count(*)")),
+                       OrderBy.descending(TagPopularityRecord.COUNT_C),
                        new GroupBy(TagNameRecord.TAG_ID_C, TagNameRecord.TAG_C));
     }
 
