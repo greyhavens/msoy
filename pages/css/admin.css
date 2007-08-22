@@ -35,6 +35,11 @@
   width: 400px;
 }
 
+/** Review Panel **/
+.reviewPanel {
+  padding: 10px;
+}
+
 /*** Player Browser ***/
 .playerBrowser .PlayerList {
   text-align: center;
