@@ -227,8 +227,8 @@ public class MyWhirled extends FlexTable
             }
         }
 
-        // ensure that the list has PEOPLE_COLUMNS entries for spacing reasons
-        while (people.size() < PEOPLE_COLUMNS) {
+        // ensure that the list has either >= PEOPLE_COLUMNS or 0 entries for spacing reasons
+        while (people.size() != 0 && people.size() < PEOPLE_COLUMNS) {
             people.add(null);
         }
         _people.setModel(new SimpleDataModel(people), 0);
