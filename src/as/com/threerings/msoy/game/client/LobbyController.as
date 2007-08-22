@@ -51,6 +51,7 @@ public class LobbyController extends Controller implements Subscriber
         _gctx = gctx;
         _liaison = liaison;
 
+        Log.getLog(this).info("Subscribing to lobby object " + oid + ".");
         _subscriber = new SafeSubscriber(oid, this)
         _subscriber.subscribe(_gctx.getDObjectManager());
 
@@ -181,7 +182,7 @@ public class LobbyController extends Controller implements Subscriber
     // from Subscriber
     public function requestFailed (oid :int, cause :ObjectAccessError) :void 
     {
-        Log.getLog(this).warning("request for the LobbyObject failed: ", cause);
+        Log.getLog(this).warning("Request for the LobbyObject failed: " + cause);
     }
 
     /**
@@ -196,9 +197,11 @@ public class LobbyController extends Controller implements Subscriber
             // only clear the display if its a display for this lobby
             _mctx.getTopPanel().clearTableDisplay();
         }
-        _tableDir.clearTableObject();
-        _tableDir.removeTableObserver(_panel);
-        _tableDir.removeSeatednessObserver(_panel);
+        if (_tableDir != null) {
+            _tableDir.clearTableObject();
+            _tableDir.removeTableObserver(_panel);
+            _tableDir.removeSeatednessObserver(_panel);
+        }
 
         // let the game liaison know that we're gone
         _liaison.lobbyCleared(inGame);

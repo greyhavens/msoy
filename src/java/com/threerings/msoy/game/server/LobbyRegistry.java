@@ -132,11 +132,11 @@ public class LobbyRegistry
     public void lobbyDidShutdown (Game game)
     {
         // destroy our record of that lobby
-        _lobbies.remove(game.itemId);
-        _loading.remove(game.itemId); // just in case
+        _lobbies.remove(game.gameId);
+        _loading.remove(game.gameId); // just in case
 
         // let our world server know we're audi
-        MsoyGameServer.worldClient.stoppedHostingGame(game.itemId);
+        MsoyGameServer.worldClient.stoppedHostingGame(game.gameId);
     }
 
     /** The distributed object manager that we work with. */

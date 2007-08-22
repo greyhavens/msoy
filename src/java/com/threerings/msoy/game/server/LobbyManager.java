@@ -52,8 +52,9 @@ public class LobbyManager
 //         if (_game.parentId == 0) {
 //             _uplist = new ItemManager.ItemUpdateListener() {
 //                 public void itemUpdated (ItemRecord item) {
-//                     if (item.itemId == getGameId()) {
-//                         updateGame((Game) item.toItem());
+//                     Game game = (Game)item.toItem();
+//                     if (game.gameId == getGameId()) {
+//                         updateGame(game);
 //                     }
 //                 }
 //             };
@@ -93,7 +94,7 @@ public class LobbyManager
      */
     public int getGameId ()
     {
-        return _game.itemId;
+        return _game.gameId;
     }
 
     /**
@@ -120,7 +121,7 @@ public class LobbyManager
         try {
             gameDef = new MsoyGameParser().parseGame(game);
         } catch (Exception e) {
-            log.warning("Error parsing game definition [id=" + game.itemId + ", err=" + e + "].");
+            log.warning("Error parsing game definition [id=" + game.gameId + ", err=" + e + "].");
             return;
         }
 
