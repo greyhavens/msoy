@@ -153,13 +153,13 @@ public class AVRGameControlBackend extends WhirledGameControlBackend
         return true;
     }
     
-    override public function getOccupants_v1 () :Array
+    override protected function getOccupants_v1 () :Array
     {
         validateConnected();
         return (_roomObj == null ? null : getOccupantIds(_roomObj));
     }
 
-    override public function getPlayers_v1 () :Array
+    override protected function getPlayers_v1 () :Array
     {
         validateConnected();
         return getOccupantIds(_avrGameObj);
@@ -189,7 +189,7 @@ public class AVRGameControlBackend extends WhirledGameControlBackend
         return null;
     }
 
-    override public function getOccupantName_v1 (occupantId :int) :String
+    override protected function getOccupantName_v1 (occupantId :int) :String
     {
         validateConnected();
         if (_roomObj != null) {

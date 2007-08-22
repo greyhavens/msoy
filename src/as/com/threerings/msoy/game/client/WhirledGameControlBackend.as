@@ -37,6 +37,8 @@ public class WhirledGameControlBackend extends GameControlBackend
         o["setChatBounds_v1"] = ctrl.setChatBounds_v1;
         o["getHeadShot_v1"] = getHeadShot_v1;
         o["getStageBounds_v1"] = getStageBounds_v1;
+        o["endGameWithWinners_v1"] = endGameWithWinners_v1;
+        o["endGameWithScores_v1"] = endGameWithScores_v1;
         o["backToWhirled_v1"] = backToWhirled_v1;
 
         // backwards compatibility
@@ -62,6 +64,22 @@ public class WhirledGameControlBackend extends GameControlBackend
     protected function getStageBounds_v1 () :Rectangle
     {
         return (_ctx as WhirledGameContext).getTopPanel().getPlaceViewBounds();
+    }
+
+    protected function endGameWithWinners_v1 (
+        winnerIds :Array, loserIds :Array, payoutType :int) :void
+    {
+        // TODO
+    }
+
+    protected function endGameWithScores_v1 (playerIds :Array, scores :Array, payoutType :int) :void
+    {
+        // TODO
+    }
+
+    override protected function endGame_v2 (... winnerIds) :void
+    {
+        // TODO
     }
 
     protected function backToWhirled_v1 (showLobby :Boolean = false) :void
