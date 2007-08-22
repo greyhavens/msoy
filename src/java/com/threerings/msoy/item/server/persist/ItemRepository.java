@@ -64,7 +64,7 @@ public abstract class ItemRepository<
     RT extends RatingRecord<T>>
     extends DepotRepository
 {
-    @Computed
+    @Computed(shadowOf=RatingRecord.class)
     @Entity
     public static class RatingAverageRecord extends PersistentRecord {
         @Computed(fieldDefinition="count(*)")
@@ -679,7 +679,6 @@ public abstract class ItemRepository<
 
         RatingAverageRecord average =
             load(RatingAverageRecord.class,
-                 new FromOverride(getRatingClass()),
                  new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId));
 
         float newRating = (float) ((average.count == 0) ? 0.0 : average.sum/average.count);
