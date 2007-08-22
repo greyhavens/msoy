@@ -522,6 +522,10 @@ public class MemberServlet extends MsoyServiceServlet
             for (int gameId : map.intKeySet()) {
                 GameRecord gameRec = 
                     MsoyServer.itemMan.getGameRepository().loadGameRecord(gameId);
+                if (gameRec == null) {
+                    log.warning("Missing game record for game [id=" + gameId + "]");
+                    continue;
+                }
                 SceneCard card = new SceneCard();
                 card.sceneId = gameId;
                 card.name = gameRec.name;
