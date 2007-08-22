@@ -13,6 +13,7 @@ import com.threerings.whirled.client.PendingData;
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.client.persist.SceneRepository;
 
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -96,20 +97,29 @@ public class MsoySceneDirector extends SceneDirector
         super.requestFailed(reason);
 
         var wctx :WorldContext = _ctx as WorldContext;
+        var ctrl :MsoyController = wctx.getMsoyController();
         wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, reason);
 
-        // if the scene was locked, the player might have tried to enter there directly
-        // from the my whirled view, not from another scene, in which case we need to deal with it
-        if (reason == RoomCodes.E_ENTRANCE_DENIED) {
-            if (_sceneId == -1) {
-                // this is the first place we've tried, and it's locked - go back home
-                var memberId :int = wctx.getMemberObject().memberName.getMemberId();
-                log.info("Scene locked, returning home [memberId=" + memberId + "].");
-                wctx.getMsoyController().handleGoMemberHome(memberId);
-            } else {
-                // we tried to move from one scene to another - update the URL to the old scene id
-                wctx.getMsoyController().wentToScene(_sceneId);
-            } 
+        if (reason != RoomCodes.E_ENTRANCE_DENIED) {
+            return; // we're done
+        }
+
+        // let's deal with the player getting bumped back from a locked scene
+        if (_sceneId != -1) {
+            // we tried to move from one scene to another - update the URL to the old scene id
+            ctrl.wentToScene(_sceneId);
+            return;
+        }
+
+        // this is the first place we've tried, and it's locked - go back home
+        var memberId :int = wctx.getMemberObject().memberName.getMemberId();
+        if (memberId != 0) {
+            log.info("Scene locked, returning home [memberId=" + memberId + "].");
+            ctrl.handleGoMemberHome(memberId);
+        } else {
+            // this is a guest, they don't have a home. drop them into the common area.
+            var commonAreaId :int = 1; // = SceneRecord.PUBLIC_ROOM.getSceneId() on the server
+            ctrl.handleGoScene(commonAreaId);
         }
     }
 
