@@ -242,7 +242,7 @@ public class MsoyGameRegistry
     {
         // otherwise obtain a lock and resolve the game ourselves
         MsoyServer.peerMan.acquireLock(
-            MsoyPeerManager.getGameLock(game.itemId), new ResultListener<String>() {
+            MsoyPeerManager.getGameLock(game.gameId), new ResultListener<String>() {
             public void requestCompleted (String nodeName) {
                 if (MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeName)) {
                     log.info("Got lock, resolving " + game.name + ".");
@@ -250,22 +250,22 @@ public class MsoyGameRegistry
 
                 } else if (nodeName != null) {
                     // some other peer got the lock before we could; send them there
-                    log.info("Didn't get lock, going remote " + game.itemId + "@" + nodeName + ".");
-                    if (!checkAndSendToNode(game.itemId, listener)) {
+                    log.info("Didn't get lock, going remote " + game.gameId + "@" + nodeName + ".");
+                    if (!checkAndSendToNode(game.gameId, listener)) {
                         log.warning("Falied to acquire lock but no registered host for game!? " +
-                                    "[id=" + game.itemId + "].");
+                                    "[id=" + game.gameId + "].");
                         listener.requestFailed(GameCodes.INTERNAL_ERROR);
                     }
 
                 } else {
-                    log.warning("Game lock acquired by null? [id=" + game.itemId + "].");
+                    log.warning("Game lock acquired by null? [id=" + game.gameId + "].");
                     listener.requestFailed(GameCodes.INTERNAL_ERROR);
                 }
             }
 
             public void requestFailed (Exception cause) {
                 log.log(Level.WARNING, "Failed to acquire game resolution lock " +
-                        "[id=" + game.itemId + "].", cause);
+                        "[id=" + game.gameId + "].", cause);
                 listener.requestFailed(GameCodes.INTERNAL_ERROR);
             }
         });
@@ -276,18 +276,18 @@ public class MsoyGameRegistry
         // TODO: load balance across our handlers if we ever have more than one
         GameServerHandler handler = _handlers[0];
         if (handler == null) {
-            log.warning("Have no game servers, cannot handle game [id=" + game.itemId + "].");
+            log.warning("Have no game servers, cannot handle game [id=" + game.gameId + "].");
             listener.requestFailed(GameCodes.INTERNAL_ERROR);
 
             // releases our lock on this game as we didn't end up hosting it
-            MsoyServer.peerMan.releaseLock(MsoyPeerManager.getGameLock(game.itemId),
+            MsoyServer.peerMan.releaseLock(MsoyPeerManager.getGameLock(game.gameId),
                                            new ResultListener.NOOP<String>());
             return;
         }
 
         // register this handler as handling this game
         handler.hostGame(game);
-        _handmap.put(game.itemId, handler);
+        _handmap.put(game.gameId, handler);
 
         listener.gameLocated(ServerConfig.serverHost, handler.port);
     }
@@ -327,11 +327,11 @@ public class MsoyGameRegistry
         }
 
         public void hostGame (Game game) {
-            if (!_games.add(game.itemId)) {
+            if (!_games.add(game.gameId)) {
                 log.warning("Requested to host game that we're already hosting? [port=" + port +
-                            ", game=" + game.itemId + "].");
+                            ", game=" + game.gameId + "].");
             } else {
-                MsoyServer.peerMan.gameDidStartup(game.itemId, game.name, port);
+                MsoyServer.peerMan.gameDidStartup(game.gameId, game.name, port);
             }
         }
 
