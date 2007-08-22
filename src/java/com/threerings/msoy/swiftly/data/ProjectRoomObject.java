@@ -55,19 +55,6 @@ public class ProjectRoomObject extends PlaceObject
     public ProjectRoomMarshaller service;
 
     /**
-     * Throws a RuntimeException if the thread calling this method is not on the thread that
-     * created this distributed object.
-     */
-    public void enforceThreadSafety ()
-    {
-        // Enforce access only on the distributed object thread.
-        if (!Thread.currentThread().equals(_dobjThread)) {
-            throw new RuntimeException(
-                "Attempted access of ProjectRoomObject from non-dobject thread.");
-        }
-    }
-
-    /**
      * Adds a new path element to the project's distributed state, assigning a unique identifier to
      * it and then adding it to the distributed state.
      */

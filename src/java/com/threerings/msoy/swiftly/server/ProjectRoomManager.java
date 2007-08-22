@@ -489,7 +489,7 @@ public class ProjectRoomManager extends PlaceManager
     public ProjectRoomObject getRoomObj ()
     {
         // Enforce access only on the distributed object thread.
-        _roomObj.enforceThreadSafety();
+        MsoyServer.requireDObjThread();
         return _roomObj;
     }
 
@@ -500,7 +500,7 @@ public class ProjectRoomManager extends PlaceManager
     public Map<MemberName, Integer> getResultItems ()
     {
         // Enforce access only on the distributed object thread.
-        _roomObj.enforceThreadSafety();
+        MsoyServer.requireDObjThread();
         return _resultItems;
     }
 
