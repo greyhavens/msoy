@@ -5,6 +5,8 @@ package client.whirled;
 
 import com.google.gwt.user.client.History;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -17,11 +19,22 @@ import client.shell.Application;
 
 import com.threerings.msoy.item.data.all.Item;
 
+import com.threerings.msoy.web.data.Whirled;
+
 public class Whirledwide extends FlexTable
 {
     public Whirledwide ()
     {
         buildUi();
+
+        CWhirled.membersvc.getWhirledwide(new AsyncCallback() {
+            public void onSuccess (Object result) {
+                fillUi((Whirled) result);
+            }
+            public void onFailure (Throwable caught) {
+                _errorContainer.add(new Label(CWhirled.serverError(caught)));
+            }
+        });
     }
 
     protected void buildUi ()
@@ -30,6 +43,9 @@ public class Whirledwide extends FlexTable
 
         setCellPadding(0);
         setCellSpacing(5);
+
+        getFlexCellFormatter().setColSpan(row, 0, 3);
+        setWidget(row++, 0, _errorContainer = new HorizontalPanel());
         
         getFlexCellFormatter().setRowSpan(row, 0, 4);
         VerticalPanel topGamesContainer = new VerticalPanel();
@@ -92,6 +108,10 @@ public class Whirledwide extends FlexTable
         featuredPlace.add(_featuredPlace = new FeaturedPlaceView());
     }
 
+    protected void fillUi (Whirled whirledwide) 
+    {
+    }
+
     protected static class FeaturedPlacesList extends HorizontalPanel
     {
         public FeaturedPlacesList ()
@@ -106,6 +126,7 @@ public class Whirledwide extends FlexTable
         }
     }
 
+    protected HorizontalPanel _errorContainer;
     protected VerticalPanel _topGames;
     protected VerticalPanel _players;
     protected FeaturedPlaceView _featuredPlace;

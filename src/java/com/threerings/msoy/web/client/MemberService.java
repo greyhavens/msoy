@@ -58,6 +58,12 @@ public interface MemberService extends RemoteService
         throws ServiceException;
 
     /**
+     * Get the data for the Whirledwide view for the current user.
+     */
+    public Whirled getWhirledwide ()
+        throws ServiceException;
+
+    /**
      * Return the invitation details for the given ident.
      */
     public MemberInvites getInvitationsStatus (WebIdent ident) 

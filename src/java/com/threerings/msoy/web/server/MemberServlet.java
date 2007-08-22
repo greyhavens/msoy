@@ -30,6 +30,7 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
@@ -57,6 +58,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.Invitation;
@@ -342,6 +344,33 @@ public class MemberServlet extends MsoyServiceServlet
         mywhirled.ownedRooms = ownedRooms;
         mywhirled.chats = chats;
         return mywhirled;
+    }
+
+    // from MemberService
+    public Whirled getWhirledwide ()
+        throws ServiceException
+    {
+        Whirled whirledwide = new Whirled();
+
+        // get the top 9 rated Game SceneCards.  We sort them by rating here on the server, and 
+        // don't fill in info that is unneeded, like population
+        try {
+            ArrayList<SceneCard> games = new ArrayList<SceneCard>();
+            ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(Item.GAME);
+
+            // fetch catalog records and loop over them
+            for (CatalogRecord record : repo.loadCatalog(
+                CatalogListing.SORT_BY_RATING, false, null, 0, 0, 0, 9)) {
+                // TODO
+            }
+
+            whirledwide.games = games;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to get popular games info", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        return whirledwide;
     }
 
     // from MemberService
