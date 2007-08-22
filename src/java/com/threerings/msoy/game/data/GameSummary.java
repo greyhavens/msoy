@@ -15,7 +15,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class GameSummary extends SimpleStreamableObject
     implements Cloneable
 {
-    /** The game item id */
+    /** The game id */
     public int gameId;
 
     /** The name of the game - used as a tooltip */
@@ -37,7 +37,7 @@ public class GameSummary extends SimpleStreamableObject
      */
     public GameSummary (Game game)
     {
-        gameId = game.itemId;
+        gameId = game.gameId;
         name = game.name;
         gameMediaType = game.gameMedia.mimeType;
         thumbMedia = game.thumbMedia;
