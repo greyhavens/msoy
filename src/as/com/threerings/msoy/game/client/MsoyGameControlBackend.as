@@ -10,21 +10,18 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.utils.Dictionary;
 
-import com.threerings.util.Name;
-
-import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.ezgame.client.GameControlBackend;
+import com.whirled.client.WhirledGameControlBackend;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
 import com.threerings.msoy.game.data.GameMemberInfo;
 
 /**
- * Extends the basic EZGame backend with flow and other whirled services.
+ * Implements the various Msoy specific parts of the Whirled Game backend.
  */
-public class WhirledGameControlBackend extends GameControlBackend
+public class MsoyGameControlBackend extends WhirledGameControlBackend
 {
-    public function WhirledGameControlBackend (
+    public function MsoyGameControlBackend (
         ctx :WhirledGameContext, gameObj :MsoyGameObject, ctrl :MsoyGameController)
     {
         super(ctx, gameObj, ctrl);
@@ -39,8 +36,6 @@ public class WhirledGameControlBackend extends GameControlBackend
         o["setChatBounds_v1"] = ctrl.setChatBounds_v1;
         o["getHeadShot_v1"] = getHeadShot_v1;
         o["getStageBounds_v1"] = getStageBounds_v1;
-        o["endGameWithWinners_v1"] = endGameWithWinners_v1;
-        o["endGameWithScores_v1"] = endGameWithScores_v1;
         o["backToWhirled_v1"] = backToWhirled_v1;
 
         // backwards compatibility
@@ -67,45 +62,6 @@ public class WhirledGameControlBackend extends GameControlBackend
     protected function getStageBounds_v1 () :Rectangle
     {
         return (_ctx as WhirledGameContext).getTopPanel().getPlaceViewBounds();
-    }
-
-    protected function endGameWithWinners_v1 (
-        winnerIds :Array, loserIds :Array, payoutType :int) :void
-    {
-        validateConnected();
-
-        // pass the buck straight on through, the server will validate everything
-        (_ezObj as MsoyGameObject).whirledGameService.endGameWithWinners(
-            _ctx.getClient(), toTypedIntArray(winnerIds), toTypedIntArray(loserIds), payoutType,
-            createLoggingConfirmListener("endGameWithWinners"));
-    }
-
-    protected function endGameWithScores_v1 (playerIds :Array, scores :Array, payoutType :int) :void
-    {
-        validateConnected();
-
-        // pass the buck straight on through, the server will validate everything
-        (_ezObj as MsoyGameObject).whirledGameService.endGameWithScores(
-            _ctx.getClient(), toTypedIntArray(playerIds), toTypedIntArray(scores), payoutType,
-            createLoggingConfirmListener("endGameWithWinners"));
-    }
-
-    override protected function endGame_v2 (... winnerIds) :void
-    {
-        validateConnected();
-
-        // if this is a table game, all the non-winners are losers, if it's not a table game then
-        // no one is a loser because we're not going to declare that all watchers automatically be
-        // considered as players and thus contribute to the winners' booty
-        var loserIds :Array = [];
-        // party games have a zero length players array
-        for (var ii :int = 0; ii < _ezObj.players.length; ii++) {
-            var occInfo :OccupantInfo = _ezObj.getOccupantInfo(_ezObj.players[ii] as Name);
-            if (occInfo != null) {
-                loserIds.push(occInfo.bodyOid);
-            }
-        }
-        endGameWithWinners_v1(winnerIds, loserIds, 0) // WhirledGameControl.CASCADING_PAYOUT
     }
 
     protected function backToWhirled_v1 (showLobby :Boolean = false) :void

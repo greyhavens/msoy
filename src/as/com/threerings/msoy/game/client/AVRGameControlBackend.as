@@ -21,8 +21,6 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
-import com.threerings.ezgame.client.GameControlBackend;
-
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -35,15 +33,18 @@ import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.game.data.WorldGameConfig;
 import com.threerings.msoy.game.data.AVRGameObject;
 
-public class AVRGameControlBackend extends WhirledGameControlBackend
+public class AVRGameControlBackend extends MsoyGameControlBackend
     implements LocationObserver, OccupantObserver
 {
     public function AVRGameControlBackend (
         ctx :WorldContext, avrGameObj :AVRGameObject, ctrl :MsoyGameController)
     {
         super(ctx, avrGameObj, ctrl);
+
         _mctx = ctx;
         _avrGameObj = avrGameObj;
+
+        // TODO: this needs redoing
         // the gameIdent matches the prototype of the game
         _gameIdent = new ItemIdent(
             Item.GAME, (ctrl.getPlaceConfig() as WorldGameConfig).getGameId());

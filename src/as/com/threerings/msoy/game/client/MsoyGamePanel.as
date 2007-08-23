@@ -79,7 +79,7 @@ public class MsoyGamePanel extends EZGamePanel
 
     override protected function createBackend () :GameControlBackend
     {
-        return new WhirledGameControlBackend(
+        return new MsoyGameControlBackend(
             (_ctx as GameContext), (_ezObj as MsoyGameObject), (_ctrl as MsoyGameController));
     }
 
