@@ -17,12 +17,9 @@ public class MsoyGameObject extends EZGameObject
     implements WhirledGame
 {
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>flowPerMinute</code> field. */
-    public static const FLOW_PER_MINUTE :String= "flowPerMinute";
+    /** The field name of the <code>whirledGameService</code> field. */
+    public static const WHIRLED_GAME_SERVICE :String = "whirledGameService";
     // AUTO-GENERATED: FIELDS END
-
-    /** The base per-minute flow rate of this game. */
-    public var flowPerMinute :int;
 
     /** The whirled game services. */
     public var whirledGameService :WhirledGameMarshaller;
@@ -37,7 +34,6 @@ public class MsoyGameObject extends EZGameObject
     {
         super.readDefaultFields(ins);
 
-        flowPerMinute = ins.readInt();
         whirledGameService = (ins.readObject() as WhirledGameMarshaller);
     }
 }
