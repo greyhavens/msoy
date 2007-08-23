@@ -50,7 +50,7 @@
 
   <!-- declare the files from bin needed in the package -->
   <property name="bin.list1" value="msoy,msoyrespawn,msoyserver,msoyjava,runmsoy,rungame,mysql"/>
-  <property name="bin.list2" value="process_stats,roll_logs"/>
+  <property name="bin.list2" value="process_stats,roll_logs,swiftlycompiler"/>
   <property name="bin.list"   value="${bin.list1},${bin.list2}"/>
 
   <!-- declare the files that will be deployed to the maven repository -->
@@ -101,6 +101,9 @@
     <file name="lib/servlet-api-2.5-6.1.4.jar"/>
 
     <file name="lib/lwjgl-applet.jar"/>
+
+    <!-- we need the mxmlc library to build FlexCompilerDelegate -->
+    <file name="tools/extern/flex_sdk/lib/mxmlc.jar"/>
 
     <!-- The following are used for aperture -->
     <file name="lib/aperture/aperture-2006.1-alpha-3.jar"/>
@@ -746,11 +749,15 @@
       <include name="*.properties"/>
       <include name="rsrc/**/*.properties"/>
       <include name="rsrc/**/*.tmpl"/>
+      <exclude name="com/threerings/msoy/swiftly/server/build/FlexCompilerDelegate*"/>
     </jar>
     <!-- and all of our configuration and media in another -->
     <jar file="${deploy.dir}/${app.name}-media.jar" basedir="${classes.dir}" includes="rsrc/**"/>
     <!-- and our server-only data in yet another -->
     <jar file="${deploy.dir}/${app.name}-data.jar" basedir="." includes="data/dictionary/**"/>
+    <!-- and our flex compiler delegate all by itself -->
+    <jar file="${deploy.dir}/flex-compiler-delegate.jar" basedir="${classes.dir}"
+         includes="com/threerings/msoy/swiftly/server/build/FlexCompilerDelegate*"/>
   </target>
 
   <!-- builds top-level flash applications. -->

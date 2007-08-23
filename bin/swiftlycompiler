@@ -1,0 +1,21 @@
+#!/bin/sh
+
+#
+# script to launch the FlexCompilerDelegate process.
+#
+
+MSOY_HOME=`dirname $0`
+MSOY_HOME=`cd $MSOY_HOME/.. ; pwd`
+FLEX_HOME="$MSOY_HOME/data/swiftly/flex_sdk"
+
+VMARGS="-Xmx128m -Dsun.io.useCanonCaches=false"
+CLASS="com.threerings.msoy.swiftly.server.build.FlexCompilerDelegate"
+
+for JAR in $FLEX_HOME/lib/*.jar; do
+    if [ -e $JAR ]; then
+        CLASSPATH=$JAR:$CLASSPATH
+    fi
+done
+CLASSPATH=$MSOY_HOME/dist/flex-compiler-delegate.jar:$CLASSPATH
+
+java $VMARGS -cp "$CLASSPATH" $CLASS $*

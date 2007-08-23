@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
@@ -64,10 +65,12 @@ public class LocalProjectBuilder
             // Refer the to "Using the Flex Compilers" documentation
             // http://livedocs.adobe.com/flex/2/docs/00001477.html
             procBuilder = new ProcessBuilder(
-                _flexSDK.getAbsolutePath() + "/bin/mxmlc",
+                ServerConfig.serverRoot + "/bin/swiftlycompiler",
+                "--kill_delay=" + KILL_DELAY_DEFAULT,
                 "-load-config",
                 _whirledSDK.getAbsolutePath() + "/etc/whirled-config.xml",
                 "-compiler.source-path=.",
+                "+flexlib=" + _flexSDK.getAbsolutePath() + "/frameworks",
                 "+flex_sdk=" + _flexSDK.getAbsolutePath(),
                 "+whirled_sdk=" + _whirledSDK.getAbsolutePath(),
                 "-file-specs",
@@ -137,6 +140,9 @@ public class LocalProjectBuilder
 
     /** The maximum number of lines to store in the local process output queue */
     protected static final int MAX_QUEUE_SIZE = 40;
+
+    /** Number of milliseconds after which the compile task will kill itself. */
+    public static final long KILL_DELAY_DEFAULT = 180000;
 
     /** Reference to our project. */
     protected SwiftlyProject _project;
