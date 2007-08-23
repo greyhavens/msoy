@@ -70,6 +70,12 @@ public class PlayerObject extends BodyObject
     }
 
     // from interface MsoyUserObject
+    public MemberName getMemberName ()
+    {
+        return memberName;
+    }
+
+    // from interface MsoyUserObject
     public int getMemberId ()
     {
         return (memberName == null) ? MemberName.GUEST_ID : memberName.getMemberId();

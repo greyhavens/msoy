@@ -90,7 +90,6 @@ public class FlowAwardTracker
         int now = _tracking ? now() : 0;
         for (FlowRecord record : _flowRecords.values()) {
             total += record.secondsPlayed;
-
             if (_tracking && record.beganStamp != 0) {
                 total += (now - record.beganStamp);
             }
@@ -112,7 +111,7 @@ public class FlowAwardTracker
         int memberId = 0;
         double humanity = 0;
 
-        // this is messy, but we'll sort it out later
+        // cache this member's id and humanity rating
         MsoyUserObject uobj = (MsoyUserObject) MsoyBaseServer.omgr.getObject(oid);
         if (uobj == null) {
             log.warning("Failed to lookup member [oid=" + oid + "]");
@@ -133,8 +132,7 @@ public class FlowAwardTracker
     }
 
     /**
-     * Remove the member from being tracked and actually persist the flow they've
-     * been awarded.
+     * Remove the member from being tracked and actually persist the flow they've been awarded.
      */
     public void removeMember (int oid)
     {
@@ -145,8 +143,8 @@ public class FlowAwardTracker
             return;
         }
 
-        // if they're leaving in the middle of things, update their secondsPlayed,
-        // just so that it's correct for calculations below
+        // if they're leaving in the middle of things, update their secondsPlayed, just so that
+        // it's correct for calculations below
         if (_tracking) {
             record.secondsPlayed += now() - record.beganStamp;
             record.beganStamp = 0;
@@ -224,8 +222,8 @@ public class FlowAwardTracker
         }
 
         int available = getAwardableFlow(record);
-        // the final amount of flow to pay out is accumulated in-memory and not
-        // capped until the ending
+        // the final amount of flow to pay out is accumulated in-memory and not capped until the
+        // ending
         record.awarded += amount;
 
         // for immediate flow payouts that don't have to be precise, we try to make our estimate
@@ -329,8 +327,8 @@ public class FlowAwardTracker
     /** The action to use when granting flow. */
     protected UserAction _grantAction;
 
-    /** Counts the total number of seconds that have elapsed during 'tracked' time,
-     * for each tracked member that is no longer present with a FlowRecord. */
+    /** Counts the total number of seconds that have elapsed during 'tracked' time, for each
+     * tracked member that is no longer present with a FlowRecord. */
     protected int _totalTrackedSeconds = 0;
 
     /** Passed along when granting flow. */

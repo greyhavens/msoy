@@ -3,29 +3,39 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.ArrayList;
+import java.util.TreeMap;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
+import com.threerings.util.Name;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.parlor.game.data.GameCodes;
 import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.rating.server.RatingManagerDelegate;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
-import com.threerings.util.Name;
+
+import com.threerings.ezgame.server.EZGameManager;
 
 import com.whirled.data.WhirledGame;
 import com.whirled.data.WhirledGameMarshaller;
 import com.whirled.server.WhirledGameDispatcher;
 import com.whirled.server.WhirledGameProvider;
 
+import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.server.MsoyBaseServer;
 
@@ -48,19 +58,116 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     }
 
     // from interface WhirledGameProvider
-    public void endGameWithScores (ClientObject caller, int[] playerIds, int[] scores,
+    public void endGameWithScores (ClientObject caller, int[] playerOids, int[] scores,
                                    int payoutType, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        // TODO
+        verifyIsPlayer(caller);
+
+        // convert the players into record indexed on player oid which will weed out duplicates and
+        // avoid funny business
+        HashIntMap<Player> players = new HashIntMap<Player>();
+        for (int ii = 0; ii < playerOids.length; ii++) {
+            int availFlow = tracker.getAwardableFlow(playerOids[ii]);
+            players.put(playerOids[ii], new Player(playerOids[ii], scores[ii], availFlow));
+        }
+
+        // TODO: record scores, convert scores to percentiles
+        for (Player player : players.values()) {
+            player.percentile = 99;
+            // scale each players' flow award by their percentile performance
+            player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
+        }
+
+        // award flow according to the rankings and the payout type
+        awardFlow(players, payoutType);
+
+        // TODO: update ratings
+
+        // now actually end the game
+        _gmgr.endGame();
     }
 
     // from interface WhirledGameProvider
-    public void endGameWithWinners (ClientObject caller, int[] winnerIds, int[] loserIds,
+    public void endGameWithWinners (ClientObject caller, int[] winnerOids, int[] loserOids,
                                     int payoutType, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        // TODO
+        verifyIsPlayer(caller);
+
+        // convert the players into records indexed on player oid to weed out duplicates and avoid
+        // any funny business
+        HashIntMap<Player> players = new HashIntMap<Player>();
+        for (int ii = 0; ii < winnerOids.length; ii++) {
+            Player player = new Player(winnerOids[ii], 1, tracker.getAwardableFlow(winnerOids[ii]));
+            player.percentile = 74; // winners are 75th percentile
+            players.put(winnerOids[ii], player);
+        }
+        for (int ii = 0; ii < loserOids.length; ii++) {
+            Player player = new Player(loserOids[ii], 0, tracker.getAwardableFlow(loserOids[ii]));
+            player.percentile = 24; // losers are 25th percentile
+            players.put(loserOids[ii], player);
+        }
+
+        // award flow according to the rankings and the payout type
+        awardFlow(players, payoutType);
+
+        // tell the game manager about our winners which will be used to compute ratings, etc.
+        if (_gmgr instanceof EZGameManager) {
+            ArrayIntSet winners = new ArrayIntSet();
+            for (Player player : players.values()) {
+                if (player.score == 1) {
+                    winners.add(player.playerOid);
+                }
+            }
+            ((EZGameManager)_gmgr).setWinners(winners.toIntArray());
+
+        } else {
+            log.warning("Unable to configure EZGameManager with winners [where=" + where() +
+                        ", isa=" + _gmgr.getClass().getName() + "].");
+        }
+
+        // now actually end the game
+        _gmgr.endGame();
+    }
+
+    protected void awardFlow (HashIntMap<Player> players, int payoutType)
+    {
+        // figure out who ranked where
+        TreeMap<Integer,ArrayList<Player>> rankings = new TreeMap<Integer,ArrayList<Player>>();
+        for (Player player : players.values()) {
+            ArrayList<Player> list = rankings.get(player.score);
+            if (list == null) {
+                list = new ArrayList<Player>();
+            }
+            list.add(player);
+        }
+
+        switch (payoutType) {
+        case WINNERS_TAKE_ALL: // TODO
+//            break;
+
+        case CASCADING_PAYOUT: // TODO
+//            break;
+
+        case TO_EACH_THEIR_OWN:
+            for (Player player : players.values()) {
+                player.flowAward = player.availFlow;
+            }
+            break;
+        }
+
+        log.info("Awarding flow [game=" + where() + ", to=" + players + "].");
+
+        // actually award flow and report it to the player
+        for (Player player : players.values()) {
+            tracker.awardFlow(player.playerOid, player.flowAward);
+            DObject user = MsoyBaseServer.omgr.getObject(player.playerOid);
+            if (user != null) {
+                user.postMessage(WhirledGame.FLOW_AWARDED_MESSAGE,
+                                 player.flowAward, player.percentile);
+            }
+        }
     }
 
     @Override
@@ -70,9 +177,8 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // wire up our WhirledGameService
         if (plobj instanceof WhirledGame) {
-            _wgame = (WhirledGame)plobj;
             _invmarsh = MsoyBaseServer.invmgr.registerDispatcher(new WhirledGameDispatcher(this));
-            _wgame.setWhirledGameService((WhirledGameMarshaller)_invmarsh);
+            ((WhirledGame)plobj).setWhirledGameService((WhirledGameMarshaller)_invmarsh);
         }
 
         // then load up our anti-abuse factor
@@ -201,10 +307,49 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         tracker.init(flowPerMinute, UserAction.PLAYED_GAME, String.valueOf(getGameId()));
     }
 
-    /** A reference to our game object, casted appropriately or null if the game does not implement
-     * {@link WhirledGame}. */
-    protected WhirledGame _wgame;
+    /**
+     * Checks that the caller in question is a player if the game is not a party game.
+     */
+    protected void verifyIsPlayer (ClientObject caller)
+        throws InvocationException
+    {
+        MsoyUserObject user = (MsoyUserObject)caller;
+        if (_gobj.players.length > 0) {
+            if (_gobj.getPlayerIndex(user.getMemberName()) == -1) {
+                throw new InvocationException(GameCodes.E_ACCESS_DENIED);
+            }
+        }
+    }
+
+    protected static class Player
+    {
+        public int playerOid;
+        public int score;
+        public int availFlow;
+
+        public int percentile;
+        public int flowAward;
+
+        public Player (int playerOid, int score, int availFlow) {
+            this.playerOid = playerOid;
+            this.score = score;
+            this.availFlow = availFlow;
+        }
+
+        public String toString () {
+            return StringUtil.fieldsToString(this);
+        }
+    }
 
     /** Keep our invocation service registration so that we can unload it at shutdown. */
     protected InvocationMarshaller _invmarsh;
+
+    /** From WhirledGameControl.as. */
+    protected static final int CASCADING_PAYOUT = 0;
+
+    /** From WhirledGameControl.as. */
+    protected static final int WINNERS_TAKE_ALL = 1;
+
+    /** From WhirledGameControl.as. */
+    protected static final int TO_EACH_THEIR_OWN = 2;
 }

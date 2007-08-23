@@ -53,6 +53,7 @@ public class WorldServerClient
 
     public void stoppedHostingGame (int gameId)
     {
+        log.info("Stopped hosting " + gameId + ".");
         if (_gssvc == null) {
             log.warning("Dropping unhosting notification " + gameId + ".");
         } else {
