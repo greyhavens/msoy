@@ -12,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
+import com.threerings.msoy.swiftly.server.ProjectRoomManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorageUnitTest;
@@ -33,8 +34,12 @@ public class LocalProjectBuilderUnitTest extends TestCase
         /** Mocked up storage record. */
         SwiftlySVNStorageRecord storageRecord;
 
+        // Get the local build directory
+        File topBuildDir =
+            new File(SERVER_ROOT.getAbsoluteFile() + ProjectRoomManager.LOCAL_BUILD_DIRECTORY);
+
         // Create a temporary directory.
-        _tempDir = File.createTempFile("localbuilder", "test");
+        _tempDir = File.createTempFile("localbuilder", "test", topBuildDir);
         _tempDir.delete();
         if (_tempDir.mkdir() != true) {
             throw new Exception("Temporary directory '" + _tempDir + "' already exists!");

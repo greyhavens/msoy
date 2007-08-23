@@ -52,6 +52,9 @@ import com.threerings.presents.server.InvocationException;
 public class ProjectRoomManager extends PlaceManager
     implements ProjectRoomProvider, SetListener
 {
+    /** Server-root relative path to the server build directory. */
+    public static final String LOCAL_BUILD_DIRECTORY = "/data/swiftly/build";
+
     /**
      * Called by the {@link SwiftlyManager} after creating this project room manager.
      */
@@ -576,9 +579,6 @@ public class ProjectRoomManager extends PlaceManager
 
     /** Server-root relative path to the Flex SDK. */
     protected static final String FLEX_SDK = "/data/swiftly/flex_sdk";
-
-    /** Server-root relative path to the server build directory. */
-    protected static final String LOCAL_BUILD_DIRECTORY = "/data/swiftly/build";
 
     /** This is used to execute potentially long running svn operations serially on a separate
      * thread so that they do not interfere with normal server operation. */
