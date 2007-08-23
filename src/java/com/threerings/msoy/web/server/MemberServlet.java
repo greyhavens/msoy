@@ -353,17 +353,24 @@ public class MemberServlet extends MsoyServiceServlet
         Whirled whirledwide = new Whirled();
 
         // get the top 9 rated Game SceneCards.  We sort them by rating here on the server, and 
-        // don't fill in info that is unneeded, like population
+        // avoid fill in info that is unneeded, like population
         try {
             ArrayList<SceneCard> games = new ArrayList<SceneCard>();
-
             // fetch catalog records and loop over them
             for (CatalogRecord record : MsoyServer.itemMan.getGameRepository().loadCatalog(
-                CatalogListing.SORT_BY_RATING, false, null, 0, 0, 0, 9)) {
-                // TODO
+                    CatalogListing.SORT_BY_RATING, false, null, 0, 0, 0, 9)) {
+                GameRecord gameRec = (GameRecord) record.item;
+                SceneCard game = new SceneCard();
+                game.sceneId = gameRec.gameId;
+                game.name = gameRec.name;
+                game.logo = gameRec.thumbMediaHash == null ? null : 
+                    new MediaDesc(gameRec.thumbMediaHash, gameRec.thumbMimeType, 
+                                  gameRec.thumbConstraint);
+                game.sceneType = SceneCard.GAME;
+                games.add(game);
             }
-
             whirledwide.games = games;
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to get popular games info", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);

@@ -301,3 +301,20 @@
   border-bottom: 1px dotted;
   background-color: #DCDCDC;
 }
+
+.GameWidget, .TopGame {
+  font-size: 10px;
+  cursor: pointer;
+  width: 100%;
+  padding: 3px;
+}
+
+.GameWidget img, .TopGame img {
+  display: block;
+  cursor: pointer;
+}
+
+.TopGame {
+  font-size: 12px;
+  font-weight: bold;
+}

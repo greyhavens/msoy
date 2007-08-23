@@ -3,10 +3,13 @@
 
 package client.whirled;
 
+import java.util.Iterator;
+
 import com.google.gwt.user.client.History;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -15,11 +18,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
+
+import com.threerings.msoy.web.data.SceneCard;
+import com.threerings.msoy.web.data.Whirled;
+
 import client.shell.Application;
 
-import com.threerings.msoy.item.data.all.Item;
-
-import com.threerings.msoy.web.data.Whirled;
+import client.util.MediaUtil;
 
 public class Whirledwide extends FlexTable
 {
@@ -110,6 +117,52 @@ public class Whirledwide extends FlexTable
 
     protected void fillUi (Whirled whirledwide) 
     {
+        Iterator gamesIter = whirledwide.games.iterator();
+        if (gamesIter.hasNext()) {
+            VerticalPanel topGame = new VerticalPanel();
+            topGame.setStyleName("TopGame");
+            topGame.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
+            topGame.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
+            addGameDataTo(topGame, (SceneCard) gamesIter.next());
+            _topGames.add(topGame);
+        }
+        while(gamesIter.hasNext()) {
+            HorizontalPanel game = new HorizontalPanel();
+            game.setStyleName("GameWidget");
+            game.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            game.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+            addGameDataTo(game, (SceneCard) gamesIter.next());
+            _topGames.add(game);
+        }
+    }
+
+    protected void addGameDataTo (CellPanel panel, final SceneCard game) 
+    {
+        ClickListener goToGame = new ClickListener() {
+            public void onClick (Widget sender) {
+                History.newItem(Application.createLinkToken("game", "" + game.sceneId));
+            }
+        };
+
+        MediaDesc logoMedia = game.logo != null ? game.logo :
+            Item.getDefaultThumbnailMediaFor(Item.GAME);
+        Widget logo;
+        if (panel instanceof VerticalPanel) {
+            logo = MediaUtil.createMediaView(logoMedia, MediaDesc.HALF_THUMBNAIL_SIZE);
+        } else {
+            logo = MediaUtil.createMediaView(logoMedia,
+                // THUMBNAIL is too big, HALF_THUMBNAIL too small - do something custom
+                (int) (MediaDesc.THUMBNAIL_WIDTH * 0.3), (int) (MediaDesc.THUMBNAIL_HEIGHT * 0.3));
+        }
+        if (logo instanceof Image) {
+            ((Image) logo).addClickListener(goToGame);
+        }
+        panel.add(logo);
+
+        Label nameLabel = new Label(game.name);
+        nameLabel.setStyleName("NameLabel");
+        nameLabel.addClickListener(goToGame);
+        panel.add(nameLabel);
     }
 
     protected static class FeaturedPlacesList extends HorizontalPanel

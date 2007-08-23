@@ -270,7 +270,7 @@ public class MsoyPeerManager extends CrowdPeerManager
         public void attributeChanged (AttributeChangedEvent event) {
             // skip "location=null" updates as the client will either logoff or arrive at their
             // real location immediately following and that will trigger the real update
-            if (event.getName().equals(MemberObject.LOCATION) &&
+            if (event.getName().equals(MemberObject.LOCATION) && 
                 event.getValue() instanceof ScenePlace) {
                 MemberObject memobj = (MemberObject)MsoyServer.omgr.getObject(event.getTargetOid());
                 if (memobj == null) {
