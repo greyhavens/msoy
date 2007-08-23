@@ -19,4 +19,5 @@ for JAR in $FLEX_HOME/lib/*.jar; do
 done
 CLASSPATH=$MSOY_HOME/dist/flex-compiler-delegate.jar:$CLASSPATH
 
-java $VMARGS -Djava.security.manager -Djava.security.policy=$SEC_POLICY -cp "$CLASSPATH" $CLASS $*
+# run at the lowest "nice" priority
+nice -n 20 java $VMARGS -Djava.security.manager -Djava.security.policy=$SEC_POLICY -cp "$CLASSPATH" $CLASS $*
