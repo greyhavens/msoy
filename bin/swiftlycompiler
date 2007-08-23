@@ -7,6 +7,7 @@
 MSOY_HOME=`dirname $0`
 MSOY_HOME=`cd $MSOY_HOME/.. ; pwd`
 FLEX_HOME="$MSOY_HOME/data/swiftly/flex_sdk"
+SEC_POLICY="$MSOY_HOME/dist/swiftly.policy"
 
 VMARGS="-Xmx128m -Dsun.io.useCanonCaches=false"
 CLASS="com.threerings.msoy.swiftly.server.build.FlexCompilerDelegate"
@@ -18,4 +19,4 @@ for JAR in $FLEX_HOME/lib/*.jar; do
 done
 CLASSPATH=$MSOY_HOME/dist/flex-compiler-delegate.jar:$CLASSPATH
 
-java $VMARGS -cp "$CLASSPATH" $CLASS $*
+java $VMARGS -Djava.security.manager -Djava.security.policy=$SEC_POLICY -cp "$CLASSPATH" $CLASS $*

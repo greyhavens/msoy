@@ -69,7 +69,7 @@ public class LocalProjectBuilder
                 "--kill_delay=" + KILL_DELAY_DEFAULT,
                 "-load-config",
                 _whirledSDK.getAbsolutePath() + "/etc/whirled-config.xml",
-                "-compiler.source-path=.",
+                "-compiler.source-path=" + buildRoot.getAbsolutePath(),
                 "+flexlib=" + _flexSDK.getAbsolutePath() + "/frameworks",
                 "+flex_sdk=" + _flexSDK.getAbsolutePath(),
                 "+whirled_sdk=" + _whirledSDK.getAbsolutePath(),

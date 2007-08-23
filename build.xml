@@ -160,8 +160,14 @@
     <!-- copy ehcache.xml to a classpath location -->
     <copy todir="${deploy.dir}" file="${basedir}/etc/ehcache.xml"/>
     <mkdir dir="${deploy.dir}/lib"/>
-    <!-- create a dev usable security.policy file; real one created in prepare-server-extra -->
+    <!-- create dev usable security.policy and swiftly.policy files; real ones created in
+         prepare-server-extra -->
     <copy file="etc/security.policy.in" tofile="${deploy.dir}/security.policy" overwrite="true">
+      <filterset>
+        <filter token="PREFIX" value="${server_root}"/>
+      </filterset>
+    </copy>
+    <copy file="etc/swiftly.policy.in" tofile="${deploy.dir}/swiftly.policy" overwrite="true">
       <filterset>
         <filter token="PREFIX" value="${server_root}"/>
       </filterset>
@@ -853,6 +859,11 @@
     <mkdir dir="${pkg.base}/tmp"/>
     <!-- create our production security.policy file -->
     <copy file="etc/security.policy.in" tofile="${pkg.base}/${deploy.dir}/security.policy">
+      <filterset>
+        <filter token="PREFIX" value="${prefix.app}"/>
+      </filterset>
+    </copy>
+    <copy file="etc/swiftly.policy.in" tofile="${pkg.base}/${deploy.dir}/swiftly.policy">
       <filterset>
         <filter token="PREFIX" value="${prefix.app}"/>
       </filterset>
