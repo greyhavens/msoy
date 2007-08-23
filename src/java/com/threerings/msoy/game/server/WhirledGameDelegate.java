@@ -74,7 +74,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // TODO: record scores, convert scores to percentiles
         for (Player player : players.values()) {
-            player.percentile = 99;
+            player.percentile = 69; // TEMP
             // scale each players' flow award by their percentile performance
             player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
         }
