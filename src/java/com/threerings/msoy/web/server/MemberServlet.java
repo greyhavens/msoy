@@ -537,7 +537,9 @@ public class MemberServlet extends MsoyServiceServlet
                 PopularPlacesSnapshot.Place snap = pps.getGame(gameId);
                 // if the snapshot is out of date, the display will be made sane in GWT.
                 card.population = snap == null ? 0 : snap.population;
-                cards.add(card);
+                if (card.population > 0 || card.friends.size() > 0) {
+                    cards.add(card);
+                }
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "failed to fill in SceneCards for games...", pe);
