@@ -10,6 +10,9 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.utils.Dictionary;
 
+import com.threerings.util.Name;
+
+import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.ezgame.client.GameControlBackend;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -32,7 +35,6 @@ public class WhirledGameControlBackend extends GameControlBackend
         super.populateProperties(o);
 
         var ctrl :MsoyGameController = (_ctrl as MsoyGameController);
-        o["awardFlow_v2"] = ctrl.awardFlow_v2;
         o["setChatEnabled_v1"] = ctrl.setChatEnabled_v1;
         o["setChatBounds_v1"] = ctrl.setChatBounds_v1;
         o["getHeadShot_v1"] = getHeadShot_v1;
@@ -44,6 +46,7 @@ public class WhirledGameControlBackend extends GameControlBackend
         // backwards compatibility
         o["getAvailableFlow_v1"] = getAvailableFlow_v1;
         o["awardFlow_v1"] = awardFlow_v1;
+        o["awardFlow_v2"] = awardFlow_v2;
     }
 
     protected function getHeadShot_v1 (occupant :int, callback :Function) :void
@@ -69,17 +72,40 @@ public class WhirledGameControlBackend extends GameControlBackend
     protected function endGameWithWinners_v1 (
         winnerIds :Array, loserIds :Array, payoutType :int) :void
     {
-        // TODO
+        validateConnected();
+
+        // pass the buck straight on through, the server will validate everything
+        (_ezObj as MsoyGameObject).whirledGameService.endGameWithWinners(
+            _ctx.getClient(), toTypedIntArray(winnerIds), toTypedIntArray(loserIds), payoutType,
+            createLoggingConfirmListener("endGameWithWinners"));
     }
 
     protected function endGameWithScores_v1 (playerIds :Array, scores :Array, payoutType :int) :void
     {
-        // TODO
+        validateConnected();
+
+        // pass the buck straight on through, the server will validate everything
+        (_ezObj as MsoyGameObject).whirledGameService.endGameWithScores(
+            _ctx.getClient(), toTypedIntArray(playerIds), toTypedIntArray(scores), payoutType,
+            createLoggingConfirmListener("endGameWithWinners"));
     }
 
     override protected function endGame_v2 (... winnerIds) :void
     {
-        // TODO
+        validateConnected();
+
+        // if this is a table game, all the non-winners are losers, if it's not a table game then
+        // no one is a loser because we're not going to declare that all watchers automatically be
+        // considered as players and thus contribute to the winners' booty
+        var loserIds :Array = [];
+        // party games have a zero length players array
+        for (var ii :int = 0; ii < _ezObj.players.length; ii++) {
+            var occInfo :OccupantInfo = _ezObj.getOccupantInfo(_ezObj.players[ii] as Name);
+            if (occInfo != null) {
+                loserIds.push(occInfo.bodyOid);
+            }
+        }
+        endGameWithWinners_v1(winnerIds, loserIds, 0) // WhirledGameControl.CASCADING_PAYOUT
     }
 
     protected function backToWhirled_v1 (showLobby :Boolean = false) :void
@@ -96,23 +122,19 @@ public class WhirledGameControlBackend extends GameControlBackend
     /** A backwards compatible method. */
     protected function getAvailableFlow_v1 () :int
     {
-//        return 100;
-
-        // we still support the old way, for now
-        return (_ctrl as MsoyGameController).getAvailableFlow_v1();
+        return 0;
     }
 
     /** A backwards compatible method. */
     protected function awardFlow_v1 (amount :int) :void
     {
-//        var perf :Number = amount / 100;
-//        var flow :int = (_ctrl as MsoyGameController).awardFlow_v2(perf, null);
-//        if (flow != amount) {
-//            (_ctx as WhirledGameContext).displayFeedback(null, "Actual flow awarded: " + flow);
-//        }
+        // NOOP!
+    }
 
-        // we still support the old way, for now
-        return (_ctrl as MsoyGameController).awardFlow_v1(amount);
+    /** A backwards compatible method. */
+    protected function awardFlow_v2 (perf :int) :int
+    {
+        return 0;
     }
 
     /** A cache of loaded avatar headshots, indexed by occupant id. */

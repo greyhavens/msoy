@@ -47,12 +47,20 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         super(gmgr);
     }
 
-    // from WhirledGameProvider
-    public void awardFlow (ClientObject caller, int amount,
-                           InvocationService.InvocationListener listener)
+    // from interface WhirledGameProvider
+    public void endGameWithScores (ClientObject caller, int[] playerIds, int[] scores,
+                                   int payoutType, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        tracker.awardFlow(caller.getOid(), amount);
+        // TODO
+    }
+
+    // from interface WhirledGameProvider
+    public void endGameWithWinners (ClientObject caller, int[] winnerIds, int[] loserIds,
+                                    int payoutType, InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        // TODO
     }
 
     @Override
