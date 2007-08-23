@@ -169,7 +169,7 @@
     </copy>
     <copy file="etc/swiftly.policy.in" tofile="${deploy.dir}/swiftly.policy" overwrite="true">
       <filterset>
-        <filter token="PREFIX" value="${server_root}"/>
+        <filter token="PREFIX" value="${basedir}"/>
       </filterset>
     </copy>
   </target>
