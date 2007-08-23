@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import java.util.logging.Level;
 
+import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntTuple;
 import com.samskivert.util.ResultListener;
@@ -31,9 +32,11 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.server.persist.GameRecord;
 
 import com.threerings.msoy.world.data.MemoryEntry;
 
@@ -58,7 +61,7 @@ public class WorldGameRegistry
     }
 
     // from WorldGameProvider
-    public void joinWorldGame (ClientObject caller, int gameId,
+    public void joinWorldGame (ClientObject caller, final int gameId,
                                final InvocationService.InvocationListener listener)
         throws InvocationException
     {
@@ -107,39 +110,35 @@ public class WorldGameRegistry
         _loading.put(gameKey, list);
 
         // retrieve the game item
-        MsoyServer.itemMan.getItem(new ItemIdent(Item.GAME, gameId), new ResultListener<Item>() {
-            public void requestCompleted (Item item) {
+        MsoyServer.invoker.postUnit(new RepositoryUnit("loadWorldGame") {
+            public void invokePersist () throws Exception {
+                GameRecord grec = MsoyServer.itemMan.getGameRepository().loadGameRecord(gameId);
+                if (grec == null) {
+                    throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
+                }
+                _game = (Game)grec.toItem();
+            }
+
+            public void handleSuccess () {
                 try {
-                    final Game game = (Game) item;
-                    final GameDefinition gdef = new MsoyGameParser().parseGame(game);
-
-                    WorldGameConfig config = new WorldGameConfig();
-                    config.init(game, gdef);
-                    config.startSceneId = gameKey.right;
-                    if (config.getMatchType() == GameConfig.PARTY) {
-                        config.players = new Name[0];
-                    } else {
-                        config.players = new Name[((TableMatchConfig)gdef.match).maxSeats];
-                    }
-
-                    // TODO: fix Chiyogami stuff... game.config will never be non-xml anymore
-                    if (game.config != null &&
-                        game.config.contains("<toggle ident=\"chiyogami\" start=\"true\"/>")) {
-                        String prefix = "com.threerings.msoy.game.chiyogami.";
-                        gdef.controller = prefix + "client.ChiyogamiController";
-                        gdef.manager = prefix + "server.ChiyogamiManager";
-                    }
-
-                    MsoyServer.plreg.createPlace(config);
-
+                    startWorldGame(gameKey, _game);
                 } catch (Exception e) {
-                    log.log(Level.WARNING, "Exception configuring world game", e);
-                    requestFailed(e);
+                    log.log(Level.WARNING, "Exception configuring world game.", e);
+                    handleFailure(e);
                 }
             }
-            public void requestFailed (Exception cause) {
-                _loading.remove(gameKey).requestFailed(cause);
+
+            public void handleFailure (Exception cause) {
+                ResultListenerList<Integer> list = _loading.remove(gameKey);
+                if (list != null) {
+                    list.requestFailed(cause);
+                } else {
+                    log.warning("Unable to notify listeners of world game join failure " +
+                                "[game=" + _game + ", cause=" + cause + "].");
+                }
             }
+
+            protected Game _game;
         });
     }
 
@@ -194,6 +193,9 @@ public class WorldGameRegistry
         GameManager manager = _managers.get(gameObj.getOid());
         WorldGameConfig config = (WorldGameConfig) manager.getConfig();
 
+        // TODO: this all needs to be redone not ot use entity memory (which is item based) but
+        // rather to use a special gameId indexed memory
+
         // make sure the entry refers to the game
         entry.item = new ItemIdent(Item.GAME, config.getGameId());
 
@@ -218,12 +220,17 @@ public class WorldGameRegistry
 
         // record the oid and manager for the game
         IntTuple gameKey = new IntTuple(config.getGameId(), config.startSceneId);
-
         _games.put(gameKey, gameOid);
         _managers.put(gameOid, manager);
 
         // remove the list of listeners and notify each of them
-        _loading.remove(gameKey).requestCompleted(gameOid);
+        ResultListenerList<Integer> list = _loading.remove(gameKey);
+        if (list != null) {
+            list.requestCompleted(gameOid);
+        } else {
+            log.warning("Unable to notify listeners of world game startup [key=" + gameKey +
+                        ", oid=" + gameOid + "].");
+        }
     }
 
     /**
@@ -249,6 +256,34 @@ public class WorldGameRegistry
         _games.remove(gameKey);
         _managers.remove(gameOid);
         _loading.remove(gameKey); // just in case
+    }
+
+    /**
+     * Helper function for {@link #joinWorldGame}.
+     */
+    protected void startWorldGame (IntTuple gameKey, Game game)
+        throws Exception
+    {
+        GameDefinition gdef = new MsoyGameParser().parseGame(game);
+
+        WorldGameConfig config = new WorldGameConfig();
+        config.init(game, gdef);
+        config.startSceneId = gameKey.right;
+        if (config.getMatchType() == GameConfig.PARTY) {
+            config.players = new Name[0];
+        } else {
+            config.players = new Name[((TableMatchConfig)gdef.match).maxSeats];
+        }
+
+        // TODO: fix Chiyogami stuff... game.config will never be non-xml anymore
+        if (game.config != null &&
+            game.config.contains("<toggle ident=\"chiyogami\" start=\"true\"/>")) {
+            String prefix = "com.threerings.msoy.game.chiyogami.";
+            gdef.controller = prefix + "client.ChiyogamiController";
+            gdef.manager = prefix + "server.ChiyogamiManager";
+        }
+
+        MsoyServer.plreg.createPlace(config);
     }
 
     /**
