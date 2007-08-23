@@ -199,9 +199,6 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     protected void setFlowPerMinute (int flowPerMinute)
     {
         tracker.init(flowPerMinute, UserAction.PLAYED_GAME, String.valueOf(getGameId()));
-        if (_wgame != null) {
-            _wgame.setFlowPerMinute(flowPerMinute);
-        }
     }
 
     /** A reference to our game object, casted appropriately or null if the game does not implement

@@ -6,9 +6,15 @@ package com.threerings.msoy.game.data {
 import com.threerings.io.ObjectInputStream;
 
 import com.threerings.ezgame.data.EZGameObject;
+
+import com.whirled.data.WhirledGame;
 import com.whirled.data.WhirledGameMarshaller;
 
+/**
+ * Maintains additional state for MSOY games.
+ */
 public class MsoyGameObject extends EZGameObject
+    implements WhirledGame
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>flowPerMinute</code> field. */
@@ -20,6 +26,12 @@ public class MsoyGameObject extends EZGameObject
 
     /** The whirled game services. */
     public var whirledGameService :WhirledGameMarshaller;
+
+    // from interface WhirledGame
+    public function getWhirledGameService () :WhirledGameMarshaller
+    {
+        return whirledGameService;
+    }
 
     override protected function readDefaultFields (ins :ObjectInputStream) :void
     {
