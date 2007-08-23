@@ -70,7 +70,8 @@ public class ProjectRoomManager extends PlaceManager
 
         // Setup the builder.
         _builder = new LocalProjectBuilder(
-            project, _storage, flexSdk.getAbsoluteFile(), whirledSdk.getAbsoluteFile());
+            project, _storage, flexSdk.getAbsoluteFile(), whirledSdk.getAbsoluteFile(),
+            ServerConfig.serverRoot.getAbsoluteFile());
 
         // Load the project tree from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("loadProject") {

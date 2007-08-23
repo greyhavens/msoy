@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
@@ -31,12 +30,13 @@ public class LocalProjectBuilder
      * @param flexSDK: Local path to the Flex SDK.
      */
     public LocalProjectBuilder (SwiftlyProject project, ProjectStorage storage,
-        File flexSDK, File whirledSDK)
+                                File flexSDK, File whirledSDK, File serverRoot)
     {
         _project = project;
         _storage = storage;
         _flexSDK = flexSDK;
         _whirledSDK = whirledSDK;
+        _serverRoot = serverRoot;
     }
 
     public BuildResult build (File buildRoot, MemberName member)
@@ -65,7 +65,7 @@ public class LocalProjectBuilder
             // Refer the to "Using the Flex Compilers" documentation
             // http://livedocs.adobe.com/flex/2/docs/00001477.html
             procBuilder = new ProcessBuilder(
-                ServerConfig.serverRoot + "/bin/swiftlycompiler",
+                _serverRoot + "/bin/swiftlycompiler",
                 "--kill_delay=" + KILL_DELAY_DEFAULT,
                 "-load-config",
                 _whirledSDK.getAbsolutePath() + "/etc/whirled-config.xml",
@@ -145,14 +145,17 @@ public class LocalProjectBuilder
     public static final long KILL_DELAY_DEFAULT = 180000;
 
     /** Reference to our project. */
-    protected SwiftlyProject _project;
+    protected final SwiftlyProject _project;
 
     /** Reference to our backing project storage. */
-    protected ProjectStorage _storage;
+    protected final ProjectStorage _storage;
 
     /** Path to the Flex SDK. */
-    protected File _flexSDK;
+    protected final File _flexSDK;
 
     /** Path to the Whirled SDK. */
-    protected File _whirledSDK;
+    protected final File _whirledSDK;
+
+    /** Path to the base of the msoy server */
+    protected final File _serverRoot;
 }

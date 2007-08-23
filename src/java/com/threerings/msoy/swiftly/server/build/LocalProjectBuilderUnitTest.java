@@ -61,7 +61,8 @@ public class LocalProjectBuilderUnitTest extends TestCase
         throws Exception
     {
         ProjectBuilder builder = new LocalProjectBuilder(_project, _storage,
-            FLEX_SDK_DIR.getAbsoluteFile(), WHIRLED_SDK_DIR.getAbsoluteFile());
+            FLEX_SDK_DIR.getAbsoluteFile(), WHIRLED_SDK_DIR.getAbsoluteFile(),
+            SERVER_ROOT.getAbsoluteFile());
         BuildResult result = builder.build(_tempDir, new MemberName());
         for (CompilerOutput output : result.getOutput()) {
             // no output should be displayed if the build worked
@@ -85,5 +86,8 @@ public class LocalProjectBuilderUnitTest extends TestCase
 
     /** Static, brittle path to the whirled SDK. Sorry. */
     public static final File WHIRLED_SDK_DIR = new File("data/swiftly/whirled_sdk");
+
+    /** Static, brittle path to the server root. Sorry. */
+    public static final File SERVER_ROOT = new File("");
 
 }
