@@ -277,7 +277,7 @@ public class ItemManager
                 if (_result != null) {
                     super.handleSuccess();
                 } else {
-                    handleFailure(new Exception("No such item"));
+                    handleFailure(new InvocationException(ItemCodes.E_NO_SUCH_ITEM));
                 }
             }
         });
