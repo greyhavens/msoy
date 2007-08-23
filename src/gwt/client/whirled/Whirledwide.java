@@ -72,8 +72,13 @@ public class Whirledwide extends FlexTable
         star.setStyleName("HeaderRight");
         header.add(star);
         topGamesContainer.add(header);
-        topGamesContainer.add(_topGames = new VerticalPanel());
-        _topGames.setStyleName("TopGamesList");
+        VerticalPanel topGamesList = new VerticalPanel();
+        topGamesList.addStyleName("TopGamesList");
+        topGamesList.setVerticalAlignment(VerticalPanel.ALIGN_TOP);
+        topGamesList.add(_topGames = new VerticalPanel());
+        topGamesContainer.add(topGamesList);
+        //topGamesContainer.add(_topGames = new VerticalPanel());
+        //_topGames.setStyleName("TopGamesList");
         HorizontalPanel allGames = new HorizontalPanel();
         allGames.setStyleName("AllGames");
         allGames.setHorizontalAlignment(HorizontalPanel.ALIGN_RIGHT);
@@ -149,15 +154,21 @@ public class Whirledwide extends FlexTable
         Widget logo;
         if (panel instanceof VerticalPanel) {
             logo = MediaUtil.createMediaView(logoMedia, MediaDesc.HALF_THUMBNAIL_SIZE);
+            panel.add(logo);
         } else {
+            HorizontalPanel logoContainer = new HorizontalPanel();
+            logoContainer.setStyleName("LogoContainer");
+            logoContainer.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            logoContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
             logo = MediaUtil.createMediaView(logoMedia,
                 // THUMBNAIL is too big, HALF_THUMBNAIL too small - do something custom
                 (int) (MediaDesc.THUMBNAIL_WIDTH * 0.3), (int) (MediaDesc.THUMBNAIL_HEIGHT * 0.3));
+            logoContainer.add(logo);
+            panel.add(logoContainer);
         }
         if (logo instanceof Image) {
             ((Image) logo).addClickListener(goToGame);
         }
-        panel.add(logo);
 
         Label nameLabel = new Label(game.name);
         nameLabel.setStyleName("NameLabel");

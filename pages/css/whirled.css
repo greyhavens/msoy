@@ -306,7 +306,7 @@
   font-size: 10px;
   cursor: pointer;
   width: 100%;
-  padding: 3px;
+  border-bottom: 1px solid #BFBFBF;
 }
 
 .GameWidget img, .TopGame img {
@@ -317,4 +317,22 @@
 .TopGame {
   font-size: 12px;
   font-weight: bold;
+  height: 100px;
+}
+
+.GameWidget {
+  height: 48px;
+}
+
+.GameWidget .NameLabel {
+  width: 72px;
+  text-align: left;
+}
+
+.GameWidget .LogoContainer {
+  width: 50px;
+}
+
+.Spacer {
+  height: 100%;
 }
