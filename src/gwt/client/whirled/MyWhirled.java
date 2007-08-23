@@ -280,10 +280,6 @@ public class MyWhirled extends FlexTable
             sceneContainer.setStyleName("SceneListContainer");
             sceneContainer.setSpacing(0);
             setWidget(sceneContainer);
-            if (scenes.size() == 0) {
-                showEmptyEntry(sceneContainer);
-                return;
-            }
 
             // sort by number of friends in the room, then total population, desc
             Object[] sceneArray = scenes.toArray();
@@ -305,8 +301,17 @@ public class MyWhirled extends FlexTable
                     return obj == this;
                 }
             });
+
             for (int ii = 0; ii < sceneArray.length; ii++) {
-                sceneContainer.add(new SceneWidget((SceneCard) sceneArray[ii], peopleAttributes));
+                SceneCard scene = (SceneCard) sceneArray[ii];
+                if (scene.population > 0 || scene.friends.size() > 0) {
+                    sceneContainer.add(new SceneWidget(scene, peopleAttributes));
+                }
+            }
+
+            if (sceneContainer.getWidgetCount() == 0) {
+                showEmptyEntry(sceneContainer);
+                return;
             }
         }
 
