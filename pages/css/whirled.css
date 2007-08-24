@@ -231,12 +231,12 @@
 .TopGamesContainer .HeaderLeft, .TopGamesContainer .HeaderRight {
   background-image: url(/images/whirled/games_star.png);
   width: 20px;
-  height: 20px;
+  height: 19px;
 }
 
 .TopGamesContainer .Header {
   background-image: url(/images/whirled/games_tile.png);
-  height: 20px;
+  height: 19px;
 }
 
 .TopGamesContainer .HeaderCenter {
@@ -249,7 +249,7 @@
 
 .TopGamesList {
   width: 124px;
-  height: 480px;
+  height: 481px;
   border-left: 1px dotted;
   border-right: 1px dotted;
   background-color: #DCDCDC;
@@ -277,12 +277,12 @@
 .PlayersContainer .HeaderLeft, .PlayersContainer .HeaderRight {
   background-image: url(/images/whirled/people_star.png);
   width: 20px;
-  height: 20px;
+  height: 19px;
 }
 
 .PlayersContainer .Header {
   background-image: url(/images/whirled/people_tile.png);
-  height: 20px;
+  height: 19px;
 }
 
 .PlayersContainer .HeaderCenter {
@@ -294,8 +294,8 @@
 }
 
 .PlayersList {
-  height: 500px;
   width: 124px;
+  height: 501px;
   border-left: 1px dotted;
   border-right: 1px dotted;
   border-bottom: 1px dotted;
@@ -335,4 +335,16 @@
 
 .Spacer {
   height: 100%;
+}
+
+.PlayerWidget {
+  width: 122px;
+  height: 100px;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 3px 0px 3px 0px;
+}
+
+.NameLabel {
+  padding: 0px 2px 0px 2px;
 }

@@ -110,8 +110,13 @@ public class Whirledwide extends FlexTable
         star.setStyleName("HeaderRight");
         header.add(star);
         playersContainer.add(header);
-        playersContainer.add(_players = new VerticalPanel());
-        _players.setStyleName("PlayersList");
+        VerticalPanel playersList = new VerticalPanel();
+        playersList.addStyleName("PlayersList");
+        playersList.setVerticalAlignment(VerticalPanel.ALIGN_TOP);
+        playersList.add(_players = new VerticalPanel());
+        playersContainer.add(playersList);
+        //playersContainer.add(_players = new VerticalPanel());
+        //_players.setStyleName("PlayersList");
         
         VerticalPanel featuredPlace = new VerticalPanel();
         setWidget(row++, 1, featuredPlace);
@@ -145,7 +150,7 @@ public class Whirledwide extends FlexTable
         while (peopleIter.hasNext()) {
             final MemberCard person = (MemberCard) peopleIter.next();
             VerticalPanel personPanel = new VerticalPanel();
-            personPanel.setStyleName("PersonWidget");
+            personPanel.setStyleName("PlayerWidget");
             personPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
             personPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
             
@@ -156,7 +161,7 @@ public class Whirledwide extends FlexTable
                 }
             };
 
-            Widget logo = MediaUtil.createMediaView(person.photo, 93, 80);
+            Widget logo = MediaUtil.createMediaView(person.photo, 93, 70);
             if (logo instanceof Image) {
                 ((Image) logo).addClickListener(goToProfile);
             }
