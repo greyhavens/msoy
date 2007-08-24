@@ -66,12 +66,13 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         if (!_gobj.isInPlay()) {
             throw new InvocationException("e.game_already_ended");
         }
+        int now = now();
 
         // convert the players into record indexed on player oid which will weed out duplicates and
         // avoid funny business
         HashIntMap<Player> players = new HashIntMap<Player>();
         for (int ii = 0; ii < playerOids.length; ii++) {
-            int availFlow = getAwardableFlow(playerOids[ii]);
+            int availFlow = getAwardableFlow(now, playerOids[ii]);
             players.put(playerOids[ii], new Player(playerOids[ii], scores[ii], availFlow));
         }
 
@@ -100,17 +101,18 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         if (!_gobj.isInPlay()) {
             throw new InvocationException("e.game_already_ended");
         }
+        int now = now();
 
         // convert the players into records indexed on player oid to weed out duplicates and avoid
         // any funny business
         HashIntMap<Player> players = new HashIntMap<Player>();
         for (int ii = 0; ii < winnerOids.length; ii++) {
-            Player player = new Player(winnerOids[ii], 1, getAwardableFlow(winnerOids[ii]));
+            Player player = new Player(winnerOids[ii], 1, getAwardableFlow(now, winnerOids[ii]));
             player.percentile = 74; // winners are 75th percentile
             players.put(winnerOids[ii], player);
         }
         for (int ii = 0; ii < loserOids.length; ii++) {
-            Player player = new Player(loserOids[ii], 0, getAwardableFlow(loserOids[ii]));
+            Player player = new Player(loserOids[ii], 0, getAwardableFlow(now, loserOids[ii]));
             player.percentile = 24; // losers are 25th percentile
             players.put(loserOids[ii], player);
         }
@@ -298,6 +300,9 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         // stop accumulating "game time" for players
         stopTracking();
 
+        // TODO: update this game's average game duration based on the time spent playing for all
+        // the players in the game
+
         int totalSeconds = _totalTrackedSeconds;
         int now = _tracking ? now() : 0;
         for (FlowRecord record : _flowRecords.values()) {
@@ -397,10 +402,16 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         return total;
     }
 
-    protected int getAwardableFlow (int playerOid)
+    protected int getAwardableFlow (int now, int playerOid)
     {
         FlowRecord record = _flowRecords.get(playerOid);
-        return (record == null) ? 0 : record.getAwardableFlow(_flowPerMinute, now());
+        if (record == null) {
+            return 0;
+        }
+
+        // TODO: don't use actual playtime, use the game's average
+        int secondsOfPlay = record.getPlayTime(now);
+        return (int) ((record.humanity * _flowPerMinute * secondsOfPlay) / 60);
     }
 
     protected void payoutPlayer (int oid)
@@ -501,12 +512,12 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             this.awarded = 0;
         }
 
-        public int getAwardableFlow (int flowPerMinute, int now) {
+        public int getPlayTime (int now) {
             int secondsOfPlay = secondsPlayed;
             if (beganStamp != 0) {
                 secondsOfPlay += (now - beganStamp);
             }
-            return (int) ((humanity * flowPerMinute * secondsOfPlay) / 60);
+            return secondsOfPlay;
         }
 
         public void stopTracking (int endStamp) {
