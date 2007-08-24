@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
@@ -39,7 +37,7 @@ public class LocalProjectBuilder
         _serverRoot = serverRoot;
     }
 
-    public BuildResult build (File buildRoot, MemberName member)
+    public BuildArtifact build (File buildRoot)
         throws ProjectBuilderException
     {
         // Export the project data
@@ -59,7 +57,7 @@ public class LocalProjectBuilder
             InputStream stdout;
             BufferedReader bufferedOutput;
             LinkedList<String> outputQueue;
-            BuildResult result = new BuildResult(member);
+            BuildArtifact artifact = new BuildArtifact();
             String line;
 
             // Refer the to "Using the Flex Compilers" documentation
@@ -101,7 +99,7 @@ public class LocalProjectBuilder
                     // log.warning("Unparsable swiftly flex compiler output. [line=" + line + "]");
                     break;
                 }
-                result.appendOutput(output);
+                artifact.appendOutput(output);
                 // trim the output queue so that massive amounts of output do not fill up memory
                 if (outputQueue.size() > MAX_QUEUE_SIZE) {
                     outputQueue.removeFirst();
@@ -112,21 +110,21 @@ public class LocalProjectBuilder
             int exitCode = proc.waitFor();
 
             // if we had a successful build yet had a non 0 exit code, something wacky happened
-            if (result.buildSuccessful() && exitCode > 0) {
+            if (artifact.buildSuccessful() && exitCode > 0) {
                 throw new ProjectBuilderException("Successful build returned non-zero exit " +
                     "value. [code=" + exitCode + ",output=" + outputQueue + "].");
             }
 
             // if we had a successful build yet did not generate a build result, throw exception
             File outputFile = new File(buildRoot, _project.getOutputFileName());
-            if (result.buildSuccessful() && !outputFile.exists()) {
+            if (artifact.buildSuccessful() && !outputFile.exists()) {
                 throw new ProjectBuilderException("Successful build did not produce a build " +
                     "result. [output=" + outputQueue + "].");
             }
 
-            result.setOutputFile(outputFile);
+            artifact.setOutputFile(outputFile);
 
-            return result;
+            return artifact;
 
         } catch (IOException ioe) {
             throw new ProjectBuilderException.InternalError(

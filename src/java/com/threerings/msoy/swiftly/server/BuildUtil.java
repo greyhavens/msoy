@@ -12,7 +12,7 @@ import org.apache.commons.io.FileUtils;
 
 import com.samskivert.io.PersistenceException;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.swiftly.data.BuildResult;
+import com.threerings.msoy.swiftly.server.build.BuildArtifact;
 import com.threerings.msoy.swiftly.server.build.ProjectBuilder;
 import com.threerings.msoy.swiftly.server.build.ProjectBuilderException;
 
@@ -22,10 +22,10 @@ public class BuildUtil
      * Build the project and return the result. Handle any errors encountered.
      * @throws IOException, ProjectBuilderException, PersistenceException
      */
-    public static BuildResult buildProject (AbstractBuildTask task, ProjectBuilder builder)
+    public static BuildArtifact buildProject (AbstractBuildTask task, ProjectBuilder builder)
         throws IOException, ProjectBuilderException, PersistenceException
     {
-        final BuildResult result;
+        final BuildArtifact artifact;
         File buildDir = null;
         final long startTime = System.currentTimeMillis();
         try {
@@ -45,18 +45,18 @@ public class BuildUtil
             }
 
             // build the project
-            result = builder.build(buildDir, task.getMember());
+            artifact = builder.build(buildDir);
 
             // let the build task do any result processing while the build artifact still exists,
             // if a build artifact was created
-            if (result.getOutputFile().exists()) {
-                task.processArtifact(result.getOutputFile());
+            if (artifact.getOutputFile().exists()) {
+                task.processArtifact(artifact.getOutputFile());
             }
 
             // set the full time of the build in the result
-            result.setBuildTime(System.currentTimeMillis() - startTime);
+            artifact.setBuildTime(System.currentTimeMillis() - startTime);
 
-            return result;
+            return artifact;
 
         } finally {
             // finally clean up the build results.

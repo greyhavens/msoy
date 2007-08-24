@@ -7,11 +7,11 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.swiftly.server.build.BuildArtifact;
 
-public class BuildResultUnitTest extends TestCase
+public class BuildArtifactUnitTest extends TestCase
 {
-    public BuildResultUnitTest (String name)
+    public BuildArtifactUnitTest (String name)
     {
         super(name);
     }
@@ -20,7 +20,7 @@ public class BuildResultUnitTest extends TestCase
     {
         CompilerOutput output = new FlexCompilerOutput("Awesome",
             CompilerOutput.Level.INFO, "file.as", 27, 5);
-        BuildResult result = new BuildResult(new MemberName());
+        BuildArtifact result = new BuildArtifact();
 
         result.appendOutput(output);
 
@@ -33,7 +33,7 @@ public class BuildResultUnitTest extends TestCase
     {
         CompilerOutput output = new FlexCompilerOutput("Awesome",
             CompilerOutput.Level.ERROR, "file.as", 27, 5);
-        BuildResult result = new BuildResult(new MemberName());
+        BuildArtifact result = new BuildArtifact();
 
         assertEquals(true, result.buildSuccessful());
         result.appendOutput(output);
@@ -42,7 +42,7 @@ public class BuildResultUnitTest extends TestCase
 
     public void testSetBuildOutputFile ()
     {
-        BuildResult result = new BuildResult(new MemberName());
+        BuildArtifact result = new BuildArtifact();
         File outputFile = new File("/tmp/nonexistent");
 
         result.setOutputFile(outputFile);

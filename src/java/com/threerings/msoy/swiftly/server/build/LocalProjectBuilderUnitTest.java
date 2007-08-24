@@ -9,8 +9,6 @@ import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
 
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.server.ProjectRoomManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
@@ -25,7 +23,6 @@ public class LocalProjectBuilderUnitTest extends TestCase
     {
         super(name);
     }
-
 
     /** Set up the test case anew. */
     public void setUp ()
@@ -54,7 +51,6 @@ public class LocalProjectBuilderUnitTest extends TestCase
             ProjectSVNStorageUnitTest.GAME_TEMPLATE_DIR.getCanonicalFile());
     }
 
-
     /** Clean up afterwards. */
     public void tearDown ()
         throws Exception
@@ -68,12 +64,12 @@ public class LocalProjectBuilderUnitTest extends TestCase
         ProjectBuilder builder = new LocalProjectBuilder(_project, _storage,
             FLEX_SDK_DIR.getAbsoluteFile(), WHIRLED_SDK_DIR.getAbsoluteFile(),
             SERVER_ROOT.getAbsoluteFile());
-        BuildResult result = builder.build(_tempDir, new MemberName());
-        for (CompilerOutput output : result.getOutput()) {
+        BuildArtifact artifact = builder.build(_tempDir);
+        for (CompilerOutput output : artifact.getOutput()) {
             // no output should be displayed if the build worked
             assertEquals("", output);
         }
-        assertTrue(result.buildSuccessful());
+        assertTrue(artifact.buildSuccessful());
         // TODO: test broken build output
     }
 

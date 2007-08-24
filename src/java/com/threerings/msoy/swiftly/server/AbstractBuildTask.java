@@ -12,13 +12,14 @@ import com.samskivert.io.PersistenceException;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.swiftly.data.BuildResult;
+import com.threerings.msoy.swiftly.server.build.BuildArtifact;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 
 public abstract class AbstractBuildTask
     implements Runnable
 {
     public AbstractBuildTask (ProjectRoomManager manager, MemberName member,
-                            ConfirmListener listener)
+                              ConfirmListener listener)
     {
         _manager = manager;
         // snapshot the projectId, type and name while we are on the dobject thread
@@ -32,20 +33,12 @@ public abstract class AbstractBuildTask
     public void run ()
     {
         try {
-            BuildResult result = BuildUtil.buildProject(this, _manager.getBuilder());
-            publishResult(result);
+            BuildArtifact artifact = BuildUtil.buildProject(this, _manager.getBuilder());
+            publishResult(new BuildResult(artifact, _member));
 
         } catch (Exception e) {
             processFailure(e, "e.build_failed_unexpected");
         }
-    }
-
-    /**
-     * Returns the MemberName who requested this build.
-     */
-    public MemberName getMember ()
-    {
-        return _member;
     }
 
     /**
