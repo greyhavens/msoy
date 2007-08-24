@@ -391,18 +391,19 @@ public class ChiyogamiManager extends GameManager
      */
     protected void awardFlow ()
     {
-        MediaDesc effectMedia = new StaticMediaDesc(
-            MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE, "chiyogami/FlowGain");
-        for (PlayerRec rec : _playerPerfs.values()) {
-            // their score / style averages will be between 0 and 1,
-            // we award them the max of those as a percentage of their possible flow..
-            int flowGained = _whirledDelegate.tracker.awardFlowPercentage(rec.oid,
-                Math.max(rec.getAverageScore(), rec.getAverageStyle()));
-            if (flowGained > 0) {
-                _roomMgr.addTransientEffect(rec.oid, effectMedia, EffectData.MODE_XLATE,
-                    MessageBundle.tcompose("m.flow_gain", String.valueOf(flowGained)));
-            }
-        }
+// TODO: revampulate!
+//         MediaDesc effectMedia = new StaticMediaDesc(
+//             MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE, "chiyogami/FlowGain");
+//         for (PlayerRec rec : _playerPerfs.values()) {
+//             // their score / style averages will be between 0 and 1,
+//             // we award them the max of those as a percentage of their possible flow..
+//             int flowGained = _whirledDelegate.tracker.awardFlowPercentage(rec.oid,
+//                 Math.max(rec.getAverageScore(), rec.getAverageStyle()));
+//             if (flowGained > 0) {
+//                 _roomMgr.addTransientEffect(rec.oid, effectMedia, EffectData.MODE_XLATE,
+//                     MessageBundle.tcompose("m.flow_gain", String.valueOf(flowGained)));
+//             }
+//         }
     }
 
     /**
