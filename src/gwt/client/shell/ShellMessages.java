@@ -592,9 +592,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String resetPasswordMismatch();
 
   /**
-   * Translated "You must be over the age of 13 to play in Whirled.".
+   * Translated "You must be at least 13 years old to play in Whirled.".
    * 
-   * @return translated "You must be over the age of 13 to play in Whirled."
+   * @return translated "You must be at least 13 years old to play in Whirled."
    * @gwt.key createDateOfBirthTip
    */
   String createDateOfBirthTip();
