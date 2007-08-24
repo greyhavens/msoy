@@ -62,7 +62,7 @@ public class AVRGameManager extends MsoyGameManager
             };
 
             public void handleResult () {
-                AVRGameObject avrGameObj = (AVRGameObject)_gameObj;
+                AVRGameObject avrGameObj = (AVRGameObject)_ezObj;
                 avrGameObj.startTransaction();
                 try {
                     for (MemoryRecord mrec : _mems) {
@@ -106,7 +106,7 @@ public class AVRGameManager extends MsoyGameManager
         
         // flush any modified memory records to the database
         final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();
-        for (MemoryEntry entry : ((AVRGameObject)_gameObj).memories) {
+        for (MemoryEntry entry : ((AVRGameObject)_ezObj).memories) {
             if (entry.modified) {
                 memrecs.add(new MemoryRecord(entry));
             }
