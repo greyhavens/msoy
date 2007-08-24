@@ -63,6 +63,9 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         throws InvocationException
     {
         verifyIsPlayer(caller);
+        if (!_gobj.isInPlay()) {
+            throw new InvocationException("e.game_already_ended");
+        }
 
         // convert the players into record indexed on player oid which will weed out duplicates and
         // avoid funny business
@@ -94,6 +97,9 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         throws InvocationException
     {
         verifyIsPlayer(caller);
+        if (!_gobj.isInPlay()) {
+            throw new InvocationException("e.game_already_ended");
+        }
 
         // convert the players into records indexed on player oid to weed out duplicates and avoid
         // any funny business
