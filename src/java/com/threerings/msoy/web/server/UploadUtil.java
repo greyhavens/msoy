@@ -100,7 +100,7 @@ public class UploadUtil
     }
 
     /**
-     * Publishes a file. Currently this is to the filesystem first, and then s3 if enabled.
+     * Publishes an InputStream to the media store using the hash and mimeType of the stream.
      */
     public static void publishStream (InputStream input, String hash, byte mimeType)
         throws IOException
@@ -109,9 +109,11 @@ public class UploadUtil
         String name = hash + MediaDesc.mimeTypeToSuffix(mimeType);
         publishStream (input, name, MediaDesc.mimeTypeToString(mimeType));
     }
-            
+
     /**
-     * Publishes a file. Currently this is to the filesystem first, and then s3 if enabled.
+     * Publishes an InputStream to the media store using the hash of the stream and a supplied
+     * "file" extension.
+     * Currently this is to the filesystem first, and then s3 if enabled.
      */
     public static void publishStream (InputStream input, String name, String extension)
         throws IOException
