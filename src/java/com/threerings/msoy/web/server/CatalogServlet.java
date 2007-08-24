@@ -292,11 +292,19 @@ public class CatalogServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
 
-        // reset any important bits
-        listItem.prepareForListing();
+        // if this is a new listing, compute the listing cost and check that they have it
+        boolean newListing = (listItem.catalogId == 0);
+        int price = 0;
+        if (newListing) {
+            price = getCheckListingPrice(mrec, rarity);
+        }
 
-        // note this item's old catalog id and configure its new one
-        int oldItemId = listItem.catalogId;
+        // if this item has already been listed in the catalog, load up the old listing record
+        // if it's an old listing, copy some bits from the old listed item to the new one
+        ItemRecord oldListItem = newListing ? null : repo.loadItem(listItem.catalogId);
+
+        // prepare the new item for listing and wire it up to its source item
+        listItem.prepareForListing(oldListItem);
         listItem.catalogId = item.itemId;
 
         // use the updated description
@@ -305,36 +313,20 @@ public class CatalogServlet extends MsoyServiceServlet
         // acquire a current timestamp
         long now = System.currentTimeMillis();
         CatalogRecord record;
-        int price = 0;
-
-        // if this is a new listing, compute and check that they have the listing cost
-        if (oldItemId == 0) {
-            price = getCheckListingPrice(mrec, rarity);
-        }
 
         // create a new immutable catalog prototype item
         repo.insertOriginalItem(listItem, true);
 
         // copy tags from the old listing (or the original) item to the new listing item
-        int oldTagId = (oldItemId == 0) ? item.itemId : oldItemId;
+        int oldTagId = newListing ? item.itemId : oldListItem.itemId;
         repo.getTagRepository().copyTags(oldTagId, listItem.itemId, mrec.memberId, now);
 
-        // if this item is already listed in the catalog, we want to update the listing
-        // instead of creating it anew
-        if (oldItemId != 0) {
-            // reassign ratings from the old prototype
-            repo.reassignRatings(oldItemId, listItem.itemId);
-
-            // update the catalog listing
-            record = repo.updateListing(oldItemId, listItem, now);
-
-            String details = item.type + " " + item.itemId;
-            logUserAction(mrec, UserAction.UPDATED_LISTING, details);
-
-        } else {
-            // and finally create & insert the catalog record
+        // we'll either create a new listing or update the old one
+        if (newListing) {
+            // create & insert the catalog record
             record = repo.insertListing(listItem, rarity, now);
 
+            // record the listing action and charge the flow
             String details = item.type + " " + item.itemId + " " + rarity;
             if (price > 0) {
                 MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
@@ -343,6 +335,17 @@ public class CatalogServlet extends MsoyServiceServlet
             } else {
                 logUserAction(mrec, UserAction.LISTED_ITEM, details);
             }
+
+        } else {
+            // reassign ratings from the old prototype
+            repo.reassignRatings(oldListItem.itemId, listItem.itemId);
+
+            // update the catalog listing
+            record = repo.updateListing(oldListItem.itemId, listItem, now);
+
+            // record the listing action
+            String details = item.type + " " + item.itemId;
+            logUserAction(mrec, UserAction.UPDATED_LISTING, details);
         }
 
         return record.toListing();

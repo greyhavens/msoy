@@ -273,13 +273,24 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     /**
      * Clears out any fields that should be reset when listing this item in the catalog.
+     *
+     * @param oldListing the previous catalog prototype item if this item has already been listed,
+     * or null if it is being listed for the first time.
      */
-    public void prepareForListing ()
+    public void prepareForListing (ItemRecord oldListing)
     {
         itemId = 0;
         ownerId = 0;
         used = 0;
         location = 0;
+
+        if (oldListing != null) {
+            // inherit the average rating from the old item
+            rating = oldListing.rating;
+            // if the old listing was mature or the new item is mature we want the new listing to
+            // be mature as well; there's no going back without listing anew
+            mature = oldListing.mature || mature;
+        }
     }
 
     /**
