@@ -25,6 +25,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import com.samskivert.util.StringUtil;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.SnapshotMediaDesc;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.s3.client.S3Connection;
 import com.threerings.s3.client.S3Exception;
@@ -104,8 +105,17 @@ public class UploadUtil
     public static void publishStream (InputStream input, String hash, byte mimeType)
         throws IOException
     {
-        // now name it using the hash value and the suffix
+        // name it using the hash value and the suffix
         String name = hash + MediaDesc.mimeTypeToSuffix(mimeType);
+        publishStream (input, name, MediaDesc.mimeTypeToString(mimeType));
+    }
+            
+    /**
+     * Publishes a file. Currently this is to the filesystem first, and then s3 if enabled.
+     */
+    public static void publishStream (InputStream input, String name, String extension)
+        throws IOException
+    {
         File target = new File(ServerConfig.mediaDir, name);
 
         // copy the uploaded file data to the local file system media store. eventually we will
@@ -118,8 +128,7 @@ public class UploadUtil
             try {
                 S3Connection conn = new S3Connection(
                     ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
-                S3FileObject uploadTarget = new S3FileObject(
-                    name, target, MediaDesc.mimeTypeToString(mimeType));
+                S3FileObject uploadTarget = new S3FileObject(name, target, extension);
                 conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
                                AccessControlList.StandardPolicy.PUBLIC_READ);
                 log.info("Uploaded media to S3 [bucket=" + ServerConfig.mediaS3Bucket +
@@ -136,6 +145,19 @@ public class UploadUtil
                 log.warning("S3 upload failed: " + e);
             }
         }
+    }
+
+    /**
+     * Publishes a screenshot file with a meaningful filename.
+     */
+    public static void publishSnapshot (SnapshotUploadFile uploadFile)
+        throws IOException
+    {
+        String name =
+            SnapshotMediaDesc.sceneToName(uploadFile.getSceneId()) +
+            SnapshotMediaDesc.mimeTypeToSuffix(uploadFile.getMimeType());
+        publishStream(uploadFile.getInputStream(),
+                      name, SnapshotMediaDesc.mimeTypeToString(uploadFile.getMimeType()));
     }
 
     /**
