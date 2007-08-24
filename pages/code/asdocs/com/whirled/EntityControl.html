@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="EntityControl,com.whirled.EntityControl,_location,_tickInterval,_ticker,_hasControl,getLogicalLocation,getPixelLocation,getRoomBounds,canEditRoom,triggerAction,sendMessage,getMemories,lookupMemory,hasControl,requestControl,setTickInterval,getInstanceId,updateMemory,setHotSpot,addControl,removeControl,showPopup,clearPopup,populateProperties,gotInitProperties,messageReceived_v1,memoryChanged_v1,gotControl_v1,recheckTicker,stopTicker,handleUnload" name="keywords">
+<meta content="EntityControl,com.whirled.EntityControl,_location,_tickInterval,_ticker,_hasControl,getLogicalLocation,getPixelLocation,getRoomBounds,canEditRoom,triggerAction,sendMessage,getMemories,lookupMemory,hasControl,requestControl,setTickInterval,getInstanceId,updateMemory,setHotSpot,showPopup,clearPopup,populateProperties,gotInitProperties,messageReceived_v1,memoryChanged_v1,gotControl_v1,recheckTicker,stopTicker,handleUnload" name="keywords">
 <title>com.whirled.EntityControl</title>
 </head>
 <body>
@@ -114,13 +114,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#addControl()">addControl</a>(control:Sprite):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">EntityControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="#canEditRoom()">canEditRoom</a>():Boolean</div>
 <div class="summaryTableDescription">
      Returns true if the local client has editing privileges in the current room.</div>
@@ -198,13 +191,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#lookupMemory()">lookupMemory</a>(key:String, defval:Object = null):Object</div>
 <div class="summaryTableDescription">
      Returns the value associated with the supplied key in this item's memory.</div>
-</td><td class="summaryTableOwnerCol">EntityControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#removeControl()">removeControl</a>(control:Sprite):void</div>
-<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -479,24 +465,10 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="addControl()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">addControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function addControl(control:Sprite):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">control</span>:Sprite</code></td>
-</tr>
-</table>
-</div>
 <a name="canEditRoom()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">canEditRoom</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">canEditRoom</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -776,20 +748,6 @@ showHideInherited();
 <code>protected function recheckTicker():void</code><p>
      Check the status of the ticker, starting or stopping it as necessary.
      </p></div>
-<a name="removeControl()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">removeControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function removeControl(control:Sprite):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">control</span>:Sprite</code></td>
-</tr>
-</table>
-</div>
 <a name="requestControl()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
