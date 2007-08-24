@@ -36,7 +36,7 @@ public abstract class AbstractBuildTask
             publishResult(new BuildResult(artifact, _member));
 
         } catch (Exception e) {
-            processFailure(e, "e.build_failed_unexpected");
+            publishFailure(e, "e.build_failed_unexpected");
         }
     }
 
@@ -63,7 +63,7 @@ public abstract class AbstractBuildTask
      * Code to be run back on the calling thread, usually the dobject thread, to handle build
      * failure.
      */
-    public void processFailure (Exception error, final String reason) {
+    public void publishFailure (Exception error, final String reason) {
         log.log(Level.WARNING, "Project build failed.", error);
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run() {
