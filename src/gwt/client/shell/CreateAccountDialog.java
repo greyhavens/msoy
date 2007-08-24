@@ -41,7 +41,7 @@ public class CreateAccountDialog extends BorderedDialog
         _footer.add(new Button(CShell.cmsgs.createCreate(), new ClickListener() {
             public void onClick (Widget sender) {
                 if (!validateData(true)) {
-                    return; // TODO: blink the status message?
+                    return;
                 }
 
                 String[] today = new Date().toString().split(" ");
