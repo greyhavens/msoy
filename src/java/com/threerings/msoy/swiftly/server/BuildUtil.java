@@ -16,10 +16,13 @@ import com.threerings.msoy.swiftly.server.build.BuildArtifact;
 import com.threerings.msoy.swiftly.server.build.ProjectBuilder;
 import com.threerings.msoy.swiftly.server.build.ProjectBuilderException;
 
+/**
+ * Utility class for building an AbstractBuildTask.
+ */
 public class BuildUtil
 {
     /**
-     * Build the project and return the result. Handle any errors encountered.
+     * Build the project and return the BuildArtifact. Any file system results will be deleted.
      * @throws IOException, ProjectBuilderException, PersistenceException
      */
     public static BuildArtifact buildProject (AbstractBuildTask task, ProjectBuilder builder)
@@ -50,7 +53,7 @@ public class BuildUtil
             // let the build task do any result processing while the build artifact still exists,
             // if a build artifact was created
             if (artifact.getOutputFile().exists()) {
-                task.processArtifact(artifact.getOutputFile());
+                task.processArtifact(artifact);
             }
 
             // set the full time of the build in the result
