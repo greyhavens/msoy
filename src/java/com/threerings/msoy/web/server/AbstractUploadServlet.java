@@ -5,6 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 import javax.servlet.http.HttpServlet;
@@ -30,22 +31,23 @@ public abstract class AbstractUploadServlet extends HttpServlet
     protected void doPost (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
     {
-        FileItem item = null;
+        FileItem[] items = null;
         try {
             // validate the content length is sane
             int length = validateContentLength(req);
 
             // attempt to extract the FileItem from the servlet request and also verify the upload
             // is not larger than our maximum allowed size
-            item = extractFileItem(req);
-            if (item == null) {
+            items = extractFileItems(req);
+            FileItem file = findFile(items);
+            if (file == null) {
                 log.warning("Failed to extract file from upload request. [req= " + req + "].");
                 internalError(rsp);
                 return;
             }
 
             // pass the extracted file to the concrete class
-            handleFileItem(item, length, rsp);
+            handleFileItems(file, items, length, req, rsp);
 
         } catch (ServletFileUpload.SizeLimitExceededException slee) {
             log.info(slee.getMessage() + " [size=" + slee.getActualSize() + " allowed=" +
@@ -70,9 +72,13 @@ public abstract class AbstractUploadServlet extends HttpServlet
 
         } finally {
             // delete the temporary upload file data.
-            // item may be null if extractFileItem throws an exception
-            if (item != null) {
-                item.delete();
+            // items may be null if extractFileItem throws an exception
+            if (items != null) {
+                for (FileItem item : items) {
+                    if (item != null) {
+                        item.delete();
+                    }
+                }
             }
         }
     }
@@ -80,8 +86,8 @@ public abstract class AbstractUploadServlet extends HttpServlet
     /**
      * Handles the extracted UploadFile in a concrete class specific way.
      */
-    protected abstract void handleFileItem (FileItem item, int uploadLength,
-                                            HttpServletResponse rsp)
+    protected abstract void handleFileItems (FileItem file, FileItem[] allItems, int uploadLength,
+                                             HttpServletRequest req, HttpServletResponse rsp)
         throws IOException, FileUploadException, AccessDeniedException;
 
     /**
@@ -90,14 +96,15 @@ public abstract class AbstractUploadServlet extends HttpServlet
     protected abstract int getMaxUploadSize ();
 
     /**
-     * Parse the upload request and return the first FileItem found. This will ignore 
-     * multiple file uploads if a multipart request is used. Returns null if no FileItem
-     * could be found.
+     * Parse the upload request and return all FileItems found, whether they correspond
+     * to actual files, or merely form fields. Returns an empty array if no FileItem was found.
      * @throws FileUploadException
      */
-    protected FileItem extractFileItem (HttpServletRequest req)
+    protected FileItem[] extractFileItems (HttpServletRequest req)
         throws FileUploadException
     {
+        ArrayList<FileItem> items = new ArrayList<FileItem>();
+        
         // TODO: create a custom file item factory that just puts items in the right place from the
         // start and computes the SHA hash on the way
         ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory(
@@ -108,11 +115,16 @@ public abstract class AbstractUploadServlet extends HttpServlet
         upload.setFileSizeMax(getMaxUploadSize());
 
         for (Object obj : upload.parseRequest(req)) {
-            FileItem item = (FileItem)obj;
-            if (item.isFormField()) {
-                // currently, we don't care about these
+            items.add((FileItem)obj);
+        }
+        return items.toArray(new FileItem[]{});
+    }
 
-            } else {
+    /** Returns the first form element that actually contains a file. */
+    protected FileItem findFile (FileItem[] items)
+    {
+        for (FileItem item : items) {
+            if (! item.isFormField()) {
                 return item;
             }
         }

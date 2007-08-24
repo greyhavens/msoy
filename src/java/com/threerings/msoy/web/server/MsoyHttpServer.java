@@ -99,6 +99,7 @@ public class MsoyHttpServer extends Server
         "swiftlysvc",
         "swiftlyuploadsvc",
         "facebook",
+        "snapshotsvc",
     };
 
     protected static final HttpServlet[] SERVLETS = {
@@ -115,5 +116,6 @@ public class MsoyHttpServer extends Server
         new SwiftlyServlet(),
         new SwiftlyUploadServlet(),
         new FacebookServlet(),
+        new SnapshotServlet()
     };
 }

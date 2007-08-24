@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
@@ -31,8 +32,8 @@ public class UploadServlet extends AbstractUploadServlet
      * store and returns the results via Javascript to the GWT client.
      */
     @Override // from AbstractUploadServlet
-    protected void handleFileItem (FileItem item, int uploadLength,
-                                   HttpServletResponse rsp)
+    protected void handleFileItems (FileItem item, FileItem[] allItems, int uploadLength,
+                                    HttpServletRequest req, HttpServletResponse rsp)
         throws IOException, FileUploadException, AccessDeniedException
     {
         FullMediaInfo fullInfo = null;

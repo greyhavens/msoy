@@ -7,6 +7,7 @@ import static com.threerings.msoy.Log.log;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
@@ -23,8 +24,8 @@ import com.threerings.msoy.web.data.WebIdent;
 public class SwiftlyUploadServlet extends AbstractUploadServlet
 {
     @Override // from AbstractUploadServlet
-    protected void handleFileItem (FileItem item, int uploadLength,
-                                   HttpServletResponse rsp)
+    protected void handleFileItems (FileItem item, FileItem[] allItems, int uploadLength,
+                                    HttpServletRequest req, HttpServletResponse rsp)
         throws IOException, FileUploadException, AccessDeniedException
     {
         // wrap the FileItem in an UploadFile for publishing
