@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.world.client.editor {
 
-import mx.controls.Button;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
@@ -11,6 +10,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.ui.Keyboard;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.io.TypedArray;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
@@ -100,6 +100,10 @@ public class RoomEditorController
         _entranceSprite = new EntranceSprite(scene.getEntrance());
         _entranceSprite.setEditing(true);
         _view.addOtherSprite(_entranceSprite);
+
+        _snap = new SnapshotSender(_ctx);
+        _snap.init();
+
     }
 
     /**
@@ -227,7 +231,7 @@ public class RoomEditorController
             setTarget(index == -1 ? null : sprites[index]);
         }
     }        
-    
+
     /**
      * Called by the room controller, to query whether the user should be allowed to move
      * around the scene.
@@ -259,6 +263,16 @@ public class RoomEditorController
         _view.getRoomController().handleEditDoor(data);
     }
 
+    /** Takes a room snapshot. */
+    public function actionTakeSnapshot () :void
+    {
+        _hover.target = null;
+        setTarget(null);
+        _view.setEditing(false);
+        _snap.send(scene.getId(), roomView);
+        _view.setEditing(true);
+    }
+    
     /**
      * Cleans up editing actions and closes editing UIs. This function is called automatically
      * when the main editing UI is being closed (whether because the user clicked the close
@@ -270,6 +284,9 @@ public class RoomEditorController
             Log.getLog(this).warning("Room editor failed to close!");
         }
 
+        _snap.shutdown();
+        _snap = null;
+        
         _entranceSprite.setEditing(false);
         _view.removeOtherSprite(_entranceSprite);
         _entranceSprite = null;
@@ -461,7 +478,8 @@ public class RoomEditorController
     protected var _hover :FurniHighlight;
     protected var _panel :RoomEditorPanel;
     protected var _wrapupFn :Function;   // will be called when ending editing
-
+    protected var _snap :SnapshotSender;
+    
     protected var _entranceSprite :EntranceSprite;
 }
 }

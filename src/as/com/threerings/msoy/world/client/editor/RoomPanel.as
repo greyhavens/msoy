@@ -15,6 +15,7 @@ import mx.events.FlexEvent;
 import mx.events.ItemClickEvent;
 import mx.events.SliderEvent;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.world.data.FurniData;
@@ -62,6 +63,17 @@ public class RoomPanel extends BasePanel
         _buttonbar = new ToggleButtonBar();
         _buttonbar.styleName = "roomEditAccessButtons";
         box.addChild(_buttonbar);
+
+        if (_controller.ctx.getMemberObject().tokens.isSupport()) {
+            var snap :CommandButton = new CommandButton();
+            snap.styleName = "roomEditButtonSnapshot";
+            snap.setCallback(function () :void {
+                    snap.enabled = false;
+                    _controller.actionTakeSnapshot();
+                    snap.enabled = true;
+                });
+            box.addChild(snap);
+        }
         
         addChild(makePanelButtons());
     }

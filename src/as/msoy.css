@@ -516,6 +516,13 @@ Window {
   disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_undo_disabled.png");
 }
 
+.roomEditButtonSnapshot {
+  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_snapshot.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_snapshot.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_snapshot.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_snapshot.png");
+}
+
 .roomEditPanelButton { 
   paddingBottom: 0;
   right: 0;

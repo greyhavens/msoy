@@ -85,14 +85,21 @@ public class SnapshotSender
 
     protected function makeMimeBody (sceneId :int, data :ByteArray) :ByteArray
     {
-        var filename :String = "s" + sceneId;
         var output :ByteArray = new ByteArray();
+        var memberId :int = _ctx.getMemberObject().memberName.getMemberId();
 
-        output.writeBytes(StringUtil.toBytes("\r\n--" + BOUNDARY + "\r\n" +
-                                             "Content-Disposition: form-data; name=\"" + filename +
-                                             "\"; filename=\"" + filename + ".jpg\"\r\n" +
-                                             "Content-Type: image/jpg\r\n" +
-                                             "\r\n"));
+        var b :String = "--" + BOUNDARY + "\r\n";
+        output.writeBytes(
+            StringUtil.toBytes(
+                "\r\n" + b +  
+                "Content-Disposition: form-data; name=\"member\"\r\n" +
+                "\r\n" + String(memberId) + "\r\n" + b +
+                "Content-Disposition: form-data; name=\"scene\"\r\n" +
+                "\r\n" + String(sceneId) + "\r\n" + b +
+                "Content-Disposition: form-data; name=\"snapshot\"; " +
+                "filename=\"snapshot.jpg\"\r\n" +
+                "Content-Type: image/jpg\r\n" +
+                "\r\n"));
         output.writeBytes(data);
         output.writeBytes(StringUtil.toBytes("\r\n--" + BOUNDARY + "--\r\n"));
         return output;
