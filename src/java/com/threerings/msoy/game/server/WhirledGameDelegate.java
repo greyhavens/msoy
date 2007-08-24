@@ -166,25 +166,23 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         log.info("Awarding flow [game=" + where() + ", to=" + players + "].");
 
         // actually award flow and report it to the player
+        int now = now();
         for (Player player : players.values()) {
             FlowRecord record = _flowRecords.get(player.playerOid);
             if (record == null) {
                 continue;
             }
 
-            int available = getAwardableFlow(record);
-            // the final amount of flow to pay out is accumulated in-memory and not capped until
-            // the ending
+            // accumulate their awarded flow into their flow record; we'll pay it all out in one
+            // database action when they leave the room or the game is shutdown
             record.awarded += player.flowAward;
 
-            // for immediate flow payouts that don't have to be precise, we try to make our estimate
-            // more precise (nobody likes to see their flow actually drop at the end of a game) by
-            // taking the cap into account
-            int cappedAmount = Math.min(available, player.flowAward);
-            if (cappedAmount > 0) {
-                reportFlowAward(record.memberId, cappedAmount);
+            // update the player's member object on their world server
+            if (player.flowAward > 0) {
+                reportFlowAward(record.memberId, player.flowAward);
             }
 
+            // report to the game that this player earned some flow
             DObject user = MsoyBaseServer.omgr.getObject(player.playerOid);
             if (user != null) {
                 user.postMessage(WhirledGame.FLOW_AWARDED_MESSAGE,
@@ -380,10 +378,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         // note all remaining player's seconds played
         int endStamp = now();
         for (FlowRecord record : _flowRecords.values()) {
-            if (record.beganStamp != 0) {
-                record.secondsPlayed += endStamp - record.beganStamp;
-                record.beganStamp = 0;
-            }
+            record.stopTracking(endStamp);
         }
     }
 
@@ -405,22 +400,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     protected int getAwardableFlow (int playerOid)
     {
         FlowRecord record = _flowRecords.get(playerOid);
-        return (record == null) ? 0 : getAwardableFlow(record);
-    }
-
-    /**
-     * Get the available flow that can be awarded to the player with the specified record.
-     */
-    protected int getAwardableFlow (FlowRecord record)
-    {
-        int secondsOfPlay = record.secondsPlayed;
-        if (record.beganStamp != 0) {
-            secondsOfPlay += now() - record.beganStamp;
-        }
-        int flowBudget = (int) ((record.humanity * _flowPerMinute * secondsOfPlay) / 60);
-        // Don't let the available be less than 0.
-        // The awarded amount can be higher than the budget up until the point of actual reward
-        return Math.max(0, flowBudget - record.awarded);
+        return (record == null) ? 0 : record.getAwardableFlow(_flowPerMinute, now());
     }
 
     protected void payoutPlayer (int oid)
@@ -435,8 +415,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         // if they're leaving in the middle of things, update their secondsPlayed, just so that
         // it's correct for calculations below
         if (_tracking) {
-            record.secondsPlayed += now() - record.beganStamp;
-            record.beganStamp = 0;
+            record.stopTracking(now());
         }
 
         // since we're dropping this record, we need to record the seconds played
@@ -447,38 +426,29 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             return;
         }
 
-        // see if we're initialized
+        // sanity check that we're initialized
         if (_flowPerMinute == -1) {
             log.warning("Unknown flow rate, but there's a grant. Wha?");
             return;
         }
 
         // see how much they actually get (also uses their secondsPlayed)
-        int flowBudget = (int) ((record.humanity * _flowPerMinute * record.secondsPlayed) / 60);
-        final int awarded = Math.min(record.awarded, flowBudget);
         final String details = getGameId() + " " + record.secondsPlayed;
 
-        // actually grant their flow award
-        if (awarded > 0) {
-            if (MsoyServer.isActive()) {
-                MsoyServer.memberMan.grantFlow(
-                    record.memberId, awarded, UserAction.PLAYED_GAME, details);
-
-            } else {
-                MsoyGameServer.invoker.postUnit(new Invoker.Unit("grantFlow") {
-                    public boolean invoke () {
-                        try {
-                            MsoyGameServer.memberRepo.getFlowRepository().grantFlow(
-                                record.memberId, awarded, UserAction.PLAYED_GAME, details);
-                        } catch (PersistenceException pe) {
-                            log.log(Level.WARNING, "Failed to grant flow [mid=" + record.memberId +
-                                    ", amount=" + awarded + ", details=" + details + "].", pe);
-                        }
-                        return false;
-                    }
-                });
+        // actually grant their flow award; we don't need to update their in-memory flow value
+        // because we've been doing that all along
+        MsoyBaseServer.invoker.postUnit(new Invoker.Unit("grantFlow") {
+            public boolean invoke () {
+                try {
+                    MsoyBaseServer.memberRepo.getFlowRepository().grantFlow(
+                        record.memberId, record.awarded, UserAction.PLAYED_GAME, details);
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to grant flow [mid=" + record.memberId +
+                            ", amount=" + record.awarded + ", details=" + details + "].", pe);
+                }
+                return false;
             }
-        }
+        });
     }
 
     /**
@@ -513,21 +483,37 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     }
 
     /**
-     * A record of flow awarded, even for guests.
+     * A record of flow awarded.
      */
     protected static class FlowRecord
     {
-        protected double humanity;
-        protected int memberId;
-        protected int awarded;
-        protected int beganStamp;
-        protected int secondsPlayed;
+        public double humanity;
+        public int memberId;
 
-        protected FlowRecord (int memberId, double humanity)
-        {
+        public int beganStamp;
+        public int secondsPlayed;
+
+        public int awarded;
+
+        public FlowRecord (int memberId, double humanity) {
             this.humanity = humanity;
             this.memberId = memberId;
             this.awarded = 0;
+        }
+
+        public int getAwardableFlow (int flowPerMinute, int now) {
+            int secondsOfPlay = secondsPlayed;
+            if (beganStamp != 0) {
+                secondsOfPlay += (now - beganStamp);
+            }
+            return (int) ((humanity * flowPerMinute * secondsOfPlay) / 60);
+        }
+
+        public void stopTracking (int endStamp) {
+            if (beganStamp != 0) {
+                secondsPlayed += endStamp - beganStamp;
+                beganStamp = 0;
+            }
         }
     }
 
