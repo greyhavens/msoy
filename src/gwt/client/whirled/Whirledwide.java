@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.Whirled;
 
@@ -77,8 +78,6 @@ public class Whirledwide extends FlexTable
         topGamesList.setVerticalAlignment(VerticalPanel.ALIGN_TOP);
         topGamesList.add(_topGames = new VerticalPanel());
         topGamesContainer.add(topGamesList);
-        //topGamesContainer.add(_topGames = new VerticalPanel());
-        //_topGames.setStyleName("TopGamesList");
         HorizontalPanel allGames = new HorizontalPanel();
         allGames.setStyleName("AllGames");
         allGames.setHorizontalAlignment(HorizontalPanel.ALIGN_RIGHT);
@@ -122,6 +121,7 @@ public class Whirledwide extends FlexTable
 
     protected void fillUi (Whirled whirledwide) 
     {
+        // games
         Iterator gamesIter = whirledwide.games.iterator();
         if (gamesIter.hasNext()) {
             VerticalPanel topGame = new VerticalPanel();
@@ -138,6 +138,35 @@ public class Whirledwide extends FlexTable
             game.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
             addGameDataTo(game, (SceneCard) gamesIter.next());
             _topGames.add(game);
+        }
+
+        // people
+        Iterator peopleIter = whirledwide.people.iterator();
+        while (peopleIter.hasNext()) {
+            final MemberCard person = (MemberCard) peopleIter.next();
+            VerticalPanel personPanel = new VerticalPanel();
+            personPanel.setStyleName("PersonWidget");
+            personPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
+            personPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
+            
+            ClickListener goToProfile = new ClickListener() {
+                public void onClick (Widget sender) {
+                    History.newItem(
+                        Application.createLinkToken("profile", "" + person.name.getMemberId()));
+                }
+            };
+
+            Widget logo = MediaUtil.createMediaView(person.photo, 93, 80);
+            if (logo instanceof Image) {
+                ((Image) logo).addClickListener(goToProfile);
+            }
+            personPanel.add(logo);
+
+            Label nameLabel = new Label("" + person.name);
+            nameLabel.setStyleName("NameLabel");
+            nameLabel.addClickListener(goToProfile);
+            personPanel.add(nameLabel);
+            _players.add(personPanel);
         }
     }
 

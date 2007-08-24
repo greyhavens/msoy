@@ -49,6 +49,7 @@ import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -350,7 +351,7 @@ public class MemberServlet extends MsoyServiceServlet
     public Whirled getWhirledwide ()
         throws ServiceException
     {
-        Whirled whirledwide = new Whirled();
+        final Whirled whirledwide = new Whirled();
 
         // get the top 9 rated Game SceneCards.  We sort them by rating here on the server, and 
         // avoid fill in info that is unneeded, like population
@@ -373,6 +374,54 @@ public class MemberServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to get popular games info", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        final ArrayList<MemberCard> whirledPeople = new ArrayList<MemberCard>();
+        final ServletWaiter<Void> waiter = new ServletWaiter<Void>("getWhirledwide");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                try {
+                    final ArrayList<MemberCard> people = new ArrayList<MemberCard>();
+                    MsoyServer.peerMan.applyToNodes(new PeerManager.Operation() {
+                        public void apply (NodeObject nodeobj) {
+                            MsoyNodeObject mnobj = (MsoyNodeObject) nodeobj;
+                            for (MemberLocation memberLoc : mnobj.memberLocs) {
+                                MemberCard member = new MemberCard();
+                                // card details get filled in back on the servlet thread
+                                member.name = new MemberName("", memberLoc.memberId);
+                                people.add(member);
+                            }
+                        }
+                    });
+                    for (int ii = 0; ii < 5 && people.size() > 0; ii++) {
+                        int randomPerson = (int) (Math.random() * people.size());
+                        whirledPeople.add(people.remove(randomPerson));
+                    }
+                    waiter.requestCompleted(null);
+                } catch (Exception e) {
+                    waiter.requestFailed(e);
+                    return;
+                }
+            }
+        });
+        waiter.waitForResult();
+
+        try {
+            for (MemberCard card : whirledPeople) {
+                MemberNameRecord name = 
+                    MsoyServer.memberRepo.loadMemberName(card.name.getMemberId());
+                card.name = new MemberName(name.name, card.name.getMemberId());
+                ProfileRecord profile = 
+                    MsoyServer.profileRepo.loadProfile(card.name.getMemberId());
+                if (profile.photoHash != null) {
+                    card.photo = new MediaDesc(profile.photoHash, profile.photoMimeType,
+                                               profile.photoConstraint);
+                }
+            }
+            whirledwide.people = whirledPeople;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to flesh out MemberCards", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
