@@ -48,7 +48,9 @@ public class WorldClient extends Widget
         // create our client if necessary
         if (! _isFlashClientPresent) {
             clearClient(false); // clear our Java client if we have one
-            flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port;
+            flashArgs += "&host=" + _defaultServer.server +
+                "&port=" + _defaultServer.port +
+                "&httpPort=" + _defaultServer.httpPort;
             String partner = Application.getPartner();
             if (partner != null) {
                 flashArgs += "&partner=" + partner;

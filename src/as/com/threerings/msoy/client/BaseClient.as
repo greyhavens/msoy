@@ -94,6 +94,7 @@ public /*abstract*/ class BaseClient extends Client
 
         // configure our server and port info and logon
         setServer(getServerHost(stage), getServerPorts(stage));
+        _httpPort = getHttpServerPort(stage);
     }
 
     public function fuckingCompiler () :void
@@ -172,6 +173,14 @@ public /*abstract*/ class BaseClient extends Client
         return _embedded;
     }
 
+    /**
+     * Returns the port on which we can connect to the HTTP server.
+     */
+    public function getHttpPort () :int
+    {
+        return _httpPort;
+    }
+     
     /**
      * Called just before we logon to a server.
      */
@@ -267,9 +276,23 @@ public /*abstract*/ class BaseClient extends Client
             [ int(parseInt(params["port"])) ] : DeploymentConfig.serverPorts;
     }
 
+    /**
+     * Returns the port on which we can connect to the HTTP server, first checking the movie
+     * parameters, then falling back to the default in DeploymentConfig.
+     */
+    protected static function getHttpServerPort (stage :Stage) :int
+    {
+        var params :Object = stage.loaderInfo.parameters;
+        return (params["httpPort"] != null) ?
+            int(parseInt(params["httpPort"])) : DeploymentConfig.httpPort;
+    }
+
     protected var _ctx :BaseContext;
     protected var _user :MemberObject;
     protected var _embedded :Boolean = false;
+
+    /** The port on which we connect to the HTTP server. */
+    protected var _httpPort :int;
 }
 }
 
