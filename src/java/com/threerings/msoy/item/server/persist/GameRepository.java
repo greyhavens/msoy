@@ -249,17 +249,19 @@ public class GameRepository extends ItemRepository<
             if (item != null && item.gameId != 0) {
                 gdr = load(GameDetailRecord.class, item.gameId);
             }
-            if (gdr.sourceItemId == itemId) {
-                gdr.sourceItemId = 0;
-                if (gdr.listedItemId == 0) {
-                    delete(gdr);
-                } else {
-                    update(gdr);
+            if (gdr != null) {
+                if (gdr.sourceItemId == itemId) {
+                    gdr.sourceItemId = 0;
+                    if (gdr.listedItemId == 0) {
+                        delete(gdr);
+                    } else {
+                        update(gdr);
+                    }
                 }
-            }
-            // this should never happen as catalog originals are not (currently) deleted
-            if (gdr.listedItemId == itemId) {
-                log.warning("Deleting listed item for game?! " + gdr + ".");
+                // this should never happen as catalog originals are not (currently) deleted
+                if (gdr.listedItemId == itemId) {
+                    log.warning("Deleting listed item for game?! " + gdr + ".");
+                }
             }
         }
 
