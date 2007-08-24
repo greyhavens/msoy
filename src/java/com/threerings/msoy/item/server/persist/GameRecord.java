@@ -146,9 +146,9 @@ public class GameRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
-    public void prepareForListing ()
+    public void prepareForListing (ItemRecord oldListing)
     {
-        super.prepareForListing();
+        super.prepareForListing(oldListing);
 
         // the original from which this game is being listed will have -gameId as its game
         // identifier because it is an original; all non-originals will use the positive id
@@ -158,7 +158,7 @@ public class GameRecord extends ItemRecord
     @Override // from ItemRecord
     public void prepareForRemixing ()
     {
-        super.prepareForListing();
+        super.prepareForRemixing();
 
         // clear out our game id; this is now a totally separate game
         gameId = 0;
