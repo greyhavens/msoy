@@ -4,7 +4,6 @@ package com.threerings.msoy.swiftly.server;
 
 import static com.threerings.msoy.Log.log;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
@@ -57,7 +56,7 @@ public abstract class AbstractBuildTask
     /**
      * Let any subclass process the build artifact before it is deleted.
      */
-    public abstract void processArtifact (File artifact)
+    public abstract void processArtifact (final BuildArtifact artifact)
         throws IOException, PersistenceException;
 
     /**

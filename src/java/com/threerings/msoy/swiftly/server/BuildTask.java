@@ -2,11 +2,10 @@
 // $Id$
 package com.threerings.msoy.swiftly.server;
 
-import java.io.File;
-
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.swiftly.data.BuildResult;
+import com.threerings.msoy.swiftly.server.build.BuildArtifact;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 
 /** Handles a request to build our project. */
@@ -31,7 +30,7 @@ public class BuildTask extends AbstractBuildTask
     }
 
     @Override // from CommonBuildTask
-    public void processArtifact (File artifact)
+    public void processArtifact (final BuildArtifact artifact)
     {
         // BuildTask does nothing with the artifact
     }

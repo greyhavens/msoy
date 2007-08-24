@@ -2,7 +2,6 @@
 // $Id$
 package com.threerings.msoy.swiftly.server;
 
-import java.io.File;
 import java.io.IOException;
 
 import com.samskivert.io.PersistenceException;
@@ -21,6 +20,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PetRecord;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.swiftly.data.BuildResult;
+import com.threerings.msoy.swiftly.server.build.BuildArtifact;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.GenericUploadFile;
@@ -67,11 +67,11 @@ public class BuildAndExportTask extends AbstractBuildTask
     }
 
     @Override // from CommonBuildTask
-    public void processArtifact (File artifact)
+    public void processArtifact (final BuildArtifact artifact)
         throws IOException, PersistenceException
     {
         // First, publish the results into the media store
-        UploadFile uploadFile = new GenericUploadFile(artifact);
+        UploadFile uploadFile = new GenericUploadFile(artifact.getOutputFile());
         UploadUtil.publishUploadFile(uploadFile);
 
         // load the correct item repository
