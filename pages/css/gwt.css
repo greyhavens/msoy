@@ -257,9 +257,8 @@ a:visited {
 }
 
 .formDialog .Tip {
-  width: 400px;
   font-size: 12px;
-  text-align: center;
+  width: 200px;
 }
 
 .formDialog .Status {

@@ -38,8 +38,12 @@ public class CreateAccountDialog extends BorderedDialog
         _parent = parent;
         _invite = invite;
         _header.add(createTitleLabel(CShell.cmsgs.createTitle(), null));
-        _footer.add(_go = new Button(CShell.cmsgs.createCreate(), new ClickListener() {
+        _footer.add(new Button(CShell.cmsgs.createCreate(), new ClickListener() {
             public void onClick (Widget sender) {
+                if (!validateData(true)) {
+                    return; // TODO: blink the status message?
+                }
+
                 String[] today = new Date().toString().split(" ");
                 String thirteenYearsAgo = "";
                 for (int ii = 0; ii < today.length; ii++) {
@@ -51,23 +55,22 @@ public class CreateAccountDialog extends BorderedDialog
                 }
 
                 if (new Date(thirteenYearsAgo).compareTo(_dateOfBirth.getDate()) < 0) {
-                    MsoyUI.error(CShell.cmsgs.createNotThirteen());
+                    setError(CShell.cmsgs.createNotThirteen());
                 } else {
                     createAccount();
                 }
             }
         }));
-        _go.setEnabled(false);
 
         FlexTable contents = (FlexTable)_contents;
         int row = 0;
-        contents.getFlexCellFormatter().setColSpan(row, 0, 2);
+        contents.getFlexCellFormatter().setColSpan(row, 0, 3);
         contents.getFlexCellFormatter().setStyleName(row, 0, "Intro");
         contents.setText(row++, 0, CShell.cmsgs.createIntro());
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.createEmail());
-        contents.setWidget(row++, 1, _email = new TextBox());
+        contents.setWidget(row, 1, _email = new TextBox());
         _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 _password.setFocus(true);
@@ -78,19 +81,21 @@ public class CreateAccountDialog extends BorderedDialog
             _email.setText(invite.inviteeEmail);
         }
         _email.addKeyboardListener(_validator);
-        contents.getFlexCellFormatter().setColSpan(row, 0, 2);
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
-        contents.setText(row++, 0, CShell.cmsgs.createEmailTip());
+        contents.getFlexCellFormatter().setStyleName(row, 2, "Tip");
+        contents.setText(row++, 2, CShell.cmsgs.createEmailTip());
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.createPassword());
-        contents.setWidget(row++, 1, _password = new PasswordTextBox());
+        contents.setWidget(row, 1, _password = new PasswordTextBox());
         _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 _confirm.setFocus(true);
             }
         }));
         _password.addKeyboardListener(_validator);
+        contents.getFlexCellFormatter().setRowSpan(row, 2, 2);
+        contents.getFlexCellFormatter().setStyleName(row, 2, "Tip");
+        contents.setText(row++, 2, CShell.cmsgs.createPasswordTip());
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.createConfirm());
@@ -101,34 +106,28 @@ public class CreateAccountDialog extends BorderedDialog
             }
         }));
         _confirm.addKeyboardListener(_validator);
-        contents.getFlexCellFormatter().setColSpan(row, 0, 2);
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
-        contents.setText(row++, 0, CShell.cmsgs.createPasswordTip());
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.createDisplayName());
-        contents.setWidget(row++, 1, _name = new TextBox());
+        contents.setWidget(row, 1, _name = new TextBox());
         _name.addKeyboardListener(_validator);
-        contents.getFlexCellFormatter().setColSpan(row, 0, 2);
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
-        contents.setText(row++, 0, CShell.cmsgs.createDisplayNameTip());
+        contents.getFlexCellFormatter().setStyleName(row, 2, "Tip");
+        contents.setText(row++, 2, CShell.cmsgs.createDisplayNameTip());
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.createRealName());
-        contents.setWidget(row++, 1, _rname = new TextBox());
-        contents.getFlexCellFormatter().setColSpan(row, 0, 2);
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
-        contents.setText(row++, 0, CShell.cmsgs.createRealNameTip());
+        contents.setWidget(row, 1, _rname = new TextBox());
+        contents.getFlexCellFormatter().setStyleName(row, 2, "Tip");
+        contents.setText(row++, 2, CShell.cmsgs.createRealNameTip());
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.createDateOfBirth());
-        contents.setWidget(row++, 1, _dateOfBirth = new DateFields());
+        contents.setWidget(row, 1, _dateOfBirth = new DateFields());
         _dateOfBirth.addKeyboardListenerToFields(_validator);
-        contents.getFlexCellFormatter().setColSpan(row, 0, 2);
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
-        contents.setText(row++, 0, CShell.cmsgs.createDateOfBirthTip());
+        contents.getFlexCellFormatter().setStyleName(row, 2, "Tip");
+        contents.setText(row++, 2, CShell.cmsgs.createDateOfBirthTip());
 
-        contents.getFlexCellFormatter().setColSpan(row, 0, 2);
+        contents.getFlexCellFormatter().setColSpan(row, 0, 3);
         contents.getFlexCellFormatter().setStyleName(row, 0, "Status");
         contents.setWidget(row++, 0, _status = new Label(""));
         _status.setText(CShell.cmsgs.createMissingEmail());
@@ -150,28 +149,34 @@ public class CreateAccountDialog extends BorderedDialog
         return contents;
     }
 
-    protected void validateData ()
+    protected boolean validateData (boolean forceError)
     {
-        boolean valid = false;
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim(), confirm = _confirm.getText().trim();
+        String status;
         if (email.length() == 0) {
-            setStatus(CShell.cmsgs.createMissingEmail());
+            status = CShell.cmsgs.createMissingEmail();
         } else if (password.length() == 0) {
-            setStatus(CShell.cmsgs.createMissingPassword());
+            status = CShell.cmsgs.createMissingPassword();
         } else if (confirm.length() == 0) {
-            setStatus(CShell.cmsgs.createMissingConfirm());
+            status = CShell.cmsgs.createMissingConfirm();
         } else if (!password.equals(confirm)) {
-            setError(CShell.cmsgs.createPasswordMismatch());
+            status = CShell.cmsgs.createPasswordMismatch();
         } else if (name.length() == 0) {
-            setStatus(CShell.cmsgs.createMissingName());
+            status = CShell.cmsgs.createMissingName();
         } else if (_dateOfBirth.getDate() == null) {
-            setStatus(CShell.cmsgs.createMissingDoB());
+            status = CShell.cmsgs.createMissingDoB();
         } else {
             setStatus(CShell.cmsgs.createReady());
-            valid = true;
+            return true;
         }
-        _go.setEnabled(valid);
+
+        if (forceError) {
+            setError(status);
+        } else {
+            setStatus(status);
+        }
+        return false;
     }
 
     protected void createAccount ()
@@ -213,7 +218,7 @@ public class CreateAccountDialog extends BorderedDialog
             // let the keypress go through, then validate our data
             DeferredCommand.add(new Command() {
                 public void execute () {
-                    validateData();
+                    validateData(false);
                 }
             });
         }
@@ -224,6 +229,5 @@ public class CreateAccountDialog extends BorderedDialog
     protected TextBox _email, _name, _rname;
     protected PasswordTextBox _password, _confirm;
     protected DateFields _dateOfBirth;
-    protected Button _go;
     protected Label _status;
 }
