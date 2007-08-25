@@ -9,13 +9,16 @@
   height: 100%;
 }
 
-.projectEdit {
-  width: 400px;
-  height: 100px;
+.swiftlyUploader {
+  width: 100%;
+  background: #DCDCDC;
+  border: 1px solid black
 }
 
-.projectEdit td {
-  vertical-align: top;
+.projectEdit {
+  width: 100%;
+  background: #DCDCDC;
+  border: 1px solid black
 }
 
 .projectEdit .LabelLink {

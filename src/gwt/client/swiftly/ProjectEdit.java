@@ -8,10 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import client.shell.Application;
-import client.util.BorderedDialog;
 import client.util.ClickCallback;
-import client.util.MsoyUI;
-import client.util.PromptPopup;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,6 +17,7 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -36,7 +34,7 @@ import com.threerings.msoy.web.data.SwiftlyProject;
 /**
  * Display a dialog to edit a project.
  */
-public class ProjectEdit extends BorderedDialog
+public class ProjectEdit extends FlexTable
 {
     /**
      * A callback interface for classes that want to know when a project was committed.
@@ -48,22 +46,18 @@ public class ProjectEdit extends BorderedDialog
 
     public ProjectEdit (SwiftlyProject project, ProjectEditListener listener)
     {
-        // no autohiding, have a close button, disable dragging
-        super(false, false, false);
-
         _project = project;
         _listener = listener;
         _amOwner = (CSwiftly.getMemberId() == project.ownerId);
 
-        _header.add(new InlineLabel(_project.projectName));
+        setStyleName("projectEdit");
 
-        FlexTable contents = (FlexTable)_contents;
-        contents.setStyleName("projectEdit");
-
-        int idx = 0;
-        contents.setText(idx, 0, CSwiftly.msgs.projectName());
+        int row = 0;
+        int col = 0;
+        HorizontalPanel cell = new HorizontalPanel();
+        cell.add(new Label(CSwiftly.msgs.projectName()));
         TextBox projectName = new TextBox();
-        contents.setWidget(idx++, 1, projectName);
+        cell.add(projectName);
         projectName.setText(_project.projectName);
         projectName.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
@@ -71,19 +65,20 @@ public class ProjectEdit extends BorderedDialog
             }
         });
 
-        contents.setText(idx, 0, CSwiftly.msgs.remixable());
-        contents.setWidget(idx++, 1, _remixable = new CheckBox());
+        cell.add(new Label(CSwiftly.msgs.remixable()));
+        cell.add(_remixable = new CheckBox());
         _remixable.setChecked(_project.remixable);
         _remixable.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 _project.remixable = _remixable.isChecked();
             }
         });
+        setWidget(row, col++, cell);
 
-        contents.setText(idx, 0, CSwiftly.msgs.collaborators());
-        contents.getFlexCellFormatter().setHeight(idx, 0, "100%");
+        cell = new HorizontalPanel();
+        cell.add(new Label(CSwiftly.msgs.collaborators()));
         _collaboratorsPanel = new HorizontalPanel();
-        contents.setWidget(idx, 1, _collaboratorsPanel);
+        cell.add(_collaboratorsPanel);
 
         // Add collaborators button if project owner
         if (_amOwner) {
@@ -101,13 +96,14 @@ public class ProjectEdit extends BorderedDialog
                     _collabMenuPanel.show();
                 }
             });
-            contents.setWidget(idx, 2, addCollabs);
+            cell.add(addCollabs);
         }
-        idx++;
+        setWidget(row, col++, cell);
 
+        cell = new HorizontalPanel();
         // Submit button
         Button submit = new Button(CSwiftly.msgs.submit());
-        _footer.add(submit);
+        cell.add(submit);
         new ClickCallback(submit) {
             public boolean callService () {
                 CSwiftly.swiftlysvc.updateProject(CSwiftly.ident, _project, this);
@@ -120,11 +116,14 @@ public class ProjectEdit extends BorderedDialog
         };
 
         // Close button
-        _footer.add(new Button(CSwiftly.msgs.close(), new ClickListener() {
+        cell.add(new Button(CSwiftly.msgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 closeDialog();
             }
         }));
+        getFlexCellFormatter().setHorizontalAlignment(row, col, HasAlignment.ALIGN_RIGHT);
+        setWidget(row, col, cell);
+        col++;
 
         loadCollaborators();
         loadFriends();
@@ -139,7 +138,7 @@ public class ProjectEdit extends BorderedDialog
 
     protected void closeDialog()
     {
-        hide();
+        removeFromParent();
         if (_listener != null) {
             _listener.projectSubmitted(_project);
         }
@@ -157,7 +156,7 @@ public class ProjectEdit extends BorderedDialog
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Listing collaborators failed memberId=[" + CSwiftly.getMemberId() +
                     "]", caught);
-                MsoyUI.error(CSwiftly.serverError(caught));
+                SwiftlyPanel.displayError(CSwiftly.serverError(caught));
             }
         });
     }
@@ -204,23 +203,16 @@ public class ProjectEdit extends BorderedDialog
             "" + name.getMemberId()), true, new Command() {
             public void execute () {
                 parent.hide();
-                ProjectEdit.this.hide();
+                ProjectEdit.this.removeFromParent();
             }
         });
 
         MenuItem remove = new MenuItem(CSwiftly.msgs.viewRemove(), new Command() {
             public void execute() {
-                (new PromptPopup(CSwiftly.msgs.viewRemovePrompt(name.toString(),
-                    _project.projectName)) {
-                    public void onAffirmative () {
-                        parent.hide();
-                        removeCollaborator(name);
-                    }
-                    public void onNegative () { }
-                }).prompt();
+                parent.hide();
+                removeCollaborator(name);
             }
         });
-
 
         // show actions that we don't have permission to take, but make sure they are
         // disabled. disable removal for the owner on themselves
@@ -245,7 +237,7 @@ public class ProjectEdit extends BorderedDialog
             public void onFailure (Throwable caught) {
                 CSwiftly.log(
                     "Listing friends failed memberId=[" + CSwiftly.getMemberId() + "]", caught);
-                MsoyUI.error(CSwiftly.serverError(caught));
+                SwiftlyPanel.displayError(CSwiftly.serverError(caught));
             }
         });
     }
@@ -310,7 +302,7 @@ public class ProjectEdit extends BorderedDialog
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Failed to add collaborator [projectId=" + _project.projectId +
                            ", memberId=" + name.getMemberId() + "]", caught);
-                MsoyUI.error(CSwiftly.serverError(caught));
+                SwiftlyPanel.displayError(CSwiftly.serverError(caught));
             }
         });
     }
@@ -331,7 +323,7 @@ public class ProjectEdit extends BorderedDialog
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Failed to remove collaborator [projectId=" + _project.projectId +
                              ", memberId=" + name.getMemberId() + "]", caught);
-                MsoyUI.error(CSwiftly.serverError(caught));
+                SwiftlyPanel.displayError(CSwiftly.serverError(caught));
             }
         });
     }

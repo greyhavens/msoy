@@ -5,7 +5,6 @@ package client.swiftly;
 
 import client.shell.Application;
 import client.shell.WorldClient;
-import client.util.MsoyUI;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -13,6 +12,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.client.DeploymentConfig;
@@ -40,7 +41,7 @@ public class SwiftlyPanel extends FlexTable
                 loadApplet();
             }
             public void onFailure (Throwable cause) {
-                MsoyUI.error(CSwiftly.serverError(cause));
+                SwiftlyPanel.displayError(CSwiftly.serverError(cause));
             }
         });
     }
@@ -49,7 +50,17 @@ public class SwiftlyPanel extends FlexTable
     public void projectSubmitted (SwiftlyProject project)
     {
         _project = project;
+        _editButton.setEnabled(true);
         updateProjectLink();
+    }
+
+    /**
+     * Display an error message into the status label, rather than using MsoyUI which breaks on top
+     * of the Java applet
+     */
+    public static void displayError (String error)
+    {
+        _status.setText(error);
     }
 
     // @Override // from Widget
@@ -61,15 +72,26 @@ public class SwiftlyPanel extends FlexTable
 
     protected void loadApplet ()
     {
+        setWidget(0, 0, _vertPanel = new VerticalPanel());
+        _vertPanel.setWidth("100%");
+
         // Add project information to the header
-        setText(0, 0, CSwiftly.msgs.swiftlyEditing());
-        setWidget(0, 1, _projectLink);
-        setWidget(0, 2, new Button(CSwiftly.msgs.editProject(), new ClickListener() {
+        FlexTable infoPanel = new FlexTable();
+        infoPanel.setText(0, 0, CSwiftly.msgs.swiftlyEditing());
+        infoPanel.setWidget(0, 1, _projectLink);
+        _editButton = new Button(CSwiftly.msgs.editProject(), new ClickListener() {
             public void onClick (Widget sender) {
-                new ProjectEdit(_project, SwiftlyPanel.this).show();
+                _editButton.setEnabled(false);
+                _vertPanel.insert(new ProjectEdit(_project, SwiftlyPanel.this), 1);
             }
-        }));
-        getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
+        });
+        infoPanel.setWidget(0, 2, _editButton);
+        infoPanel.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
+        infoPanel.setWidth("100%");
+        _vertPanel.add(infoPanel);
+
+        // Add the project edit and upload dialogs as well as a status area
+        _vertPanel.add(_status);
 
         // Add the applet
         String[] args = new String[] {
@@ -78,7 +100,7 @@ public class SwiftlyPanel extends FlexTable
             "server", _config.server,
             "port", String.valueOf(_config.port) };
         // we have to serve swiftly-client.jar from the server to which it will connect back
-        // due to security restrictions and proxy the game jar through there as well
+        // due to security restrictions
         String swiftlyJar = "http://" + _config.server + ":" + _config.httpPort + "/clients/" +
             DeploymentConfig.version + "/swiftly-client.jar";
         _applet = WidgetUtil.createApplet(
@@ -86,7 +108,6 @@ public class SwiftlyPanel extends FlexTable
             "100%", "100%", args);
         _applet.setHeight("100%");
         setWidget(1, 0, _applet);
-        getFlexCellFormatter().setColSpan(1, 0, 3);
         getFlexCellFormatter().setHeight(1, 0, "100%");
 
         // clear out any world client because Swiftly currently kills it anyway
@@ -102,6 +123,7 @@ public class SwiftlyPanel extends FlexTable
 
     /**
      * Display a dialog for selecting a file to be uploaded into the project.
+     * If a dialog is already open, do nothing.
      */
     protected static void showUploadDialog (String projectId)
     {
@@ -114,8 +136,8 @@ public class SwiftlyPanel extends FlexTable
                     _uploadDialog = null;
                 }
             });
+            _vertPanel.insert(_uploadDialog, 1);
         }
-        _uploadDialog.show();
     }
 
     /**
@@ -124,7 +146,7 @@ public class SwiftlyPanel extends FlexTable
      */
     protected static void uploadError ()
     {
-        displayError(CSwiftly.msgs.errUploadError());
+        displayUploadError(CSwiftly.msgs.errUploadError());
     }
 
     /**
@@ -133,7 +155,7 @@ public class SwiftlyPanel extends FlexTable
      */
     protected static void uploadTooLarge ()
     {
-        displayError(CSwiftly.msgs.errUploadTooLarge());
+        displayUploadError(CSwiftly.msgs.errUploadTooLarge());
     }
 
     /**
@@ -142,19 +164,17 @@ public class SwiftlyPanel extends FlexTable
      */
     protected static void accessDenied ()
     {
-        displayError(CSwiftly.msgs.errAccessDenied());
+        displayUploadError(CSwiftly.msgs.errAccessDenied());
     }
 
     /**
-     * Display an error message into the UploadDialog if open, otherwise use MsoyUI to display.
+     * Display an error message into the UploadDialog if open, otherwise use the status panel
+     * to display.
      */
-    protected static void displayError (String message)
+    protected static void displayUploadError (String message)
     {
-        if (_uploadDialog != null) {
-            _uploadDialog.setErrorMessage(message);
-        } else {
-            MsoyUI.error(message);
-        }
+        _uploadDialog.setError();
+        SwiftlyPanel.displayError(message);
     }
 
     /**
@@ -179,9 +199,12 @@ public class SwiftlyPanel extends FlexTable
     protected static UploadDialog _uploadDialog;
 
     protected SwiftlyProject _project;
-    protected ConnectConfig _config;
-    protected String _authtoken;
-    protected Hyperlink _projectLink = new Hyperlink();
-    protected Widget _applet;
+    protected final ConnectConfig _config;
+    protected final String _authtoken;
+    protected static VerticalPanel _vertPanel;
+    protected final Hyperlink _projectLink = new Hyperlink();
+    protected Button _editButton;
+    protected static final Label _status = new Label();
+    protected static Widget _applet;
 
 }

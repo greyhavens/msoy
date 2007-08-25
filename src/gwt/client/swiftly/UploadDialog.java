@@ -3,8 +3,6 @@
 
 package client.swiftly;
 
-import client.util.BorderedDialog;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Button;
@@ -15,14 +13,16 @@ import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-
-import com.threerings.gwt.ui.InlineLabel;
-
 import com.threerings.msoy.web.data.WebIdent;
 
-public class UploadDialog extends BorderedDialog
+/**
+ * Display a dialog to upload a file into a Swiftly project.
+ */
+public class UploadDialog extends FlexTable
 {
     /**
      * A callback interface for classes that want to know when this dialog was closed.
@@ -34,12 +34,8 @@ public class UploadDialog extends BorderedDialog
 
     public UploadDialog (String projectId, WebIdent ident, UploadDialogListener listener)
     {
-        // no auto hiding, have a close button, disable dragging
-        super(false, false, false);
-        FlexTable contents = (FlexTable)_contents;
-        contents.setStyleName("swiftlyUploader");
-        
-        _header.add(new InlineLabel(CSwiftly.msgs.uploadTitle()));
+        setStyleName("swiftlyUploader");
+
         _status = new Label(CSwiftly.msgs.selectFile());
         _listener = listener;
 
@@ -75,9 +71,9 @@ public class UploadDialog extends BorderedDialog
                 }
             }
 
-            public void onSubmitComplete (FormSubmitCompleteEvent event) {                
+            public void onSubmitComplete (FormSubmitCompleteEvent event) {
                 String result = event.getResults();
-                
+
                 // hide the dialog after the form has been submitted only if no error was set
                 if (!_wasError) {
                     closeDialog();
@@ -89,39 +85,33 @@ public class UploadDialog extends BorderedDialog
             }
         });
 
-        contents.setWidget(0, 0, _status);
-        contents.setWidget(1, 0, form);
-
         // Upload button
-        _footer.add(new Button(CSwiftly.msgs.upload(), new ClickListener() {
+        HorizontalPanel buttons = new HorizontalPanel();
+        buttons.add(new Button(CSwiftly.msgs.upload(), new ClickListener() {
             public void onClick (Widget sender) {
                 form.submit();
             }
         }));
-        
+
         // Cancel button
-        _footer.add(new Button(CSwiftly.msgs.cancel(), new ClickListener() {
+        buttons.add(new Button(CSwiftly.msgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 closeDialog();
             }
         }));
 
-    }
+        setWidget(0, 0, _status);
+        setWidget(1, 0, form);
+        getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
+        setWidget(1, 1, buttons);
 
-    // from BorderedDialog.  This is called in the super constructor, so no UI components that
-    // depend on members that are set in this object's constructor can be used here.
-    public Widget createContents ()
-    {
-        return new FlexTable();
     }
 
     /**
      * Display an error message in the UploadDialog's status panel.
      */
-    public void setErrorMessage (String message)
+    public void setError ()
     {
-        _status.setText(message);
-        updateFrame();
         _wasError = true;
     }
 
@@ -130,7 +120,7 @@ public class UploadDialog extends BorderedDialog
      */
     protected void closeDialog ()
     {
-        hide();
+        setVisible(false);
         _listener.dialogClosed();
     }
 

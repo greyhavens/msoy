@@ -63,12 +63,14 @@ public class index extends Page
         }
 
         // XXX TEMP while swiftly is broken on whirled1/2 display a message only
+        /*
         if (true) {
             setContent(MsoyUI.createLabel("Ouch! Swiftly is experiencing growing pains as we " +
                 "continue our efforts to scale Whirled. Please bear with us while we finish our " +
                 "work.", "infoLabel"));
             return;
         }
+        */
 
         setPageTitle(CSwiftly.msgs.projectsTitle());
         if (args.length() == 0) {
