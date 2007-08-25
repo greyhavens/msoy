@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.TransitionRepository;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
@@ -58,7 +57,7 @@ public class MsoyGameRegistry
     /**
      * Initializes this registry.
      */
-    public void init (InvocationManager invmgr, GameRepository gameRepo, TransitionRepository xrepo)
+    public void init (InvocationManager invmgr, GameRepository gameRepo)
         throws PersistenceException
     {
         _gameRepo = gameRepo;
@@ -86,13 +85,6 @@ public class MsoyGameRegistry
                                 "[port=" + port + "].", e);
                     }
                 }
-            }
-        });
-
-        // TEMP: migrate game item ids to game ids in various places
-        xrepo.transition(getClass(), "20070821-iid-gid", new TransitionRepository.Transition() {
-            public void run () throws PersistenceException {
-                _gameRepo.bigGameIdMigration();
             }
         });
     }

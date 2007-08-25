@@ -398,15 +398,6 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Note that a game has ended: potentially reassess its anti-abuse factor.
-     */
-    public void noteGameEnded (int gameId, int playerMinutes)
-        throws PersistenceException
-    {
-        _flowRepo.maybeAssessAntiAbuseFactor(gameId, playerMinutes);
-    }
-
-    /**
      * Returns the NeighborFriendRecords for all the established friends of a given member, through
      * an inner join between {@link MemberRecord} and {@link FriendRecord}.
      */

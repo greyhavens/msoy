@@ -5,6 +5,7 @@ package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -40,11 +41,39 @@ public class GameDetailRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #sourceItemId} field. */
     public static final ColumnExp SOURCE_ITEM_ID_C =
         new ColumnExp(GameDetailRecord.class, SOURCE_ITEM_ID);
+
+    /** The column identifier for the {@link #playerGames} field. */
+    public static final String PLAYER_GAMES = "playerGames";
+
+    /** The qualified column identifier for the {@link #playerGames} field. */
+    public static final ColumnExp PLAYER_GAMES_C =
+        new ColumnExp(GameDetailRecord.class, PLAYER_GAMES);
+
+    /** The column identifier for the {@link #playerMinutes} field. */
+    public static final String PLAYER_MINUTES = "playerMinutes";
+
+    /** The qualified column identifier for the {@link #playerMinutes} field. */
+    public static final ColumnExp PLAYER_MINUTES_C =
+        new ColumnExp(GameDetailRecord.class, PLAYER_MINUTES);
+
+    /** The column identifier for the {@link #abuseFactor} field. */
+    public static final String ABUSE_FACTOR = "abuseFactor";
+
+    /** The qualified column identifier for the {@link #abuseFactor} field. */
+    public static final ColumnExp ABUSE_FACTOR_C =
+        new ColumnExp(GameDetailRecord.class, ABUSE_FACTOR);
+
+    /** The column identifier for the {@link #lastAbuseRecalc} field. */
+    public static final String LAST_ABUSE_RECALC = "lastAbuseRecalc";
+
+    /** The qualified column identifier for the {@link #lastAbuseRecalc} field. */
+    public static final ColumnExp LAST_ABUSE_RECALC_C =
+        new ColumnExp(GameDetailRecord.class, LAST_ABUSE_RECALC);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The unique identifier for this game. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -55,6 +84,40 @@ public class GameDetailRecord extends PersistentRecord
 
     /** The mutable item which is edited by the developer(s) working on this game. */
     public int sourceItemId;
+
+    /** Contains the total number of "player games" accumulated for this game. Each time a game is
+     * played to completion, this field is incremented by the number of players in the game. See
+     * {@link #playerMinutes} for a note on extremely popular games. */
+    public int playerGames;
+
+    /** The total number of minutes spent playing this game. Note: if a game becomes close to
+     * overflowing this field (>2 billion player minutes), this field and {@link #playerGames} will
+     * no longer be updated. */
+    public int playerMinutes;
+
+    /** The current abuse factor, from 0 to 255. */
+    @Column(defaultValue="100")
+    public int abuseFactor;
+
+    /** The value of {@link #playerMinutes} when we last recalculated the abuse factor. */
+    public int lastAbuseRecalc;
+
+    /**
+     * Return the current anti-abuse factor for this game, in [0, 1).
+     */
+    public float getAntiAbuseFactor ()
+    {
+        return abuseFactor / 256f;
+    }
+
+    /**
+     * Returns true if we should recaculate our abuse factor based on the supplied additional
+     * player minutes and the specified recalculation interval.
+     */
+    public boolean shouldRecalcAbuse (int playerMins, int recalcMinutes)
+    {
+        return (playerMinutes - lastAbuseRecalc) + playerMins > recalcMinutes;
+    }
 
     @Override // from Object
     public String toString ()

@@ -74,15 +74,6 @@ public class FlowRepository extends DepotRepository
     }
 
     /**
-     * Return the current anti-abuse factor associated with the given gameId, in [0, 1).
-     */
-    public double getAntiAbuseFactor (int gameId)
-        throws PersistenceException
-    {
-        return (double) getAbuseRecord(gameId, true).abuseFactor / 0x100;
-    }
-
-    /**
      * Logs an action for a member with optional action-specific data, which may be null.
      *
      * @return null if no flow was granted as a result of this action, the member's new
@@ -146,43 +137,6 @@ public class FlowRepository extends DepotRepository
         // finally compute a new humanity assessment for this member (TODO: load up action summary
         // counts, pass that data in as well)
         return helper.computeNewHumanity(memberId, currentHumanity, secsSinceLast);
-    }
-
-    /**
-     * Assess a game's anti-abuse factor based on flow grants, if it's been more
-     * than RuntimeConfig.server.antiAbuseReassessment player-minutes since last.
-     */
-    public void maybeAssessAntiAbuseFactor (int gameId, int playerMinutes)
-        throws PersistenceException
-    {
-        if (RuntimeConfig.server.abuseFactorReassessment == 0) {
-            // game abuse factor has been disabled, just return
-            return;
-        }
-        GameAbuseRecord gameRecord = getAbuseRecord(gameId, false);
-        gameRecord.accumMinutes += playerMinutes;
-
-        if (gameRecord.accumMinutes >= RuntimeConfig.server.abuseFactorReassessment) {
-            // load all actions logged since our last assessment
-//            List<GameFlowSummaryRecord> records =
-//                findAll(GameFlowSummaryRecord.class,
-//                    new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId),
-//                    new FromOverride(GameFlowGrantLogRecord.class),
-//                    new FieldOverride(GameFlowSummaryRecord.GAME_ID,
-//                                      GameFlowGrantLogRecord.GAME_ID_C),
-//                    new FieldOverride(GameFlowSummaryRecord.AMOUNT,
-//                                      new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)),
-//                    new GroupBy(GameFlowGrantLogRecord.GAME_ID_C));
-
-            // write an algorithm that actually does something with 'records' here
-            gameRecord.abuseFactor = 123;
-            gameRecord.accumMinutes = 0;
-
-            // then delete the records
-            deleteAll(GameFlowGrantLogRecord.class,
-                      new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId), null);
-        }
-        store(gameRecord);
     }
 
     /**
@@ -368,28 +322,9 @@ public class FlowRepository extends DepotRepository
         insert(record);
     }
 
-    // read a game abuse record or create one if needed, possibly also inserting it into the db
-    protected GameAbuseRecord getAbuseRecord (int gameId, boolean insertOnCreation)
-        throws PersistenceException
-    {
-        GameAbuseRecord gameRecord = load(GameAbuseRecord.class, gameId);
-        if (gameRecord == null) {
-            gameRecord = new GameAbuseRecord();
-            gameRecord.gameId = gameId;
-            gameRecord.abuseFactor = 100;
-            gameRecord.accumMinutes = 0;
-            if (insertOnCreation) {
-                insert(gameRecord);
-            }
-        }
-        return gameRecord;
-    }
-
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
-        classes.add(GameAbuseRecord.class);
-        classes.add(GameFlowGrantLogRecord.class);
         classes.add(DailyFlowRecord.class);
         classes.add(MemberFlowRecord.class);
         classes.add(MemberActionLogRecord.class);

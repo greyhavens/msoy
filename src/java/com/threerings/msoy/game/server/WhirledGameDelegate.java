@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
@@ -43,6 +44,8 @@ import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.server.MsoyGameServer;
+import com.threerings.msoy.item.server.persist.GameDetailRecord;
+import com.threerings.msoy.item.server.persist.GameRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -204,31 +207,29 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             ((WhirledGame)plobj).setWhirledGameService((WhirledGameMarshaller)_invmarsh);
         }
 
-        // then load up our anti-abuse factor
+        // load up some metadata
         final int gameId = getGameId();
-        MsoyBaseServer.invoker.postUnit(new Invoker.Unit() {
-            public boolean invoke () {
-                try {
-                    _antiAbuseFactor =
-                        MsoyBaseServer.memberRepo.getFlowRepository().getAntiAbuseFactor(gameId);
-
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to fetch game's anti-abuse factor [where=" +
-                            where() + "]", pe);
-                    // if for some reason our anti-abuse mechanism is on the blink, assume the
-                    // game is innocent until proven guilty
-                    _antiAbuseFactor = 1.0f;
+        MsoyBaseServer.invoker.postUnit(new RepositoryUnit("loadGameDetail") {
+            public void invokePersist () throws Exception {
+                _result = getGameRepository().loadGameDetail(gameId);
+                if (_result == null) {
+                    throw new Exception("Missing game detail record.");
                 }
-                return true; // = call handleResult()
             }
 
-            // here, we're back on the dobj thread
-            public void handleResult () {
-                int hourlyRate = RuntimeConfig.server.hourlyGameFlowRate;
-                _flowPerMinute = (int)((hourlyRate * _antiAbuseFactor) / 60d);
+            public void handleSuccess () {
+                _detail = _result;
+                float minuteRate = RuntimeConfig.server.hourlyGameFlowRate / 60f;
+                _flowPerMinute = (int)Math.round(minuteRate * _detail.getAntiAbuseFactor());
             }
 
-            protected double _antiAbuseFactor;
+            public void handleFailure (Exception e) {
+                log.log(Level.WARNING, "Failed to fetch game metadata [id=" + gameId + "]", e);
+                // we're probably hosed, but use a conservative default anyway
+                _flowPerMinute = (int)((RuntimeConfig.server.hourlyGameFlowRate * 0.5f) / 60f);
+            }
+
+            protected GameDetailRecord _result;
         });
     }
 
@@ -250,6 +251,40 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // put the kibosh on further flow tracking
         _flowPerMinute = -1;
+
+        // update our statistics for this game (plays, duration, etc.)
+        int totalSeconds = _totalTrackedSeconds;
+        int now = _tracking ? now() : 0;
+        for (FlowRecord record : _flowRecords.values()) {
+            totalSeconds += record.secondsPlayed;
+            if (_tracking && record.beganStamp != 0) {
+                totalSeconds += (now - record.beganStamp);
+            }
+        }
+        int totalMinutes = Math.round(totalSeconds / 60f);
+        if (totalMinutes == 0 && totalSeconds > 0) {
+            totalMinutes = 1; // round very short games up to 1 minute.
+        }
+
+        // if we were played for zero minutes, don't bother updating anything
+        if (totalMinutes <= 0) {
+            return;
+        }
+
+        final int gameId = getGameId();
+        final int playerGames = _allPlayers.size(), playerMins = totalMinutes;
+        final boolean recalc = (RuntimeConfig.server.abuseFactorReassessment == 0) ? false :
+            _detail.shouldRecalcAbuse(playerMins, RuntimeConfig.server.abuseFactorReassessment);
+        MsoyBaseServer.invoker.postUnit(new Invoker.Unit("updateGameDetail") {
+            public boolean invoke () {
+                try {
+                    getGameRepository().noteGamePlayed(gameId, playerGames, playerMins, recalc);
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to note end of game [in=" + where() + "]", pe);
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -269,6 +304,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
                 // if we're currently tracking, note that they're "starting" immediately
                 if (_tracking) {
                     record.beganStamp = now();
+                    _allPlayers.add(record.memberId);
                 }
             }
         }
@@ -299,38 +335,6 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // stop accumulating "game time" for players
         stopTracking();
-
-        // TODO: update this game's average game duration based on the time spent playing for all
-        // the players in the game
-
-        int totalSeconds = _totalTrackedSeconds;
-        int now = _tracking ? now() : 0;
-        for (FlowRecord record : _flowRecords.values()) {
-            totalSeconds += record.secondsPlayed;
-            if (_tracking && record.beganStamp != 0) {
-                totalSeconds += (now - record.beganStamp);
-            }
-        }
-        int totalMinutes = Math.round(totalSeconds / 60f);
-        if (totalMinutes == 0 && totalSeconds > 0) {
-            totalMinutes = 1; // round very short games up to 1 minute.
-        }
-
-        if (totalMinutes > 0) {
-            final int playerMins = totalMinutes;
-            final int gameId = getGameId();
-            MsoyBaseServer.invoker.postUnit(new Invoker.Unit() {
-                public boolean invoke () {
-                    try {
-                        MsoyBaseServer.memberRepo.noteGameEnded(gameId, playerMins);
-                    } catch (PersistenceException pe) {
-                        log.log(Level.WARNING,
-                            "Failed to note end of game [where=" + where() + "]", pe);
-                    }
-                    return false;
-                }
-            });
-        }
     }
 
     @Override
@@ -359,6 +363,29 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         return ((GameConfig) _plmgr.getConfig()).getGameId();
     }
 
+    /**
+     * Returns the average duration for this game in fractional minutes.
+     */
+    protected float getAverageGameDuration (int playerSeconds)
+    {
+        // if we failed to load our detail record, use the player's actual time capped at the max
+        if (_detail == null) {
+            return Math.min(MAX_FRESH_GAME_DURATION, playerSeconds / 60f);
+        }
+
+        // if we've got enough data to trust the average, simply return it
+        float minutes = _detail.playerMinutes;
+        int samples = _detail.playerGames;
+        if (samples > FRESH_GAME_CUTOFF) {
+            return minutes / samples;
+        }
+
+        // otherwise incorporate this player's time into the average and cap it
+        minutes += (playerSeconds / 60f);
+        samples++;
+        return Math.min(minutes / samples, MAX_FRESH_GAME_DURATION);
+    }
+
     protected void startTracking ()
     {
         if (_tracking) {
@@ -370,6 +397,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         int startStamp = now();
         for (FlowRecord record : _flowRecords.values()) {
             record.beganStamp = startStamp;
+            _allPlayers.add(record.memberId);
         }
     }
 
@@ -408,10 +436,8 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         if (record == null) {
             return 0;
         }
-
-        // TODO: don't use actual playtime, use the game's average
-        int secondsOfPlay = record.getPlayTime(now);
-        return (int) ((record.humanity * _flowPerMinute * secondsOfPlay) / 60);
+        float minutes = getAverageGameDuration(record.getPlayTime(now));
+        return (int)Math.round(record.humanity * _flowPerMinute * minutes);
     }
 
     protected void payoutPlayer (int oid)
@@ -485,6 +511,12 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         }
     }
 
+    protected static GameRepository getGameRepository ()
+    {
+        return (MsoyGameServer.gameRepo == null) ?
+            MsoyServer.itemMan.getGameRepository() : MsoyGameServer.gameRepo;
+    }
+
     /**
      * Convenience method to calculate the current timestmap in seconds.
      */
@@ -554,6 +586,18 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     /** The base flow per player per minute rate that can be awarded by this game. */
     protected int _flowPerMinute = -1; // marker for 'unknown'.
 
+    /** Our detail record for this game. */
+    protected GameDetailRecord _detail;
+
+    /** The average duration (in seconds) of this game. */
+    protected int _averageDuration;
+
+    /** The number of samples used to compute {@link #_averageDuration}. */
+    protected int _averageSamples;
+
+    /** Used to track whether or not we should recalculate our abuse factor. */
+    protected int _minsSinceLastAbuseRecalc;
+
     /** If true, the clock is ticking and participants are earning flow potential. */
     protected boolean _tracking;
 
@@ -561,8 +605,17 @@ public class WhirledGameDelegate extends RatingManagerDelegate
      * tracked member that is no longer present with a FlowRecord. */
     protected int _totalTrackedSeconds = 0;
 
+    /** Used to track how many players participated in this game. */
+    protected ArrayIntSet _allPlayers = new ArrayIntSet();
+
     /** Tracks accumulated playtime for all players in the game. */
     protected HashIntMap<FlowRecord> _flowRecords = new HashIntMap<FlowRecord>();
+
+    /** Once a game has accumulated this many player games, its average time is trusted. */
+    protected static final int FRESH_GAME_CUTOFF = 10;
+
+    /** Games for which we have no history earn no flow beyond this many minutes. */
+    protected static final int MAX_FRESH_GAME_DURATION = 10;
 
     /** From WhirledGameControl.as. */
     protected static final int CASCADING_PAYOUT = 0;
