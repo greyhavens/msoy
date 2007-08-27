@@ -4,7 +4,9 @@
 package com.threerings.msoy.world.client.editor {
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.util.ClassUtil;
 
 /**
  * This class is a version of furni data used by "fake" entrance furnis. It's only used to
@@ -12,10 +14,30 @@ import com.threerings.msoy.world.data.FurniData;
  */
 public class EntranceFurniData extends FurniData
 {
+    public static const ENTRANCE_FURNI_ID :int = -1;
+    public static const ITEM_IDENT :ItemIdent =
+        new ItemIdent(Item.NOT_A_TYPE, ENTRANCE_FURNI_ID);
+    
     public function EntranceFurniData ()
     {
         super();
-        this.itemType = Item.NOT_A_TYPE;
-    }    
+        this.itemType = ITEM_IDENT.type;
+        this.itemId = ITEM_IDENT.itemId;
+    }
+
+    // @Override from FurniData
+    override public function clone () :Object
+    {
+        // just a shallow copy at present
+        var that :EntranceFurniData = (ClassUtil.newInstance(this) as EntranceFurniData);
+        that.copyFrom(this);
+        return that;
+    }
+
+    // @Override from FurniData
+    override public function toString () :String
+    {
+        return "Entrance" + super.toString();
+    }
 }
 }

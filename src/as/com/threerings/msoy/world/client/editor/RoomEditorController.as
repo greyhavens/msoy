@@ -100,7 +100,9 @@ public class RoomEditorController
         _entranceSprite = new EntranceSprite(scene.getEntrance());
         _entranceSprite.setEditing(true);
         _view.addOtherSprite(_entranceSprite);
-
+        var id :ItemIdent = _entranceSprite.getFurniData().getItemIdent();
+        _names.put(id, { label: Msgs.EDITING.get("l.entrance"), data: id });
+        
         _snap = new SnapshotSender(_ctx);
         _snap.init();
 
@@ -128,7 +130,9 @@ public class RoomEditorController
         
         if (update is SceneAttrsUpdate) {
             var up :SceneAttrsUpdate = update as SceneAttrsUpdate;
-            _entranceSprite.setLocation(up.entrance);
+            // update sprite data
+            _entranceSprite.getFurniData().loc.set(up.entrance);
+            _entranceSprite.update(_entranceSprite.getFurniData());
             refreshTarget();
             return;
         }
@@ -218,6 +222,12 @@ public class RoomEditorController
         if (ident == NEW_ITEM_SELECTION) {
             CommandEvent.dispatch(_panel.parent, MsoyController.VIEW_MY_FURNITURE);
             setTarget(null);
+            return;
+        }
+
+        // is this our special entrance sprite? if so, it's not in the room contents list.
+        if (ident.equals(EntranceFurniData.ITEM_IDENT)) {
+            setTarget(_entranceSprite);
             return;
         }
         
@@ -396,9 +406,15 @@ public class RoomEditorController
 
         // pull out selected furni
         var targetData :FurniData = _edit.target.getFurniData();
+        var ident :ItemIdent = targetData.getItemIdent();
         _panel.updateDisplay(targetData);
 
-        var ident :ItemIdent = targetData.getItemIdent();
+        // if this is a special furni, deal with it in a special way
+        if (EntranceFurniData.ITEM_IDENT.equals(ident)) {
+            _panel.selectInNameList(_names.get(ident));
+            return;
+        }
+
         if (ident.type == Item.NOT_A_TYPE) {
             // this must be one of the "freebie" doors - since this isn't an actual Item,
             // it has no name.
@@ -426,6 +442,7 @@ public class RoomEditorController
             return ArrayUtil.contains(idents, def.data);
         });
 
+        defs.push(_names.get(EntranceFurniData.ITEM_IDENT));
         defs.sortOn("label", Array.CASEINSENSITIVE);
 
         // if we're running in a browser, add the "new item" selection

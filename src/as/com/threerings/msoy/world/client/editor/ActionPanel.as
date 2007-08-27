@@ -41,10 +41,12 @@ public class ActionPanel extends BasePanel
     {
         super.updateDisplay(data);
 
-        if (data == null) {
+        if (data == null || data is EntranceFurniData) {
             _readOnlyActionLabel.text = "";
             _actionTypeSelection.selectedIndex = 0;
-
+            // also, make sure we disable the panel (the parent already does this for null data,
+            // but this subclass also cares about EntranceFurniData instances!)
+            this.enabled = false;            
         } else {
             // abandon previous edits
 
