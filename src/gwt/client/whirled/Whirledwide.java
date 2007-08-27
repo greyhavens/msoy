@@ -28,6 +28,7 @@ import com.threerings.msoy.web.data.Whirled;
 import client.shell.Application;
 
 import client.util.MediaUtil;
+import client.util.MsoyUI;
 
 public class Whirledwide extends FlexTable
 {
@@ -40,7 +41,7 @@ public class Whirledwide extends FlexTable
                 fillUi((Whirled) result);
             }
             public void onFailure (Throwable caught) {
-                _errorContainer.add(new Label(CWhirled.serverError(caught)));
+                MsoyUI.error(CWhirled.serverError(caught));
             }
         });
     }
@@ -52,9 +53,6 @@ public class Whirledwide extends FlexTable
         setCellPadding(0);
         setCellSpacing(5);
 
-        getFlexCellFormatter().setColSpan(row, 0, 3);
-        setWidget(row++, 0, _errorContainer = new HorizontalPanel());
-        
         getFlexCellFormatter().setRowSpan(row, 0, 4);
         VerticalPanel topGamesContainer = new VerticalPanel();
         setWidget(row, 0, topGamesContainer);
@@ -224,7 +222,6 @@ public class Whirledwide extends FlexTable
         }
     }
 
-    protected HorizontalPanel _errorContainer;
     protected VerticalPanel _topGames;
     protected VerticalPanel _players;
     protected FeaturedPlaceView _featuredPlace;

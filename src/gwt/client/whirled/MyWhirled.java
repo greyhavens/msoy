@@ -43,6 +43,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import client.util.FlashClients;
 import client.util.MediaUtil;
+import client.util.MsoyUI;
 
 import client.shell.Application;
 import client.shell.WorldClient;
@@ -58,7 +59,7 @@ public class MyWhirled extends FlexTable
                 fillUi((Whirled) result);
             }
             public void onFailure (Throwable caught) {
-                _errorContainer.add(new Label(CWhirled.serverError(caught)));
+                MsoyUI.error(CWhirled.serverError(caught));
             }
         });
     }
@@ -70,7 +71,7 @@ public class MyWhirled extends FlexTable
         setCellPadding(0);
         setCellSpacing(0);
 
-        getFlexCellFormatter().setRowSpan(row, 0, 3);
+        getFlexCellFormatter().setRowSpan(row, 0, 2);
         getFlexCellFormatter().setStyleName(row, 0, "MePanelContainer");
         VerticalPanel mePanel = new VerticalPanel();
         mePanel.setStyleName("MePanel");
@@ -115,8 +116,6 @@ public class MyWhirled extends FlexTable
 
         _peopleAttributes = new HashMap();
         
-        setWidget(row++, 1, _errorContainer = new HorizontalPanel());
-
         getFlexCellFormatter().setColSpan(row, 1, 2);
         setWidget(row++, 1, _people = new PagedGrid(PEOPLE_ROWS, PEOPLE_COLUMNS) {
             protected Widget createWidget (Object item) {
@@ -141,7 +140,7 @@ public class MyWhirled extends FlexTable
         _people.addStyleName("PeopleContainer");
 
         VerticalPanel placesContainer = new VerticalPanel();
-        setWidget(row, 1, placesContainer);
+        setWidget(row, 0, placesContainer);
         placesContainer.setStyleName("PlacesContainer");
         header = new HorizontalPanel();
         header.setStyleName("Header");
@@ -160,7 +159,7 @@ public class MyWhirled extends FlexTable
         placesContainer.add(_places = new SceneList(SceneCard.ROOM));
         
         VerticalPanel gamesContainer = new VerticalPanel();
-        setWidget(row++, 2, gamesContainer);
+        setWidget(row++, 1, gamesContainer);
         gamesContainer.setStyleName("GamesContainer");
         header = new HorizontalPanel();
         header.setStyleName("Header");
@@ -443,8 +442,6 @@ public class MyWhirled extends FlexTable
     protected VerticalPanel _pictureBox;
     protected VerticalPanel _roomsBox;
     protected VerticalPanel _chatsBox;
-
-    protected HorizontalPanel _errorContainer;
 
     /** Map of member Ids to a List of attributes for the person.  This list is currently first 
      * the member's name as a string, then second a style name to apply to their name label. */
