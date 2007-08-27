@@ -232,7 +232,7 @@ public class TableRenderer extends HBox
                 box.setStyle("horizontalAlign", "center");
                 box.percentWidth = 100;
                 box.percentHeight = 100;
-                btn = new CommandButton(MsoyController.GO_GAME, [ _game.itemId, table.gameOid ]);
+                btn = new CommandButton(MsoyController.GO_GAME, [ _game.gameId, table.gameOid ]);
                 btn.label = Msgs.GAME.get(key);
                 box.addChild(btn);
                 _seatsGrid.addChild(box);
