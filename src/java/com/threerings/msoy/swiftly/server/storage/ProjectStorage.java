@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface ProjectStorage
 {    
-    /** Returns a list of path elements that compose the entirity of the project tree. */
+    /** Returns a list of path elements that compose the entirety of the project tree. */
     public List<PathElement> getProjectTree () throws ProjectStorageException;
 
     /** Loads and returns a SwiftlyDocument from cold storage. */
