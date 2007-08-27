@@ -11,6 +11,9 @@ import com.threerings.msoy.web.client.DeploymentConfig;
  */
 public class SnapshotMediaDesc extends MediaDesc
 {
+    /** This is where snapshots are stored relative to the media directory. */
+    public static final String SNAPSHOT_DIRECTORY = "snapshot";
+    
     /** SceneId of this snapshot. */
     public int sceneId;
 
@@ -18,13 +21,14 @@ public class SnapshotMediaDesc extends MediaDesc
     public static String getMediaPath (int sceneId, byte mimeType, boolean proxy)
     {
         String prefix = proxy ? DeploymentConfig.PROXY_PREFIX : DeploymentConfig.mediaURL;
-        return prefix + sceneToName(sceneId) + mimeTypeToSuffix(mimeType);
+        return prefix + SNAPSHOT_DIRECTORY + "/" +
+            sceneToName(sceneId) + mimeTypeToSuffix(mimeType);
     }
 
     /** Generates a snapshot media filename root, sans path or extension. */
     public static String sceneToName (int sceneId)
     {
-        return "s" + Integer.toString(sceneId);
+        return Integer.toString(sceneId);
     }
     
     /** Used for deserialization. */

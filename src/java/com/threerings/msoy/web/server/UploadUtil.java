@@ -100,28 +100,51 @@ public class UploadUtil
     }
 
     /**
-     * Publishes an InputStream to the media store using the hash and mimeType of the stream.
+     * Publishes an InputStream to the default media store location, using the hash and the
+     * mimeType of the stream.
      */
     public static void publishStream (InputStream input, String hash, byte mimeType)
         throws IOException
     {
         // name it using the hash value and the suffix
         String name = hash + MediaDesc.mimeTypeToSuffix(mimeType);
-        publishStream (input, name, MediaDesc.mimeTypeToString(mimeType));
+        publishStream (input, null, name, MediaDesc.mimeTypeToString(mimeType));
     }
 
     /**
-     * Publishes an InputStream to the media store using the hash of the stream and a supplied
-     * "file" extension.
-     * Currently this is to the filesystem first, and then s3 if enabled.
+     * Publishes an InputStream to the default media store location, using name of the stream
+     * (usually its hash) and a supplied mime type. 
      */
-    public static void publishStream (InputStream input, String name, String extension)
+    public static void publishStream (InputStream input, String name, String mimeType)
         throws IOException
     {
-        File target = new File(ServerConfig.mediaDir, name);
+        publishStream(input, null, name, mimeType);
+    }
 
+    /**
+     * Publishes an InputStream to the media store at the specified subdirectory location,
+     * using name of the stream (usually its hash) and a supplied mime type.
+     * Currently this is to the filesystem first, and then s3 if enabled.
+     */
+    public static void publishStream (
+        InputStream input, String subdirectory, String name, String mimeType)
+        throws IOException
+    {
         // copy the uploaded file data to the local file system media store. eventually we will
         // only be keeping a local file on developer's machines
+
+        File location = ServerConfig.mediaDir; // default media directory
+
+        // if a subdirectory was specified, set that as the new location, and make sure it exists
+        if (subdirectory != null) {
+            location = new File(ServerConfig.mediaDir, subdirectory);
+            if (! location.exists()) {
+                location.mkdir();
+            }
+        } 
+
+        // our new file location
+        File target = new File(location, name);
         IOUtils.copy(input, new FileOutputStream(target));
 
         // publish to s3 if enabled
@@ -130,7 +153,7 @@ public class UploadUtil
             try {
                 S3Connection conn = new S3Connection(
                     ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
-                S3FileObject uploadTarget = new S3FileObject(name, target, extension);
+                S3FileObject uploadTarget = new S3FileObject(name, target, mimeType);
                 conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
                                AccessControlList.StandardPolicy.PUBLIC_READ);
                 log.info("Uploaded media to S3 [bucket=" + ServerConfig.mediaS3Bucket +
@@ -155,10 +178,9 @@ public class UploadUtil
     public static void publishSnapshot (SnapshotUploadFile uploadFile)
         throws IOException
     {
-        String name =
-            SnapshotMediaDesc.sceneToName(uploadFile.getSceneId()) +
+        String name =SnapshotMediaDesc.sceneToName(uploadFile.getSceneId()) +
             SnapshotMediaDesc.mimeTypeToSuffix(uploadFile.getMimeType());
-        publishStream(uploadFile.getInputStream(),
+        publishStream(uploadFile.getInputStream(), SnapshotMediaDesc.SNAPSHOT_DIRECTORY,
                       name, SnapshotMediaDesc.mimeTypeToString(uploadFile.getMimeType()));
     }
 

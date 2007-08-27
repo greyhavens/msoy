@@ -14,19 +14,23 @@ import com.threerings.msoy.client.DeploymentConfig;
  */
 public class SnapshotMediaDesc extends MediaDesc
 {
+    /** This is where snapshots are stored relative to the media directory. */
+    public static const SNAPSHOT_DIRECTORY :String = "snapshot";
+    
     /** SceneId of this snapshot. */
     public var sceneId :int;
 
     /** Generates a snapshot media path for the given scene id. */
     public static function getMediaPath (sceneId :int, mimeType :int) :String
     {
-        return DeploymentConfig.mediaURL + sceneToName(sceneId) + mimeTypeToSuffix(mimeType);
+        return DeploymentConfig.mediaURL + SHAPSHOT_DIRECTORY + "/" +
+            sceneToName(sceneId) + mimeTypeToSuffix(mimeType);
     }
 
     /** Generates a snapshot media filename root, sans path or extension. */
     public static function sceneToName (sceneId :int) :String
     {
-        return "s" + String(sceneId);
+        return String(sceneId);
     }
 
     /**
