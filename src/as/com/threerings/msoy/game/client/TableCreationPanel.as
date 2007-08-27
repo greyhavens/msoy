@@ -57,7 +57,9 @@ public class TableCreationPanel extends HBox
         var tconfigger :TableConfigurator;
         switch (match.getMatchType()) {
         case GameConfig.PARTY:
-            tconfigger = new DefaultFlexTableConfigurator(-1, -1, -1, true);
+            tconfigger = new DefaultFlexTableConfigurator(-1, -1, -1, true, 
+                Msgs.GAME.get("l.players") + ": ", Msgs.GAME.get("l.watchable") + ": ",
+                Msgs.GAME.get("l.private"));
             break;
 
         case GameConfig.SEATED_GAME:
