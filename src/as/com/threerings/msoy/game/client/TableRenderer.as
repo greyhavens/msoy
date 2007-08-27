@@ -213,7 +213,9 @@ public class TableRenderer extends HBox
             var key :String = null;
             switch (table.config.getMatchType()) {
             case GameConfig.PARTY:
-                key = "b.join";
+                if (!table.tconfig.privateTable) {
+                    key = "b.join";
+                }
                 break;
 
             default:
