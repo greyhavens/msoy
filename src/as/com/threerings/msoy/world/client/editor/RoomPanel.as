@@ -98,12 +98,30 @@ public class RoomPanel extends BasePanel
             // configure an update
             var newscene :MsoyScene = _controller.scene.clone() as MsoyScene;
             var newmodel :MsoySceneModel = newscene.getSceneModel() as MsoySceneModel;
-            newmodel.name = _name.text;
+            newmodel.name = (isRoomNameValid() ? _name.text : model.name);
             newmodel.accessControl = _buttonbar.selectedIndex;
             _controller.updateScene(_controller.scene, newscene);
         }
     }
 
+    // @Override from BasePanel
+    override protected function changedHandler (event :Event) :void
+    {
+        // note: no call to super, this is a complete replacement
+
+        // only display apply/cancel buttons if the name field is valid
+        if (isRoomNameValid()) {
+            setChanged(true);
+        }
+    }
+
+    protected function isRoomNameValid () :Boolean
+    {
+        return _name != null &&
+            _name.text.length > 0 &&
+            _name.text.length < 255;
+    }
+    
     protected function updateAccessButtons () :void
     {
         if (_controller.scene == null) {
