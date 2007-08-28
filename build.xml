@@ -681,6 +681,13 @@
 
   <!-- run the unit tests -->
   <target name="tests" depends="compile" description="Runs unit tests.">
+    <!-- haul in our testing properties -->
+    <if><isset property="msoy.test.propertyfile"/><then>
+        <property file="${msoy.test.propertyfile}"/>
+    </then><else>
+        <property file="test.properties"/>
+    </else></if>
+  
     <mkdir dir="${basedir}/${deploy.dir}/tmp"/>
     <taskdef name="unit" classpathref="classpath"
       classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
@@ -689,11 +696,20 @@
         <classpath refid="classpath"/>
         <formatter type="brief" usefile="false" unless="use.xml.output"/>
         <formatter type="xml" usefile="true" if="use.xml.output"/>
-        
+
+        <!-- Vend the test. properties -->
+        <syspropertyset>
+            <propertyref prefix="test."/>
+        </syspropertyset>
+
         <!-- batch run our tests -->
         <batchtest todir="${basedir}/${deploy.dir}/tmp" unless="test">
           <fileset dir="${src.dir}">
             <include name="**/*UnitTest.java"/>
+            
+            <!-- XXX A nasty way to exclude S3 tests. This is fragile and
+                 not-good, but I don't know of a better way to do it -->
+            <exclude name="**/ProjectS3StorageUnitTest.java" unless="test.aws.id"/>
           </fileset>
         </batchtest>
 
