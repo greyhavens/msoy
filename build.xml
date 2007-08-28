@@ -78,7 +78,7 @@
     <file name="${extlibs.dir}/gwt-user.jar"/>
     <file name="${extlibs.dir}/gwt-widgets.jar"/>
     <file name="${extlibs.dir}/javassist.jar"/>
-    <file name="${extlibs.dir}/junit-3.7.jar"/>
+    <file name="${extlibs.dir}/junit4.jar"/>
     <file name="${extlibs.dir}/junit4.jar"/>
     <file name="${extlibs.dir}/mail.jar"/>
     <file name="${extlibs.dir}/mysql-connector-java.jar"/>
@@ -99,7 +99,7 @@
 
     <file name="lib/jetty-6.1.4.jar"/>
     <file name="lib/jetty-util-6.1.4.jar"/>
-    <file name="lib/servlet-api-2.5-6.1.4.jar"/>
+    <file name="lib/servlet-api.jar"/>
 
     <file name="lib/lwjgl-applet.jar"/>
 
@@ -679,14 +679,6 @@
     </genscript>
   </target>
 
-  <!-- creates the serialized color repository config -->
-  <target name="colorpos">
-    <taskdef name="confcomp" classpathref="classpath"
-      classname="com.threerings.tools.CompiledConfigTask"/>
-    <confcomp parser="com.threerings.media.image.tools.xml.ColorPositoryParser"
-      configdef="rsrc/config/media/colordefs.xml"/>
-  </target>
-
   <!-- run the unit tests -->
   <target name="tests" depends="compile" description="Runs unit tests.">
     <mkdir dir="${basedir}/${deploy.dir}/tmp"/>
@@ -738,9 +730,6 @@
 
   <!-- a target for rebuilding everything -->
   <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
-
-  <!-- rebuild all the niggling bits -->
-  <target name="bits" depends="colorpos"/>
 
   <!-- builds the distribution jar files -->
   <target name="dist" depends="prepare,compile,procstream">
