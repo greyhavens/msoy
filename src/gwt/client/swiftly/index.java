@@ -76,17 +76,21 @@ public class index extends Page
             setContent(new ProjectSelectionPanel());
 
         } else {
+            final int projectId;
+            try {
+                projectId = Integer.parseInt(args);
+
+            } catch (NumberFormatException e) {
+                // display an error message if the supplied projectId did not parse
+                setContent(new Label(CSwiftly.msgs.invalidProjectId(args)));
+                return;
+            }
+
             // load up the information needed to launch the applet
-            CSwiftly.usersvc.getConnectConfig(new AsyncCallback() {
+            CSwiftly.swiftlysvc.getConnectConfig(new AsyncCallback() {
                 public void onSuccess (Object result) {
-                    try {
-                        int projectId = Integer.parseInt(args);
-                        setJavaContent(new SwiftlyPanel((ConnectConfig)result, projectId));
-                        setContentStretchHeight(true);
-                    } catch (NumberFormatException e) {
-                        // display an error message if the supplied projectId did not parse
-                        setContent(new Label(CSwiftly.msgs.invalidProjectId(args)));
-                    }
+                    setJavaContent(new SwiftlyPanel((ConnectConfig)result, projectId));
+                    setContentStretchHeight(true);
                 }
                 public void onFailure (Throwable cause) {
                     CSwiftly.serverError(cause);

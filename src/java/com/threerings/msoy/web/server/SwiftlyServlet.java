@@ -26,6 +26,7 @@ import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 import com.threerings.msoy.web.client.SwiftlyService;
+import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
@@ -36,6 +37,17 @@ import com.threerings.msoy.web.data.WebIdent;
 public class SwiftlyServlet extends MsoyServiceServlet
     implements SwiftlyService
 {
+    // from SwiftlyService
+    public ConnectConfig getConnectConfig ()
+        throws ServiceException
+    {
+        ConnectConfig config = new ConnectConfig();
+        config.server = ServerConfig.serverHost;
+        config.port = ServerConfig.serverPorts[0];
+        config.httpPort = ServerConfig.httpPort;
+        return config;
+    }
+
     // from SwiftlyService
     public List getRemixableProjects (WebIdent ident)
         throws ServiceException

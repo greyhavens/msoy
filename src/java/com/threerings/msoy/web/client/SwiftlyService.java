@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
@@ -16,6 +17,12 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface SwiftlyService extends RemoteService
 {
+    /**
+     * Returns the ConnectConfig used by the applet for connecting to the server.
+     */
+    public ConnectConfig getConnectConfig ()
+        throws ServiceException;
+
     /**
      * Returns the list of SwiftlyProjects that are remixable.
      *

@@ -14,6 +14,11 @@ import com.threerings.msoy.web.data.WebIdent;
 public interface SwiftlyServiceAsync
 {
     /**
+     * The asynchronous version of {@link SwiftlyService#getConnectConfig}.
+     */
+    public void getConnectConfig (AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link SwiftlyService#getRemixableProjects}.
      */
     public void getRemixableProjects (WebIdent ident, AsyncCallback callback);
