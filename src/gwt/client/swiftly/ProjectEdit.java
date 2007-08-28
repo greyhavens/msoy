@@ -4,6 +4,7 @@
 package client.swiftly;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
@@ -80,23 +82,23 @@ public class ProjectEdit extends FlexTable
         _collaboratorsPanel = new HorizontalPanel();
         cell.add(_collaboratorsPanel);
 
-        // Add collaborators button if project owner
+        // Add friends list if project owner
         if (_amOwner) {
-            _collabMenuPanel = new PopupPanel(true);
-            // MenuBar(true) creates a vertical menu
-            _collabMenu = new MenuBar(true);
-            _collabMenuPanel.add(_collabMenu);
-            final Label addCollabs = new Label(CSwiftly.msgs.addCollaborators());
-            addCollabs.addStyleName("LabelLink");
-            addCollabs.addMouseListener(new MouseListenerAdapter() {
-                public void onMouseDown (Widget sender, int x, int y) {
-                    updateCollabMenu();
-                    _collabMenuPanel.setPopupPosition(addCollabs.getAbsoluteLeft() + x,
-                        addCollabs.getAbsoluteTop() + y);
-                    _collabMenuPanel.show();
+            cell.add(new Label(CSwiftly.msgs.addCollaborators()));
+            _friendList = new ListBox();
+            _friendList.addChangeListener(new ChangeListener() {
+                public void onChange (Widget sender) {
+                    int tx = _friendList.getSelectedIndex();
+                    // first item is the menu or no friends message
+                    if (tx < 1) {
+                        return;
+                    }
+                    FriendEntry friend =
+                        (FriendEntry)_friends.get(new Integer(_friendList.getValue(tx)));
+                    addCollaborator(friend.name);
                 }
             });
-            cell.add(addCollabs);
+            cell.add(_friendList);
         }
         setWidget(row, col++, cell);
 
@@ -229,10 +231,15 @@ public class ProjectEdit extends FlexTable
      */
     protected void loadFriends ()
     {
-        _friends = new ArrayList();
+        _friends = new HashMap();
         CSwiftly.swiftlysvc.getFriends(CSwiftly.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _friends.addAll((List)result);
+                Iterator iter = ((List)result).iterator();
+                while (iter.hasNext()) {
+                    FriendEntry friend = (FriendEntry)iter.next();
+                    _friends.put(new Integer(friend.getMemberId()), friend);
+                }
+                updateFriendList();
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log(
@@ -243,12 +250,12 @@ public class ProjectEdit extends FlexTable
     }
 
     /**
-     * Populate the menu for use by owners when adding collaborators of their project.
+     * Populate the list box for use by owners when adding collaborators of their project.
      */
-    protected void updateCollabMenu ()
+    protected void updateFriendList ()
     {
-        _collabMenu.clearItems();
-        Iterator iter = _friends.iterator();
+        _friendList.clear();
+        Iterator iter = _friends.values().iterator();
         boolean foundFriend = false;
         while (iter.hasNext()) {
             final FriendEntry friend = (FriendEntry)iter.next();
@@ -256,33 +263,16 @@ public class ProjectEdit extends FlexTable
             if (_collaborators.contains(friend.name)) {
                 continue;
             }
-            // add a menu title element as the first element
+
+            // add a title as the first element
             if (!foundFriend) {
-                MenuItem title = new MenuItem(CSwiftly.msgs.friends(), new Command() {
-                    public void execute() {
-                        // noop
-                    }
-                });
-                title.addStyleName("MenuTitle");
-                _collabMenu.addItem(title);
+                _friendList.addItem(CSwiftly.msgs.friends());
                 foundFriend = true;
             }
-            MenuItem member = new MenuItem(friend.name.toString(), new Command() {
-                public void execute() {
-                    addCollaborator(friend.name);
-                    _collabMenuPanel.hide();
-                }
-            });
-            _collabMenu.addItem(member);
+            _friendList.addItem(friend.name.toString(), String.valueOf(friend.name.getMemberId()));
         }
         if (!foundFriend) {
-            MenuItem noFriends = new MenuItem(CSwiftly.msgs.noFriends(), new Command() {
-                public void execute() {
-                    // noop
-                    _collabMenuPanel.hide();
-                }
-            });
-            _collabMenu.addItem(noFriends);
+            _friendList.addItem(CSwiftly.msgs.noFriends());
         }
     }
 
@@ -298,6 +288,7 @@ public class ProjectEdit extends FlexTable
             public void onSuccess (Object result) {
                 _collaborators.add(name);
                 displayCollaborators();
+                updateFriendList();
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Failed to add collaborator [projectId=" + _project.projectId +
@@ -319,6 +310,7 @@ public class ProjectEdit extends FlexTable
             public void onSuccess (Object result) {
                 _collaborators.remove(name);
                 displayCollaborators();
+                updateFriendList();
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Failed to remove collaborator [projectId=" + _project.projectId +
@@ -331,11 +323,10 @@ public class ProjectEdit extends FlexTable
     protected SwiftlyProject _project;
     protected ProjectEditListener _listener;
     protected List _collaborators;
-    protected List _friends;
+    protected HashMap _friends;
     protected boolean _amOwner;
 
     protected CheckBox _remixable;
     protected HorizontalPanel _collaboratorsPanel;
-    protected MenuBar _collabMenu;
-    protected PopupPanel _collabMenuPanel;
+    protected ListBox _friendList;
 }
