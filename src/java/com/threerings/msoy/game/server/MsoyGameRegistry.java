@@ -309,6 +309,8 @@ public class MsoyGameRegistry
             Runtime.getRuntime().exec(new String[] {
                 ServerConfig.serverRoot + "/bin/rungame",
                 String.valueOf(port),
+                // have the game server connect to us on our first port
+                String.valueOf(ServerConfig.serverPorts[0]),
             });
         }
 

@@ -11,13 +11,15 @@ MSOY_HOME=`dirname $0 | sed s:/bin$::`
 HOSTNAME=`hostname`
 
 # Make sure our game id and port were properly supplied.
-if [ -z "$1" ]; then
-    echo "Usage: $0 port"
+if [ -z "$1" -o -z "$2" ]; then
+    echo "Usage: $0 listenPort connectPort"
     exit 255
 fi
-PORT=$1
+LISTEN_PORT=$1
+CONNECT_PORT=$2
 
-LOGFILE=$MSOY_HOME/log/stdout-p$PORT.log
+
+LOGFILE=$MSOY_HOME/log/stdout-p$LISTEN_PORT.log
 LOG_EMAIL=nightly-logs@threerings.net
 LOGLEVEL=info
 
@@ -73,20 +75,20 @@ export CLASSPATH
 touch $LOGFILE
 
 # Start up the server
-echo "Running MetaSOY game server: $PORT" >>$LOGFILE
+echo "Running MetaSOY game server: $LISTEN_PORT" >>$LOGFILE
 echo " Deployment root: $MSOY_HOME" >>$LOGFILE
 echo "         Java VM: $JAVA_VM" >>$LOGFILE
 echo "       Java args: $JAVA_ARGS" >>$LOGFILE
 echo "    Server class: $CLASS" >>$LOGFILE
 
-$JAVA_VM $JAVA_ARGS $CLASS $PORT >>$LOGFILE 2>&1
+$JAVA_VM $JAVA_ARGS $CLASS $LISTEN_PORT $CONNECT_PORT >>$LOGFILE 2>&1
 EXIT_CODE=$?
 
 # Mail out warnings from the logs
-FILTLOG=`mktemp /tmp/msoyfiltered-$PORT.log.XXXXXX` || exit 1
+FILTLOG=`mktemp /tmp/msoyfiltered-$LISTEN_PORT.log.XXXXXX` || exit 1
 cat $LOGFILE | $MSOY_HOME/tools/bin/lfilter > $FILTLOG
 if [ -s $FILTLOG ]; then
-    cat $FILTLOG | $MAIL -s "$HOSTNAME: $MSOY_HOME p$PORT filtered log" $LOG_EMAIL
+    cat $FILTLOG | $MAIL -s "$HOSTNAME: $MSOY_HOME p$LISTEN_PORT filtered log" $LOG_EMAIL
 fi
 rm -f $FILTLOG
 

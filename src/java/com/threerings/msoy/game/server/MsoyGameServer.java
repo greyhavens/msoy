@@ -92,8 +92,8 @@ public class MsoyGameServer extends MsoyBaseServer
      */
     public static void main (String[] args)
     {
-        if (args.length < 1) {
-            System.err.println("Usage: MsoyGameServer port");
+        if (args.length < 2) {
+            System.err.println("Usage: MsoyGameServer listenPort connectPort");
             System.exit(-1);
         }
 
@@ -104,6 +104,7 @@ public class MsoyGameServer extends MsoyBaseServer
         MsoyGameServer server = new MsoyGameServer();
         try {
             server._listenPort = Integer.parseInt(args[0]);
+            server._connectPort = Integer.parseInt(args[1]);
             server.init();
             server.run();
 
@@ -144,7 +145,7 @@ public class MsoyGameServer extends MsoyBaseServer
         DictionaryManager.init("data/dictionary");
 
         // connect back to our parent world server
-        worldClient.init(this, _listenPort);
+        worldClient.init(this, _listenPort, _connectPort);
 
         log.info("Game server initialized.");
     }
@@ -205,6 +206,9 @@ public class MsoyGameServer extends MsoyBaseServer
 
     /** The port on which we listen for client connections. */
     protected int _listenPort;
+
+    /** The port on which we connect back to our parent server. */
+    protected int _connectPort;
 
     /** A mapping from member name to member object for all online members. */
     protected static HashMap<MemberName,PlayerObject> _online =

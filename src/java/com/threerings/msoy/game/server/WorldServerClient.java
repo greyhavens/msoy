@@ -28,15 +28,15 @@ public class WorldServerClient
     /** A message sent by our world server to let us know to shut down. */
     public static final String SHUTDOWN_MESSAGE = "shutdown";
 
-    public void init (MsoyGameServer server, int port)
+    public void init (MsoyGameServer server, int listenPort, int connectPort)
     {
         _server = server;
-        _port = port;
+        _port = listenPort;
 
         // create our client and connect to the server
         _client = new Client(null, MsoyGameServer.omgr);
-        _client.setCredentials(new PeerCreds("game:" + port, ServerConfig.sharedSecret));
-        _client.setServer("localhost", ServerConfig.serverPorts);
+        _client.setCredentials(new PeerCreds("game:" + _port, ServerConfig.sharedSecret));
+        _client.setServer("localhost", new int[] { connectPort });
         _client.addServiceGroup(MsoyGameRegistry.GAME_SERVER_GROUP);
         _client.addClientObserver(_clientObs);
         _client.logon();
