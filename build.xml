@@ -79,6 +79,7 @@
     <file name="${extlibs.dir}/gwt-widgets.jar"/>
     <file name="${extlibs.dir}/javassist.jar"/>
     <file name="${extlibs.dir}/junit-3.7.jar"/>
+    <file name="${extlibs.dir}/junit4.jar"/>
     <file name="${extlibs.dir}/mail.jar"/>
     <file name="${extlibs.dir}/mysql-connector-java.jar"/>
     <file name="${extlibs.dir}/postgresql-jdbc.jar"/>
