@@ -271,6 +271,13 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             return;
         }
 
+        // sanity check (TODO: bound by percent of existing game duration)
+        if (totalMinutes/_allPlayers.size() > 15) {
+            log.info("Capping player minutes at 15 mins per game [games=" + _allPlayers.size() +
+                     ", mins=" + totalMinutes + "].");
+            totalMinutes = _allPlayers.size() * 15;
+        }
+
         final int gameId = getGameId();
         final int playerGames = _allPlayers.size(), playerMins = totalMinutes;
         final boolean recalc = (RuntimeConfig.server.abuseFactorReassessment == 0) ? false :
