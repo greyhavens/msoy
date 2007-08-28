@@ -152,7 +152,7 @@ public class LobbyPanel extends VBox
     // from AttributeChangeListener
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
-        if (event.getName() == MemberObject.PENDING_GAME) {
+        if (event.getName() == MemberObject.GAME) {
             updateCreateButton();
             if (_formingTables != null) {
                 _formingTables.refresh();
@@ -229,7 +229,7 @@ public class LobbyPanel extends VBox
      */
     public function isSeated () :Boolean
     {
-        return _isSeated || (_ctx.getMemberObject().pendingGame != null);
+        return _isSeated || (_ctx.getMemberObject().game != null);
     }
 
     /**

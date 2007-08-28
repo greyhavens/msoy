@@ -82,8 +82,8 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>hasNewMail</code> field. */
     public static const HAS_NEW_MAIL :String = "hasNewMail";
 
-    /** The field name of the <code>pendingGame</code> field. */
-    public static const PENDING_GAME :String = "pendingGame";
+    /** The field name of the <code>game</code> field. */
+    public static const GAME :String = "game";
 
     /** The field name of the <code>notifications</code> field. */
     public static const NOTIFICATIONS :String = "notifications";
@@ -137,8 +137,8 @@ public class MemberObject extends MsoyBodyObject
     /** A flag that's true if this member has unread mail. */
     public var hasNewMail :Boolean;
 
-    /* The game summary for the forming game table that this user is sitting at. */
-    public var pendingGame :GameSummary;
+    /* The game summary for the game that the player is lobbying for or currently playing. */
+    public var game :GameSummary;
 
     /** The item lists owned by this user. */
     public var lists :DSet;
@@ -342,7 +342,7 @@ public class MemberObject extends MsoyBodyObject
         friends = (ins.readObject() as DSet);
         groups = (ins.readObject() as DSet);
         hasNewMail = ins.readBoolean();
-        pendingGame = (ins.readObject() as GameSummary);
+        game = (ins.readObject() as GameSummary);
         lists = (ins.readObject() as DSet);
         notifications = (ins.readObject() as DSet);
     }

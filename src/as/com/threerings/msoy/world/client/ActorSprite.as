@@ -272,12 +272,12 @@ public class ActorSprite extends MsoySprite
         if (winfo is WorldMemberInfo) {
             var minfo :WorldMemberInfo = winfo as WorldMemberInfo;
 
-            if (_tableIcon != null && !_tableIcon.getGameSummary().equals(minfo.pendingGame)) {
+            if (_tableIcon != null && !_tableIcon.getGameSummary().equals(minfo.game)) {
                 _tableIcon.shutdown();
                 _tableIcon = null;
             }
-            if (_tableIcon == null && minfo.pendingGame != null) {
-                _tableIcon = new TableIcon(this, minfo.pendingGame);
+            if (_tableIcon == null && minfo.game != null) {
+                _tableIcon = new TableIcon(this, minfo.game);
             }
         }
 

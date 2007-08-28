@@ -89,8 +89,8 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>hasNewMail</code> field. */
     public static final String HAS_NEW_MAIL = "hasNewMail";
 
-    /** The field name of the <code>pendingGame</code> field. */
-    public static final String PENDING_GAME = "pendingGame";
+    /** The field name of the <code>game</code> field. */
+    public static final String GAME = "game";
 
     /** The field name of the <code>lists</code> field. */
     public static final String LISTS = "lists";
@@ -153,8 +153,8 @@ public class MemberObject extends MsoyBodyObject
     /** A flag that's true if this member has unread mail. */
     public boolean hasNewMail;
 
-    /** The game summary for the forming game table that this user is sitting at. */
-    public GameSummary pendingGame;
+    /** The game summary for the game that the player is lobbying for or currently playing. */
+    public GameSummary game;
 
     /** The item lists owned by this user. */
     public DSet<ItemListInfo> lists = new DSet<ItemListInfo>();
@@ -749,19 +749,19 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
-     * Requests that the <code>pendingGame</code> field be set to the
+     * Requests that the <code>game</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setPendingGame (GameSummary value)
+    public void setGame (GameSummary value)
     {
-        GameSummary ovalue = this.pendingGame;
+        GameSummary ovalue = this.game;
         requestAttributeChange(
-            PENDING_GAME, value, ovalue);
-        this.pendingGame = value;
+            GAME, value, ovalue);
+        this.game = value;
     }
 
     /**

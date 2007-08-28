@@ -156,7 +156,7 @@ public class MsoyGameRegistry
         }
 
         // set or clear their pending game
-        memobj.setPendingGame(game);
+        memobj.setGame(game);
 
         // update their occupant info if they're in a scene
         MsoyServer.memberMan.updateOccupantInfo(memobj);

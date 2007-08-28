@@ -23,7 +23,7 @@ public class WorldMemberInfo extends MemberInfo
     public var state :String;
 
     /** The game summary for the user's currently pending game. */
-    public var pendingGame :GameSummary;
+    public var game :GameSummary;
 
 //    /** The style of chat bubble to use. */
 //    public var chatStyle :int;
@@ -56,7 +56,7 @@ public class WorldMemberInfo extends MemberInfo
 //        chatStyle = ins.readShort();
 //        chatPopStyle = ins.readShort();
         state = (ins.readField(String) as String);
-        pendingGame = (ins.readObject() as GameSummary);
+        game = (ins.readObject() as GameSummary);
         _media = (ins.readObject() as MediaDesc);
         _scale = ins.readFloat();
     }
