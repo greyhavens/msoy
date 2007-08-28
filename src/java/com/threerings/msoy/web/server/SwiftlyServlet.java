@@ -38,14 +38,25 @@ public class SwiftlyServlet extends MsoyServiceServlet
     implements SwiftlyService
 {
     // from SwiftlyService
-    public ConnectConfig getConnectConfig ()
+    public ConnectConfig getConnectConfig (WebIdent ident, final int projectId)
         throws ServiceException
     {
-        ConnectConfig config = new ConnectConfig();
-        config.server = ServerConfig.serverHost;
-        config.port = ServerConfig.serverPorts[0];
-        config.httpPort = ServerConfig.httpPort;
-        return config;
+        final MemberRecord memrec = requireAuthedUser(ident);
+
+        // run a task on the dobject thread that finds the ProjectRoomManager for this project
+        // either on this server or on a different node and returns that server's ConnectConfig
+        final ServletWaiter<ConnectConfig> waiter =
+            new ServletWaiter<ConnectConfig>("resolveRoomManager[" + projectId + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.swiftlyMan.resolveRoomManager(memrec.getName(), projectId, waiter);
+            }
+        });
+
+        // block the servlet waiting for the dobject thread
+        waiter.waitForResult();
+
+        return waiter.getArgument();
     }
 
     // from SwiftlyService

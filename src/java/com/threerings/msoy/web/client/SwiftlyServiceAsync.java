@@ -16,7 +16,7 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#getConnectConfig}.
      */
-    public void getConnectConfig (AsyncCallback callback);
+    public void getConnectConfig (WebIdent ident, int projectId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#getRemixableProjects}.

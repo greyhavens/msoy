@@ -20,7 +20,7 @@ public interface SwiftlyService extends RemoteService
     /**
      * Returns the ConnectConfig used by the applet for connecting to the server.
      */
-    public ConnectConfig getConnectConfig ()
+    public ConnectConfig getConnectConfig (WebIdent ident, int projectId)
         throws ServiceException;
 
     /**
