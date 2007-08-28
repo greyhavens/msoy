@@ -103,7 +103,6 @@ public class GameRepository extends ItemRepository<
 
             // write an algorithm that actually does something with 'records' here
             fieldMap.put(GameDetailRecord.ABUSE_FACTOR, new LiteralExp("123"));
-            fieldMap.put(GameDetailRecord.ABUSE_FACTOR, GameDetailRecord.PLAYER_MINUTES_C);
 
             // then delete the records
             deleteAll(GameFlowGrantLogRecord.class,
