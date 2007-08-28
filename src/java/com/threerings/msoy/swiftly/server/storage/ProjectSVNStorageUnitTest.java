@@ -26,28 +26,9 @@ import java.util.List;
 import junit.framework.TestCase;
 
 public class ProjectSVNStorageUnitTest extends TestCase
-{    
-    /** Static, brittle path to the test template. Sorry. */
-    public static final File TEMPLATE_DIR = new File("data/swiftly/templates/unittest");
-    
-    public static final File GAME_TEMPLATE_DIR = new File("data/swiftly/templates/game");
-
-    /** Mock up a project record. */
-    public static SwiftlyProject mockProject ()
-    {
-        SwiftlyProject project;
-
-        // Mock up a project record.
-        project = new SwiftlyProject();
-        project.projectName = "project-name";
-        project.ownerId = 0;
-        project.projectType = Item.GAME;
-
-        return project;
-    }
-
+{
     /** Mock up an SVN storage record. */
-    public static SwiftlySVNStorageRecord mockStorageRecord (File tempDir)
+    public static SwiftlySVNStorageRecord mockStorageRecord (final File tempDir)
     {
         SwiftlySVNStorageRecord storageRecord;
 
@@ -58,12 +39,13 @@ public class ProjectSVNStorageUnitTest extends TestCase
         return storageRecord;
     }
 
-    public ProjectSVNStorageUnitTest (String name)
+    public ProjectSVNStorageUnitTest (final String name)
     {
         super(name);
     }
 
     /** Set up the test case anew. */
+    @Override
     public void setUp ()
         throws Exception
     {
@@ -74,15 +56,17 @@ public class ProjectSVNStorageUnitTest extends TestCase
             throw new Exception("Temporary directory '" + _tempDir + "' already exists!");
         }
 
-        _project = mockProject();
+        _project = ProjectStorageUnitTest.mockProject();
         _storageRecord = mockStorageRecord(_tempDir);
 
         // Initialize the storage
-        ProjectSVNStorage.initializeStorage(_project, _storageRecord, TEMPLATE_DIR.getCanonicalFile());
+        ProjectSVNStorage.initializeStorage(_project, _storageRecord,
+            ProjectStorageUnitTest.TEMPLATE_DIR.getCanonicalFile());
     }
 
 
     /** Clean up afterwards. */
+    @Override
     public void tearDown ()
         throws Exception
     {
@@ -93,7 +77,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testOpenStorage ()
         throws Exception
     {
-        ProjectStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        final ProjectStorage storage = new ProjectSVNStorage(_project, _storageRecord);
         assertTrue(storage != null);
     }
 
@@ -101,9 +85,9 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testGetDocument ()
         throws Exception
     {
-        ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
-        PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
-        SwiftlyTextDocument doc = (SwiftlyTextDocument)storage.getDocument(path);
+        final ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        final PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
+        final SwiftlyTextDocument doc = (SwiftlyTextDocument)storage.getDocument(path);
 
         // Ensure the document data was defrosted correctly
         assertTrue(doc.getText().startsWith("package {"));
@@ -112,10 +96,10 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testPutDocument ()
         throws Exception
     {
-        ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
-        PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
+        final ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        final PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
         SwiftlyTextDocument doc;
-        
+
         // Get an initial copy of the document
         doc = (SwiftlyTextDocument)storage.getDocument(path);
 
@@ -131,12 +115,12 @@ public class ProjectSVNStorageUnitTest extends TestCase
     /** If a non-svnkit exception was thrown in the middle of a commit operation,
      *  the transaction would not be safely aborted. Test that the transaction is
      *  aborted safely and the svnkit repository instance is left in a consistent
-     *  state. */ 
+     *  state. */
     public void testPutDocumentReentrancy ()
         throws Exception
     {
-        ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
-        PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
+        final ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        final PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
 
         // Create and initialize broken document
         SwiftlyDocument brokenDoc = new SwiftlyIOExceptionDocument(
@@ -146,7 +130,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         try {
             storage.putDocument(brokenDoc, "Testing");
             fail("Did not throw an IOException");
-        } catch (ProjectStorageException e) {
+        } catch (final ProjectStorageException e) {
             // Supposed to fail
         }
 
@@ -158,10 +142,10 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testDeleteDocument ()
         throws Exception
     {
-        ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
-        PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
+        final ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        final PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
         SwiftlyTextDocument doc;
-        
+
         // Get an initial copy of the document
         doc = (SwiftlyTextDocument)storage.getDocument(path);
 
@@ -176,7 +160,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         try {
             doc = (SwiftlyTextDocument)storage.getDocument(path);
             fail("The storage engine did not delete the document!");
-        } catch (ProjectStorageException pse) {
+        } catch (final ProjectStorageException pse) {
             // It's supposed to fail!
         }
     }
@@ -184,10 +168,10 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testRenameDocument ()
         throws Exception
     {
-        ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
-        PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
+        final ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        final PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
         SwiftlyTextDocument doc;
-        
+
         // Get an initial copy of the document
         doc = (SwiftlyTextDocument)storage.getDocument(path);
 
@@ -199,11 +183,11 @@ public class ProjectSVNStorageUnitTest extends TestCase
         storage.renameDocument(path, "UnitTestMoved.as", "Renaming");
 
         // Retrieve the new document
-        PathElement newPath = PathElement.createFile(
+        final PathElement newPath = PathElement.createFile(
             "UnitTestMoved.as", null, "text/x-actionscript");
         try {
             doc = (SwiftlyTextDocument)storage.getDocument(newPath);
-        } catch (ProjectStorageException pse) {
+        } catch (final ProjectStorageException pse) {
             fail("The storage engine did not rename the document!");
         }
 
@@ -211,7 +195,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         try {
             doc = (SwiftlyTextDocument)storage.getDocument(path);
             fail("The storage engine did not delete the renamed document!");
-        } catch (ProjectStorageException pse) {
+        } catch (final ProjectStorageException pse) {
             // It's supposed to fail!
         }
     }
@@ -219,7 +203,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testGetSVNURL ()
         throws Exception
     {
-        ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        final ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
         assertEquals("file://" + _tempDir + "/" + _project.projectId,
             storage.getSVNURL().toString());
     }
@@ -228,25 +212,25 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testGetProjectTree ()
         throws Exception
     {
-        ProjectStorage storage = new ProjectSVNStorage(_project, _storageRecord);
-        List<PathElement> projectTree = storage.getProjectTree();
+        final ProjectStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        final List<PathElement> projectTree = storage.getProjectTree();
         assertTrue("The returned PathElement list is empty", projectTree.size() != 0);
 
         // Simple sanity check of one of the paths, to ensure that it matches the template
         boolean foundPNGFile = false;
         boolean foundASFile = false;
-        
-        for (PathElement node : projectTree) {
+
+        for (final PathElement node : projectTree) {
             if (node.getName().equals("test.png")) {
                 foundPNGFile = true;
-                PathElement parent = node.getParent();
+                final PathElement parent = node.getParent();
                 assertEquals("media", parent.getName());
                 assertEquals(PathElement.Type.ROOT, parent.getParent().getType());
                 assertEquals("image/png", node.getMimeType());
             }
             if (node.getName().equals("UnitTest.as")) {
                 foundASFile = true;
-                PathElement parent = node.getParent();
+                final PathElement parent = node.getParent();
                 assertEquals(PathElement.Type.ROOT, parent.getType());
                 assertEquals("text/x-actionscript", node.getMimeType());
             }
@@ -262,19 +246,19 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testExportProject ()
         throws Exception
     {
-        ProjectStorage storage = new ProjectSVNStorage(_project, _storageRecord);
-        File exportDir = new File(_tempDir, "export");
-        File srcFile = new File(exportDir, "UnitTest.as");
+        final ProjectStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        final File exportDir = new File(_tempDir, "export");
+        final File srcFile = new File(exportDir, "UnitTest.as");
 
         storage.export(exportDir);
         assertTrue(srcFile.getName() + " was not exported.", srcFile.exists());
 
         // Ensure the document data was exported correctly.
-        InputStream input = new FileInputStream(srcFile);
-        byte data[] = new byte[1024];
+        final InputStream input = new FileInputStream(srcFile);
+        final byte data[] = new byte[1024];
         int len;
         String contents;
-    
+
         assertTrue("Could not read any data from " + srcFile.getName(),
             (len = input.read(data, 0, data.length)) >= 0);
 
@@ -290,34 +274,38 @@ public class ProjectSVNStorageUnitTest extends TestCase
     protected static class SwiftlyIOExceptionDocument
         extends SwiftlyDocument
     {
-        public SwiftlyIOExceptionDocument (ByteArrayInputStream stream, PathElement path)
+        public SwiftlyIOExceptionDocument (final ByteArrayInputStream stream, final PathElement path)
             throws IOException
         {
             super(stream, path);
         }
 
+        @Override
         public InputStream getModifiedData ()
             throws IOException
         {
-            InputStream dead = new FileInputStream("/file does not ever exist");
+            final InputStream dead = new FileInputStream("/file does not ever exist");
             return dead;
         }
-        
-        public boolean handlesMimeType (String mimeType) {
+
+        public boolean handlesMimeType (final String mimeType) {
             return true;
         }
-        
-        public void loadInEditor (SwiftlyDocumentEditor editor, int row, int column,
-                                  boolean highlight)
+
+        @Override
+        public void loadInEditor (final SwiftlyDocumentEditor editor, final int row, final int column,
+                                  final boolean highlight)
         {
             return;
         }
-        
+
+        @Override
         public boolean isDirty () {
             return true;
         }
 
-        public void setData (InputStream input, String encoding) {
+        @Override
+        public void setData (final InputStream input, final String encoding) {
             return;
         }
     }
@@ -327,7 +315,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
 
     /** Mocked up project record. */
     protected SwiftlyProject _project;
-    
+
     /** Mocked up storage record. */
     protected SwiftlySVNStorageRecord _storageRecord;
 }
