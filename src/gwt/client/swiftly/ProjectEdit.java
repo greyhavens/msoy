@@ -128,7 +128,6 @@ public class ProjectEdit extends FlexTable
         col++;
 
         loadCollaborators();
-        loadFriends();
     }
 
     // from BorderedDialog.  This is called in the super constructor, so no UI components that
@@ -153,7 +152,8 @@ public class ProjectEdit extends FlexTable
             new AsyncCallback() {
             public void onSuccess (Object result) {
                 _collaborators.addAll((List)result);
-                displayCollaborators();
+                // now that we have our collaborators, load our friends.
+                loadFriends();
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Listing collaborators failed memberId=[" + CSwiftly.getMemberId() +
@@ -239,6 +239,10 @@ public class ProjectEdit extends FlexTable
                     FriendEntry friend = (FriendEntry)iter.next();
                     _friends.put(new Integer(friend.getMemberId()), friend);
                 }
+                // we now have our collaborators and friends, so display them both. displaying of
+                // friends relies on both the collaborators list and friends list so we need them
+                // both before displaying.
+                displayCollaborators();
                 updateFriendList();
             }
             public void onFailure (Throwable caught) {
