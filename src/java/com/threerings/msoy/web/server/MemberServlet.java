@@ -271,7 +271,7 @@ public class MemberServlet extends MsoyServiceServlet
                                 MemberCard memberCard = new MemberCard();
                                 memberCard.name = friend.name;
                                 onlineFriends.put(memberCard.name.getMemberId(), memberCard);
-                                if (memLoc.sceneId == 0) {
+                                if (memLoc.sceneId == 0 && memLoc.gameId == 0) {
                                     continue;
                                 }
 

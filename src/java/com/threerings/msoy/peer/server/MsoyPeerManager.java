@@ -268,16 +268,18 @@ public class MsoyPeerManager extends CrowdPeerManager
     protected class LocationTracker implements AttributeChangeListener
     {
         public void attributeChanged (AttributeChangedEvent event) {
-            // skip "location=null" updates as the client will either logoff or arrive at their
-            // real location immediately following and that will trigger the real update
-            if (event.getName().equals(MemberObject.LOCATION) && 
-                event.getValue() instanceof ScenePlace) {
+            // skip null location updates unless we have a game attached to this MemberObject.  In 
+            // that case, the null location could mean heading to the game, and we do need to zero
+            // out the sceneId on this player's MemberLocation.
+            if (event.getName().equals(MemberObject.LOCATION)) {
                 MemberObject memobj = (MemberObject)MsoyServer.omgr.getObject(event.getTargetOid());
                 if (memobj == null) {
                     log.warning("Got location change for unregistered member!? " + event);
                     return;
                 }
-                updateMemberLocation(memobj);
+                if (event.getValue() instanceof ScenePlace || memobj.game != null) {
+                    updateMemberLocation(memobj);
+                }
             }
         }
     }
