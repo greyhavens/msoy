@@ -692,29 +692,22 @@
     <mkdir dir="${basedir}/${deploy.dir}/tmp"/>
     <taskdef name="unit" classpathref="classpath"
       classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
-    <if><isset property="test"/>
-      <then>
-        <!-- Run a single test -->
-        <unit printsummary="yes" haltonfailure="yes">
-          <classpath refid="classpath"/>
-          <formatter type="brief" usefile="false"/>
-          <test name="${test}"/>
-        </unit>
-      </then>
-      <else>
-        <!-- Run all tests -->
-        <unit printsummary="no" haltonfailure="yes" fork="yes" dir="${basedir}">
-          <classpath refid="classpath"/>
-          <formatter type="brief" usefile="false" unless="use.xml.output"/>
-          <formatter type="xml" usefile="true" if="use.xml.output"/>
-          <batchtest todir="${basedir}/${deploy.dir}/tmp">
-            <fileset dir="${src.dir}">
-              <include name="**/*UnitTest.java"/>
-            </fileset>
-          </batchtest>
-        </unit>
-      </else>
-    </if>
+    
+      <unit printsummary="no" haltonfailure="yes" fork="yes" dir="${basedir}">
+        <classpath refid="classpath"/>
+        <formatter type="brief" usefile="false" unless="use.xml.output"/>
+        <formatter type="xml" usefile="true" if="use.xml.output"/>
+        
+        <!-- batch run our tests -->
+        <batchtest todir="${basedir}/${deploy.dir}/tmp" unless="test">
+          <fileset dir="${src.dir}">
+            <include name="**/*UnitTest.java"/>
+          </fileset>
+        </batchtest>
+
+        <!-- or run the requested test -->
+        <test name="${test}" if="test"/>
+      </unit>
   </target>
 
   <!-- build the java class files -->
