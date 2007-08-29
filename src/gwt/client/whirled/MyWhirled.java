@@ -210,17 +210,36 @@ public class MyWhirled extends FlexTable
         for (int ii = 0; ii < scenes.length; ii++) {
             Iterator sceneIter = scenes[ii].iterator();
             while (sceneIter.hasNext()) {
-                SceneCard card = (SceneCard) sceneIter.next();
+                final SceneCard card = (SceneCard) sceneIter.next();
                 Iterator friendIter = card.friends.iterator();
                 while (friendIter.hasNext()) {
-                    Object id = friendIter.next();
+                    final Object id = friendIter.next();
                     List entry = (List) _peopleAttributes.get(id);
                     if (entry != null) {
-                        // we look at index 1 for the style to add to the name label - if there
-                        // is already something there, this should replace it, but List.set()
-                        // will throw IndexOutOfBoundsException if the index isn't already in the
-                        // list.
-                        entry.add(1, card.sceneType == SceneCard.ROOM ? "Room" : "Game");
+                        if (entry.size() == 1) {
+                            // make sure there is already something at indexex 1 and 2 so that 
+                            // entry.set() is happy
+                            entry.add(null);
+                        }
+                        entry.set(1, card.sceneType == SceneCard.ROOM ? "Room" : "Game");
+                        // TODO: this check prevents us from overwriting a room click listener with
+                        // a game click listener, which would happen if they're in a room and 
+                        // sitting at a forming game table.  In that instance, we want to both
+                        // take them to that room and join their table... Oh the fiddling...
+                        if (entry.size() < 3) {
+                            entry.add(new ClickListener () {
+                                public void onClick (Widget sender) {
+                                    if (card.sceneType == SceneCard.ROOM) {
+                                        WorldClient.displayFlash("memberScene=" + id);
+                                    } else if (card.sceneType == SceneCard.GAME) {
+                                        // TODO: we will want this to connect you directly to their
+                                        // game instance.
+                                        History.newItem(
+                                            Application.createLinkToken("game", "" + card.sceneId));
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -410,21 +429,20 @@ public class MyWhirled extends FlexTable
             setStyleName("PersonWidget");
             setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
 
-            ClickListener goToFriend = new ClickListener() {
-                public void onClick (Widget sender) {
-                    WorldClient.displayFlash("memberScene=" + card.name.getMemberId());
-                }
-            };
+            List attrs = (List) peopleAttributes.get(new Integer(card.name.getMemberId()));
+            ClickListener goToFriend = attrs != null && attrs.size() >= 3 ? 
+                (ClickListener) attrs.get(2) : null;
 
             Widget pic = MediaUtil.createMediaView(card.photo, MediaDesc.HALF_THUMBNAIL_SIZE);
-            if (pic instanceof Image) {
+            if (pic instanceof Image && goToFriend != null) {
                 ((Image) pic).addClickListener(goToFriend);
             }
             add(pic);
             Label nameLabel = new Label("" + card.name);
-            nameLabel.addClickListener(goToFriend);
+            if (goToFriend != null) {
+                nameLabel.addClickListener(goToFriend);
+            }
             nameLabel.setStyleName("NameLabel");
-            List attrs = (List) peopleAttributes.get(new Integer(card.name.getMemberId()));
             if (attrs != null && attrs.size() >= 2) {
                 nameLabel.addStyleName("" + attrs.get(1));
             }
@@ -443,7 +461,7 @@ public class MyWhirled extends FlexTable
     protected VerticalPanel _roomsBox;
     protected VerticalPanel _chatsBox;
 
-    /** Map of member Ids to a List of attributes for the person.  This list is currently first 
-     * the member's name as a string, then second a style name to apply to their name label. */
+    /** Map of member Ids to a List of attributes for the person.  
+     * List is: [ name, style for name label, click listener for name label ] */
     protected Map _peopleAttributes;
 }
