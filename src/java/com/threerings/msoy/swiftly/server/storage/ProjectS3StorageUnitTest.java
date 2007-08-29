@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.swiftly.server.storage;
 
-import com.threerings.msoy.swiftly.server.storage.s3.ProjectS3ConnectionFactory;
+import com.threerings.msoy.swiftly.server.storage.s3.S3StorageConnectionFactory;
 import com.threerings.s3.client.S3Connection;
 
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class ProjectS3StorageUnitTest {
      * @author landonf
      *
      */
-    public static class ConnectionFactory implements ProjectS3ConnectionFactory {
+    public static class ConnectionFactory implements S3StorageConnectionFactory {
         public S3Connection getConnection () {
             return new S3Connection(AWS_ID, AWS_KEY);
         }

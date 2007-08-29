@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
-import com.threerings.msoy.swiftly.server.storage.s3.ProjectS3ConnectionFactory;
+import com.threerings.msoy.swiftly.server.storage.s3.S3StorageConnectionFactory;
 
 /**
  * Implements an S3-backed project storage repository.
@@ -18,7 +18,7 @@ import com.threerings.msoy.swiftly.server.storage.s3.ProjectS3ConnectionFactory;
 public class ProjectS3Storage implements ProjectStorage
 {
 
-    public ProjectS3Storage (final ProjectS3ConnectionFactory connectionFactory) {
+    public ProjectS3Storage (final S3StorageConnectionFactory connectionFactory) {
         _factory = connectionFactory;
     }
 
@@ -62,5 +62,5 @@ public class ProjectS3Storage implements ProjectStorage
     }
 
     /** S3Connection factory. */
-    private final ProjectS3ConnectionFactory _factory;
+    private final S3StorageConnectionFactory _factory;
 }

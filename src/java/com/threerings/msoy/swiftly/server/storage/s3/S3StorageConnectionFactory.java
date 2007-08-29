@@ -10,7 +10,7 @@ import com.threerings.s3.client.S3Connection;
  *
  * @author landonf
  */
-public interface ProjectS3ConnectionFactory {
+public interface S3StorageConnectionFactory {
     /**
      * Exception thrown if a connection can not be provided.
      */
