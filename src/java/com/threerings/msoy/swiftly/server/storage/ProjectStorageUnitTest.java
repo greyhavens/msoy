@@ -2,10 +2,12 @@ package com.threerings.msoy.swiftly.server.storage;
 
 import java.io.File;
 
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.web.data.SwiftlyProject;
+import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Test;
+
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.web.data.SwiftlyProject;
 
 /**
  * Re-usable static methods for testing ProjectStorage implementations.
@@ -32,9 +34,13 @@ public class ProjectStorageUnitTest
 
         return project;
     }
-    
+
     @Test
     public void testSomething () {
         // Without at least one test, junit gets pissy
+    }
+
+    public static junit.framework.Test suite() {
+        return new JUnit4TestAdapter(ProjectStorageUnitTest.class);
     }
 }
