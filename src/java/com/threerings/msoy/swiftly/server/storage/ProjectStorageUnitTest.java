@@ -15,6 +15,8 @@ public class ProjectStorageUnitTest
     /** Static, brittle path to the test template. Sorry. */
     public static final File TEMPLATE_DIR = new File("data/swiftly/templates/unittest");
 
+    public static final File GAME_TEMPLATE_DIR = new File("data/swiftly/templates/game");
+
     /** Mock up a project record. */
     public static SwiftlyProject mockProject ()
     {

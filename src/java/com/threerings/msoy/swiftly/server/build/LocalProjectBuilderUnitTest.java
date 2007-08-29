@@ -14,6 +14,8 @@ import com.threerings.msoy.swiftly.server.ProjectRoomManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorageUnitTest;
+import com.threerings.msoy.swiftly.server.storage.ProjectStorageUnitTest;
+
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
@@ -43,12 +45,12 @@ public class LocalProjectBuilderUnitTest extends TestCase
         }
 
         // Mock up a project record.
-        _project = ProjectSVNStorageUnitTest.mockProject();
+        _project = ProjectStorageUnitTest.mockProject();
         storageRecord = ProjectSVNStorageUnitTest.mockStorageRecord(_tempDir);
 
         // Initialize the storage
         _storage = ProjectSVNStorage.initializeStorage(_project, storageRecord,
-            ProjectSVNStorageUnitTest.GAME_TEMPLATE_DIR.getCanonicalFile());
+            ProjectStorageUnitTest.GAME_TEMPLATE_DIR.getCanonicalFile());
     }
 
     /** Clean up afterwards. */
