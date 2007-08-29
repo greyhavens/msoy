@@ -5,6 +5,8 @@ import java.io.File;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
+import org.junit.Test;
+
 /**
  * Re-usable static methods for testing ProjectStorage implementations.
  * @author landonf
@@ -30,5 +32,9 @@ public class ProjectStorageUnitTest
 
         return project;
     }
-
+    
+    @Test
+    public void testSomething () {
+        // Without at least one test, junit gets pissy
+    }
 }
