@@ -397,21 +397,25 @@ public class MyWhirled extends FlexTable
             text.add(nameLabel);
             Iterator peopleIter = scene.friends.iterator();
             String peopleList = "";
+            String visiblePeopleList = "";
             while (peopleIter.hasNext()) {
-                List attrs = (List) peopleAttributes.get(peopleIter.next());
+                Object id = peopleIter.next();
+                List attrs = (List) peopleAttributes.get(id);
                 if (attrs == null) {
                     continue;
                 }
 
-                peopleList += "" + attrs.get(0);
+                visiblePeopleList += "" + attrs.get(0);
+                if (visiblePeopleList.length() > 50) {
+                    peopleList = peopleList.substring(0, peopleList.length() - 2) + "...";
+                    break;
+                }
+                peopleList += Application.createLinkHtml("" + attrs.get(0), "profile", "" + id);
                 if (peopleIter.hasNext()) {
                     peopleList += ", ";
                 } else {
                     peopleList += ".";
                 }
-            }
-            if (peopleList.length() > 50) {
-                peopleList = peopleList.substring(0, 47) + "...";
             }
             // Its a little silly that GWT has no way to string together some <span>s
             HTML population = new HTML(
