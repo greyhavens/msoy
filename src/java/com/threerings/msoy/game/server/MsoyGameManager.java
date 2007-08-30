@@ -26,10 +26,10 @@ public class MsoyGameManager extends EZGameManager
     @Override // from PlaceManager
     public String where ()
     {
-        MsoyGameConfig cfg = (MsoyGameConfig)_config;
-        if (cfg != null || _plobj == null) {
+        if (_config == null || _plobj == null) {
             return super.where();
         }
+        MsoyGameConfig cfg = (MsoyGameConfig)_config;
         return "[" + cfg.name + ":" + cfg.getGameId() + ":" + _gameobj.getOid() +
             "(" + StringUtil.toString(_gameobj.players) + ")";
     }
