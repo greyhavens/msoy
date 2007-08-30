@@ -385,34 +385,38 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     /**
-     * Used by the SwiftlyServlet to update the local list of collaborators.
+     * Used by the SwiftlyManager to update the local list of collaborators.
      */
-    public void addCollaborator (MemberName name, ResultListener<Void> lner)
+    public void addCollaborator (MemberName name)
     {
         getRoomObj().addToCollaborators(name);
         getRoomObj().postMessage(ProjectRoomObject.ACCESS_CONTROL_CHANGE);
-        lner.requestCompleted(null);
+
     }
 
     /**
-     * Used by the SwiftlyServlet to update the local list of collaborators.
+     * Used by the SwiftlyManager to update the local list of collaborators.
      */
-    public void removeCollaborator (MemberName name, ResultListener<Void> lner)
+    public void removeCollaborator (MemberName name)
     {
         getRoomObj().removeFromCollaborators(name.getKey());
         getRoomObj().postMessage(ProjectRoomObject.ACCESS_CONTROL_CHANGE);
-        _resultItems.remove(name);
-        lner.requestCompleted(null);
+        getResultItems().remove(name);
     }
 
     /**
-     * Used by the SwiftlyServlet to update the room object project object.
+     * Used by the SwiftlyManager to update the room object project object.
      */
-    public void updateProject (final SwiftlyProject project, ResultListener<Void> lner)
+    public void updateProject (final SwiftlyProject project)
     {
+        // if the name of the project has changed, update the root path element in the dset
+        if (!getRoomObj().project.projectName.equals(project.projectName)) {
+            getRoomObj().getRootElement().setName(project.projectName);
+            getRoomObj().publishPathElement(getRoomObj().getRootElement());
+        }
+
         getRoomObj().setProject(project);
         getRoomObj().postMessage(ProjectRoomObject.ACCESS_CONTROL_CHANGE);
-        lner.requestCompleted(null);
     }
 
     /**

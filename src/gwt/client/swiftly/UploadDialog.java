@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -32,7 +33,8 @@ public class UploadDialog extends FlexTable
         public void dialogClosed ();
     }
 
-    public UploadDialog (String projectId, WebIdent ident, UploadDialogListener listener)
+    public UploadDialog (String projectId, WebIdent ident, ConnectConfig config,
+        UploadDialogListener listener)
     {
         setStyleName("swiftlyUploader");
 
@@ -42,7 +44,10 @@ public class UploadDialog extends FlexTable
         final FormPanel form = new FormPanel();
 
         if (GWT.isScript()) {
-            form.setAction("/swiftlyuploadsvc");
+            // we need to upload to the server hosting this project and has the room manager
+            // resolved
+            form.setAction(
+                "http://" + config.server + ":" + config.httpPort + "/swiftlyuploadsvc");
         } else {
             form.setAction("http://localhost:8080/swiftlyuploadsvc");
         }

@@ -345,13 +345,9 @@ public class SwiftlyEditor extends PlacePanel
             document.lazarus(_roomObj.pathElements);
         }
 
-        // if we have already resolved the project, load it into the project panel
-        // otherwise we'll wait for the message that the project has been resolved later
-        // we will also check access as we have entered the room for the first time
-        if (_roomObj.project != null) {
-            _projectPanel.setProject(_roomObj);
-            updateEditorAccess();
-        }
+        // load the resolved project into the project panel
+        _projectPanel.setProject(_roomObj);
+        updateEditorAccess();
 
         // set the room object in the console now that it is available
         _console.setRoomObject(_roomObj);
@@ -382,9 +378,9 @@ public class SwiftlyEditor extends PlacePanel
     // from AttributeChangeListener
     public void attributeChanged (AttributeChangedEvent event)
     {
-        // the project has been loaded or changed. tell the project panel to make the project tree
+        // the project has been loaded or changed.
         if (event.getName().equals(ProjectRoomObject.PROJECT)) {
-            _projectPanel.setProject(_roomObj);
+            // nada
         }
     }
 

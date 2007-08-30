@@ -3,37 +3,33 @@
 
 package com.threerings.msoy.peer.server;
 
-import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.util.Invoker;
-import com.samskivert.util.ObserverList;
-import com.samskivert.util.Tuple;
-import com.samskivert.util.ResultListener;
+import static com.threerings.msoy.Log.log;
 
+import com.samskivert.util.ObserverList;
+import com.samskivert.util.ResultListener;
+import com.samskivert.util.Tuple;
+import com.threerings.crowd.peer.server.CrowdPeerManager;
+import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.peer.data.HostedChannel;
+import com.threerings.msoy.peer.data.HostedGame;
+import com.threerings.msoy.peer.data.HostedPlace;
+import com.threerings.msoy.peer.data.HostedProject;
+import com.threerings.msoy.peer.data.MemberLocation;
+import com.threerings.msoy.peer.data.MsoyClientInfo;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
-import com.threerings.presents.server.PresentsClient;
-
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.peer.server.persist.NodeRecord;
-
-import com.threerings.crowd.peer.server.CrowdPeerManager;
+import com.threerings.presents.server.PresentsClient;
 import com.threerings.whirled.data.ScenePlace;
-
-import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.peer.data.HostedChannel;
-import com.threerings.msoy.peer.data.HostedGame;
-import com.threerings.msoy.peer.data.HostedPlace;
-import com.threerings.msoy.peer.data.MemberLocation;
-import com.threerings.msoy.peer.data.MsoyClientInfo;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Manages communication with our peer servers, coordinates services that must work across peers.
@@ -60,6 +56,12 @@ public class MsoyPeerManager extends CrowdPeerManager
     public static NodeObject.Lock getGameLock (int gameId)
     {
         return new NodeObject.Lock("GameHost", gameId);
+    }
+
+    /** Returns a lock used to claim resolution of the specified Swiftly project room. */
+    public static NodeObject.Lock getProjectLock (int projectId)
+    {
+        return new NodeObject.Lock("ProjectHost", projectId);
     }
 
     /** Returns a lock used to claim resolution of the specified chat channel. */
@@ -127,6 +129,20 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
+     * Returns the ConnectConfig for the Node hosting the Swiftly project room manager for this
+     * project or null if no peer has published that they are hosting the project.
+     */
+    public HostedProject getProjectHost (final int projectId)
+    {
+        return lookupNodeDatum(new Lookup<HostedProject>() {
+            public HostedProject lookup (NodeObject nodeobj) {
+                HostedProject info = ((MsoyNodeObject) nodeobj).hostedProjects.get(projectId);
+                return info;
+            }
+        });
+    }
+
+    /**
      * Returns the node of the peer that is hosting the specified chat channel, or null if no peer
      * has published that they are hosting the channel.
      */
@@ -150,7 +166,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Clears out a remote member oberver registration.
+     * Clears out a remote member observer registration.
      */
     public void removeRemoteMemberObserver (RemoteMemberObserver obs)
     {
@@ -180,7 +196,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Called by the MsoyGameRegistry when we have established a new game server to host a
      * particular game.
-     */ 
+     */
     public void gameDidStartup (int gameId, String name, int port)
     {
         log.info("Hosting game [id=" + gameId + ", name=" + name + "].");
@@ -196,6 +212,25 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         log.info("No longer hosting game [id=" + gameId + "].");
         _mnobj.removeFromHostedGames(gameId);
+    }
+
+    /**
+     * Called by the SwiftlyManager when it is hosting a project.
+     */
+    public void projectDidStartup (SwiftlyProject project, ConnectConfig config)
+    {
+        log.info(
+            "Hosting project [id=" + project.projectId + ", name=" + project.projectName + "].");
+        _mnobj.addToHostedProjects(new HostedProject(project, config, getNodeObject().nodeName));
+    }
+
+    /**
+     * Called by the SwiftlyManager when it is no longer hosting a project.
+     */
+    public void projectDidShutdown (int projectId)
+    {
+        log.info("No longer hosting project [id=" + projectId + "].");
+        _mnobj.removeFromHostedProjects(projectId);
     }
 
     /**
@@ -268,7 +303,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     protected class LocationTracker implements AttributeChangeListener
     {
         public void attributeChanged (AttributeChangedEvent event) {
-            // skip null location updates unless we have a game attached to this MemberObject.  In 
+            // skip null location updates unless we have a game attached to this MemberObject.  In
             // that case, the null location could mean heading to the game, and we do need to zero
             // out the sceneId on this player's MemberLocation.
             if (event.getName().equals(MemberObject.LOCATION)) {

@@ -17,7 +17,6 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.swiftly.server.ProjectRoomManager;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -30,36 +29,36 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
     {
         // wrap the FileItem in an UploadFile for publishing
         final UploadFile uploadFile = new FileItemUploadFile(item);
-        
+
         // attempt to extract the projectId and auth token from the field name
         String field = item.getFieldName();
         if (field == null) {
             throw new FileUploadException("Failed to extract form field from the upload request.");
         }
-        
+
         // break the form field into the authentication components and the projectId
         String[] split = field.split("::");
-        
+
         // first try to pull the authentication token out
         String token = split[0];
         if (StringUtil.isBlank(token)) {
             throw new FileUploadException(
                 "The authentication token form field from the upload request is blank, aborting.");
         }
-        
+
         // now pull the integers out
         final int memberId;
         final int projectId;
         try {
             memberId = Integer.parseInt(split[1]);
             projectId = Integer.parseInt(split[2]);
-            
+
         } catch (NumberFormatException nfe) {
             throw new FileUploadException(
                 "Failed to parse integer form field parameters from the upload request. " +
                     "[memberId=" + split[1] + " projectId=" + split[2] + "]");
         }
-        
+
         // finally, instantiate the WebIdent
         WebIdent ident = new WebIdent(memberId, token);
 
@@ -74,17 +73,11 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         final ServletWaiter<Void> waiter =
             new ServletWaiter<Void>("insertUploadFile[" + projectId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {               
-                ProjectRoomManager manager = MsoyServer.swiftlyMan.getRoomManager(projectId);
-                if (manager == null) {
-                    waiter.requestFailed(new Exception("No ProjectRoomManager found."));
-                    return;
-                }
-
-                manager.insertUploadFile(uploadFile, waiter);
+            public void run () {
+                MsoyServer.swiftlyMan.insertUploadFile(projectId, uploadFile, waiter);
             }
         });
-        
+
         // block the servlet waiting for the dobject thread to complete the upload
         try {
             waiter.waitForResult();
@@ -116,7 +109,7 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         } catch (ServiceException e) {
             throw new AccessDeniedException("Access denied. Member not logged in: [memberId=" +
                 ident.memberId + ", projectId=" + projectId + "]");
-            
+
         } catch (PersistenceException pe) {
             throw new FileUploadException("Failed when trying to check collaborator status");
         }

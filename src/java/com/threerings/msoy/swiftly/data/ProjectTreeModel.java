@@ -9,16 +9,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import com.threerings.msoy.swiftly.client.ProjectPanel;
+import com.threerings.msoy.swiftly.util.SwiftlyContext;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 import com.threerings.util.MessageBundle;
-
-import com.threerings.msoy.swiftly.data.PathElement;
-import com.threerings.msoy.swiftly.util.SwiftlyContext;
-
-import com.threerings.msoy.swiftly.client.ProjectPanel;
 
 /**
  * Present the contents of a Swiftly project as a tree model.
@@ -68,7 +65,7 @@ public class ProjectTreeModel extends DefaultTreeModel
                     insertNodeInto(new PathElementTreeNode(element), node, node.getChildCount());
                 }
             });
-            
+
             // inform the user that an element was added
             _ctx.showInfoMessage(_msgs.get("m.element_added", element.getName()));
         }
@@ -112,7 +109,7 @@ public class ProjectTreeModel extends DefaultTreeModel
                     removeNodeFromParent(node);
                 }
             });
-            
+
             // inform the user that an element was deleted
             _ctx.showInfoMessage(_msgs.get("m.element_deleted", element.getName()));
         }

@@ -125,8 +125,14 @@ public class ProjectPanel extends JPanel
     // from interface TreeModelListener
     public void treeNodesChanged (TreeModelEvent e)
     {
+        Object[] children = e.getChildren();
+        // children is null if the root node changed
+        if (children == null) {
+            return;
+        }
+
         // TODO we are in single selection mode so only one node will ever change [right?]
-        PathElementTreeNode node = (PathElementTreeNode)e.getChildren()[0];
+        PathElementTreeNode node = (PathElementTreeNode)children[0];
         if (node.getElement().getType() == PathElement.Type.FILE) {
             _editor.pathElementChanged(node.getElement());
         }

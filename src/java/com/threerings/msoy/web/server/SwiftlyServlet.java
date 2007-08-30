@@ -20,7 +20,6 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
-import com.threerings.msoy.swiftly.server.ProjectRoomManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
@@ -345,17 +344,10 @@ public class SwiftlyServlet extends MsoyServiceServlet
         // run a task on the dobject thread that first finds the ProjectRoomManager for this
         // project if it exists, and then tells it to update its local list of collaborators
         final ServletWaiter<Void> waiter =
-            new ServletWaiter<Void>("addToRoomCollaborators[" + projectId + "]");
+            new ServletWaiter<Void>("addCollaborator[" + projectId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                ProjectRoomManager manager = MsoyServer.swiftlyMan.getRoomManager(projectId);
-                // the room manager is not resolved, no problem, we updated the database
-                if (manager == null) {
-                    waiter.requestCompleted(null);
-                    return;
-                }
-
-                manager.addCollaborator(name, waiter);
+                MsoyServer.swiftlyMan.addCollaborator(projectId, name, waiter);
             }
         });
 
@@ -373,17 +365,10 @@ public class SwiftlyServlet extends MsoyServiceServlet
         // run a task on the dobject thread that first finds the ProjectRoomManager for this
         // project if it exists, and then tells it to update its local list of collaborators
         final ServletWaiter<Void> waiter =
-            new ServletWaiter<Void>("removeFromRoomCollaborators[" + projectId + "]");
+            new ServletWaiter<Void>("removeCollaborator[" + projectId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                ProjectRoomManager manager = MsoyServer.swiftlyMan.getRoomManager(projectId);
-                // the room manager is not resolved, no problem, we updated the database
-                if (manager == null) {
-                    waiter.requestCompleted(null);
-                    return;
-                }
-
-                manager.removeCollaborator(name, waiter);
+                MsoyServer.swiftlyMan.removeCollaborator(projectId, name, waiter);
             }
         });
 
@@ -403,15 +388,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
             new ServletWaiter<Void>("updateProject[" + project.projectId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                ProjectRoomManager manager =
-                    MsoyServer.swiftlyMan.getRoomManager(project.projectId);
-                // the room manager is not resolved, no problem, we updated the database
-                if (manager == null) {
-                    waiter.requestCompleted(null);
-                    return;
-                }
-
-                manager.updateProject(project, waiter);
+                MsoyServer.swiftlyMan.updateProject(project, waiter);
             }
         });
 

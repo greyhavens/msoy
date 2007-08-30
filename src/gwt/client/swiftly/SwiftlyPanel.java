@@ -128,7 +128,7 @@ public class SwiftlyPanel extends FlexTable
     protected static void showUploadDialog (String projectId)
     {
         if (_uploadDialog == null) {
-            _uploadDialog = new UploadDialog(projectId, CSwiftly.ident,
+            _uploadDialog = new UploadDialog(projectId, CSwiftly.ident, _config,
                 new UploadDialog.UploadDialogListener () {
                 public void dialogClosed ()
                 {
@@ -199,7 +199,7 @@ public class SwiftlyPanel extends FlexTable
     protected static UploadDialog _uploadDialog;
 
     protected SwiftlyProject _project;
-    protected final ConnectConfig _config;
+    protected static ConnectConfig _config;
     protected final String _authtoken;
     protected static VerticalPanel _vertPanel;
     protected final Hyperlink _projectLink = new Hyperlink();
