@@ -213,7 +213,7 @@ public class SwiftlyManager
         ProjectRoomManager manager = _managers.get(projectId);
         // this node is hosting the manager, send the message to the room manager
         if (manager != null) {
-            manager.addCollaborator(name);
+            manager.removeCollaborator(name);
             return;
         }
 
