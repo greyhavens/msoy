@@ -12,7 +12,7 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Label;
 import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.client.SwiftlyServiceAsync;
-import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.SwiftlyConnectConfig;
 
 /**
  * Displays a page that allows a player to launch swiftly for a given project.
@@ -63,12 +63,14 @@ public class index extends Page
         }
 
         // XXX TEMP while swiftly is broken on whirled1/2 display a message only
+        /*
         if (true) {
             setContent(MsoyUI.createLabel("Ouch! Swiftly is experiencing growing pains as we " +
                 "continue our efforts to scale Whirled. Please bear with us while we finish our " +
                 "work.", "infoLabel"));
             return;
         }
+        */
 
         setPageTitle(CSwiftly.msgs.projectsTitle());
         if (args.length() == 0) {
@@ -89,7 +91,7 @@ public class index extends Page
             // load up the information needed to launch the applet
             CSwiftly.swiftlysvc.getConnectConfig(CSwiftly.ident, projectId, new AsyncCallback() {
                 public void onSuccess (Object result) {
-                    setJavaContent(new SwiftlyPanel((ConnectConfig)result, projectId));
+                    setJavaContent(new SwiftlyPanel((SwiftlyConnectConfig)result, projectId));
                     setContentStretchHeight(true);
                 }
                 public void onFailure (Throwable cause) {

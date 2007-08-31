@@ -28,7 +28,6 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
@@ -73,21 +72,23 @@ public class SwiftlyManager
         MsoyServer.registerShutdowner(this);
     }
 
-    public void resolveRoomManager (MemberName name, final int projectId,
+    /**
+     * Called from SwiftlyServlet to resolve a room manager for the supplied project.
+     * Whoever resolved the SwiftlyProject should have checked to make sure the supplied user
+     * has permissions to load this project.
+     */
+    public void resolveRoomManager (MemberName name, final SwiftlyProject project,
                                     final ServletWaiter<ConnectConfig> waiter)
     {
-        ProjectRoomManager curmgr = _managers.get(projectId);
+        ProjectRoomManager curmgr = _managers.get(project.projectId);
         // the room is resolved on this node, so return this node's ConnectConfig
         if (curmgr != null) {
-            // verify the caller has at least read permissions on the resolved room manager
-            // TODO: need a MemberObject curmgr.requireReadPermissions(caller);
-
             waiter.requestCompleted(getConnectConfig());
             return;
         }
 
         // we don't have the project resolved. is it already hosted on another node?
-        ConnectConfig config = MsoyServer.peerMan.getProjectConnectConfig(projectId);
+        ConnectConfig config = MsoyServer.peerMan.getProjectConnectConfig(project.projectId);
         if (config != null) {
             log.info(
                 "Redirecting Swiftly connection to another node. [server=" + config.server + "].");
@@ -96,11 +97,11 @@ public class SwiftlyManager
         }
 
         // nobody has this project resolved. let's create and host the project room on this node.
-        NodeObject.Lock lock = MsoyPeerManager.getProjectLock(projectId);
+        NodeObject.Lock lock = MsoyPeerManager.getProjectLock(project.projectId);
         PeerManager.LockedOperation createOp = new PeerManager.LockedOperation() {
             public void run () {
-                log.info("Got lock, creating project " + projectId);
-                createRoom(projectId, waiter);
+                log.info("Got lock, creating project " + project.projectId);
+                createRoom(project, waiter);
             }
 
             // if we failed to acquire a lock, attempt to redirect to the resolving host
@@ -115,7 +116,7 @@ public class SwiftlyManager
                     return;
 
                 } else {
-                    log.warning("Project lock acquired by null? [id=" + projectId + "].");
+                    log.warning("Project lock acquired by null? [id=" + project.projectId + "].");
                     waiter.requestFailed(new Exception("Project lock acquired by null?"));
                     return;
                 }
@@ -335,54 +336,47 @@ public class SwiftlyManager
         collaboratorRemoved(null, projectId, name);
     }
 
-
     /**
      * Create a ProjectRoomManager on this node. Failure and success will be handled using the
      * supplied ServletWaiter
      */
-    protected void createRoom (final int projectId, final ServletWaiter<ConnectConfig> waiter)
+    protected void createRoom (final SwiftlyProject project,
+                               final ServletWaiter<ConnectConfig> waiter)
     {
         final ProjectRoomManager mgr;
         ProjectRoomConfig config = new ProjectRoomConfig();
         try {
-            config.projectId = projectId;
+            config.projectId = project.projectId;
             mgr = (ProjectRoomManager)MsoyServer.plreg.createPlace(config);
-            _managers.put(projectId, mgr);
+            _managers.put(project.projectId, mgr);
 
-            log.info("Created project room [project=" + projectId +
+            log.info("Created project room [project=" + project.projectId +
                 ", room=" + mgr.getPlaceObject().getOid() + "].");
 
             // Load the project storage on the invoker thread, initialize the ProjectRoomManager
             MsoyServer.invoker.postUnit(new Invoker.Unit("loadProjectStorage") {
                 public boolean invoke () {
                     try {
-                        // first load the project record
-                        SwiftlyProjectRecord projectRecord =
-                            MsoyServer.swiftlyRepo.loadProject(projectId);
-                        if (projectRecord == null) {
-                            throw new PersistenceException("Failed to load project record " +
-                                "[projectId=" + projectId + "].");
-                        }
-                        _project = projectRecord.toSwiftlyProject();
+                        _project = project;
 
-                        // then the storage record
+                        // load the storage record
                         SwiftlySVNStorageRecord storageRecord =
-                            MsoyServer.swiftlyRepo.loadStorageRecordForProject(projectId);
+                            MsoyServer.swiftlyRepo.loadStorageRecordForProject(project.projectId);
                         if (storageRecord == null) {
                             throw new PersistenceException("Project missing storage record " +
-                                " [projectId=" + projectId + "].");
+                                " [projectId=" + project.projectId + "].");
                         }
                         _storage = new ProjectSVNStorage(_project, storageRecord);
 
-                        // and finally the list of collaborators
+                        // and the list of collaborators
                         _collaborators = new ArrayList<MemberName>();
                         for (MemberRecord mRec :
-                            MsoyServer.swiftlyRepo.getCollaborators(projectId)) {
+                            MsoyServer.swiftlyRepo.getCollaborators(project.projectId)) {
                             _collaborators.add(mRec.getName());
                         }
                         if (_collaborators.size() <= 0) {
                             throw new PersistenceException("No collaborators found for project " +
-                                " [projectId=" + projectId + "].");
+                                " [projectId=" + project.projectId + "].");
                         }
 
                     } catch (Exception e) {
@@ -401,13 +395,6 @@ public class SwiftlyManager
                         mgr.shutdown();
                         return;
                     }
-
-                    // if it was cheap and easy, we would check the users rights at this point to
-                    // make sure they should be able to resolve the room manager. but the cleanest
-                    // way to do that would be after the mgr.init() which is not a free operation.
-                    // we could redefine what read access means at this point, but that's just
-                    // nasty. so we'll rely on all the service checks we have in the manager to
-                    // protect us.
 
                     // all the necessary bits of data have been loaded, initialize the room manager
                     mgr.init(_project, _collaborators, _storage,

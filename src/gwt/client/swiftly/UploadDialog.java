@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.SwiftlyConnectConfig;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -33,7 +33,7 @@ public class UploadDialog extends FlexTable
         public void dialogClosed ();
     }
 
-    public UploadDialog (String projectId, WebIdent ident, ConnectConfig config,
+    public UploadDialog (String projectId, WebIdent ident, SwiftlyConnectConfig config,
         UploadDialogListener listener)
     {
         setStyleName("swiftlyUploader");

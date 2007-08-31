@@ -27,6 +27,7 @@ import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.SwiftlyConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -37,10 +38,13 @@ public class SwiftlyServlet extends MsoyServiceServlet
     implements SwiftlyService
 {
     // from SwiftlyService
-    public ConnectConfig getConnectConfig (WebIdent ident, final int projectId)
+    public SwiftlyConnectConfig getConnectConfig (WebIdent ident, final int projectId)
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser(ident);
+
+        // load the project. this also verifies the user has permissions to view the project
+        final SwiftlyProject project = loadProject(ident, projectId);
 
         // run a task on the dobject thread that finds the ProjectRoomManager for this project
         // either on this server or on a different node and returns that server's ConnectConfig
@@ -48,14 +52,14 @@ public class SwiftlyServlet extends MsoyServiceServlet
             new ServletWaiter<ConnectConfig>("resolveRoomManager[" + projectId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.swiftlyMan.resolveRoomManager(memrec.getName(), projectId, waiter);
+                MsoyServer.swiftlyMan.resolveRoomManager(memrec.getName(), project, waiter);
             }
         });
 
         // block the servlet waiting for the dobject thread
         waiter.waitForResult();
 
-        return waiter.getArgument();
+        return new SwiftlyConnectConfig(waiter.getArgument(), project);
     }
 
     // from SwiftlyService
@@ -236,7 +240,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
                 throw new ServiceException(SwiftlyCodes.E_NO_SUCH_PROJECT);
             }
             // verify the user has permission to view this project
-            // TODO: another place we have access controls defined. Can we simplify this?
+            // TODO: read access is defined here and the room object. Can we simplify this?
             if (!pRec.remixable && !isCollaborator(pRec.projectId, memrec.memberId)) {
                 throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
             }

@@ -6,7 +6,6 @@ package client.swiftly;
 import client.shell.Application;
 import client.shell.WorldClient;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -17,7 +16,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.client.DeploymentConfig;
-import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.SwiftlyConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 /**
@@ -26,24 +25,15 @@ import com.threerings.msoy.web.data.SwiftlyProject;
 public class SwiftlyPanel extends FlexTable
     implements ProjectEdit.ProjectEditListener
 {
-    public SwiftlyPanel (ConnectConfig config, int projectId)
+    public SwiftlyPanel (SwiftlyConnectConfig config, int projectId)
     {
         super();
         setStyleName("swiftlyPanel");
         _authtoken = (CSwiftly.creds == null) ? "" : CSwiftly.creds.token;
         _config = config;
-
-        // load up the swiftly project record
-        CSwiftly.swiftlysvc.loadProject(CSwiftly.ident, projectId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                _project = (SwiftlyProject)result;
-                updateProjectLink();
-                loadApplet();
-            }
-            public void onFailure (Throwable cause) {
-                SwiftlyPanel.displayError(CSwiftly.serverError(cause));
-            }
-        });
+        _project = config.project;
+        updateProjectLink();
+        loadApplet();
     }
 
     // from ProjectEdit.ProjectEditListener
@@ -199,7 +189,7 @@ public class SwiftlyPanel extends FlexTable
     protected static UploadDialog _uploadDialog;
 
     protected SwiftlyProject _project;
-    protected static ConnectConfig _config;
+    protected static SwiftlyConnectConfig _config;
     protected final String _authtoken;
     protected static VerticalPanel _vertPanel;
     protected final Hyperlink _projectLink = new Hyperlink();

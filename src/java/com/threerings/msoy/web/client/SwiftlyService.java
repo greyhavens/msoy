@@ -7,8 +7,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.SwiftlyConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -18,9 +18,9 @@ import com.threerings.msoy.web.data.WebIdent;
 public interface SwiftlyService extends RemoteService
 {
     /**
-     * Returns the ConnectConfig used by the applet for connecting to the server.
+     * Returns the SwiftlyConnectConfig used by the applet for connecting to the server.
      */
-    public ConnectConfig getConnectConfig (WebIdent ident, int projectId)
+    public SwiftlyConnectConfig getConnectConfig (WebIdent ident, int projectId)
         throws ServiceException;
 
     /**
