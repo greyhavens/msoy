@@ -106,6 +106,9 @@ public class SwiftlyRepository extends DepotRepository
     public void deleteProject (SwiftlyProjectRecord record)
         throws PersistenceException
     {
+        // delete all this project collaborators
+        deleteAll(SwiftlyCollaboratorsRecord.class,
+            new Where(SwiftlyCollaboratorsRecord.PROJECT_ID_C, record.projectId), null);
         delete(record);
     }
 
