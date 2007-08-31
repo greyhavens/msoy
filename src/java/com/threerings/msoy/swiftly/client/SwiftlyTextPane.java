@@ -188,7 +188,7 @@ public class SwiftlyTextPane extends JEditorPane
             try {
                 final Object position = getHighlighter().addHighlight(
                     getCaretPosition(), getCaretPosition() + 1,
-                    new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));;
+                    new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
                 // show the highlighting for 3 seconds
                 Timer timer = new Timer(3000, new ActionListener () {
                     public void actionPerformed (ActionEvent evt)
