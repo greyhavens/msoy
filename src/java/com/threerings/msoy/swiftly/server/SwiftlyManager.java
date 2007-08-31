@@ -397,20 +397,7 @@ public class SwiftlyManager
                     }
 
                     // all the necessary bits of data have been loaded, initialize the room manager
-                    mgr.init(_project, _collaborators, _storage,
-                        new InvocationService.ConfirmListener() {
-                        public void requestProcessed ()
-                        {
-                            // add this node to the peer manager as the project host
-                            MsoyServer.peerMan.projectDidStartup(_project, getConnectConfig());
-                            waiter.requestCompleted(getConnectConfig());
-                        }
-
-                        public void requestFailed (String cause)
-                        {
-                            waiter.requestFailed(new Exception(cause));
-                        }
-                    });
+                    mgr.init(_project, _collaborators, _storage, getConnectConfig(), waiter);
                 }
 
                 protected SwiftlyProject _project;

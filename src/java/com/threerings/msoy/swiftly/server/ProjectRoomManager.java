@@ -34,7 +34,9 @@ import com.threerings.msoy.swiftly.server.build.LocalProjectBuilder;
 import com.threerings.msoy.swiftly.server.build.ProjectBuilder;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
+import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.web.server.UploadFile;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.client.InvocationService.InvocationListener;
@@ -59,7 +61,8 @@ public class ProjectRoomManager extends PlaceManager
      * Called by the {@link SwiftlyManager} after creating this project room manager.
      */
     public void init (final SwiftlyProject project, final List<MemberName> collaborators,
-                      ProjectStorage storage, final ConfirmListener listener)
+                      ProjectStorage storage, final ConnectConfig config,
+                      final ServletWaiter<ConnectConfig> listener)
     {
         _storage = storage;
         _resultItems = new HashMap<MemberName, Integer>();
@@ -97,7 +100,7 @@ public class ProjectRoomManager extends PlaceManager
                 if (_error != null) {
                     log.log(Level.WARNING,
                         "Loading project tree failed. [project=" + project + "].", _error);
-                    listener.requestFailed(SwiftlyCodes.E_INTERNAL_ERROR);
+                    listener.requestFailed(_error);
                     shutdown();
                     return;
                 }
@@ -114,7 +117,10 @@ public class ProjectRoomManager extends PlaceManager
                 // the project and collaborators have changed, send out an access control change
                 getRoomObj().postMessage(ProjectRoomObject.ACCESS_CONTROL_CHANGE);
 
-                listener.requestProcessed();
+                // add this node to the peer manager as the project host
+                MsoyServer.peerMan.projectDidStartup(project, config);
+
+                listener.requestCompleted(config);
             }
 
             protected List<PathElement> _projectTree;
