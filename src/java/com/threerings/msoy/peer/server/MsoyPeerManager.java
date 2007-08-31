@@ -132,12 +132,12 @@ public class MsoyPeerManager extends CrowdPeerManager
      * Returns the ConnectConfig for the Node hosting the Swiftly project room manager for this
      * project or null if no peer has published that they are hosting the project.
      */
-    public HostedProject getProjectHost (final int projectId)
+    public ConnectConfig getProjectConnectConfig (final int projectId)
     {
-        return lookupNodeDatum(new Lookup<HostedProject>() {
-            public HostedProject lookup (NodeObject nodeobj) {
+        return lookupNodeDatum(new Lookup<ConnectConfig>() {
+            public ConnectConfig lookup (NodeObject nodeobj) {
                 HostedProject info = ((MsoyNodeObject) nodeobj).hostedProjects.get(projectId);
-                return info;
+                return (info == null) ? null : info.createConnectConfig();
             }
         });
     }

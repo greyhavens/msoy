@@ -18,7 +18,6 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.peer.data.HostedProject;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.data.PeerProjectMarshaller;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -88,9 +87,8 @@ public class SwiftlyManager
         }
 
         // we don't have the project resolved. is it already hosted on another node?
-        HostedProject hosted = MsoyServer.peerMan.getProjectHost(projectId);
-        if (hosted != null) {
-            ConnectConfig config = hosted.createConnectConfig();
+        ConnectConfig config = MsoyServer.peerMan.getProjectConnectConfig(projectId);
+        if (config != null) {
             log.info(
                 "Redirecting Swiftly connection to another node. [server=" + config.server + "].");
             waiter.requestCompleted(config);
