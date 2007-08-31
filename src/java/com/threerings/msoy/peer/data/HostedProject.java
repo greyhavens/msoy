@@ -20,9 +20,6 @@ public class HostedProject extends HostedPlace
     /** The HTTP port from which the applet should be downloaded. */
     public int httpPort;
 
-    /** The node currently hosting this game. */
-    public String node;
-
     /**
      * Empty constructor used for unserializing
      */
@@ -33,13 +30,12 @@ public class HostedProject extends HostedPlace
     /**
      * Creates a hosted project record.
      */
-    public HostedProject (SwiftlyProject project, ConnectConfig config, String node)
+    public HostedProject (SwiftlyProject project, ConnectConfig config)
     {
         super(project.projectId, project.projectName);
         this.port = config.port;
         this.httpPort = config.httpPort;
         this.server = config.server;
-        this.node = node;
     }
 
     /**

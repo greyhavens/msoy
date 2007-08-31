@@ -222,7 +222,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         log.info(
             "Hosting project [id=" + project.projectId + ", name=" + project.projectName + "].");
-        _mnobj.addToHostedProjects(new HostedProject(project, config, getNodeObject().nodeName));
+        _mnobj.addToHostedProjects(new HostedProject(project, config));
     }
 
     /**
