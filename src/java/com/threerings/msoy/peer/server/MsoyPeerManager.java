@@ -20,6 +20,7 @@ import com.threerings.msoy.peer.data.MemberLocation;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -234,6 +235,15 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
+     * Returns the HTTP port this Whirled node is listening on.
+     */
+    public int getPeerHttpPort (String nodeName)
+    {
+        MsoyPeerNode peer = (MsoyPeerNode)_peers.get(nodeName);
+        return (peer == null) ? -1 : peer.getHttpPort();
+    }
+
+    /**
      * Called by the {@link MsoyPeerNode} when a member logs onto their server.
      */
     protected void remoteMemberLoggedOn (MsoyPeerNode node, final MsoyClientInfo info)
@@ -296,7 +306,8 @@ public class MsoyPeerManager extends CrowdPeerManager
     @Override // from PeerManager
     protected PeerNode createPeerNode (NodeRecord record)
     {
-        return new MsoyPeerNode(this, record);
+        return new MsoyPeerNode(this, record,
+            ServerConfig.config.getValue(record.nodeName + ".http_port", ServerConfig.httpPort));
     }
 
     /** Used to keep {@link MsoyNodeObject#memberLocs} up to date. */

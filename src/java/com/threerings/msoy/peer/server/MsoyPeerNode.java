@@ -23,9 +23,10 @@ import com.threerings.msoy.peer.data.MsoyClientInfo;
 public class MsoyPeerNode extends PeerNode
     implements SetListener
 {
-    public MsoyPeerNode (PeerManager peermgr, NodeRecord record)
+    public MsoyPeerNode (PeerManager peermgr, NodeRecord record, int httpPort)
     {
         super(peermgr, record);
+        _httpPort = httpPort;
     }
 
     @Override // from PeerNode
@@ -72,4 +73,15 @@ public class MsoyPeerNode extends PeerNode
                 this, (MsoyClientInfo)event.getOldEntry());
         }
     }
+
+    /**
+     * Return the HTTP port this Whirled node is listening on.
+     */
+    public int getHttpPort ()
+    {
+        return _httpPort;
+    }
+
+    /** The HTTP port this Whirled node is listening on.  */
+    protected int _httpPort;
 }

@@ -106,15 +106,11 @@ public class SwiftlyManager
             // if we failed to acquire a lock, attempt to redirect to the resolving host
             public void fail (String peerName) {
                 if (peerName != null) {
-                    String hostname = MsoyServer.peerMan.getPeerPublicHostName(peerName);
-                    int port = MsoyServer.peerMan.getPeerPort(peerName);
-
-                    log.info("Sending Swiftly user to " + hostname + ":" + port + ".");
                     ConnectConfig config = new ConnectConfig();
-                    config.server = hostname;
-                    config.port = port;
-                    // XXX TODO ugh, this has no httpport set, shit, this will break the applet
-                    // loading on the client.
+                    config.server = MsoyServer.peerMan.getPeerPublicHostName(peerName);
+                    config.port = MsoyServer.peerMan.getPeerPort(peerName);
+                    config.httpPort = MsoyServer.peerMan.getPeerHttpPort(peerName);
+                    log.info("Sending Swiftly user to " + config.server + ":" + config.port + ".");
                     waiter.requestCompleted(config);
                     return;
 
