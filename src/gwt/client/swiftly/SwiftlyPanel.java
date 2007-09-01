@@ -80,7 +80,7 @@ public class SwiftlyPanel extends FlexTable
         infoPanel.setWidth("100%");
         _vertPanel.add(infoPanel);
 
-        // Add the project edit and upload dialogs as well as a status area
+        // Add a status area for error messages.
         _vertPanel.add(_status);
 
         // Add the applet
