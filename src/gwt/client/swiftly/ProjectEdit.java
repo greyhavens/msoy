@@ -46,14 +46,47 @@ public class ProjectEdit extends FlexTable
         public void projectSubmitted (SwiftlyProject project);
     }
 
-    public ProjectEdit (SwiftlyProject project, ProjectEditListener listener)
+    public ProjectEdit (int projectId, ProjectEditListener listener)
     {
-        _project = project;
         _listener = listener;
-        _amOwner = (CSwiftly.getMemberId() == project.ownerId);
-
         setStyleName("projectEdit");
 
+        loadProject(projectId);
+    }
+
+    // from BorderedDialog.  This is called in the super constructor, so no UI components that
+    // depend on members that are set in this object's constructor can be used here.
+    public Widget createContents ()
+    {
+        return new FlexTable();
+    }
+
+    protected void closeDialog()
+    {
+        removeFromParent();
+        if (_listener != null) {
+            _listener.projectSubmitted(_project);
+        }
+    }
+
+    protected void loadProject (final int projectId)
+    {
+        CSwiftly.swiftlysvc.loadProject(CSwiftly.ident, projectId, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _project = (SwiftlyProject)result;
+                _amOwner = (CSwiftly.getMemberId() == _project.ownerId);
+                // now that we have our project, load our collaborators.
+                loadCollaborators();
+            }
+            public void onFailure (Throwable caught) {
+                CSwiftly.log("Loadling project failed projectId=[" + projectId + "]", caught);
+                SwiftlyPanel.displayError(CSwiftly.serverError(caught));
+            }
+        });
+    }
+
+    protected void displayProject ()
+    {
         int row = 0;
         int col = 0;
         HorizontalPanel cell = new HorizontalPanel();
@@ -126,23 +159,6 @@ public class ProjectEdit extends FlexTable
         getFlexCellFormatter().setHorizontalAlignment(row, col, HasAlignment.ALIGN_RIGHT);
         setWidget(row, col, cell);
         col++;
-
-        loadCollaborators();
-    }
-
-    // from BorderedDialog.  This is called in the super constructor, so no UI components that
-    // depend on members that are set in this object's constructor can be used here.
-    public Widget createContents ()
-    {
-        return new FlexTable();
-    }
-
-    protected void closeDialog()
-    {
-        removeFromParent();
-        if (_listener != null) {
-            _listener.projectSubmitted(_project);
-        }
     }
 
     protected void loadCollaborators ()
@@ -242,6 +258,7 @@ public class ProjectEdit extends FlexTable
                 // we now have our collaborators and friends, so display them both. displaying of
                 // friends relies on both the collaborators list and friends list so we need them
                 // both before displaying.
+                displayProject();
                 displayCollaborators();
                 updateFriendList();
             }

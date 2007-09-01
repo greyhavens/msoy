@@ -72,7 +72,7 @@ public class SwiftlyPanel extends FlexTable
         _editButton = new Button(CSwiftly.msgs.editProject(), new ClickListener() {
             public void onClick (Widget sender) {
                 _editButton.setEnabled(false);
-                _vertPanel.insert(new ProjectEdit(_project, SwiftlyPanel.this), 1);
+                _vertPanel.insert(new ProjectEdit(_project.projectId, SwiftlyPanel.this), 1);
             }
         });
         infoPanel.setWidget(0, 2, _editButton);
