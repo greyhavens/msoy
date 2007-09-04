@@ -191,7 +191,7 @@ public class MsoyGameRegistry
         MemberObject mobj = MsoyServer.lookupMember(memberId);
         if (mobj != null) {
             mobj.setFlow(mobj.flow + deltaFlow);
-            mobj.setAccFlow(mobj.flow + deltaFlow);
+            mobj.setAccFlow(mobj.accFlow + deltaFlow);
 
         } else {
             // locate the peer that is hosting this member and forward the flow update there
