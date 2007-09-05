@@ -54,13 +54,6 @@ public class ProjectEdit extends FlexTable
         loadProject(projectId);
     }
 
-    // from BorderedDialog.  This is called in the super constructor, so no UI components that
-    // depend on members that are set in this object's constructor can be used here.
-    public Widget createContents ()
-    {
-        return new FlexTable();
-    }
-
     protected void closeDialog()
     {
         removeFromParent();
