@@ -217,29 +217,11 @@ public class MyWhirled extends FlexTable
                     List entry = (List) _peopleAttributes.get(id);
                     if (entry != null) {
                         if (entry.size() == 1) {
-                            // make sure there is already something at indexex 1 and 2 so that 
-                            // entry.set() is happy
+                            // make sure there is already something at index 1 so that entry.set() 
+                            // is happy
                             entry.add(null);
                         }
                         entry.set(1, card.sceneType == SceneCard.ROOM ? "Room" : "Game");
-                        // TODO: this check prevents us from overwriting a room click listener with
-                        // a game click listener, which would happen if they're in a room and 
-                        // sitting at a forming game table.  In that instance, we want to both
-                        // take them to that room and join their table... Oh the fiddling...
-                        if (entry.size() < 3) {
-                            entry.add(new ClickListener () {
-                                public void onClick (Widget sender) {
-                                    if (card.sceneType == SceneCard.ROOM) {
-                                        WorldClient.displayFlash("memberScene=" + id);
-                                    } else if (card.sceneType == SceneCard.GAME) {
-                                        // TODO: we will want this to connect you directly to their
-                                        // game instance.
-                                        History.newItem(
-                                            Application.createLinkToken("game", "" + card.sceneId));
-                                    }
-                                }
-                            });
-                        }
                     }
                 }
             }
@@ -434,8 +416,11 @@ public class MyWhirled extends FlexTable
             setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
 
             List attrs = (List) peopleAttributes.get(new Integer(card.name.getMemberId()));
-            ClickListener goToFriend = attrs != null && attrs.size() >= 3 ? 
-                (ClickListener) attrs.get(2) : null;
+            ClickListener goToFriend = new ClickListener() {
+                public void onClick (Widget sender) {
+                    WorldClient.displayFlash("memberScene=" + card.name.getMemberId());
+                }
+            };
 
             Widget pic = MediaUtil.createMediaView(card.photo, MediaDesc.HALF_THUMBNAIL_SIZE);
             if (pic instanceof Image && goToFriend != null) {
