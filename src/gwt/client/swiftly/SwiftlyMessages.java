@@ -176,6 +176,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String projectsTitle();
 
   /**
+   * Translated "Add".
+   * 
+   * @return translated "Add"
+   * @gwt.key add
+   */
+  String add();
+
+  /**
    * Translated "Please enter a name for your new project.".
    * 
    * @return translated "Please enter a name for your new project."
@@ -216,12 +224,12 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String createProject();
 
   /**
-   * Translated "Add Collaborators".
+   * Translated "Remove".
    * 
-   * @return translated "Add Collaborators"
-   * @gwt.key addCollaborators
+   * @return translated "Remove"
+   * @gwt.key remove
    */
-  String addCollaborators();
+  String remove();
 
   /**
    * Translated "No more friends.".
@@ -238,6 +246,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key invalidProjectId
    */
   String invalidProjectId(String arg0);
+
+  /**
+   * Translated "Project Owner:".
+   * 
+   * @return translated "Project Owner:"
+   * @gwt.key projectOwner
+   */
+  String projectOwner();
 
   /**
    * Translated "Upload a file".

@@ -3,15 +3,12 @@
 
 package client.swiftly;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import client.shell.Application;
 import client.util.ClickCallback;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -22,19 +19,14 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MenuBar;
-import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 /**
- * Display a dialog to edit a project.
+ * Display a dialog to edit a project used only by the project owner.
  */
 public class ProjectEdit extends FlexTable
 {
@@ -67,7 +59,6 @@ public class ProjectEdit extends FlexTable
         CSwiftly.swiftlysvc.loadProject(CSwiftly.ident, projectId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _project = (SwiftlyProject)result;
-                _amOwner = (CSwiftly.getMemberId() == _project.ownerId);
                 // now that we have our project, load our collaborators.
                 loadCollaborators();
             }
@@ -104,28 +95,45 @@ public class ProjectEdit extends FlexTable
         setWidget(row, col++, cell);
 
         cell = new HorizontalPanel();
-        cell.add(new Label(CSwiftly.msgs.collaborators()));
-        _collaboratorsPanel = new HorizontalPanel();
-        cell.add(_collaboratorsPanel);
 
-        // Add friends list if project owner
-        if (_amOwner) {
-            cell.add(new Label(CSwiftly.msgs.addCollaborators()));
-            _friendList = new ListBox();
-            _friendList.addChangeListener(new ChangeListener() {
-                public void onChange (Widget sender) {
-                    int tx = _friendList.getSelectedIndex();
-                    // first item is the menu or no friends message
-                    if (tx < 1) {
-                        return;
-                    }
-                    FriendEntry friend =
-                        (FriendEntry)_friends.get(new Integer(_friendList.getValue(tx)));
+        cell.add(new Label(CSwiftly.msgs.collaborators()));
+        _collaboratorsList = new ListBox();
+        cell.add(_collaboratorsList);
+
+        _removeCollaboratorButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                int tx = _collaboratorsList.getSelectedIndex();
+                if (tx == -1) {
+                    return;
+                }
+                MemberName name =
+                    (MemberName)_collaborators.get(new Integer(_collaboratorsList.getValue(tx)));
+                if (name != null) {
+                    removeCollaborator(name);
+                }
+            }
+        });
+        cell.add(_removeCollaboratorButton);
+
+        cell.add(new Label(CSwiftly.msgs.friends()));
+        _friendList = new ListBox();
+        cell.add(_friendList);
+
+        _addFriendButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                int tx = _friendList.getSelectedIndex();
+                if (tx == -1) {
+                    return;
+                }
+
+                FriendEntry friend =
+                    (FriendEntry)_friends.get(new Integer(_friendList.getValue(tx)));
+                if (friend != null) {
                     addCollaborator(friend.name);
                 }
-            });
-            cell.add(_friendList);
-        }
+            }
+        });
+        cell.add(_addFriendButton);
         setWidget(row, col++, cell);
 
         cell = new HorizontalPanel();
@@ -156,11 +164,15 @@ public class ProjectEdit extends FlexTable
 
     protected void loadCollaborators ()
     {
-        _collaborators = new ArrayList();
+        _collaborators = new HashMap();
         CSwiftly.swiftlysvc.getProjectCollaborators(CSwiftly.ident, _project.projectId,
             new AsyncCallback() {
             public void onSuccess (Object result) {
-                _collaborators.addAll((List)result);
+                Iterator iter = ((List)result).iterator();
+                while (iter.hasNext()) {
+                    MemberName name = (MemberName)iter.next();
+                    _collaborators.put(new Integer(name.getMemberId()), name);
+                }
                 // now that we have our collaborators, load our friends.
                 loadFriends();
             }
@@ -172,67 +184,28 @@ public class ProjectEdit extends FlexTable
         });
     }
 
-    protected void displayCollaborators ()
+    protected void updateCollaboratorsList ()
     {
-        _collaboratorsPanel.clear();
-        Iterator iter = _collaborators.iterator();
-        if (!iter.hasNext()) {
-            _collaboratorsPanel.add(new Label(CSwiftly.msgs.noCollaborators()));
-            return;
-        }
+        _collaboratorsList.clear();
+        Iterator iter = _collaborators.values().iterator();
 
+        boolean foundCollaborator = false;
         while (iter.hasNext()) {
             MemberName name = (MemberName)iter.next();
-            final PopupPanel collabMenuPanel = new PopupPanel(true);
-            MenuBar menu = getOwnerMenuBar(name, collabMenuPanel);
-            collabMenuPanel.add(menu);
-            final InlineLabel collaborator = new InlineLabel(name.toString());
-            collaborator.addStyleName("LabelLink");
-            // use a MouseListener instead of ClickListener to get at the mouse (x,y)
-            collaborator.addMouseListener(new MouseListenerAdapter() {
-                public void onMouseDown (Widget sender, int x, int y) {
-                    collabMenuPanel.setPopupPosition(collaborator.getAbsoluteLeft() + x,
-                                                     collaborator.getAbsoluteTop() + y);
-                    collabMenuPanel.show();
-                }
-            });
-            _collaboratorsPanel.add(collaborator);
-            if (iter.hasNext()) {
-                _collaboratorsPanel.add(new InlineLabel(", "));
+            // don't display the owner in the collaborators list since they cannot be removed
+            if (name.getMemberId() == _project.ownerId) {
+                continue;
             }
+            foundCollaborator = true;
+            _collaboratorsList.addItem(name.toString(), String.valueOf(name.getMemberId()));
         }
-    }
 
-    /**
-     * Get the menus for use by owners when perusing the collaborators of their project.
-     */
-    protected MenuBar getOwnerMenuBar(final MemberName name, final PopupPanel parent)
-    {
-        // MenuBar(true) creates a vertical menu
-        MenuBar menu = new MenuBar(true);
-        menu.addItem(Application.createLinkHtml(CSwiftly.msgs.viewProfile(), "profile",
-            "" + name.getMemberId()), true, new Command() {
-            public void execute () {
-                parent.hide();
-                ProjectEdit.this.removeFromParent();
-            }
-        });
-
-        MenuItem remove = new MenuItem(CSwiftly.msgs.viewRemove(), new Command() {
-            public void execute() {
-                parent.hide();
-                removeCollaborator(name);
-            }
-        });
-
-        // show actions that we don't have permission to take, but make sure they are
-        // disabled. disable removal for the owner on themselves
-        if (!_amOwner || _project.ownerId == name.getMemberId()) {
-            remove.setCommand(null);
-            remove.addStyleName("Disabled");
+        if (foundCollaborator) {
+            _removeCollaboratorButton.setEnabled(true);
+        } else {
+            _removeCollaboratorButton.setEnabled(false);
+            _collaboratorsList.addItem(CSwiftly.msgs.noCollaborators());
         }
-        menu.addItem(remove);
-        return menu;
     }
 
     /**
@@ -252,7 +225,7 @@ public class ProjectEdit extends FlexTable
                 // friends relies on both the collaborators list and friends list so we need them
                 // both before displaying.
                 displayProject();
-                displayCollaborators();
+                updateCollaboratorsList();
                 updateFriendList();
             }
             public void onFailure (Throwable caught) {
@@ -270,22 +243,22 @@ public class ProjectEdit extends FlexTable
     {
         _friendList.clear();
         Iterator iter = _friends.values().iterator();
+
         boolean foundFriend = false;
         while (iter.hasNext()) {
             final FriendEntry friend = (FriendEntry)iter.next();
             // do not display friends who are already collaborators
-            if (_collaborators.contains(friend.name)) {
+            if (_collaborators.containsKey(new Integer(friend.name.getMemberId()))) {
                 continue;
             }
-
-            // add a title as the first element
-            if (!foundFriend) {
-                _friendList.addItem(CSwiftly.msgs.friends());
-                foundFriend = true;
-            }
+            foundFriend = true;
             _friendList.addItem(friend.name.toString(), String.valueOf(friend.name.getMemberId()));
         }
-        if (!foundFriend) {
+
+        if (foundFriend) {
+            _addFriendButton.setEnabled(true);
+        } else {
+            _addFriendButton.setEnabled(false);
             _friendList.addItem(CSwiftly.msgs.noFriends());
         }
     }
@@ -300,8 +273,8 @@ public class ProjectEdit extends FlexTable
         CSwiftly.swiftlysvc.joinCollaborators(
             CSwiftly.ident, _project.projectId, name, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _collaborators.add(name);
-                displayCollaborators();
+                _collaborators.put(new Integer(name.getMemberId()), name);
+                updateCollaboratorsList();
                 updateFriendList();
             }
             public void onFailure (Throwable caught) {
@@ -322,8 +295,8 @@ public class ProjectEdit extends FlexTable
         CSwiftly.swiftlysvc.leaveCollaborators(
             CSwiftly.ident, _project.projectId, name, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _collaborators.remove(name);
-                displayCollaborators();
+                _collaborators.remove(new Integer(name.getMemberId()));
+                updateCollaboratorsList();
                 updateFriendList();
             }
             public void onFailure (Throwable caught) {
@@ -336,11 +309,12 @@ public class ProjectEdit extends FlexTable
 
     protected SwiftlyProject _project;
     protected ProjectEditListener _listener;
-    protected List _collaborators;
+    protected HashMap _collaborators;
     protected HashMap _friends;
-    protected boolean _amOwner;
+    protected Button _addFriendButton = new Button(CSwiftly.msgs.add());
+    protected Button _removeCollaboratorButton = new Button(CSwiftly.msgs.remove());
 
     protected CheckBox _remixable;
-    protected HorizontalPanel _collaboratorsPanel;
+    protected ListBox _collaboratorsList;
     protected ListBox _friendList;
 }

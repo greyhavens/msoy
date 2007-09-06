@@ -6,15 +6,18 @@ package client.swiftly;
 import client.shell.Application;
 import client.shell.WorldClient;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.SwiftlyConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
@@ -69,13 +72,25 @@ public class SwiftlyPanel extends FlexTable
         FlexTable infoPanel = new FlexTable();
         infoPanel.setText(0, 0, CSwiftly.msgs.swiftlyEditing());
         infoPanel.setWidget(0, 1, _projectLink);
-        _editButton = new Button(CSwiftly.msgs.editProject(), new ClickListener() {
-            public void onClick (Widget sender) {
-                _editButton.setEnabled(false);
-                _vertPanel.insert(new ProjectEdit(_project.projectId, SwiftlyPanel.this), 1);
-            }
-        });
-        infoPanel.setWidget(0, 2, _editButton);
+
+        // display the edit button only if this user is the project owner
+        if (CSwiftly.getMemberId() == _project.ownerId) {
+            _editButton = new Button(CSwiftly.msgs.editProject(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    _editButton.setEnabled(false);
+                    _vertPanel.insert(new ProjectEdit(_project.projectId, SwiftlyPanel.this), 1);
+                }
+            });
+            infoPanel.setWidget(0, 2, _editButton);
+
+        // display a link to the owner if this user is not the owner
+        } else {
+            HorizontalPanel cell = new HorizontalPanel();
+            cell.add(new Label(CSwiftly.msgs.projectOwner()));
+            cell.add(_ownerLink);
+            infoPanel.setWidget(0, 2, cell);
+            loadOwner();
+        }
         infoPanel.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
         infoPanel.setWidth("100%");
         _vertPanel.add(infoPanel);
@@ -109,6 +124,22 @@ public class SwiftlyPanel extends FlexTable
         _projectLink.setTargetHistoryToken(
             Application.createLinkToken("swiftly", String.valueOf(_project.projectId)));
         _projectLink.setText(_project.projectName);
+    }
+
+    protected void loadOwner ()
+    {
+        CSwiftly.swiftlysvc.getProjectOwner(CSwiftly.ident, _project.projectId,
+            new AsyncCallback() {
+            public void onSuccess (Object result) {
+                MemberName owner = (MemberName)result;
+                _ownerLink.setTargetHistoryToken(
+                    Application.createLinkToken("profile", String.valueOf(owner.getMemberId())));
+                _ownerLink.setText(owner.getNormal());
+            }
+            public void onFailure (Throwable cause) {
+                CSwiftly.serverError(cause);
+            }
+        });
     }
 
     /**
@@ -193,6 +224,7 @@ public class SwiftlyPanel extends FlexTable
     protected final String _authtoken;
     protected static VerticalPanel _vertPanel;
     protected final Hyperlink _projectLink = new Hyperlink();
+    protected final Hyperlink _ownerLink = new Hyperlink();
     protected Button _editButton;
     protected static final Label _status = new Label();
     protected static Widget _applet;
