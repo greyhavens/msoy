@@ -1,9 +1,5 @@
 package com.threerings.msoy.swiftly.server.storage.s3;
 
-import java.util.Date;
-
-import com.threerings.msoy.swiftly.server.storage.ProjectS3Storage;
-
 /**
  * S3 lock manager. Responsible for providing per-object locking for all
  * potentially conflicting clients, locally or within a cluster. All
@@ -32,29 +28,9 @@ public interface S3StorageLockManager
     }
 
     /**
-     * Exception thrown if a lock has expired.
-     */
-    public static class StorageLockExpiredException extends Exception {
-    	public StorageLockExpiredException (String message) {
-    		super(message);
-    	}
-    }
-
-    
-    /**
-     * S3 Object Lock. Supports lock expiration, which will be used by the {@link ProjectS3Storage}
-     * to help ensure lock validity and timeouts on "lost" locks.
-     * 
-     * It is highly recommended that the lock report an expiration date earlier than actual
-     * expiration -- this will allow for a safety window in which the lock will be assumed
-     * expired by the owner, prior to actual lock expiry.
+     * S3 Object Lock.
      */
     public interface S3ObjectLock {
-    	/**
-    	 * Return the date of lock expiry, or null if the lock will not expire.
-    	 * @return Date of expiration, or null if the lock will not expire.
-    	 */
-    	public Date getExpiration ();
     }
 
     
@@ -63,7 +39,7 @@ public interface S3StorageLockManager
      * 
      * @param owner Identifying entity that will own the lock
      * @param objectKey The S3 object key to lock
-     * @param timeout The maximum time to wait on the lock.
+     * @param timeout The maximum time to wait on the lock, in seconds.
      * @throws StorageLockUnavailableException Thrown if the lock can not be acquired within the specified period.
      */
     public S3ObjectLock lockObject (Object owner, String objectKey, int timeout) throws StorageLockUnavailableException;
