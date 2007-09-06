@@ -23,9 +23,9 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link MemberService#getCurrentSceneId} request.
+     * Handles a {@link MemberService#getCurrentMemberLocation} request.
      */
-    public void getCurrentSceneId (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+    public void getCurrentMemberLocation (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 
     /**

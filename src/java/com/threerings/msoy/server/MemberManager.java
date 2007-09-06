@@ -27,6 +27,7 @@ import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -34,7 +35,6 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-import com.threerings.msoy.peer.data.MemberLocation;
 import com.threerings.msoy.web.data.FriendInviteObject;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
@@ -243,7 +243,7 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getCurrentSceneId (
+    public void getCurrentMemberLocation (
         ClientObject caller, int memberId, InvocationService.ResultListener listener)
         throws InvocationException
     {
@@ -259,10 +259,7 @@ public class MemberManager
         if (memloc == null) {
             throw new InvocationException(MessageBundle.tcompose("e.not_online", entry.name));
         }
-        if (memloc.sceneId == 0) {
-            throw new InvocationException("e.not_in_room");
-        }
-        listener.requestProcessed(memloc.sceneId);
+        listener.requestProcessed(memloc);
     }
 
     // from interface MemberProvider

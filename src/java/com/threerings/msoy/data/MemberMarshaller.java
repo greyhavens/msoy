@@ -33,15 +33,15 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #getCurrentSceneId} requests. */
-    public static final int GET_CURRENT_SCENE_ID = 2;
+    /** The method id used to dispatch {@link #getCurrentMemberLocation} requests. */
+    public static final int GET_CURRENT_MEMBER_LOCATION = 2;
 
     // from interface MemberService
-    public void getCurrentSceneId (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    public void getCurrentMemberLocation (Client arg1, int arg2, InvocationService.ResultListener arg3)
     {
         InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
         listener3.listener = arg3;
-        sendRequest(arg1, GET_CURRENT_SCENE_ID, new Object[] {
+        sendRequest(arg1, GET_CURRENT_MEMBER_LOCATION, new Object[] {
             Integer.valueOf(arg2), listener3
         });
     }

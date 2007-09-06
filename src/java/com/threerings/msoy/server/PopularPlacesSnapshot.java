@@ -8,11 +8,12 @@ import java.util.List;
 import com.samskivert.util.ComparableArrayList;
 import com.samskivert.util.HashIntMap;
 
+import com.threerings.msoy.data.MemberLocation;
+
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.peer.data.HostedPlace;
-import com.threerings.msoy.peer.data.MemberLocation;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 /**

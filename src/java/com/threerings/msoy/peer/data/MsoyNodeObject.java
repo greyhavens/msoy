@@ -7,6 +7,8 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.peer.data.CrowdNodeObject;
 
+import com.threerings.msoy.data.MemberLocation;
+
 /**
  * Maintains information on an MSOY peer server.
  */
@@ -295,10 +297,10 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setMemberLocs (DSet<com.threerings.msoy.peer.data.MemberLocation> value)
+    public void setMemberLocs (DSet<com.threerings.msoy.data.MemberLocation> value)
     {
         requestAttributeChange(MEMBER_LOCS, value, this.memberLocs);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.peer.data.MemberLocation> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.MemberLocation> clone =
             (value == null) ? null : value.typedClone();
         this.memberLocs = clone;
     }

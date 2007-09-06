@@ -39,7 +39,6 @@ import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.HostedGame;
-import com.threerings.msoy.peer.data.MemberLocation;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 import com.threerings.msoy.server.MsoyServer;
@@ -53,6 +52,7 @@ import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;

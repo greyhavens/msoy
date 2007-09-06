@@ -11,6 +11,7 @@ import com.threerings.presents.client.ResultWrapper;
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -51,12 +52,17 @@ public class WorldDirector extends BasicDirector
      */
     public function goToMemberScene (memberId :int) :void
     {
-        _msvc.getCurrentSceneId(_mctx.getClient(), memberId, new ResultWrapper(
+        _msvc.getCurrentMemberLocation(_mctx.getClient(), memberId, new ResultWrapper(
             function (cause :String) :void {
                 _mctx.displayFeedback(null, cause);
             },
-            function (sceneId :int) :void {
-                _mctx.getSceneDirector().moveTo(sceneId);
+            function (location :MemberLocation) :void {
+                if (location.sceneId == 0) {
+                    // TODO: send them to the game they're in instead
+                    _mctx.displayFeedback(null, "e.not_in_room");
+                } else {
+                    _mctx.getSceneDirector().moveTo(location.sceneId);
+                }
             }));
     }
 

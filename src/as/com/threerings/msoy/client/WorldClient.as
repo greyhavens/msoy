@@ -32,6 +32,7 @@ import com.threerings.toybox.data.ToyBoxMarshaller;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.item.data.ItemMarshaller;
@@ -149,6 +150,7 @@ public class WorldClient extends BaseClient
         c = LevelUpNotification;
         c = ReleaseNotesNotification;
         c = GuestInviteNotification;
+        c = MemberLocation;
 
         // these cause bundles to be compiled in.
         [ResourceBundle("general")]

@@ -46,8 +46,8 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
-        case MemberMarshaller.GET_CURRENT_SCENE_ID:
-            ((MemberProvider)provider).getCurrentSceneId(
+        case MemberMarshaller.GET_CURRENT_MEMBER_LOCATION:
+            ((MemberProvider)provider).getCurrentMemberLocation(
                 source,
                 ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
             );

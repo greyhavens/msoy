@@ -46,6 +46,7 @@ import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 
@@ -417,12 +418,17 @@ public class MsoyController extends Controller
         if (inGWTApp()) {
             var msvc :MemberService = 
                 _ctx.getClient().requireService(MemberService) as MemberService;
-            msvc.getCurrentSceneId(_ctx.getClient(), memberId, new ResultWrapper(
+            msvc.getCurrentMemberLocation(_ctx.getClient(), memberId, new ResultWrapper(
                 function (cause :String) :void {
                     _ctx.displayFeedback(null, cause);
                 },
-                function (sceneId :int) :void {
-                    displayPageGWT("world", "s" + sceneId);
+                function (location :MemberLocation) :void {
+                    if (location.sceneId == 0) {
+                        // TODO: send them to the game they're in instead
+                        _ctx.displayFeedback(null, "e.not_in_room");
+                    } else {
+                        displayPageGWT("world", "s" + location.sceneId);
+                    }
                 }));
         } else {
             _ctx.getWorldDirector().goToMemberScene(memberId);

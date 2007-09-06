@@ -24,11 +24,11 @@ public interface MemberService extends InvocationService
     public void getHomeId (Client client, byte ownerType, int ownerId, ResultListener listener);
 
     /**
-     * Request to get the current (scene id) for the specified member.
+     * Request to get the current MemberLocation of the specified member.
      *
      * Note: presently the member must be a friend.
      */
-    public void getCurrentSceneId (Client client, int memberId, ResultListener listener);
+    public void getCurrentMemberLocation (Client client, int memberId, ResultListener listener);
 
     /**
      * Set the avatar in use by this user.
