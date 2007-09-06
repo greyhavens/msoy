@@ -40,7 +40,7 @@ public interface SwiftlyService extends RemoteService
         throws ServiceException;
 
     /**
-     * Creates a new SwiftlyProject for the member in the supplied WebIdent
+     * Creates a new SwiftlyProject for the member in the supplied WebIdent.
      */
     public SwiftlyProject createProject (WebIdent ident, String projectName, byte projectType,
                                          boolean remixable)
@@ -59,9 +59,15 @@ public interface SwiftlyService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads the SwiftlyProject using the supplied projectId
+     * Loads the SwiftlyProject using the supplied projectId.
      */
     public SwiftlyProject loadProject (WebIdent ident, int projectId)
+        throws ServiceException;
+
+    /**
+     * Loads the MemberName of the project owner.
+     */
+    public MemberName getProjectOwner (WebIdent ident, int projectId)
         throws ServiceException;
 
     /**
@@ -87,7 +93,7 @@ public interface SwiftlyService extends RemoteService
         throws ServiceException;
 
     /**
-     * Adds a collaborator from a project
+     * Adds a collaborator from a project.
      * @return the MemberName record of the member that just joined.
      */
     public void joinCollaborators (WebIdent ident, int projectId, MemberName name)

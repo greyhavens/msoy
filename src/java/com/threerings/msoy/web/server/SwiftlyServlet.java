@@ -63,7 +63,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     }
 
     // from SwiftlyService
-    public List getRemixableProjects (WebIdent ident)
+    public List<SwiftlyProject> getRemixableProjects (WebIdent ident)
         throws ServiceException
     {
         requireAuthedUser(ident);
@@ -83,7 +83,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     }
 
     // from SwiftlyService
-    public List getMembersProjects (WebIdent ident)
+    public List<SwiftlyProject> getMembersProjects (WebIdent ident)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
@@ -253,7 +253,26 @@ public class SwiftlyServlet extends MsoyServiceServlet
     }
 
     // from SwiftlyService
-    public List getProjectCollaborators (WebIdent ident, int projectId)
+    public MemberName getProjectOwner (WebIdent ident, int projectId)
+        throws ServiceException
+    {
+        requireAuthedUser(ident);
+
+        try {
+            MemberRecord mRec = MsoyServer.swiftlyRepo.loadProjectOwner(projectId);
+            if (mRec == null) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            }
+            return mRec.getName();
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Loading project owner failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
+    // from SwiftlyService
+    public List<MemberName> getProjectCollaborators (WebIdent ident, int projectId)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);

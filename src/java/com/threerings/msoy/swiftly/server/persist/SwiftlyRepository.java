@@ -224,6 +224,18 @@ public class SwiftlyRepository extends DepotRepository
     }
 
     /**
+     * Fetches the owner MemberRecord for a given project.
+     */
+    public MemberRecord loadProjectOwner (int projectId)
+        throws PersistenceException
+    {
+        return load(MemberRecord.class,
+            new Join(MemberRecord.MEMBER_ID_C,
+                     SwiftlyProjectRecord.OWNER_ID_C),
+            new Where(new Equals(SwiftlyProjectRecord.PROJECT_ID_C, projectId)));
+    }
+
+    /**
      * Fetches the collaborators for a given project.
      */
     // TODO: sort these in a predictable manner
