@@ -33,7 +33,7 @@ public class FlexCompilerOutput
 
             // If the regex matched, there's no way the integers can be invalid.
             String fullFilePath = match.group(1);
-            _lineNumber = Integer.parseInt(match.group(2));                
+            _lineNumber = Integer.parseInt(match.group(2));
             _columnNumber = Integer.parseInt(match.group(3));
             level = match.group(4);
             _message = match.group(5);
@@ -160,7 +160,7 @@ public class FlexCompilerOutput
         // We got this far, it must be true!
         return true;
     }
-    
+
     /** Line number referenced. -1 if no line number. */
     protected int _lineNumber = -1;
 
@@ -189,7 +189,8 @@ public class FlexCompilerOutput
     /**
      * Matches the server side path in which the project was built.
      */
-    protected static final Pattern SERVER_SIDE_PATH = Pattern.compile("\\S*localbuilder[0-9]+");
+    protected static final Pattern SERVER_SIDE_PATH =
+        Pattern.compile("\\S*localbuilder[0-9]+_[0-9]+");
 
     /** Map flex compiler level strings to CompilerOutput.Level enums. */
     protected static final Map<String,CompilerOutput.Level> _messageLevels =
