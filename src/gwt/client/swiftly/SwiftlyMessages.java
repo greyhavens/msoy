@@ -72,9 +72,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String startProject();
 
   /**
-   * Translated "Your friends:".
+   * Translated "Friends:".
    * 
-   * @return translated "Your friends:"
+   * @return translated "Friends:"
    * @gwt.key friends
    */
   String friends();
@@ -120,9 +120,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String submit();
 
   /**
-   * Translated "No collaborators found.".
+   * Translated "No collaborators.".
    * 
-   * @return translated "No collaborators found."
+   * @return translated "No collaborators."
    * @gwt.key noCollaborators
    */
   String noCollaborators();
