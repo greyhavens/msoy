@@ -52,11 +52,13 @@ public class BuildAndExportTask extends AbstractBuildTask
                 // Provide build output to the room
                 _manager.getRoomObj().publishBuildResult(result);
 
-                // inform the item manager of the new or updated item
-                if (_record.itemId == 0) {
-                    MsoyServer.itemMan.itemCreated(_record);
-                } else {
-                    MsoyServer.itemMan.itemUpdated(_record);
+                // inform the item manager of the new or updated item if the build succeeded
+                if (result.buildSuccessful()) {
+                    if (_record.itemId == 0) {
+                        MsoyServer.itemMan.itemCreated(_record);
+                    } else {
+                        MsoyServer.itemMan.itemUpdated(_record);
+                    }
                 }
                 // update the build result id cache
                 _manager.getResultItems().put(_member, _resultId);
