@@ -84,7 +84,9 @@ public class ProjectEdit extends FlexTable
             }
         });
 
-        cell.add(new Label(CSwiftly.msgs.remixable()));
+        Label remixable = new Label(CSwiftly.msgs.remixable());
+        remixable.addStyleName("LeftSpacer");
+        cell.add(remixable);
         cell.add(_remixable = new CheckBox());
         _remixable.setChecked(_project.remixable);
         _remixable.addClickListener(new ClickListener() {
@@ -115,7 +117,9 @@ public class ProjectEdit extends FlexTable
             }
         }));
 
-        cell.add(new Label(CSwiftly.msgs.friends()));
+        Label friends = new Label(CSwiftly.msgs.friends());
+        friends.addStyleName("LeftSpacer");
+        cell.add(friends);
         _friendList = new ListBox();
         cell.add(_friendList);
 

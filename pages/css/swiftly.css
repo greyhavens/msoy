@@ -21,15 +21,8 @@
   border: 1px solid black
 }
 
-.projectEdit .LabelLink {
-  cursor: pointer;
-  text-decoration: underline;
-  color: blue;
-}
-
-.projectEdit .MenuTitle {
-  font-weight: bold;
-  background-color: transparent;
+.projectEdit .LeftSpacer {
+  padding-left: 5px;
 }
 
 .projectSelectionPanel {

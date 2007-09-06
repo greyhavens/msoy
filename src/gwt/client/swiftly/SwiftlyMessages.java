@@ -128,14 +128,6 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String noCollaborators();
 
   /**
-   * Translated "Are you sure you wish to remove {0} from {1}?".
-   * 
-   * @return translated "Are you sure you wish to remove {0} from {1}?"
-   * @gwt.key viewRemovePrompt
-   */
-  String viewRemovePrompt(String arg0,  String arg1);
-
-  /**
    * Translated "Project type".
    * 
    * @return translated "Project type"
@@ -264,28 +256,12 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String uploadTitle();
 
   /**
-   * Translated "View profile".
-   * 
-   * @return translated "View profile"
-   * @gwt.key viewProfile
-   */
-  String viewProfile();
-
-  /**
    * Translated "The selected file is too large to be used in a Swiftly project.".
    * 
    * @return translated "The selected file is too large to be used in a Swiftly project."
    * @gwt.key errUploadTooLarge
    */
   String errUploadTooLarge();
-
-  /**
-   * Translated "Remove".
-   * 
-   * @return translated "Remove"
-   * @gwt.key viewRemove
-   */
-  String viewRemove();
 
   /**
    * Translated "Click the browse button to select a file. Then click upload.".
@@ -312,9 +288,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String mustSelectFile();
 
   /**
-   * Translated "Project name".
+   * Translated "Project name:".
    * 
-   * @return translated "Project name"
+   * @return translated "Project name:"
    * @gwt.key projectName
    */
   String projectName();
