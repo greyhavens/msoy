@@ -24,10 +24,10 @@ public class S3StorageLocalLockManagerUnitTest {
 
 		// Make sure we unlock properly
 		lock = _lockMgr.lockObject(this, "test", 20);
-		_lockMgr.unlockObject(this, lock);
+		lock.unlock();
 
 		lock = _lockMgr.lockObject(this, "test", 20);
-		_lockMgr.unlockObject(this, lock);
+		lock.unlock();
 	}
 
 	@Test(expected=S3StorageLockManager.StorageLockUnavailableException.class)
@@ -36,10 +36,12 @@ public class S3StorageLocalLockManagerUnitTest {
 	{
 		final S3ObjectLock lock = _lockMgr.lockObject(this, "test", 20);
 		
-		// This lock will timeout
-		_lockMgr.lockObject(this, "test", 1);
-
-		_lockMgr.unlockObject(this, lock);
+		try {
+			// This lock will timeout
+			_lockMgr.lockObject(this, "test", 1);
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	private S3StorageLocalLockManager _lockMgr;

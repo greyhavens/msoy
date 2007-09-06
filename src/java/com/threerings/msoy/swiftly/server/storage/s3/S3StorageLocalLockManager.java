@@ -87,7 +87,7 @@ public class S3StorageLocalLockManager implements S3StorageLockManager {
 		//     - We hold the table lock
 		//     - No lock on our object exists
 		// The only thing left to do is add our lock to the table, unlock the table, and return.
-		final LockEntry newLockEntry = new LockEntry(owner, objectKey, _lock.newCondition());
+		final LockEntry newLockEntry = new LockEntry(this, owner, objectKey, _lock.newCondition());
 		_objectTable.put(objectKey, newLockEntry);
 
 		// Release the objectTable lock
@@ -96,11 +96,7 @@ public class S3StorageLocalLockManager implements S3StorageLockManager {
 		return newLockEntry;
 	}
 
-	public void unlockObject(Object owner, S3ObjectLock lock) {
-		// This cast is safe, if ugly -- anyone passing another lock manager's
-		// lock to unlockObject() is smoking crack.
-		final LockEntry entry = (LockEntry) lock;
-
+	private void unlockObject(Object owner, LockEntry entry) {
 		// Acquire a lock on our object table
 		_lock.lock();
 
@@ -116,10 +112,16 @@ public class S3StorageLocalLockManager implements S3StorageLockManager {
 
 	/** A single lock entry */
 	static class LockEntry implements S3StorageLockManager.S3ObjectLock {
-		LockEntry (Object owner, String objectKey, Condition unlockCondition) {
+		LockEntry (S3StorageLocalLockManager lockMgr, Object owner,
+				String objectKey, Condition unlockCondition) {
+			_lockMgr = lockMgr;
 			_owner = owner;
 			_objectKey = objectKey;
 			_cond = unlockCondition;
+		}
+
+		public void unlock () {
+			_lockMgr.unlockObject(_owner, this);
 		}
 
 		Object getOwner () {
@@ -133,11 +135,9 @@ public class S3StorageLocalLockManager implements S3StorageLockManager {
 		Condition getCondition () {
 			return _cond;
 		}
-
-		public Date getExpiration() {
-			// No expiration
-			return null;
-		}
+		
+		/** The lock manager. */
+		private final S3StorageLocalLockManager _lockMgr;
 
 		/** The lock owner. */
 		private final Object _owner;
