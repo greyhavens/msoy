@@ -100,7 +100,8 @@ public class ProjectEdit extends FlexTable
         _collaboratorsList = new ListBox();
         cell.add(_collaboratorsList);
 
-        _removeCollaboratorButton.addClickListener(new ClickListener() {
+        cell.add(_removeCollaboratorButton = new Button(CSwiftly.msgs.remove(),
+            new ClickListener() {
             public void onClick (Widget sender) {
                 int tx = _collaboratorsList.getSelectedIndex();
                 if (tx == -1) {
@@ -112,14 +113,13 @@ public class ProjectEdit extends FlexTable
                     removeCollaborator(name);
                 }
             }
-        });
-        cell.add(_removeCollaboratorButton);
+        }));
 
         cell.add(new Label(CSwiftly.msgs.friends()));
         _friendList = new ListBox();
         cell.add(_friendList);
 
-        _addFriendButton.addClickListener(new ClickListener() {
+        cell.add(_addFriendButton = new Button(CSwiftly.msgs.add(), new ClickListener() {
             public void onClick (Widget sender) {
                 int tx = _friendList.getSelectedIndex();
                 if (tx == -1) {
@@ -132,8 +132,7 @@ public class ProjectEdit extends FlexTable
                     addCollaborator(friend.name);
                 }
             }
-        });
-        cell.add(_addFriendButton);
+        }));
         setWidget(row, col++, cell);
 
         cell = new HorizontalPanel();
@@ -311,8 +310,8 @@ public class ProjectEdit extends FlexTable
     protected ProjectEditListener _listener;
     protected HashMap _collaborators;
     protected HashMap _friends;
-    protected Button _addFriendButton = new Button(CSwiftly.msgs.add());
-    protected Button _removeCollaboratorButton = new Button(CSwiftly.msgs.remove());
+    protected Button _addFriendButton;
+    protected Button _removeCollaboratorButton;
 
     protected CheckBox _remixable;
     protected ListBox _collaboratorsList;
