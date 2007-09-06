@@ -5,6 +5,7 @@ package com.threerings.msoy.swiftly.client;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -75,6 +76,9 @@ public class SwiftlyTextPane extends JEditorPane
         // TODO make setable by the user?
         setForeground(Color.black);
         setBackground(Color.white);
+
+        // tweak the margins which are borked by SDoc or Substance
+        setMargin(new Insets(-2, 0, 0, 0));
 
         // TODO pick the lexer based on the mime type
         SyntaxSupport support = SyntaxSupport.getInstance();
