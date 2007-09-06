@@ -7,7 +7,9 @@ import junit.framework.TestCase;
 
 public class FlexCompilerOutputUnitTest extends TestCase
 {
-    public static final String FAKE_BUILD_ROOT = "/export/msoy/data/swiftly/buil/localbuilder1234";
+    public static final String FAKE_BUILD_ROOT =
+        "/export/msoy/data/swiftly/buil/localbuilder1234_1";
+
     public FlexCompilerOutputUnitTest (String name)
     {
         super(name);
@@ -32,6 +34,6 @@ public class FlexCompilerOutputUnitTest extends TestCase
         assertEquals(-1, output.getColumnNumber());
         assertEquals(null, output.getFileName());
         assertEquals(CompilerOutput.Level.UNKNOWN, output.getLevel());
-        assertEquals("Hello, World", output.getMessage());           
+        assertEquals("Hello, World", output.getMessage());
     }
 }
