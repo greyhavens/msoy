@@ -9,6 +9,8 @@ import java.util.List;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.server.storage.s3.S3StorageConnectionFactory;
+import com.threerings.msoy.swiftly.server.storage.s3.S3StorageLockManager;
+import com.threerings.msoy.web.data.SwiftlyProject;
 
 /**
  * Implements an S3-backed project storage repository.
@@ -18,24 +20,28 @@ import com.threerings.msoy.swiftly.server.storage.s3.S3StorageConnectionFactory;
 public class ProjectS3Storage implements ProjectStorage
 {
 
-    public ProjectS3Storage (final S3StorageConnectionFactory connectionFactory) {
+    public ProjectS3Storage (SwiftlyProject project, S3StorageConnectionFactory connectionFactory,
+    		S3StorageLockManager lockMgr, String storageBucket)
+    {
         _factory = connectionFactory;
+        _lockMgr = lockMgr;
+        _bucket = storageBucket;
     }
 
-    public void deleteDocument (final PathElement pathElement, final String logMessage)
+    public void deleteDocument (PathElement pathElement, String logMessage)
         throws ProjectStorageException
     {
         // TODO Auto-generated method stub
 
     }
 
-    public void export (final File exportDirectory) throws ProjectStorageException
+    public void export (File exportDirectory) throws ProjectStorageException
     {
         // TODO Auto-generated method stub
 
     }
 
-    public SwiftlyDocument getDocument (final PathElement path) throws ProjectStorageException
+    public SwiftlyDocument getDocument (PathElement path) throws ProjectStorageException
     {
         // TODO Auto-generated method stub
         return null;
@@ -47,14 +53,14 @@ public class ProjectS3Storage implements ProjectStorage
         return null;
     }
 
-    public void putDocument (final SwiftlyDocument document, final String logMessage)
+    public void putDocument (SwiftlyDocument document, String logMessage)
         throws ProjectStorageException
     {
         // TODO Auto-generated method stub
 
     }
 
-    public void renameDocument (final PathElement pathElement, final String newName, final String logMessage)
+    public void renameDocument (PathElement pathElement, String newName, String logMessage)
         throws ProjectStorageException
     {
         // TODO Auto-generated method stub
@@ -63,4 +69,10 @@ public class ProjectS3Storage implements ProjectStorage
 
     /** S3Connection factory. */
     private final S3StorageConnectionFactory _factory;
+
+    /** S3 Lock Manager. */
+    private final S3StorageLockManager _lockMgr;
+    
+    /** S3 storage bucket. */
+    private final String _bucket;
 }
