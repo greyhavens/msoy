@@ -3,12 +3,12 @@
 
 package com.threerings.msoy.swiftly.server.storage.s3;
 
+import junit.framework.JUnit4TestAdapter;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.threerings.msoy.swiftly.server.storage.s3.S3StorageLockManager.S3ObjectLock;
-
-import static org.junit.Assert.*;
 
 public class S3StorageLocalLockManagerUnitTest {
     @Before
@@ -35,13 +35,17 @@ public class S3StorageLocalLockManagerUnitTest {
         throws Exception
     {
         final S3ObjectLock lock = _lockMgr.lockObject(this, "test", 20);
-        
+
         try {
             // This lock will timeout
             _lockMgr.lockObject(this, "test", 1);
         } finally {
             lock.unlock();
         }
+    }
+
+    public static junit.framework.Test suite() {
+        return new JUnit4TestAdapter(S3StorageLocalLockManagerUnitTest.class);
     }
 
     private S3StorageLocalLockManager _lockMgr;
