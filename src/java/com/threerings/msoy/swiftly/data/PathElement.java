@@ -102,6 +102,9 @@ public class PathElement
         return _parent;
     }
 
+    /**
+     * Returns the absolute path to this PathElement, based on the project root.
+     */
     public String getAbsolutePath ()
     {
         PathElement node;
@@ -137,6 +140,9 @@ public class PathElement
         return null; // TODO
     }
 
+    /**
+     * Returns the ImageIcon associated with this type of path element.
+     */
     public ImageIcon getIcon ()
     {
         if (_icon == null) {
