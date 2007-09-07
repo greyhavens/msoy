@@ -9,6 +9,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
+import javax.swing.ImageIcon;
+
 import org.apache.commons.io.IOUtils;
 
 import com.threerings.io.ObjectOutputStream;
@@ -32,6 +34,9 @@ public abstract class SwiftlyDocument
         /** Returns true if the provided mime type is supported. */
         public boolean handlesMimeType (String mimeType);
 
+        /** Returns an ImageIcon for displaying this kind of document */
+        public ImageIcon createIcon () throws IOException;
+
         /** Construct a new, blank SwiftlyDocument. */
         public SwiftlyDocument createDocument (PathElement path,
             String encoding) throws IOException;
@@ -51,7 +56,7 @@ public abstract class SwiftlyDocument
     }
 
     /**
-     * Returns a new SwiftlyDocument using the supplied PathElement's mimeType;
+     * Returns a new SwiftlyDocument using the supplied PathElement's mimeType.
      */
     public static SwiftlyDocument createFromPathElement (InputStream data, PathElement path,
         String encoding)
@@ -66,7 +71,26 @@ public abstract class SwiftlyDocument
                 }
             }
         }
- 
+
+        // BinaryDocument handles all mime types so this statement should never be reached
+        throw new RuntimeException("Unhandled mime-type. SwiftlyBinaryDocument should handle" +
+            "all mime types");
+    }
+
+    /**
+     * Returns an ImageIcon for displaying a SwiftlyDocument using the supplied PathElement's
+     * mimeType.
+     *
+     */
+    public static ImageIcon createIcon (PathElement path)
+        throws IOException
+    {
+        for (DocumentFactory factory : _documentTypeFactories) {
+            if (factory.handlesMimeType(path.getMimeType())) {
+                return factory.createIcon();
+            }
+        }
+
         // BinaryDocument handles all mime types so this statement should never be reached
         throw new RuntimeException("Unhandled mime-type. SwiftlyBinaryDocument should handle" +
             "all mime types");
@@ -76,7 +100,7 @@ public abstract class SwiftlyDocument
     public SwiftlyDocument ()
     {
     }
-    
+
     /** Initializes the SwiftlyDocument. */
     public SwiftlyDocument (InputStream data, PathElement path)
         throws IOException

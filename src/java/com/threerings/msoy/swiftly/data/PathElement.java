@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.swiftly.data;
 
+import static com.threerings.msoy.Log.log;
+
 import java.io.IOException;
 
 import java.net.URL;
@@ -10,6 +12,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.swing.ImageIcon;
 
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.presents.dobj.DSet;
@@ -77,7 +81,7 @@ public class PathElement
             assert(_parent != null);
         }
     }
-    
+
     public Type getType ()
     {
         return _type;
@@ -103,7 +107,7 @@ public class PathElement
         PathElement node;
         StringBuffer output = new StringBuffer();
         List<PathElement> pathList = new ArrayList<PathElement>();
-        
+
         // This is a relatively expensive implementation, but then, it always is
 
         // We build up a list of parent elements, reverse the list, append them all
@@ -119,7 +123,7 @@ public class PathElement
         Collections.reverse(pathList);
 
         for (PathElement element : pathList) {
-            output.append("/" + element.getName());   
+            output.append("/" + element.getName());
         }
 
         return output.toString();
@@ -131,6 +135,19 @@ public class PathElement
     public URL getElementURL ()
     {
         return null; // TODO
+    }
+
+    public ImageIcon getIcon ()
+    {
+        if (_icon == null) {
+            try {
+                _icon = SwiftlyDocument.createIcon(this);
+
+            } catch (IOException ioe) {
+                log.warning("Failed to set document icon. " + ioe);
+            }
+        }
+        return _icon;
     }
 
     public void setName (String name)
@@ -181,7 +198,7 @@ public class PathElement
         throws IOException
     {
         if (_parent != null) {
-            _parentKey = _parent.getKey();            
+            _parentKey = _parent.getKey();
         }
         out.defaultWriteObject();
     }
@@ -197,7 +214,10 @@ public class PathElement
 
     /** Enclosing parent PathElement, if any. */
     protected transient PathElement _parent = null;
-    
+
+    /** The icon associated with this type of path element. */
+    protected transient ImageIcon _icon;
+
     /** Key for the enclosing parent, used to re-bind the transient _parent instance variable
      * post-serialization. */
     private Comparable _parentKey = null;

@@ -7,6 +7,9 @@ import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.net.URL;
+
+import javax.swing.ImageIcon;
 
 import org.apache.commons.io.IOUtils;
 
@@ -31,6 +34,16 @@ public class SwiftlyTextDocument extends SwiftlyDocument
             return false;
         }
 
+        public ImageIcon createIcon ()
+            throws IOException
+        {
+            URL path = getClass().getResource(DOCUMENT_ICON);
+            if (path == null) {
+                throw new IOException("Icon path for SwiftlyDocument not found: " + DOCUMENT_ICON);
+            }
+            return new ImageIcon(path);
+        }
+
         public SwiftlyDocument createDocument (PathElement path, String encoding)
             throws IOException
         {
@@ -45,6 +58,9 @@ public class SwiftlyTextDocument extends SwiftlyDocument
 
         /** Mime types supported by this document type. */
         private String[] _mimeTypes = {"text/"};
+
+        /** The path to the icon for a text document */
+        private static final String DOCUMENT_ICON = "/rsrc/icons/swiftly/text_document.png";
     }
 
     /** Required for the dobj system. Do not use. */
@@ -64,14 +80,14 @@ public class SwiftlyTextDocument extends SwiftlyDocument
         throws IOException
     {
         super(data, path);
-    
+
         // TODO: Stack of deltas and a mmap()'d base document, such that we
         // don't waste RAM storing the whole file in memory.
-    
+
         // text will remain blank if this is a new document
         _text = "";
         _encoding = encoding;
-    
+
         if (data != null) {
             StringBuffer textBuffer = new StringBuffer();
             FileOutputStream fileOutput = new FileOutputStream(_backingStore);
@@ -87,7 +103,7 @@ public class SwiftlyTextDocument extends SwiftlyDocument
             fileOutput.close();
         }
     }
-    
+
     public String getText ()
     {
         return _text;

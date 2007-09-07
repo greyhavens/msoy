@@ -5,6 +5,9 @@ package com.threerings.msoy.swiftly.data;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.net.URL;
+
+import javax.swing.ImageIcon;
 
 import org.apache.commons.io.IOUtils;
 
@@ -28,6 +31,16 @@ public class SwiftlyImageDocument extends SwiftlyBinaryDocument
             return false;
         }
 
+        public ImageIcon createIcon ()
+            throws IOException
+        {
+            URL path = getClass().getResource(DOCUMENT_ICON);
+            if (path == null) {
+                throw new IOException("Icon path for SwiftlyDocument not found: " + DOCUMENT_ICON);
+            }
+            return new ImageIcon(path);
+        }
+
         public SwiftlyDocument createDocument (PathElement path, String encoding)
             throws IOException
         {
@@ -42,6 +55,9 @@ public class SwiftlyImageDocument extends SwiftlyBinaryDocument
 
         /** Mime types supported by this document type. */
         private String[] _mimeTypes = {"image/"};
+
+        /** The path to the icon for an image document */
+        private static final String DOCUMENT_ICON = "/rsrc/icons/swiftly/image_document.png";
     }
 
     /** Required for the dobj system. Do not use. */
