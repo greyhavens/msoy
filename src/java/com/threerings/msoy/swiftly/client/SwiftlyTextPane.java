@@ -208,6 +208,11 @@ public class SwiftlyTextPane extends JEditorPane
         }
     }
 
+    public SwiftlyTextDocument getSwiftlyDocument ()
+    {
+        return _document;
+    }
+
     public Action createCutAction ()
     {
         return new AbstractAction(_msgs.get("m.action.cut")) {

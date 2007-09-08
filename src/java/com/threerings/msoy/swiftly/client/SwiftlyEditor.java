@@ -18,8 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import sdoc.Gutter;
-
 import com.samskivert.swing.GroupLayout;
 import com.samskivert.swing.HGroupLayout;
 import com.samskivert.swing.VGroupLayout;
@@ -62,8 +60,9 @@ public class SwiftlyEditor extends PlacePanel
         _ctrl = ctrl;
         _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
-        // setup the list of access listeners
+        // setup the list of access and build result listeners
         _accessListeners = new HashSet<AccessControlListener>();
+        _buildResultListeners = new HashSet<BuildResultListener>();
 
         setLayout(new VGroupLayout(
                       GroupLayout.STRETCH, GroupLayout.STRETCH, 5, GroupLayout.TOP));
@@ -198,7 +197,7 @@ public class SwiftlyEditor extends PlacePanel
         SwiftlyTextPane textPane = new SwiftlyTextPane(_ctx, this, document);
         TabbedEditorScroller scroller = new TabbedEditorScroller(textPane, pathElement);
         // add line numbers
-        scroller.setRowHeaderView(new Gutter(textPane, scroller));
+        scroller.setRowHeaderView(new EditorGutter(this, textPane, scroller));
 
         // disable editing if the user does not have write access on the project
         if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
@@ -253,7 +252,7 @@ public class SwiftlyEditor extends PlacePanel
         }
     }
 
-    /** Should be called when an AccessControlListener component is add from the UI. */
+    /** Should be called when an AccessControlListener component is added to the UI. */
     public void addAccessControlListener (AccessControlListener listener)
     {
         _accessListeners.add(listener);
@@ -263,6 +262,18 @@ public class SwiftlyEditor extends PlacePanel
     public void removeAccessControlListener (AccessControlListener listener)
     {
         _accessListeners.remove(listener);
+    }
+
+    /** Should be called when an BuildResultListener component is added to the UI. */
+    public void addBuildResultListener (BuildResultListener listener)
+    {
+        _buildResultListeners.add(listener);
+    }
+
+    /** Should be called when an BuildResultListener component is removed from the UI. */
+    public void removeBuildResultListener (BuildResultListener listener)
+    {
+        _buildResultListeners.remove(listener);
     }
 
     public AbstractAction createCloseCurrentTabAction ()
@@ -461,13 +472,11 @@ public class SwiftlyEditor extends PlacePanel
     protected void updateEditorAccess ()
     {
         if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
-            // TODO add feedback, such as an icon, to indicate the editor is in write mode
             for (AccessControlListener listener : _accessListeners) {
                 listener.writeAccessGranted();
             }
 
         } else if (_roomObj.hasReadAccess(_ctx.getMemberObject().memberName)) {
-            // TODO add feedback, such as an icon, to indicate the editor is in read-only mode
             for (AccessControlListener listener : _accessListeners) {
                 listener.readOnlyAccessGranted();
             }
@@ -487,6 +496,9 @@ public class SwiftlyEditor extends PlacePanel
             _ctx.showErrorMessage(_msgs.get("m.build_failed"));
         }
         _console.displayCompilerOutput(result.getOutput());
+        for (BuildResultListener listener : _buildResultListeners) {
+            listener.gotResult(result);
+        }
     }
 
     /** A list of files that can be created by this SwiftlyDocumentEditor. */
@@ -494,6 +506,9 @@ public class SwiftlyEditor extends PlacePanel
 
     /** A set of components listening for access control change events. */
     protected Set<AccessControlListener> _accessListeners;
+
+    /** A set of components listening for new BuildResults. */
+    protected Set<BuildResultListener> _buildResultListeners;
 
     protected SwiftlyContext _ctx;
     protected ProjectRoomController _ctrl;
