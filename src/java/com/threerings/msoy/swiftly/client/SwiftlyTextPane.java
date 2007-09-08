@@ -94,6 +94,9 @@ public class SwiftlyTextPane extends JEditorPane
         _syntaxDoc.addUndoableEditListener(new UndoHandler());
         _syntaxDoc.addDocumentListener(new DocumentElementListener());
 
+        // set a good default font size
+        setFont(getFont().deriveFont(DEFAULT_FONT_SIZE));
+
         // load the document into the text pane
         loadDocumentText();
     }
@@ -432,6 +435,8 @@ public class SwiftlyTextPane extends JEditorPane
             // nada
         }
     }
+
+    public static final float DEFAULT_FONT_SIZE = 14;
 
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;

@@ -5,7 +5,6 @@ package com.threerings.msoy.swiftly.client;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -70,31 +69,36 @@ public class EditorGutter extends JPanel
     {
         // TODO pick the most severe icon and show only that which means a lookup to see if
         // there is already a label at this location
-        JLabel label = null;
+        ImageIcon icon = null;
         switch (line.getLevel()) {
             case ERROR:
-                label = new JLabel(new ImageIcon(getClass().getResource(ERROR_ICON)));
+                icon = new ImageIcon(getClass().getResource(ERROR_ICON));
                 break;
             case WARNING:
-                label = new JLabel(new ImageIcon(getClass().getResource(WARN_ICON)));
+                icon = new ImageIcon(getClass().getResource(WARN_ICON));
                 break;
             case INFO:
-                label = new JLabel(new ImageIcon(getClass().getResource(INFO_ICON)));
+                icon = new ImageIcon(getClass().getResource(INFO_ICON));
                 break;
             case IGNORE:
             case UNKNOWN:
             default:
                 return;
         }
+        JLabel label = new JLabel(icon);
         // TODO this should APPEND the message so that multiple errors on the same line
         // are in the tooltip which means we need to track all labels being used in a hashmap
         label.setToolTipText(line.getMessage());
 
-        Graphics2D g2d = (Graphics2D) getGraphics();
-        FontMetrics fm = g2d.getFontMetrics();
+        FontMetrics fm = getFontMetrics(_text.getFont());
         int fontHeight = fm.getHeight();
-        int labelY = (fontHeight * line.getLineNumber()) - fontHeight;
-        label.setBounds(0, labelY + 2, DEFAULT_WIDTH, fontHeight);
+        int center = Math.max(0, (fontHeight / 2) - (icon.getIconHeight() / 2));
+        // slight fudge factor
+        if (fontHeight > icon.getIconHeight()) {
+            center += 2;
+        }
+        int labelY = ((fontHeight * line.getLineNumber()) - fontHeight) + center;
+        label.setBounds(0, labelY, icon.getIconWidth(), icon.getIconHeight());
         // TODO can we use add(label, row); ?
         add(label);
     }
