@@ -205,5 +205,6 @@ public class FlexCompilerOutput
     // Initialize String -> Enum level mappings.
     static {
         _messageLevels.put("Error", CompilerOutput.Level.ERROR);
+        _messageLevels.put("Warning", CompilerOutput.Level.WARNING);
     }
 }
