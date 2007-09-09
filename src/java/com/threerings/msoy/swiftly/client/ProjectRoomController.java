@@ -97,8 +97,7 @@ public class ProjectRoomController extends PlaceController
        buildStarted();
         _roomObj.service.buildAndExportProject(_ctx.getClient(), new ConfirmListener() {
             public void requestProcessed () {
-                BuildResult result = _roomObj.findResultForMember(
-                    _ctx.getMemberObject().memberName);
+                BuildResult result = _roomObj.results.get(_ctx.getMemberObject().memberName);
                 if (result.buildSuccessful()) {
                     _ctx.showInfoMessage(_msgs.get("m.build_export_succeeded"));
                 }
@@ -119,7 +118,7 @@ public class ProjectRoomController extends PlaceController
         // disable the action on this client
         buildAction.setEnabled(false);
         buildExportAction.setEnabled(false);
-        BuildResult result = _roomObj.findResultForMember(_ctx.getMemberObject().memberName);
+        BuildResult result = _roomObj.results.get(_ctx.getMemberObject().memberName);
         if (result != null) {
             _ctx.showProgress((int)result.getBuildTime());
         } else {

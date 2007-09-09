@@ -3,12 +3,13 @@
 
 package com.threerings.msoy.swiftly.data;
 
+
 /** A compiler message. */
 public interface CompilerOutput
 {
     /** Message severity levels. */
     public enum Level {
-        /** Mesage should be ignored. */
+        /** Message should be ignored. */
         IGNORE,
         /** Informational message. */
         INFO,
@@ -16,7 +17,7 @@ public interface CompilerOutput
         WARNING,
         /** Error message. */
         ERROR,
-        /** Mesage level could not be determined. */
+        /** Message level could not be determined. */
         UNKNOWN
     }
 

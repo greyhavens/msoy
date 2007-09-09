@@ -196,14 +196,19 @@ public class SwiftlyEditor extends PlacePanel
         PathElement pathElement = document.getPathElement();
         SwiftlyTextPane textPane = new SwiftlyTextPane(_ctx, this, document);
         TabbedEditorScroller scroller = new TabbedEditorScroller(textPane, pathElement);
-        // add line numbers
-        scroller.setRowHeaderView(new EditorGutter(this, textPane, scroller));
+        EditorGutter gutter = new EditorGutter(this, textPane, scroller);
+        scroller.setRowHeaderView(gutter);
 
         // disable editing if the user does not have write access on the project
         if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
             textPane.writeAccessGranted();
         } else {
             textPane.readOnlyAccessGranted();
+        }
+
+        // if we have a current build result, inform the gutter
+        if (_roomObj.results.containsKey(_ctx.getMemberObject().memberName)) {
+            gutter.gotResult(_roomObj.results.get(_ctx.getMemberObject().memberName));
         }
 
         // add the tab
@@ -495,7 +500,6 @@ public class SwiftlyEditor extends PlacePanel
         } else {
             _ctx.showErrorMessage(_msgs.get("m.build_failed"));
         }
-        _console.displayCompilerOutput(result.getOutput());
         for (BuildResultListener listener : _buildResultListeners) {
             listener.gotResult(result);
         }

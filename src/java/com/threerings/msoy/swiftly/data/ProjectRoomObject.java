@@ -121,27 +121,11 @@ public class ProjectRoomObject extends PlaceObject
     }
 
     /**
-     * Find the BuildResult for a given MemberName..
-     * Return the result if found, null otherwise
-     */
-    public BuildResult findResultForMember (MemberName member)
-    {
-        for (BuildResult result : results) {
-            if (result.getMember().equals(member)) {
-                return result;
-            }
-        }
-
-        // return null if we did not find the element
-        return null;
-    }
-
-    /**
      *  Publish the supplied BuildResult into the room object
      */
     public void publishBuildResult (final BuildResult result)
     {
-        if (findResultForMember(result.getMember()) != null) {
+        if (results.containsKey(result.getMember())) {
             updateResults(result);
         } else {
             addToResults(result);

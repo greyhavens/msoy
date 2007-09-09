@@ -7,8 +7,8 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -24,13 +24,16 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
+import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.data.CompilerOutput.Level;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class Console extends JFrame
+    implements BuildResultListener
 {
     public Console (SwiftlyContext ctx, SwiftlyEditor editor)
     {
@@ -45,12 +48,15 @@ public class Console extends JFrame
 
         // stick the text pane into a scroller
         JScrollPane scroller = new JScrollPane(_consoleText,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroller.setPreferredSize(new Dimension(400, 400));
         setContentPane(scroller);
 
         StyleConstants.setBold(_error, true);
         StyleConstants.setForeground(_error, Color.red);
+        StyleConstants.setBold(_warning, true);
+        StyleConstants.setForeground(_warning, Color.yellow.darker());
 
         pack();
         setVisible(false);
@@ -64,39 +70,35 @@ public class Console extends JFrame
         _roomObj = roomObj;
     }
 
-    /**
-     * Iterates over the supplied CompilerOutput and prints messages to the console.
-     */
-    public void displayCompilerOutput (List<CompilerOutput> output)
+    @Override // from JComponent
+    public void addNotify ()
+    {
+        super.addNotify();
+        _editor.addBuildResultListener(this);
+    }
+
+    @Override // from JComponent
+    public void removeNotify ()
+    {
+        super.removeNotify();
+        _editor.removeBuildResultListener(this);
+    }
+
+    // from BuildResultListener
+    public void gotResult (BuildResult result)
     {
         // first, clear the console
-        clearConsole();
+        _consoleText.setText("");
 
         // then display each line of output
-        boolean wasOutput = false;
-        for (CompilerOutput line : output) {
-            switch (line.getLevel()) {
-                case ERROR:
-                case WARNING:
-                    if (line.getLineNumber() != -1 && line.getPath() != null) {
-                        appendLineNumberButton(line);
-                    }
-                    appendMessage(line.getMessage() + "\n", _error);
-                    wasOutput = true;
-                    break;
-                case INFO:
-                    appendMessage(line.getMessage() + "\n", _normal);
-                    wasOutput = true;
-                    break;
-                case IGNORE:
-                case UNKNOWN:
-                    break;
+        for (CompilerOutput line : result.getOutput()) {
+            if (line.getLevel() == Level.IGNORE || line.getLevel() == Level.UNKNOWN) {
+                continue;
             }
-        }
-
-        // if no output was displayed, hide the window
-        if (!wasOutput) {
-            setVisible(false);
+            if (line.getLineNumber() != -1 && line.getPath() != null) {
+                appendLineNumberButton(line);
+            }
+            appendMessage(line.getMessage() + "\n", _messageLevels.get(line.getLevel()));
         }
     }
 
@@ -105,7 +107,6 @@ public class Console extends JFrame
      */
     protected void appendMessage (String message, AttributeSet set)
     {
-        setVisible(true);
         try {
             _document.insertString(_document.getLength(), message, set);
             _consoleText.setCaretPosition(_document.getLength());
@@ -147,12 +148,6 @@ public class Console extends JFrame
         appendMessage("ignored", style);
     }
 
-    /** Clears the console.  */
-    protected void clearConsole ()
-    {
-        _consoleText.setText("");
-    }
-
     protected static class LineNumberButton extends JButton
     {
         public LineNumberButton ()
@@ -184,13 +179,28 @@ public class Console extends JFrame
         protected static final String LINE_NUMBER_ICON = "/rsrc/icons/swiftly/zoom.gif";
     }
 
+
+    protected static final SimpleAttributeSet _normal = new SimpleAttributeSet();
+    protected static final SimpleAttributeSet _warning = new SimpleAttributeSet();
+    protected static final SimpleAttributeSet _error = new SimpleAttributeSet();
+
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
     protected ProjectRoomObject _roomObj;
 
     protected JTextPane _consoleText;
     protected DefaultStyledDocument _document;
-    protected SimpleAttributeSet _normal = new SimpleAttributeSet();
-    protected SimpleAttributeSet _error = new SimpleAttributeSet();
 
+    /** Map CompilerOutput.Level enums to font attributes. */
+    protected static final Map<CompilerOutput.Level, SimpleAttributeSet> _messageLevels =
+        new HashMap<CompilerOutput.Level, SimpleAttributeSet>();
+
+    // Initialize Enum level -> font attribute mapping.
+    static {
+        _messageLevels.put(CompilerOutput.Level.INFO, _normal);
+        _messageLevels.put(CompilerOutput.Level.IGNORE, _normal);
+        _messageLevels.put(CompilerOutput.Level.UNKNOWN, _normal);
+        _messageLevels.put(CompilerOutput.Level.WARNING, _warning);
+        _messageLevels.put(CompilerOutput.Level.ERROR, _error);
+    }
 }
