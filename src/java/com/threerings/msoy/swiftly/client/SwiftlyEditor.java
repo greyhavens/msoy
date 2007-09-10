@@ -200,15 +200,15 @@ public class SwiftlyEditor extends PlacePanel
         scroller.setRowHeaderView(gutter);
 
         // disable editing if the user does not have write access on the project
-        if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
+        if (_roomObj.hasWriteAccess(_ctx.getMember())) {
             textPane.writeAccessGranted();
         } else {
             textPane.readOnlyAccessGranted();
         }
 
         // if we have a current build result, inform the gutter
-        if (_roomObj.results.containsKey(_ctx.getMemberObject().memberName)) {
-            gutter.gotResult(_roomObj.results.get(_ctx.getMemberObject().memberName));
+        if (_roomObj.results.containsKey(_ctx.getMember())) {
+            gutter.gotResult(_roomObj.results.get(_ctx.getMember()));
         }
 
         // add the tab
@@ -410,7 +410,7 @@ public class SwiftlyEditor extends PlacePanel
 
         } else if (event.getName().equals(ProjectRoomObject.RESULTS)) {
             final BuildResult result = (BuildResult)event.getEntry();
-            if (result.getMember().equals(_ctx.getMemberObject().memberName)) {
+            if (result.getMember().equals(_ctx.getMember())) {
                 displayBuildResult(result);
             }
         }
@@ -426,7 +426,7 @@ public class SwiftlyEditor extends PlacePanel
 
         } else if (event.getName().equals(ProjectRoomObject.RESULTS)) {
             final BuildResult result = (BuildResult)event.getEntry();
-            if (result.getMember().equals(_ctx.getMemberObject().memberName)) {
+            if (result.getMember().equals(_ctx.getMember())) {
                 displayBuildResult(result);
             }
         }
@@ -476,12 +476,12 @@ public class SwiftlyEditor extends PlacePanel
      */
     protected void updateEditorAccess ()
     {
-        if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
+        if (_roomObj.hasWriteAccess(_ctx.getMember())) {
             for (AccessControlListener listener : _accessListeners) {
                 listener.writeAccessGranted();
             }
 
-        } else if (_roomObj.hasReadAccess(_ctx.getMemberObject().memberName)) {
+        } else if (_roomObj.hasReadAccess(_ctx.getMember())) {
             for (AccessControlListener listener : _accessListeners) {
                 listener.readOnlyAccessGranted();
             }

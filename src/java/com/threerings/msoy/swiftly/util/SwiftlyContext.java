@@ -6,7 +6,7 @@ package com.threerings.msoy.swiftly.util;
 import java.applet.AppletContext;
 
 import com.threerings.crowd.util.CrowdContext;
-import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.swiftly.client.SimpleProgressBar;
 import com.threerings.util.MessageManager;
 
@@ -26,8 +26,8 @@ public interface SwiftlyContext extends CrowdContext
     /** Returns the applet context */
     public AppletContext getAppletContext ();
 
-    /** Returns the MemberObject for the client */
-    public MemberObject getMemberObject ();
+    /** Returns the MemberName for the client */
+    public MemberName getMember ();
 
     /** Displays an info level message to the user. */
     public void showInfoMessage (String message);

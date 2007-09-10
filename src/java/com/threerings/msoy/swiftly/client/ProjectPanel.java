@@ -363,7 +363,7 @@ public class ProjectPanel extends JPanel
     protected void updateActions ()
     {
         // if the user does not have write access disable all actions
-        if (!_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
+        if (!_roomObj.hasWriteAccess(_ctx.getMember())) {
             _addFileAction.setEnabled(false);
             _uploadFileAction.setEnabled(false);
             _deleteFileAction.setEnabled(false);

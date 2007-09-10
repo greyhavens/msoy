@@ -35,6 +35,7 @@ import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 import com.threerings.msoy.web.client.DeploymentConfig;
@@ -257,8 +258,8 @@ public class SwiftlyApplet extends JApplet
         public Client getClient () {
             return _client;
         }
-        public MemberObject getMemberObject () {
-            return (MemberObject)getClient().getClientObject();
+        public MemberName getMember () {
+            return ((MemberObject)getClient().getClientObject()).memberName;
         }
         public DObjectManager getDObjectManager () {
             return _client.getDObjectManager();

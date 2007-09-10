@@ -66,11 +66,11 @@ public class EditorGutter extends JPanel
                     label = new BuildResultIconLabel(line);
                     _labels.put(line.getLineNumber(), label);
                     add(label);
-
+                    
                 } else {
                     label.appendLine(line);
                 }
-
+                
                 // position the label on the gutter
                 int fontHeight = getFontMetrics(_text.getFont()).getHeight();
                 int center = Math.max(0, (fontHeight / 2) - (label.getIcon().getIconHeight() / 2));
