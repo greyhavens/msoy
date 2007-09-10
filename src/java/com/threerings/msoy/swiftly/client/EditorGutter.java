@@ -65,6 +65,7 @@ public class EditorGutter extends JPanel
                 if (label == null) {
                     label = new BuildResultIconLabel(line);
                     _labels.put(line.getLineNumber(), label);
+                    add(label);
 
                 } else {
                     label.appendLine(line);
@@ -80,8 +81,6 @@ public class EditorGutter extends JPanel
                 int labelY = ((fontHeight * line.getLineNumber()) - fontHeight) + center;
                 label.setBounds(
                     0, labelY, label.getIcon().getIconWidth(), label.getIcon().getIconHeight());
-
-                add(label);
             }
         }
     }

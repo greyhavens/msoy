@@ -35,7 +35,7 @@ public class BuildResultIconLabel extends JLabel
                 _highestLevel = line.getLevel();
             }
             // TODO: replace with this with a new multiline tooltip class
-            setToolTipText(getToolTipText() + "-" + line.getMessage() + "<br>");
+            setToolTipText(getToolTipText() + "- " + line.getMessage() + "<br>");
         }
         setToolTipText(getToolTipText() + "</html>");
 
