@@ -725,6 +725,7 @@
 
   <!-- builds the java class files only, without preparing the build directories etc. -->
   <target name="qcompile">
+    <echo>Compiling MSOY...</echo>
     <javac srcdir="${src.dir}" destdir="${classes.dir}"
            debug="on" optimize="off" deprecation="on">
       <classpath refid="classpath"/>
