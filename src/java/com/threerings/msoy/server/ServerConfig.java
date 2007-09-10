@@ -119,6 +119,14 @@ public class ServerConfig
     }
 
     /**
+     * Returns the HTTP port on which the specified node should be listening.
+     */
+    public static int getHttpPort (String nodeName)
+    {
+        return config.getValue(nodeName + ".http_port", httpPort);
+    }
+
+    /**
      * Configures server bits when this class is resolved.
      */
     static {
