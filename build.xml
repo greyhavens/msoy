@@ -159,19 +159,19 @@
       </redirector>
     </exec>
     <!-- copy ehcache.xml to a classpath location -->
-    <copy todir="${deploy.dir}" file="${basedir}/etc/ehcache.xml"/>
-    <mkdir dir="${deploy.dir}/lib"/>
-    <!-- create dev usable security.policy and swiftly.policy files; real ones created in
-         prepare-server-extra -->
+    <if><equals arg1="${props.dist}" arg2="production"/>
+    <then>
+      <copy tofile="${deploy.dir}/ehcache.xml" file="${basedir}/etc/ehcache-production.xml"/>
+    </then><else>
+      <copy todir="${deploy.dir}" file="${basedir}/etc/ehcache.xml"/>
+    </else></if>
+    <!-- create dev usable security.policy and swiftly.policy files -->
+    <!-- real ones are created in prepare-server-extra -->
     <copy file="etc/security.policy.in" tofile="${deploy.dir}/security.policy" overwrite="true">
-      <filterset>
-        <filter token="PREFIX" value="${server_root}"/>
-      </filterset>
+      <filterset><filter token="PREFIX" value="${server_root}"/></filterset>
     </copy>
     <copy file="etc/swiftly.policy.in" tofile="${deploy.dir}/swiftly.policy" overwrite="true">
-      <filterset>
-        <filter token="PREFIX" value="${basedir}"/>
-      </filterset>
+      <filterset><filter token="PREFIX" value="${basedir}"/></filterset>
     </copy>
   </target>
 
