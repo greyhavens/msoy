@@ -11,7 +11,7 @@ import com.threerings.util.Name;
  * Contains a group name and group id in one handy object.
  */
 public class GroupName extends Name
-    implements IsSerializable, Comparable
+    implements IsSerializable
 {
     /** The maximum length of a group name */
     public static final int LENGTH_MAX = 24;
@@ -62,8 +62,8 @@ public class GroupName extends Name
         return (other instanceof GroupName) && _groupId == ((GroupName)other)._groupId;
     }
 
-    // from Comparable
-    public int compareTo (Object o) 
+    // @Override // from Name
+    public int compareTo (Name o) 
     {
         return _groupId - ((GroupName) o)._groupId;
     }

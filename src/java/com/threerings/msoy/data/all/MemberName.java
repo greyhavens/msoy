@@ -85,7 +85,7 @@ public class MemberName extends Name
     }
 
     // @Override // from Name
-    public int compareTo (Object o)
+    public int compareTo (Name o)
     {
         MemberName that = (MemberName) o;
         int diff = this._memberId - that._memberId;

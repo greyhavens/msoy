@@ -11,7 +11,7 @@ import com.threerings.util.Name;
  * Represents the name of a custom chat channel.
  */
 public class ChannelName extends Name
-    implements IsSerializable, Comparable
+    implements IsSerializable
 {
     /** The maximum length of a channel name */
     public static final int LENGTH_MAX = 24;
@@ -57,8 +57,8 @@ public class ChannelName extends Name
         return  false;
     }
 
-    // from Comparable
-    public int compareTo (Object o) 
+    // @Override // from Name
+    public int compareTo (Name o) 
     {
         ChannelName oc = (ChannelName)o;
         if (_creatorId == oc._creatorId) {
