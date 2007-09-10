@@ -54,8 +54,8 @@ import com.threerings.msoy.world.data.MsoySceneMarshaller;
 import com.threerings.msoy.world.data.PetMarshaller;
 import com.threerings.msoy.world.data.RoomConfig;
 
-import com.threerings.msoy.game.data.WorldGameConfig;
-import com.threerings.msoy.game.data.WorldGameMarshaller;
+import com.threerings.msoy.game.data.AVRGameConfig;
+import com.threerings.msoy.game.data.AVRGameMarshaller;
 
 import com.threerings.msoy.game.chiyogami.client.ChiyogamiController;
 
@@ -141,10 +141,10 @@ public class WorldClient extends BaseClient
         c = Furniture;
         c = Game;
         c = ItemMarshaller;
-        c = WorldGameMarshaller;
+        c = AVRGameMarshaller;
         c = ToyBoxMarshaller;
         c = PetMarshaller;
-        c = WorldGameConfig;
+        c = AVRGameConfig;
         c = ChiyogamiController;
         c = ItemList;
         c = LevelUpNotification;

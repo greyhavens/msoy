@@ -22,7 +22,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.world.client.AvatarSprite;
 import com.threerings.msoy.world.client.RoomView;
 
-import com.threerings.msoy.game.client.WorldGameControllerDelegate;
+import com.threerings.msoy.game.client.AVRGameControllerDelegate;
 
 import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
 
@@ -34,7 +34,7 @@ public class ChiyogamiController extends GameController
     public function ChiyogamiController ()
     {
         super();
-        addDelegate(_worldDelegate = new WorldGameControllerDelegate(this));
+        addDelegate(_worldDelegate = new AVRGameControllerDelegate(this));
     }
 
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
@@ -211,7 +211,7 @@ public class ChiyogamiController extends GameController
     protected var _gameObj :ChiyogamiObject;
 
     /** Our world delegate. */
-    protected var _worldDelegate :WorldGameControllerDelegate;
+    protected var _worldDelegate :AVRGameControllerDelegate;
 
     /** Our panel. */
     protected var _panel :ChiyogamiPanel;

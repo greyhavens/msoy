@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.game.server;
 
-import com.threerings.msoy.game.client.WorldGameService;
+import com.threerings.msoy.game.client.AVRGameService;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -12,24 +12,24 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
 
 /**
- * Defines the server-side of the {@link WorldGameService}.
+ * Defines the server-side of the {@link AVRGameService}.
  */
-public interface WorldGameProvider extends InvocationProvider
+public interface AVRGameProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link WorldGameService#joinWorldGame} request.
+     * Handles a {@link AVRGameService#joinAVRGame} request.
      */
-    public void joinWorldGame (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
+    public void joinAVRGame (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
 
     /**
-     * Handles a {@link WorldGameService#leaveWorldGame} request.
+     * Handles a {@link AVRGameService#leaveAVRGame} request.
      */
-    public void leaveWorldGame (ClientObject caller, InvocationService.InvocationListener arg1)
+    public void leaveAVRGame (ClientObject caller, InvocationService.InvocationListener arg1)
         throws InvocationException;
 
     /**
-     * Handles a {@link WorldGameService#updateMemory} request.
+     * Handles a {@link AVRGameService#updateMemory} request.
      */
     public void updateMemory (ClientObject caller, MemoryEntry arg1);
 }

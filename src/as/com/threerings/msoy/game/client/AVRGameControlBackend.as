@@ -30,7 +30,7 @@ import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomObject;
 
-import com.threerings.msoy.game.data.WorldGameConfig;
+import com.threerings.msoy.game.data.AVRGameConfig;
 import com.threerings.msoy.game.data.AVRGameObject;
 
 public class AVRGameControlBackend extends MsoyGameControlBackend
@@ -47,7 +47,7 @@ public class AVRGameControlBackend extends MsoyGameControlBackend
         // TODO: this needs redoing
         // the gameIdent matches the prototype of the game
         _gameIdent = new ItemIdent(
-            Item.GAME, (ctrl.getPlaceConfig() as WorldGameConfig).getGameId());
+            Item.GAME, (ctrl.getPlaceConfig() as AVRGameConfig).getGameId());
         
         _avrGameObj.addListener(_memlist);
         
@@ -148,8 +148,8 @@ public class AVRGameControlBackend extends MsoyGameControlBackend
     {
         validateConnected();
         var data :ByteArray = ObjectMarshaller.validateAndEncode(value);
-        var wgsvc :WorldGameService =
-            (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
+        var wgsvc :AVRGameService =
+            (_ctx.getClient().requireService(AVRGameService) as AVRGameService);
         wgsvc.updateMemory(_ctx.getClient(), new MemoryEntry(_gameIdent, key, data));
         return true;
     }

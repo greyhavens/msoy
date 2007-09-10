@@ -6,9 +6,9 @@ package com.threerings.msoy.game.data;
 import com.threerings.util.ActionScript;
 
 /**
- * A game config for an in-world game.
+ * A game config for an AVR (in-world) game.
  */
-public class WorldGameConfig extends MsoyGameConfig
+public class AVRGameConfig extends MsoyGameConfig
 {
     /** The scene id in which the game was started. */
     public int startSceneId;

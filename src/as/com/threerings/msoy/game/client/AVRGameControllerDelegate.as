@@ -27,9 +27,9 @@ import com.threerings.msoy.world.client.RoomView;
  * A delegate controller encapsulating all client-side behavior available
  * to "World" games, whether AVRG or our own.
  */
-public class WorldGameControllerDelegate extends GameControllerDelegate
+public class AVRGameControllerDelegate extends GameControllerDelegate
 {
-    public function WorldGameControllerDelegate (ctrl :GameController)
+    public function AVRGameControllerDelegate (ctrl :GameController)
     {
         super(ctrl);
     }
@@ -87,7 +87,7 @@ public class WorldGameControllerDelegate extends GameControllerDelegate
         _panel.addChild(comp);
 
         // TODO: A nice wee X
-        var quit :CommandButton = new CommandButton(MsoyController.LEAVE_WORLD_GAME);
+        var quit :CommandButton = new CommandButton(MsoyController.LEAVE_AVR_GAME);
         quit.label = Msgs.GAME.get("b.leave_world_game");
         _panel.addChild(quit);
         _panel.height = 100;

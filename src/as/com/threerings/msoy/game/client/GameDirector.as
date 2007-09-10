@@ -24,13 +24,13 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
 
+import com.threerings.msoy.game.data.AVRGameConfig;
 import com.threerings.msoy.game.data.GameCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyGameMarshaller;
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.data.WorldGameConfig;
 
 /**
  * A director that manages game related bits.
@@ -119,7 +119,7 @@ public class GameDirector extends BasicDirector
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
         if (event.getName() == MemberObject.WORLD_GAME_OID) {
-            updateWorldGame();
+            updateAVRGame();
         }
     }
 
@@ -139,7 +139,7 @@ public class GameDirector extends BasicDirector
         _worldGameObj = (obj as GameObject);
         // the config is set in the memberobject simultaneously with the oid.  so if the oid is
         // up-to-date, we can trust the config as well
-        var cfg :WorldGameConfig = (_mctx.getMemberObject().worldGameCfg as WorldGameConfig);
+        var cfg :AVRGameConfig = (_mctx.getMemberObject().worldGameCfg as AVRGameConfig);
         _worldGameCtrl = (cfg.createController() as GameController);
         _worldGameCtrl.init(_mctx, cfg);
         _worldGameCtrl.willEnterPlace(_worldGameObj);
@@ -167,14 +167,14 @@ public class GameDirector extends BasicDirector
     override protected function clientObjectUpdated (client :Client) :void
     {
         // listen for changes to the in-world game oid
-        updateWorldGame();
+        updateAVRGame();
         client.getClientObject().addListener(this);
     }
 
     /**
      * Called to create, remove, or change the in-world game.
      */
-    protected function updateWorldGame () :void
+    protected function updateAVRGame () :void
     {
         var noid :int = _mctx.getMemberObject().worldGameOid;
         if (noid == _worldGameOid) {

@@ -114,7 +114,7 @@ public class MsoyClient extends WhirledClient
     {
         super.clearLocation(bobj);
         try {
-            MsoyServer.worldGameReg.leaveWorldGame((MemberObject)bobj);
+            MsoyServer.worldGameReg.leaveAVRGame((MemberObject)bobj);
         } catch (InvocationException e) {
             // a warning will have already been logged
         }

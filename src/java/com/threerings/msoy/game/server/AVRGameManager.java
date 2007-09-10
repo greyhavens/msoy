@@ -25,14 +25,13 @@ import com.threerings.msoy.game.data.AVRGameObject;
 import static com.threerings.msoy.Log.*;
 
 /**
- * Manages an in-world ez-game, or an AVRGame-
- * an Alternate Virtual Reality Game.
+ * Manages an in-world ez-game, or an AVRGame- an Alternate Virtual Reality Game.
  */
 public class AVRGameManager extends MsoyGameManager
 {
     public AVRGameManager ()
     {
-        addDelegate(_worldDelegate = new WorldGameManagerDelegate(this));
+        addDelegate(_worldDelegate = new AVRGameManagerDelegate(this));
     }
 
     @Override // documentation inherited
@@ -127,5 +126,5 @@ public class AVRGameManager extends MsoyGameManager
     }
 
     /** Our world delegate. */
-    protected WorldGameManagerDelegate _worldDelegate;
+    protected AVRGameManagerDelegate _worldDelegate;
 }

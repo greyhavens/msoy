@@ -63,7 +63,7 @@ import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-import com.threerings.msoy.game.client.WorldGameService;
+import com.threerings.msoy.game.client.AVRGameService;
 
 import com.threerings.msoy.world.client.RoomView;
 
@@ -109,10 +109,10 @@ public class MsoyController extends Controller
     public static const JOIN_GAME_LOBBY :String = "JoinGameLobby";
 
     /** Command to join an in-world game. */
-    public static const JOIN_WORLD_GAME :String = "JoinWorldGame";
+    public static const JOIN_AVR_GAME :String = "JoinAVRGame";
 
     /** Command to leave the in-world game. */
-    public static const LEAVE_WORLD_GAME :String = "LeaveWorldGame";
+    public static const LEAVE_AVR_GAME :String = "LeaveAVRGame";
 
     /** Command to invite someone to be a friend. */
     public static const INVITE_FRIEND :String = "InviteFriend";
@@ -476,24 +476,24 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle JOIN_WORLD_GAME.
+     * Handle JOIN_AVR_GAME.
      */
-    public function handleJoinWorldGame (gameId :int) :void
+    public function handleJoinAVRGame (gameId :int) :void
     {
-        var wgsvc :WorldGameService =
-            (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
-        wgsvc.joinWorldGame(_ctx.getClient(), gameId,
+        var wgsvc :AVRGameService =
+            (_ctx.getClient().requireService(AVRGameService) as AVRGameService);
+        wgsvc.joinAVRGame(_ctx.getClient(), gameId,
             new ReportingListener(_ctx, MsoyCodes.GAME_MSGS, "e.join_world_game_failed"));
     }
 
     /**
-     * Handle LEAVE_WORLD_GAME.
+     * Handle LEAVE_AVR_GAME.
      */
-    public function handleLeaveWorldGame () :void
+    public function handleLeaveAVRGame () :void
     {
-        var wgsvc :WorldGameService =
-            (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
-        wgsvc.leaveWorldGame(_ctx.getClient(),
+        var wgsvc :AVRGameService =
+            (_ctx.getClient().requireService(AVRGameService) as AVRGameService);
+        wgsvc.leaveAVRGame(_ctx.getClient(),
              new ReportingListener(_ctx, MsoyCodes.GAME_MSGS, "e.leave_world_game_failed"));
     }
 
@@ -578,7 +578,7 @@ public class MsoyController extends Controller
             handleJoinGameLobby(int(params["gameLobby"]));
 
         } else if (null != params["worldGame"]) {
-            handleJoinWorldGame(int(params["worldGame"]));
+            handleJoinAVRGame(int(params["worldGame"]));
 
         } else if (null != params["groupChat"]) {
             var group :GroupName = new GroupName(null, int(params["groupChat"]));

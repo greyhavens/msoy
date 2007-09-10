@@ -15,12 +15,12 @@ import com.threerings.msoy.game.client.AVRGameController;
 /**
  * A game config for an in-world game.
  */
-public class WorldGameConfig extends MsoyGameConfig
+public class AVRGameConfig extends MsoyGameConfig
 {
     /** The scene id in which the game was started. */
     public var startSceneId :int;
 
-    public function WorldGameConfig ()
+    public function AVRGameConfig ()
     {
         // used for unserialization
     }

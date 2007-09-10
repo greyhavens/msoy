@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.game.server;
 
-import com.threerings.msoy.game.client.WorldGameService;
-import com.threerings.msoy.game.data.WorldGameMarshaller;
+import com.threerings.msoy.game.client.AVRGameService;
+import com.threerings.msoy.game.data.AVRGameMarshaller;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -14,15 +14,15 @@ import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
 
 /**
- * Dispatches requests to the {@link WorldGameProvider}.
+ * Dispatches requests to the {@link AVRGameProvider}.
  */
-public class WorldGameDispatcher extends InvocationDispatcher
+public class AVRGameDispatcher extends InvocationDispatcher
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
      * service requests for the specified provider.
      */
-    public WorldGameDispatcher (WorldGameProvider provider)
+    public AVRGameDispatcher (AVRGameProvider provider)
     {
         this.provider = provider;
     }
@@ -30,7 +30,7 @@ public class WorldGameDispatcher extends InvocationDispatcher
     // from InvocationDispatcher
     public InvocationMarshaller createMarshaller ()
     {
-        return new WorldGameMarshaller();
+        return new AVRGameMarshaller();
     }
 
     @SuppressWarnings("unchecked") // from InvocationDispatcher
@@ -39,22 +39,22 @@ public class WorldGameDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
-        case WorldGameMarshaller.JOIN_WORLD_GAME:
-            ((WorldGameProvider)provider).joinWorldGame(
+        case AVRGameMarshaller.JOIN_AVRGAME:
+            ((AVRGameProvider)provider).joinAVRGame(
                 source,
                 ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
             );
             return;
 
-        case WorldGameMarshaller.LEAVE_WORLD_GAME:
-            ((WorldGameProvider)provider).leaveWorldGame(
+        case AVRGameMarshaller.LEAVE_AVRGAME:
+            ((AVRGameProvider)provider).leaveAVRGame(
                 source,
                 (InvocationService.InvocationListener)args[0]
             );
             return;
 
-        case WorldGameMarshaller.UPDATE_MEMORY:
-            ((WorldGameProvider)provider).updateMemory(
+        case AVRGameMarshaller.UPDATE_MEMORY:
+            ((AVRGameProvider)provider).updateMemory(
                 source,
                 (MemoryEntry)args[0]
             );

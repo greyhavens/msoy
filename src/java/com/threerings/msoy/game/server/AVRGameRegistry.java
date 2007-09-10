@@ -41,7 +41,7 @@ import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.world.data.MemoryEntry;
 
 import com.threerings.msoy.game.data.AVRGameObject;
-import com.threerings.msoy.game.data.WorldGameConfig;
+import com.threerings.msoy.game.data.AVRGameConfig;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import static com.threerings.msoy.Log.*;
@@ -49,19 +49,19 @@ import static com.threerings.msoy.Log.*;
 /**
  * Manages AVRG games.
  */
-public class WorldGameRegistry
-    implements WorldGameProvider
+public class AVRGameRegistry
+    implements AVRGameProvider
 {
     /**
      * Initializes the registry.
      */
     public void init (InvocationManager invmgr)
     {
-        invmgr.registerDispatcher(new WorldGameDispatcher(this), MsoyCodes.WORLD_GROUP);
+        invmgr.registerDispatcher(new AVRGameDispatcher(this), MsoyCodes.WORLD_GROUP);
     }
 
-    // from WorldGameProvider
-    public void joinWorldGame (ClientObject caller, final int gameId,
+    // from AVRGameProvider
+    public void joinAVRGame (ClientObject caller, final int gameId,
                                final InvocationService.InvocationListener listener)
         throws InvocationException
     {
@@ -76,7 +76,7 @@ public class WorldGameRegistry
         Integer gameOid = _games.get(gameKey);
         if (gameOid != null) {
             // if we know the game oid, join immediately
-            joinWorldGame(member, gameOid);
+            joinAVRGame(member, gameOid);
             return;
         }
 
@@ -87,7 +87,7 @@ public class WorldGameRegistry
                     return; // he bailed
                 }
                 try {
-                    joinWorldGame(member, result);
+                    joinAVRGame(member, result);
                 } catch (InvocationException e) {
                     requestFailed(e);
                 }
@@ -110,7 +110,7 @@ public class WorldGameRegistry
         _loading.put(gameKey, list);
 
         // retrieve the game item
-        MsoyServer.invoker.postUnit(new RepositoryUnit("loadWorldGame") {
+        MsoyServer.invoker.postUnit(new RepositoryUnit("loadAVRGame") {
             public void invokePersist () throws Exception {
                 GameRecord grec = MsoyServer.itemMan.getGameRepository().loadGameRecord(gameId);
                 if (grec == null) {
@@ -121,7 +121,7 @@ public class WorldGameRegistry
 
             public void handleSuccess () {
                 try {
-                    startWorldGame(gameKey, _game);
+                    startAVRGame(gameKey, _game);
                 } catch (Exception e) {
                     log.log(Level.WARNING, "Exception configuring world game.", e);
                     handleFailure(e);
@@ -142,17 +142,17 @@ public class WorldGameRegistry
         });
     }
 
-    // from WorldGameProvider
-    public void leaveWorldGame (ClientObject caller, InvocationService.InvocationListener arg1)
+    // from AVRGameProvider
+    public void leaveAVRGame (ClientObject caller, InvocationService.InvocationListener arg1)
         throws InvocationException
     {
-        leaveWorldGame((MemberObject)caller);
+        leaveAVRGame((MemberObject)caller);
     }
 
     /**
      * Removes the user from the world game he currently occupies (if any).
      */
-    public void leaveWorldGame (MemberObject member)
+    public void leaveAVRGame (MemberObject member)
         throws InvocationException
     {
         // nothing to do if they aren't in a game
@@ -162,7 +162,7 @@ public class WorldGameRegistry
 
         int gameOid = member.worldGameOid;
 
-        clearWorldGame(member);
+        clearAVRGame(member);
 
         // remove them from the occupant list
         GameObject gobj = getGameObject(member, gameOid);
@@ -178,7 +178,7 @@ public class WorldGameRegistry
         }
     }
 
-    // from WorldGameProvider
+    // from AVRGameProvider
     public void updateMemory (ClientObject caller, MemoryEntry entry)
     {
         // get their game object
@@ -191,7 +191,7 @@ public class WorldGameRegistry
         }
 
         GameManager manager = _managers.get(gameObj.getOid());
-        WorldGameConfig config = (WorldGameConfig) manager.getConfig();
+        AVRGameConfig config = (AVRGameConfig) manager.getConfig();
 
         // TODO: this all needs to be redone not ot use entity memory (which is item based) but
         // rather to use a special gameId indexed memory
@@ -212,11 +212,11 @@ public class WorldGameRegistry
     }
 
     /**
-     * Called by WorldGameManagerDelegates instances after they're all ready to go.
+     * Called by AVRGameManagerDelegates instances after they're all ready to go.
      */
     public void gameStartup (GameManager manager, int gameOid)
     {
-        WorldGameConfig config = (WorldGameConfig) manager.getConfig();
+        AVRGameConfig config = (AVRGameConfig) manager.getConfig();
 
         // record the oid and manager for the game
         IntTuple gameKey = new IntTuple(config.getGameId(), config.startSceneId);
@@ -234,7 +234,7 @@ public class WorldGameRegistry
     }
 
     /**
-     * Called by WorldGameManagerDelegate instances when they start to shut down and destroy their
+     * Called by AVRGameManagerDelegate instances when they start to shut down and destroy their
      * dobject.
      */
     public void gameShutdown (GameManager manager, int gameOid)
@@ -244,11 +244,11 @@ public class WorldGameRegistry
         for (int ii = game.occupants.size() - 1; ii >= 0; ii--) {
             MemberObject member = (MemberObject) MsoyServer.omgr.getObject(game.occupants.get(ii));
             if (member != null) {
-                clearWorldGame(member);
+                clearAVRGame(member);
             }
         }
 
-        WorldGameConfig config = (WorldGameConfig) manager.getConfig();
+        AVRGameConfig config = (AVRGameConfig) manager.getConfig();
 
         // destroy our record of that game
         IntTuple gameKey = new IntTuple(config.getGameId(), config.startSceneId);
@@ -259,14 +259,14 @@ public class WorldGameRegistry
     }
 
     /**
-     * Helper function for {@link #joinWorldGame}.
+     * Helper function for {@link #joinAVRGame}.
      */
-    protected void startWorldGame (IntTuple gameKey, Game game)
+    protected void startAVRGame (IntTuple gameKey, Game game)
         throws Exception
     {
         GameDefinition gdef = new MsoyGameParser().parseGame(game);
 
-        WorldGameConfig config = new WorldGameConfig();
+        AVRGameConfig config = new AVRGameConfig();
         config.init(game, gdef);
         config.startSceneId = gameKey.right;
         if (config.getMatchType() == GameConfig.PARTY) {
@@ -289,7 +289,7 @@ public class WorldGameRegistry
     /**
      * Adds the user to a world game.
      */
-    protected void joinWorldGame (MemberObject member, int gameOid)
+    protected void joinAVRGame (MemberObject member, int gameOid)
         throws InvocationException
     {
         // make sure they're not already in the game
@@ -303,12 +303,12 @@ public class WorldGameRegistry
         // TODO: verify that there's room for them to join?
 
         // leave the current game, if any
-        leaveWorldGame(member);
+        leaveAVRGame(member);
 
         // add to the occupant list
         int memberOid = member.getOid();
         GameManager gmgr = _managers.get(gameOid);
-        WorldGameConfig wgcfg = (WorldGameConfig) gmgr.getConfig();
+        AVRGameConfig wgcfg = (AVRGameConfig) gmgr.getConfig();
 
         gobj.startTransaction();
         try {
@@ -331,7 +331,7 @@ public class WorldGameRegistry
     /**
      * Remove this member from any world games.
      */
-    protected void clearWorldGame (MemberObject member)
+    protected void clearAVRGame (MemberObject member)
     {
         member.startTransaction();
         try {

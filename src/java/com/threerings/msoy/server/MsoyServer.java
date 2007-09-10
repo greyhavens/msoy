@@ -43,7 +43,7 @@ import com.threerings.whirled.spot.server.SpotProvider;
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
-import com.threerings.msoy.game.server.WorldGameRegistry;
+import com.threerings.msoy.game.server.AVRGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -125,7 +125,7 @@ public class MsoyServer extends MsoyBaseServer
     public static MsoyGameRegistry gameReg = new MsoyGameRegistry();
 
     /** The in-world game registry for this server. */
-    public static WorldGameRegistry worldGameReg = new WorldGameRegistry();
+    public static AVRGameRegistry worldGameReg = new AVRGameRegistry();
 
     /** Handles HTTP servlet requests. */
     public static MsoyHttpServer httpServer;

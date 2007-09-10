@@ -105,11 +105,11 @@ public class MemberObject extends MsoyBodyObject
     /** The name and id information for this user. */
     public MemberName memberName;
 
-    /** The object ID of the in-world game that the user is in, or 0. */
+    /** The object ID of the AVR (in-world) game that the user is in, or 0. */
     public int worldGameOid;
 
     /** The config that goes along with the world game oid, or null. This is not typed
-     * WorldGameConfig to avoid introducing a dependency on all the game code in the MemberObject
+     * AVRGameConfig to avoid introducing a dependency on all the game code in the MemberObject
      * which is used by numerous clients that don't care about game stuff. */
     public Streamable worldGameCfg;
 

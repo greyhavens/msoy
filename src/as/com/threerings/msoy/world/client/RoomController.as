@@ -436,7 +436,7 @@ public class RoomController extends SceneController
             var actionData :Array = furni.splitActionData();
             var gameId :int = int(actionData[0]);
             postAction(furni.actionType == FurniData.ACTION_LOBBY_GAME ?
-                MsoyController.JOIN_GAME_LOBBY : MsoyController.JOIN_WORLD_GAME, gameId);
+                MsoyController.JOIN_GAME_LOBBY : MsoyController.JOIN_AVR_GAME, gameId);
             return;
 
         case FurniData.ACTION_PORTAL:

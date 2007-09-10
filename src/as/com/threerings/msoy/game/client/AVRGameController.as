@@ -15,7 +15,7 @@ public class AVRGameController extends MsoyGameController
     public function AVRGameController ()
     {
         super();
-        addDelegate(_worldDelegate = new WorldGameControllerDelegate(this));
+        addDelegate(_worldDelegate = new AVRGameControllerDelegate(this));
     }
 
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
@@ -23,25 +23,25 @@ public class AVRGameController extends MsoyGameController
         super.init(ctx, config);
         _mctx = (ctx as WorldContext);
     }
-    
+
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
         _panel = new AVRGamePanel(ctx, this);
         return _panel;
     }
-    
+
     override protected function setPlaceView () :void
     {
         _worldDelegate.setPlaceView(_panel);
     }
-    
+
     override protected function clearPlaceView () :void
     {
         _worldDelegate.clearPlaceView();
     }
-    
+
     protected var _mctx :WorldContext;
-    protected var _worldDelegate :WorldGameControllerDelegate;
+    protected var _worldDelegate :AVRGameControllerDelegate;
 }
 }
 
@@ -59,9 +59,10 @@ class AVRGamePanel extends EZGamePanel // we need no chat
     {
         super(ctx, ctrl);
     }
-    
+
     override protected function createBackend () :GameControlBackend
     {
-        return new AVRGameControlBackend(_ctx as WorldContext, _ezObj as AVRGameObject, _ctrl as AVRGameController);
+        return new AVRGameControlBackend(
+            _ctx as WorldContext, _ezObj as AVRGameObject, _ctrl as AVRGameController);
     }
 }

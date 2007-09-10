@@ -42,10 +42,10 @@ import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.server.RoomManager;
 
+import com.threerings.msoy.game.data.AVRGameConfig;
 import com.threerings.msoy.game.data.PerfRecord;
-import com.threerings.msoy.game.data.WorldGameConfig;
+import com.threerings.msoy.game.server.AVRGameManagerDelegate;
 import com.threerings.msoy.game.server.WhirledGameDelegate;
-import com.threerings.msoy.game.server.WorldGameManagerDelegate;
 
 import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
 
@@ -58,7 +58,7 @@ public class ChiyogamiManager extends GameManager
 {
     public ChiyogamiManager ()
     {
-        addDelegate(_worldDelegate = new WorldGameManagerDelegate(this));
+        addDelegate(_worldDelegate = new AVRGameManagerDelegate(this));
         addDelegate(_whirledDelegate = new WhirledGameDelegate(this));
     }
 
@@ -189,7 +189,7 @@ public class ChiyogamiManager extends GameManager
         _gameObj = (ChiyogamiObject) _plobj;
 
         // get a handle on the room we're in
-        _sceneId = ((WorldGameConfig) getConfig()).startSceneId;
+        _sceneId = ((AVRGameConfig) getConfig()).startSceneId;
         _roomMgr = (RoomManager) MsoyServer.screg.getSceneManager(_sceneId);
         _roomObj = (RoomObject) _roomMgr.getPlaceObject();
         _roomObj.addListener(_roomListener);
@@ -920,7 +920,7 @@ public class ChiyogamiManager extends GameManager
             int oid = event.getOid();
             if (_gameObj.occupants.contains(oid)) {
                 try {
-                    MsoyServer.worldGameReg.leaveWorldGame(
+                    MsoyServer.worldGameReg.leaveAVRGame(
                         (MemberObject) MsoyServer.omgr.getObject(oid));
                 } catch (InvocationException ie) {
                     log.warning("Error removing user from chiyogami game [where=" + where() +
@@ -1081,7 +1081,7 @@ public class ChiyogamiManager extends GameManager
     protected RoomListener _roomListener = new RoomListener();
 
     /** Our world delegate. */
-    protected WorldGameManagerDelegate _worldDelegate;
+    protected AVRGameManagerDelegate _worldDelegate;
 
     /** Handles Whirled game services. */
     protected WhirledGameDelegate _whirledDelegate;

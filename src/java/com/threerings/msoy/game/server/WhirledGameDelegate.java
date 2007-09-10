@@ -28,6 +28,7 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.rating.server.RatingManagerDelegate;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
+import com.threerings.parlor.rating.util.Percentiler;
 
 import com.threerings.ezgame.server.EZGameManager;
 
@@ -79,7 +80,10 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             players.put(playerOids[ii], new Player(playerOids[ii], scores[ii], availFlow));
         }
 
-        // TODO: record scores, convert scores to percentiles
+        // determine whether we're recording scores for single or multi-player
+        // Percentiler tiler = TODO
+
+        // record scores, convert scores to percentiles
         for (Player player : players.values()) {
             player.percentile = 69; // TEMP
             // scale each players' flow award by their percentile performance
@@ -586,6 +590,9 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             return StringUtil.fieldsToString(this);
         }
     }
+
+    /** Used to identify our percentile distributions. Do not remove or reorder these constants. */
+    protected static enum Tilers { SINGLE_PLAYER, MULTI_PLAYER };
 
     /** Keep our invocation service registration so that we can unload it at shutdown. */
     protected InvocationMarshaller _invmarsh;

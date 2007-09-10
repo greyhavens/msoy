@@ -10,9 +10,9 @@ import com.threerings.parlor.game.server.GameManagerDelegate;
 
 import com.threerings.msoy.server.MsoyServer;
 
-public class WorldGameManagerDelegate extends GameManagerDelegate
+public class AVRGameManagerDelegate extends GameManagerDelegate
 {
-    public WorldGameManagerDelegate (GameManager gmgr)
+    public AVRGameManagerDelegate (GameManager gmgr)
     {
         super(gmgr);
     }
