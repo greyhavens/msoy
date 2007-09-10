@@ -74,10 +74,6 @@ public class index extends Page
                 // go to a specific member's home
                 WorldClient.displayFlash("memberHome=" + token.substring(1));
 
-            } else if (token.startsWith("l")) {
-                // go to a specific member's home
-                WorldClient.displayFlash("location=" + token.substring(1));
-
             } else if (token.startsWith("c")) {
                 // join a group chat
                 WorldClient.displayFlash("groupChat=" + token.substring(1));

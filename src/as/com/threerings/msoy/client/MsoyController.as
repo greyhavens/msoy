@@ -566,10 +566,6 @@ public class MsoyController extends Controller
             _sceneIdString = null;
             handleGoMemberScene(int(params["memberScene"]));
 
-        } else if (null != params["location"]) {
-            _sceneIdString = null;
-            _ctx.getLocationDirector().moveTo(int(params["location"]));
-
         } else if (null != params["gameLocation"]) {
             _sceneIdString = null;
             _ctx.getGameDirector().enterGame(int(params["gameLocation"]));
