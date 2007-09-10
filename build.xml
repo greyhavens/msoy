@@ -513,6 +513,8 @@
 
   <!-- builds, runs Proguard on and signs a Java client -->
   <target name="proguard">
+    <echo>Building ${ident} Java client...</echo>
+
     <!-- figure out where the Java rt.jar file lives -->
     <condition property="rtClasses" value="${java.home}/../Classes/classes.jar">
       <istrue value="${platform.darwin}"/>
