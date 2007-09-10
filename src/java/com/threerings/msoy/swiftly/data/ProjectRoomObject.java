@@ -121,6 +121,20 @@ public class ProjectRoomObject extends PlaceObject
     }
 
     /**
+     *  Returns the amount of time the last build took for this member or if this is the first
+     *  build a decent default value.
+     */
+    public int getLastBuildTime (final MemberName name)
+    {
+        if (results.containsKey(name)) {
+            return (int)results.get(name).getBuildTime();
+
+        } else {
+            return DEFAULT_BUILD_TIME;
+        }
+    }
+
+    /**
      *  Publish the supplied BuildResult into the room object
      */
     public void publishBuildResult (final BuildResult result)
@@ -442,6 +456,9 @@ public class ProjectRoomObject extends PlaceObject
         this.service = value;
     }
     // AUTO-GENERATED: METHODS END
+
+    /** The first build will be guessed to be 6 seconds. */
+    protected static final int DEFAULT_BUILD_TIME = 6000;
 
     /** Used to assign unique identifiers to elements. */
     protected transient int _nextElementId;

@@ -118,12 +118,7 @@ public class ProjectRoomController extends PlaceController
         // disable the action on this client
         buildAction.setEnabled(false);
         buildExportAction.setEnabled(false);
-        BuildResult result = _roomObj.results.get(_ctx.getMember());
-        if (result != null) {
-            _ctx.showProgress((int)result.getBuildTime());
-        } else {
-            _ctx.showProgress(DEFAULT_BUILD_TIME);
-        }
+        _ctx.showProgress(_roomObj.getLastBuildTime(_ctx.getMember()));
     }
 
     /**
@@ -139,8 +134,6 @@ public class ProjectRoomController extends PlaceController
         _ctx.stopProgress();
     }
 
-    /** The first build will be guessed to be 6 seconds. */
-    protected static final int DEFAULT_BUILD_TIME = 6000;
 
     protected SwiftlyContext _ctx;
     protected MessageBundle _msgs;
