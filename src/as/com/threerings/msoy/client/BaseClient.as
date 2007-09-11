@@ -128,6 +128,9 @@ public /*abstract*/ class BaseClient extends Client
         }
         if (rdata.sessionToken != null) {
             Prefs.setSessionToken(rdata.sessionToken);
+            // fill our session token into our credentials so that we can log in more efficiently
+            // on a reconnect and so that we can log into game servers
+            (getCredentials() as MsoyCredentials).sessionToken = rdata.sessionToken;
         }
 
         if (rdata.sessionToken != null) {
