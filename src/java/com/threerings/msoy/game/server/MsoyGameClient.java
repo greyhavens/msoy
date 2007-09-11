@@ -41,7 +41,9 @@ public class MsoyGameClient extends CrowdClient
 
         // TEMP: for now end everyone's game session if they disconnect; we don't currently support
         // reentering a game automatically so we might as well give the player the boot
-        safeEndSession();
+        if (_plobj != null) {
+            safeEndSession();
+        }
     }
 
     @Override // from PresentsClient
