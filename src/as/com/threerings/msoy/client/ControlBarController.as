@@ -46,6 +46,9 @@ public class ControlBarController extends Controller
     /** Opens up a new toolbar and a new room editor. */
     public static const ROOM_EDIT :String = "handleRoomEdit";
     
+    /** Takes a room snapshot. */
+    public static const SNAPSHOT :String = "handleSnapshot";
+    
     /** Create the controller. */
     public function ControlBarController (
         ctx :WorldContext, topPanel :TopPanel, controlBar :ControlBar)
@@ -116,6 +119,17 @@ public class ControlBarController extends Controller
         if (canEditScene()) {
             var room :RoomView = _topPanel.getPlaceView() as RoomView;
             room.getRoomController().handleRoomEdit(button);
+        }
+    }   
+
+    /**
+     * Handle the SNAPSHOT command.
+     */
+    public function handleSnapshot () :void
+    {
+        if (canEditScene()) {
+            var room :RoomView = _topPanel.getPlaceView() as RoomView;
+            room.getRoomController().takeSnapshot();
         }
     }   
 

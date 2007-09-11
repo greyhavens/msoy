@@ -14,6 +14,8 @@ import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.utils.ByteArray;
 
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.flex.CommandButton;
 import com.threerings.msoy.client.WorldClient;
 import com.threerings.msoy.client.WorldContext;
@@ -23,19 +25,16 @@ import com.threerings.util.StringUtil;
 /**
  * Captures RoomView snapshots and sends them over to the server.
  */
-public class SnapshotSender
+public class SnapshotController
 {
     public static const SERVICE_ENTRY_POINT :String = "/snapshotsvc";
     public static const IMAGE_HEIGHT :int = 180;
     public static const IMAGE_WIDTH :int = 320;
-    
-    public function SnapshotSender (ctx :WorldContext)
+
+    public function SnapshotController (ctx :WorldContext)
     {
         _ctx = ctx;
-    }
 
-    public function init () :void
-    {
         var client :WorldClient = _ctx.getWorldClient();
         var url :String =
             "http://" + client.getHostname() + ":" + client.getHttpPort() + SERVICE_ENTRY_POINT;
@@ -47,42 +46,43 @@ public class SnapshotSender
 
         _loader = new URLLoader();
         _loader.addEventListener(Event.COMPLETE, handleResult);
-        _loader.addEventListener(Event.OPEN, handleProgress);
-        _loader.addEventListener(HTTPStatusEvent.HTTP_STATUS, handleProgress);
         _loader.addEventListener(IOErrorEvent.IO_ERROR, handleError);
         _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
 
         _encoder = new JPGEncoder(80);
     }
 
-    public function shutdown () :void
+    /** Pops up a UI that will ask the user to apply or cancel the current room screenshot. */
+    public function takeScreenshot (sceneId :int, view :RoomView) :void
     {
-        _loader.removeEventListener(Event.COMPLETE, handleResult);
-        _loader.removeEventListener(Event.OPEN, handleProgress);
-        _loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, handleProgress);
-        _loader.removeEventListener(IOErrorEvent.IO_ERROR, handleError);
-        _loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
-        
-        _loader = null;
-        _request = null;
-        _encoder = null;
-    }
-
-    public function send (sceneId :int, view :RoomView) :void
-    {
-        if (_loader != null) {
-            // draw the room, scaling down to the appropriate size
-            var newScale :Number = IMAGE_HEIGHT / view.getScrollBounds().height;
-            var matrix :Matrix = new Matrix(newScale, 0, 0, newScale);
-            var room :BitmapData = new BitmapData(IMAGE_WIDTH, IMAGE_HEIGHT);
-            room.draw(view, matrix, null, null, null, true);
-
-            // encode as an image file and send over
-            _request.data = makeMimeBody(sceneId, _encoder.encode(room));
-            _loader.load(_request);
+        if (_panel == null) {
+            var bitmap :BitmapData = capture(view);
+            var callback :Function = function (save :Boolean) :void {
+                if (save) {
+                    // encodes bitmap image as a MIME file upload, and sends it over
+                    _request.data = makeMimeBody(sceneId, _encoder.encode(bitmap));
+                    _loader.load(_request);
+                }
+                _panel = null;
+            }
+            
+            _panel = new SnapshotPanel(_ctx, bitmap, callback);
+            _panel.open();
         }
     }
 
+    /** Captures the current room view into a bitmap. */
+    protected function capture (view :RoomView) :BitmapData
+    {
+        // draw the room, scaling down to the appropriate size
+        var newScale :Number = IMAGE_HEIGHT / view.getScrollBounds().height;
+        var matrix :Matrix = new Matrix(newScale, 0, 0, newScale);
+        var room :BitmapData = new BitmapData(IMAGE_WIDTH, IMAGE_HEIGHT);
+        room.draw(view, matrix, null, null, null, true);
+        return room;
+    }
+
+    /** Creates an HTTP POST upload request. */
     protected function makeMimeBody (sceneId :int, data :ByteArray) :ByteArray
     {
         var output :ByteArray = new ByteArray();
@@ -105,27 +105,22 @@ public class SnapshotSender
         return output;
     }
 
-    public function handleError (event :Event) :void
+    protected function handleError (event :Event) :void
     {
-        trace("*** FAULT: " + event);
+        _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, "e.snapshot_error");
     }
-    
-    public function handleProgress (event :Event) :void
+
+    protected function handleResult (event :Event) :void
     {
-        trace("*** INVOKE: " + event);
+        _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, "e.snapshot_success");
     }
-    
-    public function handleResult (event :Event) :void
-    {
-        trace("*** RESULT: " + event);
-    }
-    
+
+    protected var _panel :SnapshotPanel;
     protected var _encoder :JPGEncoder;
     protected var _loader :URLLoader;
     protected var _request :URLRequest;
     protected var _ctx :WorldContext;
-
+    
     protected static const BOUNDARY :String = "why are you reading the raw http stream?";
-
 }
 }

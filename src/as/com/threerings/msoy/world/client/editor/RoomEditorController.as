@@ -102,10 +102,6 @@ public class RoomEditorController
         _view.addOtherSprite(_entranceSprite);
         var id :ItemIdent = _entranceSprite.getFurniData().getItemIdent();
         _names.put(id, { label: Msgs.EDITING.get("l.entrance"), data: id });
-        
-        _snap = new SnapshotSender(_ctx);
-        _snap.init();
-
     }
 
     /**
@@ -273,16 +269,6 @@ public class RoomEditorController
         _view.getRoomController().handleEditDoor(data);
     }
 
-    /** Takes a room snapshot. */
-    public function actionTakeSnapshot () :void
-    {
-        _hover.target = null;
-        setTarget(null);
-        _view.setEditing(false);
-        _snap.send(scene.getId(), roomView);
-        _view.setEditing(true);
-    }
-    
     /**
      * Cleans up editing actions and closes editing UIs. This function is called automatically
      * when the main editing UI is being closed (whether because the user clicked the close
@@ -294,9 +280,6 @@ public class RoomEditorController
             Log.getLog(this).warning("Room editor failed to close!");
         }
 
-        _snap.shutdown();
-        _snap = null;
-        
         _entranceSprite.setEditing(false);
         _view.removeOtherSprite(_entranceSprite);
         _entranceSprite = null;
@@ -495,7 +478,6 @@ public class RoomEditorController
     protected var _hover :FurniHighlight;
     protected var _panel :RoomEditorPanel;
     protected var _wrapupFn :Function;   // will be called when ending editing
-    protected var _snap :SnapshotSender;
     
     protected var _entranceSprite :EntranceSprite;
 }

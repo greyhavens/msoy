@@ -295,6 +295,13 @@ Window {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/hoverzone.png");
 }
 
+.controlBarButtonSnapshot {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_snapshot.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_snapshot_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_snapshot_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_snapshot_disabled.png");
+}
+
 .controlBarButtonNotify {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_over.png");
@@ -514,13 +521,6 @@ Window {
   overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_undo_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_undo_down.png");
   disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_undo_disabled.png");
-}
-
-.roomEditButtonSnapshot {
-  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_snapshot.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_snapshot.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_snapshot.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_snapshot.png");
 }
 
 .roomEditPanelButton { 

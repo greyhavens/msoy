@@ -267,6 +267,13 @@ public class ControlBar extends HBox
         // notifications button
         addGroupChild(_notifyBtn, [ UI_STD, UI_GUEST ]);
 
+        _snapBtn = new CommandButton();
+        _snapBtn.toolTip = Msgs.GENERAL.get("i.snapshot");
+        _snapBtn.setCommand(ControlBarController.SNAPSHOT);
+        _snapBtn.styleName = "controlBarButtonSnapshot";
+        _snapBtn.enabled = false;
+        addGroupChild(_snapBtn, [ UI_STD ]);
+
         // some elements that are common to guest and logged in users
         var footerLeft :SkinnableImage = new SkinnableImage();
         footerLeft.styleName = "controlBarFooterLeft";
@@ -418,12 +425,12 @@ public class ControlBar extends HBox
     /** Receives notification whether scene editing is possible for this scene. */
     public function set sceneEditPossible (value :Boolean) :void
     {
-        if (_roomeditBtn != null) {
-            _roomeditBtn.enabled = value;
-        }
-        if (_petBtn != null) {
-            _petBtn.enabled = value;
-        }
+        var editButtons :Array = [ _roomeditBtn, _petBtn, _snapBtn ];
+        editButtons.forEach(function (button :CommandButton, i :*, a :*) :void {
+                if (button != null) {
+                    button.enabled = value;
+                }
+            });
     }
 
     /**
@@ -469,7 +476,9 @@ public class ControlBar extends HBox
 
     /** Button for editing the current scene. */
     protected var _roomeditBtn :CommandButton;
-    protected var _roomeditBtnNew :CommandButton;
+
+    /** Button for room snapshots. */
+    protected var _snapBtn :CommandButton;
 
     /** Displays notification status. */
     protected var _notifyBtn :CommandButton;

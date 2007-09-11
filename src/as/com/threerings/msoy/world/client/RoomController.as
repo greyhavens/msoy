@@ -84,6 +84,7 @@ import com.threerings.msoy.world.client.updates.UpdateStack;
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 import com.threerings.msoy.world.client.editor.RoomEditorController;
 import com.threerings.msoy.world.client.editor.ItemUsedDialog;
+import com.threerings.msoy.world.client.editor.SnapshotController;
 
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.EffectData;
@@ -246,6 +247,7 @@ public class RoomController extends SceneController
 
         _mctx = (ctx as WorldContext);
         _editor = new RoomEditorController(_mctx, _roomView);
+        _snap = new SnapshotController(_mctx);
         
         // watch for when we're un-minimized and the display list is valid, so that we can
         // open the editor, and place things correctly when necessary
@@ -562,6 +564,14 @@ public class RoomController extends SceneController
         }
     }
 
+    /**
+     * Takes a snapshot of the current room.
+     */
+    public function takeSnapshot () :void
+    {
+        _snap.takeScreenshot(_scene.getId(), _roomView);
+    };   
+    
     /**
      * Create the menu item that allows a user to change their own avatar.
      */
@@ -1570,6 +1580,9 @@ public class RoomController extends SceneController
     /** Controller for in-room furni editing. */
     protected var _editor :RoomEditorController;
 
+    /** Controller for room snapshots. */
+    protected var _snap :SnapshotController;
+    
     /** Stack that stores the sequence of room updates. */
     protected var _updates :UpdateStack = new UpdateStack(updateRoom);
 
