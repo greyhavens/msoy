@@ -170,19 +170,7 @@ public class GameLiaison
     public function receivedGameReady (gameOid :int) :Boolean
     {
         _ctx.getTopPanel().clearTableDisplay();
-
-        // route our entry to the game through GWT so that we can handle non-Flash games
-        if (!_ctx.getMsoyController().handleGoGame(_gameId, gameOid)) {
-            // fall back to breaking the back button
-            log.info("Going straight into game [oid=" + gameOid + "].");
-            enterGame(gameOid);
-            // TODO: if this is a Java game and we're in embedded mode, try popping up a new
-            // browser window
-            // NetUtil.navigateToURL("/#game-" + gameId + "_" + placeOid, false);
-        } else {
-            log.info("Routed game ready through URL [oid=" + gameOid + "].");
-        }
-
+        _ctx.getMsoyController().handleGoGame(_gameId, gameOid);
         return true;
     }
 

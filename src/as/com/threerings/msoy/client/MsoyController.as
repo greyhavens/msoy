@@ -457,9 +457,19 @@ public class MsoyController extends Controller
     /**
      * Handle the GO_GAME command to go to a non-Flash game.
      */
-    public function handleGoGame (gameId :int, placeOid :int) :Boolean
+    public function handleGoGame (gameId :int, placeOid :int) :void
     {
-        return displayPage("game", gameId + "_" + placeOid);
+        // route our entry to the game through GWT so that we can handle non-Flash games
+        if (!displayPage("game", gameId + "_" + placeOid)) {
+            // fall back to breaking the back button
+            log.info("Going straight into game [oid=" + placeOid + "].");
+            _ctx.getGameDirector().enterGame(placeOid);
+            // TODO: if this is a Java game and we're in embedded mode, try popping up a new
+            // browser window
+            // NetUtil.navigateToURL("/#game-" + gameId + "_" + placeOid, false);
+        } else {
+            log.info("Routed game ready through URL [oid=" + placeOid + "].");
+        }
     }
 
     /**
