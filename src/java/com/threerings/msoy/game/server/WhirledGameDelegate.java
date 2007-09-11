@@ -438,13 +438,13 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     }
 
     @Override // from RatingManagerDelegate
-    protected void saveRatings (Collection<Rating> ratings)
+    protected void loadRatings (Collection<Rating> ratings)
     {
-        // we don't save ratings for non-published games
+        // we don't support ratings for non-published games
         if (_gmgr.getGameConfig().getGameId() < 0) {
             return;
         }
-        super.saveRatings(ratings);
+        super.loadRatings(ratings);
     }
 
     /**
