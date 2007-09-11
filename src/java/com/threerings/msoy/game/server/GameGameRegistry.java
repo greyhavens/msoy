@@ -4,7 +4,6 @@
 package com.threerings.msoy.game.server;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
@@ -41,11 +40,6 @@ public class GameGameRegistry
     implements LobbyProvider, MsoyGameServer.Shutdowner, LobbyManager.ShutdownObserver
 {
     /**
-     * Used to identify our percentile distributions. Do not remove or reorder these constants.
-     */
-    public static enum Distrib { SINGLE_PLAYER, MULTI_PLAYER };
-
-    /**
      * Initializes this registry.
      */
     public void init (RootDObjectManager omgr, InvocationManager invmgr, GameRepository gameRepo,
@@ -73,11 +67,9 @@ public class GameGameRegistry
      * be modified and when the lobby for the game in question is finally unloaded, the percentiler
      * will be written back out to the database.
      */
-    public Percentiler getScoreDistribution (int gameId, Distrib distrib)
+    public Percentiler getScoreDistribution (int gameId, boolean multiplayer)
     {
-        // TODO: -gameId -> gameId?
-        HashMap<Distrib,Percentiler> map = _distribs.get(gameId);
-        return (map == null) ? null : map.get(distrib);
+        return _distribs.get(multiplayer ? Math.abs(gameId) : -Math.abs(gameId));
     }
 
     // from LobbyProvider
@@ -110,7 +102,8 @@ public class GameGameRegistry
                 if (rec != null) {
                     _game = (Game)rec.toItem();
                     // load up the score distribution information for this game as well
-                    _tilers = _ratingRepo.loadPercentiles(gameId);
+                    _single = _ratingRepo.loadPercentile(-Math.abs(gameId));
+                    _multi = _ratingRepo.loadPercentile(Math.abs(gameId));
                 }
             }
 
@@ -130,15 +123,8 @@ public class GameGameRegistry
                     }
 
                     // map this game's score distributions
-                    HashMap<Distrib,Percentiler> dmap = new HashMap<Distrib,Percentiler>();
-                    for (Distrib distrib : Distrib.values()) {
-                        Percentiler tiler = _tilers.get(distrib.ordinal()+1);
-                        if (tiler == null) {
-                            tiler = new Percentiler();
-                        }
-                        dmap.put(distrib, tiler);
-                    }
-                    _distribs.put(gameId, dmap);
+                    _distribs.put(-Math.abs(gameId), _single == null ? new Percentiler() : _single);
+                    _distribs.put(Math.abs(gameId), _multi == null ? new Percentiler() : _multi);
 
                 } catch (Exception e) {
                     handleFailure(e);
@@ -162,7 +148,7 @@ public class GameGameRegistry
             }
 
             protected Game _game;
-            protected IntMap<Percentiler> _tilers;
+            protected Percentiler _single, _multi;
         });
     }
 
@@ -195,24 +181,26 @@ public class GameGameRegistry
         MsoyGameServer.worldClient.stoppedHostingGame(game.gameId);
 
         // flush any modified percentile distributions
-        final HashMap<Distrib,Percentiler> dmap = _distribs.remove(game.gameId);
-        MsoyGameServer.invoker.postUnit(new Invoker.Unit("updatePercentiles") {
+        flushPercentiler(-Math.abs(game.gameId)); // single-player
+        flushPercentiler(Math.abs(game.gameId)); // multiplayer
+    }
+
+    protected void flushPercentiler (final int gameId)
+    {
+        final Percentiler tiler = _distribs.remove(gameId);
+        if (tiler == null || !tiler.isModified()) {
+            return;
+        }
+
+        MsoyGameServer.invoker.postUnit(new Invoker.Unit("flushPercentiler") {
             public boolean invoke () {
-                for (Map.Entry<Distrib,Percentiler> entry : dmap.entrySet()) {
-                    updateDistrib(entry.getKey(), entry.getValue());
-                }
-                return false;
-            }
-            protected void updateDistrib (Distrib distrib, Percentiler tiler) {
-                if (!tiler.isModified()) {
-                    return;
-                }
                 try {
-                    _ratingRepo.updatePercentile(game.gameId, distrib.ordinal()+1, tiler);
+                    _ratingRepo.updatePercentile(gameId, tiler);
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to update score distribution " +
-                            "[game=" + game.gameId + ", type=" + distrib + "].", pe);
+                            "[game=" + gameId + ", tiler=" + tiler + "].", pe);
                 }
+                return false;
             }
         });
     }
@@ -230,8 +218,7 @@ public class GameGameRegistry
     protected IntMap<LobbyManager> _lobbies = new HashIntMap<LobbyManager>();
 
     /** Maps game id -> a mapping of various percentile distributions. */
-    protected IntMap<HashMap<Distrib,Percentiler>> _distribs =
-        new HashIntMap<HashMap<Distrib,Percentiler>>();
+    protected IntMap<Percentiler> _distribs = new HashIntMap<Percentiler>();
 
     /** Maps game id -> listeners waiting for a lobby to load. */
     protected IntMap<ResultListenerList> _loading = new HashIntMap<ResultListenerList>();

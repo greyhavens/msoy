@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.server;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.TreeMap;
 import java.util.logging.Level;
 
@@ -83,7 +84,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         }
 
         // record the scores of all players in the game
-        Percentiler tiler = getScoreDistribution(players.size() > 1);
+        Percentiler tiler = getScoreDistribution();
         for (Player player : players.values()) {
             tiler.recordValue(player.score);
         }
@@ -184,7 +185,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         }
 
         // load up some metadata
-        final int gameId = getGameId();
+        final int gameId = _gmgr.getGameConfig().getGameId();
         MsoyBaseServer.invoker.postUnit(new RepositoryUnit("loadGameDetail") {
             public void invokePersist () throws Exception {
                 _result = getGameRepository().loadGameDetail(gameId);
@@ -254,7 +255,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             totalMinutes = _allPlayers.size() * 15;
         }
 
-        final int gameId = getGameId();
+        final int gameId = _gmgr.getGameConfig().getGameId();
         final int playerGames = _allPlayers.size(), playerMins = totalMinutes;
         final boolean recalc = (RuntimeConfig.server.abuseFactorReassessment == 0) ? false :
             _detail.shouldRecalcAbuse(playerMins, RuntimeConfig.server.abuseFactorReassessment);
@@ -428,12 +429,22 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         }
     }
 
-    /**
-     * Convenience method to get our game Id.
-     */
+    @Override // from RatingManagerDelegate
     protected int getGameId ()
     {
-        return ((GameConfig) _plmgr.getConfig()).getGameId();
+        // single player ratings are stored as -gameId, multi-player as gameId
+        int gameId = Math.abs(super.getGameId());
+        return isMultiPlayer() ? gameId : -gameId;
+    }
+
+    @Override // from RatingManagerDelegate
+    protected void saveRatings (Collection<Rating> ratings)
+    {
+        // we don't save ratings for non-published games
+        if (_gmgr.getGameConfig().getGameId() < 0) {
+            return;
+        }
+        super.saveRatings(ratings);
     }
 
     /**
@@ -459,14 +470,31 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         return Math.min(minutes / samples, MAX_FRESH_GAME_DURATION);
     }
 
-    protected Percentiler getScoreDistribution (boolean multiplayer)
+    protected boolean isMultiPlayer ()
+    {
+        switch (_gmgr.getGameConfig().getMatchType()) {
+        case GameConfig.PARTY:
+            // all party games are multiplayer; we can't know when the game starts whether more
+            // than one player will show up so we must always load and save multiplayer ratings and
+            // percentile information
+            return true;
+
+        case GameConfig.SEATED_CONTINUOUS:
+            // same goes for seated continuous where players can show up after the game starts
+            return true;
+
+        default:
+        case GameConfig.SEATED_GAME:
+            return (_gmgr.getGameConfig().players.length > 1);
+        }
+    }
+
+    protected Percentiler getScoreDistribution ()
     {
         Percentiler tiler = null;
         // if we're not running on a game server, we don't have score distributions
         if (MsoyGameServer.gameReg != null) {
-            tiler = MsoyGameServer.gameReg.getScoreDistribution(
-                getGameId(), multiplayer ? GameGameRegistry.Distrib.MULTI_PLAYER :
-                GameGameRegistry.Distrib.SINGLE_PLAYER);
+            tiler = MsoyGameServer.gameReg.getScoreDistribution(getGameId(), isMultiPlayer());
         }
         // if for whatever reason we don't have a score distribution, return a blank one which will
         // result in the default percentile being used
