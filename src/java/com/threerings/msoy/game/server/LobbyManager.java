@@ -90,6 +90,14 @@ public class LobbyManager
     }
 
     /**
+     * Returns the metadata record for the game hosted by this lobby.
+     */
+    public Game getGame ()
+    {
+        return _game;
+    }
+
+    /**
      * Return the ID of the game for which we're the lobby.
      */
     public int getGameId ()

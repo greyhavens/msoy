@@ -80,12 +80,15 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             players.put(playerOids[ii], new Player(playerOids[ii], scores[ii], availFlow));
         }
 
-        // determine whether we're recording scores for single or multi-player
-        // Percentiler tiler = TODO
-
-        // record scores, convert scores to percentiles
+        // record the scores of all players in the game
+        Percentiler tiler = getScoreDistribution(players.size() > 1);
         for (Player player : players.values()) {
-            player.percentile = 69; // TEMP
+            tiler.recordValue(player.score);
+        }
+
+        // convert scores to percentiles, scale available flow
+        for (Player player : players.values()) {
+            player.percentile = getPercentile(tiler, player.score);
             // scale each players' flow award by their percentile performance
             player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
         }
@@ -397,6 +400,26 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         return Math.min(minutes / samples, MAX_FRESH_GAME_DURATION);
     }
 
+    protected Percentiler getScoreDistribution (boolean multiplayer)
+    {
+        Percentiler tiler = null;
+        // if we're not running on a game server, we don't have score distributions
+        if (MsoyGameServer.gameReg != null) {
+            tiler = MsoyGameServer.gameReg.getScoreDistribution(
+                getGameId(), multiplayer ? GameGameRegistry.Distrib.MULTI_PLAYER :
+                GameGameRegistry.Distrib.SINGLE_PLAYER);
+        }
+        // if for whatever reason we don't have a score distribution, return a blank one which will
+        // result in the default percentile being used
+        return (tiler == null) ? new Percentiler() : tiler;
+    }
+
+    protected int getPercentile (Percentiler tiler, int score)
+    {
+        return (tiler.getRecordedCount() < MIN_VALID_SCORES) ?
+            DEFAULT_PERCENTILE : tiler.getPercentile(score);
+    }
+
     protected void startTracking ()
     {
         if (_tracking) {
@@ -524,8 +547,8 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
     protected static GameRepository getGameRepository ()
     {
-        return (MsoyGameServer.gameRepo == null) ?
-            MsoyServer.itemMan.getGameRepository() : MsoyGameServer.gameRepo;
+        return (MsoyGameServer.gameReg != null) ?
+            MsoyGameServer.gameReg.getGameRepository() : MsoyServer.itemMan.getGameRepository();
     }
 
     /**
@@ -591,9 +614,6 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         }
     }
 
-    /** Used to identify our percentile distributions. Do not remove or reorder these constants. */
-    protected static enum Tilers { SINGLE_PLAYER, MULTI_PLAYER };
-
     /** Keep our invocation service registration so that we can unload it at shutdown. */
     protected InvocationMarshaller _invmarsh;
 
@@ -630,6 +650,13 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
     /** Games for which we have no history earn no flow beyond this many minutes. */
     protected static final int MAX_FRESH_GAME_DURATION = 10;
+
+    /** We require at least this many data points before we'll consider a percentile distribution
+     * to be sufficiently valid that we use it to compute performance. */
+    protected static final int MIN_VALID_SCORES = 10;
+
+    /** If we lack a valid or sufficiently large score distribution, we use this performance. */
+    protected static final int DEFAULT_PERCENTILE = 50;
 
     /** From WhirledGameControl.as. */
     protected static final int CASCADING_PAYOUT = 0;

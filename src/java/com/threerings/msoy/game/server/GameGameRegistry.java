@@ -3,14 +3,18 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
-
+import java.util.Map;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.Invoker;
+
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -19,8 +23,10 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.ResultListenerList;
 
+import com.threerings.parlor.rating.server.persist.RatingRepository;
+import com.threerings.parlor.rating.util.Percentiler;
+
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRecord;
@@ -31,22 +37,47 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages the lobbies active on this server.
  */
-public class LobbyRegistry
-    implements LobbyProvider, LobbyManager.ShutdownObserver
+public class GameGameRegistry
+    implements LobbyProvider, MsoyGameServer.Shutdowner, LobbyManager.ShutdownObserver
 {
+    /**
+     * Used to identify our percentile distributions. Do not remove or reorder these constants.
+     */
+    public static enum Distrib { SINGLE_PLAYER, MULTI_PLAYER };
+
     /**
      * Initializes this registry.
      */
-    public void init (RootDObjectManager omgr, InvocationManager invmgr, GameRepository gameRepo)
+    public void init (RootDObjectManager omgr, InvocationManager invmgr, GameRepository gameRepo,
+                      RatingRepository ratingRepo)
     {
         _omgr = omgr;
         _gameRepo = gameRepo;
+        _ratingRepo = ratingRepo;
         invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
+
+        // register to hear when the server is shutdown
+        MsoyGameServer.registerShutdowner(this);
     }
 
-    public RootDObjectManager getDObjectManager ()
+    /**
+     * Returns the game repository used to maintain our persistent data.
+     */
+    public GameRepository getGameRepository ()
     {
-        return _omgr;
+        return _gameRepo;
+    }
+
+    /**
+     * Returns the percentiler for the specified game and score distribution. The percentiler may
+     * be modified and when the lobby for the game in question is finally unloaded, the percentiler
+     * will be written back out to the database.
+     */
+    public Percentiler getScoreDistribution (int gameId, Distrib distrib)
+    {
+        // TODO: -gameId -> gameId?
+        HashMap<Distrib,Percentiler> map = _distribs.get(gameId);
+        return (map == null) ? null : map.get(distrib);
     }
 
     // from LobbyProvider
@@ -73,10 +104,14 @@ public class LobbyRegistry
         _loading.put(gameId, list = new ResultListenerList());
         list.add(listener);
 
-        MsoyServer.invoker.postUnit(new RepositoryUnit() {
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("loadLobby") {
             public void invokePersist () throws PersistenceException {
                 GameRecord rec = _gameRepo.loadGameRecord(gameId);
-                _game = (rec == null) ? null : (Game)rec.toItem();
+                if (rec != null) {
+                    _game = (Game)rec.toItem();
+                    // load up the score distribution information for this game as well
+                    _tilers = _ratingRepo.loadPercentiles(gameId);
+                }
             }
 
             public void handleSuccess () {
@@ -86,13 +121,24 @@ public class LobbyRegistry
                 }
 
                 try {
-                    LobbyManager lmgr = new LobbyManager(_omgr, _game, LobbyRegistry.this);
+                    LobbyManager lmgr = new LobbyManager(_omgr, _game, GameGameRegistry.this);
                     _lobbies.put(gameId, lmgr);
 
                     ResultListenerList list = _loading.remove(gameId);
                     if (list != null) {
                         list.requestProcessed(lmgr.getLobbyObject().getOid());
                     }
+
+                    // map this game's score distributions
+                    HashMap<Distrib,Percentiler> dmap = new HashMap<Distrib,Percentiler>();
+                    for (Distrib distrib : Distrib.values()) {
+                        Percentiler tiler = _tilers.get(distrib.ordinal()+1);
+                        if (tiler == null) {
+                            tiler = new Percentiler();
+                        }
+                        dmap.put(distrib, tiler);
+                    }
+                    _distribs.put(gameId, dmap);
 
                 } catch (Exception e) {
                     handleFailure(e);
@@ -116,6 +162,7 @@ public class LobbyRegistry
             }
 
             protected Game _game;
+            protected IntMap<Percentiler> _tilers;
         });
     }
 
@@ -128,8 +175,17 @@ public class LobbyRegistry
         return _lobbies.values().iterator();
     }
 
+    // from interface MsoyServer.Shutdowner
+    public void shutdown ()
+    {
+        // shutdown our active lobbies
+        for (LobbyManager lmgr : _lobbies.values().toArray(new LobbyManager[_lobbies.size()])) {
+            lobbyDidShutdown(lmgr.getGame());
+        }
+    }
+
     // from interface LobbyManager.ShutdownObserver
-    public void lobbyDidShutdown (Game game)
+    public void lobbyDidShutdown (final Game game)
     {
         // destroy our record of that lobby
         _lobbies.remove(game.gameId);
@@ -137,6 +193,28 @@ public class LobbyRegistry
 
         // let our world server know we're audi
         MsoyGameServer.worldClient.stoppedHostingGame(game.gameId);
+
+        // flush any modified percentile distributions
+        final HashMap<Distrib,Percentiler> dmap = _distribs.remove(game.gameId);
+        MsoyGameServer.invoker.postUnit(new Invoker.Unit("updatePercentiles") {
+            public boolean invoke () {
+                for (Map.Entry<Distrib,Percentiler> entry : dmap.entrySet()) {
+                    updateDistrib(entry.getKey(), entry.getValue());
+                }
+                return false;
+            }
+            protected void updateDistrib (Distrib distrib, Percentiler tiler) {
+                if (!tiler.isModified()) {
+                    return;
+                }
+                try {
+                    _ratingRepo.updatePercentile(game.gameId, distrib.ordinal()+1, tiler);
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to update score distribution " +
+                            "[game=" + game.gameId + ", type=" + distrib + "].", pe);
+                }
+            }
+        });
     }
 
     /** The distributed object manager that we work with. */
@@ -145,8 +223,15 @@ public class LobbyRegistry
     /** Provides access to game metadata. */
     protected GameRepository _gameRepo;
 
+    /** Provides access to rating information. */
+    protected RatingRepository _ratingRepo;
+
     /** Maps game id -> lobby. */
     protected IntMap<LobbyManager> _lobbies = new HashIntMap<LobbyManager>();
+
+    /** Maps game id -> a mapping of various percentile distributions. */
+    protected IntMap<HashMap<Distrib,Percentiler>> _distribs =
+        new HashIntMap<HashMap<Distrib,Percentiler>>();
 
     /** Maps game id -> listeners waiting for a lobby to load. */
     protected IntMap<ResultListenerList> _loading = new HashIntMap<ResultListenerList>();

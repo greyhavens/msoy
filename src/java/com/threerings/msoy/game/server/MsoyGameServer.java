@@ -47,14 +47,11 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyGameServer extends MsoyBaseServer
 {
-    /** Contains information on our games. */
-    public static GameRepository gameRepo;
-
     /** The parlor manager in operation on this server. */
     public static ParlorManager parlorMan = new ParlorManager();
 
-    /** Manages lobbies on this server. */
-    public static LobbyRegistry lobbyReg = new LobbyRegistry();
+    /** Manages lobbies and other game bits on this server. */
+    public static GameGameRegistry gameReg = new GameGameRegistry();
 
     /** Handles sandboxed game server code. */
     public static HostedGameManager hostedMan = new HostedGameManager();
@@ -130,12 +127,9 @@ public class MsoyGameServer extends MsoyBaseServer
             }
         });
 
-        // create our various repositories
-        gameRepo = new GameRepository(perCtx);
-
         // intialize various services
         parlorMan.init(invmgr, plreg);
-        lobbyReg.init(omgr, invmgr, gameRepo);
+        gameReg.init(omgr, invmgr, new GameRepository(perCtx), ratingRepo);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
