@@ -340,8 +340,9 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
     protected void updateScoreBasedRating (Player player, Rating rating)
     {
-        // map our percentile to a rating value
-        int erat = MINIMUM_RATING + (player.percentile * (MAXIMUM_RATING - MINIMUM_RATING) / 100);
+        // map our percentile to a rating value (0 - 33 map to 1000 and we scale linearly up from
+        // there to 3000)
+        int erat = Math.max((player.percentile * MAXIMUM_RATING) / 100, MINIMUM_RATING);
         int orat = MathUtil.bound(MINIMUM_RATING, rating.rating, MAXIMUM_RATING);
 
         // compute the K value. Low exp players get to move more quickly.
@@ -349,12 +350,12 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         float K;
         if (sessions < 20) {
             if (sessions < 10) {
-                K = 500f; // 0-9 sessions
+                K = 300f; // 0-9 sessions
             } else {
-                K = 250f; // 10-19 sessions
+                K = 150f; // 10-19 sessions
             }
         } else {
-            K = 125f; // 20+ sessions
+            K = 75f; // 20+ sessions
         }
 
         // compute the delta rating as a percentage of the player's current rating (eg. they should
