@@ -516,6 +516,7 @@ public class MsoyController extends Controller
         } else {
             // if we're running in the GWT app, or the external display failed, go straight in
             _ctx.getGameDirector().displayLobby(gameId);
+            displayPageGWT("world", "s" + _ctx.getSceneDirector().getScene().getId());
         }
     }
 
