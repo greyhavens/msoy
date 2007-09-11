@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.events.Event;
+
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.BasicDirector;
@@ -74,6 +76,29 @@ public class GameDirector extends BasicDirector
     }
 
     /**
+     * Requests that we join the given player in the given game.
+     */
+    public function joinPlayer (gameId :int, memberId :int) :void
+    {
+        if (_liaison != null && _liaison.gameId != gameId) {
+            _liaison.lobbyController.forceShutdown();
+            _liaison = null;
+        }
+        displayLobby(gameId);
+
+        if (_liaison.lobbyController != null) {
+            _liaison.lobbyController.joinPlayer(memberId);
+        } else {
+            var playerJoiner :Function;
+            playerJoiner = function (evt :Event) :void {
+                _liaison.removeEventListener(GameLiaison.LOBBY_AVAILABLE, playerJoiner);
+                _liaison.lobbyController.joinPlayer(memberId);
+            };
+            _liaison.addEventListener(GameLiaison.LOBBY_AVAILABLE, playerJoiner);
+        }
+    }
+
+    /**
      * Requests that we move to the specified game location.
      */
     public function enterGame (gameOid :int) :void
@@ -108,9 +133,9 @@ public class GameDirector extends BasicDirector
      */
     public function liaisonCleared (liaison :GameLiaison) : void
     {
-        if (_liaison != liaison) {
-            log.warning("Bogus liaison cleared? [have=" + _liaison + ", got=" + liaison + "].");
-        } else {
+        // we could get the "wrong" liaison here, if we were asked to load up a new lobby while
+        // another one was active.
+        if (_liaison == liaison) {
             _liaison = null;
         }
     }

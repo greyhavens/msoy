@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.events.Event;
+import flash.events.EventDispatcher;
+
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.client.ResultWrapper;
@@ -19,14 +22,18 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
+[Event (name="gameLiaisonLobbyAvailable", type="Event")];
+
 /**
  * Handles all the fiddly bits relating to connecting to a separate server to match-make and play a
  * game.
  */
-public class GameLiaison
+public class GameLiaison extends EventDispatcher
     implements MsoyGameService_LocationListener, ClientObserver, GameReadyObserver
 {
     public static const log :Log = Log.getLog(GameLiaison);
+
+    public static const LOBBY_AVAILABLE :String = "gameLiaisonLobbyAvailable";
 
     public function GameLiaison (ctx :WorldContext, gameId :int)
     {
@@ -53,6 +60,14 @@ public class GameLiaison
     public function get gameId () :int
     {
         return _gameId;
+    }
+
+    /**
+     * Returns the lobby controller used by this liaison.
+     */
+    public function get lobbyController () :LobbyController
+    {
+        return _lobby;
     }
 
     /**
@@ -191,6 +206,7 @@ public class GameLiaison
     {
         // this will create a panel and add it to the side panel on the top level
         _lobby = new LobbyController(_ctx, _gctx, this, int(result));
+        dispatchEvent(new Event(LOBBY_AVAILABLE));
     }
 
     /** Provides access to main client services. */

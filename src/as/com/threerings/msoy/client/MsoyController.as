@@ -29,6 +29,7 @@ import com.threerings.util.StringUtil;
 import com.threerings.util.CommandEvent;
 
 import com.threerings.crowd.client.BodyService;
+import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.data.CrowdCodes;
 import com.threerings.crowd.chat.data.ChatCodes;
 
@@ -423,10 +424,31 @@ public class MsoyController extends Controller
                     _ctx.displayFeedback(null, cause);
                 },
                 function (location :MemberLocation) :void {
-                    if (location.sceneId == 0) {
-                        // TODO: send them to the game they're in instead
-                        _ctx.displayFeedback(null, "e.not_in_room");
+                    var goToGame :Function = function () :void {};
+                    if (location.gameId != 0) {
+                        goToGame = function () :void {
+                            _ctx.getGameDirector().joinPlayer(location.gameId, memberId);
+                        };
+                    }
+                     
+                    var sceneId :int = location.sceneId;
+                    if (sceneId == 0 && _ctx.getSceneDirector().getScene() == null) {
+                        // if we're not in a scene and they're not in a scene, go home.  If they're
+                        // in an unwatchable game, we'll get an error in the lobby, and this way
+                        // we'll at least be in a scene as well.
+                        sceneId = _ctx.getMemberObject().homeSceneId;
+                    }
+
+                    if (sceneId == 0) {
+                        // we're not moving, take our game action immediately
+                        goToGame();
                     } else {
+                        var gameLauncher :LocationAdapter;
+                        gameLauncher = new LocationAdapter(null, function (...ignored) :void {
+                            _ctx.getLocationDirector().removeLocationObserver(gameLauncher);
+                            goToGame();
+                        }, null);
+                        _ctx.getLocationDirector().addLocationObserver(gameLauncher);
                         displayPageGWT("world", "s" + location.sceneId);
                     }
                 }));

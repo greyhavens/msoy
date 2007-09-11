@@ -72,6 +72,32 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     /**
+     * This is called if something external wants us to leave any table we're seated at and 
+     * shutdown.
+     */
+    public function forceShutdown () :void
+    {
+        if (_tableDir != null) {
+            var currentTable :Table = _tableDir.getSeatedTable();
+            if (currentTable != null) {
+                _tableDir.leaveTable(currentTable.tableId);
+                _panel.seatednessDidChange(false);
+            }
+        }
+
+        shutdown(false);
+    }
+
+    /**
+     * Join the given player - either sit them at the player's lobbying table, join their party
+     * game, watch their seated game, or put up an error message.
+     */
+    public function joinPlayer (memberId :int) :void
+    {
+        Log.getLog(this).debug("REQUESTED TO JOIN PLAYER [" + memberId + "]");
+    }
+
+    /**
      * Handles SUBMIT_TABLE.
      */
     public function handleSubmitTable (tcfg :TableConfig, gcfg :GameConfig) :void
