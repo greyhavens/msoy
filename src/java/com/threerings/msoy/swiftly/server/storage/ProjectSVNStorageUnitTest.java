@@ -7,7 +7,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
 
-import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
+import com.threerings.msoy.swiftly.client.view.SwiftlyDocumentEditor;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;

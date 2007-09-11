@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.client;
+package com.threerings.msoy.swiftly.client.event;
 
 /**
  * Interface to be used by Swing components interested in access control events.

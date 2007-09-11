@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.io.IOUtils;
 
-import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
+import com.threerings.msoy.swiftly.client.view.SwiftlyDocumentEditor;
 
 /**
  * Represents an image file in a project and contains the data of the image.

@@ -1,6 +1,6 @@
 //
 // $Id$
-package com.threerings.msoy.swiftly.client;
+package com.threerings.msoy.swiftly.client.event;
 
 import com.threerings.msoy.swiftly.data.BuildResult;
 

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.client;
+package com.threerings.msoy.swiftly.client.view;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -29,6 +29,9 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.micasa.client.ChatPanel;
 import com.threerings.micasa.client.OccupantList;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.swiftly.client.controller.ProjectRoomController;
+import com.threerings.msoy.swiftly.client.event.AccessControlListener;
+import com.threerings.msoy.swiftly.client.event.BuildResultListener;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;

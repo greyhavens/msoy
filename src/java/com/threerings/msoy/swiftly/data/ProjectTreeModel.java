@@ -9,7 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-import com.threerings.msoy.swiftly.client.ProjectPanel;
+import com.threerings.msoy.swiftly.client.view.ProjectPanel;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;

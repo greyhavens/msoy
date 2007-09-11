@@ -13,7 +13,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.io.IOUtils;
 
-import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
+import com.threerings.msoy.swiftly.client.view.SwiftlyDocumentEditor;
 
 /**
  * Represents a source file in a project and contains the text of the file.

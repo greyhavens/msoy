@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.client;
+package com.threerings.msoy.swiftly.client.view;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -34,6 +34,7 @@ import sdoc.SyntaxDocument;
 import sdoc.SyntaxEditorKit;
 import sdoc.SyntaxSupport;
 
+import com.threerings.msoy.swiftly.client.event.AccessControlListener;
 import com.threerings.msoy.swiftly.data.DocumentUpdateListener;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;

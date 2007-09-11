@@ -7,7 +7,7 @@ import java.applet.AppletContext;
 
 import com.threerings.crowd.util.CrowdContext;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.swiftly.client.SimpleProgressBar;
+import com.threerings.msoy.swiftly.client.view.SimpleProgressBar;
 import com.threerings.util.MessageManager;
 
 /**

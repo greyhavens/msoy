@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.client;
+package com.threerings.msoy.swiftly.client.model;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;

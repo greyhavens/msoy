@@ -1,6 +1,6 @@
 //
 // $Id$
-package com.threerings.msoy.swiftly.client;
+package com.threerings.msoy.swiftly.client.view;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import com.samskivert.util.HashIntMap;
+import com.threerings.msoy.swiftly.client.event.BuildResultListener;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 

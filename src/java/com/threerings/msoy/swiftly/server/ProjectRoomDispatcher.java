@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.swiftly.server;
 
-import com.threerings.msoy.swiftly.client.ProjectRoomService;
+import com.threerings.msoy.swiftly.client.model.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.presents.client.Client;

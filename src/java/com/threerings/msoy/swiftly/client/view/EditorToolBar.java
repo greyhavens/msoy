@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.client;
+package com.threerings.msoy.swiftly.client.view;
 
 import java.awt.Font;
 
@@ -13,6 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
+import com.threerings.msoy.swiftly.client.controller.ProjectRoomController;
+import com.threerings.msoy.swiftly.client.event.AccessControlListener;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 

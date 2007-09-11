@@ -1,6 +1,6 @@
 //
 // $Id$
-package com.threerings.msoy.swiftly.client;
+package com.threerings.msoy.swiftly.client.view;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
