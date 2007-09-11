@@ -172,13 +172,12 @@ public class MsoyGameRegistry
             return;
         }
 
-        for (GameServerHandler handler : _handlers) {
-            if (handler != null && handler.port == port) {
-                handler.clearGame(gameId);
-                return;
-            }
+        GameServerHandler handler = _handmap.get(gameId);
+        if (handler != null) {
+            handler.clearGame(gameId);
+        } else {
+            log.warning("Game cleared by unknown handler? [port=" + port + ", id=" + gameId + "].");
         }
-        log.warning("Game cleared by unknown handler? [port=" + port + ", id=" + gameId + "].");
     }
 
     // from interface GameServerProvider and PeerGameProvider
