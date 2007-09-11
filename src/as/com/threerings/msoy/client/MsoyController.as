@@ -503,8 +503,20 @@ public class MsoyController extends Controller
         if (!inGWTApp() && displayPage("game", "" + gameId)) {
             return;
         }
-        // if we're running in the GWT app, or the external display failed, go straight in
-        _ctx.getGameDirector().displayLobby(gameId);
+
+        if (_ctx.getSceneDirector().getScene() == null) {
+            // if we're not in a scene, go to our home scene first
+            var displayLobby :LocationAdapter;
+            displayLobby = new LocationAdapter(null, function (...ignored) :void {
+                _ctx.getLocationDirector().removeLocationObserver(displayLobby);
+                _ctx.getGameDirector().displayLobby(gameId);
+            }, null);
+            _ctx.getLocationDirector().addLocationObserver(displayLobby);
+            displayPageGWT("world", "s" + _ctx.getMemberObject().homeSceneId);
+        } else {
+            // if we're running in the GWT app, or the external display failed, go straight in
+            _ctx.getGameDirector().displayLobby(gameId);
+        }
     }
 
     /**
