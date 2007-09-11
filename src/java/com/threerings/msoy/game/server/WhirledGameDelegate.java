@@ -13,6 +13,8 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
+
+import com.threerings.media.util.MathUtil;
 import com.threerings.util.Name;
 
 import com.threerings.presents.client.InvocationService;
@@ -96,7 +98,28 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         // award flow according to the rankings and the payout type
         awardFlow(players, payoutType);
 
-        // TODO: update ratings
+        // compute new ratings
+        for (Rating rating : _ratings.values()) {
+            Player player = players.get(rating.playerOid);
+            if (player != null) {
+                updateScoreBasedRating(player, rating);
+            }
+        }
+
+        int[] nratings = new int[_playerIds.length];
+        for (int ii = 0; ii < nratings.length; ii ++) {
+            nratings[ii] = computeRating(ii);
+        }
+
+        // and write them back to their rating records
+        for (int ii = 0; ii < nratings.length; ii++) {
+            Rating rating = _ratings.get(_playerIds[ii]);
+            if (rating != null && nratings[ii] > 0) {
+                rating.rating = nratings[ii];
+                rating.experience++;
+                rating.modified = true;
+            }
+        }
 
         // now actually end the game
         _gmgr.endGame();
@@ -147,60 +170,6 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // now actually end the game
         _gmgr.endGame();
-    }
-
-    protected void awardFlow (HashIntMap<Player> players, int payoutType)
-    {
-        // figure out who ranked where
-        TreeMap<Integer,ArrayList<Player>> rankings = new TreeMap<Integer,ArrayList<Player>>();
-        for (Player player : players.values()) {
-            ArrayList<Player> list = rankings.get(player.score);
-            if (list == null) {
-                list = new ArrayList<Player>();
-            }
-            list.add(player);
-        }
-
-        switch (payoutType) {
-        case WINNERS_TAKE_ALL: // TODO
-//            break;
-
-        case CASCADING_PAYOUT: // TODO
-//            break;
-
-        case TO_EACH_THEIR_OWN:
-            for (Player player : players.values()) {
-                player.flowAward = player.availFlow;
-            }
-            break;
-        }
-
-        log.info("Awarding flow [game=" + where() + ", to=" + players + "].");
-
-        // actually award flow and report it to the player
-        int now = now();
-        for (Player player : players.values()) {
-            FlowRecord record = _flowRecords.get(player.playerOid);
-            if (record == null) {
-                continue;
-            }
-
-            // accumulate their awarded flow into their flow record; we'll pay it all out in one
-            // database action when they leave the room or the game is shutdown
-            record.awarded += player.flowAward;
-
-            // update the player's member object on their world server
-            if (player.flowAward > 0) {
-                reportFlowAward(record.memberId, player.flowAward);
-            }
-
-            // report to the game that this player earned some flow
-            DObject user = MsoyBaseServer.omgr.getObject(player.playerOid);
-            if (user != null) {
-                user.postMessage(WhirledGame.FLOW_AWARDED_MESSAGE,
-                                 player.flowAward, player.percentile);
-            }
-        }
     }
 
     @Override
@@ -301,7 +270,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         });
     }
 
-    @Override
+    @Override // from PlaceManagerDelegate
     public void bodyEntered (int bodyOid)
     {
         super.bodyEntered(bodyOid);
@@ -324,7 +293,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         }
     }
 
-    @Override
+    @Override // from PlaceManagerDelegate
     public void bodyLeft (int bodyOid)
     {
         super.bodyLeft(bodyOid);
@@ -333,7 +302,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         payoutPlayer(bodyOid);
     }
 
-    @Override
+    @Override // from GameManagerDelegate
     public void gameDidStart ()
     {
         super.gameDidStart();
@@ -342,7 +311,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         startTracking();
     }
 
-    @Override
+    @Override // from GameManagerDelegate
     public void gameDidEnd ()
     {
         super.gameDidEnd();
@@ -351,22 +320,111 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         stopTracking();
     }
 
-    @Override
+    @Override // from RatingManagerDelegate
     protected int minimumRatedDuration ()
     {
         return 10; // don't rate games that last less than 10 seconds
     }
 
-    @Override
+    @Override // from RatingManagerDelegate
     protected RatingRepository getRatingRepository ()
     {
         return MsoyBaseServer.ratingRepo;
     }
 
-    @Override
-    protected void updateRatingInMemory (int gameId, Name playerName, Rating rating)
+    @Override // from RatingManagerDelegate
+    protected void updateRatingInMemory (int gameId, Rating rating)
     {
         // we don't keep in-memory ratings for whirled
+    }
+
+    protected void updateScoreBasedRating (Player player, Rating rating)
+    {
+        // map our percentile to a rating value
+        int erat = MINIMUM_RATING + (player.percentile * (MAXIMUM_RATING - MINIMUM_RATING) / 100);
+        int orat = MathUtil.bound(MINIMUM_RATING, rating.rating, MAXIMUM_RATING);
+
+        // compute the K value. Low exp players get to move more quickly.
+        int sessions = rating.experience;
+        float K;
+        if (sessions < 20) {
+            if (sessions < 10) {
+                K = 500f; // 0-9 sessions
+            } else {
+                K = 250f; // 10-19 sessions
+            }
+        } else {
+            K = 125f; // 20+ sessions
+        }
+
+        // compute the delta rating as a percentage of the player's current rating (eg. they should
+        // have been 12% better or worse)
+        float pctdiff = ((float)(erat - orat) / orat);
+
+        // update the player's rating
+        int nrat = Math.round(orat + pctdiff * K);
+
+        // make sure the rating remains within a valid range
+        rating.rating = MathUtil.bound(MINIMUM_RATING, nrat, MAXIMUM_RATING);
+        rating.experience++;
+        rating.modified = true;
+
+        log.info("Updated rating [who=" + rating.playerName + ", orat=" + orat + ", erat=" + erat +
+                 ", diff=" + pctdiff + ", K=" + K + ", nrat=" + nrat + "].");
+    }
+
+    protected void awardFlow (HashIntMap<Player> players, int payoutType)
+    {
+        // figure out who ranked where
+        TreeMap<Integer,ArrayList<Player>> rankings = new TreeMap<Integer,ArrayList<Player>>();
+        for (Player player : players.values()) {
+            ArrayList<Player> list = rankings.get(player.score);
+            if (list == null) {
+                list = new ArrayList<Player>();
+            }
+            list.add(player);
+        }
+
+        switch (payoutType) {
+        case WINNERS_TAKE_ALL: // TODO
+//            break;
+
+        case CASCADING_PAYOUT: // TODO
+//            break;
+
+        case TO_EACH_THEIR_OWN:
+            for (Player player : players.values()) {
+                player.flowAward = player.availFlow;
+            }
+            break;
+        }
+
+        log.info("Awarding flow [game=" + where() + ", to=" + players + "].");
+
+        // actually award flow and report it to the player
+        int now = now();
+        for (Player player : players.values()) {
+            FlowRecord record = _flowRecords.get(player.playerOid);
+            if (record == null) {
+                continue;
+            }
+
+            // accumulate their awarded flow into their flow record; we'll pay it all out in one
+            // database action when they leave the room or the game is shutdown
+            record.awarded += player.flowAward;
+
+            // update the player's member object on their world server
+            if (player.flowAward > 0) {
+                reportFlowAward(record.memberId, player.flowAward);
+            }
+
+            // report to the game that this player earned some flow
+            DObject user = MsoyBaseServer.omgr.getObject(player.playerOid);
+            if (user != null) {
+                user.postMessage(WhirledGame.FLOW_AWARDED_MESSAGE,
+                                 player.flowAward, player.percentile);
+            }
+        }
     }
 
     /**
