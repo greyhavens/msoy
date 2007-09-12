@@ -66,6 +66,11 @@
 .ratingsBlurb .GameName {
 }
 
+.ratingsBlurb .Note {
+  text-align: center;
+  font-size: 12px;
+}
+
 .ratingsBlurb .GameThumb {
 }
 
