@@ -8,6 +8,8 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.client.ResultWrapper;
 
+import com.threerings.crowd.client.LocationAdapter;
+
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.WorldContext;
@@ -50,20 +52,13 @@ public class WorldDirector extends BasicDirector
      *
      * Note: presently the member must be a friend.
      */
-    public function goToMemberScene (memberId :int) :void
+    public function goToMemberLocation (memberId :int) :void
     {
         _msvc.getCurrentMemberLocation(_mctx.getClient(), memberId, new ResultWrapper(
             function (cause :String) :void {
                 _mctx.displayFeedback(null, cause);
             },
-            function (location :MemberLocation) :void {
-                if (location.sceneId == 0) {
-                    // TODO: send them to the game they're in instead
-                    _mctx.displayFeedback(null, "e.not_in_room");
-                } else {
-                    _mctx.getSceneDirector().moveTo(location.sceneId);
-                }
-            }));
+            finishGoToMemberLocation));
     }
 
     /**
@@ -93,6 +88,41 @@ public class WorldDirector extends BasicDirector
             function (sceneId :int) :void {
                 _mctx.getSceneDirector().moveTo(sceneId);
             }));
+    }
+
+    /**
+     * Called by {@link #handleGoMemberLocation}.
+     */
+    protected function finishGoToMemberLocation (location :MemberLocation) :void
+    {
+        var goToGame :Function = function () :void {};
+        if (location.gameId != 0) {
+            goToGame = function () :void {
+                _mctx.getGameDirector().joinPlayer(location.gameId, location.memberId);
+            };
+        }
+
+        var sceneId :int = location.sceneId;
+        if (sceneId == 0 && _mctx.getSceneDirector().getScene() == null) {
+            // if we're not in a scene and they're not in a scene, go home.  If they're in an
+            // unwatchable game, we'll get an error in the lobby, and this way we'll at least be in
+            // a scene as well
+            sceneId = _mctx.getMemberObject().homeSceneId;
+        }
+
+        if (sceneId == 0) {
+            goToGame(); // we're not moving, so take our game action immediately
+            return;
+        }
+
+        // otherwise we have to do things the hard way
+        var gameLauncher :LocationAdapter;
+        gameLauncher = new LocationAdapter(null, function (...ignored) :void {
+            _mctx.getLocationDirector().removeLocationObserver(gameLauncher);
+            goToGame();
+        }, null);
+        _mctx.getLocationDirector().addLocationObserver(gameLauncher);
+        _mctx.getMsoyController().handleGoScene(location.sceneId);
     }
 
     // from BasicDirector

@@ -29,7 +29,6 @@ import com.threerings.util.StringUtil;
 import com.threerings.util.CommandEvent;
 
 import com.threerings.crowd.client.BodyService;
-import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.data.CrowdCodes;
 import com.threerings.crowd.chat.data.ChatCodes;
 
@@ -101,7 +100,7 @@ public class MsoyController extends Controller
     public static const GO_GROUP_HOME :String = "GoGroupHome";
 
     /** Command to go to a member's current scene. */
-    public static const GO_MEMBER_SCENE :String = "GoMemberScene";
+    public static const GO_MEMBER_LOCATION :String = "GoMemberLocation";
 
     /** Command to go to a running game (gameId + placeOid). */
     public static const GO_GAME :String = "GoGame";
@@ -398,7 +397,10 @@ public class MsoyController extends Controller
      */
     public function handleGoScene (sceneId :int) :void
     {
-        _ctx.getSceneDirector().moveTo(sceneId);
+        if (!displayPageGWT("world", "s" + sceneId)) {
+            // fall back to breaking the back button
+            _ctx.getSceneDirector().moveTo(sceneId);
+        }
     }
 
     /**
@@ -410,51 +412,12 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the GO_MEMBER_SCENE command.
+     * Handle the GO_MEMBER_LOCATION command.
      */
-    public function handleGoMemberScene (memberId :int) :void
+    public function handleGoMemberLocation (memberId :int) :void
     {
-        // rather than just going straight to the member scene, handle it through GWT if we can
-        // so that we update the URL.
-        if (inGWTApp()) {
-            var msvc :MemberService = 
-                _ctx.getClient().requireService(MemberService) as MemberService;
-            msvc.getCurrentMemberLocation(_ctx.getClient(), memberId, new ResultWrapper(
-                function (cause :String) :void {
-                    _ctx.displayFeedback(null, cause);
-                },
-                function (location :MemberLocation) :void {
-                    var goToGame :Function = function () :void {};
-                    if (location.gameId != 0) {
-                        goToGame = function () :void {
-                            _ctx.getGameDirector().joinPlayer(location.gameId, memberId);
-                        };
-                    }
-                     
-                    var sceneId :int = location.sceneId;
-                    if (sceneId == 0 && _ctx.getSceneDirector().getScene() == null) {
-                        // if we're not in a scene and they're not in a scene, go home.  If they're
-                        // in an unwatchable game, we'll get an error in the lobby, and this way
-                        // we'll at least be in a scene as well.
-                        sceneId = _ctx.getMemberObject().homeSceneId;
-                    }
-
-                    if (sceneId == 0) {
-                        // we're not moving, take our game action immediately
-                        goToGame();
-                    } else {
-                        var gameLauncher :LocationAdapter;
-                        gameLauncher = new LocationAdapter(null, function (...ignored) :void {
-                            _ctx.getLocationDirector().removeLocationObserver(gameLauncher);
-                            goToGame();
-                        }, null);
-                        _ctx.getLocationDirector().addLocationObserver(gameLauncher);
-                        displayPageGWT("world", "s" + location.sceneId);
-                    }
-                }));
-        } else {
-            _ctx.getWorldDirector().goToMemberScene(memberId);
-        }
+        // pass the buck to the world director
+        _ctx.getWorldDirector().goToMemberLocation(memberId);
     }
 
     /**
@@ -504,20 +467,20 @@ public class MsoyController extends Controller
             return;
         }
 
+        // if we're not in a scene, go to our home scene while we're displaying the lobby
+        var sceneId :int;
         if (_ctx.getSceneDirector().getScene() == null) {
-            // if we're not in a scene, go to our home scene first
-            var displayLobby :LocationAdapter;
-            displayLobby = new LocationAdapter(null, function (...ignored) :void {
-                _ctx.getLocationDirector().removeLocationObserver(displayLobby);
-                _ctx.getGameDirector().displayLobby(gameId);
-            }, null);
-            _ctx.getLocationDirector().addLocationObserver(displayLobby);
-            displayPageGWT("world", "s" + _ctx.getMemberObject().homeSceneId);
+            sceneId = _ctx.getMemberObject().homeSceneId;
+            _ctx.getSceneDirector().moveTo(sceneId);
         } else {
-            // if we're running in the GWT app, or the external display failed, go straight in
-            _ctx.getGameDirector().displayLobby(gameId);
-            displayPageGWT("world", "s" + _ctx.getSceneDirector().getScene().getId());
+            sceneId = _ctx.getSceneDirector().getScene().getId();
         }
+
+        // now display the lobby interface
+        _ctx.getGameDirector().displayLobby(gameId);
+
+        // replace the #game-XXX URL with a #world-sXXX URL for our current scene
+        displayPageGWT("world", "s" + sceneId);
     }
 
     /**
@@ -589,7 +552,7 @@ public class MsoyController extends Controller
             _ctx.displayFeedback(MsoyCodes.GENERAL_MSGS, MessageBundle.tcompose("m.invite_sent",
                 result));
         };
-        msvc.issueInvitation(_ctx.getClient(), guest, 
+        msvc.issueInvitation(_ctx.getClient(), guest,
                              new ResultWrapper(errorHandler, resultHandler));
     }
 
@@ -609,7 +572,7 @@ public class MsoyController extends Controller
 
         } else if (null != params["memberScene"]) {
             _sceneIdString = null;
-            handleGoMemberScene(int(params["memberScene"]));
+            handleGoMemberLocation(int(params["memberScene"]));
 
         } else if (null != params["gameLocation"]) {
             _sceneIdString = null;
@@ -628,7 +591,7 @@ public class MsoyController extends Controller
         } else if (null != params["groupChat"]) {
             var group :GroupName = new GroupName(null, int(params["groupChat"]));
             // get the real GroupName, complete with text name
-            var groupMembership :GroupMembership = 
+            var groupMembership :GroupMembership =
                 _ctx.getMemberObject().groups.get(group) as GroupMembership;
             if (groupMembership != null) {
                 handleOpenChannel(groupMembership.group);
