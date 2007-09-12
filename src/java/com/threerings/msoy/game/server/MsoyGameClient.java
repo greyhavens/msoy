@@ -66,7 +66,7 @@ public class MsoyGameClient extends CrowdClient
 
 //         final MemberName name = _plobj.memberName;
 //         final StatSet stats = _plobj.stats;
-//         _plobj = null;
+        _plobj = null;
 
 //         // update the member record in the database
 //         MsoyServer.invoker.postUnit(new Invoker.Unit("sessionDidEnd:" + name) {
