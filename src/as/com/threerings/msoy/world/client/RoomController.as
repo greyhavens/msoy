@@ -247,8 +247,7 @@ public class RoomController extends SceneController
 
         _mctx = (ctx as WorldContext);
         _editor = new RoomEditorController(_mctx, _roomView);
-        _snap = new SnapshotController(_mctx);
-        
+
         // watch for when we're un-minimized and the display list is valid, so that we can
         // open the editor, and place things correctly when necessary
         _mctx.getTopPanel().getControlBar().addEventListener(ControlBar.DISPLAY_LIST_VALID,
@@ -280,6 +279,8 @@ public class RoomController extends SceneController
         // get a copy of the scene
         _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
 
+        _snap = new SnapshotController(_mctx, _scene.getId());
+        
         _walkTarget.visible = false;
         _flyTarget.visible = false;
         _roomView.addChildAt(_flyTarget, _roomView.numChildren);
@@ -313,6 +314,7 @@ public class RoomController extends SceneController
 
         _roomObj.removeListener(_roomListener);
 
+        _snap = null;
         _scene = null;
         _roomObj = null;
 
@@ -569,9 +571,9 @@ public class RoomController extends SceneController
      */
     public function takeSnapshot () :void
     {
-        _snap.takeScreenshot(_scene.getId(), _roomView);
+        _snap.takeScreenshot(_roomView);
     };   
-    
+
     /**
      * Create the menu item that allows a user to change their own avatar.
      */
@@ -989,7 +991,7 @@ public class RoomController extends SceneController
                 // and tell the editor which sprite was being hovered (whether highlighted or not)
                 _editor.mouseOverSprite(hitter);
             }
-            
+
         }
 
         _walkTarget.visible = showWalkTarget;
@@ -1582,7 +1584,7 @@ public class RoomController extends SceneController
 
     /** Controller for room snapshots. */
     protected var _snap :SnapshotController;
-    
+
     /** Stack that stores the sequence of room updates. */
     protected var _updates :UpdateStack = new UpdateStack(updateRoom);
 

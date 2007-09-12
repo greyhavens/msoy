@@ -5,17 +5,13 @@ package com.threerings.msoy.world.client.editor {
 
 import flash.display.BitmapData;
 import flash.events.Event;
-import flash.events.HTTPStatusEvent;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
-import flash.geom.Matrix;
-import flash.geom.Rectangle;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.utils.ByteArray;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.flex.CommandButton;
 import com.threerings.msoy.client.WorldClient;
 import com.threerings.msoy.client.WorldContext;
@@ -28,19 +24,15 @@ import com.threerings.util.StringUtil;
 public class SnapshotController
 {
     public static const SERVICE_ENTRY_POINT :String = "/snapshotsvc";
-    public static const IMAGE_HEIGHT :int = 180;
-    public static const IMAGE_WIDTH :int = 320;
-
-    public function SnapshotController (ctx :WorldContext)
+    public static const SNAPSHOT_MEDIA_PATH :String = "/media/snapshot/";
+    
+    public function SnapshotController (ctx :WorldContext, sceneId :int)
     {
         _ctx = ctx;
-
-        var client :WorldClient = _ctx.getWorldClient();
-        var url :String =
-            "http://" + client.getHostname() + ":" + client.getHttpPort() + SERVICE_ENTRY_POINT;
+        _sceneId = sceneId;
 
         _request = new URLRequest();
-        _request.url = url;
+        _request.url = baseUrl + SERVICE_ENTRY_POINT;
         _request.method = "POST";
         _request.contentType = "multipart/form-data; boundary=" + BOUNDARY;
 
@@ -52,36 +44,43 @@ public class SnapshotController
         _encoder = new JPGEncoder(80);
     }
 
+    public function get sceneId () :int
+    {
+        return _sceneId;
+    }
+
+    public function get mediaUrl () :String
+    {
+        return baseUrl + SNAPSHOT_MEDIA_PATH + _sceneId + ".jpg";
+    }
+    
+    protected function get baseUrl () :String
+    {
+        var client :WorldClient = _ctx.getWorldClient();
+        return "http://" + client.getHostname() + ":" + client.getHttpPort();
+    }
+    
     /** Pops up a UI that will ask the user to apply or cancel the current room screenshot. */
-    public function takeScreenshot (sceneId :int, view :RoomView) :void
+    public function takeScreenshot (view :RoomView) :void
     {
         if (_panel == null) {
-            var bitmap :BitmapData = capture(view);
-            var callback :Function = function (save :Boolean) :void {
-                if (save) {
-                    // encodes bitmap image as a MIME file upload, and sends it over
-                    _request.data = makeMimeBody(sceneId, _encoder.encode(bitmap));
-                    _loader.load(_request);
-                }
-                _panel = null;
-            }
-            
-            _panel = new SnapshotPanel(_ctx, bitmap, callback);
+            _panel = new SnapshotPanel(_ctx, this, view);
             _panel.open();
         }
     }
 
-    /** Captures the current room view into a bitmap. */
-    protected function capture (view :RoomView) :BitmapData
+    /** Called when after the screenshot panel was closed. If bitmap is not null,
+     *  it will be uploaded to the server as the new screenshot for the scene. */
+    public function close (bitmap :BitmapData) :void
     {
-        // draw the room, scaling down to the appropriate size
-        var newScale :Number = IMAGE_HEIGHT / view.getScrollBounds().height;
-        var matrix :Matrix = new Matrix(newScale, 0, 0, newScale);
-        var room :BitmapData = new BitmapData(IMAGE_WIDTH, IMAGE_HEIGHT);
-        room.draw(view, matrix, null, null, null, true);
-        return room;
+        if (bitmap != null) {
+            // encodes bitmap image as a MIME file upload, and sends it over
+            _request.data = makeMimeBody(sceneId, _encoder.encode(bitmap));
+            _loader.load(_request);
+        }
+        _panel = null;
     }
-
+    
     /** Creates an HTTP POST upload request. */
     protected function makeMimeBody (sceneId :int, data :ByteArray) :ByteArray
     {
@@ -115,12 +114,13 @@ public class SnapshotController
         _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, "e.snapshot_success");
     }
 
+    protected var _sceneId :int;
     protected var _panel :SnapshotPanel;
     protected var _encoder :JPGEncoder;
     protected var _loader :URLLoader;
     protected var _request :URLRequest;
     protected var _ctx :WorldContext;
-    
+
     protected static const BOUNDARY :String = "why are you reading the raw http stream?";
 }
 }
