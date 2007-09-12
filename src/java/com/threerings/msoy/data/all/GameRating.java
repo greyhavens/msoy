@@ -4,6 +4,8 @@
 package com.threerings.msoy.data.all;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
@@ -14,31 +16,22 @@ public class GameRating
 {
     /** The game's id. */
     public int gameId;
-    
+
     /** The game's name. */
     public String gameName;
-    
+
     /** The game's thumbnail media. */
-    public MediaDesc gameThumb;
-    
-    /** The actual rating of the implicit user, for this game. This value is scaled to [0, 1]. */
-    public float rating;
+    public MediaDesc gameThumb = Item.getDefaultThumbnailMediaFor(Item.GAME);
+
+    /** The single player rating of the user for this game. This value is scaled to [0, 1]. */
+    public float singleRating;
+
+    /** The multiplayer rating of the user for this game. This value is scaled to [0, 1]. */
+    public float multiRating;
 
     /** Used when unserializing */
     public GameRating ()
     {
-    }
-
-    /**
-     * Creates a {@link GameRating} instance populated with the given data.
-     * @param thumb 
-     */
-    public GameRating (int gameId, String gameName, MediaDesc thumb, float rating)
-    {
-        this.gameId = gameId;
-        this.gameName = gameName;
-        this.gameThumb = thumb;
-        this.rating = rating;
     }
 
     // @Override // from Object

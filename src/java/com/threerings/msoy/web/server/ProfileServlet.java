@@ -129,11 +129,11 @@ public class ProfileServlet extends MsoyServiceServlet
 //                 case BlurbData.HOOD:
 //                     result.hood = resolveHoodData(memrec, tgtrec);
 //                     break;
-                    
+
                 case BlurbData.RATINGS:
                     result.ratings = resolveRatingsData(memrec, tgtrec);
                     break;
-                    
+
                 default:
                     log.log(Level.WARNING, "Requested to resolve unknown blurb " + bdata + ".");
                     break;
@@ -294,46 +294,53 @@ public class ProfileServlet extends MsoyServiceServlet
         // fetch all the rating records for the user
         List<RatingRecord> ratings = MsoyServer.ratingRepo.getRatings(tgtrec.memberId);
 
+        log.info("Loading ratings for " + tgtrec.memberId + ": " + ratings);
+
         // sort them by rating
         Collections.sort(ratings, new Comparator<RatingRecord>() {
             public int compare (RatingRecord o1, RatingRecord o2) {
                 return (o1.rating > o2.rating) ? -1 : (o1.rating == o2.rating) ? 0 : 1;
             }
         });
-        
-        // extract the game id's
-        int[] gameIds = new int[ratings.size()];
-        for (int ii = 0; ii < gameIds.length; ii ++) {
-            gameIds[ii] = ratings.get(ii).gameId;
-        }
-        
-        // load the associated game records and put them in a lookup map (by id)
-        IntMap<GameRecord> gameMap = new HashIntMap<GameRecord>();
-        for (GameRecord record : MsoyServer.itemMan.getGameRepository().loadItems(gameIds)) {
-            gameMap.put(record.itemId, record);
-        }
-        
+
+        // create GameRating records for all the games we know about
         List<GameRating> result = new ArrayList<GameRating>();
-
-        // client decides how much to show, but don't send ridiculous amounts of data
-        int count = Math.min(gameIds.length, 20);
-
-        for (int ii = 0; ii < count; ii ++) {
-            GameRecord record = gameMap.get(gameIds[ii]);
-            if (record == null) {
-                // if there is a RatingRecord referencing a game that's disappeared, just skip
-                // it; we don't clean out RatingRecords when we delete a GameRecord, so this
-                // could happen with some frequency
-                continue;
+        HashIntMap<GameRating> map = new HashIntMap<GameRating>();
+        for (RatingRecord record : ratings) {
+            GameRating rrec = map.get(Math.abs(record.gameId));
+            if (rrec == null) {
+                // stop adding results
+                if (result.size() >= MAX_PROFILE_MATCHES) {
+                    continue;
+                }
+                rrec = new GameRating();
+                rrec.gameId = Math.abs(record.gameId);
+                result.add(rrec);
+                map.put(rrec.gameId, rrec);
             }
-            float rating = ratings.get(ii).rating - RatingManagerDelegate.MINIMUM_RATING;
+            float rating = record.rating - RatingManagerDelegate.MINIMUM_RATING;
             rating /= (RatingManagerDelegate.MAXIMUM_RATING - RatingManagerDelegate.MINIMUM_RATING);
+            if (record.gameId < 0) {
+                rrec.singleRating = rating;
+            } else {
+                rrec.multiRating = rating;
+            }
+        }
 
-            MediaDesc thumb = record.thumbMediaHash != null ?
-                new MediaDesc(record.thumbMediaHash, record.thumbMimeType, record.thumbConstraint) :
-                Item.getDefaultThumbnailMediaFor(Item.GAME);
-
-            result.add(new GameRating(record.itemId, record.name, thumb, rating));
+        // now load up and fill in the game details
+        for (IntMap.IntEntry<GameRating> entry : map.intEntrySet()) {
+            int gameId = entry.getIntKey();
+            GameRecord record = MsoyServer.itemMan.getGameRepository().loadGameRecord(gameId);
+            if (record == null) {
+                log.warning("Player has rating for non-existent game [id=" + gameId + "].");
+                entry.getValue().gameName = "";
+            } else {
+                entry.getValue().gameName = record.name;
+                if (record.thumbMediaHash != null) {
+                    entry.getValue().gameThumb = new MediaDesc(
+                        record.thumbMediaHash, record.thumbMimeType, record.thumbConstraint);
+                }
+            }
         }
 
         return result;
@@ -351,4 +358,5 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     protected static final int MAX_PROFILE_MATCHES = 100;
+    protected static final int MAX_PROFILE_GAMES = 20;
 }
