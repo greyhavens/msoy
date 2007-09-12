@@ -16,20 +16,20 @@ public interface WorldMessages extends com.google.gwt.i18n.client.Messages {
   String noSuchMember();
 
   /**
-   * Translated "Neighborhood".
-   * 
-   * @return translated "Neighborhood"
-   * @gwt.key neighborhoodTitle
-   */
-  String neighborhoodTitle();
-
-  /**
    * Translated "My Whirled".
    * 
    * @return translated "My Whirled"
    * @gwt.key hotSpotsTitle
    */
   String hotSpotsTitle();
+
+  /**
+   * Translated "That neighborhood could not be found.".
+   * 
+   * @return translated "That neighborhood could not be found."
+   * @gwt.key noSuchNeighborhood
+   */
+  String noSuchNeighborhood();
 
   /**
    * Translated "temp".
@@ -40,10 +40,10 @@ public interface WorldMessages extends com.google.gwt.i18n.client.Messages {
   String temp();
 
   /**
-   * Translated "That neighborhood could not be found.".
+   * Translated "Neighborhood".
    * 
-   * @return translated "That neighborhood could not be found."
-   * @gwt.key noSuchNeighborhood
+   * @return translated "Neighborhood"
+   * @gwt.key neighborhoodTitle
    */
-  String noSuchNeighborhood();
+  String neighborhoodTitle();
 }

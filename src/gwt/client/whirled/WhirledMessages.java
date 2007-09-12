@@ -8,12 +8,22 @@ package client.whirled;
 public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "What''s going <br/>on in My Whirled <br/>right now.".
+   * Translated "My Popular Places".
    * 
-   * @return translated "What''s going <br/>on in My Whirled <br/>right now."
-   * @gwt.key myWhirledDescription
+   * @return translated "My Popular Places"
+   * @gwt.key headerPlaces
    */
-  String myWhirledDescription();
+  String headerPlaces();
+
+  /**
+   * Translated "You currently have no active games.<br/>
+   * Check <a href="/#{0}">Whirledwide</a> to see what other people are playing!".
+   * 
+   * @return translated "You currently have no active games.<br/>
+   * Check <a href="/#{0}">Whirledwide</a> to see what other people are playing!"
+   * @gwt.key emptyActiveGames
+   */
+  String emptyActiveGames(String arg0);
 
   /**
    * Translated "You currently have no popular places.<br/>
@@ -28,44 +38,12 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String emptyPopularPlaces(String arg0,  String arg1);
 
   /**
-   * Translated "My Popular Places".
+   * Translated "My Active Games".
    * 
-   * @return translated "My Popular Places"
-   * @gwt.key headerPlaces
+   * @return translated "My Active Games"
+   * @gwt.key headerGames
    */
-  String headerPlaces();
-
-  /**
-   * Translated "My Whirled".
-   * 
-   * @return translated "My Whirled"
-   * @gwt.key titleMyWhirled
-   */
-  String titleMyWhirled();
-
-  /**
-   * Translated "Whirledwide".
-   * 
-   * @return translated "Whirledwide"
-   * @gwt.key titleWhirledwide
-   */
-  String titleWhirledwide();
-
-  /**
-   * Translated "Nobody Playing Games".
-   * 
-   * @return translated "Nobody Playing Games"
-   * @gwt.key noGames
-   */
-  String noGames();
-
-  /**
-   * Translated "No Online Friends".
-   * 
-   * @return translated "No Online Friends"
-   * @gwt.key noPeople
-   */
-  String noPeople();
+  String headerGames();
 
   /**
    * Translated "Top Games".
@@ -76,30 +54,6 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String headerTopGames();
 
   /**
-   * Translated "No Friends in Rooms".
-   * 
-   * @return translated "No Friends in Rooms"
-   * @gwt.key noRooms
-   */
-  String noRooms();
-
-  /**
-   * Translated "My Active Games".
-   * 
-   * @return translated "My Active Games"
-   * @gwt.key headerGames
-   */
-  String headerGames();
-
-  /**
-   * Translated "My Friends Online".
-   * 
-   * @return translated "My Friends Online"
-   * @gwt.key headerPeople
-   */
-  String headerPeople();
-
-  /**
    * Translated "No active group chats".
    * 
    * @return translated "No active group chats"
@@ -108,12 +62,20 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String noChats();
 
   /**
-   * Translated "My Rooms".
+   * Translated "No Friends in Rooms".
    * 
-   * @return translated "My Rooms"
-   * @gwt.key headerRooms
+   * @return translated "No Friends in Rooms"
+   * @gwt.key noRooms
    */
-  String headerRooms();
+  String noRooms();
+
+  /**
+   * Translated "No Online Friends".
+   * 
+   * @return translated "No Online Friends"
+   * @gwt.key noPeople
+   */
+  String noPeople();
 
   /**
    * Translated "Active Chats".
@@ -124,22 +86,28 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String headerChats();
 
   /**
-   * Translated "Pop. {0}, including: ".
+   * Translated "Whirledwide".
    * 
-   * @return translated "Pop. {0}, including: "
-   * @gwt.key population
+   * @return translated "Whirledwide"
+   * @gwt.key titleWhirledwide
    */
-  String population(String arg0);
+  String titleWhirledwide();
 
   /**
-   * Translated "You currently have no active games.<br/>
-   * Check <a href="/#{0}">Whirledwide</a> to see what other people are playing!".
+   * Translated "My Whirled".
    * 
-   * @return translated "You currently have no active games.<br/>
-   * Check <a href="/#{0}">Whirledwide</a> to see what other people are playing!"
-   * @gwt.key emptyActiveGames
+   * @return translated "My Whirled"
+   * @gwt.key titleMyWhirled
    */
-  String emptyActiveGames(String arg0);
+  String titleMyWhirled();
+
+  /**
+   * Translated "What''s going <br/>on in My Whirled <br/>right now.".
+   * 
+   * @return translated "What''s going <br/>on in My Whirled <br/>right now."
+   * @gwt.key myWhirledDescription
+   */
+  String myWhirledDescription();
 
   /**
    * Translated "Players".
@@ -150,10 +118,42 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String headerPlayers();
 
   /**
+   * Translated "My Friends Online".
+   * 
+   * @return translated "My Friends Online"
+   * @gwt.key headerPeople
+   */
+  String headerPeople();
+
+  /**
+   * Translated "My Rooms".
+   * 
+   * @return translated "My Rooms"
+   * @gwt.key headerRooms
+   */
+  String headerRooms();
+
+  /**
    * Translated "What''s new and<br/>exciting in the<br/>Whirled at large.".
    * 
    * @return translated "What''s new and<br/>exciting in the<br/>Whirled at large."
    * @gwt.key whirledwideDescription
    */
   String whirledwideDescription();
+
+  /**
+   * Translated "Nobody Playing Games".
+   * 
+   * @return translated "Nobody Playing Games"
+   * @gwt.key noGames
+   */
+  String noGames();
+
+  /**
+   * Translated "Pop. {0}, including: ".
+   * 
+   * @return translated "Pop. {0}, including: "
+   * @gwt.key population
+   */
+  String population(String arg0);
 }

@@ -8,30 +8,6 @@ package client.mail;
 public interface MailMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "Next".
-   * 
-   * @return translated "Next"
-   * @gwt.key appBtnNext
-   */
-  String appBtnNext();
-
-  /**
-   * Translated "From".
-   * 
-   * @return translated "From"
-   * @gwt.key appHdrFrom
-   */
-  String appHdrFrom();
-
-  /**
-   * Translated "Reply".
-   * 
-   * @return translated "Reply"
-   * @gwt.key appBtnReply
-   */
-  String appBtnReply();
-
-  /**
    * Translated "Mail".
    * 
    * @return translated "Mail"
@@ -40,20 +16,28 @@ public interface MailMessages extends com.google.gwt.i18n.client.Messages {
   String mailTitle();
 
   /**
-   * Translated "Prev".
+   * Translated "Next".
    * 
-   * @return translated "Prev"
-   * @gwt.key appBtnPrevious
+   * @return translated "Next"
+   * @gwt.key appBtnNext
    */
-  String appBtnPrevious();
+  String appBtnNext();
 
   /**
-   * Translated "Delete Selected".
+   * Translated "Delete".
    * 
-   * @return translated "Delete Selected"
-   * @gwt.key appBtnDeleteSel
+   * @return translated "Delete"
+   * @gwt.key appBtnDelete
    */
-  String appBtnDeleteSel();
+  String appBtnDelete();
+
+  /**
+   * Translated "Toggle All".
+   * 
+   * @return translated "Toggle All"
+   * @gwt.key appBtnToggle
+   */
+  String appBtnToggle();
 
   /**
    * Translated "Subject".
@@ -64,12 +48,36 @@ public interface MailMessages extends com.google.gwt.i18n.client.Messages {
   String appHdrSubject();
 
   /**
-   * Translated "Delete".
+   * Translated "From".
    * 
-   * @return translated "Delete"
-   * @gwt.key appBtnDelete
+   * @return translated "From"
+   * @gwt.key appHdrFrom
    */
-  String appBtnDelete();
+  String appHdrFrom();
+
+  /**
+   * Translated "Delete Selected".
+   * 
+   * @return translated "Delete Selected"
+   * @gwt.key appBtnDeleteSel
+   */
+  String appBtnDeleteSel();
+
+  /**
+   * Translated "Reply All".
+   * 
+   * @return translated "Reply All"
+   * @gwt.key appBtnReplyAll
+   */
+  String appBtnReplyAll();
+
+  /**
+   * Translated "Search".
+   * 
+   * @return translated "Search"
+   * @gwt.key appBtnSearch
+   */
+  String appBtnSearch();
 
   /**
    * Translated "Mail".
@@ -88,34 +96,26 @@ public interface MailMessages extends com.google.gwt.i18n.client.Messages {
   String logon();
 
   /**
+   * Translated "Prev".
+   * 
+   * @return translated "Prev"
+   * @gwt.key appBtnPrevious
+   */
+  String appBtnPrevious();
+
+  /**
+   * Translated "Reply".
+   * 
+   * @return translated "Reply"
+   * @gwt.key appBtnReply
+   */
+  String appBtnReply();
+
+  /**
    * Translated "Forward".
    * 
    * @return translated "Forward"
    * @gwt.key appBtnForward
    */
   String appBtnForward();
-
-  /**
-   * Translated "Reply All".
-   * 
-   * @return translated "Reply All"
-   * @gwt.key appBtnReplyAll
-   */
-  String appBtnReplyAll();
-
-  /**
-   * Translated "Toggle All".
-   * 
-   * @return translated "Toggle All"
-   * @gwt.key appBtnToggle
-   */
-  String appBtnToggle();
-
-  /**
-   * Translated "Search".
-   * 
-   * @return translated "Search"
-   * @gwt.key appBtnSearch
-   */
-  String appBtnSearch();
 }

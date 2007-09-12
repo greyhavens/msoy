@@ -8,108 +8,12 @@ package client.catalog;
 public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "Lowest Price".
+   * Translated "Listed on: {0}".
    * 
-   * @return translated "Lowest Price"
-   * @gwt.key sortByPriceAsc
+   * @return translated "Listed on: {0}"
+   * @gwt.key listingListed
    */
-  String sortByPriceAsc();
-
-  /**
-   * Translated "Highest Price".
-   * 
-   * @return translated "Highest Price"
-   * @gwt.key sortByPriceDesc
-   */
-  String sortByPriceDesc();
-
-  /**
-   * Translated "Rating".
-   * 
-   * @return translated "Rating"
-   * @gwt.key sortByRating
-   */
-  String sortByRating();
-
-  /**
-   * Translated "(clear)".
-   * 
-   * @return translated "(clear)"
-   * @gwt.key catalogClearFilter
-   */
-  String catalogClearFilter();
-
-  /**
-   * Translated "List Date".
-   * 
-   * @return translated "List Date"
-   * @gwt.key sortByListDate
-   */
-  String sortByListDate();
-
-  /**
-   * Translated "No {0} items match the tag: {1}".
-   * 
-   * @return translated "No {0} items match the tag: {1}"
-   * @gwt.key catalogNoTag
-   */
-  String catalogNoTag(String arg0,  String arg1);
-
-  /**
-   * Translated "You can remove this catalog listing.".
-   * 
-   * @return translated "You can remove this catalog listing."
-   * @gwt.key listingDelistTip
-   */
-  String listingDelistTip();
-
-  /**
-   * Translated "Buy!".
-   * 
-   * @return translated "Buy!"
-   * @gwt.key listingBuy
-   */
-  String listingBuy();
-
-  /**
-   * Translated "Catalog".
-   * 
-   * @return translated "Catalog"
-   * @gwt.key catalogTitle
-   */
-  String catalogTitle();
-
-  /**
-   * Translated "No filter.".
-   * 
-   * @return translated "No filter."
-   * @gwt.key catalogNoFilter
-   */
-  String catalogNoFilter();
-
-  /**
-   * Translated "Filtered by creator: {0}".
-   * 
-   * @return translated "Filtered by creator: {0}"
-   * @gwt.key catalogCreatorFilter
-   */
-  String catalogCreatorFilter(String arg0);
-
-  /**
-   * Translated "Filtered by tag: {0}".
-   * 
-   * @return translated "Filtered by tag: {0}"
-   * @gwt.key catalogTagFilter
-   */
-  String catalogTagFilter(String arg0);
-
-  /**
-   * Translated "Filtered by search: {0}".
-   * 
-   * @return translated "Filtered by search: {0}"
-   * @gwt.key catalogSearchFilter
-   */
-  String catalogSearchFilter(String arg0);
+  String listingListed(String arg0);
 
   /**
    * Translated "There are no {0} items listed.".
@@ -120,6 +24,22 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String catalogNoList(String arg0);
 
   /**
+   * Translated "List Date".
+   * 
+   * @return translated "List Date"
+   * @gwt.key sortByListDate
+   */
+  String sortByListDate();
+
+  /**
+   * Translated "Rating".
+   * 
+   * @return translated "Rating"
+   * @gwt.key sortByRating
+   */
+  String sortByRating();
+
+  /**
    * Translated "Delist Item".
    * 
    * @return translated "Delist Item"
@@ -128,28 +48,36 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String listingDelist();
 
   /**
-   * Translated "Listed on: {0}".
+   * Translated "(clear)".
    * 
-   * @return translated "Listed on: {0}"
-   * @gwt.key listingListed
+   * @return translated "(clear)"
+   * @gwt.key catalogClearFilter
    */
-  String listingListed(String arg0);
+  String catalogClearFilter();
 
   /**
-   * Translated "by {0}".
+   * Translated "Buy!".
    * 
-   * @return translated "by {0}"
-   * @gwt.key itemBy
+   * @return translated "Buy!"
+   * @gwt.key listingBuy
    */
-  String itemBy(String arg0);
+  String listingBuy();
 
   /**
-   * Translated "Item delisted.".
+   * Translated "Lowest Price".
    * 
-   * @return translated "Item delisted."
-   * @gwt.key msgListingDelisted
+   * @return translated "Lowest Price"
+   * @gwt.key sortByPriceAsc
    */
-  String msgListingDelisted();
+  String sortByPriceAsc();
+
+  /**
+   * Translated "Filtered by tag: {0}".
+   * 
+   * @return translated "Filtered by tag: {0}"
+   * @gwt.key catalogTagFilter
+   */
+  String catalogTagFilter(String arg0);
 
   /**
    * Translated "Item purchased.".
@@ -160,6 +88,22 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String msgListingBought();
 
   /**
+   * Translated "Catalog".
+   * 
+   * @return translated "Catalog"
+   * @gwt.key catalogTitle
+   */
+  String catalogTitle();
+
+  /**
+   * Translated "Filtered by creator: {0}".
+   * 
+   * @return translated "Filtered by creator: {0}"
+   * @gwt.key catalogCreatorFilter
+   */
+  String catalogCreatorFilter(String arg0);
+
+  /**
    * Translated "No {0} items match the query: {1}".
    * 
    * @return translated "No {0} items match the query: {1}"
@@ -168,10 +112,66 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String catalogNoMatch(String arg0,  String arg1);
 
   /**
+   * Translated "Item delisted.".
+   * 
+   * @return translated "Item delisted."
+   * @gwt.key msgListingDelisted
+   */
+  String msgListingDelisted();
+
+  /**
+   * Translated "No filter.".
+   * 
+   * @return translated "No filter."
+   * @gwt.key catalogNoFilter
+   */
+  String catalogNoFilter();
+
+  /**
+   * Translated "Filtered by search: {0}".
+   * 
+   * @return translated "Filtered by search: {0}"
+   * @gwt.key catalogSearchFilter
+   */
+  String catalogSearchFilter(String arg0);
+
+  /**
+   * Translated "by {0}".
+   * 
+   * @return translated "by {0}"
+   * @gwt.key itemBy
+   */
+  String itemBy(String arg0);
+
+  /**
+   * Translated "No {0} items match the tag: {1}".
+   * 
+   * @return translated "No {0} items match the tag: {1}"
+   * @gwt.key catalogNoTag
+   */
+  String catalogNoTag(String arg0,  String arg1);
+
+  /**
    * Translated "Unable to find catalog listing to delist.".
    * 
    * @return translated "Unable to find catalog listing to delist."
    * @gwt.key errListingNotFound
    */
   String errListingNotFound();
+
+  /**
+   * Translated "You can remove this catalog listing.".
+   * 
+   * @return translated "You can remove this catalog listing."
+   * @gwt.key listingDelistTip
+   */
+  String listingDelistTip();
+
+  /**
+   * Translated "Highest Price".
+   * 
+   * @return translated "Highest Price"
+   * @gwt.key sortByPriceDesc
+   */
+  String sortByPriceDesc();
 }
