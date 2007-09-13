@@ -425,7 +425,7 @@ public class ControlBar extends HBox
     /** Receives notification whether scene editing is possible for this scene. */
     public function set sceneEditPossible (value :Boolean) :void
     {
-        var editButtons :Array = [ _roomeditBtn, _petBtn, _snapBtn ];
+        var editButtons :Array = [ _roomeditBtn, _petBtn /*, _snapBtn */ ];
         editButtons.forEach(function (button :CommandButton, i :*, a :*) :void {
                 if (button != null) {
                     button.enabled = value;
