@@ -15,10 +15,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
+import client.shell.Application;
 import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MediaUtil;
@@ -141,6 +143,10 @@ public abstract class BaseItemDetailPanel extends FlexTable
         details.add(_creator = new CreatorLabel());
         _creator.setMember(_detail.creator);
         details.add(_description = new Label(ItemUtil.getDescription(_item)));
+
+        if (CItem.isAdmin() && _item instanceof Game) {
+            details.add(Application.createLink("Game details", "game", "d" + ((Game)_item).gameId));
+        }
     }
 
     /**

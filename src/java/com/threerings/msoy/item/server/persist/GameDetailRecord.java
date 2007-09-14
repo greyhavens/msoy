@@ -12,6 +12,8 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.web.data.GameDetail;
+
 /**
  * Contains details on a single game "title" which may span multiple versions and therefore
  * multiple item ids. Some day additional information like screenshots and instructions may also be
@@ -117,6 +119,20 @@ public class GameDetailRecord extends PersistentRecord
     public boolean shouldRecalcAbuse (int playerMins, int recalcMinutes)
     {
         return (playerMinutes - lastAbuseRecalc) + playerMins > recalcMinutes;
+    }
+
+    /**
+     * Creates a runtime record from this persistent record.
+     */
+    public GameDetail toGameDetail ()
+    {
+        GameDetail detail = new GameDetail();
+        detail.gameId = gameId;
+        detail.playerGames = playerGames;
+        detail.playerMinutes = playerMinutes;
+        detail.abuseFactor = getAntiAbuseFactor();
+        detail.lastAbuseRecalc = lastAbuseRecalc;
+        return detail;
     }
 
     @Override // from Object

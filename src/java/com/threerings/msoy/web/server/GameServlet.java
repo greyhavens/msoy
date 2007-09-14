@@ -10,20 +10,23 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.InvocationCodes;
 
-import com.threerings.msoy.game.xml.MsoyGameParser;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.ItemRecord;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.web.client.GameService;
+import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
@@ -102,5 +105,39 @@ public class GameServlet extends MsoyServiceServlet
         config.port = ServerConfig.serverPorts[0];
         config.httpPort = ServerConfig.httpPort;
         return config;
+    }
+
+    // from interface GameService
+    public GameDetail loadGameDetail (WebIdent ident, int gameId)
+        throws ServiceException
+    {
+        GameRepository repo = MsoyServer.itemMan.getGameRepository();
+
+        try {
+            GameDetailRecord gdr = repo.loadGameDetail(gameId);
+            if (gdr == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            }
+
+            GameDetail detail = gdr.toGameDetail();
+            if (gdr.listedItemId != 0) {
+                ItemRecord item = repo.loadItem(gdr.listedItemId);
+                if (item != null) {
+                    detail.listedItem = (Game)item.toItem();
+                }
+            }
+            if (gdr.sourceItemId != 0) {
+                ItemRecord item = repo.loadItem(gdr.sourceItemId);
+                if (item != null) {
+                    detail.sourceItem = (Game)item.toItem();
+                }
+            }
+
+            return detail;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load game detail [id=" + gameId + "].", pe);
+            throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+        }
     }
 }

@@ -44,12 +44,20 @@ public class index extends Page
             return;
         }
 
-        // our args are 'gameId-gameOid' or just 'gameId'
-        int[] args = splitArgs(token);
         try {
-            loadLaunchConfig(args[0], (args.length > 1) ? args[1] : -1);
+            // if we have dNNN then we want to see game detail
+            if (token.startsWith("d")) {
+                setPageTitle("Game Detail");
+                setContent(new GameDetailPanel(Integer.parseInt(token.substring(1))));
+
+            } else {
+                // otherwise our args are 'gameId-gameOid' or just 'gameId'
+                int[] args = splitArgs(token);
+                loadLaunchConfig(args[0], (args.length > 1) ? args[1] : -1);
+            }
+
         } catch (Exception e) {
-            // TODO: display error
+            setContent(MsoyUI.createLabel(CGame.serverError(e), "infoLabel"));
         }
     }
 
