@@ -14,6 +14,7 @@
   <source path="com/threerings/msoy/data/all"/>
   <source path="com/threerings/msoy/item/data/all"/>
   <source path="com/threerings/msoy/item/data/gwt"/>
+  <source path="com/threerings/msoy/fora/data"/>
   <source path="com/threerings/msoy/web/client"/>
   <source path="com/threerings/msoy/web/data"/>
 

@@ -19,6 +19,7 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.item.BaseItemDetailPanel;
 import client.shell.Application;
+import client.shell.CommentsPanel;
 import client.util.ClickCallback;
 import client.util.ItemUtil;
 import client.util.MsoyUI;
@@ -76,6 +77,12 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             };
             _details.add(delist);
         }
+
+        // TODO: add a method to BaseItemDetailPanel that allows things to be tacked on
+        int row = getRowCount();
+        CommentsPanel comments = new CommentsPanel(detail.item.getType(), detail.item.itemId);
+        setWidget(row, 0, comments);
+        getFlexCellFormatter().setColSpan(row, 0, 2);
     }
 
     // @Override // BaseItemDetailPanel

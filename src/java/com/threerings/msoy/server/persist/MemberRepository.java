@@ -322,6 +322,22 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         delete(member);
+
+        // TODO: delete a whole bunch of shit (not here, in whatever ends up calling this)
+        // - inventory items
+        // - item tags
+        // - item ratings
+        // - game ratings
+        // - game cookies
+        // - comments
+        // - rooms, furni, etc.
+        // - mail messages
+        // - profile data
+        // - swiftly projects (?)
+        // - invitations
+        // - friendships
+        // - group memberships
+        // - member action records, action summary record
     }
 
     /**

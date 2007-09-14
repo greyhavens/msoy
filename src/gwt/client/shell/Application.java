@@ -21,6 +21,10 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.web.client.CommentService;
+import com.threerings.msoy.web.client.CommentServiceAsync;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
@@ -52,6 +56,14 @@ public class Application
     public static Hyperlink memberViewLink (String label, int memberId)
     {
         return createLink(label, "profile", ""+memberId);
+    }
+
+    /**
+     * Returns a {@link Hyperlink} that displays the details of a given member.
+     */
+    public static Hyperlink memberViewLink (MemberName name)
+    {
+        return createLink(name.toString(), "profile", ""+name.getMemberId());
     }
 
     /**
@@ -182,6 +194,8 @@ public class Application
         ((ServiceDefTarget)CShell.usersvc).setServiceEntryPoint("/usersvc");
         CShell.membersvc = (MemberServiceAsync)GWT.create(MemberService.class);
         ((ServiceDefTarget)CShell.membersvc).setServiceEntryPoint("/membersvc");
+        CShell.commentsvc = (CommentServiceAsync)GWT.create(CommentService.class);
+        ((ServiceDefTarget)CShell.commentsvc).setServiceEntryPoint("/commentsvc");
 
         // load up our translation dictionaries
         CShell.cmsgs = (ShellMessages)GWT.create(ShellMessages.class);

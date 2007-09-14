@@ -7,6 +7,7 @@ import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.web.client.CommentServiceAsync;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 
@@ -30,6 +31,9 @@ public class CShell
 
     /** Provides member-related service. */
     public static MemberServiceAsync membersvc;
+
+    /** Provides comment-related service. */
+    public static CommentServiceAsync commentsvc;
 
     /** Messages shared by all client interfaces. */
     public static ShellMessages cmsgs;

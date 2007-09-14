@@ -42,8 +42,9 @@ import com.threerings.whirled.spot.server.SpotProvider;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.chat.server.ChatChannelManager;
-import com.threerings.msoy.game.server.MsoyGameRegistry;
+import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.game.server.AVRGameRegistry;
+import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -105,6 +106,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Contains information on our groups. */
     public static GroupRepository groupRepo;
+
+    /** Contains member comments on various things. */
+    public static CommentRepository commentRepo;
 
     /** Contains information on our swiftly projects. */
     public static SwiftlyRepository swiftlyRepo;
@@ -256,6 +260,7 @@ public class MsoyServer extends MsoyBaseServer
         // create our various repositories
         profileRepo = new ProfileRepository(perCtx);
         groupRepo = new GroupRepository(perCtx);
+        commentRepo = new CommentRepository(perCtx, memberRepo);
         swiftlyRepo = new SwiftlyRepository(perCtx);
 
         // initialize the swiftly invoker
