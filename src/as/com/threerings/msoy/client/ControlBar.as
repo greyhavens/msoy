@@ -431,6 +431,11 @@ public class ControlBar extends HBox
                     button.enabled = value;
                 }
             });
+
+        // testing only (robert)
+        if (_ctx.getMemberObject().tokens.isSupport() && _snapBtn != null) {
+            _snapBtn.enabled = value;
+        }
     }
 
     /**
