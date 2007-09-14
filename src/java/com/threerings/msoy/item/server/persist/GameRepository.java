@@ -133,6 +133,7 @@ public class GameRepository extends ItemRepository<
         if (item.gameId == 0) {
             GameDetailRecord gdr = new GameDetailRecord();
             gdr.sourceItemId = item.itemId;
+            gdr.abuseFactor = GameDetailRecord.DEFAULT_ABUSE_FACTOR;
             insert(gdr);
             // source games use -gameId to differentiate themselves from all non-source games
             updatePartial(getItemClass(), item.itemId, GameRecord.GAME_ID, -gdr.gameId);

@@ -77,6 +77,9 @@ public class GameDetailRecord extends PersistentRecord
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 2;
 
+    /** The default abuse factor for newly added games. */
+    public static final int DEFAULT_ABUSE_FACTOR = 100;
+
     /** The unique identifier for this game. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int gameId;
@@ -98,7 +101,7 @@ public class GameDetailRecord extends PersistentRecord
     public int playerMinutes;
 
     /** The current abuse factor, from 0 to 255. */
-    @Column(defaultValue="100")
+    @Column(defaultValue=(""+DEFAULT_ABUSE_FACTOR))
     public int abuseFactor;
 
     /** The value of {@link #playerMinutes} when we last recalculated the abuse factor. */
