@@ -409,9 +409,9 @@ public class MemberServlet extends MsoyServiceServlet
 
         try {
             for (MemberCard card : whirledPeople) {
-                MemberNameRecord name = 
+                MemberNameRecord name =
                     MsoyServer.memberRepo.loadMemberName(card.name.getMemberId());
-                card.name = new MemberName(name.name, card.name.getMemberId());
+                card.name = name.toMemberName();
                 ProfileRecord profile = 
                     MsoyServer.profileRepo.loadProfile(card.name.getMemberId());
                 if (profile.photoHash != null) {
@@ -439,7 +439,8 @@ public class MemberServlet extends MsoyServiceServlet
             result.availableInvitations = MsoyServer.memberRepo.getInvitesGranted(mrec.memberId);
             ArrayList<Invitation> pending = new ArrayList<Invitation>();
             for (InvitationRecord iRec : MsoyServer.memberRepo.loadPendingInvites(mrec.memberId)) {
-                pending.add(iRec.toInvitationObject());
+                // we issued these invites so we are the inviter
+                pending.add(iRec.toInvitation(mrec.getName()));
             }
             result.pendingInvitations = pending;
             result.serverUrl = ServerConfig.getServerURL() + "/#invite-";
@@ -483,7 +484,12 @@ public class MemberServlet extends MsoyServiceServlet
     {
         try {
             InvitationRecord invRec = MsoyServer.memberRepo.loadInvite(inviteId, viewing);
-            return (invRec == null) ? null : invRec.toInvitationObject();
+            if (invRec == null) {
+                return null;
+            }
+            MemberNameRecord mnr = MsoyServer.memberRepo.loadMemberName(invRec.inviterId);
+            return invRec.toInvitation(mnr.toMemberName());
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitation failed [inviteId=" + inviteId + "]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);

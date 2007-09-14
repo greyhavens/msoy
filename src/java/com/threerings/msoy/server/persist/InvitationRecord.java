@@ -15,7 +15,6 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.Invitation;
 
@@ -119,14 +118,18 @@ public class InvitationRecord extends PersistentRecord
         return StringUtil.fieldsToString(this);
     }
 
-    public Invitation toInvitationObject ()
+    /**
+     * Converts this persistent record to a runtime record.
+     *
+     * @param inviterName {@link #inviterId} converted to a {@link MemberName}.
+     */
+    public Invitation toInvitation (MemberName inviterName)
         throws PersistenceException
     {
         Invitation inv = new Invitation();
         inv.inviteeEmail = inviteeEmail;
         inv.inviteId = inviteId;
-        MemberNameRecord memNameRec = MsoyServer.memberRepo.loadMemberName(inviterId);
-        inv.inviter = new MemberName(memNameRec.name, memNameRec.memberId);
+        inv.inviter = inviterName;
         return inv;
     }
 

@@ -172,7 +172,7 @@ public class ProfileServlet extends MsoyServiceServlet
                 if (names != null) {
                     for (MemberNameRecord mname : names) {
                         MemberCard card = new MemberCard();
-                        card.name = new MemberName(mname.name, mname.memberId);
+                        card.name = mname.toMemberName();
                         cards.put(mname.memberId, card);
                     }
                 }

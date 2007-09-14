@@ -8,6 +8,8 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.data.all.MemberName;
+
 /**
  * A computed persistent entity that's used to fetch (and cache) member name information only.
  */
@@ -37,6 +39,14 @@ public class MemberNameRecord extends PersistentRecord
 
     /** The name by which this member is known in MetaSOY. */
     public String name;
+
+    /**
+     * Creates a runtime record from this persistent record.
+     */
+    public MemberName toMemberName ()
+    {
+        return new MemberName(name, memberId);
+    }
 
     // AUTO-GENERATED: METHODS START
     /**
