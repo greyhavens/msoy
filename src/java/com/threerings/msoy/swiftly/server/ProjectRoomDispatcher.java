@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.swiftly.server;
 
-import com.threerings.msoy.swiftly.client.model.ProjectRoomService;
+import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.presents.client.Client;
@@ -42,35 +42,35 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
         case ProjectRoomMarshaller.ADD_DOCUMENT:
             ((ProjectRoomProvider)provider).addDocument(
                 source,
-                (String)args[0], (PathElement)args[1], (String)args[2], (InvocationService.InvocationListener)args[3]
+                (String)args[0], (PathElement)args[1], (String)args[2], (InvocationService.ConfirmListener)args[3]
             );
             return;
 
         case ProjectRoomMarshaller.ADD_PATH_ELEMENT:
             ((ProjectRoomProvider)provider).addPathElement(
                 source,
-                (PathElement)args[0], (InvocationService.InvocationListener)args[1]
+                (PathElement)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 
         case ProjectRoomMarshaller.BUILD_AND_EXPORT_PROJECT:
             ((ProjectRoomProvider)provider).buildAndExportProject(
                 source,
-                (InvocationService.ConfirmListener)args[0]
+                (InvocationService.ResultListener)args[0]
             );
             return;
 
         case ProjectRoomMarshaller.BUILD_PROJECT:
             ((ProjectRoomProvider)provider).buildProject(
                 source,
-                (InvocationService.ConfirmListener)args[0]
+                (InvocationService.ResultListener)args[0]
             );
             return;
 
         case ProjectRoomMarshaller.DELETE_DOCUMENT:
             ((ProjectRoomProvider)provider).deleteDocument(
                 source,
-                ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
+                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 
@@ -98,14 +98,14 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
         case ProjectRoomMarshaller.UPDATE_DOCUMENT:
             ((ProjectRoomProvider)provider).updateDocument(
                 source,
-                ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.InvocationListener)args[2]
+                ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.ConfirmListener)args[2]
             );
             return;
 
         case ProjectRoomMarshaller.UPDATE_PATH_ELEMENT:
             ((ProjectRoomProvider)provider).updatePathElement(
                 source,
-                (PathElement)args[0], (InvocationService.InvocationListener)args[1]
+                (PathElement)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 

@@ -61,7 +61,7 @@ public class SwiftlyStandAlone
         applet.start();
     }
 
-    protected static HashMap<String, String> parseArguments (String argv[])
+    private static HashMap<String, String> parseArguments (String argv[])
     {
         HashMap<String, String> properties = new HashMap<String, String>();
         for (int i = 0; i < argv.length; i++) {
@@ -97,8 +97,8 @@ public class SwiftlyStandAlone
 
         return properties;
     }
-    
-    protected static class SwiftlyAppletStub
+
+    private static class SwiftlyAppletStub
         implements AppletStub
     {
         SwiftlyAppletStub (SwiftlyApplet applet, HashMap<String, String> properties)
@@ -107,7 +107,7 @@ public class SwiftlyStandAlone
             _properties = properties;
             _context = new SwiftlyAppletContext();
         }
-    
+
         public void appletResize (int width, int height)
         {
             _applet.resize(width, height);
@@ -142,13 +142,13 @@ public class SwiftlyStandAlone
         {
             return true;
         }
-        
+
         SwiftlyApplet _applet;
         HashMap<String, String> _properties;
         AppletContext _context;
     }
 
-    protected static class SwiftlyAppletContext
+    private static class SwiftlyAppletContext
         implements AppletContext
     {
         public Applet getApplet (String name)
@@ -206,7 +206,7 @@ public class SwiftlyStandAlone
             System.out.println("showStatus() called with: " + status);
         }
 
-        protected static class NotImplementedException extends RuntimeException
+        private static class NotImplementedException extends RuntimeException
         {
             NotImplementedException ()
             {

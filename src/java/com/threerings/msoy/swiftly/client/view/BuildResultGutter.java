@@ -9,21 +9,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import com.samskivert.util.HashIntMap;
-import com.threerings.msoy.swiftly.client.event.BuildResultListener;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 
 /**
  * A gutter attached to a TextComponent that can show build results.
  */
-public class EditorGutter extends JPanel
-    implements BuildResultListener
+public class BuildResultGutter extends JPanel
+    implements BuildResultComponent
 {
-    public EditorGutter (SwiftlyEditor editor, SwiftlyTextPane text, JScrollPane pane)
+    public BuildResultGutter (TextEditorView text, JScrollPane pane)
     {
-        _editor = editor;
         _text = text;
-        _labels = new HashIntMap<BuildResultIconLabel>();
 
         setBackground(Color.LIGHT_GRAY);
         setForeground(Color.LIGHT_GRAY);
@@ -32,27 +29,13 @@ public class EditorGutter extends JPanel
     }
 
     @Override // from JComponent
-    public void addNotify ()
-    {
-        super.addNotify();
-        _editor.addBuildResultListener(this);
-    }
-
-    @Override // from JComponent
-    public void removeNotify ()
-    {
-        super.removeNotify();
-        _editor.removeBuildResultListener(this);
-    }
-
-    @Override // from JComponent
     public Dimension getPreferredSize ()
     {
         return new Dimension(DEFAULT_WIDTH, (int) _text.getPreferredSize().getHeight());
     }
 
-    // from BuildResultListener
-    public void gotResult (BuildResult result)
+    // from BuildResultComponent
+    public void displayBuildResult (BuildResult result)
     {
         removeAll();
         _labels.clear();
@@ -67,11 +50,11 @@ public class EditorGutter extends JPanel
                     label = new BuildResultIconLabel(line);
                     _labels.put(line.getLineNumber(), label);
                     add(label);
-                    
+
                 } else {
                     label.appendLine(line);
                 }
-                
+
                 // position the label on the gutter
                 int fontHeight = getFontMetrics(_text.getFont()).getHeight();
                 int center = Math.max(0, (fontHeight / 2) - (label.getIcon().getIconHeight() / 2));
@@ -86,11 +69,11 @@ public class EditorGutter extends JPanel
         }
     }
 
-    protected static final int DEFAULT_WIDTH = 16;
+    private static final int DEFAULT_WIDTH = 16;
 
     /** The labels currently attached to the gutter */
-    protected final HashIntMap<BuildResultIconLabel> _labels;
+    private final HashIntMap<BuildResultIconLabel> _labels =
+        new HashIntMap<BuildResultIconLabel>();
 
-    protected final SwiftlyEditor _editor;
-    protected final SwiftlyTextPane _text;
+    private final TextEditorView _text;
 }

@@ -171,7 +171,7 @@ public class PathElement
         _parent = parent;
     }
 
-    // from interface Dset.Entry
+    // from interface DSet.Entry
     public Comparable getKey ()
     {
         return elementId;
@@ -187,6 +187,12 @@ public class PathElement
         } else {
             return false;
         }
+    }
+
+    @Override // from Object
+    public int hashCode ()
+    {
+        return getAbsolutePath().hashCode();
     }
 
     @Override // from Object

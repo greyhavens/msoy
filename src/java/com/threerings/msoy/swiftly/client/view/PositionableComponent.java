@@ -5,8 +5,8 @@ package com.threerings.msoy.swiftly.client.view;
 
 import java.awt.Component;
 
-/** 
- * Provides the implementing Component with methods to change the currently displayed position.  
+/**
+ * Provides the implementing Component with methods to change the currently displayed position.
  */
 public interface PositionableComponent
 {
@@ -16,8 +16,7 @@ public interface PositionableComponent
     public Component getComponent ();
 
     /**
-     * Requests that this component move to the row and column supplied if possible.
-     * @param highlight indicates whether the new location should be highlighted briefly
+     * Requests that this component move to the PositionLocation if possible.
      */
-    public void gotoLocation (int row, int column, boolean highlight);
+    public void gotoLocation (PositionLocation location);
 }

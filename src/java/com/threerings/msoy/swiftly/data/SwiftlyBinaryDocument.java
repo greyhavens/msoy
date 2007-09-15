@@ -4,17 +4,18 @@
 package com.threerings.msoy.swiftly.data;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
 
 import org.apache.commons.io.IOUtils;
 
-import com.threerings.msoy.swiftly.client.view.SwiftlyDocumentEditor;
+import com.threerings.msoy.swiftly.client.controller.SwiftlyDocumentEditor;
+import com.threerings.msoy.swiftly.client.view.PositionLocation;
 
 /**
  * Represents a binary file in a project and contains the data of the file.
@@ -129,7 +130,7 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     }
 
     @Override // from SwiftlyDocument
-    public void loadInEditor (SwiftlyDocumentEditor editor, int row, int column, boolean highlight)
+    public void loadInEditor (SwiftlyDocumentEditor editor, PositionLocation location)
     {
         // Cannot be displayed or edited
         return;

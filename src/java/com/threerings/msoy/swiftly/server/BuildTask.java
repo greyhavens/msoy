@@ -6,12 +6,12 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.server.build.BuildArtifact;
-import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService.ResultListener;
 
 /** Handles a request to build our project. */
 public class BuildTask extends AbstractBuildTask
 {
-    public BuildTask (ProjectRoomManager manager, MemberName member, ConfirmListener listener)
+    public BuildTask (ProjectRoomManager manager, MemberName member, ResultListener listener)
     {
         super(manager, member, listener);
     }
@@ -21,10 +21,7 @@ public class BuildTask extends AbstractBuildTask
     {
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run() {
-                // Provide build output to the room
-                _manager.getRoomObj().publishBuildResult(result);
-
-                _listener.requestProcessed();
+                _listener.requestProcessed(result);
             }
         });
     }

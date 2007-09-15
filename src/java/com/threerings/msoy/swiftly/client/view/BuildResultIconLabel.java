@@ -43,7 +43,7 @@ public class BuildResultIconLabel extends JLabel
     }
 
     /** Map CompilerOutput.Level enums to icons. */
-    protected static final Map<CompilerOutput.Level, ImageIcon> _levelIcons =
+    private static final Map<CompilerOutput.Level, ImageIcon> _levelIcons =
         new HashMap<CompilerOutput.Level, ImageIcon>();
 
     // Initialize Enum level -> icon mapping.
@@ -58,8 +58,8 @@ public class BuildResultIconLabel extends JLabel
     }
 
     /** The CompilerOutput lines being displayed by this label. */
-    protected final ArrayList<CompilerOutput> _lines;
+    private final ArrayList<CompilerOutput> _lines;
 
     /** Stores the most severe Level associated with this line of output */
-    protected Level _highestLevel;
+    private Level _highestLevel;
 }

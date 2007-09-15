@@ -5,15 +5,16 @@ package com.threerings.msoy.swiftly.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
 
 import org.apache.commons.io.IOUtils;
 
-import com.threerings.msoy.swiftly.client.view.SwiftlyDocumentEditor;
+import com.threerings.msoy.swiftly.client.controller.SwiftlyDocumentEditor;
+import com.threerings.msoy.swiftly.client.view.PositionLocation;
 
 /**
  * Represents a source file in a project and contains the text of the file.
@@ -151,9 +152,9 @@ public class SwiftlyTextDocument extends SwiftlyDocument
     }
 
     @Override // from SwiftlyDocument
-    public void loadInEditor (SwiftlyDocumentEditor editor, int row, int column, boolean highlight)
+    public void loadInEditor (SwiftlyDocumentEditor editor, PositionLocation location)
     {
-        editor.editTextDocument(this, row, column, highlight);
+        editor.editTextDocument(this, location);
     }
 
     public String getTextEncoding ()

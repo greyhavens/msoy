@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.client.view;        
+package com.threerings.msoy.swiftly.client.view;
 
 import java.awt.Container;
 import java.awt.GridLayout;
@@ -15,18 +15,20 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import com.threerings.util.MessageBundle;
+import com.threerings.msoy.swiftly.client.Translator;
+import com.threerings.msoy.swiftly.client.controller.SwiftlyDocumentEditor;
 
 /** A dialog window to prompt the user for a file name and file type. */
 public class CreateFileDialog extends JDialog
 {
-    public CreateFileDialog (SwiftlyDocumentEditor editor, Container relative, MessageBundle msgs)
+    public CreateFileDialog (SwiftlyDocumentEditor editor, Translator translator,
+                             Container relative)
     {
-        super(new JFrame(), msgs.get("m.dialog.create_file.title"), true);
+        super(new JFrame(), translator.xlate("m.dialog.create_file.title"), true);
         setLayout(new GridLayout(3, 3, 10, 10));
 
         // file name input
-        add(new JLabel(msgs.get("m.dialog.create_file.name")));
+        add(new JLabel(translator.xlate("m.dialog.create_file.name")));
         _text = new JTextField();
         _text.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -38,12 +40,12 @@ public class CreateFileDialog extends JDialog
         add(_text);
 
         // file type chooser
-        add(new JLabel(msgs.get("m.dialog.create_file.type")));
+        add(new JLabel(translator.xlate("m.dialog.create_file.type")));
         _comboBox = new JComboBox(editor.getCreateableFileTypes().toArray());
         add(_comboBox);
 
         // ok/cancel buttons
-        JButton button = new JButton(msgs.get("m.dialog.create_file.create"));
+        JButton button = new JButton(translator.xlate("m.dialog.create_file.create"));
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 _cancelled = false;
@@ -51,7 +53,7 @@ public class CreateFileDialog extends JDialog
             }
         });
         add(button);
-        button = new JButton(msgs.get("m.dialog.create_file.cancel"));
+        button = new JButton(translator.xlate("m.dialog.create_file.cancel"));
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 _cancelled = true;
@@ -66,24 +68,41 @@ public class CreateFileDialog extends JDialog
         setVisible(true);
     }
 
+    /**
+     * Return the file name inputted by the user in the dialog.
+     */
     public String getName ()
     {
         return _text.getText();
     }
 
+    /**
+     * Return the mime type selected by the user in the dialog.
+     */
     public String getMimeType ()
     {
         return ((SwiftlyDocumentEditor.FileTypes)_comboBox.getSelectedItem()).mimeType;
     }
 
+    /**
+     * Returns true if the user clicked the cancel button.
+     */
     public boolean wasCancelled ()
     {
         return _cancelled;
     }
 
-    protected JTextField _text;
-    protected JComboBox _comboBox;
+    /**
+     * Returns true if the user entered valid data.
+     */
+    public boolean isValid ()
+    {
+        return getName().length() > 0;
+    }
+
+    private final JTextField _text;
+    private final JComboBox _comboBox;
 
     /** Whether the user clicked cancel. defaults to true to deal with closing the dialog. */
-    protected boolean _cancelled = true;
+    private boolean _cancelled = true;
 }

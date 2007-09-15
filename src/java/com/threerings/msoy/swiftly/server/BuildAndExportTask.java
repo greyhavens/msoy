@@ -26,13 +26,13 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.GenericUploadFile;
 import com.threerings.msoy.web.server.UploadFile;
 import com.threerings.msoy.web.server.UploadUtil;
-import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService.ResultListener;
 
 /** Handles a request to build our project. */
 public class BuildAndExportTask extends AbstractBuildTask
 {
    public BuildAndExportTask (ProjectRoomManager manager, MemberName member,
-                              ConfirmListener listener)
+                              ResultListener listener)
     {
         super(manager, member, listener);
 
@@ -49,9 +49,6 @@ public class BuildAndExportTask extends AbstractBuildTask
     {
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run() {
-                // Provide build output to the room
-                _manager.getRoomObj().publishBuildResult(result);
-
                 // inform the item manager of the new or updated item if the build succeeded
                 if (result.buildSuccessful()) {
                     if (_record.itemId == 0) {
@@ -63,7 +60,7 @@ public class BuildAndExportTask extends AbstractBuildTask
                 // update the build result id cache
                 _manager.getResultItems().put(_member, _resultId);
 
-                _listener.requestProcessed();
+                _listener.requestProcessed(result);
             }
         });
     }

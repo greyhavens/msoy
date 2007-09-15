@@ -3,27 +3,24 @@
 
 package com.threerings.msoy.swiftly.server.storage;
 
-import com.threerings.msoy.item.data.all.Item;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
-import com.threerings.msoy.web.data.SwiftlyProject;
+import junit.framework.TestCase;
 
-import com.threerings.msoy.swiftly.client.view.SwiftlyDocumentEditor;
+import org.apache.commons.io.FileUtils;
 
+import com.threerings.msoy.swiftly.client.controller.SwiftlyDocumentEditor;
+import com.threerings.msoy.swiftly.client.view.PositionLocation;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
-
-import org.apache.commons.io.FileUtils;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.List;
-
-import junit.framework.TestCase;
+import com.threerings.msoy.web.data.SwiftlyProject;
 
 public class ProjectSVNStorageUnitTest extends TestCase
 {
@@ -293,8 +290,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         }
 
         @Override
-        public void loadInEditor (final SwiftlyDocumentEditor editor, final int row, final int column,
-                                  final boolean highlight)
+        public void loadInEditor (final SwiftlyDocumentEditor editor, PositionLocation location)
         {
             return;
         }

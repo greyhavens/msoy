@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 import com.samskivert.swing.LabelStyleConstants;
 import com.samskivert.swing.MultiLineLabel;
 import com.samskivert.swing.util.SwingUtil;
+import com.threerings.msoy.swiftly.client.controller.PassiveNotifier;
 
 /**
  * Displays translucent labels which remove themselves after an interval.
@@ -29,20 +30,21 @@ public class GrowlStyleNotifier implements PassiveNotifier
     public GrowlStyleNotifier (JLayeredPane layeredPane)
     {
         _layeredPane = layeredPane;
-        _displayedLabels = new LinkedList<NotificationLabel>();
     }
 
+    // from PassiveNotifier
     public void showInfo (String message)
     {
         addLabel(message, Level.INFO);
     }
 
+    // from PassiveNotifier
     public void showError (String message)
     {
         addLabel(message, Level.ERROR);
     }
 
-    protected void addLabel (String message, Level level)
+    private void addLabel (String message, Level level)
     {
         NotificationLabel label = new NotificationLabel(message, level, this);
         // show the label for 5 seconds
@@ -55,14 +57,14 @@ public class GrowlStyleNotifier implements PassiveNotifier
         drawLabels();
     }
 
-    protected void removeLabel (NotificationLabel label)
+    private void removeLabel (NotificationLabel label)
     {
         _layeredPane.remove(label);
         _displayedLabels.remove(label);
         drawLabels();
     }
 
-    protected void drawLabels ()
+    private void drawLabels ()
     {
         int nextY = _layeredPane.getHeight();
         for (NotificationLabel label : _displayedLabels) {
@@ -76,7 +78,7 @@ public class GrowlStyleNotifier implements PassiveNotifier
         SwingUtil.refresh(_layeredPane);
     }
 
-    protected static class NotificationLabel extends MultiLineLabel
+    private static class NotificationLabel extends MultiLineLabel
         implements ActionListener, MouseListener
     {
         public NotificationLabel (String message, Level level, GrowlStyleNotifier notifier)
@@ -124,25 +126,26 @@ public class GrowlStyleNotifier implements PassiveNotifier
             // nada
         }
 
-        protected static final Font LABEL_FONT = new Font("Times", Font.PLAIN, 13);
+        private static final Font LABEL_FONT = new Font("Times", Font.PLAIN, 13);
 
-        protected GrowlStyleNotifier _notifier;
-        protected Color _bgColor;
+        private final GrowlStyleNotifier _notifier;
+        private final Color _bgColor;
     }
 
     /** Constrain the notification label to this width. */
-    protected static final int LABEL_WIDTH = 250;
+    private static final int LABEL_WIDTH = 250;
 
     /** Use a unique value for the JLayeredPane layer to avoid conflicts with other windows. */
-    protected static final Integer NOTIFICATION_LAYER = new Integer(23);
+    private static final Integer NOTIFICATION_LAYER = new Integer(23);
 
     /** The spacing between the labels */
-    protected static final int LABEL_SPACE = 4;
+    private static final int LABEL_SPACE = 4;
 
-    protected JLayeredPane _layeredPane;
-    protected static LinkedList<NotificationLabel> _displayedLabels;
+    private final JLayeredPane _layeredPane;
+    private static final LinkedList<NotificationLabel> _displayedLabels =
+        new LinkedList<NotificationLabel>();
 
-    protected static enum Level {
+    private static enum Level {
         INFO (new Color(0.5f, 0.5f, 0.5f, 0.8f)),
         ERROR (new Color(1.0f, 0.0f, 0.0f, 0.8f));
 

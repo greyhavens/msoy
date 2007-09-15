@@ -10,12 +10,12 @@ import javax.swing.JProgressBar;
 import javax.swing.Timer;
 
 /**
- * Simple progress bar to be used by the Swiftly context.
+ * Implementation of ProgressBar.
  */
-public class SimpleProgressBar extends JProgressBar
-    implements ActionListener
+public class ProgressBarView extends JProgressBar
+    implements ActionListener, ProgressBar
 {
-    public SimpleProgressBar ()
+    public ProgressBarView ()
     {
         _timer = new Timer(TIMER_INTERVAL, this);
 
@@ -33,9 +33,7 @@ public class SimpleProgressBar extends JProgressBar
         }
     }
 
-    /**
-     * Display a progress bar for a task taking the number of milliseconds supplied.
-     */
+    // from ProgressBar
     public void showProgress (int time)
     {
         // if the time is less than our timer interval, no point in showing the progress bar
@@ -49,9 +47,7 @@ public class SimpleProgressBar extends JProgressBar
         _timer.restart();
     }
 
-    /**
-     * Stop displaying the progress bar.
-     */
+    // from ProgressBar
     public void stopProgress ()
     {
         _timer.stop();
@@ -60,8 +56,8 @@ public class SimpleProgressBar extends JProgressBar
     }
 
     /** How often the progress bar updates */
-    protected static final int TIMER_INTERVAL = 1000;
+    private static final int TIMER_INTERVAL = 1000;
 
-    protected final Timer _timer;
-    protected long _startTime;
+    private final Timer _timer;
+    private long _startTime;
 }

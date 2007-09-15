@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.swiftly.data;
 
-import com.threerings.msoy.swiftly.client.model.ProjectRoomService;
+import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -24,9 +24,9 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int ADD_DOCUMENT = 1;
 
     // from interface ProjectRoomService
-    public void addDocument (Client arg1, String arg2, PathElement arg3, String arg4, InvocationService.InvocationListener arg5)
+    public void addDocument (Client arg1, String arg2, PathElement arg3, String arg4, InvocationService.ConfirmListener arg5)
     {
-        ListenerMarshaller listener5 = new ListenerMarshaller();
+        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
         listener5.listener = arg5;
         sendRequest(arg1, ADD_DOCUMENT, new Object[] {
             arg2, arg3, arg4, listener5
@@ -37,9 +37,9 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int ADD_PATH_ELEMENT = 2;
 
     // from interface ProjectRoomService
-    public void addPathElement (Client arg1, PathElement arg2, InvocationService.InvocationListener arg3)
+    public void addPathElement (Client arg1, PathElement arg2, InvocationService.ConfirmListener arg3)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, ADD_PATH_ELEMENT, new Object[] {
             arg2, listener3
@@ -50,9 +50,9 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int BUILD_AND_EXPORT_PROJECT = 3;
 
     // from interface ProjectRoomService
-    public void buildAndExportProject (Client arg1, InvocationService.ConfirmListener arg2)
+    public void buildAndExportProject (Client arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
         listener2.listener = arg2;
         sendRequest(arg1, BUILD_AND_EXPORT_PROJECT, new Object[] {
             listener2
@@ -63,9 +63,9 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int BUILD_PROJECT = 4;
 
     // from interface ProjectRoomService
-    public void buildProject (Client arg1, InvocationService.ConfirmListener arg2)
+    public void buildProject (Client arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
         listener2.listener = arg2;
         sendRequest(arg1, BUILD_PROJECT, new Object[] {
             listener2
@@ -76,9 +76,9 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int DELETE_DOCUMENT = 5;
 
     // from interface ProjectRoomService
-    public void deleteDocument (Client arg1, int arg2, InvocationService.InvocationListener arg3)
+    public void deleteDocument (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, DELETE_DOCUMENT, new Object[] {
             Integer.valueOf(arg2), listener3
@@ -128,9 +128,9 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int UPDATE_DOCUMENT = 9;
 
     // from interface ProjectRoomService
-    public void updateDocument (Client arg1, int arg2, String arg3, InvocationService.InvocationListener arg4)
+    public void updateDocument (Client arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
     {
-        ListenerMarshaller listener4 = new ListenerMarshaller();
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, UPDATE_DOCUMENT, new Object[] {
             Integer.valueOf(arg2), arg3, listener4
@@ -141,9 +141,9 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int UPDATE_PATH_ELEMENT = 10;
 
     // from interface ProjectRoomService
-    public void updatePathElement (Client arg1, PathElement arg2, InvocationService.InvocationListener arg3)
+    public void updatePathElement (Client arg1, PathElement arg2, InvocationService.ConfirmListener arg3)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, UPDATE_PATH_ELEMENT, new Object[] {
             arg2, listener3

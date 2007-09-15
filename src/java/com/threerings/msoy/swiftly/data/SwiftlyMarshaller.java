@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.swiftly.data;
 
-import com.threerings.msoy.swiftly.client.model.SwiftlyService;
+import com.threerings.msoy.swiftly.client.SwiftlyService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;

@@ -5,11 +5,10 @@ package com.threerings.msoy.swiftly.client;
 
 import static com.threerings.msoy.Log.log;
 
-import java.applet.AppletContext;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.logging.Level;
 
 import javax.swing.JApplet;
@@ -24,36 +23,22 @@ import org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel;
 
 import com.samskivert.servlet.user.Password;
 import com.samskivert.swing.util.SwingUtil;
-import com.samskivert.util.Config;
 import com.samskivert.util.Interval;
 import com.samskivert.util.OneLineLogFormatter;
-import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
-import com.threerings.crowd.chat.client.ChatDirector;
-import com.threerings.crowd.client.LocationDirector;
-import com.threerings.crowd.client.OccupantDirector;
-import com.threerings.crowd.client.PlaceView;
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.swiftly.client.model.SwiftlyService;
+import com.threerings.msoy.swiftly.client.controller.PassiveNotifier;
 import com.threerings.msoy.swiftly.client.view.GrowlStyleNotifier;
-import com.threerings.msoy.swiftly.client.view.PassiveNotifier;
-import com.threerings.msoy.swiftly.client.view.SimpleProgressBar;
-import com.threerings.msoy.swiftly.client.view.SwiftlyEditor;
+import com.threerings.msoy.swiftly.client.view.SwiftlyWindowView;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
-import com.threerings.msoy.swiftly.util.SwiftlyContext;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientObserver;
-import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.util.IdentUtil;
-import com.threerings.util.MessageBundle;
-import com.threerings.util.MessageManager;
 import com.threerings.util.Name;
 
 public class SwiftlyApplet extends JApplet
-    implements RunQueue, ClientObserver
+    implements ClientObserver, SwiftlyApplication
 {
     @Override // from JApplet
     public void init()
@@ -66,14 +51,7 @@ public class SwiftlyApplet extends JApplet
         }
 
         // create our client services
-        _client = new Client(null, this);
-        _client.addClientObserver(this);
-        _msgmgr = new MessageManager(MESSAGE_MANAGER_PREFIX);
-        _locdtr = new LocationDirector(_ctx);
-        _occdtr = new OccupantDirector(_ctx);
-        _chatdtr = new ChatDirector(_ctx, _msgmgr, "chat");
-        _appletContext = getAppletContext();
-        _notifier = new GrowlStyleNotifier(getRootPane().getLayeredPane());
+        _ctx.getClient().addClientObserver(this);
 
         // Get the supplied projectId
         _projectId = Integer.parseInt(getParameter("projectId"));
@@ -87,7 +65,7 @@ public class SwiftlyApplet extends JApplet
             return;
         }
         log.info("Using [server=" + server + ", port=" + port + "].");
-        _client.setServer(server, new int[] { port });
+        _ctx.getClient().setServer(server, new int[] { port });
 
         // create our credentials and logon
         MsoyCredentials creds = new MsoyCredentials();
@@ -106,9 +84,9 @@ public class SwiftlyApplet extends JApplet
         if (creds.ident != null && !creds.ident.matches("S[A-Za-z0-9/+]{32}")) {
             creds.ident = "C" + creds.ident;
         }
-        _client.setCredentials(creds);
-        _client.setVersion(String.valueOf(DeploymentConfig.version));
-        _client.logon();
+        _ctx.getClient().setCredentials(creds);
+        _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.version));
+        _ctx.getClient().logon();
 
         // Execute a job on the event-dispatching thread: creating this applet's GUI.
         try {
@@ -133,8 +111,8 @@ public class SwiftlyApplet extends JApplet
         super.stop();
 
         // if we're logged on, log off
-        if (_client != null && _client.isLoggedOn()) {
-            _client.logoff(true);
+        if (_ctx.getClient() != null && _ctx.getClient().isLoggedOn()) {
+            _ctx.getClient().logoff(true);
         }
     }
 
@@ -144,18 +122,6 @@ public class SwiftlyApplet extends JApplet
         super.destroy();
         // we need to cope with our threads being destroyed but our classes not being unloaded
         Interval.resetTimer();
-    }
-
-    // from interface RunQueue
-    public void postRunnable (Runnable r)
-    {
-        EventQueue.invokeLater(r);
-    }
-
-    // from interface RunQueue
-    public boolean isDispatchThread ()
-    {
-        return EventQueue.isDispatchThread();
     }
 
     // from interface ClientObserver
@@ -170,7 +136,7 @@ public class SwiftlyApplet extends JApplet
         SwiftlyService ssvc = (SwiftlyService)client.requireService(SwiftlyService.class);
         ssvc.enterProject(client, _projectId, new SwiftlyService.ResultListener() {
             public void requestProcessed (Object result) {
-                _locdtr.moveTo((Integer)result);
+                _ctx.getLocationDirector().moveTo((Integer)result);
             }
             public void requestFailed (String result) {
                 appletError(result);
@@ -194,11 +160,11 @@ public class SwiftlyApplet extends JApplet
     public void clientDidLogoff (Client client)
     {
         JPanel panel = new JPanel();
-        panel.add(new JLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.logged_off")));
-        JButton relogon = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.reconnect"));
+        panel.add(new JLabel(_translator.xlate("m.logged_off")));
+        JButton relogon = new JButton(_translator.xlate("m.reconnect"));
         relogon.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent event) {
-                _client.logon();
+                _ctx.getClient().logon();
             }
         });
         panel.add(relogon);
@@ -226,18 +192,37 @@ public class SwiftlyApplet extends JApplet
         // nada
     }
 
+    // from SwiftlyApplication
+    public void attachWindow (SwiftlyWindowView window)
+    {
+        setContentPane(window);
+        SwingUtil.refresh(getRootPane());
+    }
+
+    // from SwiftlyApplication
+    public PassiveNotifier createNotifier ()
+    {
+        return new GrowlStyleNotifier(getRootPane().getLayeredPane());
+    }
+
+    // from SwiftlyApplication
+    public void showURL (URL url)
+    {
+        getAppletContext().showDocument(url);
+    }
+
     /**
      * Display an error message directly onto the applet root panel. Use for errors that prevent
      * the editor to be resolved.
      * @param msg the i18n key to translate for the error message.
      */
-    protected void appletError (String msg)
+    private void appletError (String msg)
     {
-        setContentPane(new JLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, msg)));
+        setContentPane(new JLabel(_translator.xlate(msg)));
         SwingUtil.refresh(getRootPane());
     }
 
-    protected void createGUI ()
+    private void createGUI ()
     {
         try {
             UIManager.setLookAndFeel(new SubstanceBusinessBlackSteelLookAndFeel());
@@ -249,91 +234,9 @@ public class SwiftlyApplet extends JApplet
         UIManager.put("swing.boldMetal", Boolean.FALSE);
         // remove the borders from the splitpane so we can add our own later
         UIManager.put("SplitPaneDivider.border", new BasicBorders.MarginBorder());
-
-        // create the progress bar after the UI has been changed
-        _progress = new SimpleProgressBar();
     }
 
-    protected class SwiftlyContextImpl implements SwiftlyContext
-    {
-        public Config getConfig () {
-            return _config;
-        }
-
-        public Client getClient () {
-            return _client;
-        }
-        public MemberName getMember () {
-            return ((MemberObject)getClient().getClientObject()).memberName;
-        }
-        public DObjectManager getDObjectManager () {
-            return _client.getDObjectManager();
-        }
-        public LocationDirector getLocationDirector () {
-            return _locdtr;
-        }
-        public OccupantDirector getOccupantDirector () {
-            return _occdtr;
-        }
-        public ChatDirector getChatDirector () {
-            return _chatdtr;
-        }
-        public AppletContext getAppletContext () {
-            return _appletContext;
-        }
-
-        public void setPlaceView (PlaceView view) {
-            setContentPane((SwiftlyEditor)view);
-            SwingUtil.refresh(getRootPane());
-        }
-        public void clearPlaceView (PlaceView view) {
-        }
-
-        public MessageManager getMessageManager () {
-            return _msgmgr;
-        }
-
-        public String xlate (String bundle, String message) {
-            MessageBundle mb = getMessageManager().getBundle(bundle);
-            return (mb == null) ? message : mb.xlate(message);
-        }
-
-        public void showInfoMessage (String message) {
-            _notifier.showInfo(message);
-        }
-        public void showErrorMessage (String message) {
-            _notifier.showError(message);
-        }
-
-        public void showProgress (int time)
-        {
-            _progress.showProgress(time);
-        }
-        public void stopProgress ()
-        {
-            _progress.stopProgress();
-        }
-        public SimpleProgressBar getProgressBar ()
-        {
-            return _progress;
-        }
-    }
-
-    protected SwiftlyContext _ctx = new SwiftlyContextImpl();
-    protected Config _config = new Config("swiftly");
-    protected MessageManager _msgmgr;
-
-    protected Client _client;
-    protected LocationDirector _locdtr;
-    protected OccupantDirector _occdtr;
-    protected ChatDirector _chatdtr;
-    protected AppletContext _appletContext;
-    protected PassiveNotifier _notifier;
-    protected SimpleProgressBar _progress;
-
-    protected int _projectId;
-
-    /** The prefix prepended to localization bundle names before looking
-     * them up in the classpath. */
-    protected static final String MESSAGE_MANAGER_PREFIX = "rsrc.i18n";
+    private final SwiftlyContext _ctx = new SwiftlyContext(this);
+    private final Translator _translator = _ctx.getTranslator();
+    private int _projectId;
 }

@@ -4,115 +4,71 @@
 package com.threerings.msoy.swiftly.data;
 
 import java.util.Enumeration;
+import java.util.Set;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-import com.threerings.msoy.swiftly.client.view.ProjectPanel;
-import com.threerings.msoy.swiftly.util.SwiftlyContext;
-import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.EntryRemovedEvent;
-import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.SetListener;
-import com.threerings.util.MessageBundle;
+import com.threerings.msoy.swiftly.client.controller.PathElementEditor;
+import com.threerings.msoy.swiftly.client.event.PathElementListener;
 
 /**
  * Present the contents of a Swiftly project as a tree model.
  */
 public class ProjectTreeModel extends DefaultTreeModel
-    implements SetListener
+    implements PathElementListener
 {
-
-    public ProjectTreeModel (ProjectRoomObject roomObj, ProjectPanel panel, SwiftlyContext ctx)
+    public ProjectTreeModel (PathElementEditor editor, PathElement root,
+                             Set<PathElement> pathElements)
     {
         super(null);
-
-        _roomObj = roomObj;
-        _roomObj.addListener(this);
-        _projectPanel = panel;
-        _ctx = ctx;
-        _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
-
-        // Raise all path elements from the dead, re-binding transient
-        // instance variables.
-        for (PathElement element : _roomObj.pathElements) {
-            element.lazarus(_roomObj.pathElements);
-        }
+        _editor = editor;
 
         // construct our tree model based on the room object's contents
-        PathElement root = roomObj.getRootElement();
-
         PathElementTreeNode node = new PathElementTreeNode(root);
         setRoot(node);
-        addChildren(node, root);
+        fillTree(node, root, pathElements);
     }
 
-    // from interface SetListener
-    public void entryAdded (EntryAddedEvent event)
+    // from interface PathElementListener
+    public void elementAdded (final PathElement element)
     {
-        if (event.getName().equals(ProjectRoomObject.PATH_ELEMENTS)) {
-            final PathElement element = (PathElement)event.getEntry();
-
-            // Re-bind transient instance variables
-            element.lazarus(_roomObj.pathElements);
-
-            updateNodes(new NodeOp() {
-                public boolean isMatch (PathElementTreeNode node) {
-                    return node.getElement().elementId == element.getParent().elementId;
-                }
-                public void update (PathElementTreeNode node) {
-                    insertNodeInto(new PathElementTreeNode(element), node, node.getChildCount());
-                }
-            });
-
-            // inform the user that an element was added
-            _ctx.showInfoMessage(_msgs.get("m.element_added", element.getName()));
-        }
+        updateNodes(new NodeOp() {
+            public boolean isMatch (PathElementTreeNode node) {
+                return node.getElement().elementId == element.getParent().elementId;
+            }
+            public void update (PathElementTreeNode node) {
+                insertNodeInto(new PathElementTreeNode(element), node, node.getChildCount());
+            }
+        });
     }
 
-    // from interface SetListener
-    public void entryUpdated (EntryUpdatedEvent event)
+    // from interface PathElementListener
+    public void elementUpdated (final PathElement element)
     {
-        if (event.getName().equals(ProjectRoomObject.PATH_ELEMENTS)) {
-            final PathElement element = (PathElement)event.getEntry();
-
-            // Re-bind transient instance variables
-            element.lazarus(_roomObj.pathElements);
-
-            updateNodes(new NodeOp() {
-                public boolean isMatch (PathElementTreeNode node) {
-                    return node.getElement().elementId == element.elementId;
-                }
-                public void update (PathElementTreeNode node) {
-                    node.setUserObject(element);
-                    nodeChanged(node);
-                }
-            });
-
-            // inform the user that an element was updated
-            _ctx.showInfoMessage(_msgs.get("m.element_updated", element.getName()));
-        }
+        updateNodes(new NodeOp() {
+            public boolean isMatch (PathElementTreeNode node) {
+                return node.getElement().elementId == element.elementId;
+            }
+            public void update (PathElementTreeNode node) {
+                node.setUserObject(element);
+                nodeChanged(node);
+            }
+        });
     }
 
-    // from interface SetListener
-    public void entryRemoved (EntryRemovedEvent event)
+    // from interface PathElementListener
+    public void elementRemoved (final PathElement element)
     {
-        if (event.getName().equals(ProjectRoomObject.PATH_ELEMENTS)) {
-            final int elementId = (Integer)event.getKey();
-            final PathElement element = (PathElement)event.getOldEntry();
-            updateNodes(new NodeOp() {
-                public boolean isMatch (PathElementTreeNode node) {
-                    return node.getElement().elementId == elementId;
-                }
-                public void update (PathElementTreeNode node) {
-                    removeNodeFromParent(node);
-                }
-            });
-
-            // inform the user that an element was deleted
-            _ctx.showInfoMessage(_msgs.get("m.element_deleted", element.getName()));
-        }
+        updateNodes(new NodeOp() {
+            public boolean isMatch (PathElementTreeNode node) {
+                return node.getElement().elementId == element.elementId;
+            }
+            public void update (PathElementTreeNode node) {
+                removeNodeFromParent(node);
+            }
+        });
     }
 
     @Override // from DefaultTreeModel
@@ -121,29 +77,33 @@ public class ProjectTreeModel extends DefaultTreeModel
         PathElementTreeNode node = (PathElementTreeNode)path.getLastPathComponent();
         PathElement element = (PathElement)node.getUserObject();
         String newName = (String)newValue;
-        _projectPanel.renamePathElement(element, newName, path);
+        _editor.renamePathElement(element, newName);
     }
 
-    // TODO: this might not need to stick around
+    @Deprecated // TODO: this might not need to stick around
     public void updateNodeName (PathElement element, TreePath path)
     {
         super.valueForPathChanged(path, element);
     }
 
-    protected void addChildren (PathElementTreeNode node, PathElement parent)
+    /**
+     * Recursively fill the tree with a set of PathElements.
+     */
+    private void fillTree (PathElementTreeNode node, PathElement parent,
+                           Set<PathElement> pathElements)
     {
-        for (PathElement element : _roomObj.pathElements) {
+        for (PathElement element : pathElements) {
             if (element.getParent() != null && element.getParent() == parent) {
                 PathElementTreeNode child = new PathElementTreeNode(element);
                 node.add(child);
                 if (element.getType() == PathElement.Type.DIRECTORY) {
-                    addChildren(child, element);
+                    fillTree(child, element, pathElements);
                 }
             }
         }
     }
 
-    protected void updateNodes (NodeOp op)
+    private void updateNodes (NodeOp op)
     {
         Enumeration iter = ((DefaultMutableTreeNode)root).breadthFirstEnumeration();
         while (iter.hasMoreElements()) {
@@ -154,14 +114,11 @@ public class ProjectTreeModel extends DefaultTreeModel
         }
     }
 
-    protected interface NodeOp
+    private interface NodeOp
     {
         public boolean isMatch (PathElementTreeNode node);
         public void update (PathElementTreeNode node);
     }
 
-    protected ProjectRoomObject _roomObj;
-    protected ProjectPanel _projectPanel;
-    protected SwiftlyContext _ctx;
-    protected MessageBundle _msgs;
+    private final PathElementEditor _editor;
 }

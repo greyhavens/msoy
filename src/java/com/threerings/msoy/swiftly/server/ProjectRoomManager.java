@@ -38,8 +38,8 @@ import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.web.server.UploadFile;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
-import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -130,7 +130,7 @@ public class ProjectRoomManager extends PlaceManager
 
     // from interface ProjectRoomProvider
     public void addPathElement (ClientObject caller, PathElement element,
-                                InvocationListener listener)
+                                ConfirmListener listener)
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
@@ -138,17 +138,21 @@ public class ProjectRoomManager extends PlaceManager
 
         // for now just update the room object
         getRoomObj().addPathElement(element);
+
+        listener.requestProcessed();
     }
 
     // from interface ProjectRoomProvider
     public void updatePathElement (ClientObject caller, PathElement element,
-                                   InvocationListener listener)
+                                   ConfirmListener listener)
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
         requireWritePermissions(caller);
 
         getRoomObj().updatePathElements(element);
+
+        listener.requestProcessed();
     }
 
     // from interface ProjectRoomProvider
@@ -262,7 +266,7 @@ public class ProjectRoomManager extends PlaceManager
 
     // from interface ProjectRoomProvider
     public void addDocument (ClientObject caller, String fileName, PathElement parent,
-                             String mimeType, final InvocationListener listener)
+                             String mimeType, final ConfirmListener listener)
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
@@ -283,11 +287,13 @@ public class ProjectRoomManager extends PlaceManager
 
         // add the swiftly document to the dest
         getRoomObj().addSwiftlyDocument(doc);
+
+        listener.requestProcessed();
     }
 
     // from interface ProjectRoomProvider
     public void updateDocument (ClientObject caller, int elementId, String text,
-                                InvocationListener listener)
+                                ConfirmListener listener)
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
@@ -295,20 +301,24 @@ public class ProjectRoomManager extends PlaceManager
 
         getRoomObj().postEvent(
             new DocumentUpdatedEvent(getRoomObj().getOid(), caller.getOid(), elementId, text));
+
+        listener.requestProcessed();
     }
 
     // from interface ProjectRoomProvider
-    public void deleteDocument (ClientObject caller, int elementId, InvocationListener listener)
+    public void deleteDocument (ClientObject caller, int elementId, ConfirmListener listener)
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
         requireWritePermissions(caller);
 
         getRoomObj().removeFromDocuments(elementId);
+
+        listener.requestProcessed();
     }
 
     // from interface ProjectRoomProvider
-    public void buildProject (ClientObject caller, ConfirmListener listener)
+    public void buildProject (ClientObject caller, InvocationService.ResultListener listener)
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
@@ -320,7 +330,8 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void buildAndExportProject (ClientObject caller, ConfirmListener listener)
+    public void buildAndExportProject (ClientObject caller,
+                                       InvocationService.ResultListener listener)
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
@@ -571,8 +582,8 @@ public class ProjectRoomManager extends PlaceManager
      */
     protected void onShutdownCommit ()
     {
-        ConfirmListener listener = new ConfirmListener() {
-            public void requestProcessed ()
+        InvocationService.ResultListener listener = new InvocationService.ResultListener() {
+            public void requestProcessed (Object result)
             {
                 // nada. no result will be provided to the user.
             }

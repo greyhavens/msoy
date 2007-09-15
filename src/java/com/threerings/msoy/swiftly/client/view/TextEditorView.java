@@ -34,31 +34,27 @@ import sdoc.SyntaxDocument;
 import sdoc.SyntaxEditorKit;
 import sdoc.SyntaxSupport;
 
-import com.threerings.msoy.swiftly.client.event.AccessControlListener;
-import com.threerings.msoy.swiftly.data.DocumentUpdateListener;
-import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
-import com.threerings.msoy.swiftly.data.ProjectRoomObject;
-import com.threerings.msoy.swiftly.data.SwiftlyCodes;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.client.Translator;
+import com.threerings.msoy.swiftly.client.controller.DocumentUpdateDispatcher;
+import com.threerings.msoy.swiftly.client.controller.EditorActionProvider;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
-import com.threerings.msoy.swiftly.util.SwiftlyContext;
-import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.EntryRemovedEvent;
-import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.SetListener;
-import com.threerings.util.MessageBundle;
 
-public class SwiftlyTextPane extends JEditorPane
-    implements DocumentUpdateListener, SetListener, PositionableComponent, AccessControlListener
+/**
+ * Implementation of TextEditor.
+ */
+public class TextEditorView extends JEditorPane
+    implements TextEditor
 {
-    public static final int PRINT_MARGIN_WIDTH = 100;
-
-    public SwiftlyTextPane (SwiftlyContext ctx, SwiftlyEditor editor, SwiftlyTextDocument document)
+    public TextEditorView (EditorActionProvider actions, Translator translator,
+                           SwiftlyTextDocument document, DocumentUpdateDispatcher dispatcher)
     {
-        _ctx = ctx;
-        _editor = editor;
+        _translator = translator;
         _document = document;
-        _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
+        _dispatcher = dispatcher;
+
+        // construct these actions after we have the translator available
+        _undoAction = new UndoAction();
+        _redoAction = new RedoAction();
 
         // TODO: this might not be required
         _kit = new SyntaxEditorKit();
@@ -67,10 +63,38 @@ public class SwiftlyTextPane extends JEditorPane
         setContentType(document.getPathElement().getMimeType());
 
         // setup the actions
-        _undoAction = new UndoAction();
-        _redoAction = new RedoAction();
+        _cutAction = new AbstractAction(_translator.xlate("m.action.cut")) {
+            public void actionPerformed (ActionEvent e) {
+                cut();
+            }
+        };
+        _copyAction = new AbstractAction(_translator.xlate("m.action.copy")) {
+            public void actionPerformed (ActionEvent e) {
+                copy();
+            }
+        };
+        _pasteAction = new AbstractAction(_translator.xlate("m.action.paste")) {
+            public void actionPerformed (ActionEvent e) {
+                paste();
+            }
+        };
+        _selectAllAction = new AbstractAction(_translator.xlate("m.action.select_all")) {
+            public void actionPerformed (ActionEvent e) {
+                selectAll();
+            }
+        };
 
-        addKeyBindings();
+        // add key bindings
+        // ctrl-w closes the tab
+        addKeyAction(actions.getCloseCurrentTabAction(),
+            KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
+
+        // ctrl-z undoes the action
+        addKeyAction(_undoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
+
+        // ctrl-y redoes the action
+        addKeyAction(_redoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Y, ActionEvent.CTRL_MASK));
+
         addPopupMenu();
 
         // setup some default colors
@@ -99,77 +123,19 @@ public class SwiftlyTextPane extends JEditorPane
         setFont(getFont().deriveFont(DEFAULT_FONT_SIZE));
 
         // load the document into the text pane
-        loadDocumentText();
+        documentTextChanged();
     }
 
-    // from AccessControlListener
-    public void writeAccessGranted ()
+    // from AccessControlComponent
+    public void showWriteAccess ()
     {
         setEditable(true);
     }
 
-    // from AccessControlListener
-    public void readOnlyAccessGranted ()
+    // from AccessControlComponent
+    public void showReadOnlyAccess ()
     {
         setEditable(false);
-    }
-
-    @Override // from JComponent
-    public void addNotify ()
-    {
-        super.addNotify();
-        _editor.addAccessControlListener(this);
-    }
-
-    @Override // from JComponent
-    public void removeNotify ()
-    {
-        super.removeNotify();
-        _editor.removeAccessControlListener(this);
-    }
-
-    // from DocumentUpdateListener
-    public void documentUpdated (DocumentUpdatedEvent event) {
-        // only apply the document changes if the event is for this textpane's document
-        // and we were not the sender
-        if (event.getDocumentId() == _document.documentId &&
-            event.getEditorOid() != _ctx.getClient().getClientOid()) {
-            loadDocumentText();
-        }
-    }
-
-    // from interface SetListener
-    public void entryAdded (EntryAddedEvent event)
-    {
-        // nada
-    }
-
-    // from interface SetListener
-    public void entryUpdated (EntryUpdatedEvent event)
-    {
-        if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
-            SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
-            // check to see if the updated document is the one being displayed
-            if (element.documentId == _document.documentId) {
-                SwiftlyTextDocument newDoc = (SwiftlyTextDocument)element;
-                SwiftlyTextDocument oldDoc = (SwiftlyTextDocument)event.getOldEntry();
-
-                // update the document reference to point at the new document
-                _document = newDoc;
-
-                // only refresh the text if the document text has changed in the new document
-                if (!newDoc.getText().equals(oldDoc.getText())) {
-                    // display the new text
-                    loadDocumentText();
-                }
-            }
-        }
-    }
-
-    // from interface SetListener
-    public void entryRemoved (EntryRemovedEvent event)
-    {
-        // nada
     }
 
     // from PositionableComponent
@@ -179,20 +145,20 @@ public class SwiftlyTextPane extends JEditorPane
     }
 
     // from PositionableComponent
-    public void gotoLocation (int row, int column, boolean highlight)
+    public void gotoLocation (PositionLocation location)
     {
         // TODO: the component should get focus after moving the caret
 
         // move the caret to the requested position
         Element root = getDocument().getDefaultRootElement();
         // row = 1, column = 1 is the starting position. anything less will be a problem
-        int character = Math.max(column, 1);
-        int line = Math.max(row, 1);
+        int character = Math.max(location.column, 1);
+        int line = Math.max(location.row, 1);
         line = Math.min(line, root.getElementCount());
         setCaretPosition(root.getElement(line - 1).getStartOffset() + (character - 1));
 
         // highlight the new position if requested
-        if (highlight) {
+        if (location.highlight) {
             try {
                 final Object position = getHighlighter().addHighlight(
                     getCaretPosition(), getCaretPosition() + 1,
@@ -212,55 +178,32 @@ public class SwiftlyTextPane extends JEditorPane
         }
     }
 
+    // from TextEditor
     public SwiftlyTextDocument getSwiftlyDocument ()
     {
         return _document;
     }
 
-    public Action createCutAction ()
+    // from TextEditor
+    public void loadDocument (SwiftlyTextDocument doc)
     {
-        return new AbstractAction(_msgs.get("m.action.cut")) {
-            public void actionPerformed (ActionEvent e) {
-                cut();
-            }
-        };
+        // only refresh the text if the text data has changed in the new document
+        if (!doc.getText().equals(_document.getText())) {
+            documentTextChanged();
+        }
+
+        // update the document reference to point at the new document
+        _document = doc;
     }
 
-    public Action createCopyAction ()
-    {
-        return new AbstractAction(_msgs.get("m.action.copy")) {
-            public void actionPerformed (ActionEvent e) {
-                copy();
-            }
-        };
-    }
-
-    public Action createPasteAction ()
-    {
-        return new AbstractAction(_msgs.get("m.action.paste")) {
-            public void actionPerformed (ActionEvent e) {
-                paste();
-            }
-        };
-    }
-
-    public Action createSelectAllAction ()
-    {
-        return new AbstractAction(_msgs.get("m.action.select_all")) {
-            public void actionPerformed (ActionEvent e) {
-                selectAll();
-            }
-        };
-    }
-
-    protected void loadDocumentText ()
+    // from TextEditor
+    public void documentTextChanged ()
     {
         // remember where the cursor is
         int pos = getCaretPosition();
 
         // this change came from the network so don't send it back out again
         _dontPropagateThisChange = true;
-
         setText(_document.getText());
         _dontPropagateThisChange = false;
 
@@ -273,29 +216,14 @@ public class SwiftlyTextPane extends JEditorPane
         }
     }
 
-    protected void addKeyBindings ()
+    private void addPopupMenu ()
     {
-        // ctrl-w closes the tab
-        addKeyAction(_editor.createCloseCurrentTabAction(),
-                     KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
-
-        // ctrl-z undoes the action
-        addKeyAction(_undoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
-
-        // ctrl-y redoes the action
-        addKeyAction(_redoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Y, ActionEvent.CTRL_MASK));
-    }
-
-    protected void addPopupMenu ()
-    {
-        _popup = new JPopupMenu();
-
         // TODO is there a cross platform way to show what the keybindings are for these actions?
-        _popup.add(createCutAction());
-        _popup.add(createCopyAction());
-        _popup.add(createPasteAction());
+        _popup.add(_cutAction);
+        _popup.add(_copyAction);
+        _popup.add(_pasteAction);
         _popup.addSeparator();
-        _popup.add(createSelectAllAction());
+        _popup.add(_selectAllAction);
         _popup.addSeparator();
         _popup.add(_undoAction);
         _popup.add(_redoAction);
@@ -304,21 +232,14 @@ public class SwiftlyTextPane extends JEditorPane
         addMouseListener(new PopupListener());
     }
 
-    protected void addKeyAction (Action action, KeyStroke key)
+    private void addKeyAction (Action action, KeyStroke key)
     {
         // key bindings work even if the textpane doesn't have focus
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key, action);
         getActionMap().put(action, action);
     }
 
-    protected void updateDocument ()
-    {
-        if (_document != null) {
-            _editor.updateDocument(_document.documentId, getText());
-        }
-    }
-
-    protected class PopupListener extends MouseAdapter
+    private class PopupListener extends MouseAdapter
     {
         @Override // from MouseAdapter
         public void mousePressed(MouseEvent e) {
@@ -330,14 +251,14 @@ public class SwiftlyTextPane extends JEditorPane
             maybeShowPopup(e);
         }
 
-        protected void maybeShowPopup(MouseEvent e) {
+        private void maybeShowPopup(MouseEvent e) {
             if (e.isPopupTrigger()) {
                 _popup.show(e.getComponent(), e.getX(), e.getY());
             }
         }
     }
 
-    protected class UndoHandler implements UndoableEditListener
+    private class UndoHandler implements UndoableEditListener
     {
         // from interface UndoableEditListener
         public void undoableEditHappened (UndoableEditEvent e)
@@ -351,10 +272,10 @@ public class SwiftlyTextPane extends JEditorPane
         }
     }
 
-    protected class UndoAction extends AbstractAction
+    private class UndoAction extends AbstractAction
     {
         public UndoAction () {
-            super(_msgs.get("m.action.undo"));
+            super(_translator.xlate("m.action.undo"));
             setEnabled(false);
         }
 
@@ -370,7 +291,7 @@ public class SwiftlyTextPane extends JEditorPane
             _redoAction.update();
         }
 
-        protected void update ()
+        private void update ()
         {
             if (_undo.canUndo()) {
                 setEnabled(true);
@@ -380,11 +301,11 @@ public class SwiftlyTextPane extends JEditorPane
         }
     }
 
-    protected class RedoAction extends AbstractAction
+    private class RedoAction extends AbstractAction
     {
         public RedoAction ()
         {
-            super(_msgs.get("m.action.redo"));
+            super(_translator.xlate("m.action.redo"));
             setEnabled(false);
         }
 
@@ -400,7 +321,7 @@ public class SwiftlyTextPane extends JEditorPane
             _undoAction.update();
         }
 
-        protected void update ()
+        private void update ()
         {
             if (_undo.canRedo()) {
                 setEnabled(true);
@@ -410,14 +331,17 @@ public class SwiftlyTextPane extends JEditorPane
         }
     }
 
-    class DocumentElementListener implements DocumentListener
+    /**
+     * Listens for changes to the document view and dispatches those changes to the controller.
+     */
+    private class DocumentElementListener implements DocumentListener
     {
         // from interface DocumentListener
         public void insertUpdate(DocumentEvent e)
         {
             // send out the update event only if we didn't get this update from the network
             if (!_dontPropagateThisChange) {
-                updateDocument();
+                _dispatcher.documentTextChanged(_document, getText());
             }
         }
 
@@ -426,7 +350,7 @@ public class SwiftlyTextPane extends JEditorPane
         {
             // send out the update event only if we didn't get this update from the network
             if (!_dontPropagateThisChange) {
-                updateDocument();
+                _dispatcher.documentTextChanged(_document, getText());
             }
         }
 
@@ -437,19 +361,22 @@ public class SwiftlyTextPane extends JEditorPane
         }
     }
 
-    public static final float DEFAULT_FONT_SIZE = 14;
+    private static final int PRINT_MARGIN_WIDTH = 100;
+    private static final float DEFAULT_FONT_SIZE = 14;
 
-    protected SwiftlyContext _ctx;
-    protected SwiftlyEditor _editor;
-    protected MessageBundle _msgs;
-    protected SwiftlyTextDocument _document;
-    protected SyntaxDocument _syntaxDoc;
-    protected boolean _dontPropagateThisChange;
+    private final Translator _translator;
+    private final DocumentUpdateDispatcher _dispatcher;
+    private SwiftlyTextDocument _document;
+    private final SyntaxDocument _syntaxDoc;
+    private boolean _dontPropagateThisChange;
 
-    protected SyntaxEditorKit _kit;
-    protected JPopupMenu _popup;
-    protected UndoManager _undo = new UndoManager();
-    protected UndoableEditListener _undoHandler = new UndoHandler();
-    protected UndoAction _undoAction;
-    protected RedoAction _redoAction;
+    private final SyntaxEditorKit _kit;
+    private final JPopupMenu _popup = new JPopupMenu();
+    private final Action _cutAction;
+    private final Action _copyAction;
+    private final Action _pasteAction;
+    private final Action _selectAllAction;
+    private final UndoManager _undo = new UndoManager();
+    private final UndoAction _undoAction;
+    private final RedoAction _redoAction;
 }

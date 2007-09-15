@@ -10,7 +10,7 @@ package com.threerings.msoy.swiftly.client.event;
 public interface AccessControlListener
 {
     /**
-     * Called to inform this component to display a writeable interface.
+     * Called to inform this component to display a writable interface.
      */
     public void writeAccessGranted();
 

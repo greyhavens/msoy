@@ -4,19 +4,19 @@
 package com.threerings.msoy.swiftly.data;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.ImageIcon;
 
 import org.apache.commons.io.IOUtils;
 
 import com.threerings.io.ObjectOutputStream;
+import com.threerings.msoy.swiftly.client.controller.SwiftlyDocumentEditor;
+import com.threerings.msoy.swiftly.client.view.PositionLocation;
 import com.threerings.presents.dobj.DSet;
-
-import com.threerings.msoy.swiftly.client.view.SwiftlyDocumentEditor;
 
 /**
  * Represents a source file in a project and contains the text of the file.
@@ -135,8 +135,7 @@ public abstract class SwiftlyDocument
      * Tell the supplied editor to load this document, at the supplied row and column.
      * @param highlight indicates whether the new location should be highlighted briefly
      */
-    public abstract void loadInEditor (SwiftlyDocumentEditor editor, int row, int column,
-                                       boolean highlight);
+    public abstract void loadInEditor (SwiftlyDocumentEditor editor, PositionLocation location);
 
     public Comparable getKey ()
     {

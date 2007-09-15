@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import com.samskivert.util.SerialExecutor;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
-import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService.ResultListener;
 
 /** Handles a request to commit our project. */
 public class CommitProjectTask
@@ -19,7 +19,7 @@ public class CommitProjectTask
     /**
      * Only commit the project, do not perform a build.
      */
-    public CommitProjectTask (ProjectRoomManager manager, ConfirmListener listener)
+    public CommitProjectTask (ProjectRoomManager manager, ResultListener listener)
     {
         this(manager, null, listener);
     }
@@ -28,7 +28,7 @@ public class CommitProjectTask
      * Commit the project, then perform a build.
      */
     public CommitProjectTask (ProjectRoomManager manager, AbstractBuildTask buildTask,
-                              ConfirmListener listener)
+                              ResultListener listener)
     {
         _manager = manager;
         // take a snapshot of certain items while we're on the dobj thread
@@ -89,7 +89,8 @@ public class CommitProjectTask
             MsoyServer.swiftlyMan.buildExecutor.execute(_buildTask);
 
         } else {
-            _listener.requestProcessed();
+            // TODO: can we avoid using null here?
+            _listener.requestProcessed(null);
         }
     }
 
@@ -109,6 +110,6 @@ public class CommitProjectTask
 
     protected final ProjectRoomManager _manager;
     protected final AbstractBuildTask _buildTask;
-    protected final ConfirmListener _listener;
+    protected final ResultListener _listener;
     protected Throwable _error;
 }

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.client.view;
+package com.threerings.msoy.swiftly.client.controller;
 
 /** 
  * An interface to display passive notifications.

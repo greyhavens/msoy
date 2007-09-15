@@ -26,9 +26,6 @@ public class ProjectRoomObject extends PlaceObject
     /** The field name of the <code>collaborators</code> field. */
     public static final String COLLABORATORS = "collaborators";
 
-    /** The field name of the <code>results</code> field. */
-    public static final String RESULTS = "results";
-
     /** The field name of the <code>service</code> field. */
     public static final String SERVICE = "service";
     // AUTO-GENERATED: FIELDS END
@@ -47,9 +44,6 @@ public class ProjectRoomObject extends PlaceObject
 
     /** All the collaborators for this project. */
     public DSet<MemberName> collaborators = new DSet<MemberName>();
-
-    /** All the build results for the collaborators of this project. */
-    public DSet<BuildResult> results = new DSet<BuildResult>();
 
     /** Provides invocation services. */
     public ProjectRoomMarshaller service;
@@ -118,32 +112,6 @@ public class ProjectRoomObject extends PlaceObject
 
         // return null if we did not find the element
         return null;
-    }
-
-    /**
-     *  Returns the amount of time the last build took for this member or if this is the first
-     *  build a decent default value.
-     */
-    public int getLastBuildTime (final MemberName name)
-    {
-        if (results.containsKey(name)) {
-            return (int)results.get(name).getBuildTime();
-
-        } else {
-            return DEFAULT_BUILD_TIME;
-        }
-    }
-
-    /**
-     *  Publish the supplied BuildResult into the room object
-     */
-    public void publishBuildResult (final BuildResult result)
-    {
-        if (results.containsKey(result.getMember())) {
-            updateResults(result);
-        } else {
-            addToResults(result);
-        }
     }
 
     /**
@@ -393,54 +361,6 @@ public class ProjectRoomObject extends PlaceObject
     }
 
     /**
-     * Requests that the specified entry be added to the
-     * <code>results</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToResults (BuildResult elem)
-    {
-        requestEntryAdd(RESULTS, results, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>results</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromResults (Comparable key)
-    {
-        requestEntryRemove(RESULTS, results, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>results</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateResults (BuildResult elem)
-    {
-        requestEntryUpdate(RESULTS, results, elem);
-    }
-
-    /**
-     * Requests that the <code>results</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setResults (DSet<com.threerings.msoy.swiftly.data.BuildResult> value)
-    {
-        requestAttributeChange(RESULTS, value, this.results);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.swiftly.data.BuildResult> clone =
-            (value == null) ? null : value.typedClone();
-        this.results = clone;
-    }
-
-    /**
      * Requests that the <code>service</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
@@ -456,9 +376,6 @@ public class ProjectRoomObject extends PlaceObject
         this.service = value;
     }
     // AUTO-GENERATED: METHODS END
-
-    /** The first build will be guessed to be 6 seconds. */
-    protected static final int DEFAULT_BUILD_TIME = 6000;
 
     /** Used to assign unique identifiers to elements. */
     protected transient int _nextElementId;

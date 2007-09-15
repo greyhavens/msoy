@@ -39,7 +39,7 @@ public class ProjectTreeCellRenderer extends SubstanceDefaultTreeCellRenderer
     /**
      * Sets the icon for the node based on the PathElement.
      */
-    protected void setIconAndToolTip(PathElement element)
+    private void setIconAndToolTip(PathElement element)
     {
         if (element.getType() == PathElement.Type.ROOT) {
             // TODO if we want tool tips here is how. Maybe "This file is being externally edited"
