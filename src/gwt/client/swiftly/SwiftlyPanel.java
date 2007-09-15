@@ -87,7 +87,7 @@ public class SwiftlyPanel extends FlexTable
         } else {
             HorizontalPanel cell = new HorizontalPanel();
             cell.add(new Label(CSwiftly.msgs.projectOwner()));
-            cell.add(_ownerLink);
+            cell.add(_ownerLinkPanel);
             infoPanel.setWidget(0, 2, cell);
             loadOwner();
         }
@@ -132,9 +132,8 @@ public class SwiftlyPanel extends FlexTable
             new AsyncCallback() {
             public void onSuccess (Object result) {
                 MemberName owner = (MemberName)result;
-                _ownerLink.setTargetHistoryToken(
-                    Application.createLinkToken("profile", String.valueOf(owner.getMemberId())));
-                _ownerLink.setText(owner.getNormal());
+                _ownerLinkPanel.clear();
+                _ownerLinkPanel.add(Application.memberViewLink((MemberName)result));
             }
             public void onFailure (Throwable cause) {
                 CSwiftly.serverError(cause);
@@ -224,7 +223,7 @@ public class SwiftlyPanel extends FlexTable
     protected final String _authtoken;
     protected static VerticalPanel _vertPanel;
     protected final Hyperlink _projectLink = new Hyperlink();
-    protected final Hyperlink _ownerLink = new Hyperlink();
+    protected final HorizontalPanel _ownerLinkPanel = new HorizontalPanel();
     protected Button _editButton;
     protected static final Label _status = new Label();
     protected static Widget _applet;

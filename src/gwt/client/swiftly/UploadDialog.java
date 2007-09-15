@@ -109,7 +109,6 @@ public class UploadDialog extends FlexTable
         setWidget(1, 0, form);
         getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
         setWidget(1, 1, buttons);
-
     }
 
     /**
@@ -129,7 +128,7 @@ public class UploadDialog extends FlexTable
         _listener.dialogClosed();
     }
 
-    protected Label _status;
-    protected UploadDialogListener _listener;
+    protected final Label _status;
+    protected final UploadDialogListener _listener;
     protected boolean _wasError;
 }
