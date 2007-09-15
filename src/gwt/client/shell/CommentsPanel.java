@@ -58,7 +58,7 @@ public class CommentsPanel extends VerticalPanel
                 _comments.clear();
                 List comments = (List)result;
                 for (int ii = 0; ii < comments.size(); ii++) {
-                    _comments.add(new CommentPanel((Comment)comments.get(ii)));
+                    _comments.add(new CommentPanel(CommentsPanel.this, (Comment)comments.get(ii)));
                 }
                 if (comments.size() == 0) {
                     _comments.add(MsoyUI.createLabel("No comments.", "Status"));
@@ -97,11 +97,28 @@ public class CommentsPanel extends VerticalPanel
                 _comments.clear();
             }
             // stick this comment at the top of the list like it's the real deal
-            _comments.insert(new CommentPanel(comment), 0);
+            _comments.insert(new CommentPanel(this, comment), 0);
 
         } else {
             MsoyUI.info("Comment posted. Click 'Latest' to see it.");
         }
+    }
+
+    protected void deleteComment (final CommentPanel panel, Comment comment)
+    {
+        CShell.commentsvc.deleteComment(
+            CShell.ident, _entityType, _entityId, comment.posted, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                MsoyUI.info("Comment deleted.");
+                _comments.remove(panel);
+                if (_page == 0 && _comments.getWidgetCount() == 0) {
+                    _comments.add(MsoyUI.createLabel("No comments.", "Status"));
+                }
+            }
+            public void onFailure (Throwable cause) {
+                MsoyUI.error(CShell.serverError(cause));
+            }
+        });
     }
 
     protected class PostPanel extends VerticalPanel
