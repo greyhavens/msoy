@@ -10,7 +10,7 @@ import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
  */
 public interface TextEditor
     extends PositionableComponent, AccessControlComponent,
-            DocumentEditor<SwiftlyTextDocument, TextEditor>
+            DocumentEditor<SwiftlyTextDocument>
 {
     /**
      * Inform the TextEditor that the contents of the SwiftlyTextDocument it is displaying

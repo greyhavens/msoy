@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.swiftly.client.view;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,15 +24,6 @@ public class ImageEditorView extends JPanel
         displayImage();
     }
 
-    @Override // from JComponent
-    public void removeNotify ()
-    {
-        super.removeNotify();
-        for (RemovalNotifier<ImageEditor> notifier : _notifiers) {
-            notifier.componentRemoved(this);
-        }
-    }
-
     // from DocumentEditor
     public SwiftlyImageDocument getSwiftlyDocument ()
     {
@@ -54,19 +42,10 @@ public class ImageEditorView extends JPanel
         }
     }
 
-    // from DocumentEditor
-    public void addDocumentEditorRemovalNotifier (RemovalNotifier<ImageEditor> notifier)
-    {
-        _notifiers.add(notifier);
-    }
-
     private void displayImage ()
     {
         _label.setIcon(new ImageIcon(_document.getImage()));
     }
-
-    private final Set<RemovalNotifier<ImageEditor>> _notifiers =
-        new HashSet<RemovalNotifier<ImageEditor>>();
 
     private SwiftlyImageDocument _document;
     private JLabel _label;

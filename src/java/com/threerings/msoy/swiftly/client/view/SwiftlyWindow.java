@@ -16,9 +16,9 @@ public interface SwiftlyWindow
      */
     public interface AttachCallback
     {
-        public void windowAttached ();
+        public void windowDisplayed ();
     }
-    
+
     /**
      * Shows a modal, internal frame dialog prompting the user to name a {@link PathElement}
      * @param pathElementType the type of {@link PathElement} to name

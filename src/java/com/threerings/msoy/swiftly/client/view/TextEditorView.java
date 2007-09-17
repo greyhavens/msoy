@@ -11,8 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -128,18 +126,6 @@ public class TextEditorView extends JEditorPane
         documentTextChanged();
     }
 
-    @Override // from JComponent
-    public void removeNotify ()
-    {
-        super.removeNotify();
-        for (RemovalNotifier<TextEditor> notifier : _textNotifiers) {
-            notifier.componentRemoved(this);
-        }
-        for (RemovalNotifier<AccessControlComponent> notifier : _accessNotifiers) {
-            notifier.componentRemoved(this);
-        }
-    }
-
     // from AccessControlComponent
     public void showWriteAccess ()
     {
@@ -150,13 +136,6 @@ public class TextEditorView extends JEditorPane
     public void showReadOnlyAccess ()
     {
         setEditable(false);
-    }
-
-    // from AccessControlComponent
-    public void addAccessControlRemovalNotifier (
-        RemovalNotifier<AccessControlComponent> notifier)
-    {
-        _accessNotifiers.add(notifier);
     }
 
     // from PositionableComponent
@@ -215,12 +194,6 @@ public class TextEditorView extends JEditorPane
         if (!doc.contentsEqual(currentDoc)) {
             documentTextChanged();
         }
-    }
-
-    // from DocumentEditor
-    public void addDocumentEditorRemovalNotifier (RemovalNotifier<TextEditor> notifier)
-    {
-        _textNotifiers.add(notifier);
     }
 
     // from TextEditor
@@ -390,12 +363,6 @@ public class TextEditorView extends JEditorPane
 
     private static final int PRINT_MARGIN_WIDTH = 100;
     private static final float DEFAULT_FONT_SIZE = 14;
-
-    private final Set<RemovalNotifier<TextEditor>> _textNotifiers =
-        new HashSet<RemovalNotifier<TextEditor>>();
-
-    private final Set<RemovalNotifier<AccessControlComponent>> _accessNotifiers =
-        new HashSet<RemovalNotifier<AccessControlComponent>>();
 
     private final Translator _translator;
     private final DocumentUpdateDispatcher _dispatcher;

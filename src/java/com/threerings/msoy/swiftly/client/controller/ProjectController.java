@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -48,7 +49,6 @@ import com.threerings.msoy.swiftly.client.view.ProgressBar;
 import com.threerings.msoy.swiftly.client.view.ProgressBarView;
 import com.threerings.msoy.swiftly.client.view.ProjectPanel;
 import com.threerings.msoy.swiftly.client.view.ProjectPanelView;
-import com.threerings.msoy.swiftly.client.view.RemovalNotifier;
 import com.threerings.msoy.swiftly.client.view.SwiftlyWindow;
 import com.threerings.msoy.swiftly.client.view.SwiftlyWindowView;
 import com.threerings.msoy.swiftly.client.view.TabbedEditor;
@@ -173,7 +173,7 @@ public class ProjectController
         _progress = progress;
         _window = window;
 
-        addAccessControlComponent(_toolbar);
+        addAccessControlComponent(_toolbar, toolbar);
 
         // handle the initial state for access control
         if (_projModel.haveWriteAccess()) {
@@ -571,8 +571,8 @@ public class ProjectController
 
         // add the various components to the removal/tracking collections
         addTextEditor(element, textEditor);
-        addCompilerOutputComponent(element, gutter);
-        addAccessControlComponent(textEditor);
+        addCompilerOutputComponent(element, gutter, gutter);
+        addAccessControlComponent(textEditor, textEditor);
     }
 
     // from SwiftlyDocumentEditor
@@ -603,7 +603,7 @@ public class ProjectController
     }
 
     // from AttachCallback
-    public void windowAttached ()
+    public void windowDisplayed ()
     {
         // start with the chat panel hidden if no one else is in the room
         if (_projModel.occupantCount() > 1) {
@@ -736,37 +736,32 @@ public class ProjectController
     /**
      * Registers an AccessControlComponent as being displayed.
      */
-    private void addAccessControlComponent (AccessControlComponent comp)
+    private void addAccessControlComponent (AccessControlComponent comp, JComponent jcomp)
     {
-        _accessControlComponents.add(comp);
-        comp.addAccessControlRemovalNotifier(
-            new SetRemovalHandler<AccessControlComponent> (_accessControlComponents));
+        new ComponentSetHandler<AccessControlComponent>(comp, jcomp, _accessControlComponents);
     }
 
     /**
      * Registers a TextEditor as displaying the given PathElement.
      */
-    private void addTextEditor (PathElement element, TextEditor editor)
+    private void addTextEditor (PathElement element, TextEditorView editor)
     {
-        _openTextEditors.put(element, editor);
-        editor.addDocumentEditorRemovalNotifier(
-            new MapRemovalHandler<PathElement, TextEditor> (_openTextEditors));
+        new ComponentMapHandler<PathElement, TextEditor>(editor, editor, _openTextEditors);
     }
 
     /**
      * Registers an ImageEditor as displaying the given PathElement.
      */
-    private void addImageEditor (PathElement element, ImageEditor editor)
+    private void addImageEditor (PathElement element, ImageEditorView editor)
     {
-        _openImageEditors.put(element, editor);
-        editor.addDocumentEditorRemovalNotifier(
-            new MapRemovalHandler<PathElement, ImageEditor> (_openImageEditors));
+        new ComponentMapHandler<PathElement, ImageEditor>(editor, editor, _openImageEditors);
     }
 
     /**
      * Registers a CompilerOutputComponent as displaying the given PathElement.
      */
-    private void addCompilerOutputComponent (PathElement element, CompilerOutputComponent comp)
+    private void addCompilerOutputComponent (PathElement element, CompilerOutputComponent comp,
+                                             JComponent jcomp)
     {
         HashSet<CompilerOutputComponent> set = _compilerOutputComponents.get(element);
         if (set == null) {
@@ -774,23 +769,7 @@ public class ProjectController
             _compilerOutputComponents.put(element, set);
         }
 
-        set.add(comp);
-        comp.addCompilerOutputRemovalNotifier(
-            new RemovalNotifier<CompilerOutputComponent> () {
-            public void componentRemoved (CompilerOutputComponent comp) {
-                removeCompilerOutputComponent(comp);
-            }
-        });
-    }
-
-    /**
-     * Removes the given CompilerOutputComponent from the list of open components.
-     */
-    private void removeCompilerOutputComponent (CompilerOutputComponent comp)
-    {
-        for (HashSet<CompilerOutputComponent> set : _compilerOutputComponents.values()) {
-            set.remove(comp);
-        }
+        new ComponentSetHandler<CompilerOutputComponent>(comp, jcomp, set);
     }
 
     /**

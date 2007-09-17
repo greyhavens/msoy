@@ -5,8 +5,6 @@ package com.threerings.msoy.swiftly.client.view;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -35,15 +33,6 @@ public class CompilerOutputGutter extends JPanel
     public Dimension getPreferredSize ()
     {
         return new Dimension(DEFAULT_WIDTH, (int) _text.getPreferredSize().getHeight());
-    }
-
-    @Override // from JComponent
-    public void removeNotify ()
-    {
-        super.removeNotify();
-        for (RemovalNotifier<CompilerOutputComponent> notifier : _outputNotifiers) {
-            notifier.componentRemoved(this);
-        }
     }
 
     // from CompilerOutputComponent
@@ -78,21 +67,11 @@ public class CompilerOutputGutter extends JPanel
         _labels.clear();
     }
 
-    // from CompilerOutputComponent
-    public void addCompilerOutputRemovalNotifier (
-        RemovalNotifier<CompilerOutputComponent> notifier)
-    {
-        _outputNotifiers.add(notifier);
-    }
-
     private static final int DEFAULT_WIDTH = 16;
 
     /** The labels currently attached to the gutter */
     private final HashIntMap<CompilerOutputIconLabel> _labels =
         new HashIntMap<CompilerOutputIconLabel>();
-
-    private final Set<RemovalNotifier<CompilerOutputComponent>> _outputNotifiers =
-        new HashSet<RemovalNotifier<CompilerOutputComponent>>();
 
     private final JTextComponent _text;
 

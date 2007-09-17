@@ -4,8 +4,6 @@
 package com.threerings.msoy.swiftly.client.view;
 
 import java.awt.Font;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.Box;
@@ -45,15 +43,6 @@ public class EditorToolBarView extends JToolBar
         setFloatable(false);
     }
 
-    @Override // from JComponent
-    public void removeNotify ()
-    {
-        super.removeNotify();
-        for (RemovalNotifier<AccessControlComponent> notifier : _accessNotifiers) {
-            notifier.componentRemoved(this);
-        }
-    }
-
     // from AccessControlComponent
     public void showWriteAccess ()
     {
@@ -64,13 +53,6 @@ public class EditorToolBarView extends JToolBar
     public void showReadOnlyAccess ()
     {
         _readOnly.setVisible(true);
-    }
-
-    // from AccessControlComponent
-    public void addAccessControlRemovalNotifier (
-        RemovalNotifier<AccessControlComponent> notifier)
-    {
-        _accessNotifiers.add(notifier);
     }
 
     private JButton createButton (Action action)
@@ -86,9 +68,6 @@ public class EditorToolBarView extends JToolBar
 
     /** The location of various icons */
     private static final String READ_ONLY_ICON = "/rsrc/icons/swiftly/readonly.png";
-
-    private final Set<RemovalNotifier<AccessControlComponent>> _accessNotifiers =
-        new HashSet<RemovalNotifier<AccessControlComponent>>();
 
     private final Translator _translator;
     private final JLabel _readOnly;

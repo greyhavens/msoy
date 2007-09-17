@@ -76,17 +76,12 @@ public class SwiftlyWindowView extends JPanel
     {
         super.doLayout();
 
-        // set up our divider location when we are first laid out
-        if (getWidth() != 0 && _contentPane.getLastDividerLocation() == 0) {
+        // set up our divider location and trigger the callback when we are first displayed
+        if (_firstLayout && getHeight() > 0) {
+            _firstLayout = false;
             _contentPane.resetToPreferredSizes();
+            _callback.windowDisplayed();
         }
-    }
-
-    @Override // from JComponent
-    public void addNotify ()
-    {
-        super.addNotify();
-        _callback.windowAttached();
     }
 
     // from SwiftlyWindow
@@ -126,6 +121,9 @@ public class SwiftlyWindowView extends JPanel
         // this is a bit of a hack, but a better way has not presented itself
         _rightPane.setDividerLocation(getHeight());
     }
+
+    /** A flag to indicate the first time this component has been laid out. */
+    private boolean _firstLayout = true;
 
     private final Translator _translator;
     private final AttachCallback _callback;

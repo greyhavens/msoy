@@ -8,20 +8,15 @@ import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 /**
  * A component to edit/view SwiftlyDocuments.
  */
-public interface DocumentEditor<T extends SwiftlyDocument, E extends DocumentEditor<T, E>>
+public interface DocumentEditor<D extends SwiftlyDocument>
 {
     /**
      * Return the SwiftlyDocument loaded in this DocumentEditor
      */
-    public T getSwiftlyDocument ();
+    public D getSwiftlyDocument ();
 
     /**
      * Inform the DocumentEditor display the supplied SwiftlyDocument.
      */
-    public void loadDocument (T doc);
-
-    /**
-     * Register an object to receive notification when this DocumentEditor is removed.
-     */
-    public void addDocumentEditorRemovalNotifier (RemovalNotifier<E> notifier);
+    public void loadDocument (D doc);
 }

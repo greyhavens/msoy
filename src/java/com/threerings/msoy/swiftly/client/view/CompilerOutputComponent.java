@@ -18,10 +18,4 @@ public interface CompilerOutputComponent
      * Clears any CompilerOutput currently shown on this gutter.
      */
     public void clearCompilerOutput ();
-
-    /**
-     * Register an object to receive notification when this CompilerOutputComponent is removed.
-     */
-    public void addCompilerOutputRemovalNotifier (
-        RemovalNotifier<CompilerOutputComponent> notifier);
 }
