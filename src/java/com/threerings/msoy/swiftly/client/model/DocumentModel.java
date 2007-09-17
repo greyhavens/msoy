@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.swiftly.client.model;
 
+import static com.threerings.msoy.Log.log;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -169,19 +171,19 @@ public class DocumentModel
     }
 
     /**
-     * Requests that the supplied PathElement be deleted.
+     * Requests that the supplied PathElement which references a SwiftlyDocument be deleted.
      */
-    public RequestId deletePathElement (final PathElement element,
-                                        final DocumentModelDelegate delegate)
+    public RequestId deleteDocument (final PathElement element,
+                                     final DocumentModelDelegate delegate)
     {
         final RequestId requestId = _requestFactory.generateId();
 
         _roomObj.service.deletePathElement(_client, element.elementId, new ConfirmListener () {
             public void requestProcessed () {
-                delegate.pathElementDeleted(requestId, element);
+                delegate.documentDeleted(requestId, element);
             }
             public void requestFailed (String reason) {
-                delegate.pathElementDeleteFailed(
+                delegate.documentDeleteFailed(
                     requestId, element, FailureCode.RENAME_ELEMENT_FAILED);
             }
         });
@@ -193,20 +195,20 @@ public class DocumentModel
      * Sends a message to the server reporting that the given SwiftlyTextDocument should have its
      * text replaced with the supplied string.
      */
-    public RequestId updateDocument (final SwiftlyTextDocument doc, final String text,
-                                     final DocumentModelDelegate delegate)
+    public RequestId updateTextDocument (final SwiftlyTextDocument doc, final String text,
+                                         final DocumentModelDelegate delegate)
     {
         final RequestId requestId = _requestFactory.generateId();
 
-        _roomObj.service.updateDocument(_client, doc.documentId, text, new ConfirmListener () {
+        _roomObj.service.updateTextDocument(_client, doc.documentId, text, new ConfirmListener () {
             public void requestProcessed ()
             {
-                delegate.documentUpdated(requestId, doc);
+                delegate.textDocumentUpdated(requestId, doc);
             }
 
             public void requestFailed (String reason)
             {
-                delegate.documentUpdateFailed(requestId, doc, FailureCode.UPDATE_DOCUMENT_FAILED);
+                delegate.textDocumentUpdateFailed(requestId, doc, FailureCode.UPDATE_DOCUMENT_FAILED);
             }
         });
 
@@ -310,7 +312,6 @@ public class DocumentModel
             // Re-bind transient instance variables
             doc.lazarus(_roomObj.pathElements);
 
-            // TODO: anyway to avoid this cast?
             if (doc instanceof SwiftlyTextDocument) {
                 for (SwiftlyDocumentListener listener : _swiftlyDocumentListeners) {
                     listener.documentUpdated((SwiftlyTextDocument)doc);
@@ -357,12 +358,16 @@ public class DocumentModel
             return;
         }
 
-        // TODO: can we avoid this cast?
-        SwiftlyTextDocument doc =
-            (SwiftlyTextDocument)_roomObj.documents.get(event.getDocumentId());
+        SwiftlyDocument doc = _roomObj.documents.get(event.getDocumentId());
+
+        // These events are only for text documents.
+        if (!(doc instanceof SwiftlyTextDocument)) {
+            log.warning("Received DocumentUpdatedEvent for non SwiftlyTextDocument.");
+            return;
+        }
 
         for (DocumentContentListener listener : _documentContentListeners) {
-            listener.documentContentsChanged(doc);
+            listener.documentContentsChanged((SwiftlyTextDocument)doc);
         }
     }
 

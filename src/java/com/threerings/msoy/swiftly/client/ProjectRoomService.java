@@ -12,13 +12,19 @@ import com.threerings.presents.client.InvocationService;
  */
 public interface ProjectRoomService extends InvocationService
 {
-    /** Requests to add a path element to the project. */
-    public void addPathElement (Client client, PathElement element, ConfirmListener listener);
+    /** Requests a document be loaded. */
+    public void loadDocument (Client client, PathElement element, ConfirmListener listener);
 
-    /** Requests that the specified path element be updated (wholesale). */
-    public void updatePathElement (Client client, PathElement element,
-                                   ConfirmListener listener);
+    /** Requests to add a document to the project. */
+    public void addDocument (Client client, String fileName, PathElement parent, String mimeType,
+                             ConfirmListener listener);
 
+    /**
+     * Requests that the specified document be updated (currently wholesale but some day with
+     * diffs).
+     */
+    public void updateTextDocument (Client client, int documentId, String text,
+                                    ConfirmListener listener);
     /** Requests that the specified path element be removed from the project. */
     public void deletePathElement (Client client, int elementId, ConfirmListener listener);
 
@@ -26,24 +32,9 @@ public interface ProjectRoomService extends InvocationService
     public void renamePathElement (Client client, int elementId, String newName,
                                    ConfirmListener listener);
 
-    /** Requests to add a document to the project. */
-    public void addDocument (Client client, String fileName, PathElement parent, String mimeType,
-                             ConfirmListener listener);
-
-    /** Requests that the specified document be updated (currently wholesale but some day with
-     * diffs). */
-    public void updateDocument (Client client, int documentId, String text,
-                                ConfirmListener listener);
-
-    /** Requests that the specified document be removed from the project. */
-    public void deleteDocument (Client client, int documentId, ConfirmListener listener);
-
     /** Requests that the project be build and the artifacts be published to the game object. */
     public void buildProject (Client client, ResultListener listener);
 
     /** Load the build result into this users inventory. */
     public void buildAndExportProject (Client client, ResultListener listener);
-
-    /** Requests a document be loaded. */
-    public void loadDocument (Client client, PathElement element, ConfirmListener listener);
 }

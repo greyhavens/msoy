@@ -33,21 +33,8 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #addPathElement} requests. */
-    public static final int ADD_PATH_ELEMENT = 2;
-
-    // from interface ProjectRoomService
-    public void addPathElement (Client arg1, PathElement arg2, InvocationService.ConfirmListener arg3)
-    {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, ADD_PATH_ELEMENT, new Object[] {
-            arg2, listener3
-        });
-    }
-
     /** The method id used to dispatch {@link #buildAndExportProject} requests. */
-    public static final int BUILD_AND_EXPORT_PROJECT = 3;
+    public static final int BUILD_AND_EXPORT_PROJECT = 2;
 
     // from interface ProjectRoomService
     public void buildAndExportProject (Client arg1, InvocationService.ResultListener arg2)
@@ -60,7 +47,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #buildProject} requests. */
-    public static final int BUILD_PROJECT = 4;
+    public static final int BUILD_PROJECT = 3;
 
     // from interface ProjectRoomService
     public void buildProject (Client arg1, InvocationService.ResultListener arg2)
@@ -72,21 +59,8 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #deleteDocument} requests. */
-    public static final int DELETE_DOCUMENT = 5;
-
-    // from interface ProjectRoomService
-    public void deleteDocument (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
-    {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, DELETE_DOCUMENT, new Object[] {
-            Integer.valueOf(arg2), listener3
-        });
-    }
-
     /** The method id used to dispatch {@link #deletePathElement} requests. */
-    public static final int DELETE_PATH_ELEMENT = 6;
+    public static final int DELETE_PATH_ELEMENT = 4;
 
     // from interface ProjectRoomService
     public void deletePathElement (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
@@ -99,7 +73,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #loadDocument} requests. */
-    public static final int LOAD_DOCUMENT = 7;
+    public static final int LOAD_DOCUMENT = 5;
 
     // from interface ProjectRoomService
     public void loadDocument (Client arg1, PathElement arg2, InvocationService.ConfirmListener arg3)
@@ -112,7 +86,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #renamePathElement} requests. */
-    public static final int RENAME_PATH_ELEMENT = 8;
+    public static final int RENAME_PATH_ELEMENT = 6;
 
     // from interface ProjectRoomService
     public void renamePathElement (Client arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
@@ -124,29 +98,16 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #updateDocument} requests. */
-    public static final int UPDATE_DOCUMENT = 9;
+    /** The method id used to dispatch {@link #updateTextDocument} requests. */
+    public static final int UPDATE_TEXT_DOCUMENT = 7;
 
     // from interface ProjectRoomService
-    public void updateDocument (Client arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
+    public void updateTextDocument (Client arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
     {
         InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
         listener4.listener = arg4;
-        sendRequest(arg1, UPDATE_DOCUMENT, new Object[] {
+        sendRequest(arg1, UPDATE_TEXT_DOCUMENT, new Object[] {
             Integer.valueOf(arg2), arg3, listener4
-        });
-    }
-
-    /** The method id used to dispatch {@link #updatePathElement} requests. */
-    public static final int UPDATE_PATH_ELEMENT = 10;
-
-    // from interface ProjectRoomService
-    public void updatePathElement (Client arg1, PathElement arg2, InvocationService.ConfirmListener arg3)
-    {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, UPDATE_PATH_ELEMENT, new Object[] {
-            arg2, listener3
         });
     }
 }

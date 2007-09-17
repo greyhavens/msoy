@@ -97,6 +97,12 @@ public class ConsoleView extends JFrame
         setVisible(true);
     }
 
+    // from Console
+    public void destroy ()
+    {
+        destroy();
+    }
+
     /**
      * Append a string to the console with the given AttributeSet applied for styling the string.
      */

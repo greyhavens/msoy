@@ -30,4 +30,9 @@ public interface Console
      * Display the console.
      */
     public void displayConsole ();
+
+    /**
+     * Destroys the console window.
+     */
+    public void destroy ();
 }

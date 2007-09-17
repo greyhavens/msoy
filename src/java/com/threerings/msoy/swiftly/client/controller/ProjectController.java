@@ -22,6 +22,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.swiftly.client.ShutdownNotifier;
 import com.threerings.msoy.swiftly.client.SwiftlyApplication;
 import com.threerings.msoy.swiftly.client.SwiftlyContext;
 import com.threerings.msoy.swiftly.client.Translator;
@@ -76,7 +77,7 @@ public class ProjectController
                PathElementListener, OccupantListener, TreeModelListener,
                TreeSelectionListener, AccessControlListener, EditorActionProvider,
                DocumentModelDelegate, ProjectModelDelegate, DocumentUpdateDispatcher,
-               DocumentContentListener
+               DocumentContentListener, ShutdownNotifier
 {
     public ProjectController (ProjectModel projModel, DocumentModel docModel, SwiftlyContext ctx)
     {
@@ -118,7 +119,7 @@ public class ProjectController
 
         _deleteFileAction = new EditorAction (ActionResource.DELETE_FILE, _translator) {
             public void actionPerformed (ActionEvent e) {
-                deletePathElement(_projectPanel.getSelectedPathElement());
+                deleteDocument(_projectPanel.getSelectedPathElement());
             }
         };
 
@@ -204,6 +205,9 @@ public class ProjectController
 
         // set the initial state of the actions
         updateActions();
+
+        // register the controller as a ShutdownNotifier on the application
+        _app.addShutdownNotifier(this);
     }
 
     // from PathElementEditor
@@ -264,7 +268,8 @@ public class ProjectController
    // from DocumentModelDelegate
    public void documentAdded (RequestId requestId, NewPathElement newElement)
    {
-       // TODO Auto-generated method stub
+       // TODO: feedback in the ProjectPanel, highlight the new document? Also, show a different
+       // message here rather than relying on the set listener
    }
 
    // from DocumentModelDelegate
@@ -281,28 +286,30 @@ public class ProjectController
    }
 
    // from DocumentModelDelegate
-   public void documentUpdateFailed (RequestId requestId, SwiftlyTextDocument doc,
+   public void textDocumentUpdateFailed (RequestId requestId, SwiftlyTextDocument doc,
+                                         DocumentModelDelegate.FailureCode error)
+   {
+       _notifier.showError(_translator.xlate(error));
+   }
+
+   // from DocumentModelDelegate
+   public void textDocumentUpdated (RequestId requestId, SwiftlyTextDocument doc)
+   {
+       // nada
+   }
+
+   // from DocumentModelDelegate
+   public void documentDeleteFailed (RequestId requestId, PathElement element,
                                      DocumentModelDelegate.FailureCode error)
    {
        _notifier.showError(_translator.xlate(error));
    }
 
    // from DocumentModelDelegate
-   public void documentUpdated (RequestId requestId, SwiftlyTextDocument doc)
+   public void documentDeleted (RequestId requestId, PathElement element)
    {
-       // TODO Auto-generated method stub
-   }
+       _editorTabs.closePathElementTab(element);
 
-   // from DocumentModelDelegate
-   public void pathElementDeleteFailed (RequestId requestId, PathElement element,
-                                        DocumentModelDelegate.FailureCode error)
-   {
-       _notifier.showError(_translator.xlate(error));
-   }
-
-   // from DocumentModelDelegate
-   public void pathElementDeleted (RequestId requestId, PathElement element)
-   {
        // TODO: show a confirm message here, don't just rely on the set listener
        // update the actions as the tree will not have a selection anymore
        updateActions();
@@ -364,7 +371,7 @@ public class ProjectController
            return;
        }
 
-       // TODO we are in single selection mode so only one node will ever change [right?]
+       // this assumes single selection mode for the tree
        PathElementTreeNode node = (PathElementTreeNode)children[0];
        if (node.getElement().getType() == PathElement.Type.FILE) {
            _editorTabs.updateTabTitleAt(node.getElement());
@@ -374,17 +381,13 @@ public class ProjectController
    // from interface TreeModelListener
    public void treeNodesInserted (TreeModelEvent e)
    {
-       // TODO is it clear this is what we want to happen?
-       /* If we want this move it to the interface somehow
-       PathElementTreeNode node = (PathElementTreeNode)e.getChildren()[0];
-       _projectPanel.getTree().scrollPathToVisible(new TreePath(node.getPath()));
-       */
+       // nada
    }
 
    // from interface TreeModelListener
    public void treeNodesRemoved (TreeModelEvent e)
    {
-       // TODO iterate over every child and close any open tabs.
+       // nada
    }
 
    // from interface TreeModelListener
@@ -459,13 +462,13 @@ public class ProjectController
    // from SwiftlyDocumentListener
    public void documentAdded (SwiftlyDocument doc)
    {
-       // TODO Auto-generated method stub
+       // nada
    }
 
    // from SwiftlyDocumentListener
    public void documentRemoved (SwiftlyDocument doc)
    {
-       // TODO Auto-generated method stub
+       // nada
    }
 
    // from SwiftlyDocumentListener
@@ -507,7 +510,7 @@ public class ProjectController
    // from DocumentUpdateDispatcher
    public void documentTextChanged (SwiftlyTextDocument doc, String text)
    {
-       _docModel.updateDocument(doc, text, this);
+       _docModel.updateTextDocument(doc, text, this);
    }
 
    // from EditorActionProvider
@@ -609,19 +612,12 @@ public class ProjectController
         return _createableFileTypes;
     }
 
-    /* TODO: controller needs to know when shit is getting shutdown
-     * possibly add a shutDown listener to the SwiftlyApplication as a way of handling this?
-    @Override // from JComponent
-    public void removeNotify ()
+    // from ShutdownNotifier
+    public void shuttingDown ()
     {
-        super.removeNotify();
-
         // destroy the console window
-        _console.dispose();
-
-        // TODO: shutdown the project panel?
+        _console.destroy();
     }
-    */
 
     /**
      * Adds a SwiftlyDocument to the project.
@@ -672,9 +668,9 @@ public class ProjectController
     }
 
     /**
-     * Removes a {@link PathElement} from the project.
+     * Removes a document [referenced by a path element] from the project.
      */
-    private void deletePathElement (final PathElement element)
+    private void deleteDocument (final PathElement element)
     {
         // Confirm the user actually wants to delete this PathElement
         if (!_window.showConfirmDialog(_translator.xlate("m.dialog.confirm_delete",
@@ -682,15 +678,7 @@ public class ProjectController
             return;
         }
 
-        if (element.getType() == PathElement.Type.FILE) {
-            _editorTabs.closePathElementTab(element);
-
-        } else if (element.getType() == PathElement.Type.DIRECTORY) {
-            // TODO oh god we have to remove all the tabs associated with this directory
-            // soo.. every tab that has a common parent id() ?
-        }
-
-        _docModel.deletePathElement(element, this);
+        _docModel.deleteDocument(element, this);
     }
 
     /**

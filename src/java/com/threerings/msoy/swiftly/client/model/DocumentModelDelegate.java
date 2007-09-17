@@ -42,11 +42,18 @@ public interface DocumentModelDelegate
                                         FailureCode error);
 
     /**
-     * Success/failure callbacks for an updateDocument call.
+     * Success/failure callbacks for a deleteDocument call.
      */
-    public void documentUpdated (RequestId requestId, SwiftlyTextDocument doc);
-    public void documentUpdateFailed (RequestId requestId, SwiftlyTextDocument doc,
+    public void documentDeleted (RequestId requestId, PathElement element);
+    public void documentDeleteFailed (RequestId requestId, PathElement element,
                                       FailureCode error);
+
+    /**
+     * Success/failure callbacks for an updateTextDocument call.
+     */
+    public void textDocumentUpdated (RequestId requestId, SwiftlyTextDocument doc);
+    public void textDocumentUpdateFailed (RequestId requestId, SwiftlyTextDocument doc,
+                                          FailureCode error);
 
     /**
      * Success/failure callbacks for a addPathElement call.
@@ -60,12 +67,5 @@ public interface DocumentModelDelegate
      */
     public void pathElementRenamed (RequestId requestId, PathElement element);
     public void pathElementRenameFailed (RequestId requestId, PathElement element,
-                                         FailureCode error);
-
-    /**
-     * Success/failure callbacks for a deletePathElement call.
-     */
-    public void pathElementDeleted (RequestId requestId, PathElement element);
-    public void pathElementDeleteFailed (RequestId requestId, PathElement element,
                                          FailureCode error);
 }

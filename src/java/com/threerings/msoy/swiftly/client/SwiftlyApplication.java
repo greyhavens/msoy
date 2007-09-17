@@ -27,4 +27,9 @@ public interface SwiftlyApplication
      * Displays the supplied URL in an application specific way.
      */
     public void showURL (URL url);
+
+    /**
+     * Adds a ShutdownNotifier to this SwiftlyApplication.
+     */
+    public void addShutdownNotifier (ShutdownNotifier notifier);
 }

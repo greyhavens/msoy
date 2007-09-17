@@ -46,13 +46,6 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             );
             return;
 
-        case ProjectRoomMarshaller.ADD_PATH_ELEMENT:
-            ((ProjectRoomProvider)provider).addPathElement(
-                source,
-                (PathElement)args[0], (InvocationService.ConfirmListener)args[1]
-            );
-            return;
-
         case ProjectRoomMarshaller.BUILD_AND_EXPORT_PROJECT:
             ((ProjectRoomProvider)provider).buildAndExportProject(
                 source,
@@ -64,13 +57,6 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             ((ProjectRoomProvider)provider).buildProject(
                 source,
                 (InvocationService.ResultListener)args[0]
-            );
-            return;
-
-        case ProjectRoomMarshaller.DELETE_DOCUMENT:
-            ((ProjectRoomProvider)provider).deleteDocument(
-                source,
-                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 
@@ -95,17 +81,10 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             );
             return;
 
-        case ProjectRoomMarshaller.UPDATE_DOCUMENT:
-            ((ProjectRoomProvider)provider).updateDocument(
+        case ProjectRoomMarshaller.UPDATE_TEXT_DOCUMENT:
+            ((ProjectRoomProvider)provider).updateTextDocument(
                 source,
                 ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.ConfirmListener)args[2]
-            );
-            return;
-
-        case ProjectRoomMarshaller.UPDATE_PATH_ELEMENT:
-            ((ProjectRoomProvider)provider).updatePathElement(
-                source,
-                (PathElement)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 

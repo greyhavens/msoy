@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 
 import javax.swing.JApplet;
@@ -114,6 +116,10 @@ public class SwiftlyApplet extends JApplet
         if (_ctx.getClient() != null && _ctx.getClient().isLoggedOn()) {
             _ctx.getClient().logoff(true);
         }
+
+        for (ShutdownNotifier notifier : _notifiers) {
+            notifier.shuttingDown();
+        }
     }
 
     @Override // from Applet
@@ -211,6 +217,12 @@ public class SwiftlyApplet extends JApplet
         getAppletContext().showDocument(url);
     }
 
+    // from SwiftlyApplication
+    public void addShutdownNotifier (ShutdownNotifier notifier)
+    {
+        _notifiers.add(notifier);
+    }
+
     /**
      * Display an error message directly onto the applet root panel. Use for errors that prevent
      * the editor to be resolved.
@@ -235,6 +247,8 @@ public class SwiftlyApplet extends JApplet
         // remove the borders from the splitpane so we can add our own later
         UIManager.put("SplitPaneDivider.border", new BasicBorders.MarginBorder());
     }
+
+    private final Set<ShutdownNotifier> _notifiers = new HashSet<ShutdownNotifier>();
 
     private final SwiftlyContext _ctx = new SwiftlyContext(this);
     private final Translator _translator = _ctx.getTranslator();

@@ -129,33 +129,6 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void addPathElement (ClientObject caller, PathElement element,
-                                ConfirmListener listener)
-        throws InvocationException
-    {
-        // check that the caller has the correct permissions to perform this action
-        requireWritePermissions(caller);
-
-        // for now just update the room object
-        getRoomObj().addPathElement(element);
-
-        listener.requestProcessed();
-    }
-
-    // from interface ProjectRoomProvider
-    public void updatePathElement (ClientObject caller, PathElement element,
-                                   ConfirmListener listener)
-        throws InvocationException
-    {
-        // check that the caller has the correct permissions to perform this action
-        requireWritePermissions(caller);
-
-        getRoomObj().updatePathElements(element);
-
-        listener.requestProcessed();
-    }
-
-    // from interface ProjectRoomProvider
     public void deletePathElement (ClientObject caller, final int elementId,
                                    final ConfirmListener listener)
         throws InvocationException
@@ -292,8 +265,8 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void updateDocument (ClientObject caller, int elementId, String text,
-                                ConfirmListener listener)
+    public void updateTextDocument (ClientObject caller, int elementId, String text,
+                                    ConfirmListener listener)
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
