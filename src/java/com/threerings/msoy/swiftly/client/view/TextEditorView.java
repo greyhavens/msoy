@@ -208,13 +208,13 @@ public class TextEditorView extends JEditorPane
     // from DocumentEditor
     public void loadDocument (SwiftlyTextDocument doc)
     {
+        SwiftlyTextDocument currentDoc = _document;
+        _document = doc;
+
         // only refresh the text if the text data has changed in the new document
-        if (!doc.getText().equals(_document.getText())) {
+        if (!doc.contentsEqual(currentDoc)) {
             documentTextChanged();
         }
-
-        // update the document reference to point at the new document
-        _document = doc;
     }
 
     // from DocumentEditor

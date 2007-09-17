@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.swiftly.client.view;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,13 +45,13 @@ public class ImageEditorView extends JPanel
     // from DocumentEditor
     public void loadDocument (SwiftlyImageDocument doc)
     {
+        SwiftlyImageDocument currentDoc = _document;
+        _document = doc;
+
         // only refresh the image if the image data has changed in the new document
-        if (!Arrays.equals(doc.getImage(), _document.getImage())) {
+        if (!doc.contentsEqual(currentDoc)) {
             displayImage();
         }
-
-        // update the document reference to point at the new document
-        _document = doc;
     }
 
     // from DocumentEditor

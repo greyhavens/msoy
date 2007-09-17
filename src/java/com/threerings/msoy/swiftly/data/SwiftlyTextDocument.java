@@ -58,7 +58,7 @@ public class SwiftlyTextDocument extends SwiftlyDocument
         }
 
         /** Mime types supported by this document type. */
-        private String[] _mimeTypes = {"text/"};
+        private final String[] _mimeTypes = {"text/"};
 
         /** The path to the icon for a text document */
         private static final String DOCUMENT_ICON = "/rsrc/icons/swiftly/text_document.png";
@@ -162,6 +162,14 @@ public class SwiftlyTextDocument extends SwiftlyDocument
         return _encoding;
     }
 
+    /**
+     * Returns true if the contents of this document are the same as the supplied document.
+     */
+    public boolean contentsEqual (SwiftlyTextDocument other)
+    {
+        return getText().equals(other.getText());
+    }
+
     @Override // from SwiftlyDocument
     public InputStream getModifiedData ()
         throws IOException
@@ -184,11 +192,11 @@ public class SwiftlyTextDocument extends SwiftlyDocument
     }
 
     /** Document contents, inefficiently stored entirely in memory. */
-    protected String _text;
+    private String _text;
 
     /** If this document has received any input. */
-    protected boolean _changed = false;
+    private boolean _changed = false;
 
     /** Text encoding. */
-    protected transient String _encoding;
+    private transient String _encoding;
 }

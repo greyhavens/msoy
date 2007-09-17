@@ -6,6 +6,7 @@ package com.threerings.msoy.swiftly.data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 
@@ -55,7 +56,7 @@ public class SwiftlyImageDocument extends SwiftlyBinaryDocument
         }
 
         /** Mime types supported by this document type. */
-        private String[] _mimeTypes = {"image/"};
+        private final String[] _mimeTypes = {"image/"};
 
         /** The path to the icon for an image document */
         private static final String DOCUMENT_ICON = "/rsrc/icons/swiftly/image_document.png";
@@ -88,6 +89,14 @@ public class SwiftlyImageDocument extends SwiftlyBinaryDocument
         return _image;
     }
 
+    /**
+     * Returns true if the contents of this document are the same as the supplied document.
+     */
+    public boolean contentsEqual (SwiftlyImageDocument other)
+    {
+        return Arrays.equals(getImage(), other.getImage());
+    }
+
     @Override // from SwiftlyBinaryDocument
     public void setData (InputStream data, String encoding)
         throws IOException
@@ -104,5 +113,5 @@ public class SwiftlyImageDocument extends SwiftlyBinaryDocument
     }
 
     /** Image contents, inefficiently stored entirely in memory. */
-    protected byte[] _image;
+    private byte[] _image;
 }

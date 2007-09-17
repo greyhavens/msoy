@@ -485,7 +485,7 @@ public class ProjectController
    {
        ImageEditor editor = _openImageEditors.get(doc.getPathElement());
 
-       // if a TextEditor is working on this document, tell it to load the new document reference
+       // if an ImageEditor is working on this document, tell it to load the new document reference
        if (editor == null) {
            return;
        }

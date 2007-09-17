@@ -18,12 +18,11 @@ public class RequestId
     @Override // from Object
     public boolean equals (Object other)
     {
-        if (other instanceof RequestId) {
-            return id == ((RequestId)other).id;
-
-        } else {
+        if (!(other instanceof RequestId)) {
             return false;
         }
+
+        return id == ((RequestId)other).id;
     }
 
     @Override // from Object
