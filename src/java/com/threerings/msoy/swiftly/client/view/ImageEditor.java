@@ -8,10 +8,6 @@ import com.threerings.msoy.swiftly.data.SwiftlyImageDocument;
 /**
  * A component to view/edit SwiftlyImageDocuments.
  */
-public interface ImageEditor
+public interface ImageEditor extends DocumentEditor<SwiftlyImageDocument, ImageEditor>
 {
-    /**
-     * Inform the ImageEditor display the supplied SwiftlyImageDocument.
-     */
-    public void loadDocument (SwiftlyImageDocument doc);
 }

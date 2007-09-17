@@ -17,4 +17,9 @@ public interface AccessControlComponent
      * Show a view for the user having read only access.
      */
     public void showReadOnlyAccess ();
+
+    /**
+     * Register an object to receive notification when this AccessControlComponent is removed.
+     */
+    public void addAccessControlRemovalNotifier (RemovalNotifier<AccessControlComponent> notifier);
 }

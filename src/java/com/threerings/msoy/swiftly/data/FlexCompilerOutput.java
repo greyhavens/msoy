@@ -99,6 +99,12 @@ public class FlexCompilerOutput
     }
 
     // from CompilerOutput interface
+    public boolean hasPath ()
+    {
+        return _path != null;
+    }
+
+    // from CompilerOutput interface
     public String getFileName ()
     {
         return _fileName;

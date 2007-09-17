@@ -35,19 +35,21 @@ import com.threerings.msoy.swiftly.client.model.ProjectModel;
 import com.threerings.msoy.swiftly.client.model.ProjectModelDelegate;
 import com.threerings.msoy.swiftly.client.model.RequestId;
 import com.threerings.msoy.swiftly.client.view.AccessControlComponent;
-import com.threerings.msoy.swiftly.client.view.BuildResultComponent;
-import com.threerings.msoy.swiftly.client.view.BuildResultGutter;
+import com.threerings.msoy.swiftly.client.view.CompilerOutputComponent;
+import com.threerings.msoy.swiftly.client.view.CompilerOutputGutter;
 import com.threerings.msoy.swiftly.client.view.Console;
 import com.threerings.msoy.swiftly.client.view.ConsoleView;
 import com.threerings.msoy.swiftly.client.view.CreateFileDialog;
 import com.threerings.msoy.swiftly.client.view.EditorToolBar;
 import com.threerings.msoy.swiftly.client.view.EditorToolBarView;
+import com.threerings.msoy.swiftly.client.view.ImageEditor;
 import com.threerings.msoy.swiftly.client.view.ImageEditorView;
 import com.threerings.msoy.swiftly.client.view.PositionLocation;
 import com.threerings.msoy.swiftly.client.view.ProgressBar;
 import com.threerings.msoy.swiftly.client.view.ProgressBarView;
 import com.threerings.msoy.swiftly.client.view.ProjectPanel;
 import com.threerings.msoy.swiftly.client.view.ProjectPanelView;
+import com.threerings.msoy.swiftly.client.view.RemovalNotifier;
 import com.threerings.msoy.swiftly.client.view.SwiftlyWindow;
 import com.threerings.msoy.swiftly.client.view.SwiftlyWindowView;
 import com.threerings.msoy.swiftly.client.view.TabbedEditor;
@@ -190,8 +192,7 @@ public class ProjectController
         _progress = progress;
         _window = window;
 
-        // register the access control components
-        _accessControlComponents.add(toolbar);
+        addAccessControlComponent(_toolbar);
 
         // handle the initial state for access control
         if (_projModel.haveWriteAccess()) {
@@ -270,7 +271,7 @@ public class ProjectController
    public void directoryAdditionFailed (RequestId requestId, PathElement element,
                                         DocumentModelDelegate.FailureCode error)
    {
-       // TODO Auto-generated method stub
+       _notifier.showError(_translator.xlate(error));
    }
 
    // from DocumentModelDelegate
@@ -305,13 +306,17 @@ public class ProjectController
        // TODO: show a confirm message here, don't just rely on the set listener
        // update the actions as the tree will not have a selection anymore
        updateActions();
+
+       _openTextEditors.remove(element);
+       _openImageEditors.remove(element);
+       _compilerOutputComponents.remove(element);
    }
 
    // from DocumentModelDelegate
    public void pathElementRenameFailed (RequestId requestId, PathElement element,
                                         DocumentModelDelegate.FailureCode error)
    {
-       // TODO Auto-generated method stub
+       _notifier.showError(_translator.xlate(error));
    }
 
    // from DocumentModelDelegate
@@ -331,7 +336,7 @@ public class ProjectController
    public void buildRequestSucceeded (RequestId requestId, BuildResult result)
    {
        buildFinished();
-       handleBuildResult(result);
+       handleNewBuildResult(result);
    }
 
    // from ProjectModelDelegate
@@ -347,7 +352,7 @@ public class ProjectController
    {
        buildFinished();
        _notifier.showInfo(_translator.xlate("m.build_export_succeeded"));
-       handleBuildResult(result);
+       handleNewBuildResult(result);
    }
 
    // from interface TreeModelListener
@@ -464,21 +469,27 @@ public class ProjectController
    }
 
    // from SwiftlyDocumentListener
-   public void documentUpdated (SwiftlyDocument doc)
+   public void documentUpdated (SwiftlyTextDocument doc)
    {
-       // TODO: this needs to look up ANY SwiftlyDocumentEditor, not just the text ones
-       // lookup the TextEditor working on this document
        TextEditor editor = _openTextEditors.get(doc.getPathElement());
 
        // if a TextEditor is working on this document, tell it to load the new document reference
        if (editor == null) {
            return;
        }
-       // TODO: XXX do this without the cast. Might have to look up the document myself? Might
-       // need to do this in the model.. but how to do it without the cast?
-       if (doc instanceof SwiftlyTextDocument) {
-           editor.loadDocument((SwiftlyTextDocument)doc);
+       editor.loadDocument(doc);
+   }
+
+   // from SwiftlyDocumentListener
+   public void documentUpdated (SwiftlyImageDocument doc)
+   {
+       ImageEditor editor = _openImageEditors.get(doc.getPathElement());
+
+       // if a TextEditor is working on this document, tell it to load the new document reference
+       if (editor == null) {
+           return;
        }
+       editor.loadDocument(doc);
    }
 
    // from DocumentContentsListener
@@ -550,10 +561,10 @@ public class ProjectController
     // from SwiftlyDocumentEditor
     public void editTextDocument (SwiftlyTextDocument document, PositionLocation location)
     {
-        PathElement pathElement = document.getPathElement();
+        PathElement element = document.getPathElement();
         TextEditorView textEditor = new TextEditorView(this, _translator, document, this);
-        TabbedEditorScroller scroller = new TabbedEditorScroller(textEditor, pathElement);
-        BuildResultGutter gutter = new BuildResultGutter(textEditor, scroller);
+        TabbedEditorScroller scroller = new TabbedEditorScroller(textEditor, element);
+        CompilerOutputGutter gutter = new CompilerOutputGutter(textEditor, scroller);
         scroller.setRowHeaderView(gutter);
 
         // disable editing if the user does not have write access on the project
@@ -563,35 +574,33 @@ public class ProjectController
             textEditor.showReadOnlyAccess();
         }
 
-        // TODO: XXX figure out how to remove these components when a tab is closed etc.
-        // possibly have the components take an interface to register
-        // themselves and remove themselves in notifyAdd/Remove
-        _openTextEditors.put(pathElement, textEditor);
-        _buildResultComponents.add(gutter);
-        _accessControlComponents.add(textEditor);
-
-        // if we have a current build result, inform the gutter
-        BuildResult result = _projModel.getLastBuildResult();
-        if (result != null) {
-            gutter.displayBuildResult(result);
-        }
+        // display any existing compiler output in the gutter
+        displayCurrentCompilerOutput(element, gutter);
 
         // add the tab
-        _editorTabs.addEditorTab(scroller, pathElement);
+        _editorTabs.addEditorTab(scroller, element);
 
         // goto the starting location
         textEditor.gotoLocation(location);
+
+        // add the various components to the removal/tracking collections
+        addTextEditor(element, textEditor);
+        addCompilerOutputComponent(element, gutter);
+        addAccessControlComponent(textEditor);
     }
 
     // from SwiftlyDocumentEditor
     public void editImageDocument (SwiftlyImageDocument document)
     {
-        PathElement pathElement = document.getPathElement();
+        PathElement element = document.getPathElement();
         ImageEditorView imageEditor = new ImageEditorView(document);
-        TabbedEditorScroller scroller = new TabbedEditorScroller(imageEditor, pathElement);
+        TabbedEditorScroller scroller = new TabbedEditorScroller(imageEditor, element);
 
         // add the tab
-        _editorTabs.addEditorTab(scroller, pathElement);
+        _editorTabs.addEditorTab(scroller, element);
+
+        // add the ImageEditor to the removal/tracking collections
+        addImageEditor(element, imageEditor);
     }
 
     // from SwiftlyDocumentEditor
@@ -674,7 +683,6 @@ public class ProjectController
         }
 
         if (element.getType() == PathElement.Type.FILE) {
-            // close the tab if the pathelement was open in the editor
             _editorTabs.closePathElementTab(element);
 
         } else if (element.getType() == PathElement.Type.DIRECTORY) {
@@ -690,7 +698,6 @@ public class ProjectController
      */
     private void buildStarted ()
     {
-        // disable the action on this client
         _buildAction.setEnabled(false);
         _buildExportAction.setEnabled(false);
         _progress.showProgress(_projModel.getLastBuildTime());
@@ -701,7 +708,6 @@ public class ProjectController
      */
     private void buildFinished ()
     {
-        // enable the action on this client if the user has write access
         if (_projModel.haveWriteAccess()) {
             _buildAction.setEnabled(true);
             _buildExportAction.setEnabled(true);
@@ -712,7 +718,7 @@ public class ProjectController
     /**
      * Handle displaying a new BuildResult.
      */
-    private void handleBuildResult (BuildResult result)
+    private void handleNewBuildResult (BuildResult result)
     {
         if (result.buildSuccessful()) {
             _notifier.showInfo(_translator.xlate("m.build_succeeded"));
@@ -721,25 +727,113 @@ public class ProjectController
             _notifier.showError(_translator.xlate("m.build_failed"));
         }
 
-        // TODO XXX refactor. its not a build result display, its a compiler output display.
-        // only send the compiler output to the path element displaying that line, or to the console
-        // if we can't find a gutter to stick it in
-        for (BuildResultComponent component : _buildResultComponents) {
-            component.displayBuildResult(result);
-        }
-
         _console.clearConsole();
+        clearCompilerOutputComponents();
+
         for (CompilerOutput line : result.getOutput()) {
             if (line.getLevel() == Level.IGNORE || line.getLevel() == Level.UNKNOWN) {
                 continue;
             }
 
-            if (line.getLineNumber() != -1 && line.getPath() != null) {
+            if (line.hasPath()) {
                  PathElement element = _docModel.findPathElementByPath(line.getPath());
+                 HashSet<CompilerOutputComponent> set = _compilerOutputComponents.get(element);
+                 if (set != null) {
+                     for (CompilerOutputComponent comp : set) {
+                         comp.displayCompilerOutput(line);
+                     }
+                 }
                  _console.appendCompilerOutput(line, element);
 
             } else {
                 _console.appendCompilerOutput(line);
+            }
+        }
+    }
+
+    /**
+     * Registers an AccessControlComponent as being displayed.
+     */
+    private void addAccessControlComponent (AccessControlComponent comp)
+    {
+        _accessControlComponents.add(comp);
+        comp.addAccessControlRemovalNotifier(
+            new SetRemovalHandler<AccessControlComponent> (_accessControlComponents));
+    }
+
+    /**
+     * Registers a TextEditor as displaying the given PathElement.
+     */
+    private void addTextEditor (PathElement element, TextEditor editor)
+    {
+        _openTextEditors.put(element, editor);
+        editor.addDocumentEditorRemovalNotifier(
+            new MapRemovalHandler<PathElement, TextEditor> (_openTextEditors));
+    }
+
+    /**
+     * Registers an ImageEditor as displaying the given PathElement.
+     */
+    private void addImageEditor (PathElement element, ImageEditor editor)
+    {
+        _openImageEditors.put(element, editor);
+        editor.addDocumentEditorRemovalNotifier(
+            new MapRemovalHandler<PathElement, ImageEditor> (_openImageEditors));
+    }
+
+    /**
+     * Registers a CompilerOutputComponent as displaying the given PathElement.
+     */
+    private void addCompilerOutputComponent (PathElement element, CompilerOutputComponent comp)
+    {
+        HashSet<CompilerOutputComponent> set = _compilerOutputComponents.get(element);
+        if (set == null) {
+            set = new HashSet<CompilerOutputComponent>();
+            _compilerOutputComponents.put(element, set);
+        }
+
+        set.add(comp);
+        comp.addCompilerOutputRemovalNotifier(
+            new RemovalNotifier<CompilerOutputComponent> () {
+            public void componentRemoved (CompilerOutputComponent comp) {
+                removeCompilerOutputComponent(comp);
+            }
+        });
+    }
+
+    /**
+     * Removes the given CompilerOutputComponent from the list of open components.
+     */
+    private void removeCompilerOutputComponent (CompilerOutputComponent comp)
+    {
+        for (HashSet<CompilerOutputComponent> set : _compilerOutputComponents.values()) {
+            set.remove(comp);
+        }
+    }
+
+    /**
+     * Displays the current CompilerOutput for the given PathElement in the supplied
+     * CompilerOutputComponent.
+     */
+    private void displayCurrentCompilerOutput (PathElement element, CompilerOutputComponent comp)
+    {
+        if (_projModel.getLastBuildResult() == null) {
+            return;
+        }
+
+        for (CompilerOutput line : _projModel.getLastBuildResult().getOutputForPath(element)) {
+            comp.displayCompilerOutput(line);
+        }
+    }
+
+    /**
+     * Asks all CompilerOutputComponents to clear any output they are currently displaying.
+     */
+    private void clearCompilerOutputComponents ()
+    {
+        for (Set<CompilerOutputComponent> set : _compilerOutputComponents.values()) {
+            for (CompilerOutputComponent comp : set) {
+                comp.clearCompilerOutput();
             }
         }
     }
@@ -811,17 +905,26 @@ public class ProjectController
     }
 
     /** A list of files that can be created by this SwiftlyDocumentEditor. */
-    private List<SwiftlyDocumentEditor.FileTypes> _createableFileTypes =
+    private final List<SwiftlyDocumentEditor.FileTypes> _createableFileTypes =
         new ArrayList<SwiftlyDocumentEditor.FileTypes>();
 
-    /** A hashmap mapping PathElements to the TextEditors working on them. */
-    private Map<PathElement, TextEditor> _openTextEditors = new HashMap<PathElement, TextEditor>();
+    /** Maps PathElements to the TextEditors working on them. */
+    private final Map<PathElement, TextEditor> _openTextEditors =
+        new HashMap<PathElement, TextEditor>();
 
-    /** The set of all components which can display BuildResults. */
-    private Set<BuildResultComponent> _buildResultComponents = new HashSet<BuildResultComponent>();
+    /** Maps PathElements to the ImageEditors working on them. */
+    private final Map<PathElement, ImageEditor> _openImageEditors =
+        new HashMap<PathElement, ImageEditor>();
+
+    /**
+     * Maps PathElements to the components interested in displaying CompilerOutput associated with
+     * that PathElement.
+     */
+    private final Map<PathElement, HashSet<CompilerOutputComponent>> _compilerOutputComponents =
+        new HashMap<PathElement, HashSet<CompilerOutputComponent>>();
 
     /** The set of all components which can display access permissions. */
-    private Set<AccessControlComponent> _accessControlComponents =
+    private final Set<AccessControlComponent> _accessControlComponents =
         new HashSet<AccessControlComponent>();
 
     /** The SwiftlyApplication provides a few useful services from the root view component. */
@@ -836,7 +939,7 @@ public class ProjectController
     private final Console _console;
     private final ProgressBar _progress;
 
-    /** The Actions vended by this controller to the various views. */
+    /** The Actions provided by this controller to the various views. */
     private final Action _buildAction;
     private final Action _buildExportAction;
     private final Action _showConsoleAction;

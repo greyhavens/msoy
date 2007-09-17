@@ -14,11 +14,6 @@ import com.threerings.msoy.swiftly.data.CompilerOutput;
  */
 public class BuildArtifact
 {
-    public BuildArtifact ()
-    {
-        _output = new ArrayList<CompilerOutput>();
-    }
-
     /** Set compiler output file path. */
     public void setOutputFile (File path)
     {
@@ -65,14 +60,14 @@ public class BuildArtifact
     }
 
     /** All compiler output. */
-    protected List<CompilerOutput> _output;
+    private final List<CompilerOutput> _output = new ArrayList<CompilerOutput>();
 
     /** Did the build succeed. */
-    protected boolean _buildSuccess = true;
+    private boolean _buildSuccess = true;
 
     /** The time, in milliseconds, that the full build task took. */
-    protected long _buildTime;
+    private long _buildTime;
 
     /** The build output file. */
-    protected File _outputFile;
+    private File _outputFile;
 }

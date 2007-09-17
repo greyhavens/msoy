@@ -4,6 +4,8 @@
 package com.threerings.msoy.swiftly.client.view;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -26,7 +28,22 @@ public class ImageEditorView extends JPanel
         displayImage();
     }
 
-    // from ImageEditor
+    @Override // from JComponent
+    public void removeNotify ()
+    {
+        super.removeNotify();
+        for (RemovalNotifier<ImageEditor> notifier : _notifiers) {
+            notifier.componentRemoved(this);
+        }
+    }
+
+    // from DocumentEditor
+    public SwiftlyImageDocument getSwiftlyDocument ()
+    {
+        return _document;
+    }
+
+    // from DocumentEditor
     public void loadDocument (SwiftlyImageDocument doc)
     {
         // only refresh the image if the image data has changed in the new document
@@ -36,12 +53,21 @@ public class ImageEditorView extends JPanel
 
         // update the document reference to point at the new document
         _document = doc;
-     }
+    }
+
+    // from DocumentEditor
+    public void addDocumentEditorRemovalNotifier (RemovalNotifier<ImageEditor> notifier)
+    {
+        _notifiers.add(notifier);
+    }
 
     private void displayImage ()
     {
         _label.setIcon(new ImageIcon(_document.getImage()));
     }
+
+    private final Set<RemovalNotifier<ImageEditor>> _notifiers =
+        new HashSet<RemovalNotifier<ImageEditor>>();
 
     private SwiftlyImageDocument _document;
     private JLabel _label;

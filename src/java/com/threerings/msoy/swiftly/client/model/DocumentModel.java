@@ -21,6 +21,7 @@ import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyImageDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
@@ -309,8 +310,15 @@ public class DocumentModel
             // Re-bind transient instance variables
             doc.lazarus(_roomObj.pathElements);
 
-            for (SwiftlyDocumentListener listener : _swiftlyDocumentListeners) {
-                listener.documentUpdated(doc);
+            // TODO: anyway to avoid this cast?
+            if (doc instanceof SwiftlyTextDocument) {
+                for (SwiftlyDocumentListener listener : _swiftlyDocumentListeners) {
+                    listener.documentUpdated((SwiftlyTextDocument)doc);
+                }
+            } else if (doc instanceof SwiftlyImageDocument) {
+                for (SwiftlyDocumentListener listener : _swiftlyDocumentListeners) {
+                    listener.documentUpdated((SwiftlyImageDocument)doc);
+                }
             }
 
         } else if (event.getName().equals(ProjectRoomObject.PATH_ELEMENTS)) {

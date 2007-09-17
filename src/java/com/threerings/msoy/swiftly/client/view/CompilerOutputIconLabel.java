@@ -13,9 +13,12 @@ import javax.swing.JLabel;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.CompilerOutput.Level;
 
-public class BuildResultIconLabel extends JLabel
+/**
+ * A label that displays an icon reflecting a CompilerOutput line.
+ */
+public class CompilerOutputIconLabel extends JLabel
 {
-    public BuildResultIconLabel (CompilerOutput line)
+    public CompilerOutputIconLabel (CompilerOutput line)
     {
         _lines = new ArrayList<CompilerOutput>();
         _highestLevel = line.getLevel();
@@ -50,11 +53,11 @@ public class BuildResultIconLabel extends JLabel
     // TODO add icon for UNKNOWN and IGNORE. question mark icon?
     static {
         _levelIcons.put(CompilerOutput.Level.INFO, new ImageIcon(
-            BuildResultIconLabel.class.getResource("/rsrc/icons/swiftly/result-info.png")));
+            CompilerOutputIconLabel.class.getResource("/rsrc/icons/swiftly/result-info.png")));
         _levelIcons.put(CompilerOutput.Level.WARNING, new ImageIcon(
-            BuildResultIconLabel.class.getResource("/rsrc/icons/swiftly/result-warn.png")));
+            CompilerOutputIconLabel.class.getResource("/rsrc/icons/swiftly/result-warn.png")));
         _levelIcons.put(CompilerOutput.Level.ERROR, new ImageIcon(
-            BuildResultIconLabel.class.getResource("/rsrc/icons/swiftly/result-error.png")));
+            CompilerOutputIconLabel.class.getResource("/rsrc/icons/swiftly/result-error.png")));
     }
 
     /** The CompilerOutput lines being displayed by this label. */

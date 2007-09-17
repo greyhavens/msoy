@@ -42,6 +42,11 @@ public interface CompilerOutput
     public String getPath();
 
     /**
+     * Returns true if this message has a path associated with it.
+     */
+    public boolean hasPath();
+
+    /**
      * Returns the compiler's text message.
      */
     public String getMessage();
