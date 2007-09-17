@@ -27,9 +27,11 @@ public class SwiftlyWindowView extends JPanel
     implements SwiftlyWindow
 {
     public SwiftlyWindowView (ProjectPanelView projectPanel, EditorToolBarView toolbar,
-                              TabbedEditorView editorTabs, CrowdContext ctx, Translator translator)
+                              TabbedEditorView editorTabs, CrowdContext ctx, Translator translator,
+                              AttachCallback callback)
     {
         _translator = translator;
+        _callback = callback;
 
         setLayout(new VGroupLayout(
                       GroupLayout.STRETCH, GroupLayout.STRETCH, 5, GroupLayout.TOP));
@@ -80,6 +82,13 @@ public class SwiftlyWindowView extends JPanel
         }
     }
 
+    @Override // from JComponent
+    public void addNotify ()
+    {
+        super.addNotify();
+        _callback.windowAttached();
+    }
+
     // from SwiftlyWindow
     // TODO: this is only being used to name directories. Consider simplifying
     public String showSelectPathElementNameDialog (PathElement.Type pathElementType)
@@ -119,6 +128,7 @@ public class SwiftlyWindowView extends JPanel
     }
 
     private final Translator _translator;
+    private final AttachCallback _callback;
 
     private final JSplitPane _contentPane;
     private final JSplitPane _rightPane;

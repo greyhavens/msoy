@@ -12,6 +12,14 @@ import com.threerings.msoy.swiftly.data.PathElement;
 public interface SwiftlyWindow
 {
     /**
+     * A callback for when the window is attached to the SwiftlyApplication and displayed.
+     */
+    public interface AttachCallback
+    {
+        public void windowAttached ();
+    }
+    
+    /**
      * Shows a modal, internal frame dialog prompting the user to name a {@link PathElement}
      * @param pathElementType the type of {@link PathElement} to name
      * @return the name of the path element. null if the user clicked cancel

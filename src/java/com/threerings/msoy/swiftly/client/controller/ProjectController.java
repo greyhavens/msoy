@@ -4,8 +4,6 @@
 package com.threerings.msoy.swiftly.client.controller;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -59,6 +57,7 @@ import com.threerings.msoy.swiftly.client.view.TabbedEditorScroller;
 import com.threerings.msoy.swiftly.client.view.TabbedEditorView;
 import com.threerings.msoy.swiftly.client.view.TextEditor;
 import com.threerings.msoy.swiftly.client.view.TextEditorView;
+import com.threerings.msoy.swiftly.client.view.SwiftlyWindow.AttachCallback;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.PathElement;
@@ -77,7 +76,7 @@ public class ProjectController
                PathElementListener, OccupantListener, TreeModelListener,
                TreeSelectionListener, AccessControlListener, EditorActionProvider,
                DocumentModelDelegate, ProjectModelDelegate, DocumentUpdateDispatcher,
-               DocumentContentListener, ShutdownNotifier
+               DocumentContentListener, ShutdownNotifier, AttachCallback
 {
     public ProjectController (ProjectModel projModel, DocumentModel docModel, SwiftlyContext ctx)
     {
@@ -160,31 +159,12 @@ public class ProjectController
         EditorToolBarView toolbar = new EditorToolBarView(this, _translator, progress);
         TabbedEditorView editorTabs = new TabbedEditorView();
         SwiftlyWindowView window =
-            new SwiftlyWindowView(projectPanel, toolbar, editorTabs, ctx, _translator);
+            new SwiftlyWindowView(projectPanel, toolbar, editorTabs, ctx, _translator, this);
         _notifier = _app.createNotifier();
         _console = new ConsoleView(_translator, this);
 
         // register the controller as a listener for tree model changes
         _treeModel.addTreeModelListener(this);
-
-        // XXX TODO: WTF? figure out a way to do this in not an insane way
-        window.addComponentListener(new ComponentAdapter () {
-            @Override
-            public void componentShown (ComponentEvent event)
-            {
-                // start with the chat panel hidden if no one else is in the room
-                if (_projModel.occupantCount() > 1) {
-                    _window.showChatPanel();
-                } else {
-                    _window.hideChatPanel();
-                }
-            }
-        });
-
-        _app.attachWindow(window);
-        // XXX TEMP
-        window.setVisible(false);
-        window.setVisible(true);
 
         // store references to the various views for later use
         _projectPanel = projectPanel;
@@ -208,6 +188,9 @@ public class ProjectController
 
         // register the controller as a ShutdownNotifier on the application
         _app.addShutdownNotifier(this);
+
+        // attach and display the SwiftlyWindow to the SwiftlyApplication
+        _app.attachWindow(window);
     }
 
     // from PathElementEditor
@@ -617,6 +600,17 @@ public class ProjectController
     {
         // destroy the console window
         _console.destroy();
+    }
+
+    // from AttachCallback
+    public void windowAttached ()
+    {
+        // start with the chat panel hidden if no one else is in the room
+        if (_projModel.occupantCount() > 1) {
+            _window.showChatPanel();
+        } else {
+            _window.hideChatPanel();
+        }
     }
 
     /**

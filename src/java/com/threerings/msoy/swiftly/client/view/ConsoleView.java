@@ -100,7 +100,7 @@ public class ConsoleView extends JFrame
     // from Console
     public void destroy ()
     {
-        destroy();
+        dispose();
     }
 
     /**
