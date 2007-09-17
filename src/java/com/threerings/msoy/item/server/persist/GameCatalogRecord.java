@@ -4,22 +4,16 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 /** Catalog Records for Games. */
+@TableGenerator(name="catalogId", pkColumnValue="GAME_CATALOG")
 public class GameCatalogRecord extends CatalogRecord<GameRecord>
 {
     // AUTO-GENERATED: FIELDS START
-    /** The qualified column identifier for the {@link #item} field. */
-    public static final ColumnExp ITEM_C =
-        new ColumnExp(GameCatalogRecord.class, ITEM);
-
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(GameCatalogRecord.class, ITEM_ID);
-
     /** The qualified column identifier for the {@link #listedDate} field. */
     public static final ColumnExp LISTED_DATE_C =
         new ColumnExp(GameCatalogRecord.class, LISTED_DATE);

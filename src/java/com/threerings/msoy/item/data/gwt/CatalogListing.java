@@ -40,6 +40,9 @@ public class CatalogListing
     /** A constant that encodes the rarity of a listed item. */
     public static final int RARITY_RARE = 5;
 
+    /** The unique id for this listing. */
+    public int catalogId;
+
     /** The item being listed. */
     public Item item;
 

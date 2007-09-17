@@ -4,18 +4,16 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 /** Catalog Records for Documents. */
+@TableGenerator(name="catalogId", pkColumnValue="DOCUMENT_CATALOG")
 public class DocumentCatalogRecord extends CatalogRecord<DocumentRecord>
 {
     // AUTO-GENERATED: FIELDS START
-    /** The qualified column identifier for the {@link #item} field. */
-    public static final ColumnExp ITEM_C =
-        new ColumnExp(DocumentCatalogRecord.class, ITEM);
-
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
         new ColumnExp(DocumentCatalogRecord.class, ITEM_ID);

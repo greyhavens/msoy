@@ -8,7 +8,10 @@ import java.util.Date;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.GeneratedValue;
+import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.Transient;
 
@@ -22,15 +25,13 @@ import com.threerings.msoy.item.data.gwt.CatalogListing;
 /**
  * Represents a catalog listing of an item.
  */
-@Entity
-@Table
+@Entity(indices={
+    @Index(name="itemIndex", fields={ CatalogRecord.ITEM_ID } )
+})
 public abstract class CatalogRecord<T extends ItemRecord> extends PersistentRecord
     implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #item} field. */
-    public static final String ITEM = "item";
-
     /** The column identifier for the {@link #itemId} field. */
     public static final String ITEM_ID = "itemId";
 
@@ -56,14 +57,14 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     public static final String REPRICE_COUNTER = "repriceCounter";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
-    /** A reference to the listed item. This value is not persisted. */
-    @Transient
-    public ItemRecord item;
-
-    /** The ID of the listed item. */
+    /** A unique id assigned to this catalog listing. */
     @Id
+    @GeneratedValue(generator="catalogId", strategy=GenerationType.TABLE, allocationSize=1)
+    public int catalogId;
+
+    /** The id of the listed item. */
     public int itemId;
 
     /** The time this item was listed in the catalog. */
@@ -87,6 +88,10 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     /** A somewhat opaque counter representing how badly this record needs to be repriced. */
     public int repriceCounter;
 
+    /** A reference to the listed item. This value is not persisted. */
+    @Transient
+    public ItemRecord item;
+
     public CatalogRecord ()
     {
         super();
@@ -103,6 +108,7 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     public CatalogListing toListing ()
     {
         CatalogListing listing = new CatalogListing();
+        listing.catalogId = catalogId;
         listing.item = item.toItem();
         listing.listedDate = new Date(listedDate.getTime());
         // the name part of the MemberName is filled in by ItemManager

@@ -4,18 +4,16 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 /** Catalog Records for Audios. */
+@TableGenerator(name="catalogId", pkColumnValue="AUDIO_CATALOG")
 public class AudioCatalogRecord extends CatalogRecord<AudioRecord>
 {
     // AUTO-GENERATED: FIELDS START
-    /** The qualified column identifier for the {@link #item} field. */
-    public static final ColumnExp ITEM_C =
-        new ColumnExp(AudioCatalogRecord.class, ITEM);
-
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
         new ColumnExp(AudioCatalogRecord.class, ITEM_ID);

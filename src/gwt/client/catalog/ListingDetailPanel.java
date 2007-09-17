@@ -80,7 +80,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // TODO: add a method to BaseItemDetailPanel that allows things to be tacked on
         int row = getRowCount();
-        CommentsPanel comments = new CommentsPanel(detail.item.getType(), detail.item.itemId);
+        CommentsPanel comments = new CommentsPanel(detail.item.getType(), listing.catalogId);
         setWidget(row, 0, comments);
         getFlexCellFormatter().setColSpan(row, 0, 2);
     }

@@ -90,6 +90,7 @@ public abstract class ItemRepository<
 
         _ctx.registerMigration(
             getItemClass(), new EntityMigration.Rename(10007, "flags", "flagged"));
+        _ctx.registerMigration(getCatalogClass(), new CatalogIdMigration(getCatalogClass()));
     }
 
     /**
