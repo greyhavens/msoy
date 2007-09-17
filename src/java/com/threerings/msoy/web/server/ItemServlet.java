@@ -148,8 +148,10 @@ public class ItemServlet extends MsoyServiceServlet
             detail.item = record.toItem();
 
             // its ratings...
-            RatingRecord<ItemRecord> rr = repo.getRating(iident.itemId, mrec.memberId);
-            detail.memberRating = (rr == null) ? 0 : rr.rating;
+            if (memberId != 0) {
+                RatingRecord<ItemRecord> rr = repo.getRating(iident.itemId, memberId);
+                detail.memberRating = (rr == null) ? 0 : rr.rating;
+            }
 
             // the creator's name
             MemberRecord crrec = MsoyServer.memberRepo.loadMember(record.creatorId);
