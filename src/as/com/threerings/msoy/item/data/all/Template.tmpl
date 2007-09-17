@@ -1,0 +1,52 @@
+//
+// $Id$
+
+package com.threerings.msoy.item.data.all {
+
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+
+/**
+ * Contains the runtime data for a Template item.
+ */
+public class Template extends Item
+{
+    // TODO: add custom item fields
+
+    public function Template ()
+    {
+    }
+
+    // from Item
+    override public function getPreviewMedia () :MediaDesc
+    {
+        return getThumbnailMedia();
+    }
+
+    // from Item
+    override public function isConsistent () :Boolean
+    {
+        return super.isConsistent(); // TODO: check consistency
+    }
+
+    // from Item
+    override public function getType () :int
+    {
+        return TEMPLATE;
+    }
+
+    // from interface Streamable
+    override public function readObject (ins :ObjectInputStream) :void
+    {
+        super.readObject(ins);
+        // TODO: read custom item fields
+    }
+
+    // from interface Streamable
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+        // TODO: write custom item fields
+    }
+}
+}

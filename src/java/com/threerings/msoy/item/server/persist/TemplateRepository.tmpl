@@ -1,0 +1,74 @@
+//
+// $Id$
+
+package com.threerings.msoy.item.server.persist;
+
+import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.jdbc.depot.annotation.Entity;
+
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagRecord;
+
+import static com.threerings.msoy.Log.log;
+
+/**
+ * Manages the persistent store of {@link TemplateRecord} items.
+ */
+public class TemplateRepository extends ItemRepository<
+    TemplateRecord,
+    TemplateCloneRecord,
+    TemplateCatalogRecord,
+    TemplateRatingRecord>
+{
+    @Entity(name="TemplateTagRecord")
+    public static class TemplateTagRecord extends TagRecord
+    {
+    }
+
+    @Entity(name="TemplateTagHistoryRecord")
+    public static class TemplateTagHistoryRecord extends TagHistoryRecord
+    {
+    }
+
+    public TemplateRepository (PersistenceContext ctx)
+    {
+        super(ctx);
+    }
+
+    @Override
+    protected Class<TemplateRecord> getItemClass ()
+    {
+        return TemplateRecord.class;
+    }
+
+    @Override
+    protected Class<TemplateCatalogRecord> getCatalogClass ()
+    {
+        return TemplateCatalogRecord.class;
+    }
+
+    @Override
+    protected Class<TemplateCloneRecord> getCloneClass ()
+    {
+        return TemplateCloneRecord.class;
+    }
+
+    @Override
+    protected Class<TemplateRatingRecord> getRatingClass ()
+    {
+        return TemplateRatingRecord.class;
+    }
+
+    @Override
+    protected TagRecord createTagRecord ()
+    {
+        return new TemplateTagRecord();
+    }
+
+    @Override
+    protected TagHistoryRecord createTagHistoryRecord ()
+    {
+        return new TemplateTagHistoryRecord();
+    }
+}
