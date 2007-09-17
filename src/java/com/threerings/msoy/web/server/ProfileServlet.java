@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.UserAction;
 
@@ -90,7 +91,8 @@ public class ProfileServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update member's profile " +
-                    "[who=" + memrec.who() + "].", pe);
+                    "[who=" + memrec.who() +
+                    ", profile=" + StringUtil.fieldsToString(profile) + "].", pe);
         }
     }
 
