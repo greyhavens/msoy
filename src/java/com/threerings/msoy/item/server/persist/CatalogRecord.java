@@ -72,19 +72,19 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
 
     /** The amount of flow it costs to purchase a clone of this item. */
     public int flowCost;
-    
+
     /** The amount of gold it costs to purchase a clone of this item. */
     public int goldCost;
 
     /** The rarity of this item; {@see Item#rarity}. */
     public int rarity;
-    
+
     /** The number of times this item has been purchased. */
     public int purchases;
-    
+
     /** The number of times this item has been returned. */
     public int returns;
-    
+
     /** A somewhat opaque counter representing how badly this record needs to be repriced. */
     public int repriceCounter;
 
