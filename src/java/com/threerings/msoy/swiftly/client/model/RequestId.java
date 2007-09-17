@@ -8,11 +8,9 @@ package com.threerings.msoy.swiftly.client.model;
  */
 public class RequestId
 {
-    public final int id;
-
     public RequestId (int id)
     {
-        this.id = id;
+        _id = id;
     }
 
     @Override // from Object
@@ -22,12 +20,14 @@ public class RequestId
             return false;
         }
 
-        return id == ((RequestId)other).id;
+        return _id == ((RequestId)other)._id;
     }
 
     @Override // from Object
     public int hashCode ()
     {
-        return id;
+        return _id;
     }
+
+    private final int _id;
 }
