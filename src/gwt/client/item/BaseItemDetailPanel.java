@@ -150,6 +150,16 @@ public abstract class BaseItemDetailPanel extends FlexTable
     }
 
     /**
+     * Adds a widget below the primary item detail contents.
+     */
+    protected void addBelow (Widget widget)
+    {
+        int row = getRowCount();
+        setWidget(row, 0, widget);
+        getFlexCellFormatter().setColSpan(row, 0, 3);
+    }
+
+    /**
      * Overrideable by subclasses to enable avatar scale editing.
      */
     protected boolean allowAvatarScaleEditing ()

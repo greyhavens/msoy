@@ -78,11 +78,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             _details.add(delist);
         }
 
-        // TODO: add a method to BaseItemDetailPanel that allows things to be tacked on
-        int row = getRowCount();
-        CommentsPanel comments = new CommentsPanel(detail.item.getType(), listing.catalogId);
-        setWidget(row, 0, comments);
-        getFlexCellFormatter().setColSpan(row, 0, 2);
+        // display a comment interface below the listing details
+        addBelow(new CommentsPanel(detail.item.getType(), listing.catalogId));
     }
 
     // @Override // BaseItemDetailPanel
