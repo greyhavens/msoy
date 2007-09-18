@@ -14,17 +14,17 @@ public interface PathElementEditor
     /**
      * Requests that the given path element be opened in the editor.
      * */
-    public void openPathElement (final PathElement pathElement);
+    public void openPathElement (PathElement element);
 
     /**
      * Requests that the given path element be opened in the editor, at the supplied
      * row and column.
      * @param highlight indicates whether the new location should be highlighted briefly
      */
-    public void openPathElement (PathElement pathElement, PositionLocation location);
+    public void openPathElement (PathElement element, PositionLocation location);
 
     /**
      * Renames a {@link PathElement} with the given String.
      */
-    public void renamePathElement (final PathElement element, final String newName);
+    public void renamePathElement (PathElement element, String newName);
 }

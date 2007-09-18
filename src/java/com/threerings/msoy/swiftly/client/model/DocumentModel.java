@@ -13,7 +13,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.swiftly.client.SwiftlyContext;
 import com.threerings.msoy.swiftly.client.controller.DocumentContentListener;
 import com.threerings.msoy.swiftly.client.controller.NewPathElement;
-import com.threerings.msoy.swiftly.client.controller.SwiftlyDocumentEditor;
 import com.threerings.msoy.swiftly.client.event.PathElementListener;
 import com.threerings.msoy.swiftly.client.event.SwiftlyDocumentListener;
 import com.threerings.msoy.swiftly.client.model.DocumentModelDelegate.FailureCode;
@@ -217,33 +216,38 @@ public class DocumentModel
     }
 
     /**
-     * Request that the given pathElement be loaded at the PositionLocation supplied.
+     * Request that the SwiftlyDocument associated with the given PathElement be loaded.
      */
-    // TODO: this should have a delegate for calling back success/failure
-    public void openPathElement (final SwiftlyDocumentEditor editor, final PathElement pathElement,
-                                 final PositionLocation location)
+    public RequestId loadDocument (final PathElement element, final PositionLocation location,
+                                   final DocumentModelDelegate delegate)
     {
-        // If the document is already in the dset, load that.
-        SwiftlyDocument doc = _roomObj.getDocument(pathElement);
+        final RequestId requestId = _requestFactory.generateId();
+
+        // If the document is already in the dset, return the loaded document.
+        SwiftlyDocument doc = _roomObj.getDocument(element);
         if (doc != null) {
-            doc.loadInEditor(editor, location);
-            return;
+            delegate.documentLoaded(requestId, doc, location);
+            return requestId;
         }
 
         // Otherwise load the document from the backend.
-        _roomObj.service.loadDocument(_client, pathElement, new ConfirmListener() {
+        _roomObj.service.loadDocument(_client, element, new ConfirmListener() {
             public void requestProcessed () {
-                SwiftlyDocument doc = _roomObj.getDocument(pathElement);
+                SwiftlyDocument doc = _roomObj.getDocument(element);
                 if (doc == null) {
-                    // _ctx.showErrorMessage(_ctx.xlate("e.load_document_failed"));
+                    delegate.documentLoadingFailed(
+                        requestId, element, FailureCode.LOAD_DOCUMENT_FAILED);
                 } else {
-                    doc.loadInEditor(editor, location);
+                    delegate.documentLoaded(requestId, doc, location);
                 }
             }
             public void requestFailed (String reason) {
-                // _ctx.showErrorMessage(_ctx.xlate(reason));
+                delegate.documentLoadingFailed(
+                    requestId, element, FailureCode.LOAD_DOCUMENT_FAILED);
             }
         });
+
+        return requestId;
     }
 
     /** Called to add a PathElementListener. */

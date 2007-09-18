@@ -1,5 +1,5 @@
-//
-// $Id$
+
+//$Id$
 
 package com.threerings.msoy.swiftly.client.model;
 
@@ -244,7 +244,7 @@ public class ProjectModel
 
         } else {
             // the user no longer has access to anything, log them off.
-            // TODO: _ctx.getClient().logoff(false);
+            _client.logoff(false);
         }
     }
 

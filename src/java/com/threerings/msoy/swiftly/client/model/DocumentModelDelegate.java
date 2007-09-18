@@ -5,7 +5,9 @@ package com.threerings.msoy.swiftly.client.model;
 
 import com.threerings.msoy.swiftly.client.TranslationMessage;
 import com.threerings.msoy.swiftly.client.controller.NewPathElement;
+import com.threerings.msoy.swiftly.client.view.PositionLocation;
 import com.threerings.msoy.swiftly.data.PathElement;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 
 /**
@@ -14,6 +16,7 @@ import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 public interface DocumentModelDelegate
 {
     public enum FailureCode implements TranslatableError {
+        LOAD_DOCUMENT_FAILED (new BundleTranslationMessage("e.load_document_failed")),
         ADD_DOCUMENT_FAILED (new BundleTranslationMessage("e.add_document_failed")),
         UPDATE_DOCUMENT_FAILED (new BundleTranslationMessage("e.update_document_failed")),
         ADD_DIRECTORY_FAILED (new BundleTranslationMessage("e.add_directory_failed")),
@@ -33,6 +36,14 @@ public interface DocumentModelDelegate
 
         private final TranslationMessage _msg;
     }
+
+    /**
+     * Success/failure callbacks for a loadDocument call.
+     */
+    public void documentLoaded (RequestId requestId, SwiftlyDocument doc,
+                                PositionLocation location);
+    public void documentLoadingFailed (RequestId requestId, PathElement element,
+                                       FailureCode error);
 
     /**
      * Success/failure callbacks for an addDocument call.

@@ -1,5 +1,5 @@
-//
-// $Id$
+
+//$Id$
 
 package com.threerings.msoy.swiftly.client.controller;
 
@@ -194,355 +194,368 @@ public class ProjectController
     }
 
     // from PathElementEditor
-    public void openPathElement (final PathElement pathElement)
+    public void openPathElement (PathElement element)
     {
-        // If the tab already exists, then select it and be done.
-        if (_editorTabs.selectTab(pathElement) != null) {
+        // If a tab is already opened for this PathElment, then select it and be done.
+        if (_editorTabs.selectTab(element) != null) {
             return;
         }
 
-        // otherwise ask that the element be opened at the starting position
-        openPathElement(pathElement, new PositionLocation(1, 1, false));
+        if (element.getType() == PathElement.Type.FILE) {
+            openDocument(element);
+        }
     }
 
     // from PathElementEditor
-   public void openPathElement (PathElement pathElement, PositionLocation location)
-   {
-       // If the tab already exists, then select it and tell it to move to row and column.
-       TabbedEditorComponent tab;
-       if ((tab = _editorTabs.selectTab(pathElement)) != null) {
-           tab.gotoLocation(location);
-           return;
-       }
+    public void openPathElement (PathElement element, PositionLocation location)
+    {
+        // If a tab is already opened for this PathElment, then select it and go to the location.
+        TabbedEditorComponent tab;
+        if ((tab = _editorTabs.selectTab(element)) != null) {
+            tab.gotoLocation(location);
+            return;
+        }
 
-       // otherwise ask the model to open the document
-       _docModel.openPathElement(this, pathElement, location);
-   }
+        if (element.getType() == PathElement.Type.FILE) {
+            openDocument(element, location);
+        }
+    }
 
-   // from PathElementEditor
-   public void renamePathElement (final PathElement element, final String newName)
-   {
-       _docModel.renamePathElement(element, newName, this);
-   }
+    // from PathElementEditor
+    public void renamePathElement (final PathElement element, final String newName)
+    {
+        _docModel.renamePathElement(element, newName, this);
+    }
 
-   // from OccupantListener
-   public void userEntered (String username)
-   {
-       _notifier.showInfo(_translator.xlate("m.user_entered", username));
-       _window.showChatPanel();
-   }
+    // from OccupantListener
+    public void userEntered (String username)
+    {
+        _notifier.showInfo(_translator.xlate("m.user_entered", username));
+        _window.showChatPanel();
+    }
 
-   // from OccupantListener
-   public void userLeft (String username)
-   {
-       _notifier.showInfo(_translator.xlate("m.user_left", username));
-       if (_projModel.occupantCount() == 1) {
-           _window.hideChatPanel();
-       }
-   }
+    // from OccupantListener
+    public void userLeft (String username)
+    {
+        _notifier.showInfo(_translator.xlate("m.user_left", username));
+        if (_projModel.occupantCount() == 1) {
+            _window.hideChatPanel();
+        }
+    }
 
-   // from DocumentModelDelegate
-   public void documentAdditionFailed (RequestId requestId, NewPathElement newElement,
-                                       DocumentModelDelegate.FailureCode error)
-   {
-       _notifier.showError(_translator.xlate(error));
-   }
+    // from DocumentModelDelegate
+    public void documentLoaded (RequestId requestId, SwiftlyDocument doc, PositionLocation location)
+    {
+        doc.loadInEditor(this, location);
+    }
 
-   // from DocumentModelDelegate
-   public void documentAdded (RequestId requestId, NewPathElement newElement)
-   {
-       // TODO: feedback in the ProjectPanel, highlight the new document? Also, show a different
-       // message here rather than relying on the set listener
-   }
+    // from DocumentModelDelegate
+    public void documentLoadingFailed (RequestId requestId, PathElement element,
+        DocumentModelDelegate.FailureCode error)
+    {
+        _notifier.showError(_translator.xlate(error));
+    }
 
-   // from DocumentModelDelegate
-   public void directoryAdditionFailed (RequestId requestId, PathElement element,
-                                        DocumentModelDelegate.FailureCode error)
-   {
-       _notifier.showError(_translator.xlate(error));
-   }
+    // from DocumentModelDelegate
+    public void documentAdditionFailed (RequestId requestId, NewPathElement newElement,
+        DocumentModelDelegate.FailureCode error)
+    {
+        _notifier.showError(_translator.xlate(error));
+    }
 
-   // from DocumentModelDelegate
-   public void directoryAdded (RequestId requestId, PathElement element)
-   {
-       // TODO Auto-generated method stub
-   }
+    // from DocumentModelDelegate
+    public void documentAdded (RequestId requestId, NewPathElement newElement)
+    {
+        // TODO: feedback in the ProjectPanel, highlight the new document? Also, show a different
+        // message here rather than relying on the set listener
+    }
 
-   // from DocumentModelDelegate
-   public void textDocumentUpdateFailed (RequestId requestId, SwiftlyTextDocument doc,
-                                         DocumentModelDelegate.FailureCode error)
-   {
-       _notifier.showError(_translator.xlate(error));
-   }
+    // from DocumentModelDelegate
+    public void directoryAdditionFailed (RequestId requestId, PathElement element,
+        DocumentModelDelegate.FailureCode error)
+    {
+        _notifier.showError(_translator.xlate(error));
+    }
 
-   // from DocumentModelDelegate
-   public void textDocumentUpdated (RequestId requestId, SwiftlyTextDocument doc)
-   {
-       // nada
-   }
+    // from DocumentModelDelegate
+    public void directoryAdded (RequestId requestId, PathElement element)
+    {
+        // TODO Auto-generated method stub
+    }
 
-   // from DocumentModelDelegate
-   public void documentDeleteFailed (RequestId requestId, PathElement element,
-                                     DocumentModelDelegate.FailureCode error)
-   {
-       _notifier.showError(_translator.xlate(error));
-   }
+    // from DocumentModelDelegate
+    public void textDocumentUpdateFailed (RequestId requestId, SwiftlyTextDocument doc,
+        DocumentModelDelegate.FailureCode error)
+    {
+        _notifier.showError(_translator.xlate(error));
+    }
 
-   // from DocumentModelDelegate
-   public void documentDeleted (RequestId requestId, PathElement element)
-   {
-       _editorTabs.closePathElementTab(element);
+    // from DocumentModelDelegate
+    public void textDocumentUpdated (RequestId requestId, SwiftlyTextDocument doc)
+    {
+        // nada
+    }
 
-       // TODO: show a confirm message here, don't just rely on the set listener
-       // update the actions as the tree will not have a selection anymore
-       updateActions();
+    // from DocumentModelDelegate
+    public void documentDeleteFailed (RequestId requestId, PathElement element,
+        DocumentModelDelegate.FailureCode error)
+    {
+        _notifier.showError(_translator.xlate(error));
+    }
 
-       _openTextEditors.remove(element);
-       _openImageEditors.remove(element);
-       _compilerOutputComponents.remove(element);
-   }
+    // from DocumentModelDelegate
+    public void documentDeleted (RequestId requestId, PathElement element)
+    {
+        _editorTabs.closePathElementTab(element);
 
-   // from DocumentModelDelegate
-   public void pathElementRenameFailed (RequestId requestId, PathElement element,
-                                        DocumentModelDelegate.FailureCode error)
-   {
-       _notifier.showError(_translator.xlate(error));
-   }
+        // TODO: show a confirm message here, don't just rely on the set listener
+        // update the actions as the tree will not have a selection anymore
+        updateActions();
 
-   // from DocumentModelDelegate
-   public void pathElementRenamed (RequestId requestId, PathElement element)
-   {
-       // TODO Auto-generated method stub
-   }
+        _openTextEditors.remove(element);
+        _openImageEditors.remove(element);
+        _compilerOutputComponents.remove(element);
+    }
 
-   // from ProjectModelDelegate
-   public void buildRequestFailed (RequestId requestId, ProjectModelDelegate.FailureCode error)
-   {
-       buildFinished();
-       _notifier.showError(_translator.xlate(error));
-   }
+    // from DocumentModelDelegate
+    public void pathElementRenameFailed (RequestId requestId, PathElement element,
+        DocumentModelDelegate.FailureCode error)
+    {
+        _notifier.showError(_translator.xlate(error));
+    }
 
-   // from ProjectModelDelegate
-   public void buildRequestSucceeded (RequestId requestId, BuildResult result)
-   {
-       buildFinished();
-       handleNewBuildResult(result);
-   }
+    // from DocumentModelDelegate
+    public void pathElementRenamed (RequestId requestId, PathElement element)
+    {
+        // TODO Auto-generated method stub
+    }
 
-   // from ProjectModelDelegate
-   public void buildAndExportRequestFailed (RequestId requestId,
-                                            ProjectModelDelegate.FailureCode error)
-   {
-       buildFinished();
-       _notifier.showError(_translator.xlate(error));
-   }
+    // from ProjectModelDelegate
+    public void buildRequestFailed (RequestId requestId, ProjectModelDelegate.FailureCode error)
+    {
+        buildFinished();
+        _notifier.showError(_translator.xlate(error));
+    }
 
-   // from ProjectModelDelegate
-   public void buildAndExportRequestSucceeded (RequestId requestId, BuildResult result)
-   {
-       buildFinished();
-       _notifier.showInfo(_translator.xlate("m.build_export_succeeded"));
-       handleNewBuildResult(result);
-   }
+    // from ProjectModelDelegate
+    public void buildRequestSucceeded (RequestId requestId, BuildResult result)
+    {
+        buildFinished();
+        handleNewBuildResult(result);
+    }
 
-   // from interface TreeModelListener
-   public void treeNodesChanged (TreeModelEvent e)
-   {
-       Object[] children = e.getChildren();
-       // children is null if the root node changed
-       if (children == null) {
-           return;
-       }
+    // from ProjectModelDelegate
+    public void buildAndExportRequestFailed (RequestId requestId,
+        ProjectModelDelegate.FailureCode error)
+    {
+        buildFinished();
+        _notifier.showError(_translator.xlate(error));
+    }
 
-       // this assumes single selection mode for the tree
-       PathElementTreeNode node = (PathElementTreeNode)children[0];
-       if (node.getElement().getType() == PathElement.Type.FILE) {
-           _editorTabs.updateTabTitleAt(node.getElement());
-       }
-   }
+    // from ProjectModelDelegate
+    public void buildAndExportRequestSucceeded (RequestId requestId, BuildResult result)
+    {
+        buildFinished();
+        _notifier.showInfo(_translator.xlate("m.build_export_succeeded"));
+        handleNewBuildResult(result);
+    }
 
-   // from interface TreeModelListener
-   public void treeNodesInserted (TreeModelEvent e)
-   {
-       // nada
-   }
+    // from interface TreeModelListener
+    public void treeNodesChanged (TreeModelEvent e)
+    {
+        Object[] children = e.getChildren();
+        // children is null if the root node changed
+        if (children == null) {
+            return;
+        }
 
-   // from interface TreeModelListener
-   public void treeNodesRemoved (TreeModelEvent e)
-   {
-       // nada
-   }
+        // this assumes single selection mode for the tree
+        PathElementTreeNode node = (PathElementTreeNode)children[0];
+        if (node.getElement().getType() == PathElement.Type.FILE) {
+            _editorTabs.updateTabTitleAt(node.getElement());
+        }
+    }
 
-   // from interface TreeModelListener
-   public void treeStructureChanged (TreeModelEvent e)
-   {
-       // nada
-   }
+    // from interface TreeModelListener
+    public void treeNodesInserted (TreeModelEvent e)
+    {
+        // nada
+    }
 
-   // from interface TreeSelectionListener
-   public void valueChanged (TreeSelectionEvent e)
-   {
-       // the selection has changed, update any actions
-       updateActions();
+    // from interface TreeModelListener
+    public void treeNodesRemoved (TreeModelEvent e)
+    {
+        // nada
+    }
 
-       PathElement element = _projectPanel.getSelectedPathElement();
-       if (element == null) {
-           return;
-       }
+    // from interface TreeModelListener
+    public void treeStructureChanged (TreeModelEvent e)
+    {
+        // nada
+    }
 
-       if (element.getType() == PathElement.Type.FILE) {
-           openPathElement(element);
-       }
-   }
+    // from interface TreeSelectionListener
+    public void valueChanged (TreeSelectionEvent e)
+    {
+        // the selection has changed, update any actions
+        updateActions();
 
-   // from AccessControlListener
-   public void readOnlyAccessGranted ()
-   {
-       updateActions();
+        PathElement element = _projectPanel.getSelectedPathElement();
+        if (element == null) {
+            return;
+        }
 
-       for (AccessControlComponent component : _accessControlComponents) {
-           component.showReadOnlyAccess();
-       }
-   }
+        openPathElement(element);
+    }
 
-   // from AccessControlListener
-   public void writeAccessGranted ()
-   {
-       updateActions();
+    // from AccessControlListener
+    public void readOnlyAccessGranted ()
+    {
+        updateActions();
 
-       for (AccessControlComponent component : _accessControlComponents) {
-           component.showWriteAccess();
-       }
-   }
+        for (AccessControlComponent component : _accessControlComponents) {
+            component.showReadOnlyAccess();
+        }
+    }
 
-   // from PathElementListener
-   public void elementAdded (PathElement element)
-   {
-       _treeModel.elementAdded(element);
-       // inform the user that an element was added
-       _notifier.showInfo(_translator.xlate("m.element_added", element.getName()));
-   }
+    // from AccessControlListener
+    public void writeAccessGranted ()
+    {
+        updateActions();
 
-   // from PathElementListener
-   public void elementRemoved (PathElement element)
-   {
-       _treeModel.elementRemoved(element);
-       // inform the user that an element was deleted
-       _notifier.showInfo(_translator.xlate("m.element_deleted", element.getName()));
-       // update the actions as the tree may have lost the element it had selected
-       updateActions();
-   }
+        for (AccessControlComponent component : _accessControlComponents) {
+            component.showWriteAccess();
+        }
+    }
 
-   // from PathElementListener
-   public void elementUpdated (PathElement element)
-   {
-       _treeModel.elementUpdated(element);
-       _editorTabs.updateTabTitleAt(element);
-       // inform the user that an element was updated
-       _notifier.showInfo(_translator.xlate("m.element_updated", element.getName()));
-   }
+    // from PathElementListener
+    public void elementAdded (PathElement element)
+    {
+        _treeModel.elementAdded(element);
+        // inform the user that an element was added
+        _notifier.showInfo(_translator.xlate("m.element_added", element.getName()));
+    }
 
-   // from SwiftlyDocumentListener
-   public void documentAdded (SwiftlyDocument doc)
-   {
-       // nada
-   }
+    // from PathElementListener
+    public void elementRemoved (PathElement element)
+    {
+        _treeModel.elementRemoved(element);
+        // inform the user that an element was deleted
+        _notifier.showInfo(_translator.xlate("m.element_deleted", element.getName()));
+        // update the actions as the tree may have lost the element it had selected
+        updateActions();
+    }
 
-   // from SwiftlyDocumentListener
-   public void documentRemoved (SwiftlyDocument doc)
-   {
-       // nada
-   }
+    // from PathElementListener
+    public void elementUpdated (PathElement element)
+    {
+        _treeModel.elementUpdated(element);
+        _editorTabs.updateTabTitleAt(element);
+        // inform the user that an element was updated
+        _notifier.showInfo(_translator.xlate("m.element_updated", element.getName()));
+    }
 
-   // from SwiftlyDocumentListener
-   public void documentUpdated (SwiftlyTextDocument doc)
-   {
-       TextEditor editor = _openTextEditors.get(doc.getPathElement());
+    // from SwiftlyDocumentListener
+    public void documentAdded (SwiftlyDocument doc)
+    {
+        // nada
+    }
 
-       // if a TextEditor is working on this document, tell it to load the new document reference
-       if (editor == null) {
-           return;
-       }
-       editor.loadDocument(doc);
-   }
+    // from SwiftlyDocumentListener
+    public void documentRemoved (SwiftlyDocument doc)
+    {
+        // nada
+    }
 
-   // from SwiftlyDocumentListener
-   public void documentUpdated (SwiftlyImageDocument doc)
-   {
-       ImageEditor editor = _openImageEditors.get(doc.getPathElement());
+    // from SwiftlyDocumentListener
+    public void documentUpdated (SwiftlyTextDocument doc)
+    {
+        TextEditor editor = _openTextEditors.get(doc.getPathElement());
 
-       // if an ImageEditor is working on this document, tell it to load the new document reference
-       if (editor == null) {
-           return;
-       }
-       editor.loadDocument(doc);
-   }
+        // if a TextEditor is working on this document, tell it to load the updated document
+        if (editor == null) {
+            return;
+        }
+        editor.loadDocument(doc);
+    }
 
-   // from DocumentContentsListener
-   public void documentContentsChanged (SwiftlyTextDocument doc) {
-       // lookup the TextEditor working on this document
-       TextEditor editor = _openTextEditors.get(doc.getPathElement());
+    // from SwiftlyDocumentListener
+    public void documentUpdated (SwiftlyImageDocument doc)
+    {
+        ImageEditor editor = _openImageEditors.get(doc.getPathElement());
 
-       // if a TextEditor is working on this document, tell it to refresh
-       if (editor == null) {
-           return;
-       }
-       editor.documentTextChanged();
-   }
+        // if an ImageEditor is working on this document, tell it to load the updated document
+        if (editor == null) {
+            return;
+        }
+        editor.loadDocument(doc);
+    }
 
-   // from DocumentUpdateDispatcher
-   public void documentTextChanged (SwiftlyTextDocument doc, String text)
-   {
-       _docModel.updateTextDocument(doc, text, this);
-   }
+    // from DocumentContentsListener
+    public void documentContentsChanged (SwiftlyTextDocument doc) {
+        // lookup the TextEditor working on this document
+        TextEditor editor = _openTextEditors.get(doc.getPathElement());
 
-   // from EditorActionProvider
-   public Action getAddFileAction ()
-   {
-       return _addFileAction;
-   }
+        // if a TextEditor is working on this document, tell it to refresh
+        if (editor == null) {
+            return;
+        }
+        editor.documentTextChanged();
+    }
 
-   // from EditorActionProvider
-   public Action getBuildAction ()
-   {
-       return _buildAction;
-   }
+    // from DocumentUpdateDispatcher
+    public void documentTextChanged (SwiftlyTextDocument doc, String text)
+    {
+        _docModel.updateTextDocument(doc, text, this);
+    }
 
-   // from EditorActionProvider
-   public Action getBuildExportAction ()
-   {
-       return _buildExportAction;
-   }
+    // from EditorActionProvider
+    public Action getAddFileAction ()
+    {
+        return _addFileAction;
+    }
 
-   // from EditorActionProvider
-   public Action getCloseCurrentTabAction ()
-   {
-       return _closeCurrentTabAction;
-   }
+    // from EditorActionProvider
+    public Action getBuildAction ()
+    {
+        return _buildAction;
+    }
 
-   // from EditorActionProvider
-   public Action getShowConsoleAction ()
-   {
-       return _showConsoleAction;
-   }
+    // from EditorActionProvider
+    public Action getBuildExportAction ()
+    {
+        return _buildExportAction;
+    }
 
-   // from EditorActionProvider
-   public Action getDeleteFileAction ()
-   {
-       return _deleteFileAction;
-   }
+    // from EditorActionProvider
+    public Action getCloseCurrentTabAction ()
+    {
+        return _closeCurrentTabAction;
+    }
 
-   // from EditorActionProvider
-   public Action getRenameFileAction ()
-   {
-       return _renameFileAction;
-   }
+    // from EditorActionProvider
+    public Action getShowConsoleAction ()
+    {
+        return _showConsoleAction;
+    }
 
-   // from EditorActionProvider
-   public Action getUploadFileAction ()
-   {
-       return _uploadFileAction;
-   }
+    // from EditorActionProvider
+    public Action getDeleteFileAction ()
+    {
+        return _deleteFileAction;
+    }
+
+    // from EditorActionProvider
+    public Action getRenameFileAction ()
+    {
+        return _renameFileAction;
+    }
+
+    // from EditorActionProvider
+    public Action getUploadFileAction ()
+    {
+        return _uploadFileAction;
+    }
 
     // from SwiftlyDocumentEditor
     public void editTextDocument (SwiftlyTextDocument document, PositionLocation location)
@@ -611,6 +624,26 @@ public class ProjectController
         } else {
             _window.hideChatPanel();
         }
+    }
+
+    /**
+     * Requests that the SwiftlyDocument associated with the given PathElement be loaded and
+     * displayed in the SwiftlyDocumentEditor.
+     */
+    private void openDocument (PathElement element)
+    {
+        // otherwise ask that the element be opened at the starting position
+        openDocument(element, new PositionLocation(1, 1, false));
+    }
+
+    /**
+     * Requests that the SwiftlyDocument associated with the given PathElement be loaded and
+     * displayed in the SwiftlyDocumentEditor at the the provided PositionLocation.
+     */
+    private void openDocument (PathElement element, PositionLocation location)
+    {
+        // ask the model to load the document. the delegate will display the document.
+        _docModel.loadDocument(element, location, this);
     }
 
     /**
@@ -718,14 +751,14 @@ public class ProjectController
             }
 
             if (line.hasPath()) {
-                 PathElement element = _docModel.findPathElementByPath(line.getPath());
-                 HashSet<CompilerOutputComponent> set = _compilerOutputComponents.get(element);
-                 if (set != null) {
-                     for (CompilerOutputComponent comp : set) {
-                         comp.displayCompilerOutput(line);
-                     }
-                 }
-                 _console.appendCompilerOutput(line, element);
+                PathElement element = _docModel.findPathElementByPath(line.getPath());
+                HashSet<CompilerOutputComponent> set = _compilerOutputComponents.get(element);
+                if (set != null) {
+                    for (CompilerOutputComponent comp : set) {
+                        comp.displayCompilerOutput(line);
+                    }
+                }
+                _console.appendCompilerOutput(line, element);
 
             } else {
                 _console.appendCompilerOutput(line);
@@ -860,11 +893,12 @@ public class ProjectController
     /** Initialize the file types that can be created. */
     private void initFileTypes ()
     {
-        _createableFileTypes.add(
-            new FileTypes(_translator.xlate("m.filetypes." + MediaDesc.TEXT_ACTIONSCRIPT),
-                          MediaDesc.mimeTypeToString(MediaDesc.TEXT_ACTIONSCRIPT)));
-        _createableFileTypes.add(new FileTypes(_translator.xlate("m.filetypes." + MediaDesc.TEXT_PLAIN),
-                                               MediaDesc.mimeTypeToString(MediaDesc.TEXT_PLAIN)));
+        _createableFileTypes.add(new FileTypes(
+            _translator.xlate("m.filetypes." + MediaDesc.TEXT_ACTIONSCRIPT),
+            MediaDesc.mimeTypeToString(MediaDesc.TEXT_ACTIONSCRIPT)));
+        _createableFileTypes.add(new FileTypes(
+            _translator.xlate("m.filetypes." + MediaDesc.TEXT_PLAIN),
+            MediaDesc.mimeTypeToString(MediaDesc.TEXT_PLAIN)));
     }
 
     /** A list of files that can be created by this SwiftlyDocumentEditor. */
