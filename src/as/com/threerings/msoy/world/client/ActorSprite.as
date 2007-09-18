@@ -104,15 +104,14 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
-     * Add some sort of nonstandard decoration to the sprite.
-     * The decoration should already be painting its full size.
+     * Add some sort of nonstandard decoration to the sprite.  The decoration should already be
+     * painting its full size.
      *
-     * @param constraints an object containing properties that will
-     *        control layout and other bits.
-     *        Supported properties:
-     *        toolTip <String> any tool tip text.
-     *        weight <Number> a sort order, higher numbers will be closer to the name. (0 if missing)
-     *        bounds <Rectangle> hand-specify the bounds (useful for SWFs)
+     * @param constraints an object containing properties that will control layout and other bits.
+     * Supported properties:
+     *   toolTip <String> any tool tip text.
+     *   weight <Number> a sort order, higher numbers will be closer to the name. (0 if missing)
+     *   bounds <Rectangle> hand-specify the bounds (useful for SWFs)
      */
     public function addDecoration (dec :DisplayObject, constraints :Object = null) :void
     {
