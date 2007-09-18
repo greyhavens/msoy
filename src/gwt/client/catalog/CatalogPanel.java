@@ -86,12 +86,14 @@ public class CatalogPanel extends VerticalPanel
                 CCatalog.msgs.sortByRating(),
                 CCatalog.msgs.sortByListDate(),
                 CCatalog.msgs.sortByPriceAsc(),
-                CCatalog.msgs.sortByPriceDesc() },
+                CCatalog.msgs.sortByPriceDesc(),
+                CCatalog.msgs.sortByPurchases(), },
             new byte[] {
                 CatalogListing.SORT_BY_RATING,
                 CatalogListing.SORT_BY_LIST_DATE,
                 CatalogListing.SORT_BY_PRICE_ASC,
-                CatalogListing.SORT_BY_PRICE_DESC },
+                CatalogListing.SORT_BY_PRICE_DESC,
+                CatalogListing.SORT_BY_PURCHASES, },
             0); // index of CatalogListing.SORT_BY_RATING
         _sortBy = CatalogListing.SORT_BY_RATING;
         _header.setWidget(0, 1, _searchSortPanel);

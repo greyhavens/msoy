@@ -28,7 +28,9 @@ public class CatalogListing
     public static final byte SORT_BY_PRICE_ASC = 4;
     /** A constant for requesting catalog search results to be returned in a certain order. */
     public static final byte SORT_BY_PRICE_DESC = 5;
-    
+    /** A constant for requesting catalog search results to be returned in a certain order. */
+    public static final byte SORT_BY_PURCHASES = 6;
+
     /** A constant that encodes the rarity of a listed item. */
     public static final int RARITY_PLENTIFUL = 1;
     /** A constant that encodes the rarity of a listed item. */
@@ -54,10 +56,16 @@ public class CatalogListing
 
     /** The amount of flow it costs to purchase this item, if it's listed, else zero. */
     public int flowCost;
-    
+
     /** The amount of gold it costs to purchase this item, if it's listed, else zero. */
     public int goldCost;
 
     /** The rarity of this item, if it's listed, else zero. */
     public int rarity;
+
+    /** The number of purchases of this item. */
+    public int purchases;
+
+    /** The number of returns of this item. */
+    public int returns;
 }

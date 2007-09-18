@@ -414,6 +414,10 @@ public abstract class ItemRepository<
             addOrderByPrice(obExprs, obOrders, OrderBy.Order.DESC);
             addOrderByRating(obExprs, obOrders);
             break;
+        case CatalogListing.SORT_BY_PURCHASES:
+            addOrderByPurchases(obExprs, obOrders);
+            addOrderByRating(obExprs, obOrders);
+            break;
         default:
             throw new IllegalArgumentException(
                 "Sort method not implemented [sortBy=" + sortBy + "]");
@@ -900,6 +904,14 @@ public abstract class ItemRepository<
                           new Mul(new ColumnExp(getCatalogClass(), CatalogRecord.GOLD_COST),
                                   FLOW_FOR_GOLD)));
         orders.add(order);
+    }
+
+    protected void addOrderByPurchases (ArrayList<SQLExpression> exprs,
+                                        ArrayList<OrderBy.Order> orders)
+    {
+        // TODO: someday make an indexed column that represents (purchases-returns)
+        exprs.add(new ColumnExp(getCatalogClass(), CatalogRecord.PURCHASES));
+        orders.add(OrderBy.Order.DESC);
     }
 
     protected ColumnExp getItemColumn (String cname)

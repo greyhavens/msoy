@@ -116,6 +116,8 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
         listing.flowCost = flowCost;
         listing.goldCost = goldCost;
         listing.rarity = rarity;
+        listing.purchases = purchases;
+        listing.returns = returns;
         return listing;
     }
 

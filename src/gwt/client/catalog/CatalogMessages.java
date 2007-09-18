@@ -48,6 +48,14 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String listingDelist();
 
   /**
+   * Translated "Purchases: {0}".
+   * 
+   * @return translated "Purchases: {0}"
+   * @gwt.key listingPurchases
+   */
+  String listingPurchases(String arg0);
+
+  /**
    * Translated "(clear)".
    * 
    * @return translated "(clear)"
@@ -102,6 +110,14 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key catalogCreatorFilter
    */
   String catalogCreatorFilter(String arg0);
+
+  /**
+   * Translated "Purchases".
+   * 
+   * @return translated "Purchases"
+   * @gwt.key sortByPurchases
+   */
+  String sortByPurchases();
 
   /**
    * Translated "No {0} items match the query: {1}".

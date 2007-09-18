@@ -37,6 +37,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _panel = panel;
 
         _listed.setText(CCatalog.msgs.listingListed(_lfmt.format(listing.listedDate)));
+        _purchases.setText(CCatalog.msgs.listingPurchases("" + listing.purchases));
 
         _extras.add(_price = new FlexTable());
         _price.setCellPadding(0);
@@ -105,6 +106,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         details.add(WidgetUtil.makeShim(1, 10));
         details.add(_listed = new Label());
+        details.add(_purchases = new Label());
 
         _creator.setMember(_detail.creator, new PopupMenu() {
             protected void addMenuItems () {
@@ -136,7 +138,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected FlexTable _price;
     protected Button _purchase;
-    protected Label _listed;
+    protected Label _purchases, _listed;
 
     protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
 }
