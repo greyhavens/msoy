@@ -23,7 +23,6 @@ import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.PersistenceContext.CacheEvictionFilter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
@@ -627,19 +626,14 @@ public abstract class ItemRepository<
             // delete the item in question
             delete(getItemClass(), itemId);
 
-            // invalidate and delete rating records for this item
-            CacheInvalidator inv = new CacheInvalidator() {
-                public void invalidate (PersistenceContext ctx) {
-                    // invalidate and delete rating records for this item
-                    ctx.cacheTraverse(getRatingClass().getName(), new CacheEvictionFilter<RT>() {
-                        public boolean testForEviction (Serializable key, RT record) {
-                            return record != null && record.itemId == itemId;
-                        }
-                    });
-                }
-            };
+            // delete rating records for this item (and invalidate the cache properly)
             deleteAll(getRatingClass(),
-                      new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId), inv);
+                      new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId),
+                      new CacheInvalidator.TraverseWithFilter<RT>(getRatingClass()) {
+                          public boolean testForEviction (Serializable key, RT record) {
+                              return record != null && record.itemId == itemId;
+                          }
+                      });
 
             // delete tag records relating to this item
             _tagRepo.deleteTags(itemId);
@@ -703,18 +697,12 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         // TODO: this cache eviction might be slow :)
-        CacheInvalidator invalidator = new CacheInvalidator() {
-            public void invalidate (PersistenceContext ctx) {
-                ctx.cacheTraverse(
-                    getRatingClass(), new PersistenceContext.CacheEvictionFilter<RT>() {
-                    protected boolean testForEviction (Serializable key, RT record) {
-                        return (record.itemId == oldItemId);
-                    }
-                });
-            }
-        };
         updatePartial(getRatingClass(), new Where(getRatingColumn(RatingRecord.ITEM_ID), oldItemId),
-                      invalidator, RatingRecord.ITEM_ID, newItemId);
+                      new CacheInvalidator.TraverseWithFilter<RT>(getRatingClass()) {
+                          public boolean testForEviction (Serializable key, RT record) {
+                              return (record.itemId == oldItemId);
+                          }
+                      }, RatingRecord.ITEM_ID, newItemId);
     }
 
     /**

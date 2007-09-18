@@ -282,31 +282,21 @@ public abstract class TagRepository extends DepotRepository
         throws PersistenceException
     {
         // invalidate and delete tag records for this target
-        CacheInvalidator inv = new CacheInvalidator() {
-            public void invalidate (PersistenceContext ctx) {
-                ctx.cacheTraverse(getTagClass().getName(),
-                                  new PersistenceContext.CacheEvictionFilter<TagRecord>() {
-                    public boolean testForEviction (Serializable key, TagRecord record) {
-                        return record != null && record.targetId == targetId;
-                    }
-                });
-            }
-        };
-        deleteAll(getTagClass(), new Where(getTagColumn(TagRecord.TARGET_ID), targetId), inv);
+        deleteAll(getTagClass(), new Where(getTagColumn(TagRecord.TARGET_ID), targetId),
+                  new CacheInvalidator.TraverseWithFilter<TagRecord>(getTagClass()) {
+                      public boolean testForEviction (Serializable key, TagRecord record) {
+                          return record != null && record.targetId == targetId;
+                      }
+                  });
 
         // invalidate and delete tag history records for this target
-        inv = new CacheInvalidator() {
-            public void invalidate (PersistenceContext ctx) {
-                ctx.cacheTraverse(getTagHistoryClass().getName(),
-                                  new PersistenceContext.CacheEvictionFilter<TagHistoryRecord>() {
-                    public boolean testForEviction (Serializable key, TagHistoryRecord record) {
-                        return record != null && record.targetId == targetId;
-                    }
-                });
-            }
-        };
         deleteAll(getTagHistoryClass(),
-                  new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId), inv);
+                  new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId),
+                  new CacheInvalidator.TraverseWithFilter<TagHistoryRecord>(getTagHistoryClass()) {
+                      public boolean testForEviction (Serializable key, TagHistoryRecord record) {
+                          return record != null && record.targetId == targetId;
+                      }
+                  });
     }
 
     protected ColumnExp getTagColumn (String cname)
