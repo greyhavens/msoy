@@ -50,6 +50,19 @@ public class SwiftlyProject
     public boolean remixable;
 
     /**
+     * A version of clone() that will work in GWT land and Java land.
+     */
+    public SwiftlyProject klone ()
+    {
+        SwiftlyProject project = new SwiftlyProject();
+        project.projectId = this.projectId;
+        project.ownerId = this.ownerId;
+        project.projectType = this.projectType;
+        project.remixable = this.remixable;
+        return project;
+    }
+
+    /**
      * Returns the source file name for the project's type.
      * TODO: Store this in the database upon project creation. Until that's
      * implemented changing these will break existing projects, so don't.
@@ -74,7 +87,8 @@ public class SwiftlyProject
      * TODO: Store this in the database upon project creation. Until that's
      * implemented changing these will break existing projects, so don't.
      */
-    public String getOutputFileName () {
+    public String getOutputFileName ()
+    {
         // We can't use a switch statement because the type finals are not actually constants
         if (projectType == Item.GAME) {
             return "SwiftlyGame.swf";

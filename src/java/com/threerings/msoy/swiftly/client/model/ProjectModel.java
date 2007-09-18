@@ -53,11 +53,12 @@ public class ProjectModel
     }
 
     /**
-     * Returns the SwiftlyProject object for this project.
+     * Returns the SwiftlyProject object for this project, cloned and disconnected from the
+     * SwiftlyProject in the dobject.
      */
     public SwiftlyProject getProject ()
     {
-        return _roomObj.project;
+        return _roomObj.project.klone();
     }
 
     /**
