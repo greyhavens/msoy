@@ -208,7 +208,8 @@ public class DocumentModel
 
             public void requestFailed (String reason)
             {
-                delegate.textDocumentUpdateFailed(requestId, doc, FailureCode.UPDATE_DOCUMENT_FAILED);
+                delegate.textDocumentUpdateFailed(requestId, doc,
+                    FailureCode.UPDATE_DOCUMENT_FAILED);
             }
         });
 

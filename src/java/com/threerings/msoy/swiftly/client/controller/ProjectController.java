@@ -746,7 +746,8 @@ public class ProjectController
      */
     private void addTextEditor (PathElement element, TextEditorView editor)
     {
-        new ComponentMapHandler<PathElement, TextEditor>(editor, editor, _openTextEditors);
+        new ComponentMapHandler<PathElement, TextEditor>(
+                editor, editor, element, _openTextEditors);
     }
 
     /**
@@ -754,7 +755,8 @@ public class ProjectController
      */
     private void addImageEditor (PathElement element, ImageEditorView editor)
     {
-        new ComponentMapHandler<PathElement, ImageEditor>(editor, editor, _openImageEditors);
+        new ComponentMapHandler<PathElement, ImageEditor>(
+                editor, editor, element, _openImageEditors);
     }
 
     /**

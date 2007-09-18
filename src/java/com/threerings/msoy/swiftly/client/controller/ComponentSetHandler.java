@@ -24,6 +24,7 @@ public class ComponentSetHandler<C> implements RemovalNotifier<C>
     public ComponentSetHandler (final C component, JComponent jcomp, Set<C> components)
     {
         _components = components;
+        _components.add(component);
 
         // this appears to be the only reliable way to hook into JComponent.removeNotify()
         jcomp.addPropertyChangeListener("ancestor", new PropertyChangeListener () {

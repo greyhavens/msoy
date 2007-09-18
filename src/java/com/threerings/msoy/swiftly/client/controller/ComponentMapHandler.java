@@ -23,9 +23,10 @@ public class ComponentMapHandler <K, C> implements RemovalNotifier<C>
      * @param jcomp The JComponent wrapped by the generic component.
      * @param components The map holding the components being tracked.
      */
-    public ComponentMapHandler (final C component, JComponent jcomp, Map<K, C> components)
+    public ComponentMapHandler (final C component, JComponent jcomp, K key, Map<K, C> components)
     {
         _components = components;
+        _components.put(key, component);
 
         // this appears to be the only reliable way to hook into JComponent.removeNotify()
         jcomp.addPropertyChangeListener("ancestor", new PropertyChangeListener () {
