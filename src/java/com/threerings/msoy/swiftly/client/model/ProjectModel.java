@@ -6,6 +6,7 @@ package com.threerings.msoy.swiftly.client.model;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.threerings.crowd.client.OccupantObserver;
 import com.threerings.crowd.data.OccupantInfo;
@@ -17,6 +18,7 @@ import com.threerings.msoy.swiftly.client.event.OccupantListener;
 import com.threerings.msoy.swiftly.client.model.ProjectModelDelegate.FailureCode;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
+import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -51,6 +53,26 @@ public class ProjectModel
     }
 
     /**
+     * Returns the SwiftlyProject object for this project.
+     */
+    public SwiftlyProject getProject ()
+    {
+        return _roomObj.project;
+    }
+
+    /**
+     * Returns the set (sorted) of collaborators for this project.
+     */
+    public Set<MemberName> getCollaborators ()
+    {
+        Set<MemberName> set = new TreeSet<MemberName>(MemberName.BY_DISPLAY_NAME);
+        for (MemberName member : _roomObj.collaborators) {
+            set.add(member);
+        }
+        return set;
+    }
+
+    /**
      * Returns the number of collaborators currently working on the project.
      */
     public int occupantCount ()
@@ -76,6 +98,14 @@ public class ProjectModel
         }
 
         return (int)_lastResult.getBuildTime();
+    }
+
+    /**
+     * Returns true if the client has owner access to the project.
+     */
+    public boolean haveOwnerAccess ()
+    {
+        return _roomObj.project.ownerId == _member.getMemberId();
     }
 
     /**

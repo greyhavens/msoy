@@ -16,7 +16,7 @@ public interface DocumentEditor<D extends SwiftlyDocument>
     public D getSwiftlyDocument ();
 
     /**
-     * Inform the DocumentEditor display the supplied SwiftlyDocument.
+     * Inform the DocumentEditor to display the supplied SwiftlyDocument.
      */
     public void loadDocument (D doc);
 }
