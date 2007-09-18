@@ -11,12 +11,10 @@ import java.util.Map.Entry;
 
 import javax.swing.JComponent;
 
-import com.threerings.msoy.swiftly.client.view.RemovalNotifier;
-
 /**
  * Generically handles RemovalNotifiers actions with Maps.
  */
-public class ComponentMapHandler <K, C> implements RemovalNotifier<C>
+public class ComponentMapHandler<K, C>
 {
     /**
      * @param component The generic component being tracked.
@@ -40,8 +38,7 @@ public class ComponentMapHandler <K, C> implements RemovalNotifier<C>
         });
     }
 
-    // from RemovalNotifier
-    public void componentRemoved (C component)
+    private void componentRemoved (C component)
     {
         Iterator<Entry<K, C>> iter = _components.entrySet().iterator();
         while (iter.hasNext()) {

@@ -9,12 +9,10 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
-import com.threerings.msoy.swiftly.client.view.RemovalNotifier;
-
 /**
  * Generically handles RemovalNotifiers actions with Sets.
  */
-public class ComponentSetHandler<C> implements RemovalNotifier<C>
+public class ComponentSetHandler<C>
 {
     /**
      * @param component The generic component being tracked.
@@ -38,8 +36,7 @@ public class ComponentSetHandler<C> implements RemovalNotifier<C>
         });
     }
 
-    // from RemovalNotifier
-    public void componentRemoved (C component)
+    private void componentRemoved (C component)
     {
         _components.remove(component);
     }
