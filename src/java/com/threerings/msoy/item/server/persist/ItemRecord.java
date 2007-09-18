@@ -356,5 +356,4 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     }
 
     protected abstract Item createItem ();
-
 }

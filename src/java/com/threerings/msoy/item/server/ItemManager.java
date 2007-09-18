@@ -105,32 +105,19 @@ public class ItemManager
      * Initializes the item manager, which will establish database connections for all of its item
      * repositories.
      */
-    @SuppressWarnings("unchecked")
     public void init (PersistenceContext ctx) throws PersistenceException
     {
-        ItemRepository repo;
         // create our various repositories
-        repo = new AudioRepository(ctx);
-        _repos.put(Item.AUDIO, repo);
-        repo = (_avatarRepo = new AvatarRepository(ctx));
-        _repos.put(Item.AVATAR, repo);
-        repo = new DocumentRepository(ctx);
-        _repos.put(Item.DOCUMENT, repo);
-        repo = new FurnitureRepository(ctx);
-        _repos.put(Item.FURNITURE, repo);
-        repo = new ToyRepository(ctx);
-        _repos.put(Item.TOY, repo);
-        repo = (_gameRepo = new GameRepository(ctx));
-        _repos.put(Item.GAME, repo);
-        repo = (_petRepo = new PetRepository(ctx));
-        _repos.put(Item.PET, repo);
-        repo = new PhotoRepository(ctx);
-        _repos.put(Item.PHOTO, repo);
-        repo = new VideoRepository(ctx);
-        _repos.put(Item.VIDEO, repo);
-        repo = (_decorRepo = new DecorRepository(ctx));
-        _repos.put(Item.DECOR, repo);
-
+        registerRepository(Item.AUDIO, new AudioRepository(ctx));
+        registerRepository(Item.AVATAR, _avatarRepo = new AvatarRepository(ctx));
+        registerRepository(Item.DECOR, _decorRepo = new DecorRepository(ctx));
+        registerRepository(Item.DOCUMENT, new DocumentRepository(ctx));
+        registerRepository(Item.FURNITURE, new FurnitureRepository(ctx));
+        registerRepository(Item.TOY, new ToyRepository(ctx));
+        registerRepository(Item.GAME, _gameRepo = new GameRepository(ctx));
+        registerRepository(Item.PET, _petRepo = new PetRepository(ctx));
+        registerRepository(Item.PHOTO, new PhotoRepository(ctx));
+        registerRepository(Item.VIDEO, new VideoRepository(ctx));
         _listRepo = new ItemListRepository(ctx);
 
         // register our invocation service
@@ -1174,6 +1161,13 @@ public class ItemManager
                 memObj.commitTransaction();
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void registerRepository (byte itemType, ItemRepository repo)
+    {
+        _repos.put(itemType, repo);
+        repo.init(itemType, MsoyServer.memoryRepo);
     }
 
     /**

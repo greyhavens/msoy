@@ -49,6 +49,8 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
+import com.threerings.msoy.world.server.persist.MemoryRepository;
+
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 import static com.threerings.msoy.Log.log;
@@ -78,6 +80,7 @@ public abstract class ItemRepository<
     public ItemRepository (PersistenceContext ctx)
     {
         super(ctx);
+
         _tagRepo = new TagRepository(ctx) {
             protected TagRecord createTagRecord () {
                 return ItemRepository.this.createTagRecord();
@@ -90,6 +93,15 @@ public abstract class ItemRepository<
         _ctx.registerMigration(
             getItemClass(), new EntityMigration.Rename(10007, "flags", "flagged"));
         _ctx.registerMigration(getCatalogClass(), new CatalogIdMigration(getCatalogClass()));
+    }
+
+    /**
+     * Configures this repository with its item type and the memory repository.
+     */
+    public void init (byte itemType, MemoryRepository memRepo)
+    {
+        _itemType = itemType;
+        _memRepo = memRepo;
     }
 
     /**
@@ -637,6 +649,9 @@ public abstract class ItemRepository<
 
             // delete tag records relating to this item
             _tagRepo.deleteTags(itemId);
+
+            // delete any entity memory for this item as well
+            _memRepo.deleteMemories(_itemType, itemId);
         }
     }
 
@@ -952,8 +967,14 @@ public abstract class ItemRepository<
      */
     protected abstract TagHistoryRecord createTagHistoryRecord ();
 
+    /** The byte type of our item. */
+    protected byte _itemType;
+
     /** Used to manage our item tags. */
     protected TagRepository _tagRepo;
+
+    /** We call into this to delete item memory if we're an item that has memory. */
+    protected MemoryRepository _memRepo;
 
     /** The minimum number of purchases before we'll start attenuating price based on returns. */
     protected static final int MIN_ATTEN_PURCHASES = 5;

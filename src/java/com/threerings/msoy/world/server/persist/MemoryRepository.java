@@ -3,11 +3,13 @@
 
 package com.threerings.msoy.world.server.persist;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -98,7 +100,7 @@ public class MemoryRepository extends DepotRepository
             storeMemory(record);
         }
     }
-    
+
     /**
      * Stores a particular memory record in the repository.
      */
@@ -112,6 +114,22 @@ public class MemoryRepository extends DepotRepository
         } else if (update(record) == 0) {
             insert(record);
         }
+    }
+
+    /**
+     * Deletes all memories for the specified item.
+     */
+    public void deleteMemories (final byte itemType, final int itemId)
+        throws PersistenceException
+    {
+        deleteAll(MemoryRecord.class,
+                  new Where(MemoryRecord.ITEM_TYPE_C, itemType, MemoryRecord.ITEM_ID_C, itemId),
+                  new CacheInvalidator.TraverseWithFilter<MemoryRecord>(MemoryRecord.class) {
+                      public boolean testForEviction (Serializable key, MemoryRecord record) {
+                          return record != null &&
+                              record.itemType == itemType && record.itemId == itemId;
+                      }
+                  });
     }
 
     @Override // from DepotRepository
