@@ -48,9 +48,9 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String searchRadioEmail();
 
   /**
-   * Translated "Let's be buddies!".
+   * Translated "Let''s be buddies!".
    * 
-   * @return translated "Let's be buddies!"
+   * @return translated "Let''s be buddies!"
    * @gwt.key inviteBody
    */
   String inviteBody();
@@ -96,17 +96,17 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String friendsLoadFailed();
 
   /**
-   * Translated "You're not a member of any groups. Boo hoo.".
+   * Translated "You''re not a member of any groups. Boo hoo.".
    * 
-   * @return translated "You're not a member of any groups. Boo hoo."
+   * @return translated "You''re not a member of any groups. Boo hoo."
    * @gwt.key notInGroupsSelf
    */
   String notInGroupsSelf();
 
   /**
-   * Translated "Sorry pardner. You don't have invite privileges for any groups.".
+   * Translated "Sorry pardner. You don''t have invite privileges for any groups.".
    * 
-   * @return translated "Sorry pardner. You don't have invite privileges for any groups."
+   * @return translated "Sorry pardner. You don''t have invite privileges for any groups."
    * @gwt.key haveNoGroups
    */
   String haveNoGroups();
