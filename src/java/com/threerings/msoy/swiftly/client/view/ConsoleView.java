@@ -83,7 +83,7 @@ public class ConsoleView extends JFrame
             appendLineNumberButton(line, element, new AbstractAction() {
                 public void actionPerformed (ActionEvent e)
                 {
-                    _editor.openPathElement(element,
+                    _editor.openPathElementAt(element,
                         new PositionLocation(line.getLineNumber(), line.getColumnNumber(), true));
                 }
             });

@@ -18,10 +18,9 @@ public interface PathElementEditor
 
     /**
      * Requests that the given path element be opened in the editor, at the supplied
-     * row and column.
-     * @param highlight indicates whether the new location should be highlighted briefly
+     * PositionLocation.
      */
-    public void openPathElement (PathElement element, PositionLocation location);
+    public void openPathElementAt (PathElement element, PositionLocation location);
 
     /**
      * Renames a {@link PathElement} with the given String.

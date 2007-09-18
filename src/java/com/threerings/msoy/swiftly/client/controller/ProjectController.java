@@ -210,7 +210,7 @@ public class ProjectController
     }
 
     // from PathElementEditor
-    public void openPathElement (PathElement element, PositionLocation location)
+    public void openPathElementAt (PathElement element, PositionLocation location)
     {
         // If a tab is already opened for this PathElment, then select it and go to the location.
         TabbedEditorComponent tab;
