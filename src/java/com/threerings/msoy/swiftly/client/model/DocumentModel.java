@@ -7,6 +7,7 @@ import static com.threerings.msoy.Log.log;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
@@ -60,10 +61,9 @@ public class DocumentModel
     /**
      * Return the set of PathElements.
      */
-    // TODO: return this as a sorted List with a predictable and reasonable order.
     public Set<PathElement> getPathElements ()
     {
-        HashSet<PathElement> set = new HashSet<PathElement>();
+        Set<PathElement> set = new TreeSet<PathElement>();
         for (PathElement element : _roomObj.pathElements) {
             set.add(element);
         }

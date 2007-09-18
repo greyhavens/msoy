@@ -22,7 +22,7 @@ import com.threerings.presents.dobj.DSet;
  * Represents an element of a project, either the root, a directory or a file element.
  */
 public class PathElement
-    implements DSet.Entry
+    implements DSet.Entry, Comparable<PathElement>
 {
     /** Indicates the type of this project element. */
     public enum Type { ROOT, DIRECTORY, FILE };
@@ -175,6 +175,39 @@ public class PathElement
     public Comparable getKey ()
     {
         return elementId;
+    }
+
+    // from Comparable
+    // note: lower number returned means this element will be higher up the project tree
+    public int compareTo (PathElement other)
+    {
+        // if the elements are equal, then they compare as equals as well
+        if (other.equals(this)) {
+            return 0;
+        }
+
+        // if either element is the root, it wins
+        if (this.getType() == Type.ROOT) {
+            return -1;
+        } else if (other.getType() == Type.ROOT) {
+            return 1;
+        }
+
+        // if the elements have the same parent,
+        if (this.getParent().equals(other.getParent())) {
+            // and they are both directories or files, compare their names
+            if (this.getType() == other.getType()) {
+                // TODO: if they are both files, compare mimetypes or if mimetype is same names?
+                return this.getName().compareTo(other.getName());
+
+            // otherwise, the directory wins
+            } else {
+                return this.getType() == Type.DIRECTORY ? -1 : 1;
+            }
+        }
+
+        // if all else fails, compare the parents, which will recurse
+        return this.getParent().compareTo(other.getParent());
     }
 
     @Override // from Object
