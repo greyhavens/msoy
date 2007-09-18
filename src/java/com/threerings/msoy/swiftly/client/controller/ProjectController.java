@@ -1,5 +1,6 @@
 
-//$Id$
+//
+// $Id$
 
 package com.threerings.msoy.swiftly.client.controller;
 
@@ -34,6 +35,7 @@ import com.threerings.msoy.swiftly.client.model.DocumentModelDelegate;
 import com.threerings.msoy.swiftly.client.model.ProjectModel;
 import com.threerings.msoy.swiftly.client.model.ProjectModelDelegate;
 import com.threerings.msoy.swiftly.client.model.RequestId;
+import com.threerings.msoy.swiftly.client.model.RequestIdFactory;
 import com.threerings.msoy.swiftly.client.view.AccessControlComponent;
 import com.threerings.msoy.swiftly.client.view.CompilerOutputComponent;
 import com.threerings.msoy.swiftly.client.view.CompilerOutputGutter;
@@ -131,14 +133,15 @@ public class ProjectController
         _buildAction = new EditorAction (ActionResource.BUILD, _translator) {
             public void actionPerformed (ActionEvent e) {
                 buildStarted();
-                _projModel.buildProject(ProjectController.this);
+                _projModel.buildProject(_requestFactory.generateId(), ProjectController.this);
             }
         };
 
         _buildExportAction = new EditorAction (ActionResource.BUILD_EXPORT, _translator) {
             public void actionPerformed (ActionEvent e) {
                 buildStarted();
-                _projModel.buildAndExportProject(ProjectController.this);
+                _projModel.buildAndExportProject(
+                    _requestFactory.generateId(), ProjectController.this);
             }
         };
 
@@ -224,7 +227,7 @@ public class ProjectController
     // from PathElementEditor
     public void renamePathElement (final PathElement element, final String newName)
     {
-        _docModel.renamePathElement(element, newName, this);
+        _docModel.renamePathElement(_requestFactory.generateId(), element, newName, this);
     }
 
     // from OccupantListener
@@ -506,7 +509,7 @@ public class ProjectController
     // from DocumentUpdateDispatcher
     public void documentTextChanged (SwiftlyTextDocument doc, String text)
     {
-        _docModel.updateTextDocument(doc, text, this);
+        _docModel.updateTextDocument(_requestFactory.generateId(), doc, text, this);
     }
 
     // from EditorActionProvider
@@ -643,7 +646,7 @@ public class ProjectController
     private void openDocument (PathElement element, PositionLocation location)
     {
         // ask the model to load the document. the delegate will display the document.
-        _docModel.loadDocument(element, location, this);
+        _docModel.loadDocument(_requestFactory.generateId(), element, location, this);
     }
 
     /**
@@ -671,7 +674,7 @@ public class ProjectController
             return;
         }
 
-        _docModel.addDocument(newElement, this);
+        _docModel.addDocument(_requestFactory.generateId(), newElement, this);
     }
 
     /**
@@ -680,8 +683,8 @@ public class ProjectController
     @Deprecated // not yet used, possibly remove for now
     private void addDirectory ()
     {
-        PathElement parentElement = _projectPanel.getCurrentParent();
-        if (parentElement == null) {
+        PathElement parent = _projectPanel.getCurrentParent();
+        if (parent == null) {
             _notifier.showError(_translator.xlate("e.directory_no_parent"));
         }
 
@@ -690,7 +693,7 @@ public class ProjectController
         if (name == null) {
             return; // if the user hit cancel do no more
         }
-        PathElement element = PathElement.createDirectory(name, parentElement);
+        PathElement element = PathElement.createDirectory(name, parent);
         // _docModel.addPathElement(element, this);
     }
 
@@ -705,7 +708,7 @@ public class ProjectController
             return;
         }
 
-        _docModel.deleteDocument(element, this);
+        _docModel.deleteDocument(_requestFactory.generateId(), element, this);
     }
 
     /**
@@ -923,6 +926,9 @@ public class ProjectController
     /** The set of all components which can display access permissions. */
     private final Set<AccessControlComponent> _accessControlComponents =
         new HashSet<AccessControlComponent>();
+
+    /** A factory for generating new RequestIds. */
+    private final RequestIdFactory _requestFactory = new RequestIdFactory();
 
     /** The SwiftlyApplication provides a few useful services from the root view component. */
     private final SwiftlyApplication _app;

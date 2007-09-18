@@ -1,5 +1,6 @@
 
-//$Id$
+//
+// $Id$
 
 package com.threerings.msoy.swiftly.client.model;
 
@@ -96,10 +97,8 @@ public class ProjectModel
     /**
      * Requests that the project is built.
      */
-    public RequestId buildProject (final ProjectModelDelegate delegate)
+    public void buildProject (final RequestId requestId, final ProjectModelDelegate delegate)
     {
-        final RequestId requestId = _requestFactory.generateId();
-
         _roomObj.service.buildProject(_client, new ResultListener () {
             public void requestProcessed (Object result)
             {
@@ -112,17 +111,14 @@ public class ProjectModel
                 delegate.buildRequestFailed(requestId, FailureCode.BUILD_REQUEST_FAILED);
             }
         });
-
-        return requestId;
     }
 
     /**
      * Requests that the project is built and exported to the users inventory.
      */
-    public RequestId buildAndExportProject (final ProjectModelDelegate delegate)
+    public void buildAndExportProject (final RequestId requestId,
+                                       final ProjectModelDelegate delegate)
     {
-        final RequestId requestId = _requestFactory.generateId();
-
         _roomObj.service.buildAndExportProject(_client, new ResultListener () {
             public void requestProcessed (Object result)
             {
@@ -136,8 +132,6 @@ public class ProjectModel
                     requestId, FailureCode.BUILD_EXPORT_REQUEST_FAILED);
             }
         });
-
-        return requestId;
     }
 
     /** Called to add an AccessControlListener. */
@@ -257,9 +251,6 @@ public class ProjectModel
 
     /** A set of components listening for occupant events. */
     private final Set<OccupantListener> _occupantListeners = new HashSet<OccupantListener>();
-
-    /** A factory for generating new RequestIds. */
-    private final RequestIdFactory _requestFactory = new RequestIdFactory();
 
     /** The last BuildResult for the current user. */
     private BuildResult _lastResult;

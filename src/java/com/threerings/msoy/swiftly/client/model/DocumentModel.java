@@ -125,11 +125,9 @@ public class DocumentModel
      * Requests that the supplied fileName,parent,mimeType be used to create a new PathElement and
      * add that PathElement to the project.
      */
-    public RequestId addDocument (final NewPathElement newElement,
-                                  final DocumentModelDelegate delegate)
+    public void addDocument (final RequestId requestId, final NewPathElement newElement,
+                             final DocumentModelDelegate delegate)
     {
-        final RequestId requestId = _requestFactory.generateId();
-
         _roomObj.service.addDocument(_client, newElement.name, newElement.parent,
             newElement.mimeType, new ConfirmListener () {
             public void requestProcessed ()
@@ -143,18 +141,14 @@ public class DocumentModel
                     requestId, newElement, FailureCode.ADD_DOCUMENT_FAILED);
             }
         });
-
-        return requestId;
     }
 
     /**
      * Requests that the supplied PathElement be renamed using the supplied String.
      */
-    public RequestId renamePathElement (final PathElement element, final String newName,
-                                        final DocumentModelDelegate delegate)
+    public void renamePathElement (final RequestId requestId, final PathElement element,
+                                   final String newName, final DocumentModelDelegate delegate)
     {
-        final RequestId requestId = _requestFactory.generateId();
-
         _roomObj.service.renamePathElement(_client, element.elementId, newName,
             new ConfirmListener () {
             public void requestProcessed () {
@@ -165,18 +159,14 @@ public class DocumentModel
                     requestId, element, FailureCode.RENAME_ELEMENT_FAILED);
             }
         });
-
-        return requestId;
     }
 
     /**
      * Requests that the supplied PathElement which references a SwiftlyDocument be deleted.
      */
-    public RequestId deleteDocument (final PathElement element,
-                                     final DocumentModelDelegate delegate)
+    public void deleteDocument (final RequestId requestId, final PathElement element,
+                                final DocumentModelDelegate delegate)
     {
-        final RequestId requestId = _requestFactory.generateId();
-
         _roomObj.service.deletePathElement(_client, element.elementId, new ConfirmListener () {
             public void requestProcessed () {
                 delegate.documentDeleted(requestId, element);
@@ -186,19 +176,15 @@ public class DocumentModel
                     requestId, element, FailureCode.RENAME_ELEMENT_FAILED);
             }
         });
-
-        return requestId;
     }
 
     /**
      * Sends a message to the server reporting that the given SwiftlyTextDocument should have its
      * text replaced with the supplied string.
      */
-    public RequestId updateTextDocument (final SwiftlyTextDocument doc, final String text,
-                                         final DocumentModelDelegate delegate)
+    public void updateTextDocument (final RequestId requestId, final SwiftlyTextDocument doc,
+                                    final String text, final DocumentModelDelegate delegate)
     {
-        final RequestId requestId = _requestFactory.generateId();
-
         _roomObj.service.updateTextDocument(_client, doc.documentId, text, new ConfirmListener () {
             public void requestProcessed ()
             {
@@ -211,23 +197,20 @@ public class DocumentModel
                     FailureCode.UPDATE_DOCUMENT_FAILED);
             }
         });
-
-        return requestId;
     }
 
     /**
      * Request that the SwiftlyDocument associated with the given PathElement be loaded.
      */
-    public RequestId loadDocument (final PathElement element, final PositionLocation location,
-                                   final DocumentModelDelegate delegate)
+    public void loadDocument (final RequestId requestId, final PathElement element,
+                              final PositionLocation location,
+                              final DocumentModelDelegate delegate)
     {
-        final RequestId requestId = _requestFactory.generateId();
-
         // If the document is already in the dset, return the loaded document.
         SwiftlyDocument doc = _roomObj.getDocument(element);
         if (doc != null) {
             delegate.documentLoaded(requestId, doc, location);
-            return requestId;
+            return;
         }
 
         // Otherwise load the document from the backend.
@@ -246,8 +229,6 @@ public class DocumentModel
                     requestId, element, FailureCode.LOAD_DOCUMENT_FAILED);
             }
         });
-
-        return requestId;
     }
 
     /** Called to add a PathElementListener. */
@@ -405,9 +386,6 @@ public class DocumentModel
     /** A set of components listening for SwiftlyTextDocument content changes. */
     private final Set<DocumentContentListener> _documentContentListeners =
         new HashSet<DocumentContentListener>();
-
-    /** A factory for generating new RequestIds. */
-    private final RequestIdFactory _requestFactory = new RequestIdFactory();
 
     private final ProjectRoomObject _roomObj;
     private final Client _client;
