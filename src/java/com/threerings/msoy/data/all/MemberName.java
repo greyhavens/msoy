@@ -16,9 +16,9 @@ public class MemberName extends Name
     implements DSet.Entry
 {
     /** A comparator for sorting Names by their display portion, case insensitively. */
-    public static final Comparator BY_DISPLAY_NAME = new Comparator() {
-        public int compare (Object o1, Object o2) {
-            return compare(o1, o2);
+    public static final Comparator<MemberName> BY_DISPLAY_NAME = new Comparator<MemberName>() {
+        public int compare (MemberName o1, MemberName o2) {
+            return compareNames(o1, o2);
         }
     };
 
@@ -96,7 +96,7 @@ public class MemberName extends Name
 
         // return 0 if diff is the same (they have the same memberId) UNLESS the memberId is 0, in
         // which case they're a guest and we compare by name
-        return (_memberId != GUEST_ID) ? 0 : compare(this, that);
+        return (_memberId != GUEST_ID) ? 0 : compareNames(this, that);
     }
 
     // @Override // from Name
@@ -108,7 +108,7 @@ public class MemberName extends Name
     /**
      * Compares two member name records case insensitively.
      */
-    protected static int compare (MemberName m1, MemberName m2)
+    protected static int compareNames (MemberName m1, MemberName m2)
     {
         return m1.toString().toLowerCase().compareTo(m2.toString().toLowerCase());
     }
