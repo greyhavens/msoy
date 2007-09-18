@@ -623,6 +623,11 @@ public class RoomController extends SceneController
             return;
         }
 
+        // no menu for non-owners for now
+        if (occInfo.ownerId != _mctx.getMemberObject().getMemberId()) {
+            return;
+        }
+
         var petId :int = occInfo.getItemIdent().itemId;
         var menuItems :Array = [];
 

@@ -10,6 +10,9 @@ import com.threerings.msoy.data.PetObject;
  */
 public class WorldPetInfo extends WorldActorInfo
 {
+    /** The member id of this pet's owner. */
+    public int ownerId;
+
     /** Set to true if the pet is following its owner around the world, false if it is in this room
      * because it has been permanently "let out" in this room. */
     public boolean isFollowing;
@@ -25,5 +28,7 @@ public class WorldPetInfo extends WorldActorInfo
     public WorldPetInfo (PetObject petobj, boolean isFollowing)
     {
         super(petobj, petobj.pet.getIdent(), petobj.pet.getFurniMedia());
+        this.ownerId = petobj.pet.ownerId;
+        this.isFollowing = isFollowing;
     }
 }
