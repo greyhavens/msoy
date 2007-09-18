@@ -21,6 +21,7 @@ import com.threerings.admin.client.ConfigEditorPanel;
 import com.threerings.admin.data.AdminCodes;
 
 import com.threerings.msoy.admin.util.AdminContext;
+import com.threerings.msoy.data.MemberObject;
 
 /**
  * Displays the main admin interface.
@@ -66,8 +67,10 @@ public class AdminPanel extends JPanel
             client.addServiceGroup(AdminCodes.ADMIN_GROUP);
         }
         public void clientDidLogon (Client client) {
-            add(_config = new ConfigEditorPanel(_ctx));
-            _config.setOpaque(false);
+            if (((MemberObject)client.getClientObject()).tokens.isAdmin()) {
+                add(_config = new ConfigEditorPanel(_ctx));
+                _config.setOpaque(false);
+            }
             setStatus("m.logged_on");
         }
         public void clientDidLogoff (Client client) {
