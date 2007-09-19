@@ -94,6 +94,10 @@ public abstract class ItemRepository<
         _ctx.registerMigration(
             getItemClass(), new EntityMigration.Rename(10007, "flags", "flagged"));
         _ctx.registerMigration(getCatalogClass(), new CatalogIdMigration(getCatalogClass()));
+        _ctx.registerMigration(
+            getCatalogClass(), new EntityMigration.Rename(6, "itemId", "listedItemId"));
+        _ctx.registerMigration(
+            getCatalogClass(), new MoreCatalogIdMigration(getItemClass(), getCatalogClass()));
     }
 
     /**
@@ -103,6 +107,14 @@ public abstract class ItemRepository<
     {
         _itemType = itemType;
         _memRepo = memRepo;
+    }
+
+    /**
+     * Returns the item type constant for the type of item handled by this repository.
+     */
+    public byte getItemType ()
+    {
+        return _itemType;
     }
 
     /**
@@ -316,7 +328,7 @@ public abstract class ItemRepository<
         });
 
         if (record != null) {
-            record.item = loadOriginalItem(record.itemId);
+            record.item = loadOriginalItem(record.listedItemId);
         }
         return record;
     }
@@ -340,11 +352,11 @@ public abstract class ItemRepository<
         }
 
         List<CAT> records = findAll(getCatalogClass(),
-            new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+            new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
                      getItemClass(), ItemRecord.ITEM_ID),
             new Limit(0, 1),
             OrderBy.random(),
-            new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+            new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
                      getTagRepository().getTagClass(), TagRecord.TARGET_ID),
             new Where(new In(getTagColumn(TagRecord.TAG_ID), tagIds)));
 
@@ -353,7 +365,7 @@ public abstract class ItemRepository<
         }
 
         CAT record = records.get(0);
-        record.item = loadOriginalItem(record.itemId);
+        record.item = loadOriginalItem(record.listedItemId);
         return record;
     }
 
@@ -365,7 +377,7 @@ public abstract class ItemRepository<
     {
         ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
         clauses.add(new FromOverride(getCatalogClass()));
-        clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+        clauses.add(new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
                              getItemClass(), ItemRecord.ITEM_ID));
 
         // see if there's any where bits to turn into an actual where clause
@@ -391,7 +403,7 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
-        clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+        clauses.add(new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
                              getItemClass(), ItemRecord.ITEM_ID));
         clauses.add(new Limit(offset, rows));
 
@@ -440,7 +452,7 @@ public abstract class ItemRepository<
         Comparable[] idArr = new Integer[records.size()];
         int ii = 0;
         for (CatalogRecord record : records) {
-            idArr[ii ++] = record.itemId;
+            idArr[ii++] = record.listedItemId;
         }
 
         // load those items and map item ID's to items
@@ -453,38 +465,36 @@ public abstract class ItemRepository<
 
         // finally populate the catalog records
         for (CatalogRecord<T> record : records) {
-            record.item = map.get(record.itemId);
+            record.item = map.get(record.listedItemId);
         }
         return records;
     }
 
     /**
      * Load a single catalog listing.
-     *
-     * TODO: This needs to be a join, just like {@link #loadCatalog}.
      */
-    public CAT loadListing (int itemId)
+    public CAT loadListing (int catalogId, boolean loadListedItem)
         throws PersistenceException
     {
-        CAT record = load(getCatalogClass(), itemId);
-        if (record != null) {
-            record.item = load(getItemClass(), itemId);
+        CAT record = load(getCatalogClass(), catalogId);
+        if (record != null && loadListedItem) {
+            record.item = load(getItemClass(), record.listedItemId);
         }
         return record;
     }
 
     /**
-     * Update either the 'purchases' or the 'returns' field of a catalog listing,
-     * and figure out if it's time to reprice it.
+     * Update either the 'purchases' or the 'returns' field of a catalog listing, and figure out if
+     * it's time to reprice it.
      */
-    public void nudgeListing (int itemId, boolean purchased)
+    public void nudgeListing (int catalogId, boolean purchased)
         throws PersistenceException
     {
-        CAT record = load(getCatalogClass(), itemId);
+        CAT record = load(getCatalogClass(), catalogId);
         if (record == null) {
-            // if the record managed to vanish, I suppose we don't need to nudge it.
-            return;
+            return; // if the listing has been unlisted, we don't need to nudge it.
         }
+
         if (purchased) {
             record.purchases += 1;
             record.repriceCounter += 1;
@@ -495,6 +505,7 @@ public abstract class ItemRepository<
         if (record.repriceCounter >= Math.sqrt(record.purchases + record.returns)) {
             priceRecord(record, false);
         }
+
         String column = purchased ? CatalogRecord.PURCHASES : CatalogRecord.RETURNS;
         update(record, column, CatalogRecord.REPRICE_COUNTER, CatalogRecord.FLOW_COST,
                CatalogRecord.GOLD_COST);
@@ -529,7 +540,8 @@ public abstract class ItemRepository<
      * Create a row in our catalog table corresponding to the given item record, which should
      * be of the immutable variety.
      */
-    public CatalogRecord insertListing (ItemRecord listItem, int rarity, long listingTime)
+    public CatalogRecord insertListing (ItemRecord listItem, int originalItemId, int rarity,
+                                        long listingTime)
         throws PersistenceException
     {
         if (listItem.ownerId != 0) {
@@ -544,17 +556,17 @@ public abstract class ItemRepository<
             throw new PersistenceException(e);
         }
         record.item = listItem;
-        record.itemId = listItem.itemId;
+        record.listedItemId = listItem.itemId;
+        record.originalItemId = originalItemId;
         record.listedDate = new Timestamp(listingTime);
         record.rarity = rarity;
         record.purchases = record.returns = 0;
         priceRecord(record, true);
         insert(record);
 
-        // wire this listed item up to the original that created it
-        if (listItem.catalogId != 0) {
-            noteListing(listItem.catalogId, listItem.itemId);
-        }
+        // wire this listed item and its original up to the catalog record
+        noteListing(record.listedItemId, record.catalogId);
+        noteListing(originalItemId, record.catalogId);
 
         return record;
     }
@@ -562,31 +574,21 @@ public abstract class ItemRepository<
     /**
      * Updates the specified catalog listing to reference a new listed item.
      */
-    public CatalogRecord updateListing (int oldItemId, ItemRecord listItem, long updateTime)
+    public CatalogRecord updateListing (ItemRecord listItem, long updateTime)
         throws PersistenceException
     {
-        // we're changing the primary key of the catalog record, so we load it, remove it, update
-        // the primary key and then reinsert (which plays nice with the cache)
-        CAT record = loadListing(oldItemId);
+        // update our catalog record's listed item id
+        updatePartial(getCatalogClass(), listItem.catalogId,
+                      // TODO?: CatalogRecord.LISTED_DATE, new Timestamp(updateTime),
+                      CatalogRecord.LISTED_ITEM_ID, listItem.itemId);
+
+        // load the newly updated record so that we can return it
+        CAT record = loadListing(listItem.catalogId, false);
         if (record == null) {
-            throw new PersistenceException("Missing old listing for update [oldId=" + oldItemId +
-                                           ", newId=" + listItem.itemId + "].");
+            throw new PersistenceException(
+                "Missing catalog listing for update? [catId=" + listItem.catalogId + "].");
         }
-        delete(getCatalogClass(), oldItemId);
-
-        // clear out the old catalog prototype's connection to the original item
-        noteListing(oldItemId, 0);
-
         record.item = listItem;
-        record.itemId = listItem.itemId;
-        // TOOD updatedDate?: record.listedDate = new Timestamp(updateTime);
-        insert(record);
-
-        // wire this listed item up to the original that created it
-        if (listItem.catalogId != 0) {
-            noteListing(listItem.catalogId, listItem.itemId);
-        }
-
         return record;
     }
 
@@ -594,15 +596,14 @@ public abstract class ItemRepository<
      * Removes the listing for the specified item from the catalog, returns true if a listing was
      * found and removed, false otherwise.
      */
-    public boolean removeListing (int itemId)
+    public boolean removeListing (CatalogRecord listing)
         throws PersistenceException
     {
-        // clear out the catalog id of the original item from which this listing was created
-        T listedItem = loadItem(itemId);
-        if (listedItem != null && listedItem.catalogId != 0) {
-            noteListing(listedItem.catalogId, 0);
+        // clear out the listing mappings for the original item
+        if (listing.originalItemId != 0) {
+            noteListing(listing.originalItemId, 0);
         }
-        return delete(getCatalogClass(), itemId) > 0;
+        return delete(getCatalogClass(), listing.catalogId) > 0;
     }
 
     /**
@@ -794,8 +795,8 @@ public abstract class ItemRepository<
             break;
         default:
             throw new PersistenceException(
-                "Unknown rarity [class=" + record.getClass() + ", itemId=" + record.itemId +
-                ", rarity=" + record.rarity + "]");
+                "Unknown rarity [class=" + record.getClass().getName() +
+                ", id=" + record.catalogId + ", rarity=" + record.rarity + "]");
         }
         targetPopulation = Math.max(targetPopulation, 1);
         // see if really need to reprice this item
@@ -813,7 +814,7 @@ public abstract class ItemRepository<
         record.goldCost = 0; // (int) Math.round(listPrice / (2.5 * flowForGoldFactor));
         record.flowCost = (int) (listPrice - record.goldCost * FLOW_FOR_GOLD);
         record.repriceCounter = 0;
-        log.info("Repriced [item=" + record.itemId + ", Ec=" + currentPopulation +
+        log.info("Repriced [id=" + record.catalogId + ", Ec=" + currentPopulation +
                  ", Et=" + targetPopulation + ", base=" + basePrice + ", S=" + S +
                  ", list=" + listPrice + "].");
     }
@@ -862,7 +863,7 @@ public abstract class ItemRepository<
 
         if (tag > 0) {
             // join against TagRecord
-            clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+            clauses.add(new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
                                  getTagRepository().getTagClass(), TagRecord.TARGET_ID));
             // and add a condition
             whereBits.add(new Equals(getTagColumn(TagRecord.TAG_ID), tag));

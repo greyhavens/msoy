@@ -14,9 +14,13 @@ import com.threerings.msoy.item.data.gwt.CatalogListing;
 public class PhotoCatalogRecord extends CatalogRecord<PhotoRecord>
 {
     // AUTO-GENERATED: FIELDS START
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(PhotoCatalogRecord.class, ITEM_ID);
+    /** The qualified column identifier for the {@link #catalogId} field. */
+    public static final ColumnExp CATALOG_ID_C =
+        new ColumnExp(PhotoCatalogRecord.class, CATALOG_ID);
+
+    /** The qualified column identifier for the {@link #listedItemId} field. */
+    public static final ColumnExp LISTED_ITEM_ID_C =
+        new ColumnExp(PhotoCatalogRecord.class, LISTED_ITEM_ID);
 
     /** The qualified column identifier for the {@link #listedDate} field. */
     public static final ColumnExp LISTED_DATE_C =
@@ -45,6 +49,10 @@ public class PhotoCatalogRecord extends CatalogRecord<PhotoRecord>
     /** The qualified column identifier for the {@link #repriceCounter} field. */
     public static final ColumnExp REPRICE_COUNTER_C =
         new ColumnExp(PhotoCatalogRecord.class, REPRICE_COUNTER);
+
+    /** The qualified column identifier for the {@link #item} field. */
+    public static final ColumnExp ITEM_C =
+        new ColumnExp(PhotoCatalogRecord.class, ITEM);
     // AUTO-GENERATED: FIELDS END
 
     public PhotoCatalogRecord ()
@@ -62,12 +70,12 @@ public class PhotoCatalogRecord extends CatalogRecord<PhotoRecord>
      * Create and return a primary {@link Key} to identify a {@link #PhotoCatalogRecord}
      * with the supplied key values.
      */
-    public static Key<PhotoCatalogRecord> getKey (int itemId)
+    public static Key<PhotoCatalogRecord> getKey (int catalogId)
     {
         return new Key<PhotoCatalogRecord>(
                 PhotoCatalogRecord.class,
-                new String[] { ITEM_ID },
-                new Comparable[] { itemId });
+                new String[] { CATALOG_ID },
+                new Comparable[] { catalogId });
     }
     // AUTO-GENERATED: METHODS END
 }

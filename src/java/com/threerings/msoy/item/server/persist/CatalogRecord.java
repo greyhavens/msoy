@@ -26,14 +26,17 @@ import com.threerings.msoy.item.data.gwt.CatalogListing;
  * Represents a catalog listing of an item.
  */
 @Entity(indices={
-    @Index(name="itemIndex", fields={ CatalogRecord.ITEM_ID } )
+    @Index(name="listedItemIndex", fields={ CatalogRecord.LISTED_ITEM_ID } )
 })
 public abstract class CatalogRecord<T extends ItemRecord> extends PersistentRecord
     implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #itemId} field. */
-    public static final String ITEM_ID = "itemId";
+    /** The column identifier for the {@link #catalogId} field. */
+    public static final String CATALOG_ID = "catalogId";
+
+    /** The column identifier for the {@link #listedItemId} field. */
+    public static final String LISTED_ITEM_ID = "listedItemId";
 
     /** The column identifier for the {@link #listedDate} field. */
     public static final String LISTED_DATE = "listedDate";
@@ -55,9 +58,12 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
 
     /** The column identifier for the {@link #repriceCounter} field. */
     public static final String REPRICE_COUNTER = "repriceCounter";
+
+    /** The column identifier for the {@link #item} field. */
+    public static final String ITEM = "item";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 5;
+    public static final int SCHEMA_VERSION = 7;
 
     /** A unique id assigned to this catalog listing. */
     @Id
@@ -65,7 +71,10 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     public int catalogId;
 
     /** The id of the listed item. */
-    public int itemId;
+    public int listedItemId;
+
+    /** The id of the original item used to create this listing. */
+    public int originalItemId;
 
     /** The time this item was listed in the catalog. */
     public Timestamp listedDate;

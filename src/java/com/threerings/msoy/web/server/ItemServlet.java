@@ -26,6 +26,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
@@ -539,8 +540,13 @@ public class ItemServlet extends MsoyServiceServlet
             int deletionCount = 0;
             owners.add(item.creatorId);
 
-            // this item may be listed; make sure to unlist it
-            repo.removeListing(item.itemId);
+            // if this is the prototype for a listed item, delist it
+            if (item.catalogId != 0) {
+                CatalogRecord catrec = repo.loadListing(item.catalogId, false);
+                if (catrec != null && catrec.listedItemId == item.itemId) {
+                    repo.removeListing(catrec);
+                }
+            }
 
             // then delete any potential clones
             for (CloneRecord record : repo.loadCloneRecords(item.itemId)) {

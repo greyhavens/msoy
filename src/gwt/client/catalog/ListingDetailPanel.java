@@ -26,7 +26,7 @@ import client.util.MsoyUI;
 import client.util.PopupMenu;
 
 /**
- * Displays a popup detail view of an item from the catalog.
+ * Displays a detail view of an item from the catalog.
  */
 public class ListingDetailPanel extends BaseItemDetailPanel
 {
@@ -61,19 +61,15 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             Button delist = new Button(CCatalog.msgs.listingDelist());
             new ClickCallback(delist) {
                 public boolean callService () {
-                    CCatalog.catalogsvc.listItem(
-                        CCatalog.ident, _item.getIdent(), null, -1, false, this);
+                    CCatalog.catalogsvc.removeListing(
+                        CCatalog.ident, _item.getType(), _listing.catalogId, this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
-                    if (result != null) {
-                        MsoyUI.info(CCatalog.msgs.msgListingDelisted());
-                        _panel.itemDelisted(_listing);
-                        return false; // don't reenable delist
-                    } else {
-                        MsoyUI.error(CCatalog.msgs.errListingNotFound());
-                        return true;
-                    }
+                    MsoyUI.info(CCatalog.msgs.msgListingDelisted());
+                    _panel.itemDelisted(_listing);
+                    _panel.showCatalog();
+                    return false;
                 }
             };
             _details.add(delist);
@@ -94,7 +90,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _buttons.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
         new ClickCallback(_purchase) {
             public boolean callService () {
-                CCatalog.catalogsvc.purchaseItem(CCatalog.ident, _item.getIdent(), this);
+                CCatalog.catalogsvc.purchaseItem(
+                    CCatalog.ident, _item.getType(), _listing.catalogId, this);
                 return true;
             }
             public boolean gotResult (Object result) {

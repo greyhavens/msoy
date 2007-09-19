@@ -23,13 +23,19 @@ public interface CatalogServiceAsync
     /**
      *  The asynchronous version of {@link CatalogService#purchaseItem}
      */
-    public void purchaseItem (WebIdent ident, ItemIdent item, AsyncCallback callback);
+    public void purchaseItem (WebIdent ident, byte itemType, int catalogId, AsyncCallback callback);
     
     /**
      *  The asynchronous version of {@link CatalogService#listItem}
      */
-    public void listItem (WebIdent ident, ItemIdent item, String descrip, int rarity, boolean list,
+    public void listItem (WebIdent ident, ItemIdent item, String descrip, int rarity,
                           AsyncCallback callback);
+
+    /**
+     * Removes the specified catalog listing.
+     */
+    public void removeListing (WebIdent ident, byte itemType, int catalogId,
+                               AsyncCallback callback);
 
     /**
      *  The asynchronous version of {@link CatalogService#returnItem}

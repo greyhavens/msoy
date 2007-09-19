@@ -106,7 +106,7 @@ public class DoListItemPopup extends BorderedDialog
             public boolean callService () {
                 int rarity = firstTime ? _rarities[Math.max(0, rarityBox.getSelectedIndex())] : 0;
                 CInventory.catalogsvc.listItem(
-                    CInventory.ident, _item.getIdent(), _description.getText(), rarity, true, this);
+                    CInventory.ident, _item.getIdent(), _description.getText(), rarity, this);
                 return true;
             }
             public boolean gotResult (Object result) {

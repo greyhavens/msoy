@@ -49,14 +49,19 @@ public interface CatalogService extends RemoteService
     /**
      * Purchases the item of the specified id and type.
      */
-    public Item purchaseItem (WebIdent ident, ItemIdent item)
+    public Item purchaseItem (WebIdent ident, byte itemType, int catalogId)
         throws ServiceException;
 
     /**
-     * Lists or delists the specified item in the catalog.
+     * Lists the specified item in the catalog.
      */
-    public CatalogListing listItem (WebIdent ident, ItemIdent item, String descrip, int rarity,
-                                    boolean list)
+    public CatalogListing listItem (WebIdent ident, ItemIdent item, String descrip, int rarity)
+        throws ServiceException;
+
+    /**
+     * Removes the specified catalog listing.
+     */
+    public void removeListing (WebIdent ident, byte itemType, int catalogId)
         throws ServiceException;
 
     /**
