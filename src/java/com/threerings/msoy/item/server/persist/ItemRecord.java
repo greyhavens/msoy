@@ -148,6 +148,9 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     @Computed(required=false)
     public int sourceId = 0;
 
+    /** The identifier of the suite to which this item belongs or zero. See {@link Item#suite}. */
+    public int suiteId;
+
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */
     public byte flagged;

@@ -94,8 +94,6 @@ public abstract class ItemRepository<
         // ItemRecord migrations
         _ctx.registerMigration(
             getItemClass(), new EntityMigration.Rename(10007, "flags", "flagged"));
-        _ctx.registerMigration(
-            getItemClass(), new EntityMigration.Rename(10013, "parentId", "sourceId"));
 
         // CatalogRecord migrations
         _ctx.registerMigration(getCatalogClass(), new CatalogIdMigration(getCatalogClass()));

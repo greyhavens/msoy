@@ -74,8 +74,15 @@ public /*abstract*/ class Item
      * all digital items. Each type of item has its own identifier space. */
     public var itemId :int;
 
-    /** The item ID from which this object was cloned, or -1 if this is not a clone. */
+    /** The item ID from which this object was cloned, or 0 if this is not a clone. */
     public var sourceId :int;
+
+    /** The identifier of the suite to which this item belongs or zero. If this item is an
+     * auxilliary item for a suite (currently only games are suites, but someday paperdoll avatars
+     * will probably be as well), this will contain either the catalogId of the listing for the
+     * primary item (if this and the primary item are listed) or the item id of the primary item
+     * (if this and the primary item are not listed). */
+    public var suiteId :int;
 
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */

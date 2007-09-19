@@ -83,6 +83,13 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     /** The item id from which this object was cloned, or 0 if this is not a clone. */
     public int sourceId;
 
+    /** The identifier of the suite to which this item belongs or zero. If this item is an
+     * auxilliary item for a suite (currently only games are suites, but someday paperdoll avatars
+     * will probably be as well), this will contain either the catalogId of the listing for the
+     * primary item (if this and the primary item are listed) or the item id of the primary item
+     * (if this and the primary item are not listed). */
+    public int suiteId;
+
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */
     public byte flagged;
