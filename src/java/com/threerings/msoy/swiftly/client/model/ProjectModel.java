@@ -4,6 +4,7 @@
 
 package com.threerings.msoy.swiftly.client.model;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -66,7 +67,11 @@ public class ProjectModel
      */
     public Set<MemberName> getCollaborators ()
     {
-        Set<MemberName> set = new TreeSet<MemberName>(MemberName.BY_DISPLAY_NAME);
+        Set<MemberName> set = new TreeSet<MemberName>(new Comparator<MemberName>() {
+            public int compare (MemberName m1, MemberName m2) {
+                return MemberName.compareNames(m1, m2);
+            }
+        });
         for (MemberName member : _roomObj.collaborators) {
             set.add(member);
         }
