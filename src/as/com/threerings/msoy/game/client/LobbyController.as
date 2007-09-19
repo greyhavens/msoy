@@ -96,53 +96,6 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     /**
-     * Join the given player - either sit at the player's lobbying table, join their party
-     * game, watch their seated game, or put up an error message.
-     */
-    public function joinPlayer (memberId :int) :void
-    {
-        if (_lobj == null) {
-            // this will cause this function to get called again when we've got our copy of the 
-            // LobbyObject
-            _playerToJoin = memberId;
-            return;
-        }
-        
-        for each (var table :Table in _lobj.tables.toArray()) {
-            for each (var occupant :Name in table.occupants) {
-                if (!(occupant is MemberName)) {
-                    Log.getLog(this).warning(
-                        "table occupant is not a MemberName? [" + occupant + "]");
-                    continue;
-                }
-
-                var member :MemberName = occupant as MemberName;
-                if (member.getMemberId() == memberId) {
-                    // This only works for seated games - party games are handled differently.
-                    if (!table.inPlay()) {
-                        for (var ii :int = 0; ii < table.occupants.length; ii++) {
-                            if (table.occupants[ii] == null) {
-                                handleJoinTable(table.tableId, ii);
-                                break;
-                            }
-                        }
-                    } else if ((_lobj.gameDef.match as MsoyMatchConfig).unwatchable) {
-                        _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.unwatchable_game");
-                    } else if (table.tconfig.privateTable) {
-                        _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.private_game");
-                    } else {
-                        _mctx.getMsoyController().handleGoGame( 
-                            _lobj.game.gameId, table.gameOid);
-                    }
-                    return;
-                }
-            }
-        }
-
-        _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.player_not_found");
-    }
-
-    /**
      * Handles SUBMIT_TABLE.
      */
     public function handleSubmitTable (tcfg :TableConfig, gcfg :GameConfig) :void
@@ -247,11 +200,6 @@ public class LobbyController extends Controller implements Subscriber
         _tableDir.addSeatednessObserver(_panel);
 
         _mctx.getWorldClient().setWindowTitle(_lobj.game.name);
-
-        if (_playerToJoin != 0) {
-            joinPlayer(_playerToJoin);
-            _playerToJoin = 0;
-        }
     }
 
     // from Subscriber
@@ -304,8 +252,5 @@ public class LobbyController extends Controller implements Subscriber
     protected var _subscriber :SafeSubscriber;
 
     protected var _panelIsVisible :Boolean;
-
-    /** When we have a valid lobby object, join this player in whatever table they are sitting at */
-    protected var _playerToJoin :int = 0;
 }
 }

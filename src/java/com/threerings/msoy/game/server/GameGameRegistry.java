@@ -14,6 +14,8 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
 
+import com.threerings.crowd.server.PlaceManager;
+
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -22,14 +24,24 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.ResultListenerList;
 
+import com.threerings.parlor.data.Table;
+
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+
+import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.data.PlayerObject;
+
+import com.threerings.msoy.server.MsoyBaseServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -150,6 +162,63 @@ public class GameGameRegistry
             protected Game _game;
             protected Percentiler _single, _multi;
         });
+    }
+    
+    // from LobbyProvider
+    public void joinPlayerGame (ClientObject caller, final int playerId,
+                                InvocationService.ResultListener listener)
+        throws InvocationException
+    {
+        PlayerObject player = 
+            (PlayerObject) MsoyGameServer.lookupBody(new MemberName("", playerId));
+        if (player == null) {
+            listener.requestFailed("e.player_not_found");
+            return;
+        }
+
+        // If they're not in a location, we can send that on immediately.
+        int placeOid = player.getPlaceOid();
+        if (placeOid == -1) {
+            listener.requestProcessed(placeOid);
+            return;
+        }
+
+        // Check to make sure the game that they're in is watchable
+        PlaceManager plman = MsoyBaseServer.plreg.getPlaceManager(placeOid);
+        if (plman == null) {
+            log.warning(
+                "Fetched null PlaceManager for player's current gameOid [" + placeOid + "]");
+            listener.requestFailed("e.player_not_found");
+            return;
+        }
+        MsoyGameConfig gameConfig = (MsoyGameConfig) plman.getConfig();
+        MsoyMatchConfig matchConfig = (MsoyMatchConfig) gameConfig.getGameDefinition().match;
+        if (matchConfig.unwatchable) {
+            listener.requestFailed("e.unwatchable_game");
+            return;
+        }
+
+        // Check to make sure the game that they're in is not private
+        int gameId = gameConfig.getGameId();
+        LobbyManager lmgr = _lobbies.get(gameId);
+        if (lmgr == null) {
+            log.warning("No lobby manager found for existing game! [" + gameId + "]");
+            listener.requestFailed("e.player_not_found");
+            return;
+        }
+        LobbyObject lobj = lmgr.getLobbyObject();
+        for (Table table : lobj.tables) {
+            if (table.gameOid == placeOid) {
+                if (table.tconfig.privateTable) {
+                    listener.requestFailed("e.private_game");
+                    return;
+                }
+                break;
+            }
+        }
+        
+        // finally, hand off the game oid
+        listener.requestProcessed(placeOid);
     }
 
     /**

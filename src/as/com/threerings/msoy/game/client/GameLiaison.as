@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.events.Event;
-import flash.events.EventDispatcher;
-
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.client.ResultWrapper;
@@ -22,23 +19,20 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
-[Event (name="gameLiaisonLobbyAvailable", type="Event")];
-
 /**
  * Handles all the fiddly bits relating to connecting to a separate server to match-make and play a
  * game.
  */
-public class GameLiaison extends EventDispatcher
+public class GameLiaison
     implements MsoyGameService_LocationListener, ClientObserver, GameReadyObserver
 {
     public static const log :Log = Log.getLog(GameLiaison);
 
-    public static const LOBBY_AVAILABLE :String = "gameLiaisonLobbyAvailable";
-
-    public function GameLiaison (ctx :WorldContext, gameId :int)
+    public function GameLiaison (ctx :WorldContext, gameId :int, playerId :int = 0)
     {
         _ctx = ctx;
         _gameId = gameId;
+        _playerId = playerId;
 
         // create our custom context which we'll use to connect to lobby/game servers
         _gctx = new GameContext(ctx);
@@ -71,6 +65,28 @@ public class GameLiaison extends EventDispatcher
     }
 
     /**
+     * Join the player in their running game if possible, otherwise simply display the game
+     * lobby, if it isn't up already. 
+     */
+    public function joinPlayer (playerId :int) :void
+    {
+        if (!_gctx.getClient().isLoggedOn()) {
+            // this function will be called again, once the we've logged onto the game server.
+            _playerId = playerId;
+            return;
+        }
+
+        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
+        var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
+            _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+            // some failure cases are innocuous, and should be followed up by a display of the 
+            // lobby - if we really are hosed, joinLobby() will cause the liaison to shut down.
+            showLobbyUI();
+        }, gotPlayerGameOid);
+        lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);
+    }
+
+    /**
      * Returns the config of our active game if we're in an active game.
      */
     public function getGameConfig () :MsoyGameConfig
@@ -81,7 +97,11 @@ public class GameLiaison extends EventDispatcher
 
     public function showLobbyUI () :void
     {
-        _lobby.restoreLobbyUI();
+        if (_lobby != null) {
+            _lobby.restoreLobbyUI();
+        } else {
+            joinLobby();
+        }
     }
 
     public function enterGame (gameOid :int) :void
@@ -133,13 +153,11 @@ public class GameLiaison extends EventDispatcher
     // from interface ClientObserver
     public function clientDidLogon (event :ClientEvent) :void
     {
-        // join the lobby
-        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-        var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
-            _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
-            shutdown();
-        }, gotLobbyOid);
-        lsvc.identifyLobby(_gctx.getClient(), _gameId, cb);
+        if (_playerId != 0) {
+            joinPlayer(_playerId);
+        } else {
+            joinLobby();
+        }
     }
 
     // from interface ClientObserver
@@ -189,6 +207,16 @@ public class GameLiaison extends EventDispatcher
         return true;
     }
 
+    protected function joinLobby () :void
+    {
+        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
+        var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
+            _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+            shutdown();
+        }, gotLobbyOid);
+        lsvc.identifyLobby(_gctx.getClient(), _gameId, cb);
+    }
+
     protected function worldLocationDidChange (place :PlaceObject) :void
     {
         // don't do anything if we are not yet in a game
@@ -206,7 +234,17 @@ public class GameLiaison extends EventDispatcher
     {
         // this will create a panel and add it to the side panel on the top level
         _lobby = new LobbyController(_ctx, _gctx, this, int(result));
-        dispatchEvent(new Event(LOBBY_AVAILABLE));
+    }
+
+    protected function gotPlayerGameOid (result :Object) :void
+    {
+        var gameOid :int = int(result);
+        if (gameOid == -1) {
+            // player isn't currently playing - show the lobby instead
+            showLobbyUI();
+        } else {
+            _ctx.getMsoyController().handleGoGame(_gameId, gameOid);
+        }
     }
 
     /** Provides access to main client services. */
@@ -217,6 +255,9 @@ public class GameLiaison extends EventDispatcher
 
     /** The id of the game with which we're dealing. */
     protected var _gameId :int;
+
+    /** The id of the player we'd like to join. */
+    protected var _playerId :int = 0;
 
     /** Listens for world location changes. */
     protected var _worldLocObs :LocationAdapter =

@@ -45,6 +45,13 @@ public class LobbyDispatcher extends InvocationDispatcher
             );
             return;
 
+        case LobbyMarshaller.JOIN_PLAYER_GAME:
+            ((LobbyProvider)provider).joinPlayerGame(
+                source,
+                ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;

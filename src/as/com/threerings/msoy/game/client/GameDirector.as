@@ -84,17 +84,11 @@ public class GameDirector extends BasicDirector
             _liaison.lobbyController.forceShutdown();
             _liaison = null;
         }
-        displayLobby(gameId);
 
-        if (_liaison.lobbyController != null) {
-            _liaison.lobbyController.joinPlayer(memberId);
+        if (_liaison == null) {
+            _liaison = new GameLiaison(_mctx, gameId, memberId);
         } else {
-            var playerJoiner :Function;
-            playerJoiner = function (evt :Event) :void {
-                _liaison.removeEventListener(GameLiaison.LOBBY_AVAILABLE, playerJoiner);
-                _liaison.lobbyController.joinPlayer(memberId);
-            };
-            _liaison.addEventListener(GameLiaison.LOBBY_AVAILABLE, playerJoiner);
+            _liaison.joinPlayer(memberId);
         }
     }
 

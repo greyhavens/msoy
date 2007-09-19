@@ -20,4 +20,10 @@ public interface LobbyProvider extends InvocationProvider
      */
     public void identifyLobby (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
+
+    /**
+     * Handles a {@link LobbyService#joinPlayerGame} request.
+     */
+    public void joinPlayerGame (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+        throws InvocationException;
 }
