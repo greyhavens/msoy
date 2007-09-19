@@ -81,6 +81,7 @@ public class GameLiaison
             _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
             // some failure cases are innocuous, and should be followed up by a display of the 
             // lobby - if we really are hosed, joinLobby() will cause the liaison to shut down.
+            _ctx.getMsoyController().restoreSceneURL();
             showLobbyUI();
         }, gotPlayerGameOid);
         lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);

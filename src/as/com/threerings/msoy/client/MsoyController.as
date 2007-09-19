@@ -650,6 +650,16 @@ public class MsoyController extends Controller
         _sceneIdString = scene;
     }
 
+    /**
+     * Convienience function to restore our GWT page URL for the current scene.
+     */
+    public function restoreSceneURL () :void
+    {
+        if (_ctx.getSceneDirector().getScene() != null) {
+            displayPageGWT("world", "s" + _ctx.getSceneDirector().getScene().getId());
+        }
+    }
+
     // from ClientObserver
     public function clientWillLogon (event :ClientEvent) :void
     {
