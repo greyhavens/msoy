@@ -93,6 +93,19 @@ public class GameDirector extends BasicDirector
     }
 
     /**
+     * Requests that we join the given player at his pending game table.
+     */
+    public function joinPlayerTable (gameId :int, memberId :int) :void
+    {
+        if (_liaison != null && _liaison.gameId != gameId) {
+            _liaison.lobbyController.forceShutdown();
+            _liaison = null;
+        }
+        displayLobby(gameId);
+        _liaison.joinPlayerTable(memberId);
+    }
+
+    /**
      * Requests that we move to the specified game location.
      */
     public function enterGame (gameOid :int) :void

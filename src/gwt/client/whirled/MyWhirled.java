@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.History;
 
@@ -18,15 +19,20 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.gwt.util.SimpleDataModel;
@@ -220,6 +226,10 @@ public class MyWhirled extends FlexTable
                             // make sure there is already something at index 1 so that entry.set() 
                             // is happy
                             entry.add(null);
+                        } else {
+                            // if the list had an entry at index 1, then this person is in both
+                            // a game and a scene, meaning that they're at a pending table.
+                            _pendingTableMembers.add(id);
                         }
                         entry.set(1, card.sceneType == SceneCard.ROOM ? "Room" : "Game");
                     }
@@ -233,7 +243,7 @@ public class MyWhirled extends FlexTable
         }
         _people.setModel(new SimpleDataModel(people), 0);
         _places.populate(myWhirled.places, _peopleAttributes);
-        _games.populate(myWhirled.games, _peopleAttributes);
+        _games.populate(myWhirled.games, _peopleAttributes, _pendingTableMembers);
                 
         MediaDesc photo = myWhirled.photo == null ? Profile.DEFAULT_PHOTO : myWhirled.photo;
         _pictureBox.add(MediaUtil.createMediaView(photo, 
@@ -274,7 +284,12 @@ public class MyWhirled extends FlexTable
             DOM.setStyleAttribute(getElement(), "overflowX", "hidden");
         }
 
-        public void populate (List scenes, Map peopleAttributes)
+        public void populate (List scenes, Map peopleAttributes) 
+        {
+            populate(scenes, peopleAttributes, null);
+        }
+
+        public void populate (List scenes, Map peopleAttributes, List pendingTableMembers)
         {
             VerticalPanel sceneContainer = new VerticalPanel();
             sceneContainer.setStyleName("SceneListContainer");
@@ -308,7 +323,7 @@ public class MyWhirled extends FlexTable
 
             for (int ii = 0; ii < sceneArray.length; ii++) {
                 SceneCard scene = (SceneCard) sceneArray[ii];
-                sceneContainer.add(new SceneWidget(scene, peopleAttributes));
+                sceneContainer.add(new SceneWidget(scene, peopleAttributes, pendingTableMembers));
             }
         }
 
@@ -340,7 +355,7 @@ public class MyWhirled extends FlexTable
 
     protected static class SceneWidget extends HorizontalPanel
     {
-        public SceneWidget (final SceneCard scene, Map peopleAttributes)
+        public SceneWidget (final SceneCard scene, Map peopleAttributes, List pendingTableMembers)
         {
             setStyleName("SceneWidget");
             setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
@@ -378,10 +393,13 @@ public class MyWhirled extends FlexTable
             nameLabel.addClickListener(goToScene);
             text.add(nameLabel);
             Iterator peopleIter = scene.friends.iterator();
-            String peopleList = "";
+            FlowPanel peopleList = new FlowPanel();
+            InlineLabel population = new InlineLabel(
+                CWhirled.msgs.population("" + Math.max(scene.population, scene.friends.size())));
+            peopleList.add(population);
             String visiblePeopleList = "";
             while (peopleIter.hasNext()) {
-                Object id = peopleIter.next();
+                final Object id = peopleIter.next();
                 List attrs = (List) peopleAttributes.get(id);
                 if (attrs == null) {
                     continue;
@@ -389,21 +407,58 @@ public class MyWhirled extends FlexTable
 
                 visiblePeopleList += "" + attrs.get(0);
                 if (visiblePeopleList.length() > 50) {
-                    peopleList = peopleList.substring(0, peopleList.length() - 2) + "...";
+                    peopleList.remove(peopleList.getWidgetCount() - 1);
+                    InlineLabel ellipses = new InlineLabel("...");
+                    ellipses.setStyleName("GrayName");
+                    peopleList.add(ellipses);
                     break;
                 }
-                peopleList += Application.createLinkHtml("" + attrs.get(0), "profile", "" + id);
-                if (peopleIter.hasNext()) {
-                    peopleList += ", ";
+
+                final InlineLabel person = new InlineLabel("" + attrs.get(0));
+                person.addStyleName("Underline");
+                if (scene.sceneType == SceneCard.GAME) {
+                    boolean inPending = 
+                        pendingTableMembers != null && pendingTableMembers.contains(id);
+                    person.addStyleName(inPending ? "OrangeName" : "GrayName");
+                    final PopupPanel personMenuPanel = new PopupPanel(true);
+                    MenuBar menu = new MenuBar(true);
+                    menu.addItem(
+                        Application.createLinkHtml(CWhirled.msgs.viewProfile(), "profile", "" + id),
+                        true, new Command() {
+                            public void execute () {
+                                personMenuPanel.hide();
+                            }
+                        });
+                    String itemText = inPending ? CWhirled.msgs.sitAtPending("" + attrs.get(0)) :
+                                                  CWhirled.msgs.goToGame("" + attrs.get(0));
+                    final String flashArg = (inPending ? "playerTable=" : "memberScene=") + id;
+                    menu.addItem(itemText, new Command() {
+                        public void execute () {
+                            WorldClient.displayFlash(flashArg);
+                        }
+                    });
+                    personMenuPanel.add(menu);
+                    person.addMouseListener(new MouseListenerAdapter() {
+                        public void onMouseDown (Widget sender, int x, int y) { 
+                            personMenuPanel.setPopupPosition(person.getAbsoluteLeft() + x, 
+                                person.getAbsoluteTop() + y);
+                            personMenuPanel.show();
+                        }
+                    });
                 } else {
-                    peopleList += ".";
+                    person.addStyleName("GrayName");
+                    person.addClickListener(new ClickListener() {
+                        public void onClick (Widget sender) {
+                            History.newItem(Application.createLinkToken("profile", "" + id));
+                        }
+                    });
                 }
+                peopleList.add(person);
+                InlineLabel connector = new InlineLabel(peopleIter.hasNext() ? ", " : ".");
+                connector.addStyleName("GrayName");
+                peopleList.add(connector);
             }
-            // Its a little silly that GWT has no way to string together some <span>s
-            HTML population = new HTML(
-                CWhirled.msgs.population("" + Math.max(scene.population, scene.friends.size())) + 
-                "<span class='PopulationList>" + peopleList + "</span>");
-            text.add(population);
+            text.add(peopleList);
             add(text);
         }
     }
@@ -451,6 +506,9 @@ public class MyWhirled extends FlexTable
     protected VerticalPanel _chatsBox;
 
     /** Map of member Ids to a List of attributes for the person.  
-     * List is: [ name, style for name label, click listener for name label ] */
+     * List is: [ name, style for name label ] */
     protected Map _peopleAttributes;
+
+    /** List of the people who are sitting at a pending table. */
+    protected List _pendingTableMembers = new ArrayList();
 }

@@ -96,6 +96,50 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     /**
+     * Join the player at their pending game table. 
+     */
+    public function joinPlayerTable (playerId :int) :void
+    {
+        if (_lobj == null) {
+            // this function will be called again when we have our lobby object
+            _playerId = playerId;
+            return;
+        }
+
+        for each (var table :Table in _lobj.tables.toArray()) {
+            for each (var occupant :Name in table.occupants) {
+                if (!(occupant is MemberName)) {
+                    Log.getLog(this).warning(
+                        "table occupant is not a MemberName? [" + occupant + "]");
+                    continue;
+                }
+
+                var member :MemberName = occupant as MemberName;
+                if (member.getMemberId() != playerId) {
+                    continue;
+                }
+
+                if (table.inPlay()) {
+                    _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_in_progress");
+                } else {
+                    var ii :int = 0;
+                    for (; ii < table.occupants.length; ii++) {
+                        if (table.occupants[ii] == null) {
+                            handleJoinTable(table.tableId, ii);
+                            break;
+                        }
+                    }
+                    if (ii == table.occupants.length) {
+                        _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_table_full");
+                    }
+                }
+
+                return;
+            }
+        }
+    }
+
+    /**
      * Handles SUBMIT_TABLE.
      */
     public function handleSubmitTable (tcfg :TableConfig, gcfg :GameConfig) :void
@@ -200,6 +244,10 @@ public class LobbyController extends Controller implements Subscriber
         _tableDir.addSeatednessObserver(_panel);
 
         _mctx.getWorldClient().setWindowTitle(_lobj.game.name);
+
+        if (_playerId != 0) {
+            joinPlayerTable(_playerId);
+        }
     }
 
     // from Subscriber
@@ -252,5 +300,8 @@ public class LobbyController extends Controller implements Subscriber
     protected var _subscriber :SafeSubscriber;
 
     protected var _panelIsVisible :Boolean;
+
+    /** The player whose pending table we'd like to join. */
+    protected var _playerId :int = 0;
 }
 }

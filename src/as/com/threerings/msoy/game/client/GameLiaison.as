@@ -32,7 +32,7 @@ public class GameLiaison
     {
         _ctx = ctx;
         _gameId = gameId;
-        _playerId = playerId;
+        _playerIdGame = playerId;
 
         // create our custom context which we'll use to connect to lobby/game servers
         _gctx = new GameContext(ctx);
@@ -71,8 +71,8 @@ public class GameLiaison
     public function joinPlayer (playerId :int) :void
     {
         if (!_gctx.getClient().isLoggedOn()) {
-            // this function will be called again, once the we've logged onto the game server.
-            _playerId = playerId;
+            // this function will be called again, once we've logged onto the game server.
+            _playerIdGame = playerId;
             return;
         }
 
@@ -85,6 +85,19 @@ public class GameLiaison
             showLobbyUI();
         }, gotPlayerGameOid);
         lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);
+    }
+
+    /** 
+     * Join the player at their currently pending game table.
+     */
+    public function joinPlayerTable (playerId :int) :void
+    {
+        if (_lobby == null) {
+            // this function will be called again, once we've got our lobby
+            _playerIdTable = playerId;
+            return;
+        }
+        _lobby.joinPlayerTable(playerId);
     }
 
     /**
@@ -154,8 +167,8 @@ public class GameLiaison
     // from interface ClientObserver
     public function clientDidLogon (event :ClientEvent) :void
     {
-        if (_playerId != 0) {
-            joinPlayer(_playerId);
+        if (_playerIdGame != 0) {
+            joinPlayer(_playerIdGame);
         } else {
             joinLobby();
         }
@@ -235,6 +248,9 @@ public class GameLiaison
     {
         // this will create a panel and add it to the side panel on the top level
         _lobby = new LobbyController(_ctx, _gctx, this, int(result));
+        if (_playerIdTable != 0) {
+            joinPlayerTable(_playerIdTable);
+        }
     }
 
     protected function gotPlayerGameOid (result :Object) :void
@@ -258,7 +274,10 @@ public class GameLiaison
     protected var _gameId :int;
 
     /** The id of the player we'd like to join. */
-    protected var _playerId :int = 0;
+    protected var _playerIdGame :int = 0;
+
+    /** The id of the player who's pending table we'd like to join. */
+    protected var _playerIdTable :int = 0;
 
     /** Listens for world location changes. */
     protected var _worldLocObs :LocationAdapter =

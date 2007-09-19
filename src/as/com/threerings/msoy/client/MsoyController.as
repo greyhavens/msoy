@@ -102,6 +102,9 @@ public class MsoyController extends Controller
     /** Command to go to a member's current scene. */
     public static const GO_MEMBER_LOCATION :String = "GoMemberLocation";
 
+    /** Command to join a member's currently pending game table. */
+    public static const JOIN_PLAYER_TABLE :String = "JoinPlayerTable";
+
     /** Command to go to a running game (gameId + placeOid). */
     public static const GO_GAME :String = "GoGame";
 
@@ -421,6 +424,26 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Handle the JOIN_PLAYER_TABLE command.
+     */
+    public function handleJoinPlayerTable (memberId :int) :void
+    {
+        var msvc :MemberService = (_ctx.getClient().requireService(MemberService) as MemberService);
+        msvc.getCurrentMemberLocation(_ctx.getClient(), memberId, new ResultWrapper(
+            function (cause :String) :void {
+                _ctx.displayFeedback(null, cause);
+            },
+            function (location :MemberLocation) :void {
+                if (location.gameId == 0 || location.sceneId == 0) {
+                    _ctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.no_longer_lobbying");
+                    return;
+                }
+                _ctx.getGameDirector().joinPlayerTable(location.gameId, location.memberId);
+            }));
+        restoreSceneURL();
+    }
+
+    /**
      * Handle the GO_GROUP_HOME command.
      */
     public function handleGoGroupHome (groupId :int, direct :Boolean = false) :void
@@ -573,6 +596,10 @@ public class MsoyController extends Controller
         } else if (null != params["memberScene"]) {
             _sceneIdString = null;
             handleGoMemberLocation(int(params["memberScene"]));
+
+        } else if (null != params["playerTable"]) {
+            _sceneIdString = null;
+            handleJoinPlayerTable(int(params["playerTable"]));
 
         } else if (null != params["gameLocation"]) {
             _sceneIdString = null;

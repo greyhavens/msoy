@@ -216,12 +216,20 @@
   margin-bottom: 2px;
 }
 
-.SceneWidget .PopulationList, .SceneWidget .PopulationList a {
+.SceneWidget .GrayName {
   font-size: 10px;
   color: #A9A8AD;
 }
 
+.SceneWidget .OrangeName {
+  font-size: 10px;
+  color: #E98932;
+}
 
+.SceneWidget .Underline {
+  text-decoration: underline;
+  cursor: pointer;
+}
 
 /**********  Whirledwide  ************/
 .TopGamesContainer {
