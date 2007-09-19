@@ -70,17 +70,15 @@ public /*abstract*/ class Item
 
     // == Instance variables follow =========================================
 
-    /** This item's unique identifier. <em>Note:</em> this identifier is not
-     * globally unique among all digital items. Each type of item has its own
-     * identifier space. */
+    /** This item's unique identifier. <em>Note:</em> this identifier is not globally unique among
+     * all digital items. Each type of item has its own identifier space. */
     public var itemId :int;
 
-    /** The item ID from which this object was cloned, or -1 if this is not
-     * a clone. */
-    public var parentId :int;
+    /** The item ID from which this object was cloned, or -1 if this is not a clone. */
+    public var sourceId :int;
 
-    /** A bit-mask of flags that we need to know about every digital item
-     * without doing further database lookups or network requests. */
+    /** A bit-mask of flags that we need to know about every digital item without doing further
+     * database lookups or network requests. */
     public var flagged :int;
 
     /** The member id of the member that created this item. */
@@ -101,8 +99,8 @@ public /*abstract*/ class Item
     /** A code indicating where this item is being used. */
     public var used :int;
 
-    /** A number, interpreted along with 'used' that identifies the
-     * location at which this item is being used. */
+    /** A number, interpreted along with 'used' that identifies the location at which this item is
+     * being used. */
     public var location :int;
 
     /** Our last-touched timetamp. */
@@ -152,9 +150,8 @@ public /*abstract*/ class Item
      */
     public static function getTypeName (type :int) :String
     {
-        // We can't use a switch statement because our final
-        // variables are not actually constants (they are assigned values
-        // at class initialization time).
+        // We can't use a switch statement because our final variables are not actually constants
+        // (they are assigned values at class initialization time).
         if (type == PHOTO) {
             return "photo"; 
         } else if (type == AVATAR) {
@@ -215,11 +212,11 @@ public /*abstract*/ class Item
     }
 
     /**
-     * Returns the parentId, or this itemId if this item is not a clone.
+     * Returns the sourceId, or this itemId if this item is not a clone.
      */
     public function getPrototypeId () :int
     {
-        return (parentId == 0) ? itemId : parentId;
+        return (sourceId == 0) ? itemId : sourceId;
     }
 
     /**
@@ -231,8 +228,8 @@ public /*abstract*/ class Item
     }
 
     /**
-     * Returns a media descriptor for the media that should be used to display
-     * our thumbnail representation.
+     * Returns a media descriptor for the media that should be used to display our thumbnail
+     * representation.
      */
     public function getThumbnailMedia () :MediaDesc
     {
@@ -240,8 +237,8 @@ public /*abstract*/ class Item
     }
 
     /**
-     * Returns a media descriptor for the media that should be used to display
-     * our furniture representation.
+     * Returns a media descriptor for the media that should be used to display our furniture
+     * representation.
      */
     public function getFurniMedia () :MediaDesc
     {
@@ -292,8 +289,7 @@ public /*abstract*/ class Item
         if (other is Item) {
             var that :Item = (other as Item);
             // cheap comparison first...
-            return (this.itemId == that.itemId) &&
-                (this.getType() === that.getType());
+            return (this.itemId == that.itemId) && (this.getType() === that.getType());
         }
         return false;
     }
@@ -317,7 +313,7 @@ public /*abstract*/ class Item
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeInt(itemId);
-        out.writeInt(parentId);
+        out.writeInt(sourceId);
         out.writeByte(flagged);
         out.writeInt(creatorId);
         out.writeInt(ownerId);
@@ -337,7 +333,7 @@ public /*abstract*/ class Item
     public function readObject (ins :ObjectInputStream) :void
     {
         itemId = ins.readInt();
-        parentId = ins.readInt();
+        sourceId = ins.readInt();
         flagged = ins.readByte();
         creatorId = ins.readInt();
         ownerId = ins.readInt();
@@ -354,8 +350,7 @@ public /*abstract*/ class Item
     }
 
     /**
-     * Returns the default thumbnail media for use if this item has no provided
-     * custom media.
+     * Returns the default thumbnail media for use if this item has no provided custom media.
      */
     protected function getDefaultThumbnailMedia () :MediaDesc
     {
@@ -363,8 +358,7 @@ public /*abstract*/ class Item
     }
 
     /**
-     * Returns the default furni media for use if this item has no provided
-     * custom media.
+     * Returns the default furni media for use if this item has no provided custom media.
      */
     protected function getDefaultFurniMedia () :MediaDesc
     {

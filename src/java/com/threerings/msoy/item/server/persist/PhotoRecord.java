@@ -58,9 +58,9 @@ public class PhotoRecord extends ItemRecord
     public static final ColumnExp ITEM_ID_C =
         new ColumnExp(PhotoRecord.class, ITEM_ID);
 
-    /** The qualified column identifier for the {@link #parentId} field. */
-    public static final ColumnExp PARENT_ID_C =
-        new ColumnExp(PhotoRecord.class, PARENT_ID);
+    /** The qualified column identifier for the {@link #sourceId} field. */
+    public static final ColumnExp SOURCE_ID_C =
+        new ColumnExp(PhotoRecord.class, SOURCE_ID);
 
     /** The qualified column identifier for the {@link #flagged} field. */
     public static final ColumnExp FLAGGED_C =

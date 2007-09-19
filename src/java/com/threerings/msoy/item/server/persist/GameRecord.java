@@ -51,9 +51,9 @@ public class GameRecord extends ItemRecord
     public static final ColumnExp ITEM_ID_C =
         new ColumnExp(GameRecord.class, ITEM_ID);
 
-    /** The qualified column identifier for the {@link #parentId} field. */
-    public static final ColumnExp PARENT_ID_C =
-        new ColumnExp(GameRecord.class, PARENT_ID);
+    /** The qualified column identifier for the {@link #sourceId} field. */
+    public static final ColumnExp SOURCE_ID_C =
+        new ColumnExp(GameRecord.class, SOURCE_ID);
 
     /** The qualified column identifier for the {@link #flagged} field. */
     public static final ColumnExp FLAGGED_C =

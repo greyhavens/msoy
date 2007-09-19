@@ -22,6 +22,10 @@ public class ToyCatalogRecord extends CatalogRecord<ToyRecord>
     public static final ColumnExp LISTED_ITEM_ID_C =
         new ColumnExp(ToyCatalogRecord.class, LISTED_ITEM_ID);
 
+    /** The qualified column identifier for the {@link #originalItemId} field. */
+    public static final ColumnExp ORIGINAL_ITEM_ID_C =
+        new ColumnExp(ToyCatalogRecord.class, ORIGINAL_ITEM_ID);
+
     /** The qualified column identifier for the {@link #listedDate} field. */
     public static final ColumnExp LISTED_DATE_C =
         new ColumnExp(ToyCatalogRecord.class, LISTED_DATE);

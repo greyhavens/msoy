@@ -81,7 +81,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public int itemId;
 
     /** The item id from which this object was cloned, or 0 if this is not a clone. */
-    public int parentId;
+    public int sourceId;
 
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */
@@ -211,11 +211,11 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public abstract byte getType ();
 
     /**
-     * Returns the parentId, or this itemId if this item is not a clone.
+     * Returns the sourceId, or this itemId if this item is not a clone.
      */
     public int getPrototypeId ()
     {
-        return (parentId == 0) ? itemId : parentId;
+        return (sourceId == 0) ? itemId : sourceId;
     }
 
     /**
@@ -248,7 +248,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      */
     public boolean isRatable ()
     {
-        return (parentId != 0) || (parentId == 0 && ownerId == 0);
+        return (sourceId != 0) || (sourceId == 0 && ownerId == 0);
     }
 
     /**

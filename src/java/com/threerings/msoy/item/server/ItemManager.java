@@ -804,7 +804,7 @@ public class ItemManager
                 if (item == null) {
                     throw new PersistenceException("Missing item for tagItem [item=" + ident + "]");
                 }
-                int originalId = item.parentId != 0 ? item.parentId : ident.itemId;
+                int originalId = (item.sourceId != 0) ? item.sourceId : ident.itemId;
 
                 // map tag to tag id
                 TagNameRecord tag = repo.getTagRepository().getOrCreateTag(tagName);

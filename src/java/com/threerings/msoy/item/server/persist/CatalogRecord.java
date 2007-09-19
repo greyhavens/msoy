@@ -38,6 +38,9 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     /** The column identifier for the {@link #listedItemId} field. */
     public static final String LISTED_ITEM_ID = "listedItemId";
 
+    /** The column identifier for the {@link #originalItemId} field. */
+    public static final String ORIGINAL_ITEM_ID = "originalItemId";
+
     /** The column identifier for the {@link #listedDate} field. */
     public static final String LISTED_DATE = "listedDate";
 

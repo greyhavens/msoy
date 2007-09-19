@@ -78,9 +78,9 @@ public class DecorRecord extends ItemRecord
     public static final ColumnExp ITEM_ID_C =
         new ColumnExp(DecorRecord.class, ITEM_ID);
 
-    /** The qualified column identifier for the {@link #parentId} field. */
-    public static final ColumnExp PARENT_ID_C =
-        new ColumnExp(DecorRecord.class, PARENT_ID);
+    /** The qualified column identifier for the {@link #sourceId} field. */
+    public static final ColumnExp SOURCE_ID_C =
+        new ColumnExp(DecorRecord.class, SOURCE_ID);
 
     /** The qualified column identifier for the {@link #flagged} field. */
     public static final ColumnExp FLAGGED_C =

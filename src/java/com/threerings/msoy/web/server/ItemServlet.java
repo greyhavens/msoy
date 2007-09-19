@@ -232,7 +232,7 @@ public class ItemServlet extends MsoyServiceServlet
             // TODO: make sure item is remixable
 
             // prep the item for remixing and insert it as a new original item
-            int originalId = item.parentId;
+            int originalId = item.sourceId;
             item.prepareForRemixing();
             repo.insertOriginalItem(item, false);
 
@@ -310,9 +310,9 @@ public class ItemServlet extends MsoyServiceServlet
             }
 
             int originalId;
-            if (item.parentId != 0) {
-                // it's a clone: use the parent id
-                originalId = item.parentId;
+            if (item.sourceId != 0) {
+                // it's a clone: use the source id
+                originalId = item.sourceId;
             } else {
                 // not a clone; make sure we're not trying to rate a mutable
                 if (item.ownerId != 0) {

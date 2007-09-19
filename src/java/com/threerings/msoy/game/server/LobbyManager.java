@@ -49,7 +49,7 @@ public class LobbyManager
         _lobj.setGameDef(new MsoyGameParser().parseGame(game));
 
 //         // if our game object is mutable, listen for updates from the ItemManager
-//         if (_game.parentId == 0) {
+//         if (_game.sourceId == 0) {
 //             _uplist = new ItemManager.ItemUpdateListener() {
 //                 public void itemUpdated (ItemRecord item) {
 //                     Game game = (Game)item.toItem();

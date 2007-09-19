@@ -59,7 +59,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         };
         _buttons.add(button);
 
-        if (_item.parentId == 0) {
+        if (_item.sourceId == 0) {
             button = new Button(CInventory.msgs.detailEdit());
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
@@ -71,7 +71,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _buttons.add(button);
         }
 
-        if (_item.catalogId != 0 || _item.parentId == 0) {
+        if (_item.catalogId != 0 || _item.sourceId == 0) {
             String tip, butlbl;
             if (_item.catalogId != 0) {
                 tip = CInventory.msgs.detailUplistTip();

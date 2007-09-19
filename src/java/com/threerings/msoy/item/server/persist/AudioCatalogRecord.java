@@ -22,6 +22,10 @@ public class AudioCatalogRecord extends CatalogRecord<AudioRecord>
     public static final ColumnExp LISTED_ITEM_ID_C =
         new ColumnExp(AudioCatalogRecord.class, LISTED_ITEM_ID);
 
+    /** The qualified column identifier for the {@link #originalItemId} field. */
+    public static final ColumnExp ORIGINAL_ITEM_ID_C =
+        new ColumnExp(AudioCatalogRecord.class, ORIGINAL_ITEM_ID);
+
     /** The qualified column identifier for the {@link #listedDate} field. */
     public static final ColumnExp LISTED_DATE_C =
         new ColumnExp(AudioCatalogRecord.class, LISTED_DATE);

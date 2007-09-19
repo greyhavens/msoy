@@ -91,8 +91,13 @@ public abstract class ItemRepository<
             }
         };
 
+        // ItemRecord migrations
         _ctx.registerMigration(
             getItemClass(), new EntityMigration.Rename(10007, "flags", "flagged"));
+        _ctx.registerMigration(
+            getItemClass(), new EntityMigration.Rename(10013, "parentId", "sourceId"));
+
+        // CatalogRecord migrations
         _ctx.registerMigration(getCatalogClass(), new CatalogIdMigration(getCatalogClass()));
         _ctx.registerMigration(
             getCatalogClass(), new EntityMigration.Rename(6, "itemId", "listedItemId"));
@@ -831,7 +836,7 @@ public abstract class ItemRepository<
         allClauses[1] = new Join(
             getItemClass(), ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID);
         allClauses[2] = new FieldDefinition(
-            ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID);
+            ItemRecord.SOURCE_ID, getItemClass(), ItemRecord.ITEM_ID);
         allClauses[3] = new FieldOverride(
             ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID);
         allClauses[4] = new FieldOverride(

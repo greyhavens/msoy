@@ -29,7 +29,7 @@ public class AdminItemPopup extends BaseItemDetailPopup
         super.createInterface(details, controls);
         
         // if it's an original item, an admin can edit it
-        if (_item.parentId == 0) {
+        if (_item.sourceId == 0) {
             Button button = new Button(CAdmin.msgs.itemPopupEdit());
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {

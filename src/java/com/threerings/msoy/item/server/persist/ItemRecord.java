@@ -51,8 +51,8 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The column identifier for the {@link #itemId} field. */
     public static final String ITEM_ID = "itemId";
 
-    /** The column identifier for the {@link #parentId} field. */
-    public static final String PARENT_ID = "parentId";
+    /** The column identifier for the {@link #sourceId} field. */
+    public static final String SOURCE_ID = "sourceId";
 
     /** The column identifier for the {@link #flagged} field. */
     public static final String FLAGGED = "flagged";
@@ -109,7 +109,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The identifier for the full text search index on Name, Description */
     public static final String FTS_ND = "ND";
 
-    public static final int BASE_SCHEMA_VERSION = 12;
+    public static final int BASE_SCHEMA_VERSION = 13;
     public static final int BASE_MULTIPLIER = 1000;
 
     public static ItemRecord newRecord (Item item) {
@@ -146,7 +146,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The item ID from which this object was cloned, or 0 if this is not a clone. This field is
      * not persisted to the database, but set when we load a clone. */
     @Computed(required=false)
-    public int parentId = 0;
+    public int sourceId = 0;
 
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */
@@ -217,7 +217,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         itemId = item.itemId;
         ownerId = item.ownerId;
         catalogId = item.catalogId;
-        parentId = item.parentId;
+        sourceId = item.sourceId;
         rating = item.rating;
         creatorId = item.creatorId;
         flagged = item.flagged;
@@ -305,7 +305,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public void prepareForRemixing ()
     {
         itemId = 0;
-        parentId = 0;
+        sourceId = 0;
         creatorId = ownerId; // TODO: preserve creator?
         used = Item.UNUSED;
         location = 0;
@@ -317,7 +317,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public void initFromClone (CloneRecord clone)
     {
         // copy our itemId to parent, and take the clone's itemId
-        this.parentId = this.itemId;
+        this.sourceId = this.itemId;
         this.itemId = clone.itemId;
 
         // clear out our catalog id; clones are never catalog originals
@@ -338,7 +338,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.itemId = itemId;
         item.ownerId = ownerId;
         item.catalogId = catalogId;
-        item.parentId = parentId;
+        item.sourceId = sourceId;
         item.rating = rating;
         item.used = used;
         item.location = location;
