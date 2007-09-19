@@ -242,9 +242,8 @@ public abstract class ItemRepository<
     }
 
     /**
-     * Loads items whose flags match the given mask and bit values, limited to a given
-     * number of rows. This method can either require all flags to be set, or merely at
-     * least one of them.
+     * Loads all items who have a non-zero {@link ItemRecord#flagged} field, limited to a given
+     * number of rows.
      */
     public List<T> loadFlaggedItems (int count)
         throws PersistenceException
