@@ -321,6 +321,7 @@ public /*abstract*/ class Item
     {
         out.writeInt(itemId);
         out.writeInt(sourceId);
+        out.writeInt(suiteId);
         out.writeByte(flagged);
         out.writeInt(creatorId);
         out.writeInt(ownerId);
@@ -341,6 +342,7 @@ public /*abstract*/ class Item
     {
         itemId = ins.readInt();
         sourceId = ins.readInt();
+        suiteId = ins.readInt();
         flagged = ins.readByte();
         creatorId = ins.readInt();
         ownerId = ins.readInt();
