@@ -27,6 +27,7 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.FullTextIndex;
 import com.samskivert.jdbc.depot.clause.FieldDefinition;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
@@ -856,9 +857,7 @@ public abstract class ItemRepository<
         ArrayList<SQLOperator> whereBits = new ArrayList<SQLOperator>();
 
         if (search != null && search.length() > 0) {
-            // TODO: does not scale at all, convert to FTS
-            whereBits.add(new Like(
-                getItemColumn(ItemRecord.NAME), "%" + search + "%"));
+            whereBits.add(new FullTextMatch(getItemClass(), ItemRecord.FTS_ND, search));
         }
 
         if (tag > 0) {

@@ -9,6 +9,7 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.FullTextIndex;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -34,7 +35,9 @@ import com.threerings.msoy.item.data.all.Decor;
 /**
  * The base class for all digital items in the MSOY system.
  */
-@Table
+@Table(fullTextIndexes={
+    @FullTextIndex(name=ItemRecord.FTS_ND, fieldNames={
+        ItemRecord.NAME, ItemRecord.DESCRIPTION })})
 @Entity(indices={
     @Index(name="locationIndex", fields={ ItemRecord.LOCATION } ),
     @Index(name="ixFlagged", fields={ ItemRecord.FLAGGED } ),
@@ -103,7 +106,10 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public static final String FURNI_CONSTRAINT = "furniConstraint";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int BASE_SCHEMA_VERSION = 11;
+    /** The identifier for the full text search index on Name, Description */
+    public static final String FTS_ND = "ND";
+
+    public static final int BASE_SCHEMA_VERSION = 12;
     public static final int BASE_MULTIPLIER = 1000;
 
     public static ItemRecord newRecord (Item item) {
