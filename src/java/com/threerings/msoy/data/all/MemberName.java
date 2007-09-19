@@ -22,6 +22,14 @@ public class MemberName extends Name
         }
     };
 
+    /**
+     * Compares two member name records case insensitively.
+     */
+    public static int compareNames (MemberName m1, MemberName m2)
+    {
+        return m1.toString().toLowerCase().compareTo(m2.toString().toLowerCase());
+    }
+
     /** Used to reprepsent a member that has been deleted but is still referenced as an item
      * creator or mail message sender, etc. */
     public static final MemberName DELETED_MEMBER = new MemberName("", -1);
@@ -103,14 +111,6 @@ public class MemberName extends Name
     protected String normalize (String name)
     {
         return name; // do not adjust
-    }
-
-    /**
-     * Compares two member name records case insensitively.
-     */
-    protected static int compareNames (MemberName m1, MemberName m2)
-    {
-        return m1.toString().toLowerCase().compareTo(m2.toString().toLowerCase());
     }
 
     /** The member id of the member we represent. */
