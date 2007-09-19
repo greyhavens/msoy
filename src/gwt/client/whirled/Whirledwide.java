@@ -53,7 +53,7 @@ public class Whirledwide extends FlexTable
         setCellPadding(0);
         setCellSpacing(5);
 
-        getFlexCellFormatter().setRowSpan(row, 0, 4);
+        getFlexCellFormatter().setRowSpan(row, 0, TOTAL_ROWS);
         VerticalPanel topGamesContainer = new VerticalPanel();
         setWidget(row, 0, topGamesContainer);
         topGamesContainer.setStyleName("TopGamesContainer");
@@ -90,7 +90,7 @@ public class Whirledwide extends FlexTable
         topGamesContainer.add(allGames);
 
 
-        getFlexCellFormatter().setRowSpan(row, 2, 4);
+        getFlexCellFormatter().setRowSpan(row, 2, TOTAL_ROWS);
         VerticalPanel playersContainer = new VerticalPanel();
         setWidget(row, 2, playersContainer);
         playersContainer.setStyleName("PlayersContainer");
@@ -116,10 +116,18 @@ public class Whirledwide extends FlexTable
         //playersContainer.add(_players = new VerticalPanel());
         //_players.setStyleName("PlayersList");
         
+        HorizontalPanel featuredPlaceContainer = new HorizontalPanel();
+        featuredPlaceContainer.setSpacing(0);
+        featuredPlaceContainer.setStyleName("FeaturedPlaceContainer");
+        featuredPlaceContainer.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
+        setWidget(row++, 1, featuredPlaceContainer);
         VerticalPanel featuredPlace = new VerticalPanel();
-        setWidget(row++, 1, featuredPlace);
+        featuredPlace.setStyleName("FeaturedPlace");
+        featuredPlace.setSpacing(0);
+        featuredPlaceContainer.add(featuredPlace);
         featuredPlace.add(new Image("/images/whirled/featured_places.jpg"));
-        featuredPlace.add(_featuredPlace = new FeaturedPlaceView());
+        //featuredPlace.add(_featuredPlace = new FeaturedPlaceView());
+        featuredPlace.add(new Image("/images/whirled/comingsoon.jpg"));
     }
 
     protected void fillUi (Whirled whirledwide) 
@@ -221,6 +229,8 @@ public class Whirledwide extends FlexTable
         {
         }
     }
+
+    protected static final int TOTAL_ROWS = 1; // temp: will be 4 when we have center content
 
     protected VerticalPanel _topGames;
     protected VerticalPanel _players;

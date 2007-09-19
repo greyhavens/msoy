@@ -356,3 +356,12 @@
 .NameLabel {
   padding: 0px 2px 0px 2px;
 }
+
+/** Temp */
+.FeaturedPlaceContainer {
+  height: 520px;
+}
+
+.FeaturedPlace img {
+  display: block;
+}
