@@ -174,7 +174,7 @@ public class Application
     {
         _currentToken = token;
 
-        String page = (token == null || token.equals("")) ? "world" : token;
+        String page = (token == null || token.equals("")) ? "whirled" : token;
         String args = "";
         int semidx = token.indexOf("-");
         if (semidx != -1) {

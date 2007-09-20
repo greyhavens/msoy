@@ -78,7 +78,7 @@ public class NaviPanel extends FlexTable
         int menuidx = 0;
         setMenu(menuidx++, "Me", CShell.cmsgs.menuMe(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "My Whirled", "world", "p");
+                addLink(menu, "My Whirled", "whirled", "mywhirled");
                 addLink(menu, "My Home", "world", "m" + creds.getMemberId());
                 addLink(menu, "My Profile", "profile", "" + creds.getMemberId());
                 addLink(menu, "My Mail", "mail", "");
@@ -106,7 +106,7 @@ public class NaviPanel extends FlexTable
 
         setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "My Whirled", "world", "p");
+                addLink(menu, "My Whirled", "whirled", "mywhirled");
                 addLink(menu, "My Home", "world", "m" + creds.getMemberId());
                 if (_scenes.size() > 0) {
                     MenuBar smenu = new MenuBar(true);
@@ -205,7 +205,7 @@ public class NaviPanel extends FlexTable
 
         setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "Whirledwide", "world", "p");
+                addLink(menu, "Whirledwide", "whirled", "whirledwide");
             }
         });
 

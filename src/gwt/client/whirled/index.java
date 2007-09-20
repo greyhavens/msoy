@@ -25,8 +25,15 @@ public class index extends MsgsEntryPoint
     // @Override // from Page
     public void onHistoryChanged (String token)
     {
-        // always display whirledwide, if we're not logged in
-        if ("whirledwide".equals(token) || CWhirled.creds == null) {
+        // if we're not logged in, always display whirledwide, if we are logged in and we're just
+        // hitting the start/default page, display my whirled instead.
+        if (CWhirled.creds == null) {
+            token = "whirledwide";
+        } else if (token == null || "".equals(token)) {
+            token = "mywhirled";
+        }
+
+        if ("whirledwide".equals(token)) {
             setPageTitle(CWhirled.msgs.titleWhirledwide());
             setContent(new Whirledwide());
         } else if ("mywhirled".equals(token)) {
