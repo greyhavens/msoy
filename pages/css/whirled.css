@@ -307,13 +307,15 @@
 
 .GameWidget, .TopGame {
   font-size: 10px;
-  cursor: pointer;
   width: 100%;
   border-bottom: 1px solid #BFBFBF;
 }
 
 .GameWidget img, .TopGame img {
   display: block;
+}
+
+.GameWidget img, .TopGame img, .GameWidget .NameLabel, .TopGame div {
   cursor: pointer;
 }
 
