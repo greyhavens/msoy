@@ -444,7 +444,6 @@ public class MyWhirled extends FlexTable
                         }
                     });
                 } else {
-                    person.addStyleName("GrayName");
                     person.addClickListener(new ClickListener() {
                         public void onClick (Widget sender) {
                             History.newItem(Application.createLinkToken("profile", "" + id));
