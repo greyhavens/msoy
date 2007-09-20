@@ -23,7 +23,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.SceneCard;
-import com.threerings.msoy.web.data.Whirled;
+import com.threerings.msoy.web.data.WhirledwideData;
 
 import client.shell.Application;
 
@@ -38,7 +38,7 @@ public class Whirledwide extends FlexTable
 
         CWhirled.membersvc.getWhirledwide(new AsyncCallback() {
             public void onSuccess (Object result) {
-                fillUi((Whirled) result);
+                fillUi((WhirledwideData) result);
             }
             public void onFailure (Throwable caught) {
                 MsoyUI.error(CWhirled.serverError(caught));
@@ -130,7 +130,7 @@ public class Whirledwide extends FlexTable
         featuredPlace.add(new Image("/images/whirled/comingsoon.jpg"));
     }
 
-    protected void fillUi (Whirled whirledwide) 
+    protected void fillUi (WhirledwideData whirledwide) 
     {
         // games
         Iterator gamesIter = whirledwide.games.iterator();

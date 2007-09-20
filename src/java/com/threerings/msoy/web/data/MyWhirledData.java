@@ -14,7 +14,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 /** 
  * Contains the data that we need for the My Whirled or Whirledwide views.
  */
-public class Whirled
+public class MyWhirledData
     implements IsSerializable
 {
     /** 

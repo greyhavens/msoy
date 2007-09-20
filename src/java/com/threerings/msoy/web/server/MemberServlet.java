@@ -66,11 +66,12 @@ import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MemberInvites;
+import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.web.data.Whirled;
+import com.threerings.msoy.web.data.WhirledwideData;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -223,7 +224,7 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService 
-    public Whirled getMyWhirled (WebIdent ident)
+    public MyWhirledData getMyWhirled (WebIdent ident)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
@@ -337,21 +338,21 @@ public class MemberServlet extends MsoyServiceServlet
 
         PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
 
-        Whirled mywhirled = new Whirled();
-        mywhirled.places = getRoomSceneCards(places, pps);
-        mywhirled.games = getGameSceneCards(games, pps);
-        mywhirled.people = new ArrayList<MemberCard>(onlineFriends.values());
-        mywhirled.photo = profile.photoHash == null ? null : profile.getPhoto();
-        mywhirled.ownedRooms = ownedRooms;
-        mywhirled.chats = chats;
-        return mywhirled;
+        MyWhirledData myWhirled = new MyWhirledData();
+        myWhirled.places = getRoomSceneCards(places, pps);
+        myWhirled.games = getGameSceneCards(games, pps);
+        myWhirled.people = new ArrayList<MemberCard>(onlineFriends.values());
+        myWhirled.photo = profile.photoHash == null ? null : profile.getPhoto();
+        myWhirled.ownedRooms = ownedRooms;
+        myWhirled.chats = chats;
+        return myWhirled;
     }
 
     // from MemberService
-    public Whirled getWhirledwide ()
+    public WhirledwideData getWhirledwide ()
         throws ServiceException
     {
-        final Whirled whirledwide = new Whirled();
+        final WhirledwideData whirledwide = new WhirledwideData();
 
         // get the top 9 rated Game SceneCards.  We sort them by rating here on the server, and 
         // avoid fill in info that is unneeded, like population

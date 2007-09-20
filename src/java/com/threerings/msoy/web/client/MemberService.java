@@ -10,9 +10,10 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.MemberInvites;
+import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.Whirled;
+import com.threerings.msoy.web.data.WhirledwideData;
 
 /**
  * Defines member-specific services available to the GWT/AJAX web client.
@@ -54,13 +55,13 @@ public interface MemberService extends RemoteService
     /**
      * Get data for the MyWhirled view for the current user.
      */
-    public Whirled getMyWhirled (WebIdent ident)
+    public MyWhirledData getMyWhirled (WebIdent ident)
         throws ServiceException;
 
     /**
      * Get the data for the Whirledwide view for the current user.
      */
-    public Whirled getWhirledwide ()
+    public WhirledwideData getWhirledwide ()
         throws ServiceException;
 
     /**

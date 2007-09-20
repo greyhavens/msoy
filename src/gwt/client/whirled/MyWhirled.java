@@ -43,7 +43,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.SceneCard;
-import com.threerings.msoy.web.data.Whirled;
+import com.threerings.msoy.web.data.MyWhirledData;
 
 import com.threerings.msoy.data.all.MemberName;
 
@@ -62,7 +62,7 @@ public class MyWhirled extends FlexTable
 
         CWhirled.membersvc.getMyWhirled(CWhirled.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
-                fillUi((Whirled) result);
+                fillUi((MyWhirledData) result);
             }
             public void onFailure (Throwable caught) {
                 MsoyUI.error(CWhirled.serverError(caught));
@@ -184,7 +184,7 @@ public class MyWhirled extends FlexTable
         gamesContainer.add(_games = new SceneList(SceneCard.GAME));
     }
 
-    protected void fillUi (Whirled myWhirled) 
+    protected void fillUi (MyWhirledData myWhirled) 
     {
         List people = myWhirled.people;
         Object[] peopleArray = people.toArray();
