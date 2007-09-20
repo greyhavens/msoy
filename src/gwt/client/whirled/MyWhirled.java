@@ -416,10 +416,8 @@ public class MyWhirled extends FlexTable
 
                 final InlineLabel person = new InlineLabel("" + attrs.get(0));
                 person.addStyleName("Underline");
+                person.addStyleName("GrayName");
                 if (scene.sceneType == SceneCard.GAME) {
-                    boolean inPending = 
-                        pendingTableMembers != null && pendingTableMembers.contains(id);
-                    person.addStyleName(inPending ? "OrangeName" : "GrayName");
                     final PopupPanel personMenuPanel = new PopupPanel(true);
                     MenuBar menu = new MenuBar(true);
                     menu.addItem(
@@ -429,10 +427,10 @@ public class MyWhirled extends FlexTable
                                 personMenuPanel.hide();
                             }
                         });
-                    String itemText = inPending ? CWhirled.msgs.sitAtPending("" + attrs.get(0)) :
-                                                  CWhirled.msgs.goToGame("" + attrs.get(0));
+                    boolean inPending = 
+                        pendingTableMembers != null && pendingTableMembers.contains(id);
                     final String flashArg = (inPending ? "playerTable=" : "memberScene=") + id;
-                    menu.addItem(itemText, new Command() {
+                    menu.addItem(CWhirled.msgs.goToGame("" + attrs.get(0)), new Command() {
                         public void execute () {
                             WorldClient.displayFlash(flashArg);
                         }

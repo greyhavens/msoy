@@ -52,8 +52,13 @@ public class WorldDirector extends BasicDirector
      *
      * Note: presently the member must be a friend.
      */
-    public function goToMemberLocation (memberId :int) :void
+    public function goToMemberLocation (memberId :int, location :MemberLocation = null) :void
     {
+        if (location != null) {
+            finishGoToMemberLocation(location);
+            return;
+        } 
+
         _msvc.getCurrentMemberLocation(_mctx.getClient(), memberId, new ResultWrapper(
             function (cause :String) :void {
                 _mctx.displayFeedback(null, cause);

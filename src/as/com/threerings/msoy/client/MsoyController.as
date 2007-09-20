@@ -434,8 +434,13 @@ public class MsoyController extends Controller
                 _ctx.displayFeedback(null, cause);
             },
             function (location :MemberLocation) :void {
-                if (location.gameId == 0 || location.sceneId == 0) {
+                if (location.gameId == 0) {
                     _ctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.no_longer_lobbying");
+                    return;
+                } 
+                if (location.sceneId == 0) {
+                    // if the game already started, take them straight into it.
+                    _ctx.getWorldDirector().goToMemberLocation(location.memberId, location);
                     return;
                 }
                 _ctx.getGameDirector().joinPlayerTable(location.gameId, location.memberId);

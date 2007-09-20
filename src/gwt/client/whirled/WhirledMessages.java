@@ -36,9 +36,9 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String emptyPopularPlaces(String arg0,  String arg1);
 
   /**
-   * Translated "Go to {0}''s Game".
+   * Translated "Join {0}''s Game".
    * 
-   * @return translated "Go to {0}''s Game"
+   * @return translated "Join {0}''s Game"
    * @gwt.key goToGame
    */
   String goToGame(String arg0);
@@ -146,14 +146,6 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key headerChats
    */
   String headerChats();
-
-  /**
-   * Translated "Sit at {0}''s Table".
-   * 
-   * @return translated "Sit at {0}''s Table"
-   * @gwt.key sitAtPending
-   */
-  String sitAtPending(String arg0);
 
   /**
    * Translated "Pop. {0}, including: ".
