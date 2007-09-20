@@ -7,6 +7,7 @@ import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 
 import com.threerings.presents.data.InvocationCodes;
 
@@ -24,6 +25,7 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.GameDetail;
@@ -43,7 +45,7 @@ public class GameServlet extends MsoyServiceServlet
     public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
         throws ServiceException
     {
-        // TODO: validate this user's ident
+        MemberRecord mrec = getAuthedUser(ident);
 
         // load up the metadata for this game
         GameRepository repo = MsoyServer.itemMan.getGameRepository();
@@ -101,9 +103,15 @@ public class GameServlet extends MsoyServiceServlet
         config.gameMediaPath = (game.gameMedia.mimeType == MediaDesc.APPLICATION_JAVA_ARCHIVE) ?
             game.gameMedia.getProxyMediaPath() : game.gameMedia.getMediaPath();
         config.name = game.name;
-        config.server = ServerConfig.serverHost;
-        config.port = ServerConfig.serverPorts[0];
         config.httpPort = ServerConfig.httpPort;
+
+        // determine what server is hosting the game, if any
+        Tuple<String, Integer> rhost = MsoyServer.peerMan.getGameHost(gameId);
+        if (rhost != null) {
+            config.server = MsoyServer.peerMan.getPeerPublicHostName(rhost.left);
+            config.port = rhost.right;
+        }
+
         return config;
     }
 
