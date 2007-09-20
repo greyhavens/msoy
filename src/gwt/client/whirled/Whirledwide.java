@@ -32,13 +32,21 @@ import client.util.MsoyUI;
 
 public class Whirledwide extends FlexTable
 {
-    public Whirledwide ()
+    public static interface PopulationDisplay
     {
+        public void displayPopulation (int population);
+    }
+
+    public Whirledwide (PopulationDisplay popDisplay)
+    {
+        _popDisplay = popDisplay;
         buildUi();
 
         CWhirled.membersvc.getWhirledwide(new AsyncCallback() {
             public void onSuccess (Object result) {
-                fillUi((WhirledwideData) result);
+                WhirledwideData data = (WhirledwideData) result;
+                _popDisplay.displayPopulation(data.whirledPopulation);
+                fillUi(data);
             }
             public void onFailure (Throwable caught) {
                 MsoyUI.error(CWhirled.serverError(caught));
@@ -236,4 +244,5 @@ public class Whirledwide extends FlexTable
     protected VerticalPanel _players;
     protected FeaturedPlaceView _featuredPlace;
     protected FeaturedPlacesList _featuredPlaces;
+    protected PopulationDisplay _popDisplay;
 }

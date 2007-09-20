@@ -16,6 +16,14 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String myWhirledDescription();
 
   /**
+   * Translated "Current Whirled Population: {0}".
+   * 
+   * @return translated "Current Whirled Population: {0}"
+   * @gwt.key populationDisplay
+   */
+  String populationDisplay(String arg0);
+
+  /**
    * Translated "You currently have no popular places.<br/>
    * You can always visit <a href="/#{0}">your home</a> or<br/>
    * check <a href="/#{1}">Whirledwide</a> to get started!".

@@ -37,4 +37,9 @@ public class WhirledwideData
      * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
      */
     public List people = new ArrayList();
+
+    /**
+     * The total server population.
+     */
+    public int whirledPopulation;
 }

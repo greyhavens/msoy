@@ -5,6 +5,11 @@ package client.whirled;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.web.client.DeploymentConfig;
 import client.msgs.MsgsEntryPoint;
 import client.shell.Page;
@@ -35,7 +40,18 @@ public class index extends MsgsEntryPoint
 
         if ("whirledwide".equals(token)) {
             setPageTitle(CWhirled.msgs.titleWhirledwide());
-            setContent(new Whirledwide());
+            setContent(new Whirledwide(new Whirledwide.PopulationDisplay() {
+                public void displayPopulation (int population) {
+                    // This is a hack to get the population into the usual tabs spot...
+                    VerticalPanel container = new VerticalPanel();
+                    container.setVerticalAlignment(VerticalPanel.ALIGN_BOTTOM);
+                    container.add(WidgetUtil.makeShim(5, 3));
+                    Label popLabel = new Label(CWhirled.msgs.populationDisplay("" + population));
+                    popLabel.setStyleName("PopulationDisplay");
+                    container.add(popLabel);
+                    setPageTabs(container);
+                }
+            }));
         } else if ("mywhirled".equals(token)) {
             setPageTitle(CWhirled.msgs.titleMyWhirled());
             setContent(new MyWhirled());

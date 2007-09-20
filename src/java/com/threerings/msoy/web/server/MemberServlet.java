@@ -426,6 +426,8 @@ public class MemberServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
+        whirledwide.whirledPopulation = MsoyServer.memberMan.getPPSnapshot().getPopulationCount();
+
         return whirledwide;
     }
 
