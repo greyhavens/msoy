@@ -348,6 +348,10 @@
   padding: 3px 0px 3px 0px;
 }
 
+.PlayerWidget img, .PlayerWidget .NameLabel {
+  cursor: pointer;
+}
+
 .NameLabel {
   padding: 0px 2px 0px 2px;
 }
