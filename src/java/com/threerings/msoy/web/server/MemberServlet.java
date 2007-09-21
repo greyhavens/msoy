@@ -345,6 +345,7 @@ public class MemberServlet extends MsoyServiceServlet
         myWhirled.photo = profile.photoHash == null ? null : profile.getPhoto();
         myWhirled.ownedRooms = ownedRooms;
         myWhirled.chats = chats;
+        myWhirled.whirledPopulation = pps.getPopulationCount();
         return myWhirled;
     }
 

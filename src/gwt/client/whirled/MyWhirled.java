@@ -56,13 +56,15 @@ import client.shell.WorldClient;
 
 public class MyWhirled extends FlexTable
 {
-    public MyWhirled ()
+    public MyWhirled (final PopulationDisplay popDisplay)
     {
         buildUi();
 
         CWhirled.membersvc.getMyWhirled(CWhirled.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
-                fillUi((MyWhirledData) result);
+                MyWhirledData data = (MyWhirledData) result;
+                popDisplay.displayPopulation(data.whirledPopulation);
+                fillUi(data);
             }
             public void onFailure (Throwable caught) {
                 MsoyUI.error(CWhirled.serverError(caught));

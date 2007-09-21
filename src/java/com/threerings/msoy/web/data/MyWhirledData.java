@@ -56,4 +56,9 @@ public class MyWhirledData
      * @gwt.typeArgs <java.lang.Integer,java.lang.String>
      */
     public Map chats;
+
+    /**
+     * The current total whirled population, as of the last Snapshot.
+     */
+    public int whirledPopulation;
 }
