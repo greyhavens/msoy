@@ -282,7 +282,7 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // make sure we're the creator of the listed item
-            if (listing.item.creatorId != mrec.memberId) {
+            if (listing.item.creatorId != mrec.memberId && !mrec.isSupport()) {
                 log.warning("Member requested to delist unowned item [who=" + mrec.accountName +
                             ", type=" + itemType + ", catId=" + catalogId + "].");
                 throw new ServiceException(ItemCodes.ACCESS_DENIED);
