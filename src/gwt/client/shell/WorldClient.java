@@ -20,6 +20,47 @@ import client.util.InfoPopup;
  */
 public class WorldClient extends Widget
 {
+    /**
+     * Display a scene in the Whirledwide Featured Places area.
+     *
+     * The scene will not display chat from the people talking, and the player will not 
+     * have an avatar in the scene, and thus will not be walking around or chatting.  
+     */
+    public static void displayFeaturedPlace (final int sceneId) 
+    {
+        if (_defaultServer == null) {
+            CShell.usersvc.getConnectConfig(new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    _defaultServer = (ConnectConfig)result;
+                    displayFeaturedPlace(sceneId);
+                }
+                public void onFailure (Throwable cause) {
+                    new InfoPopup(CShell.serverError(cause)).show();
+                }
+            });
+            return;
+        }
+
+        String flashArgs = "featuredPlace=" + sceneId + "&host=" + _defaultServer.server +
+                           "&port=" + _defaultServer.port + "&httpPort=" + _defaultServer.httpPort;
+        String partner = Application.getPartner();
+        if (partner != null) {
+            flashArgs += "&partner=" + partner;
+        }
+        if (CShell.ident != null) {
+            flashArgs += "&token=" + CShell.ident.token;
+        }
+        if (!featuredPlaceGo(flashArgs)) {
+            RootPanel featuredPlaceContainer = RootPanel.get("featuredPlaceContainer");
+            if (featuredPlaceContainer == null) {
+                return;
+            }
+
+            featuredPlaceContainer.clear();
+            FlashClients.embedFeaturedPlaceView(featuredPlaceContainer, flashArgs);
+        }
+    }
+
     public static void displayFlash (String flashArgs)
     {
         displayFlash(flashArgs, History.getToken());
@@ -129,6 +170,18 @@ public class WorldClient extends Widget
     {
         clearClient(true);
     }
+
+    /**
+     * Tells the featured places view to show a particular location.
+     */
+    protected static native boolean featuredPlaceGo (String where) /*-{
+        var client = $doc.getElementById("featuredplace");
+        if (client) {
+            client.clientGo(where);
+            return true;
+        }
+        return false;
+    }-*/;
 
     /**
      * Tells the World client to go to a particular location.

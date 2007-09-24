@@ -5,6 +5,7 @@ package client.whirled;
 
 import java.util.Iterator;
 
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.History;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -26,6 +27,7 @@ import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.WhirledwideData;
 
 import client.shell.Application;
+import client.shell.WorldClient;
 
 import client.util.MediaUtil;
 import client.util.MsoyUI;
@@ -122,14 +124,16 @@ public class Whirledwide extends FlexTable
         featuredPlaceContainer.setSpacing(0);
         featuredPlaceContainer.setStyleName("FeaturedPlaceContainer");
         featuredPlaceContainer.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
+        DOM.setAttribute(featuredPlaceContainer.getElement(), "id", "featuredPlaceContainer");
         setWidget(row++, 1, featuredPlaceContainer);
-        VerticalPanel featuredPlace = new VerticalPanel();
+        WorldClient.displayFeaturedPlace(16);
+        /*VerticalPanel featuredPlace = new VerticalPanel();
         featuredPlace.setStyleName("FeaturedPlace");
         featuredPlace.setSpacing(0);
         featuredPlaceContainer.add(featuredPlace);
         featuredPlace.add(new Image("/images/whirled/featured_places.jpg"));
         //featuredPlace.add(_featuredPlace = new FeaturedPlaceView());
-        featuredPlace.add(new Image("/images/whirled/comingsoon.jpg"));
+        featuredPlace.add(new Image("/images/whirled/comingsoon.jpg"));*/
     }
 
     protected void fillUi (WhirledwideData whirledwide) 

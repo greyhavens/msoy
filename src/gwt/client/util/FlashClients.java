@@ -38,6 +38,17 @@ public class FlashClients
     }
 
     /**
+     * Creates a featured places world client, and embeds it in the container object.
+     */
+    public static void embedFeaturedPlaceView (Panel container, String flashVars)
+    {
+        WidgetUtil.embedFlashObject(
+            container, WidgetUtil.createFlashObjectDefinition(
+                "featuredplace", "/clients/" + DeploymentConfig.version + "/world-client.swf",
+                "100%", getClientHeight(false), flashVars));
+    }
+
+    /**
      * Creates a decor viewer, and embeds it in a container object, with which it can communicate
      * via the Flash/Javascript interface.
      */
