@@ -22,7 +22,8 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntIntMap;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntSet;
 
 import org.apache.velocity.VelocityContext;
 
@@ -538,10 +539,10 @@ public class MemberServlet extends MsoyServiceServlet
         HashIntMap<SceneCard> cards = new HashIntMap<SceneCard>();
 
         try {
-            // maps group id to the scene that is owned by it
-            IntIntMap groupIds = new IntIntMap();
-            // maps member id to the scene that is owned by them
-            IntIntMap memberIds = new IntIntMap();
+            // maps group id to the scene(s) that are owned by it
+            IntMap<IntSet> groupIds = new HashIntMap<IntSet>();
+            // maps member id to the scene(s) that are owned by them
+            IntMap<IntSet> memberIds = new HashIntMap<IntSet>();
             for (SceneRecord sceneRec : 
                     MsoyServer.sceneRepo.loadScenes(map.intKeySet().toIntArray())) {
                 SceneCard card = new SceneCard();
@@ -554,30 +555,46 @@ public class MemberServlet extends MsoyServiceServlet
                 card.population = snap == null ? 0 : snap.population;
                 cards.put(card.sceneId, card);
                 if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                    groupIds.put(sceneRec.ownerId, sceneRec.sceneId);
+                    IntSet groupScenes = groupIds.get(sceneRec.ownerId);
+                    if (groupScenes == null) {
+                        groupScenes = new ArrayIntSet();
+                        groupIds.put(sceneRec.ownerId, groupScenes);
+                    }
+                    groupScenes.add(sceneRec.sceneId);
                 } else if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                    memberIds.put(sceneRec.ownerId, sceneRec.sceneId);
+                    IntSet memberScenes = memberIds.get(sceneRec.ownerId);
+                    if (memberScenes == null) {
+                        memberScenes = new ArrayIntSet();
+                        memberIds.put(sceneRec.ownerId, memberScenes);
+                    }
+                    memberScenes.add(sceneRec.sceneId);
                 }
             }
 
             // fill in logos for group-owned scenes
-            for (GroupRecord groupRec : MsoyServer.groupRepo.loadGroups(groupIds.getKeys())) {
-                SceneCard card = cards.get(groupIds.get(groupRec.groupId));
-                if (card != null) {
-                    card.logo = groupRec.logoMediaHash == null ? Group.getDefaultGroupLogoMedia() :
-                        new MediaDesc(groupRec.logoMediaHash, groupRec.logoMimeType, 
-                                      groupRec.logoMediaConstraint);
-                } 
+            for (GroupRecord groupRec : 
+                    MsoyServer.groupRepo.loadGroups(groupIds.intKeySet().toIntArray())) {
+                for (int sceneId : groupIds.get(groupRec.groupId)) {
+                    SceneCard card = cards.get(sceneId);
+                    if (card != null) {
+                        card.logo = groupRec.logoMediaHash == null ? 
+                            Group.getDefaultGroupLogoMedia() :
+                            new MediaDesc(groupRec.logoMediaHash, groupRec.logoMimeType, 
+                                          groupRec.logoMediaConstraint);
+                    }
+                }
             }
 
             // fill in logos for member-owned scenes
             for (ProfileRecord profileRec : 
-                    MsoyServer.profileRepo.loadProfiles(memberIds.getKeys())) {
-                SceneCard card = cards.get(memberIds.get(profileRec.memberId));
-                if (card != null) {
-                    card.logo = profileRec.photoHash == null ? Profile.DEFAULT_PHOTO : 
-                        new MediaDesc(profileRec.photoHash, profileRec.photoMimeType, 
-                                      profileRec.photoConstraint);
+                    MsoyServer.profileRepo.loadProfiles(memberIds.intKeySet().toIntArray())) {
+                for (int sceneId : memberIds.get(profileRec.memberId)) {
+                    SceneCard card = cards.get(sceneId);
+                    if (card != null) {
+                        card.logo = profileRec.photoHash == null ? Profile.DEFAULT_PHOTO : 
+                            new MediaDesc(profileRec.photoHash, profileRec.photoMimeType, 
+                                        profileRec.photoConstraint);
+                    }
                 }
             }
         } catch (PersistenceException pe) {
