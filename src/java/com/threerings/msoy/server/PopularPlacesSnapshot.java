@@ -40,7 +40,7 @@ public class PopularPlacesSnapshot
         }
     }
 
-    /** We keep track of only this many top scenes game games. */
+    /** We keep track of only this many top scenes and games. */
     public static final int MAX_TRACKED_PLACES = 50;
 
     /**
