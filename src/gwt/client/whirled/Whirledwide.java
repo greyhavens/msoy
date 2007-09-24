@@ -16,6 +16,8 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -233,23 +235,20 @@ public class Whirledwide extends FlexTable
     {
         public FeaturedPlaceView ()
         {
-            HorizontalPanel featuredPlaceContainer = new HorizontalPanel();
-            DOM.setAttribute(featuredPlaceContainer.getElement(), "id", "featuredPlaceContainer");
-            add(featuredPlaceContainer);
-
-            _sceneNameContainer = new HorizontalPanel();
+            add(_featuredPlaceContainer = new HorizontalPanel());
+            add(_sceneNameContainer = new HorizontalPanel());
             _sceneNameContainer.setStyleName("SceneNameContainer");
             _sceneNameContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
-            add(_sceneNameContainer);
         }
 
         public void displayScene (SceneCard card) 
         {
-            WorldClient.displayFeaturedPlace(card.sceneId);
+            WorldClient.displayFeaturedPlace(card.sceneId, _featuredPlaceContainer);
             _sceneNameContainer.clear();
             _sceneNameContainer.add(new Label(card.name));
         }
 
+        HorizontalPanel _featuredPlaceContainer;
         HorizontalPanel _sceneNameContainer;
     }
 

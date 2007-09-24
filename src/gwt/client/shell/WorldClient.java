@@ -6,6 +6,7 @@ package client.shell;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -26,13 +27,13 @@ public class WorldClient extends Widget
      * The scene will not display chat from the people talking, and the player will not 
      * have an avatar in the scene, and thus will not be walking around or chatting.  
      */
-    public static void displayFeaturedPlace (final int sceneId) 
+    public static void displayFeaturedPlace (final int sceneId, final Panel container) 
     {
         if (_defaultServer == null) {
             CShell.usersvc.getConnectConfig(new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _defaultServer = (ConnectConfig)result;
-                    displayFeaturedPlace(sceneId);
+                    displayFeaturedPlace(sceneId, container);
                 }
                 public void onFailure (Throwable cause) {
                     new InfoPopup(CShell.serverError(cause)).show();
@@ -48,13 +49,8 @@ public class WorldClient extends Widget
             flashArgs += "&partner=" + partner;
         }
         if (!featuredPlaceGo(flashArgs)) {
-            RootPanel featuredPlaceContainer = RootPanel.get("featuredPlaceContainer");
-            if (featuredPlaceContainer == null) {
-                return;
-            }
-
-            featuredPlaceContainer.clear();
-            FlashClients.embedFeaturedPlaceView(featuredPlaceContainer, flashArgs);
+            container.clear();
+            FlashClients.embedFeaturedPlaceView(container, flashArgs);
         }
     }
 
