@@ -1,5 +1,5 @@
 <!-- build configuration -->
-<project name="msoy" default="compile" basedir=".">
+<project name="msoy" default="compile" basedir="." xmlns:artifact="urn:maven-artifact-ant">
 
   <!-- read in our server properties -->
   <property file="server.properties"/>
@@ -148,6 +148,19 @@
        <include name="**/*"/>
       </fileset>
     </copy>
+    
+    <!-- Fetch Three Rings Dependencies -->
+    <artifact:dependencies filesetId="dependency.fileset">
+        <remoteRepository refid="maven.depends.repo"/>
+        <dependency groupId="com.threerings.panopticon.${maven.dist}" artifactId="panopticon-client"
+            version="0.0-SNAPSHOT"/>
+    </artifact:dependencies>
+
+    <copy todir="${deploy.dir}/lib">
+        <fileset refid="dependency.fileset"/>
+        <mapper type="flatten"/>
+    </copy>
+    
     <!-- create our toybox propertis from server.properties -->
     <exec executable="egrep">
       <arg line="^toybox\."/>
@@ -158,6 +171,7 @@
         </outputfilterchain>
       </redirector>
     </exec>
+    
     <!-- copy ehcache.xml to a classpath location -->
     <if><equals arg1="${props.dist}" arg2="production"/>
     <then>
@@ -165,6 +179,7 @@
     </then><else>
       <copy todir="${deploy.dir}" file="${basedir}/etc/ehcache.xml"/>
     </else></if>
+    
     <!-- create dev usable security.policy and swiftly.policy files -->
     <!-- real ones are created in prepare-server-extra -->
     <copy file="etc/security.policy.in" tofile="${deploy.dir}/security.policy" overwrite="true">
