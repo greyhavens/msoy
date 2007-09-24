@@ -126,7 +126,6 @@ public class Whirledwide extends FlexTable
         featuredPlaceContainer.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
         DOM.setAttribute(featuredPlaceContainer.getElement(), "id", "featuredPlaceContainer");
         setWidget(row++, 1, featuredPlaceContainer);
-        WorldClient.displayFeaturedPlace(16);
         /*VerticalPanel featuredPlace = new VerticalPanel();
         featuredPlace.setStyleName("FeaturedPlace");
         featuredPlace.setSpacing(0);
@@ -184,6 +183,11 @@ public class Whirledwide extends FlexTable
             nameLabel.addClickListener(goToProfile);
             personPanel.add(nameLabel);
             _players.add(personPanel);
+        }
+
+        // scenes
+        if (whirledwide.places.size() > 0) {
+            WorldClient.displayFeaturedPlace(((SceneCard) whirledwide.places.get(0)).sceneId);
         }
     }
 

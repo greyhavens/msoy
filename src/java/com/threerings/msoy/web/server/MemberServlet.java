@@ -427,7 +427,20 @@ public class MemberServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
-        whirledwide.whirledPopulation = MsoyServer.memberMan.getPPSnapshot().getPopulationCount();
+        PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+        whirledwide.whirledPopulation = pps.getPopulationCount();
+        ArrayList<SceneCard> cards = new ArrayList<SceneCard>();
+        for (PopularPlacesSnapshot.Place scene : pps.getTopScenes()) {
+            // TODO: only add scenes that are publicly accessible... should perhaps be made to be
+            // true for the entire top scenes list in PopularPlacesSnapshot?
+            SceneCard card = new SceneCard();
+            card.sceneType = SceneCard.ROOM;
+            card.sceneId = scene.placeId;
+            card.name = scene.name;
+            card.population = scene.population;
+            cards.add(card);
+        }
+        whirledwide.places = cards;
 
         return whirledwide;
     }
