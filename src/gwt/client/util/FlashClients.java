@@ -45,7 +45,7 @@ public class FlashClients
         WidgetUtil.embedFlashObject(
             container, WidgetUtil.createFlashObjectDefinition(
                 "featuredplace", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-                "100%", getClientHeight(false), flashVars));
+                FEATURED_PLACE_WIDTH, FEATURED_PLACE_HEIGHT, flashVars));
     }
 
     /**
@@ -392,4 +392,8 @@ public class FlashClients
     protected static final int HEADER_HEIGHT = 50;
     protected static final int BLACKBAR_HEIGHT = 20;
     protected static final int CLIENT_HEIGHT = 550;
+
+    // defines a 16:9 view ratio for the featured places view.
+    protected static final String FEATURED_PLACE_WIDTH = "424px";
+    protected static final String FEATURED_PLACE_HEIGHT = "239px";
 }

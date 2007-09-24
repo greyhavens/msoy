@@ -371,3 +371,9 @@
   font-size: 10px;
   color: #A9A8AD;
 }
+
+.SceneNameContainer {
+  font-size: 12px;
+  font-weight: bold;
+  width: 100%;
+}

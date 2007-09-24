@@ -660,7 +660,7 @@ public class MsoyController extends Controller
             }
 
         } else if (null != params["featuredPlace"]) {
-            Log.getLog(this).debug("FEATURED PLACE [" + params["featuredPlace"] + "]");
+            _ctx.getSceneDirector().moveTo(int(params["featuredPlace"]));
 
         } else if (_ctx.getMemberObject().getMemberId() != 0) {
             _ctx.getWorldDirector().goToMemberHome(_ctx.getMemberObject().getMemberId());

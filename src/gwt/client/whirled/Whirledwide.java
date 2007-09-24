@@ -117,22 +117,18 @@ public class Whirledwide extends FlexTable
         playersList.setVerticalAlignment(VerticalPanel.ALIGN_TOP);
         playersList.add(_players = new VerticalPanel());
         playersContainer.add(playersList);
-        //playersContainer.add(_players = new VerticalPanel());
-        //_players.setStyleName("PlayersList");
         
         HorizontalPanel featuredPlaceContainer = new HorizontalPanel();
         featuredPlaceContainer.setSpacing(0);
         featuredPlaceContainer.setStyleName("FeaturedPlaceContainer");
         featuredPlaceContainer.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
-        DOM.setAttribute(featuredPlaceContainer.getElement(), "id", "featuredPlaceContainer");
         setWidget(row++, 1, featuredPlaceContainer);
-        /*VerticalPanel featuredPlace = new VerticalPanel();
+        VerticalPanel featuredPlace = new VerticalPanel();
         featuredPlace.setStyleName("FeaturedPlace");
         featuredPlace.setSpacing(0);
         featuredPlaceContainer.add(featuredPlace);
         featuredPlace.add(new Image("/images/whirled/featured_places.jpg"));
-        //featuredPlace.add(_featuredPlace = new FeaturedPlaceView());
-        featuredPlace.add(new Image("/images/whirled/comingsoon.jpg"));*/
+        featuredPlace.add(_featuredPlace = new FeaturedPlaceView());
     }
 
     protected void fillUi (WhirledwideData whirledwide) 
@@ -187,7 +183,7 @@ public class Whirledwide extends FlexTable
 
         // scenes
         if (whirledwide.places.size() > 0) {
-            WorldClient.displayFeaturedPlace(((SceneCard) whirledwide.places.get(0)).sceneId);
+            _featuredPlace.displayScene((SceneCard) whirledwide.places.get(0));
         }
     }
 
@@ -233,11 +229,28 @@ public class Whirledwide extends FlexTable
         }
     }
     
-    protected static class FeaturedPlaceView extends HorizontalPanel
+    protected static class FeaturedPlaceView extends VerticalPanel
     {
         public FeaturedPlaceView ()
         {
+            HorizontalPanel featuredPlaceContainer = new HorizontalPanel();
+            DOM.setAttribute(featuredPlaceContainer.getElement(), "id", "featuredPlaceContainer");
+            add(featuredPlaceContainer);
+
+            _sceneNameContainer = new HorizontalPanel();
+            _sceneNameContainer.setStyleName("SceneNameContainer");
+            _sceneNameContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+            add(_sceneNameContainer);
         }
+
+        public void displayScene (SceneCard card) 
+        {
+            WorldClient.displayFeaturedPlace(card.sceneId);
+            _sceneNameContainer.clear();
+            _sceneNameContainer.add(new Label(card.name));
+        }
+
+        HorizontalPanel _sceneNameContainer;
     }
 
     protected static final int TOTAL_ROWS = 1; // temp: will be 4 when we have center content
