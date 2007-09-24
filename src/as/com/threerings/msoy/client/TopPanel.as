@@ -58,12 +58,14 @@ public class TopPanel extends Canvas
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
-        _headerBar = new HeaderBar(ctx);
-        _headerBar.includeInLayout = false;
-        _headerBar.setStyle("top", 0);
-        _headerBar.setStyle("left", 0);
-        _headerBar.setStyle("right", 0);
-        addChild(_headerBar);
+        if (!_ctx.getWorldClient().isFeaturedPlaceView()) {
+            _headerBar = new HeaderBar(ctx);
+            _headerBar.includeInLayout = false;
+            _headerBar.setStyle("top", 0);
+            _headerBar.setStyle("left", 0);
+            _headerBar.setStyle("right", 0);
+            addChild(_headerBar);
+        }
 
         _placeBox = new PlaceBox();
         _placeBox.autoLayout = false;
@@ -71,25 +73,29 @@ public class TopPanel extends Canvas
         addChild(_placeBox);
 
         // set up the control bar
-        _controlBar = new ControlBar(ctx, this);
-        _controlBar.includeInLayout = false;
-        _controlBar.setStyle("bottom", 0);
-        _controlBar.setStyle("left", 0);
-        _controlBar.setStyle("right", 0);
-        addChild(_controlBar);
+        if (!_ctx.getWorldClient().isFeaturedPlaceView()) {
+            _controlBar = new ControlBar(ctx, this);
+            _controlBar.includeInLayout = false;
+            _controlBar.setStyle("bottom", 0);
+            _controlBar.setStyle("left", 0);
+            _controlBar.setStyle("right", 0);
+            addChild(_controlBar);
+        }
 
         // show a subtle build-stamp
-        var buildStamp :Label = new Label();
-        buildStamp.includeInLayout = false;
-        buildStamp.mouseEnabled = false;
-        buildStamp.mouseChildren = false;
-        buildStamp.text = "Build: " + DeploymentConfig.buildTime;
-        buildStamp.setStyle("color", "#F7069A");
-        buildStamp.setStyle("fontSize", 8);
-        buildStamp.setStyle("bottom", ControlBar.HEIGHT);
-        // The scrollbar isn't really this thick, but it's pretty close.
-        buildStamp.setStyle("right", ScrollBar.THICKNESS);
-        addChild(buildStamp);
+        if (!_ctx.getWorldClient().isFeaturedPlaceView()) {
+            var buildStamp :Label = new Label();
+            buildStamp.includeInLayout = false;
+            buildStamp.mouseEnabled = false;
+            buildStamp.mouseChildren = false;
+            buildStamp.text = "Build: " + DeploymentConfig.buildTime;
+            buildStamp.setStyle("color", "#F7069A");
+            buildStamp.setStyle("fontSize", 8);
+            buildStamp.setStyle("bottom", ControlBar.HEIGHT);
+            // The scrollbar isn't really this thick, but it's pretty close.
+            buildStamp.setStyle("right", ScrollBar.THICKNESS);
+            addChild(buildStamp);
+        }
 
         // clear out the application and install ourselves as the only child
         var app :Application = Application(Application.application);
@@ -444,6 +450,12 @@ public class TopPanel extends Canvas
 
     protected function layoutPanels () :void
     {
+        if (_ctx.getWorldClient().isFeaturedPlaceView()) {
+            // in this case, we only have one panel...
+            updatePlaceViewSize();
+            return;
+        }
+
         if (_leftPanel != null) {
             _leftPanel.setStyle("top", 0);
             _leftPanel.setStyle("bottom", getBottomPanelHeight());
@@ -486,7 +498,8 @@ public class TopPanel extends Canvas
     {
         var pv :PlaceView = getPlaceView();
         if (pv is RoomView) {
-            (pv as RoomView).setUseChatOverlay(_placeBox.parent == this);
+            (pv as RoomView).setUseChatOverlay(_placeBox.parent == this && 
+                !_ctx.getWorldClient().isFeaturedPlaceView());
         }
     }
 
@@ -494,6 +507,15 @@ public class TopPanel extends Canvas
     {
         if (_placeBox.parent != this) {
             return; // nothing doing if we're not in control
+        }
+
+        if (_ctx.getWorldClient().isFeaturedPlaceView()) {
+            _placeBox.clearStyle("top");
+            _placeBox.clearStyle("bottom");
+            _placeBox.clearStyle("left");
+            _placeBox.clearStyle("right");
+            _placeBox.wasResized(stage.stageWidth, stage.stageHeight);
+            return;
         }
 
         var botHeight :int = getBottomPanelHeight();

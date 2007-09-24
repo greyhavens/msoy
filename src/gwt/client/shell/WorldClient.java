@@ -47,9 +47,6 @@ public class WorldClient extends Widget
         if (partner != null) {
             flashArgs += "&partner=" + partner;
         }
-        if (CShell.ident != null) {
-            flashArgs += "&token=" + CShell.ident.token;
-        }
         if (!featuredPlaceGo(flashArgs)) {
             RootPanel featuredPlaceContainer = RootPanel.get("featuredPlaceContainer");
             if (featuredPlaceContainer == null) {

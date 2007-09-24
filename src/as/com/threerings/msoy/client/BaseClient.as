@@ -70,6 +70,10 @@ public /*abstract*/ class BaseClient extends Client
         super(createStartupCreds(stage), stage);
         setVersion(DeploymentConfig.version);
 
+        var params :Object = stage.loaderInfo.parameters;
+        _featuredPlaceView = params["featuredPlace"] != null;
+        Log.getLog(this).debug("featured place view: " + _featuredPlaceView);
+
         _ctx = createContext();
         LoggingTargets.configureLogging(_ctx);
         
@@ -174,6 +178,14 @@ public /*abstract*/ class BaseClient extends Client
     public function isEmbedded () :Boolean
     {
         return _embedded;
+    }
+
+    /**
+     * Find out whether this client is being used as a featured place view.
+     */
+    public function isFeaturedPlaceView () :Boolean
+    {
+        return _featuredPlaceView;
     }
 
     /**
@@ -293,6 +305,7 @@ public /*abstract*/ class BaseClient extends Client
     protected var _ctx :BaseContext;
     protected var _user :MemberObject;
     protected var _embedded :Boolean = false;
+    protected var _featuredPlaceView :Boolean = false;
 
     /** The port on which we connect to the HTTP server. */
     protected var _httpPort :int;

@@ -250,7 +250,11 @@ public class RoomController extends SceneController
 
         // watch for when we're un-minimized and the display list is valid, so that we can
         // open the editor, and place things correctly when necessary
-        _mctx.getTopPanel().getControlBar().addEventListener(ControlBar.DISPLAY_LIST_VALID,
+        var controlBar :ControlBar = _mctx.getTopPanel().getControlBar();
+        if (controlBar == null) {
+            return;
+        }
+        controlBar.addEventListener(ControlBar.DISPLAY_LIST_VALID,
             function (evt :ValueEvent) :void {
                 if (_openEditor && !isRoomEditing()) {
                     beginRoomEditing(_mctx.getTopPanel().getControlBar().roomEditBtn);

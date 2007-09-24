@@ -22,6 +22,7 @@ import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 
+import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.WorldContext;
 
@@ -220,7 +221,10 @@ public class NotificationDirector extends BasicDirector
             acknowledgeNotifications(shouldAck);
         }
         // and update the button if there are any persistent notifications
-        _wctx.getTopPanel().getControlBar().setNotificationsAvailable(hasPersistent);
+        var controlBar :ControlBar = _wctx.getTopPanel().getControlBar();
+        if (controlBar != null) {
+            controlBar.setNotificationsAvailable(hasPersistent);
+        }
     }
 
     /**
