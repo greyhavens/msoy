@@ -78,6 +78,8 @@
     <file name="${extlibs.dir}/gwt-user.jar"/>
     <file name="${extlibs.dir}/gwt-widgets.jar"/>
     <file name="${extlibs.dir}/javassist.jar"/>
+    <file name="${extlibs.dir}/jetty6/jetty.jar"/>
+    <file name="${extlibs.dir}/jetty6/jetty-util.jar"/>
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/junit4.jar"/>
     <file name="${extlibs.dir}/mail.jar"/>
@@ -97,8 +99,6 @@
     <file name="lib/sdoc-0.5.0-beta-ooo.jar"/>
     <file name="lib/substance-lite.jar"/>
 
-    <file name="lib/jetty-6.1.4.jar"/>
-    <file name="lib/jetty-util-6.1.4.jar"/>
     <file name="lib/servlet-api.jar"/>
 
     <file name="lib/lwjgl-applet.jar"/>
