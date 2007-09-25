@@ -393,7 +393,6 @@ public class FlashClients
     protected static final int BLACKBAR_HEIGHT = 20;
     protected static final int CLIENT_HEIGHT = 550;
 
-    // defines a 16:9 view ratio for the featured places view.
     protected static final String FEATURED_PLACE_WIDTH = "424px";
-    protected static final String FEATURED_PLACE_HEIGHT = "239px";
+    protected static final String FEATURED_PLACE_HEIGHT = "189px";
 }
