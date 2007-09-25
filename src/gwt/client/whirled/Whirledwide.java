@@ -241,11 +241,18 @@ public class Whirledwide extends FlexTable
             _sceneNameContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
         }
 
-        public void displayScene (SceneCard card) 
+        public void displayScene (final SceneCard card) 
         {
             WorldClient.displayFeaturedPlace(card.sceneId, _featuredPlaceContainer);
             _sceneNameContainer.clear();
-            _sceneNameContainer.add(new Label(card.name));
+            Label sceneName = new Label(card.name);
+            sceneName.setStyleName("SceneName");
+            sceneName.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    History.newItem(Application.createLinkToken("world", "s" + card.sceneId));
+                }
+            });
+            _sceneNameContainer.add(sceneName);
         }
 
         HorizontalPanel _featuredPlaceContainer;

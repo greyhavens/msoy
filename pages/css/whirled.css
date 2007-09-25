@@ -373,7 +373,11 @@
 }
 
 .SceneNameContainer {
+  width: 100%;
+}
+
+.SceneNameContainer .SceneName {
+  cursor: pointer;
   font-size: 12px;
   font-weight: bold;
-  width: 100%;
 }
