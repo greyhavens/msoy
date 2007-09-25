@@ -25,6 +25,9 @@ public class WorldMemberInfo extends MemberInfo
     /** The game summary for the user's currently pending game. */
     public var game :GameSummary;
 
+    /** True of this member is only viewing the scene and should not be rendered in it. */
+    public var viewOnly :Boolean;
+
 //    /** The style of chat bubble to use. */
 //    public var chatStyle :int;
 //
@@ -57,6 +60,7 @@ public class WorldMemberInfo extends MemberInfo
 //        chatPopStyle = ins.readShort();
         state = (ins.readField(String) as String);
         game = (ins.readObject() as GameSummary);
+        viewOnly = ins.readBoolean();
         _media = (ins.readObject() as MediaDesc);
         _scale = ins.readFloat();
     }

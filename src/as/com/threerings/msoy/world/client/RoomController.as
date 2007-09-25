@@ -251,17 +251,23 @@ public class RoomController extends SceneController
         // watch for when we're un-minimized and the display list is valid, so that we can
         // open the editor, and place things correctly when necessary
         var controlBar :ControlBar = _mctx.getTopPanel().getControlBar();
-        if (controlBar == null) {
-            return;
-        }
-        controlBar.addEventListener(ControlBar.DISPLAY_LIST_VALID,
-            function (evt :ValueEvent) :void {
-                if (_openEditor && !isRoomEditing()) {
-                    beginRoomEditing(_mctx.getTopPanel().getControlBar().roomEditBtn);
+        if (controlBar != null) {
+            controlBar.addEventListener(ControlBar.DISPLAY_LIST_VALID,
+                function (evt :ValueEvent) :void {
+                    if (_openEditor && !isRoomEditing()) {
+                        beginRoomEditing(_mctx.getTopPanel().getControlBar().roomEditBtn);
+                    }
+                    _openEditor = false;
                 }
-                _openEditor = false;
-            }
-        );
+            );
+        }
+
+        if (_mctx.getWorldClient().isFeaturedPlaceView()) {
+            // show the pointer cursor 
+            _roomView.buttonMode = true;
+            _roomView.mouseChildren = false;
+            _roomView.useHandCursor = true;
+        }
     }
 
     // documentation inherited
@@ -932,7 +938,8 @@ public class RoomController extends SceneController
     protected function checkMouse (event :Event) :void
     {
         // no mouse fiddling while we're minimized
-        if ((_mctx.getChatDirector() as MsoyChatDirector).containsRoomTab()) {
+        if ((_mctx.getChatDirector() as MsoyChatDirector).containsRoomTab() ||
+                _mctx.getWorldClient().isFeaturedPlaceView()) {
             setHoverSprite(null);
             return;
         }
@@ -1130,6 +1137,12 @@ public class RoomController extends SceneController
 
     protected function mouseClicked (event :MouseEvent) :void
     {
+        // if we're in a featured place view, any click should take the member to this room.
+        if (_mctx.getWorldClient().isFeaturedPlaceView()) {
+            _mctx.getMsoyController().handleGoScene(_scene.getId());
+            return;
+        }
+
         // if we're minimized, then request to be unminimized
         if (_mctx.getWorldClient().isMinimized()) {
             _mctx.getWorldClient().restoreClient();

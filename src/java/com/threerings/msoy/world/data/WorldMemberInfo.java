@@ -23,6 +23,9 @@ public class WorldMemberInfo extends MemberInfo
     /** The game summary for the user's currently lobbying or playing game. */
     public GameSummary game;
 
+    /** True of this member is only viewing the scene and should not be rendered in it. */
+    public boolean viewOnly;
+
 //    /** The style of chat bubble to use. */
 //    public short chatStyle;
 //
@@ -59,6 +62,7 @@ public class WorldMemberInfo extends MemberInfo
 
         state = user.avatarState;
         game = user.game;
+        viewOnly = user.viewOnly;
     }
 
     // from interface WorldOccupantInfo

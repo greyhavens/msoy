@@ -21,6 +21,9 @@ public class MsoyCredentials extends UsernamePasswordCreds
     /** The machine identifier of the client, if one is known. */
     public String ident;
 
+    /** Indicates whether this client is set up as a featured place view. */
+    public boolean featuredPlaceView;
+
     /**
      * Creates credentials with the specified username and password.  {@link #ident} should be set
      * before logging in unless the client does not know its machine identifier in which case it
@@ -44,5 +47,6 @@ public class MsoyCredentials extends UsernamePasswordCreds
     {
         super.toString(buf);
         buf.append(", ident=").append(ident);
+        buf.append(", featuredPlaceView=").append(featuredPlaceView);
     }
 }

@@ -97,6 +97,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>notifications</code> field. */
     public static final String NOTIFICATIONS = "notifications";
+
+    /** The field name of the <code>viewOnly</code> field. */
+    public static final String VIEW_ONLY = "viewOnly";
     // AUTO-GENERATED: FIELDS END
 
     /** The ideal size of the avatar cache. */
@@ -161,6 +164,10 @@ public class MemberObject extends MsoyBodyObject
 
     /** The set of notifications pending on the member object. */
     public DSet<Notification> notifications = new DSet<Notification>();
+
+    /** A flag that's true if this member object is only viewing the current scene and should not
+     * be rendered in it. */
+    public boolean viewOnly;
 
     /** Statistics tracked for this player. */
     public transient StatSet stats;
@@ -858,6 +865,22 @@ public class MemberObject extends MsoyBodyObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.notify.data.Notification> clone =
             (value == null) ? null : value.typedClone();
         this.notifications = clone;
+    }
+
+    /**
+     * Requests that the <code>viewOnly</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setViewOnly (boolean value)
+    {
+        boolean ovalue = this.viewOnly;
+        requestAttributeChange(
+            VIEW_ONLY, Boolean.valueOf(value), Boolean.valueOf(ovalue));
+        this.viewOnly = value;
     }
     // AUTO-GENERATED: METHODS END
 

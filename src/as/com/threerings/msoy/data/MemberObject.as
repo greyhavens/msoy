@@ -87,6 +87,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>notifications</code> field. */
     public static const NOTIFICATIONS :String = "notifications";
+
+    /** The field name of the <code>viewOnly</code> field. */
+    public static const VIEW_ONLY :String = "viewOnly";
     // AUTO-GENERATED: FIELDS END
 
     /** The member name and id for this user. */
@@ -145,6 +148,10 @@ public class MemberObject extends MsoyBodyObject
 
     /** The set of notifications pending on the member. */
     public var notifications :DSet;
+
+    /** A flag that's true if this member object is only viewing the current scene and should not
+     * be rendered in it. */
+    public var viewOnly :Boolean;
 
     /**
      * Return this member's unique id.
@@ -345,6 +352,7 @@ public class MemberObject extends MsoyBodyObject
         game = (ins.readObject() as GameSummary);
         lists = (ins.readObject() as DSet);
         notifications = (ins.readObject() as DSet);
+        viewOnly = ins.readBoolean();
     }
 }
 }

@@ -715,6 +715,10 @@ public class RoomView extends AbstractRoomView
         }
 
         var occInfo :ActorInfo = (_roomObj.occupantInfo.get(bodyOid) as ActorInfo);
+        if (occInfo is WorldMemberInfo && (occInfo as WorldMemberInfo).viewOnly) {
+            // don't add viewOnly actors.
+            return;
+        }
         var sloc :SceneLocation = (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
@@ -779,7 +783,9 @@ public class RoomView extends AbstractRoomView
     {
         var actor :ActorSprite = (_actors.get(newInfo.getBodyOid()) as ActorSprite);
         if (actor == null) {
-            log.warning("No actor for updated occupant? [info=" + newInfo + "].");
+            if (!(newInfo is WorldMemberInfo) || !(newInfo as WorldMemberInfo).viewOnly) {
+                log.warning("No actor for updated occupant? [info=" + newInfo + "].");
+            }
             return;
         }
         actor.setActorInfo(newInfo);

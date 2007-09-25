@@ -19,6 +19,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
+import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -48,6 +49,9 @@ public class MsoyClient extends WhirledClient
         } else {
             _memobj.setTokens(new MsoyTokenRing());
         }
+
+        // flag viewing-only clients that way.
+        _memobj.viewOnly = ((MsoyCredentials) getCredentials()).featuredPlaceView;
 
         // let our various server entities know that this member logged on
         MsoyServer.memberLoggedOn(_memobj);

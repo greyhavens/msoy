@@ -72,7 +72,6 @@ public /*abstract*/ class BaseClient extends Client
 
         var params :Object = stage.loaderInfo.parameters;
         _featuredPlaceView = params["featuredPlace"] != null;
-        Log.getLog(this).debug("featured place view: " + _featuredPlaceView);
 
         _ctx = createContext();
         LoggingTargets.configureLogging(_ctx);
@@ -267,6 +266,7 @@ public /*abstract*/ class BaseClient extends Client
         if (null == params["guest"]) {
             creds.sessionToken = (token == null) ? params["token"] : token;
         }
+        creds.featuredPlaceView = null != params["featuredPlace"];
         return creds;
     }
 
