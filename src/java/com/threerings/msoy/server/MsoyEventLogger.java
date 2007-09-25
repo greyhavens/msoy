@@ -20,10 +20,9 @@ import com.threerings.msoy.Log;
  */
 public class MsoyEventLogger extends EventLogger
 {
-    public MsoyEventLogger (String serverURL)
-        throws MalformedURLException
+    public MsoyEventLogger (URL serverURL)
     {
-        super("com.threerings.msoy", new URL(serverURL));
+        super("com.threerings.msoy", serverURL);
         connect();
 
         Log.log.info("Events will be logged to " + serverURL);
@@ -50,7 +49,7 @@ public class MsoyEventLogger extends EventLogger
     }
 
     @Override // from EventLogger
-    public void log (String table, Object[] values)
+    public void log (String table, Object ... values)
         throws IllegalArgumentException
     {
         super.log(table, values);
