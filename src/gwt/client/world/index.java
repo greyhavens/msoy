@@ -4,6 +4,7 @@
 package client.world;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -13,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 
+import client.shell.Application;
 import client.shell.Page;
 import client.shell.WorldClient;
 import client.util.FlashClients;
@@ -78,18 +80,18 @@ public class index extends Page
                 // join a group chat
                 WorldClient.displayFlash("groupChat=" + token.substring(1));
 
-            } else if (token.startsWith("p") || CWorld.ident != null) {
-                // display popular places by request or if we're logged in
+            } else if (token.startsWith("p")) {
+                // display popular places by request
                 displayHotSpots(_entryCounter);
 
             } else {
-                // we're not logged in, show popular places
-                displayHotSpots(_entryCounter);
+                // default: show whirledwide
+                History.newItem(Application.createLinkToken("whirled", "whirledwide"));
             }
 
         } catch (NumberFormatException e) {
-            // if all else fails, display popular places
-            displayHotSpots(_entryCounter);
+            // if all else fails, display whirledwide
+            History.newItem(Application.createLinkToken("whirled", "whirledwide"));
         }
     }
 
