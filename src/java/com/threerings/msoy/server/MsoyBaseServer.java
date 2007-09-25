@@ -66,6 +66,9 @@ public abstract class MsoyBaseServer extends WhirledServer
     /** Stores user's game cookies. */
     public static GameCookieRepository gameCookieRepo;
 
+    /** Sends event information to an external log database. */
+    public static MsoyEventLogger eventLog;
+    
     /**
      * Creates an audit log with the specified name (which should not include
      * the <code>.log</code> suffix) in our server log directory.
@@ -143,6 +146,9 @@ public abstract class MsoyBaseServer extends WhirledServer
         confReg = createConfigRegistry();
         AdminProvider.init(invmgr, confReg);
 
+        // initialize event logger
+        eventLog = new MsoyEventLogger(ServerConfig.eventLogHost, ServerConfig.eventLogPort);
+        
         // now initialize our runtime configuration, postponing the remaining server initialization
         // until our configuration objects are available
         RuntimeConfig.init(omgr, confReg);

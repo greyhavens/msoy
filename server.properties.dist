@@ -125,3 +125,10 @@ oooauth.access_denied_url = /register/access_denied.wm
 
 # facebook.api_key = 
 # facebook.secret = 
+
+#
+# Hostname and port of the event log server.
+
+# event_log_host = logdb.metasoy.com
+# event_log_port = 47615
+
