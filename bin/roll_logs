@@ -43,4 +43,4 @@ for MSOYLOG in $MSOY_HOME/log/stdout-*.log ; do
 done
 
 # prune old logs
-find $MSOY_HOME/log -name 'stdout.log*' -a -mtime +7 | xargs rm -f
+find $MSOY_HOME/log -name 'stdout*.log*' -a -mtime +7 | xargs rm -f
