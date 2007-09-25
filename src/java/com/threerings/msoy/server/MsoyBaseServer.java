@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
+import java.net.URL;
 import java.security.Security;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -147,7 +148,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         AdminProvider.init(invmgr, confReg);
 
         // initialize event logger
-        eventLog = new MsoyEventLogger(ServerConfig.eventLogURL);
+        eventLog = new MsoyEventLogger(new URL(ServerConfig.eventLogURL));
         
         // now initialize our runtime configuration, postponing the remaining server initialization
         // until our configuration objects are available
