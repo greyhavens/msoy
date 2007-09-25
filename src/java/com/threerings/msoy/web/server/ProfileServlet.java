@@ -294,7 +294,8 @@ public class ProfileServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         // fetch all the rating records for the user
-        List<RatingRecord> ratings = MsoyServer.ratingRepo.getRatings(tgtrec.memberId);
+        List<RatingRecord> ratings = MsoyServer.ratingRepo.getRatings(
+            tgtrec.memberId, -1, MAX_PROFILE_GAMES);
 
         log.info("Loading ratings for " + tgtrec.memberId + ": " + ratings);
 
@@ -360,5 +361,5 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     protected static final int MAX_PROFILE_MATCHES = 100;
-    protected static final int MAX_PROFILE_GAMES = 20;
+    protected static final int MAX_PROFILE_GAMES = 10;
 }
