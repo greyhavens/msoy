@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server;
 
+import java.net.URL;
+
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
@@ -17,10 +19,10 @@ import com.threerings.msoy.Log;
  */
 public class MsoyEventLogger extends EventLogger
 {
-    public MsoyEventLogger (String host, int port)
+    public MsoyEventLogger (URL serverURL)
     {
-        super("com.threerings.msoy", host, port);
-        Log.log.info("Events will be logged to " + host + ":" + port);
+        super("com.threerings.msoy", serverURL);
+        Log.log.info("Events will be logged to " + serverURL);
 
         connect();
     }

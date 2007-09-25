@@ -147,7 +147,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         AdminProvider.init(invmgr, confReg);
 
         // initialize event logger
-        eventLog = new MsoyEventLogger(ServerConfig.eventLogHost, ServerConfig.eventLogPort);
+        eventLog = new MsoyEventLogger(ServerConfig.eventLogURL);
         
         // now initialize our runtime configuration, postponing the remaining server initialization
         // until our configuration objects are available

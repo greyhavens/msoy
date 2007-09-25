@@ -66,11 +66,8 @@ public class ServerConfig
     /** The secret key used for S3 authentication. */
     public static String mediaS3Key;
 
-    /** Event logging server hostname. */
-    public static String eventLogHost;
-
-    /** Event logging server port number. */
-    public static int eventLogPort;
+    /** Event logging server RPC URL. */
+    public static String eventLogURL;
     
     /** Provides access to our config properties. <em>Do not</em> modify
      * these properties! */
@@ -173,7 +170,6 @@ public class ServerConfig
         mediaS3Id = config.getValue("media_s3id", "id");
         mediaS3Key = config.getValue("media_s3key", "key");
         sharedSecret = config.getValue("server_secret", "");
-        eventLogHost = config.getValue("event_log_host", "localhost");
-        eventLogPort = config.getValue("event_log_port", 47615);
+        eventLogURL = config.getValue("event_log_url", "http://localhost:8080");
     }
 }
