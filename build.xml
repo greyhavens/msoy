@@ -92,7 +92,9 @@
     <file name="${extlibs.dir}/svnkit-javahl.jar"/>
     <file name="${extlibs.dir}/svnkit.jar"/>
     <file name="${extlibs.dir}/velocity-1.5-dev.jar"/>
-    <file name="${extlibs.dir}/ws-commons-util-1.0.1.jar"/>
+    <file name="${extlibs.dir}/ws-commons-util.jar"/>
+    <file name="${extlibs.dir}/xmlrpc-client.jar"/>
+    <file name="${extlibs.dir}/xmlrpc-common.jar"/>
 
     <file name="lib/json.jar"/>
     <file name="lib/jswiff-8.0-beta-2-threerings.jar"/>
