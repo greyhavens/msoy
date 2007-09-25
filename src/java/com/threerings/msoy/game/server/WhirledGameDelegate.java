@@ -99,26 +99,28 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         // award flow according to the rankings and the payout type
         awardFlow(players, payoutType);
 
-        // compute new ratings
-        for (Rating rating : _ratings.values()) {
-            Player player = players.get(rating.playerOid);
-            if (player != null) {
-                updateScoreBasedRating(player, rating);
+        // compute new ratings if appropriate
+        if (shouldRateGame()) {
+            for (Rating rating : _ratings.values()) {
+                Player player = players.get(rating.playerOid);
+                if (player != null) {
+                    updateScoreBasedRating(player, rating);
+                }
             }
-        }
 
-        int[] nratings = new int[_playerIds.length];
-        for (int ii = 0; ii < nratings.length; ii ++) {
-            nratings[ii] = computeRating(ii);
-        }
+            int[] nratings = new int[_playerIds.length];
+            for (int ii = 0; ii < nratings.length; ii ++) {
+                nratings[ii] = computeRating(ii);
+            }
 
-        // and write them back to their rating records
-        for (int ii = 0; ii < nratings.length; ii++) {
-            Rating rating = _ratings.get(_playerIds[ii]);
-            if (rating != null && nratings[ii] > 0) {
-                rating.rating = nratings[ii];
-                rating.experience++;
-                rating.modified = true;
+            // and write them back to their rating records
+            for (int ii = 0; ii < nratings.length; ii++) {
+                Rating rating = _ratings.get(_playerIds[ii]);
+                if (rating != null && nratings[ii] > 0) {
+                    rating.rating = nratings[ii];
+                    rating.experience++;
+                    rating.modified = true;
+                }
             }
         }
 
@@ -437,14 +439,11 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         return isMultiPlayer() ? gameId : -gameId;
     }
 
-    @Override // from RatingManagerDelegate
-    protected void loadRatings (Collection<Rating> ratings)
+    @Override
+    protected boolean shouldRateGame ()
     {
         // we don't support ratings for non-published games
-        if (_gmgr.getGameConfig().getGameId() < 0) {
-            return;
-        }
-        super.loadRatings(ratings);
+        return (_gmgr.getGameConfig().getGameId() > 0) && super.shouldRateGame();
     }
 
     /**
