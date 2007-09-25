@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import java.net.URL;
+import java.net.MalformedURLException;
 
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
@@ -19,12 +20,13 @@ import com.threerings.msoy.Log;
  */
 public class MsoyEventLogger extends EventLogger
 {
-    public MsoyEventLogger (URL serverURL)
+    public MsoyEventLogger (String serverURL)
+        throws MalformedURLException
     {
-        super("com.threerings.msoy", serverURL);
-        Log.log.info("Events will be logged to " + serverURL);
-
+        super("com.threerings.msoy", new URL(serverURL));
         connect();
+
+        Log.log.info("Events will be logged to " + serverURL);
     }
 
     @Override // from EventLogger
