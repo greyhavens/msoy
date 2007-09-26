@@ -43,6 +43,7 @@ import client.shell.Application;
 import client.util.BorderedDialog;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
+import client.util.StyledTabPanel;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.
@@ -88,7 +89,7 @@ public class GroupEdit extends BorderedDialog
         groupNameEdit.setSpacing(5);
         contents.add(groupNameEdit);
 
-        TabPanel groupTabs = createTabs();
+        TabPanel groupTabs = new StyledTabPanel();
         groupTabs.add(createInfoPanel(), CGroup.msgs.editInfoTab());
         groupTabs.add(createDescriptionPanel(), CGroup.msgs.editDescripTab());
         groupTabs.add(createBackgroundsPanel(), CGroup.msgs.editImagesTab());

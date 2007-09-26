@@ -91,19 +91,16 @@ public class MediaUploader extends VerticalPanel
                 }
             }
         });
-        // TODO: needed?
-//        if (GWT.isScript()) {
-//            _panel.addField(new SubmitField("submit", CEditem.emsgs.upload()), "submit");
-//        } else {
-            Button submit = new Button(CEditem.emsgs.upload());
-            submit.setStyleName("mediaUploader");
-            submit.addClickListener(new ClickListener() {
-                public void onClick (Widget widget) {
-                    form.submit();
-                }
-            });
-            _panel.add(submit);
-//        }
+
+        Button submit = new Button(CEditem.emsgs.upload());
+        submit.setStyleName("mediaUploader");
+        submit.addClickListener(new ClickListener() {
+            public void onClick (Widget widget) {
+                form.submit();
+            }
+        });
+        _panel.add(submit);
+
         add(form);
     }
 

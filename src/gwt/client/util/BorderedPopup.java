@@ -47,7 +47,7 @@ public class BorderedPopup extends PopupPanel
     {
         if (_centerOnShow) {
             _centerOnShow = false;
-            super.center(); // this will show us
+            center(); // this will show us
         } else {
             super.show();
         }

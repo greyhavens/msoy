@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -74,8 +75,8 @@ public class MediaUtil
             break;
 
         default:
-            view = new Label(path);
-            break;
+            // TODO: create a default image for media we don't know how to display
+            return new Image(Item.getDefaultThumbnailMediaFor(Item.DOCUMENT).getMediaPath());
         }
 
         return view;

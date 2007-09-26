@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -25,6 +26,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
 import client.util.RowPanel;
+import client.util.StyledTabPanel;
 
 /**
  * The base class for an interface for creating and editing digital items.
@@ -98,7 +100,7 @@ public abstract class ItemEditor extends BorderedDialog
         _header.add(_etitle = createTitleLabel("title", "Title"));
 
         VerticalPanel contents = (VerticalPanel)_contents;
-        TabPanel mediaTabs = createTabs();
+        TabPanel mediaTabs = new StyledTabPanel();
         contents.add(mediaTabs);
 
         VerticalPanel info = new VerticalPanel();

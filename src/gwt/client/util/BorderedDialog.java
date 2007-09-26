@@ -21,17 +21,6 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class BorderedDialog extends BorderedPopup
 {
-    /**
-     * Creates an appropriately styled TabPanel, for use in BorderedDialogs.  It is up to the caller
-     * to add it to the dialog.
-     */
-    public static TabPanel createTabs () 
-    {
-        TabPanel tabs = new StyledTabPanel();
-        // styling is handeled in gwt.css
-        return tabs;
-    }
-
     public BorderedDialog ()
     {
         this(false);

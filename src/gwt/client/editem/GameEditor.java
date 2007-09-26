@@ -36,6 +36,7 @@ public class GameEditor extends ItemEditor
     {
         super.setItem(item);
         _game = (Game)item;
+        _mainUploader.setMedia(_game.gameMedia);
 
         // if we have no game configuration, leave everything as default
         if (_game.config == null || _game.config.length() == 0) {
@@ -151,7 +152,7 @@ public class GameEditor extends ItemEditor
         bits.setWidget(row, 0, _extras = new TextArea());
 
         bits.getFlexCellFormatter().setColSpan(row++, 0, 2);
-        _extras.setCharacterWidth(80);
+        _extras.setCharacterWidth(60);
         _extras.setVisibleLines(5);
 
         bits.setText(row, 0, CEditem.emsgs.gameJavaTip());

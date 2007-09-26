@@ -144,9 +144,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String videoPromptGoogle();
 
   /**
-   * Translated "Upload your audio.".
+   * Translated "The MP3 audio file".
    * 
-   * @return translated "Upload your audio."
+   * @return translated "The MP3 audio file"
    * @gwt.key audioMainTitle
    */
   String audioMainTitle();
@@ -256,9 +256,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameIdent();
 
   /**
-   * Translated "Main Game media".
+   * Translated "The SWF or JAR file for your game".
    * 
-   * @return translated "Main Game media"
+   * @return translated "The SWF or JAR file for your game"
    * @gwt.key gameMainTitle
    */
   String gameMainTitle();
@@ -416,9 +416,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String decorType_Fixed();
 
   /**
-   * Translated "Upload your video.".
+   * Translated "The FLA video file".
    * 
-   * @return translated "Upload your video."
+   * @return translated "The FLA video file"
    * @gwt.key videoMainTitle
    */
   String videoMainTitle();
