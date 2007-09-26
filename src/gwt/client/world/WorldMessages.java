@@ -8,6 +8,14 @@ package client.world;
 public interface WorldMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "That address is not recognized.".
+   * 
+   * @return translated "That address is not recognized."
+   * @gwt.key unknownLocation
+   */
+  String unknownLocation();
+
+  /**
    * Translated "That member could not be found.".
    * 
    * @return translated "That member could not be found."

@@ -85,13 +85,11 @@ public class index extends Page
                 displayHotSpots(_entryCounter);
 
             } else {
-                // default: show whirledwide
-                History.newItem(Application.createLinkToken("whirled", "whirledwide"));
+                MsoyUI.error(CWorld.msgs.unknownLocation());
             }
 
         } catch (NumberFormatException e) {
-            // if all else fails, display whirledwide
-            History.newItem(Application.createLinkToken("whirled", "whirledwide"));
+            MsoyUI.error(CWorld.msgs.unknownLocation());
         }
     }
 
