@@ -136,12 +136,8 @@ public abstract class ItemGift
                 };
 
                 final ListBox box = new ListBox();
-                final byte[] types = new byte[] {
-                    Item.PHOTO, Item.DOCUMENT, Item.FURNITURE, Item.GAME, Item.AVATAR,
-                    Item.PET, Item.AUDIO, Item.VIDEO, Item.DECOR, Item.TOY
-                };
-                for (int i = 0; i < types.length; i ++) {
-                    box.addItem(capitalizeString(Item.getTypeName(types[i])));
+                for (int i = 0; i < Item.GIFT_TYPES.length; i ++) {
+                    box.addItem(CMsgs.dmsgs.getString("itemType" + Item.GIFT_TYPES[i]));
                 }
                 box.setSelectedIndex(0);
                 box.addChangeListener(new ChangeListener() {
@@ -149,7 +145,7 @@ public abstract class ItemGift
                         _right.clear();
                         _status.setText(null);
                         if (box.getSelectedIndex() != -1) {
-                            rightBits(types[box.getSelectedIndex()]);
+                            rightBits(Item.GIFT_TYPES[box.getSelectedIndex()]);
                         }
                     }
                 });

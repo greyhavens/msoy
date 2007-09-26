@@ -48,6 +48,13 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
         AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO
     };
 
+    /**
+     * A canonical ordering of our item types for use in giving gifts.
+     */
+    public static final byte[] GIFT_TYPES = {
+        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO, LEVEL_PACK, ITEM_PACK
+    };
+
     /** A 'used' constant value to indicate that the item is unused. */
     public static final byte UNUSED = (byte) 0;
 
@@ -205,6 +212,10 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
             return "decor";
         } else if (type == TOY) {
             return "toy";
+        } else if (type == LEVEL_PACK) {
+            return "level_pack";
+        } else if (type == ITEM_PACK) {
+            return "item_pack";
         } else {
             return "unknown:" + type;
         }

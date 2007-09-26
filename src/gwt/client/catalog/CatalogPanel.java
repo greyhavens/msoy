@@ -63,7 +63,7 @@ public class CatalogPanel extends VerticalPanel
                 return new ListingContainer((CatalogListing)item, CatalogPanel.this);
             }
             protected String getEmptyMessage () {
-                String name = Item.getTypeName(_type);
+                String name = CCatalog.dmsgs.getString("itemType" + _type);
                 if (_tag != null) {
                     return CCatalog.msgs.catalogNoTag(name, _tag);
                 } else if (_search != null) {
