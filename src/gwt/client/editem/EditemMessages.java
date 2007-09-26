@@ -136,9 +136,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameMaxPlayers();
 
   /**
-   * Translated "Enter a google video id:".
+   * Translated "Enter a Google video id:".
    * 
-   * @return translated "Enter a google video id:"
+   * @return translated "Enter a Google video id:"
    * @gwt.key videoPromptGoogle
    */
   String videoPromptGoogle();
@@ -160,9 +160,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String videoMainTab();
 
   /**
-   * Translated "Or use an embeddable google video.".
+   * Translated "Or use an embeddable Google video.".
    * 
-   * @return translated "Or use an embeddable google video."
+   * @return translated "Or use an embeddable Google video."
    * @gwt.key videoOptionGoogle
    */
   String videoOptionGoogle();
@@ -184,9 +184,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String editorThumbTab();
 
   /**
-   * Translated "Enter a youtube video id:".
+   * Translated "Enter a YouTube video id:".
    * 
-   * @return translated "Enter a youtube video id:"
+   * @return translated "Enter a YouTube video id:"
    * @gwt.key videoPromptYoutube
    */
   String videoPromptYoutube();
@@ -320,9 +320,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String audioMainTab();
 
   /**
-   * Translated "Or use an embeddable youtube video.".
+   * Translated "Or use an embeddable YouTube video.".
    * 
-   * @return translated "Or use an embeddable youtube video."
+   * @return translated "Or use an embeddable YouTube video."
    * @gwt.key videoOptionYoutube
    */
   String videoOptionYoutube();
@@ -416,9 +416,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String decorType_Fixed();
 
   /**
-   * Translated "The FLA video file".
+   * Translated "The video media file".
    * 
-   * @return translated "The FLA video file"
+   * @return translated "The video media file"
    * @gwt.key videoMainTitle
    */
   String videoMainTitle();

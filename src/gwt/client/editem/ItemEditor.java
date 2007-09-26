@@ -104,7 +104,7 @@ public abstract class ItemEditor extends BorderedDialog
         contents.add(mediaTabs);
 
         VerticalPanel info = new VerticalPanel();
-        info.setSpacing(10);
+        info.setSpacing(5);
         populateInfoTab(info);
         mediaTabs.add(info, CEditem.emsgs.editorInfoTab());
 
