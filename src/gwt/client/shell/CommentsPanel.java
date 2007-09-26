@@ -30,7 +30,6 @@ public class CommentsPanel extends VerticalPanel
         _entityType = entityType;
         _entityId = entityId;
 
-        add(MsoyUI.createLabel("Comments", "Header"));
         add(_comments = new VerticalPanel());
         _comments.setSpacing(5);
 

@@ -766,11 +766,6 @@ a:visited {
   border: 0px;
 }
 
-.commentsPanel .Header {
-  font-size: 16px;
-  font-weight: bold;
-}
-
 .commentsPanel .Status {
   font-size: 12px;
 }

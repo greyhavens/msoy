@@ -76,7 +76,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
 
         // display a comment interface below the listing details
-        addBelow(new CommentsPanel(detail.item.getType(), listing.catalogId));
+        addTabBelow("Comments", new CommentsPanel(detail.item.getType(), listing.catalogId));
     }
 
     // @Override // BaseItemDetailPanel

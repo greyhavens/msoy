@@ -25,6 +25,7 @@ import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MediaUtil;
 import client.util.PopupMenu;
+import client.util.StyledTabPanel;
 import client.util.TagDetailPanel;
 
 /**
@@ -149,6 +150,17 @@ public abstract class BaseItemDetailPanel extends FlexTable
         }
     }
 
+    protected void addTabBelow (String title, Widget content)
+    {
+        if (_belowTabs == null) {
+            addBelow(_belowTabs = new StyledTabPanel());
+        }
+        _belowTabs.add(content, title);
+        if (_belowTabs.getWidgetCount() == 1) {
+            _belowTabs.selectTab(0);
+        }
+    }
+
     /**
      * Adds a widget below the primary item detail contents.
      */
@@ -240,6 +252,8 @@ public abstract class BaseItemDetailPanel extends FlexTable
 
     protected Label _description;
     protected CreatorLabel _creator;
+
+    protected StyledTabPanel _belowTabs;
 
     /** Have we updated the scale (of an avatar?) */
     protected boolean _scaleUpdated;
