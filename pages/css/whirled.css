@@ -373,11 +373,18 @@
 }
 
 .SceneNameContainer {
-  width: 100%;
+  font-size: 12px;
+  width: 424px;
+  text-align: center;
+}
+
+.SceneNameContainer div {
+  display: inline;
+  padding: 0px 2px 0px 2px;
 }
 
 .SceneNameContainer .SceneName {
   cursor: pointer;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
 }

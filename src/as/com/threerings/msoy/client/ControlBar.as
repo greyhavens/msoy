@@ -271,7 +271,7 @@ public class ControlBar extends HBox
         _snapBtn.toolTip = Msgs.GENERAL.get("i.snapshot");
         _snapBtn.setCommand(ControlBarController.SNAPSHOT);
         _snapBtn.styleName = "controlBarButtonSnapshot";
-        _snapBtn.enabled = false;
+        _snapBtn.enabled = true;
         addGroupChild(_snapBtn, [ UI_STD ]);
 
         // some elements that are common to guest and logged in users

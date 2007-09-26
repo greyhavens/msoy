@@ -8,6 +8,14 @@ package client.whirled;
 public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "owner: {0}".
+   * 
+   * @return translated "owner: {0}"
+   * @gwt.key sceneOwner
+   */
+  String sceneOwner(String arg0);
+
+  /**
    * Translated "What''s going <br/>on in My Whirled <br/>right now.".
    * 
    * @return translated "What''s going <br/>on in My Whirled <br/>right now."
@@ -146,6 +154,14 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key headerChats
    */
   String headerChats();
+
+  /**
+   * Translated "Featured Room: ".
+   * 
+   * @return translated "Featured Room: "
+   * @gwt.key featuredRoom
+   */
+  String featuredRoom();
 
   /**
    * Translated "Pop. {0}, including: ".

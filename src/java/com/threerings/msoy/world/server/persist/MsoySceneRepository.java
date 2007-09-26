@@ -163,6 +163,15 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /**
+     * Load the SceneRecord for the given sceneId
+     */
+    public SceneRecord loadScene (int sceneId)
+        throws PersistenceException
+    {
+        return load(SceneRecord.class, new Where(SceneRecord.SCENE_ID_C, sceneId));
+    }
+
+    /**
      * Load the SceneRecords for the given sceneIds.
      */
     public List<SceneRecord> loadScenes (int[] sceneIds)

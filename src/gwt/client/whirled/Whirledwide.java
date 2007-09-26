@@ -13,13 +13,18 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.GroupName;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -235,17 +240,22 @@ public class Whirledwide extends FlexTable
     {
         public FeaturedPlaceView ()
         {
+            setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
             add(_featuredPlaceContainer = new HorizontalPanel());
-            add(_sceneNameContainer = new HorizontalPanel());
+            add(_sceneNameContainer = new FlowPanel());
             _sceneNameContainer.setStyleName("SceneNameContainer");
-            _sceneNameContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+            //_sceneNameContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+            //_sceneNameContainer.setVerticalAlignment(HorizontalPanel.ALIGN_BOTTOM);
+            //_sceneNameContainer.setSpacing(3);
         }
 
         public void displayScene (final SceneCard card) 
         {
             WorldClient.displayFeaturedPlace(card.sceneId, _featuredPlaceContainer);
             _sceneNameContainer.clear();
-            Label sceneName = new Label(card.name);
+            _sceneNameContainer.add(new Label(CWhirled.msgs.featuredRoom(), false));
+
+            Label sceneName = new Label("\"" + card.name + "\"");
             sceneName.setStyleName("SceneName");
             sceneName.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
@@ -253,10 +263,25 @@ public class Whirledwide extends FlexTable
                 }
             });
             _sceneNameContainer.add(sceneName);
+            
+            HTML sceneOwner = null;
+            if (card.sceneOwner instanceof MemberName) {
+                sceneOwner = new HTML(CWhirled.msgs.sceneOwner(Application.createLinkHtml(
+                    "" + card.sceneOwner, "profile",
+                    "" + ((MemberName) card.sceneOwner).getMemberId())));
+            } else if (card.sceneOwner instanceof GroupName) {
+                sceneOwner = new HTML(CWhirled.msgs.sceneOwner(Application.createLinkHtml(
+                    "" + card.sceneOwner, "group",
+                    "" + ((GroupName) card.sceneOwner).getGroupId())));
+            }
+            if (sceneOwner != null) {
+                sceneOwner.setStyleName("SceneOwner");
+                _sceneNameContainer.add(sceneOwner);
+            }
         }
 
         HorizontalPanel _featuredPlaceContainer;
-        HorizontalPanel _sceneNameContainer;
+        FlowPanel _sceneNameContainer;
     }
 
     protected static final int TOTAL_ROWS = 1; // temp: will be 4 when we have center content
