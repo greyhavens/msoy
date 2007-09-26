@@ -37,6 +37,11 @@ public class GameEditor extends ItemEditor
         super.setItem(item);
         _game = (Game)item;
 
+        // if we have no game configuration, leave everything as default
+        if (_game.config == null || _game.config.length() == 0) {
+            return;
+        }
+
         // read our configuration information out of the game's XML config data
         Document xml;
         try {
@@ -112,15 +117,7 @@ public class GameEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        // configure the main uploader first
-        tabs.add(createMainUploader(CEditem.emsgs.gameMainTitle(), new MediaUpdater() {
-            public String updateMedia (MediaDesc desc, int width, int height) {
-                // TODO: validate media type
-                _game.gameMedia = desc;
-                return null;
-            }
-        }), CEditem.emsgs.gameMainTab());
-
+        // add a tab for configuring the game
         FlexTable bits = new FlexTable();
         tabs.add(bits, CEditem.emsgs.gameConfigTab());
         int row = 0;
@@ -173,6 +170,15 @@ public class GameEditor extends ItemEditor
 
         bits.setText(row, 0, CEditem.emsgs.gameLWJGL());
         bits.setWidget(row++, 1, _lwjgl = new CheckBox());
+
+        // add a tab for uploading the game media
+        tabs.add(createMainUploader(CEditem.emsgs.gameMainTitle(), new MediaUpdater() {
+            public String updateMedia (MediaDesc desc, int width, int height) {
+                // TODO: validate media type
+                _game.gameMedia = desc;
+                return null;
+            }
+        }), CEditem.emsgs.gameMainTab());
 
         super.createInterface(contents, tabs);
     }

@@ -163,3 +163,7 @@
   text-align: left;
   font-weight: bold;
 }
+
+.itemEditorContents {
+  margin-top: 5px;
+}

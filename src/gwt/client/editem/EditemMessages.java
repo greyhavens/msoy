@@ -40,9 +40,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String decorHorizon();
 
   /**
-   * Translated "Item Name".
+   * Translated "Name".
    * 
-   * @return translated "Item Name"
+   * @return translated "Name"
    * @gwt.key editorName
    */
   String editorName();
@@ -208,12 +208,20 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String petMainTab();
 
   /**
-   * Translated "Enter a Description to be shown if you list your Item in the Catalog".
+   * Translated "This is shown if you list your Item in the Catalog".
    * 
-   * @return translated "Enter a Description to be shown if you list your Item in the Catalog"
-   * @gwt.key editorDescripTitle
+   * @return translated "This is shown if you list your Item in the Catalog"
+   * @gwt.key editorDescripTip
    */
-  String editorDescripTitle();
+  String editorDescripTip();
+
+  /**
+   * Translated "Description".
+   * 
+   * @return translated "Description"
+   * @gwt.key editorDescrip
+   */
+  String editorDescrip();
 
   /**
    * Translated "Background type:".
@@ -376,6 +384,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String msgItemUpdated();
 
   /**
+   * Translated "Item Info".
+   * 
+   * @return translated "Item Info"
+   * @gwt.key editorInfoTab
+   */
+  String editorInfoTab();
+
+  /**
    * Translated "Controller".
    * 
    * @return translated "Controller"
@@ -446,14 +462,6 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key upload
    */
   String upload();
-
-  /**
-   * Translated "Extra Info".
-   * 
-   * @return translated "Extra Info"
-   * @gwt.key editorExtraTab
-   */
-  String editorExtraTab();
 
   /**
    * Translated "Item created.".

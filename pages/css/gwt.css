@@ -577,7 +577,10 @@ a:visited {
 
 .rowPanelCell {
   padding-right: 10px;
-  vertical-align: bottom;
+}
+
+.tipLabel {
+  font-size: 12px;
 }
 
 .infoPopup {

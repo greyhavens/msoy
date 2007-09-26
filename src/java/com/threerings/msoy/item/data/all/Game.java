@@ -42,7 +42,7 @@ public class Game extends Item
     public byte[] getSubTypes ()
     {
         return new byte[] {
-            LEVEL_PACK, ITEM_PACK, AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO
+            LEVEL_PACK, ITEM_PACK, /* BADGE, AWARD */
         };
     }
 

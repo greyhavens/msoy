@@ -29,6 +29,14 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     {
         super(detail);
         _parent = parent;
+
+        // if this item supports sub-items, add a tab for those item types
+        byte[] types = _item.getSubTypes();
+        if (types.length > 0) {
+            for (int ii = 0; ii < types.length; ii++) {
+                addTabBelow(CInventory.dmsgs.getString("pItemType" + types[ii]), new Label("TBD"));
+            }
+        }
     }
 
     // @Override // BaseItemDetailPanel
@@ -40,12 +48,43 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
         // TODO: this may not be necessary if this panel is only shown to the owner, but currently
         // anyone can see it by viewing the item details.
-        boolean userOwnsItem = (_item.ownerId == CShell.getMemberId());
-        if (!userOwnsItem) {
-            // don't add any more of the buttons
-            return;
+        if (_item.ownerId == CShell.getMemberId()) {
+            addOwnerButtons();
         }
 
+        // TODO: When catalog browsing is fully URL-friendly, browsing catalog by creator from here
+        // will be straightforward
+        /*_creator.setMember(_detail.creator, new PopupMenu() {
+            protected void addMenuItems () {
+                this.addMenuItem(CInventory.imsgs.viewProfile(), new Command() {
+                    public void execute () {
+                        History.newItem(Application.createLinkToken("profile",
+                            "" + _detail.creator.getMemberId()));
+                    }
+                });
+                this.addMenuItem(CInventory.imsgs.browseCatalogFor(), new Command() {
+                    public void execute () {
+                        // TODO
+                    }
+                });
+            }
+        });*/
+    }
+
+    // @Override // BaseItemDetailPanel
+    protected void returnToList ()
+    {
+        _parent.requestClearDetail();
+    }
+
+    // @Override // BaseItemDetailPanel
+    protected boolean allowAvatarScaleEditing ()
+    {
+        return (_item.ownerId == CShell.getMemberId());
+    }
+
+    protected void addOwnerButtons ()
+    {
         Button button = new Button(CInventory.msgs.detailDelete());
         new ClickCallback(button) {
             public boolean callService () {
@@ -111,36 +150,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 //             };
 //             _details.add(button);
         }
-
-        // TODO: When catalog browsing is fully URL-friendly, browsing catalog by creator from here
-        // will be straightforward
-        /*_creator.setMember(_detail.creator, new PopupMenu() {
-            protected void addMenuItems () {
-                this.addMenuItem(CInventory.imsgs.viewProfile(), new Command() {
-                    public void execute () {
-                        History.newItem(Application.createLinkToken("profile",
-                            "" + _detail.creator.getMemberId()));
-                    }
-                });
-                this.addMenuItem(CInventory.imsgs.browseCatalogFor(), new Command() {
-                    public void execute () {
-                        // TODO
-                    }
-                });
-            }
-        });*/
-    }
-
-    // @Override // BaseItemDetailPanel
-    protected void returnToList ()
-    {
-        _parent.requestClearDetail();
-    }
-
-    // @Override // BaseItemDetailPanel
-    protected boolean allowAvatarScaleEditing ()
-    {
-        return (_item.ownerId == CShell.getMemberId());
     }
 
     protected ItemPanel _parent;

@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -25,6 +24,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
+import client.util.RowPanel;
 
 /**
  * The base class for an interface for creating and editing digital items.
@@ -99,18 +99,12 @@ public abstract class ItemEditor extends BorderedDialog
 
         VerticalPanel contents = (VerticalPanel)_contents;
         TabPanel mediaTabs = createTabs();
+        contents.add(mediaTabs);
 
-        // create a name entry field
-        HorizontalPanel row = new HorizontalPanel();
-        row.setSpacing(10);
-        row.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        row.add(new Label(CEditem.emsgs.editorName()));
-        row.add(bind(_name = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _item.name = text;
-            }
-        }));
-        contents.add(row);
+        VerticalPanel info = new VerticalPanel();
+        info.setSpacing(10);
+        populateInfoTab(info);
+        mediaTabs.add(info, CEditem.emsgs.editorInfoTab());
 
         // create the rest of the interface
         createInterface(contents, mediaTabs);
@@ -196,7 +190,9 @@ public abstract class ItemEditor extends BorderedDialog
     // @Override // from BorderedDialog
     protected Widget createContents ()
     {
-        return new VerticalPanel();
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("itemEditorContents");
+        return panel;
     }
 
     /**
@@ -207,15 +203,8 @@ public abstract class ItemEditor extends BorderedDialog
      */
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        contents.add(tabs);
-
         createFurniUploader(tabs);
         createThumbUploader(tabs);
-
-        VerticalPanel extras = new VerticalPanel();
-        extras.setSpacing(10);
-        populateExtrasTab(extras);
-        tabs.add(extras, CEditem.emsgs.editorExtraTab());
     }
 
     protected void createFurniUploader (TabPanel tabs)
@@ -252,23 +241,27 @@ public abstract class ItemEditor extends BorderedDialog
      * All items have an "extra information" tab which by default contains the item description but
      * can be extended by overriding this method.
      */
-    protected void populateExtrasTab (VerticalPanel extras)
+    protected void populateInfoTab (VerticalPanel info)
     {
-        extras.add(new Label(CEditem.emsgs.editorDescripTitle()));
-        extras.add(bind(_description = new TextArea(), new Binder() {
+        // create a name entry field
+        RowPanel row = new RowPanel();
+        row.add(new Label(CEditem.emsgs.editorName()));
+        row.add(bind(_name = new TextBox(), new Binder() {
+            public void textUpdated (String text) {
+                _item.name = text;
+            }
+        }));
+        info.add(row);
+
+        info.add(new Label(CEditem.emsgs.editorDescrip()));
+        info.add(bind(_description = new TextArea(), new Binder() {
             public void textUpdated (String text) {
                 _item.description = text;
             }
         }));
         _description.setCharacterWidth(40);
         _description.setVisibleLines(3);
-    }
-
-    /**
-     * Derived classes can add editors to the main tab by overriding this method.
-     */
-    protected void createExtraInterface (VerticalPanel extra)
-    {
+        info.add(MsoyUI.createLabel(CEditem.emsgs.editorDescripTip(), "tipLabel"));
     }
 
     /**
