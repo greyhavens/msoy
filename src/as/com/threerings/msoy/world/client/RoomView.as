@@ -616,6 +616,24 @@ public class RoomView extends AbstractRoomView
     {
         super.relayout();
 
+        if (_ctx.getWorldClient().isFeaturedPlaceView()) {
+            var sceneWidth :int = Math.round(_scene.getWidth() * scaleX) as int;
+            if (sceneWidth < _actualWidth) {
+                // center a scene that is narrower than our view area.
+                x = (_actualWidth - sceneWidth) / 2;
+            } else {
+                // center a scene that is wider than our view area.
+                var rect :Rectangle = scrollRect;
+                if (rect != null) {
+                    var newX :Number = (_scene.getWidth() - _actualWidth / scaleX) / 2;
+                    newX = Math.min(_scene.getWidth() - rect.width, Math.max(0, newX));
+                    rect.x = newX;
+                    scrollRect = rect;
+                    scrollRectUpdated();
+                }
+            }
+        }
+
         var sprite :MsoySprite;
         for each (sprite in _actors.values()) {
             locationUpdated(sprite);
