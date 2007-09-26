@@ -4,6 +4,7 @@
 package client.whirled;
 
 import java.util.Iterator;
+import java.util.List;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.History;
@@ -12,6 +13,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -140,6 +142,8 @@ public class Whirledwide extends FlexTable
 
     protected void fillUi (WhirledwideData whirledwide) 
     {
+        _featuredPlace.setSceneList(whirledwide.places);
+
         // games
         Iterator gamesIter = whirledwide.games.iterator();
         if (gamesIter.hasNext()) {
@@ -187,11 +191,6 @@ public class Whirledwide extends FlexTable
             personPanel.add(nameLabel);
             _players.add(personPanel);
         }
-
-        // scenes
-        if (whirledwide.places.size() > 0) {
-            _featuredPlace.displayScene((SceneCard) whirledwide.places.get(0));
-        }
     }
 
     protected void addGameDataTo (CellPanel panel, final SceneCard game) 
@@ -229,24 +228,53 @@ public class Whirledwide extends FlexTable
         panel.add(nameLabel);
     }
 
-    protected static class FeaturedPlacesList extends HorizontalPanel
-    {
-        public FeaturedPlacesList ()
-        {
-        }
-    }
-    
     protected static class FeaturedPlaceView extends VerticalPanel
+        implements ClickListener
     {
         public FeaturedPlaceView ()
         {
             setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
             add(_featuredPlaceContainer = new HorizontalPanel());
-            add(_sceneNameContainer = new FlowPanel());
+            HorizontalPanel nav = new HorizontalPanel();
+            nav.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            nav.setStyleName("SceneNavigation");
+            nav.add(_prevButton = new Button(CWhirled.msgs.prev(), this));
+            _prevButton.addStyleName("PrevButton");
+            nav.add(_sceneNameContainer = new FlowPanel());
             _sceneNameContainer.setStyleName("SceneNameContainer");
+            nav.add(_nextButton = new Button(CWhirled.msgs.next(), this));
+            _nextButton.addStyleName("NextButton");
+            add(nav);
         }
 
-        public void displayScene (final SceneCard card) 
+        public void onClick (Widget sender) 
+        {
+            if (_scenes == null) {
+                return;
+            }
+
+            if (sender == _prevButton) {
+                if (_sceneIdx > 0) {
+                    displayScene((SceneCard) _scenes.get(--_sceneIdx));
+                }
+            } else if (sender == _nextButton) {
+                if (_scenes.size() > _sceneIdx + 1) {
+                    displayScene((SceneCard) _scenes.get(++_sceneIdx));
+                }
+            }
+
+            _prevButton.setEnabled(_sceneIdx > 0);
+            _nextButton.setEnabled(_scenes.size() > _sceneIdx + 1);
+        }
+
+        public void setSceneList (List scenes)
+        {
+            _scenes = scenes;
+            _sceneIdx = -1;
+            onClick(_nextButton);
+        }
+
+        protected void displayScene (final SceneCard card) 
         {
             WorldClient.displayFeaturedPlace(card.sceneId, _featuredPlaceContainer);
             _sceneNameContainer.clear();
@@ -263,6 +291,10 @@ public class Whirledwide extends FlexTable
 
         HorizontalPanel _featuredPlaceContainer;
         FlowPanel _sceneNameContainer;
+
+        Button _prevButton, _nextButton;
+        List _scenes;
+        int _sceneIdx;
     }
 
     protected static final int TOTAL_ROWS = 1; // temp: will be 4 when we have center content
@@ -270,5 +302,4 @@ public class Whirledwide extends FlexTable
     protected VerticalPanel _topGames;
     protected VerticalPanel _players;
     protected FeaturedPlaceView _featuredPlace;
-    protected FeaturedPlacesList _featuredPlaces;
 }

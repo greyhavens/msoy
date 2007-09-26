@@ -394,5 +394,5 @@ public class FlashClients
     protected static final int CLIENT_HEIGHT = 550;
 
     protected static final String FEATURED_PLACE_WIDTH = "424px";
-    protected static final String FEATURED_PLACE_HEIGHT = "189px";
+    protected static final String FEATURED_PLACE_HEIGHT = "200px";
 }

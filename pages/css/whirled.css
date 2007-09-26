@@ -374,7 +374,7 @@
 
 .SceneNameContainer {
   font-size: 12px;
-  width: 424px;
+  width: 312px;
   text-align: center;
 }
 
@@ -387,4 +387,25 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
+}
+
+.SceneNavigation .gwt-Button {
+  border: none;
+  font-size: 12px;
+  width: 56px;
+  height: 20px;
+  vertical-align: top;
+  padding-bottom: 1px;
+  cursor: pointer;
+  border: 0px none;
+}
+
+.SceneNavigation .PrevButton {
+  padding-left: 10px;
+  background-image: url(/images/ui/button_prev.png);
+}
+
+.SceneNavigation .NextButton {
+  padding-right: 10px;
+  background-image: url(/images/ui/button_next.png);
 }

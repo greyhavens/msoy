@@ -676,6 +676,9 @@ public class MsoyController extends Controller
      */
     public function wentToScene (sceneId :int) :void
     {
+        if (_ctx.getWorldClient().isFeaturedPlaceView()) {
+            return;
+        }
         // this will result in another request to move to the scene we're already in, but we'll
         // ignore it because we're already there
         var scene :String = sceneId + "";

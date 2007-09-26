@@ -60,6 +60,14 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String titleMyWhirled();
 
   /**
+   * Translated "Next".
+   * 
+   * @return translated "Next"
+   * @gwt.key next
+   */
+  String next();
+
+  /**
    * Translated "Whirledwide".
    * 
    * @return translated "Whirledwide"
@@ -122,6 +130,14 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key noChats
    */
   String noChats();
+
+  /**
+   * Translated "Prev".
+   * 
+   * @return translated "Prev"
+   * @gwt.key prev
+   */
+  String prev();
 
   /**
    * Translated "View Profile".

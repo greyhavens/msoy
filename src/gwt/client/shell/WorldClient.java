@@ -42,13 +42,14 @@ public class WorldClient extends Widget
             return;
         }
 
-        String flashArgs = "featuredPlace=" + sceneId + "&host=" + _defaultServer.server +
-                           "&port=" + _defaultServer.port + "&httpPort=" + _defaultServer.httpPort;
-        String partner = Application.getPartner();
-        if (partner != null) {
-            flashArgs += "&partner=" + partner;
-        }
+        String flashArgs = "featuredPlace=" + sceneId;
         if (!featuredPlaceGo(flashArgs)) {
+            flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port + 
+                         "&httpPort=" + _defaultServer.httpPort;
+            String partner = Application.getPartner();
+            if (partner != null) {
+                flashArgs += "&partner=" + partner;
+            }
             container.clear();
             FlashClients.embedFeaturedPlaceView(container, flashArgs);
         }
