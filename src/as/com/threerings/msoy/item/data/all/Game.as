@@ -38,22 +38,22 @@ public class Game extends Item
             (0 <= config.indexOf("<toggle ident=\"chiyogami\" start=\"true\"/>"));
     }
 
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-
-        out.writeField(config);
-        out.writeObject(gameMedia);
-        out.writeInt(gameId);
-    }
-
+    // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-
         config = (ins.readField(String) as String);
         gameMedia = (ins.readObject() as MediaDesc);
         gameId = ins.readInt();
+    }
+
+    // from interface Streamable
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+        out.writeField(config);
+        out.writeObject(gameMedia);
+        out.writeInt(gameId);
     }
 }
 }

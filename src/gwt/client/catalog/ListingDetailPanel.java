@@ -77,6 +77,14 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(detail.item.getType(), listing.catalogId));
+
+        // if this item supports sub-items, add a tab for those item types
+        byte[] types = detail.item.getSalableSubTypes();
+        if (types.length > 0) {
+            for (int ii = 0; ii < types.length; ii++) {
+                addTabBelow(CCatalog.dmsgs.getString("pItemType" + types[ii]), new Label("TBD"));
+            }
+        }
     }
 
     // @Override // BaseItemDetailPanel

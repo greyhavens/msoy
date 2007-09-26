@@ -32,12 +32,18 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public static final byte VIDEO = registerItemType(Video.class, 8);
     public static final byte DECOR = registerItemType(Decor.class, 9);
     public static final byte TOY = registerItemType(Toy.class, 10);
+    public static final byte LEVEL_PACK = registerItemType(LevelPack.class, 11);
+    public static final byte ITEM_PACK = registerItemType(ItemPack.class, 12);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     //
     // Note: If the number of item types surpasses 31, we need to change the loadedInventory field
     // of MemberObject to be a BitSet or something.
 
-    /** A canonical ordering of our item types for use in the catalog, inventory, etc. */
+    /**
+     * A canonical ordering of our item types for use in the catalog, inventory, etc. Note that thi
+     * does not contain subtypes (ie. LEVEL_PACK) as those do not have top-level categories but are
+     * only shown when viewing an item of their containing type (ie. GAME).
+     */
     public static final byte[] TYPES = {
         AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO
     };
@@ -216,6 +222,24 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      * Gets the type code for this item.
      */
     public abstract byte getType ();
+
+    /**
+     * Returns the set of subtypes of this item that can be sold in the catalog. For example, games
+     * might sell {@link LevelPack} or {@link ItemPack} sub-items; avatars might sell {@link
+     * Article} sub-items.
+     */
+    public byte[] getSalableSubTypes ()
+    {
+        return NO_SUBTYPES;
+    }
+
+    /**
+     * Returns the set of all subtypes that can be created for this item.
+     */
+    public byte[] getSubTypes ()
+    {
+        return NO_SUBTYPES;
+    }
 
     /**
      * Returns the sourceId, or this itemId if this item is not a clone.
@@ -409,4 +433,6 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
 
     private static HashMap _mapping;
     private static HashMap _reverseMapping;
+
+    protected static final byte[] NO_SUBTYPES = {};
 }

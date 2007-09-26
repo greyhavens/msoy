@@ -24,6 +24,8 @@ public interface DynamicMessages extends ConstantsWithLookup
     public String itemType8 ();
     public String itemType9 ();
     public String itemType10 ();
+    public String itemType11 ();
+    public String itemType12 ();
     
     public String pItemType1 ();
     public String pItemType2 ();
@@ -35,6 +37,8 @@ public interface DynamicMessages extends ConstantsWithLookup
     public String pItemType8 ();
     public String pItemType9 ();
     public String pItemType10 ();
+    public String pItemType11 ();
+    public String pItemType12 ();
 
     public String itemUploadTitle1 ();
     public String itemUploadPitch1a ();

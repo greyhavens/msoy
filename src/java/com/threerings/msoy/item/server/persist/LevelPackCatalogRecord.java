@@ -9,9 +9,9 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
-/** Catalog Records for Templates. */
-@TableGenerator(name="catalogId", pkColumnValue="TEMPLATE_CATALOG")
-public class TemplateCatalogRecord extends CatalogRecord<TemplateRecord>
+/** Catalog Records for LevelPacks. */
+@TableGenerator(name="catalogId", pkColumnValue="LEVELPACK_CATALOG")
+public class LevelPackCatalogRecord extends CatalogRecord<LevelPackRecord>
 {
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #catalogId} field. */
@@ -28,52 +28,52 @@ public class TemplateCatalogRecord extends CatalogRecord<TemplateRecord>
 
     /** The qualified column identifier for the {@link #listedDate} field. */
     public static final ColumnExp LISTED_DATE_C =
-        new ColumnExp(TemplateCatalogRecord.class, LISTED_DATE);
+        new ColumnExp(LevelPackCatalogRecord.class, LISTED_DATE);
 
     /** The qualified column identifier for the {@link #flowCost} field. */
     public static final ColumnExp FLOW_COST_C =
-        new ColumnExp(TemplateCatalogRecord.class, FLOW_COST);
+        new ColumnExp(LevelPackCatalogRecord.class, FLOW_COST);
 
     /** The qualified column identifier for the {@link #goldCost} field. */
     public static final ColumnExp GOLD_COST_C =
-        new ColumnExp(TemplateCatalogRecord.class, GOLD_COST);
+        new ColumnExp(LevelPackCatalogRecord.class, GOLD_COST);
 
     /** The qualified column identifier for the {@link #rarity} field. */
     public static final ColumnExp RARITY_C =
-        new ColumnExp(TemplateCatalogRecord.class, RARITY);
+        new ColumnExp(LevelPackCatalogRecord.class, RARITY);
 
     /** The qualified column identifier for the {@link #purchases} field. */
     public static final ColumnExp PURCHASES_C =
-        new ColumnExp(TemplateCatalogRecord.class, PURCHASES);
+        new ColumnExp(LevelPackCatalogRecord.class, PURCHASES);
 
     /** The qualified column identifier for the {@link #returns} field. */
     public static final ColumnExp RETURNS_C =
-        new ColumnExp(TemplateCatalogRecord.class, RETURNS);
+        new ColumnExp(LevelPackCatalogRecord.class, RETURNS);
 
     /** The qualified column identifier for the {@link #repriceCounter} field. */
     public static final ColumnExp REPRICE_COUNTER_C =
-        new ColumnExp(TemplateCatalogRecord.class, REPRICE_COUNTER);
+        new ColumnExp(LevelPackCatalogRecord.class, REPRICE_COUNTER);
     // AUTO-GENERATED: FIELDS END
 
-    public TemplateCatalogRecord ()
+    public LevelPackCatalogRecord ()
     {
         super();
     }
 
-    protected TemplateCatalogRecord (CatalogListing listing)
+    protected LevelPackCatalogRecord (CatalogListing listing)
     {
         super(listing);
     }
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #TemplateCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link #LevelPackCatalogRecord}
      * with the supplied key values.
      */
-    public static Key<TemplateCatalogRecord> getKey (int catalogId)
+    public static Key<LevelPackCatalogRecord> getKey (int catalogId)
     {
-        return new Key<TemplateCatalogRecord>(
-                TemplateCatalogRecord.class,
+        return new Key<LevelPackCatalogRecord>(
+                LevelPackCatalogRecord.class,
                 new String[] { CATALOG_ID },
                 new Comparable[] { catalogId });
     }

@@ -45,7 +45,7 @@ public class Avatar extends Item
     // @Override // from Item
     public boolean isConsistent ()
     {
-        return super.isConsistent() && (avatarMedia != null);
+        return super.isConsistent() && nonBlank(name) && (avatarMedia != null);
     }
 
     // @Override // from Item

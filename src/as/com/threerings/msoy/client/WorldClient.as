@@ -42,6 +42,8 @@ import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemList;
+import com.threerings.msoy.item.data.all.ItemPack;
+import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Photo;
 
@@ -130,27 +132,29 @@ public class WorldClient extends BaseClient
     {
         super.fuckingCompiler();
         var c :Class;
-        c = RoomConfig;
-        c = SceneMarshaller;
-        c = MsoySceneMarshaller;
-        c = SpotMarshaller;
-        c = SpotSceneObject;
-        c = ParlorMarshaller;
+        c = AVRGameConfig;
+        c = AVRGameMarshaller;
+        c = ChiyogamiController;
         c = Document;
-        c = Photo;
         c = Furniture;
         c = Game;
-        c = ItemMarshaller;
-        c = AVRGameMarshaller;
-        c = ToyBoxMarshaller;
-        c = PetMarshaller;
-        c = AVRGameConfig;
-        c = ChiyogamiController;
-        c = ItemList;
-        c = LevelUpNotification;
-        c = ReleaseNotesNotification;
         c = GuestInviteNotification;
+        c = ItemList;
+        c = ItemMarshaller;
+        c = ItemPack;
+        c = LevelPack;
+        c = LevelUpNotification;
         c = MemberLocation;
+        c = MsoySceneMarshaller;
+        c = ParlorMarshaller;
+        c = PetMarshaller;
+        c = Photo;
+        c = ReleaseNotesNotification;
+        c = RoomConfig;
+        c = SceneMarshaller;
+        c = SpotMarshaller;
+        c = SpotSceneObject;
+        c = ToyBoxMarshaller;
 
         // these cause bundles to be compiled in.
         [ResourceBundle("general")]

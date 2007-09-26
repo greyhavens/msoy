@@ -23,7 +23,7 @@ public class Furniture extends Item
     // @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() && (furniMedia != null);
+        return super.isConsistent() && nonBlank(name) && (furniMedia != null);
     }
 
     // @Override // from Item

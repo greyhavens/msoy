@@ -25,12 +25,6 @@ public class Document extends Item
     }
 
     // from Item
-    override public function isConsistent () :Boolean
-    {
-        return super.isConsistent() && (docMedia != null) && nonBlank(name);
-    }
-
-    // from Item
     override public function getType () :int
     {
         return DOCUMENT;

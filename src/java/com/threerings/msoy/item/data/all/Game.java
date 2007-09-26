@@ -30,6 +30,22 @@ public class Game extends Item
         return GAME;
     }
 
+    // @Override from Item
+    public byte[] getSalableSubTypes ()
+    {
+        return new byte[] {
+            LEVEL_PACK, ITEM_PACK,
+        };
+    }
+
+    // @Override from Item
+    public byte[] getSubTypes ()
+    {
+        return new byte[] {
+            LEVEL_PACK, ITEM_PACK, AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO
+        };
+    }
+
     // @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
@@ -49,10 +65,7 @@ public class Game extends Item
     // @Override
     public boolean isConsistent ()
     {
-        if (!super.isConsistent() || !nonBlank(name)) {
-            return false;
-        }
         // TODO: Check over the values in the XML to make sure they are sane
-        return (gameMedia != null);
+        return super.isConsistent() && nonBlank(name) && (gameMedia != null);
     }
 }

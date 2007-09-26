@@ -22,12 +22,6 @@ public class Toy extends Item
         return getFurniMedia();
     }
 
-    //
-    override public function isConsistent () :Boolean
-    {
-        return super.isConsistent() && (furniMedia != null);
-    }
-
     // from Item
     override public function getType () :int
     {

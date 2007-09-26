@@ -39,6 +39,8 @@ public /*abstract*/ class Item
     public static const VIDEO :int = 8; // registerItemType(Video, 8);
     public static const DECOR :int = 9; //registerItemType(Decor, 9);
     public static const TOY :int = 10; //registerItemType(Toy, 10);
+    public static const LEVEL_PACK :int = 11; //registerItemType(LevelPack, 11);
+    public static const ITEM_PACK :int = 12; //registerItemType(ItemPack, 12);
     // Note: registery of Item types is done at the bottom of this class
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
 
@@ -268,16 +270,6 @@ public /*abstract*/ class Item
         return getThumbnailMedia().getMediaPath();
     }
 
-    /**
-     * Verifise that all the required fields in this particular Item subclass are filled in, make
-     * sense, and are consistent with each other. This is used to verify the data being edited by a
-     * user during item creation, and also that the final uploaded item isn't hacked.
-     */
-    public function isConsistent () :Boolean
-    {
-        return true;
-    }
-
     // from DSet_Entry
     public function getKey () :Object
     {
@@ -372,15 +364,6 @@ public /*abstract*/ class Item
     protected function getDefaultFurniMedia () :MediaDesc
     {
         return getDefaultFurniMediaFor(getType());
-    }
-
-    /**
-     * A handy method that makes sure that the specified text is not null or all-whitespace.
-     * Usually used by isConsistent().
-     */
-    protected static function nonBlank (text :String) :Boolean
-    {
-        return (text != null) && (StringUtil.trim(text).length > 0);
     }
 
     private static function registerItemType (iclass :Class, itype :int) :int

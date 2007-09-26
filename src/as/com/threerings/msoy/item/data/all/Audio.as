@@ -25,13 +25,6 @@ public class Audio extends Item
     }
 
     // from Item
-    override public function isConsistent () :Boolean
-    {
-        return super.isConsistent() && (audioMedia != null) && audioMedia.isAudio() &&
-            nonBlank(name);
-    }
-
-    // from Item
     override public function getType () :int
     {
         return AUDIO;
