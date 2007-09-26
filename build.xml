@@ -95,6 +95,8 @@
     <file name="${extlibs.dir}/ws-commons-util.jar"/>
     <file name="${extlibs.dir}/xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/xmlrpc-common.jar"/>
+    <file name="${extlibs.dir}/redstone-xmlrpc.jar"/>
+    <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
 
     <file name="lib/json.jar"/>
     <file name="lib/jswiff-8.0-beta-2-threerings.jar"/>
