@@ -14,7 +14,10 @@ import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.peer.data.HostedPlace;
+import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
+
+import com.threerings.msoy.world.data.MsoySceneModel;
 
 /**
  * Contains a snapshot of all of the popular places in the Whirled.
@@ -112,6 +115,10 @@ public class PopularPlacesSnapshot
                 if (hp == null) {
                     return;
                 }
+                if (hp instanceof HostedRoom && 
+                    ((HostedRoom) hp).accessControl != MsoySceneModel.ACCESS_EVERYONE) {
+                    return;
+                } 
                 Place place = places.get(hp.placeId);
                 if (place == null) {
                     place = new Place();

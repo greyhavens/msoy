@@ -103,6 +103,14 @@ public class MsoyScene extends SceneImpl
 
         return hasRights;
     }
+
+    /**
+     * Returns the access control for the scene. 
+     */
+    public byte getAccessControl ()
+    {
+        return _model.accessControl;
+    }
     
     /**
      * Returns the type of the scene.

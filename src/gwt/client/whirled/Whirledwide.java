@@ -250,7 +250,6 @@ public class Whirledwide extends FlexTable
         {
             WorldClient.displayFeaturedPlace(card.sceneId, _featuredPlaceContainer);
             _sceneNameContainer.clear();
-            _sceneNameContainer.add(new Label(CWhirled.msgs.featuredRoom(), false));
 
             Label sceneName = new Label("\"" + card.name + "\"");
             sceneName.setStyleName("SceneName");
@@ -260,21 +259,6 @@ public class Whirledwide extends FlexTable
                 }
             });
             _sceneNameContainer.add(sceneName);
-            
-            HTML sceneOwner = null;
-            if (card.sceneOwner instanceof MemberName) {
-                sceneOwner = new HTML(CWhirled.msgs.sceneOwner(Application.createLinkHtml(
-                    "" + card.sceneOwner, "profile",
-                    "" + ((MemberName) card.sceneOwner).getMemberId())));
-            } else if (card.sceneOwner instanceof GroupName) {
-                sceneOwner = new HTML(CWhirled.msgs.sceneOwner(Application.createLinkHtml(
-                    "" + card.sceneOwner, "group",
-                    "" + ((GroupName) card.sceneOwner).getGroupId())));
-            }
-            if (sceneOwner != null) {
-                sceneOwner.setStyleName("SceneOwner");
-                _sceneNameContainer.add(sceneOwner);
-            }
         }
 
         HorizontalPanel _featuredPlaceContainer;

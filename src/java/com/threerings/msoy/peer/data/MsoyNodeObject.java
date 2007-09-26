@@ -41,7 +41,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     // AUTO-GENERATED: FIELDS END
 
     /** Contains info on all scenes hosted by this server. */
-    public DSet<HostedPlace> hostedScenes = new DSet<HostedPlace>();
+    public DSet<HostedRoom> hostedScenes = new DSet<HostedRoom>();
 
     /** Contains info on all games hosted by this server. */
     public DSet<HostedGame> hostedGames = new DSet<HostedGame>();
@@ -70,7 +70,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>hostedScenes</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToHostedScenes (HostedPlace elem)
+    public void addToHostedScenes (HostedRoom elem)
     {
         requestEntryAdd(HOSTED_SCENES, hostedScenes, elem);
     }
@@ -90,7 +90,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>hostedScenes</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateHostedScenes (HostedPlace elem)
+    public void updateHostedScenes (HostedRoom elem)
     {
         requestEntryUpdate(HOSTED_SCENES, hostedScenes, elem);
     }
@@ -105,10 +105,10 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setHostedScenes (DSet<com.threerings.msoy.peer.data.HostedPlace> value)
+    public void setHostedScenes (DSet<com.threerings.msoy.peer.data.HostedRoom> value)
     {
         requestAttributeChange(HOSTED_SCENES, value, this.hostedScenes);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.peer.data.HostedPlace> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.peer.data.HostedRoom> clone =
             (value == null) ? null : value.typedClone();
         this.hostedScenes = clone;
     }

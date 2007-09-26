@@ -43,9 +43,6 @@ public class SceneCard
     /** The scene's type. */
     public int sceneType;
 
-    /** The scene's owner name. */
-    public Name sceneOwner;
-
     /**
      * A list of the friend ids that are in this scene.
      *

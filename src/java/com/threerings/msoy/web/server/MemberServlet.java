@@ -436,42 +436,18 @@ public class MemberServlet extends MsoyServiceServlet
         }
 
         // Scene cards
-        try {
-            // TODO: bump this into popular places snapshot too.  Really... all the calculations 
-            // for  Whirledwide should be done in the Popular places snapshot so we're not tying
-            // up the servlet response and hammering the database/cache everytime someone visits 
-            // this page...
-            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
-            whirledwide.whirledPopulation = pps.getPopulationCount();
-            ArrayList<SceneCard> cards = new ArrayList<SceneCard>();
-            for (PopularPlacesSnapshot.Place scene : pps.getTopScenes()) {
-                SceneRecord sceneRec = MsoyServer.sceneRepo.loadScene(scene.placeId);
-                if (sceneRec.accessControl != MsoySceneModel.ACCESS_EVERYONE) {
-                    continue;
-                }
-                SceneCard card = new SceneCard();
-                card.sceneType = SceneCard.ROOM;
-                card.sceneId = scene.placeId;
-                card.name = scene.name;
-                card.population = scene.population;
-                if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                    GroupRecord groupRec = MsoyServer.groupRepo.loadGroup(sceneRec.ownerId);
-                    card.sceneOwner = new GroupName(groupRec.name, groupRec.groupId);
-                } else if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                    MemberNameRecord memberNameRec = 
-                        MsoyServer.memberRepo.loadMemberName(sceneRec.ownerId);
-                    card.sceneOwner = memberNameRec.toMemberName();
-                } else {
-                    log.warning("Unknown owner type - unable to fill in SceneCard owner name [" +
-                        sceneRec.sceneId + ", " + sceneRec.ownerType + "]");
-                }
-                cards.add(card);
-            }
-            whirledwide.places = cards;
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to flesh out SceneCards", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+        whirledwide.whirledPopulation = pps.getPopulationCount();
+        ArrayList<SceneCard> cards = new ArrayList<SceneCard>();
+        for (PopularPlacesSnapshot.Place scene : pps.getTopScenes()) {
+            SceneCard card = new SceneCard();
+            card.sceneType = SceneCard.ROOM;
+            card.sceneId = scene.placeId;
+            card.name = scene.name;
+            card.population = scene.population;
+            cards.add(card);
         }
+        whirledwide.places = cards;
 
         return whirledwide;
     }

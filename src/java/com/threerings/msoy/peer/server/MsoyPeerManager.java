@@ -15,8 +15,8 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.HostedGame;
-import com.threerings.msoy.peer.data.HostedPlace;
 import com.threerings.msoy.peer.data.HostedProject;
+import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
@@ -108,7 +108,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         return lookupNodeDatum(new Lookup<String>() {
             public String lookup (NodeObject nodeobj) {
-                HostedPlace info = ((MsoyNodeObject)nodeobj).hostedScenes.get(sceneId);
+                HostedRoom info = ((MsoyNodeObject)nodeobj).hostedScenes.get(sceneId);
                 return (info == null) ? null : nodeobj.nodeName;
             }
         });
@@ -177,10 +177,10 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Called by the RoomManager when it is hosting a scene.
      */
-    public void roomDidStartup (int sceneId, String name)
+    public void roomDidStartup (int sceneId, String name, byte accessControl)
     {
         log.info("Hosting scene [id=" + sceneId + ", name=" + name + "].");
-        _mnobj.addToHostedScenes(new HostedPlace(sceneId, name));
+        _mnobj.addToHostedScenes(new HostedRoom(sceneId, name, accessControl));
         // release our lock on this scene now that it is resolved and we are hosting it
         releaseLock(getSceneLock(sceneId), new ResultListener.NOOP<String>());
     }
@@ -192,6 +192,14 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         log.info("No longer hosting scene [id=" + sceneId + "].");
         _mnobj.removeFromHostedScenes(sceneId);
+    }
+
+    /**
+     * Called by the RoomManager when information pertinant to the HostedRoom has been updated.
+     */
+    public void roomUpdated (int sceneId, String name, byte accessControl)
+    {
+        _mnobj.updateHostedScenes(new HostedRoom(sceneId, name, accessControl));
     }
 
     /**
