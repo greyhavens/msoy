@@ -244,9 +244,6 @@ public class Whirledwide extends FlexTable
             add(_featuredPlaceContainer = new HorizontalPanel());
             add(_sceneNameContainer = new FlowPanel());
             _sceneNameContainer.setStyleName("SceneNameContainer");
-            //_sceneNameContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
-            //_sceneNameContainer.setVerticalAlignment(HorizontalPanel.ALIGN_BOTTOM);
-            //_sceneNameContainer.setSpacing(3);
         }
 
         public void displayScene (final SceneCard card) 
