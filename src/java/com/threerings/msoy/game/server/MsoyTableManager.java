@@ -11,6 +11,7 @@ import com.threerings.parlor.data.Table;
 
 import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.data.GameObject;
+import com.threerings.parlor.game.server.GameManager;
 
 import com.threerings.parlor.server.TableManager;
 
@@ -76,7 +77,7 @@ public class MsoyTableManager extends TableManager
     }
 
     @Override
-    protected void gameCreated (Table table, GameObject gameobj)
+    protected void gameCreated (Table table, GameObject gameobj, GameManager gmgr)
     {
         for (int ii = 0; table.occupants != null && ii < table.occupants.length; ii++) {
             if (table.occupants[ii] == null) {
@@ -109,11 +110,7 @@ public class MsoyTableManager extends TableManager
         super.purgeTable(table);
     }
 
-    protected LobbyObject _lobj;
-
-    protected ArrayIntSet _membersPlaying = new ArrayIntSet();
-
-    protected OidListListener _playerUpdater = new OidListListener () {
+    protected OidListListener _playerUpdater = new OidListListener() {
         public void objectAdded (ObjectAddedEvent event) {
             PlayerObject plobj = (PlayerObject) MsoyGameServer.omgr.getObject(event.getOid());
             int memberId = plobj.getMemberId();
@@ -130,4 +127,7 @@ public class MsoyTableManager extends TableManager
             _membersPlaying.remove(memberId);
         }
     };
+
+    protected LobbyObject _lobj;
+    protected ArrayIntSet _membersPlaying = new ArrayIntSet();
 }
