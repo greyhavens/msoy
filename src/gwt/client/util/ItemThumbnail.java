@@ -16,17 +16,17 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 public class ItemThumbnail extends FlexTable
 {
-    public ItemThumbnail (Item item, ClickListener listener) {
+    public ItemThumbnail (Item item, ClickListener listener)
+    {
         _item = item;
 
         setStyleName("itemThumbnail");
-
         setCellPadding(0);
         setCellSpacing(0);
 
         // the thumbnail is always an image, so we can cast safely here
         Image image = (Image) MediaUtil.createMediaView(
-            item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
+            item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE);
         image.addStyleName("Image");
         image.addClickListener(listener);
         setWidget(0, 0, image);
@@ -36,7 +36,7 @@ public class ItemThumbnail extends FlexTable
         label.addClickListener(listener);
         setWidget(1, 0, label);
     }
-    
+
     public Item getItem ()
     {
         return _item;

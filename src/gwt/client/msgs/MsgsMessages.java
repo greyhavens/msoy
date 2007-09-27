@@ -24,9 +24,9 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String friendInviting();
 
   /**
-   * Translated "Choose Another Item".
+   * Translated "Choose Different Item".
    * 
-   * @return translated "Choose Another Item"
+   * @return translated "Choose Different Item"
    * @gwt.key giftBtnAnother
    */
   String giftBtnAnother();

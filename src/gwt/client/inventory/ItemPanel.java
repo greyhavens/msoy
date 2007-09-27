@@ -56,7 +56,7 @@ public class ItemPanel extends VerticalPanel
                 return new ItemContainer(ItemPanel.this, (Item)item, _itemList);
             }
             protected String getEmptyMessage () {
-                return CInventory.msgs.panelNoItems(Item.getTypeName(_type));
+                return CInventory.msgs.panelNoItems(CInventory.dmsgs.getString("itemType" + _type));
             }
         };
         _contents.addStyleName("inventoryContents");
@@ -128,7 +128,8 @@ public class ItemPanel extends VerticalPanel
         CInventory.itemsvc.loadItemDetail(CInventory.ident, ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 clear();
-                add(new ItemDetailPanel((ItemDetail)result, ItemPanel.this));
+                String uptgt = Page.composeArgs(new int[] { _type, _contents.getPage() });
+                add(new ItemDetailPanel((ItemDetail)result, ItemPanel.this, uptgt));
             }
             public void onFailure (Throwable caught) {
                 MsoyUI.error(CInventory.serverError(caught));
@@ -143,16 +144,6 @@ public class ItemPanel extends VerticalPanel
     public void requestShowDetail (int itemId)
     {
         String args = Page.composeArgs(new int[] { _type, _contents.getPage(), itemId });
-        History.newItem(Application.createLinkToken("inventory", args));
-    }
-
-    /**
-     * Called by the {@link ItemDetailPanel} to request that we do the browser history jockeying to
-     * return to our current page.
-     */
-    public void requestClearDetail ()
-    {
-        String args = Page.composeArgs(new int[] { _type, _contents.getPage() });
         History.newItem(Application.createLinkToken("inventory", args));
     }
 
@@ -197,7 +188,6 @@ public class ItemPanel extends VerticalPanel
             // TEMP: workaround null description problem
             item.description = "";
             editor.setItem(item);
-            editor.setPopupPosition(_create.getAbsoluteLeft()+20, _create.getAbsoluteTop()-200);
             editor.show();
         }
     }

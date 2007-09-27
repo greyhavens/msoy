@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
@@ -16,6 +17,7 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.ItemEditor;
 import client.item.BaseItemDetailPanel;
+import client.shell.Application;
 import client.shell.CShell;
 import client.util.ClickCallback;
 import client.util.ItemUtil;
@@ -25,16 +27,18 @@ import client.util.ItemUtil;
  */
 public class ItemDetailPanel extends BaseItemDetailPanel
 {
-    public ItemDetailPanel (ItemDetail detail, ItemPanel parent)
+    public ItemDetailPanel (ItemDetail detail, ItemPanel parent, String uptgt)
     {
         super(detail);
         _parent = parent;
+        _uptgt = uptgt;
 
         // if this item supports sub-items, add a tab for those item types
         byte[] types = _item.getSubTypes();
         if (types.length > 0) {
             for (int ii = 0; ii < types.length; ii++) {
-                addTabBelow(CInventory.dmsgs.getString("pItemType" + types[ii]), new Label("TBD"));
+                addTabBelow(CInventory.dmsgs.getString("pItemType" + types[ii]),
+                            new SubItemPanel(types[ii], parent));
             }
         }
     }
@@ -74,7 +78,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     // @Override // BaseItemDetailPanel
     protected void returnToList ()
     {
-        _parent.requestClearDetail();
+        History.newItem(Application.createLinkToken("inventory", _uptgt));
     }
 
     // @Override // BaseItemDetailPanel
@@ -153,4 +157,5 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     }
 
     protected ItemPanel _parent;
+    protected String _uptgt;
 }

@@ -8,11 +8,10 @@ import java.util.Iterator;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.CShell;
@@ -32,22 +31,17 @@ public class ItemChooser extends VerticalPanel
     public ItemChooser (List images, AsyncCallback callback)
     {
         _callback = callback;
-
         setStyleName("itemChooser");
 
         // iterate over all our items and fill the popup panel
-        if (images.size() > 0) {
-            HorizontalPanel itemPanel = new HorizontalPanel();
-            ScrollPanel chooser = new ScrollPanel(itemPanel);
-            add(chooser);
-
-            for (Iterator iter = images.iterator(); iter.hasNext(); ) {
-                itemPanel.add(new ItemThumbnail((Item) iter.next(), this));
+        PagedGrid grid = new PagedGrid(1, 4) {
+            protected Widget createWidget (Object item) {
+                return new ItemThumbnail((Item)item, ItemChooser.this);
             }
-
-        } else {
-            add(MsoyUI.createLabel(CShell.cmsgs.haveNoImages(), "Title"));
-        }
+            protected String getEmptyMessage () {
+                return CMsgs.cmsgs.haveNoImages();
+            }
+        };
     }
 
     // from interface ClickListener

@@ -65,8 +65,10 @@ import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemListInfoRecord;
 import com.threerings.msoy.item.server.persist.ItemListRepository;
+import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.LevelPackRepository;
 import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.RatingRecord;
@@ -118,6 +120,8 @@ public class ItemManager
         registerRepository(Item.PET, _petRepo = new PetRepository(ctx));
         registerRepository(Item.PHOTO, new PhotoRepository(ctx));
         registerRepository(Item.VIDEO, new VideoRepository(ctx));
+        registerRepository(Item.LEVEL_PACK, new LevelPackRepository(ctx));
+        registerRepository(Item.ITEM_PACK, new ItemPackRepository(ctx));
         _listRepo = new ItemListRepository(ctx);
 
         // register our invocation service

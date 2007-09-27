@@ -5,15 +5,12 @@ package client.msgs;
 
 import java.util.List;
 
-import client.shell.CShell;
-import client.util.BorderedWidget;
-import client.util.ItemThumbnail;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -21,11 +18,19 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.SimpleDataModel;
+
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.data.ItemGiftObject;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
-import com.threerings.msoy.data.all.MemberName;
+
+import client.shell.CShell;
+import client.util.BorderedWidget;
+import client.util.ItemThumbnail;
 
 public abstract class ItemGift
 {
@@ -84,12 +89,33 @@ public abstract class ItemGift
 
             protected void buildUI ()
             {
-                DockPanel panel = new DockPanel();
+                FlexTable panel = new FlexTable();
                 panel.setStyleName("itemGift");
 
-                _status = new Label();
+                _title = new Label(CMsgs.mmsgs.giftChoose());
+                _title.addStyleName("Title");
+                panel.setWidget(0, 0, _title);
+                panel.getFlexCellFormatter().setColSpan(0, 0, 2);
+
+                panel.setWidget(1, 0, _left = new SimplePanel());
+                panel.getFlexCellFormatter().setVerticalAlignment(1, 0, VerticalPanel.ALIGN_TOP);
+                panel.setWidget(1, 1, _right = new PagedGrid(1, 4) {
+                    protected Widget createWidget (Object item) {
+                        return new ItemThumbnail((Item)item, new ClickListener() {
+                            public void onClick (Widget sender) {
+                                _imageChooser.onSuccess(
+                                    ((ItemThumbnail)(sender.getParent())).getItem());
+                            }
+                        });
+                    }
+                    protected String getEmptyMessage () {
+                        return CMsgs.mmsgs.giftNoItems();
+                    }
+                });
+                _right.setWidth("100%");
+
                 final FlowPanel southBits = new FlowPanel();
-                southBits.add(_status);
+                southBits.add(_status = new Label());
                 Button cancelButton = new Button(CMsgs.mmsgs.giftCancel());
                 cancelButton.addStyleName("ControlButton");
                 cancelButton.addClickListener(new ClickListener() {
@@ -98,19 +124,8 @@ public abstract class ItemGift
                     }
                 });
                 southBits.add(cancelButton);
-                panel.add(southBits, DockPanel.SOUTH);
-
-                _title = new Label(CMsgs.mmsgs.giftChoose());
-                _title.addStyleName("Title");
-                panel.add(_title, DockPanel.NORTH);
-
-                _right = new SimplePanel();
-                panel.add(_right, DockPanel.CENTER);
-                panel.setCellWidth(_right, "75%");
-
-                _left = new SimplePanel();
-                panel.add(_left, DockPanel.WEST);
-                panel.setCellWidth(_left, "25%");
+                panel.setWidget(2, 0, southBits);
+                panel.getFlexCellFormatter().setColSpan(2, 0, 2);
 
                 _imageChooser = new AsyncCallback() {
                     public void onSuccess (Object result) {
@@ -128,7 +143,7 @@ public abstract class ItemGift
                         });
                         southBits.add(backButton);
                         _left.setWidget(selectedBits);
-                        _right.clear();
+                        _right.setVisible(false);
                     }
                     public void onFailure (Throwable caught) {
                         // not used
@@ -142,42 +157,33 @@ public abstract class ItemGift
                 box.setSelectedIndex(0);
                 box.addChangeListener(new ChangeListener() {
                     public void onChange (Widget sender) {
-                        _right.clear();
                         _status.setText(null);
                         if (box.getSelectedIndex() != -1) {
-                            rightBits(Item.GIFT_TYPES[box.getSelectedIndex()]);
+                            loadInventory(Item.GIFT_TYPES[box.getSelectedIndex()]);
                         }
                     }
                 });
                 _left.setWidget(box);
-
-                rightBits(Item.PHOTO);
-
                 setWidget(panel);
+                loadInventory(Item.GIFT_TYPES[0]);
             }
 
-            protected void rightBits (final byte type)
+            protected void loadInventory (final byte type)
             {
                 CMsgs.membersvc.loadInventory(CMsgs.ident, type, new AsyncCallback() {
                     public void onSuccess (Object result) {
-                        if (((List) result).size() == 0) {
-                            _status.setText(CMsgs.mmsgs.giftNoItems());
-                            return;
-                        }
-                        _right.setWidget(
-                            new ItemChooser((List) result, _imageChooser));
+                        _right.setModel(new SimpleDataModel((List)result), 0);
                     }
                     public void onFailure (Throwable caught) {
-                        CMsgs.log("Failed to load inventory [type=" + type + "]", caught);
                         _status.setText(CMsgs.serverError(caught));
-
                     }
                 });
             }
 
             protected Label _status;
             protected Label _title;
-            protected SimplePanel _left, _right;
+            protected SimplePanel _left;
+            protected PagedGrid _right;
 
             protected AsyncCallback _imageChooser;
         }
