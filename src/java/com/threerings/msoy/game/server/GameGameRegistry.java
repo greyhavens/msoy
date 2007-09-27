@@ -131,7 +131,8 @@ public class GameGameRegistry
                 }
 
                 try {
-                    LobbyManager lmgr = new LobbyManager(_omgr, _game, GameGameRegistry.this);
+                    LobbyManager lmgr = new LobbyManager(_omgr, GameGameRegistry.this);
+                    lmgr.setGameData(_game, null, null);
                     _lobbies.put(gameId, lmgr);
 
                     ResultListenerList list = _loading.remove(gameId);

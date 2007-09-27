@@ -30,11 +30,12 @@ import static com.threerings.msoy.Log.log;
 
 public class MsoyTableManager extends TableManager
 {
-    public MsoyTableManager (LobbyObject lobj)
+    public MsoyTableManager (LobbyManager lmgr)
     {
-        super(lobj);
+        super(lmgr.getLobbyObject());
 
-        _lobj = lobj;
+        _lmgr = lmgr;
+        _lobj = lmgr.getLobbyObject();
         _tableClass = MsoyTable.class;
     }
 
@@ -87,7 +88,7 @@ public class MsoyTableManager extends TableManager
             _membersPlaying.add(member.getMemberId());
         }
 
-        super.gameCreated(table, gameobj);
+        super.gameCreated(table, gameobj, gmgr);
         gameobj.addListener(_playerUpdater);
     }
 
@@ -128,6 +129,7 @@ public class MsoyTableManager extends TableManager
         }
     };
 
+    protected LobbyManager _lmgr;
     protected LobbyObject _lobj;
     protected ArrayIntSet _membersPlaying = new ArrayIntSet();
 }

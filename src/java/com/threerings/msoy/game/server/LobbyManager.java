@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.ArrayList;
+
 import com.samskivert.util.Interval;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -12,8 +14,10 @@ import com.threerings.presents.dobj.SetAdapter;
 
 import com.threerings.ezgame.data.GameDefinition;
 
-import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.ItemPack;
+import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.xml.MsoyGameParser;
@@ -37,14 +41,30 @@ public class LobbyManager
      * @param game The game we're managing a lobby for.
      */
     public LobbyManager (RootDObjectManager omgr, Game game, ShutdownObserver shutObs)
-        throws Exception
     {
         _omgr = omgr;
-        _game = game;
         _shutObs = shutObs;
 
         _lobj = _omgr.registerObject(new LobbyObject());
         _lobj.subscriberListener = this;
+        _lobj.addListener(_tableWatcher);
+
+        _tableMgr = new MsoyTableManager(this);
+
+        // since we start empty, we need to immediately assume shutdown
+        recheckShutdownInterval();
+    }
+
+    /**
+     * Called when a lobby is first created and possibly again later to refresh its game metadata.
+     */
+    public void setGameData (Game game, ArrayList<LevelPack> levels, ArrayList<ItemPack> items)
+        throws Exception
+    {
+        _game = game;
+        _lpacks = levels;
+        _ipacks = items;
+
         _lobj.setGame(_game);
         _lobj.setGameDef(new MsoyGameParser().parseGame(game));
 
@@ -60,12 +80,6 @@ public class LobbyManager
 //             };
 //             MsoyServer.itemMan.registerItemUpdateListener(GameRecord.class, _uplist);
 //         }
-
-        _tableMgr = new MsoyTableManager(_lobj);
-        _lobj.addListener(_tableWatcher);
-
-        // since we start empty, we need to immediately assume shutdown
-        recheckShutdownInterval();
     }
 
     public void shutdown ()
@@ -196,14 +210,20 @@ public class LobbyManager
     /** Our distributed object manager. */
     protected RootDObjectManager _omgr;
 
-    /** The game for which we're lobbying. */
-    protected Game _game;
-
     /** The Lobby object we're using. */
     protected LobbyObject _lobj;
 
     /** This fellow wants to hear when we shutdown. */
     protected ShutdownObserver _shutObs;
+
+    /** The game for which we're lobbying. */
+    protected Game _game;
+
+    /** All level packs available for this game. */
+    protected ArrayList<LevelPack> _lpacks;
+
+    /** All item packs available for this game. */
+    protected ArrayList<ItemPack> _ipacks;
 
     /** Manages the actual tables. */
     protected MsoyTableManager _tableMgr;
