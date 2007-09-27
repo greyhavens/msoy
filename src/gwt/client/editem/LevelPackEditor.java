@@ -3,11 +3,17 @@
 
 package client.editem;
 
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.MediaDesc;
+
+import client.util.MsoyUI;
+import client.util.RowPanel;
 
 /**
  * A class for creating and editing {@link LevelPack} digital items.
@@ -19,12 +25,29 @@ public class LevelPackEditor extends ItemEditor
     {
         super.setItem(item);
         _pack = (LevelPack)item;
+        _premium.setChecked(_pack.premium);
     }
 
     // @Override from ItemEditor
     public Item createBlankItem ()
     {
         return new LevelPack();
+    }
+
+    // @Override // from ItemEditor
+    protected void populateInfoTab (FlexTable info)
+    {
+        addInfoRow(info, CEditem.emsgs.packIdent(), bind(_name = new TextBox(), new Binder() {
+            public void textUpdated (String text) {
+                _pack.ident = text;
+            }
+        }));
+        addInfoTip(info, CEditem.emsgs.packIdentTip());
+
+        addInfoRow(info, CEditem.emsgs.lpackPremium(), _premium = new CheckBox());
+        addInfoTip(info, CEditem.emsgs.lpackPremiumTip());
+
+        super.populateInfoTab(info);
     }
 
     // @Override from ItemEditor
@@ -42,5 +65,14 @@ public class LevelPackEditor extends ItemEditor
         tabs.add(_furniUploader, CEditem.emsgs.lpackMainTab());
     }
 
+    // @Override // from ItemEditor
+    protected void prepareItem ()
+        throws Exception
+    {
+        super.prepareItem();
+        _pack.premium = _premium.isChecked();
+    }
+
     protected LevelPack _pack;
+    protected CheckBox _premium;
 }

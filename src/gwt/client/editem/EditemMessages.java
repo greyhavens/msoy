@@ -8,6 +8,14 @@ package client.editem;
 public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "This string is used to identify this pack in your game code.".
+   * 
+   * @return translated "This string is used to identify this pack in your game code."
+   * @gwt.key packIdentTip
+   */
+  String packIdentTip();
+
+  /**
    * Translated "Main Photo image".
    * 
    * @return translated "Main Photo image"
@@ -78,6 +86,22 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key gameManager
    */
   String gameManager();
+
+  /**
+   * Translated "All item packs must be purchased by the player to be usable.".
+   * 
+   * @return translated "All item packs must be purchased by the player to be usable."
+   * @gwt.key ipackPremiumTip
+   */
+  String ipackPremiumTip();
+
+  /**
+   * Translated "Premium".
+   * 
+   * @return translated "Premium"
+   * @gwt.key lpackPremium
+   */
+  String lpackPremium();
 
   /**
    * Translated "Game Lobby Table background image".
@@ -400,6 +424,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameLWJGL();
 
   /**
+   * Translated "Identifier".
+   * 
+   * @return translated "Identifier"
+   * @gwt.key packIdent
+   */
+  String packIdent();
+
+  /**
    * Translated "Item updated.".
    * 
    * @return translated "Item updated."
@@ -430,6 +462,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key decorDimensions
    */
   String decorDimensions();
+
+  /**
+   * Translated "Premium level packs must be purchased by the player, non-premium packs are available to all players.".
+   * 
+   * @return translated "Premium level packs must be purchased by the player, non-premium packs are available to all players."
+   * @gwt.key lpackPremiumTip
+   */
+  String lpackPremiumTip();
 
   /**
    * Translated "Fixed image".

@@ -12,6 +12,8 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.dobj.SetAdapter;
 
+import com.threerings.parlor.game.server.GameManager;
+
 import com.threerings.ezgame.data.GameDefinition;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -157,6 +159,16 @@ public class LobbyManager
             _lobj.commitTransaction();
         }
         _tableMgr.gameUpdated();
+    }
+
+    /**
+     * Called by the {@link MsoyTableManager} when a game is created.
+     */
+    protected void gameCreated (GameManager gmgr)
+    {
+        if (gmgr instanceof MsoyGameManager) {
+            ((MsoyGameManager)gmgr).setGameData(_game, _lpacks, _ipacks);
+        }
     }
 
     /**

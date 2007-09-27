@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -26,7 +27,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
-import client.util.RowPanel;
 import client.util.StyledTabPanel;
 
 /**
@@ -108,9 +108,18 @@ public abstract class ItemEditor extends BorderedDialog
         TabPanel mediaTabs = new StyledTabPanel();
         contents.add(mediaTabs);
 
-        VerticalPanel info = new VerticalPanel();
-        info.setSpacing(5);
+        // create and populate our info tab
+        FlexTable info = new FlexTable();
+
+        // create a name entry field
+        addInfoRow(info, CEditem.emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
+            public void textUpdated (String text) {
+                _item.name = text;
+            }
+        }));
+
         populateInfoTab(info);
+
         mediaTabs.add(info, CEditem.emsgs.editorInfoTab());
 
         // create the rest of the interface
@@ -256,27 +265,51 @@ public abstract class ItemEditor extends BorderedDialog
      * All items have an "extra information" tab which by default contains the item description but
      * can be extended by overriding this method.
      */
-    protected void populateInfoTab (VerticalPanel info)
+    protected void populateInfoTab (FlexTable info)
     {
-        // create a name entry field
-        RowPanel row = new RowPanel();
-        row.add(new Label(CEditem.emsgs.editorName()));
-        row.add(bind(_name = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _item.name = text;
-            }
-        }));
-        info.add(row);
-
-        info.add(new Label(CEditem.emsgs.editorDescrip()));
-        info.add(bind(_description = new TextArea(), new Binder() {
+        addInfoRow(info, new Label(CEditem.emsgs.editorDescrip()));
+        addInfoRow(info, bind(_description = new TextArea(), new Binder() {
             public void textUpdated (String text) {
                 _item.description = text;
             }
         }));
         _description.setCharacterWidth(40);
         _description.setVisibleLines(3);
-        info.add(MsoyUI.createLabel(CEditem.emsgs.editorDescripTip(), "tipLabel"));
+        addInfoTip(info, CEditem.emsgs.editorDescripTip());
+    }
+
+    /**
+     * Helper function for overriders of {@link #populateInfoTab}.
+     */
+    protected void addInfoRow (FlexTable info, String label, Widget widget)
+    {
+        int row = info.getRowCount();
+        info.setText(row, 0, label);
+        info.setWidget(row, 1, widget);
+        // this aims to make the label column skinny; it event works on some browsers...
+        info.getFlexCellFormatter().setWidth(row, 1, "100%");
+    }
+
+    /**
+     * Helper function for overriders of {@link #populateInfoTab}.
+     */
+    protected void addInfoRow (FlexTable info, Widget widget)
+    {
+        int row = info.getRowCount();
+        info.setWidget(row, 0, widget);
+        info.getFlexCellFormatter().setColSpan(row, 0, 2);
+    }
+
+    /**
+     * Helper function for overriders of {@link #populateInfoTab}.
+     */
+    protected void addInfoTip (FlexTable info, String tip)
+    {
+        int row = info.getRowCount();
+        info.setText(row, 0, tip);
+        info.getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
+        info.getFlexCellFormatter().setWidth(row, 0, "400px"); // wrap long text
+        info.getFlexCellFormatter().setColSpan(row, 0, 2);
     }
 
     /**

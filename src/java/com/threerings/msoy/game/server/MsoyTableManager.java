@@ -90,6 +90,9 @@ public class MsoyTableManager extends TableManager
 
         super.gameCreated(table, gameobj, gmgr);
         gameobj.addListener(_playerUpdater);
+
+        // let the lobby manager talk to the game manager if desired
+        _lmgr.gameCreated(gmgr);
     }
 
     @Override
