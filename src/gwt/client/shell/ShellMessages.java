@@ -72,6 +72,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createRealNameTip();
 
   /**
+   * Translated "on {0}".
+   * 
+   * @return translated "on {0}"
+   * @gwt.key postedOn
+   */
+  String postedOn(String arg0);
+
+  /**
    * Translated "Email address:".
    * 
    * @return translated "Email address:"
@@ -152,6 +160,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String inviteBody2();
 
   /**
+   * Translated "Comment deleted.".
+   * 
+   * @return translated "Comment deleted."
+   * @gwt.key commentDeleted
+   */
+  String commentDeleted();
+
+  /**
    * Translated "Dismiss".
    * 
    * @return translated "Dismiss"
@@ -206,6 +222,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key tagQuickAdd
    */
   String tagQuickAdd();
+
+  /**
+   * Translated "No comments.".
+   * 
+   * @return translated "No comments."
+   * @gwt.key noComments
+   */
+  String noComments();
 
   /**
    * Translated "Sending email...".
@@ -304,6 +328,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesEmailAddresses();
 
   /**
+   * Translated "Post comment...".
+   * 
+   * @return translated "Post comment..."
+   * @gwt.key postComment
+   */
+  String postComment();
+
+  /**
    * Translated "{0} will no longer receive email from whirled.com".
    * 
    * @return translated "{0} will no longer receive email from whirled.com"
@@ -374,6 +406,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key editEmailReady
    */
   String editEmailReady();
+
+  /**
+   * Translated "[deleting...]".
+   * 
+   * @return translated "[deleting...]"
+   * @gwt.key deletingPost
+   */
+  String deletingPost();
 
   /**
    * Translated "Email address updated. Remember, this new address must be used next time you log into Whirled.".
@@ -576,9 +616,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagFlagCancelButton();
 
   /**
-   * Translated "Enter and confirm a new password for your account below. Or dismiss this dialog and logon above if you don't wish to change your password.".
+   * Translated "Enter and confirm a new password for your account below. Or dismiss this dialog and logon above if you don''t wish to change your password.".
    * 
-   * @return translated "Enter and confirm a new password for your account below. Or dismiss this dialog and logon above if you don't wish to change your password."
+   * @return translated "Enter and confirm a new password for your account below. Or dismiss this dialog and logon above if you don''t wish to change your password."
    * @gwt.key resetIntro
    */
   String resetIntro();
@@ -638,6 +678,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key createMissingName
    */
   String createMissingName();
+
+  /**
+   * Translated "Comment posted. Click ''Latest'' to see it.".
+   * 
+   * @return translated "Comment posted. Click ''Latest'' to see it."
+   * @gwt.key commentPosted
+   */
+  String commentPosted();
 
   /**
    * Translated "Too many addresses ({0}): you have {1} invitations available".
@@ -872,6 +920,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagRemove();
 
   /**
+   * Translated "[delete]".
+   * 
+   * @return translated "[delete]"
+   * @gwt.key deletePost
+   */
+  String deletePost();
+
+  /**
    * Translated "Flag".
    * 
    * @return translated "Flag"
@@ -974,6 +1030,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key createPassword
    */
   String createPassword();
+
+  /**
+   * Translated "Enter the text of your comment:".
+   * 
+   * @return translated "Enter the text of your comment:"
+   * @gwt.key commentText
+   */
+  String commentText();
 
   /**
    * Translated "Not Now, Thanks".

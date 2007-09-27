@@ -37,7 +37,7 @@ public class CommentsPanel extends VerticalPanel
 
         // if we're logged in, display the posting UI
         if (CShell.getMemberId() != 0) {
-            add(_post = new Button("Post comment...", new ClickListener() {
+            add(_post = new Button(CShell.cmsgs.postComment(), new ClickListener() {
                 public void onClick (Widget sender) {
                     _post.setEnabled(false);
                     add(new PostPanel());
@@ -60,7 +60,7 @@ public class CommentsPanel extends VerticalPanel
                     _comments.add(new CommentPanel(CommentsPanel.this, (Comment)comments.get(ii)));
                 }
                 if (comments.size() == 0) {
-                    _comments.add(MsoyUI.createLabel("No comments.", "Status"));
+                    _comments.add(MsoyUI.createLabel(CShell.cmsgs.noComments(), "Status"));
                 }
             }
 
@@ -99,7 +99,7 @@ public class CommentsPanel extends VerticalPanel
             _comments.insert(new CommentPanel(this, comment), 0);
 
         } else {
-            MsoyUI.info("Comment posted. Click 'Latest' to see it.");
+            MsoyUI.info(CShell.cmsgs.commentPosted());
         }
     }
 
@@ -108,10 +108,10 @@ public class CommentsPanel extends VerticalPanel
         CShell.commentsvc.deleteComment(
             CShell.ident, _entityType, _entityId, comment.posted, new AsyncCallback() {
             public void onSuccess (Object result) {
-                MsoyUI.info("Comment deleted.");
+                MsoyUI.info(CShell.cmsgs.commentDeleted());
                 _comments.remove(panel);
                 if (_page == 0 && _comments.getWidgetCount() == 0) {
-                    _comments.add(MsoyUI.createLabel("No comments.", "Status"));
+                    _comments.add(MsoyUI.createLabel(CShell.cmsgs.noComments(), "Status"));
                 }
             }
             public void onFailure (Throwable cause) {
@@ -123,18 +123,18 @@ public class CommentsPanel extends VerticalPanel
     protected class PostPanel extends VerticalPanel
     {
         public PostPanel () {
-            add(new Label("Enter the text of your comment:"));
+            add(new Label(CShell.cmsgs.commentText()));
             add(_text = new TextArea());
             _text.setCharacterWidth(40);
             _text.setVisibleLines(3);
             add(_status = new Label(""));
             RowPanel buttons = new RowPanel();
-            buttons.add(new Button("Cancel", new ClickListener() {
+            buttons.add(new Button(CShell.cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
                     clearPost();
                 }
             }));
-            buttons.add(new Button("Post", new ClickListener() {
+            buttons.add(new Button(CShell.cmsgs.submit(), new ClickListener() {
                 public void onClick (Widget sender) {
                     postComment(_text.getText());
                     clearPost();

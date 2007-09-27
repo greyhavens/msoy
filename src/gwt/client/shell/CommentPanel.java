@@ -16,8 +16,6 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.fora.data.Comment;
 
-import client.util.MsoyUI;
-
 /**
  * Displays a single comment.
  */
@@ -36,19 +34,21 @@ public class CommentPanel extends FlexTable
         setText(1, 0, comment.text);
         getFlexCellFormatter().setStyleName(1, 0, "Text");
 
-        setText(2, 0, "on " + _pfmt.format(new Date(comment.posted)));
+        FlowPanel details = new FlowPanel();
+        details.add(new InlineLabel(CShell.cmsgs.postedOn(_pfmt.format(new Date(comment.posted)))));
+        setWidget(2, 0, details);
         getFlexCellFormatter().setStyleName(2, 0, "Posted");
 
         if (CShell.getMemberId() == comment.commentor.getMemberId() || CShell.isSupport()) {
-            getFlexCellFormatter().setColSpan(0, 0, 2);
-            getFlexCellFormatter().setColSpan(1, 0, 2);
-            getFlexCellFormatter().setStyleName(2, 1, "Posted");
-            setWidget(2, 1, MsoyUI.createActionLabel("[delete]", new ClickListener() {
+            InlineLabel delete = new InlineLabel(CShell.cmsgs.deletePost(), false, true, false);
+            delete.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     parent.deleteComment(CommentPanel.this, comment);
-                    setText(2, 1, "[deleting...]");
+                    setText(2, 1, CShell.cmsgs.deletingPost());
                 }
-            }));
+            });
+            delete.addStyleName("actionLabel");
+            details.add(delete);
         }
     }
 
