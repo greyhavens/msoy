@@ -10,6 +10,7 @@ import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
@@ -35,6 +36,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.ItemPackRepository;
+import com.threerings.msoy.item.server.persist.LevelPackRepository;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -54,11 +57,13 @@ public class GameGameRegistry
     /**
      * Initializes this registry.
      */
-    public void init (RootDObjectManager omgr, InvocationManager invmgr, GameRepository gameRepo,
+    public void init (RootDObjectManager omgr, InvocationManager invmgr, PersistenceContext perCtx,
                       RatingRepository ratingRepo)
     {
         _omgr = omgr;
-        _gameRepo = gameRepo;
+        _gameRepo = new GameRepository(perCtx);
+        _lpackRepo = new LevelPackRepository(perCtx);
+        _ipackRepo = new ItemPackRepository(perCtx);
         _ratingRepo = ratingRepo;
         invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
 
@@ -277,12 +282,6 @@ public class GameGameRegistry
     /** The distributed object manager that we work with. */
     protected RootDObjectManager _omgr;
 
-    /** Provides access to game metadata. */
-    protected GameRepository _gameRepo;
-
-    /** Provides access to rating information. */
-    protected RatingRepository _ratingRepo;
-
     /** Maps game id -> lobby. */
     protected IntMap<LobbyManager> _lobbies = new HashIntMap<LobbyManager>();
 
@@ -291,4 +290,10 @@ public class GameGameRegistry
 
     /** Maps game id -> listeners waiting for a lobby to load. */
     protected IntMap<ResultListenerList> _loading = new HashIntMap<ResultListenerList>();
+
+    // various and sundry repositories for loading persistent data
+    protected RatingRepository _ratingRepo;
+    protected GameRepository _gameRepo;
+    protected LevelPackRepository _lpackRepo;
+    protected ItemPackRepository _ipackRepo;
 }

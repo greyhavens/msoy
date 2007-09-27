@@ -36,8 +36,6 @@ import com.threerings.parlor.server.ParlorManager;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyBaseServer;
 
-import com.threerings.msoy.item.server.persist.GameRepository;
-
 import com.threerings.msoy.game.data.PlayerObject;
 
 import static com.threerings.msoy.Log.log;
@@ -129,7 +127,7 @@ public class MsoyGameServer extends MsoyBaseServer
 
         // intialize various services
         parlorMan.init(invmgr, plreg);
-        gameReg.init(omgr, invmgr, new GameRepository(perCtx), ratingRepo);
+        gameReg.init(omgr, invmgr, perCtx, ratingRepo);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {

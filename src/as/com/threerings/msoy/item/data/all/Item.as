@@ -386,8 +386,6 @@ public /*abstract*/ class Item
         return itype;
     }
 
-    private static var _mapping :HashMap;
-
     /**
      * Behold the twisted backbends to get this to work.  If I do it like I do in Java, it starts
      * to initialize the Item class when it sees the first use of a subclass, which is usually
@@ -411,11 +409,16 @@ public /*abstract*/ class Item
         registerItemType(Video, VIDEO);
         registerItemType(Decor, DECOR);
         registerItemType(Toy, TOY);
+        registerItemType(LevelPack, LEVEL_PACK);
+        registerItemType(ItemPack, ITEM_PACK);
     }
+
     private static function staticInit () :void
     {
         MethodQueue.callLater(registerAll);
     }
+
     staticInit();
+    private static var _mapping :HashMap;
 }
 }

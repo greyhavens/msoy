@@ -103,13 +103,6 @@ public class TemplateRecord extends ItemRecord
         super();
     }
 
-    protected TemplateRecord (Template source)
-    {
-        super(source);
-
-        // TODO: extract your values here
-    }
-
     @Override // from ItemRecord
     public byte getType ()
     {
@@ -122,6 +115,13 @@ public class TemplateRecord extends ItemRecord
         super.initFromClone(clone);
 
         // TODO: initialize your clone fields here
+    }
+
+    protected TemplateRecord (Template source)
+    {
+        super(source);
+
+        // TODO: extract your values here
     }
 
     @Override
