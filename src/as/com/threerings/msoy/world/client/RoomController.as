@@ -1508,7 +1508,8 @@ public class RoomController extends SceneController
      * Called from user code to show a custom popup.
      */
     internal function showEntityPopup (
-        sprite :MsoySprite, title :String, panel :DisplayObject, w :Number, h :Number) :Boolean
+        sprite :MsoySprite, title :String, panel :DisplayObject, w :Number, h :Number,
+        color :uint = 0xFFFFFF, alpha :Number = 1.0) :Boolean
     {
 //        if (_entityAllowedToPop != sprite) {
 //            return false;
@@ -1522,7 +1523,7 @@ public class RoomController extends SceneController
             _entityPopup.close();
         }
 
-        _entityPopup = new EntityPopup(_mctx, sprite, this, title, panel, w, h);
+        _entityPopup = new EntityPopup(_mctx, sprite, this, title, panel, w, h, color, alpha);
         _entityPopup.open();
         return true;
     }

@@ -24,7 +24,8 @@ public class EntityPopup extends FloatingPanel
 {
     public function EntityPopup (
         ctx :WorldContext, entitySprite :MsoySprite, ctrl :RoomController,
-        title :String, userPanel :DisplayObject, panelWidth :Number, panelHeight :Number)
+        title :String, userPanel :DisplayObject, panelWidth :Number, panelHeight :Number,
+        panelColor :uint = 0xFFFFFF, panelAlpha :Number = 1.0)
     {
         super(ctx,
             Msgs.GENERAL.get("t.entity_popup", Msgs.GENERAL.get(entitySprite.getDesc()), title));
@@ -45,7 +46,7 @@ public class EntityPopup extends FloatingPanel
         _canvas.width = panelWidth;
         _canvas.height = panelHeight;
         var mask :Shape = new Shape();
-        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.beginFill(panelColor, panelAlpha);
         mask.graphics.drawRect(0, 0, panelWidth, panelHeight);
         mask.graphics.endFill();
         _canvas.rawChildren.addChild(mask);

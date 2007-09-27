@@ -108,13 +108,14 @@ public class EntityBackend extends ControlBackend
     }
 
     protected function showPopup_v1 (
-        title :String, panel :DisplayObject, w :Number, h :Number) :Boolean
+        title :String, panel :DisplayObject, w :Number, h :Number, 
+        color :uint = 0xFFFFFF, alpha :Number = 1.0) :Boolean
     {
         if (_sprite == null) {
             return false;
         }
         return (_sprite.parent as RoomView).getRoomController().showEntityPopup(
-            _sprite, title, panel, w, h);
+            _sprite, title, panel, w, h, color, alpha);
     }
 
     protected function clearPopup_v1 () :void
