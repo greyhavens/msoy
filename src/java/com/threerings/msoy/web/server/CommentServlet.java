@@ -54,7 +54,7 @@ public class CommentServlet extends MsoyServiceServlet
         // bunch of entity specific befuckery which I don't particularly care to do)
         if (!Comment.isValidType(etype) || eid == 0) {
             log.warning("Refusing to post comment on illegal entity [entity=" + etype + ":" + eid +
-                        ", who=" + mrec.getName() +
+                        ", who=" + mrec.who() +
                         ", text=" + StringUtil.truncate(text, 40, "...") + "].");
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
@@ -72,7 +72,7 @@ public class CommentServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to post comment [entity=" + etype + ":" + eid +
-                    ", who=" + mrec.getName() +
+                    ", who=" + mrec.who() +
                     ", text=" + StringUtil.truncate(text, 40, "...") + "].", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
@@ -97,7 +97,7 @@ public class CommentServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to delete comment [entity=" + etype + ":" + eid +
-                    ", who=" + mrec.getName() + ", posted=" + posted + "].", pe);
+                    ", who=" + mrec.who() + ", posted=" + posted + "].", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }

@@ -97,8 +97,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public int sourceId;
 
     /** The identifier of the suite to which this item belongs or zero. If this item is an
-     * auxilliary item for a suite (currently only games are suites, but someday paperdoll avatars
-     * will probably be as well), this will contain either the catalogId of the listing for the
+     * auxilliary item for a suite, this will contain either the catalogId of the listing for the
      * primary item (if this and the primary item are listed) or the item id of the primary item
      * (if this and the primary item are not listed). */
     public int suiteId;

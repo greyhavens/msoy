@@ -157,7 +157,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     @Computed(required=false)
     public int sourceId = 0;
 
-    /** The identifier of the suite to which this item belongs or zero. See {@link Item#suite}. */
+    /** The identifier of the suite to which this item belongs or zero. See {@link Item#suiteId}. */
     public int suiteId;
 
     /** A bit-mask of flags that we need to know about every digital item without doing further
@@ -171,15 +171,14 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public int ownerId;
 
-    /** Either the item id of the catalog prototype created from this mutable item (ownerId != 0),
-     * or the item id of the mutable item from which this catalog prototype was created (and
-     * ownerId == 0), or zero. */
+    /** The id of the catalog listing for which this item is either the listed prototype (in which
+     * case ownerId == 0) or the original (in which case ownerId != 0). */
     public int catalogId;
 
     /** The current rating of this item, from 1 to 5. */
     public float rating;
 
-    /** How this item is being used (see Item.USED_AS_FURNITURE). */
+    /** How this item is being used (see {@link Item#USED_AS_FURNITURE}). */
     public byte used;
 
     /** Where it's being used. */
