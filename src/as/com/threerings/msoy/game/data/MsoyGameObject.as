@@ -43,6 +43,24 @@ public class MsoyGameObject extends EZGameObject
         return whirledGameService;
     }
 
+    // from interface WhirledGame
+    public function getLevelPacks () :Array
+    {
+        return levelPacks;
+    }
+
+    // from interface WhirledGame
+    public function getItemPacks () :Array
+    {
+        return itemPacks;
+    }
+
+    // from interface WhirledGame
+    public function occupantOwnsItemPack (ident :String, occupant :int) :Boolean
+    {
+        return false; // TODO
+    }
+
     override protected function readDefaultFields (ins :ObjectInputStream) :void
     {
         super.readDefaultFields(ins);
