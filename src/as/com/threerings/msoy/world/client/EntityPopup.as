@@ -46,11 +46,14 @@ public class EntityPopup extends FloatingPanel
         _canvas.width = panelWidth;
         _canvas.height = panelHeight;
         var mask :Shape = new Shape();
-        mask.graphics.beginFill(panelColor, panelAlpha);
+        mask.graphics.beginFill(0xFFFFFF);
         mask.graphics.drawRect(0, 0, panelWidth, panelHeight);
         mask.graphics.endFill();
         _canvas.rawChildren.addChild(mask);
         _canvas.mask = mask;
+
+        setStyle("backgroundColor", panelColor);
+        setStyle("backgroundAlpha", panelAlpha);
 
         // don't add the user panel yet. See note in open().
         _userPanel = userPanel;
