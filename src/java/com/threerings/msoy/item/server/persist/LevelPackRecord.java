@@ -19,6 +19,13 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class LevelPackRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #premium} field. */
+    public static final String PREMIUM = "premium";
+
+    /** The qualified column identifier for the {@link #premium} field. */
+    public static final ColumnExp PREMIUM_C =
+        new ColumnExp(LevelPackRecord.class, PREMIUM);
+
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
         new ColumnExp(LevelPackRecord.class, ITEM_ID);
@@ -100,7 +107,13 @@ public class LevelPackRecord extends ItemRecord
         new ColumnExp(LevelPackRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+    public static final int SCHEMA_VERSION = 3 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+
+    /** An identifier for this level pack, used by the game code. */
+    public String ident;
+
+    /** Whether or not this level pack is premium. See {@link LevelPack#premium}. */
+    public boolean premium;
 
     public LevelPackRecord ()
     {
@@ -110,7 +123,8 @@ public class LevelPackRecord extends ItemRecord
     protected LevelPackRecord (LevelPack source)
     {
         super(source);
-        // nothing to extract
+        ident = source.ident;
+        premium = source.premium;
     }
 
     @Override // from ItemRecord
@@ -123,7 +137,8 @@ public class LevelPackRecord extends ItemRecord
     protected Item createItem ()
     {
         LevelPack object = new LevelPack();
-        // nothing to set
+        object.ident = ident;
+        object.premium = premium;
         return object;
     }
 

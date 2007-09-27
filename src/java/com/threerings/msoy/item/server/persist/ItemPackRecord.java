@@ -100,7 +100,10 @@ public class ItemPackRecord extends ItemRecord
         new ColumnExp(ItemPackRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+    public static final int SCHEMA_VERSION = 3 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+
+    /** An identifier for this item pack, used by the game code. */
+    public String ident;
 
     public ItemPackRecord ()
     {
@@ -110,7 +113,7 @@ public class ItemPackRecord extends ItemRecord
     protected ItemPackRecord (ItemPack source)
     {
         super(source);
-        // nothing to extract
+        ident = source.ident;
     }
 
     @Override // from ItemRecord
@@ -123,7 +126,7 @@ public class ItemPackRecord extends ItemRecord
     protected Item createItem ()
     {
         ItemPack object = new ItemPack();
-        // nothing to set
+        object.ident = ident;
         return object;
     }
 

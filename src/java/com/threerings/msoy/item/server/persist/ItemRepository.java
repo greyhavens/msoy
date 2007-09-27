@@ -186,6 +186,15 @@ public abstract class ItemRepository<
     }
 
     /**
+     * Loads all original items with the specified suite.
+     */
+    public List<T> loadOriginalItemsBySuite (int suiteId)
+        throws PersistenceException
+    {
+        return findAll(getItemClass(), new Where(getItemColumn(ItemRecord.SUITE_ID), suiteId));
+    }
+
+    /**
      * Loads all cloned items owned by the specified member.
      */
     public List<T> loadClonedItems (int ownerId, int suiteId)

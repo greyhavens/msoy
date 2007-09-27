@@ -263,14 +263,14 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
 
     /**
      * Returns the suite for which this item is the parent. If the item is a listed catalog
-     * prototype, the suite id will be its catalog listing id. If the item is a mutable original,
-     * the suite id will be its item id. <em>Note:</em> this is different than {@link #suiteId}
-     * which indicates that this item is part of another item's suite rather than the parent of a
-     * suite of its own.
+     * prototype, the suite id will be its negated catalog listing id. If the item is a mutable
+     * original, the suite id will be its item id. <em>Note:</em> this is different than {@link
+     * #suiteId} which indicates that this item is part of another item's suite rather than the
+     * parent of a suite of its own.
      */
     public int getSuiteId ()
     {
-        return (ownerId == 0 && catalogId != 0) ? catalogId : itemId;
+        return (ownerId == 0 && catalogId != 0) ? -catalogId : itemId;
     }
 
     /**

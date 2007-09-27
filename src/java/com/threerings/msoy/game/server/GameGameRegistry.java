@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -34,9 +35,14 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.ItemPack;
+import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.LevelPackRecord;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
 
 import com.threerings.msoy.game.data.LobbyObject;
@@ -121,6 +127,15 @@ public class GameGameRegistry
                     // load up the score distribution information for this game as well
                     _single = _ratingRepo.loadPercentile(-Math.abs(gameId));
                     _multi = _ratingRepo.loadPercentile(Math.abs(gameId));
+                    // load up our level and item packs
+                    for (LevelPackRecord record :
+                             _lpackRepo.loadOriginalItemsBySuite(_game.getSuiteId())) {
+                        _lpacks.add((LevelPack)record.toItem());
+                    }
+                    for (ItemPackRecord record :
+                             _ipackRepo.loadOriginalItemsBySuite(_game.getSuiteId())) {
+                        _ipacks.add((ItemPack)record.toItem());
+                    }
                 }
             }
 
@@ -132,7 +147,7 @@ public class GameGameRegistry
 
                 try {
                     LobbyManager lmgr = new LobbyManager(_omgr, GameGameRegistry.this);
-                    lmgr.setGameData(_game, null, null);
+                    lmgr.setGameData(_game, _lpacks, _ipacks);
                     _lobbies.put(gameId, lmgr);
 
                     ResultListenerList list = _loading.remove(gameId);
@@ -167,6 +182,8 @@ public class GameGameRegistry
 
             protected Game _game;
             protected Percentiler _single, _multi;
+            protected ArrayList<LevelPack> _lpacks = new ArrayList<LevelPack>();
+            protected ArrayList<ItemPack> _ipacks = new ArrayList<ItemPack>();
         });
     }
     

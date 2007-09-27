@@ -8,6 +8,12 @@ package com.threerings.msoy.item.data.all;
  */
 public class LevelPack extends Item
 {
+    /** An identifier for this level pack, used by the game code. */
+    public String ident;
+
+    /** Premium level packs must be purchased to be used. */
+    public boolean premium;
+
     // @Override // from Item
     public byte getType ()
     {

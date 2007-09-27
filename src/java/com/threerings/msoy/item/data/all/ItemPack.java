@@ -8,6 +8,9 @@ package com.threerings.msoy.item.data.all;
  */
 public class ItemPack extends Item
 {
+    /** An identifier for this item pack, used by the game code. */
+    public String ident;
+
     // @Override // from Item
     public byte getType ()
     {

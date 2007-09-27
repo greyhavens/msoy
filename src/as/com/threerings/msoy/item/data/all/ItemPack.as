@@ -6,15 +6,13 @@ package com.threerings.msoy.item.data.all {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
-
 /**
  * Contains the runtime data for an ItemPack item.
  */
 public class ItemPack extends Item
 {
-    /** The item media. */
-    public var itemMedia :MediaDesc;
+    /** An identifier for this item pack, used by the game code. */
+    public var ident :String;
 
     public function ItemPack ()
     {
@@ -36,14 +34,14 @@ public class ItemPack extends Item
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        itemMedia = (ins.readObject() as MediaDesc);
+        ident = (ins.readField(String) as String);
     }
 
     // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeObject(itemMedia);
+        out.writeField(ident);
     }
 }
 }

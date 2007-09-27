@@ -6,15 +6,13 @@ package com.threerings.msoy.item.data.all {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
-
 /**
  * Contains the runtime data for a LevelPack item.
  */
 public class LevelPack extends Item
 {
-    /** The level media. */
-    public var levelMedia :MediaDesc;
+    /** Premium level packs must be purchased to be used. */
+    public var premium :Boolean;
 
     public function LevelPack ()
     {
@@ -36,14 +34,16 @@ public class LevelPack extends Item
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        levelMedia = (ins.readObject() as MediaDesc);
+        ident = (ins.readField(String) as String);
+        premium = ins.readBoolean();
     }
 
     // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeObject(levelMedia);
+        out.writeField(ident);
+        out.writeBoolean(premium);
     }
 }
 }

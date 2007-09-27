@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.server.persist;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
@@ -42,6 +43,7 @@ import com.threerings.msoy.item.data.all.Video;
         ItemRecord.NAME, ItemRecord.DESCRIPTION })})
 @Entity(indices={
     @Index(name="locationIndex", fields={ ItemRecord.LOCATION } ),
+    @Index(name="ixSuiteId", fields={ ItemRecord.SUITE_ID } ),
     @Index(name="ixFlagged", fields={ ItemRecord.FLAGGED } ),
     @Index(name="ixMature", fields={ ItemRecord.MATURE } ),
     @Index(name="ixOwner", fields={ ItemRecord.OWNER_ID }),
@@ -114,7 +116,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The identifier for the full text search index on Name, Description */
     public static final String FTS_ND = "ND";
 
-    public static final int BASE_SCHEMA_VERSION = 14;
+    public static final int BASE_SCHEMA_VERSION = 15;
     public static final int BASE_MULTIPLIER = 1000;
 
     /**

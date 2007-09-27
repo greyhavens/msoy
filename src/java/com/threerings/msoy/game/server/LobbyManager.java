@@ -40,7 +40,7 @@ public class LobbyManager
      *
      * @param game The game we're managing a lobby for.
      */
-    public LobbyManager (RootDObjectManager omgr, Game game, ShutdownObserver shutObs)
+    public LobbyManager (RootDObjectManager omgr, ShutdownObserver shutObs)
     {
         _omgr = omgr;
         _shutObs = shutObs;
