@@ -82,7 +82,7 @@ public class SubItemPanel extends VerticalPanel
         }
 
         CInventory.membersvc.loadInventory(
-            CInventory.ident, _type, _parentItem.suiteId, new AsyncCallback() {
+            CInventory.ident, _type, _parentItem.getSuiteId(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 _contents.setModel(new SimpleDataModel(_items = (List)result), 0);
             }

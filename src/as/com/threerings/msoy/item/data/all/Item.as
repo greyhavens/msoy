@@ -18,10 +18,9 @@ import com.threerings.presents.dobj.DSet_Entry;
 /**
  * The base class for all digital items in the MSOY system.
  *
- * <p><em>Note:</em> this class and all derived classes are very strictly
- * limited in their contents as they must be translatable into JavaScript
- * ({@link IsSerializable}) and must work with the Presents streaming system
- * ({@link Streamable}) and must work with the JORA object persistence system.
+ * <p><em>Note:</em> this class and all derived classes are very strictly limited in their contents
+ * as they must be translatable into JavaScript (IsSerializable) and must work with the Presents
+ * streaming system (Streamable) and must work with the JORA object persistence system.
  */
 public /*abstract*/ class Item
     implements Comparable, Hashable, Streamable, DSet_Entry
@@ -187,8 +186,8 @@ public /*abstract*/ class Item
     }
 
     /**
-     * Returns a {@link MediaDesc} configured to display the default furniture media for items of
-     * the specified type.
+     * Returns a MediaDesc configured to display the default furniture media for items of the
+     * specified type.
      */
     public static function getDefaultFurniMediaFor (itemType :int) :MediaDesc
     {
@@ -196,8 +195,8 @@ public /*abstract*/ class Item
     }
 
     /**
-     * Returns a {@link MediaDesc} configured to display the default thumbnaiul media for items of
-     * the specified type.
+     * Returns a MediaDesc configured to display the default thumbnaiul media for items of the
+     * specified type.
      */
     public static function getDefaultThumbnailMediaFor (itemType :int) :MediaDesc
     {
@@ -226,6 +225,18 @@ public /*abstract*/ class Item
     public function getPrototypeId () :int
     {
         return (sourceId == 0) ? itemId : sourceId;
+    }
+
+    /**
+     * Returns the suite for which this item is the parent. If the item is a listed catalog
+     * prototype, the suite id will be its catalog listing id. If the item is a mutable original,
+     * the suite id will be its item id. <em>Note:</em> this is different than Item.suiteId which
+     * indicates that this item is part of another item's suite rather than the parent of a suite
+     * of its own.
+     */
+    public function getSuiteId () :int
+    {
+        return (ownerId == 0 && catalogId != 0) ? catalogId : itemId;
     }
 
     /**

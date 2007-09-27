@@ -172,19 +172,33 @@ public abstract class ItemRepository<
     /**
      * Loads all original items owned by the specified member.
      */
-    public List<T> loadOriginalItems (int ownerId)
+    public List<T> loadOriginalItems (int ownerId, int suiteId)
         throws PersistenceException
     {
-        return findAll(getItemClass(), new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId));
+        Where where;
+        if (suiteId == 0) {
+            where = new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId);
+        } else {
+            where = new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId,
+                              getItemColumn(ItemRecord.SUITE_ID), suiteId);
+        }
+        return findAll(getItemClass(), where);
     }
 
     /**
      * Loads all cloned items owned by the specified member.
      */
-    public List<T> loadClonedItems (int ownerId)
+    public List<T> loadClonedItems (int ownerId, int suiteId)
         throws PersistenceException
     {
-        return loadClonedItems(new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId));
+        Where where;
+        if (suiteId == 0) {
+            where = new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId);
+        } else {
+            where = new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId,
+                              getItemColumn(ItemRecord.SUITE_ID), suiteId);
+        }
+        return loadClonedItems(where);
     }
 
     /**

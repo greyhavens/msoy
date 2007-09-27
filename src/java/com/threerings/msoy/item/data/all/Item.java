@@ -99,7 +99,9 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     /** The identifier of the suite to which this item belongs or zero. If this item is an
      * auxilliary item for a suite, this will contain either the catalogId of the listing for the
      * primary item (if this and the primary item are listed) or the item id of the primary item
-     * (if this and the primary item are not listed). */
+     * (if this and the primary item are not listed). <em>Note:</em> this is different from {@link
+     * #getSuiteId} which is used to determine if this item is the parent of a suite, not part of
+     * another item's suite. */
     public int suiteId;
 
     /** A bit-mask of flags that we need to know about every digital item without doing further
@@ -257,6 +259,18 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public int getPrototypeId ()
     {
         return (sourceId == 0) ? itemId : sourceId;
+    }
+
+    /**
+     * Returns the suite for which this item is the parent. If the item is a listed catalog
+     * prototype, the suite id will be its catalog listing id. If the item is a mutable original,
+     * the suite id will be its item id. <em>Note:</em> this is different than {@link #suiteId}
+     * which indicates that this item is part of another item's suite rather than the parent of a
+     * suite of its own.
+     */
+    public int getSuiteId ()
+    {
+        return (ownerId == 0 && catalogId != 0) ? catalogId : itemId;
     }
 
     /**

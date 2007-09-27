@@ -160,11 +160,10 @@ public class MemberServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
         try {
             ArrayList<Item> items = new ArrayList<Item>();
-            // TODO: handle suiteId
-            for (ItemRecord record : repo.loadOriginalItems(memrec.memberId)) {
+            for (ItemRecord record : repo.loadOriginalItems(memrec.memberId, suiteId)) {
                 items.add(record.toItem());
             }
-            for (ItemRecord record : repo.loadClonedItems(memrec.memberId)) {
+            for (ItemRecord record : repo.loadClonedItems(memrec.memberId, suiteId)) {
                 items.add(record.toItem());
             }
 
