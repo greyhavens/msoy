@@ -11,6 +11,9 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class LevelPack extends Item
 {
+    /** An identifier for this level pack, used by the game code. */
+    public var ident :String;
+
     /** Premium level packs must be purchased to be used. */
     public var premium :Boolean;
 
