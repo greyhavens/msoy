@@ -6,6 +6,7 @@ package com.threerings.msoy.game.server;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
@@ -72,7 +73,7 @@ public class MsoyGameAuthenticator extends Authenticator
             }
 
             // if they're a guest, assign them a username and send them on their merry way
-            if (creds.sessionToken == null) {
+            if (StringUtil.isBlank(creds.sessionToken)) {
                 // for guests, we use the same Name object as their username and their display
                 // name. We create it here.
                 creds.setUsername(

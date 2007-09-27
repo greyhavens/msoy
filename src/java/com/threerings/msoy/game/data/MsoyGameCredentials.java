@@ -26,6 +26,6 @@ public class MsoyGameCredentials extends Credentials
     protected void toString (StringBuilder buf)
     {
         super.toString(buf);
-        buf.append("token=").append(sessionToken);
+        buf.append(", token=").append(sessionToken);
     }
 }
