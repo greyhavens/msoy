@@ -56,6 +56,9 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The column identifier for the {@link #sourceId} field. */
     public static final String SOURCE_ID = "sourceId";
 
+    /** The column identifier for the {@link #suiteId} field. */
+    public static final String SUITE_ID = "suiteId";
+
     /** The column identifier for the {@link #flagged} field. */
     public static final String FLAGGED = "flagged";
 

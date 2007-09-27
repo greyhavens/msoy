@@ -25,7 +25,11 @@ public class LevelPackRecord extends ItemRecord
 
     /** The qualified column identifier for the {@link #sourceId} field. */
     public static final ColumnExp SOURCE_ID_C =
-        new ColumnExp(ItemPackRecord.class, SOURCE_ID);
+        new ColumnExp(LevelPackRecord.class, SOURCE_ID);
+
+    /** The qualified column identifier for the {@link #suiteId} field. */
+    public static final ColumnExp SUITE_ID_C =
+        new ColumnExp(LevelPackRecord.class, SUITE_ID);
 
     /** The qualified column identifier for the {@link #flagged} field. */
     public static final ColumnExp FLAGGED_C =

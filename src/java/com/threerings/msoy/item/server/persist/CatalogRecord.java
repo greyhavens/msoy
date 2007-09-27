@@ -61,9 +61,6 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
 
     /** The column identifier for the {@link #repriceCounter} field. */
     public static final String REPRICE_COUNTER = "repriceCounter";
-
-    /** The column identifier for the {@link #item} field. */
-    public static final String ITEM = "item";
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 7;

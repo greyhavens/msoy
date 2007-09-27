@@ -53,10 +53,6 @@ public class PhotoCatalogRecord extends CatalogRecord<PhotoRecord>
     /** The qualified column identifier for the {@link #repriceCounter} field. */
     public static final ColumnExp REPRICE_COUNTER_C =
         new ColumnExp(PhotoCatalogRecord.class, REPRICE_COUNTER);
-
-    /** The qualified column identifier for the {@link #item} field. */
-    public static final ColumnExp ITEM_C =
-        new ColumnExp(PhotoCatalogRecord.class, ITEM);
     // AUTO-GENERATED: FIELDS END
 
     public PhotoCatalogRecord ()
