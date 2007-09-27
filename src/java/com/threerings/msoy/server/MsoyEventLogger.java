@@ -5,6 +5,7 @@ package com.threerings.msoy.server;
 
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.Date;
 
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
@@ -13,82 +14,90 @@ import com.threerings.panopticon.client.logging.EventLogger;
 import com.threerings.msoy.Log;
 
 /**
- * Shim on EventLogger, providing Whirled-specific typesafe logging functions.
+ * Wrapper around EventLogger, providing Whirled-specific typesafe logging functions.
  *
  * All logging requests will be scheduled on the invoker thread, to avoid tying up
  * the rest of the server.
  */
-public class MsoyEventLogger extends EventLogger
+public class MsoyEventLogger implements EventLogger.StatusMonitor
 {
     public MsoyEventLogger (URL serverURL)
     {
-        super("com.threerings.msoy", serverURL);
-
         Log.log.info("Events will be logged to " + serverURL);
+        _serverURL = serverURL;
     }
 
-    @Override // from EventLogger
-    public void connect ()
+    /** Event: registered user logged in. */
+    public void playerLoggedIn (int playerId, boolean firstLogin, String sessionToken)
     {
-        super.connect();
+        post("Login_test", now(), playerId, firstLogin, sessionToken);
+    }
 
-        // for testing only
-        Log.log.info("EventLogger connect.");
+    /** Event: guest user logged in. */
+    public void guestLoggedIn (String sessionToken)
+    {
+        playerLoggedIn(-1, false, sessionToken);
+    }
 
-        // every time we reconnect, make sure to redeclare our schemas
-        if (isConnected()) {
-            declareMsoySchemas();
-        }
+    /** Event: sent mail from one user to another. */
+    public void mailSent (int fromId, int toId, int payloadType)
+    {
+        post("Mail_test", now(), fromId, toId, payloadType);
+    }
+
+    // from interface EventLogger.StatusMonitor
+    public void afterConnect ()
+    {
+        // always redeclare schemas after every reconnect
+        declareMsoySchemas();
     }
     
-    @Override // from EventLogger
-    public void declareSchema (String table, String[] names, Class[] types)
-        throws IllegalArgumentException
+    // from interface EventLogger.StatusMonitor
+    public void beforeDisconnect ()
     {
-        super.declareSchema(table, names, types);
-
-        // for testing only
-        Log.log.info("EventLogger define schema [table=" + table + ", names=" +
-                     StringUtil.toString(names) + ", types=" + StringUtil.toString(types) + "].");
+        // no op
     }
-
-    @Override // from EventLogger
-    public void log (String table, Object ... values)
-        throws IllegalArgumentException
-    {
-        super.log(table, values);
-
-        // for testing only
-        Log.log.info("EventLogger processing [table=" + table + ", values=" +
-                     StringUtil.toString(values) + "].");
-    }
-
-    /** User login action, msoy-specific. */
-    public void logLogin (int playerId)
-    {
-        post("Login_test", 0, playerId);
-    }
-
 
     /** Wraps a logging action in a work unit, and posts it on the queue. */
     protected void post (final String table, final Object ... values)
     {
+        /* disabled for testing
+        Log.log.info("Posting a log entry [table=" + table + ", values=" +
+                     StringUtil.toString(values) + "].");
         MsoyServer.invoker.postUnit(new Invoker.Unit () {
             public boolean invoke () {
-                log(table, values);
+                if (_logger == null) {
+                    _logger = new EventLogger(
+                        "com.threerings.msoy", _serverURL, MsoyEventLogger.this);
+                }
+                _logger.log(table, values);
                 return false;
             }
-        });
+            });
+        */
+    }
+
+    /** Convenience function to return a boxed value for current time
+     *  (in ms since beginning of epoch in GMT). */
+    protected Long now () {
+        return (Long) (new Date()).getTime();
     }
     
     protected void declareMsoySchemas ()
     {
-        declareSchema("Login_test",
-                      new String[] { "timestamp", "playerId" },
-                      new Class[]  { Long.class,  Integer.class });
+        _logger.declareSchema(
+            "Login_test",
+            new String[] { "timestamp", "playerId",    "firstLogin",  "sessionToken" },
+            new Class[]  { Long.class,  Integer.class, Boolean.class, String.class   });
+
+        _logger.declareSchema(
+            "Mail_test",
+            new String[] { "timestamp", "senderId",    "recipientId", "payloadId" },
+            new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class });
         
         Log.log.info("Schemas declared, ready to go!");
     }
 
     protected EventLogger _logger;
+    protected URL _serverURL;
 }
