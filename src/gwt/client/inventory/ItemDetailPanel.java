@@ -38,7 +38,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (types.length > 0) {
             for (int ii = 0; ii < types.length; ii++) {
                 addTabBelow(CInventory.dmsgs.getString("pItemType" + types[ii]),
-                            new SubItemPanel(types[ii], parent));
+                            new SubItemPanel(types[ii], _item, parent));
             }
         }
     }

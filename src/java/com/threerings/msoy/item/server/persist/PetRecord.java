@@ -105,8 +105,7 @@ public class PetRecord extends ItemRecord
     protected PetRecord (Pet pet)
     {
         super(pet);
-
-        description = pet.description;
+        // nothing custom to extract
     }
 
     @Override // from Item
@@ -119,6 +118,7 @@ public class PetRecord extends ItemRecord
     protected Item createItem ()
     {
         Pet object = new Pet();
+        // nothing custom to set
         return object;
     }
 

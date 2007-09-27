@@ -152,6 +152,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String audioMainTitle();
 
   /**
+   * Translated "Level Pack Media".
+   * 
+   * @return translated "Level Pack Media"
+   * @gwt.key lpackMainTab
+   */
+  String lpackMainTab();
+
+  /**
    * Translated "Video Media".
    * 
    * @return translated "Video Media"
@@ -182,6 +190,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key editorThumbTab
    */
   String editorThumbTab();
+
+  /**
+   * Translated "Item Pack Media".
+   * 
+   * @return translated "Item Pack Media"
+   * @gwt.key ipackMainTab
+   */
+  String ipackMainTab();
 
   /**
    * Translated "Enter a YouTube video id:".
@@ -360,6 +376,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String avatarMainTitle();
 
   /**
+   * Translated "The data file for this level pack".
+   * 
+   * @return translated "The data file for this level pack"
+   * @gwt.key lpackMainTitle
+   */
+  String lpackMainTitle();
+
+  /**
    * Translated "Save".
    * 
    * @return translated "Save"
@@ -448,12 +472,20 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errAudioNotAudio();
 
   /**
-   * Translated "Image shown for Item in Inventory and Catalog".
+   * Translated "Small image shown in My Stuff and the Catalog".
    * 
-   * @return translated "Image shown for Item in Inventory and Catalog"
+   * @return translated "Small image shown in My Stuff and the Catalog"
    * @gwt.key editorThumbTitle
    */
   String editorThumbTitle();
+
+  /**
+   * Translated "The data file for this item pack".
+   * 
+   * @return translated "The data file for this item pack"
+   * @gwt.key ipackMainTitle
+   */
+  String ipackMainTitle();
 
   /**
    * Translated "Upload".

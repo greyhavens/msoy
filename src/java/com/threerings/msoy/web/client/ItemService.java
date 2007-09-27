@@ -30,7 +30,7 @@ public interface ItemService extends RemoteService
      * @exception ServiceException thrown if there is any problem creating the
      * item.
      */
-    public int createItem (WebIdent ident, Item item)
+    public int createItem (WebIdent ident, Item item, ItemIdent parent)
         throws ServiceException;
 
     /**

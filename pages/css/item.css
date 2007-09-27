@@ -75,7 +75,7 @@
   width: 320px;
 }
 
-.itemDetailPanel .Name {
+.itemDetailPanel .Box .Name {
   text-align: center;
   font-size: 18px;
   font-weight: bold;
@@ -84,7 +84,7 @@
   padding: 2px;
 }
 
-.itemDetailPanel .Preview {
+.itemDetailPanel .Box .Preview {
   background-image: url(/images/item/detail_preview_bg.png);
   text-align: center;
   width: 320px;
@@ -92,14 +92,14 @@
   padding: 10px;
 }
 
-.itemDetailPanel .Extras {
+.itemDetailPanel .Box .Extras {
   color: #FFFFFF;
   background: #242424;
   text-align: left;
   padding-left: 10px;
 }
 
-.itemDetailPanel .Buttons {
+.itemDetailPanel .Box .Buttons {
   background: #242424;
   text-align: right;
   width: 1px;

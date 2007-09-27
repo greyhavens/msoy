@@ -39,11 +39,12 @@ public interface MemberService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads all items in a player's inventory of the specified type.
+     * Loads all items in a player's inventory of the specified type and optionally restricted to
+     * the specified suite.
      *
      * @gwt.typeArgs <com.threerings.msoy.item.data.all.Item>
      */
-    public List loadInventory (WebIdent ident, byte type)
+    public List loadInventory (WebIdent ident, byte type, int suiteId)
         throws ServiceException;
 
     /**

@@ -96,13 +96,7 @@ public class ItemPackRecord extends ItemRecord
         new ColumnExp(ItemPackRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
-
-    /** A hash code identifying the item media. */
-    public byte[] itemMediaHash;
-
-    /** The MIME type of the {@link #itemMediaHash} media. */
-    public byte itemMimeType;
+    public static final int SCHEMA_VERSION = 2 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     public ItemPackRecord ()
     {
@@ -112,11 +106,7 @@ public class ItemPackRecord extends ItemRecord
     protected ItemPackRecord (ItemPack source)
     {
         super(source);
-
-        if (source.itemMedia != null) {
-            itemMediaHash = source.itemMedia.hash;
-            itemMimeType = source.itemMedia.mimeType;
-        }
+        // nothing to extract
     }
 
     @Override // from ItemRecord
@@ -129,8 +119,7 @@ public class ItemPackRecord extends ItemRecord
     protected Item createItem ()
     {
         ItemPack object = new ItemPack();
-        object.itemMedia = (itemMediaHash == null) ? null :
-            new MediaDesc(itemMediaHash, itemMimeType);
+        // nothing to set
         return object;
     }
 

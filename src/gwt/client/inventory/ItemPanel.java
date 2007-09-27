@@ -162,7 +162,7 @@ public class ItemPanel extends VerticalPanel
 
     protected void loadInventory ()
     {
-        CInventory.membersvc.loadInventory(CInventory.ident, _type, new AsyncCallback() {
+        CInventory.membersvc.loadInventory(CInventory.ident, _type, 0, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _contentsModelDirty = false;
                 if (_type == Item.PET) {

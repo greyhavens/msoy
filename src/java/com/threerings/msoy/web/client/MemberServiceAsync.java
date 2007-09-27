@@ -33,7 +33,7 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#loadInventory}.
      */
-    public void loadInventory (WebIdent ident, byte type, AsyncCallback callback);
+    public void loadInventory (WebIdent ident, byte type, int suiteId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MemberService#serializePopularPlaces}.

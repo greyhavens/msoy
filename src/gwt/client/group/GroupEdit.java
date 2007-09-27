@@ -406,7 +406,7 @@ public class GroupEdit extends BorderedDialog
     {
         // the list of images is cached for this object
         if (_images == null) {
-            CGroup.membersvc.loadInventory(CGroup.ident, Item.PHOTO, new AsyncCallback() {
+            CGroup.membersvc.loadInventory(CGroup.ident, Item.PHOTO, 0, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _images = (List) result;
                     // will use the cached results this time.
@@ -417,70 +417,71 @@ public class GroupEdit extends BorderedDialog
                     addError(CGroup.msgs.errPhotoLoadFailed(CGroup.serverError(caught)));
                 }
             });
-        } else {
-            if (_images.size() == 0) {
-                addError(CGroup.msgs.errNoPhotos());
-                return;
-            }
-
-            // create the popup and its nested panels
-            HorizontalPanel itemPanel = new HorizontalPanel();
-            ScrollPanel chooser = new ScrollPanel(itemPanel);
-            final PopupPanel popup = new PopupPanel(true);
-            popup.setStyleName("groupLogoPopup");
-            popup.setWidget(chooser);
-
-            // set up a listener to pick an image for the logo, hide the popup, and update
-            final ClickListener logoChanger = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Photo photo = ((PhotoThumbnailImage) sender).photo;
-                    switch(type) {
-                    case IMAGE_LOGO:
-                        _group.logo = photo.getThumbnailMedia();
-                        break;
-                    case IMAGE_INFO_BACKGROUND:
-                        _extras.infoBackground = photo.photoMedia;
-                        // the background images store the thumbnail's constraint so that they can
-                        // be scaled properly in the edit dialog
-                        _extras.infoBackground.constraint = photo.thumbMedia.constraint;
-                        break;
-                    case IMAGE_DETAIL_BACKGROUND:
-                        _extras.detailBackground = photo.photoMedia;
-                        _extras.detailBackground.constraint = photo.thumbMedia.constraint;
-                        _extras.detailBackgroundWidth = photo.photoWidth;
-                        _extras.detailAreaHeight = photo.photoHeight;
-                        break;
-                    case IMAGE_PEOPLE_BACKGROUND:
-                        _extras.peopleBackground = photo.photoMedia;
-                        _extras.peopleBackground.constraint = photo.thumbMedia.constraint;
-                        break;
-                    case IMAGE_PEOPLE_UPPER_CAP:
-                        _extras.peopleUpperCap = photo.photoMedia;
-                        _extras.peopleUpperCapHeight = photo.photoHeight;
-                        break;
-                    case IMAGE_PEOPLE_LOWER_CAP:
-                        _extras.peopleLowerCap = photo.photoMedia;
-                        _extras.peopleLowerCapHeight = photo.photoHeight;
-                        break;
-                    default:
-                        addError("Internal Error! Unkown image type: " + type);
-                    }
-                    popup.hide();
-                    updateImageBox(box, type, buttonLabel);
-                }
-            };
-
-            // iterate over all our photos and fill the popup panel
-            Iterator i = _images.iterator();
-            while (i.hasNext()) {
-                Image image = new PhotoThumbnailImage(((Photo) i.next()));
-                image.addClickListener(logoChanger);
-                itemPanel.add(image);
-            }
-
-            // finally show the popup
-            popup.show();
+            return;
         }
+
+        if (_images.size() == 0) {
+            addError(CGroup.msgs.errNoPhotos());
+            return;
+        }
+
+        // create the popup and its nested panels
+        HorizontalPanel itemPanel = new HorizontalPanel();
+        ScrollPanel chooser = new ScrollPanel(itemPanel);
+        final PopupPanel popup = new PopupPanel(true);
+        popup.setStyleName("groupLogoPopup");
+        popup.setWidget(chooser);
+
+        // set up a listener to pick an image for the logo, hide the popup, and update
+        final ClickListener logoChanger = new ClickListener() {
+            public void onClick (Widget sender) {
+                Photo photo = ((PhotoThumbnailImage) sender).photo;
+                switch(type) {
+                case IMAGE_LOGO:
+                    _group.logo = photo.getThumbnailMedia();
+                    break;
+                case IMAGE_INFO_BACKGROUND:
+                    _extras.infoBackground = photo.photoMedia;
+                    // the background images store the thumbnail's constraint so that they can
+                    // be scaled properly in the edit dialog
+                    _extras.infoBackground.constraint = photo.thumbMedia.constraint;
+                    break;
+                case IMAGE_DETAIL_BACKGROUND:
+                    _extras.detailBackground = photo.photoMedia;
+                    _extras.detailBackground.constraint = photo.thumbMedia.constraint;
+                    _extras.detailBackgroundWidth = photo.photoWidth;
+                    _extras.detailAreaHeight = photo.photoHeight;
+                    break;
+                case IMAGE_PEOPLE_BACKGROUND:
+                    _extras.peopleBackground = photo.photoMedia;
+                    _extras.peopleBackground.constraint = photo.thumbMedia.constraint;
+                    break;
+                case IMAGE_PEOPLE_UPPER_CAP:
+                    _extras.peopleUpperCap = photo.photoMedia;
+                    _extras.peopleUpperCapHeight = photo.photoHeight;
+                    break;
+                case IMAGE_PEOPLE_LOWER_CAP:
+                    _extras.peopleLowerCap = photo.photoMedia;
+                    _extras.peopleLowerCapHeight = photo.photoHeight;
+                    break;
+                default:
+                    addError("Internal Error! Unkown image type: " + type);
+                }
+                popup.hide();
+                updateImageBox(box, type, buttonLabel);
+            }
+        };
+
+        // iterate over all our photos and fill the popup panel
+        Iterator i = _images.iterator();
+        while (i.hasNext()) {
+            Image image = new PhotoThumbnailImage(((Photo) i.next()));
+            image.addClickListener(logoChanger);
+            itemPanel.add(image);
+        }
+
+        // finally show the popup
+        popup.show();
     }
 
     protected void updateSubmitButton ()

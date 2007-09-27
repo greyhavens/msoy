@@ -145,7 +145,7 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from interface MemberService
-    public List loadInventory (WebIdent ident, final byte type)
+    public List loadInventory (WebIdent ident, byte type, int suiteId)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
@@ -160,6 +160,7 @@ public class MemberServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
         try {
             ArrayList<Item> items = new ArrayList<Item>();
+            // TODO: handle suiteId
             for (ItemRecord record : repo.loadOriginalItems(memrec.memberId)) {
                 items.add(record.toItem());
             }

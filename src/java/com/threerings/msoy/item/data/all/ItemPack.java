@@ -8,9 +8,6 @@ package com.threerings.msoy.item.data.all;
  */
 public class ItemPack extends Item
 {
-    /** The primary item media. */
-    public MediaDesc itemMedia;
-
     // @Override // from Item
     public byte getType ()
     {
@@ -26,6 +23,6 @@ public class ItemPack extends Item
     // @Override // from Item
     public boolean isConsistent ()
     {
-        return super.isConsistent() && nonBlank(name) && (itemMedia != null);
+        return super.isConsistent() && nonBlank(name) && (furniMedia != null);
     }
 }

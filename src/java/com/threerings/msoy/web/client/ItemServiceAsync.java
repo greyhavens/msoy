@@ -17,7 +17,7 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#createItem}.
      */
-    public void createItem (WebIdent ident, Item item, AsyncCallback callback);
+    public void createItem (WebIdent ident, Item item, ItemIdent parent, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link ItemService#updateItem}.

@@ -170,7 +170,7 @@ public abstract class ItemGift
 
             protected void loadInventory (final byte type)
             {
-                CMsgs.membersvc.loadInventory(CMsgs.ident, type, new AsyncCallback() {
+                CMsgs.membersvc.loadInventory(CMsgs.ident, type, 0, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         _right.setModel(new SimpleDataModel((List)result), 0);
                     }

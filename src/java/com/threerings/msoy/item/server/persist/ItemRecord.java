@@ -21,16 +21,18 @@ import com.threerings.io.Streamable;
 
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Document;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemPack;
+import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.data.all.Toy;
 import com.threerings.msoy.item.data.all.Video;
-import com.threerings.msoy.item.data.all.Decor;
 
 /**
  * The base class for all digital items in the MSOY system.
@@ -112,6 +114,9 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public static final int BASE_SCHEMA_VERSION = 14;
     public static final int BASE_MULTIPLIER = 1000;
 
+    /**
+     * Creates the persistent record for a corresponding runtime item.
+     */
     public static ItemRecord newRecord (Item item) {
         if (item instanceof Document) {
             return new DocumentRecord((Document) item);
@@ -133,6 +138,10 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
             return new DecorRecord((Decor) item);
         } else if (item instanceof Toy) {
             return new ToyRecord((Toy) item);
+        } else if (item instanceof LevelPack) {
+            return new LevelPackRecord((LevelPack) item);
+        } else if (item instanceof ItemPack) {
+            return new ItemPackRecord((ItemPack) item);
         }
         throw new RuntimeException("Unknown item type: " + item);
     }
@@ -218,9 +227,10 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         super();
 
         itemId = item.itemId;
+        sourceId = item.sourceId;
+        suiteId = item.suiteId;
         ownerId = item.ownerId;
         catalogId = item.catalogId;
-        sourceId = item.sourceId;
         rating = item.rating;
         creatorId = item.creatorId;
         flagged = item.flagged;
@@ -339,9 +349,10 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     {
         Item item = createItem();
         item.itemId = itemId;
+        item.sourceId = sourceId;
+        item.suiteId = suiteId;
         item.ownerId = ownerId;
         item.catalogId = catalogId;
-        item.sourceId = sourceId;
         item.rating = rating;
         item.used = used;
         item.location = location;

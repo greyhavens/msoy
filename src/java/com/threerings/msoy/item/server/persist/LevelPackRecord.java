@@ -96,13 +96,7 @@ public class LevelPackRecord extends ItemRecord
         new ColumnExp(LevelPackRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
-
-    /** A hash code identifying the level media. */
-    public byte[] levelMediaHash;
-
-    /** The MIME type of the {@link #levelMediaHash} media. */
-    public byte levelMimeType;
+    public static final int SCHEMA_VERSION = 2 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     public LevelPackRecord ()
     {
@@ -112,11 +106,7 @@ public class LevelPackRecord extends ItemRecord
     protected LevelPackRecord (LevelPack source)
     {
         super(source);
-
-        if (source.levelMedia != null) {
-            levelMediaHash = source.levelMedia.hash;
-            levelMimeType = source.levelMedia.mimeType;
-        }
+        // nothing to extract
     }
 
     @Override // from ItemRecord
@@ -129,8 +119,7 @@ public class LevelPackRecord extends ItemRecord
     protected Item createItem ()
     {
         LevelPack object = new LevelPack();
-        object.levelMedia = (levelMediaHash == null) ? null :
-            new MediaDesc(levelMediaHash, levelMimeType);
+        // nothing to set
         return object;
     }
 

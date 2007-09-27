@@ -46,16 +46,20 @@ public class ItemServlet extends MsoyServiceServlet
     implements ItemService
 {
     // from interface ItemService
-    public int createItem (WebIdent ident, final Item item)
+    public int createItem (WebIdent ident, Item item, ItemIdent parent)
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser(ident);
 
         // validate the item
         if (!item.isConsistent()) {
-            // TODO?
+            log.warning("Got inconsistent item for upload? [from=" + memrec.getName() +
+                        ", item=" + item + "].");
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
+
+        // TODO: determine this item's suite id
+        int suiteId = 0;
 
         // TODO: validate anything else?
 

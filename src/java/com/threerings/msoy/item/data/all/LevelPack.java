@@ -8,9 +8,6 @@ package com.threerings.msoy.item.data.all;
  */
 public class LevelPack extends Item
 {
-    /** The primary level media. */
-    public MediaDesc levelMedia;
-
     // @Override // from Item
     public byte getType ()
     {
@@ -23,9 +20,9 @@ public class LevelPack extends Item
         return getThumbnailMedia();
     }
 
-    // @Override
+    // @Override // from Item
     public boolean isConsistent ()
     {
-        return super.isConsistent() && !nonBlank(name) && (levelMedia != null);
+        return super.isConsistent() && nonBlank(name) && (furniMedia != null);
     }
 }

@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.util.BorderedDialog;
@@ -81,6 +82,10 @@ public abstract class ItemEditor extends BorderedDialog
             editor = new DecorEditor();
         } else if (type == Item.TOY) {
             editor = new ToyEditor();
+        } else if (type == Item.LEVEL_PACK) {
+            editor = new LevelPackEditor();
+        } else if (type == Item.ITEM_PACK) {
+            editor = new ItemPackEditor();
         } else {
             return null; // woe be the caller
         }
@@ -167,6 +172,14 @@ public abstract class ItemEditor extends BorderedDialog
         recheckThumbMedia();
 
         updateSubmittable();
+    }
+
+    /**
+     * Configures the parent item to use when creating an item that is part of an item suite.
+     */
+    public void setParentItem (ItemIdent parentItem)
+    {
+        _parentItem = parentItem;
     }
 
     /**
@@ -437,7 +450,7 @@ public abstract class ItemEditor extends BorderedDialog
             }
         };
         if (_item.itemId == 0) {
-            CEditem.itemsvc.createItem(CEditem.ident, _item, cb);
+            CEditem.itemsvc.createItem(CEditem.ident, _item, _parentItem, cb);
         } else {
             CEditem.itemsvc.updateItem(CEditem.ident, _item, cb);
         }
@@ -507,6 +520,7 @@ public abstract class ItemEditor extends BorderedDialog
     protected EditorHost _parent;
 
     protected Item _item, _updatedItem;
+    protected ItemIdent _parentItem;
 
     protected VerticalPanel _content;
 
