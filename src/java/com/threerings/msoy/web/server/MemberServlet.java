@@ -31,6 +31,8 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
+
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -449,6 +451,7 @@ public class MemberServlet extends MsoyServiceServlet
         }
         whirledwide.places = cards;
 
+        whirledwide.newsHtml = RuntimeConfig.server.whirledwideNewsHtml;
         return whirledwide;
     }
 

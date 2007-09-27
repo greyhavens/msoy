@@ -42,4 +42,9 @@ public class WhirledwideData
      * The total server population.
      */
     public int whirledPopulation;
+
+    /**
+     * The HTML to put into the news box.
+     */
+    public String newsHtml;
 }

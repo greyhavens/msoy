@@ -227,8 +227,12 @@
 }
 
 /**********  Whirledwide  ************/
+.WhirledwidePage {
+  height: 520px;
+}
+
 .TopGamesContainer {
-  width: 124;
+  width: 124px;
 }
 
 .TopGamesContainer .HeaderLeft, .TopGamesContainer .HeaderRight {
@@ -358,9 +362,8 @@
   padding: 0px 2px 0px 2px;
 }
 
-/** Temp */
-.FeaturedPlaceContainer {
-  height: 520px;
+.FeaturedPlace {
+  height: 268px;
 }
 
 .FeaturedPlace img {
@@ -408,4 +411,36 @@
 .SceneNavigation .NextButton {
   padding-right: 10px;
   background-image: url(/images/ui/button_next.png);
+}
+
+.NewsBox {
+  width: 424px;
+  margin-bottom: auto;
+  margin-top: auto;
+}
+
+.NewsBox .HeaderLeft, .NewsBox .HeaderRight {
+  background-image: url(/images/whirled/default_star.png);
+  width: 20px;
+  height: 20px;
+}
+
+.NewsBox .Header {
+  background-image: url(/images/whirled/default_tile.png);
+  height: 20px;
+}
+
+.NewsBox .HeaderCenter {
+  width: 100%;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+}
+
+.NewsContainer {
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+  border-bottom: 1px dotted;
+  height: 226px;
 }

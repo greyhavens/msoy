@@ -24,6 +24,14 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String populationDisplay(String arg0);
 
   /**
+   * Translated "News".
+   * 
+   * @return translated "News"
+   * @gwt.key headerNews
+   */
+  String headerNews();
+
+  /**
    * Translated "You currently have no popular places.<br/>
    * You can always visit <a href="/#{0}">your home</a> or<br/>
    * check <a href="/#{1}">Whirledwide</a> to get started!".
