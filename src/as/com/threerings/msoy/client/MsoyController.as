@@ -499,7 +499,8 @@ public class MsoyController extends Controller
         var sceneId :int;
         if (_ctx.getSceneDirector().getScene() == null) {
             sceneId = _ctx.getMemberObject().homeSceneId;
-            _ctx.getSceneDirector().moveTo(sceneId);
+            // default to scene 1 for guests.
+            _ctx.getSceneDirector().moveTo(sceneId != 0 ? sceneId : 1);
         } else {
             sceneId = _ctx.getSceneDirector().getScene().getId();
         }
