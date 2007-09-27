@@ -21,4 +21,11 @@ public class MsoyGameCredentials extends Credentials
         // may preserve their randomly assigned name with a later call to setUsername()
         super(new Name(""));
     }
+
+    @Override // from Credentials
+    protected void toString (StringBuilder buf)
+    {
+        super.toString(buf);
+        buf.append("token=").append(sessionToken);
+    }
 }
