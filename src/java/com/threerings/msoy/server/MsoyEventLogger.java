@@ -23,7 +23,6 @@ public class MsoyEventLogger extends EventLogger
     public MsoyEventLogger (URL serverURL)
     {
         super("com.threerings.msoy", serverURL);
-        connect();
 
         Log.log.info("Events will be logged to " + serverURL);
     }
@@ -31,10 +30,15 @@ public class MsoyEventLogger extends EventLogger
     @Override // from EventLogger
     public void connect ()
     {
-        // todo: actually connect
+        super.connect();
+
+        // for testing only
+        Log.log.info("EventLogger connect.");
 
         // every time we reconnect, make sure to redeclare our schemas
-        declareMsoySchemas();
+        if (isConnected()) {
+            declareMsoySchemas();
+        }
     }
     
     @Override // from EventLogger
@@ -59,18 +63,32 @@ public class MsoyEventLogger extends EventLogger
                      StringUtil.toString(values) + "].");
     }
 
-    protected void declareMsoySchemas ()
+    /** User login action, msoy-specific. */
+    public void logLogin (int playerId)
     {
-        /*
-        // for testing only
-        MsoyServer.invoker.postUnit(new Invoker.Unit() {
+        post("Login_test", 0, playerId);
+    }
+
+
+    /** Wraps a logging action in a work unit, and posts it on the queue. */
+    protected void post (final String table, final Object ... values)
+    {
+        MsoyServer.invoker.postUnit(new Invoker.Unit () {
             public boolean invoke () {
-                declareSchema("FlowTransaction",
-                              new String[] { "type",       "playerId", "time" },
-                              new Class[]  { String.class, int.class,  Long.class });
+                log(table, values);
                 return false;
             }
         });
-        */
-    }        
+    }
+    
+    protected void declareMsoySchemas ()
+    {
+        declareSchema("Login_test",
+                      new String[] { "timestamp", "playerId" },
+                      new Class[]  { Long.class,  Integer.class });
+        
+        Log.log.info("Schemas declared, ready to go!");
+    }
+
+    protected EventLogger _logger;
 }
