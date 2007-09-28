@@ -15,30 +15,31 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
+import client.editem.EditorHost;
 import client.editem.ItemEditor;
 import client.item.BaseItemDetailPanel;
 import client.shell.Application;
 import client.shell.CShell;
 import client.util.ClickCallback;
 import client.util.ItemUtil;
+import client.util.MsoyUI;
 
 /**
  * Displays a popup detail view of an item from the user's inventory.
  */
 public class ItemDetailPanel extends BaseItemDetailPanel
 {
-    public ItemDetailPanel (ItemDetail detail, ItemPanel parent, String uptgt)
+    public ItemDetailPanel (ItemDetail detail, ItemPanel panel)
     {
         super(detail);
-        _parent = parent;
-        _uptgt = uptgt;
+        _panel = panel;
 
         // if this item supports sub-items, add a tab for those item types
         byte[] types = _item.getSubTypes();
         if (types.length > 0) {
             for (int ii = 0; ii < types.length; ii++) {
                 addTabBelow(CInventory.dmsgs.getString("pItemType" + types[ii]),
-                            new SubItemPanel(types[ii], _item, parent));
+                            new SubItemPanel(types[ii], _item, panel));
             }
         }
     }
@@ -78,7 +79,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     // @Override // BaseItemDetailPanel
     protected void returnToList ()
     {
-        History.newItem(Application.createLinkToken("inventory", _uptgt));
+        History.back();
     }
 
     // @Override // BaseItemDetailPanel
@@ -96,7 +97,9 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 return true;
             }
             public boolean gotResult (Object result) {
-                _parent.itemDeleted(_item);
+                _panel.itemDeleted(_item);
+                MsoyUI.info(CInventory.msgs.msgItemDeleted());
+                History.back(); // back up to the page that contained the item
                 return false;
             }
         };
@@ -106,7 +109,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             button = new Button(CInventory.msgs.detailEdit());
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _parent);
+                    ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _panel);
                     editor.setItem(_item);
                     editor.show();
                 }
@@ -148,7 +151,9 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 //                     return true;
 //                 }
 //                 public boolean gotResult (Object result) {
-//                     _parent.itemRemixed (_item, (Item) result);
+//                     MsoyUI.info(CInventory.msgs.msgItemRemixed());
+//                     _panel.itemRemixed(_item, (Item) result);
+//                     History.back();
 //                     return false;
 //                 }
 //             };
@@ -156,6 +161,5 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
     }
 
-    protected ItemPanel _parent;
-    protected String _uptgt;
+    protected ItemPanel _panel;
 }

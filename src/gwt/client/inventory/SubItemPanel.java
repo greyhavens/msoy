@@ -27,14 +27,13 @@ import client.editem.ItemEditor;
 public class SubItemPanel extends VerticalPanel
     implements EditorHost
 {
-    public SubItemPanel (byte type, Item parentItem, ItemPanel parent)
+    public SubItemPanel (byte type, Item parent, final ItemPanel panel)
     {
         _type = type;
-        _parentItem = parentItem;
         _parent = parent;
         _contents = new PagedGrid(2, ItemPanel.COLUMNS) {
             protected Widget createWidget (Object item) {
-                return new ItemContainer(_parent, (Item)item, null);
+                return new ItemContainer(panel, (Item)item, null);
             }
             protected String getEmptyMessage () {
                 return CInventory.msgs.panelNoItems(CInventory.dmsgs.getString("itemType" + _type));
@@ -53,7 +52,7 @@ public class SubItemPanel extends VerticalPanel
                     // TEMP: workaround null description problem
                     item.description = "";
                     editor.setItem(item);
-                    editor.setParentItem(_parentItem.getIdent());
+                    editor.setParentItem(_parent.getIdent());
                     editor.show();
                 }
             }
@@ -82,7 +81,7 @@ public class SubItemPanel extends VerticalPanel
         }
 
         CInventory.membersvc.loadInventory(
-            CInventory.ident, _type, _parentItem.getSuiteId(), new AsyncCallback() {
+            CInventory.ident, _type, _parent.getSuiteId(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 _contents.setModel(new SimpleDataModel(_items = (List)result), 0);
             }
@@ -94,8 +93,7 @@ public class SubItemPanel extends VerticalPanel
     }
 
     protected byte _type;
-    protected Item _parentItem;
-    protected ItemPanel _parent;
+    protected Item _parent;
 
     protected PagedGrid _contents;
     protected Button _create;

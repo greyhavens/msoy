@@ -59,7 +59,7 @@ public class ItemContainer extends FlexTable
 
         ClickListener clicker = new ClickListener() {
             public void onClick (Widget sender) {
-                _panel.requestShowDetail(_item.itemId);
+                _panel.requestShowDetail(_item.getIdent());
             }
         };
         Widget mview = MediaUtil.createMediaView(

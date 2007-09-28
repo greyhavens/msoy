@@ -61,48 +61,16 @@ public class ItemPanel extends VerticalPanel
         };
         _contents.addStyleName("inventoryContents");
 
-        // this will allow us to create new items
-        _upload = new VerticalPanel();
-        _upload.setSpacing(0);
-        _upload.setStyleName("uploadBlurb");
-
-        Grid header = new Grid(1, 3);
-        header.setStyleName("Header");
-        header.setCellSpacing(0);
-        header.setCellPadding(0);
-        header.getCellFormatter().setStyleName(0, 0, "TitleLeft");
-        header.getCellFormatter().setStyleName(0, 1, "TitleCenter");
-        header.getCellFormatter().setStyleName(0, 2, "TitleRight");
-        header.setText(0, 1, CInventory.dmsgs.getString("itemUploadTitle" + type));
-        _upload.add(header);
-
-        VerticalPanel cwrap = new VerticalPanel();
-        cwrap.setStyleName("Contents");
-        _upload.add(cwrap);
-        
-        Grid contents = new Grid(1, 2); 
-        contents.setStyleName("Table");
-        contents.setCellSpacing(0);
-        contents.setCellPadding(0);
-        contents.getCellFormatter().setStyleName(0, 0, "Pitch");
-        contents.getCellFormatter().setStyleName(0, 1, "Upload");
-        contents.getCellFormatter().setHorizontalAlignment(0, 1, ALIGN_RIGHT);
-        contents.getCellFormatter().setVerticalAlignment(0, 1, ALIGN_MIDDLE);
-        cwrap.add(contents);
-
-        // add the various "why to upload" pitches
-        contents.setHTML(0, 0, CInventory.dmsgs.getString("itemUploadPitch" + type + "a") + "<br>" +
-                         CInventory.dmsgs.getString("itemUploadPitch" + type + "b") + "<br>" +
-                         CInventory.dmsgs.getString("itemUploadPitch" + type + "c"));
-
-        // add the create button
-        _create = new Button(CInventory.msgs.panelCreateNew());
-        _create.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                createNewItem();
+        boolean isCatalogItem = false;
+        for (int ii = 0; ii < Item.TYPES.length; ii++) {
+            if (type == Item.TYPES[ii]) {
+                isCatalogItem = true;
+                break;
             }
-        });
-        contents.setWidget(0, 1, _create);
+        }
+        if (isCatalogItem) {
+            addUploadInterface();
+        }
     }
 
     /**
@@ -128,8 +96,7 @@ public class ItemPanel extends VerticalPanel
         CInventory.itemsvc.loadItemDetail(CInventory.ident, ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 clear();
-                String uptgt = Page.composeArgs(new int[] { _type, _contents.getPage() });
-                add(new ItemDetailPanel((ItemDetail)result, ItemPanel.this, uptgt));
+                add(new ItemDetailPanel((ItemDetail)result, ItemPanel.this));
             }
             public void onFailure (Throwable caught) {
                 MsoyUI.error(CInventory.serverError(caught));
@@ -141,9 +108,9 @@ public class ItemPanel extends VerticalPanel
      * Called by the {@link ItemContainer} to request that we do the browser history jockeying to
      * cause the specified item's detail to be shown.
      */
-    public void requestShowDetail (int itemId)
+    public void requestShowDetail (ItemIdent ident)
     {
-        String args = Page.composeArgs(new int[] { _type, _contents.getPage(), itemId });
+        String args = Page.composeArgs(new int[] { ident.type, _contents.getPage(), ident.itemId });
         History.newItem(Application.createLinkToken("inventory", args));
     }
 
@@ -192,6 +159,53 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
+    protected void addUploadInterface ()
+    {
+        // this will allow us to create new items
+        _upload = new VerticalPanel();
+        _upload.setSpacing(0);
+        _upload.setStyleName("uploadBlurb");
+
+        Grid header = new Grid(1, 3);
+        header.setStyleName("Header");
+        header.setCellSpacing(0);
+        header.setCellPadding(0);
+        header.getCellFormatter().setStyleName(0, 0, "TitleLeft");
+        header.getCellFormatter().setStyleName(0, 1, "TitleCenter");
+        header.getCellFormatter().setStyleName(0, 2, "TitleRight");
+        header.setText(0, 1, CInventory.dmsgs.getString("itemUploadTitle" + _type));
+        _upload.add(header);
+
+        VerticalPanel cwrap = new VerticalPanel();
+        cwrap.setStyleName("Contents");
+        _upload.add(cwrap);
+
+        Grid contents = new Grid(1, 2);
+        contents.setStyleName("Table");
+        contents.setCellSpacing(0);
+        contents.setCellPadding(0);
+        contents.getCellFormatter().setStyleName(0, 0, "Pitch");
+        contents.getCellFormatter().setStyleName(0, 1, "Upload");
+        contents.getCellFormatter().setHorizontalAlignment(0, 1, ALIGN_RIGHT);
+        contents.getCellFormatter().setVerticalAlignment(0, 1, ALIGN_MIDDLE);
+        cwrap.add(contents);
+
+        // add the various "why to upload" pitches
+        String why = (CInventory.dmsgs.getString("itemUploadPitch" + _type + "a") + "<br>" +
+                      CInventory.dmsgs.getString("itemUploadPitch" + _type + "b") + "<br>" +
+                      CInventory.dmsgs.getString("itemUploadPitch" + _type + "c"));
+        contents.setHTML(0, 0, why);
+
+        // add the create button
+        _create = new Button(CInventory.msgs.panelCreateNew());
+        _create.addClickListener(new ClickListener() {
+            public void onClick (Widget widget) {
+                createNewItem();
+            }
+        });
+        contents.setWidget(0, 1, _create);
+    }
+
     /**
      * Requests that the current inventory page be displayed (clearing out any currently displayed
      * item detail view).
@@ -202,7 +216,9 @@ public class ItemPanel extends VerticalPanel
         if (!_contents.isAttached()) {
             clear();
             add(_contents);
-            add(_upload);
+            if (_upload != null) {
+                add(_upload);
+            }
         }
 
         // trigger the loading of our inventory the first time we're displayed
@@ -217,9 +233,10 @@ public class ItemPanel extends VerticalPanel
      */
     protected void itemDeleted (Item item)
     {
-        showInventory();
-        _contents.removeItem(item);
-        MsoyUI.info(CInventory.msgs.msgItemDeleted());
+        // this may be from a sub-item in which case we ignore it
+        if (item.getType() == _type) {
+            _contents.removeItem(item);
+        }
     }
 
     /**
@@ -229,8 +246,10 @@ public class ItemPanel extends VerticalPanel
      */
     protected void itemRemixed (Item oldItem, Item newItem)
     {
-        MsoyUI.info(CInventory.msgs.msgItemRemixed());
-        loadInventory();
+        // this may be from a sub-item in which case we ignore it
+        if (newItem.getType() == _type) {
+            // TODO: add new item to our list
+        }
     }
 
     protected PagedGrid _contents;
