@@ -4,7 +4,11 @@
 package com.threerings.msoy.item.server.persist;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,6 +23,8 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.QuickSort;
 
+import com.samskivert.jdbc.DatabaseLiaison;
+import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
@@ -91,16 +97,24 @@ public abstract class ItemRepository<
             }
         };
 
-        // ItemRecord migrations
+        // rarity -> pricing; all pricing to manual
         _ctx.registerMigration(
-            getItemClass(), new EntityMigration.Rename(10007, "flags", "flagged"));
-
-        // CatalogRecord migrations
-        _ctx.registerMigration(getCatalogClass(), new CatalogIdMigration(getCatalogClass()));
-        _ctx.registerMigration(
-            getCatalogClass(), new EntityMigration.Rename(6, "itemId", "listedItemId"));
-        _ctx.registerMigration(
-            getCatalogClass(), new MoreCatalogIdMigration(getItemClass(), getCatalogClass()));
+            getCatalogClass(), new EntityMigration.Rename(8, "rarity", "pricing"));
+        _ctx.registerMigration(getCatalogClass(), new EntityMigration(8) {
+            public boolean runBeforeDefault () {
+                return false;
+            }
+            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                String query = "update " + liaison.tableSQL(_tableName) +
+                    " set " + liaison.columnSQL("pricing") + " = " + CatalogListing.PRICING_MANUAL;
+                Statement stmt = conn.createStatement();
+                try {
+                    return stmt.executeUpdate(query);
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+            }
+        });
     }
 
     /**
@@ -520,20 +534,36 @@ public abstract class ItemRepository<
             return; // if the listing has been unlisted, we don't need to nudge it.
         }
 
+        ArrayList<String> mods = new ArrayList<String>();
         if (purchased) {
             record.purchases += 1;
-            record.repriceCounter += 1;
+            mods.add(CatalogRecord.PURCHASES);
+
+            switch (record.pricing) {
+            case CatalogListing.PRICING_LIMITED_EDITION:
+                if (record.purchases >= record.salesTarget) {
+                    record.pricing = CatalogListing.PRICING_HIDDEN;
+                    mods.add(CatalogRecord.PRICING);
+                }
+                break;
+
+            case CatalogListing.PRICING_ESCALATE:
+                if (record.purchases == record.salesTarget) {
+                    record.flowCost += Math.round(record.flowCost * CatalogListing.ESCALATE_FACTOR);
+                    mods.add(CatalogRecord.FLOW_COST);
+                    record.goldCost += Math.round(record.goldCost * CatalogListing.ESCALATE_FACTOR);
+                    mods.add(CatalogRecord.GOLD_COST);
+                }
+                break;
+            }
+
         } else {
+            mods.add(CatalogRecord.RETURNS);
             record.returns += 1;
-            record.repriceCounter += 2;
-        }
-        if (record.repriceCounter >= Math.sqrt(record.purchases + record.returns)) {
-            priceRecord(record, false);
         }
 
-        String column = purchased ? CatalogRecord.PURCHASES : CatalogRecord.RETURNS;
-        update(record, column, CatalogRecord.REPRICE_COUNTER, CatalogRecord.FLOW_COST,
-               CatalogRecord.GOLD_COST);
+        // finally update the columns we actually modified
+        update(record, mods.toArray(new String[mods.size()]));
     }
 
     /**
@@ -565,8 +595,9 @@ public abstract class ItemRepository<
      * Create a row in our catalog table corresponding to the given item record, which should
      * be of the immutable variety.
      */
-    public CatalogRecord insertListing (ItemRecord listItem, int originalItemId, int rarity,
-                                        long listingTime)
+    public CatalogRecord insertListing (
+        ItemRecord listItem, int originalItemId, int pricing, int salesTarget,
+        int flowCost, int goldCost, long listingTime)
         throws PersistenceException
     {
         if (listItem.ownerId != 0) {
@@ -584,9 +615,11 @@ public abstract class ItemRepository<
         record.listedItemId = listItem.itemId;
         record.originalItemId = originalItemId;
         record.listedDate = new Timestamp(listingTime);
-        record.rarity = rarity;
+        record.pricing = pricing;
+        record.salesTarget = salesTarget;
         record.purchases = record.returns = 0;
-        priceRecord(record, true);
+        record.flowCost = flowCost;
+        record.goldCost = goldCost;
         insert(record);
 
         // wire this listed item and its original up to the catalog record
@@ -599,22 +632,27 @@ public abstract class ItemRepository<
     /**
      * Updates the specified catalog listing to reference a new listed item.
      */
-    public CatalogRecord updateListing (ItemRecord listItem, long updateTime)
+    public void updateListing (ItemRecord listItem, long updateTime)
         throws PersistenceException
     {
-        // update our catalog record's listed item id
         updatePartial(getCatalogClass(), listItem.catalogId,
                       // TODO?: CatalogRecord.LISTED_DATE, new Timestamp(updateTime),
                       CatalogRecord.LISTED_ITEM_ID, listItem.itemId);
+    }
 
-        // load the newly updated record so that we can return it
-        CAT record = loadListing(listItem.catalogId, false);
-        if (record == null) {
-            throw new PersistenceException(
-                "Missing catalog listing for update? [catId=" + listItem.catalogId + "].");
-        }
-        record.item = listItem;
-        return record;
+    /**
+     * Updates the pricing for the specified catalog listing.
+     */
+    public void updatePricing (int catalogId, int pricing, int salesTarget,
+                               int flowCost, int goldCost, long updateTime)
+        throws PersistenceException
+    {
+        updatePartial(getCatalogClass(), catalogId,
+                      // TODO?: CatalogRecord.LISTED_DATE, new Timestamp(updateTime),
+                      CatalogRecord.PRICING, pricing,
+                      CatalogRecord.SALES_TARGET, salesTarget,
+                      CatalogRecord.FLOW_COST, flowCost,
+                      CatalogRecord.GOLD_COST, goldCost);
     }
 
     /**
@@ -786,62 +824,6 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         updatePartial(getItemClass(), originalItemId, ItemRecord.CATALOG_ID, catalogId);
-    }
-
-    protected void priceRecord (CAT record, boolean always)
-        throws PersistenceException
-    {
-        // size up the active member population
-        int U = MsoyServer.memberRepo.getActivePopulationCount();
-        // calculate the target item population
-        int C, targetPopulation;
-        switch(record.rarity) {
-        case CatalogListing.RARITY_PLENTIFUL:
-            C = 100;
-            targetPopulation = U*10;
-            break;
-        case CatalogListing.RARITY_COMMON:
-            C = 300;
-            targetPopulation = U;
-            break;
-        case CatalogListing.RARITY_NORMAL:
-            C = 500;
-            targetPopulation = U/10;
-            break;
-        case CatalogListing.RARITY_UNCOMMON:
-            C = 700;
-            // targetPopulation = U/100;
-            targetPopulation = U/50; // TEMP: while population is small
-            break;
-        case CatalogListing.RARITY_RARE:
-            C = 900;
-//             targetPopulation = U/1000;
-            targetPopulation = U/100; // TEMP: while population is small
-            break;
-        default:
-            throw new PersistenceException(
-                "Unknown rarity [class=" + record.getClass().getName() +
-                ", id=" + record.catalogId + ", rarity=" + record.rarity + "]");
-        }
-        targetPopulation = Math.max(targetPopulation, 1);
-        // see if really need to reprice this item
-        if (!always && record.repriceCounter < Math.min(Math.sqrt(targetPopulation), 100)) {
-            return;
-        }
-
-        int currentPopulation = Math.max(0, record.purchases - record.returns);
-        double ratio = (double) currentPopulation / targetPopulation;
-        double basePrice = 100 + C * ((ratio < 1.0) ? Math.sqrt(ratio) : Math.pow(ratio, 4));
-        double S = (record.purchases < MIN_ATTEN_PURCHASES) ? 1f :
-            Math.max(0, 1 - record.returns / (double)record.purchases);
-        double listPrice = Math.max(1, basePrice * Math.sqrt(S));
-        // TEMP: no gold cost
-        record.goldCost = 0; // (int) Math.round(listPrice / (2.5 * flowForGoldFactor));
-        record.flowCost = (int) (listPrice - record.goldCost * FLOW_FOR_GOLD);
-        record.repriceCounter = 0;
-        log.info("Repriced [id=" + record.catalogId + ", Ec=" + currentPopulation +
-                 ", Et=" + targetPopulation + ", base=" + basePrice + ", S=" + S +
-                 ", list=" + listPrice + "].");
     }
 
     /**

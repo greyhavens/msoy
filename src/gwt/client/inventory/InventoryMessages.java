@@ -8,20 +8,20 @@ package client.inventory;
 public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "Common".
+   * Translated "You can update your item''s catalog description with information on any changes you''ve made for this update. Remember that some people will be seeing your item for the first time so be sure to first describe it and then explain your recent updates.".
    * 
-   * @return translated "Common"
-   * @gwt.key doListRarityCommon
-   */
-  String doListRarityCommon();
-
-  /**
-   * Translated "You can update your item's catalog description with information on any changes you've made for this update. Remember that some people will be seeing your item for the first time so be sure to first describe it and then explain your recent updates.".
-   * 
-   * @return translated "You can update your item's catalog description with information on any changes you've made for this update. Remember that some people will be seeing your item for the first time so be sure to first describe it and then explain your recent updates."
+   * @return translated "You can update your item''s catalog description with information on any changes you''ve made for this update. Remember that some people will be seeing your item for the first time so be sure to first describe it and then explain your recent updates."
    * @gwt.key doUpdateNeedsDescrip
    */
   String doUpdateNeedsDescrip();
+
+  /**
+   * Translated "Sales Target:".
+   * 
+   * @return translated "Sales Target:"
+   * @gwt.key doListSalesTarget
+   */
+  String doListSalesTarget();
 
   /**
    * Translated "Please configure the name of this item. Click Edit above to do so.".
@@ -38,14 +38,6 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key detailList
    */
   String detailList();
-
-  /**
-   * Translated "Item Rarity".
-   * 
-   * @return translated "Item Rarity"
-   * @gwt.key doListRarityHeader
-   */
-  String doListRarityHeader();
 
   /**
    * Translated "Item Description".
@@ -70,14 +62,6 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key detailDelete
    */
   String detailDelete();
-
-  /**
-   * Translated "Normal".
-   * 
-   * @return translated "Normal"
-   * @gwt.key doListRarityNormal
-   */
-  String doListRarityNormal();
 
   /**
    * Translated "Use this avatar ".
@@ -112,12 +96,28 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String panelNoItems(String arg0);
 
   /**
+   * Translated "Here you can change the pricing of your catalog listing and the pricing strategy or sales target.".
+   * 
+   * @return translated "Here you can change the pricing of your catalog listing and the pricing strategy or sales target."
+   * @gwt.key doUppriceBlurb
+   */
+  String doUppriceBlurb();
+
+  /**
    * Translated "Edit...".
    * 
    * @return translated "Edit..."
    * @gwt.key detailEdit
    */
   String detailEdit();
+
+  /**
+   * Translated "Strategy:".
+   * 
+   * @return translated "Strategy:"
+   * @gwt.key doListStrategy
+   */
+  String doListStrategy();
 
   /**
    * Translated "Stop using this music".
@@ -168,14 +168,6 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doUpdateBlurb();
 
   /**
-   * Translated "The rarity you choose for an item influences its purchase price.".
-   * 
-   * @return translated "The rarity you choose for an item influences its purchase price."
-   * @gwt.key doListRarityBlurb
-   */
-  String doListRarityBlurb();
-
-  /**
    * Translated "Please logon above to view Your Stuff.".
    * 
    * @return translated "Please logon above to view Your Stuff."
@@ -184,9 +176,9 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String logon();
 
   /**
-   * Translated "You can list this item in the catalog.".
+   * Translated "You can list this item in the catalog. Click below for more information.".
    * 
-   * @return translated "You can list this item in the catalog."
+   * @return translated "You can list this item in the catalog. Click below for more information."
    * @gwt.key detailListTip
    */
   String detailListTip();
@@ -208,14 +200,6 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doUpdateBtnGo();
 
   /**
-   * Translated "Uncommon".
-   * 
-   * @return translated "Uncommon"
-   * @gwt.key dolistRarityUncommon
-   */
-  String dolistRarityUncommon();
-
-  /**
    * Translated "Use this music in current room".
    * 
    * @return translated "Use this music in current room"
@@ -230,14 +214,6 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key msgItemUpdated
    */
   String msgItemUpdated();
-
-  /**
-   * Translated "Rarity:".
-   * 
-   * @return translated "Rarity:"
-   * @gwt.key doListHdrRarity
-   */
-  String doListHdrRarity();
 
   /**
    * Translated "List it!".
@@ -272,9 +248,9 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String msgItemDeleted();
 
   /**
-   * Translated "Update Listing".
+   * Translated "Update Item".
    * 
-   * @return translated "Update Listing"
+   * @return translated "Update Item"
    * @gwt.key detailUplist
    */
   String detailUplist();
@@ -286,14 +262,6 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key msgItemRemixed
    */
   String msgItemRemixed();
-
-  /**
-   * Translated "Rare".
-   * 
-   * @return translated "Rare"
-   * @gwt.key doListRarityRare
-   */
-  String doListRarityRare();
 
   /**
    * Translated "Item listed.".
@@ -312,6 +280,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String wearAvatar();
 
   /**
+   * Translated "Flow Cost:".
+   * 
+   * @return translated "Flow Cost:"
+   * @gwt.key doListFlowCost
+   */
+  String doListFlowCost();
+
+  /**
    * Translated "Remove from room".
    * 
    * @return translated "Remove from room"
@@ -328,6 +304,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailUseDecor();
 
   /**
+   * Translated "Item Pricing".
+   * 
+   * @return translated "Item Pricing"
+   * @gwt.key doListPricingHeader
+   */
+  String doListPricingHeader();
+
+  /**
    * Translated "Remix...".
    * 
    * @return translated "Remix..."
@@ -336,9 +320,17 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailRemix();
 
   /**
-   * Translated "This item is listed in the catalog. You can update the listing by updating this item and then clicking below.".
+   * Translated "Update Pricing".
    * 
-   * @return translated "This item is listed in the catalog. You can update the listing by updating this item and then clicking below."
+   * @return translated "Update Pricing"
+   * @gwt.key detailUpprice
+   */
+  String detailUpprice();
+
+  /**
+   * Translated "This item is listed in the catalog. You can update the listed item or pricing below.".
+   * 
+   * @return translated "This item is listed in the catalog. You can update the listed item or pricing below."
    * @gwt.key detailUplistTip
    */
   String detailUplistTip();
@@ -368,18 +360,18 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doListHdrPrice();
 
   /**
-   * Translated "Plentiful".
-   * 
-   * @return translated "Plentiful"
-   * @gwt.key doListRarityPlentiful
-   */
-  String doListRarityPlentiful();
-
-  /**
    * Translated "Cancel".
    * 
    * @return translated "Cancel"
    * @gwt.key doListBtnCancel
    */
   String doListBtnCancel();
+
+  /**
+   * Translated "Gold Cost:".
+   * 
+   * @return translated "Gold Cost:"
+   * @gwt.key doListGoldCost
+   */
+  String doListGoldCost();
 }

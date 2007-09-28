@@ -38,9 +38,13 @@ public class FurnitureCatalogRecord extends CatalogRecord<FurnitureRecord>
     public static final ColumnExp GOLD_COST_C =
         new ColumnExp(FurnitureCatalogRecord.class, GOLD_COST);
 
-    /** The qualified column identifier for the {@link #rarity} field. */
-    public static final ColumnExp RARITY_C =
-        new ColumnExp(FurnitureCatalogRecord.class, RARITY);
+    /** The qualified column identifier for the {@link #pricing} field. */
+    public static final ColumnExp PRICING_C =
+        new ColumnExp(FurnitureCatalogRecord.class, PRICING);
+
+    /** The qualified column identifier for the {@link #salesTarget} field. */
+    public static final ColumnExp SALES_TARGET_C =
+        new ColumnExp(FurnitureCatalogRecord.class, SALES_TARGET);
 
     /** The qualified column identifier for the {@link #purchases} field. */
     public static final ColumnExp PURCHASES_C =
@@ -49,21 +53,7 @@ public class FurnitureCatalogRecord extends CatalogRecord<FurnitureRecord>
     /** The qualified column identifier for the {@link #returns} field. */
     public static final ColumnExp RETURNS_C =
         new ColumnExp(FurnitureCatalogRecord.class, RETURNS);
-
-    /** The qualified column identifier for the {@link #repriceCounter} field. */
-    public static final ColumnExp REPRICE_COUNTER_C =
-        new ColumnExp(FurnitureCatalogRecord.class, REPRICE_COUNTER);
     // AUTO-GENERATED: FIELDS END
-
-    public FurnitureCatalogRecord ()
-    {
-        super();
-    }
-
-    protected FurnitureCatalogRecord (CatalogListing listing)
-    {
-        super(listing);
-    }
 
     // AUTO-GENERATED: METHODS START
     /**

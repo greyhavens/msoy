@@ -89,4 +89,16 @@ public interface DynamicMessages extends ConstantsWithLookup
     public String itemUploadPitch10a ();
     public String itemUploadPitch10b ();
     public String itemUploadPitch10c ();
+
+    public String listingPricing1 ();
+    public String listingPricingTip1 ();
+
+    public String listingPricing2 ();
+    public String listingPricingTip2 ();
+
+    public String listingPricing3 ();
+    public String listingPricingTip3 ();
+
+    public String listingPricing4 ();
+    public String listingPricingTip4 ();
 }

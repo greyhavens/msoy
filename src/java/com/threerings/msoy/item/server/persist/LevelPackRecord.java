@@ -19,6 +19,13 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class LevelPackRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #ident} field. */
+    public static final String IDENT = "ident";
+
+    /** The qualified column identifier for the {@link #ident} field. */
+    public static final ColumnExp IDENT_C =
+        new ColumnExp(LevelPackRecord.class, IDENT);
+
     /** The column identifier for the {@link #premium} field. */
     public static final String PREMIUM = "premium";
 

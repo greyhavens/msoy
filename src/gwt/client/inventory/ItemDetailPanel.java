@@ -23,6 +23,7 @@ import client.shell.CShell;
 import client.util.ClickCallback;
 import client.util.ItemUtil;
 import client.util.MsoyUI;
+import client.util.RowPanel;
 
 /**
  * Displays a popup detail view of an item from the user's inventory.
@@ -128,12 +129,20 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             }
             _details.add(WidgetUtil.makeShim(1, 10));
             _details.add(new Label(tip));
-            button = new Button(butlbl, new ClickListener() {
+            RowPanel buttons = new RowPanel();
+            buttons.add(new Button(butlbl, new ClickListener() {
                 public void onClick (Widget sender) {
-                    new DoListItemPopup(_item).show();
+                    new DoListItemPopup(_item, false).show();
                 }
-            });
-            _details.add(button);
+            }));
+            if (_item.catalogId != 0) {
+                buttons.add(new Button(CInventory.msgs.detailUpprice(), new ClickListener() {
+                    public void onClick (Widget sender) {
+                        new DoListItemPopup(_item, true).show();
+                    }
+                }));
+            }
+            _details.add(buttons);
 
 // TODO: we want to handle remixing in a more sophisticated way, most likely we'll link items to a
 // project where the item's source files are available (even if they're not built by swiftly) and

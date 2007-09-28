@@ -55,7 +55,21 @@ public interface CatalogService extends RemoteService
     /**
      * Lists the specified item in the catalog.
      */
-    public CatalogListing listItem (WebIdent ident, ItemIdent item, String descrip, int rarity)
+    public CatalogListing listItem (WebIdent ident, ItemIdent item, String descrip, int pricing,
+                                    int salesTarget, int flowCost, int goldCost)
+        throws ServiceException;
+
+    /**
+     * Updates the catalog listing associated with the supplied catalog original.
+     */
+    public void updateListing (WebIdent ident, ItemIdent item, String descrip)
+        throws ServiceException;
+
+    /**
+     * Updates the specified catalog listing's price.
+     */
+    public void updatePricing (WebIdent ident, byte itemType, int catalogId, int pricing,
+                               int salesTarget, int flowCost, int goldCost)
         throws ServiceException;
 
     /**

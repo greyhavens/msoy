@@ -28,6 +28,7 @@ public enum UserAction
     RETURNED_ITEM(33, 0),
     RECEIVED_PAYOUT(34, 0),
     UPDATED_LISTING(35, 0),
+    UPDATED_PRICING(36, 0),
     ;
 
     /**

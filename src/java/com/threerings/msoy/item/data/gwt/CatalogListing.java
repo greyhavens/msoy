@@ -31,16 +31,24 @@ public class CatalogListing
     /** A constant for requesting catalog search results to be returned in a certain order. */
     public static final byte SORT_BY_PURCHASES = 6;
 
-    /** A constant that encodes the rarity of a listed item. */
-    public static final int RARITY_PLENTIFUL = 1;
-    /** A constant that encodes the rarity of a listed item. */
-    public static final int RARITY_COMMON = 2;
-    /** A constant that encodes the rarity of a listed item. */
-    public static final int RARITY_NORMAL = 3;
-    /** A constant that encodes the rarity of a listed item. */
-    public static final int RARITY_UNCOMMON = 4;
-    /** A constant that encodes the rarity of a listed item. */
-    public static final int RARITY_RARE = 5;
+    /** An item that is not actually for sale (used for game awards). */
+    public static final int PRICING_HIDDEN = 1;
+    /** An item with a manually configured price. */
+    public static final int PRICING_MANUAL = 2;
+    /** An item whose price should be adjusted as it hits sales targets. */
+    public static final int PRICING_ESCALATE = 3;
+    /** A limited edition item that should be delisted when it hits its sales target. */
+    public static final int PRICING_LIMITED_EDITION = 4;
+
+    /** Enumerates all available pricing strategies. */
+    public static final int[] PRICING = {
+        PRICING_HIDDEN, PRICING_MANUAL, PRICING_ESCALATE, PRICING_LIMITED_EDITION };
+
+    /** The minimum run for escalating pricing and limited edition. */
+    public static final int MIN_SALES_TARGET = 100;
+
+    /** The amount by which we increase the price at each escalation. */
+    public static final float ESCALATE_FACTOR = 0.25f;
 
     /** The unique id for this listing. */
     public int catalogId;
@@ -60,8 +68,11 @@ public class CatalogListing
     /** The amount of gold it costs to purchase this item, if it's listed, else zero. */
     public int goldCost;
 
-    /** The rarity of this item, if it's listed, else zero. */
-    public int rarity;
+    /** The pricing setting for this item. */
+    public int pricing;
+
+    /** Used by items with {@link #PRICING_ESCALATE} or {@link #PRICING_LIMITED_EDITION}. */
+    public int salesTarget;
 
     /** The number of purchases of this item. */
     public int purchases;

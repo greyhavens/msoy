@@ -21,15 +21,27 @@ public interface CatalogServiceAsync
                              AsyncCallback callback);
     
     /**
-     *  The asynchronous version of {@link CatalogService#purchaseItem}
+     * The asynchronous version of {@link CatalogService#purchaseItem}
      */
     public void purchaseItem (WebIdent ident, byte itemType, int catalogId, AsyncCallback callback);
     
     /**
-     *  The asynchronous version of {@link CatalogService#listItem}
+     * The asynchronous version of {@link CatalogService#listItem}
      */
-    public void listItem (WebIdent ident, ItemIdent item, String descrip, int rarity,
-                          AsyncCallback callback);
+    public void listItem (WebIdent ident, ItemIdent item, String descrip, int pricing,
+                          int salesTarget, int flowCost, int goldCost, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link CatalogService#updateListing}
+     */
+    public void updateListing (WebIdent ident, ItemIdent item, String descrip,
+                               AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link CatalogService#updatePricing}
+     */
+    public void updatePricing (WebIdent ident, byte itemType, int catalogId, int pricing,
+                               int salesTarget, int flowCost, int goldCost, AsyncCallback callback);
 
     /**
      * Removes the specified catalog listing.
@@ -38,7 +50,7 @@ public interface CatalogServiceAsync
                                AsyncCallback callback);
 
     /**
-     *  The asynchronous version of {@link CatalogService#returnItem}
+     * The asynchronous version of {@link CatalogService#returnItem}
      */
     public void returnItem (WebIdent ident, ItemIdent item, AsyncCallback callback);
 

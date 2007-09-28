@@ -50,20 +50,20 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     /** The column identifier for the {@link #goldCost} field. */
     public static final String GOLD_COST = "goldCost";
 
-    /** The column identifier for the {@link #rarity} field. */
-    public static final String RARITY = "rarity";
+    /** The column identifier for the {@link #pricing} field. */
+    public static final String PRICING = "pricing";
+
+    /** The column identifier for the {@link #salesTarget} field. */
+    public static final String SALES_TARGET = "salesTarget";
 
     /** The column identifier for the {@link #purchases} field. */
     public static final String PURCHASES = "purchases";
 
     /** The column identifier for the {@link #returns} field. */
     public static final String RETURNS = "returns";
-
-    /** The column identifier for the {@link #repriceCounter} field. */
-    public static final String REPRICE_COUNTER = "repriceCounter";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 7;
+    public static final int SCHEMA_VERSION = 8;
 
     /** A unique id assigned to this catalog listing. */
     @Id
@@ -85,8 +85,11 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     /** The amount of gold it costs to purchase a clone of this item. */
     public int goldCost;
 
-    /** The rarity of this item; {@see Item#rarity}. */
-    public int rarity;
+    /** The pricing of this item; {@see CatalogListing#pricing}. */
+    public int pricing;
+
+    /** The number of unit sales after which to adjust the price or delist this item. */
+    public int salesTarget;
 
     /** The number of times this item has been purchased. */
     public int purchases;
@@ -94,26 +97,13 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     /** The number of times this item has been returned. */
     public int returns;
 
-    /** A somewhat opaque counter representing how badly this record needs to be repriced. */
-    public int repriceCounter;
-
     /** A reference to the listed item. This value is not persisted. */
     @Transient
     public ItemRecord item;
 
-    public CatalogRecord ()
-    {
-        super();
-    }
-
-    protected CatalogRecord (CatalogListing listing)
-    {
-        super();
-
-        item = ItemRecord.newRecord(listing.item);
-        listedDate = new Timestamp(listing.listedDate.getTime());
-    }
-
+    /**
+     * Creates a runtime record from this persistent record.
+     */
     public CatalogListing toListing ()
     {
         CatalogListing listing = new CatalogListing();
@@ -124,7 +114,8 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
         listing.creator = new MemberName(null, item.creatorId);
         listing.flowCost = flowCost;
         listing.goldCost = goldCost;
-        listing.rarity = rarity;
+        listing.pricing = pricing;
+        listing.salesTarget = salesTarget;
         listing.purchases = purchases;
         listing.returns = returns;
         return listing;

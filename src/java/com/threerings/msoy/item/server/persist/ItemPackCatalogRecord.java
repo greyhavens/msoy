@@ -38,9 +38,13 @@ public class ItemPackCatalogRecord extends CatalogRecord<ItemPackRecord>
     public static final ColumnExp GOLD_COST_C =
         new ColumnExp(ItemPackCatalogRecord.class, GOLD_COST);
 
-    /** The qualified column identifier for the {@link #rarity} field. */
-    public static final ColumnExp RARITY_C =
-        new ColumnExp(ItemPackCatalogRecord.class, RARITY);
+    /** The qualified column identifier for the {@link #pricing} field. */
+    public static final ColumnExp PRICING_C =
+        new ColumnExp(ItemPackCatalogRecord.class, PRICING);
+
+    /** The qualified column identifier for the {@link #salesTarget} field. */
+    public static final ColumnExp SALES_TARGET_C =
+        new ColumnExp(ItemPackCatalogRecord.class, SALES_TARGET);
 
     /** The qualified column identifier for the {@link #purchases} field. */
     public static final ColumnExp PURCHASES_C =
@@ -49,21 +53,7 @@ public class ItemPackCatalogRecord extends CatalogRecord<ItemPackRecord>
     /** The qualified column identifier for the {@link #returns} field. */
     public static final ColumnExp RETURNS_C =
         new ColumnExp(ItemPackCatalogRecord.class, RETURNS);
-
-    /** The qualified column identifier for the {@link #repriceCounter} field. */
-    public static final ColumnExp REPRICE_COUNTER_C =
-        new ColumnExp(ItemPackCatalogRecord.class, REPRICE_COUNTER);
     // AUTO-GENERATED: FIELDS END
-
-    public ItemPackCatalogRecord ()
-    {
-        super();
-    }
-
-    protected ItemPackCatalogRecord (CatalogListing listing)
-    {
-        super(listing);
-    }
 
     // AUTO-GENERATED: METHODS START
     /**
