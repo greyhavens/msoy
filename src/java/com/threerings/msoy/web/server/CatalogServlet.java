@@ -128,6 +128,17 @@ public class CatalogServlet extends MsoyServiceServlet
                 throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
             }
 
+            // make sure we haven't hit our limited edition count
+            if (listing.pricing == CatalogListing.PRICING_LIMITED_EDITION &&
+                listing.purchases >= listing.salesTarget) {
+                throw new ServiceException(ItemCodes.E_HIT_SALES_LIMIT);
+            }
+
+            // make sure they're not seeing a stale record for a hidden item
+            if (listing.pricing == CatalogListing.PRICING_HIDDEN) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            }
+
             // create the clone row in the database
             ItemRecord newClone = repo.insertClone(
                 listing.item, mrec.memberId, flowCost, listing.goldCost);

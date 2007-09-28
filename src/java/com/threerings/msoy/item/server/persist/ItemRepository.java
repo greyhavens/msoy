@@ -44,8 +44,9 @@ import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
+import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
-import com.samskivert.jdbc.depot.operator.Arithmetic.*;
+import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
@@ -287,10 +288,9 @@ public abstract class ItemRepository<
     public List<T> loadFlaggedItems (int count)
         throws PersistenceException
     {
-        return findAll(
-            getItemClass(),
-            new Where(new GreaterThan(new ColumnExp(getItemClass(), ItemRecord.FLAGGED), 0)),
-            new Limit(0, count));
+        return findAll(getItemClass(),
+                       new Where(new GreaterThan(getItemColumn(ItemRecord.FLAGGED), 0)),
+                       new Limit(0, count));
     }
 
     /**
@@ -536,36 +536,37 @@ public abstract class ItemRepository<
             return; // if the listing has been unlisted, we don't need to nudge it.
         }
 
-        ArrayList<String> mods = new ArrayList<String>();
+        Map<String, SQLExpression> updates = new HashMap<String, SQLExpression>();
         if (purchased) {
-            record.purchases += 1;
-            mods.add(CatalogRecord.PURCHASES);
+            updates.put(CatalogRecord.PURCHASES,
+                        new Arithmetic.Add(getCatalogColumn(CatalogRecord.PURCHASES), 1));
 
+            int purchases = record.purchases + 1; // for below calculations
             switch (record.pricing) {
             case CatalogListing.PRICING_LIMITED_EDITION:
-                if (record.purchases >= record.salesTarget) {
-                    record.pricing = CatalogListing.PRICING_HIDDEN;
-                    mods.add(CatalogRecord.PRICING);
+                if (purchases >= record.salesTarget) {
+                    updates.put(CatalogRecord.PRICING,
+                                new LiteralExp(""+CatalogListing.PRICING_HIDDEN));
                 }
                 break;
 
             case CatalogListing.PRICING_ESCALATE:
-                if (record.purchases == record.salesTarget) {
-                    record.flowCost += Math.round(record.flowCost * CatalogListing.ESCALATE_FACTOR);
-                    mods.add(CatalogRecord.FLOW_COST);
-                    record.goldCost += Math.round(record.goldCost * CatalogListing.ESCALATE_FACTOR);
-                    mods.add(CatalogRecord.GOLD_COST);
+                if (purchases == record.salesTarget) {
+                    updates.put(CatalogRecord.FLOW_COST,
+                                new LiteralExp(""+CatalogListing.escalatePrice(record.flowCost)));
+                    updates.put(CatalogRecord.GOLD_COST,
+                                new LiteralExp(""+CatalogListing.escalatePrice(record.goldCost)));
                 }
                 break;
             }
 
         } else {
-            mods.add(CatalogRecord.RETURNS);
-            record.returns += 1;
+            updates.put(CatalogRecord.RETURNS,
+                        new Arithmetic.Add(getCatalogColumn(CatalogRecord.RETURNS), 1));
         }
 
         // finally update the columns we actually modified
-        update(record, mods.toArray(new String[mods.size()]));
+        updateLiteral(getCatalogClass(), record.catalogId, updates);
     }
 
     /**
@@ -887,7 +888,7 @@ public abstract class ItemRepository<
             whereBits.add(new Equals(getItemColumn(ItemRecord.MATURE), false));
         }
 
-        whereBits.add(new Not(new Equals(new ColumnExp(getCatalogClass(), CatalogRecord.PRICING),
+        whereBits.add(new Not(new Equals(getCatalogColumn(CatalogRecord.PRICING),
                                          CatalogListing.PRICING_HIDDEN)));
         clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
     }
@@ -895,7 +896,7 @@ public abstract class ItemRepository<
     protected void addOrderByListDate (ArrayList<SQLExpression> exprs,
                                        ArrayList<OrderBy.Order> orders)
     {
-        exprs.add(new ColumnExp(getCatalogClass(), CatalogRecord.LISTED_DATE));
+        exprs.add(getCatalogColumn(CatalogRecord.LISTED_DATE));
         orders.add(OrderBy.Order.DESC);
     }
 
@@ -909,9 +910,9 @@ public abstract class ItemRepository<
     protected void addOrderByPrice (ArrayList<SQLExpression> exprs, ArrayList<OrderBy.Order> orders,
                                     OrderBy.Order order)
     {
-        exprs.add(new Add(new ColumnExp(getCatalogClass(), CatalogRecord.FLOW_COST),
-                          new Mul(new ColumnExp(getCatalogClass(), CatalogRecord.GOLD_COST),
-                                  FLOW_FOR_GOLD)));
+        exprs.add(new Arithmetic.Add(getCatalogColumn(CatalogRecord.FLOW_COST),
+                                     new Arithmetic.Mul(getCatalogColumn(CatalogRecord.GOLD_COST),
+                                                        FLOW_FOR_GOLD)));
         orders.add(order);
     }
 
@@ -919,13 +920,18 @@ public abstract class ItemRepository<
                                         ArrayList<OrderBy.Order> orders)
     {
         // TODO: someday make an indexed column that represents (purchases-returns)
-        exprs.add(new ColumnExp(getCatalogClass(), CatalogRecord.PURCHASES));
+        exprs.add(getCatalogColumn(CatalogRecord.PURCHASES));
         orders.add(OrderBy.Order.DESC);
     }
 
     protected ColumnExp getItemColumn (String cname)
     {
         return new ColumnExp(getItemClass(), cname);
+    }
+
+    protected ColumnExp getCatalogColumn (String cname)
+    {
+        return new ColumnExp(getCatalogClass(), cname);
     }
 
     protected ColumnExp getCloneColumn (String cname)

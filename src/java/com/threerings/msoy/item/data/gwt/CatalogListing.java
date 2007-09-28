@@ -47,8 +47,13 @@ public class CatalogListing
     /** The minimum run for escalating pricing and limited edition. */
     public static final int MIN_SALES_TARGET = 100;
 
-    /** The amount by which we increase the price at each escalation. */
-    public static final float ESCALATE_FACTOR = 0.25f;
+    /**
+     * Escalates the supplied price based on the escalation factor.
+     */
+    public static final int escalatePrice (int value)
+    {
+        return Math.round(value + value * ESCALATION_FACTOR);
+    }
 
     /** The unique id for this listing. */
     public int catalogId;
@@ -79,4 +84,7 @@ public class CatalogListing
 
     /** The number of returns of this item. */
     public int returns;
+
+    /** The amount by which we increase the price at each escalation. */
+    protected static final float ESCALATION_FACTOR = 0.25f;
 }

@@ -30,6 +30,7 @@ public interface ServerMessages extends ConstantsWithLookup
     public String item_in_use ();
     public String item_listed ();
 
+    public String hit_sales_limit ();
     public String insufficient_flow ();
     public String insufficient_gold ();
 
