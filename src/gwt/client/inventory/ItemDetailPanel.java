@@ -4,6 +4,7 @@
 package client.inventory;
 
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
@@ -13,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.EditorHost;
@@ -129,16 +131,29 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             }
             _details.add(WidgetUtil.makeShim(1, 10));
             _details.add(new Label(tip));
+
+            // add a button for listing or updating the item
             RowPanel buttons = new RowPanel();
             buttons.add(new Button(butlbl, new ClickListener() {
                 public void onClick (Widget sender) {
-                    new DoListItemPopup(_item, false).show();
+                    new DoListItemPopup(_item, null).show();
                 }
             }));
+
             if (_item.catalogId != 0) {
+                // add a button for repricing the listing
+                final AsyncCallback cb = new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        new DoListItemPopup(_item, (CatalogListing)result).show();
+                    }
+                    public void onFailure (Throwable caught) {
+                        MsoyUI.error(CInventory.serverError(caught));
+                    }
+                };
                 buttons.add(new Button(CInventory.msgs.detailUpprice(), new ClickListener() {
                     public void onClick (Widget sender) {
-                        new DoListItemPopup(_item, true).show();
+                        CInventory.catalogsvc.loadListing(
+                            _item.getType(), _item.catalogId, false, cb);
                     }
                 }));
             }

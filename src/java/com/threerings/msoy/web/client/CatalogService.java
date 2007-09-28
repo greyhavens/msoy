@@ -60,6 +60,12 @@ public interface CatalogService extends RemoteService
         throws ServiceException;
 
     /**
+     * Loads and returns the specified catalog listing.
+     */
+    public CatalogListing loadListing (byte itemType, int catalogId, boolean loadListedItem)
+        throws ServiceException;
+
+    /**
      * Updates the catalog listing associated with the supplied catalog original.
      */
     public void updateListing (WebIdent ident, ItemIdent item, String descrip)

@@ -29,7 +29,7 @@ import client.util.NumberTextBox;
 
 public class DoListItemPopup extends BorderedDialog
 {
-    public DoListItemPopup (Item item, boolean repricing)
+    public DoListItemPopup (Item item, final CatalogListing listing)
     {
         super(false, true);
         addStyleName("doListItem");
@@ -38,8 +38,9 @@ public class DoListItemPopup extends BorderedDialog
         _status = new Label("");
         _status.addStyleName("Status");
 
-        // note whether we are listing this item for the first time or updating its listing
-        final boolean firstTime = (item.catalogId == 0);
+        // note whether we are listing this item for the first time or updating its listing or
+        // whether or not we're repricing an existing listing
+        boolean firstTime = (item.catalogId == 0), repricing = (listing != null);
 
         _header.add(createTitleLabel(CInventory.msgs.doListHdrTop(), null));
         if (firstTime) {
@@ -72,9 +73,13 @@ public class DoListItemPopup extends BorderedDialog
 
             int row = pricing.addText(CInventory.msgs.doListStrategy(), 1, "rightLabel");
             pricing.setWidget(row, 1, _pricingBox = new ListBox(), 1, null);
+            int selectedPricing = 1;
             for (int ii = 0; ii < CatalogListing.PRICING.length; ii++) {
                 String key = "listingPricing" + CatalogListing.PRICING[ii];
                 _pricingBox.addItem(CInventory.dmsgs.getString(key));
+                if (listing != null && listing.pricing == CatalogListing.PRICING[ii]) {
+                    selectedPricing = ii;
+                }
             }
             ChangeListener tipper = new ChangeListener() {
                 public void onChange (Widget sender) {
@@ -94,19 +99,22 @@ public class DoListItemPopup extends BorderedDialog
             _salesTargetLabel = new Label(CInventory.msgs.doListSalesTarget());
             row = pricing.addWidget(_salesTargetLabel, 1, "rightLabel");
             pricing.setWidget(row, 1, _salesTarget = new NumberTextBox(false, 5, 5), 1, null);
-            _salesTarget.setText(""+DEFAULT_SALES_TARGET);
+            int salesTarget = (listing == null) ? DEFAULT_SALES_TARGET : listing.salesTarget;
+            _salesTarget.setText(String.valueOf(salesTarget));
 
             row = pricing.addText(CInventory.msgs.doListFlowCost(), 1, "rightLabel");
             pricing.setWidget(row, 1, _flowCost = new NumberTextBox(false, 5, 5), 1, null);
-            _flowCost.setText(""+DEFAULT_FLOW_COST);
+            int flowCost = (listing == null) ? DEFAULT_FLOW_COST : listing.flowCost;
+            _flowCost.setText(String.valueOf(flowCost));
 
 //             row = pricing.addText(CInventory.msgs.doListGoldCost(), 1, "rightLabel");
 //             pricing.setWidget(row, 1, _goldCost = new NumberTextBox(false, 5, 5), 2, null);
-//             _goldCost.setText(""+DEFAULT_GOLD_COST);
+//             int goldCost = (listing == null) ? DEFAULT_GOLD_COST : listing.goldCost;
+//             _goldCost.setText(String.valueOf(goldCost));
 
             _content.add(pricing);
 
-            _pricingBox.setSelectedIndex(1);
+            _pricingBox.setSelectedIndex(selectedPricing);
             tipper.onChange(_pricingBox); // alas setSelectedIndex() doesn't do this, yay DHTML
         }
         _content.add(_status);
@@ -121,6 +129,8 @@ public class DoListItemPopup extends BorderedDialog
         _footer.add(_doIt = new Button(doLbl));
 
         if (firstTime) {
+            final String resultMsg = firstTime ?
+                CInventory.msgs.doListListed() : CInventory.msgs.doListUpdated();
             new ClickCallback(_doIt) {
                 public boolean callService () {
                     CInventory.catalogsvc.listItem(
@@ -131,8 +141,7 @@ public class DoListItemPopup extends BorderedDialog
                 }
                 public boolean gotResult (Object result) {
                     // TODO: enhance dialog to link to catalog page to see item
-                    MsoyUI.info(firstTime ? CInventory.msgs.msgItemListed() :
-                                CInventory.msgs.msgItemUpdated());
+                    MsoyUI.info(resultMsg);
                     hide();
                     return false;
                 }
@@ -141,14 +150,20 @@ public class DoListItemPopup extends BorderedDialog
         } else if (repricing) {
             new ClickCallback(_doIt) {
                 public boolean callService () {
+                    int pricing = getPricing(), salesTarget = _salesTarget.getValue().intValue();
+                    if (getPricing() == CatalogListing.PRICING_LIMITED_EDITION &&
+                        listing != null && salesTarget <= listing.purchases) {
+                        MsoyUI.error(CInventory.msgs.doListHitLimit(""+listing.purchases));
+                        return false;
+                    }
                     CInventory.catalogsvc.updatePricing(
                         CInventory.ident, _item.getType(), _item.catalogId, getPricing(),
-                        _salesTarget.getValue().intValue(), _flowCost.getValue().intValue(),
+                        salesTarget, _flowCost.getValue().intValue(),
                         0 /* _goldCost.getValue().intValue() */, this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
-                    MsoyUI.info(CInventory.msgs.msgItemUpdated());
+                    MsoyUI.info(CInventory.msgs.doListUpdated());
                     hide();
                     return false;
                 }
@@ -162,7 +177,7 @@ public class DoListItemPopup extends BorderedDialog
                     return true;
                 }
                 public boolean gotResult (Object result) {
-                    MsoyUI.info(CInventory.msgs.msgItemUpdated());
+                    MsoyUI.info(CInventory.msgs.doListUpdated());
                     hide();
                     return false;
                 }

@@ -208,12 +208,20 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailUseAudio();
 
   /**
-   * Translated "Listing updated.".
+   * Translated "Item listed.".
    * 
-   * @return translated "Listing updated."
-   * @gwt.key msgItemUpdated
+   * @return translated "Item listed."
+   * @gwt.key doListListed
    */
-  String msgItemUpdated();
+  String doListListed();
+
+  /**
+   * Translated "This item has already reached that sales target. Either increase the target above {0} or choose a different pricing strategy.".
+   * 
+   * @return translated "This item has already reached that sales target. Either increase the target above {0} or choose a different pricing strategy."
+   * @gwt.key doListHitLimit
+   */
+  String doListHitLimit(String arg0);
 
   /**
    * Translated "List it!".
@@ -254,22 +262,6 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key detailUplist
    */
   String detailUplist();
-
-  /**
-   * Translated "Item remixed.".
-   * 
-   * @return translated "Item remixed."
-   * @gwt.key msgItemRemixed
-   */
-  String msgItemRemixed();
-
-  /**
-   * Translated "Item listed.".
-   * 
-   * @return translated "Item listed."
-   * @gwt.key msgItemListed
-   */
-  String msgItemListed();
 
   /**
    * Translated "Wear avatar".
@@ -320,6 +312,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailRemix();
 
   /**
+   * Translated "Listing updated.".
+   * 
+   * @return translated "Listing updated."
+   * @gwt.key doListUpdated
+   */
+  String doListUpdated();
+
+  /**
    * Translated "Update Pricing".
    * 
    * @return translated "Update Pricing"
@@ -342,6 +342,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key doListNeedsDescrip
    */
   String doListNeedsDescrip();
+
+  /**
+   * Translated "Item remixed.".
+   * 
+   * @return translated "Item remixed."
+   * @gwt.key doListRemixed
+   */
+  String doListRemixed();
 
   /**
    * Translated "Stop using this decor".

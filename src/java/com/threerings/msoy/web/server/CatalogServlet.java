@@ -259,6 +259,27 @@ public class CatalogServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface CatalogServlet
+    public CatalogListing loadListing (byte itemType, int catalogId, boolean loadListedItem)
+        throws ServiceException
+    {
+        // locate the appropriate repository
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemType);
+        try {
+            // load up the old catalog record
+            CatalogRecord record = repo.loadListing(catalogId, loadListedItem);
+            if (record == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            }
+            return record.toListing();
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Load listing failed [type=" + itemType +
+                    ", catId=" + catalogId + "].", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+    }
+
     // from interface CatalogService
     public void updateListing (WebIdent ident, ItemIdent item, String descrip)
         throws ServiceException
