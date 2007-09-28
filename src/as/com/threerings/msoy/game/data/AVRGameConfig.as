@@ -42,7 +42,9 @@ public class AVRGameConfig extends MsoyGameConfig
     // from EZGameConfig
     override protected function createDefaultController () :PlaceController
     {
-        return new AVRGameController();
+//        return new AVRGameController();
+        // TODO: AVRGames are not Places
+        return null;
     }
 }
 }
