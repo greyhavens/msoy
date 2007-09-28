@@ -16,10 +16,17 @@ import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.ObjectAddedEvent;
+import com.threerings.presents.dobj.ObjectRemovedEvent;
+import com.threerings.presents.dobj.OidListListener;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.whirled.data.ScenePlace;
 
@@ -28,7 +35,7 @@ import static com.threerings.msoy.Log.log;
 /**
  */
 public class AVRGameManager
-    implements AVRGameProvider
+    implements AVRGameProvider, OidListListener
 {
     public AVRGameManager (int gameId, AVRGameRepository repo)
     {
@@ -55,6 +62,9 @@ public class AVRGameManager
     {
         _gameObj = gameObj;
 
+        // listen for gameObj.playerOids removals
+        gameObj.addListener(this);
+
         gameObj.startTransaction();
         try {
             for (GameStateRecord rec : stateRecords) {
@@ -63,7 +73,7 @@ public class AVRGameManager
         } finally {
             gameObj.commitTransaction();
         }
-}
+    }
 
     public void shutdown ()
     {
@@ -90,6 +100,31 @@ public class AVRGameManager
                     "Unable to flush game state [gameId=" + _gameId + ", error=" + pe + "]");
             }
         });
+    }
+
+    // from interface OidListListener
+    public void objectAdded (ObjectAddedEvent event)
+    {
+        // no special action
+    }
+
+    // from interface OidListListener
+    public void objectRemoved (ObjectRemovedEvent event)
+    {
+        if (event.getName().equals(AVRGameObject.PLAYER_OIDS)) {
+            int playerOid = event.getOid();
+            if (_gameObj.players.containsKey(playerOid)) {
+                _gameObj.removeFromPlayers(playerOid);
+
+            } else {
+                log.warning(
+                    "Player removed from OidList without a corresponding DSet entry [gameId=" +
+                    _gameId + ", oid=" + event.getOid() + "]");
+            }
+            PlayerObject player = _players.remove(playerOid);
+            assert(player != null);
+            flushPlayerGameState(player);
+        }
     }
 
     public void startQuest (ClientObject caller, final String questId, final String status,
@@ -120,7 +155,6 @@ public class AVRGameManager
             }
         });
     }
-
 
     public void updateQuest (ClientObject caller, final String questId, final int step,
                              final String status, final ConfirmListener listener)
@@ -235,9 +269,17 @@ public class AVRGameManager
         setPlayerProperty(caller, key, null, listener);
     }
 
-    public void addPlayer (final PlayerObject player, List<PlayerGameStateRecord> stateRecords)
+    public void addPlayer (PlayerObject player, List<PlayerGameStateRecord> stateRecords)
     {
-        // TODO: create & add OccupantInfo, sanity checks
+        _players.put(player.getOid(), player);
+
+        _gameObj.startTransaction();
+        try {
+            _gameObj.addToPlayers(new OccupantInfo(player));
+            _gameObj.addToPlayerOids(player.getOid());
+        } finally {
+            _gameObj.commitTransaction();
+        }
 
         player.startTransaction();
         try {
@@ -249,10 +291,13 @@ public class AVRGameManager
         }
     }
 
-    public void removePlayer (final PlayerObject player)
+    public void removePlayer (PlayerObject player)
     {
-        // TODO: remove OccupantInfo, sanity checks
+        _gameObj.removeFromPlayerOids(player.getOid());
+    }
 
+    protected void flushPlayerGameState (final PlayerObject player)
+    {
         // flush any modified memory records to the database
         final List<PlayerGameStateRecord> recs = new ArrayList<PlayerGameStateRecord>();
         for (GameState entry : player.gameState) {
@@ -284,4 +329,6 @@ public class AVRGameManager
     protected AVRGameObject _gameObj;
 
     protected AVRGameRepository _repo;
+
+    protected IntMap<PlayerObject> _players = new HashIntMap<PlayerObject>();
 }
