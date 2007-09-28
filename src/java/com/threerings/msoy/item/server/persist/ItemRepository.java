@@ -115,6 +115,8 @@ public abstract class ItemRepository<
                 }
             }
         });
+        _ctx.registerMigration(
+            getCatalogClass(), new EntityMigration.Drop(8, "repriceCounter"));
     }
 
     /**
