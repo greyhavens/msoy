@@ -6,30 +6,29 @@ package com.threerings.msoy.game.client;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
-import com.threerings.msoy.world.data.MemoryEntry;
-
 /**
  * A service for joining AVR (in-world) games.
  */
 public interface AVRGameService extends InvocationService
 {
-    /**
-     * Requests to join an in-world game.
-     *
-     * @param gameId the item id of a Game-type item.
-     * @param listener a listener to notify on failure.
-     */
-    public void joinAVRGame (Client client, int gameId, InvocationListener listener);
+    public void setProperty (
+        Client client, String key, byte[] value, ConfirmListener listener);
 
-    /**
-     * Requests to leave the current in-world game.
-     *
-     * @param listener a listener to notify on failure.
-     */
-    public void leaveAVRGame (Client client, InvocationListener listener);
+    public void deleteProperty (
+        Client client, String key, ConfirmListener listener);
 
-    /**
-     * Requests to change the game memory.
-     */
-    public void updateMemory (Client client, MemoryEntry entry);
+    public void setPlayerProperty (
+        Client client, String key, byte[] value, ConfirmListener listener);
+
+    public void deletePlayerProperty (
+        Client client, String key, ConfirmListener listener);
+
+    public void startQuest (
+        Client client, String questId, String status, ConfirmListener listener);
+
+    public void updateQuest (
+        Client caller, String questId, int step, String progress, ConfirmListener listener);
+
+    public void completeQuest (
+        Client caller, String questId, int payoutLevel, ConfirmListener listener);
 }

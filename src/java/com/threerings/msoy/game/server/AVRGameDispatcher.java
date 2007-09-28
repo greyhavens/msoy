@@ -5,7 +5,6 @@ package com.threerings.msoy.game.server;
 
 import com.threerings.msoy.game.client.AVRGameService;
 import com.threerings.msoy.game.data.AVRGameMarshaller;
-import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -39,24 +38,52 @@ public class AVRGameDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
-        case AVRGameMarshaller.JOIN_AVRGAME:
-            ((AVRGameProvider)provider).joinAVRGame(
+        case AVRGameMarshaller.COMPLETE_QUEST:
+            ((AVRGameProvider)provider).completeQuest(
                 source,
-                ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
+                (String)args[0], ((Integer)args[1]).intValue(), (InvocationService.ConfirmListener)args[2]
             );
             return;
 
-        case AVRGameMarshaller.LEAVE_AVRGAME:
-            ((AVRGameProvider)provider).leaveAVRGame(
+        case AVRGameMarshaller.DELETE_PLAYER_PROPERTY:
+            ((AVRGameProvider)provider).deletePlayerProperty(
                 source,
-                (InvocationService.InvocationListener)args[0]
+                (String)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 
-        case AVRGameMarshaller.UPDATE_MEMORY:
-            ((AVRGameProvider)provider).updateMemory(
+        case AVRGameMarshaller.DELETE_PROPERTY:
+            ((AVRGameProvider)provider).deleteProperty(
                 source,
-                (MemoryEntry)args[0]
+                (String)args[0], (InvocationService.ConfirmListener)args[1]
+            );
+            return;
+
+        case AVRGameMarshaller.SET_PLAYER_PROPERTY:
+            ((AVRGameProvider)provider).setPlayerProperty(
+                source,
+                (String)args[0], (byte[])args[1], (InvocationService.ConfirmListener)args[2]
+            );
+            return;
+
+        case AVRGameMarshaller.SET_PROPERTY:
+            ((AVRGameProvider)provider).setProperty(
+                source,
+                (String)args[0], (byte[])args[1], (InvocationService.ConfirmListener)args[2]
+            );
+            return;
+
+        case AVRGameMarshaller.START_QUEST:
+            ((AVRGameProvider)provider).startQuest(
+                source,
+                (String)args[0], (String)args[1], (InvocationService.ConfirmListener)args[2]
+            );
+            return;
+
+        case AVRGameMarshaller.UPDATE_QUEST:
+            ((AVRGameProvider)provider).updateQuest(
+                source,
+                (String)args[0], ((Integer)args[1]).intValue(), (String)args[2], (InvocationService.ConfirmListener)args[3]
             );
             return;
 

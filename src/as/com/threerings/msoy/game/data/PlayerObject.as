@@ -4,6 +4,9 @@
 package com.threerings.msoy.game.data {
 
 import com.threerings.io.ObjectInputStream;
+
+import com.threerings.presents.dobj.DSet;
+
 import com.threerings.util.Name;
 
 import com.threerings.crowd.data.BodyObject;
@@ -33,6 +36,12 @@ public class PlayerObject extends BodyObject
 
     /** The field name of the <code>humanity</code> field. */
     public static const HUMANITY :String = "humanity";
+
+    /** The field name of the <code>gameState</code> field. */
+    public static const GAME_STATE :String = "gameState";
+
+    /** The field name of the <code>questState</code> field. */
+    public static const QUEST_STATE :String = "questState";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
@@ -46,6 +55,12 @@ public class PlayerObject extends BodyObject
 
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public var humanity :int;
+
+    /** Game state entries for the world game we're currently on. */
+    public var gameState :DSet;
+
+    /** The quests of our current world game that we're currently on. */
+    public var questState :DSet;
 
     // from BodyObject
     override public function getTokens () :TokenRing
@@ -103,6 +118,8 @@ public class PlayerObject extends BodyObject
         tokens = (ins.readObject() as MsoyTokenRing);
         avatar = (ins.readObject() as Avatar);
         humanity = ins.readInt();
+        gameState = (ins.readObject() as DSet);
+        questState = (ins.readObject() as DSet);
     }
 }
 }

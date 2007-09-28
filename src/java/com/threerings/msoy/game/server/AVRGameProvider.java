@@ -4,7 +4,6 @@
 package com.threerings.msoy.game.server;
 
 import com.threerings.msoy.game.client.AVRGameService;
-import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -17,19 +16,44 @@ import com.threerings.presents.server.InvocationProvider;
 public interface AVRGameProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link AVRGameService#joinAVRGame} request.
+     * Handles a {@link AVRGameService#completeQuest} request.
      */
-    public void joinAVRGame (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
+    public void completeQuest (ClientObject caller, String arg1, int arg2, InvocationService.ConfirmListener arg3)
         throws InvocationException;
 
     /**
-     * Handles a {@link AVRGameService#leaveAVRGame} request.
+     * Handles a {@link AVRGameService#deletePlayerProperty} request.
      */
-    public void leaveAVRGame (ClientObject caller, InvocationService.InvocationListener arg1)
+    public void deletePlayerProperty (ClientObject caller, String arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 
     /**
-     * Handles a {@link AVRGameService#updateMemory} request.
+     * Handles a {@link AVRGameService#deleteProperty} request.
      */
-    public void updateMemory (ClientObject caller, MemoryEntry arg1);
+    public void deleteProperty (ClientObject caller, String arg1, InvocationService.ConfirmListener arg2)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link AVRGameService#setPlayerProperty} request.
+     */
+    public void setPlayerProperty (ClientObject caller, String arg1, byte[] arg2, InvocationService.ConfirmListener arg3)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link AVRGameService#setProperty} request.
+     */
+    public void setProperty (ClientObject caller, String arg1, byte[] arg2, InvocationService.ConfirmListener arg3)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link AVRGameService#startQuest} request.
+     */
+    public void startQuest (ClientObject caller, String arg1, String arg2, InvocationService.ConfirmListener arg3)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link AVRGameService#updateQuest} request.
+     */
+    public void updateQuest (ClientObject caller, String arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
+        throws InvocationException;
 }

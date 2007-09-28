@@ -58,6 +58,7 @@ import com.threerings.msoy.world.data.RoomConfig;
 
 import com.threerings.msoy.game.data.AVRGameConfig;
 import com.threerings.msoy.game.data.AVRGameMarshaller;
+import com.threerings.msoy.game.data.AVRMarshaller;
 
 import com.threerings.msoy.game.chiyogami.client.ChiyogamiController;
 
@@ -132,6 +133,7 @@ public class WorldClient extends BaseClient
     {
         super.fuckingCompiler();
         var c :Class;
+        c = AVRMarshaller;
         c = AVRGameConfig;
         c = AVRGameMarshaller;
         c = ChiyogamiController;

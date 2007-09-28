@@ -4,9 +4,8 @@
 package com.threerings.msoy.game.server;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -19,6 +18,7 @@ import com.samskivert.util.Invoker;
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -41,14 +41,17 @@ import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
-import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.LevelPackRecord;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
 
+import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.server.persist.AVRGameRepository;
+import com.threerings.msoy.game.server.persist.GameStateRecord;
+import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
 
 import com.threerings.msoy.server.MsoyBaseServer;
 
@@ -58,7 +61,8 @@ import static com.threerings.msoy.Log.log;
  * Manages the lobbies active on this server.
  */
 public class GameGameRegistry
-    implements LobbyProvider, MsoyGameServer.Shutdowner, LobbyManager.ShutdownObserver
+    implements LobbyProvider, AVRProvider,
+               MsoyGameServer.Shutdowner, LobbyManager.ShutdownObserver
 {
     /**
      * Initializes this registry.
@@ -70,8 +74,10 @@ public class GameGameRegistry
         _gameRepo = new GameRepository(perCtx);
         _lpackRepo = new LevelPackRepository(perCtx);
         _ipackRepo = new ItemPackRepository(perCtx);
+        _avrgRepo = new AVRGameRepository(perCtx);
         _ratingRepo = ratingRepo;
         invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
+        invmgr.registerDispatcher(new AVRDispatcher(this), MsoyCodes.GAME_GROUP);
 
         // register to hear when the server is shutdown
         MsoyGameServer.registerShutdowner(this);
@@ -95,6 +101,63 @@ public class GameGameRegistry
         return _distribs.get(multiplayer ? Math.abs(gameId) : -Math.abs(gameId));
     }
 
+    // from AVRProvider
+    public void activateGame (ClientObject caller, final int gameId, final ResultListener listener)
+        throws InvocationException
+    {
+        final PlayerObject player = (PlayerObject) caller;
+
+        ResultListener joinListener = new ResultListener() {
+            public void requestProcessed (Object result) {
+                joinAVRGame(player, (AVRGameManager) result, listener);
+            }
+            public void requestFailed (String cause) {
+                listener.requestFailed(cause);
+            }
+        };
+
+        ResultListenerList list = _loadingAVRGames.get(gameId);
+        if (list != null) {
+            list.add(joinListener);
+            return;
+        }
+
+        AVRGameManager mgr = _avrgManagers.get(gameId);
+        if (mgr != null) {
+            joinListener.requestProcessed(mgr);
+            return;
+        }
+
+        _loadingAVRGames.put(gameId, list = new ResultListenerList());
+        list.add(joinListener);
+
+        final AVRGameManager fmgr = new AVRGameManager(gameId, _avrgRepo);
+        final AVRGameObject gameObj = fmgr.createGameObject();
+
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("activateAVRGame") {
+            public void invokePersist () throws Exception {
+                _recs = _avrgRepo.getGameState(gameId);
+            }
+            public void handleSuccess () {
+                _omgr.registerObject(gameObj);
+                fmgr.startup(gameObj, _recs);
+
+                ResultListenerList list = _loadingLobbies.remove(gameId);
+                if (list != null) {
+                    list.requestProcessed(fmgr);
+                } else {
+                    log.warning(
+                        "No listeners when done activating AVRGame [gameId=" + gameId + "]");
+                }
+            }
+            public void handleFailure (Exception pe) {
+                log.warning(
+                    "Unable to resolve game state [gameId=" + gameId + ", error=" + pe + "]");
+            }
+            protected List<GameStateRecord> _recs;
+        });
+    }
+
     // from LobbyProvider
     public void identifyLobby (ClientObject caller, final int gameId,
                                InvocationService.ResultListener listener)
@@ -102,7 +165,7 @@ public class GameGameRegistry
     {
         // if we're already resolving this lobby, add this listener to the list of those interested
         // in the outcome
-        ResultListenerList list = _loading.get(gameId);
+        ResultListenerList list = _loadingLobbies.get(gameId);
         if (list != null) {
             list.add(listener);
             return;
@@ -116,7 +179,7 @@ public class GameGameRegistry
         }
 
         // otherwise we need to do the resolving
-        _loading.put(gameId, list = new ResultListenerList());
+        _loadingLobbies.put(gameId, list = new ResultListenerList());
         list.add(listener);
 
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("loadLobby") {
@@ -150,7 +213,7 @@ public class GameGameRegistry
                     lmgr.setGameData(_game, _lpacks, _ipacks);
                     _lobbies.put(gameId, lmgr);
 
-                    ResultListenerList list = _loading.remove(gameId);
+                    ResultListenerList list = _loadingLobbies.remove(gameId);
                     if (list != null) {
                         list.requestProcessed(lmgr.getLobbyObject().getOid());
                     }
@@ -170,7 +233,7 @@ public class GameGameRegistry
             }
 
             protected void reportFailure (String reason) {
-                ResultListenerList list = _loading.remove(gameId);
+                ResultListenerList list = _loadingLobbies.remove(gameId);
                 if (list != null) {
                     list.requestFailed(reason);
                 }
@@ -186,13 +249,13 @@ public class GameGameRegistry
             protected ArrayList<ItemPack> _ipacks = new ArrayList<ItemPack>();
         });
     }
-    
+
     // from LobbyProvider
     public void joinPlayerGame (ClientObject caller, final int playerId,
                                 InvocationService.ResultListener listener)
         throws InvocationException
     {
-        PlayerObject player = 
+        PlayerObject player =
             (PlayerObject) MsoyGameServer.lookupBody(new MemberName("", playerId));
         if (player == null) {
             listener.requestFailed("e.player_not_found");
@@ -239,7 +302,7 @@ public class GameGameRegistry
                 break;
             }
         }
-        
+
         // finally, hand off the game oid
         listener.requestProcessed(placeOid);
     }
@@ -253,12 +316,16 @@ public class GameGameRegistry
         return _lobbies.values().iterator();
     }
 
-    // from interface MsoyServer.Shutdowner
+    // from interface PresentsServer.Shutdowner
     public void shutdown ()
     {
         // shutdown our active lobbies
         for (LobbyManager lmgr : _lobbies.values().toArray(new LobbyManager[_lobbies.size()])) {
             lobbyDidShutdown(lmgr.getGame());
+        }
+
+        for (AVRGameManager amgr : _avrgManagers.values()) {
+            amgr.shutdown();
         }
     }
 
@@ -267,7 +334,7 @@ public class GameGameRegistry
     {
         // destroy our record of that lobby
         _lobbies.remove(game.gameId);
-        _loading.remove(game.gameId); // just in case
+        _loadingLobbies.remove(game.gameId); // just in case
 
         // let our world server know we're audi
         MsoyGameServer.worldClient.stoppedHostingGame(game.gameId);
@@ -275,6 +342,26 @@ public class GameGameRegistry
         // flush any modified percentile distributions
         flushPercentiler(-Math.abs(game.gameId)); // single-player
         flushPercentiler(Math.abs(game.gameId)); // multiplayer
+    }
+
+    protected void joinAVRGame (final PlayerObject player, final AVRGameManager mgr,
+                                final ResultListener listener)
+    {
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("joinAVRGame") {
+            public void invokePersist () throws Exception {
+                _recs = _avrgRepo.getPlayerGameState(mgr.getGameId(), player.getMemberId());
+            }
+            public void handleSuccess () {
+                mgr.addPlayer(player, _recs);
+                listener.requestProcessed(mgr.getGameObject().getOid());
+            }
+            public void handleFailure (Exception pe) {
+                log.warning(
+                    "Unable to reslve player game state [gameId=" + mgr.getGameId() +
+                    ", player=" + player + ", error=" + pe + "]");
+            }
+            protected List<PlayerGameStateRecord> _recs;
+        });
     }
 
     protected void flushPercentiler (final int gameId)
@@ -300,6 +387,9 @@ public class GameGameRegistry
     /** The distributed object manager that we work with. */
     protected RootDObjectManager _omgr;
 
+    /** Provides access to persistent AVRG information. */
+    protected AVRGameRepository _avrgRepo;
+
     /** Maps game id -> lobby. */
     protected IntMap<LobbyManager> _lobbies = new HashIntMap<LobbyManager>();
 
@@ -307,7 +397,13 @@ public class GameGameRegistry
     protected IntMap<Percentiler> _distribs = new HashIntMap<Percentiler>();
 
     /** Maps game id -> listeners waiting for a lobby to load. */
-    protected IntMap<ResultListenerList> _loading = new HashIntMap<ResultListenerList>();
+    protected IntMap<ResultListenerList> _loadingLobbies = new HashIntMap<ResultListenerList>();
+
+    /** Maps game id -> manager for AVR games. */
+    protected IntMap<AVRGameManager> _avrgManagers = new HashIntMap<AVRGameManager>();
+
+    /** Maps game id -> listeners waiting for a lobby to load. */
+    protected IntMap<ResultListenerList> _loadingAVRGames = new HashIntMap<ResultListenerList>();
 
     // various and sundry repositories for loading persistent data
     protected RatingRepository _ratingRepo;

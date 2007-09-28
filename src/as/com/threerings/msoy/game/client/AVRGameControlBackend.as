@@ -148,9 +148,9 @@ public class AVRGameControlBackend extends MsoyGameControlBackend
     {
         validateConnected();
         var data :ByteArray = ObjectMarshaller.validateAndEncode(value);
-        var wgsvc :AVRGameService =
-            (_ctx.getClient().requireService(AVRGameService) as AVRGameService);
-        wgsvc.updateMemory(_ctx.getClient(), new MemoryEntry(_gameIdent, key, data));
+//        var wgsvc :AVRGameService =
+//            (_ctx.getClient().requireService(AVRGameService) as AVRGameService);
+//        wgsvc.updateMemory(_ctx.getClient(), new MemoryEntry(_gameIdent, key, data));
         return true;
     }
     

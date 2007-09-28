@@ -8,10 +8,10 @@ import com.threerings.util.*; // for Float, Integer, etc.
 import com.threerings.io.TypedArray;
 
 import com.threerings.msoy.game.client.AVRGameService;
-import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationService_InvocationListener;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 
 /**
@@ -24,40 +24,94 @@ import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 public class AVRGameMarshaller extends InvocationMarshaller
     implements AVRGameService
 {
-    /** The method id used to dispatch {@link #joinAVRGame} requests. */
-    public static const JOIN_AVRGAME :int = 1;
+    /** The method id used to dispatch {@link #completeQuest} requests. */
+    public static const COMPLETE_QUEST :int = 1;
 
     // from interface AVRGameService
-    public function joinAVRGame (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function completeQuest (arg1 :Client, arg2 :String, arg3 :int, arg4 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, COMPLETE_QUEST, [
+            arg2, Integer.valueOf(arg3), listener4
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #deletePlayerProperty} requests. */
+    public static const DELETE_PLAYER_PROPERTY :int = 2;
+
+    // from interface AVRGameService
+    public function deletePlayerProperty (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void
+    {
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
         listener3.listener = arg3;
-        sendRequest(arg1, JOIN_AVRGAME, [
-            Integer.valueOf(arg2), listener3
+        sendRequest(arg1, DELETE_PLAYER_PROPERTY, [
+            arg2, listener3
         ]);
     }
 
-    /** The method id used to dispatch {@link #leaveAVRGame} requests. */
-    public static const LEAVE_AVRGAME :int = 2;
+    /** The method id used to dispatch {@link #deleteProperty} requests. */
+    public static const DELETE_PROPERTY :int = 3;
 
     // from interface AVRGameService
-    public function leaveAVRGame (arg1 :Client, arg2 :InvocationService_InvocationListener) :void
+    public function deleteProperty (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void
     {
-        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, LEAVE_AVRGAME, [
-            listener2
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, DELETE_PROPERTY, [
+            arg2, listener3
         ]);
     }
 
-    /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static const UPDATE_MEMORY :int = 3;
+    /** The method id used to dispatch {@link #setPlayerProperty} requests. */
+    public static const SET_PLAYER_PROPERTY :int = 4;
 
     // from interface AVRGameService
-    public function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void
+    public function setPlayerProperty (arg1 :Client, arg2 :String, arg3 :ByteArray, arg4 :InvocationService_ConfirmListener) :void
     {
-        sendRequest(arg1, UPDATE_MEMORY, [
-            arg2
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, SET_PLAYER_PROPERTY, [
+            arg2, arg3, listener4
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #setProperty} requests. */
+    public static const SET_PROPERTY :int = 5;
+
+    // from interface AVRGameService
+    public function setProperty (arg1 :Client, arg2 :String, arg3 :ByteArray, arg4 :InvocationService_ConfirmListener) :void
+    {
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, SET_PROPERTY, [
+            arg2, arg3, listener4
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #startQuest} requests. */
+    public static const START_QUEST :int = 6;
+
+    // from interface AVRGameService
+    public function startQuest (arg1 :Client, arg2 :String, arg3 :String, arg4 :InvocationService_ConfirmListener) :void
+    {
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, START_QUEST, [
+            arg2, arg3, listener4
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #updateQuest} requests. */
+    public static const UPDATE_QUEST :int = 7;
+
+    // from interface AVRGameService
+    public function updateQuest (arg1 :Client, arg2 :String, arg3 :int, arg4 :String, arg5 :InvocationService_ConfirmListener) :void
+    {
+        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, UPDATE_QUEST, [
+            arg2, Integer.valueOf(arg3), arg4, listener5
         ]);
     }
 }

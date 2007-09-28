@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.data;
 
+import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 
 import com.threerings.crowd.data.BodyObject;
@@ -35,6 +36,12 @@ public class PlayerObject extends BodyObject
 
     /** The field name of the <code>humanity</code> field. */
     public static final String HUMANITY = "humanity";
+
+    /** The field name of the <code>gameState</code> field. */
+    public static final String GAME_STATE = "gameState";
+
+    /** The field name of the <code>questState</code> field. */
+    public static final String QUEST_STATE = "questState";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
@@ -49,6 +56,12 @@ public class PlayerObject extends BodyObject
     /** Our current assessment of how likely to be human this member is, in [0, {@link
      * MsoyCodes#MAX_HUMANITY}]. */
     public int humanity;
+
+    /** Game state entries for the world game we're currently on. */
+    public DSet<GameState> gameState = new DSet<GameState>();
+
+    /** The quests of our current world game that we're currently on. */
+    public DSet<QuestState> questState = new DSet<QuestState>();
 
     /**
      * Return true if this user is merely a guest.
@@ -162,6 +175,102 @@ public class PlayerObject extends BodyObject
         requestAttributeChange(
             HUMANITY, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.humanity = value;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>gameState</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToGameState (GameState elem)
+    {
+        requestEntryAdd(GAME_STATE, gameState, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>gameState</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromGameState (Comparable key)
+    {
+        requestEntryRemove(GAME_STATE, gameState, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>gameState</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateGameState (GameState elem)
+    {
+        requestEntryUpdate(GAME_STATE, gameState, elem);
+    }
+
+    /**
+     * Requests that the <code>gameState</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setGameState (DSet<com.threerings.msoy.game.data.GameState> value)
+    {
+        requestAttributeChange(GAME_STATE, value, this.gameState);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.game.data.GameState> clone =
+            (value == null) ? null : value.typedClone();
+        this.gameState = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>questState</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToQuestState (QuestState elem)
+    {
+        requestEntryAdd(QUEST_STATE, questState, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>questState</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromQuestState (Comparable key)
+    {
+        requestEntryRemove(QUEST_STATE, questState, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>questState</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateQuestState (QuestState elem)
+    {
+        requestEntryUpdate(QUEST_STATE, questState, elem);
+    }
+
+    /**
+     * Requests that the <code>questState</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setQuestState (DSet<com.threerings.msoy.game.data.QuestState> value)
+    {
+        requestAttributeChange(QUEST_STATE, value, this.questState);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.game.data.QuestState> clone =
+            (value == null) ? null : value.typedClone();
+        this.questState = clone;
     }
     // AUTO-GENERATED: METHODS END
 }

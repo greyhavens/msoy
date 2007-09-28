@@ -4,119 +4,284 @@
 package com.threerings.msoy.game.server;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.logging.Level;
-
-import com.samskivert.io.PersistenceException;
-import com.samskivert.util.Invoker;
-
-import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.server.MsoyServer;
-
-import com.threerings.msoy.item.data.all.Item;
-
-import com.threerings.msoy.world.data.MemoryEntry;
-import com.threerings.msoy.world.server.persist.MemoryRecord;
+import java.util.List;
 
 import com.threerings.msoy.game.data.AVRGameObject;
+import com.threerings.msoy.game.data.GameState;
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.data.QuestState;
+import com.threerings.msoy.game.server.persist.AVRGameRepository;
+import com.threerings.msoy.game.server.persist.GameStateRecord;
+import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
 
-import static com.threerings.msoy.Log.*;
+import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryUnit;
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.server.InvocationException;
+import com.threerings.whirled.data.ScenePlace;
+
+import static com.threerings.msoy.Log.log;
 
 /**
- * Manages an in-world ez-game, or an AVRGame- an Alternate Virtual Reality Game.
  */
-public class AVRGameManager extends MsoyGameManager
+public class AVRGameManager
+    implements AVRGameProvider
 {
-    @Override // documentation inherited
-    protected PlaceObject createPlaceObject ()
+    public AVRGameManager (int gameId, AVRGameRepository repo)
+    {
+        _gameId = gameId;
+        _repo = repo;
+    }
+
+    public AVRGameObject createGameObject ()
     {
         return new AVRGameObject();
     }
 
-    @Override // documentation inherited
-    protected void didStartup ()
+    public AVRGameObject getGameObject ()
     {
-        super.didStartup();
-        
-        // TODO: this needs some re-thinking, there could be more than one instance of this game
-        // running simultaneously and they will overwrite each other's memory.
-        final int prototypeId = _gameconfig.getGameId();
-        MsoyServer.invoker.postUnit(new Invoker.Unit() {
-            public boolean invoke () {
-                try {
-                    _mems = MsoyServer.memoryRepo.loadMemory(Item.GAME, prototypeId);
-                    return true;
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to load memories [where=" + where() +
-                            ", id=" + prototypeId + "].", pe);
-                    return false;
-                }
-            };
+        return _gameObj;
+    }
 
-            public void handleResult () {
-                AVRGameObject avrGameObj = (AVRGameObject)_ezObj;
-                avrGameObj.startTransaction();
-                try {
-                    for (MemoryRecord mrec : _mems) {
-                        avrGameObj.addToMemories(mrec.toEntry());
-                    }
-                } finally {
-                    avrGameObj.commitTransaction();
+    public int getGameId ()
+    {
+        return _gameId;
+    }
+
+    public void startup (AVRGameObject gameObj, List<GameStateRecord> stateRecords)
+    {
+        _gameObj = gameObj;
+
+        gameObj.startTransaction();
+        try {
+            for (GameStateRecord rec : stateRecords) {
+                gameObj.addToState(rec.toEntry());
+            }
+        } finally {
+            gameObj.commitTransaction();
+        }
+}
+
+    public void shutdown ()
+    {
+        // flush any modified memory records to the database
+        final List<GameStateRecord> recs = new ArrayList<GameStateRecord>();
+        for (GameState entry : _gameObj.state) {
+            if (entry.modified) {
+                recs.add(new GameStateRecord(_gameId, entry));
+            }
+        }
+        if (recs.size() == 0) {
+            return;
+        }
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("shutdown") {
+            public void invokePersist () throws Exception {
+                for (GameStateRecord rec : recs) {
+                    _repo.storeState(rec);
                 }
             }
-
-            protected Collection<MemoryRecord> _mems;
+            public void handleSuccess () {
+            }
+            public void handleFailure (Exception pe) {
+                log.warning(
+                    "Unable to flush game state [gameId=" + _gameId + ", error=" + pe + "]");
+            }
         });
     }
-    
-    @Override // documentation inherited
-    protected void bodyEntered (int bodyOid)
+
+    public void startQuest (ClientObject caller, final String questId, final String status,
+                            final InvocationService.ConfirmListener listener)
+        throws InvocationException
     {
-        super.bodyEntered(bodyOid);
-        if (getPlayerCount() < getPlayerSlots()) {
-            // automatically add as a player
-            MemberObject member = (MemberObject)MsoyServer.omgr.getObject(bodyOid);
-            addPlayer(member.memberName);
+        final PlayerObject player = (PlayerObject) caller;
+
+        if (player.questState.containsKey(questId)) {
+            // silently ignore
+            return;
+        }
+
+        final int sceneId = ScenePlace.getSceneId(player);
+
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("startQuest") {
+            public void invokePersist () throws PersistenceException {
+                _repo.setQuestState(_gameId, questId, QuestState.STEP_NEW, status, sceneId);
+            }
+            public void handleSuccess () {
+                player.addToQuestState(new QuestState(questId, QuestState.STEP_NEW, status, sceneId));
+                listener.requestProcessed();
+            }
+            public void handleFailure (Exception pe) {
+                log.warning(
+                    "Unable to subscribe to quest [questId=" + questId + ", error=" + pe + "]");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+        });
+    }
+
+
+    public void updateQuest (ClientObject caller, final String questId, final int step,
+                             final String status, final ConfirmListener listener)
+        throws InvocationException
+    {
+        final PlayerObject player = (PlayerObject) caller;
+
+        QuestState oldState = player.questState.get(questId);
+        if (oldState == null) {
+            throw new IllegalArgumentException(
+                "Member not subscribed to updated quest [questId=" + questId + "]");
+        }
+
+        final int sceneId = ScenePlace.getSceneId(player);
+
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateQuest") {
+            public void invokePersist () throws PersistenceException {
+                _repo.setQuestState(_gameId, questId, step, status, sceneId);
+            }
+            public void handleSuccess () {
+                player.updateQuestState(new QuestState(questId, step, status, sceneId));
+                listener.requestProcessed();
+            }
+            public void handleFailure (Exception pe) {
+                log.warning(
+                    "Unable to advance quest [questId=" + questId + ", step=" + step +
+                    ", error=" + pe + "]");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+        });
+    }
+
+    public void completeQuest (ClientObject caller, final String questId, int payoutLevel,
+                               final ConfirmListener listener)
+        throws InvocationException
+    {
+        // TODO: Handle Flow Payout
+
+        final PlayerObject player = (PlayerObject) caller;
+
+        QuestState oldState = player.questState.get(questId);
+        if (oldState == null) {
+            throw new IllegalArgumentException(
+                "Member not subscribed to updated quest [questId=" + questId + "]");
+        }
+
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateQuest") {
+            public void invokePersist () throws PersistenceException {
+                _repo.setQuestState(_gameId, questId, QuestState.STEP_COMPLETED, null, 0);
+            }
+            public void handleSuccess () {
+                player.removeFromQuestState(questId);
+                listener.requestProcessed();
+            }
+            public void handleFailure (Exception pe) {
+                log.warning(
+                    "Unable to complete quest [questId=" + questId + ", error=" + pe + "]");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+        });
+    }
+
+    // from AVRGameProvider
+    public void setProperty (ClientObject caller, String key, byte[] value,
+                             ConfirmListener listener)
+        throws InvocationException
+    {
+        GameState entry = new GameState(key, value);
+
+        // TODO: verify that the memory does not exceed legal size
+
+        entry.modified = true;
+        if (_gameObj.state.contains(entry)) {
+            _gameObj.updateState(entry);
+        } else if (value != null) {
+            _gameObj.addToState(entry);
+        }
+        listener.requestProcessed();
+    }
+
+    // from AVRGameProvider
+    public void deleteProperty (ClientObject caller, String key, ConfirmListener listener)
+        throws InvocationException
+    {
+        setProperty(caller, key, null, listener);
+    }
+
+    // from AVRGameProvider
+    public void setPlayerProperty (ClientObject caller, String key, byte[] value,
+                                   ConfirmListener listener)
+        throws InvocationException
+    {
+        PlayerObject player = (PlayerObject) caller;
+
+        GameState entry = new GameState(key, value);
+
+        // TODO: verify that the memory does not exceed legal size
+
+        entry.modified = true;
+        if (player.gameState.contains(entry)) {
+            player.updateGameState(entry);
+        } else if (value != null) {
+            player.addToGameState(entry);
+        }
+        listener.requestProcessed();
+    }
+
+    // from AVRGameProvider
+    public void deletePlayerProperty (ClientObject caller, String key, ConfirmListener listener)
+        throws InvocationException
+    {
+        setPlayerProperty(caller, key, null, listener);
+    }
+
+    public void addPlayer (final PlayerObject player, List<PlayerGameStateRecord> stateRecords)
+    {
+        // TODO: create & add OccupantInfo, sanity checks
+
+        player.startTransaction();
+        try {
+            for (PlayerGameStateRecord rec : stateRecords) {
+                player.addToGameState(rec.toEntry());
+            }
+        } finally {
+            player.commitTransaction();
         }
     }
-    
-    @Override // documentation inherited
-    protected void bodyLeft (int bodyOid)
+
+    public void removePlayer (final PlayerObject player)
     {
-        MemberObject member = (MemberObject)MsoyServer.omgr.getObject(bodyOid);
-        if (getPlayerIndex(member.memberName) != -1) {
-            // clear the slot to let another take it
-            removePlayer(member.memberName);
-        }
-        super.bodyLeft(bodyOid);
-    }
-    
-    @Override // documentation inherited
-    protected void didShutdown ()
-    {
-        super.didShutdown();
-        
+        // TODO: remove OccupantInfo, sanity checks
+
         // flush any modified memory records to the database
-        final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();
-        for (MemoryEntry entry : ((AVRGameObject)_ezObj).memories) {
+        final List<PlayerGameStateRecord> recs = new ArrayList<PlayerGameStateRecord>();
+        for (GameState entry : player.gameState) {
             if (entry.modified) {
-                memrecs.add(new MemoryRecord(entry));
+                recs.add(new PlayerGameStateRecord(_gameId, player.getMemberId(), entry));
             }
         }
-        if (memrecs.size() > 0) {
-            MsoyServer.invoker.postUnit(new Invoker.Unit() {
-                public boolean invoke () {
-                    try {
-                        MsoyServer.memoryRepo.storeMemories(memrecs);
-                    } catch (PersistenceException pe) {
-                        log.log(Level.WARNING, "Failed to update memories [where=" + where() +
-                                ", memrecs=" + memrecs + "].", pe);
-                    }
-                    return false;
-                }
-            });
+        if (recs.size() == 0) {
+            return;
         }
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("removePlayer") {
+            public void invokePersist () throws Exception {
+                for (PlayerGameStateRecord rec : recs) {
+                    _repo.storePlayerState(rec);
+                }
+            }
+            public void handleSuccess () {
+            }
+            public void handleFailure (Exception pe) {
+                log.warning(
+                    "Unable to flush player game state [gameId=" + _gameId +  "player=" + player +
+                    ", error=" + pe + "]");
+            }
+        });
     }
+
+    protected int _gameId;
+
+    protected AVRGameObject _gameObj;
+
+    protected AVRGameRepository _repo;
 }

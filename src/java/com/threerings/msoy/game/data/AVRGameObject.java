@@ -3,56 +3,55 @@
 
 package com.threerings.msoy.game.data;
 
+import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
-
-import com.threerings.msoy.world.data.MemoryEntry;
 
 /**
  * A game config for an AVR game.
  */
-public class AVRGameObject extends MsoyGameObject
+public class AVRGameObject extends DObject
 {
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>memories</code> field. */
-    public static final String MEMORIES = "memories";
+    /** The field name of the <code>state</code> field. */
+    public static final String STATE = "state";
     // AUTO-GENERATED: FIELDS END
 
     /** Contains the game's memories. */
-    public DSet<MemoryEntry> memories = new DSet<MemoryEntry>();
+    public DSet<GameState> state = new DSet<GameState>();
 
     // AUTO-GENERATED: METHODS START
     /**
      * Requests that the specified entry be added to the
-     * <code>memories</code> set. The set will not change until the event is
+     * <code>state</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToMemories (MemoryEntry elem)
+    public void addToState (GameState elem)
     {
-        requestEntryAdd(MEMORIES, memories, elem);
+        requestEntryAdd(STATE, state, elem);
     }
 
     /**
      * Requests that the entry matching the supplied key be removed from
-     * the <code>memories</code> set. The set will not change until the
+     * the <code>state</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromMemories (Comparable key)
+    public void removeFromState (Comparable key)
     {
-        requestEntryRemove(MEMORIES, memories, key);
+        requestEntryRemove(STATE, state, key);
     }
 
     /**
      * Requests that the specified entry be updated in the
-     * <code>memories</code> set. The set will not change until the event is
+     * <code>state</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateMemories (MemoryEntry elem)
+    public void updateState (GameState elem)
     {
-        requestEntryUpdate(MEMORIES, memories, elem);
+        requestEntryUpdate(STATE, state, elem);
     }
 
     /**
-     * Requests that the <code>memories</code> field be set to the
+     * Requests that the <code>state</code> field be set to the
      * specified value. Generally one only adds, updates and removes
      * entries of a distributed set, but certain situations call for a
      * complete replacement of the set value. The local value will be
@@ -61,12 +60,12 @@ public class AVRGameObject extends MsoyGameObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setMemories (DSet<com.threerings.msoy.world.data.MemoryEntry> value)
+    public void setState (DSet<com.threerings.msoy.game.data.GameState> value)
     {
-        requestAttributeChange(MEMORIES, value, this.memories);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.world.data.MemoryEntry> clone =
+        requestAttributeChange(STATE, value, this.state);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.game.data.GameState> clone =
             (value == null) ? null : value.typedClone();
-        this.memories = clone;
+        this.state = clone;
     }
     // AUTO-GENERATED: METHODS END
 }

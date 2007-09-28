@@ -4,7 +4,6 @@
 package com.threerings.msoy.game.data;
 
 import com.threerings.msoy.game.client.AVRGameService;
-import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -20,40 +19,94 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
 public class AVRGameMarshaller extends InvocationMarshaller
     implements AVRGameService
 {
-    /** The method id used to dispatch {@link #joinAVRGame} requests. */
-    public static final int JOIN_AVRGAME = 1;
+    /** The method id used to dispatch {@link #completeQuest} requests. */
+    public static final int COMPLETE_QUEST = 1;
 
     // from interface AVRGameService
-    public void joinAVRGame (Client arg1, int arg2, InvocationService.InvocationListener arg3)
+    public void completeQuest (Client arg1, String arg2, int arg3, InvocationService.ConfirmListener arg4)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, COMPLETE_QUEST, new Object[] {
+            arg2, Integer.valueOf(arg3), listener4
+        });
+    }
+
+    /** The method id used to dispatch {@link #deletePlayerProperty} requests. */
+    public static final int DELETE_PLAYER_PROPERTY = 2;
+
+    // from interface AVRGameService
+    public void deletePlayerProperty (Client arg1, String arg2, InvocationService.ConfirmListener arg3)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
         listener3.listener = arg3;
-        sendRequest(arg1, JOIN_AVRGAME, new Object[] {
-            Integer.valueOf(arg2), listener3
+        sendRequest(arg1, DELETE_PLAYER_PROPERTY, new Object[] {
+            arg2, listener3
         });
     }
 
-    /** The method id used to dispatch {@link #leaveAVRGame} requests. */
-    public static final int LEAVE_AVRGAME = 2;
+    /** The method id used to dispatch {@link #deleteProperty} requests. */
+    public static final int DELETE_PROPERTY = 3;
 
     // from interface AVRGameService
-    public void leaveAVRGame (Client arg1, InvocationService.InvocationListener arg2)
+    public void deleteProperty (Client arg1, String arg2, InvocationService.ConfirmListener arg3)
     {
-        ListenerMarshaller listener2 = new ListenerMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, LEAVE_AVRGAME, new Object[] {
-            listener2
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, DELETE_PROPERTY, new Object[] {
+            arg2, listener3
         });
     }
 
-    /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static final int UPDATE_MEMORY = 3;
+    /** The method id used to dispatch {@link #setPlayerProperty} requests. */
+    public static final int SET_PLAYER_PROPERTY = 4;
 
     // from interface AVRGameService
-    public void updateMemory (Client arg1, MemoryEntry arg2)
+    public void setPlayerProperty (Client arg1, String arg2, byte[] arg3, InvocationService.ConfirmListener arg4)
     {
-        sendRequest(arg1, UPDATE_MEMORY, new Object[] {
-            arg2
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, SET_PLAYER_PROPERTY, new Object[] {
+            arg2, arg3, listener4
+        });
+    }
+
+    /** The method id used to dispatch {@link #setProperty} requests. */
+    public static final int SET_PROPERTY = 5;
+
+    // from interface AVRGameService
+    public void setProperty (Client arg1, String arg2, byte[] arg3, InvocationService.ConfirmListener arg4)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, SET_PROPERTY, new Object[] {
+            arg2, arg3, listener4
+        });
+    }
+
+    /** The method id used to dispatch {@link #startQuest} requests. */
+    public static final int START_QUEST = 6;
+
+    // from interface AVRGameService
+    public void startQuest (Client arg1, String arg2, String arg3, InvocationService.ConfirmListener arg4)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, START_QUEST, new Object[] {
+            arg2, arg3, listener4
+        });
+    }
+
+    /** The method id used to dispatch {@link #updateQuest} requests. */
+    public static final int UPDATE_QUEST = 7;
+
+    // from interface AVRGameService
+    public void updateQuest (Client arg1, String arg2, int arg3, String arg4, InvocationService.ConfirmListener arg5)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, UPDATE_QUEST, new Object[] {
+            arg2, Integer.valueOf(arg3), arg4, listener5
         });
     }
 }
