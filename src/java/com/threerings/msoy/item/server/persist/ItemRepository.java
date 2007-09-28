@@ -887,9 +887,9 @@ public abstract class ItemRepository<
             whereBits.add(new Equals(getItemColumn(ItemRecord.MATURE), false));
         }
 
-        if (whereBits.size() > 0) {
-            clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
-        }
+        whereBits.add(new Not(new Equals(new ColumnExp(getCatalogClass(), CatalogRecord.PRICING),
+                                         CatalogListing.PRICING_HIDDEN)));
+        clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
     }
 
     protected void addOrderByListDate (ArrayList<SQLExpression> exprs,
