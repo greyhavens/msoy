@@ -11,6 +11,9 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.panopticon.client.logging.EventLogger;
+import com.threerings.panopticon.client.logging.EventLoggerMonitor;
+import com.threerings.panopticon.client.logging.NullLogger;
+
 import com.threerings.msoy.Log;
 
 /**
@@ -19,7 +22,7 @@ import com.threerings.msoy.Log;
  * All logging requests will be scheduled on the invoker thread, to avoid tying up
  * the rest of the server.
  */
-public class MsoyEventLogger implements EventLogger.StatusMonitor
+public class MsoyEventLogger implements EventLoggerMonitor
 {
     public MsoyEventLogger (URL serverURL)
     {
@@ -61,20 +64,26 @@ public class MsoyEventLogger implements EventLogger.StatusMonitor
     /** Wraps a logging action in a work unit, and posts it on the queue. */
     protected void post (final String table, final Object ... values)
     {
-        /* disabled for testing
+        /* disabled during testing
         Log.log.info("Posting a log entry [table=" + table + ", values=" +
                      StringUtil.toString(values) + "].");
         MsoyServer.invoker.postUnit(new Invoker.Unit () {
             public boolean invoke () {
-                if (_logger == null) {
-                    _logger = new EventLogger(
-                        "com.threerings.msoy", _serverURL, MsoyEventLogger.this);
-                }
-                _logger.log(table, values);
+                logHelper(table, values);
                 return false;
             }
-            });
+        });
         */
+    }
+
+    /** Ensures a logger exists, and logs the event. */
+    protected void logHelper (final String table, final Object [] values)
+    {
+        if (_logger == null) {
+            _logger = new NullLogger("com.threerings.msoy", this);
+            //_logger = new ServerLogger("com.threerings.msoy", _serverURL, this);
+        }
+        _logger.log(table, values);
     }
 
     /** Convenience function to return a boxed value for current time
