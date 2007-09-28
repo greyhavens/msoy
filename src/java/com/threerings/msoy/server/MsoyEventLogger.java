@@ -48,14 +48,14 @@ public class MsoyEventLogger implements EventLoggerMonitor
         post("Mail_test", now(), fromId, toId, payloadType);
     }
 
-    // from interface EventLogger.StatusMonitor
+    // from interface EventLoggerMonitor
     public void afterConnect ()
     {
         // always redeclare schemas after every reconnect
         declareMsoySchemas();
     }
     
-    // from interface EventLogger.StatusMonitor
+    // from interface EventLoggerMonitor
     public void beforeDisconnect ()
     {
         // no op

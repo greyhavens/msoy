@@ -210,6 +210,7 @@ public class MsoyAuthenticator extends Authenticator
                     }
                     rsp.authdata = null;
                     rdata.code = MsoyAuthResponseData.SUCCESS;
+                    MsoyServer.eventLog.guestLoggedIn(creds.sessionToken);
                     return;
                 }
 
@@ -320,6 +321,8 @@ public class MsoyAuthenticator extends Authenticator
             // log.info("User logged on [user=" + user.username + "].");
             rsp.authdata = account;
             rdata.code = MsoyAuthResponseData.SUCCESS;
+            MsoyServer.eventLog.playerLoggedIn(
+                member.memberId, account.firstLogon, creds.sessionToken);
 
 //             // pass their user record to the client resolver for retrieval
 //             // later in the logging on process
