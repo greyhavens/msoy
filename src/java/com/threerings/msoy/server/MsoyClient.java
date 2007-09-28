@@ -8,11 +8,9 @@ import java.util.logging.Level;
 import com.samskivert.util.Invoker;
 
 import com.threerings.presents.net.BootstrapData;
-import com.threerings.presents.server.InvocationException;
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
 
-import com.threerings.crowd.data.BodyObject;
 import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -111,17 +109,6 @@ public class MsoyClient extends WhirledClient
                 return false;
             }
         });
-    }
-
-    @Override // from CrowdClient
-    protected void clearLocation (BodyObject bobj)
-    {
-        super.clearLocation(bobj);
-        try {
-            MsoyServer.worldGameReg.leaveAVRGame((MemberObject)bobj);
-        } catch (InvocationException e) {
-            // a warning will have already been logged
-        }
     }
 
     /** A casted reference to the userobject. */

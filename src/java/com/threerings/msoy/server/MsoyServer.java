@@ -43,7 +43,6 @@ import com.threerings.whirled.spot.server.SpotProvider;
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.fora.server.persist.CommentRepository;
-import com.threerings.msoy.game.server.AVRGameRegistry;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.server.NotificationManager;
@@ -127,9 +126,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Manages our external game servers. */
     public static MsoyGameRegistry gameReg = new MsoyGameRegistry();
-
-    /** The in-world game registry for this server. */
-    public static AVRGameRegistry worldGameReg = new AVRGameRegistry();
 
     /** Handles HTTP servlet requests. */
     public static MsoyHttpServer httpServer;
@@ -356,7 +352,6 @@ public class MsoyServer extends MsoyBaseServer
         swiftlyMan.init(invmgr);
         petMan.init(invmgr);
         gameReg.init(invmgr, itemMan.getGameRepository());
-        worldGameReg.init(invmgr);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {

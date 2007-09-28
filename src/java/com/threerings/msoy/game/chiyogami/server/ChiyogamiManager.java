@@ -44,7 +44,6 @@ import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.game.data.AVRGameConfig;
 import com.threerings.msoy.game.data.PerfRecord;
-import com.threerings.msoy.game.server.AVRGameManagerDelegate;
 import com.threerings.msoy.game.server.WhirledGameDelegate;
 
 import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
@@ -58,7 +57,7 @@ public class ChiyogamiManager extends GameManager
 {
     public ChiyogamiManager ()
     {
-        addDelegate(_worldDelegate = new AVRGameManagerDelegate(this));
+//        addDelegate(_worldDelegate = new AVRGameManagerDelegate(this));
         addDelegate(_whirledDelegate = new WhirledGameDelegate(this));
     }
 
@@ -703,7 +702,7 @@ public class ChiyogamiManager extends GameManager
                 perc += portion;
                 double angle;
                 if (side == 0) {
-                    angle = (1 - perc) * Math.PI + Math.PI/2; 
+                    angle = (1 - perc) * Math.PI + Math.PI/2;
 
                 } else {
                     angle = Math.PI * perc - Math.PI/2;
@@ -919,13 +918,13 @@ public class ChiyogamiManager extends GameManager
             // when someone leaves the room, kick them out of the chiyogami game
             int oid = event.getOid();
             if (_gameObj.occupants.contains(oid)) {
-                try {
-                    MsoyServer.worldGameReg.leaveAVRGame(
-                        (MemberObject) MsoyServer.omgr.getObject(oid));
-                } catch (InvocationException ie) {
-                    log.warning("Error removing user from chiyogami game [where=" + where() +
-                                ", error=" + ie + "].");
-                }
+//                try {
+//                    MsoyServer.worldGameReg.leaveAVRGame(
+//                        (MemberObject) MsoyServer.omgr.getObject(oid));
+//                } catch (InvocationException ie) {
+//                    log.warning("Error removing user from chiyogami game [where=" + where() +
+//                                ", error=" + ie + "].");
+//                }
             }
         }
 
@@ -1079,9 +1078,6 @@ public class ChiyogamiManager extends GameManager
 
     /** Listens to the room we're boom-chikka-ing. */
     protected RoomListener _roomListener = new RoomListener();
-
-    /** Our world delegate. */
-    protected AVRGameManagerDelegate _worldDelegate;
 
     /** Handles Whirled game services. */
     protected WhirledGameDelegate _whirledDelegate;
