@@ -517,10 +517,10 @@ public class MsoyController extends Controller
      */
     public function handleJoinAVRGame (gameId :int) :void
     {
-        var wgsvc :AVRGameService =
-            (_ctx.getClient().requireService(AVRGameService) as AVRGameService);
-        wgsvc.joinAVRGame(_ctx.getClient(), gameId,
-            new ReportingListener(_ctx, MsoyCodes.GAME_MSGS, "e.join_world_game_failed"));
+//        var wgsvc :AVRGameService =
+//            (_ctx.getClient().requireService(AVRGameService) as AVRGameService);
+//        wgsvc.joinAVRGame(_ctx.getClient(), gameId,
+//            new ReportingListener(_ctx, MsoyCodes.GAME_MSGS, "e.join_world_game_failed"));
     }
 
     /**
@@ -528,10 +528,10 @@ public class MsoyController extends Controller
      */
     public function handleLeaveAVRGame () :void
     {
-        var wgsvc :AVRGameService =
-            (_ctx.getClient().requireService(AVRGameService) as AVRGameService);
-        wgsvc.leaveAVRGame(_ctx.getClient(),
-             new ReportingListener(_ctx, MsoyCodes.GAME_MSGS, "e.leave_world_game_failed"));
+//        var wgsvc :AVRGameService =
+//            (_ctx.getClient().requireService(AVRGameService) as AVRGameService);
+//        wgsvc.leaveAVRGame(_ctx.getClient(),
+//             new ReportingListener(_ctx, MsoyCodes.GAME_MSGS, "e.leave_world_game_failed"));
     }
 
     /**
