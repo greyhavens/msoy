@@ -29,11 +29,6 @@ import static com.threerings.msoy.Log.*;
  */
 public class AVRGameManager extends MsoyGameManager
 {
-    public AVRGameManager ()
-    {
-        addDelegate(_worldDelegate = new AVRGameManagerDelegate(this));
-    }
-
     @Override // documentation inherited
     protected PlaceObject createPlaceObject ()
     {
@@ -124,7 +119,4 @@ public class AVRGameManager extends MsoyGameManager
             });
         }
     }
-
-    /** Our world delegate. */
-    protected AVRGameManagerDelegate _worldDelegate;
 }
