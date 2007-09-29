@@ -353,11 +353,41 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      Tests if the given line intersects this line.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html#getItemPacks()">getItemPacks</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html">WhirledGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns the set of all item packs available to this game as an array of objects with the
+     following properties:
+          <pre>
+     ident - string identifier of item pack
+     name - human readable name of item pack
+     mediaURL - URL for item pack content
+     </pre>
+     </td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/LineSegment.html#getLength()">getLength</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/LineSegment.html">LineSegment</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Get the length of this line.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html#getLevelPacks()">getLevelPacks</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html">WhirledGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns the set of level packs available to this game as an array of objects with the
+     following properties:
+          <pre>
+     ident - string identifier of level pack
+     name - human readable name of level pack
+     mediaURL - URL for level pack content
+     premium - boolean indicating that content is premium or not
+     </pre>
+          This will contain all free level packs that are registered for this game as well as the
+     premium level packs owned by all players in the game.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#getLogicalLocation()">getLogicalLocation</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
@@ -476,6 +506,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
 <tr>
 <td width="20"></td><td>
      Get all the players at the table, in their seated position.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html#getPlayerItemPacks()">getPlayerItemPacks</a>(occupant) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html">WhirledGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns all item packs owned by the specified game occupant.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SeatingControl.html#getPlayerNames()">getPlayerNames</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SeatingControl.html">SeatingControl</a></td>

@@ -172,7 +172,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#hasControl()">hasControl</a>():Boolean</div>
 <div class="summaryTableDescription">
-     Is this client in control? Note: entity control is <em>not</em> automatically assigned.</div>
+     Is this client in control?
+          <p>Control is a mutually exclusive lock across all instances of the entity (i.e.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -229,7 +230,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#showPopup()">showPopup</a>(title:String, panel:DisplayObject, width:Number, height:Number):Boolean</div>
+<a class="signatureLink" href="#showPopup()">showPopup</a>(title:String, panel:DisplayObject, width:Number, height:Number, backgroundColor:uint = 0xFFFFFF, backgroundAlpha:Number = 1.0):Boolean</div>
 <div class="summaryTableDescription">
      Show a popup to the current user in the whirled.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
@@ -629,11 +630,14 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function hasControl():Boolean</code><p>
-     Is this client in control? Note: entity control is <em>not</em> automatically assigned. If
-     an entity wishes to obtain control, it should first call <code>requestControl</code> and it
-     will then receive a <code>GOT_CONTROL</code> event if and when control has been assigned to
-     this client.
-     </p><p></p>
+     Is this client in control?
+          </p><p>Control is a mutually exclusive lock across all instances of the entity (i.e. running in
+     other browsers across the network). Only one client can hold the lock at any time.
+          <p>Note: control is <em>not</em> automatically assigned. If an entity wishes to obtain
+     control, it should first call <code>requestControl</code> and it will then receive a
+     <code>GOT_CONTROL</code> event if and when control has been assigned to this client.
+     There are no guarantees which of the requesting clients will receive it, or when. 
+     <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -757,7 +761,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public function requestControl():void</code><p>
      Request to have this client control all the instances of this entity. The other instances
-     are the same code, but running in other browsers.
+     are the same code, but running in other browsers. See the <code>hasControl</code> method.
      </p></div>
 <a name="sendMessage()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -823,17 +827,21 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function setTickInterval(interval:Number):void</code><p>
-     Configures the interval on which this item is "ticked" in milliseconds. The tick interval
-     can be no smaller than 100ms to avoid bogging down the client. By calling this method with a
-     non-zero value, the item indicates that it wants to be ticked and the ticking mechanism will
-     be activated. If this method is not called, ticking will not be done. Calling this method
-     with a 0ms interval will deactivate ticking.
-          Note: Setting the tickInterval implicitely requests control, as only the instance that is in
-     control may tick.
-     </p><span class="label">Parameters</span>
+     Configures the interval on which this item is "ticked" in milliseconds. If the client
+     setting this interval is in control, it will get a <code>timer</code> event at the
+     specified interval. Otherwise, the entity will request control from the server, and only
+     set the timer once control was granted (if ever).
+          </p><p>Ticking mechanism is turned off by default. Application needs to set the interval
+     explicitly to start receiving tick events. The tick interval can be no smaller than 100ms
+     to avoid bogging down the client.
+     
+     <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">interval</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">interval</span>:Number</code> &mdash; Delay between ticks in milliseconds, either 0ms, or a value larger
+     than 100ms. Value larger than zero activates the ticking mechanism,
+     and a value of exactly zero deactivates it.
+     </td>
 </tr>
 </table>
 </div>
@@ -844,7 +852,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function showPopup(title:String, panel:DisplayObject, width:Number, height:Number):Boolean</code><p>
+<code>public function showPopup(title:String, panel:DisplayObject, width:Number, height:Number, backgroundColor:uint = 0xFFFFFF, backgroundAlpha:Number = 1.0):Boolean</code><p>
      Show a popup to the current user in the whirled. This may ONLY be called inside of a
      MOUSE_CLICK handler, to prevent malicious furniture from jamming up popups left and right.
           </p><span class="label">Parameters</span>
@@ -873,6 +881,20 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">height</span>:Number</code> &mdash; The height of the panel.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">backgroundColor</span>:uint</code> (default = <code>0xFFFFFF</code>)<code></code> &mdash; The RGB value to fill the background of the panel with.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">backgroundAlpha</span>:Number</code> (default = <code>1.0</code>)<code></code> &mdash; The transparency to fill the background of the panel with.
           </td>
 </tr>
 </table>
@@ -987,7 +1009,7 @@ showHideInherited();
 <br>
 <span class="label">ControlEvent.type property = </span><a href="../whirled/ControlEvent.html#GOT_CONTROL"><code>com.whirled.ControlEvent.GOT_CONTROL</code></a>
 <br><p>
- Dispatched when this instance gains control.
+ Dispatched when this instance gains control. See the <code>hasControl</code> method.
   </p><p> An event type dispatched when this client-side instance of the item
      has gained "control" over the other client-side instances.
      name: unused

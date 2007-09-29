@@ -330,6 +330,38 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="WhirledGameControl.html#getItemPacks()">getItemPacks</a>():Array</div>
+<div class="summaryTableDescription">
+     Returns the set of all item packs available to this game as an array of objects with the
+     following properties:
+          <pre>
+     ident - string identifier of item pack
+     name - human readable name of item pack
+     mediaURL - URL for item pack content
+     </pre>
+     </div>
+</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="WhirledGameControl.html#getLevelPacks()">getLevelPacks</a>():Array</div>
+<div class="summaryTableDescription">
+     Returns the set of level packs available to this game as an array of objects with the
+     following properties:
+          <pre>
+     ident - string identifier of level pack
+     name - human readable name of level pack
+     mediaURL - URL for level pack content
+     premium - boolean indicating that content is premium or not
+     </pre>
+          This will contain all free level packs that are registered for this game as well as the
+     premium level packs owned by all players in the game.</div>
+</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getMyId()">getMyId</a>():int</div>
 <div class="summaryTableDescription">
      Returns this client's player id.</div>
@@ -358,6 +390,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Returns the player ids of all occupants in the game room.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="WhirledGameControl.html#getPlayerItemPacks()">getPlayerItemPacks</a>(occupant:int):Array</div>
+<div class="summaryTableDescription">
+     Returns all item packs owned by the specified game occupant.</div>
+</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">

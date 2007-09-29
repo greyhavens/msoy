@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="WhirledGameControl,com.whirled.WhirledGameControl,CASCADING_PAYOUT,WINNERS_TAKE_ALL,TO_EACH_THEIR_OWN,setChatEnabled,setChatBounds,getHeadShot,getStageBounds,endGameWithWinners,endGameWithScores,endGameWithScore,endGame,backToWhirled,populateProperties" name="keywords">
+<meta content="WhirledGameControl,com.whirled.WhirledGameControl,CASCADING_PAYOUT,WINNERS_TAKE_ALL,TO_EACH_THEIR_OWN,setChatEnabled,setChatBounds,getHeadShot,getStageBounds,getLevelPacks,getItemPacks,getPlayerItemPacks,endGameWithWinners,endGameWithScores,endGameWithScore,endGame,backToWhirled,populateProperties" name="keywords">
 <title>com.whirled.WhirledGameControl</title>
 </head>
 <body>
@@ -297,6 +297,38 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Return the headshot image for the given occupant in the form of a Sprite object.</div>
 </td><td class="summaryTableOwnerCol">WhirledGameControl</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getItemPacks()">getItemPacks</a>():Array</div>
+<div class="summaryTableDescription">
+     Returns the set of all item packs available to this game as an array of objects with the
+     following properties:
+          <pre>
+     ident - string identifier of item pack
+     name - human readable name of item pack
+     mediaURL - URL for item pack content
+     </pre>
+     </div>
+</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getLevelPacks()">getLevelPacks</a>():Array</div>
+<div class="summaryTableDescription">
+     Returns the set of level packs available to this game as an array of objects with the
+     following properties:
+          <pre>
+     ident - string identifier of level pack
+     name - human readable name of level pack
+     mediaURL - URL for level pack content
+     premium - boolean indicating that content is premium or not
+     </pre>
+          This will contain all free level packs that are registered for this game as well as the
+     premium level packs owned by all players in the game.</div>
+</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
+</tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -320,6 +352,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Returns the player ids of all occupants in the game room.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getPlayerItemPacks()">getPlayerItemPacks</a>(occupant:int):Array</div>
+<div class="summaryTableDescription">
+     Returns all item packs owned by the specified game occupant.</div>
+</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -928,6 +968,78 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">callback</span>:Function</code></td>
+</tr>
+</table>
+</div>
+<a name="getItemPacks()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getItemPacks</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getItemPacks():Array</code><p>
+     Returns the set of all item packs available to this game as an array of objects with the
+     following properties:
+          <pre>
+     ident - string identifier of item pack
+     name - human readable name of item pack
+     mediaURL - URL for item pack content
+     </pre>
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="getLevelPacks()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getLevelPacks</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getLevelPacks():Array</code><p>
+     Returns the set of level packs available to this game as an array of objects with the
+     following properties:
+          <pre>
+     ident - string identifier of level pack
+     name - human readable name of level pack
+     mediaURL - URL for level pack content
+     premium - boolean indicating that content is premium or not
+     </pre>
+          This will contain all free level packs that are registered for this game as well as the
+     premium level packs owned by all players in the game.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="getPlayerItemPacks()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getPlayerItemPacks</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getPlayerItemPacks(occupant:int):Array</code><p>
+     Returns all item packs owned by the specified game occupant.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">occupant</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
 </tr>
 </table>
 </div>
