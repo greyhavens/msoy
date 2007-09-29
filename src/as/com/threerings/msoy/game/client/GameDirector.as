@@ -233,14 +233,10 @@ public class GameDirector extends BasicDirector
     override protected function registerServices (client :Client) :void
     {
         client.addServiceGroup(MsoyCodes.GAME_GROUP);
-
-        _avrService = (client.requireService(AVRService) as AVRService);
     }
 
     /** A casted ref to the msoy context. */
     protected var _mctx :WorldContext;
-
-    protected var _avrService :AVRService;
 
     /** Handles our connection to the game server. */
     protected var _liaison :GameLiaison;
