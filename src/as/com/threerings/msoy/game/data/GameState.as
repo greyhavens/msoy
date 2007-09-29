@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.data {
 
+import flash.utils.ByteArray;
+
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.Streamable;

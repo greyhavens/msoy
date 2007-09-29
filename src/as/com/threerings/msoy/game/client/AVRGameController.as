@@ -3,67 +3,53 @@
 
 package com.threerings.msoy.game.client {
 
+import com.threerings.util.Controller;
+
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.threerings.util.Controller;
-
 import com.threerings.msoy.client.WorldContext;
+
+import com.threerings.msoy.game.data.AVRGameObject;
 
 public class AVRGameController extends Controller
 {
-//     public function AVRGameController ()
-//     {
-//         super();
-//         addDelegate(_worldDelegate = new AVRGameControllerDelegate(this));
-//    }
+    public function AVRGameController (ctx :WorldContext, gameObj :AVRGameObject)
+    {
+        super();
 
-//    override public function init (ctx :CrowdContext, config :PlaceConfig) :void
-//    {
-//        super.init(ctx, config);
-//        _mctx = (ctx as WorldContext);
-//    }
+        _mctx = (ctx as WorldContext);
 
-//     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
-//     {
-//         _panel = new AVRGamePanel(ctx, this);
-//         return _panel;
-//     }
-
-//     override protected function setPlaceView () :void
-//     {
-//         _worldDelegate.setPlaceView(_panel);
-//     }
-
-//     override protected function clearPlaceView () :void
-//     {
-//         _worldDelegate.clearPlaceView();
-//     }
+        setControlledPanel(new AVRGamePanel(ctx, gameObj, this));
+    }
 
     protected var _mctx :WorldContext;
-    protected var _worldDelegate :AVRGameControllerDelegate;
 }
 }
 
-// import com.threerings.crowd.util.CrowdContext;
-// import com.threerings.ezgame.client.EZGamePanel;
-// import com.threerings.ezgame.client.GameControlBackend;
-// import com.threerings.msoy.client.WorldContext;
-// import com.threerings.msoy.game.client.AVRGameControlBackend;
-// import com.threerings.msoy.game.client.AVRGameController;
-// import com.threerings.msoy.game.data.AVRGameObject;
+import flash.display.Loader;
 
-// class AVRGamePanel extends EZGamePanel // we need no chat
-// {
-//     public function AVRGamePanel (ctx :CrowdContext, ctrl :AVRGameController)
-//     {
-//         super(ctx, ctrl);
-//     }
+import com.threerings.flash.MediaContainer;
 
-//     override protected function createBackend () :GameControlBackend
-//     {
-//         return new AVRGameControlBackend(
-//             _ctx as WorldContext, _ezObj as AVRGameObject, _ctrl as AVRGameController);
-//     }
-// }
+import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.client.ControlBackend;
+
+import com.threerings.msoy.game.client.AVRGameControlBackend;
+import com.threerings.msoy.game.client.AVRGameController;
+import com.threerings.msoy.game.data.AVRGameObject;
+
+class AVRGamePanel extends MediaContainer
+{
+    public function AVRGamePanel (
+        ctx :WorldContext, gameObj :AVRGameObject, ctrl :AVRGameController)
+    {
+//        super(gameObj.gameDef.getMediaPath(1));
+        super(null);
+
+        _backend = new AVRGameControlBackend(ctx, gameObj, ctrl);
+        _backend.init(Loader(_media));
+    }
+
+    protected var _backend :ControlBackend;
+}

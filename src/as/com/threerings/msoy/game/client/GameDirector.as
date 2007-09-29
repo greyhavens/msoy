@@ -26,7 +26,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
 
-import com.threerings.msoy.game.data.AVRGameConfig;
+import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.GameCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -168,13 +168,8 @@ public class GameDirector extends BasicDirector
             return;
         }
 
-        _worldGameObj = (obj as GameObject);
-        // the config is set in the memberobject simultaneously with the oid.  so if the oid is
-        // up-to-date, we can trust the config as well
-        var cfg :AVRGameConfig = (_mctx.getMemberObject().worldGameCfg as AVRGameConfig);
-        _worldGameCtrl = (cfg.createController() as GameController);
-        _worldGameCtrl.init(_mctx, cfg);
-        _worldGameCtrl.willEnterPlace(_worldGameObj);
+        _worldGameObj = (obj as AVRGameObject);
+        _worldGameCtrl = new AVRGameController(_mctx, _worldGameObj);
     }
 
     // from interface Subscriber
@@ -182,7 +177,7 @@ public class GameDirector extends BasicDirector
     {
         log.warning("Failed to subscribe to world game object [oid=" + oid +
                     ", cause=" + cause + "].");
-        _worldGameOid = 0;
+         _worldGameOid = 0;
     }
 
     // from BasicDirector
@@ -214,7 +209,7 @@ public class GameDirector extends BasicDirector
         }
         if (_worldGameOid != 0) {
             if (_worldGameCtrl != null) {
-                _worldGameCtrl.didLeavePlace(_worldGameObj);
+//                _worldGameCtrl.didLeavePlace(_worldGameObj);
                 _worldGameCtrl = null;
             }
             _mctx.getDObjectManager().unsubscribeFromObject(_worldGameOid, this);
@@ -238,10 +233,14 @@ public class GameDirector extends BasicDirector
     override protected function registerServices (client :Client) :void
     {
         client.addServiceGroup(MsoyCodes.GAME_GROUP);
+
+        _avrService = (client.requireService(AVRService) as AVRService);
     }
 
     /** A casted ref to the msoy context. */
     protected var _mctx :WorldContext;
+
+    protected var _avrService :AVRService;
 
     /** Handles our connection to the game server. */
     protected var _liaison :GameLiaison;
@@ -254,9 +253,9 @@ public class GameDirector extends BasicDirector
     protected var _worldGameOid :int;
 
     /** The current world game object. */
-    protected var _worldGameObj :GameObject;
+    protected var _worldGameObj :AVRGameObject;
 
     /** The controller for the current world game. */
-    protected var _worldGameCtrl :GameController;
+    protected var _worldGameCtrl :AVRGameController;
 }
 }

@@ -27,27 +27,21 @@ import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomObject;
 
-import com.threerings.msoy.game.data.AVRGameConfig;
+import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.AVRGameObject;
 
 public class AVRGameControlBackend extends ControlBackend
     implements LocationObserver, OccupantObserver
 {
     public function AVRGameControlBackend (
-        ctx :WorldContext, avrGameObj :AVRGameObject, ctrl :MsoyGameController)
+        ctx :WorldContext, avrGameObj :AVRGameObject, ctrl :AVRGameController)
     {
         _mctx = ctx;
         _avrGameObj = avrGameObj;
 
-        // TODO: this needs redoing
-        // the gameIdent matches the prototype of the game
-        _gameIdent = new ItemIdent(
-            Item.GAME, (ctrl.getPlaceConfig() as AVRGameConfig).getGameId());
-        
         _avrGameObj.addListener(_memlist);
         
         _mctx.getLocationDirector().addLocationObserver(this);
@@ -109,22 +103,22 @@ public class AVRGameControlBackend extends ControlBackend
         // naught for now
     }
     
-//     // from GameControlBackend
-//     override public function shutdown () :void
-//     {
-//         super.shutdown();
+    // from ControlBackend
+     override public function shutdown () :void
+     {
+         super.shutdown();
         
-//         _avrGameObj.removeListener(_memlist);
+         _avrGameObj.removeListener(_memlist);
         
-//         _mctx.getLocationDirector().removeLocationObserver(this);
-//         _mctx.getOccupantDirector().removeOccupantObserver(this);
+         _mctx.getLocationDirector().removeLocationObserver(this);
+         _mctx.getOccupantDirector().removeOccupantObserver(this);
         
-//         if (_roomObj != null) {
-//             _roomObj.removeListener(_movelist);
-//             _roomObj = null;
-//         }
-//     }
-    
+         if (_roomObj != null) {
+             _roomObj.removeListener(_movelist);
+             _roomObj = null;
+         }
+     }
+
 //     // from GameControlBackend
 //     override protected function populateProperties (o :Object) :void
 //     {
@@ -201,7 +195,7 @@ public class AVRGameControlBackend extends ControlBackend
 //         return null;
 //     }
     
-     protected function callMemoryChanged (entry :MemoryEntry) :void
+     protected function callMemoryChanged (entry :GameState) :void
      {
          callUserCode("memoryChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
      }
@@ -221,12 +215,12 @@ public class AVRGameControlBackend extends ControlBackend
     protected var _memlist :SetAdapter = new SetAdapter(
         function (event :EntryAddedEvent) :void {
             if (event.getName() == AVRGameObject.MEMORIES) {
-                callMemoryChanged(event.getEntry() as MemoryEntry);
+                callMemoryChanged(event.getEntry() as GameState);
             }
         },
         function (event :EntryUpdatedEvent) :void {
             if (event.getName() == AVRGameObject.MEMORIES) {
-                callMemoryChanged(event.getEntry() as MemoryEntry);
+                callMemoryChanged(event.getEntry() as GameState);
             }
         });
 }
