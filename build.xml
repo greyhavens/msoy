@@ -747,6 +747,7 @@
     <echo>Compiling MSOY...</echo>
     <javac srcdir="${src.dir}" destdir="${classes.dir}"
            debug="on" optimize="off" deprecation="on">
+      <exclude name="**/chiyogami/**/*.java"/>
       <classpath refid="classpath"/>
       <compilerarg value="-Xlint:unchecked"/>
     </javac>
