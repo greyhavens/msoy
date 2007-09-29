@@ -10,9 +10,12 @@ import java.util.Date;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.panopticon.client.logging.EventSchema;
 import com.threerings.panopticon.client.logging.EventLogger;
-import com.threerings.panopticon.client.logging.EventLoggerMonitor;
-import com.threerings.panopticon.client.logging.NullLogger;
+import com.threerings.panopticon.client.logging.EchoStorage;
+import com.threerings.panopticon.client.logging.LogStorage;
+import com.threerings.panopticon.client.logging.NullStorage;
+import com.threerings.panopticon.client.logging.ServerStorage;
 
 import com.threerings.msoy.Log;
 
@@ -22,12 +25,17 @@ import com.threerings.msoy.Log;
  * All logging requests will be scheduled on the invoker thread, to avoid tying up
  * the rest of the server.
  */
-public class MsoyEventLogger implements EventLoggerMonitor
+public class MsoyEventLogger
 {
     public MsoyEventLogger (URL serverURL)
     {
         Log.log.info("Events will be logged to " + serverURL);
+
         _serverURL = serverURL;
+        _storage = new NullStorage();
+        // _storage = new EchoStorage();
+        // _storage = new ServerStorage(serverURL);
+        _logger = new EventLogger("com.threerings.msoy", _storage, MSOY_SCHEMAS);
     }
 
     /** Event: registered user logged in. */
@@ -48,42 +56,23 @@ public class MsoyEventLogger implements EventLoggerMonitor
         post("Mail_test", now(), fromId, toId, payloadType);
     }
 
-    // from interface EventLoggerMonitor
-    public void afterConnect ()
-    {
-        // always redeclare schemas after every reconnect
-        declareMsoySchemas();
-    }
-    
-    // from interface EventLoggerMonitor
-    public void beforeDisconnect ()
-    {
-        // no op
-    }
-
     /** Wraps a logging action in a work unit, and posts it on the queue. */
-    protected void post (final String table, final Object ... values)
+    protected void post (final String event, final Object ... values)
     {
-        /* disabled during testing
-        Log.log.info("Posting a log entry [table=" + table + ", values=" +
-                     StringUtil.toString(values) + "].");
         MsoyServer.invoker.postUnit(new Invoker.Unit () {
             public boolean invoke () {
-                logHelper(table, values);
+                _logger.log(event, values);
                 return false;
             }
         });
-        */
     }
 
     /** Ensures a logger exists, and logs the event. */
     protected void logHelper (final String table, final Object [] values)
     {
-        if (_logger == null) {
-            _logger = new NullLogger("com.threerings.msoy", this);
-            //_logger = new ServerLogger("com.threerings.msoy", _serverURL, this);
-        }
-        _logger.log(table, values);
+
+        Log.log.info("Posted a log entry [table=" + table + ", values=" +
+                     StringUtil.toString(values) + "].");
     }
 
     /** Convenience function to return a boxed value for current time
@@ -92,21 +81,18 @@ public class MsoyEventLogger implements EventLoggerMonitor
         return (Long) (new Date()).getTime();
     }
     
-    protected void declareMsoySchemas ()
-    {
-        _logger.declareSchema(
+    protected static final EventSchema[] MSOY_SCHEMAS = new EventSchema[] {
+        new EventSchema(
             "Login_test",
             new String[] { "timestamp", "playerId",    "firstLogin",  "sessionToken" },
-            new Class[]  { Long.class,  Integer.class, Boolean.class, String.class   });
-
-        _logger.declareSchema(
+            new Class[]  { Long.class,  Integer.class, Boolean.class, String.class   }),
+        new EventSchema(
             "Mail_test",
-            new String[] { "timestamp", "senderId",    "recipientId", "payloadId" },
-            new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class });
-        
-        Log.log.info("Schemas declared, ready to go!");
-    }
+            new String[] { "timestamp", "senderId",    "recipientId", "payloadId"    },
+            new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class  })
+    };        
 
+    protected LogStorage _storage;
     protected EventLogger _logger;
     protected URL _serverURL;
 }
