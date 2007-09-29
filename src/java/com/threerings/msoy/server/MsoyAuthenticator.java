@@ -204,7 +204,7 @@ public class MsoyAuthenticator extends Authenticator
 
                 // potentially allow GUEST access
                 if (member == null) {
-                    if (!RuntimeConfig.server.guestsAllowed ||
+                    if ((!RuntimeConfig.server.guestsAllowed && !creds.featuredPlaceView) ||
                         !RuntimeConfig.server.nonAdminsAllowed) {
                         throw new ServiceException(MsoyAuthCodes.NO_GUESTS);
                     }
