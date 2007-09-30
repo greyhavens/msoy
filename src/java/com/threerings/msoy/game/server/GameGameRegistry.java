@@ -54,6 +54,7 @@ import com.threerings.msoy.game.server.persist.GameStateRecord;
 import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
 
 import com.threerings.msoy.server.MsoyBaseServer;
+import com.threerings.msoy.server.MsoyServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -142,7 +143,7 @@ public class GameGameRegistry
                 _omgr.registerObject(gameObj);
                 fmgr.startup(gameObj, _recs);
 
-                ResultListenerList list = _loadingLobbies.remove(gameId);
+                ResultListenerList list = _loadingAVRGames.remove(gameId);
                 if (list != null) {
                     list.requestProcessed(fmgr);
                 } else {
@@ -151,8 +152,13 @@ public class GameGameRegistry
                 }
             }
             public void handleFailure (Exception pe) {
-                log.warning(
-                    "Unable to resolve game state [gameId=" + gameId + ", error=" + pe + "]");
+                ResultListenerList list = _loadingAVRGames.remove(gameId);
+                if (list != null) {
+                    list.requestFailed(pe.getMessage());
+                } else {
+                    log.warning(
+                        "No listeners when done activating AVRGame [gameId=" + gameId + "]");
+                }
             }
             protected List<GameStateRecord> _recs;
         });
