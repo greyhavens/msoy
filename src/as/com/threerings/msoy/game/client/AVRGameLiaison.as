@@ -18,8 +18,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
 /**
- * Handles all the fiddly bits relating to connecting to a separate server to match-make and play a
- * game.
+ * Handles the AVRG-specific aspects of the game server connection.
  */
 public class AVRGameLiaison extends GameLiaison
 {
