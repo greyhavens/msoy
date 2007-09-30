@@ -52,7 +52,7 @@ public class LobbyController extends Controller implements Subscriber
     public static const LEAVE_LOBBY :String = "LeaveLobby";
 
     public function LobbyController (
-        mctx :WorldContext, gctx :GameContext, liaison :GameLiaison, oid :int) 
+        mctx :WorldContext, gctx :GameContext, liaison :LobbyGameLiaison, oid :int) 
     {
         _mctx = mctx;
         _gctx = gctx;
@@ -285,7 +285,7 @@ public class LobbyController extends Controller implements Subscriber
     protected var _gctx :GameContext;
 
     /** Handles our connection to the game server. */
-    protected var _liaison :GameLiaison;
+    protected var _liaison :LobbyGameLiaison;
 
     /** Our distributed LobbyObject */
     protected var _lobj :LobbyObject;

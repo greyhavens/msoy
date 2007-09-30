@@ -24,28 +24,23 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
  * game.
  */
 public class GameLiaison
-    implements MsoyGameService_LocationListener, ClientObserver, GameReadyObserver
+    implements MsoyGameService_LocationListener, ClientObserver
 {
     public static const log :Log = Log.getLog(GameLiaison);
 
-    public function GameLiaison (ctx :WorldContext, gameId :int, playerId :int = 0)
+    public function GameLiaison (ctx :WorldContext, gameId :int)
     {
         _ctx = ctx;
         _gameId = gameId;
-        _playerIdGame = playerId;
 
         // create our custom context which we'll use to connect to lobby/game servers
         _gctx = new GameContext(ctx);
         _gctx.getClient().addClientObserver(this);
-        _gctx.getParlorDirector().addGameReadyObserver(this);
 
         // locate the game server to start everything off
         var mgsvc :MsoyGameService =
             (_ctx.getClient().requireService(MsoyGameService) as MsoyGameService);
         mgsvc.locateGame(_ctx.getClient(), gameId, this);
-
-        // listen for changes in world location so that we can shutdown if we move
-        _ctx.getLocationDirector().addLocationObserver(_worldLocObs);
     }
 
     /**
@@ -57,90 +52,17 @@ public class GameLiaison
     }
 
     /**
-     * Returns the lobby controller used by this liaison.
-     */
-    public function get lobbyController () :LobbyController
-    {
-        return _lobby;
-    }
-
-    /**
-     * Join the player in their running game if possible, otherwise simply display the game
-     * lobby, if it isn't up already. 
-     */
-    public function joinPlayer (playerId :int) :void
-    {
-        if (!_gctx.getClient().isLoggedOn()) {
-            // this function will be called again, once we've logged onto the game server.
-            _playerIdGame = playerId;
-            return;
-        }
-
-        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-        var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
-            _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
-            // some failure cases are innocuous, and should be followed up by a display of the 
-            // lobby - if we really are hosed, joinLobby() will cause the liaison to shut down.
-            _ctx.getMsoyController().restoreSceneURL();
-            showLobbyUI();
-        }, gotPlayerGameOid);
-        lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);
-    }
-
-    /** 
-     * Join the player at their currently pending game table.
-     */
-    public function joinPlayerTable (playerId :int) :void
-    {
-        if (_lobby == null) {
-            // this function will be called again, once we've got our lobby
-            _playerIdTable = playerId;
-            return;
-        }
-        _lobby.joinPlayerTable(playerId);
-    }
-
-    /**
      * Returns the config of our active game if we're in an active game.
      */
     public function getGameConfig () :MsoyGameConfig
     {
-        var ctrl :PlaceController = _gctx.getLocationDirector().getPlaceController();
-        return (ctrl == null) ? null : (ctrl.getPlaceConfig() as MsoyGameConfig);
-    }
-
-    public function showLobbyUI () :void
-    {
-        if (_lobby != null) {
-            _lobby.restoreLobbyUI();
-        } else {
-            joinLobby();
-        }
-    }
-
-    public function enterGame (gameOid :int) :void
-    {
-        _gameOid = gameOid;
-        _gctx.getLocationDirector().moveTo(gameOid);
-
-        // clear out our lobby side panel in case it has not been cleared already
-        _ctx.getTopPanel().clearLeftPanel(null);
+        // subclasses can return something real here
+        return null;
     }
 
     public function shutdown () :void
     {
-        _ctx.getLocationDirector().removeLocationObserver(_worldLocObs);
         _gctx.getClient().logoff(false);
-    }
-
-    public function lobbyCleared (inGame :Boolean) :void
-    {
-        log.info("Lobby cleared [in=" + inGame + "].");
-
-        // if we're not about to go to a game, shutdown, otherwise stick around
-        if (!inGame && _gameOid == 0) {
-            shutdown();
-        }
     }
 
     // from interface MsoyGameService_LocationListener
@@ -167,11 +89,7 @@ public class GameLiaison
     // from interface ClientObserver
     public function clientDidLogon (event :ClientEvent) :void
     {
-        if (_playerIdGame != 0) {
-            joinPlayer(_playerIdGame);
-        } else {
-            joinLobby();
-        }
+        // nada
     }
 
     // from interface ClientObserver
@@ -213,57 +131,6 @@ public class GameLiaison
         _ctx.getGameDirector().liaisonCleared(this);
     }
 
-    // from interface GameReadyObserver
-    public function receivedGameReady (gameOid :int) :Boolean
-    {
-        _ctx.getTopPanel().clearTableDisplay();
-        _ctx.getMsoyController().handleGoGame(_gameId, gameOid);
-        return true;
-    }
-
-    protected function joinLobby () :void
-    {
-        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-        var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
-            _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
-            shutdown();
-        }, gotLobbyOid);
-        lsvc.identifyLobby(_gctx.getClient(), _gameId, cb);
-    }
-
-    protected function worldLocationDidChange (place :PlaceObject) :void
-    {
-        // don't do anything if we are not yet in a game
-        if (_gameOid == 0) {
-            return;
-        }
-
-        if (place != null) {
-            // we've left our game and returned to the world, so we want to shutdown
-            shutdown();
-        }
-    }
-
-    protected function gotLobbyOid (result :Object) :void
-    {
-        // this will create a panel and add it to the side panel on the top level
-        _lobby = new LobbyController(_ctx, _gctx, this, int(result));
-        if (_playerIdTable != 0) {
-            joinPlayerTable(_playerIdTable);
-        }
-    }
-
-    protected function gotPlayerGameOid (result :Object) :void
-    {
-        var gameOid :int = int(result);
-        if (gameOid == -1) {
-            // player isn't currently playing - show the lobby instead
-            showLobbyUI();
-        } else {
-            _ctx.getMsoyController().handleGoGame(_gameId, gameOid);
-        }
-    }
-
     /** Provides access to main client services. */
     protected var _ctx :WorldContext;
 
@@ -272,21 +139,5 @@ public class GameLiaison
 
     /** The id of the game with which we're dealing. */
     protected var _gameId :int;
-
-    /** The id of the player we'd like to join. */
-    protected var _playerIdGame :int = 0;
-
-    /** The id of the player who's pending table we'd like to join. */
-    protected var _playerIdTable :int = 0;
-
-    /** Listens for world location changes. */
-    protected var _worldLocObs :LocationAdapter =
-        new LocationAdapter(null, worldLocationDidChange, null);
-
-    /** Our active lobby, if we have one. */
-    protected var _lobby :LobbyController;
-
-    /** The oid of our game object, once we've been told it. */
-    protected var _gameOid :int;
 }
 }

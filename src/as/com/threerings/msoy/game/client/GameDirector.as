@@ -10,11 +10,8 @@ import com.threerings.util.MessageBundle;
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.dobj.AttributeChangeListener;
-import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ObjectAccessError;
-import com.threerings.presents.dobj.Subscriber;
 
 import com.threerings.parlor.game.client.GameController;
 import com.threerings.parlor.game.data.GameObject;
@@ -26,7 +23,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
 
-import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.GameCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -38,7 +34,6 @@ import com.threerings.msoy.game.data.PlayerObject;
  * A director that manages game related bits.
  */
 public class GameDirector extends BasicDirector
-    implements AttributeChangeListener, Subscriber
 {
     public static const log :Log = Log.getLog(GameDirector);
 
@@ -62,7 +57,7 @@ public class GameDirector extends BasicDirector
     {
         if (_liaison != null) {
             if (_liaison.gameId == gameId) {
-                _liaison.showLobbyUI();
+                LobbyGameLiaison(_liaison).showLobbyUI();
             } else {
                 // TODO: close current game and open new one?
                 log.info("Zoiks, asked to switch to new lobby [in=" + _liaison.gameId +
@@ -72,7 +67,7 @@ public class GameDirector extends BasicDirector
         }
 
         // create our new liaison, which will resolve the lobby and do all the business
-        _liaison = new GameLiaison(_mctx, gameId);
+        _liaison = new LobbyGameLiaison(_mctx, gameId);
     }
 
     /**
@@ -81,14 +76,14 @@ public class GameDirector extends BasicDirector
     public function joinPlayer (gameId :int, memberId :int) :void
     {
         if (_liaison != null && _liaison.gameId != gameId) {
-            _liaison.lobbyController.forceShutdown();
+            _liaison.shutdown();
             _liaison = null;
         }
 
         if (_liaison == null) {
-            _liaison = new GameLiaison(_mctx, gameId, memberId);
+            _liaison = new LobbyGameLiaison(_mctx, gameId, memberId);
         } else {
-            _liaison.joinPlayer(memberId);
+            LobbyGameLiaison(_liaison).joinPlayer(memberId);
         }
     }
 
@@ -98,11 +93,26 @@ public class GameDirector extends BasicDirector
     public function joinPlayerTable (gameId :int, memberId :int) :void
     {
         if (_liaison != null && _liaison.gameId != gameId) {
-            _liaison.lobbyController.forceShutdown();
+            _liaison.shutdown();
             _liaison = null;
         }
         displayLobby(gameId);
-        _liaison.joinPlayerTable(memberId);
+        LobbyGameLiaison(_liaison).joinPlayerTable(memberId);
+    }
+
+    public function activateAVRGame (gameId :int) :void
+    {
+        if (_liaison != null) {
+            if (_liaison.gameId == gameId) {
+                log.warning("Requested to activate the AVRG that's already active [gameId=" +
+                            gameId + "]");
+                return;
+            }
+            // TODO: implement proper leaving, this should only be the fallback
+            _liaison.shutdown();
+        }
+
+        _liaison = new AVRGameLiaison(_mctx, gameId);
     }
 
     /**
@@ -112,8 +122,10 @@ public class GameDirector extends BasicDirector
     {
         if (_liaison == null) {
             log.warning("Requested to enter game but have no liaison?! [oid=" + gameOid + "].");
+        } else if (!(_liaison is LobbyGameLiaison)) {
+            log.warning("Requested to enter game but have AVRG liaison?! [oid=" + gameOid + "].");
         } else {
-            _liaison.enterGame(gameOid);
+            LobbyGameLiaison(_liaison).enterGame(gameOid);
         }
     }
 
@@ -147,39 +159,6 @@ public class GameDirector extends BasicDirector
         }
     }
 
-    // from interface AttributeChangeListener
-    public function attributeChanged (event :AttributeChangedEvent) :void
-    {
-        if (event.getName() == MemberObject.WORLD_GAME_OID) {
-            updateAVRGame();
-        }
-    }
-
-    // from interface Subscriber
-    public function objectAvailable (obj :DObject) :void
-    {
-        if (obj.getOid() != _worldGameOid) {
-            // we changed our minds!
-            _mctx.getDObjectManager().unsubscribeFromObject(obj.getOid(), this);
-            return;
-
-        } else if (obj == _worldGameObj) {
-            // already subscribed
-            return;
-        }
-
-        _worldGameObj = (obj as AVRGameObject);
-        _worldGameCtrl = new AVRGameController(_mctx, _worldGameObj);
-    }
-
-    // from interface Subscriber
-    public function requestFailed (oid :int, cause :ObjectAccessError) :void
-    {
-        log.warning("Failed to subscribe to world game object [oid=" + oid +
-                    ", cause=" + cause + "].");
-         _worldGameOid = 0;
-    }
-
     // from BasicDirector
     override public function clientDidLogoff (event :ClientEvent) :void
     {
@@ -188,36 +167,6 @@ public class GameDirector extends BasicDirector
         // shutdown and game connection we might have going
         if (_liaison != null) {
             _liaison.shutdown();
-        }
-    }
-
-    override protected function clientObjectUpdated (client :Client) :void
-    {
-        // listen for changes to the in-world game oid
-        updateAVRGame();
-        client.getClientObject().addListener(this);
-    }
-
-    /**
-     * Called to create, remove, or change the in-world game.
-     */
-    protected function updateAVRGame () :void
-    {
-        var noid :int = _mctx.getMemberObject().worldGameOid;
-        if (noid == _worldGameOid) {
-            return;
-        }
-        if (_worldGameOid != 0) {
-            if (_worldGameCtrl != null) {
-//                _worldGameCtrl.didLeavePlace(_worldGameObj);
-                _worldGameCtrl = null;
-            }
-            _mctx.getDObjectManager().unsubscribeFromObject(_worldGameOid, this);
-            _worldGameObj = null;
-        }
-        _worldGameOid = noid;
-        if (_worldGameOid != 0) {
-            _mctx.getDObjectManager().subscribeToObject(_worldGameOid, this);
         }
     }
 
@@ -245,13 +194,5 @@ public class GameDirector extends BasicDirector
      * because by the time we get around to entering that game, we no longer have this info. */
     protected var _matchingGame :Game;
 
-    /** The oid of the world game object to which we are subscribed or are subscribing to. */
-    protected var _worldGameOid :int;
-
-    /** The current world game object. */
-    protected var _worldGameObj :AVRGameObject;
-
-    /** The controller for the current world game. */
-    protected var _worldGameCtrl :AVRGameController;
 }
 }
