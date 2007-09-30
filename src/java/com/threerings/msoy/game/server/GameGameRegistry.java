@@ -54,7 +54,6 @@ import com.threerings.msoy.game.server.persist.GameStateRecord;
 import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
 
 import com.threerings.msoy.server.MsoyBaseServer;
-import com.threerings.msoy.server.MsoyServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -137,11 +136,13 @@ public class GameGameRegistry
 
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("activateAVRGame") {
             public void invokePersist () throws Exception {
+                GameRecord gRec = _gameRepo.loadGameRecord(gameId);
+                _game = (Game) gRec.toItem();
                 _recs = _avrgRepo.getGameState(gameId);
             }
             public void handleSuccess () {
                 _omgr.registerObject(gameObj);
-                fmgr.startup(gameObj, _recs);
+                fmgr.startup(gameObj, _game, _recs);
 
                 ResultListenerList list = _loadingAVRGames.remove(gameId);
                 if (list != null) {
@@ -160,6 +161,7 @@ public class GameGameRegistry
                         "No listeners when done activating AVRGame [gameId=" + gameId + "]");
                 }
             }
+            protected Game _game;
             protected List<GameStateRecord> _recs;
         });
     }

@@ -11,12 +11,17 @@ import com.threerings.presents.dobj.OidList;
 
 import com.threerings.ezgame.data.EZGameObject;
 
+import com.threerings.msoy.item.data.all.MediaDesc;
+
 /**
  * Holds game state for an AVRGame.
  */
 public class AVRGameObject extends DObject
 {
     // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>gameMedia</code> field. */
+    public static const GAME_MEDIA :String = "gameMedia";
+
     /** The field name of the <code>memories</code> field. */
     public static const MEMORIES :String = "memories";
 
@@ -27,6 +32,9 @@ public class AVRGameObject extends DObject
     public static const PLAYERS :String = "players";
 
     // AUTO-GENERATED: FIELDS END
+
+    /** The defining media of the AVRGame. */
+    public var gameMedia :MediaDesc;
 
     /** Contains the game's memories. */
     public var memories :DSet = new DSet();
@@ -40,7 +48,8 @@ public class AVRGameObject extends DObject
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        
+
+        gameMedia = (ins.readObject() as MediaDesc);
         memories = (ins.readObject() as DSet);
         playerOids = (ins.readObject() as OidList);
         players = (ins.readObject() as DSet);

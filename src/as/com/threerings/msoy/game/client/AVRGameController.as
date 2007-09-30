@@ -103,7 +103,7 @@ class AVRGamePanel extends MediaContainer
     public function init (gameObj :AVRGameObject) :void
     {
         _gameObj = gameObj;
-//        setMedia(gameObj.gameDef.getMediaPath(1));
+        setMedia(gameObj.gameMedia.getMediaPath());
         _backend = new AVRGameControlBackend(_mctx, _gameObj, _ctrl);
         _backend.init(Loader(_media));
     }

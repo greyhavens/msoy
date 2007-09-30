@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.data;
 
+import com.threerings.msoy.item.data.all.MediaDesc;
+
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
@@ -14,6 +16,9 @@ import com.threerings.presents.dobj.OidList;
 public class AVRGameObject extends DObject
 {
     // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>gameMedia</code> field. */
+    public static final String GAME_MEDIA = "gameMedia";
+
     /** The field name of the <code>state</code> field. */
     public static final String STATE = "state";
 
@@ -23,6 +28,9 @@ public class AVRGameObject extends DObject
     /** The field name of the <code>players</code> field. */
     public static final String PLAYERS = "players";
     // AUTO-GENERATED: FIELDS END
+
+    /** The defining media of the AVRGame. */
+    public MediaDesc gameMedia;
 
     /** Contains the game's memories. */
     public DSet<GameState> state = new DSet<GameState>();
@@ -38,6 +46,22 @@ public class AVRGameObject extends DObject
     public DSet<OccupantInfo> players = new DSet<OccupantInfo>();
 
     // AUTO-GENERATED: METHODS START
+    /**
+     * Requests that the <code>gameMedia</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setGameMedia (MediaDesc value)
+    {
+        MediaDesc ovalue = this.gameMedia;
+        requestAttributeChange(
+            GAME_MEDIA, value, ovalue);
+        this.gameMedia = value;
+    }
+
     /**
      * Requests that the specified entry be added to the
      * <code>state</code> set. The set will not change until the event is

@@ -13,13 +13,13 @@ import com.threerings.msoy.game.data.QuestState;
 import com.threerings.msoy.game.server.persist.AVRGameRepository;
 import com.threerings.msoy.game.server.persist.GameStateRecord;
 import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
+import com.threerings.msoy.item.data.all.Game;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.data.PlaceObject;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
@@ -58,7 +58,7 @@ public class AVRGameManager
         return _gameId;
     }
 
-    public void startup (AVRGameObject gameObj, List<GameStateRecord> stateRecords)
+    public void startup (AVRGameObject gameObj, Game game, List<GameStateRecord> stateRecords)
     {
         _gameObj = gameObj;
 
@@ -66,6 +66,7 @@ public class AVRGameManager
         gameObj.addListener(this);
 
         gameObj.startTransaction();
+        gameObj.setGameMedia(game.gameMedia);
         try {
             for (GameStateRecord rec : stateRecords) {
                 gameObj.addToState(rec.toEntry());
