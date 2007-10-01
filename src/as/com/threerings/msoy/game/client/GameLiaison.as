@@ -51,15 +51,6 @@ public class GameLiaison
         return _gameId;
     }
 
-    /**
-     * Returns the config of our active game if we're in an active game.
-     */
-    public function getGameConfig () :MsoyGameConfig
-    {
-        // subclasses can return something real here
-        return null;
-    }
-
     public function shutdown () :void
     {
         _gctx.getClient().logoff(false);

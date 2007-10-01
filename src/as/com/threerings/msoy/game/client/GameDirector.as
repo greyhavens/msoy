@@ -135,7 +135,10 @@ public class GameDirector extends BasicDirector
      */
     public function getGameConfig () :MsoyGameConfig
     {
-        return (_liaison == null) ? null : _liaison.getGameConfig();
+        if (_liaison != null && _liaison is LobbyGameLiaison) {
+            return LobbyGameLiaison(_liaison).getGameConfig();
+        }
+        return null;
     }
 
     /**

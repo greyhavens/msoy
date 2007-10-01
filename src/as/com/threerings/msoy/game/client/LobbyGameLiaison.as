@@ -78,7 +78,7 @@ public class LobbyGameLiaison extends GameLiaison
     /**
      * Returns the config of our active game if we're in an active game.
      */
-    override public function getGameConfig () :MsoyGameConfig
+    public function getGameConfig () :MsoyGameConfig
     {
         var ctrl :PlaceController = _gctx.getLocationDirector().getPlaceController();
         return (ctrl == null) ? null : (ctrl.getPlaceConfig() as MsoyGameConfig);
