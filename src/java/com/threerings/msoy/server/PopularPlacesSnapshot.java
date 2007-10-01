@@ -131,12 +131,13 @@ public class PopularPlacesSnapshot
             }
         });
 
-        // sort and prune our top places list
-        _sclist.sort();
+        // sort and prune our top places list.  Use reverse sorting so the largest populations 
+        // appear first.
+        _sclist.rsort();
         while (_sclist.size() > MAX_TRACKED_PLACES) {
             _sclist.remove(_sclist.size()-1);
         }
-        _glist.sort();
+        _glist.rsort();
         while (_glist.size() > MAX_TRACKED_PLACES) {
             _glist.remove(_glist.size()-1);
         }
