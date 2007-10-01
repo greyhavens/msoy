@@ -255,7 +255,9 @@ public abstract class Page
         Widget content, boolean contentIsFlash, boolean contentIsJava)
     {
         WorldClient.minimize();
-        displayingFlash = contentIsFlash;
+        String token = History.getToken();
+        // the whirledwide page has a flash embed in the menu area as well.
+        displayingFlash = contentIsFlash || "".equals(token) || "whirled-whirledwide".equals(token);
         displayingJava = contentIsJava;
         RootPanel.get("content").clear();
         // clear out any content height overrides
