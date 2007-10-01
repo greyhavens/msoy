@@ -146,12 +146,14 @@ public class MsoyAuthenticator extends Authenticator
     /**
      * Called during server initialization.
      */
-    public void init ()
+    public void init (MsoyEventLogger eventLog)
         throws PersistenceException
     {
         // create our default authentication domain
         _defaultDomain = new OOOAuthenticationDomain();
         _defaultDomain.init();
+
+        _eventLog = eventLog;
     }
 
     @Override
@@ -210,7 +212,7 @@ public class MsoyAuthenticator extends Authenticator
                     }
                     rsp.authdata = null;
                     rdata.code = MsoyAuthResponseData.SUCCESS;
-                    MsoyEventLogger.guestLoggedIn(creds.sessionToken);
+                    _eventLog.guestLoggedIn(creds.sessionToken);
                     return;
                 }
 
@@ -321,7 +323,7 @@ public class MsoyAuthenticator extends Authenticator
             // log.info("User logged on [user=" + user.username + "].");
             rsp.authdata = account;
             rdata.code = MsoyAuthResponseData.SUCCESS;
-            MsoyEventLogger.playerLoggedIn(
+            _eventLog.playerLoggedIn(
                 member.memberId, account.firstLogon, creds.sessionToken);
 
 //             // pass their user record to the client resolver for retrieval
@@ -527,6 +529,9 @@ public class MsoyAuthenticator extends Authenticator
         return mrec;
     }
 
+    /** Reference to the event logger. */
+    protected MsoyEventLogger _eventLog;
+    
     /** The default domain against which we authenticate. */
     protected Domain _defaultDomain;
 

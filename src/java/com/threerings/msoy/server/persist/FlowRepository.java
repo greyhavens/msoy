@@ -44,10 +44,12 @@ public class FlowRepository extends DepotRepository
     /**
      * Creates a flow repository for.
      */
-    public FlowRepository (PersistenceContext ctx)
+    public FlowRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
     {
         super(ctx);
-
+        
+        _eventLog = eventLog;
+        
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
             public void entryInvalidated (CacheKey key, MemberRecord member) {
@@ -306,7 +308,7 @@ public class FlowRepository extends DepotRepository
         
         // log this to the audit log as well
         int signedAmount = (grant ? amount : -amount);
-        MsoyEventLogger.flowTransaction(
+        _eventLog.flowTransaction(
             memberId, action.getNumber(), signedAmount, updatedFlow.flow, details);
         // todo: remove old logging functions:
         String loginfo = action + (details != null ? " " + details : "");
@@ -340,4 +342,7 @@ public class FlowRepository extends DepotRepository
 
     /** Minutes in a day. */
     protected static final float DAY_MINS = 24 * 60;
+
+    /** Reference to the event logger. */
+    protected MsoyEventLogger _eventLog;
 }

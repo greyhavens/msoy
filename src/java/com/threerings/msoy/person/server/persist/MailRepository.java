@@ -33,9 +33,11 @@ import static com.threerings.msoy.Log.log;
  */
 public class MailRepository extends DepotRepository
 {
-    public MailRepository (PersistenceContext ctx)
+    public MailRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
     {
         super(ctx);
+
+        _eventLog = eventLog;
     }
 
     /**
@@ -141,7 +143,7 @@ public class MailRepository extends DepotRepository
         record.unread = true;
         fileMessage(record);
 
-        MsoyEventLogger.mailSent(record.senderId, record.recipientId, record.payloadType);
+        _eventLog.mailSent(record.senderId, record.recipientId, record.payloadType);
     }
 
     /**
@@ -248,4 +250,6 @@ public class MailRepository extends DepotRepository
         classes.add(MailMessageRecord.class);
         classes.add(MailFolderRecord.class);
     }
+
+    protected MsoyEventLogger _eventLog;
 }

@@ -60,11 +60,12 @@ public class MemberRepository extends DepotRepository
     /** The cache identifier for the friends-of-a-member collection query. */
     public static final String FRIENDS_CACHE_ID = "FriendsCache";
 
-    public MemberRepository (PersistenceContext ctx)
+    public MemberRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
     {
         super(ctx);
 
-        _flowRepo = new FlowRepository(_ctx);
+        _flowRepo = new FlowRepository(_ctx, eventLog);
+        _eventLog = eventLog;
 
         // add a cache invalidator that listens to single FriendRecord updates
         _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
@@ -744,7 +745,7 @@ public class MemberRepository extends DepotRepository
             rec.inviterId = memberId;
             rec.inviteeId = otherId;
             insert(rec);
-            MsoyEventLogger.friendAdded(memberId, otherId);
+            _eventLog.friendAdded(memberId, otherId);
         }
 
         return other.getName();
@@ -765,7 +766,7 @@ public class MemberRepository extends DepotRepository
         key = FriendRecord.getKey(otherId, memberId);
         deleteAll(FriendRecord.class, key, key);
 
-        MsoyEventLogger.friendRemoved(memberId, otherId);
+        _eventLog.friendRemoved(memberId, otherId);
     }
 
     /**
@@ -860,6 +861,9 @@ public class MemberRepository extends DepotRepository
 
     protected static final int INVITE_ID_LENGTH = 10;
     protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
+
+    /** Reference to the event logger. */
+    protected MsoyEventLogger _eventLog;
 
     protected FlowRepository _flowRepo;
 }

@@ -28,7 +28,7 @@ import com.threerings.msoy.Log;
 public class MsoyEventLogger
 {
     /** Initializes the logger; this must happen before any events can be logged. */
-    public static void init (final URL serverURL)
+    public MsoyEventLogger (final URL serverURL)
     {
         Log.log.info("Events will be logged to " + serverURL);
         
@@ -36,76 +36,66 @@ public class MsoyEventLogger
         _storage = new NullStorage();
         // _storage = new ServerStorage(serverURL);
         
-        _storage.open();
         _logger = new EventLogger("com.threerings.msoy", _storage, MSOY_SCHEMAS);
     }
 
-    /** Closes log storage and deinitializes the logger. */
-    public static void deinit ()
-    {
-        _storage.close();
-        _storage = null;
-        _logger = null;
-        Log.log.info("Events logger shut down.");
-    }
-        
     /** Event: flow transation. */
-    public static void flowTransaction (
+    public void flowTransaction (
         int playerId, int actionType, int flowDelta, int newTotal, String details)
     {
         post("FlowTransaction_test", now(), playerId, actionType, flowDelta, newTotal, details);
     }
     
     /** Event: registered user logged in. */
-    public static void playerLoggedIn (int playerId, boolean firstLogin, String sessionToken)
+    public void playerLoggedIn (int playerId, boolean firstLogin, String sessionToken)
     {
         post("Login_test", now(), playerId, firstLogin, sessionToken);
     }
 
     /** Event: guest user logged in. */
-    public static void guestLoggedIn (String sessionToken)
+    public void guestLoggedIn (String sessionToken)
     {
         playerLoggedIn(-1, false, sessionToken);
     }
 
     /** Event: sent mail from one user to another. */
-    public static void mailSent (int fromId, int toId, int payloadType)
+    public void mailSent (int fromId, int toId, int payloadType)
     {
         post("MailSent_test", now(), fromId, toId, payloadType);
     }
 
     /** Event: added a friend. */
-    public static void friendAdded (int playerId, int friendId)
+    public void friendAdded (int playerId, int friendId)
     {
         post("FriendListAction_test", now(), playerId, friendId, true);
     }
 
     /** Event: removed a friend. */
-    public static void friendRemoved (int playerId, int friendId)
+    public void friendRemoved (int playerId, int friendId)
     {
         post("FriendListAction_test", now(), playerId, friendId, false);
     }
 
     /** Event: joined a group. */
-    public static void groupJoined (int playerId, int groupId)
+    public void groupJoined (int playerId, int groupId)
     {
         post("GroupMembershipAction_test", now(), playerId, groupId, true);
     }
 
     /** Event: joined a group. */
-    public static void groupLeft (int playerId, int groupId)
+    public void groupLeft (int playerId, int groupId)
     {
         post("GroupMembershipAction_test", now(), playerId, groupId, false);
     }
 
     /** Event: promotion/demotion in a group. */
-    public static void groupRankChange (int playerId, int groupId, byte newRank)
+    public void groupRankChange (int playerId, int groupId, byte newRank)
     {
         post("GroupRankModification_test", now(), playerId, groupId, newRank);
     }
     
     /** Wraps a logging action in a work unit, and posts it on the queue. */
-    protected static void post (final String event, final Object ... values)
+    protected void post (final String event, final Object ... values)
     {
         if (_logger == null) {
             throw new RuntimeException("MsoyEventLogger not initialized, cannot log events.");
@@ -121,7 +111,7 @@ public class MsoyEventLogger
 
     /** Convenience function to return a boxed value for current time
      *  (in ms since beginning of epoch in GMT). */
-    protected static Long now () {
+    protected Long now () {
         return System.currentTimeMillis();
     }
     
@@ -156,8 +146,8 @@ public class MsoyEventLogger
     };        
 
     /** Singleton reference to log storage. */
-    protected static LogStorage _storage;
+    protected LogStorage _storage;
 
     /** Singleton reference to the event logger instance. */
-    protected static EventLogger _logger;
+    protected EventLogger _logger;
 }

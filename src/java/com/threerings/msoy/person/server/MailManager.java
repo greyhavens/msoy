@@ -20,6 +20,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -42,9 +43,10 @@ public class MailManager
     /**
      * Prepares our mail manager for operation.
      */
-    public void init (PersistenceContext ctx, MemberRepository memberRepo)
+    public void init (
+        PersistenceContext ctx, MemberRepository memberRepo, MsoyEventLogger eventLog)
     {
-        _mailRepo = new MailRepository(ctx);
+        _mailRepo = new MailRepository(ctx, eventLog);
         _memberRepo = memberRepo;
     }
 

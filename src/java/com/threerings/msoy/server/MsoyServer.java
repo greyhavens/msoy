@@ -255,7 +255,7 @@ public class MsoyServer extends MsoyBaseServer
 
         // create our various repositories
         profileRepo = new ProfileRepository(perCtx);
-        groupRepo = new GroupRepository(perCtx);
+        groupRepo = new GroupRepository(perCtx, eventLog);
         commentRepo = new CommentRepository(perCtx, memberRepo);
         swiftlyRepo = new SwiftlyRepository(perCtx);
 
@@ -332,7 +332,7 @@ public class MsoyServer extends MsoyBaseServer
         throws Exception
     {
         // initialize our authenticator
-        author.init();
+        author.init(eventLog);
 
         // start up our peer manager
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
@@ -346,7 +346,7 @@ public class MsoyServer extends MsoyBaseServer
         memberMan.init(memberRepo, groupRepo);
         friendMan.init();
         groupMan.init(groupRepo, memberRepo);
-        mailMan.init(perCtx, memberRepo);
+        mailMan.init(perCtx, memberRepo, eventLog);
         channelMan.init(invmgr);
         itemMan.init(perCtx);
         swiftlyMan.init(invmgr);

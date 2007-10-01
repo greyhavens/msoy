@@ -67,6 +67,9 @@ public abstract class MsoyBaseServer extends WhirledServer
     /** Stores user's game cookies. */
     public static GameCookieRepository gameCookieRepo;
 
+    /** Sends event information to an external log database. */
+    public static MsoyEventLogger eventLog;
+    
     /**
      * Creates an audit log with the specified name (which should not include
      * the <code>.log</code> suffix) in our server log directory.
@@ -120,6 +123,9 @@ public abstract class MsoyBaseServer extends WhirledServer
         // breaks Amazon S3, specifically.
         Security.setProperty("networkaddress.cache.ttl" , "30");
 
+        // initialize event logger
+        eventLog = new MsoyEventLogger(new URL(ServerConfig.eventLogURL));
+
         // create our JDBC bits before calling super.init() because our superclass will attempt to
         // create our authenticator and we need that ready by then
         _conProv = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
@@ -127,7 +133,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         perCtx = new PersistenceContext("msoy", _conProv, cacher);
 
         // this one is needed by createAuthenticator() in our derived classes
-        memberRepo = new MemberRepository(perCtx);
+        memberRepo = new MemberRepository(perCtx, eventLog);
 
         super.init();
 
@@ -144,9 +150,6 @@ public abstract class MsoyBaseServer extends WhirledServer
         confReg = createConfigRegistry();
         AdminProvider.init(invmgr, confReg);
 
-        // initialize event logger
-        MsoyEventLogger.init(new URL(ServerConfig.eventLogURL));
-        
         // now initialize our runtime configuration, postponing the remaining server initialization
         // until our configuration objects are available
         RuntimeConfig.init(omgr, confReg);
@@ -177,8 +180,6 @@ public abstract class MsoyBaseServer extends WhirledServer
                         "[where=" + pmgr.where() + "].", e);
             }
         }
-
-        MsoyEventLogger.deinit();
     }
 
     @Override // from PresentsServer

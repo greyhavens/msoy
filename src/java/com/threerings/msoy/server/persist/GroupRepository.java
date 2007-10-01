@@ -51,9 +51,11 @@ public class GroupRepository extends DepotRepository
     {
     }
 
-    public GroupRepository (PersistenceContext ctx)
+    public GroupRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
     {
         super(ctx);
+
+        _eventLog = eventLog;
 
         _tagRepo = new TagRepository(_ctx) {
             protected TagRecord createTagRecord () {
@@ -212,7 +214,7 @@ public class GroupRepository extends DepotRepository
         insert(record);
         updateMemberCount(groupId);
 
-        MsoyEventLogger.groupJoined(memberId, groupId);
+        _eventLog.groupJoined(memberId, groupId);
     }
 
     /**
@@ -231,7 +233,7 @@ public class GroupRepository extends DepotRepository
                 "Couldn't find group membership to modify [groupId=" + groupId +
                 "memberId=" + memberId + "]");
         } else {
-            MsoyEventLogger.groupRankChange(memberId, groupId, newRank);
+            _eventLog.groupRankChange(memberId, groupId, newRank);
         }
     }
 
@@ -257,7 +259,7 @@ public class GroupRepository extends DepotRepository
         Key key = GroupMembershipRecord.getKey(memberId, groupId);
         int rows = deleteAll(GroupMembershipRecord.class, key, key);
         updateMemberCount(groupId);
-        MsoyEventLogger.groupLeft(memberId, groupId);
+        _eventLog.groupLeft(memberId, groupId);
         return rows > 0;
     }
 
@@ -328,4 +330,7 @@ public class GroupRepository extends DepotRepository
 
     /** Used to manage our group tags. */
     protected TagRepository _tagRepo;
+
+    /** Reference to the event logger. */
+    protected MsoyEventLogger _eventLog;
 }
