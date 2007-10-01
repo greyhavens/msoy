@@ -11,13 +11,19 @@ import com.threerings.io.Streamable;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
+/**
+ * Contains a single state datum for a member for a game.
+ */
 public class GameState
     implements Streamable, DSet_Entry
 {
+    /** The key for this state datum. */
     public var key :String;
 
+    /** The actual contents of the state datum. */
     public var value :ByteArray;
 
+    /** Whether or not this datum will be persistently stored between sessions. */
     public var persistent :Boolean;
 
     // from DSet_Entry
@@ -41,5 +47,6 @@ public class GameState
         out.writeField(value);
         out.writeBoolean(persistent);
     }
+
 }
 }

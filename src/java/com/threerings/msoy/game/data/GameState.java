@@ -11,13 +11,13 @@ import com.threerings.presents.dobj.DSet;
 public class GameState
     implements DSet.Entry, Comparable<GameState>
 {
-    /** The key for this memory datum. */
+    /** The key for this state datum. */
     public String key;
 
-    /** The actual contents of the memory datum. */
+    /** The actual contents of the state datum. */
     public byte[] value;
 
-    /** Whether or not this datum should be persistently stored between sessions. */
+    /** Whether or not this datum will be persistently stored between sessions. */
     public boolean persistent;
 
     /** Used to track whether the memory is modified and should be flushed when the game is
