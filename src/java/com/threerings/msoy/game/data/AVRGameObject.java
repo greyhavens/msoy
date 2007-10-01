@@ -27,6 +27,9 @@ public class AVRGameObject extends DObject
 
     /** The field name of the <code>players</code> field. */
     public static final String PLAYERS = "players";
+
+    /** The field name of the <code>avrgService</code> field. */
+    public static final String AVRG_SERVICE = "avrgService";
     // AUTO-GENERATED: FIELDS END
 
     /** The defining media of the AVRGame. */
@@ -44,6 +47,9 @@ public class AVRGameObject extends DObject
      * Contains an {@link OccupantInfo} record for each player of this game.
      */
     public DSet<OccupantInfo> players = new DSet<OccupantInfo>();
+
+    /** Used to communicate with the AVRGameManager. */
+    public AVRGameMarshaller avrgService;
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -176,6 +182,22 @@ public class AVRGameObject extends DObject
         @SuppressWarnings("unchecked") DSet<com.threerings.crowd.data.OccupantInfo> clone =
             (value == null) ? null : value.typedClone();
         this.players = clone;
+    }
+
+    /**
+     * Requests that the <code>avrgService</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setAvrgService (AVRGameMarshaller value)
+    {
+        AVRGameMarshaller ovalue = this.avrgService;
+        requestAttributeChange(
+            AVRG_SERVICE, value, ovalue);
+        this.avrgService = value;
     }
     // AUTO-GENERATED: METHODS END
 }

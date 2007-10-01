@@ -6,6 +6,7 @@ package com.threerings.msoy.game.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.threerings.msoy.game.data.AVRGameMarshaller;
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -64,6 +65,9 @@ public class AVRGameManager
 
         // listen for gameObj.playerOids removals
         gameObj.addListener(this);
+
+        gameObj.setAvrgService((AVRGameMarshaller) MsoyGameServer.invmgr.registerDispatcher(
+            new AVRGameDispatcher(this)));
 
         gameObj.startTransaction();
         gameObj.setGameMedia(game.gameMedia);
