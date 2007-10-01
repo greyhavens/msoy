@@ -92,7 +92,7 @@ public abstract class Page
         return builder.toString();
     }
 
-    /** 
+    /**
      * Notes the history token for the current page so that it can be restored in the event that we
      * open a normal page and then later close it.
      *
@@ -219,11 +219,11 @@ public abstract class Page
      */
     protected void setContent (Widget content)
     {
-        setContentInternal(content, false, false);
+        setContent(content, false, false);
     }
 
     /**
-     * Clears out any existing content, creates a new Flash object from the definition, and 
+     * Clears out any existing content, creates a new Flash object from the definition, and
      * sets it as the new main page content. Returns the newly-created content as a widget.
      */
     protected HTML setFlashContent (String definition)
@@ -235,29 +235,26 @@ public abstract class Page
         // the Flash object definition.
         // Also see: WidgetUtil.embedFlashObject()
         HTML control = new HTML();
-        setContentInternal(control, true, false);
+        setContent(control, true, false);
         control.setHTML(definition);
         return control;
     }
-    
+
     /**
      * Clears out any existing content and sets the specified Java applet as the main page content.
      */
     protected void setJavaContent (Widget content)
     {
-        setContentInternal(content, false, true);
+        setContent(content, false, true);
     }
 
     /**
      * Clears out any existing content and sets the specified widget as the main page content.
      */
-    protected void setContentInternal (
-        Widget content, boolean contentIsFlash, boolean contentIsJava)
+    protected void setContent (Widget content, boolean contentIsFlash, boolean contentIsJava)
     {
         WorldClient.minimize();
-        String token = History.getToken();
-        // the whirledwide page has a flash embed in the menu area as well.
-        displayingFlash = contentIsFlash || "".equals(token) || "whirled-whirledwide".equals(token);
+        displayingFlash = contentIsFlash;
         displayingJava = contentIsJava;
         RootPanel.get("content").clear();
         // clear out any content height overrides
@@ -282,7 +279,7 @@ public abstract class Page
         RootPanel.get("content").setHeight(height);
     }
 
-    protected void createContentContainer () 
+    protected void createContentContainer ()
     {
         _content = new FlexTable();
         _content.setCellPadding(0);
@@ -309,7 +306,7 @@ public abstract class Page
         Window.setTitle(CShell.cmsgs.windowTitle(title));
     }
 
-    protected void setPageTabs (Widget tabs) 
+    protected void setPageTabs (Widget tabs)
     {
         if (_content == null) {
             createContentContainer();
