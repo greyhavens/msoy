@@ -15,6 +15,7 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
 /**
@@ -51,6 +52,14 @@ public class AVRGameLiaison extends GameLiaison
         }
 
         super.shutdown();
+    }
+
+    /**
+     * Returns the game object if we're currently in an AVRG, null otherwise.
+     */
+    public function getAVRGameObject () :AVRGameObject
+    {
+        return (_ctrl == null) ? null : _ctrl.getAVRGameObject();
     }
 
     /** The controller for the current world game. */

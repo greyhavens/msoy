@@ -63,6 +63,11 @@ public class AVRGameController extends Controller
         _gameObj = null;
     }
 
+    public function getAVRGameObject () :AVRGameObject
+    {
+        return _gameObj;
+    }
+
     protected function shutdown () :void
     {
         _subscriber.unsubscribe(_mctx.getDObjectManager());

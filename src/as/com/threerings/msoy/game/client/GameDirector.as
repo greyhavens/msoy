@@ -23,6 +23,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
 
+import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.GameCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -137,6 +138,17 @@ public class GameDirector extends BasicDirector
     {
         if (_liaison != null && _liaison is LobbyGameLiaison) {
             return LobbyGameLiaison(_liaison).getGameConfig();
+        }
+        return null;
+    }
+
+    /**
+     * Returns the game object if we're currently in an AVRG, null otherwise.
+     */
+    public function getAVRGameObject () :AVRGameObject
+    {
+        if (_liaison != null && _liaison is AVRGameObject) {
+            return AVRGameLiaison(_liaison).getAVRGameObject();
         }
         return null;
     }
