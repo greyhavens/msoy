@@ -23,6 +23,7 @@ import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.web.data.MailFolder;
 
 import static com.threerings.msoy.Log.log;
@@ -139,6 +140,8 @@ public class MailRepository extends DepotRepository
         record.folderId = MailFolder.INBOX_FOLDER_ID;
         record.unread = true;
         fileMessage(record);
+
+        MsoyEventLogger.mailSent(record.senderId, record.recipientId, record.payloadType);
     }
 
     /**

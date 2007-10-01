@@ -47,6 +47,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.web.data.Invitation;
 
 import static com.threerings.msoy.Log.log;
@@ -743,6 +744,7 @@ public class MemberRepository extends DepotRepository
             rec.inviterId = memberId;
             rec.inviteeId = otherId;
             insert(rec);
+            MsoyEventLogger.friendAdded(memberId, otherId);
         }
 
         return other.getName();
@@ -762,6 +764,8 @@ public class MemberRepository extends DepotRepository
 
         key = FriendRecord.getKey(otherId, memberId);
         deleteAll(FriendRecord.class, key, key);
+
+        MsoyEventLogger.friendRemoved(memberId, otherId);
     }
 
     /**

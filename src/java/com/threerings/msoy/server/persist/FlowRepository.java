@@ -31,6 +31,7 @@ import com.samskivert.util.IntIntMap;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 
 import static com.threerings.msoy.Log.log;
@@ -300,12 +301,18 @@ public class FlowRepository extends DepotRepository
         // record the associated user action
         recordUserAction(memberId, action, details);
 
+        // TODO: can we magically get the updated value from the database? stored procedure?
+        MemberFlowRecord updatedFlow = loadMemberFlow(memberId);
+        
         // log this to the audit log as well
+        int signedAmount = (grant ? amount : -amount);
+        MsoyEventLogger.flowTransaction(
+            memberId, action.getNumber(), signedAmount, updatedFlow.flow, details);
+        // todo: remove old logging functions:
         String loginfo = action + (details != null ? " " + details : "");
         MsoyServer.flowLog(memberId + (grant ? " G " : " S ") + amount + " " + loginfo);
-
-        // TODO: can we magically get the updated value from the database? stored procedure?
-        return loadMemberFlow(memberId);
+        
+        return updatedFlow;
     }
 
     /**

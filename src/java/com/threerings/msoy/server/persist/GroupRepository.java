@@ -31,6 +31,7 @@ import com.samskivert.jdbc.depot.operator.Logic.*;
 
 import com.samskivert.util.IntListUtil;
 
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.web.data.Group;
@@ -210,6 +211,8 @@ public class GroupRepository extends DepotRepository
         record.rankAssigned = new Timestamp(System.currentTimeMillis());
         insert(record);
         updateMemberCount(groupId);
+
+        MsoyEventLogger.groupJoined(memberId, groupId);
     }
 
     /**
@@ -227,6 +230,8 @@ public class GroupRepository extends DepotRepository
             throw new PersistenceException(
                 "Couldn't find group membership to modify [groupId=" + groupId +
                 "memberId=" + memberId + "]");
+        } else {
+            MsoyEventLogger.groupRankChange(memberId, groupId, newRank);
         }
     }
 
@@ -252,6 +257,7 @@ public class GroupRepository extends DepotRepository
         Key key = GroupMembershipRecord.getKey(memberId, groupId);
         int rows = deleteAll(GroupMembershipRecord.class, key, key);
         updateMemberCount(groupId);
+        MsoyEventLogger.groupLeft(memberId, groupId);
         return rows > 0;
     }
 

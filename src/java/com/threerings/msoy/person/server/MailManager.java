@@ -190,9 +190,6 @@ public class MailManager
                         ctx.put("server_url", ServerConfig.getServerURL());
                     }
                 });
-
-                MsoyServer.eventLog.mailSent(
-                    senderId, recipientId, (payload != null) ? payload.getType() : 0);
             }
 
             protected MemberRecord _sendrec, _reciprec;
