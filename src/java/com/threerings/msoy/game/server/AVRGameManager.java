@@ -81,7 +81,7 @@ public class AVRGameManager
         // flush any modified memory records to the database
         final List<GameStateRecord> recs = new ArrayList<GameStateRecord>();
         for (GameState entry : _gameObj.state) {
-            if (entry.modified) {
+            if (entry.persistent && entry.modified) {
                 recs.add(new GameStateRecord(_gameId, entry));
             }
         }
@@ -219,11 +219,11 @@ public class AVRGameManager
     }
 
     // from AVRGameProvider
-    public void setProperty (ClientObject caller, String key, byte[] value,
+    public void setProperty (ClientObject caller, String key, byte[] value, boolean persistent,
                              ConfirmListener listener)
         throws InvocationException
     {
-        GameState entry = new GameState(key, value);
+        GameState entry = new GameState(key, value, persistent);
 
         // TODO: verify that the memory does not exceed legal size
 
@@ -240,17 +240,17 @@ public class AVRGameManager
     public void deleteProperty (ClientObject caller, String key, ConfirmListener listener)
         throws InvocationException
     {
-        setProperty(caller, key, null, listener);
+        setProperty(caller, key, null, true, listener);
     }
 
     // from AVRGameProvider
     public void setPlayerProperty (ClientObject caller, String key, byte[] value,
-                                   ConfirmListener listener)
+                                   boolean persistent, ConfirmListener listener)
         throws InvocationException
     {
         PlayerObject player = (PlayerObject) caller;
 
-        GameState entry = new GameState(key, value);
+        GameState entry = new GameState(key, value, persistent);
 
         // TODO: verify that the memory does not exceed legal size
 
@@ -267,7 +267,7 @@ public class AVRGameManager
     public void deletePlayerProperty (ClientObject caller, String key, ConfirmListener listener)
         throws InvocationException
     {
-        setPlayerProperty(caller, key, null, listener);
+        setPlayerProperty(caller, key, null, true, listener);
     }
 
     public void addPlayer (PlayerObject player, List<PlayerGameStateRecord> stateRecords)
@@ -302,7 +302,7 @@ public class AVRGameManager
         // flush any modified memory records to the database
         final List<PlayerGameStateRecord> recs = new ArrayList<PlayerGameStateRecord>();
         for (GameState entry : player.gameState) {
-            if (entry.modified) {
+            if (entry.persistent && entry.modified) {
                 recs.add(new PlayerGameStateRecord(_gameId, player.getMemberId(), entry));
             }
         }

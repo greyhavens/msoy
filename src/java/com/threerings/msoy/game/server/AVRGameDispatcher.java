@@ -62,14 +62,14 @@ public class AVRGameDispatcher extends InvocationDispatcher
         case AVRGameMarshaller.SET_PLAYER_PROPERTY:
             ((AVRGameProvider)provider).setPlayerProperty(
                 source,
-                (String)args[0], (byte[])args[1], (InvocationService.ConfirmListener)args[2]
+                (String)args[0], (byte[])args[1], ((Boolean)args[2]).booleanValue(), (InvocationService.ConfirmListener)args[3]
             );
             return;
 
         case AVRGameMarshaller.SET_PROPERTY:
             ((AVRGameProvider)provider).setProperty(
                 source,
-                (String)args[0], (byte[])args[1], (InvocationService.ConfirmListener)args[2]
+                (String)args[0], (byte[])args[1], ((Boolean)args[2]).booleanValue(), (InvocationService.ConfirmListener)args[3]
             );
             return;
 

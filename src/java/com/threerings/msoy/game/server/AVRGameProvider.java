@@ -36,13 +36,13 @@ public interface AVRGameProvider extends InvocationProvider
     /**
      * Handles a {@link AVRGameService#setPlayerProperty} request.
      */
-    public void setPlayerProperty (ClientObject caller, String arg1, byte[] arg2, InvocationService.ConfirmListener arg3)
+    public void setPlayerProperty (ClientObject caller, String arg1, byte[] arg2, boolean arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
 
     /**
      * Handles a {@link AVRGameService#setProperty} request.
      */
-    public void setProperty (ClientObject caller, String arg1, byte[] arg2, InvocationService.ConfirmListener arg3)
+    public void setProperty (ClientObject caller, String arg1, byte[] arg2, boolean arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
 
     /**

@@ -12,13 +12,13 @@ import com.threerings.presents.client.InvocationService;
 public interface AVRGameService extends InvocationService
 {
     public void setProperty (
-        Client client, String key, byte[] value, ConfirmListener listener);
+        Client client, String key, byte[] value, boolean persistent, ConfirmListener listener);
 
     public void deleteProperty (
         Client client, String key, ConfirmListener listener);
 
     public void setPlayerProperty (
-        Client client, String key, byte[] value, ConfirmListener listener);
+        Client client, String key, byte[] value, boolean persistent, ConfirmListener listener);
 
     public void deletePlayerProperty (
         Client client, String key, ConfirmListener listener);

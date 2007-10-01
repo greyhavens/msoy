@@ -67,12 +67,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static const SET_PLAYER_PROPERTY :int = 4;
 
     // from interface AVRGameService
-    public function setPlayerProperty (arg1 :Client, arg2 :String, arg3 :ByteArray, arg4 :InvocationService_ConfirmListener) :void
+    public function setPlayerProperty (arg1 :Client, arg2 :String, arg3 :ByteArray, arg4 :Boolean, arg5 :InvocationService_ConfirmListener) :void
     {
-        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener4.listener = arg4;
+        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, SET_PLAYER_PROPERTY, [
-            arg2, arg3, listener4
+            arg2, arg3, langBoolean.valueOf(arg4), listener5
         ]);
     }
 
@@ -80,12 +80,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static const SET_PROPERTY :int = 5;
 
     // from interface AVRGameService
-    public function setProperty (arg1 :Client, arg2 :String, arg3 :ByteArray, arg4 :InvocationService_ConfirmListener) :void
+    public function setProperty (arg1 :Client, arg2 :String, arg3 :ByteArray, arg4 :Boolean, arg5 :InvocationService_ConfirmListener) :void
     {
-        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener4.listener = arg4;
+        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, SET_PROPERTY, [
-            arg2, arg3, listener4
+            arg2, arg3, langBoolean.valueOf(arg4), listener5
         ]);
     }
 

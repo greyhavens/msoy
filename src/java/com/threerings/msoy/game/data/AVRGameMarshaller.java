@@ -62,12 +62,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static final int SET_PLAYER_PROPERTY = 4;
 
     // from interface AVRGameService
-    public void setPlayerProperty (Client arg1, String arg2, byte[] arg3, InvocationService.ConfirmListener arg4)
+    public void setPlayerProperty (Client arg1, String arg2, byte[] arg3, boolean arg4, InvocationService.ConfirmListener arg5)
     {
-        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
-        listener4.listener = arg4;
+        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, SET_PLAYER_PROPERTY, new Object[] {
-            arg2, arg3, listener4
+            arg2, arg3, Boolean.valueOf(arg4), listener5
         });
     }
 
@@ -75,12 +75,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static final int SET_PROPERTY = 5;
 
     // from interface AVRGameService
-    public void setProperty (Client arg1, String arg2, byte[] arg3, InvocationService.ConfirmListener arg4)
+    public void setProperty (Client arg1, String arg2, byte[] arg3, boolean arg4, InvocationService.ConfirmListener arg5)
     {
-        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
-        listener4.listener = arg4;
+        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, SET_PROPERTY, new Object[] {
-            arg2, arg3, listener4
+            arg2, arg3, Boolean.valueOf(arg4), listener5
         });
     }
 

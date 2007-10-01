@@ -18,6 +18,8 @@ public class GameState
 
     public var value :ByteArray;
 
+    public var persistent :Boolean;
+
     // from DSet_Entry
     public function getKey () :Object
     {
@@ -29,6 +31,7 @@ public class GameState
     {
         key = ins.readField(String) as String;
         value = ins.readField(ByteArray) as ByteArray;
+        persistent = ins.readBoolean();
     }
 
     // from interface Streamable
@@ -36,6 +39,7 @@ public class GameState
     {
         out.writeField(key);
         out.writeField(value);
+        out.writeBoolean(persistent);
     }
 }
 }

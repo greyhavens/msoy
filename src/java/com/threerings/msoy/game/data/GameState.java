@@ -17,6 +17,9 @@ public class GameState
     /** The actual contents of the memory datum. */
     public byte[] value;
 
+    /** Whether or not this datum should be persistently stored between sessions. */
+    public boolean persistent;
+
     /** Used to track whether the memory is modified and should be flushed when the game is
      * unloaded. */
     public transient boolean modified;
@@ -25,10 +28,11 @@ public class GameState
     {
     }
 
-    public GameState (String key, byte[] value)
+    public GameState (String key, byte[] value, boolean persistent)
     {
         this.key = key;
         this.value = value;
+        this.persistent = persistent;
     }
 
     /**

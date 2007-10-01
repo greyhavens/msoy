@@ -76,7 +76,7 @@ public class GameStateRecord extends PersistentRecord
      */
     public GameState toEntry ()
     {
-        return new GameState(datumKey, datumValue);
+        return new GameState(datumKey, datumValue, true);
     }
 
     // AUTO-GENERATED: METHODS START
