@@ -109,7 +109,7 @@ class AVRGamePanel extends MediaContainer
     {
         _gameObj = gameObj;
         setMedia(gameObj.gameMedia.getMediaPath());
-        _backend = new AVRGameControlBackend(_mctx, _gameObj, _ctrl);
+        _backend = new AVRGameControlBackend(_mctx, _gctx, _gameObj, _ctrl);
         _backend.init(Loader(_media));
     }
 
