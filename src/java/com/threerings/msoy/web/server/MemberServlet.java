@@ -387,12 +387,15 @@ public class MemberServlet extends MsoyServiceServlet
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 try {
-                    // TODO: do this in the popular places snapshot
                     final ArrayList<MemberCard> people = new ArrayList<MemberCard>();
                     MsoyServer.peerMan.applyToNodes(new PeerManager.Operation() {
                         public void apply (NodeObject nodeobj) {
                             MsoyNodeObject mnobj = (MsoyNodeObject) nodeobj;
                             for (MemberLocation memberLoc : mnobj.memberLocs) {
+                                if (memberLoc.memberId == MemberName.GUEST_ID) {
+                                    // don't include guests.
+                                    continue;
+                                }
                                 MemberCard member = new MemberCard();
                                 // card details get filled in back on the servlet thread
                                 member.name = new MemberName("", memberLoc.memberId);
@@ -418,11 +421,6 @@ public class MemberServlet extends MsoyServiceServlet
             for (MemberCard card : whirledPeople) {
                 MemberNameRecord name =
                     MsoyServer.memberRepo.loadMemberName(card.name.getMemberId());
-                if (name == null) {
-                    log.warning("Retrieved null MemberNameRecord for MemberCard member [" + 
-                        card.name.getMemberId() + "]");
-                    continue;
-                }
                 card.name = name.toMemberName();
                 ProfileRecord profile = 
                     MsoyServer.profileRepo.loadProfile(card.name.getMemberId());
