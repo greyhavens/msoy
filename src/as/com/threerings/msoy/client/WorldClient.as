@@ -183,7 +183,7 @@ public class WorldClient extends BaseClient
     public function restoreClient () :void
     {
         try {
-            if (ExternalInterface.available && !_embedded) {
+            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
                 ExternalInterface.call("restoreClient");
             }
         } catch (err :Error) {
@@ -197,7 +197,7 @@ public class WorldClient extends BaseClient
     public function closeClient () :void
     {
         try {
-            if (ExternalInterface.available && !_embedded) {
+            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
                 ExternalInterface.call("clearClient");
             }
         } catch (err :Error) {
@@ -211,7 +211,7 @@ public class WorldClient extends BaseClient
     public function setSeparator (x :int) :void
     {
         try {
-            if (ExternalInterface.available && !_embedded) {
+            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
                 ExternalInterface.call("setSeparator", x);
             }
         } catch (err :Error) {
@@ -225,7 +225,7 @@ public class WorldClient extends BaseClient
     public function clearSeparator () :void
     {
         try {
-            if (ExternalInterface.available && !_embedded) {
+            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
                 ExternalInterface.call("clearSeparator");
             }
         } catch (err :Error) {
@@ -239,7 +239,7 @@ public class WorldClient extends BaseClient
     public function setWindowTitle (title :String) :void
     {
         try {
-            if (ExternalInterface.available && !_embedded) {
+            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
                 ExternalInterface.call("setWindowTitle", title);
             }
         } catch (err :Error) {
@@ -251,7 +251,7 @@ public class WorldClient extends BaseClient
     override public function gotClientObject (clobj :ClientObject) :void
     {
         super.gotClientObject(clobj);
-        if (clobj is MemberObject && !_embedded) {
+        if (clobj is MemberObject && !_embedded && !_featuredPlaceView) {
             var member :MemberObject = clobj as MemberObject;
             member.addListener(new AvatarUpdateNotifier());
         }

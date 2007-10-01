@@ -159,16 +159,18 @@ public /*abstract*/ class BaseClient extends Client
         // set up our logging targets
         LoggingTargets.configureLogging(_ctx);
 
-        // listen for flow and gold updates
-        _user = (clobj as MemberObject);
-        var updater :StatusUpdater = new StatusUpdater(this);
-        _user.addListener(updater);
+        if (!_featuredPlaceView) {
+            // listen for flow and gold updates
+            _user = (clobj as MemberObject);
+            var updater :StatusUpdater = new StatusUpdater(this);
+            _user.addListener(updater);
 
-        // configure our levels to start
-        updater.newLevel(_user.level);
-        // updater.newGold(_user.gold);
-        updater.newFlow(_user.flow);
-        updater.newMail(_user.hasNewMail);
+            // configure our levels to start
+            updater.newLevel(_user.level);
+            // updater.newGold(_user.gold);
+            updater.newFlow(_user.flow);
+            updater.newMail(_user.hasNewMail);
+        }
     }
 
     /**
