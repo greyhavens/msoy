@@ -119,6 +119,7 @@ public abstract class ItemEditor extends BorderedDialog
                 _item.name = text;
             }
         }));
+        _name.setMaxLength(Item.MAX_NAME_LENGTH);
 
         populateInfoTab(info);
 

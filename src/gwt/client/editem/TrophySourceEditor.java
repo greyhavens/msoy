@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -43,6 +44,7 @@ public class TrophySourceEditor extends ItemEditor
                 _tsource.ident = text;
             }
         }));
+        _ident.setMaxLength(Game.MAX_IDENT_LENGTH);
         addInfoTip(info, CEditem.emsgs.trophyIdentTip());
 
         // we don't call super because we don't want a description

@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -41,6 +42,7 @@ public class ItemPackEditor extends ItemEditor
                 _pack.ident = text;
             }
         }));
+        _ident.setMaxLength(Game.MAX_IDENT_LENGTH);
         addInfoTip(info, CEditem.emsgs.packIdentTip());
 
         addInfoTip(info, CEditem.emsgs.ipackPremiumTip());
