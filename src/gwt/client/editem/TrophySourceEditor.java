@@ -24,6 +24,7 @@ public class TrophySourceEditor extends ItemEditor
     {
         super.setItem(item);
         _tsource = (TrophySource)item;
+        safeSetText(_ident, _tsource.ident);
     }
 
     // @Override from ItemEditor
@@ -37,7 +38,7 @@ public class TrophySourceEditor extends ItemEditor
     {
         addInfoTip(info, CEditem.emsgs.trophyNameTip());
 
-        addInfoRow(info, CEditem.emsgs.trophyIdent(), bind(_name = new TextBox(), new Binder() {
+        addInfoRow(info, CEditem.emsgs.trophyIdent(), bind(_ident = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _tsource.ident = text;
             }
@@ -73,4 +74,5 @@ public class TrophySourceEditor extends ItemEditor
     }
 
     protected TrophySource _tsource;
+    protected TextBox _ident;
 }

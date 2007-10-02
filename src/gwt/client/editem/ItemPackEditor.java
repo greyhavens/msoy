@@ -24,6 +24,7 @@ public class ItemPackEditor extends ItemEditor
     {
         super.setItem(item);
         _pack = (ItemPack)item;
+        safeSetText(_ident, _pack.ident);
     }
 
     // @Override from ItemEditor
@@ -35,7 +36,7 @@ public class ItemPackEditor extends ItemEditor
     // @Override // from ItemEditor
     protected void populateInfoTab (FlexTable info)
     {
-        addInfoRow(info, CEditem.emsgs.packIdent(), bind(_name = new TextBox(), new Binder() {
+        addInfoRow(info, CEditem.emsgs.packIdent(), bind(_ident = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _pack.ident = text;
             }
@@ -63,4 +64,5 @@ public class ItemPackEditor extends ItemEditor
     }
 
     protected ItemPack _pack;
+    protected TextBox _ident;
 }

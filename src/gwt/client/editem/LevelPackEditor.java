@@ -25,6 +25,7 @@ public class LevelPackEditor extends ItemEditor
     {
         super.setItem(item);
         _pack = (LevelPack)item;
+        safeSetText(_ident, _pack.ident);
         _premium.setChecked(_pack.premium);
     }
 
@@ -37,7 +38,7 @@ public class LevelPackEditor extends ItemEditor
     // @Override // from ItemEditor
     protected void populateInfoTab (FlexTable info)
     {
-        addInfoRow(info, CEditem.emsgs.packIdent(), bind(_name = new TextBox(), new Binder() {
+        addInfoRow(info, CEditem.emsgs.packIdent(), bind(_ident = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _pack.ident = text;
             }
@@ -74,5 +75,6 @@ public class LevelPackEditor extends ItemEditor
     }
 
     protected LevelPack _pack;
+    protected TextBox _ident;
     protected CheckBox _premium;
 }

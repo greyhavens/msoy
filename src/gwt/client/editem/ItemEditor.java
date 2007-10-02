@@ -172,12 +172,8 @@ public abstract class ItemEditor extends BorderedDialog
                         CEditem.emsgs.editorUploadTitle() : CEditem.emsgs.editorEditTitle());
         _esubmit.setText(CEditem.emsgs.editorSave());
 
-        if (_item.name != null) {
-            _name.setText(_item.name);
-        }
-        if (_item.description != null && _description != null) {
-            _description.setText(_item.description);
-        }
+        safeSetText(_name, _item.name);
+        safeSetText(_description, _item.description);
 
         recheckFurniMedia();
         recheckThumbMedia();
@@ -278,6 +274,13 @@ public abstract class ItemEditor extends BorderedDialog
         _description.setCharacterWidth(40);
         _description.setVisibleLines(3);
         addInfoTip(info, CEditem.emsgs.editorDescripTip());
+    }
+
+    protected void safeSetText (TextBoxBase box, String value)
+    {
+        if (box != null && value != null) {
+            box.setText(value);
+        }
     }
 
     /**
