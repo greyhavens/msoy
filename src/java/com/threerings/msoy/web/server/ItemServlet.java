@@ -91,6 +91,7 @@ public class ItemServlet extends MsoyServiceServlet
         // configure the item's creator and owner
         item.creatorId = memrec.memberId;
         item.ownerId = memrec.memberId;
+        item.suiteId = suiteId;
 
         // write the item to the database
         final ItemRecord record = ItemRecord.newRecord(item);
