@@ -116,6 +116,13 @@ public class GameDirector extends BasicDirector
         _liaison = new AVRGameLiaison(_mctx, gameId);
     }
 
+    public function leaveAVRGame () :void
+    {
+        if (_liaison != null && _liaison is AVRGameLiaison) {
+            _liaison.shutdown();
+        }
+    }
+
     /**
      * Requests that we move to the specified game location.
      */

@@ -528,10 +528,7 @@ public class MsoyController extends Controller
      */
     public function handleLeaveAVRGame () :void
     {
-//        var wgsvc :AVRGameService =
-//            (_ctx.getClient().requireService(AVRGameService) as AVRGameService);
-//        wgsvc.leaveAVRGame(_ctx.getClient(),
-//             new ReportingListener(_ctx, MsoyCodes.GAME_MSGS, "e.leave_world_game_failed"));
+        _ctx.getGameDirector().leaveAVRGame();
     }
 
     /**

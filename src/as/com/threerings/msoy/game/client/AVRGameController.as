@@ -36,6 +36,8 @@ public class AVRGameController extends Controller
 
         _panel = new AVRGamePanel(_mctx, _gctx, this);
         setControlledPanel(_panel);
+
+        _mctx.getTopPanel().setBottomPanel(_panel);
     }
 
     public function forceShutdown () :void
@@ -47,7 +49,7 @@ public class AVRGameController extends Controller
     public function objectAvailable (obj :DObject) :void
     {
         if (_gameObj) {
-            log.warning("Already subscribed to object [gameObj=" + _gameObj + "]");
+            log.warning("Already subscribed to game object [gameObj=" + _gameObj + "]");
             return;
         }
 
@@ -71,6 +73,7 @@ public class AVRGameController extends Controller
     protected function shutdown () :void
     {
         _subscriber.unsubscribe(_mctx.getDObjectManager());
+        _mctx.getTopPanel().clearBottomPanel(_panel);
     }
 
     protected var _mctx :WorldContext;
@@ -83,22 +86,36 @@ public class AVRGameController extends Controller
 
 import flash.display.Loader;
 
-import com.threerings.flash.MediaContainer;
+import mx.containers.HBox;
 
-import com.threerings.msoy.client.WorldContext;
+import com.threerings.flash.MediaContainer;
+import com.threerings.flex.CommandButton;
+
 import com.threerings.msoy.client.ControlBackend;
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.game.client.AVRGameControlBackend;
 import com.threerings.msoy.game.client.AVRGameController;
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.AVRGameObject;
 
-class AVRGamePanel extends MediaContainer
+class AVRGamePanel extends HBox
 {
     public function AVRGamePanel (
         mctx :WorldContext, gctx :GameContext, ctrl :AVRGameController)
     {
-        super(null);
+        super();
+
+        _mediaHolder = new MediaContainer();
+        addChild(_mediaHolder);
+
+        // TODO: A nice wee X
+        var quit :CommandButton = new CommandButton(MsoyController.LEAVE_AVR_GAME);
+        quit.label = Msgs.GAME.get("b.leave_world_game");
+        this.addChild(quit);
+        this.height = 100;
 
         _mctx = mctx;
         _gctx = gctx;
@@ -108,14 +125,15 @@ class AVRGamePanel extends MediaContainer
     public function init (gameObj :AVRGameObject) :void
     {
         _gameObj = gameObj;
-        setMedia(gameObj.gameMedia.getMediaPath());
+        _mediaHolder.setMedia(gameObj.gameMedia.getMediaPath());
         _backend = new AVRGameControlBackend(_mctx, _gctx, _gameObj, _ctrl);
-        _backend.init(Loader(_media));
+        _backend.init(Loader(_mediaHolder.getMedia()));
     }
 
     protected var _mctx :WorldContext;
     protected var _gctx :GameContext;
     protected var _ctrl :AVRGameController;
+    protected var _mediaHolder :MediaContainer;
     protected var _gameObj :AVRGameObject;
     protected var _backend :ControlBackend;
 }
