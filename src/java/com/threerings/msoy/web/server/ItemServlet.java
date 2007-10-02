@@ -81,11 +81,6 @@ public class ItemServlet extends MsoyServiceServlet
                             ", parent=" + prec + ", item=" + item + "].");
                 throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
             }
-            if (prec.catalogId != 0) {
-                log.warning("Requested to make item with listed parent [who=" + memrec.who() +
-                            ", parent=" + prec + ", item=" + item + "].");
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
-            }
             // if we made it this far, we can finally assign the suite id; as this is a mutable
             // item and a mutable parent, the suite id is the item id of the parent
             suiteId = prec.itemId;
