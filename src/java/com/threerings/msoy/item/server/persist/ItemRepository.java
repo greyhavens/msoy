@@ -51,7 +51,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
-import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
@@ -123,10 +123,11 @@ public abstract class ItemRepository<
     /**
      * Configures this repository with its item type and the memory repository.
      */
-    public void init (byte itemType, MemoryRepository memRepo)
+    public void init (byte itemType, MemoryRepository memRepo, MsoyEventLogger eventLog)
     {
         _itemType = itemType;
         _memRepo = memRepo;
+        _eventLog = eventLog;
     }
 
     /**
@@ -629,6 +630,10 @@ public abstract class ItemRepository<
         noteListing(record.listedItemId, record.catalogId);
         noteListing(originalItemId, record.catalogId);
 
+        _eventLog.itemListedInCatalog(
+            listItem.creatorId, _itemType, listItem.itemId,
+            flowCost, goldCost, pricing, salesTarget);
+
         return record;
     }
 
@@ -692,6 +697,8 @@ public abstract class ItemRepository<
 
         ItemRecord newClone = (ItemRecord) parent.clone();
         newClone.initFromClone(record);
+
+        _eventLog.itemPurchased(newOwnerId, _itemType, newClone.itemId, flowPaid, goldPaid);
         return newClone;
     }
 
@@ -1002,6 +1009,9 @@ public abstract class ItemRepository<
 
     /** We call into this to delete item memory if we're an item that has memory. */
     protected MemoryRepository _memRepo;
+
+    /** Reference to the event logger. */
+    protected MsoyEventLogger _eventLog;
 
     /** The minimum number of purchases before we'll start attenuating price based on returns. */
     protected static final int MIN_ATTEN_PURCHASES = 5;

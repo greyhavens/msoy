@@ -37,6 +37,7 @@ import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -108,8 +109,10 @@ public class ItemManager
      * Initializes the item manager, which will establish database connections for all of its item
      * repositories.
      */
-    public void init (PersistenceContext ctx) throws PersistenceException
+    public void init (PersistenceContext ctx, MsoyEventLogger eventLog) throws PersistenceException
     {
+        _eventLog = eventLog;
+        
         // create our various repositories
         registerRepository(Item.AUDIO, new AudioRepository(ctx));
         registerRepository(Item.AVATAR, _avatarRepo = new AvatarRepository(ctx));
@@ -1173,7 +1176,7 @@ public class ItemManager
     protected void registerRepository (byte itemType, ItemRepository repo)
     {
         _repos.put(itemType, repo);
-        repo.init(itemType, MsoyServer.memoryRepo);
+        repo.init(itemType, MsoyServer.memoryRepo, _eventLog);
     }
 
     /**
@@ -1361,4 +1364,7 @@ public class ItemManager
 
     /** The special repository that stores item lists. */
     protected ItemListRepository _listRepo;
+
+    /** Reference to the event logger. */
+    protected MsoyEventLogger _eventLog;
 }

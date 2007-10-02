@@ -32,20 +32,36 @@ public class MsoyEventLogger
     {
         Log.log.info("Events will be logged to " + serverURL);
         
-        // _storage = new EchoStorage();
-        _storage = new NullStorage();
+        _storage = new EchoStorage();
+        // _storage = new NullStorage();
         // _storage = new ServerStorage(serverURL);
         
         _logger = new EventLogger("com.threerings.msoy", _storage, MSOY_SCHEMAS);
     }
 
-    /** Event: flow transation. */
+    /** Event: generic flow transaction. */
     public void flowTransaction (
         int playerId, int actionType, int flowDelta, int newTotal, String details)
     {
         post("FlowTransaction_test", now(), playerId, actionType, flowDelta, newTotal, details);
     }
+
+    /** Event: item purchase. */
+    public void itemPurchased (
+        int playerId, byte itemType, int itemId, int flowCost, int goldCost)
+    {
+        post("ItemPurchase_test", now(), playerId, itemType, itemId, flowCost, goldCost);
+    }
     
+    /** Event: item purchase. */
+    public void itemListedInCatalog (
+        int creatorId, byte itemType, int itemId, int flowCost, int goldCost,
+        int pricing, int salesTarget)
+    {
+        post("ItemCatalogListing_test", now(), creatorId, itemType, itemId,
+             flowCost, goldCost, pricing, salesTarget);
+    }
+
     /** Event: registered user logged in. */
     public void playerLoggedIn (int playerId, boolean firstLogin, String sessionToken)
     {
@@ -118,31 +134,42 @@ public class MsoyEventLogger
     protected static final EventSchema[] MSOY_SCHEMAS = new EventSchema[] {
         new EventSchema(
             "Login_test",
-            new String[] { "timestamp", "playerId",    "firstLogin",  "sessionToken" },
+            new String[] { "timestamp", "playerId",   "firstLogin",  "sessionToken"  },
             new Class[]  { Long.class,  Integer.class, Boolean.class, String.class   }),
         new EventSchema(
             "MailSent_test",
-            new String[] { "timestamp", "senderId",    "recipientId", "payloadId"    },
+            new String[] { "timestamp", "senderId",   "recipientId", "payloadId"     },
             new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class  }),
         new EventSchema(
             "FlowTransaction_test",
-            new String[] { "timestamp", "playerId",    "actionType",  "flowDelta",
-                              "newTotal",    "details" },
+            new String[] { "timestamp", "playerId",   "actionType",  "flowDelta",
+                              "newTotal",    "details"     },
             new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class,
-                           Integer.class, String.class }),
+                               Integer.class, String.class }),
+        new EventSchema(
+            "ItemPurchase_test",
+            new String[] { "timestamp", "playerId",   "itemType", "itemId",
+                           "flowCost",    "goldCost"     },
+            new Class[]  { Long.class,  Integer.class, Byte.class, Integer.class,
+                            Integer.class, Integer.class }),
+        new EventSchema(
+            "ItemCatalogListing_test",
+            new String[] { "timestamp", "creatorId",   "itemType", "itemId",
+                           "flowCost",    "goldCost",    "pricing",     "salesTarget"  },
+            new Class[]  { Long.class,   Integer.class, Byte.class, Integer.class,
+                           Integer.class,  Integer.class, Integer.class, Integer.class }),
         new EventSchema(
             "FriendListAction_test",
-            new String[] { "timestamp", "playerId",    "friendId",    "isAdded"      },
+            new String[] { "timestamp", "playerId",   "friendId",    "isAdded"       },
             new Class[]  { Long.class,  Integer.class, Integer.class, Boolean.class  }),
         new EventSchema(
             "GroupMembershipAction_test",
             new String[] { "timestamp", "playerId",    "groupId",     "isJoined"     },
-            new Class[]  { Long.class,   Integer.class, Integer.class, Boolean.class  }),
+            new Class[]  { Long.class,   Integer.class, Integer.class, Boolean.class }),
         new EventSchema(
             "GroupRankModification_test",
-            new String[] { "timestamp", "playerId",   "groupId",     "newRank"        },
-            new Class[]  { Long.class,  Integer.class, Integer.class, Byte.class       })
-
+            new String[] { "timestamp", "playerId",    "groupId",     "newRank"      },
+            new Class[]  { Long.class,   Integer.class, Integer.class, Byte.class    })
     };        
 
     /** Singleton reference to log storage. */
