@@ -65,6 +65,14 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     }
 
     // from interface WhirledGameProvider
+    public void awardTrophy (ClientObject caller, String ident, int occupant,
+                             InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        // TODO
+    }
+
+    // from interface WhirledGameProvider
     public void endGameWithScores (ClientObject caller, int[] playerOids, int[] scores,
                                    int payoutType, InvocationService.InvocationListener listener)
         throws InvocationException

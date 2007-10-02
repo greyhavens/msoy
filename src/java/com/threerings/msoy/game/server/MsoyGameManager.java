@@ -12,12 +12,15 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.ezgame.server.EZGameManager;
 import com.threerings.ezgame.server.GameCookieManager;
 
-import com.whirled.data.ItemInfo;
-import com.whirled.data.LevelInfo;
+import com.whirled.data.GameData;
+import com.whirled.data.ItemData;
+import com.whirled.data.LevelData;
+import com.whirled.data.TrophyData;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.TrophySource;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
@@ -36,22 +39,39 @@ public class MsoyGameManager extends EZGameManager
     /**
      * Called by the lobby manager once we're started to inform us of our level and item packs.
      */
-    public void setGameData (Game game, ArrayList<LevelPack> lpacks, ArrayList<ItemPack> ipacks)
-        // TODO: have lobby manager pass in info on per-player packs or have us do it?
+    public void setGameData (Game game, ArrayList<LevelPack> lpacks, ArrayList<ItemPack> ipacks,
+                             ArrayList<TrophySource> tsources)
     {
         MsoyGameObject gobj = (MsoyGameObject)_plobj;
 
-        LevelInfo[] linfo = new LevelInfo[lpacks.size()];
-        for (int ii = 0; ii < lpacks.size(); ii++) {
-            linfo[ii] = toLevelInfo(lpacks.get(ii));
+        // populate our game data information
+        ArrayList<GameData> gdata = new ArrayList<GameData>();
+        for (LevelPack pack : lpacks) {
+            LevelData data = new LevelData();
+            data.ident = pack.ident;
+            data.name = pack.name;
+            data.mediaURL = pack.getFurniMedia().getMediaPath();
+            data.premium = pack.premium;
+            gdata.add(data);
         }
-        gobj.setLevelPacks(linfo);
+        for (ItemPack pack : ipacks) {
+            ItemData data = new ItemData();
+            data.ident = pack.ident;
+            data.name = pack.name;
+            data.mediaURL = pack.getFurniMedia().getMediaPath();
+            gdata.add(data);
+        }
+        for (TrophySource source : tsources) {
+            TrophyData data = new TrophyData();
+            data.ident = source.ident;
+            data.name = source.name;
+            data.mediaURL = source.getThumbnailMedia().getMediaPath();
+            gdata.add(data);
+        }
+        gobj.setGameData(gdata.toArray(new GameData[gdata.size()]));
 
-        ItemInfo[] iinfo = new ItemInfo[ipacks.size()];
-        for (int ii = 0; ii < ipacks.size(); ii++) {
-            iinfo[ii] = toItemInfo(ipacks.get(ii));
-        }
-        gobj.setItemPacks(iinfo);
+        // keep the trophy source information around for later
+        _tsources = tsources;
     }
 
     @Override // from PlaceManager
@@ -77,24 +97,6 @@ public class MsoyGameManager extends EZGameManager
         return new GameCookieManager(MsoyGameServer.gameCookieRepo);
     }
 
-    protected LevelInfo toLevelInfo (LevelPack pack)
-    {
-        LevelInfo info = new LevelInfo();
-        info.ident = pack.ident;
-        info.name = pack.name;
-        info.mediaURL = pack.getFurniMedia().getMediaPath();
-        info.premium = pack.premium;
-        return info;
-    }
-
-    protected ItemInfo toItemInfo (ItemPack pack)
-    {
-        ItemInfo info = new ItemInfo();
-        info.ident = pack.ident;
-        info.name = pack.name;
-        info.mediaURL = pack.getFurniMedia().getMediaPath();
-        return info;
-    }
-
     protected WhirledGameDelegate _whirledDelegate;
+    protected ArrayList<TrophySource> _tsources;
 }

@@ -5,6 +5,7 @@ package com.threerings.msoy.game.data {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.TypedArray;
+import com.threerings.presents.dobj.DSet;
 
 import com.threerings.ezgame.data.EZGameObject;
 
@@ -31,11 +32,11 @@ public class MsoyGameObject extends EZGameObject
     /** The whirled game services. */
     public var whirledGameService :WhirledGameMarshaller;
 
-    /** The set of level packs available to this game. */
-    public var levelPacks :TypedArray /*LevelInfo*/;
+    /** The set of game data available to this game. */
+    public var gameData :TypedArray /*GameData*/;
 
-    /** The set of item packs available to this game. */
-    public var itemPacks :TypedArray /*ItemInfo*/;
+    /** Information on which players own which game data. */
+    public var ownershipData :DSet /*Ownership*/;
 
     // from interface WhirledGame
     public function getWhirledGameService () :WhirledGameMarshaller
@@ -44,21 +45,15 @@ public class MsoyGameObject extends EZGameObject
     }
 
     // from interface WhirledGame
-    public function getLevelPacks () :Array
+    public function getGameData () :Array
     {
-        return levelPacks;
+        return gameData;
     }
 
     // from interface WhirledGame
-    public function getItemPacks () :Array
+    public function getGameDataOwnership () :DSet
     {
-        return itemPacks;
-    }
-
-    // from interface WhirledGame
-    public function occupantOwnsItemPack (ident :String, occupant :int) :Boolean
-    {
-        return false; // TODO
+        return ownershipData;
     }
 
     override protected function readDefaultFields (ins :ObjectInputStream) :void
@@ -66,8 +61,8 @@ public class MsoyGameObject extends EZGameObject
         super.readDefaultFields(ins);
 
         whirledGameService = (ins.readObject() as WhirledGameMarshaller);
-        levelPacks = (ins.readObject() as TypedArray);
-        itemPacks = (ins.readObject() as TypedArray);
+        gameData = (ins.readObject() as TypedArray);
+        ownershipData = (ins.readObject() as DSet);
     }
 }
 }

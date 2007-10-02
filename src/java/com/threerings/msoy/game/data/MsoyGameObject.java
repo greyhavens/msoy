@@ -3,10 +3,12 @@
 
 package com.threerings.msoy.game.data;
 
+import com.threerings.presents.dobj.DSet;
+
 import com.threerings.ezgame.data.EZGameObject;
 
-import com.whirled.data.ItemInfo;
-import com.whirled.data.LevelInfo;
+import com.whirled.data.GameData;
+import com.whirled.data.Ownership;
 import com.whirled.data.WhirledGame;
 import com.whirled.data.WhirledGameMarshaller;
 
@@ -20,21 +22,21 @@ public class MsoyGameObject extends EZGameObject
     /** The field name of the <code>whirledGameService</code> field. */
     public static final String WHIRLED_GAME_SERVICE = "whirledGameService";
 
-    /** The field name of the <code>levelPacks</code> field. */
-    public static final String LEVEL_PACKS = "levelPacks";
+    /** The field name of the <code>gameData</code> field. */
+    public static final String GAME_DATA = "gameData";
 
-    /** The field name of the <code>itemPacks</code> field. */
-    public static final String ITEM_PACKS = "itemPacks";
+    /** The field name of the <code>ownershipData</code> field. */
+    public static final String OWNERSHIP_DATA = "ownershipData";
     // AUTO-GENERATED: FIELDS END
 
     /** The whirled game services. */
     public WhirledGameMarshaller whirledGameService;
 
-    /** The set of level packs available to this game. */
-    public LevelInfo[] levelPacks;
+    /** The various game data available to this game. */
+    public GameData[] gameData;
 
-    /** The set of item packs available to this game. */
-    public ItemInfo[] itemPacks;
+    /** Contains info on which player owns which game data. */
+    public DSet<Ownership> ownershipData;
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -54,69 +56,84 @@ public class MsoyGameObject extends EZGameObject
     }
 
     /**
-     * Requests that the <code>levelPacks</code> field be set to the
+     * Requests that the <code>gameData</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setLevelPacks (LevelInfo[] value)
+    public void setGameData (GameData[] value)
     {
-        LevelInfo[] ovalue = this.levelPacks;
+        GameData[] ovalue = this.gameData;
         requestAttributeChange(
-            LEVEL_PACKS, value, ovalue);
-        this.levelPacks = (value == null) ? null : (LevelInfo[])value.clone();
+            GAME_DATA, value, ovalue);
+        this.gameData = (value == null) ? null : (GameData[])value.clone();
     }
 
     /**
      * Requests that the <code>index</code>th element of
-     * <code>levelPacks</code> field be set to the specified value.
+     * <code>gameData</code> field be set to the specified value.
      * The local value will be updated immediately and an event will be
      * propagated through the system to notify all listeners that the
      * attribute did change. Proxied copies of this object (on clients)
      * will apply the value change when they received the attribute
      * changed notification.
      */
-    public void setLevelPacksAt (LevelInfo value, int index)
+    public void setGameDataAt (GameData value, int index)
     {
-        LevelInfo ovalue = this.levelPacks[index];
+        GameData ovalue = this.gameData[index];
         requestElementUpdate(
-            LEVEL_PACKS, index, value, ovalue);
-        this.levelPacks[index] = value;
+            GAME_DATA, index, value, ovalue);
+        this.gameData[index] = value;
     }
 
     /**
-     * Requests that the <code>itemPacks</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
+     * Requests that the specified entry be added to the
+     * <code>ownershipData</code> set. The set will not change until the event is
+     * actually propagated through the system.
      */
-    public void setItemPacks (ItemInfo[] value)
+    public void addToOwnershipData (Ownership elem)
     {
-        ItemInfo[] ovalue = this.itemPacks;
-        requestAttributeChange(
-            ITEM_PACKS, value, ovalue);
-        this.itemPacks = (value == null) ? null : (ItemInfo[])value.clone();
+        requestEntryAdd(OWNERSHIP_DATA, ownershipData, elem);
     }
 
     /**
-     * Requests that the <code>index</code>th element of
-     * <code>itemPacks</code> field be set to the specified value.
-     * The local value will be updated immediately and an event will be
-     * propagated through the system to notify all listeners that the
-     * attribute did change. Proxied copies of this object (on clients)
-     * will apply the value change when they received the attribute
-     * changed notification.
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>ownershipData</code> set. The set will not change until the
+     * event is actually propagated through the system.
      */
-    public void setItemPacksAt (ItemInfo value, int index)
+    public void removeFromOwnershipData (Comparable key)
     {
-        ItemInfo ovalue = this.itemPacks[index];
-        requestElementUpdate(
-            ITEM_PACKS, index, value, ovalue);
-        this.itemPacks[index] = value;
+        requestEntryRemove(OWNERSHIP_DATA, ownershipData, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>ownershipData</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateOwnershipData (Ownership elem)
+    {
+        requestEntryUpdate(OWNERSHIP_DATA, ownershipData, elem);
+    }
+
+    /**
+     * Requests that the <code>ownershipData</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setOwnershipData (DSet<com.whirled.data.Ownership> value)
+    {
+        requestAttributeChange(OWNERSHIP_DATA, value, this.ownershipData);
+        @SuppressWarnings("unchecked") DSet<com.whirled.data.Ownership> clone =
+            (value == null) ? null : value.typedClone();
+        this.ownershipData = clone;
     }
     // AUTO-GENERATED: METHODS END
 }

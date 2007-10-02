@@ -3,13 +3,16 @@
 
 package com.threerings.msoy.game.server.persist;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.clause.Where;
 
 /**
  * Manages the trophy persistent storage.
@@ -27,7 +30,7 @@ public class TrophyRepository extends DepotRepository
     public List<TrophyRecord> loadTrophies (int memberId)
         throws PersistenceException
     {
-        return null; // TODO
+        return findAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID_C, memberId));
     }
 
     /**
@@ -36,7 +39,8 @@ public class TrophyRepository extends DepotRepository
     public List<TrophyRecord> loadTrophies (int gameId, int memberId)
         throws PersistenceException
     {
-        return null; // TODO
+        return findAll(TrophyRecord.class, new Where(TrophyRecord.GAME_ID_C, gameId,
+                                                     TrophyRecord.MEMBER_ID_C, memberId));
     }
 
     /**
@@ -45,16 +49,21 @@ public class TrophyRepository extends DepotRepository
     public void storeTrophy (TrophyRecord trophy)
         throws PersistenceException
     {
-        // TODO
+        insert(trophy);
     }
 
     /**
      * Deletes all trophies held by the supplied member.
      */
-    public void deleteTrophies (int memberId)
+    public void deleteTrophies (final int memberId)
         throws PersistenceException
     {
-        // TODO
+        deleteAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID_C, memberId),
+                  new CacheInvalidator.TraverseWithFilter<TrophyRecord>(TrophyRecord.class) {
+                      public boolean testForEviction (Serializable key, TrophyRecord record) {
+                          return (record != null) && record.memberId == memberId;
+                      }
+                  });
     }
 
     @Override // from DepotRepository

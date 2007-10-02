@@ -37,12 +37,14 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRecord;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
+import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
 import com.threerings.msoy.game.data.AVRGameObject;
@@ -210,6 +212,10 @@ public class GameGameRegistry
                         _ipacks.add((ItemPack)record.toItem());
                     }
                     // load up our trophy source items
+                    for (TrophySourceRecord record :
+                             _tsourceRepo.loadOriginalItemsBySuite(_game.getSuiteId())) {
+                        _tsources.add((TrophySource)record.toItem());
+                    }
                 }
             }
 
@@ -221,7 +227,7 @@ public class GameGameRegistry
 
                 try {
                     LobbyManager lmgr = new LobbyManager(_omgr, GameGameRegistry.this);
-                    lmgr.setGameData(_game, _lpacks, _ipacks);
+                    lmgr.setGameData(_game, _lpacks, _ipacks, _tsources);
                     _lobbies.put(gameId, lmgr);
 
                     ResultListenerList list = _loadingLobbies.remove(gameId);
@@ -258,6 +264,7 @@ public class GameGameRegistry
             protected Percentiler _single, _multi;
             protected ArrayList<LevelPack> _lpacks = new ArrayList<LevelPack>();
             protected ArrayList<ItemPack> _ipacks = new ArrayList<ItemPack>();
+            protected ArrayList<TrophySource> _tsources = new ArrayList<TrophySource>();
         });
     }
 

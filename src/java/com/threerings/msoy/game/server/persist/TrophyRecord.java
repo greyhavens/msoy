@@ -19,12 +19,12 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class TrophyRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #ident} field. */
-    public static final String IDENT = "ident";
+    /** The column identifier for the {@link #gameId} field. */
+    public static final String GAME_ID = "gameId";
 
-    /** The qualified column identifier for the {@link #ident} field. */
-    public static final ColumnExp IDENT_C =
-        new ColumnExp(TrophyRecord.class, IDENT);
+    /** The qualified column identifier for the {@link #gameId} field. */
+    public static final ColumnExp GAME_ID_C =
+        new ColumnExp(TrophyRecord.class, GAME_ID);
 
     /** The column identifier for the {@link #memberId} field. */
     public static final String MEMBER_ID = "memberId";
@@ -32,6 +32,13 @@ public class TrophyRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #memberId} field. */
     public static final ColumnExp MEMBER_ID_C =
         new ColumnExp(TrophyRecord.class, MEMBER_ID);
+
+    /** The column identifier for the {@link #ident} field. */
+    public static final String IDENT = "ident";
+
+    /** The qualified column identifier for the {@link #ident} field. */
+    public static final ColumnExp IDENT_C =
+        new ColumnExp(TrophyRecord.class, IDENT);
 
     /** The column identifier for the {@link #name} field. */
     public static final String NAME = "name";
@@ -96,12 +103,12 @@ public class TrophyRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link #TrophyRecord}
      * with the supplied key values.
      */
-    public static Key<TrophyRecord> getKey (String ident, int memberId)
+    public static Key<TrophyRecord> getKey (int gameId, int memberId, String ident)
     {
         return new Key<TrophyRecord>(
                 TrophyRecord.class,
-                new String[] { IDENT, MEMBER_ID },
-                new Comparable[] { ident, memberId });
+                new String[] { GAME_ID, MEMBER_ID, IDENT },
+                new Comparable[] { gameId, memberId, ident });
     }
     // AUTO-GENERATED: METHODS END
 }

@@ -19,6 +19,7 @@ import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.game.data.LobbyObject;
@@ -60,12 +61,14 @@ public class LobbyManager
     /**
      * Called when a lobby is first created and possibly again later to refresh its game metadata.
      */
-    public void setGameData (Game game, ArrayList<LevelPack> levels, ArrayList<ItemPack> items)
+    public void setGameData (Game game, ArrayList<LevelPack> levels, ArrayList<ItemPack> items,
+                             ArrayList<TrophySource> tsources)
         throws Exception
     {
         _game = game;
         _lpacks = levels;
         _ipacks = items;
+        _tsources = tsources;
 
         _lobj.setGame(_game);
         _lobj.setGameDef(new MsoyGameParser().parseGame(game));
@@ -167,7 +170,7 @@ public class LobbyManager
     protected void gameCreated (GameManager gmgr)
     {
         if (gmgr instanceof MsoyGameManager) {
-            ((MsoyGameManager)gmgr).setGameData(_game, _lpacks, _ipacks);
+            ((MsoyGameManager)gmgr).setGameData(_game, _lpacks, _ipacks, _tsources);
         }
     }
 
@@ -236,6 +239,9 @@ public class LobbyManager
 
     /** All item packs available for this game. */
     protected ArrayList<ItemPack> _ipacks;
+
+    /** All trophy source items available for this game. */
+    protected ArrayList<TrophySource> _tsources;
 
     /** Manages the actual tables. */
     protected MsoyTableManager _tableMgr;
