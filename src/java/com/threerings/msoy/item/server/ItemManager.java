@@ -73,6 +73,7 @@ import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.server.persist.ToyRepository;
+import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.item.server.persist.VideoRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -122,6 +123,7 @@ public class ItemManager
         registerRepository(Item.VIDEO, new VideoRepository(ctx));
         registerRepository(Item.LEVEL_PACK, new LevelPackRepository(ctx));
         registerRepository(Item.ITEM_PACK, new ItemPackRepository(ctx));
+        registerRepository(Item.TROPHY_SOURCE, new TrophySourceRepository(ctx));
         _listRepo = new ItemListRepository(ctx);
 
         // register our invocation service

@@ -86,6 +86,8 @@ public abstract class ItemEditor extends BorderedDialog
             editor = new LevelPackEditor();
         } else if (type == Item.ITEM_PACK) {
             editor = new ItemPackEditor();
+        } else if (type == Item.TROPHY_SOURCE) {
+            editor = new TrophySourceEditor();
         } else {
             return null; // woe be the caller
         }
@@ -173,7 +175,7 @@ public abstract class ItemEditor extends BorderedDialog
         if (_item.name != null) {
             _name.setText(_item.name);
         }
-        if (_item.description != null) {
+        if (_item.description != null && _description != null) {
             _description.setText(_item.description);
         }
 

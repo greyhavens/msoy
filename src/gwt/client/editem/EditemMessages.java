@@ -112,6 +112,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameTableTitle();
 
   /**
+   * Translated "The trophy image must be a 60x60 PNG, JPEG or GIF".
+   * 
+   * @return translated "The trophy image must be a 60x60 PNG, JPEG or GIF"
+   * @gwt.key trophyMainTitle
+   */
+  String trophyMainTitle();
+
+  /**
    * Translated "Video data must be an FLV, MPEG, WMV or Quicktime file.".
    * 
    * @return translated "Video data must be an FLV, MPEG, WMV or Quicktime file."
@@ -312,6 +320,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameJavaTip();
 
   /**
+   * Translated "Trophy images must be 60x60 and must be either PNG, JPEG or GIF.".
+   * 
+   * @return translated "Trophy images must be 60x60 and must be either PNG, JPEG or GIF."
+   * @gwt.key invalidTrophy
+   */
+  String invalidTrophy();
+
+  /**
    * Translated "Image shown when Item is placed in the World as Furniture".
    * 
    * @return translated "Image shown when Item is placed in the World as Furniture"
@@ -352,12 +368,28 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errAvatarNotFlash();
 
   /**
+   * Translated "Trophy Image".
+   * 
+   * @return translated "Trophy Image"
+   * @gwt.key trophyMainTab
+   */
+  String trophyMainTab();
+
+  /**
    * Translated "Audio Media".
    * 
    * @return translated "Audio Media"
    * @gwt.key audioMainTab
    */
   String audioMainTab();
+
+  /**
+   * Translated "Identifier".
+   * 
+   * @return translated "Identifier"
+   * @gwt.key trophyIdent
+   */
+  String trophyIdent();
 
   /**
    * Translated "Or use an embeddable YouTube video.".
@@ -518,6 +550,22 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key editorThumbTitle
    */
   String editorThumbTitle();
+
+  /**
+   * Translated "This string is used to identify this trophy in your game code.".
+   * 
+   * @return translated "This string is used to identify this trophy in your game code."
+   * @gwt.key trophyIdentTip
+   */
+  String trophyIdentTip();
+
+  /**
+   * Translated "This name is displayed under the trophy image on a player''s trophy page.".
+   * 
+   * @return translated "This name is displayed under the trophy image on a player''s trophy page."
+   * @gwt.key trophyNameTip
+   */
+  String trophyNameTip();
 
   /**
    * Translated "The data file for this item pack".

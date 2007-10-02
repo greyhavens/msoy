@@ -9,38 +9,38 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
-/** Catalog Records for Templates. */
-@TableGenerator(name="catalogId", pkColumnValue="TEMPLATE_CATALOG")
-public class TemplateCatalogRecord extends CatalogRecord<TemplateRecord>
+/** Catalog Records for TrophySources. */
+@TableGenerator(name="catalogId", pkColumnValue="TROPHYSOURCE_CATALOG")
+public class TrophySourceCatalogRecord extends CatalogRecord<TrophySourceRecord>
 {
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #catalogId} field. */
     public static final ColumnExp CATALOG_ID_C =
-        new ColumnExp(GameCatalogRecord.class, CATALOG_ID);
+        new ColumnExp(TrophySourceCatalogRecord.class, CATALOG_ID);
 
     /** The qualified column identifier for the {@link #listedItemId} field. */
     public static final ColumnExp LISTED_ITEM_ID_C =
-        new ColumnExp(GameCatalogRecord.class, LISTED_ITEM_ID);
+        new ColumnExp(TrophySourceCatalogRecord.class, LISTED_ITEM_ID);
 
     /** The qualified column identifier for the {@link #originalItemId} field. */
     public static final ColumnExp ORIGINAL_ITEM_ID_C =
-        new ColumnExp(GameCatalogRecord.class, ORIGINAL_ITEM_ID);
+        new ColumnExp(TrophySourceCatalogRecord.class, ORIGINAL_ITEM_ID);
 
     /** The qualified column identifier for the {@link #listedDate} field. */
     public static final ColumnExp LISTED_DATE_C =
-        new ColumnExp(TemplateCatalogRecord.class, LISTED_DATE);
+        new ColumnExp(TrophySourceCatalogRecord.class, LISTED_DATE);
 
     /** The qualified column identifier for the {@link #flowCost} field. */
     public static final ColumnExp FLOW_COST_C =
-        new ColumnExp(TemplateCatalogRecord.class, FLOW_COST);
+        new ColumnExp(TrophySourceCatalogRecord.class, FLOW_COST);
 
     /** The qualified column identifier for the {@link #goldCost} field. */
     public static final ColumnExp GOLD_COST_C =
-        new ColumnExp(TemplateCatalogRecord.class, GOLD_COST);
+        new ColumnExp(TrophySourceCatalogRecord.class, GOLD_COST);
 
     /** The qualified column identifier for the {@link #pricing} field. */
     public static final ColumnExp PRICING_C =
-        new ColumnExp(TemplateCatalogRecord.class, PRICING);
+        new ColumnExp(TrophySourceCatalogRecord.class, PRICING);
 
     /** The qualified column identifier for the {@link #salesTarget} field. */
     public static final ColumnExp SALES_TARGET_C =
@@ -48,22 +48,22 @@ public class TemplateCatalogRecord extends CatalogRecord<TemplateRecord>
 
     /** The qualified column identifier for the {@link #purchases} field. */
     public static final ColumnExp PURCHASES_C =
-        new ColumnExp(TemplateCatalogRecord.class, PURCHASES);
+        new ColumnExp(TrophySourceCatalogRecord.class, PURCHASES);
 
     /** The qualified column identifier for the {@link #returns} field. */
     public static final ColumnExp RETURNS_C =
-        new ColumnExp(TemplateCatalogRecord.class, RETURNS);
+        new ColumnExp(TrophySourceCatalogRecord.class, RETURNS);
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #TemplateCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link #TrophySourceCatalogRecord}
      * with the supplied key values.
      */
-    public static Key<TemplateCatalogRecord> getKey (int catalogId)
+    public static Key<TrophySourceCatalogRecord> getKey (int catalogId)
     {
-        return new Key<TemplateCatalogRecord>(
-                TemplateCatalogRecord.class,
+        return new Key<TrophySourceCatalogRecord>(
+                TrophySourceCatalogRecord.class,
                 new String[] { CATALOG_ID },
                 new Comparable[] { catalogId });
     }

@@ -74,6 +74,7 @@ public class GameGameRegistry
         _gameRepo = new GameRepository(perCtx);
         _lpackRepo = new LevelPackRepository(perCtx);
         _ipackRepo = new ItemPackRepository(perCtx);
+        _tsourceRepo = new TrophySourceRepository(perCtx);
         _avrgRepo = new AVRGameRepository(perCtx);
         _ratingRepo = ratingRepo;
         invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
@@ -207,6 +208,7 @@ public class GameGameRegistry
                              _ipackRepo.loadOriginalItemsBySuite(_game.getSuiteId())) {
                         _ipacks.add((ItemPack)record.toItem());
                     }
+                    // load up our trophy source items
                 }
             }
 
@@ -418,4 +420,5 @@ public class GameGameRegistry
     protected GameRepository _gameRepo;
     protected LevelPackRepository _lpackRepo;
     protected ItemPackRepository _ipackRepo;
+    protected TrophySourceRepository _tsourceRepo;
 }

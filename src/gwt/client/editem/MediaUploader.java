@@ -81,13 +81,13 @@ public class MediaUploader extends VerticalPanel
                     event.setCancelled(true);
                 }
             }
-
             public void onSubmitComplete (FormSubmitCompleteEvent event) {
                 String result = event.getResults();
-                if (result != null && result.length() > 0) {
-                    // TODO: This is fugly as all hell, but at least we're
-                    // now reporting *something* to the user
-                    _status.setText(result);
+                result = (result == null) ? "" : result.trim();
+                if (result.length() > 0) {
+                    // TODO: This is fugly as all hell, but at least we're now reporting
+                    // *something* to the user
+                    MsoyUI.error(result);
                 }
             }
         });
@@ -126,7 +126,7 @@ public class MediaUploader extends VerticalPanel
         if (result == null) {
             setMedia(desc);
         } else {
-            _status.setText(result);
+            MsoyUI.error(result);
         }
     }
 

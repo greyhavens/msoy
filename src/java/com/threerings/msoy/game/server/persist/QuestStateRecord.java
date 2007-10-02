@@ -24,11 +24,11 @@ public class QuestStateRecord extends PersistentRecord
         new ColumnExp(QuestStateRecord.class, MEMBER_ID);
 
     /** The column identifier for the {@link #gameId} field. */
-    public static final String AVRG_ID = "avrgId";
+    public static final String GAME_ID = "gameId";
 
     /** The qualified column identifier for the {@link #gameId} field. */
-    public static final ColumnExp AVRG_ID_C =
-        new ColumnExp(QuestStateRecord.class, AVRG_ID);
+    public static final ColumnExp GAME_ID_C =
+        new ColumnExp(QuestStateRecord.class, GAME_ID);
 
     /** The column identifier for the {@link #questId} field. */
     public static final String QUEST_ID = "questId";
@@ -43,6 +43,20 @@ public class QuestStateRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #step} field. */
     public static final ColumnExp STEP_C =
         new ColumnExp(QuestStateRecord.class, STEP);
+
+    /** The column identifier for the {@link #status} field. */
+    public static final String STATUS = "status";
+
+    /** The qualified column identifier for the {@link #status} field. */
+    public static final ColumnExp STATUS_C =
+        new ColumnExp(QuestStateRecord.class, STATUS);
+
+    /** The column identifier for the {@link #sceneId} field. */
+    public static final String SCENE_ID = "sceneId";
+
+    /** The qualified column identifier for the {@link #sceneId} field. */
+    public static final ColumnExp SCENE_ID_C =
+        new ColumnExp(QuestStateRecord.class, SCENE_ID);
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;
@@ -92,12 +106,12 @@ public class QuestStateRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link #QuestStateRecord}
      * with the supplied key values.
      */
-    public static Key<QuestStateRecord> getKey (int memberId, int avrgId, int questId)
+    public static Key<QuestStateRecord> getKey (int memberId, int gameId, String questId)
     {
         return new Key<QuestStateRecord>(
                 QuestStateRecord.class,
-                new String[] { MEMBER_ID, AVRG_ID, QUEST_ID },
-                new Comparable[] { memberId, avrgId, questId });
+                new String[] { MEMBER_ID, GAME_ID, QUEST_ID },
+                new Comparable[] { memberId, gameId, questId });
     }
     // AUTO-GENERATED: METHODS END
 }

@@ -92,7 +92,7 @@ public class PlayerGameStateRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #MemberMemoryRecord}
+     * Create and return a primary {@link Key} to identify a {@link #PlayerGameStateRecord}
      * with the supplied key values.
      */
     public static Key<PlayerGameStateRecord> getKey (int gameId, int memberId, String datumKey)
