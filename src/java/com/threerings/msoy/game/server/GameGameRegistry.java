@@ -43,6 +43,7 @@ import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRecord;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
+import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.LobbyObject;
