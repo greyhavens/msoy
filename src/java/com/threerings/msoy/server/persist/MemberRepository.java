@@ -331,6 +331,7 @@ public class MemberRepository extends DepotRepository
         // - item ratings
         // - game ratings
         // - game cookies
+        // - trophies
         // - comments
         // - rooms, furni, etc.
         // - mail messages
