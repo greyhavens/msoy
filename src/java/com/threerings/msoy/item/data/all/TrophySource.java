@@ -32,6 +32,7 @@ public class TrophySource extends Item
     // @Override // from Item
     public boolean isConsistent ()
     {
-        return super.isConsistent() && nonBlank(name) && nonBlank(ident) && (thumbMedia != null);
+        return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) &&
+            nonBlank(ident, Game.MAX_IDENT_LENGTH) && (thumbMedia != null);
     }
 }

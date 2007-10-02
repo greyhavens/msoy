@@ -20,7 +20,7 @@ public class Document extends Item
     // @Override // from Item
     public boolean isConsistent ()
     {
-        return super.isConsistent() && (docMedia != null) && nonBlank(name);
+        return super.isConsistent() && (docMedia != null) && nonBlank(name, MAX_NAME_LENGTH);
     }
 
     // @Override // from Item

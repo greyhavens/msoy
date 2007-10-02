@@ -21,7 +21,7 @@ public class Audio extends Item
     public boolean isConsistent ()
     {
         return super.isConsistent() && (audioMedia != null) && audioMedia.isAudio() &&
-            nonBlank(name);
+            nonBlank(name, MAX_NAME_LENGTH);
     }
 
     // @Override // from Item

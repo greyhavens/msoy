@@ -21,7 +21,7 @@ public class Video extends Item
     public boolean isConsistent ()
     {
         return super.isConsistent() && (videoMedia != null) && videoMedia.isVideo() &&
-            nonBlank(name);
+            nonBlank(name, MAX_NAME_LENGTH);
     }
 
     // @Override // from Item

@@ -60,7 +60,7 @@ public class Decor extends Item
     public boolean isConsistent ()
     {
         return super.isConsistent() &&
-            nonBlank(name) &&
+            nonBlank(name, MAX_NAME_LENGTH) &&
             type < TYPE_COUNT && width > 0 && height > 0 && depth > 0 &&
             horizon <= 1.0f && horizon >= 0.0f;
     }

@@ -18,7 +18,7 @@ public class Toy extends Item
     // @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() && nonBlank(name) && (furniMedia != null);
+        return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (furniMedia != null);
     }
 
     // @Override // from Item

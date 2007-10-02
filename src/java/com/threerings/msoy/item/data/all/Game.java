@@ -14,6 +14,9 @@ public class Game extends Item
     /** Defines the number of different game types. See GameConfig. */
     public static final int GAME_TYPES = 3;
 
+    /** The maximum length of game identifiers (used by level and item packs and trophies). */
+    public static final int MAX_IDENT_LENGTH = 32;
+
     /** The XML game configuration. */
     public String config;
 
@@ -66,6 +69,6 @@ public class Game extends Item
     public boolean isConsistent ()
     {
         // TODO: Check over the values in the XML to make sure they are sane
-        return super.isConsistent() && nonBlank(name) && (gameMedia != null);
+        return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (gameMedia != null);
     }
 }

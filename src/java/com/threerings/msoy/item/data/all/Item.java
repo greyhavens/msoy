@@ -88,6 +88,9 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     /** Indicates that somebody has flagged this item as copyrighted content. */
     public static final byte FLAG_FLAGGED_COPYRIGHT= 0x1 << 1;
 
+    /** The maximum length for item names. */
+    public static final int MAX_NAME_LENGTH = 64;
+
     // == Instance variables follow =========================================
 
     /** This item's unique identifier. <em>Note:</em> this identifier is not globally unique among
@@ -428,12 +431,13 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     }
 
     /**
-     * A handy method that makes sure that the specified text is not null or all-whitespace.
-     * Usually used by isConsistent().
+     * A handy method that makes sure that the specified text is not null or all-whitespace and is
+     * less than or equal to the specified maximum length.  Usually used by isConsistent().
      */
-    protected static boolean nonBlank (String text)
+    protected static boolean nonBlank (String text, int maxLength)
     {
-        return (text != null) && (text.trim().length() > 0);
+        text = (text == null) ? "" : text.trim();
+        return (text.length() > 0 && text.length() <= maxLength);
     }
 
     /**
