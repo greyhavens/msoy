@@ -104,15 +104,10 @@ public class LobbyGameLiaison extends GameLiaison
 
     override public function shutdown () :void
     {
+        _shuttingDown = true;
         // any shutdown of the liaison kills the lobby, so check if there is one open
         if (_lobby != null) {
-            // if so, give it control over the shutdown procedure; it will eventually
-            // call back here to shut us down again. make sure we fall through to the
-            // real shutdown procedure when that happens.
-            var lobby :LobbyController = _lobby;
-            _lobby = null;
-            lobby.forceShutdown();
-            return;
+            _lobby.forceShutdown();
         }
         _ctx.getLocationDirector().removeLocationObserver(_worldLocObs);
         super.shutdown();
@@ -120,10 +115,8 @@ public class LobbyGameLiaison extends GameLiaison
 
     public function lobbyCleared (inGame :Boolean) :void
     {
-        log.info("Lobby cleared [in=" + inGame + "].");
-
-        // if we're not about to go to a game, shutdown, otherwise stick around
-        if (!inGame && _gameOid == 0) {
+        // if we're not about tabout to go to a game, shutdown, otherwise stick around
+        if (!_shuttingDown && !inGame && _gameOid == 0) {
             shutdown();
         }
     }
@@ -204,5 +197,8 @@ public class LobbyGameLiaison extends GameLiaison
 
     /** The oid of our game object, once we've been told it. */
     protected var _gameOid :int;
+
+    /** True if we're shutting down. */
+    protected var _shuttingDown :Boolean;
 }
 }
