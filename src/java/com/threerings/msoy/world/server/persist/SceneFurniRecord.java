@@ -121,7 +121,7 @@ public class SceneFurniRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The id of the scene in which this furni is placed. */
     @Id public int sceneId;
@@ -159,6 +159,12 @@ public class SceneFurniRecord extends PersistentRecord
     /** The furni's Y scale. */
     public float scaleY;
 
+    /** The x location of this furniture's hot spot. */
+    public short hotSpotX;
+
+    /** The y location of this furniture's hot spot. */
+    public short hotSpotY;
+
     /** The action to be taken when this furni is clicked. */
     public byte actionType;
 
@@ -188,6 +194,8 @@ public class SceneFurniRecord extends PersistentRecord
         layoutInfo = data.layoutInfo;
         scaleX = data.scaleX;
         scaleY = data.scaleY;
+        hotSpotX = data.hotSpotX;
+        hotSpotY = data.hotSpotY;
         actionType = data.actionType;
         actionData = data.actionData;
     }
@@ -206,6 +214,8 @@ public class SceneFurniRecord extends PersistentRecord
         furni.layoutInfo = layoutInfo;
         furni.scaleX = scaleX;
         furni.scaleY = scaleY;
+        furni.hotSpotX = hotSpotX;
+        furni.hotSpotY = hotSpotY;
         furni.actionType = actionType;
         furni.actionData = actionData;
         return furni;

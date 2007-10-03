@@ -47,6 +47,10 @@ public class FurniSprite extends MsoySprite
     {
         _furni = furni;
         super(furni.media, furni.getItemIdent());
+        // set up our hotspot if one is configured in the furni data record
+        if (_furni.hotSpotX > 0 || _furni.hotSpotY > 0) {
+            _hotSpot = new Point(_furni.hotSpotX, _furni.hotSpotY);
+        }
         checkPerspective();
     }
 

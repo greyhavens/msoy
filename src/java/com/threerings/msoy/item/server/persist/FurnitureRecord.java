@@ -11,8 +11,8 @@ import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
 
 /**
- * Represents a piece of furniture (any prop really) that a user can place into
- * a virtual world scene and potentially interact with.
+ * Represents a piece of furniture (any prop really) that a user can place into a virtual world
+ * scene and potentially interact with.
  */
 @TableGenerator(name="itemId", pkColumnValue="FURNITURE")
 public class FurnitureRecord extends ItemRecord
@@ -106,13 +106,17 @@ public class FurnitureRecord extends ItemRecord
         new ColumnExp(FurnitureRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1 +
-        BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+    public static final int SCHEMA_VERSION = 2 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
-    /** An action associated with this furniture which is dispatched to the
-     * virtual world client when the furniture is clicked on (max length 255
-     * characters). */
+    /** An action associated with this furniture which is dispatched to the virtual world client
+     * when the furniture is clicked on (max length 255 characters). */
     public String action = "";
+
+    /** The x position of the hot spot to use for this furniture. */
+    public short hotSpotX;
+
+    /** The y position of the hot spot to use for this furniture. */
+    public short hotSpotY;
 
     public FurnitureRecord ()
     {
@@ -124,6 +128,8 @@ public class FurnitureRecord extends ItemRecord
         super(furniture);
 
         action = furniture.action;
+        hotSpotX = furniture.hotSpotX;
+        hotSpotY = furniture.hotSpotY;
     }
 
     @Override // from Item
@@ -137,6 +143,8 @@ public class FurnitureRecord extends ItemRecord
     {
         Furniture object = new Furniture();
         object.action = action;
+        object.hotSpotX = hotSpotX;
+        object.hotSpotY = hotSpotY;
         return object;
     }
 

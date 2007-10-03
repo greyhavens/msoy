@@ -65,16 +65,17 @@ import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.Furniture;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
@@ -789,6 +790,10 @@ public class RoomController extends SceneController
                     furni.media = item.getFurniMedia();
                     // create it at the front of the scene, centered on the floor
                     furni.loc = new MsoyLocation(0.5, 0, 0);
+                    if (item is Furniture) {
+                        furni.hotSpotX = (item as Furniture).hotSpotX;
+                        furni.hotSpotY = (item as Furniture).hotSpotY;
+                    }
                     if (item is Game) {
                         var game :Game = (item as Game);
                         furni.actionType = game.isInWorld() ?

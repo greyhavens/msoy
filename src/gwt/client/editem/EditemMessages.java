@@ -88,20 +88,12 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameManager();
 
   /**
-   * Translated "All item packs must be purchased by the player to be usable.".
+   * Translated "All item packs are premium and must be purchased by the player to be usable.".
    * 
-   * @return translated "All item packs must be purchased by the player to be usable."
+   * @return translated "All item packs are premium and must be purchased by the player to be usable."
    * @gwt.key ipackPremiumTip
    */
   String ipackPremiumTip();
-
-  /**
-   * Translated "Premium".
-   * 
-   * @return translated "Premium"
-   * @gwt.key lpackPremium
-   */
-  String lpackPremium();
 
   /**
    * Translated "Game Lobby Table background image".
@@ -110,6 +102,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key gameTableTitle
    */
   String gameTableTitle();
+
+  /**
+   * Translated "Premium".
+   * 
+   * @return translated "Premium"
+   * @gwt.key packPremium
+   */
+  String packPremium();
 
   /**
    * Translated "The trophy image must be a 60x60 PNG, JPEG or GIF".
@@ -198,6 +198,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key videoMainTab
    */
   String videoMainTab();
+
+  /**
+   * Translated "This is the pixel offset from the upper left of the furniture image to the furniture's hotspot. Leave it at (0, 0) for the default which is to put the hotspot at the bottom center of the furniture image.".
+   * 
+   * @return translated "This is the pixel offset from the upper left of the furniture image to the furniture's hotspot. Leave it at (0, 0) for the default which is to put the hotspot at the bottom center of the furniture image."
+   * @gwt.key furniHotSpotTip
+   */
+  String furniHotSpotTip();
 
   /**
    * Translated "Or use an embeddable Google video.".
@@ -400,20 +408,20 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String videoOptionYoutube();
 
   /**
-   * Translated "Head Shot Media".
-   * 
-   * @return translated "Head Shot Media"
-   * @gwt.key avatarThumbTab
-   */
-  String avatarThumbTab();
-
-  /**
    * Translated "Photo Media".
    * 
    * @return translated "Photo Media"
    * @gwt.key photoMainTab
    */
   String photoMainTab();
+
+  /**
+   * Translated "Head Shot Media".
+   * 
+   * @return translated "Head Shot Media"
+   * @gwt.key avatarThumbTab
+   */
+  String avatarThumbTab();
 
   /**
    * Translated "Head Shots must be an image type.".
@@ -598,6 +606,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key gameWatchable
    */
   String gameWatchable();
+
+  /**
+   * Translated "Hot Spot".
+   * 
+   * @return translated "Hot Spot"
+   * @gwt.key furniHotSpot
+   */
+  String furniHotSpot();
 
   /**
    * Translated "Pet as seen in the World".

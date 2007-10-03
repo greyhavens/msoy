@@ -47,7 +47,7 @@ public class LevelPackEditor extends ItemEditor
         _ident.setMaxLength(Game.MAX_IDENT_LENGTH);
         addInfoTip(info, CEditem.emsgs.packIdentTip());
 
-        addInfoRow(info, CEditem.emsgs.lpackPremium(), _premium = new CheckBox());
+        addInfoRow(info, CEditem.emsgs.packPremium(), _premium = new CheckBox());
         addInfoTip(info, CEditem.emsgs.lpackPremiumTip());
 
         super.populateInfoTab(info);

@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -45,6 +46,10 @@ public class ItemPackEditor extends ItemEditor
         _ident.setMaxLength(Game.MAX_IDENT_LENGTH);
         addInfoTip(info, CEditem.emsgs.packIdentTip());
 
+        CheckBox box = new CheckBox();
+        box.setChecked(true);
+        box.setEnabled(false);
+        addInfoRow(info, CEditem.emsgs.packPremium(), box);
         addInfoTip(info, CEditem.emsgs.ipackPremiumTip());
 
         super.populateInfoTab(info);

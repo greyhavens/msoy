@@ -574,6 +574,10 @@ a:visited {
   white-space: nowrap;
 }
 
+.nowrapLabel {
+  white-space: nowrap;
+}
+
 .infoLabel {
   font-size: 18px;
   padding: 25px;

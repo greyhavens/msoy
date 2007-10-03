@@ -291,6 +291,7 @@ public abstract class ItemEditor extends BorderedDialog
     {
         int row = info.getRowCount();
         info.setText(row, 0, label);
+        info.getFlexCellFormatter().setStyleName(row, 0, "nowrapLabel");
         info.setWidget(row, 1, widget);
         // this aims to make the label column skinny; it event works on some browsers...
         info.getFlexCellFormatter().setWidth(row, 1, "100%");
@@ -377,8 +378,8 @@ public abstract class ItemEditor extends BorderedDialog
         }
 
         // set the new media in preview and in the item
-        mu.setUploadedMedia(new MediaDesc(mediaHash, (byte)mimeType, (byte)constraint),
-            width, height);
+        mu.setUploadedMedia(
+            new MediaDesc(mediaHash, (byte)mimeType, (byte)constraint), width, height);
 
         // if we got thumbnail media back from this upload, use that as well
         // TODO: avoid overwriting custom thumbnail, sigh

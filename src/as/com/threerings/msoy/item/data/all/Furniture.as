@@ -17,6 +17,12 @@ public class Furniture extends Item
      * characters). */
     public var action :String = "";
 
+    /** The x position of the hot spot to use for this furniture. */
+    public var hotSpotX :int;
+
+    /** The y position of the hot spot to use for this furniture. */
+    public var hotSpotY :int;
+
     public function Furniture ()
     {
     }
@@ -38,6 +44,8 @@ public class Furniture extends Item
     {
         super.readObject(ins);
         action = (ins.readField(String) as String);
+        hotSpotX = ins.readShort();
+        hotSpotY = ins.readShort();
     }
 
     // from interface Streamable
@@ -45,6 +53,8 @@ public class Furniture extends Item
     {
         super.writeObject(out);
         out.writeField(action);
+        out.writeShort(hotSpotX);
+        out.writeShort(hotSpotY);
     }
 
     // from Item

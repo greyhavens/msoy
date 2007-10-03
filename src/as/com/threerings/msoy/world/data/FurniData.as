@@ -45,12 +45,11 @@ public class FurniData
     /** An actionType indicating that actionData is special page displayed in the chat panel.
         actionData = "<tabName>:<pageURL>" */
     public static const ACTION_HELP_PAGE :int = 5;
-    
+
     /** The id of this piece of furni. */
     public var id :int;
 
-    /** Identifies the type of the item that was used to create this furni,
-     * or Item.NOT_A_TYPE. */
+    /** Identifies the type of the item that was used to create this furni, or Item.NOT_A_TYPE. */
     public var itemType :int;
 
     /** Identifies the id of the item that was used to create this. */
@@ -70,6 +69,12 @@ public class FurniData
 
     /** A scale factor in the Y direction. */
     public var scaleY :Number = 1;
+
+    /** The x location of this furniture's hot spot. */
+    public var hotSpotX :int;
+
+    /** The y location of this furniture's hot spot. */
+    public var hotSpotY :int;
 
     /** The type of action, determines how to use actionData. */
     public var actionType :int;
@@ -137,14 +142,13 @@ public class FurniData
         return id;
     }
 
-    // documentation inherited from superinterface Equalable
+    // from superinterface Equalable
     public function equals (other :Object) :Boolean
     {
-        return (other is FurniData) &&
-            (other as FurniData).id == this.id;
+        return (other is FurniData) && (other as FurniData).id == this.id;
     }
 
-    // documentation inherited from interface Hashable
+    // from interface Hashable
     public function hashCode () :int
     {
         return id;
@@ -163,6 +167,8 @@ public class FurniData
             (this.layoutInfo == that.layoutInfo) &&
             (this.scaleX == that.scaleX) &&
             (this.scaleY == that.scaleY) &&
+            (this.hotSpotX == that.hotSpotX) &&
+            (this.hotSpotY == that.hotSpotY) &&
             (this.actionType == that.actionType) &&
             Util.equals(this.actionData, that.actionData);
     }
@@ -193,11 +199,13 @@ public class FurniData
         this.layoutInfo = that.layoutInfo;
         this.scaleX = that.scaleX;
         this.scaleY = that.scaleY;
+        this.hotSpotX = that.hotSpotX;
+        this.hotSpotY = that.hotSpotY;
         this.actionType = that.actionType;
         this.actionData = that.actionData;
     }
-    
-    // documentation inherited from interface Cloneable
+
+    // from interface Cloneable
     public function clone () :Object
     {
         // just a shallow copy at present
@@ -206,7 +214,7 @@ public class FurniData
         return that;
     }
 
-    // documentation inherited from interface Streamable
+    // from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeShort(id);
@@ -217,11 +225,13 @@ public class FurniData
         out.writeByte(layoutInfo);
         out.writeFloat(scaleX);
         out.writeFloat(scaleY);
+        out.writeShort(hotSpotX);
+        out.writeShort(hotSpotY);
         out.writeByte(actionType);
         out.writeField(actionData);
     }
 
-    // documentation inherited from interface Streamable
+    // from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
         id = ins.readShort();
@@ -232,6 +242,8 @@ public class FurniData
         layoutInfo = ins.readByte();
         scaleX = ins.readFloat();
         scaleY = ins.readFloat();
+        hotSpotX = ins.readShort();
+        hotSpotY = ins.readShort();
         actionType = ins.readByte();
         actionData = (ins.readField(String) as String);
     }

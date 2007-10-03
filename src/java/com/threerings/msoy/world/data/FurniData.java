@@ -46,8 +46,7 @@ public class FurniData extends SimpleStreamableObject
     /** The id of this piece of furni. */
     public short id;
 
-    /** Identifies the type of the item that was used to create this furni,
-     * or Item.NOT_A_TYPE. */
+    /** Identifies the type of the item that was used to create this furni, or Item.NOT_A_TYPE. */
     public byte itemType;
 
     /** Identifies the id of the item that was used to create this. */
@@ -68,6 +67,12 @@ public class FurniData extends SimpleStreamableObject
     /** A scale factor in the Y direction. */
     public float scaleY = 1f;
 
+    /** The x location of this furniture's hot spot. */
+    public short hotSpotX;
+
+    /** The y location of this furniture's hot spot. */
+    public short hotSpotY;
+
     /** The type of action, determines how to use actionData. */
     public byte actionType;
 
@@ -83,8 +88,8 @@ public class FurniData extends SimpleStreamableObject
     }
 
     /**
-     * Return the actionData as two strings, split after the first colon.
-     * If there is no colon, then a single-element array is returned.
+     * Return the actionData as two strings, split after the first colon.  If there is no colon,
+     * then a single-element array is returned.
      */
     public String[] splitActionData ()
     {
@@ -107,19 +112,6 @@ public class FurniData extends SimpleStreamableObject
         return id;
     }
 
-    // documentation inherited
-    public boolean equals (Object other)
-    {
-        return (other instanceof FurniData) &&
-            ((FurniData) other).id == this.id;
-    }
-
-    // documentation inherited
-    public int hashCode ()
-    {
-        return id;
-    }
-
     /**
      * @return true if the other FurniData is identical.
      */
@@ -133,11 +125,25 @@ public class FurniData extends SimpleStreamableObject
             (this.layoutInfo == that.layoutInfo) &&
             (this.scaleX == that.scaleX) &&
             (this.scaleY == that.scaleY) &&
+            (this.hotSpotX == that.hotSpotX) &&
+            (this.hotSpotY == that.hotSpotY) &&
             (this.actionType == that.actionType) &&
             ObjectUtil.equals(this.actionData, that.actionData);
     }
 
-    @Override
+    @Override // from Object
+    public boolean equals (Object other)
+    {
+        return (other instanceof FurniData) && ((FurniData) other).id == this.id;
+    }
+
+    @Override // from Object
+    public int hashCode ()
+    {
+        return id;
+    }
+
+    @Override // from Object
     public String toString ()
     {
         String s = "Furni[id=" + id + ", itemType=" + itemType;
@@ -149,11 +155,10 @@ public class FurniData extends SimpleStreamableObject
             s += ", actionData=\"" + actionData + "\"";
         }
         s += "]";
-
         return s;
     }
 
-    // documentation inherited
+    @Override // from Object
     public Object clone ()
     {
         try {
