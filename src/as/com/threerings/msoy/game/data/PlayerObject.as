@@ -62,6 +62,9 @@ public class PlayerObject extends BodyObject
     /** The quests of our current world game that we're currently on. */
     public var questState :DSet;
 
+    /** Contains information on player's ownership of game content (populated lazily). */
+    public var gameContent :DSet;
+
     // from BodyObject
     override public function getTokens () :TokenRing
     {
@@ -120,6 +123,7 @@ public class PlayerObject extends BodyObject
         humanity = ins.readInt();
         gameState = (ins.readObject() as DSet);
         questState = (ins.readObject() as DSet);
+        gameContent = (ins.readObject() as DSet);
     }
 }
 }
