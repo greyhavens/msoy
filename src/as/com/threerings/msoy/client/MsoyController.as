@@ -517,10 +517,7 @@ public class MsoyController extends Controller
      */
     public function handleJoinAVRGame (gameId :int) :void
     {
-//        var wgsvc :AVRGameService =
-//            (_ctx.getClient().requireService(AVRGameService) as AVRGameService);
-//        wgsvc.joinAVRGame(_ctx.getClient(), gameId,
-//            new ReportingListener(_ctx, MsoyCodes.GAME_MSGS, "e.join_world_game_failed"));
+        _ctx.getGameDirector().activateAVRGame(gameId);
     }
 
     /**
