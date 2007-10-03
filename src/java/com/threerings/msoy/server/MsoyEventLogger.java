@@ -32,8 +32,8 @@ public class MsoyEventLogger
     {
         Log.log.info("Events will be logged to " + serverURL);
         
-        _storage = new EchoStorage();
-        // _storage = new NullStorage();
+        // _storage = new EchoStorage();
+        _storage = new NullStorage();
         // _storage = new ServerStorage(serverURL);
         
         _logger = new EventLogger("com.threerings.msoy", _storage, MSOY_SCHEMAS);
