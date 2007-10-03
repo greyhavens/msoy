@@ -86,7 +86,7 @@ public class AVRGameController extends Controller
 
 import flash.display.Loader;
 
-import mx.containers.HBox;
+import mx.containers.Canvas;
 
 import com.threerings.flash.MediaContainer;
 import com.threerings.flex.CommandButton;
@@ -101,25 +101,30 @@ import com.threerings.msoy.game.client.AVRGameController;
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.AVRGameObject;
 
-class AVRGamePanel extends HBox
+class AVRGamePanel extends Canvas
 {
+    public static const log :Log = Log.getLog(AVRGamePanel);
+
     public function AVRGamePanel (
         mctx :WorldContext, gctx :GameContext, ctrl :AVRGameController)
     {
         super();
 
+        _mctx = mctx;
+        _gctx = gctx;
+        _ctrl = ctrl;
+    }
+
+    override protected function createChildren () :void
+    {
         _mediaHolder = new MediaContainer();
-        addChild(_mediaHolder);
+        this.rawChildren.addChildAt(_mediaHolder, 0);
 
         // TODO: A nice wee X
         var quit :CommandButton = new CommandButton(MsoyController.LEAVE_AVR_GAME);
         quit.label = Msgs.GAME.get("b.leave_world_game");
-        this.addChild(quit);
+        this.addChildAt(quit, 0);
         this.height = 100;
-
-        _mctx = mctx;
-        _gctx = gctx;
-        _ctrl = ctrl;
     }
 
     public function init (gameObj :AVRGameObject) :void
