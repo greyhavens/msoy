@@ -36,8 +36,6 @@ public class AVRGameController extends Controller
 
         _panel = new AVRGamePanel(_mctx, _gctx, this);
         setControlledPanel(_panel);
-
-        _mctx.getTopPanel().setBottomPanel(_panel);
     }
 
     public function forceShutdown () :void

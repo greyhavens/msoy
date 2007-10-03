@@ -3,9 +3,14 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.events.Event;
 import flash.display.Loader;
+import flash.display.LoaderInfo;
 
 import mx.containers.Canvas;
+import mx.containers.HBox;
+import mx.containers.VBox;
+import mx.controls.Text;
 
 import com.threerings.flash.MediaContainer;
 import com.threerings.flex.CommandButton;
@@ -34,24 +39,39 @@ public class AVRGamePanel extends Canvas
         _ctrl = ctrl;
     }
 
-    override protected function createChildren () :void
-    {
-        _mediaHolder = new MediaContainer();
-        this.rawChildren.addChildAt(_mediaHolder, 0);
-
-        // TODO: A nice wee X
-        var quit :CommandButton = new CommandButton(MsoyController.LEAVE_AVR_GAME);
-        quit.label = Msgs.GAME.get("b.leave_world_game");
-        this.addChildAt(quit, 0);
-        this.height = 100;
-    }
-
     public function init (gameObj :AVRGameObject) :void
     {
         _gameObj = gameObj;
-        _mediaHolder.setMedia(gameObj.gameMedia.getMediaPath());
+
+        // create the backend
         _backend = new AVRGameControlBackend(_mctx, _gctx, _gameObj, _ctrl);
-        _backend.init(Loader(_mediaHolder.getMedia()));
+
+        // create the container for the user media
+        _mediaHolder = new MediaContainer(gameObj.gameMedia.getMediaPath());
+        var loader :Loader = Loader(_mediaHolder.getMedia());
+
+        // hook the backend up with the media
+        _backend.init(loader);
+
+        // set ourselves up properly once the media is loaded
+        loader.contentLoaderInfo.addEventListener(Event.COMPLETE, mediaComplete);
+    }
+
+    protected function mediaComplete (event :Event) :void
+    {
+        var info :LoaderInfo = (event.target as LoaderInfo);
+        info.removeEventListener(Event.COMPLETE, mediaComplete);
+
+        this.height = info.height + 2;
+
+        var quit :CommandButton = new CommandButton(MsoyController.LEAVE_AVR_GAME);
+        quit.label = Msgs.GAME.get("b.leave_world_game");
+        quit.x = quit.y = 0;
+        this.addChild(quit);
+
+        this.rawChildren.addChildAt(_mediaHolder, 0);
+
+        _mctx.getTopPanel().setBottomPanel(this);
     }
 
     protected var _mctx :WorldContext;
