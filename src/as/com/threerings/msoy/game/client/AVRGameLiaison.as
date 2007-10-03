@@ -29,7 +29,7 @@ public class AVRGameLiaison extends GameLiaison
     {
         super(ctx, gameId);
     }
-
+    
     override public function clientDidLogon (event :ClientEvent) :void
     {
         var svc :AVRService = (_gctx.getClient().requireService(AVRService) as AVRService);
@@ -39,9 +39,11 @@ public class AVRGameLiaison extends GameLiaison
                 shutdown();
             },
             function (result :Object) :void {
+                log.info("Successfully activated AVRG [gameId=" + _gameId + "]");
                 _ctrl = new AVRGameController(_ctx, _gctx, int(result));
             }
         );
+        svc.activateGame(_gctx.getClient(), _gameId, cb);
     }
 
     override public function shutdown () :void
