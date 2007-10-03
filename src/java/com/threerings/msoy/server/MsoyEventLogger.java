@@ -39,6 +39,12 @@ public class MsoyEventLogger
         _logger = new EventLogger("com.threerings.msoy", _storage, MSOY_SCHEMAS);
     }
 
+    /** Event: periodic system snapshot of player counts. */
+    public void currentPlayerStats (String serverName, int total, int active, int guests)
+    {
+        post("CurrentPlayerStats_test", now(), serverName, total, active, guests);
+    }
+    
     /** Event: generic flow transaction. */
     public void flowTransaction (
         int playerId, int actionType, int flowDelta, int newTotal, String details)
@@ -62,16 +68,16 @@ public class MsoyEventLogger
              flowCost, goldCost, pricing, salesTarget);
     }
 
-    /** Event: registered user logged in. */
-    public void playerLoggedIn (int playerId, boolean firstLogin, String sessionToken)
+    /** Event: registered user authenticated with the specified cookie. */
+    public void userAuthenticated (int playerId, boolean firstLogin, String sessionToken)
     {
-        post("Login_test", now(), playerId, firstLogin, sessionToken);
+        post("Login_test", now(), false, playerId, firstLogin, sessionToken);
     }
 
-    /** Event: guest user logged in. */
-    public void guestLoggedIn (String sessionToken)
+    /** Event: guest user logged in with the specified cookie. */
+    public void userAuthenticated (String sessionToken)
     {
-        playerLoggedIn(-1, false, sessionToken);
+        post("Login_test", now(), true, -1, false, sessionToken);
     }
 
     /** Event: sent mail from one user to another. */
@@ -133,9 +139,17 @@ public class MsoyEventLogger
     
     protected static final EventSchema[] MSOY_SCHEMAS = new EventSchema[] {
         new EventSchema(
+            "CurrentPlayerStats_test",
+            new String[] { "timestamp", "serverName", "total",       "active",
+                           "guests" },
+            new Class[]  { Long.class,   String.class, Integer.class, Integer.class,
+                           Integer.class }),
+        new EventSchema(
             "Login_test",
-            new String[] { "timestamp", "playerId",   "firstLogin",  "sessionToken"  },
-            new Class[]  { Long.class,  Integer.class, Boolean.class, String.class   }),
+            new String[] { "timestamp", "guest",       "playerId",    "firstLogin",
+                           "sessionToken" },
+            new Class[]  { Long.class,   Boolean.class, Integer.class, Boolean.class,
+                           String.class }),
         new EventSchema(
             "MailSent_test",
             new String[] { "timestamp", "senderId",   "recipientId", "payloadId"     },

@@ -4,6 +4,7 @@
 package com.threerings.msoy.admin.server;
 
 import com.samskivert.util.Interval;
+import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -14,6 +15,7 @@ import com.threerings.presents.server.RebootManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.admin.data.StatusObject;
@@ -46,6 +48,10 @@ public class MsoyAdminManager
         // start up our connection manager stat monitor
         _conmgrStatsUpdater.schedule(5000L, true);
 
+        // start up the system "snapshot" logger
+        _systemStatsLogger = new StatsLogger();
+        _systemStatsLogger.schedule(0, StatsLogger.DELAY);
+        
         // initialize our reboot manager
         _rebmgr.init();
     }
@@ -79,6 +85,33 @@ public class MsoyAdminManager
 //         scheduleReboot(minutes, user.who());
 //     }
 
+    /** Logs current system "snapshot". */
+    protected class StatsLogger extends Interval
+    {
+        /** 10 minute delay between logged snapshots, in milliseconds. */
+        public static final long DELAY = 1000 * 60 * 10;
+        
+        public void expired () {
+            // we have to do this on the dobj thread, because we're accessing the server's
+            // member object list. so we better be quick! :)
+            _server.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    // iterate over the list of players, adding up a total, as well as
+                    // counting up subsets of active users and guest users
+                    int total = 0, active = 0, guest = 0;
+                    for (MemberObject memobj : _server.getMembersOnline()) {
+                        total++;
+                        active += (memobj.status == OccupantInfo.ACTIVE) ? 1 : 0;
+                        guest += memobj.isGuest() ? 1 : 0;
+                    }
+                    // this will post a unit on another invoker, and exit
+                    _server.eventLog.currentPlayerStats(
+                        ServerConfig.nodeName, total, active, guest);
+                }
+            });
+        }
+    };
+    
     /** Used to manage automatic reboots. */
     protected class MsoyRebootManager extends RebootManager
         implements AttributeChangeListener
@@ -151,6 +184,9 @@ public class MsoyAdminManager
             statObj.setConnStats(MsoyServer.conmgr.getStats());
         }
     };
+
+    /** Logs server "snapshot" information every 10 minutes. */
+    protected Interval _systemStatsLogger;
 
     protected MsoyServer _server;
     protected MsoyRebootManager _rebmgr;

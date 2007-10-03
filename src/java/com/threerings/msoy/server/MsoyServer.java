@@ -4,6 +4,8 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -174,6 +176,16 @@ public class MsoyServer extends MsoyBaseServer
     {
         requireDObjThread();
         return _online.get(name);
+    }
+
+    /**
+     * Returns an <i>unmodifiable</i> collection of members currently online.
+     * This should only be called from the dobjmgr thread.
+     */
+    public static Collection<MemberObject> getMembersOnline ()
+    {
+        requireDObjThread();
+        return Collections.unmodifiableCollection(_online.values());
     }
 
     /**
