@@ -57,7 +57,7 @@ public class GameRepository extends ItemRepository<
     public GameRecord loadGameRecord (int gameId)
         throws PersistenceException
     {
-        return loadGameRecord(loadGameDetail(gameId));
+        return loadGameRecord(gameId, loadGameDetail(gameId));
     }
 
     /**
@@ -77,13 +77,13 @@ public class GameRepository extends ItemRepository<
     /**
      * Loads the appropriate {@link GameRecord} for the specified game detail.
      */
-    public GameRecord loadGameRecord (GameDetailRecord gdr)
+    public GameRecord loadGameRecord (int gameId, GameDetailRecord gdr)
         throws PersistenceException
     {
         if (gdr == null) {
             return null;
         }
-        return loadItem(gdr.gameId < 0 ? gdr.sourceItemId : gdr.listedItemId);
+        return loadItem(gameId < 0 ? gdr.sourceItemId : gdr.listedItemId);
     }
 
     /**

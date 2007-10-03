@@ -213,7 +213,7 @@ public class GameGameRegistry
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("loadLobby") {
             public void invokePersist () throws PersistenceException {
                 _content.detail = _gameRepo.loadGameDetail(gameId);
-                GameRecord rec = _gameRepo.loadGameRecord(_content.detail);
+                GameRecord rec = _gameRepo.loadGameRecord(gameId, _content.detail);
                 if (rec != null) {
                     _content.game = (Game)rec.toItem();
                     // load up the score distribution information for this game as well
