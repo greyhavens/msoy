@@ -9,7 +9,9 @@ import com.threerings.util.Name;
 import com.threerings.util.ObjectMarshaller;
 
 import com.threerings.presents.client.ConfirmAdapter;
+import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
+import com.threerings.presents.client.InvocationService_InvocationListener;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -64,6 +66,7 @@ public class AVRGameControlBackend extends ControlBackend
         o["getPlayerProperty_v1"] = getPlayerProperty_v1;
         o["setPlayerProperty_v1"] = setPlayerProperty_v1;
 //        o["setPlayerPropertyAt_v1"] = setPlayerPropertyAt_v1;
+        o["sendMessage_v1"] = sendMessage_v1;
     }
 
     protected function getProperty_v1 (key :String) :Object
@@ -78,12 +81,12 @@ public class AVRGameControlBackend extends ControlBackend
         var wgsvc :AVRGameService = _gameObj.avrgService;
         if (value == null) {
             wgsvc.deleteProperty(_gctx.getClient(), key,
-                                 createLoggingConfirmListener("deleteProperty"));
+                                 loggingConfirmListener("deleteProperty"));
 
         } else {
             wgsvc.setProperty(_gctx.getClient(), key,
                               ObjectMarshaller.validateAndEncode(value), persistent,
-                              createLoggingConfirmListener("setProperty"));
+                              loggingConfirmListener("setProperty"));
 
         }
         return true;
@@ -101,16 +104,23 @@ public class AVRGameControlBackend extends ControlBackend
         var wgsvc :AVRGameService = _gameObj.avrgService;
         if (value == null) {
             wgsvc.deletePlayerProperty(_gctx.getClient(), key,
-                                       createLoggingConfirmListener("deletePlayerProperty"));
+                                       loggingConfirmListener("deletePlayerProperty"));
 
         } else {
             wgsvc.setPlayerProperty(_gctx.getClient(), key,
                                     ObjectMarshaller.validateAndEncode(value), persistent,
-                                    createLoggingConfirmListener("setPlayerProperty"));
+                                    loggingConfirmListener("setPlayerProperty"));
         }
         return true;
     }
-    
+
+    protected function sendMessage_v1 (key :String, value :Object, playerId :int) :Boolean
+    {
+        _gameObj.avrgService.sendMessage(_gctx.getClient(), key, value, playerId,
+                                         loggingInvocationListener("sendMessage"));
+        return true;
+    }
+
      protected function callStateChanged (entry :GameState) :void
      {
          callUserCode("stateChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
@@ -121,15 +131,19 @@ public class AVRGameControlBackend extends ControlBackend
          callUserCode("playerStateChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
      }
 
-    /**
-     * Create a logging confirm listener for service requests.
-     */
-    protected function createLoggingConfirmListener (
-        service :String) :InvocationService_ConfirmListener
+    protected function loggingConfirmListener (svc :String) :InvocationService_ConfirmListener
     {
         return new ConfirmAdapter(function (cause :String) :void {
             Log.getLog(this).warning(
-                "Service failure [service=" + service + ", cause=" + cause + "].");
+                "Service failure [service=" + svc + ", cause=" + cause + "].");
+        });
+    }
+
+    protected function loggingInvocationListener (svc :String) :InvocationService_InvocationListener
+    {
+        return new InvocationAdapter(function (cause :String) :void {
+            Log.getLog(this).warning(
+                "Service failure [service=" + svc + ", cause=" + cause + "].");
         });
     }
 
