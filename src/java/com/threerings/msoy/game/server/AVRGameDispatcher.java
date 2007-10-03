@@ -38,6 +38,13 @@ public class AVRGameDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case AVRGameMarshaller.CANCEL_QUEST:
+            ((AVRGameProvider)provider).cancelQuest(
+                source,
+                (String)args[0], (InvocationService.ConfirmListener)args[1]
+            );
+            return;
+
         case AVRGameMarshaller.COMPLETE_QUEST:
             ((AVRGameProvider)provider).completeQuest(
                 source,

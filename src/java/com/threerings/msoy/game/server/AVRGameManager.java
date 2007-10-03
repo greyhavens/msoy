@@ -132,6 +132,7 @@ public class AVRGameManager
         }
     }
 
+    // from AVRGameProvider
     public void startQuest (ClientObject caller, final String questId, final String status,
                             final InvocationService.ConfirmListener listener)
         throws InvocationException
@@ -161,6 +162,7 @@ public class AVRGameManager
         });
     }
 
+    // from AVRGameProvider
     public void updateQuest (ClientObject caller, final String questId, final int step,
                              final String status, final ConfirmListener listener)
         throws InvocationException
@@ -192,6 +194,7 @@ public class AVRGameManager
         });
     }
 
+    // from AVRGameProvider
     public void completeQuest (ClientObject caller, final String questId, int payoutLevel,
                                final ConfirmListener listener)
         throws InvocationException
@@ -217,6 +220,34 @@ public class AVRGameManager
             public void handleFailure (Exception pe) {
                 log.warning(
                     "Unable to complete quest [questId=" + questId + ", error=" + pe + "]");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+        });
+    }
+
+    // from AVRGameProvider
+    public void cancelQuest (ClientObject caller, final String questId,
+                             final ConfirmListener listener)
+        throws InvocationException
+    {
+        final PlayerObject player = (PlayerObject) caller;
+
+        QuestState oldState = player.questState.get(questId);
+        if (oldState == null) {
+            throw new IllegalArgumentException(
+                "Member not subscribed to cancelled quest [questId=" + questId + "]");
+        }
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("cancelQuest") {
+            public void invokePersist () throws PersistenceException {
+                _repo.deleteQuestState(player.getMemberId(), _gameId, questId);
+            }
+            public void handleSuccess () {
+                player.removeFromQuestState(questId);
+                listener.requestProcessed();
+            }
+            public void handleFailure (Exception pe) {
+                log.warning(
+                    "Unable to cancel quest [questId=" + questId + ", error=" + pe + "]");
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });

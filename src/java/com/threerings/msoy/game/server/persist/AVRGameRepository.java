@@ -32,6 +32,12 @@ public class AVRGameRepository extends DepotRepository
         store(new QuestStateRecord(gameId, questId, step, status, sceneId));
     }
 
+    public void deleteQuestState (int memberId, int gameId, String questId)
+        throws PersistenceException
+    {
+        delete(QuestStateRecord.class, QuestStateRecord.getKey(memberId, gameId, questId));
+    }
+
     public List<PlayerGameStateRecord> getPlayerGameState (int gameId, int memberId)
         throws PersistenceException
     {

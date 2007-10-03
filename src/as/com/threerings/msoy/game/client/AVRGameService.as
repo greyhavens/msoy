@@ -18,6 +18,9 @@ import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 public interface AVRGameService extends InvocationService
 {
     // from Java interface AVRGameService
+    function cancelQuest (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void;
+
+    // from Java interface AVRGameService
     function completeQuest (arg1 :Client, arg2 :String, arg3 :int, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface AVRGameService

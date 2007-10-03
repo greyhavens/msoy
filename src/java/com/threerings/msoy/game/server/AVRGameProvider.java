@@ -16,6 +16,12 @@ import com.threerings.presents.server.InvocationProvider;
 public interface AVRGameProvider extends InvocationProvider
 {
     /**
+     * Handles a {@link AVRGameService#cancelQuest} request.
+     */
+    public void cancelQuest (ClientObject caller, String arg1, InvocationService.ConfirmListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link AVRGameService#completeQuest} request.
      */
     public void completeQuest (ClientObject caller, String arg1, int arg2, InvocationService.ConfirmListener arg3)
