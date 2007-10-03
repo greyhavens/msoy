@@ -42,6 +42,9 @@ public class PlayerObject extends BodyObject
 
     /** The field name of the <code>questState</code> field. */
     public static final String QUEST_STATE = "questState";
+
+    /** The field name of the <code>gameContent</code> field. */
+    public static final String GAME_CONTENT = "gameContent";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
@@ -62,6 +65,9 @@ public class PlayerObject extends BodyObject
 
     /** The quests of our current world game that we're currently on. */
     public DSet<QuestState> questState = new DSet<QuestState>();
+
+    /** Contains information on player's ownership of game content (populated lazily). */
+    public DSet<GameContentOwnership> gameContent = new DSet<GameContentOwnership>();
 
     /**
      * Return true if this user is merely a guest.
@@ -271,6 +277,54 @@ public class PlayerObject extends BodyObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.game.data.QuestState> clone =
             (value == null) ? null : value.typedClone();
         this.questState = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>gameContent</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToGameContent (GameContentOwnership elem)
+    {
+        requestEntryAdd(GAME_CONTENT, gameContent, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>gameContent</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromGameContent (Comparable key)
+    {
+        requestEntryRemove(GAME_CONTENT, gameContent, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>gameContent</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateGameContent (GameContentOwnership elem)
+    {
+        requestEntryUpdate(GAME_CONTENT, gameContent, elem);
+    }
+
+    /**
+     * Requests that the <code>gameContent</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setGameContent (DSet<com.threerings.msoy.game.data.GameContentOwnership> value)
+    {
+        requestAttributeChange(GAME_CONTENT, value, this.gameContent);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.game.data.GameContentOwnership> clone =
+            (value == null) ? null : value.typedClone();
+        this.gameContent = clone;
     }
     // AUTO-GENERATED: METHODS END
 }
