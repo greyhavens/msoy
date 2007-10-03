@@ -63,17 +63,19 @@ public class GameDirector extends BasicDirector
             } else if (_liaison is AVRGameLiaison) {
                 // automatically drop out of AVRG game
                 _liaison.shutdown();
+                _liaison = null;
 
             } else {
                 // TODO: close current game and open new one?
                 log.info("Zoiks, asked to switch to new lobby [in=" + _liaison.gameId +
                          ", want=" + gameId + "].");
             }
-            return;
         }
 
-        // create our new liaison, which will resolve the lobby and do all the business
-        _liaison = new LobbyGameLiaison(_mctx, gameId);
+        if (_liaison == null) {
+            // create our new liaison, which will resolve the lobby and do all the business
+            _liaison = new LobbyGameLiaison(_mctx, gameId);
+        }
     }
 
     /**
