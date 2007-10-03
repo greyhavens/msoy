@@ -59,6 +59,11 @@ public class GameDirector extends BasicDirector
         if (_liaison != null) {
             if (_liaison.gameId == gameId) {
                 LobbyGameLiaison(_liaison).showLobbyUI();
+
+            } else if (_liaison is AVRGameLiaison) {
+                // automatically drop out of AVRG game
+                _liaison.shutdown();
+
             } else {
                 // TODO: close current game and open new one?
                 log.info("Zoiks, asked to switch to new lobby [in=" + _liaison.gameId +
