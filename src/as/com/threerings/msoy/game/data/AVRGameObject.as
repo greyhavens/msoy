@@ -18,6 +18,9 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 public class AVRGameObject extends DObject
 {
+    /** The identifier for a MessageEvent containing a user message. */
+    public static const USER_MESSAGE :String = "Umsg";
+
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>gameMedia</code> field. */
     public static const GAME_MEDIA :String = "gameMedia";

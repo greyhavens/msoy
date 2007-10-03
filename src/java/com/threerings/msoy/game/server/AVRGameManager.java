@@ -274,6 +274,28 @@ public class AVRGameManager
         setPlayerProperty(caller, key, null, true, listener);
     }
 
+    // from AVRGameProvider
+    public void sendMessage (ClientObject caller, String msg, Object data, int playerId,
+                             InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        if (playerId == 0) {
+            // send to everyone
+            _gameObj.postMessage(AVRGameObject.USER_MESSAGE, msg, data);
+            return;
+        }
+
+        // send to a specific player
+        if (_gameObj.playerOids.contains(playerId)) {
+            PlayerObject toPlayer = (PlayerObject) MsoyGameServer.omgr.getObject(playerId);
+            if (toPlayer != null) {
+                toPlayer.postMessage(
+                    AVRGameObject.USER_MESSAGE + ":" + _gameObj.getOid(),
+                    new Object[] { msg, data });
+            }
+        }
+    }
+
     public void addPlayer (PlayerObject player, List<PlayerGameStateRecord> stateRecords)
     {
         _players.put(player.getOid(), player);

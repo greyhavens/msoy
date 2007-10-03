@@ -27,6 +27,9 @@ public interface AVRGameService extends InvocationService
     function deleteProperty (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface AVRGameService
+    function sendMessage (arg1 :Client, arg2 :String, arg3 :Object, arg4 :int, arg5 :InvocationService_InvocationListener) :void;
+
+    // from Java interface AVRGameService
     function setPlayerProperty (arg1 :Client, arg2 :String, arg3 :ByteArray, arg4 :Boolean, arg5 :InvocationService_ConfirmListener) :void;
 
     // from Java interface AVRGameService

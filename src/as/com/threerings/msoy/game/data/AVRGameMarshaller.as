@@ -10,6 +10,7 @@ import com.threerings.io.TypedArray;
 import com.threerings.msoy.game.client.AVRGameService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
+import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
@@ -63,8 +64,21 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #sendMessage} requests. */
+    public static const SEND_MESSAGE :int = 4;
+
+    // from interface AVRGameService
+    public function sendMessage (arg1 :Client, arg2 :String, arg3 :Object, arg4 :int, arg5 :InvocationService_InvocationListener) :void
+    {
+        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, SEND_MESSAGE, [
+            arg2, arg3, Integer.valueOf(arg4), listener5
+        ]);
+    }
+
     /** The method id used to dispatch {@link #setPlayerProperty} requests. */
-    public static const SET_PLAYER_PROPERTY :int = 4;
+    public static const SET_PLAYER_PROPERTY :int = 5;
 
     // from interface AVRGameService
     public function setPlayerProperty (arg1 :Client, arg2 :String, arg3 :ByteArray, arg4 :Boolean, arg5 :InvocationService_ConfirmListener) :void
@@ -77,7 +91,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setProperty} requests. */
-    public static const SET_PROPERTY :int = 5;
+    public static const SET_PROPERTY :int = 6;
 
     // from interface AVRGameService
     public function setProperty (arg1 :Client, arg2 :String, arg3 :ByteArray, arg4 :Boolean, arg5 :InvocationService_ConfirmListener) :void
@@ -90,7 +104,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #startQuest} requests. */
-    public static const START_QUEST :int = 6;
+    public static const START_QUEST :int = 7;
 
     // from interface AVRGameService
     public function startQuest (arg1 :Client, arg2 :String, arg3 :String, arg4 :InvocationService_ConfirmListener) :void
@@ -103,7 +117,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateQuest} requests. */
-    public static const UPDATE_QUEST :int = 7;
+    public static const UPDATE_QUEST :int = 8;
 
     // from interface AVRGameService
     public function updateQuest (arg1 :Client, arg2 :String, arg3 :int, arg4 :String, arg5 :InvocationService_ConfirmListener) :void

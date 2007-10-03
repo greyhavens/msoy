@@ -58,8 +58,21 @@ public class AVRGameMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #sendMessage} requests. */
+    public static final int SEND_MESSAGE = 4;
+
+    // from interface AVRGameService
+    public void sendMessage (Client arg1, String arg2, Object arg3, int arg4, InvocationService.InvocationListener arg5)
+    {
+        ListenerMarshaller listener5 = new ListenerMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, SEND_MESSAGE, new Object[] {
+            arg2, arg3, Integer.valueOf(arg4), listener5
+        });
+    }
+
     /** The method id used to dispatch {@link #setPlayerProperty} requests. */
-    public static final int SET_PLAYER_PROPERTY = 4;
+    public static final int SET_PLAYER_PROPERTY = 5;
 
     // from interface AVRGameService
     public void setPlayerProperty (Client arg1, String arg2, byte[] arg3, boolean arg4, InvocationService.ConfirmListener arg5)
@@ -72,7 +85,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setProperty} requests. */
-    public static final int SET_PROPERTY = 5;
+    public static final int SET_PROPERTY = 6;
 
     // from interface AVRGameService
     public void setProperty (Client arg1, String arg2, byte[] arg3, boolean arg4, InvocationService.ConfirmListener arg5)
@@ -85,7 +98,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #startQuest} requests. */
-    public static final int START_QUEST = 6;
+    public static final int START_QUEST = 7;
 
     // from interface AVRGameService
     public void startQuest (Client arg1, String arg2, String arg3, InvocationService.ConfirmListener arg4)
@@ -98,7 +111,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateQuest} requests. */
-    public static final int UPDATE_QUEST = 7;
+    public static final int UPDATE_QUEST = 8;
 
     // from interface AVRGameService
     public void updateQuest (Client arg1, String arg2, int arg3, String arg4, InvocationService.ConfirmListener arg5)

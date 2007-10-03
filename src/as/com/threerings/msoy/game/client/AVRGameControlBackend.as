@@ -10,8 +10,12 @@ import com.threerings.util.ObjectMarshaller;
 
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
+
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.MessageAdapter;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetAdapter;
 
 import com.threerings.msoy.client.WorldContext;
@@ -33,9 +37,11 @@ public class AVRGameControlBackend extends ControlBackend
         _gameObj = gameObj;
 
         _gameObj.addListener(_stateListener);
+        _gameObj.addListener(_messageListener);
 
         _playerObj = _gctx.getPlayerObject();
         _playerObj.addListener(_playerStateListener);
+        _playerObj.addListener(_playerMessageListener);
     }
 
     // from ControlBackend
@@ -144,6 +150,15 @@ public class AVRGameControlBackend extends ControlBackend
             }
         });
 
+    protected var _messageListener :MessageListener = new MessageAdapter(
+        function (event :MessageEvent) :void {
+            if (AVRGameObject.USER_MESSAGE == event.getName()) {
+                var args :Array = event.getArgs();
+                var key :String = (args[0] as String);
+                callUserCode("messageReceived_v1", key, ObjectMarshaller.decode(args[1]));
+            }
+        });
+
     protected var _playerStateListener :SetAdapter = new SetAdapter(
         function (event :EntryAddedEvent) :void {
             if (event.getName() == PlayerObject.GAME_STATE) {
@@ -155,5 +170,15 @@ public class AVRGameControlBackend extends ControlBackend
                 callPlayerStateChanged(event.getEntry() as GameState);
             }
         });
+
+    protected var _playerMessageListener :MessageListener = new MessageAdapter(
+        function (event :MessageEvent) :void {
+            if (AVRGameObject.USER_MESSAGE + ":" + _gameObj.getOid() == event.getName()) {
+                var args :Array = event.getArgs();
+                var key :String = (args[0] as String);
+                callUserCode("messageReceived_v1", key, ObjectMarshaller.decode(args[1]));
+            }
+        });
+
 }
 }

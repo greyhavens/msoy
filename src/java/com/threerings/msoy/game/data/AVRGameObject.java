@@ -15,6 +15,9 @@ import com.threerings.presents.dobj.OidList;
  */
 public class AVRGameObject extends DObject
 {
+    /** The identifier for a MessageEvent containing a user message. */
+    public static final String USER_MESSAGE = "Umsg";
+
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>gameMedia</code> field. */
     public static final String GAME_MEDIA = "gameMedia";

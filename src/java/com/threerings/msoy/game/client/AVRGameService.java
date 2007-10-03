@@ -23,6 +23,9 @@ public interface AVRGameService extends InvocationService
     public void deletePlayerProperty (
         Client client, String key, ConfirmListener listener);
 
+    public void sendMessage (
+        Client client, String msg, Object data, int playerId, InvocationListener listener);
+
     public void startQuest (
         Client client, String questId, String status, ConfirmListener listener);
 
