@@ -38,6 +38,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.TrophySource;
+import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemPackRecord;
@@ -141,10 +142,18 @@ public class GameGameRegistry
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("activateAVRGame") {
             public void invokePersist () throws Exception {
                 GameRecord gRec = _gameRepo.loadGameRecord(gameId);
-                _game = (Game) gRec.toItem();
-                _recs = _avrgRepo.getGameState(gameId);
+                if (gRec != null) {
+                    _game = (Game) gRec.toItem();
+                    _recs = _avrgRepo.getGameState(gameId);
+                }
             }
+
             public void handleSuccess () {
+                if (_game == null) {
+                    reportFailure("m.no_such_game");
+                    return;
+                }
+
                 _omgr.registerObject(gameObj);
                 fmgr.startup(gameObj, _game, _recs);
 
@@ -156,15 +165,22 @@ public class GameGameRegistry
                         "No listeners when done activating AVRGame [gameId=" + gameId + "]");
                 }
             }
+
             public void handleFailure (Exception pe) {
+                log.log(Level.WARNING, "Failed to resolve AVRGame [id=" + gameId + "].", pe);
+                reportFailure(pe.getMessage());
+            }
+
+            protected void reportFailure (String reason) {
                 ResultListenerList list = _loadingAVRGames.remove(gameId);
                 if (list != null) {
-                    list.requestFailed(pe.getMessage());
+                    list.requestFailed(reason);
                 } else {
                     log.warning(
-                        "No listeners when done activating AVRGame [gameId=" + gameId + "]");
+                        "No listeners when failing AVRGame [gameId=" + gameId + "]");
                 }
             }
+
             protected Game _game;
             protected List<GameStateRecord> _recs;
         });
@@ -196,38 +212,39 @@ public class GameGameRegistry
 
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("loadLobby") {
             public void invokePersist () throws PersistenceException {
-                GameRecord rec = _gameRepo.loadGameRecord(gameId);
+                _content.detail = _gameRepo.loadGameDetail(gameId);
+                GameRecord rec = _gameRepo.loadGameRecord(_content.detail);
                 if (rec != null) {
-                    _game = (Game)rec.toItem();
+                    _content.game = (Game)rec.toItem();
                     // load up the score distribution information for this game as well
                     _single = _ratingRepo.loadPercentile(-Math.abs(gameId));
                     _multi = _ratingRepo.loadPercentile(Math.abs(gameId));
                     // load up our level and item packs
                     for (LevelPackRecord record :
-                             _lpackRepo.loadOriginalItemsBySuite(_game.getSuiteId())) {
-                        _lpacks.add((LevelPack)record.toItem());
+                             _lpackRepo.loadOriginalItemsBySuite(_content.game.getSuiteId())) {
+                        _content.lpacks.add((LevelPack)record.toItem());
                     }
                     for (ItemPackRecord record :
-                             _ipackRepo.loadOriginalItemsBySuite(_game.getSuiteId())) {
-                        _ipacks.add((ItemPack)record.toItem());
+                             _ipackRepo.loadOriginalItemsBySuite(_content.game.getSuiteId())) {
+                        _content.ipacks.add((ItemPack)record.toItem());
                     }
                     // load up our trophy source items
                     for (TrophySourceRecord record :
-                             _tsourceRepo.loadOriginalItemsBySuite(_game.getSuiteId())) {
-                        _tsources.add((TrophySource)record.toItem());
+                             _tsourceRepo.loadOriginalItemsBySuite(_content.game.getSuiteId())) {
+                        _content.tsources.add((TrophySource)record.toItem());
                     }
                 }
             }
 
             public void handleSuccess () {
-                if (_game == null) {
+                if (_content.game == null) {
                     reportFailure("m.no_such_game");
                     return;
                 }
 
                 try {
                     LobbyManager lmgr = new LobbyManager(_omgr, GameGameRegistry.this);
-                    lmgr.setGameData(_game, _lpacks, _ipacks, _tsources);
+                    lmgr.setGameContent(_content);
                     _lobbies.put(gameId, lmgr);
 
                     ResultListenerList list = _loadingLobbies.remove(gameId);
@@ -260,11 +277,8 @@ public class GameGameRegistry
                 MsoyGameServer.worldClient.stoppedHostingGame(gameId);
             }
 
-            protected Game _game;
+            protected GameContent _content = new GameContent();
             protected Percentiler _single, _multi;
-            protected ArrayList<LevelPack> _lpacks = new ArrayList<LevelPack>();
-            protected ArrayList<ItemPack> _ipacks = new ArrayList<ItemPack>();
-            protected ArrayList<TrophySource> _tsources = new ArrayList<TrophySource>();
         });
     }
 

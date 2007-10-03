@@ -35,21 +35,28 @@ import com.threerings.parlor.rating.util.Percentiler;
 
 import com.threerings.ezgame.server.EZGameManager;
 
+import com.whirled.data.GameData;
+import com.whirled.data.ItemData;
+import com.whirled.data.LevelData;
+import com.whirled.data.TrophyData;
 import com.whirled.data.WhirledGame;
 import com.whirled.data.WhirledGameMarshaller;
 import com.whirled.server.WhirledGameDispatcher;
 import com.whirled.server.WhirledGameProvider;
 
-import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MsoyBaseServer;
-import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.game.server.MsoyGameServer;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.ItemPack;
+import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.server.MsoyGameServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -62,6 +69,48 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     public WhirledGameDelegate (GameManager gmgr)
     {
         super(gmgr);
+    }
+
+    /**
+     * Called by the lobby manager once we're started to inform us of our level and item packs.
+     */
+    public void setGameContent (GameContent content)
+    {
+        // keep our game content around for later
+        _content = content;
+
+        // compute our flow per minute
+        float minuteRate = RuntimeConfig.server.hourlyGameFlowRate / 60f;
+        _flowPerMinute = (int)Math.round(minuteRate * _content.detail.getAntiAbuseFactor());
+
+        // let the client know what game content is available
+        if (_plmgr.getPlaceObject() instanceof WhirledGame) {
+            WhirledGame gobj = (WhirledGame)_plmgr.getPlaceObject();
+            ArrayList<GameData> gdata = new ArrayList<GameData>();
+            for (LevelPack pack : content.lpacks) {
+                LevelData data = new LevelData();
+                data.ident = pack.ident;
+                data.name = pack.name;
+                data.mediaURL = pack.getFurniMedia().getMediaPath();
+                data.premium = pack.premium;
+                gdata.add(data);
+            }
+            for (ItemPack pack : content.ipacks) {
+                ItemData data = new ItemData();
+                data.ident = pack.ident;
+                data.name = pack.name;
+                data.mediaURL = pack.getFurniMedia().getMediaPath();
+                gdata.add(data);
+            }
+            for (TrophySource source : content.tsources) {
+                TrophyData data = new TrophyData();
+                data.ident = source.ident;
+                data.name = source.name;
+                data.mediaURL = source.getThumbnailMedia().getMediaPath();
+                gdata.add(data);
+            }
+            gobj.setGameData(gdata.toArray(new GameData[gdata.size()]));
+        }
     }
 
     // from interface WhirledGameProvider
@@ -190,34 +239,9 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // wire up our WhirledGameService
         if (plobj instanceof WhirledGame) {
-            _invmarsh = MsoyBaseServer.invmgr.registerDispatcher(new WhirledGameDispatcher(this));
+            _invmarsh = MsoyGameServer.invmgr.registerDispatcher(new WhirledGameDispatcher(this));
             ((WhirledGame)plobj).setWhirledGameService((WhirledGameMarshaller)_invmarsh);
         }
-
-        // load up some metadata
-        final int gameId = _gmgr.getGameConfig().getGameId();
-        MsoyBaseServer.invoker.postUnit(new RepositoryUnit("loadGameDetail") {
-            public void invokePersist () throws Exception {
-                _result = getGameRepository().loadGameDetail(gameId);
-                if (_result == null) {
-                    throw new Exception("Missing game detail record.");
-                }
-            }
-
-            public void handleSuccess () {
-                _detail = _result;
-                float minuteRate = RuntimeConfig.server.hourlyGameFlowRate / 60f;
-                _flowPerMinute = (int)Math.round(minuteRate * _detail.getAntiAbuseFactor());
-            }
-
-            public void handleFailure (Exception e) {
-                log.log(Level.WARNING, "Failed to fetch game metadata [id=" + gameId + "]", e);
-                // we're probably hosed, but use a conservative default anyway
-                _flowPerMinute = (int)((RuntimeConfig.server.hourlyGameFlowRate * 0.5f) / 60f);
-            }
-
-            protected GameDetailRecord _result;
-        });
     }
 
     @Override
@@ -225,7 +249,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     {
         super.didShutdown();
         if (_invmarsh != null) {
-            MsoyBaseServer.invmgr.clearDispatcher(_invmarsh);
+            MsoyGameServer.invmgr.clearDispatcher(_invmarsh);
         }
 
         stopTracking();
@@ -268,11 +292,13 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         final int gameId = _gmgr.getGameConfig().getGameId();
         final int playerGames = _allPlayers.size(), playerMins = totalMinutes;
         final boolean recalc = (RuntimeConfig.server.abuseFactorReassessment == 0) ? false :
-            _detail.shouldRecalcAbuse(playerMins, RuntimeConfig.server.abuseFactorReassessment);
-        MsoyBaseServer.invoker.postUnit(new Invoker.Unit("updateGameDetail") {
+            _content.detail.shouldRecalcAbuse(
+                playerMins, RuntimeConfig.server.abuseFactorReassessment);
+        MsoyGameServer.invoker.postUnit(new Invoker.Unit("updateGameDetail") {
             public boolean invoke () {
                 try {
-                    getGameRepository().noteGamePlayed(gameId, playerGames, playerMins, recalc);
+                    MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(
+                        gameId, playerGames, playerMins, recalc);
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to note end of game [in=" + where() + "]", pe);
                 }
@@ -286,21 +312,22 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     {
         super.bodyEntered(bodyOid);
 
-        // potentially create a flow record for this occupant
-        if (!_flowRecords.containsKey(bodyOid)) {
-            MsoyUserObject uobj = (MsoyUserObject) MsoyBaseServer.omgr.getObject(bodyOid);
-            if (uobj == null) {
-                log.warning("Failed to lookup member [oid=" + bodyOid + "]");
+        PlayerObject plobj = (PlayerObject)MsoyGameServer.omgr.getObject(bodyOid);
 
-            } else {
-                FlowRecord record = new FlowRecord(uobj.getMemberId(), uobj.getHumanity());
-                _flowRecords.put(bodyOid, record);
-                // if we're currently tracking, note that they're "starting" immediately
-                if (_tracking) {
-                    record.beganStamp = now();
-                    _allPlayers.add(record.memberId);
-                }
+        // potentially create a flow record for this occupant
+        if (!_flowRecords.containsKey(bodyOid) && plobj != null) {
+            FlowRecord record = new FlowRecord(plobj.getMemberId(), plobj.getHumanity());
+            _flowRecords.put(bodyOid, record);
+            // if we're currently tracking, note that they're "starting" immediately
+            if (_tracking) {
+                record.beganStamp = now();
+                _allPlayers.add(record.memberId);
             }
+        }
+
+        // if this person is a player, load up their content packs and trophies
+        if (isPlayer(plobj)) {
+            resolveOwnedContent(plobj.getMemberId());
         }
     }
 
@@ -340,13 +367,22 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     @Override // from RatingManagerDelegate
     protected RatingRepository getRatingRepository ()
     {
-        return MsoyBaseServer.ratingRepo;
+        return MsoyGameServer.ratingRepo;
     }
 
     @Override // from RatingManagerDelegate
     protected void updateRatingInMemory (int gameId, Rating rating)
     {
         // we don't keep in-memory ratings for whirled
+    }
+
+    /**
+     * Resolves the item and level packs owned by the player in question as well as trophies they
+     * have earned. (All related to the current game.)
+     */
+    protected void resolveOwnedContent (int playerId)
+    {
+        // TODO
     }
 
     protected void updateScoreBasedRating (Player player, Rating rating)
@@ -427,11 +463,11 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
             // update the player's member object on their world server
             if (player.flowAward > 0) {
-                reportFlowAward(record.memberId, player.flowAward);
+                MsoyGameServer.worldClient.reportFlowAward(record.memberId, player.flowAward);
             }
 
             // report to the game that this player earned some flow
-            DObject user = MsoyBaseServer.omgr.getObject(player.playerOid);
+            DObject user = MsoyGameServer.omgr.getObject(player.playerOid);
             if (user != null) {
                 user.postMessage(WhirledGame.FLOW_AWARDED_MESSAGE,
                                  player.flowAward, player.percentile);
@@ -459,14 +495,9 @@ public class WhirledGameDelegate extends RatingManagerDelegate
      */
     protected float getAverageGameDuration (int playerSeconds)
     {
-        // if we failed to load our detail record, use the player's actual time capped at the max
-        if (_detail == null) {
-            return Math.min(MAX_FRESH_GAME_DURATION, playerSeconds / 60f);
-        }
-
         // if we've got enough data to trust the average, simply return it
-        float minutes = _detail.playerMinutes;
-        int samples = _detail.playerGames;
+        float minutes = _content.detail.playerMinutes;
+        int samples = _content.detail.playerGames;
         if (samples > FRESH_GAME_CUTOFF) {
             return minutes / samples;
         }
@@ -498,11 +529,8 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
     protected Percentiler getScoreDistribution ()
     {
-        Percentiler tiler = null;
-        // if we're not running on a game server, we don't have score distributions
-        if (MsoyGameServer.gameReg != null) {
-            tiler = MsoyGameServer.gameReg.getScoreDistribution(getGameId(), isMultiPlayer());
-        }
+        Percentiler tiler =
+            MsoyGameServer.gameReg.getScoreDistribution(getGameId(), isMultiPlayer());
         // if for whatever reason we don't have a score distribution, return a blank one which will
         // result in the default percentile being used
         return (tiler == null) ? new Percentiler() : tiler;
@@ -602,10 +630,10 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // actually grant their flow award; we don't need to update their in-memory flow value
         // because we've been doing that all along
-        MsoyBaseServer.invoker.postUnit(new Invoker.Unit("grantFlow") {
+        MsoyGameServer.invoker.postUnit(new Invoker.Unit("grantFlow") {
             public boolean invoke () {
                 try {
-                    MsoyBaseServer.memberRepo.getFlowRepository().grantFlow(
+                    MsoyGameServer.memberRepo.getFlowRepository().grantFlow(
                         record.memberId, record.awarded, UserAction.PLAYED_GAME, details);
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to grant flow [mid=" + record.memberId +
@@ -622,27 +650,12 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     protected void verifyIsPlayer (ClientObject caller)
         throws InvocationException
     {
-        MsoyUserObject user = (MsoyUserObject)caller;
+        PlayerObject user = (PlayerObject)caller;
         if (_gobj.players.length > 0) {
             if (_gobj.getPlayerIndex(user.getMemberName()) == -1) {
                 throw new InvocationException(GameCodes.E_ACCESS_DENIED);
             }
         }
-    }
-
-    protected void reportFlowAward (int memberId, int deltaFlow)
-    {
-        if (MsoyServer.isActive()) {
-            MsoyServer.gameReg.reportFlowAward(null, memberId, deltaFlow);
-        } else {
-            MsoyGameServer.worldClient.reportFlowAward(memberId, deltaFlow);
-        }
-    }
-
-    protected static GameRepository getGameRepository ()
-    {
-        return (MsoyGameServer.gameReg != null) ?
-            MsoyGameServer.gameReg.getGameRepository() : MsoyServer.itemMan.getGameRepository();
     }
 
     /**
@@ -711,11 +724,11 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     /** Keep our invocation service registration so that we can unload it at shutdown. */
     protected InvocationMarshaller _invmarsh;
 
+    /** The metadata for the game being played. */
+    protected GameContent _content;
+
     /** The base flow per player per minute rate that can be awarded by this game. */
     protected int _flowPerMinute = -1; // marker for 'unknown'.
-
-    /** Our detail record for this game. */
-    protected GameDetailRecord _detail;
 
     /** The average duration (in seconds) of this game. */
     protected int _averageDuration;
@@ -738,6 +751,9 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
     /** Tracks accumulated playtime for all players in the game. */
     protected HashIntMap<FlowRecord> _flowRecords = new HashIntMap<FlowRecord>();
+
+    /** The set of trophies available for awarding by this game. */
+    protected ArrayList<TrophySource> _tsources;
 
     /** Once a game has accumulated this many player games, its average time is trusted. */
     protected static final int FRESH_GAME_CUTOFF = 10;

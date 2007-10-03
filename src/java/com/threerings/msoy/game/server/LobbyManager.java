@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.ArrayList;
-
 import com.samskivert.util.Interval;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -12,14 +10,12 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.dobj.SetAdapter;
 
+import com.threerings.crowd.server.PlaceManagerDelegate;
 import com.threerings.parlor.game.server.GameManager;
 
 import com.threerings.ezgame.data.GameDefinition;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.ItemPack;
-import com.threerings.msoy.item.data.all.LevelPack;
-import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.game.data.LobbyObject;
@@ -61,20 +57,16 @@ public class LobbyManager
     /**
      * Called when a lobby is first created and possibly again later to refresh its game metadata.
      */
-    public void setGameData (Game game, ArrayList<LevelPack> levels, ArrayList<ItemPack> items,
-                             ArrayList<TrophySource> tsources)
+    public void setGameContent (GameContent content)
         throws Exception
     {
-        _game = game;
-        _lpacks = levels;
-        _ipacks = items;
-        _tsources = tsources;
+        _content = content;
 
-        _lobj.setGame(_game);
-        _lobj.setGameDef(new MsoyGameParser().parseGame(game));
+        _lobj.setGame(_content.game);
+        _lobj.setGameDef(new MsoyGameParser().parseGame(content.game));
 
 //         // if our game object is mutable, listen for updates from the ItemManager
-//         if (_game.sourceId == 0) {
+//         if (_content.game.sourceId == 0) {
 //             _uplist = new ItemManager.ItemUpdateListener() {
 //                 public void itemUpdated (ItemRecord item) {
 //                     Game game = (Game)item.toItem();
@@ -97,7 +89,7 @@ public class LobbyManager
 //             MsoyServer.itemMan.removeItemUpdateListener(GameRecord.class, _uplist);
 //         }
 
-        _shutObs.lobbyDidShutdown(_game);
+        _shutObs.lobbyDidShutdown(_content.game);
 
         _tableMgr.shutdown();
 
@@ -113,7 +105,7 @@ public class LobbyManager
      */
     public Game getGame ()
     {
-        return _game;
+        return _content.game;
     }
 
     /**
@@ -121,7 +113,7 @@ public class LobbyManager
      */
     public int getGameId ()
     {
-        return _game.gameId;
+        return _content.game.gameId;
     }
 
     /**
@@ -153,7 +145,7 @@ public class LobbyManager
         }
 
         // Accept the new game, and update the lobby object
-        _game = game;
+        _content.game = game;
         _lobj.startTransaction();
         try {
             _lobj.setGame(game);
@@ -169,9 +161,13 @@ public class LobbyManager
      */
     protected void gameCreated (GameManager gmgr)
     {
-        if (gmgr instanceof MsoyGameManager) {
-            ((MsoyGameManager)gmgr).setGameData(_game, _lpacks, _ipacks, _tsources);
-        }
+        gmgr.applyToDelegates(new GameManager.DelegateOp() {
+            public void apply (PlaceManagerDelegate delegate) {
+                if (delegate instanceof WhirledGameDelegate) {
+                    ((WhirledGameDelegate)delegate).setGameContent(_content);
+                }
+            }
+        });
     }
 
     /**
@@ -231,17 +227,8 @@ public class LobbyManager
     /** This fellow wants to hear when we shutdown. */
     protected ShutdownObserver _shutObs;
 
-    /** The game for which we're lobbying. */
-    protected Game _game;
-
-    /** All level packs available for this game. */
-    protected ArrayList<LevelPack> _lpacks;
-
-    /** All item packs available for this game. */
-    protected ArrayList<ItemPack> _ipacks;
-
-    /** All trophy source items available for this game. */
-    protected ArrayList<TrophySource> _tsources;
+    /** The metadata for the game for which we're lobbying. */
+    protected GameContent _content;
 
     /** Manages the actual tables. */
     protected MsoyTableManager _tableMgr;
