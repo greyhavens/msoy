@@ -62,15 +62,14 @@ public class AVRGameControlBackend extends ControlBackend
 
     protected function getProperty_v1 (key :String) :Object
     {
-        var entry :GameState = GameState(_gameObj.memories.get(key));
+        var entry :GameState = GameState(_gameObj.state.get(key));
         return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
     }
 
     protected function setProperty_v1 (
         key :String, value: Object, persistent :Boolean) :Boolean
     {
-        var wgsvc :AVRGameService =
-            (_gctx.getClient().requireService(AVRGameService) as AVRGameService);
+        var wgsvc :AVRGameService = _gameObj.avrgService;
         if (value == null) {
             wgsvc.deleteProperty(_gctx.getClient(), key,
                                  createLoggingConfirmListener("deleteProperty"));
@@ -93,8 +92,7 @@ public class AVRGameControlBackend extends ControlBackend
     protected function setPlayerProperty_v1 (
         key :String, value: Object, persistent :Boolean) :Boolean
     {
-        var wgsvc :AVRGameService =
-            (_gctx.getClient().requireService(AVRGameService) as AVRGameService);
+        var wgsvc :AVRGameService = _gameObj.avrgService;
         if (value == null) {
             wgsvc.deletePlayerProperty(_gctx.getClient(), key,
                                        createLoggingConfirmListener("deletePlayerProperty"));
@@ -136,12 +134,12 @@ public class AVRGameControlBackend extends ControlBackend
 
     protected var _stateListener :SetAdapter = new SetAdapter(
         function (event :EntryAddedEvent) :void {
-            if (event.getName() == AVRGameObject.MEMORIES) {
+            if (event.getName() == AVRGameObject.STATE) {
                 callStateChanged(event.getEntry() as GameState);
             }
         },
         function (event :EntryUpdatedEvent) :void {
-            if (event.getName() == AVRGameObject.MEMORIES) {
+            if (event.getName() == AVRGameObject.STATE) {
                 callStateChanged(event.getEntry() as GameState);
             }
         });
