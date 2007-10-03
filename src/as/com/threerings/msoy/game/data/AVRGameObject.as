@@ -22,8 +22,8 @@ public class AVRGameObject extends DObject
     /** The field name of the <code>gameMedia</code> field. */
     public static const GAME_MEDIA :String = "gameMedia";
 
-    /** The field name of the <code>memories</code> field. */
-    public static const MEMORIES :String = "memories";
+    /** The field name of the <code>state</code> field. */
+    public static const STATE :String = "state";
 
     /** The field name of the <code>playerOids</code> field. */
     public static const PLAYER_OIDS :String = "playerOids";
@@ -39,8 +39,8 @@ public class AVRGameObject extends DObject
     /** The defining media of the AVRGame. */
     public var gameMedia :MediaDesc;
 
-    /** Contains the game's memories. */
-    public var memories :DSet = new DSet();
+    /** Contains the game's state. */
+    public var state :DSet = new DSet();
 
     /** Tracks the oid of the body objects of all of the active players of this game. */
     public var playerOids :OidList;
@@ -56,7 +56,7 @@ public class AVRGameObject extends DObject
         super.readObject(ins);
 
         gameMedia = (ins.readObject() as MediaDesc);
-        memories = (ins.readObject() as DSet);
+        state = (ins.readObject() as DSet);
         playerOids = (ins.readObject() as OidList);
         players = (ins.readObject() as DSet);
         avrgService = (ins.readObject() as AVRGameMarshaller);
