@@ -84,10 +84,13 @@ public class GameRepository extends ItemRepository<
     /**
      * Updates the specified {@link GameDetailRecord}, recording an increase in games played and
      * total player minutes.
+     *
+     * @return null or the recalculated abuse factor if one was recalculated.
      */
-    public void noteGamePlayed (int gameId, int playerGames, int playerMinutes, boolean recalc)
+    public Integer noteGamePlayed (int gameId, int playerGames, int playerMinutes, boolean recalc)
         throws PersistenceException
     {
+        Integer newAbuse = null;
         gameId = Math.abs(gameId); // how to handle playing the original?
 
         Map<String, SQLExpression> fieldMap = new HashMap<String, SQLExpression>();
@@ -109,8 +112,9 @@ public class GameRepository extends ItemRepository<
 //                                      new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)),
 //                    new GroupBy(GameFlowGrantLogRecord.GAME_ID_C));
 
-            // write an algorithm that actually does something with 'records' here
-            fieldMap.put(GameDetailRecord.ABUSE_FACTOR, new LiteralExp("123"));
+            // TODO: write an algorithm that actually does something with 'records' here
+            newAbuse = 123;
+            fieldMap.put(GameDetailRecord.ABUSE_FACTOR, new LiteralExp("" + newAbuse));
 
             // then delete the records
             deleteAll(GameFlowGrantLogRecord.class,
@@ -124,6 +128,7 @@ public class GameRepository extends ItemRepository<
                           new Conditionals.LessThan(GameDetailRecord.PLAYER_MINUTES_C, overflow)));
 
         updateLiteral(GameDetailRecord.class, where, GameDetailRecord.getKey(gameId), fieldMap);
+        return newAbuse;
     }
 
     @Override // from ItemRepository

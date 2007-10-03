@@ -289,7 +289,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             totalMinutes = _allPlayers.size() * 15;
         }
 
-        final int gameId = _gmgr.getGameConfig().getGameId();
+        // record this game's playtime to the repository
         final int playerGames = _allPlayers.size(), playerMins = totalMinutes;
         final boolean recalc = (RuntimeConfig.server.abuseFactorReassessment == 0) ? false :
             _content.detail.shouldRecalcAbuse(
@@ -297,14 +297,22 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         MsoyGameServer.invoker.postUnit(new Invoker.Unit("updateGameDetail") {
             public boolean invoke () {
                 try {
-                    MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(
-                        gameId, playerGames, playerMins, recalc);
+                    _newAbuse = MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(
+                        _content.game.gameId, playerGames, playerMins, recalc);
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to note end of game [in=" + where() + "]", pe);
                 }
-                return false;
+                return (_newAbuse != null);
             }
+            public void handleResult () {
+                _content.detail.abuseFactor = _newAbuse;
+            }
+            protected Integer _newAbuse;
         });
+
+        // also update our in-memory game detail record
+        _content.detail.playerGames += playerGames;
+        _content.detail.playerMinutes += playerMins;
     }
 
     @Override // from PlaceManagerDelegate
@@ -487,7 +495,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     protected boolean shouldRateGame ()
     {
         // we don't support ratings for non-published games
-        return (_gmgr.getGameConfig().getGameId() > 0) && super.shouldRateGame();
+        return (_content.game.gameId > 0) && super.shouldRateGame();
     }
 
     /**
