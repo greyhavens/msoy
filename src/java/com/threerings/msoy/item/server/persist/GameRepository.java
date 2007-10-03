@@ -66,7 +66,12 @@ public class GameRepository extends ItemRepository<
     public GameDetailRecord loadGameDetail (int gameId)
         throws PersistenceException
     {
-        return load(GameDetailRecord.class, Math.abs(gameId));
+        GameDetailRecord rec = load(GameDetailRecord.class, Math.abs(gameId));
+        if (rec != null) {
+            // preserve gameId's sign and thus the distinction between source and listed games
+            rec.gameId = gameId;
+        }
+        return rec;
     }
 
     /**
@@ -194,7 +199,7 @@ public class GameRepository extends ItemRepository<
     {
         return GameRecord.class;
     }
-    
+
     @Override // from ItemRepository
     protected Class<GameCatalogRecord> getCatalogClass ()
     {
@@ -206,7 +211,7 @@ public class GameRepository extends ItemRepository<
     {
         return GameCloneRecord.class;
     }
-    
+
     @Override // from ItemRepository
     protected Class<GameRatingRecord> getRatingClass ()
     {
