@@ -23,6 +23,8 @@ import com.threerings.msoy.game.data.PlayerObject;
 
 public class AVRGameControlBackend extends ControlBackend
 {
+    public static const log :Log = Log.getLog(AVRGameControlBackend);
+
     public function AVRGameControlBackend (
         mctx :WorldContext, gctx :GameContext, gameObj :AVRGameObject, ctrl :AVRGameController)
     {
