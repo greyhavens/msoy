@@ -20,11 +20,14 @@ import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetAdapter;
 
+import com.threerings.util.Iterator;
+
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.ControlBackend;
 
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.GameState;
+import com.threerings.msoy.game.data.QuestState;
 import com.threerings.msoy.game.data.PlayerObject;
 
 public class AVRGameControlBackend extends ControlBackend
@@ -67,6 +70,12 @@ public class AVRGameControlBackend extends ControlBackend
         o["setPlayerProperty_v1"] = setPlayerProperty_v1;
 //        o["setPlayerPropertyAt_v1"] = setPlayerPropertyAt_v1;
         o["sendMessage_v1"] = sendMessage_v1;
+
+        o["offerQuest_v1"] = offerQuest_v1;
+        o["updateQuest_v1"] = updateQuest_v1;
+        o["completeQuest_v1"] = completeQuest_v1;
+        o["cancelQuest_v1"] = cancelQuest_v1;
+        o["getActiveQuests_v1"] = getActiveQuests_v1;
     }
 
     protected function getProperty_v1 (key :String) :Object
@@ -119,6 +128,47 @@ public class AVRGameControlBackend extends ControlBackend
         _gameObj.avrgService.sendMessage(_gctx.getClient(), key, value, playerId,
                                          loggingInvocationListener("sendMessage"));
         return true;
+    }
+
+    protected function offerQuest_v1 (questId :String, initialStatus :String) :Boolean
+    {
+        // TODO: Popup UI and whatnot
+        _gameObj.avrgService.startQuest(_gctx.getClient(), questId, initialStatus,
+                                       loggingConfirmListener("startQuest"));
+        return true;
+    }
+
+    protected function updateQuest_v1 (questId :String, step :int, status :String) :Boolean
+    {
+        _gameObj.avrgService.updateQuest(_gctx.getClient(), questId, step, status,
+                                        loggingConfirmListener("updateQuest"));
+        return true;
+    }
+
+    protected function completeQuest_v1 (questId :String, payoutLevel :int) :Boolean
+    {
+        _gameObj.avrgService.completeQuest(_gctx.getClient(), questId, payoutLevel,
+                                        loggingConfirmListener("completeQuest"));
+        return true;
+    }
+
+    protected function cancelQuest_v1 (questId :String) :Boolean
+    {
+        // TODO: confirmation dialog
+        _gameObj.avrgService.cancelQuest(_gctx.getClient(), questId,
+                                         loggingConfirmListener("cancelQuest"));
+        return true;
+    }
+
+    protected function getActiveQuests_v1 () :Array
+    {
+        var list :Array = new Array();
+        var i :Iterator = _playerObj.questState.iterator();
+        while (i.hasNext()) {
+            var state :QuestState = QuestState(i.next());
+            list.push([ state.step, state.status ]);
+        }
+        return list;
     }
 
     protected function callStateChanged (entry :GameState) :void
