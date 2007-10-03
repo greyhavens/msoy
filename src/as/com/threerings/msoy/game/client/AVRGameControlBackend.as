@@ -121,15 +121,15 @@ public class AVRGameControlBackend extends ControlBackend
         return true;
     }
 
-     protected function callStateChanged (entry :GameState) :void
-     {
-         callUserCode("stateChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
-     }
+    protected function callStateChanged (entry :GameState) :void
+    {
+        callUserCode("stateChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
+    }
     
-     protected function callPlayerStateChanged (entry :GameState) :void
-     {
-         callUserCode("playerStateChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
-     }
+    protected function callPlayerStateChanged (entry :GameState) :void
+    {
+        callUserCode("playerStateChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
+    }
 
     protected function loggingConfirmListener (svc :String) :InvocationService_ConfirmListener
     {
