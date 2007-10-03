@@ -1,5 +1,5 @@
 //
-// $Id: AVRGameController.as 5986 2007-10-02 13:46:12Z zell $
+// $Id: AVRGamePanel.as 5986 2007-10-02 13:46:12Z zell $
 
 package com.threerings.msoy.game.client {
 
