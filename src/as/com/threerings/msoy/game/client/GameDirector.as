@@ -159,9 +159,9 @@ public class GameDirector extends BasicDirector
     /**
      * Returns the gameId of the game we're currently connected to, or zero if we're not.
      */
-    public function get gameId () :int
+    public function getGameId () :int
     {
-        return (_liaison != null) ? _liaison.getGameId() : 0;
+        return (_liaison != null) ? _liaison.gameId : 0;
     }
 
     /**
