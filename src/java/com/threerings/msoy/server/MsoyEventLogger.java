@@ -9,7 +9,7 @@ import java.net.MalformedURLException;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.panopticon.client.logging.EventSchema;
+import com.threerings.panopticon.data.Schema;
 import com.threerings.panopticon.client.logging.EventLogger;
 import com.threerings.panopticon.client.logging.EchoStorage;
 import com.threerings.panopticon.client.logging.LogStorage;
@@ -137,53 +137,53 @@ public class MsoyEventLogger
         return System.currentTimeMillis();
     }
     
-    protected static final EventSchema[] MSOY_SCHEMAS = new EventSchema[] {
-        new EventSchema(
+    protected static final Schema[] MSOY_SCHEMAS = new Schema[] {
+        new Schema(
             "CurrentPlayerStats_test",
             new String[] { "timestamp", "serverName", "total",       "active",
                            "guests" },
             new Class[]  { Long.class,   String.class, Integer.class, Integer.class,
                            Integer.class }),
-        new EventSchema(
+        new Schema(
             "Login_test",
             new String[] { "timestamp", "guest",       "playerId",    "firstLogin",
                            "sessionToken" },
             new Class[]  { Long.class,   Boolean.class, Integer.class, Boolean.class,
                            String.class }),
-        new EventSchema(
+        new Schema(
             "MailSent_test",
             new String[] { "timestamp", "senderId",   "recipientId", "payloadId"     },
             new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class  }),
-        new EventSchema(
+        new Schema(
             "FlowTransaction_test",
             new String[] { "timestamp", "playerId",   "actionType",  "flowDelta",
                               "newTotal",    "details"     },
             new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class,
                                Integer.class, String.class }),
-        new EventSchema(
+        new Schema(
             "ItemPurchase_test",
             new String[] { "timestamp", "playerId",   "itemType", "itemId",
                            "flowCost",    "goldCost"     },
-            new Class[]  { Long.class,  Integer.class, Byte.class, Integer.class,
+            new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class,
                             Integer.class, Integer.class }),
-        new EventSchema(
+        new Schema(
             "ItemCatalogListing_test",
-            new String[] { "timestamp", "creatorId",   "itemType", "itemId",
+            new String[] { "timestamp", "creatorId",   "itemType",    "itemId",
                            "flowCost",    "goldCost",    "pricing",     "salesTarget"  },
-            new Class[]  { Long.class,   Integer.class, Byte.class, Integer.class,
+            new Class[]  { Long.class,   Integer.class, Integer.class, Integer.class,
                            Integer.class,  Integer.class, Integer.class, Integer.class }),
-        new EventSchema(
+        new Schema(
             "FriendListAction_test",
             new String[] { "timestamp", "playerId",   "friendId",    "isAdded"       },
             new Class[]  { Long.class,  Integer.class, Integer.class, Boolean.class  }),
-        new EventSchema(
+        new Schema(
             "GroupMembershipAction_test",
             new String[] { "timestamp", "playerId",    "groupId",     "isJoined"     },
             new Class[]  { Long.class,   Integer.class, Integer.class, Boolean.class }),
-        new EventSchema(
+        new Schema(
             "GroupRankModification_test",
             new String[] { "timestamp", "playerId",    "groupId",     "newRank"      },
-            new Class[]  { Long.class,   Integer.class, Integer.class, Byte.class    })
+            new Class[]  { Long.class,   Integer.class, Integer.class, Integer.class    })
     };        
 
     /** Singleton reference to log storage. */
