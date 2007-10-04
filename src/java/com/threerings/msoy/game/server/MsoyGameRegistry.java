@@ -157,6 +157,9 @@ public class MsoyGameRegistry
 
         // set or clear their pending game
         memobj.setGame(game);
+        if (game.avrGame) {
+            memobj.setAvrGameId(game.gameId);
+        }
 
         // update their occupant info if they're in a scene
         MsoyServer.memberMan.updateOccupantInfo(memobj);

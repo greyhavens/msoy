@@ -62,6 +62,7 @@ public class AVRGameManager
     public void startup (AVRGameObject gameObj, Game game, List<GameStateRecord> stateRecords)
     {
         _gameObj = gameObj;
+        _game = game;
 
         // listen for gameObj.playerOids removals
         gameObj.addListener(this);
@@ -347,11 +348,15 @@ public class AVRGameManager
         } finally {
             player.commitTransaction();
         }
+
+        MsoyGameServer.worldClient.updatePlayer(player.getMemberId(), _game);
     }
 
     public void removePlayer (PlayerObject player)
     {
         _gameObj.removeFromPlayerOids(player.getOid());
+
+        MsoyGameServer.worldClient.updatePlayer(player.getMemberId(), null);
     }
 
     protected void flushPlayerGameState (final PlayerObject player)
@@ -383,6 +388,8 @@ public class AVRGameManager
     }
 
     protected int _gameId;
+
+    protected Game _game;
 
     protected AVRGameObject _gameObj;
 
