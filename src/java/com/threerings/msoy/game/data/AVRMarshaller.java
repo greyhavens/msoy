@@ -31,4 +31,17 @@ public class AVRMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2), listener3
         });
     }
+
+    /** The method id used to dispatch {@link #deactivateGame} requests. */
+    public static final int DEACTIVATE_GAME = 2;
+
+    // from interface AVRService
+    public void deactivateGame (Client arg1, InvocationService.ConfirmListener arg2)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, DEACTIVATE_GAME, new Object[] {
+            listener2
+        });
+    }
 }

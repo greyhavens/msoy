@@ -18,6 +18,7 @@ import com.samskivert.util.Invoker;
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -184,6 +185,13 @@ public class GameGameRegistry
             protected Game _game;
             protected List<GameStateRecord> _recs;
         });
+    }
+
+    public void deactivateGame (ClientObject caller, final ConfirmListener listener)
+        throws InvocationException
+    {
+        final PlayerObject player = (PlayerObject) caller;
+
     }
 
     // from LobbyProvider

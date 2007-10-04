@@ -45,6 +45,13 @@ public class AVRDispatcher extends InvocationDispatcher
             );
             return;
 
+        case AVRMarshaller.DEACTIVATE_GAME:
+            ((AVRProvider)provider).deactivateGame(
+                source,
+                (InvocationService.ConfirmListener)args[0]
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;

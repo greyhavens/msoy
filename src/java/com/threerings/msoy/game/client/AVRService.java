@@ -18,4 +18,9 @@ public interface AVRService extends InvocationService
      * @param listener a listener to return result to or notify on failure.
      */
     public void activateGame (Client client, int gameId, ResultListener listener);
+
+    /**
+     * Requests to deactivate the current AVR Game.
+     */
+    public void deactivateGame (Client client, ConfirmListener listener);
 }

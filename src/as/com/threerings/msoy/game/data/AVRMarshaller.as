@@ -9,8 +9,10 @@ import com.threerings.io.TypedArray;
 
 import com.threerings.msoy.game.client.AVRService;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
@@ -34,6 +36,19 @@ public class AVRMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, ACTIVATE_GAME, [
             Integer.valueOf(arg2), listener3
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #deactivateGame} requests. */
+    public static const DEACTIVATE_GAME :int = 2;
+
+    // from interface AVRService
+    public function deactivateGame (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void
+    {
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, DEACTIVATE_GAME, [
+            listener2
         ]);
     }
 }
