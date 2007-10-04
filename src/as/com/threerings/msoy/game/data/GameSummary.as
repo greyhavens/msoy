@@ -27,6 +27,9 @@ public class GameSummary extends SimpleStreamableObject
     /** The name of the game - used as a tooltip */
     public var name :String;
 
+    /** Whether or not this is an AVRGame. */
+    public var avrGame :Boolean;
+
     /** The mime type of this game's client media (SWF or JAR). */
     public var gameMediaType :int;
 
@@ -52,6 +55,7 @@ public class GameSummary extends SimpleStreamableObject
         var data :GameSummary = new GameSummary();
         data.gameId = this.gameId;
         data.name = this.name;
+        data.avrGame = this.avrGame;
         data.thumbMedia = this.thumbMedia;
         return data;
     }
@@ -72,6 +76,7 @@ public class GameSummary extends SimpleStreamableObject
         super.readObject(ins);
         gameId = ins.readInt();
         name = (ins.readField(String) as String);
+        avrGame = ins.readBoolean();
         gameMediaType = ins.readByte();
         thumbMedia = (ins.readObject() as MediaDesc);
     }
@@ -82,6 +87,7 @@ public class GameSummary extends SimpleStreamableObject
         super.writeObject(out);
         out.writeInt(gameId);
         out.writeField(name);
+        out.writeBoolean(avrGame);
         out.writeByte(gameMediaType);
         out.writeObject(thumbMedia);
     }

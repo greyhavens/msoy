@@ -21,6 +21,9 @@ public class GameSummary extends SimpleStreamableObject
     /** The name of the game - used as a tooltip */
     public String name;
 
+    /** Whether or not this is an AVRGame. */
+    public boolean avrGame;
+
     /** The mime type of this game's client media (SWF or JAR). */
     public byte gameMediaType;
 
@@ -39,6 +42,7 @@ public class GameSummary extends SimpleStreamableObject
     {
         gameId = game.gameId;
         name = game.name;
+        avrGame = game.isInWorld();
         gameMediaType = game.gameMedia.mimeType;
         thumbMedia = game.thumbMedia;
     }
