@@ -169,7 +169,7 @@ public class GameDirector extends BasicDirector
      */
     public function getAVRGameObject () :AVRGameObject
     {
-        if (_liaison != null && _liaison is AVRGameObject) {
+        if (_liaison != null && _liaison is AVRGameLiaison) {
             return AVRGameLiaison(_liaison).getAVRGameObject();
         }
         return null;
