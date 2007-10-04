@@ -398,7 +398,6 @@ public class FlashClients
      */
     protected static native void tutorialEventNative (String eventName) /*-{
         var client = $doc.getElementById("asclient");
-        alert('doing it: ' + client);
         if (client) {
             client.tutorialEvent(eventName);
         }
