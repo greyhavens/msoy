@@ -157,6 +157,14 @@ public class GameDirector extends BasicDirector
     }
 
     /**
+     * Returns the gameId of the game we're currently connected to, or zero if we're not.
+     */
+    public function get gameId () :int
+    {
+        return (_liaison != null) ? _liaison.getGameId() : 0;
+    }
+
+    /**
      * Returns the game object if we're currently in an AVRG, null otherwise.
      */
     public function getAVRGameObject () :AVRGameObject
