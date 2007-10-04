@@ -66,7 +66,7 @@ public class FlashClients
 //             "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
 //             "100%", getClientHeight(false), "gameLobby=" + gameId + "&token=" + token);
 //     }
-    
+
 //     public static HTML createNeighborhood (String hoodData)
 //     {
 //         return createNeighborhood(hoodData, "100%", getClientHeight(true));
@@ -124,7 +124,7 @@ public class FlashClients
         return clientExistsNative();
     }
 
-    /** 
+    /**
      * Checks with the actionscript client to find out if our current scene is in fact a room.
      */
     public static boolean inRoom ()
@@ -136,13 +136,13 @@ public class FlashClients
      * Tells the actionscript client that we'd like to use this item in the current room.  This can
      * be used to add furni, or set the background audio or decor.
      */
-    public static void useItem (int itemId, byte itemType) 
+    public static void useItem (int itemId, byte itemType)
     {
         useItemNative(itemId, itemType);
     }
 
     /**
-     * Tells the actionscript client to remove the given item from the current room. 
+     * Tells the actionscript client to remove the given item from the current room.
      */
     public static void removeFurni (int itemId, byte itemType)
     {
@@ -152,7 +152,7 @@ public class FlashClients
     /**
      * Gets the item list of items being used as furni in the current room.
      */
-    public static List getFurniList () 
+    public static List getFurniList ()
     {
         JavaScriptObject items = getFurniListNative();
         List furnis = new ArrayList();
@@ -193,7 +193,7 @@ public class FlashClients
 
     /**
      * Fetches the currently active avatar id that is being used by the client.  If 0 is returned,
-     * the flash client is either not open (check clientExits() before calling), or we're using 
+     * the flash client is either not open (check clientExits() before calling), or we're using
      * the default avatar.
      */
     public static int getAvatarId ()
@@ -209,6 +209,11 @@ public class FlashClients
     public static void removePet (int petId)
     {
         removePetNative(petId);
+    }
+
+    public static void tutorialEvent (String eventName)
+    {
+        tutorialEventNative(eventName);
     }
 
     /**
@@ -236,7 +241,7 @@ public class FlashClients
      * Helpy helper function.  Makes it possible to retrieve objects from arrays that are members
      * of arrays.
      */
-    public static native JavaScriptObject getJavaScriptElement (JavaScriptObject array, 
+    public static native JavaScriptObject getJavaScriptElement (JavaScriptObject array,
         int index) /*-{
         return array[index];
     }-*/;
@@ -276,7 +281,7 @@ public class FlashClients
         return value;
     }-*/;
 
-    /** 
+    /**
      * Does the actual <code>clientExists()</code> call.
      */
     protected static native boolean clientExistsNative () /*-{
@@ -290,7 +295,7 @@ public class FlashClients
         var client = $doc.getElementById("asclient");
         if (client) {
             return client.inRoom();
-        } 
+        }
         return false;
     }-*/;
 
@@ -386,6 +391,17 @@ public class FlashClients
             return client.getPets();
         }
         return [];
+    }-*/;
+
+    /**
+     * Does the actual <code>tutorialEvent()</code> call.
+     */
+    protected static native void tutorialEventNative (String eventName) /*-{
+        var client = $doc.getElementById("asclient");
+        alert('doing it: ' + client);
+        if (client) {
+            client.tutorialEvent(eventName);
+        }
     }-*/;
 
     // TODO: put this in Application?

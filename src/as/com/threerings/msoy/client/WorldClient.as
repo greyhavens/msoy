@@ -82,6 +82,12 @@ import com.threerings.msoy.notify.data.ReleaseNotesNotification;
  */
 [Event(name="embeddedStateKnown", type="com.threerings.util.ValueEvent")]
 
+/**
+ * An event dispatched for tutorial-specific purposes.
+ * 
+ * @eventType com.threerings.msoy.client.WorldClient.TUTORIAL_EVENT
+ */
+[Event(name="tutorial", type="com.threerings.util.ValueEvent")]
 
 /**
  * Handles the main services for the world and game clients.
@@ -101,6 +107,13 @@ public class WorldClient extends BaseClient
      * @eventType clientEmbedded
      */
     public static const EMBEDDED_STATE_KNOWN :String = "clientEmbedded";
+
+    /**
+     * An event dispatched for tutorial-specific purposes.
+     *
+     * @eventType tutorial
+     */
+    public static const TUTORIAL_EVENT :String = "tutorial";
 
     public static const log :Log = Log.getLog(WorldClient);
 
@@ -283,6 +296,7 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("usePet", externalUsePet);
         ExternalInterface.addCallback("removePet", externalRemovePet);
         ExternalInterface.addCallback("getPets", externalGetPets);
+        ExternalInterface.addCallback("tutorialEvent", externalTutorialEvent);
 
         try {
             _embedded = !(ExternalInterface.call("helloWhirled") as Boolean);
@@ -511,6 +525,11 @@ public class WorldClient extends BaseClient
         } else {
             return [];
         }
+    }
+
+    protected function externalTutorialEvent (eventName :String) :void
+    {
+        _wctx.getGameDirector().tutorialEvent(eventName);
     }
 
     protected var _wctx :WorldContext;

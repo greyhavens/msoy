@@ -57,6 +57,13 @@ public class AVRGamePanel extends Canvas
         loader.contentLoaderInfo.addEventListener(Event.COMPLETE, mediaComplete);
     }
 
+    public function tutorialEvent (eventName :String) :void
+    {
+        if (_backend) {
+            _backend.tutorialEvent(eventName);
+        }
+    }
+
     protected function mediaComplete (event :Event) :void
     {
         var info :LoaderInfo = (event.target as LoaderInfo);
@@ -79,6 +86,6 @@ public class AVRGamePanel extends Canvas
     protected var _ctrl :AVRGameController;
     protected var _mediaHolder :MediaContainer;
     protected var _gameObj :AVRGameObject;
-    protected var _backend :ControlBackend;
+    protected var _backend :AVRGameControlBackend;
 }
 }

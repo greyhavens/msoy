@@ -38,6 +38,8 @@ public class GameDirector extends BasicDirector
 {
     public static const log :Log = Log.getLog(GameDirector);
 
+    public static const TUTORIAL_GAME_ID :int = -4;
+
     public function GameDirector (ctx :WorldContext)
     {
         super(ctx);
@@ -173,6 +175,21 @@ public class GameDirector extends BasicDirector
             return AVRGameLiaison(_liaison).getAVRGameObject();
         }
         return null;
+    }
+
+    /**
+     * If we're in an AVRG and that AVRG happens to be our Tutorial, forward all
+     * tutorial-specific events to the relevant game object. This should allow us
+     * to write the tutorial as an otherwise entirely external AVRG.
+     */
+    public function tutorialEvent (eventName :String) :void
+    {
+        if (_liaison != null && _liaison.gameId == TUTORIAL_GAME_ID) {
+            var ctrl :AVRGameController = AVRGameLiaison(_liaison).getAVRGameController();
+            if (ctrl != null) {
+                ctrl.tutorialEvent(eventName);
+            }
+        }
     }
 
     /**

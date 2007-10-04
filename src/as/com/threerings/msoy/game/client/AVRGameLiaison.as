@@ -64,6 +64,14 @@ public class AVRGameLiaison extends GameLiaison
         return (_ctrl == null) ? null : _ctrl.getAVRGameObject();
     }
 
+    /**
+     * Returns the game object if we're currently in an AVRG, null otherwise.
+     */
+    public function getAVRGameController () :AVRGameController
+    {
+        return _ctrl;
+    }
+
     /** The controller for the current world game. */
     protected var _ctrl :AVRGameController;
 }

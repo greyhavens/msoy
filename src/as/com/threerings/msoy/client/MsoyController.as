@@ -716,6 +716,12 @@ public class MsoyController extends Controller
             _didFirstLogonGo = true;
             goToPlace(_topPanel.loaderInfo.parameters);
         }
+
+        if (memberObj.avrGameId > 0) {
+            if (_ctx.getGameDirector().getGameId() == 0) {
+                _ctx.getGameDirector().activateAVRGame(memberObj.avrGameId);
+            }
+        }
     }
 
     // from ClientObserver

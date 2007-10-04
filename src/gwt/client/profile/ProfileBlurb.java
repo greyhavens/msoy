@@ -31,6 +31,7 @@ import com.threerings.msoy.web.data.Profile;
 
 import client.msgs.MailComposition;
 import client.shell.Application;
+import client.util.FlashClients;
 import client.util.ImageChooserPopup;
 import client.util.MsoyUI;
 
@@ -198,7 +199,7 @@ public class ProfileBlurb extends Blurb
         if (CProfile.isAdmin()) {
             _buttons.add(new Button(CProfile.msgs.adminBrowse(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(Application.createLinkToken("admin", "browser_" + 
+                    History.newItem(Application.createLinkToken("admin", "browser_" +
                         _name.getMemberId()));
                 }
             }));
@@ -245,6 +246,7 @@ public class ProfileBlurb extends Blurb
                 _edit.setText("Edit");
                 _editing = false;
                 displayProfile();
+                FlashClients.tutorialEvent("profileEdited");
             }
             public void onFailure (Throwable cause) {
                 GWT.log("Nay!", cause);

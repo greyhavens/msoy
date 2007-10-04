@@ -63,6 +63,13 @@ public class AVRGameController extends Controller
         _gameObj = null;
     }
 
+    public function tutorialEvent (eventName :String) :void
+    {
+        if (_panel) {
+            _panel.tutorialEvent(eventName);
+        }
+    }
+
     public function getAVRGameObject () :AVRGameObject
     {
         return _gameObj;
