@@ -58,6 +58,11 @@ public class AVRGameControlBackend extends ControlBackend
          _playerObj.removeListener(_playerStateListener);
      }
 
+    public function tutorialEvent (eventName :String) :void
+    {
+        callUserCode("messageReceived_v1", "tutorialEvent", eventName);
+    }
+
     // from GameControlBackend
     override protected function populateControlProperties (o :Object) :void
     {
@@ -125,8 +130,9 @@ public class AVRGameControlBackend extends ControlBackend
 
     protected function sendMessage_v1 (key :String, value :Object, playerId :int) :Boolean
     {
-        _gameObj.avrgService.sendMessage(_gctx.getClient(), key, value, playerId,
-                                         loggingInvocationListener("sendMessage"));
+        _gameObj.avrgService.sendMessage(_gctx.getClient(), key,
+                                         ObjectMarshaller.validateAndEncode(value),
+                                         playerId, loggingInvocationListener("sendMessage"));
         return true;
     }
 
