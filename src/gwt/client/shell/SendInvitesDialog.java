@@ -131,6 +131,7 @@ public class SendInvitesDialog extends BorderedDialog
         final ArrayList validAddresses = new ArrayList();
         String addresses[] = _emailAddresses.getText().split("\n");
         for (int ii = 0; ii < addresses.length; ii++) {
+            addresses[ii] = addresses[ii].trim();
             if (addresses[ii].matches(EMAIL_REGEX)) {
                 if (validAddresses.contains(addresses[ii])) {
                     MsoyUI.info(CShell.cmsgs.sendInvitesDuplicateAddress(addresses[ii]));
