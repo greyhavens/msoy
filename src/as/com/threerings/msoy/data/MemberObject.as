@@ -37,11 +37,8 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>memberName</code> field. */
     public static const MEMBER_NAME :String = "memberName";
 
-    /** The field name of the <code>worldGameOid</code> field. */
-    public static const WORLD_GAME_OID :String = "worldGameOid";
-
-    /** The field name of the <code>worldGameCfg</code> field. */
-    public static const WORLD_GAME_CFG :String = "worldGameCfg";
+    /** The field name of the <code>avrGameId</code> field. */
+    public static const AVR_GAME_ID :String = "avrGameId";
 
     /** The field name of the <code>humanity</code> field. */
     public static const HUMANITY :String = "humanity";
@@ -95,11 +92,8 @@ public class MemberObject extends MsoyBodyObject
     /** The member name and id for this user. */
     public var memberName :MemberName;
 
-    /** The object ID of the in-world game that the user is in, if any. */
-    public var worldGameOid :int;
-
-    /** The world game config that goes along with the oid, or null. */
-    public var worldGameCfg :Streamable;
+    /** The Game ID of the in-avr game that the user is in, if any. */
+    public var avrGameId :int;
 
     /** How much lovely flow we've got jangling around on our person. */
     public var flow :int;
@@ -334,8 +328,7 @@ public class MemberObject extends MsoyBodyObject
         super.readObject(ins);
 
         memberName = (ins.readObject() as MemberName);
-        worldGameOid = ins.readInt();
-        worldGameCfg = (ins.readObject() as Streamable);
+        avrGameId = ins.readInt();
         flow = ins.readInt();
         accFlow = ins.readInt();
         level = ins.readInt();
