@@ -5,6 +5,7 @@ package com.threerings.msoy.world.client {
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.client.ResultWrapper;
 
@@ -73,7 +74,14 @@ public class WorldDirector extends BasicDirector
      */
     public function setAvatar (avatarId :int, newScale :Number = 0) :void
     {
-        _msvc.setAvatar(_mctx.getClient(), avatarId, newScale, new ReportingListener(_mctx));
+        _msvc.setAvatar(_mctx.getClient(), avatarId, newScale, new ConfirmAdapter(
+            function (cause :String) :void {
+                log.info("Reporting failure [reason=" + cause + "].");
+                _mctx.displayFeedback(null, cause);
+            },
+            function () :void {
+                _mctx.getGameDirector().tutorialEvent("avatarInstalled");
+            }));
     }
 
     /**

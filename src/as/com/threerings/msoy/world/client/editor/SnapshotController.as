@@ -77,6 +77,8 @@ public class SnapshotController
             // encodes bitmap image as a MIME file upload, and sends it over
             _request.data = makeMimeBody(sceneId, _encoder.encode(bitmap));
             _loader.load(_request);
+
+            _ctx.getGameDirector().tutorialEvent("snapshotTaken");
         }
         _panel = null;
     }

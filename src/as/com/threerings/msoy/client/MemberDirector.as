@@ -32,9 +32,18 @@ public class MemberDirector extends BasicDirector
      */
     public function inviteToBeFriend (friendId :int) :void
     {
-        _msvc.inviteToBeFriend(
-            _bctx.getClient(), friendId,
-            new ReportingListener(_bctx, MsoyCodes.GENERAL_MSGS, null, "m.friend_invited"));
+        _msvc.inviteToBeFriend(_bctx.getClient(), friendId, new ConfirmAdapter(
+            function (cause :String) :void {
+                log.info("Reporting failure [reason=" + cause + "].");
+                _bctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
+             },
+             function () :void {
+                 _bctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.friend_invited");
+                 if (_bctx is WorldContext) {
+                     // TODO: this is pretty iffy
+                     WorldContext(_bctx).getGameDirector().tutorialEvent("friendInvited");
+                 }
+             }));
     }
 
     /**
