@@ -111,7 +111,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 if (_item.getType() == Item.DECOR) {
                     FlashClients.tutorialEvent("decorBought");
                 } else if (_item.getType() == Item.FURNITURE) {
-                    FlashClients.tutorialEvent("furnitureBought");
+                    FlashClients.tutorialEvent("furniBought");
                 } else if (_item.getType() == Item.AVATAR) {
                     FlashClients.tutorialEvent("avatarBought");
                 }
