@@ -7,6 +7,7 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.msoy.data.MemberObject;
@@ -20,10 +21,10 @@ public class MemberDirector extends BasicDirector
 {
     public const log :Log = Log.getLog(MemberDirector);
 
-    public function MemberDirector (ctx :BaseContext)
+    public function MemberDirector (ctx :WorldContext)
     {
         super(ctx);
-        _bctx = ctx;
+        _wctx = ctx;
     }
 
     /**
@@ -41,7 +42,7 @@ public class MemberDirector extends BasicDirector
      */
     public function setDisplayName (newName :String) :void
     {
-        _msvc.setDisplayName(_bctx.getClient(), newName, new ReportingListener(_bctx));
+        _msvc.setDisplayName(_wctx.getClient(), newName, new ReportingListener(_wctx));
     }
 
     // from BasicDirector
@@ -58,7 +59,7 @@ public class MemberDirector extends BasicDirector
         _msvc = (client.requireService(MemberService) as MemberService);
     }
 
-    protected var _bctx :BaseContext;
+    protected var _wctx :WorldContext;
     protected var _msvc :MemberService;
 }
 }

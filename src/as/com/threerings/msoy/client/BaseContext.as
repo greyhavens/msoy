@@ -47,7 +47,6 @@ public /*abstract*/ class BaseContext
         _chatDir = createChatDirector();
         _chatDir.setChatterValidator(_helper);
         _chatDir.addChatFilter(new CurseFilter(this));
-        _memberDir = new MemberDirector(this);
     }
 
     public function getStage () :Stage
@@ -119,14 +118,6 @@ public /*abstract*/ class BaseContext
     }
 
     /**
-     * Get the MemberDirector.
-     */
-    public function getMemberDirector () :MemberDirector
-    {
-        return _memberDir;
-    }
-
-    /**
      * Get the message manager.
      */
     public function getMessageManager () :MessageManager
@@ -193,8 +184,6 @@ public /*abstract*/ class BaseContext
     protected var _occDir :OccupantDirector;
 
     protected var _chatDir :ChatDirector;
-
-    protected var _memberDir :MemberDirector;
 }
 }
 
