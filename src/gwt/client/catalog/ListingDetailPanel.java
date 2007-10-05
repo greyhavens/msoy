@@ -14,6 +14,7 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
@@ -21,6 +22,7 @@ import client.item.BaseItemDetailPanel;
 import client.shell.Application;
 import client.shell.CommentsPanel;
 import client.util.ClickCallback;
+import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MsoyUI;
 import client.util.PopupMenu;
@@ -104,6 +106,16 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             }
             public boolean gotResult (Object result) {
                 MsoyUI.info(CCatalog.msgs.msgListingBought());
+
+                // tutorial events
+                if (_item.getType() == Item.DECOR) {
+                    FlashClients.tutorialEvent("decorBought");
+                } else if (_item.getType() == Item.FURNITURE) {
+                    FlashClients.tutorialEvent("furnitureBought");
+                } else if (_item.getType() == Item.AVATAR) {
+                    FlashClients.tutorialEvent("avatarBought");
+                }
+
                 return false; // don't reenable purchase
             }
         };
@@ -117,13 +129,13 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             protected void addMenuItems () {
                 this.addMenuItem(CCatalog.imsgs.viewProfile(), new Command() {
                     public void execute () {
-                        History.newItem(Application.createLinkToken("profile", 
+                        History.newItem(Application.createLinkToken("profile",
                             "" + _detail.creator.getMemberId()));
                     }
                 });
                 this.addMenuItem(CCatalog.imsgs.browseCatalogFor(), new Command() {
                     public void execute () {
-                        _panel.browseByCreator(_detail.creator.getMemberId(), 
+                        _panel.browseByCreator(_detail.creator.getMemberId(),
                             _detail.creator.toString());
                         returnToList();
                     }
