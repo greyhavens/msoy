@@ -141,7 +141,7 @@ public class AVRGameControlBackend extends ControlBackend
         // TODO: Popup UI and whatnot
         _gameObj.avrgService.startQuest(
             _gctx.getClient(), questId, initialStatus, loggingConfirmListener(
-                "startQuest", new function () :void {
+                "startQuest", function () :void {
                     _mctx.displayFeedback(null, "Quest begun: " + initialStatus);
                 }));
         return true;
@@ -151,7 +151,7 @@ public class AVRGameControlBackend extends ControlBackend
     {
         _gameObj.avrgService.updateQuest(
             _gctx.getClient(), questId, step, status, loggingConfirmListener(
-                "updateQuest", new function () :void {
+                "updateQuest", function () :void {
                     _mctx.displayFeedback(null, "Quest update: " + status);
                 }));
         return true;
@@ -161,7 +161,7 @@ public class AVRGameControlBackend extends ControlBackend
     {
         _gameObj.avrgService.completeQuest(
             _gctx.getClient(), questId, payoutLevel, loggingConfirmListener(
-                "completeQuest", new function () :void {
+                "completeQuest", function () :void {
                     _mctx.displayFeedback(null, "Quest completed!");
                 }));
         return true;
@@ -172,7 +172,7 @@ public class AVRGameControlBackend extends ControlBackend
         // TODO: confirmation dialog
         _gameObj.avrgService.cancelQuest(
             _gctx.getClient(), questId, loggingConfirmListener(
-                "cancelQuest", new function () :void {
+                "cancelQuest", function () :void {
                     _mctx.displayFeedback(null, "Quest cancelled!");
                 }));
         return true;
