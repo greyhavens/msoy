@@ -51,7 +51,6 @@ public class WorldContext extends BaseContext
         _gameDir = new GameDirector(this);
         _worldDir = new WorldDirector(this);
         _notifyDir = new NotificationDirector(this);
-        _memberDir = new MemberDirector(this);
 
         // set up the top panel
         _topPanel = new TopPanel(this);
@@ -125,14 +124,6 @@ public class WorldContext extends BaseContext
     }
 
     /**
-     * Get the MemberDirector.
-     */
-    public function getMemberDirector () :MemberDirector
-    {
-        return _memberDir;
-    }
-
-    /**
      * Get the top-level msoy controller.
      */
     public function getMsoyController () :MsoyController
@@ -166,6 +157,5 @@ public class WorldContext extends BaseContext
     protected var _mediaDir :MediaDirector;
     protected var _worldDir :WorldDirector;
     protected var _notifyDir :NotificationDirector;
-    protected var _memberDir :MemberDirector;
 }
 }

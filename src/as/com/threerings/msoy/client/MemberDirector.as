@@ -21,10 +21,10 @@ public class MemberDirector extends BasicDirector
 {
     public const log :Log = Log.getLog(MemberDirector);
 
-    public function MemberDirector (ctx :WorldContext)
+    public function MemberDirector (ctx :BaseContext)
     {
         super(ctx);
-        _wctx = ctx;
+        _bctx = ctx;
     }
 
     /**
@@ -33,8 +33,8 @@ public class MemberDirector extends BasicDirector
     public function inviteToBeFriend (friendId :int) :void
     {
         _msvc.inviteToBeFriend(
-            _wctx.getClient(), friendId,
-            new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS, null, "m.friend_invited"));
+            _bctx.getClient(), friendId,
+            new ReportingListener(_bctx, MsoyCodes.GENERAL_MSGS, null, "m.friend_invited"));
     }
 
     /**
@@ -42,7 +42,7 @@ public class MemberDirector extends BasicDirector
      */
     public function setDisplayName (newName :String) :void
     {
-        _msvc.setDisplayName(_wctx.getClient(), newName, new ReportingListener(_wctx));
+        _msvc.setDisplayName(_bctx.getClient(), newName, new ReportingListener(_bctx));
     }
 
     // from BasicDirector
@@ -59,7 +59,7 @@ public class MemberDirector extends BasicDirector
         _msvc = (client.requireService(MemberService) as MemberService);
     }
 
-    protected var _wctx :WorldContext;
+    protected var _bctx :BaseContext;
     protected var _msvc :MemberService;
 }
 }
