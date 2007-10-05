@@ -32,11 +32,11 @@ public class MsoyEventLogger
     {
         Log.log.info("Events will be logged to " + serverURL);
         
-        // _storage = new EchoStorage();
-        _storage = new NullStorage();
+        _storage = new EchoStorage();
+        // _storage = new NullStorage();
         // _storage = new ServerStorage(serverURL);
         
-        _logger = new EventLogger("com.threerings.msoy", _storage, MSOY_SCHEMAS);
+        _logger = new EventLogger(_storage, MSOY_SCHEMAS);
     }
 
     /** Event: periodic system snapshot of player counts. */
@@ -124,7 +124,7 @@ public class MsoyEventLogger
         } else {
             MsoyServer.invoker.postUnit(new Invoker.Unit () {
                 public boolean invoke () {
-                    _logger.log(event, values);
+                    _logger.log(MSOY, event, values);
                     return false;
                 }
             });
@@ -136,52 +136,53 @@ public class MsoyEventLogger
     protected Long now () {
         return System.currentTimeMillis();
     }
-    
+
+    protected static final String MSOY = "com.threerings.msoy";
     protected static final Schema[] MSOY_SCHEMAS = new Schema[] {
         new Schema(
-            "CurrentPlayerStats_test",
+            MSOY, "CurrentPlayerStats_test",
             new String[] { "timestamp", "serverName", "total",       "active",
                            "guests" },
             new Class[]  { Long.class,   String.class, Integer.class, Integer.class,
                            Integer.class }),
         new Schema(
-            "Login_test",
+            MSOY, "Login_test",
             new String[] { "timestamp", "guest",       "playerId",    "firstLogin",
                            "sessionToken" },
             new Class[]  { Long.class,   Boolean.class, Integer.class, Boolean.class,
                            String.class }),
         new Schema(
-            "MailSent_test",
+            MSOY, "MailSent_test",
             new String[] { "timestamp", "senderId",   "recipientId", "payloadId"     },
             new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class  }),
         new Schema(
-            "FlowTransaction_test",
+            MSOY, "FlowTransaction_test",
             new String[] { "timestamp", "playerId",   "actionType",  "flowDelta",
                               "newTotal",    "details"     },
             new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class,
                                Integer.class, String.class }),
         new Schema(
-            "ItemPurchase_test",
+            MSOY, "ItemPurchase_test",
             new String[] { "timestamp", "playerId",   "itemType", "itemId",
                            "flowCost",    "goldCost"     },
             new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class,
                             Integer.class, Integer.class }),
         new Schema(
-            "ItemCatalogListing_test",
+            MSOY, "ItemCatalogListing_test",
             new String[] { "timestamp", "creatorId",   "itemType",    "itemId",
                            "flowCost",    "goldCost",    "pricing",     "salesTarget"  },
             new Class[]  { Long.class,   Integer.class, Integer.class, Integer.class,
                            Integer.class,  Integer.class, Integer.class, Integer.class }),
         new Schema(
-            "FriendListAction_test",
+            MSOY, "FriendListAction_test",
             new String[] { "timestamp", "playerId",   "friendId",    "isAdded"       },
             new Class[]  { Long.class,  Integer.class, Integer.class, Boolean.class  }),
         new Schema(
-            "GroupMembershipAction_test",
+            MSOY, "GroupMembershipAction_test",
             new String[] { "timestamp", "playerId",    "groupId",     "isJoined"     },
             new Class[]  { Long.class,   Integer.class, Integer.class, Boolean.class }),
         new Schema(
-            "GroupRankModification_test",
+            MSOY, "GroupRankModification_test",
             new String[] { "timestamp", "playerId",    "groupId",     "newRank"      },
             new Class[]  { Long.class,   Integer.class, Integer.class, Integer.class    })
     };        
