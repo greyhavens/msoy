@@ -72,7 +72,7 @@ public class QuestStateRecord extends PersistentRecord
 
     public int step;
 
-    @Column(length=32)
+    @Column(nullable=true, length=32)
     public String status;
 
     public int sceneId;
@@ -81,8 +81,10 @@ public class QuestStateRecord extends PersistentRecord
     {
     }
 
-    public QuestStateRecord (int gameId, String questId, int step, String status, int sceneId)
+    public QuestStateRecord (
+        int memberId, int gameId, String questId, int step, String status, int sceneId)
     {
+        this.memberId = memberId;
         this.gameId = gameId;
         this.questId = questId;
         this.step = step;

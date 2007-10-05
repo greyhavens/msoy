@@ -26,10 +26,11 @@ public class AVRGameRepository extends DepotRepository
         return findAll(QuestStateRecord.class, new Where(QuestStateRecord.MEMBER_ID_C, memberId));
     }
 
-    public void setQuestState (int gameId, String questId, int step, String status, int sceneId)
+    public void setQuestState (
+        int memberId, int gameId, String questId, int step, String status, int sceneId)
         throws PersistenceException
     {
-        store(new QuestStateRecord(gameId, questId, step, status, sceneId));
+        store(new QuestStateRecord(memberId, gameId, questId, step, status, sceneId));
     }
 
     public void deleteQuestState (int memberId, int gameId, String questId)

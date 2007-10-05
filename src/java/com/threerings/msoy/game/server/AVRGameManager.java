@@ -5,6 +5,9 @@ package com.threerings.msoy.game.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+
+import org.apache.tools.ant.types.LogLevel;
 
 import com.threerings.msoy.game.data.AVRGameMarshaller;
 import com.threerings.msoy.game.data.AVRGameObject;
@@ -102,8 +105,7 @@ public class AVRGameManager
             public void handleSuccess () {
             }
             public void handleFailure (Exception pe) {
-                log.warning(
-                    "Unable to flush game state [gameId=" + _gameId + ", error=" + pe + "]");
+                log.log(Level.WARNING, "Unable to flush game state [gameId=" + _gameId + "]", pe);
             }
         });
     }
@@ -149,15 +151,17 @@ public class AVRGameManager
 
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("startQuest") {
             public void invokePersist () throws PersistenceException {
-                _repo.setQuestState(_gameId, questId, QuestState.STEP_NEW, status, sceneId);
+                _repo.setQuestState(
+                    player.getMemberId(), _gameId, questId, QuestState.STEP_NEW, status, sceneId);
             }
             public void handleSuccess () {
-                player.addToQuestState(new QuestState(questId, QuestState.STEP_NEW, status, sceneId));
+                player.addToQuestState(
+                    new QuestState(questId, QuestState.STEP_NEW, status, sceneId));
                 listener.requestProcessed();
             }
             public void handleFailure (Exception pe) {
-                log.warning(
-                    "Unable to subscribe to quest [questId=" + questId + ", error=" + pe + "]");
+                log.log(
+                    Level.WARNING, "Unable to subscribe to quest [questId=" + questId + "]", pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
@@ -180,16 +184,15 @@ public class AVRGameManager
 
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateQuest") {
             public void invokePersist () throws PersistenceException {
-                _repo.setQuestState(_gameId, questId, step, status, sceneId);
+                _repo.setQuestState(player.getMemberId(), _gameId, questId, step, status, sceneId);
             }
             public void handleSuccess () {
                 player.updateQuestState(new QuestState(questId, step, status, sceneId));
                 listener.requestProcessed();
             }
             public void handleFailure (Exception pe) {
-                log.warning(
-                    "Unable to advance quest [questId=" + questId + ", step=" + step +
-                    ", error=" + pe + "]");
+                log.log(Level.WARNING, "Unable to advance quest [questId=" + questId + ", step=" +
+                    step + "]", pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
@@ -210,17 +213,17 @@ public class AVRGameManager
                 "Member not subscribed to updated quest [questId=" + questId + "]");
         }
 
-        MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateQuest") {
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("completeQuest") {
             public void invokePersist () throws PersistenceException {
-                _repo.setQuestState(_gameId, questId, QuestState.STEP_COMPLETED, null, 0);
+                _repo.setQuestState(
+                    player.getMemberId(), _gameId, questId, QuestState.STEP_COMPLETED, null, 0);
             }
             public void handleSuccess () {
                 player.removeFromQuestState(questId);
                 listener.requestProcessed();
             }
             public void handleFailure (Exception pe) {
-                log.warning(
-                    "Unable to complete quest [questId=" + questId + ", error=" + pe + "]");
+                log.log(Level.WARNING, "Unable to complete quest [questId=" + questId + "]", pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
@@ -247,8 +250,7 @@ public class AVRGameManager
                 listener.requestProcessed();
             }
             public void handleFailure (Exception pe) {
-                log.warning(
-                    "Unable to cancel quest [questId=" + questId + ", error=" + pe + "]");
+                log.log(Level.WARNING, "Unable to cancel quest [questId=" + questId + "]", pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
@@ -380,9 +382,8 @@ public class AVRGameManager
             public void handleSuccess () {
             }
             public void handleFailure (Exception pe) {
-                log.warning(
-                    "Unable to flush player game state [gameId=" + _gameId +  "player=" + player +
-                    ", error=" + pe + "]");
+                log.log(Level.WARNING, "Unable to flush player game state [gameId=" + _gameId +
+                    "player=" + player + "]", pe);
             }
         });
     }
