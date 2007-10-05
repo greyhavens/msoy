@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.apache.tools.ant.types.LogLevel;
-
 import com.threerings.msoy.game.data.AVRGameMarshaller;
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.GameState;
