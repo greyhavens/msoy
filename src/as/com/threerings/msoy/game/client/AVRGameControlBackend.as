@@ -139,30 +139,42 @@ public class AVRGameControlBackend extends ControlBackend
     protected function offerQuest_v1 (questId :String, initialStatus :String) :Boolean
     {
         // TODO: Popup UI and whatnot
-        _gameObj.avrgService.startQuest(_gctx.getClient(), questId, initialStatus,
-                                       loggingConfirmListener("startQuest"));
+        _gameObj.avrgService.startQuest(
+            _gctx.getClient(), questId, initialStatus, loggingConfirmListener(
+                "startQuest", new function () :void {
+                    _mctx.displayFeedback(null, "Quest begun: " + initialStatus);
+                }));
         return true;
     }
 
     protected function updateQuest_v1 (questId :String, step :int, status :String) :Boolean
     {
-        _gameObj.avrgService.updateQuest(_gctx.getClient(), questId, step, status,
-                                        loggingConfirmListener("updateQuest"));
+        _gameObj.avrgService.updateQuest(
+            _gctx.getClient(), questId, step, status, loggingConfirmListener(
+                "updateQuest", new function () :void {
+                    _mctx.displayFeedback(null, "Quest update: " + status);
+                }));
         return true;
     }
 
     protected function completeQuest_v1 (questId :String, payoutLevel :int) :Boolean
     {
-        _gameObj.avrgService.completeQuest(_gctx.getClient(), questId, payoutLevel,
-                                        loggingConfirmListener("completeQuest"));
+        _gameObj.avrgService.completeQuest(
+            _gctx.getClient(), questId, payoutLevel, loggingConfirmListener(
+                "completeQuest", new function () :void {
+                    _mctx.displayFeedback(null, "Quest completed!");
+                }));
         return true;
     }
 
     protected function cancelQuest_v1 (questId :String) :Boolean
     {
         // TODO: confirmation dialog
-        _gameObj.avrgService.cancelQuest(_gctx.getClient(), questId,
-                                         loggingConfirmListener("cancelQuest"));
+        _gameObj.avrgService.cancelQuest(
+            _gctx.getClient(), questId, loggingConfirmListener(
+                "cancelQuest", new function () :void {
+                    _mctx.displayFeedback(null, "Quest cancelled!");
+                }));
         return true;
     }
 
@@ -187,19 +199,18 @@ public class AVRGameControlBackend extends ControlBackend
         callUserCode("playerStateChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
     }
 
-    protected function loggingConfirmListener (svc :String) :InvocationService_ConfirmListener
+    protected function loggingConfirmListener (svc :String, processed :Function = null)
+        :InvocationService_ConfirmListener
     {
         return new ConfirmAdapter(function (cause :String) :void {
-            Log.getLog(this).warning(
-                "Service failure [service=" + svc + ", cause=" + cause + "].");
-        });
+            log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
+        }, processed);
     }
 
     protected function loggingInvocationListener (svc :String) :InvocationService_InvocationListener
     {
         return new InvocationAdapter(function (cause :String) :void {
-            Log.getLog(this).warning(
-                "Service failure [service=" + svc + ", cause=" + cause + "].");
+            log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
         });
     }
 
