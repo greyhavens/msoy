@@ -33,8 +33,8 @@ public class MemberDirector extends BasicDirector
     public function inviteToBeFriend (friendId :int) :void
     {
         _msvc.inviteToBeFriend(
-            _bctx.getClient(), friendId,
-            new ReportingListener(_bctx, MsoyCodes.GENERAL_MSGS, null, "m.friend_invited"));
+            _wctx.getClient(), friendId,
+            new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS, null, "m.friend_invited"));
     }
 
     /**
