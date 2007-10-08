@@ -178,13 +178,20 @@ public class GameDirector extends BasicDirector
     }
 
     /**
-     * If we're in an AVRG and that AVRG happens to be our Tutorial, forward all
-     * tutorial-specific events to the relevant game object. This should allow us
-     * to write the tutorial as an otherwise entirely external AVRG.
+     * Let the caller know if the tutorial is our currently active AVRG.
+     */
+    public function isPlayingTutorial () :Boolean
+    {
+        return _liaison != null && _liaison.gameId == TUTORIAL_GAME_ID;
+    }
+
+    /**
+     * If we're in the tutorial, forward tutorial-specific events to the relevant game object.
+     * This should allow us to write the tutorial as an otherwise entirely external AVRG.
      */
     public function tutorialEvent (eventName :String) :void
     {
-        if (_liaison != null && _liaison.gameId == TUTORIAL_GAME_ID) {
+        if (isPlayingTutorial()) {
             var ctrl :AVRGameController = AVRGameLiaison(_liaison).getAVRGameController();
             if (ctrl != null) {
                 ctrl.tutorialEvent(eventName);

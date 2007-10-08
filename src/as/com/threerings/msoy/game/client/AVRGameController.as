@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.client {
 
 import com.threerings.util.Controller;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ObjectAccessError;
@@ -15,6 +16,7 @@ import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.client.WorldClient;
 
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.client.GameContext;
@@ -34,6 +36,11 @@ public class AVRGameController extends Controller
         _subscriber = new SafeSubscriber(gameOid, this)
         _subscriber.subscribe(_gctx.getDObjectManager());
 
+        _mctx.getClient().addEventListener(
+            WorldClient.MINI_WILL_CHANGE, function (ev :ValueEvent) :void {
+                miniWillChange(ev.value);
+            });
+
         _panel = new AVRGamePanel(_mctx, _gctx, this);
         setControlledPanel(_panel);
     }
@@ -52,7 +59,10 @@ public class AVRGameController extends Controller
         }
 
         _gameObj = (obj as AVRGameObject);
+
         _panel.init(_gameObj);
+
+        miniWillChange(_mctx.getWorldClient().isMinimized());
     }
 
     // from interface Subscriber
@@ -75,8 +85,16 @@ public class AVRGameController extends Controller
         return _gameObj;
     }
 
+    protected function miniWillChange (mini :Boolean) :void
+    {
+        if (_mctx.getGameDirector().isPlayingTutorial()) {
+            tutorialEvent(mini ? "willMinimize" : "willUnminimize");
+        }
+    }
+
     protected function shutdown () :void
     {
+        _mctx.getClient().removeEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
         _subscriber.unsubscribe(_mctx.getDObjectManager());
         _mctx.getTopPanel().clearBottomPanel(_panel);
     }
