@@ -55,8 +55,10 @@ import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.MsoyGameServer;
+import com.threerings.msoy.game.server.persist.TrophyRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -115,10 +117,65 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
     // from interface WhirledGameProvider
     public void awardTrophy (ClientObject caller, String ident, int occupant,
-                             InvocationService.InvocationListener listener)
+                             final InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        // TODO
+        final PlayerObject plobj = verifyIsPlayer(caller);
+
+        // locate the trophy source record in question
+        TrophySource source = null;
+        for (TrophySource csource : _tsources) {
+            if (csource.ident.equals(ident)) {
+                source = csource;
+                break;
+            }
+        }
+        if (source == null) {
+            log.info("Game requested to award unknown trophy [game=" + where() +
+                     ", who=" + plobj.who() + ", ident=" + ident + "].");
+            throw new InvocationException(GameCodes.E_INTERNAL_ERROR);
+        }
+
+        // if the player already has this trophy, ignore the request
+        final int gameId = _content.game.gameId;
+        if (plobj.ownsGameContent(gameId, GameData.TROPHY_DATA, ident)) {
+            log.info("Game requested to award already held trophy [game=" + where() +
+                     ", who=" + plobj.who() + ", ident=" + ident + "].");
+            return;
+        }
+
+        // otherwise, award them the trophy and add it to their runtime collection
+        final TrophyRecord trophy = new TrophyRecord();
+        trophy.gameId = gameId;
+        trophy.memberId = plobj.getMemberId();
+        trophy.ident = source.ident;
+        trophy.name = source.name;
+        trophy.trophyMediaHash = source.getThumbnailMedia().hash;
+        trophy.trophyMimeType = source.getThumbnailMedia().mimeType;
+
+        MsoyGameServer.invoker.postUnit(new Invoker.Unit("awardTrophy") {
+            public boolean invoke () {
+                try {
+                    MsoyGameServer.gameReg.getTrophyRepository().storeTrophy(trophy);
+                    // now that this has succeeded, we can create our ownership record
+                    _trophy = new GameContentOwnership();
+                    _trophy.gameId = gameId;
+                    _trophy.type = GameData.TROPHY_DATA;
+                    _trophy.ident = trophy.ident;
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to store trophy " + trophy + ".", pe);
+                }
+                return true;
+            }
+            public void handleResult () {
+                if (_trophy != null) {
+                    plobj.addToGameContent(_trophy);
+                } else {
+                    listener.requestFailed(GameCodes.E_INTERNAL_ERROR);
+                }
+            }
+            protected GameContentOwnership _trophy;
+        });
     }
 
     // from interface WhirledGameProvider
@@ -654,8 +711,10 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
     /**
      * Checks that the caller in question is a player if the game is not a party game.
+     *
+     * @return a casted {@link PlayerObject} reference if the method returns at all.
      */
-    protected void verifyIsPlayer (ClientObject caller)
+    protected PlayerObject verifyIsPlayer (ClientObject caller)
         throws InvocationException
     {
         PlayerObject user = (PlayerObject)caller;
@@ -664,6 +723,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
                 throw new InvocationException(GameCodes.E_ACCESS_DENIED);
             }
         }
+        return user;
     }
 
     /**

@@ -88,6 +88,20 @@ public class PlayerObject extends BodyObject
         return Avatar.getDefaultThumbnailMediaFor(Item.AVATAR);
     }
 
+    /**
+     * Returns true if this player owns the specified piece of game content. <em>Note:</em> the
+     * content must have previously been resolved, which happens when the player enters the game in
+     * question.
+     */
+    public boolean ownsGameContent (int gameId, byte type, String ident)
+    {
+        GameContentOwnership key = new GameContentOwnership();
+        key.gameId = gameId;
+        key.type = type;
+        key.ident = ident;
+        return gameContent.containsKey(key);
+    }
+
     // from interface MsoyUserObject
     public MemberName getMemberName ()
     {

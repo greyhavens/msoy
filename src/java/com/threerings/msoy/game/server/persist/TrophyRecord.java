@@ -9,6 +9,8 @@ import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.samskivert.util.StringUtil;
+
 import com.threerings.msoy.game.data.Trophy;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -96,6 +98,12 @@ public class TrophyRecord extends PersistentRecord
         trophy.trophyMedia = new MediaDesc(
             trophyMediaHash, trophyMimeType, MediaDesc.NOT_CONSTRAINED);
         return trophy;
+    }
+
+    @Override // from Object
+    public String toString ()
+    {
+        return StringUtil.fieldsToString(this);
     }
 
     // AUTO-GENERATED: METHODS START

@@ -56,6 +56,7 @@ import com.threerings.msoy.game.server.persist.AVRGameRepository;
 import com.threerings.msoy.game.server.persist.GameStateRecord;
 import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
 import com.threerings.msoy.game.server.persist.QuestStateRecord;
+import com.threerings.msoy.game.server.persist.TrophyRepository;
 
 import com.threerings.msoy.server.MsoyBaseServer;
 
@@ -75,12 +76,17 @@ public class GameGameRegistry
                       RatingRepository ratingRepo)
     {
         _omgr = omgr;
+
+        // create our various game-related repositories
         _gameRepo = new GameRepository(perCtx);
+        _avrgRepo = new AVRGameRepository(perCtx);
         _lpackRepo = new LevelPackRepository(perCtx);
         _ipackRepo = new ItemPackRepository(perCtx);
         _tsourceRepo = new TrophySourceRepository(perCtx);
-        _avrgRepo = new AVRGameRepository(perCtx);
+        _trophyRepo = new TrophyRepository(perCtx);
         _ratingRepo = ratingRepo;
+
+        // register game-related bootstrap services
         invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
         invmgr.registerDispatcher(new AVRDispatcher(this), MsoyCodes.GAME_GROUP);
 
@@ -94,6 +100,14 @@ public class GameGameRegistry
     public GameRepository getGameRepository ()
     {
         return _gameRepo;
+    }
+
+    /**
+     * Returns the repository used to maintain trophy to player mappings.
+     */
+    public TrophyRepository getTrophyRepository ()
+    {
+        return _trophyRepo;
     }
 
     /**
@@ -428,9 +442,6 @@ public class GameGameRegistry
     /** The distributed object manager that we work with. */
     protected RootDObjectManager _omgr;
 
-    /** Provides access to persistent AVRG information. */
-    protected AVRGameRepository _avrgRepo;
-
     /** Maps game id -> lobby. */
     protected IntMap<LobbyManager> _lobbies = new HashIntMap<LobbyManager>();
 
@@ -447,8 +458,10 @@ public class GameGameRegistry
     protected IntMap<ResultListenerList> _loadingAVRGames = new HashIntMap<ResultListenerList>();
 
     // various and sundry repositories for loading persistent data
-    protected RatingRepository _ratingRepo;
     protected GameRepository _gameRepo;
+    protected AVRGameRepository _avrgRepo;
+    protected RatingRepository _ratingRepo;
+    protected TrophyRepository _trophyRepo;
     protected LevelPackRepository _lpackRepo;
     protected ItemPackRepository _ipackRepo;
     protected TrophySourceRepository _tsourceRepo;
