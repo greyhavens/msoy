@@ -184,7 +184,7 @@ public class AVRGameControlBackend extends ControlBackend
         var i :Iterator = _playerObj.questState.iterator();
         while (i.hasNext()) {
             var state :QuestState = QuestState(i.next());
-            list.push([ state.step, state.status ]);
+            list.push([ state.questId, state.step, state.status ]);
         }
         return list;
     }
