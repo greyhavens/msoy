@@ -55,6 +55,24 @@
   font-size: 10px;
 }
 
+.profileBlurb .ControlButton {
+  width: 28px;
+  height: 25px;
+  border: none;
+}
+
+.profileBlurb .VisitHome {
+  background-image: url(/images/profile/visithome.png);
+}
+
+.profileBlurb .SendMail {
+  background-image: url(/images/profile/sendmail.png);
+}
+
+.profileBlurb .AdminInfo {
+  background-image: url(/images/profile/admininfo.png);
+}
+
 .friendsBlurb {
   padding-top: 5px;
 }

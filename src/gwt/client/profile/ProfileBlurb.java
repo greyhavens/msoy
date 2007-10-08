@@ -12,8 +12,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -22,6 +20,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
+
+import com.threerings.gwt.ui.Anchor;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -34,6 +34,7 @@ import client.shell.Application;
 import client.util.FlashClients;
 import client.util.ImageChooserPopup;
 import client.util.MsoyUI;
+import client.util.RowPanel;
 
 /**
  * Displays a person's basic profile information.
@@ -46,27 +47,24 @@ public class ProfileBlurb extends Blurb
         _content = new FlexTable();
         _content.setStyleName("profileBlurb");
 
-        _content.setWidget(0, 0, _photo = new Image());
+        int row = 0;
+        _content.setWidget(row, 0, _photo = new Image());
         _content.getFlexCellFormatter().setStyleName(0, 0, "Photo");
-        _content.getFlexCellFormatter().setRowSpan(0, 0, 6);
 
-        _content.setWidget(0, 1, _displayName = new Label("name"));
+        // editable stuff comes first
+        _content.setWidget(row++, 1, _displayName = new Label("name"));
         _displayName.setStyleName("Name");
         _content.getFlexCellFormatter().setColSpan(0, 1, 2);
-        _content.setWidget(1, 1, _headline = new Label("headline"));
+        _content.setWidget(row++, 1, _headline = new Label("headline"));
         _headline.setStyleName("Headline");
-        _content.setWidget(2, 1, _homepage = new HTML("homepage"));
-        _content.setWidget(3, 1, _laston = new Label("..."));
-        _content.setWidget(4, 1, _permaName = new Label("permaname"));
 
-        _content.setWidget(1, 2, _blog = new HTML(""));
-        _content.setWidget(2, 2, _gallery = new HTML(""));
-        // setWidget(3, 2, _hood = new HTML(""));
+        // then status information and controls
+        _content.setWidget(row++, 1, _permaName = new Label("permaname"));
+        _content.setWidget(row++, 1, _lastOn = new Label("..."));
+        _content.setWidget(row++, 1, _buttons = new RowPanel());
 
-        _content.setWidget(5, 1, _buttons = new HorizontalPanel());
-        _buttons.setSpacing(5);
-        _content.getFlexCellFormatter().setColSpan(5, 1, 3);
-        _content.getFlexCellFormatter().setHorizontalAlignment(5, 1, HasAlignment.ALIGN_RIGHT);
+        // make the photo span everything
+        _content.getFlexCellFormatter().setRowSpan(0, 0, row);
 
         _edit = new Button("Edit");
         _edit.addClickListener(new ClickListener() {
@@ -113,7 +111,7 @@ public class ProfileBlurb extends Blurb
                 }
                 public void onFailure (Throwable cause) {
                     CProfile.log("Failed to load images for profile photo pick.", cause);
-                    // TODO: report error to user
+                    MsoyUI.error(CProfile.serverError(cause));
                 }
             };
             _ephoto = new Button("Select...");
@@ -137,10 +135,12 @@ public class ProfileBlurb extends Blurb
         VerticalPanel ppanel = new VerticalPanel();
         ppanel.add(_photo);
         ppanel.add(_ephoto);
-        _content.setWidget(0, 0, ppanel);
-        _content.setWidget(0, 1, wrapEditor(CProfile.msgs.displayName(), _ename));
-        _content.setWidget(1, 1, wrapEditor(CProfile.msgs.headline(), _eheadline));
-        _content.setWidget(2, 1, wrapEditor(CProfile.msgs.homepage(), _ehomepage));
+
+        int row = 0;
+        _content.setWidget(row, 0, ppanel);
+        _content.setWidget(row++, 1, wrapEditor(CProfile.msgs.displayName(), _ename));
+        _content.setWidget(row++, 1, wrapEditor(CProfile.msgs.headline(), _eheadline));
+        _content.setWidget(row++, 1, wrapEditor(CProfile.msgs.homepage(), _ehomepage));
     }
 
     protected void displayProfile ()
@@ -154,29 +154,29 @@ public class ProfileBlurb extends Blurb
             _permaName.setText(CProfile.msgs.permaName(_profile.permaName));
         }
         _headline.setText(_profile.headline);
-        _laston.setText(_profile.lastLogon > 0L ?
+        _lastOn.setText(_profile.lastLogon > 0L ?
                         CProfile.msgs.lastOnline(_lfmt.format(new Date(_profile.lastLogon))) : "");
 
-        if (_profile.homePageURL == null) {
-            _homepage.setHTML("");
-        } else {
-            _homepage.setHTML("<a target=\"_blank\" href=\"" + _profile.homePageURL + "\">" +
-                              _profile.homePageURL + "</a>");
-        }
-
-        _content.setWidget(0, 0, _photo);
-        _content.setWidget(0, 1, _displayName);
-        _content.setWidget(1, 1, _headline);
-        _content.setWidget(2, 1, _homepage);
+        int row = 0;
+        _content.setWidget(row, 0, _photo);
+        _content.setWidget(row++, 1, _displayName);
+        _content.setWidget(row++, 1, _headline);
+        _content.setWidget(row++, 1, _permaName);
 
         _buttons.clear();
 
-        // display the edit button if this is our profile
-        if (_name.getMemberId() == CProfile.getMemberId()) {
-            _buttons.add(_edit);
+        // if they have a homepage configured show that button
+        if (_profile.homePageURL != null && _profile.homePageURL.length() > 0) {
+            Anchor homepage = new Anchor(_profile.homePageURL, "");
+            homepage.setHTML("<img border=\"0\" src=\"/images/profile/homepage.png\">");
+            homepage.setFrameTarget("_blank");
+            homepage.setTitle(CProfile.msgs.showHomepage());
+            _buttons.add(homepage);
+        }
 
-        } else {
-            _buttons.add(new Button(CProfile.msgs.sendMail(), new ClickListener() {
+        // if this is not us, add some useful controls
+        if (_name.getMemberId() != CProfile.getMemberId()) {
+            _buttons.add(newControl(CProfile.msgs.sendMail(), "SendMail", new ClickListener() {
                 public void onClick (Widget widget) {
                     new MailComposition(_name, null, null, null).show();
                 }
@@ -189,20 +189,27 @@ public class ProfileBlurb extends Blurb
 //                 }
 //             }));
 
-            _buttons.add(new Button(CProfile.msgs.visitHome(), new ClickListener() {
+            _buttons.add(newControl(CProfile.msgs.visitHome(), "VisitHome", new ClickListener() {
                 public void onClick (Widget sender) {
                     History.newItem(
                         Application.createLinkToken("world", "m" + _name.getMemberId()));
                 }
             }));
         }
+
+        // if we're an admin, add a button for special info
         if (CProfile.isAdmin()) {
-            _buttons.add(new Button(CProfile.msgs.adminBrowse(), new ClickListener() {
+            _buttons.add(newControl(CProfile.msgs.adminBrowse(), "AdminInfo", new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(Application.createLinkToken("admin", "browser_" +
-                        _name.getMemberId()));
+                    History.newItem(Application.createLinkToken(
+                                        "admin", "browser_" + _name.getMemberId()));
                 }
             }));
+        }
+
+        // display the edit button if this is our profile
+        if (_name.getMemberId() == CProfile.getMemberId()) {
+            _buttons.add(_edit);
         }
     }
 
@@ -213,6 +220,15 @@ public class ProfileBlurb extends Blurb
         panel.add(MsoyUI.createLabel(label, "EditLabel"));
         panel.add(editor);
         return panel;
+    }
+
+    protected Button newControl (String title, String style, ClickListener listener)
+    {
+        Button button = new Button("", listener);
+        button.addStyleName("ControlButton");
+        button.addStyleName(style);
+        button.setTitle(title);
+        return button;
     }
 
     protected void updatePhoto (MediaDesc photo)
@@ -249,7 +265,8 @@ public class ProfileBlurb extends Blurb
                 FlashClients.tutorialEvent("profileEdited");
             }
             public void onFailure (Throwable cause) {
-                GWT.log("Nay!", cause);
+                CProfile.log("Failed to update profile.", cause);
+                MsoyUI.error(CProfile.serverError(cause));
             }
         });
     }
@@ -259,15 +276,13 @@ public class ProfileBlurb extends Blurb
 
     protected Profile _profile;
     protected Image _photo;
-    protected HTML _homepage;
-    protected Label _displayName, _headline, _laston, _permaName;
-    protected HTML _blog, _gallery, _hood;
+    protected Label _displayName, _headline, _lastOn, _permaName;
 
+    protected RowPanel _buttons;
     protected Button _edit;
+
     protected Button _ephoto;
     protected TextBox _ename, _eheadline, _ehomepage;
-
-    protected HorizontalPanel _buttons;
 
     protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
 }

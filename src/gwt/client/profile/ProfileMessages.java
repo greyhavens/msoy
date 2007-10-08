@@ -96,6 +96,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String inviteTitle();
 
   /**
+   * Translated "Show Homepage".
+   * 
+   * @return translated "Show Homepage"
+   * @gwt.key showHomepage
+   */
+  String showHomepage();
+
+  /**
    * Translated "Permaname: {0}".
    * 
    * @return translated "Permaname: {0}"

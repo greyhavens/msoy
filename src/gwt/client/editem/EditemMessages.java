@@ -200,9 +200,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String videoMainTab();
 
   /**
-   * Translated "This is the pixel offset from the upper left of the furniture image to the furniture's hotspot. Leave it at (0, 0) for the default which is to put the hotspot at the bottom center of the furniture image.".
+   * Translated "This is the pixel offset from the upper left of the furniture image to the point where the furniture connects to the floor. Leave it at (0, 0) for the default which is to put the hotspot at the bottom center of the furniture image.".
    * 
-   * @return translated "This is the pixel offset from the upper left of the furniture image to the furniture's hotspot. Leave it at (0, 0) for the default which is to put the hotspot at the bottom center of the furniture image."
+   * @return translated "This is the pixel offset from the upper left of the furniture image to the point where the furniture connects to the floor. Leave it at (0, 0) for the default which is to put the hotspot at the bottom center of the furniture image."
    * @gwt.key furniHotSpotTip
    */
   String furniHotSpotTip();
