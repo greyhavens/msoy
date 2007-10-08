@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -39,7 +38,6 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.TrophySource;
-import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemPackRecord;
@@ -57,6 +55,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.persist.AVRGameRepository;
 import com.threerings.msoy.game.server.persist.GameStateRecord;
 import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
+import com.threerings.msoy.game.server.persist.QuestStateRecord;
 
 import com.threerings.msoy.server.MsoyBaseServer;
 
@@ -389,10 +388,11 @@ public class GameGameRegistry
     {
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("joinAVRGame") {
             public void invokePersist () throws Exception {
-                _recs = _avrgRepo.getPlayerGameState(mgr.getGameId(), player.getMemberId());
+                _questRecs = _avrgRepo.getQuests(mgr.getGameId(), player.getMemberId());
+                _stateRecs = _avrgRepo.getPlayerGameState(mgr.getGameId(), player.getMemberId());
             }
             public void handleSuccess () {
-                mgr.addPlayer(player, _recs);
+                mgr.addPlayer(player, _questRecs, _stateRecs);
                 listener.requestProcessed(mgr.getGameObject().getOid());
             }
             public void handleFailure (Exception pe) {
@@ -400,7 +400,8 @@ public class GameGameRegistry
                     "Unable to reslve player game state [gameId=" + mgr.getGameId() +
                     ", player=" + player + ", error=" + pe + "]");
             }
-            protected List<PlayerGameStateRecord> _recs;
+            protected List<QuestStateRecord> _questRecs;
+            protected List<PlayerGameStateRecord> _stateRecs;
         });
     }
 

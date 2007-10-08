@@ -13,9 +13,9 @@ import com.threerings.presents.dobj.DSet;
 public class QuestState extends SimpleStreamableObject
     implements IsSerializable, DSet.Entry
 {
-    public static final int STEP_NEW = -1;
-
     public static final int STEP_COMPLETED = -2;
+    public static final int STEP_VIRGIN = -1;
+    public static final int STEP_FIRST = 1;
 
     public String questId;
 

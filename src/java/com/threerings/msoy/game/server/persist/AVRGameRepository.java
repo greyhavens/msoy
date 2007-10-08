@@ -6,12 +6,15 @@ package com.threerings.msoy.game.server.persist;
 import java.util.List;
 import java.util.Set;
 
+import com.threerings.msoy.game.data.QuestState;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.jdbc.depot.operator.Logic.*;
 
 public class AVRGameRepository extends DepotRepository
 {
@@ -20,10 +23,20 @@ public class AVRGameRepository extends DepotRepository
         super(context);
     }
 
-    public List<QuestStateRecord> loadQuestsForMember (int memberId)
+    public List<QuestStateRecord> getQuests (int memberId)
         throws PersistenceException
     {
         return findAll(QuestStateRecord.class, new Where(QuestStateRecord.MEMBER_ID_C, memberId));
+    }
+
+    public List<QuestStateRecord> getQuests (int gameId, int memberId)
+        throws PersistenceException
+    {
+        return findAll(QuestStateRecord.class, new Where(new And(
+                new Equals(QuestStateRecord.GAME_ID_C, gameId),
+                new Equals(QuestStateRecord.MEMBER_ID_C, memberId),
+                new Not(new In(QuestStateRecord.STEP_C,
+                    QuestState.STEP_COMPLETED, QuestState.STEP_VIRGIN)))));
     }
 
     public void setQuestState (

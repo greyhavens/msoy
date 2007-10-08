@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.server.persist;
 
+import com.threerings.msoy.game.data.QuestState;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
@@ -90,6 +92,11 @@ public class QuestStateRecord extends PersistentRecord
         this.step = step;
         this.status = status;
         this.sceneId = sceneId;
+    }
+
+    public QuestState toEntry ()
+    {
+        return new QuestState(questId, step, status, sceneId);
     }
 
     /**

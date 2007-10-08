@@ -15,6 +15,7 @@ import com.threerings.msoy.game.data.QuestState;
 import com.threerings.msoy.game.server.persist.AVRGameRepository;
 import com.threerings.msoy.game.server.persist.GameStateRecord;
 import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
+import com.threerings.msoy.game.server.persist.QuestStateRecord;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.samskivert.io.PersistenceException;
@@ -150,11 +151,11 @@ public class AVRGameManager
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("startQuest") {
             public void invokePersist () throws PersistenceException {
                 _repo.setQuestState(
-                    player.getMemberId(), _gameId, questId, QuestState.STEP_NEW, status, sceneId);
+                    player.getMemberId(), _gameId, questId, QuestState.STEP_FIRST, status, sceneId);
             }
             public void handleSuccess () {
                 player.addToQuestState(
-                    new QuestState(questId, QuestState.STEP_NEW, status, sceneId));
+                    new QuestState(questId, QuestState.STEP_FIRST, status, sceneId));
                 listener.requestProcessed();
             }
             public void handleFailure (Exception pe) {
@@ -328,7 +329,8 @@ public class AVRGameManager
         }
     }
 
-    public void addPlayer (PlayerObject player, List<PlayerGameStateRecord> stateRecords)
+    public void addPlayer (PlayerObject player, List<QuestStateRecord> questRecords,
+                           List<PlayerGameStateRecord> stateRecords)
     {
         _players.put(player.getOid(), player);
 
@@ -344,6 +346,9 @@ public class AVRGameManager
         try {
             for (PlayerGameStateRecord rec : stateRecords) {
                 player.addToGameState(rec.toEntry());
+            }
+            for (QuestStateRecord rec: questRecords) {
+                player.addToQuestState(rec.toEntry());
             }
         } finally {
             player.commitTransaction();
