@@ -98,11 +98,6 @@ public class TemplateRecord extends ItemRecord
 
     public static final int SCHEMA_VERSION = 1 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
-    public TemplateRecord ()
-    {
-        super();
-    }
-
     @Override // from ItemRecord
     public byte getType ()
     {
@@ -117,14 +112,16 @@ public class TemplateRecord extends ItemRecord
         // TODO: initialize your clone fields here
     }
 
-    protected TemplateRecord (Template source)
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
     {
-        super(source);
+        super.fromItem(item);
 
+        Template temp = (Template)item;
         // TODO: extract your values here
     }
 
-    @Override
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         Template object = new Template();

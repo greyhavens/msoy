@@ -59,6 +59,7 @@ import com.threerings.msoy.server.persist.TagRepository;
 
 import com.threerings.msoy.world.server.persist.MemoryRepository;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 import static com.threerings.msoy.Log.log;
@@ -136,6 +137,21 @@ public abstract class ItemRepository<
     public byte getItemType ()
     {
         return _itemType;
+    }
+
+    /**
+     * Converts a runtime item record to an initialized instance of our persistent item record
+     * class.
+     */
+    public ItemRecord newItemRecord (Item item)
+    {
+        try {
+            T record = getItemClass().newInstance();
+            record.fromItem(item);
+            return record;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

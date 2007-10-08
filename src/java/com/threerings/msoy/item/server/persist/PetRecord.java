@@ -101,24 +101,22 @@ public class PetRecord extends ItemRecord
     public static final int SCHEMA_VERSION = 1 +
         BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
-    public PetRecord ()
-    {
-        super();
-    }
-
-    protected PetRecord (Pet pet)
-    {
-        super(pet);
-        // nothing custom to extract
-    }
-
-    @Override // from Item
+    @Override // from ItemRecord
     public byte getType ()
     {
         return Item.PET;
     }
 
-    @Override
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
+    {
+        super.fromItem(item);
+
+        Pet pet = (Pet)item;
+        // nothing custom to extract
+    }
+
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         Pet object = new Pet();

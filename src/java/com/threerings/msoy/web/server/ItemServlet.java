@@ -94,8 +94,8 @@ public class ItemServlet extends MsoyServiceServlet
         item.suiteId = suiteId;
 
         // write the item to the database
-        final ItemRecord record = ItemRecord.newRecord(item);
         repo = MsoyServer.itemMan.getRepository(item.getType());
+        final ItemRecord record = repo.newItemRecord(item);
         try {
             repo.insertOriginalItem(record, false);
         } catch (PersistenceException pe) {
@@ -128,8 +128,8 @@ public class ItemServlet extends MsoyServiceServlet
         // TODO: validate anything else?
 
         // write the item to the database
-        final ItemRecord record = ItemRecord.newRecord(item);
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.getType());
+        final ItemRecord record = repo.newItemRecord(item);
         try {
             repo.updateOriginalItem(record);
         } catch (PersistenceException pe) {

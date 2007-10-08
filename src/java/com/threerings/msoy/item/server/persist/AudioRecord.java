@@ -122,15 +122,18 @@ public class AudioRecord extends ItemRecord
     /** The MIME type of the {@link #audioMediaHash} media. */
     public byte audioMimeType;
 
-    public AudioRecord ()
+    @Override // from ItemRecord
+    public byte getType ()
     {
-        super();
+        return Item.AUDIO;
     }
 
-    protected AudioRecord (Audio audio)
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
     {
-        super(audio);
+        super.fromItem(item);
 
+        Audio audio = (Audio)item;
         if (audio.audioMedia != null) {
             audioMediaHash = audio.audioMedia.hash;
             audioMimeType = audio.audioMedia.mimeType;
@@ -138,12 +141,6 @@ public class AudioRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
-    public byte getType ()
-    {
-        return Item.AUDIO;
-    }
-
-    @Override
     protected Item createItem ()
     {
         Audio object = new Audio();

@@ -144,11 +144,6 @@ public class GameRecord extends ItemRecord
      * item so that ratings and lobbies and content packs all reference the same "game". */
     public int gameId;
 
-    public GameRecord ()
-    {
-        super();
-    }
-
     @Override // from ItemRecord
     public void prepareForListing (ItemRecord oldListing)
     {
@@ -168,13 +163,27 @@ public class GameRecord extends ItemRecord
         gameId = 0;
     }
 
-    @Override // from Item
+    @Override // from ItemRecord
     public byte getType ()
     {
         return Item.GAME;
     }
 
-    @Override // from Item
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
+    {
+        super.fromItem(item);
+
+        Game game = (Game)item;
+        config = game.config;
+        if (game.gameMedia != null) {
+            gameMediaHash = game.gameMedia.hash;
+            gameMimeType = game.gameMedia.mimeType;
+        }
+        gameId = game.gameId;
+    }
+
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         Game object = new Game();
@@ -183,18 +192,6 @@ public class GameRecord extends ItemRecord
             new MediaDesc(gameMediaHash, gameMimeType);
         object.gameId = gameId;
         return object;
-    }
-
-    protected GameRecord (Game game)
-    {
-        super(game);
-
-        config = game.config;
-        if (game.gameMedia != null) {
-            gameMediaHash = game.gameMedia.hash;
-            gameMimeType = game.gameMedia.mimeType;
-        }
-        gameId = game.gameId;
     }
 
     // AUTO-GENERATED: METHODS START

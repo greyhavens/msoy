@@ -112,24 +112,22 @@ public class TrophySourceRecord extends ItemRecord
     /** An identifier for this item pack, used by the game code. */
     public String ident;
 
-    public TrophySourceRecord ()
-    {
-        super();
-    }
-
     @Override // from ItemRecord
     public byte getType ()
     {
         return Item.TROPHY_SOURCE;
     }
 
-    protected TrophySourceRecord (TrophySource source)
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
     {
-        super(source);
+        super.fromItem(item);
+
+        TrophySource source = (TrophySource)item;
         ident = source.ident;
     }
 
-    @Override
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         TrophySource object = new TrophySource();

@@ -20,20 +20,8 @@ import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.util.StringUtil;
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.item.data.all.Audio;
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.item.data.all.Document;
-import com.threerings.msoy.item.data.all.Furniture;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemPack;
-import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.Pet;
-import com.threerings.msoy.item.data.all.Photo;
-import com.threerings.msoy.item.data.all.Toy;
-import com.threerings.msoy.item.data.all.Video;
 
 /**
  * The base class for all digital items in the MSOY system.
@@ -119,38 +107,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public static final int BASE_SCHEMA_VERSION = 15;
     public static final int BASE_MULTIPLIER = 1000;
 
-    /**
-     * Creates the persistent record for a corresponding runtime item.
-     */
-    public static ItemRecord newRecord (Item item) {
-        if (item instanceof Document) {
-            return new DocumentRecord((Document) item);
-        } else if (item instanceof Furniture) {
-            return new FurnitureRecord((Furniture) item);
-        } else if (item instanceof Game) {
-            return new GameRecord((Game) item);
-        } else if (item instanceof Photo) {
-            return new PhotoRecord((Photo) item);
-        } else if (item instanceof Avatar) {
-            return new AvatarRecord((Avatar) item);
-        } else if (item instanceof Pet) {
-            return new PetRecord((Pet) item);
-        } else if (item instanceof Audio) {
-            return new AudioRecord((Audio) item);
-        } else if (item instanceof Video) {
-            return new VideoRecord((Video) item);
-        } else if (item instanceof Decor) {
-            return new DecorRecord((Decor) item);
-        } else if (item instanceof Toy) {
-            return new ToyRecord((Toy) item);
-        } else if (item instanceof LevelPack) {
-            return new LevelPackRecord((LevelPack) item);
-        } else if (item instanceof ItemPack) {
-            return new ItemPackRecord((ItemPack) item);
-        }
-        throw new RuntimeException("Unknown item type: " + item);
-    }
-
     /** This item's unique identifier. <em>Note:</em> this identifier is not globally unique among
      * all digital items. Each type of item has its own identifier space. */
     @Id
@@ -220,41 +176,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     /** The size constraint on the {@link #furniMediaHash} media. */
     public byte furniConstraint;
-
-    public ItemRecord ()
-    {
-        super();
-    }
-
-    protected ItemRecord (Item item)
-    {
-        super();
-
-        itemId = item.itemId;
-        sourceId = item.sourceId;
-        suiteId = item.suiteId;
-        ownerId = item.ownerId;
-        catalogId = item.catalogId;
-        rating = item.rating;
-        creatorId = item.creatorId;
-        flagged = item.flagged;
-        mature = item.mature;
-        used = item.used;
-        location = item.location;
-        lastTouched = new Timestamp(System.currentTimeMillis());
-        name = (item.name == null) ? "" : item.name;
-        description = (item.description == null) ? "" : item.description;
-        if (item.thumbMedia != null) {
-            thumbMediaHash = item.thumbMedia.hash;
-            thumbMimeType = item.thumbMedia.mimeType;
-            thumbConstraint = item.thumbMedia.constraint;
-        }
-        if (item.furniMedia != null) {
-            furniMediaHash = item.furniMedia.hash;
-            furniMimeType = item.furniMedia.mimeType;
-            furniConstraint = item.furniMedia.constraint;
-        }
-    }
 
     /**
      * This is used to map {@link ItemRecord} concrete classes to item type
@@ -379,5 +300,40 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         return StringUtil.fieldsToString(this);
     }
 
+    /**
+     * Initializes this persistent record from the supplied runtime record.
+     */
+    protected void fromItem (Item item)
+    {
+        itemId = item.itemId;
+        sourceId = item.sourceId;
+        suiteId = item.suiteId;
+        ownerId = item.ownerId;
+        catalogId = item.catalogId;
+        rating = item.rating;
+        creatorId = item.creatorId;
+        flagged = item.flagged;
+        mature = item.mature;
+        used = item.used;
+        location = item.location;
+        lastTouched = new Timestamp(System.currentTimeMillis());
+        name = (item.name == null) ? "" : item.name;
+        description = (item.description == null) ? "" : item.description;
+        if (item.thumbMedia != null) {
+            thumbMediaHash = item.thumbMedia.hash;
+            thumbMimeType = item.thumbMedia.mimeType;
+            thumbConstraint = item.thumbMedia.constraint;
+        }
+        if (item.furniMedia != null) {
+            furniMediaHash = item.furniMedia.hash;
+            furniMimeType = item.furniMedia.mimeType;
+            furniConstraint = item.furniMedia.constraint;
+        }
+    }
+
+    /**
+     * Creates an instance of the appropriate item runtime object and initializes the derived
+     * class's custom fields. Used by {@link #toItem}.
+     */
     protected abstract Item createItem ();
 }

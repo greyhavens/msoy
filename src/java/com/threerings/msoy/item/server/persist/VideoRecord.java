@@ -122,15 +122,18 @@ public class VideoRecord extends ItemRecord
     /** The MIME type of the {@link #videoMediaHash} media. */
     public byte videoMimeType;
 
-    public VideoRecord ()
+    @Override // from ItemRecord
+    public byte getType ()
     {
-        super();
+        return Item.VIDEO;
     }
 
-    protected VideoRecord (Video video)
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
     {
-        super(video);
+        super.fromItem(item);
 
+        Video video = (Video)item;
         if (video.videoMedia != null) {
             videoMediaHash = video.videoMedia.hash;
             videoMimeType = video.videoMedia.mimeType;
@@ -138,12 +141,6 @@ public class VideoRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
-    public byte getType ()
-    {
-        return Item.VIDEO;
-    }
-
-    @Override
     protected Item createItem ()
     {
         Video object = new Video();

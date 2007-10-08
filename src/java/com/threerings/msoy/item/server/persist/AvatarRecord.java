@@ -134,22 +134,6 @@ public class AvatarRecord extends ItemRecord
     @Column(defaultValue="1")
     public float scale;
 
-    public AvatarRecord ()
-    {
-        super();
-    }
-
-    protected AvatarRecord (Avatar avatar)
-    {
-        super(avatar);
-
-        if (avatar.avatarMedia != null) {
-            avatarMediaHash = avatar.avatarMedia.hash;
-            avatarMimeType = avatar.avatarMedia.mimeType;
-        }
-        scale = avatar.scale;
-    }
-
     @Override // from ItemRecord
     public byte getType ()
     {
@@ -164,7 +148,20 @@ public class AvatarRecord extends ItemRecord
         this.scale = ((AvatarCloneRecord) clone).scale;
     }
 
-    @Override
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
+    {
+        super.fromItem(item);
+
+        Avatar avatar = (Avatar)item;
+        if (avatar.avatarMedia != null) {
+            avatarMediaHash = avatar.avatarMedia.hash;
+            avatarMimeType = avatar.avatarMedia.mimeType;
+        }
+        scale = avatar.scale;
+    }
+
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         Avatar object = new Avatar();

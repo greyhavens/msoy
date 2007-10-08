@@ -182,15 +182,18 @@ public class DecorRecord extends ItemRecord
     public static final int SCHEMA_VERSION = 2 +
         BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
-    public DecorRecord ()
+    @Override // from ItemRecord
+    public byte getType ()
     {
-        super();
+        return Item.DECOR;
     }
 
-    protected DecorRecord (Decor decor)
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
     {
-        super(decor);
+        super.fromItem(item);
 
+        Decor decor = (Decor)item;
         type = decor.type;
         height = decor.height;
         width = decor.width;
@@ -201,13 +204,7 @@ public class DecorRecord extends ItemRecord
         offsetY = decor.offsetY;
     }
 
-    @Override // from Item
-    public byte getType ()
-    {
-        return Item.DECOR;
-    }
-
-    @Override
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         Decor object = new Decor();

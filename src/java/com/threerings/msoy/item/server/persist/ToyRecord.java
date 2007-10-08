@@ -102,25 +102,22 @@ public class ToyRecord extends ItemRecord
     public static final int SCHEMA_VERSION = 1 +
         BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
-    public ToyRecord ()
-    {
-        super();
-    }
-
-    protected ToyRecord (Toy furniture)
-    {
-        super(furniture);
-
-        // nothing for now
-    }
-
-    @Override // from Item
+    @Override // from ItemRecord
     public byte getType ()
     {
         return Item.TOY;
     }
 
-    @Override
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
+    {
+        super.fromItem(item);
+
+        Toy toy = (Toy)item;
+        // nothing for now
+    }
+
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         Toy object = new Toy();

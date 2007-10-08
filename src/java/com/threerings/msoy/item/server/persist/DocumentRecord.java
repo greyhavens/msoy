@@ -122,15 +122,18 @@ public class DocumentRecord extends ItemRecord
     /** The MIME type of the {@link #docMediaHash} media. */
     public byte docMimeType;
 
-    public DocumentRecord ()
+    @Override // from ItemRecord
+    public byte getType ()
     {
-        super();
+        return Item.DOCUMENT;
     }
 
-    protected DocumentRecord (Document document)
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
     {
-        super(document);
+        super.fromItem(item);
 
+        Document document = (Document)item;
         if (document.docMedia != null) {
             docMediaHash = document.docMedia.hash;
             docMimeType = document.docMedia.mimeType;
@@ -138,12 +141,6 @@ public class DocumentRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
-    public byte getType ()
-    {
-        return Item.DOCUMENT;
-    }
-
-    @Override
     protected Item createItem ()
     {
         Document object = new Document();

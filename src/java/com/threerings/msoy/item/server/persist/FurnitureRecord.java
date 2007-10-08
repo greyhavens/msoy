@@ -118,27 +118,24 @@ public class FurnitureRecord extends ItemRecord
     /** The y position of the hot spot to use for this furniture. */
     public short hotSpotY;
 
-    public FurnitureRecord ()
-    {
-        super();
-    }
-
-    protected FurnitureRecord (Furniture furniture)
-    {
-        super(furniture);
-
-        action = furniture.action;
-        hotSpotX = furniture.hotSpotX;
-        hotSpotY = furniture.hotSpotY;
-    }
-
-    @Override // from Item
+    @Override // from ItemRecord
     public byte getType ()
     {
         return Item.FURNITURE;
     }
 
-    @Override
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
+    {
+        super.fromItem(item);
+
+        Furniture furniture = (Furniture)item;
+        action = furniture.action;
+        hotSpotX = furniture.hotSpotX;
+        hotSpotY = furniture.hotSpotY;
+    }
+
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         Furniture object = new Furniture();

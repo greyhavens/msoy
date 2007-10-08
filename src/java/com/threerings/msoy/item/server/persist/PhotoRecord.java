@@ -153,15 +153,18 @@ public class PhotoRecord extends ItemRecord
     /** The height (in pixels) of the main photo media. */
     public int photoHeight;
 
-    public PhotoRecord ()
+    @Override // from ItemRecord
+    public byte getType ()
     {
-        super();
+        return Item.PHOTO;
     }
 
-    protected PhotoRecord (Photo photo)
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
     {
-        super(photo);
+        super.fromItem(item);
 
+        Photo photo = (Photo)item;
         if (photo.photoMedia != null) {
             photoMediaHash = photo.photoMedia.hash;
             photoMimeType = photo.photoMedia.mimeType;
@@ -172,12 +175,6 @@ public class PhotoRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
-    public byte getType ()
-    {
-        return Item.PHOTO;
-    }
-
-    @Override
     protected Item createItem ()
     {
         Photo object = new Photo();

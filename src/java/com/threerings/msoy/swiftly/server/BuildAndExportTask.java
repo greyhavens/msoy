@@ -144,7 +144,7 @@ public class BuildAndExportTask extends AbstractBuildTask
             item.description = "";
             item.ownerId = _member.getMemberId();
             item.creatorId = _member.getMemberId();
-            _record = ItemRecord.newRecord(item);
+            _record = repo.newItemRecord(item);
 
             // insert the new item into the repository
             repo.insertOriginalItem(_record, false);

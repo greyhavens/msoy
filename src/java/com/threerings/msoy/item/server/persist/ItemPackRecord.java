@@ -112,24 +112,22 @@ public class ItemPackRecord extends ItemRecord
     /** An identifier for this item pack, used by the game code. */
     public String ident;
 
-    public ItemPackRecord ()
-    {
-        super();
-    }
-
-    protected ItemPackRecord (ItemPack source)
-    {
-        super(source);
-        ident = source.ident;
-    }
-
     @Override // from ItemRecord
     public byte getType ()
     {
         return Item.ITEM_PACK;
     }
 
-    @Override
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
+    {
+        super.fromItem(item);
+
+        ItemPack pack = (ItemPack)item;
+        ident = pack.ident;
+    }
+
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         ItemPack object = new ItemPack();

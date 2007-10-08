@@ -122,25 +122,23 @@ public class LevelPackRecord extends ItemRecord
     /** Whether or not this level pack is premium. See {@link LevelPack#premium}. */
     public boolean premium;
 
-    public LevelPackRecord ()
-    {
-        super();
-    }
-
-    protected LevelPackRecord (LevelPack source)
-    {
-        super(source);
-        ident = source.ident;
-        premium = source.premium;
-    }
-
     @Override // from ItemRecord
     public byte getType ()
     {
         return Item.LEVEL_PACK;
     }
 
-    @Override
+    @Override // from ItemRecord
+    protected void fromItem (Item item)
+    {
+        super.fromItem(item);
+
+        LevelPack pack = (LevelPack)item;
+        ident = pack.ident;
+        premium = pack.premium;
+    }
+
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         LevelPack object = new LevelPack();
