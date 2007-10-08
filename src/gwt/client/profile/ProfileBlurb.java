@@ -160,8 +160,8 @@ public class ProfileBlurb extends Blurb
         if (_profile.homePageURL == null) {
             _homepage.setHTML("");
         } else {
-            _homepage.setHTML(
-                "<a href=\"" + _profile.homePageURL + "\">" + _profile.homePageURL + "</a>");
+            _homepage.setHTML("<a target=\"_blank\" href=\"" + _profile.homePageURL + "\">" +
+                              _profile.homePageURL + "</a>");
         }
 
         _content.setWidget(0, 0, _photo);
