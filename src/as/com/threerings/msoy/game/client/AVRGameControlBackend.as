@@ -139,6 +139,9 @@ public class AVRGameControlBackend extends ControlBackend
     protected function offerQuest_v1 (questId :String, initialStatus :String) :Boolean
     {
         // TODO: Popup UI and whatnot
+        if (isOnQuest(questId)) {
+            return false;
+        }
         _gameObj.avrgService.startQuest(
             _gctx.getClient(), questId, initialStatus, loggingConfirmListener(
                 "startQuest", function () :void {
@@ -149,6 +152,9 @@ public class AVRGameControlBackend extends ControlBackend
 
     protected function updateQuest_v1 (questId :String, step :int, status :String) :Boolean
     {
+        if (!isOnQuest(questId)) {
+            return false;
+        }
         _gameObj.avrgService.updateQuest(
             _gctx.getClient(), questId, step, status, loggingConfirmListener(
                 "updateQuest", function () :void {
@@ -159,6 +165,9 @@ public class AVRGameControlBackend extends ControlBackend
 
     protected function completeQuest_v1 (questId :String, payoutLevel :int) :Boolean
     {
+        if (!isOnQuest(questId)) {
+            return false;
+        }
         _gameObj.avrgService.completeQuest(
             _gctx.getClient(), questId, payoutLevel, loggingConfirmListener(
                 "completeQuest", function () :void {
@@ -169,6 +178,9 @@ public class AVRGameControlBackend extends ControlBackend
 
     protected function cancelQuest_v1 (questId :String) :Boolean
     {
+        if (!isOnQuest(questId)) {
+            return false;
+        }
         // TODO: confirmation dialog
         _gameObj.avrgService.cancelQuest(
             _gctx.getClient(), questId, loggingConfirmListener(
@@ -212,6 +224,18 @@ public class AVRGameControlBackend extends ControlBackend
         return new InvocationAdapter(function (cause :String) :void {
             log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
         });
+    }
+
+    protected function isOnQuest (questId :String) :Boolean
+    {
+        var i :Iterator = _playerObj.questState.iterator();
+        while (i.hasNext()) {
+            var state :QuestState = QuestState(i.next());
+            if (state[0] == questId) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected var _mctx :WorldContext;
