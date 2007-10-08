@@ -27,6 +27,7 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.ObjectAddedEvent;
 import com.threerings.presents.dobj.ObjectRemovedEvent;
 import com.threerings.presents.dobj.OidListListener;
@@ -360,6 +361,14 @@ public class AVRGameManager
     public void removePlayer (PlayerObject player)
     {
         _gameObj.removeFromPlayerOids(player.getOid());
+
+        player.startTransaction();
+        try {
+            player.setQuestState(new DSet<QuestState>());
+            player.setGameState(new DSet<GameState>());
+        } finally {
+            player.commitTransaction();
+        }
 
         MsoyGameServer.worldClient.updatePlayer(player.getMemberId(), null);
     }
