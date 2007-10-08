@@ -66,12 +66,7 @@ public class GameRepository extends ItemRepository<
     public GameDetailRecord loadGameDetail (int gameId)
         throws PersistenceException
     {
-        GameDetailRecord rec = load(GameDetailRecord.class, Math.abs(gameId));
-        if (rec != null) {
-            // preserve gameId's sign and thus the distinction between source and listed games
-            rec.gameId = gameId;
-        }
-        return rec;
+        return load(GameDetailRecord.class, Math.abs(gameId));
     }
 
     /**
