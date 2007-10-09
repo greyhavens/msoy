@@ -50,7 +50,7 @@
 
   <!-- declare the files from bin needed in the package -->
   <property name="bin.list1" value="msoy,msoyrespawn,msoyserver,msoyjava,runmsoy,rungame,mysql"/>
-  <property name="bin.list2" value="process_stats,roll_logs,swiftlycompiler"/>
+  <property name="bin.list2" value="process_stats,roll_logs,swiftlycompiler,runcommon"/>
   <property name="bin.list"   value="${bin.list1},${bin.list2}"/>
 
   <!-- declare the files that will be deployed to the maven repository -->
