@@ -33,6 +33,10 @@
   font-size: 14px;
 }
 
+.itemEntry .OriginalThumbText {
+  font-style: italic;
+}
+
 .itemEntry .Tip {
   font-size: 10px;
   color: #AABDC8;
