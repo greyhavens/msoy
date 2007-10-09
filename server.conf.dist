@@ -4,9 +4,6 @@
 #
 # Local configuration for this MetaSOY installation.
 
-# Java configuration
-export JAVA_HOME=/usr/local/java
-
 # Database server configuration
 DBSERVER=localhost
 DBUSER=msoy
