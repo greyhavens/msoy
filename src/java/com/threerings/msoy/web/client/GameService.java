@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.TrophyCase;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -25,5 +26,11 @@ public interface GameService extends RemoteService
      * Loads the details for the specified game.
      */
     public GameDetail loadGameDetail (WebIdent ident, int gameId)
+        throws ServiceException;
+
+    /**
+     * Loads all trophies owned by the specified member.
+     */
+    public TrophyCase loadTrophyCase (WebIdent ident, int memberId)
         throws ServiceException;
 }

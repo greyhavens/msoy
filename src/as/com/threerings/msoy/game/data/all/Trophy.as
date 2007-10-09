@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.game.data {
+package com.threerings.msoy.game.data.all {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;

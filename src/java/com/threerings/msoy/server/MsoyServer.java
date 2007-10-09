@@ -46,6 +46,7 @@ import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
+import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -110,6 +111,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Contains member comments on various things. */
     public static CommentRepository commentRepo;
+
+    /** Provides access to our trophy metadata. */
+    public static TrophyRepository trophyRepo;
 
     /** Contains information on our swiftly projects. */
     public static SwiftlyRepository swiftlyRepo;
@@ -269,6 +273,7 @@ public class MsoyServer extends MsoyBaseServer
         profileRepo = new ProfileRepository(perCtx);
         groupRepo = new GroupRepository(perCtx, eventLog);
         commentRepo = new CommentRepository(perCtx, memberRepo);
+        trophyRepo = new TrophyRepository(perCtx);
         swiftlyRepo = new SwiftlyRepository(perCtx);
 
         // initialize the swiftly invoker

@@ -3,9 +3,13 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -13,6 +17,8 @@ import com.threerings.presents.data.InvocationCodes;
 
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import com.threerings.msoy.item.data.ItemCodes;
@@ -31,6 +37,7 @@ import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.TrophyCase;
 import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;
@@ -146,6 +153,58 @@ public class GameServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load game detail [id=" + gameId + "].", pe);
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+        }
+    }
+
+    // from interface GameService
+    public TrophyCase loadTrophyCase (WebIdent ident, int memberId)
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser(ident);
+
+        try {
+            MemberRecord tgtrec = MsoyServer.memberRepo.loadMember(memberId);
+            if (tgtrec == null) {
+                return null;
+            }
+
+            TrophyCase tcase = new TrophyCase();
+            tcase.owner= tgtrec.getName();
+
+            HashIntMap<ArrayList<Trophy>> tmap = new HashIntMap<ArrayList<Trophy>>();
+            for (TrophyRecord trec : MsoyServer.trophyRepo.loadTrophies(memberId)) {
+                ArrayList<Trophy> tlist = tmap.get(trec.gameId);
+                if (tlist == null) {
+                    tmap.put(trec.gameId, tlist = new ArrayList<Trophy>());
+                }
+                tlist.add(trec.toTrophy());
+            }
+
+            tcase.shelves = new TrophyCase.Shelf[tmap.size()];
+            int ii = 0;
+            for (IntMap.IntEntry<ArrayList<Trophy>> entry : tmap.intEntrySet()) {
+                TrophyCase.Shelf shelf = new TrophyCase.Shelf();
+                shelf.gameId = entry.getIntKey();
+                shelf.trophies = entry.getValue().toArray(new Trophy[entry.getValue().size()]);
+                Arrays.sort(shelf.trophies);
+                GameRecord grec = MsoyServer.itemMan.getGameRepository().loadGameRecord(
+                    shelf.gameId);
+                if (grec == null) {
+                    log.warning("Have trophies for unknown game [who=" + memberId +
+                                ", gameId=" + shelf.gameId + "].");
+                    shelf.name = "???";
+                } else {
+                    shelf.name = grec.name;
+                }
+                tcase.shelves[ii++] = shelf;
+            }
+            // TODO: sort shelves?
+
+            return tcase;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failure loading trophies [tgtid=" + memberId + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }
 }

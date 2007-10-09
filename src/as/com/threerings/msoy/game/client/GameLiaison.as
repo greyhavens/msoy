@@ -36,7 +36,7 @@ import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.game.data.Trophy;
+import com.threerings.msoy.game.data.all.Trophy;
 
 /**
  * Handles all the fiddly bits relating to connecting to a separate server to match-make and play a

@@ -47,9 +47,14 @@ public class index extends Page
 
         try {
             // if we have d-NNN then we want to see game detail
-            if (args.get(0, "").equals("d")) {
+            String action = args.get(0, "");
+            if (action.equals("d")) {
                 setPageTitle("Game Detail");
                 setContent(new GameDetailPanel(args.get(1, 0)));
+
+            } else if (action.equals("t")) {
+                setPageTitle("Trophies");
+                setContent(new TrophyCasePanel(args.get(1, 0)));
 
             } else {
                 // otherwise our args are 'gameId-gameOid' or just 'gameId'

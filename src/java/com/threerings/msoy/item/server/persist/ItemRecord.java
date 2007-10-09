@@ -234,6 +234,8 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
             // if the old listing was mature or the new item is mature we want the new listing to
             // be mature as well; there's no going back without listing anew
             mature = oldListing.mature || mature;
+            // inherit our suite id from the old item
+            suiteId = oldListing.suiteId;
         }
     }
 

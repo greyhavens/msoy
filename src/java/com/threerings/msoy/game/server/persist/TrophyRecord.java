@@ -11,9 +11,11 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.game.data.Trophy;
+import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
+
+import java.sql.Timestamp;
 
 /**
  * Contains persistent data on a player's trophy.
@@ -66,7 +68,7 @@ public class TrophyRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The game that awarded this trophy. */
     @Id
@@ -89,6 +91,9 @@ public class TrophyRecord extends PersistentRecord
     /** The MIME type of the {@link #trophyMediaHash} media. */
     public byte trophyMimeType;
 
+    /** The date and time on which this trophy was earned. */
+    public Timestamp whenEarned;
+
     /**
      * Converts this persistent record to a runtime record.
      */
@@ -98,6 +103,7 @@ public class TrophyRecord extends PersistentRecord
         trophy.name = name;
         trophy.trophyMedia = new MediaDesc(
             trophyMediaHash, trophyMimeType, MediaDesc.NOT_CONSTRAINED);
+        trophy.whenEarned = whenEarned.getTime();
         return trophy;
     }
 

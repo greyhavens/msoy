@@ -224,6 +224,19 @@ public class CatalogServlet extends MsoyServiceServlet
             ItemRecord listItem = originalItem;
             listItem.prepareForListing(null);
 
+            // TODO: we need to know the item type of our suite master... grumble grumble
+
+            // if this item has a suite id (it's part of another item's suite), we need to
+            // configure its listed suite as the catalog id of the suite master item
+            if (originalItem.suiteId != 0) {
+//                 ItemRecord suiteMaster = repo.loadOriginalItem(originalItem.suiteId);
+//                 if (suiteMaster == null) {
+//                     log.warning("Failed to locate suite master item [item=" + item + "].");
+//                     throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+//                 }
+//                 listItem.suiteId = -suiteMaster.catalogId;
+            }
+
             // use the updated description
             listItem.description = descrip;
 
