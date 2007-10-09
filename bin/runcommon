@@ -28,4 +28,4 @@ for JAR in $MSOY_HOME/dist/lib/*.jar $MSOY_HOME/dist/msoy-*.jar; do
 	CLASSPATH=$CLASSPATH:$JAR
     fi
 done
-export $CLASSPATH
+export CLASSPATH
