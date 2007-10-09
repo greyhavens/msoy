@@ -99,6 +99,15 @@ public class GameContext
     }
 
     /**
+     * Returns a reference to the WorldContext.
+     */
+
+    public function getWorldContext () :WorldContext
+    {
+        return _wctx;
+    }
+
+    /**
      * Returns a reference to the top-level UI container.
      */
     public function getTopPanel () :TopPanel

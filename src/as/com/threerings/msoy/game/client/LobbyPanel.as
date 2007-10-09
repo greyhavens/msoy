@@ -71,10 +71,10 @@ public class LobbyPanel extends VBox
     /**
      * Create a new LobbyPanel.
      */
-    public function LobbyPanel (ctx :WorldContext, gctx :GameContext, ctrl :LobbyController)
+    public function LobbyPanel (ctx :GameContext, ctrl :LobbyController)
     {
-        _ctx = ctx;
-        _gctx = gctx;
+        _gctx = ctx;
+        _wctx = ctx.getWorldContext();
         controller = ctrl;
 
         width = LOBBY_PANEL_WIDTH;
@@ -229,7 +229,7 @@ public class LobbyPanel extends VBox
      */
     public function isSeated () :Boolean
     {
-        return _isSeated || (_ctx.getMemberObject().game != null);
+        return _isSeated || (_wctx.getMemberObject().game != null);
     }
 
     /**
@@ -247,7 +247,7 @@ public class LobbyPanel extends VBox
      */
     protected function handleAdded (... ignored) :void
     {
-        _ctx.getMemberObject().addListener(this);
+        _wctx.getMemberObject().addListener(this);
     }
 
     /**
@@ -255,7 +255,7 @@ public class LobbyPanel extends VBox
      */
     protected function handleRemoved (... ignored) :void
     {
-        _ctx.getMemberObject().removeListener(this);
+        _wctx.getMemberObject().removeListener(this);
     }
 
     override protected function createChildren () :void
@@ -293,7 +293,7 @@ public class LobbyPanel extends VBox
         embedBtn.text = Msgs.GENERAL.get("l.share");
         var thisLobbyPanel :LobbyPanel = this;
         embedBtn.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            new EmbedDialog(_ctx);
+            new EmbedDialog(_wctx);
         });
         embedBtn.buttonMode = true;
         embedBtn.useHandCursor = true;
@@ -347,7 +347,7 @@ public class LobbyPanel extends VBox
     protected function createTablesDisplay () :void
     {
         // our game table data
-        var list :MsoyList = new MsoyList(_ctx);
+        var list :MsoyList = new MsoyList(_wctx);
         list.styleName = "lobbyTableList";
         list.variableRowHeight = true;
         list.percentHeight = 100;
@@ -392,7 +392,7 @@ public class LobbyPanel extends VBox
             tabViews.addChild(formingBox);
             formingBox.addChild(list);
 
-            var runningList :MsoyList = new MsoyList(_ctx);
+            var runningList :MsoyList = new MsoyList(_wctx);
             runningList.styleName = "lobbyTableList";
             runningList.variableRowHeight = true;
             runningList.percentHeight = 100;
@@ -429,7 +429,7 @@ public class LobbyPanel extends VBox
     protected static const LOBBY_PANEL_WIDTH :int = 500; // in px
 
     /** Provides world client services. */
-    protected var _ctx :WorldContext;
+    protected var _wctx :WorldContext;
 
     /** Buy one get one free. */
     protected var _gctx :GameContext;

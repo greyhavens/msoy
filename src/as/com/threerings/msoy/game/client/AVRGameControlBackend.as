@@ -35,10 +35,10 @@ public class AVRGameControlBackend extends ControlBackend
     public static const log :Log = Log.getLog(AVRGameControlBackend);
 
     public function AVRGameControlBackend (
-        mctx :WorldContext, gctx :GameContext, gameObj :AVRGameObject, ctrl :AVRGameController)
+        gctx :GameContext, gameObj :AVRGameObject, ctrl :AVRGameController)
     {
-        _mctx = mctx;
         _gctx = gctx;
+        _mctx = gctx.getWorldContext();
         _gameObj = gameObj;
 
         _gameObj.addListener(_stateListener);

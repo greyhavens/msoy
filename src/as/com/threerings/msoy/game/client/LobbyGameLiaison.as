@@ -166,7 +166,7 @@ public class LobbyGameLiaison extends GameLiaison
     protected function gotLobbyOid (result :Object) :void
     {
         // this will create a panel and add it to the side panel on the top level
-        _lobby = new LobbyController(_ctx, _gctx, this, int(result));
+        _lobby = new LobbyController(_gctx, this, int(result));
         if (_playerIdTable != 0) {
             joinPlayerTable(_playerIdTable);
         }

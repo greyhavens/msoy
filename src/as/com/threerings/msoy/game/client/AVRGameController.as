@@ -26,12 +26,12 @@ public class AVRGameController extends Controller
 {
     public static const log :Log = Log.getLog(AVRGameController);
 
-    public function AVRGameController (ctx :WorldContext, gctx :GameContext, gameOid :int)
+    public function AVRGameController (ctx :GameContext, gameOid :int)
     {
         super();
 
-        _mctx = ctx;
-        _gctx = gctx;
+        _gctx = ctx;
+        _mctx = ctx.getWorldContext();
 
         _subscriber = new SafeSubscriber(gameOid, this)
         _subscriber.subscribe(_gctx.getDObjectManager());

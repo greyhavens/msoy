@@ -44,7 +44,7 @@ public class AVRGamePanel extends Canvas
         _gameObj = gameObj;
 
         // create the backend
-        _backend = new AVRGameControlBackend(_mctx, _gctx, _gameObj, _ctrl);
+        _backend = new AVRGameControlBackend(_gctx, _gameObj, _ctrl);
 
         // create the container for the user media
         _mediaHolder = new MediaContainer(gameObj.gameMedia.getMediaPath());

@@ -26,12 +26,12 @@ import com.threerings.util.CommandEvent;
 public class FloatingTableDisplay extends FloatingPanel 
     implements TableObserver
 {
-    public function FloatingTableDisplay (ctx :WorldContext, gctx :GameContext, panel :LobbyPanel, 
+    public function FloatingTableDisplay (ctx :GameContext, panel :LobbyPanel, 
                                           tableDir :TableDirector, gameName :String)
     {
-        super(ctx, Msgs.GAME.get("t.table_display") + gameName);
+        super(ctx.getWorldContext(), Msgs.GAME.get("t.table_display") + gameName);
 
-        _gctx = gctx;
+        _gctx = ctx;
         _panel = panel;
         _tableDir = tableDir;
         _tableDir.addTableObserver(this);

@@ -51,17 +51,16 @@ public class LobbyController extends Controller implements Subscriber
     /** A command to leave the lobby. */
     public static const LEAVE_LOBBY :String = "LeaveLobby";
 
-    public function LobbyController (
-        mctx :WorldContext, gctx :GameContext, liaison :LobbyGameLiaison, oid :int) 
+    public function LobbyController (ctx :GameContext, liaison :LobbyGameLiaison, oid :int) 
     {
-        _mctx = mctx;
-        _gctx = gctx;
+        _gctx = ctx;
+        _mctx = ctx.getWorldContext();
         _liaison = liaison;
 
         _subscriber = new SafeSubscriber(oid, this)
         _subscriber.subscribe(_gctx.getDObjectManager());
 
-        _panel = new LobbyPanel(_mctx, _gctx, this);
+        _panel = new LobbyPanel(_gctx, this);
         _panel.addEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
         _panel.addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
         setControlledPanel(_panel);
@@ -221,7 +220,7 @@ public class LobbyController extends Controller implements Subscriber
         var seatedTable :Table = _tableDir != null ? _tableDir.getSeatedTable() : null;
         if ((seatedTable != null) && !seatedTable.inPlay()) {
             var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(
-                _mctx, _gctx, _panel, _tableDir, _panel.getGame().name);
+                _gctx, _panel, _tableDir, _panel.getGame().name);
             tableDisplay.open();
             setControlledPanel(tableDisplay.getRenderer());
             _mctx.getTopPanel().setTableDisplay(tableDisplay);
