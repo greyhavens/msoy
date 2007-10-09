@@ -9,10 +9,19 @@ import com.threerings.util.Long;
 
 import com.threerings.crowd.chat.data.UserMessage;
 
+/**
+ * A custom chat message used on chat channels.
+ */
 public class ChannelMessage extends UserMessage
 {
     /** Creation timestamp on this message (set by server hosting the channel). */
     public var creationTime :Long;
+
+    /** Default constructor. */
+    public function ChannelMessage (speaker :Name = null, message :String = null, mode :int = 0)
+    {
+        super(speaker, null, message, mode);
+    }
 
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
@@ -27,6 +36,5 @@ public class ChannelMessage extends UserMessage
         super.writeObject(out);
         out.writeField(creationTime);
     }
-
 }
 }

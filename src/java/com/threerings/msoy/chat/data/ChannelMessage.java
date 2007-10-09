@@ -6,6 +6,9 @@ package com.threerings.msoy.chat.data;
 import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.util.Name;
 
+/**
+ * A custom chat message used on chat channels.
+ */
 public class ChannelMessage extends UserMessage
 {
     /** Creation timestamp on this message (set by server hosting the channel). */
