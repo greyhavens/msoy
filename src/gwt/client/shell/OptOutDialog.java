@@ -17,9 +17,9 @@ import client.util.MsoyUI;
 
 public class OptOutDialog extends BorderedDialog
 {
-    public static void display (String args)
+    public static void display (String inviteId)
     {
-        CShell.membersvc.getInvitation(args, false, new AsyncCallback () {
+        CShell.membersvc.getInvitation(inviteId, false, new AsyncCallback () {
             public void onSuccess (Object result) {
                 (new OptOutDialog((Invitation)result)).show();
             }

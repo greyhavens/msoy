@@ -7,18 +7,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.History;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -37,6 +34,7 @@ import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.WhirledwideData;
 
 import client.shell.Application;
+import client.shell.Page;
 import client.shell.WorldClient;
 
 import client.util.MediaUtil;
@@ -98,7 +96,7 @@ public class Whirledwide extends FlexTable
         Image allGamesImage = new Image("/images/whirled/all_games.png");
         allGamesImage.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                History.newItem(Application.createLinkToken("catalog", "" + Item.GAME));
+                Application.go(Page.CATALOG, "" + Item.GAME);
             }
         });
         allGames.add(allGamesImage);
@@ -203,8 +201,7 @@ public class Whirledwide extends FlexTable
             
             ClickListener goToProfile = new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(
-                        Application.createLinkToken("profile", "" + person.name.getMemberId()));
+                    Application.go(Page.PROFILE, "" + person.name.getMemberId());
                 }
             };
 
@@ -226,7 +223,7 @@ public class Whirledwide extends FlexTable
     {
         ClickListener goToGame = new ClickListener() {
             public void onClick (Widget sender) {
-                History.newItem(Application.createLinkToken("game", "" + game.sceneId));
+                Application.go(Page.GAME, "" + game.sceneId);
             }
         };
 
@@ -316,7 +313,7 @@ public class Whirledwide extends FlexTable
             sceneName.setStyleName("SceneName");
             sceneName.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(Application.createLinkToken("world", "s" + card.sceneId));
+                    Application.go(Page.WORLD, "s" + card.sceneId);
                 }
             });
             _sceneNameContainer.add(sceneName);

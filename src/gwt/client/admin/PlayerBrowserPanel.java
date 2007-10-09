@@ -12,7 +12,6 @@ import java.util.Map;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -26,10 +25,11 @@ import com.threerings.msoy.web.data.MemberInviteResult;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
 import client.util.InfoPopup;
 import client.util.NumberTextBox;
-
-import client.shell.Application;
 
 /**
  * Displays the various services available to support and admin personnel.
@@ -51,8 +51,8 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     // we're keeping the same history token, just need to grab parent info.
                     displayPlayersInvitedBy(_childList.getResult().memberId);
                 } else {
-                    History.newItem(Application.createLinkToken("admin",
-                        "browser_" + _parentList.getResult().memberId));
+                    int memberId = _parentList.getResult().memberId;
+                    Application.go(Page.ADMIN, Args.compose("browser", memberId));
                 }
             }
         }));
@@ -68,8 +68,8 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     // nothing to do
                     return;
                 }
-                History.newItem(Application.createLinkToken("admin", "browser_" + 
-                    ((PlayerList) _playerLists.get(index + 1)).getResult().memberId));
+                int memberId = ((PlayerList) _playerLists.get(index + 1)).getResult().memberId;
+                Application.go(Page.ADMIN, Args.compose("browser", memberId));
             }
         }));
         _forwardButton.setEnabled(false);
@@ -197,8 +197,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 buttons.addStyleName("Buttons");
                 buttons.add(new Button("View Profile", new ClickListener() {
                     public void onClick (Widget sender) {
-                        History.newItem(Application.createLinkToken("profile", 
-                            "" + _result.memberId));
+                        Application.go(Page.PROFILE, "" + _result.memberId);
                     }
                 }));
                 Widget shim = WidgetUtil.makeShim(1, 25);
@@ -276,8 +275,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 Label nameLabel = new Label(member.name);
                 nameLabel.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
-                        History.newItem(Application.createLinkToken("admin", "browser_" + 
-                            member.memberId));
+                        Application.go(Page.ADMIN, Args.compose("browser", member.memberId));
                     }
                 });
                 nameLabel.addStyleName("Clickable");

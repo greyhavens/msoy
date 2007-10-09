@@ -4,8 +4,11 @@
 package client.mail;
 
 import com.google.gwt.core.client.GWT;
+
 import com.threerings.msoy.web.data.MailFolder;
+
 import client.msgs.MsgsEntryPoint;
+import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -22,7 +25,7 @@ public class index extends MsgsEntryPoint
     }
 
     // @Override // from Page
-    public void onHistoryChanged (String token)
+    public void onHistoryChanged (Args args)
     {
         // if we have no creds, just display a message saying login
         if (CMail.ident == null) {
@@ -41,26 +44,10 @@ public class index extends MsgsEntryPoint
             setContent(_mainView);
         }
 
-        // set defaults to use in liu of sane URL contents
-        int folderId = MailFolder.INBOX_FOLDER_ID;
-        int headerOffset = 0;
-        int messageId = -1;
-
-        if (token != null && token.length() > 0) {
-            try {
-                String[] bits = token.substring(1).split("\\.");
-                folderId = Integer.parseInt(bits[0]);
-                if (bits.length > 1) {
-                    headerOffset = Integer.parseInt(bits[1]);
-                    if (bits.length > 2) {
-                        messageId = Integer.parseInt(bits[2]);
-                    }
-                }
-            } catch (Exception e) {
-                // just use the defaults
-            }
-        }
-        // finally update the application view
+        // display the requested folder, header and/or message
+        int folderId = args.get(0, MailFolder.INBOX_FOLDER_ID);
+        int headerOffset = args.get(1, 0);
+        int messageId = args.get(2, -1);
         _mainView.show(folderId, headerOffset, messageId);
     }
 

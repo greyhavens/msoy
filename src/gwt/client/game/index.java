@@ -14,6 +14,7 @@ import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.client.GameServiceAsync;
 import com.threerings.msoy.web.data.LaunchConfig;
 
+import client.shell.Args;
 import client.shell.Page;
 import client.shell.WorldClient;
 import client.util.MsoyUI;
@@ -36,7 +37,7 @@ public class index extends Page
     }
 
     // @Override from Page
-    public void onHistoryChanged (String token)
+    public void onHistoryChanged (Args args)
     {
         // if we're not a dev deployment, disallow guests
         if (!DeploymentConfig.devDeployment && CGame.ident == null) {
@@ -45,15 +46,14 @@ public class index extends Page
         }
 
         try {
-            // if we have dNNN then we want to see game detail
-            if (token.startsWith("d")) {
+            // if we have d-NNN then we want to see game detail
+            if (args.get(0, "").equals("d")) {
                 setPageTitle("Game Detail");
-                setContent(new GameDetailPanel(Integer.parseInt(token.substring(1))));
+                setContent(new GameDetailPanel(args.get(1, 0)));
 
             } else {
                 // otherwise our args are 'gameId-gameOid' or just 'gameId'
-                int[] args = splitArgs(token);
-                loadLaunchConfig(args[0], (args.length > 1) ? args[1] : -1);
+                loadLaunchConfig(args.get(0, 0), args.get(1, -1));
             }
 
         } catch (Exception e) {

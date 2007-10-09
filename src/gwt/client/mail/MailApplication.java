@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -38,6 +37,8 @@ import client.msgs.MailComposition;
 import client.msgs.MailPayloadDisplay;
 import client.msgs.MailUpdateListener;
 import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
 import client.util.BorderedWidget;
 
 /**
@@ -678,11 +679,10 @@ public class MailApplication extends DockPanel
     // anytime we wish to update the URL with a snapshot of the state, we call this
     protected void updateHistory ()
     {
-        String args = "f" + _currentFolder + "." + _currentOffset;
-        if (_currentMessage >= 0) {
-            args += "." + _currentMessage;
-        }
-        History.newItem(Application.createLinkToken("mail", args));
+        String[] args = (_currentMessage >= 0) ?
+            new String[] { ""+_currentFolder, ""+_currentOffset, ""+_currentMessage } :
+            new String[] { ""+_currentFolder, ""+_currentOffset };
+        Application.go(Page.MAIL, Args.compose(args));
     }
 
     // scans a text, generating HTML that respects leading/consecutive spaces and newlines,

@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 
+import client.shell.Args;
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
 
@@ -25,19 +26,15 @@ import client.util.MsoyUI;
  */
 public class ResetPasswordDialog extends BorderedDialog
 {
-    public static void display (String args)
+    public static void display (Args args)
     {
-        try {
-            int uidx = args.indexOf("_");
-            if (uidx != -1) {
-                new ResetPasswordDialog(Integer.parseInt(args.substring(0, uidx)),
-                                        args.substring(uidx+1)).show();
-                return;
-            }
-        } catch (Exception e) {
-            // fall through and fail
+        int memberId = args.get(0, 0);
+        String code = args.get(1, "");
+        if (memberId != 0 && code.equals("")) {
+            new ResetPasswordDialog(memberId, code).show();
+        } else {
+            MsoyUI.error(CShell.cmsgs.resetInvalid());
         }
-        MsoyUI.error(CShell.cmsgs.resetInvalid());
     }
 
     // @Override // from BorderedDialog

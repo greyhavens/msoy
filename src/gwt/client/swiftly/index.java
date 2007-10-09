@@ -3,17 +3,19 @@
 
 package client.swiftly;
 
-import client.shell.Page;
-import client.util.MsoyUI;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Label;
+
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.client.SwiftlyServiceAsync;
 import com.threerings.msoy.web.data.SwiftlyConnectConfig;
+
+import client.shell.Args;
+import client.shell.Page;
+import client.util.MsoyUI;
 
 /**
  * Displays a page that allows a player to launch swiftly for a given project.
@@ -31,9 +33,9 @@ public class index extends Page
     }
 
     // @Override from Page
-    public void onHistoryChanged (String token)
+    public void onHistoryChanged (Args args)
     {
-        updateInterface(token);
+        updateInterface(args);
     }
 
     // @Override // from Page
@@ -55,7 +57,7 @@ public class index extends Page
         CSwiftly.msgs = (SwiftlyMessages)GWT.create(SwiftlyMessages.class);
     }
 
-    protected void updateInterface (final String args)
+    protected void updateInterface (final Args args)
     {
         // if we have no creds, just display a message saying login
         if (CSwiftly.ident == null) {
@@ -72,21 +74,12 @@ public class index extends Page
         }
 
         setPageTitle(CSwiftly.msgs.projectsTitle());
-        if (args.length() == 0) {
+        final int projectId = args.get(0, 0);
+        if (projectId == 0) {
             // display the project create/list panel
             setContent(new ProjectSelectionPanel());
 
         } else {
-            final int projectId;
-            try {
-                projectId = Integer.parseInt(args);
-
-            } catch (NumberFormatException e) {
-                // display an error message if the supplied projectId did not parse
-                setContent(new Label(CSwiftly.msgs.invalidProjectId(args)));
-                return;
-            }
-
             // load up the information needed to launch the applet
             CSwiftly.swiftlysvc.getConnectConfig(CSwiftly.ident, projectId, new AsyncCallback() {
                 public void onSuccess (Object result) {

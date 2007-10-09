@@ -13,7 +13,6 @@ import java.util.Map;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.History;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -47,12 +46,12 @@ import com.threerings.msoy.web.data.MyWhirledData;
 
 import com.threerings.msoy.data.all.MemberName;
 
+import client.shell.Application;
+import client.shell.Page;
+import client.shell.WorldClient;
 import client.util.FlashClients;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
-
-import client.shell.Application;
-import client.shell.WorldClient;
 
 public class MyWhirled extends FlexTable
 {
@@ -364,10 +363,11 @@ public class MyWhirled extends FlexTable
 
             ClickListener goToScene = new ClickListener() {
                 public void onClick (Widget sender) {
-                    String token = scene.sceneType == SceneCard.ROOM ?
-                        Application.createLinkToken("world", "s" + scene.sceneId) :
-                        Application.createLinkToken("game", "" + scene.sceneId);
-                    History.newItem(token);
+                    if (scene.sceneType == SceneCard.ROOM) {
+                        Application.go(Page.WORLD, "s" + scene.sceneId);
+                    } else {
+                        Application.go(Page.GAME, "" + scene.sceneId);
+                    }
                 }
             };
 
@@ -448,7 +448,7 @@ public class MyWhirled extends FlexTable
                 } else {
                     person.addClickListener(new ClickListener() {
                         public void onClick (Widget sender) {
-                            History.newItem(Application.createLinkToken("profile", "" + id));
+                            Application.go(Page.PROFILE, "" + id);
                         }
                     });
                 }

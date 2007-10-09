@@ -47,7 +47,7 @@ public class Application
      */
     public static Hyperlink groupViewLink (String label, int groupId)
     {
-        return createLink(label, "group", ""+groupId);
+        return createLink(label, Page.GROUP, ""+groupId);
     }
 
     /**
@@ -55,7 +55,7 @@ public class Application
      */
     public static Hyperlink memberViewLink (String label, int memberId)
     {
-        return createLink(label, "profile", ""+memberId);
+        return createLink(label, Page.PROFILE, ""+memberId);
     }
 
     /**
@@ -63,7 +63,7 @@ public class Application
      */
     public static Hyperlink memberViewLink (MemberName name)
     {
-        return createLink(name.toString(), "profile", ""+name.getMemberId());
+        return createLink(name.toString(), Page.PROFILE, ""+name.getMemberId());
     }
 
     /**
@@ -88,6 +88,14 @@ public class Application
     }
 
     /**
+     * Move to the page in question.
+     */
+    public static void go (String page, String args)
+    {
+        History.newItem(createLinkToken(page, args));
+    }
+
+    /**
      * Returns a string that can be appended to '#' to link to the specified page with the
      * specified arguments.
      */
@@ -99,7 +107,7 @@ public class Application
         }
         return token;
     }
-    
+
     /**
      * Configures our current history token (normally this is done automatically as the user
      * navigates, but sometimes we want to override the current token). This does not take any
@@ -144,7 +152,7 @@ public class Application
         logo.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 boolean loggedIn = CShell.creds != null;
-                History.newItem(createLinkToken("whirled", loggedIn ? "mywhirled" : "whirledwide"));
+                go("whirled", loggedIn ? "mywhirled" : "whirledwide");
             }
         });
         RootPanel logoPanel = RootPanel.get("logo");
@@ -175,11 +183,11 @@ public class Application
         _currentToken = token;
 
         String page = (token == null || token.equals("")) ? "whirled" : token;
-        String args = "";
-        int semidx = token.indexOf("-");
-        if (semidx != -1) {
-            page = token.substring(0, semidx);
-            args = token.substring(semidx+1);
+        Args args = new Args();
+        int dashidx = token.indexOf("-");
+        if (dashidx != -1) {
+            page = token.substring(0, dashidx);
+            args.setToken(token.substring(dashidx+1));
         }
 
         if (!displayPopup(page, args)) {
@@ -203,7 +211,7 @@ public class Application
         CShell.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
     }
 
-    protected void displayPage (String ident, String args)
+    protected void displayPage (String ident, Args args)
     {
         // replace the page if necessary
         if (_page == null || !_page.getPageId().equals(ident)) {
@@ -231,13 +239,13 @@ public class Application
         _page.onHistoryChanged(args);
     }
 
-    protected boolean displayPopup (String ident, String args)
+    protected boolean displayPopup (String ident, Args args)
     {
         if ("invite".equals(ident)) {
-            InvitationDialog.display(_status, args);
+            InvitationDialog.display(_status, args.get(0, ""));
 
         } else if ("optout".equals(ident)) {
-            OptOutDialog.display(args);
+            OptOutDialog.display(args.get(0, ""));
 
         } else if ("resetpw".equals(ident)) {
             ResetPasswordDialog.display(args);
@@ -321,7 +329,7 @@ public class Application
         }
     }
 
-    protected void setSeparator (int x) 
+    protected void setSeparator (int x)
     {
         clearSeparator();
         Label div = new Label();
@@ -338,31 +346,20 @@ public class Application
             DOM.removeChild(DOM.getParent(div), div);
         }
     }
-        
+
     protected void createMappings ()
     {
-        _creators.put("admin", client.admin.index.getCreator());
-        _creators.put("catalog", client.catalog.index.getCreator());
-        _creators.put("game", client.game.index.getCreator());
-        _creators.put("group", client.group.index.getCreator());
-        _creators.put("inventory", client.inventory.index.getCreator());
-        _creators.put("mail", client.mail.index.getCreator());
-        _creators.put("profile", client.profile.index.getCreator());
-        _creators.put("swiftly", client.swiftly.index.getCreator());
-        _creators.put("world", client.world.index.getCreator());
-        _creators.put("wrap", client.wrap.index.getCreator());
-        _creators.put("whirled", client.whirled.index.getCreator());
-    }
-
-    /**
-     * Called when the Flash client wishes to display a particular Whirled page. The supplied page
-     * and args are composed into a history token and inserted into the history which will trigger
-     * the loading of the page in question.
-     */
-    protected static void displayPageExternal (String page, String args)
-    {
-        // note: the following operation will trigger onHistoryChanged
-        History.newItem(createLinkToken(page, args));
+        _creators.put(Page.ADMIN, client.admin.index.getCreator());
+        _creators.put(Page.CATALOG, client.catalog.index.getCreator());
+        _creators.put(Page.GAME, client.game.index.getCreator());
+        _creators.put(Page.GROUP, client.group.index.getCreator());
+        _creators.put(Page.INVENTORY, client.inventory.index.getCreator());
+        _creators.put(Page.MAIL, client.mail.index.getCreator());
+        _creators.put(Page.PROFILE, client.profile.index.getCreator());
+        _creators.put(Page.SWIFTLY, client.swiftly.index.getCreator());
+        _creators.put(Page.WHIRLED, client.whirled.index.getCreator());
+        _creators.put(Page.WORLD, client.world.index.getCreator());
+        _creators.put(Page.WRAP, client.wrap.index.getCreator());
     }
 
     /**
@@ -404,8 +401,7 @@ public class Application
             @com.google.gwt.user.client.Window::setTitle(Ljava/lang/String;)(msg);
        }
        $wnd.displayPage = function (page, args) {
-           @client.shell.Application::displayPageExternal(Ljava/lang/String;Ljava/lang/String;)(
-               page, args);
+           @client.shell.Application::go(Ljava/lang/String;Ljava/lang/String;)(page, args);
        };
     }-*/;
 

@@ -184,14 +184,6 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String search();
 
   /**
-   * Translated "There was an error parsing the page parameters.".
-   * 
-   * @return translated "There was an error parsing the page parameters."
-   * @gwt.key searchParseParamsError
-   */
-  String searchParseParamsError();
-
-  /**
    * Translated "Email".
    * 
    * @return translated "Email"

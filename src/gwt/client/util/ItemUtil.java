@@ -3,7 +3,6 @@
 
 package client.util;
 
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -14,6 +13,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.Application;
 import client.shell.CShell;
+import client.shell.Page;
 
 /**
  * Contains utility methods for item related user interface business.
@@ -56,13 +56,12 @@ public class ItemUtil
      * Adds item specific buttons to be shown in the item detail in a member's inventory or in the
      * catalog.
      */
-    public static void addItemSpecificButtons (Item item, HorizontalPanel panel)
+    public static void addItemSpecificButtons (final Item item, HorizontalPanel panel)
     {
         if (item instanceof Game) {
-            final String token = Application.createLinkToken("game", "" + ((Game)item).gameId);
             panel.add(new Button(CShell.cmsgs.detailPlay(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(token);
+                    Application.go(Page.GAME, "" + ((Game)item).gameId);
                 }
             }));
         }

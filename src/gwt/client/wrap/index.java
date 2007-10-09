@@ -5,6 +5,7 @@ package client.wrap;
 
 import com.google.gwt.user.client.ui.Frame;
 
+import client.shell.Args;
 import client.shell.Page;
 
 /**
@@ -23,15 +24,16 @@ public class index extends Page
     }
 
     // @Override from Page
-    public void onHistoryChanged (String token)
+    public void onHistoryChanged (Args args)
     {
-        if (token.equals("w")) {
+        String action = args.get(0, "");
+        if (action.equals("w")) {
             displayPage("Wiki", "http://wiki.whirled.com/");
 
-        } else if (token.startsWith("w-")) {
-            displayPage("Wiki", "http://wiki.whirled.com/" + token.substring(2));
+        } else if (action.equals("w")) {
+            displayPage("Wiki", "http://wiki.whirled.com/" + args.get(1, ""));
 
-        } else if (token.equals("f")) {
+        } else if (action.equals("f")) {
             displayPage("Forums", "http://forums.whirled.com/");
         }
     }

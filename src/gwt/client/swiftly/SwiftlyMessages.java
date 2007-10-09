@@ -232,14 +232,6 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String noFriends();
 
   /**
-   * Translated "Not a valid projectId: {0}".
-   * 
-   * @return translated "Not a valid projectId: {0}"
-   * @gwt.key invalidProjectId
-   */
-  String invalidProjectId(String arg0);
-
-  /**
    * Translated "Project Owner:".
    * 
    * @return translated "Project Owner:"

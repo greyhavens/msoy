@@ -4,7 +4,6 @@
 package client.world;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -15,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.DeploymentConfig;
 
 import client.shell.Application;
+import client.shell.Args;
 import client.shell.Page;
 import client.shell.WorldClient;
 import client.util.FlashClients;
@@ -36,7 +36,7 @@ public class index extends Page
     }
 
     // @Override // from Page
-    public void onHistoryChanged (String token)
+    public void onHistoryChanged (Args args)
     {
         _entryCounter++;
 
@@ -58,29 +58,30 @@ public class index extends Page
         }
 
         try {
-            if (token.startsWith("s")) {
-                int didx = token.indexOf("-");
-                if (didx == -1) {
-                    WorldClient.displayFlash("sceneId=" + token.substring(1));
+            String action = args.get(0, "s1");
+            if (action.startsWith("s")) {
+                String sceneId = action.substring(1);
+                if (args.getArgCount() <= 1) {
+                    WorldClient.displayFlash("sceneId=" + sceneId);
                 } else {
                     // if we have sNN-extra-args we want the close button to use just "sNN"
-                    String sceneId = token.substring(1, didx), page = token.substring(didx+1);
-                    WorldClient.displayFlash("sceneId=" + sceneId + "&page=" + page, "s" + sceneId);
+                    WorldClient.displayFlash("sceneId=" + sceneId + "&page=" +
+                                             Args.compose(args.splice(1)), "s" + sceneId);
                 }
 
-            } else if (token.startsWith("g")) {
+            } else if (action.startsWith("g")) {
                 // go to a specific group's scene group
-                WorldClient.displayFlash("groupHome=" + token.substring(1));
+                WorldClient.displayFlash("groupHome=" + action.substring(1));
 
-            } else if (token.startsWith("m")) {
+            } else if (action.startsWith("m")) {
                 // go to a specific member's home
-                WorldClient.displayFlash("memberHome=" + token.substring(1));
+                WorldClient.displayFlash("memberHome=" + action.substring(1));
 
-            } else if (token.startsWith("c")) {
+            } else if (action.startsWith("c")) {
                 // join a group chat
-                WorldClient.displayFlash("groupChat=" + token.substring(1));
+                WorldClient.displayFlash("groupChat=" + action.substring(1));
 
-            } else if (token.startsWith("p")) {
+            } else if (action.startsWith("p")) {
                 // display popular places by request
                 displayHotSpots(_entryCounter);
 
@@ -107,15 +108,8 @@ public class index extends Page
     // @Override // from Page
     protected void didLogoff ()
     {
-        onHistoryChanged("p");
-    }
-
-    // @Override // from Page
-    protected boolean needsHeaderClient ()
-    {
-        String token = getPageArgs();
-        return (token.startsWith("ng") || token.startsWith("nm") || token.startsWith("p") ||
-                CWorld.ident == null);
+        // instead of reloading the current page, go to whirledwide
+        Application.go(Page.WHIRLED, "whirledwide");
     }
 
     // @Override // from Page
@@ -132,13 +126,7 @@ public class index extends Page
         CWorld.membersvc.serializePopularPlaces(CWorld.ident, 20, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (requestEntryCount == _entryCounter) {
-                    HTML widget = hotSpots((String) result);
-                    scheduleReload();
-                    widget.addMouseListener(new MouseListenerAdapter() {
-                        public void onMouseMove(Widget sender, int x, int y) {
-                            scheduleReload();
-                        }
-                    });
+                    hotSpots((String) result);
                 }
             }
             public void onFailure (Throwable caught) {
@@ -147,18 +135,6 @@ public class index extends Page
                 }
             }
         });
-    }
-
-    protected void scheduleReload ()
-    {
-        if (_refresher == null) {
-            _refresher = new Timer() {
-                public void run() {
-                    onHistoryChanged(getPageArgs());
-                }
-            };
-        }
-        _refresher.schedule(NEIGHBORHOOD_REFRESH_TIME * 1000);
     }
 
     protected HTML hotSpots (String hotSpots)

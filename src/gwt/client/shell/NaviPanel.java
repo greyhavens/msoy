@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -78,10 +77,10 @@ public class NaviPanel extends FlexTable
         int menuidx = 0;
         setMenu(menuidx++, "Me", CShell.cmsgs.menuMe(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "My Whirled", "whirled", "mywhirled");
-                addLink(menu, "My Home", "world", "m" + creds.getMemberId());
-                addLink(menu, "My Profile", "profile", "" + creds.getMemberId());
-                addLink(menu, "My Mail", "mail", "");
+                addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
+                addLink(menu, "My Home", Page.WORLD, "m" + creds.getMemberId());
+                addLink(menu, "My Profile", Page.PROFILE, "" + creds.getMemberId());
+                addLink(menu, "My Mail", Page.MAIL, "");
                 menu.addItem("My Account", true, new Command() {
                     public void execute () {
                         CShell.usersvc.getAccountInfo(CShell.ident, new AsyncCallback() {
@@ -106,14 +105,14 @@ public class NaviPanel extends FlexTable
 
         setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "My Whirled", "whirled", "mywhirled");
-                addLink(menu, "My Home", "world", "m" + creds.getMemberId());
+                addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
+                addLink(menu, "My Home", Page.WORLD, "m" + creds.getMemberId());
                 if (_scenes.size() > 0) {
                     MenuBar smenu = new MenuBar(true);
                     Iterator siter = _scenes.iterator();
                     while (siter.hasNext()) {
                         SceneData data = (SceneData)siter.next();
-                        addLink(smenu, data.name, "world", "s" + data.id);
+                        addLink(smenu, data.name, Page.WORLD, "s" + data.id);
                     }
                     menu.addItem("My Rooms", smenu);
                 }
@@ -121,14 +120,14 @@ public class NaviPanel extends FlexTable
                     MenuBar fmenu = new MenuBar(true);
                     for (int ii = 0, ll = _friends.size(); ii < ll; ii++) {
                         MemberName name = (MemberName)_friends.get(ii);
-                        addLink(fmenu, name + "'s Home", "world", "m" + name.getMemberId());
+                        addLink(fmenu, name + "'s Home", Page.WORLD, "m" + name.getMemberId());
                     }
                     menu.addItem("Friends' Homes", fmenu);
                 }
                 if (CShell.isSupport()) {
-                    addLink(menu, "Admin Console", "admin", "");
+                    addLink(menu, "Admin Console", Page.ADMIN, "");
                 }
-                addLink(menu, "Projects", "swiftly", "");
+                addLink(menu, "Projects", Page.SWIFTLY, "");
             }
         });
 
@@ -137,17 +136,17 @@ public class NaviPanel extends FlexTable
                 MenuBar fmenu = new MenuBar(true);
                 fmenu.addItem("Find People", true, new Command() {
                     public void execute () {
-                        History.newItem(Application.createLinkToken("profile", ""));
+                        Application.go(Page.PROFILE, "");
                         _popped.hide();
                     }
                 });
                 for (int ii = 0, ll = _friends.size(); ii < ll; ii++) {
                     MemberName name = (MemberName)_friends.get(ii);
-                    addLink(fmenu, name.toString(), "profile", "" + name.getMemberId());
+                    addLink(fmenu, name.toString(), Page.PROFILE, "" + name.getMemberId());
                 }
                 menu.addItem("Profiles", fmenu);
-                addLink(menu, "Groups", "group", "");
-                addLink(menu, "Forums", "wrap", "f");
+                addLink(menu, "Groups", Page.GROUP, "");
+                addLink(menu, "Forums", Page.WRAP, "f");
                 menu.addItem("Invitations", true, new Command() {
                     public void execute () {
                         CShell.membersvc.getInvitationsStatus(CShell.ident, new AsyncCallback() {
@@ -169,7 +168,7 @@ public class NaviPanel extends FlexTable
                 for (int ii = 0; ii < Item.TYPES.length; ii++) {
                     byte type = Item.TYPES[ii];
                     addLink(menu, CShell.dmsgs.getString("pItemType" + type),
-                            "inventory", "" + type);
+                            Page.INVENTORY, "" + type);
                 }
             }
         });
@@ -178,15 +177,16 @@ public class NaviPanel extends FlexTable
             protected void populateMenu (Widget sender, MenuBar menu) {
                 for (int ii = 0; ii < Item.TYPES.length; ii++) {
                     byte type = Item.TYPES[ii];
-                    addLink(menu, CShell.dmsgs.getString("pItemType" + type), "catalog", "" + type);
+                    addLink(menu, CShell.dmsgs.getString("pItemType" + type),
+                            Page.CATALOG, "" + type);
                 }
             }
         });
 
         setMenu(menuidx++, "Help", CShell.cmsgs.menuHelp(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "About Whirled", "wrap", "w");
-                addLink(menu, "Tutorials", "wrap", "w-Category:Tutorials");
+                addLink(menu, "About Whirled", Page.WRAP, "w");
+                addLink(menu, "Tutorials", Page.WRAP, Args.compose("w", "Category:Tutorials"));
             }
         });
     }
@@ -205,13 +205,13 @@ public class NaviPanel extends FlexTable
 
         setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "Whirledwide", "whirled", "whirledwide");
+                addLink(menu, "Whirledwide", Page.WHIRLED, "whirledwide");
             }
         });
 
         setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "Groups", "group", "");
+                addLink(menu, "Groups", Page.GROUP, "");
             }
         });
 
@@ -219,15 +219,16 @@ public class NaviPanel extends FlexTable
             protected void populateMenu (Widget sender, MenuBar menu) {
                 for (int ii = 0; ii < Item.TYPES.length; ii++) {
                     byte type = Item.TYPES[ii];
-                    addLink(menu, CShell.dmsgs.getString("pItemType" + type), "catalog", "" + type);
+                    addLink(menu, CShell.dmsgs.getString("pItemType" + type),
+                            Page.CATALOG, "" + type);
                 }
             }
         });
 
         setMenu(menuidx++, "Help", CShell.cmsgs.menuHelp(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "About Whirled", "wrap", "w");
-                addLink(menu, "Tutorials", "wrap", "w-Category:Tutorials");
+                addLink(menu, "About Whirled", Page.WRAP, "w");
+                addLink(menu, "Tutorials", Page.WRAP, Args.compose("w", "Category:Tutorials"));
             }
         });
 
@@ -260,7 +261,7 @@ public class NaviPanel extends FlexTable
     {
         menu.addItem(text, false, new Command() {
             public void execute () {
-                History.newItem(Application.createLinkToken(page, args));
+                Application.go(page, args);
                 _popped.hide();
             }
         });

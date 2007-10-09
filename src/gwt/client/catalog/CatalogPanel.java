@@ -29,6 +29,7 @@ import client.item.ItemSearchSortPanel;
 import client.item.ItemTypePanel;
 import client.item.TagCloud;
 import client.shell.Application;
+import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
 import client.util.RowPanel;
@@ -55,7 +56,7 @@ public class CatalogPanel extends VerticalPanel
             protected void displayPageFromClick (int page) {
 // TODO: route our page navigation through the URL
 //                 String args = Page.composeArgs(new int[] { _type, page });
-//                 History.newItem(Application.createLinkToken("catalog", args));
+//                 Application.go(Page.CATALOG, args);
                 CatalogPanel.this._page = page;
                 refreshItems(false);
             }
@@ -105,11 +106,10 @@ public class CatalogPanel extends VerticalPanel
         return _typeTabs;
     }
 
-    public void display (String args)
+    public void display (Args args)
     {
         // TODO: route everything through the args (search, tag, creator, sortBy)
-        int[] avals = Page.splitArgs(args);
-        byte type = (avals[0] == 0) ? Item.AVATAR : (byte)avals[0];
+        byte type = (byte)args.get(0, Item.AVATAR);
         if (!_typeTabs.selectTab(type)) {
             // we're already on this tab, so refresh our items in order to trigger the
             // appropriate page selection

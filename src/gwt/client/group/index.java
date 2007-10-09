@@ -6,7 +6,9 @@ package client.group;
 import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
+
 import client.msgs.MsgsEntryPoint;
+import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -23,7 +25,7 @@ public class index extends MsgsEntryPoint
     }
 
     // @Override // from Page
-    public void onHistoryChanged (String token)
+    public void onHistoryChanged (Args args)
     {
         setPageTitle(CGroup.msgs.groupTitle());
         // if we're not a dev deployment, disallow guests
@@ -32,12 +34,12 @@ public class index extends MsgsEntryPoint
             return;
         }
 
-        if (token.length() == 0) {
-            setContent(new GroupList());
-        } else if (token.startsWith("tag=")) {
-            setContent(new GroupList(token.substring(4)));
+        if (args.get(0, "").equals("tag")) {
+            setContent(new GroupList(args.get(1, "")));
+        } else if (args.get(0, 0) != 0) {
+            setContent(new GroupView(args.get(0, 0)));
         } else {
-            setContent(new GroupView(Integer.parseInt(token)));
+            setContent(new GroupList());
         }
     }
 

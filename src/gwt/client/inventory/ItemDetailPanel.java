@@ -22,6 +22,7 @@ import client.editem.ItemEditor;
 import client.item.BaseItemDetailPanel;
 import client.shell.Application;
 import client.shell.CShell;
+import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.ItemUtil;
 import client.util.MsoyUI;
@@ -66,8 +67,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             protected void addMenuItems () {
                 this.addMenuItem(CInventory.imsgs.viewProfile(), new Command() {
                     public void execute () {
-                        History.newItem(Application.createLinkToken("profile",
-                            "" + _detail.creator.getMemberId()));
+                        Application.go(Page.PROFILE, "" + _detail.creator.getMemberId());
                     }
                 });
                 this.addMenuItem(CInventory.imsgs.browseCatalogFor(), new Command() {

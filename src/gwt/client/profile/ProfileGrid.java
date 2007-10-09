@@ -3,7 +3,6 @@
 
 package client.profile;
 
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
@@ -16,6 +15,7 @@ import com.threerings.msoy.web.data.MemberCard;
 
 import com.threerings.gwt.ui.PagedGrid;
 import client.shell.Application;
+import client.shell.Page;
 import client.util.MediaUtil;
 
 /**
@@ -59,8 +59,7 @@ public class ProfileGrid extends PagedGrid
 
             ClickListener profileClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(Application.createLinkToken("profile", "" + 
-                        card.name.getMemberId()));
+                    Application.go(Page.PROFILE, "" + card.name.getMemberId());
                 }
             };
 

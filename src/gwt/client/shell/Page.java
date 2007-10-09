@@ -37,60 +37,18 @@ public abstract class Page
      * where popups might show up. */
     public static boolean displayingJava = false;
 
-    /**
-     * Returns the current page arguments extracted from the history token.
-     */
-    public static String getPageArgs ()
-    {
-        String token = History.getToken();
-        int semidx = token.indexOf("-");
-        return (semidx == -1) ? "" : token.substring(semidx+1);
-    }
-
-    /**
-     * Splits arguments composed by a call to {@link #composeArgs}. Any invalid integers will be
-     * converted to 0.
-     */
-    public static int[] splitArgs (String args)
-    {
-        ArrayList alist = new ArrayList();
-        do {
-            int didx = args.indexOf(ARG_SEP);
-            if (didx == -1) {
-                alist.add(args);
-                args = null;
-            } else {
-                alist.add(args.substring(0, didx));
-                args = args.substring(didx+1);
-            }
-        } while (args != null && args.length() > 0);
-
-        int[] values = new int[alist.size()];
-        for (int ii = 0; ii < values.length; ii++) {
-            try {
-                values[ii] = Integer.parseInt((String)alist.get(ii));
-            } catch (Exception e) {
-                values[ii] = 0;
-            }
-        }
-        return values;
-    }
-
-    /**
-     * Composes multiple integers into a single string argument that can be split up again with a
-     * call to {@link #splitArgs}.
-     */
-    public static String composeArgs (int[] args)
-    {
-        StringBuffer builder = new StringBuffer();
-        for (int ii = 0; ii < args.length; ii++) {
-            if (ii > 0) {
-                builder.append(ARG_SEP);
-            }
-            builder.append(args[ii]);
-        }
-        return builder.toString();
-    }
+    // constants for our various pages
+    public static final String ADMIN = "admin";
+    public static final String CATALOG = "catalog";
+    public static final String GAME = "game";
+    public static final String GROUP = "group";
+    public static final String INVENTORY = "inventory";
+    public static final String MAIL = "mail";
+    public static final String PROFILE = "profile";
+    public static final String SWIFTLY = "swiftly";
+    public static final String WHIRLED = "whirled";
+    public static final String WORLD = "world";
+    public static final String WRAP = "wrap";
 
     /**
      * Notes the history token for the current page so that it can be restored in the event that we
@@ -164,9 +122,7 @@ public abstract class Page
      * Called when the user navigates to this page for the first time, and when they follow {@link
      * Application#createLink} links within tihs page.
      */
-    public void onHistoryChanged (String token)
-    {
-    }
+    public abstract void onHistoryChanged (Args args);
 
     /**
      * Called when the user navigates away from this page to another page. Gives the page a chance
@@ -320,7 +276,7 @@ public abstract class Page
      */
     protected void didLogon (WebCreds creds)
     {
-        onHistoryChanged(getPageArgs());
+        History.onHistoryChanged(History.getToken());
     }
 
     /**
@@ -329,7 +285,7 @@ public abstract class Page
      */
     protected void didLogoff ()
     {
-        onHistoryChanged(getPageArgs());
+        History.onHistoryChanged(History.getToken());
     }
 
     protected static native boolean isLinux () /*-{
@@ -339,6 +295,4 @@ public abstract class Page
     protected FlexTable _content;
 
     protected static String _closeToken;
-
-    protected static final String ARG_SEP = "_";
 }

@@ -5,11 +5,14 @@ package client.admin;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+
 import com.threerings.msoy.web.client.AdminService;
 import com.threerings.msoy.web.client.AdminServiceAsync;
+
 import client.editem.EditemEntryPoint;
-import client.util.MsoyUI;
+import client.shell.Args;
 import client.shell.Page;
+import client.util.MsoyUI;
 
 /**
  * Displays an admin dashboard with various server status information and administrative
@@ -28,7 +31,7 @@ public class index extends EditemEntryPoint
     }
 
     // @Override from Page
-    public void onHistoryChanged (String token)
+    public void onHistoryChanged (Args args)
     {
         if (CAdmin.ident == null) {
             setContent(MsoyUI.createLabel(CAdmin.msgs.indexLogon(), "infoLabel"));
@@ -36,21 +39,28 @@ public class index extends EditemEntryPoint
         } else if (!CAdmin.isSupport() && !CAdmin.isAdmin()) {
             setContent(MsoyUI.createLabel(CAdmin.msgs.lackPrivileges(), "infoLabel"));
 
-        } else if (token != null && token.startsWith("browser")) {
-            displayPlayerBrowser(token.length() > 8 ? token.substring(8) : "");
+        } else if (args.get(0, "").equals("browser")) {
+            setPageTitle(CAdmin.msgs.browserTitle());
+            if (_playerBrowser == null) {
+                _playerBrowser = new PlayerBrowserPanel();
+            } 
+            setContent(_playerBrowser);
+            _playerBrowser.displayPlayersInvitedBy(args.get(1, 0));
 
-        } else if (token != null && token.startsWith("review")) {
-            displayFlaggedItemReview();
+        } else if (args.get(0, "").equals("review")) {
+            setPageTitle(CAdmin.msgs.reviewTitle());
+            setContent(new ReviewPanel());
 
         } else {
-            displayDashboard();
+            setPageTitle(CAdmin.msgs.title());
+            setContent(new DashboardPanel());
         }
     }
 
     // @Override // from Page
     protected String getPageId ()
     {
-        return "admin";
+        return ADMIN;
     }
 
     // @Override // from Page
@@ -64,36 +74,6 @@ public class index extends EditemEntryPoint
 
         // load up our translation dictionaries
         CAdmin.msgs = (AdminMessages)GWT.create(AdminMessages.class);
-    }
-
-    protected void displayDashboard ()
-    {
-        setPageTitle(CAdmin.msgs.title());
-        setContent(new DashboardPanel());
-    }
-
-    protected void displayPlayerBrowser (String memberIdString)
-    {
-        setPageTitle(CAdmin.msgs.browserTitle());
-
-        int memberId = 0;
-        try {
-            memberId = Integer.parseInt(memberIdString);
-        } catch (NumberFormatException nfe) {
-            // nada - keep memberId at 0
-        }
-
-        if (_playerBrowser == null) {
-            _playerBrowser = new PlayerBrowserPanel();
-        } 
-        setContent(_playerBrowser);
-        _playerBrowser.displayPlayersInvitedBy(memberId);
-    }
-
-    protected void displayFlaggedItemReview ()
-    {
-        setPageTitle(CAdmin.msgs.reviewTitle());
-        setContent(new ReviewPanel());
     }
 
     protected PlayerBrowserPanel _playerBrowser;

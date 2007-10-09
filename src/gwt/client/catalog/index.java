@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import client.item.ItemEntryPoint;
+import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -26,9 +27,9 @@ public class index extends ItemEntryPoint
     }
 
     // @Override from Page
-    public void onHistoryChanged (String token)
+    public void onHistoryChanged (Args args)
     {
-        updateInterface(token);
+        updateInterface(args);
     }
 
     // @Override // from Page
@@ -46,7 +47,7 @@ public class index extends ItemEntryPoint
         CCatalog.msgs = (CatalogMessages)GWT.create(CatalogMessages.class);
     }
 
-    protected void updateInterface (String args)
+    protected void updateInterface (Args args)
     {
         // if we're not a dev deployment, disallow guests
         if (!DeploymentConfig.devDeployment && CCatalog.ident == null) {

@@ -4,8 +4,11 @@
 package client.inventory;
 
 import com.google.gwt.core.client.GWT;
+
 import com.threerings.msoy.item.data.all.Item;
+
 import client.editem.EditemEntryPoint;
+import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -25,9 +28,9 @@ public class index extends EditemEntryPoint
     }
 
     // @Override from Page
-    public void onHistoryChanged (String token)
+    public void onHistoryChanged (Args args)
     {
-        updateInterface(token);
+        updateInterface(args);
     }
 
     // @Override // from Page
@@ -45,7 +48,7 @@ public class index extends EditemEntryPoint
         CInventory.msgs = (InventoryMessages)GWT.create(InventoryMessages.class);
     }
 
-    protected void updateInterface (String args)
+    protected void updateInterface (Args args)
     {
         setPageTitle(CInventory.msgs.inventoryTitle());
         if (CInventory.ident == null) {
@@ -59,10 +62,9 @@ public class index extends EditemEntryPoint
                 setPageTabs(_inventory.getTabs());
             }
 
-            int[] avals = Page.splitArgs(args);
-            byte type = (avals[0] == 0) ? Item.AVATAR : (byte)avals[0];
-            int pageNo = (avals.length > 1) ? avals[1] : 0;
-            int itemId = (avals.length > 2) ? avals[2] : 0;
+            byte type = (byte)args.get(0, Item.AVATAR);
+            int pageNo = args.get(1, 0);
+            int itemId = args.get(2, 0);
             _inventory.display(type, pageNo, itemId);
         }
     }

@@ -3,7 +3,6 @@
 
 package client.admin;
 
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -49,13 +48,13 @@ public class DashboardPanel extends FlexTable
             }));
             controls.add(new Button(CAdmin.msgs.browserPlayers(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(Application.createLinkToken("admin", "browser"));
+                    Application.go(Page.ADMIN, "browser");
                 }
             }));
         }
         controls.add(new Button(CAdmin.msgs.reviewButton(), new ClickListener() {
             public void onClick (Widget sender) {
-                History.newItem(Application.createLinkToken("admin", "review"));
+                Application.go(Page.ADMIN, "review");
             }
         }));
 

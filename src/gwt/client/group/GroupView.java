@@ -10,7 +10,6 @@ import java.util.List;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Button;
@@ -42,6 +41,8 @@ import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.MemberName;
 
 import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
 import client.util.MediaUtil;
 import client.util.PopupMenu;
 import client.util.PrettyTextPanel;
@@ -129,7 +130,7 @@ public class GroupView extends VerticalPanel
         if (logo instanceof Image) {
             ((Image) logo).addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(Application.createLinkToken("world", "g" + _group.groupId));
+                    Application.go(Page.WORLD, "g" + _group.groupId);
                 }
             });
         }
@@ -371,7 +372,7 @@ public class GroupView extends VerticalPanel
                     public void addMenuItems (final String tag, PopupMenu menu) {
                         menu.addMenuItem(CGroup.msgs.viewTagLink(), new Command() {
                             public void execute () {
-                                History.newItem(Application.createLinkToken("group", "tag=" + tag));
+                                Application.go(Page.GROUP, Args.compose("tag", tag));
                             }
                         });
                     }
@@ -553,7 +554,7 @@ public class GroupView extends VerticalPanel
                     loadGroup(_group.groupId);
                 } else { 
                     // will reload the GroupList page
-                    History.newItem(Application.createLinkToken("group", "list"));
+                    Application.go(Page.GROUP, "list");
                 }
             }
             public void onFailure (Throwable caught) {

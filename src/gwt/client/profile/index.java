@@ -16,6 +16,7 @@ import com.threerings.msoy.web.data.ProfileLayout;
 
 import client.util.MsoyUI;
 import client.msgs.MsgsEntryPoint;
+import client.shell.Args;
 import client.shell.Page;
 
 /**
@@ -35,7 +36,7 @@ public class index extends MsgsEntryPoint
     }
 
     // @Override // from Page
-    public void onHistoryChanged (String token)
+    public void onHistoryChanged (Args args)
     {
         // if we're not a dev deployment, disallow guests
         if (!DeploymentConfig.devDeployment && CProfile.ident == null) {
@@ -43,23 +44,22 @@ public class index extends MsgsEntryPoint
             return;
         }
 
-        if (token != null && token.length() > 0 && !"me".equals(token) && 
-                !token.startsWith("search")) {
-            try {
-                displayMemberPage(Integer.parseInt(token));
-            } catch (Exception e) {
-                // TODO: display error
-            }
+        if (args.get(0, "").equals("search")) {
+            displaySearch(args);
+            return;
+        }
 
-        } else if (token == null || token.equals("") || token.startsWith("search")) {
-            displaySearch((token == null || token.equals("")) ? "" : token.substring(7));
+        int memberId = args.get(0, 0);
+        if (memberId != 0) {
+            displayMemberPage(memberId);
+            return;
+        }
+        // #profile-me falls through
 
-        } else if (CProfile.ident != null) {
-            // #profile-me falls to here
+        if (CProfile.ident != null) {
             displayMemberPage(CProfile.getMemberId());
-
         } else {
-            setContent(new Label(CProfile.msgs.profileLogin()));
+            displaySearch(args);
         }
     }
 
@@ -103,45 +103,37 @@ public class index extends MsgsEntryPoint
         });
     }
 
-    protected void displaySearch (String args) 
+    protected void displaySearch (Args args) 
     {
         setPageTitle(CProfile.msgs.profileSearchTitle());
         if (_search == null) {
             _search = new SearchPanel();
         }
 
-        if (args == null || "".equals(args)) {
+        final String type = args.get(1, "name");
+        final int page = args.get(2, 0);
+        final String search = URL.decodeComponent(args.get(2, ""));
+
+        if (search.length() == 0) {
             _search.clearResults();
             setContent(_search);
-        } else {
-            String[] argArray = args.split("_", 3);
-            if (argArray.length < 3) {
-                setContent(new Label(CProfile.msgs.searchParseParamsError()));
-                return;
-            }
+            return;
+        }
 
-            try {
-                final String type = argArray[0];
-                final int page = Integer.parseInt(argArray[1]);
-                final String search = URL.decodeComponent(argArray[2]);
-    
-                if (!_search.showingResultsFor(type, search)) {
-                    CProfile.profilesvc.findProfiles(type, search, new AsyncCallback() {
-                        public void onSuccess (Object result) {
-                            _search.setResults((List) result, page, type, search);
-                            setContent(_search);
-                        }
-                        public void onFailure (Throwable cause) {
-                            setContent(new Label(CProfile.serverError(cause)));
-                            CProfile.log("Failed to load search", cause);
-                        }
-                    });
-                } else {
-                    _search.displayPage(page);
+        if (!_search.showingResultsFor(type, search)) {
+            CProfile.profilesvc.findProfiles(type, search, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    _search.setResults((List) result, page, type, search);
+                    setContent(_search);
                 }
-            } catch (NumberFormatException nfe) {
-                setContent(new Label(CProfile.msgs.searchParseParamsError()));
-            }
+                public void onFailure (Throwable cause) {
+                    setContent(new Label(CProfile.serverError(cause)));
+                    CProfile.log("Failed to load search", cause);
+                }
+            });
+
+        } else {
+            _search.displayPage(page);
         }
     }
 

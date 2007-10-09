@@ -5,7 +5,6 @@ package client.inventory;
 
 import java.util.List;
 
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -25,10 +24,11 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
+import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
 import client.util.FlashClients;
 import client.util.MsoyUI;
-import client.shell.Application;
-import client.shell.Page;
 
 /**
  * Displays all items of a particular type in a player's inventory.
@@ -49,8 +49,7 @@ public class ItemPanel extends VerticalPanel
         _contents = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
-                String args = Page.composeArgs(new int[] { _type, page });
-                History.newItem(Application.createLinkToken("inventory", args));
+                Application.go(Page.INVENTORY, Args.compose(new String[] { ""+_type, ""+page }));
             }
             protected Widget createWidget (Object item) {
                 return new ItemEntry(ItemPanel.this, (Item)item, _itemList);
@@ -110,8 +109,8 @@ public class ItemPanel extends VerticalPanel
      */
     public void requestShowDetail (ItemIdent ident)
     {
-        String args = Page.composeArgs(new int[] { ident.type, _contents.getPage(), ident.itemId });
-        History.newItem(Application.createLinkToken("inventory", args));
+        Application.go(Page.INVENTORY, Args.compose(new String[] {
+            ""+ident.type, ""+_contents.getPage(), ""+ident.itemId }));
     }
 
     // from EditorHost

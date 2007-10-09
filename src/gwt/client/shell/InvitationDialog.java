@@ -17,9 +17,9 @@ import client.util.MsoyUI;
 
 public class InvitationDialog extends BorderedDialog 
 {
-    public static void display (final StatusPanel status, String args)
+    public static void display (final StatusPanel status, String inviteId)
     {
-        CShell.membersvc.getInvitation(args, true, new AsyncCallback () {
+        CShell.membersvc.getInvitation(inviteId, true, new AsyncCallback () {
             public void onSuccess (Object result) {
                 (new InvitationDialog(status, (Invitation)result)).show();
             }

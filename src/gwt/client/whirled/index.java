@@ -11,7 +11,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
+
 import client.msgs.MsgsEntryPoint;
+import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -28,15 +30,11 @@ public class index extends MsgsEntryPoint
     }
 
     // @Override // from Page
-    public void onHistoryChanged (String token)
+    public void onHistoryChanged (Args args)
     {
-        // if we're not logged in, always display whirledwide, if we are logged in and we're just
+        // if we're not logged in, always display whirledwide; if we are logged in and we're just
         // hitting the start/default page, display my whirled instead.
-        if (CWhirled.creds == null) {
-            token = "whirledwide";
-        } else if (token == null || "".equals(token)) {
-            token = "mywhirled";
-        }
+        String action = (CWhirled.creds == null) ? "whirledwide" : args.get(0, "mywhirled");
 
         PopulationDisplay popDisplay = new PopulationDisplay() {
             public void displayPopulation (int population) {
@@ -50,10 +48,10 @@ public class index extends MsgsEntryPoint
                 setPageTabs(container);
             }
         };
-        if ("whirledwide".equals(token)) {
+        if ("whirledwide".equals(action)) {
             setPageTitle(CWhirled.msgs.titleWhirledwide());
             setContent(new Whirledwide(popDisplay), true, false);
-        } else if ("mywhirled".equals(token)) {
+        } else if ("mywhirled".equals(action)) {
             setPageTitle(CWhirled.msgs.titleMyWhirled());
             setContent(new MyWhirled(popDisplay));
         }

@@ -6,7 +6,6 @@ package client.profile;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -31,6 +30,8 @@ import com.threerings.msoy.web.data.Profile;
 
 import client.msgs.MailComposition;
 import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
 import client.util.FlashClients;
 import client.util.ImageChooserPopup;
 import client.util.MsoyUI;
@@ -184,15 +185,13 @@ public class ProfileBlurb extends Blurb
 
 //             _buttons.add(new Button("Neighborhood", new ClickListener() {
 //                 public void onClick (Widget sender) {
-//                     History.newItem(
-//                         Application.createLinkToken("world", "nm" + _name.getMemberId()));
+//                     Application.go(Page.WORLD, "nm" + _name.getMemberId());
 //                 }
 //             }));
 
             _buttons.add(newControl(CProfile.msgs.visitHome(), "VisitHome", new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(
-                        Application.createLinkToken("world", "m" + _name.getMemberId()));
+                    Application.go(Page.WORLD, "m" + _name.getMemberId());
                 }
             }));
         }
@@ -201,8 +200,7 @@ public class ProfileBlurb extends Blurb
         if (CProfile.isAdmin()) {
             _buttons.add(newControl(CProfile.msgs.adminBrowse(), "AdminInfo", new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(Application.createLinkToken(
-                                        "admin", "browser_" + _name.getMemberId()));
+                    Application.go(Page.ADMIN, Args.compose("browser", _name.getMemberId()));
                 }
             }));
         }

@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -23,6 +22,8 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
 
 public class SearchPanel extends VerticalPanel
 {
@@ -40,16 +41,16 @@ public class SearchPanel extends VerticalPanel
 
         ClickListener goButtonListener = new ClickListener() {
             public void onClick (Widget sender) {
-                String args = "search_";
+                String[] args =  {
+                    "search", null, "0", URL.encodeComponent(_search.getText().trim()) };
                 if (_radioName.isChecked()) {
-                    args += "name_0_";
+                    args[2] = "name";
                 } else if (_radioDisplayName.isChecked()) {
-                    args += "display_0_";
+                    args[2] = "display";
                 } else {
-                    args += "email_0_";
+                    args[2] = "email";
                 }
-                args += URL.encodeComponent(_search.getText().trim());
-                History.newItem(Application.createLinkToken("profile", args));
+                Application.go(Page.PROFILE, Args.compose(args));
             }
         };
 

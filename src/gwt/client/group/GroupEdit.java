@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -40,6 +39,7 @@ import com.threerings.msoy.web.data.GroupExtras;
 import com.threerings.gwt.ui.InlineLabel;
 
 import client.shell.Application;
+import client.shell.Page;
 import client.util.BorderedDialog;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
@@ -336,7 +336,7 @@ public class GroupEdit extends BorderedDialog
                 } else if (_group.groupId == 0) {
                     // new group created - go to the new group view page
                     Group newGroup = (Group)result;
-                    History.newItem(Application.createLinkToken("group", "" + newGroup.groupId));
+                    Application.go(Page.GROUP, "" + newGroup.groupId);
                 }
             }
             public void onFailure (Throwable caught) {

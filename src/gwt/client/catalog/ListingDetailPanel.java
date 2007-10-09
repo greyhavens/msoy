@@ -4,7 +4,6 @@
 package client.catalog;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
@@ -21,6 +20,7 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 import client.item.BaseItemDetailPanel;
 import client.shell.Application;
 import client.shell.CommentsPanel;
+import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.ItemUtil;
@@ -129,8 +129,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             protected void addMenuItems () {
                 this.addMenuItem(CCatalog.imsgs.viewProfile(), new Command() {
                     public void execute () {
-                        History.newItem(Application.createLinkToken("profile",
-                            "" + _detail.creator.getMemberId()));
+                        Application.go(Page.PROFILE, "" + _detail.creator.getMemberId());
                     }
                 });
                 this.addMenuItem(CCatalog.imsgs.browseCatalogFor(), new Command() {

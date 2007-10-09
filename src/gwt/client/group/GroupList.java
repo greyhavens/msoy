@@ -6,7 +6,6 @@ package client.group;
 import java.util.Iterator;
 import java.util.List;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -30,6 +29,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.Group;
 
 import client.shell.Application;
+import client.shell.Page;
 import client.util.MediaUtil;
 
 /**
@@ -214,7 +214,7 @@ public class GroupList extends VerticalPanel
             if (logo instanceof Image) {
                 ((Image) logo).addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
-                        History.newItem(Application.createLinkToken("group", "" + group.groupId));
+                        Application.go(Page.GROUP, "" + group.groupId);
                     }
                 });
             }

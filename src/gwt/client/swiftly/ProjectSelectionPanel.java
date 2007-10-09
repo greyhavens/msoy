@@ -8,11 +8,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import client.shell.Application;
+import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.MsoyUI;
 import client.util.PromptPopup;
 
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -111,7 +111,7 @@ public class ProjectSelectionPanel extends FlexTable
             }
             public boolean gotResult (Object result) {
                 SwiftlyProject newProject = (SwiftlyProject)result;
-                History.newItem(Application.createLinkToken("swiftly", "" + newProject.projectId));
+                Application.go(Page.SWIFTLY, "" + newProject.projectId);
                 return true;
             }
         };

@@ -21,6 +21,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.shell.Application;
+import client.shell.Args;
 import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MediaUtil;
@@ -146,7 +147,8 @@ public abstract class BaseItemDetailPanel extends FlexTable
         details.add(_description = new Label(ItemUtil.getDescription(_item)));
 
         if (CItem.isAdmin() && _item instanceof Game) {
-            details.add(Application.createLink("Game details", "game", "d" + ((Game)_item).gameId));
+            String args = Args.compose(new String[] { "d" , ""+((Game)_item).gameId });
+            details.add(Application.createLink("Game details", "game", args));
         }
     }
 
