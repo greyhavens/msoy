@@ -3,6 +3,17 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.MovieClip;
+import flash.text.TextField;
+import flash.events.Event;
+import flash.utils.ByteArray;
+
+import mx.core.Container;
+
+import com.threerings.flash.path.Path;
+import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.ClientEvent;
@@ -20,6 +31,8 @@ import com.threerings.parlor.client.GameReadyObserver;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.item.data.all.TrophySource;
+import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -135,11 +148,44 @@ public class GameLiaison
     public function messageReceived (event :MessageEvent) :void
     {
         if (event.getName() == MsoyGameCodes.TROPHY_AWARDED) {
-            var trophy :Trophy = (event.getArgs()[0] as Trophy);
-            _gctx.getChatDirector().displayFeedback(
-                MsoyCodes.GAME_MSGS, MessageBundle.tcompose("m.trophy_earned", trophy.name));
-            // TODO: the fancy UI
+            // yay for bullshit embedded loading machinations
+            var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
+            loader.addEventListener(Event.COMPLETE, function (levent :Event) :void {
+                displayTrophy(loader.getContent() as DisplayObjectContainer,
+                              event.getArgs()[0] as Trophy);
+            });
+            loader.load(ByteArray(new TROPHY_PANEL()));
         }
+    }
+
+    protected function displayTrophy (panel :DisplayObjectContainer, trophy :Trophy) :void
+    {
+        _gctx.getChatDirector().displayFeedback(
+            MsoyCodes.GAME_MSGS, MessageBundle.tcompose("m.trophy_earned", trophy.name));
+
+        // configure the trophy display panel with this trophy's info
+        (panel.getChildByName("statement") as TextField).text =
+            _ctx.xlate(MsoyCodes.GAME_MSGS, "m.trophy_title");
+        (panel.getChildByName("trophy_name") as TextField).text = trophy.name;
+        var clip :MovieClip = (panel.getChildByName("trophy") as MovieClip);
+        while (clip.numChildren > 0) { // remove random green crap Rick added to this clip
+            clip.removeChildAt(0);
+        }
+        clip.x -= TrophySource.TROPHY_WIDTH/2;
+        clip.y -= TrophySource.TROPHY_HEIGHT/2;
+        clip.addChild(new MsoyMediaContainer(trophy.trophyMedia));
+
+        // slide the trophy panel onto the screen, pause for a sec, then back off
+        var container :Container = _ctx.getTopPanel().getPlaceContainer();
+        var path :Path = Path.connect(
+            Path.move(panel, 250, -panel.height, 250, 0, 500),
+            Path.delay(3000), // TODO: play a sound when this path starts
+            Path.move(panel, 250, 0, 250, -panel.height, 500));
+        path.setOnComplete(function (path :Path) :void {
+            container.rawChildren.removeChild(panel);
+        });
+        path.start();
+        container.rawChildren.addChild(panel);
     }
 
     /** Provides access to main client services. */
@@ -150,5 +196,9 @@ public class GameLiaison
 
     /** The id of the game with which we're dealing. */
     protected var _gameId :int;
+
+    [Embed(source="../../../../../../../rsrc/media/trophy_panel.swf",
+           mimeType="application/octet-stream")]
+    protected static const TROPHY_PANEL :Class;
 }
 }

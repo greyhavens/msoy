@@ -11,6 +11,12 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class TrophySource extends Item
 {
+    /** The required width for a trophy image. */
+    public static const TROPHY_WIDTH :int = 60;
+
+    /** The required height for a trophy image. */
+    public static const TROPHY_HEIGHT :int = 60;
+
     /** An identifier for this trophy, used by the game code. */
     public var ident :String;
 

@@ -20,7 +20,6 @@ import flash.text.TextFormat;
 import com.threerings.util.Util;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.Animation;
 import com.threerings.flash.FilterUtil;
 import com.threerings.flash.MediaContainer;
 import com.threerings.flash.TextFieldUtil;
