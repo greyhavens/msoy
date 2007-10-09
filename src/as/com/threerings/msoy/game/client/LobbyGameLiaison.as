@@ -121,9 +121,10 @@ public class LobbyGameLiaison extends GameLiaison
         }
     }
 
-    // from interface ClientObserver
+    // from GameLiaison
     override public function clientDidLogon (event :ClientEvent) :void
     {
+        super.clientDidLogon(event);
         if (_playerIdGame != 0) {
             joinPlayer(_playerIdGame);
         } else {
