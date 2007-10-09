@@ -29,6 +29,6 @@ public class Trophy extends SimpleStreamableObject
     {
         long otherEarned = ((Trophy)other).whenEarned;
         // avoid int and/or long overflow
-        return (whenEarned == otherEarned) ? 0 : ((whenEarned > otherEarned) ? 1 : -1);
+        return (whenEarned == otherEarned) ? 0 : ((whenEarned > otherEarned) ? -1 : 1);
     }
 }
