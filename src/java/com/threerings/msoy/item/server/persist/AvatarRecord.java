@@ -48,10 +48,6 @@ public class AvatarRecord extends ItemRecord
     public static final ColumnExp SOURCE_ID_C =
         new ColumnExp(AvatarRecord.class, SOURCE_ID);
 
-    /** The qualified column identifier for the {@link #suiteId} field. */
-    public static final ColumnExp SUITE_ID_C =
-        new ColumnExp(AvatarRecord.class, SUITE_ID);
-
     /** The qualified column identifier for the {@link #flagged} field. */
     public static final ColumnExp FLAGGED_C =
         new ColumnExp(AvatarRecord.class, FLAGGED);

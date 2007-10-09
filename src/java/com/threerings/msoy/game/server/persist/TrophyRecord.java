@@ -12,8 +12,8 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.TrophySource;
 
 import java.sql.Timestamp;
 
@@ -64,6 +64,13 @@ public class TrophyRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #trophyMimeType} field. */
     public static final ColumnExp TROPHY_MIME_TYPE_C =
         new ColumnExp(TrophyRecord.class, TROPHY_MIME_TYPE);
+
+    /** The column identifier for the {@link #whenEarned} field. */
+    public static final String WHEN_EARNED = "whenEarned";
+
+    /** The qualified column identifier for the {@link #whenEarned} field. */
+    public static final ColumnExp WHEN_EARNED_C =
+        new ColumnExp(TrophyRecord.class, WHEN_EARNED);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -79,7 +86,7 @@ public class TrophyRecord extends PersistentRecord
     public int memberId;
 
     /** The identifier for this trophy, provided by the game. */
-    @Id @Column(length=Game.MAX_IDENT_LENGTH)
+    @Id @Column(length=TrophySource.MAX_IDENT_LENGTH)
     public String ident;
 
     /** This trophy's name. */

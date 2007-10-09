@@ -31,7 +31,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
         ItemRecord.NAME, ItemRecord.DESCRIPTION })})
 @Entity(indices={
     @Index(name="locationIndex", fields={ ItemRecord.LOCATION } ),
-    @Index(name="ixSuiteId", fields={ ItemRecord.SUITE_ID } ),
     @Index(name="ixFlagged", fields={ ItemRecord.FLAGGED } ),
     @Index(name="ixMature", fields={ ItemRecord.MATURE } ),
     @Index(name="ixOwner", fields={ ItemRecord.OWNER_ID }),
@@ -45,9 +44,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     /** The column identifier for the {@link #sourceId} field. */
     public static final String SOURCE_ID = "sourceId";
-
-    /** The column identifier for the {@link #suiteId} field. */
-    public static final String SUITE_ID = "suiteId";
 
     /** The column identifier for the {@link #flagged} field. */
     public static final String FLAGGED = "flagged";
@@ -104,7 +100,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The identifier for the full text search index on Name, Description */
     public static final String FTS_ND = "ND";
 
-    public static final int BASE_SCHEMA_VERSION = 15;
+    public static final int BASE_SCHEMA_VERSION = 16;
     public static final int BASE_MULTIPLIER = 1000;
 
     /** This item's unique identifier. <em>Note:</em> this identifier is not globally unique among
@@ -117,9 +113,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      * not persisted to the database, but set when we load a clone. */
     @Computed(required=false)
     public int sourceId = 0;
-
-    /** The identifier of the suite to which this item belongs or zero. See {@link Item#suiteId}. */
-    public int suiteId;
 
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */
@@ -234,8 +227,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
             // if the old listing was mature or the new item is mature we want the new listing to
             // be mature as well; there's no going back without listing anew
             mature = oldListing.mature || mature;
-            // inherit our suite id from the old item
-            suiteId = oldListing.suiteId;
         }
     }
 
@@ -277,7 +268,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         Item item = createItem();
         item.itemId = itemId;
         item.sourceId = sourceId;
-        item.suiteId = suiteId;
         item.ownerId = ownerId;
         item.catalogId = catalogId;
         item.rating = rating;
@@ -309,7 +299,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     {
         itemId = item.itemId;
         sourceId = item.sourceId;
-        suiteId = item.suiteId;
         ownerId = item.ownerId;
         catalogId = item.catalogId;
         rating = item.rating;

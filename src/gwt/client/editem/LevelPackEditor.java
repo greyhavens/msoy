@@ -6,9 +6,7 @@ package client.editem;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -26,7 +24,6 @@ public class LevelPackEditor extends ItemEditor
     {
         super.setItem(item);
         _pack = (LevelPack)item;
-        safeSetText(_ident, _pack.ident);
         _premium.setChecked(_pack.premium);
     }
 
@@ -39,14 +36,6 @@ public class LevelPackEditor extends ItemEditor
     // @Override // from ItemEditor
     protected void populateInfoTab (FlexTable info)
     {
-        addInfoRow(info, CEditem.emsgs.packIdent(), bind(_ident = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _pack.ident = text;
-            }
-        }));
-        _ident.setMaxLength(Game.MAX_IDENT_LENGTH);
-        addInfoTip(info, CEditem.emsgs.packIdentTip());
-
         addInfoRow(info, CEditem.emsgs.packPremium(), _premium = new CheckBox());
         addInfoTip(info, CEditem.emsgs.lpackPremiumTip());
 
@@ -77,6 +66,5 @@ public class LevelPackEditor extends ItemEditor
     }
 
     protected LevelPack _pack;
-    protected TextBox _ident;
     protected CheckBox _premium;
 }

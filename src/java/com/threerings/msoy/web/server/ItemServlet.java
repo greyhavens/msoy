@@ -23,6 +23,7 @@ import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
@@ -59,9 +60,13 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
-        // determine this item's suite id if it has a parent
-        int suiteId = 0;
-        if (parent != null) {
+        // determine this item's suite id if it is a subitem
+        if (item instanceof SubItem) {
+            if (parent == null) {
+                log.warning("Requested to create sub-item with no parent [who=" + memrec.who() +
+                            ", item=" + item + "].");
+                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            }
             repo = MsoyServer.itemMan.getRepository(parent.type);
             ItemRecord prec = null;
             try {
@@ -83,7 +88,7 @@ public class ItemServlet extends MsoyServiceServlet
             }
             // if we made it this far, we can finally assign the suite id; as this is a mutable
             // item and a mutable parent, the suite id is the item id of the parent
-            suiteId = prec.itemId;
+            ((SubItem)item).suiteId = prec.itemId;
         }
 
         // TODO: validate anything else?
@@ -91,7 +96,6 @@ public class ItemServlet extends MsoyServiceServlet
         // configure the item's creator and owner
         item.creatorId = memrec.memberId;
         item.ownerId = memrec.memberId;
-        item.suiteId = suiteId;
 
         // write the item to the database
         repo = MsoyServer.itemMan.getRepository(item.getType());

@@ -16,22 +16,23 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  * Contains the persistent data for a LevelPack item.
  */
 @TableGenerator(name="itemId", pkColumnValue="LEVELPACK")
-public class LevelPackRecord extends ItemRecord
+public class LevelPackRecord extends SubItemRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #ident} field. */
-    public static final String IDENT = "ident";
-
-    /** The qualified column identifier for the {@link #ident} field. */
-    public static final ColumnExp IDENT_C =
-        new ColumnExp(LevelPackRecord.class, IDENT);
-
     /** The column identifier for the {@link #premium} field. */
     public static final String PREMIUM = "premium";
 
     /** The qualified column identifier for the {@link #premium} field. */
     public static final ColumnExp PREMIUM_C =
         new ColumnExp(LevelPackRecord.class, PREMIUM);
+
+    /** The qualified column identifier for the {@link #suiteId} field. */
+    public static final ColumnExp SUITE_ID_C =
+        new ColumnExp(LevelPackRecord.class, SUITE_ID);
+
+    /** The qualified column identifier for the {@link #ident} field. */
+    public static final ColumnExp IDENT_C =
+        new ColumnExp(LevelPackRecord.class, IDENT);
 
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
@@ -40,10 +41,6 @@ public class LevelPackRecord extends ItemRecord
     /** The qualified column identifier for the {@link #sourceId} field. */
     public static final ColumnExp SOURCE_ID_C =
         new ColumnExp(LevelPackRecord.class, SOURCE_ID);
-
-    /** The qualified column identifier for the {@link #suiteId} field. */
-    public static final ColumnExp SUITE_ID_C =
-        new ColumnExp(LevelPackRecord.class, SUITE_ID);
 
     /** The qualified column identifier for the {@link #flagged} field. */
     public static final ColumnExp FLAGGED_C =
@@ -116,9 +113,6 @@ public class LevelPackRecord extends ItemRecord
 
     public static final int SCHEMA_VERSION = 3 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
-    /** An identifier for this level pack, used by the game code. */
-    public String ident;
-
     /** Whether or not this level pack is premium. See {@link LevelPack#premium}. */
     public boolean premium;
 
@@ -134,7 +128,6 @@ public class LevelPackRecord extends ItemRecord
         super.fromItem(item);
 
         LevelPack pack = (LevelPack)item;
-        ident = pack.ident;
         premium = pack.premium;
     }
 
@@ -142,7 +135,6 @@ public class LevelPackRecord extends ItemRecord
     protected Item createItem ()
     {
         LevelPack object = new LevelPack();
-        object.ident = ident;
         object.premium = premium;
         return object;
     }

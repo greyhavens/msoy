@@ -6,11 +6,8 @@ package com.threerings.msoy.item.data.all;
 /**
  * Contains the runtime data for an ItemPack item.
  */
-public class ItemPack extends Item
+public class ItemPack extends SubItem
 {
-    /** An identifier for this item pack, used by the game code. */
-    public String ident;
-
     // @Override // from Item
     public byte getType ()
     {

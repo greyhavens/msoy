@@ -5,9 +5,7 @@ package client.editem;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -21,14 +19,6 @@ import client.util.RowPanel;
 public class TrophySourceEditor extends ItemEditor
 {
     // @Override from ItemEditor
-    public void setItem (Item item)
-    {
-        super.setItem(item);
-        _tsource = (TrophySource)item;
-        safeSetText(_ident, _tsource.ident);
-    }
-
-    // @Override from ItemEditor
     public Item createBlankItem ()
     {
         return new TrophySource();
@@ -39,16 +29,7 @@ public class TrophySourceEditor extends ItemEditor
     {
         addInfoTip(info, CEditem.emsgs.trophyNameTip());
 
-        addInfoRow(info, CEditem.emsgs.trophyIdent(), bind(_ident = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _tsource.ident = text;
-            }
-        }));
-        _ident.setMaxLength(Game.MAX_IDENT_LENGTH);
-        addInfoTip(info, CEditem.emsgs.trophyIdentTip());
-
-        // we don't call super because we don't want a description
-        // super.populateInfoTab(info);
+        super.populateInfoTab(info);
     }
 
     // @Override from ItemEditor
@@ -74,7 +55,4 @@ public class TrophySourceEditor extends ItemEditor
         });
         tabs.add(_thumbUploader, CEditem.emsgs.trophyMainTab());
     }
-
-    protected TrophySource _tsource;
-    protected TextBox _ident;
 }

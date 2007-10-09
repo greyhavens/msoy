@@ -16,11 +16,12 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  * Contains the persistent data for a TrophySource item.
  */
 @TableGenerator(name="itemId", pkColumnValue="TROPHYSOURCE")
-public class TrophySourceRecord extends ItemRecord
+public class TrophySourceRecord extends SubItemRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #ident} field. */
-    public static final String IDENT = "ident";
+    /** The qualified column identifier for the {@link #suiteId} field. */
+    public static final ColumnExp SUITE_ID_C =
+        new ColumnExp(TrophySourceRecord.class, SUITE_ID);
 
     /** The qualified column identifier for the {@link #ident} field. */
     public static final ColumnExp IDENT_C =
@@ -33,10 +34,6 @@ public class TrophySourceRecord extends ItemRecord
     /** The qualified column identifier for the {@link #sourceId} field. */
     public static final ColumnExp SOURCE_ID_C =
         new ColumnExp(TrophySourceRecord.class, SOURCE_ID);
-
-    /** The qualified column identifier for the {@link #suiteId} field. */
-    public static final ColumnExp SUITE_ID_C =
-        new ColumnExp(TrophySourceRecord.class, SUITE_ID);
 
     /** The qualified column identifier for the {@link #flagged} field. */
     public static final ColumnExp FLAGGED_C =
@@ -109,9 +106,6 @@ public class TrophySourceRecord extends ItemRecord
 
     public static final int SCHEMA_VERSION = 1 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
-    /** An identifier for this item pack, used by the game code. */
-    public String ident;
-
     @Override // from ItemRecord
     public byte getType ()
     {
@@ -124,14 +118,14 @@ public class TrophySourceRecord extends ItemRecord
         super.fromItem(item);
 
         TrophySource source = (TrophySource)item;
-        ident = source.ident;
+        // nothing to do
     }
 
     @Override // from ItemRecord
     protected Item createItem ()
     {
         TrophySource object = new TrophySource();
-        object.ident = ident;
+        // nothing to do
         return object;
     }
 

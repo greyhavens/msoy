@@ -16,11 +16,12 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  * Contains the persistent data for a ItemPack item.
  */
 @TableGenerator(name="itemId", pkColumnValue="ITEMPACK")
-public class ItemPackRecord extends ItemRecord
+public class ItemPackRecord extends SubItemRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #ident} field. */
-    public static final String IDENT = "ident";
+    /** The qualified column identifier for the {@link #suiteId} field. */
+    public static final ColumnExp SUITE_ID_C =
+        new ColumnExp(ItemPackRecord.class, SUITE_ID);
 
     /** The qualified column identifier for the {@link #ident} field. */
     public static final ColumnExp IDENT_C =
@@ -33,10 +34,6 @@ public class ItemPackRecord extends ItemRecord
     /** The qualified column identifier for the {@link #sourceId} field. */
     public static final ColumnExp SOURCE_ID_C =
         new ColumnExp(ItemPackRecord.class, SOURCE_ID);
-
-    /** The qualified column identifier for the {@link #suiteId} field. */
-    public static final ColumnExp SUITE_ID_C =
-        new ColumnExp(ItemPackRecord.class, SUITE_ID);
 
     /** The qualified column identifier for the {@link #flagged} field. */
     public static final ColumnExp FLAGGED_C =
@@ -109,9 +106,6 @@ public class ItemPackRecord extends ItemRecord
 
     public static final int SCHEMA_VERSION = 3 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
-    /** An identifier for this item pack, used by the game code. */
-    public String ident;
-
     @Override // from ItemRecord
     public byte getType ()
     {
@@ -124,14 +118,14 @@ public class ItemPackRecord extends ItemRecord
         super.fromItem(item);
 
         ItemPack pack = (ItemPack)item;
-        ident = pack.ident;
+        // nothing to do
     }
 
     @Override // from ItemRecord
     protected Item createItem ()
     {
         ItemPack object = new ItemPack();
-        object.ident = ident;
+        // nothing to do
         return object;
     }
 

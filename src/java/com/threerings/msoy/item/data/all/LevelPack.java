@@ -6,11 +6,8 @@ package com.threerings.msoy.item.data.all;
 /**
  * Contains the runtime data for a LevelPack item.
  */
-public class LevelPack extends Item
+public class LevelPack extends SubItem
 {
-    /** An identifier for this level pack, used by the game code. */
-    public String ident;
-
     /** Premium level packs must be purchased to be used. */
     public boolean premium;
 

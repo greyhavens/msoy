@@ -70,14 +70,12 @@ public class ItemEntry extends FlexTable
         }
         setWidget(0, 0, mview);
         getFlexCellFormatter().setStyleName(0, 0, "Preview");
-        getFlexCellFormatter().setRowSpan(0, 0, 2);
 
         setWidget(0, 1, MsoyUI.createActionLabel(ItemUtil.getName(item, true), clicker));
         getFlexCellFormatter().setStyleName(0, 1, "ThumbText");
         if (_item.itemId > 0) { // if this item is an original, style it slightly differently
             getFlexCellFormatter().addStyleName(0, 1, "OriginalThumbText");
         }
-        getFlexCellFormatter().setColSpan(0, 1, 2);
 
         setupListener();
     }

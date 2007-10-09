@@ -33,13 +33,13 @@ public class SubItemPanel extends VerticalPanel
         _parent = parent;
         _contents = new PagedGrid(ROWS, ItemPanel.COLUMNS) {
             protected Widget createWidget (Object item) {
-                return new ItemEntry(panel, (Item)item, null);
+                return new SubItemEntry(panel, (Item)item);
             }
             protected String getEmptyMessage () {
                 return CInventory.msgs.panelNoItems(CInventory.dmsgs.getString("itemType" + _type));
             }
         };
-        _contents.addStyleName("inventoryContents");
+        // _contents.addStyleName("inventoryContents");
         add(_contents);
 
         _create = new Button(CInventory.msgs.panelCreateNew());

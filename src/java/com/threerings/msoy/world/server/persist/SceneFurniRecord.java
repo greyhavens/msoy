@@ -104,6 +104,20 @@ public class SceneFurniRecord extends PersistentRecord
     public static final ColumnExp SCALE_Y_C =
         new ColumnExp(SceneFurniRecord.class, SCALE_Y);
 
+    /** The column identifier for the {@link #hotSpotX} field. */
+    public static final String HOT_SPOT_X = "hotSpotX";
+
+    /** The qualified column identifier for the {@link #hotSpotX} field. */
+    public static final ColumnExp HOT_SPOT_X_C =
+        new ColumnExp(SceneFurniRecord.class, HOT_SPOT_X);
+
+    /** The column identifier for the {@link #hotSpotY} field. */
+    public static final String HOT_SPOT_Y = "hotSpotY";
+
+    /** The qualified column identifier for the {@link #hotSpotY} field. */
+    public static final ColumnExp HOT_SPOT_Y_C =
+        new ColumnExp(SceneFurniRecord.class, HOT_SPOT_Y);
+
     /** The column identifier for the {@link #actionType} field. */
     public static final String ACTION_TYPE = "actionType";
 

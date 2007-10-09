@@ -25,6 +25,20 @@ public class FurnitureRecord extends ItemRecord
     public static final ColumnExp ACTION_C =
         new ColumnExp(FurnitureRecord.class, ACTION);
 
+    /** The column identifier for the {@link #hotSpotX} field. */
+    public static final String HOT_SPOT_X = "hotSpotX";
+
+    /** The qualified column identifier for the {@link #hotSpotX} field. */
+    public static final ColumnExp HOT_SPOT_X_C =
+        new ColumnExp(FurnitureRecord.class, HOT_SPOT_X);
+
+    /** The column identifier for the {@link #hotSpotY} field. */
+    public static final String HOT_SPOT_Y = "hotSpotY";
+
+    /** The qualified column identifier for the {@link #hotSpotY} field. */
+    public static final ColumnExp HOT_SPOT_Y_C =
+        new ColumnExp(FurnitureRecord.class, HOT_SPOT_Y);
+
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
         new ColumnExp(FurnitureRecord.class, ITEM_ID);
@@ -32,10 +46,6 @@ public class FurnitureRecord extends ItemRecord
     /** The qualified column identifier for the {@link #sourceId} field. */
     public static final ColumnExp SOURCE_ID_C =
         new ColumnExp(FurnitureRecord.class, SOURCE_ID);
-
-    /** The qualified column identifier for the {@link #suiteId} field. */
-    public static final ColumnExp SUITE_ID_C =
-        new ColumnExp(FurnitureRecord.class, SUITE_ID);
 
     /** The qualified column identifier for the {@link #flagged} field. */
     public static final ColumnExp FLAGGED_C =

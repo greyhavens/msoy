@@ -9,11 +9,8 @@ import com.threerings.io.ObjectOutputStream;
 /**
  * Contains the runtime data for a LevelPack item.
  */
-public class LevelPack extends Item
+public class LevelPack extends SubItem
 {
-    /** An identifier for this level pack, used by the game code. */
-    public var ident :String;
-
     /** Premium level packs must be purchased to be used. */
     public var premium :Boolean;
 
@@ -37,7 +34,6 @@ public class LevelPack extends Item
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        ident = (ins.readField(String) as String);
         premium = ins.readBoolean();
     }
 
@@ -45,7 +41,6 @@ public class LevelPack extends Item
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeField(ident);
         out.writeBoolean(premium);
     }
 }

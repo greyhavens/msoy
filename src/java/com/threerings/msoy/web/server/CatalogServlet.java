@@ -31,11 +31,13 @@ import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.SubItemRecord;
 
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.data.ServiceException;
@@ -226,15 +228,17 @@ public class CatalogServlet extends MsoyServiceServlet
 
             // if this item has a suite id (it's part of another item's suite), we need to
             // configure its listed suite as the catalog id of the suite master item
-            if (originalItem.suiteId != 0) {
+            if (originalItem instanceof SubItemRecord) {
+                SubItem sitem = (SubItem)originalItem.toItem();
                 ItemRepository<ItemRecord, ?, ?, ?> mrepo =
-                    MsoyServer.itemMan.getRepository(originalItem.toItem().getSuiteMasterType());
-                ItemRecord suiteMaster = mrepo.loadOriginalItem(originalItem.suiteId);
+                    MsoyServer.itemMan.getRepository(sitem.getSuiteMasterType());
+                ItemRecord suiteMaster = mrepo.loadOriginalItem(
+                    ((SubItemRecord)originalItem).suiteId);
                 if (suiteMaster == null) {
                     log.warning("Failed to locate suite master item [item=" + item + "].");
                     throw new ServiceException(ItemCodes.INTERNAL_ERROR);
                 }
-                listItem.suiteId = -suiteMaster.catalogId;
+                ((SubItemRecord)listItem).suiteId = -suiteMaster.catalogId;
             }
 
             // use the updated description

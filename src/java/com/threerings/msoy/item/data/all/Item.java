@@ -100,14 +100,6 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     /** The item id from which this object was cloned, or 0 if this is not a clone. */
     public int sourceId;
 
-    /** The identifier of the suite to which this item belongs or zero. If this item is an
-     * auxilliary item for a suite, this will contain either the negated catalogId of the listing
-     * for the primary item (if this and the primary item are listed) or the item id of the primary
-     * item (if this and the primary item are not listed). <em>Note:</em> this is different from
-     * {@link #getSuiteId} which is used to determine if this item is the parent of a suite, not
-     * part of another item's suite. */
-    public int suiteId;
-
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */
     public byte flagged;
@@ -270,22 +262,11 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     /**
      * Returns the suite for which this item is the parent. If the item is a listed catalog
      * prototype, the suite id will be its negated catalog listing id. If the item is a mutable
-     * original, the suite id will be its item id. <em>Note:</em> this is different than {@link
-     * #suiteId} which indicates that this item is part of another item's suite rather than the
-     * parent of a suite of its own.
+     * original, the suite id will be its item id.
      */
     public int getSuiteId ()
     {
         return (ownerId == 0 && catalogId != 0) ? -catalogId : itemId;
-    }
-
-    /**
-     * Returns the type of this item's suite master or {@link #NOT_A_TYPE} if this type of item is
-     * not a subtype of some other item.
-     */
-    public byte getSuiteMasterType ()
-    {
-        return NOT_A_TYPE;
     }
 
     /**

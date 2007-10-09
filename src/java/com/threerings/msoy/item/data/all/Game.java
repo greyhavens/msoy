@@ -14,9 +14,6 @@ public class Game extends Item
     /** Defines the number of different game types. See GameConfig. */
     public static final int GAME_TYPES = 3;
 
-    /** The maximum length of game identifiers (used by level and item packs and trophies). */
-    public static final int MAX_IDENT_LENGTH = 32;
-
     /** We reserve gameId = 1 for the tutorial. */
     public static final int TUTORIAL_GAME_ID = 1;
 

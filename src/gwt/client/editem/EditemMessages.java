@@ -8,14 +8,6 @@ package client.editem;
 public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "This string is used to identify this pack in your game code.".
-   * 
-   * @return translated "This string is used to identify this pack in your game code."
-   * @gwt.key packIdentTip
-   */
-  String packIdentTip();
-
-  /**
    * Translated "Main Photo image".
    * 
    * @return translated "Main Photo image"
@@ -118,6 +110,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key trophyMainTitle
    */
   String trophyMainTitle();
+
+  /**
+   * Translated "This string is used to identify this item in your game code.".
+   * 
+   * @return translated "This string is used to identify this item in your game code."
+   * @gwt.key subIdentTip
+   */
+  String subIdentTip();
 
   /**
    * Translated "Video data must be an FLV, MPEG, WMV or Quicktime file.".
@@ -432,6 +432,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errThumbNotImage();
 
   /**
+   * Translated "Identifier".
+   * 
+   * @return translated "Identifier"
+   * @gwt.key subIdent
+   */
+  String subIdent();
+
+  /**
    * Translated "Avatar as seen in the World".
    * 
    * @return translated "Avatar as seen in the World"
@@ -462,14 +470,6 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key gameLWJGL
    */
   String gameLWJGL();
-
-  /**
-   * Translated "Identifier".
-   * 
-   * @return translated "Identifier"
-   * @gwt.key packIdent
-   */
-  String packIdent();
 
   /**
    * Translated "Item updated.".

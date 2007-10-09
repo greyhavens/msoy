@@ -79,13 +79,6 @@ public /*abstract*/ class Item
     /** The item ID from which this object was cloned, or 0 if this is not a clone. */
     public var sourceId :int;
 
-    /** The identifier of the suite to which this item belongs or zero. If this item is an
-     * auxilliary item for a suite (currently only games are suites, but someday paperdoll avatars
-     * will probably be as well), this will contain either the catalogId of the listing for the
-     * primary item (if this and the primary item are listed) or the item id of the primary item
-     * (if this and the primary item are not listed). */
-    public var suiteId :int;
-
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */
     public var flagged :int;
@@ -237,9 +230,7 @@ public /*abstract*/ class Item
     /**
      * Returns the suite for which this item is the parent. If the item is a listed catalog
      * prototype, the suite id will be its negated catalog listing id. If the item is a mutable
-     * original, the suite id will be its item id. <em>Note:</em> this is different than
-     * Item.suiteId which indicates that this item is part of another item's suite rather than the
-     * parent of a suite of its own.
+     * original, the suite id will be its item id.
      */
     public function getSuiteId () :int
     {
@@ -331,7 +322,6 @@ public /*abstract*/ class Item
     {
         out.writeInt(itemId);
         out.writeInt(sourceId);
-        out.writeInt(suiteId);
         out.writeByte(flagged);
         out.writeInt(creatorId);
         out.writeInt(ownerId);
@@ -352,7 +342,6 @@ public /*abstract*/ class Item
     {
         itemId = ins.readInt();
         sourceId = ins.readInt();
-        suiteId = ins.readInt();
         flagged = ins.readByte();
         creatorId = ins.readInt();
         ownerId = ins.readInt();

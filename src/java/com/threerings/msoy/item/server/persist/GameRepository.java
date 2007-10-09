@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -46,6 +47,7 @@ public class GameRepository extends ItemRepository<
     public GameRepository (PersistenceContext ctx)
     {
         super(ctx);
+        _ctx.registerMigration(getItemClass(), new EntityMigration.Drop(16009, "suiteId"));
     }
 
     /**
