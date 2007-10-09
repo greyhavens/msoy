@@ -49,38 +49,8 @@ JAVA_ARGS="-server -mx$SERVER_MEMORY \
     -Drsrc_cache_dir=/tmp -Dlog_level=$LOGLEVEL \
     -Djava.security.manager -Djava.security.policy=$MSOY_HOME/dist/security.policy"
 
-# set up a custom SMTP host
-if [ ! -z "$SMTP_HOST" ]; then
-    JAVA_ARGS="$JAVA_ARGS -Dmail.smtp.host=$SMTP_HOST"
-fi
-
-umask 002
-
-JAVA_VM="$JAVA_HOME/bin/java"
-if [ ! -e $JAVA_VM ]; then
-    echo "$0: Cannot find JVM in $JAVA_HOME. Exiting."
-    exit 255
-fi
-
-# Some temporary business for multiprocessor FreeBSD machines
-NEEDS_MEMBAR=`$JAVA_VM -fullversion 2>&1 | grep diablo`
-if [ ! -z "$NEEDS_MEMBAR" ]; then
-     JAVA_ARGS="$JAVA_ARGS -XX:+UseMembar"
-fi
-
-# Start with the standard Java classes
-CLASSPATH="$JAVA_HOME/jre/lib/rt.jar"
-
-# Add all necessary JAR files to the CLASSPATH
-for JAR in $MSOY_HOME/dist/lib/*.jar $MSOY_HOME/dist/msoy-*.jar; do
-    if [ -e $JAR ]; then
-        CLASSPATH=$JAR:$CLASSPATH
-    fi
-done
-
-# Add the deployment directory to the CLASSPATH (for our config files)
-CLASSPATH=$MSOY_HOME/dist:$CLASSPATH
-export CLASSPATH
+# make sure we have a JVM and set up our classpath and bits
+. $MSOY_HOME/bin/runcommon
 
 # Create the logfile
 touch $LOGFILE

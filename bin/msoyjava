@@ -9,9 +9,9 @@ MSOY_HOME=`cd $MSOY_HOME/.. ; pwd`
 
 umask 002
 
-JAVA_VM="$JAVA_HOME/bin/java"
+JAVA_VM=`which java`
 if [ ! -e $JAVA_VM ]; then
-    echo "$0: Cannot find JVM in $JAVA_HOME. Exiting."
+    echo "$0: Cannot find JVM. Exiting."
     exit 255
 fi
 
@@ -59,14 +59,13 @@ if [ ! -z "$NEEDS_MEMBAR" ]; then
      JAVA_ARGS="$JAVA_ARGS -XX:+UseMembar"
 fi
 
-# add all necessary JAR files and $MSOY_HOME/dist to the CLASSPATH
-CLASSPATH="$JAVA_HOME/jre/lib/rt.jar"
+# Add all necessary JAR files to the CLASSPATH
+CLASSPATH=$MSOY_HOME/dist
 for JAR in $MSOY_HOME/dist/lib/*.jar $MSOY_HOME/dist/msoy-*.jar; do
     if [ -e $JAR ]; then
-        CLASSPATH=$JAR:$CLASSPATH
+        CLASSPATH=$CLASSPATH:$JAR
     fi
 done
-CLASSPATH=$MSOY_HOME/dist:$CLASSPATH
 export CLASSPATH
 
 # do the deed
