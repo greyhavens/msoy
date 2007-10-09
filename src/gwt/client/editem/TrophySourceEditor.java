@@ -16,7 +16,7 @@ import client.util.RowPanel;
 /**
  * A class for creating and editing {@link TrophySource} digital items.
  */
-public class TrophySourceEditor extends ItemEditor
+public class TrophySourceEditor extends SubItemEditor
 {
     // @Override from ItemEditor
     public Item createBlankItem ()
@@ -36,6 +36,12 @@ public class TrophySourceEditor extends ItemEditor
     protected void createFurniUploader (TabPanel tabs)
     {
         // we have no furni tab
+    }
+
+    // @Override // from ItemEditor
+    protected boolean requiresDescription ()
+    {
+        return false;
     }
 
     // @Override from ItemEditor

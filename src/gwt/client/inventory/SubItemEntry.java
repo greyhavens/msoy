@@ -3,7 +3,14 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.SubItem;
+
+import client.editem.ItemEditor;
 
 /**
  * Displays information on a sub-item.
@@ -20,7 +27,19 @@ public class SubItemEntry extends ItemEntry
     {
         super.setItem(item);
 
+        SubItem sitem = (SubItem)item;
         getFlexCellFormatter().setRowSpan(0, 0, 3);
-        setText(1, 0, "Extra bits");
+        setText(1, 0, sitem.ident);
+        getFlexCellFormatter().setStyleName(1, 0, "Ident");
+
+        Button button = new Button(CInventory.msgs.detailEdit());
+        button.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _panel);
+                editor.setItem(_item);
+                editor.show();
+            }
+        });
+        setWidget(2, 0, button);
     }
 }

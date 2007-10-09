@@ -69,6 +69,10 @@
   background-image: url(/images/ui/checkbox_room_inactive.png);
 }
 
+.itemEntry .Ident {
+  font-size: 10px;
+}
+
 .mediaUploader {
 }
 

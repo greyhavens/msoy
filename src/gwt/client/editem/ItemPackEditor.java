@@ -28,13 +28,14 @@ public class ItemPackEditor extends SubItemEditor
     // @Override // from ItemEditor
     protected void populateInfoTab (FlexTable info)
     {
+        super.populateInfoTab(info);
+
+        addSpacer(info);
         CheckBox box = new CheckBox();
         box.setChecked(true);
         box.setEnabled(false);
         addInfoRow(info, CEditem.emsgs.packPremium(), box);
         addInfoTip(info, CEditem.emsgs.ipackPremiumTip());
-
-        super.populateInfoTab(info);
     }
 
     // @Override from ItemEditor

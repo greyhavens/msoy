@@ -25,6 +25,9 @@ public abstract class SubItemEditor extends ItemEditor
     // @Override // from ItemEditor
     protected void populateInfoTab (FlexTable info)
     {
+        super.populateInfoTab(info);
+
+        addSpacer(info);
         addInfoRow(info, CEditem.emsgs.subIdent(), bind(_ident = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _subi.ident = text;
@@ -32,8 +35,6 @@ public abstract class SubItemEditor extends ItemEditor
         }));
         _ident.setMaxLength(SubItem.MAX_IDENT_LENGTH);
         addInfoTip(info, CEditem.emsgs.subIdentTip());
-
-        super.populateInfoTab(info);
     }
 
     protected SubItem _subi;

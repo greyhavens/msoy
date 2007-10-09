@@ -123,6 +123,20 @@ public abstract class ItemEditor extends BorderedDialog
 
         populateInfoTab(info);
 
+        // add the description if desired
+        if (requiresDescription()) {
+            addSpacer(info);
+            addInfoRow(info, new Label(CEditem.emsgs.editorDescrip()));
+            addInfoRow(info, bind(_description = new TextArea(), new Binder() {
+                public void textUpdated (String text) {
+                    _item.description = text;
+                }
+            }));
+            _description.setCharacterWidth(40);
+            _description.setVisibleLines(3);
+            addInfoTip(info, CEditem.emsgs.editorDescripTip());
+        }
+
         mediaTabs.add(info, CEditem.emsgs.editorInfoTab());
 
         // create the rest of the interface
@@ -266,15 +280,6 @@ public abstract class ItemEditor extends BorderedDialog
      */
     protected void populateInfoTab (FlexTable info)
     {
-        addInfoRow(info, new Label(CEditem.emsgs.editorDescrip()));
-        addInfoRow(info, bind(_description = new TextArea(), new Binder() {
-            public void textUpdated (String text) {
-                _item.description = text;
-            }
-        }));
-        _description.setCharacterWidth(40);
-        _description.setVisibleLines(3);
-        addInfoTip(info, CEditem.emsgs.editorDescripTip());
     }
 
     protected void safeSetText (TextBoxBase box, String value)
@@ -282,6 +287,11 @@ public abstract class ItemEditor extends BorderedDialog
         if (box != null && value != null) {
             box.setText(value);
         }
+    }
+
+    protected boolean requiresDescription ()
+    {
+        return true;
     }
 
     /**
@@ -316,6 +326,15 @@ public abstract class ItemEditor extends BorderedDialog
         info.setText(row, 0, tip);
         info.getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
         info.getFlexCellFormatter().setWidth(row, 0, "400px"); // wrap long text
+        info.getFlexCellFormatter().setColSpan(row, 0, 2);
+    }
+
+    protected void addSpacer (FlexTable info)
+    {
+        int row = info.getRowCount();
+        info.setText(row, 0, " ");
+        info.getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
+        info.getFlexCellFormatter().setHeight(row, 0, "10px");
         info.getFlexCellFormatter().setColSpan(row, 0, 2);
     }
 

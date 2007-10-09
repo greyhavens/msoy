@@ -150,10 +150,7 @@ public class ItemPanel extends VerticalPanel
         ItemEditor editor = ItemEditor.createItemEditor(_type, this);
         if (editor != null) {
             _create.setEnabled(false);
-            Item item = editor.createBlankItem();
-            // TEMP: workaround null description problem
-            item.description = "";
-            editor.setItem(item);
+            editor.setItem(editor.createBlankItem());
             editor.show();
         }
     }

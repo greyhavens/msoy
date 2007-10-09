@@ -17,7 +17,7 @@ import client.util.RowPanel;
 /**
  * A class for creating and editing {@link LevelPack} digital items.
  */
-public class LevelPackEditor extends ItemEditor
+public class LevelPackEditor extends SubItemEditor
 {
     // @Override from ItemEditor
     public void setItem (Item item)
@@ -36,10 +36,11 @@ public class LevelPackEditor extends ItemEditor
     // @Override // from ItemEditor
     protected void populateInfoTab (FlexTable info)
     {
+        super.populateInfoTab(info);
+
+        addSpacer(info);
         addInfoRow(info, CEditem.emsgs.packPremium(), _premium = new CheckBox());
         addInfoTip(info, CEditem.emsgs.lpackPremiumTip());
-
-        super.populateInfoTab(info);
     }
 
     // @Override from ItemEditor
