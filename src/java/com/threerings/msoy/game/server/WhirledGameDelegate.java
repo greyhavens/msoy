@@ -117,7 +117,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     }
 
     // from interface WhirledGameProvider
-    public void awardTrophy (ClientObject caller, String ident, int occupant,
+    public void awardTrophy (ClientObject caller, String ident,
                              InvocationService.InvocationListener listener)
         throws InvocationException
     {
