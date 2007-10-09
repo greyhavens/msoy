@@ -23,6 +23,7 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.data.PlaceObject;
 
@@ -117,7 +118,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
     // from interface WhirledGameProvider
     public void awardTrophy (ClientObject caller, String ident, int occupant,
-                             final InvocationService.InvocationListener listener)
+                             InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final PlayerObject plobj = verifyIsPlayer(caller);
@@ -144,6 +145,19 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             return;
         }
 
+        // if this is an in-development game, we do not award trophies persistently; but we will
+        // stick it into the player's runtime record so that the game developer can see that the
+        // trophy was awarded; note also that we do load the trophies earned from the catalog
+        // version, so a developer will not constantly re-receive trophies once they have released
+        // them and earned them permanently from the catalog version of their game
+        if (_content.game.isDeveloperVersion()) {
+            log.info("Awarding transient trophy to developer [game=" + where() +
+                     ", who=" + plobj.who() + ", ident=" + ident + "].");
+            plobj.addToGameContent(
+                new GameContentOwnership(gameId, GameData.TROPHY_DATA, source.ident));
+            return;
+        }
+
         // otherwise, award them the trophy and add it to their runtime collection
         final TrophyRecord trophy = new TrophyRecord();
         trophy.gameId = gameId;
@@ -153,26 +167,17 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         trophy.trophyMediaHash = source.getThumbnailMedia().hash;
         trophy.trophyMimeType = source.getThumbnailMedia().mimeType;
 
-        MsoyGameServer.invoker.postUnit(new Invoker.Unit("awardTrophy") {
-            public boolean invoke () {
-                try {
-                    MsoyGameServer.gameReg.getTrophyRepository().storeTrophy(trophy);
-                    // now that this has succeeded, we can create our ownership record
-                    _trophy = new GameContentOwnership();
-                    _trophy.gameId = gameId;
-                    _trophy.type = GameData.TROPHY_DATA;
-                    _trophy.ident = trophy.ident;
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to store trophy " + trophy + ".", pe);
-                }
-                return true;
+        MsoyGameServer.invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
+            public void invokePersistent () throws PersistenceException {
+                MsoyGameServer.gameReg.getTrophyRepository().storeTrophy(trophy);
+                // now that this has succeeded, we can create our ownership record
+                _trophy = new GameContentOwnership(gameId, GameData.TROPHY_DATA, trophy.ident);
             }
-            public void handleResult () {
-                if (_trophy != null) {
-                    plobj.addToGameContent(_trophy);
-                } else {
-                    listener.requestFailed(GameCodes.E_INTERNAL_ERROR);
-                }
+            public void handleSuccess () {
+                plobj.addToGameContent(_trophy);
+            }
+            protected String getFailureMessage () {
+                return "Failed to store trophy " + trophy + ".";
             }
             protected GameContentOwnership _trophy;
         });
@@ -351,18 +356,18 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         final boolean recalc = (RuntimeConfig.server.abuseFactorReassessment == 0) ? false :
             _content.detail.shouldRecalcAbuse(
                 playerMins, RuntimeConfig.server.abuseFactorReassessment);
-        MsoyGameServer.invoker.postUnit(new Invoker.Unit("updateGameDetail") {
-            public boolean invoke () {
-                try {
-                    _newAbuse = MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(
-                        _content.game.gameId, playerGames, playerMins, recalc);
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to note end of game [in=" + where() + "]", pe);
-                }
-                return (_newAbuse != null);
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateGameDetail") {
+            public void invokePersist () throws Exception {
+                _newAbuse = MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(
+                    _content.game.gameId, playerGames, playerMins, recalc);
             }
-            public void handleResult () {
-                _content.detail.abuseFactor = _newAbuse;
+            public void handleSuccess () {
+                if (_newAbuse != null) {
+                    _content.detail.abuseFactor = _newAbuse;
+                }
+            }
+            protected String getFailureMessage() {
+                return "Failed to note end of game [in=" + where() + "]";
             }
             protected Integer _newAbuse;
         });
@@ -392,7 +397,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // if this person is a player, load up their content packs and trophies
         if (isPlayer(plobj)) {
-            resolveOwnedContent(plobj.getMemberId());
+            MsoyGameServer.gameReg.resolveOwnedContent(Math.abs(_content.game.gameId), plobj);
         }
     }
 
@@ -439,15 +444,6 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     protected void updateRatingInMemory (int gameId, Rating rating)
     {
         // we don't keep in-memory ratings for whirled
-    }
-
-    /**
-     * Resolves the item and level packs owned by the player in question as well as trophies they
-     * have earned. (All related to the current game.)
-     */
-    protected void resolveOwnedContent (int playerId)
-    {
-        // TODO
     }
 
     protected void updateScoreBasedRating (Player player, Rating rating)
@@ -552,7 +548,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     protected boolean shouldRateGame ()
     {
         // we don't support ratings for non-published games
-        return (_content.game.gameId > 0) && super.shouldRateGame();
+        return !_content.game.isDeveloperVersion() && super.shouldRateGame();
     }
 
     /**
@@ -594,8 +590,9 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
     protected Percentiler getScoreDistribution ()
     {
-        Percentiler tiler =
-            MsoyGameServer.gameReg.getScoreDistribution(getGameId(), isMultiPlayer());
+        // we want the "rating" game id so we use getGameId()
+        Percentiler tiler = MsoyGameServer.gameReg.getScoreDistribution(
+            getGameId(), isMultiPlayer());
         // if for whatever reason we don't have a score distribution, return a blank one which will
         // result in the default percentile being used
         return (tiler == null) ? new Percentiler() : tiler;
@@ -691,7 +688,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         }
 
         // see how much they actually get (also uses their secondsPlayed)
-        final String details = getGameId() + " " + record.secondsPlayed;
+        final String details = _content.game.gameId + " " + record.secondsPlayed;
 
         // actually grant their flow award; we don't need to update their in-memory flow value
         // because we've been doing that all along

@@ -9,6 +9,8 @@ import com.threerings.util.Name;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
 
+import com.whirled.data.GameData;
+
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserObject;
@@ -86,6 +88,14 @@ public class PlayerObject extends BodyObject
             return avatar.getThumbnailMedia();
         }
         return Avatar.getDefaultThumbnailMediaFor(Item.AVATAR);
+    }
+
+    /**
+     * Returns true if content is resolved for the specified game, false if it is not yet ready.
+     */
+    public boolean isContentResolved (int gameId)
+    {
+        return ownsGameContent(gameId, GameData.RESOLVED_MARKER, "");
     }
 
     /**

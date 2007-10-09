@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -31,6 +33,8 @@ import com.threerings.parlor.data.Table;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 
+import com.whirled.data.GameData;
+
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -48,6 +52,7 @@ import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
 import com.threerings.msoy.game.data.AVRGameObject;
+import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
@@ -111,6 +116,15 @@ public class GameGameRegistry
     }
 
     /**
+     * Returns an enumeration of all of the registered lobby managers.  This should only be
+     * accessed on the dobjmgr thread and shouldn't be kept around across event dispatches.
+     */
+    public Iterator<LobbyManager> enumerateLobbyManagers ()
+    {
+        return _lobbies.values().iterator();
+    }
+
+    /**
      * Returns the percentiler for the specified game and score distribution. The percentiler may
      * be modified and when the lobby for the game in question is finally unloaded, the percentiler
      * will be written back out to the database.
@@ -118,6 +132,49 @@ public class GameGameRegistry
     public Percentiler getScoreDistribution (int gameId, boolean multiplayer)
     {
         return _distribs.get(multiplayer ? Math.abs(gameId) : -Math.abs(gameId));
+    }
+
+    /**
+     * Resolves the item and level packs owned by the player in question for the specified game, as
+     * well as trophies they have earned. This information will show up asynchronously, once the 
+     */
+    public void resolveOwnedContent (final int gameId, final PlayerObject plobj)
+    {
+        // if we've already resolved content for this player, we are done
+        if (plobj.isContentResolved(gameId)) {
+            return;
+        }
+
+        // add our "already resolved" marker and then start resolving
+        plobj.addToGameContent(new GameContentOwnership(gameId, GameData.RESOLVED_MARKER, ""));
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("resolveOwnedContent") {
+            public void invokePersist () throws Exception {
+                // TODO: load level and item pack ownership
+                _trophies = _trophyRepo.loadTrophyOwnership(gameId, plobj.getMemberId());
+            }
+            public void handleSuccess () {
+                plobj.startTransaction();
+                try {
+                    addContent(GameData.LEVEL_DATA, _lpacks);
+                    addContent(GameData.ITEM_DATA, _ipacks);
+                    addContent(GameData.TROPHY_DATA, _trophies);
+                } finally {
+                    plobj.commitTransaction();
+                }
+            }
+            protected void addContent (byte type, List<String> idents) {
+                for (String ident : idents) {
+                    plobj.addToGameContent(new GameContentOwnership(gameId, type, ident));
+                }
+            }
+            protected String getFailureMessage () {
+                return "Failed to resolve content [game=" + gameId + ", who=" + plobj.who() + "].";
+            }
+
+            protected List<String> _lpacks = new ArrayList<String>();
+            protected List<String> _ipacks = new ArrayList<String>();
+            protected List<String> _trophies;
+        });
     }
 
     // from AVRProvider
@@ -200,6 +257,7 @@ public class GameGameRegistry
         });
     }
 
+    // from AVRProvider
     public void deactivateGame (ClientObject caller, final ConfirmListener listener)
         throws InvocationException
     {
@@ -358,15 +416,6 @@ public class GameGameRegistry
 
         // finally, hand off the game oid
         listener.requestProcessed(placeOid);
-    }
-
-    /**
-     * Returns an enumeration of all of the registered lobby managers.  This should only be
-     * accessed on the dobjmgr thread and shouldn't be kept around across event dispatches.
-     */
-    public Iterator<LobbyManager> enumerateLobbyManagers ()
-    {
-        return _lobbies.values().iterator();
     }
 
     // from interface PresentsServer.Shutdowner

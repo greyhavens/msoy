@@ -27,6 +27,15 @@ public class Game extends Item
      * item so that ratings and lobbies and content packs all reference the same "game". */
     public int gameId;
 
+    /**
+     * Returns true if this is a developer's in-progress original game rather than one listed in
+     * the catalog.
+     */
+    public boolean isDeveloperVersion ()
+    {
+        return (gameId < 0);
+    }
+
     // @Override from Item
     public byte getType ()
     {

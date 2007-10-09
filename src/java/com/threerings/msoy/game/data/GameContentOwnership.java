@@ -23,6 +23,21 @@ public class GameContentOwnership extends SimpleStreamableObject
     /** The identifier for this content. */
     public String ident;
 
+    /** Used when unserializing. */
+    public GameContentOwnership ()
+    {
+    }
+
+    /**
+     * Creates an ownership record for the specified game, type and ident.
+     */
+    public GameContentOwnership (int gameId, byte type, String ident)
+    {
+        this.gameId = gameId;
+        this.type = type;
+        this.ident = ident;
+    }
+
     // from DSet.Entry
     public Comparable getKey ()
     {

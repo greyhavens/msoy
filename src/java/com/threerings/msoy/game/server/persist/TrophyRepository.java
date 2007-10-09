@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.server.persist;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -41,6 +42,21 @@ public class TrophyRepository extends DepotRepository
     {
         return findAll(TrophyRecord.class, new Where(TrophyRecord.GAME_ID_C, gameId,
                                                      TrophyRecord.MEMBER_ID_C, memberId));
+    }
+
+    /**
+     * Returns a list of the idents of the trophies owned by the specified player for the specified
+     * game.
+     */
+    public List<String> loadTrophyOwnership (int gameId, int memberId)
+        throws PersistenceException
+    {
+        ArrayList<String> idents = new ArrayList<String>();
+        Where where = new Where(TrophyRecord.GAME_ID_C, gameId, TrophyRecord.MEMBER_ID_C, memberId);
+        for (TrophyOwnershipRecord orec : findAll(TrophyOwnershipRecord.class, where)) {
+            idents.add(orec.ident);
+        }
+        return idents;
     }
 
     /**
