@@ -125,7 +125,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // locate the trophy source record in question
         TrophySource source = null;
-        for (TrophySource csource : _tsources) {
+        for (TrophySource csource : _content.tsources) {
             if (csource.ident.equals(ident)) {
                 source = csource;
                 break;
@@ -818,9 +818,6 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
     /** Tracks accumulated playtime for all players in the game. */
     protected HashIntMap<FlowRecord> _flowRecords = new HashIntMap<FlowRecord>();
-
-    /** The set of trophies available for awarding by this game. */
-    protected ArrayList<TrophySource> _tsources;
 
     /** Once a game has accumulated this many player games, its average time is trusted. */
     protected static final int FRESH_GAME_CUTOFF = 10;

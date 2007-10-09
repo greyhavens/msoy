@@ -64,6 +64,10 @@ public class TrophyRecord extends PersistentRecord
         new ColumnExp(TrophyRecord.class, TROPHY_MIME_TYPE);
     // AUTO-GENERATED: FIELDS END
 
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 1;
+
     /** The game that awarded this trophy. */
     @Id
     public int gameId;
