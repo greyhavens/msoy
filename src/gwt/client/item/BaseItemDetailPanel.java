@@ -147,7 +147,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
         details.add(_description = new Label(ItemUtil.getDescription(_item)));
 
         if (CItem.isAdmin() && _item instanceof Game) {
-            String args = Args.compose(new String[] { "d" , ""+((Game)_item).gameId });
+            String args = Args.compose("d" , ((Game)_item).gameId);
             details.add(Application.createLink("Game details", "game", args));
         }
     }

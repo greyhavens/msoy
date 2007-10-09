@@ -37,25 +37,9 @@ public class Args
     /**
      * Convenience function.
      */
-    public static String compose (String action, int arg1, int arg2)
-    {
-        return compose(new String[] { action, ""+arg1, ""+arg2 });
-    }
-
-    /**
-     * Convenience function.
-     */
     public static String compose (String action, String arg)
     {
         return compose(new String[] { action, arg });
-    }
-
-    /**
-     * Convenience function.
-     */
-    public static String compose (String action, String arg1, String arg2)
-    {
-        return compose(new String[] { action, arg1, arg2 });
     }
 
     /**
