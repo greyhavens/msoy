@@ -1,0 +1,15 @@
+//
+// $Id$
+
+package com.threerings.msoy.game.data;
+
+import com.threerings.parlor.game.data.GameCodes;
+
+/**
+ * Codes and constants relating to the MSOY game services.
+ */
+public interface MsoyGameCodes extends GameCodes
+{
+    /** A message sent when the player earns a trophy. The payload will be a Trophy object. */
+    public static final String TROPHY_AWARDED = "TrophyAwarded";
+}
