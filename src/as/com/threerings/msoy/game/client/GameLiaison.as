@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import com.threerings.util.MessageBundle;
+
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.client.ResultWrapper;
@@ -21,6 +23,7 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.Trophy;
 
 /**
  * Handles all the fiddly bits relating to connecting to a separate server to match-make and play a
@@ -132,8 +135,10 @@ public class GameLiaison
     public function messageReceived (event :MessageEvent) :void
     {
         if (event.getName() == MsoyGameCodes.TROPHY_AWARDED) {
+            var trophy :Trophy = (event.getArgs[0] as Trophy);
+            _ctx.displayFeedback(
+                MsoyCodes.GAME_MSGS, MessageBundle.tcompose("m.trophy_earned", trophy.name));
             // TODO: the fancy UI
-            // TODO: _ctx.displayFeedback();
         }
     }
 

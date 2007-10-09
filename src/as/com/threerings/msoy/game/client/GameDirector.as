@@ -24,6 +24,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.AVRGameObject;
+import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -51,6 +52,7 @@ public class GameDirector extends BasicDirector
         c = LobbyMarshaller;
         c = LobbyController;
         c = PlayerObject;
+        c = GameContentOwnership;
     }
 
     /**

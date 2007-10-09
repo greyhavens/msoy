@@ -4,13 +4,14 @@
 package com.threerings.msoy.game.data {
 
 import com.threerings.io.ObjectInputStream;
+import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.util.Name;
-
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
+
+import com.whirled.data.GameData;
 
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.MemberName;
@@ -110,6 +111,28 @@ public class PlayerObject extends BodyObject
     public function getHumanity () :Number
     {
         return humanity / 255;
+    }
+
+    /**
+     * Returns true if content is resolved for the specified game, false if it is not yet ready.
+     */
+    public function isContentResolved (gameId :int) :Boolean
+    {
+        return ownsGameContent(gameId, GameData.RESOLVED_MARKER, "");
+    }
+
+    /**
+     * Returns true if this player owns the specified piece of game content. <em>Note:</em> the
+     * content must have previously been resolved, which happens when the player enters the game in
+     * question.
+     */
+    public function ownsGameContent (gameId :int, type :int, ident :String) :Boolean
+    {
+        var key :GameContentOwnership = new GameContentOwnership();
+        key.gameId = gameId;
+        key.type = type;
+        key.ident = ident;
+        return gameContent.containsKey(key);
     }
 
     // from BodyObject

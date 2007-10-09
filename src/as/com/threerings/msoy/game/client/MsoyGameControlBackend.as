@@ -22,7 +22,7 @@ import com.threerings.msoy.game.data.GameMemberInfo;
 public class MsoyGameControlBackend extends WhirledGameControlBackend
 {
     public function MsoyGameControlBackend (
-        ctx :WhirledGameContext, gameObj :MsoyGameObject, ctrl :MsoyGameController)
+        ctx :GameContext, gameObj :MsoyGameObject, ctrl :MsoyGameController)
     {
         super(ctx, gameObj, ctrl);
     }
@@ -61,16 +61,23 @@ public class MsoyGameControlBackend extends WhirledGameControlBackend
 
     protected function getStageBounds_v1 () :Rectangle
     {
-        return (_ctx as WhirledGameContext).getTopPanel().getPlaceViewBounds();
+        return (_ctx as GameContext).getTopPanel().getPlaceViewBounds();
     }
 
     protected function backToWhirled_v1 (showLobby :Boolean = false) :void
     {
-        (_ctx as WhirledGameContext).getTopPanel().getControlBar().moveBack();
+        (_ctx as GameContext).getTopPanel().getControlBar().moveBack();
         if (showLobby) {
             var cfg :MsoyGameConfig = _ctrl.getPlaceConfig() as MsoyGameConfig;
-            (_ctx as WhirledGameContext).displayLobby(cfg.getGameId());
+            (_ctx as GameContext).displayLobby(cfg.getGameId());
         }
+    }
+
+    // from WhirledGameControlBackend
+    override protected function playerOwnsData (type :int, ident :String) :Boolean
+    {
+        var cfg :MsoyGameConfig = (_ctrl.getPlaceConfig() as MsoyGameConfig);
+        return (_ctx as GameContext).getPlayerObject().ownsGameContent(cfg.getGameId(), type, ident)
     }
 
     // ------ Compatibility methods, for operating with old games

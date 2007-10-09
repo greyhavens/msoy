@@ -29,7 +29,7 @@ import com.threerings.msoy.game.data.PlayerObject;
  * connected to a separate game server.
  */
 public class GameContext
-    implements ParlorContext, WhirledGameContext
+    implements ParlorContext
 {
     public function GameContext (ctx :WorldContext)
     {
@@ -98,13 +98,17 @@ public class GameContext
         return _parDtr;
     }
 
-    // from WhirledGameContext
+    /**
+     * Returns a reference to the top-level UI container.
+     */
     public function getTopPanel () :TopPanel
     {
         return _wctx.getTopPanel();
     }
 
-    // from WhirledGameContext
+    /**
+     * Displays the lobby for the specified game.
+     */
     public function displayLobby (gameId :int) :void
     {
         _wctx.getMsoyController().handleJoinGameLobby(gameId);

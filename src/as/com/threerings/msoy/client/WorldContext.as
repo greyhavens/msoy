@@ -26,7 +26,6 @@ import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.client.persist.RuntimeSceneRepository;
 
 import com.threerings.msoy.game.client.GameDirector;
-import com.threerings.msoy.game.client.WhirledGameContext;
 import com.threerings.msoy.notify.client.NotificationDirector;
 import com.threerings.msoy.world.client.MsoySceneDirector;
 import com.threerings.msoy.world.client.WorldDirector;
@@ -35,7 +34,7 @@ import com.threerings.msoy.world.client.WorldDirector;
  * Defines services for the main virtual world and game clients. TODO: make GameContext?
  */
 public class WorldContext extends BaseContext
-    implements WhirledContext, WhirledGameContext
+    implements WhirledContext
 {
     /** Contains non-persistent properties that are set in various places and can be bound to to be
      * notified when they change. */
@@ -63,16 +62,12 @@ public class WorldContext extends BaseContext
         return _sceneDir;
     }
 
-    // from WhirledGameContext
+    /**
+     * Returns a reference to the top-level UI container.
+     */
     public function getTopPanel () :TopPanel
     {
         return _topPanel;
-    }
-
-    // from WhirledGameContext
-    public function displayLobby (gameId :int) :void
-    {
-        getMsoyController().handleJoinGameLobby(gameId);
     }
 
     /**
