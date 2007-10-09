@@ -59,13 +59,13 @@ public class GameDirector extends BasicDirector
     public function displayLobby (gameId :int) :void
     {
         if (_liaison != null) {
-            if (_liaison.gameId == gameId) {
-                LobbyGameLiaison(_liaison).showLobbyUI();
-
-            } else if (_liaison is AVRGameLiaison) {
+            if (_liaison is AVRGameLiaison) {
                 // automatically drop out of AVRG game
                 _liaison.shutdown();
                 _liaison = null;
+
+            } else if (_liaison.gameId == gameId) {
+                LobbyGameLiaison(_liaison).showLobbyUI();
 
             } else {
                 // TODO: close current game and open new one?
@@ -85,9 +85,11 @@ public class GameDirector extends BasicDirector
      */
     public function joinPlayer (gameId :int, memberId :int) :void
     {
-        if (_liaison != null && _liaison.gameId != gameId) {
-            _liaison.shutdown();
-            _liaison = null;
+        if (_liaison != null) {
+            if (_liaison is AVRGameLiaison || _liaison.gameId != gameId) {
+                _liaison.shutdown();
+                _liaison = null;
+            }
         }
 
         if (_liaison == null) {
@@ -102,9 +104,11 @@ public class GameDirector extends BasicDirector
      */
     public function joinPlayerTable (gameId :int, memberId :int) :void
     {
-        if (_liaison != null && _liaison.gameId != gameId) {
-            _liaison.shutdown();
-            _liaison = null;
+        if (_liaison != null) {
+            if (_liaison is AVRGameLiaison || _liaison.gameId != gameId) {
+                _liaison.shutdown();
+                _liaison = null;
+            }
         }
         displayLobby(gameId);
         LobbyGameLiaison(_liaison).joinPlayerTable(memberId);
@@ -113,6 +117,10 @@ public class GameDirector extends BasicDirector
     public function activateAVRGame (gameId :int) :void
     {
         if (_liaison != null) {
+            if (_liaison is LobbyGameLiaison) {
+                log.warning("Eek, asked to join an AVRG while in a lobbied game.");
+                return;
+            }
             if (_liaison.gameId == gameId) {
                 log.warning("Requested to activate the AVRG that's already active [gameId=" +
                             gameId + "]");
@@ -182,7 +190,8 @@ public class GameDirector extends BasicDirector
      */
     public function isPlayingTutorial () :Boolean
     {
-        return _liaison != null && _liaison.gameId == Game.TUTORIAL_GAME_ID;
+        return _liaison != null && _liaison is AVRGameLiaison &&
+            _liaison.gameId == Game.TUTORIAL_GAME_ID;
     }
 
     /**
