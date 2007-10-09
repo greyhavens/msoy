@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.List;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -39,8 +38,11 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.StaticMediaDesc;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -136,7 +138,7 @@ public class GameGameRegistry
 
     /**
      * Resolves the item and level packs owned by the player in question for the specified game, as
-     * well as trophies they have earned. This information will show up asynchronously, once the 
+     * well as trophies they have earned. This information will show up asynchronously, once the
      */
     public void resolveOwnedContent (final int gameId, final PlayerObject plobj)
     {
@@ -212,9 +214,15 @@ public class GameGameRegistry
 
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("activateAVRGame") {
             public void invokePersist () throws Exception {
-                GameRecord gRec = _gameRepo.loadGameRecord(gameId);
-                if (gRec != null) {
-                    _game = (Game) gRec.toItem();
+                if (gameId == Game.TUTORIAL_GAME_ID) {
+                    _game = _tutorial;
+                } else {
+                    GameRecord gRec = _gameRepo.loadGameRecord(gameId);
+                    if (gRec != null) {
+                        _game = (Game) gRec.toItem();
+                    }
+                }
+                if (_game != null) {
                     _recs = _avrgRepo.getGameState(gameId);
                 }
             }
@@ -488,6 +496,21 @@ public class GameGameRegistry
         });
     }
 
+    protected static class TutorialGame extends Game
+    {
+        public TutorialGame ()
+        {
+            this.name = "Whirled Tutorial";
+            this.gameId = Game.TUTORIAL_GAME_ID;
+            this.config = "<toggle ident=\"avrg\" start=\"true\"/>";
+            this.gameMedia = new StaticMediaDesc(
+                MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.GAME, "tutorial");
+            // TODO: if we end up using these for AVRG's we'll want hand-crafted stuffs here
+            this.thumbMedia = Item.getDefaultThumbnailMediaFor(Item.GAME);
+            this.furniMedia = Item.getDefaultFurniMediaFor(Item.GAME);
+        }
+    }
+
     /** The distributed object manager that we work with. */
     protected RootDObjectManager _omgr;
 
@@ -505,6 +528,9 @@ public class GameGameRegistry
 
     /** Maps game id -> listeners waiting for a lobby to load. */
     protected IntMap<ResultListenerList> _loadingAVRGames = new HashIntMap<ResultListenerList>();
+
+    /** A fake Game representing the Tutorial AVRG. */
+    protected TutorialGame _tutorial = new TutorialGame();
 
     // various and sundry repositories for loading persistent data
     protected GameRepository _gameRepo;

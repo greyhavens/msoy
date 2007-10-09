@@ -81,7 +81,7 @@ public class GameDetailRecord extends PersistentRecord
     public static final int DEFAULT_ABUSE_FACTOR = 100;
 
     /** The unique identifier for this game. */
-    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY, initialValue=100)
     public int gameId;
 
     /** The canonical game item for this game, which has been listed in the catalog. */

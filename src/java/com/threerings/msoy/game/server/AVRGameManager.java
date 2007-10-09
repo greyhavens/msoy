@@ -17,6 +17,9 @@ import com.threerings.msoy.game.server.persist.GameStateRecord;
 import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
 import com.threerings.msoy.game.server.persist.QuestStateRecord;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;

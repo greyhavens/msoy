@@ -39,8 +39,6 @@ public class GameDirector extends BasicDirector
 {
     public static const log :Log = Log.getLog(GameDirector);
 
-    public static const TUTORIAL_GAME_ID :int = -4;
-
     public function GameDirector (ctx :WorldContext)
     {
         super(ctx);
@@ -184,7 +182,7 @@ public class GameDirector extends BasicDirector
      */
     public function isPlayingTutorial () :Boolean
     {
-        return _liaison != null && _liaison.gameId == TUTORIAL_GAME_ID;
+        return _liaison != null && _liaison.gameId == Game.TUTORIAL_GAME_ID;
     }
 
     /**

@@ -17,6 +17,9 @@ public class Game extends Item
     /** The maximum length of game identifiers (used by level and item packs and trophies). */
     public static final int MAX_IDENT_LENGTH = 32;
 
+    /** We reserve gameId = 1 for the tutorial. */
+    public static final int TUTORIAL_GAME_ID = 1;
+
     /** The XML game configuration. */
     public String config;
 
