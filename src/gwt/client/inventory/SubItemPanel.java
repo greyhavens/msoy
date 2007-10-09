@@ -31,7 +31,7 @@ public class SubItemPanel extends VerticalPanel
     {
         _type = type;
         _parent = parent;
-        _contents = new PagedGrid(2, ItemPanel.COLUMNS) {
+        _contents = new PagedGrid(ROWS, ItemPanel.COLUMNS) {
             protected Widget createWidget (Object item) {
                 return new ItemEntry(panel, (Item)item, null);
             }
@@ -99,4 +99,6 @@ public class SubItemPanel extends VerticalPanel
     protected Button _create;
 
     protected List _items;
+
+    protected static final int ROWS = 5;
 }

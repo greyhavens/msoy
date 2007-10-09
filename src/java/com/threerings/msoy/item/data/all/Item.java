@@ -280,6 +280,15 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     }
 
     /**
+     * Returns the type of this item's suite master or {@link #NOT_A_TYPE} if this type of item is
+     * not a subtype of some other item.
+     */
+    public byte getSuiteMasterType ()
+    {
+        return NOT_A_TYPE;
+    }
+
+    /**
      * Tests whether a given flag is set on this item.
      */
     public boolean isSet (byte flag)

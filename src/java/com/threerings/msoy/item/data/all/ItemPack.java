@@ -18,6 +18,12 @@ public class ItemPack extends Item
     }
 
     // @Override // from Item
+    public byte getSuiteMasterType ()
+    {
+        return GAME;
+    }
+
+    // @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         return getThumbnailMedia();
