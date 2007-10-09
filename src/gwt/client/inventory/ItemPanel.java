@@ -53,7 +53,7 @@ public class ItemPanel extends VerticalPanel
                 History.newItem(Application.createLinkToken("inventory", args));
             }
             protected Widget createWidget (Object item) {
-                return new ItemContainer(ItemPanel.this, (Item)item, _itemList);
+                return new ItemEntry(ItemPanel.this, (Item)item, _itemList);
             }
             protected String getEmptyMessage () {
                 return CInventory.msgs.panelNoItems(CInventory.dmsgs.getString("itemType" + _type));
@@ -105,7 +105,7 @@ public class ItemPanel extends VerticalPanel
     }
 
     /**
-     * Called by the {@link ItemContainer} to request that we do the browser history jockeying to
+     * Called by the {@link ItemEntry} to request that we do the browser history jockeying to
      * cause the specified item's detail to be shown.
      */
     public void requestShowDetail (ItemIdent ident)
@@ -263,7 +263,7 @@ public class ItemPanel extends VerticalPanel
      * refetched from the server. */
     protected boolean _contentsModelDirty = false;
 
-    /** Only get the furni list for the current room once, and feed it to each ItemContainer */
+    /** Only get the furni list for the current room once, and feed it to each ItemEntry */
     protected List _itemList;
 
     protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ + 10 /* gap */;

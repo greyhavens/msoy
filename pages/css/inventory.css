@@ -15,12 +15,12 @@
   margin-bottom: 10px;
 }
 
-.itemContainer {
+.itemEntry {
   padding-right: 15px;
   padding-bottom: 10px;
 }
 
-.itemContainer .Preview {
+.itemEntry .Preview {
   padding-right: 5px;
   width: 80px;
   height: 60px;
@@ -28,36 +28,36 @@
   vertical-align: middle;
 }
 
-.itemContainer .ThumbText {
+.itemEntry .ThumbText {
   vertical-align: top;
   font-size: 14px;
 }
 
-.itemContainer .Tip {
+.itemEntry .Tip {
   font-size: 10px;
   color: #AABDC8;
   padding-left: 5px;
 }
 
-.itemContainer .AvatarActive, .itemContainer .AvatarInactive {
+.itemEntry .AvatarActive, .itemEntry .AvatarInactive {
   background-image: url(/images/ui/checkbox_avatar_active.png);
   margin-top: 4px;
   width: 18px;
   height: 18px;
 }
 
-.itemContainer .AvatarInactive {
+.itemEntry .AvatarInactive {
   background-image: url(/images/ui/checkbox_avatar_inactive.png);
 }
 
-.itemContainer .RoomActive, .itemContainer .RoomInactive {
+.itemEntry .RoomActive, .itemEntry .RoomInactive {
   background-image: url(/images/ui/checkbox_room_active.png);
   margin-top: 4px;
   width: 18px;
   height: 18px;
 }
 
-.itemContainer .RoomInactive {
+.itemEntry .RoomInactive {
   background-image: url(/images/ui/checkbox_room_inactive.png);
 }
 

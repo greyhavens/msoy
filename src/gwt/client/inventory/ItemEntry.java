@@ -35,15 +35,15 @@ import client.util.MsoyUI;
 /**
  * Displays a thumbnail version of an item.
  */
-public class ItemContainer extends FlexTable
+public class ItemEntry extends FlexTable
 {
-    public ItemContainer (ItemPanel panel, Item item, List itemList)
+    public ItemEntry (ItemPanel panel, Item item, List itemList)
     {
         setCellPadding(0);
         setCellSpacing(0);
         _panel = panel;
         _itemList = itemList;
-        setStyleName("itemContainer");
+        setStyleName("itemEntry");
         setItem(item);
     }
 
