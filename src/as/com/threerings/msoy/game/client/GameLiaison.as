@@ -135,8 +135,8 @@ public class GameLiaison
     public function messageReceived (event :MessageEvent) :void
     {
         if (event.getName() == MsoyGameCodes.TROPHY_AWARDED) {
-            var trophy :Trophy = (event.getArgs[0] as Trophy);
-            _ctx.displayFeedback(
+            var trophy :Trophy = (event.getArgs()[0] as Trophy);
+            _gctx.getChatDirector().displayFeedback(
                 MsoyCodes.GAME_MSGS, MessageBundle.tcompose("m.trophy_earned", trophy.name));
             // TODO: the fancy UI
         }
