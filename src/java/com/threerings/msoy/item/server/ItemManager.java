@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.item.server;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -23,7 +26,13 @@ import com.samskivert.util.Predicate;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
+import com.samskivert.jdbc.DatabaseLiaison;
+import com.samskivert.jdbc.JDBCUtil;
+import com.samskivert.jdbc.PostgreSQLLiaison;
 import com.samskivert.jdbc.RepositoryListenerUnit;
+import com.samskivert.jdbc.TransitionRepository;
+import com.samskivert.jdbc.TransitionRepository.Transition;
+import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.threerings.presents.client.InvocationService;
@@ -49,6 +58,7 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.server.RoomManager;
 
+import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemListInfo;
@@ -63,6 +73,8 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
+import com.threerings.msoy.item.server.persist.GameDetailRecord;
+import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemListInfoRecord;
 import com.threerings.msoy.item.server.persist.ItemListRepository;
@@ -109,10 +121,11 @@ public class ItemManager
      * Initializes the item manager, which will establish database connections for all of its item
      * repositories.
      */
-    public void init (PersistenceContext ctx, MsoyEventLogger eventLog) throws PersistenceException
+    public void init (PersistenceContext ctx, MsoyEventLogger eventLog, TransitionRepository trans)
+        throws PersistenceException
     {
         _eventLog = eventLog;
-        
+
         // create our various repositories
         registerRepository(Item.AUDIO, new AudioRepository(ctx));
         registerRepository(Item.AVATAR, _avatarRepo = new AvatarRepository(ctx));
@@ -131,6 +144,41 @@ public class ItemManager
 
         // register our invocation service
         MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), MsoyCodes.WORLD_GROUP);
+
+        // BEGIN TEMP
+        final PersistenceContext fCtx = ctx;
+
+        final Modifier gameIdModifier = new Modifier(null) {
+            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                String gameId = liaison.columnSQL("gameId");
+                String set = " set " + gameId + " = " + gameId + " + 100*sign(" + gameId + ")";
+                Statement stmt = conn.createStatement();
+                try {
+                    stmt.executeUpdate("update " + liaison.tableSQL("GameRecord") + set);
+                    stmt.executeUpdate("update " + liaison.tableSQL("GameDetailRecord") + set);
+                    stmt.executeUpdate("update " + liaison.tableSQL("TrophyRecord") + set);
+                    if (liaison instanceof PostgreSQLLiaison) {
+                        // bump the sequence 100 times - my god this is cheesy, i love it
+                        for (int i = 0; i < 100; i ++) {
+                            stmt.executeQuery("select nextval('\"GameDetailRecord_gameId_seq\"')");
+                        }
+                    } // else it's MySQL, which has AUTO_INCREMENT magic
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+                return 0;
+            }
+        };
+
+        trans.transition(GameRepository.class, "gameId-to-100", new Transition() {
+            public void run () throws PersistenceException {
+                fCtx.getMarshaller(TrophyRecord.class);
+                fCtx.getMarshaller(GameDetailRecord.class);
+                fCtx.getMarshaller(GameRecord.class);
+                fCtx.invoke(gameIdModifier);
+            }
+        });
+        // END TEMP
     }
 
     /**
