@@ -6,6 +6,8 @@ package com.threerings.msoy.game.client {
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
 
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.PlaceController;
@@ -17,6 +19,7 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
 /**
@@ -24,7 +27,7 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
  * game.
  */
 public class GameLiaison
-    implements MsoyGameService_LocationListener, ClientObserver
+    implements MsoyGameService_LocationListener, ClientObserver, MessageListener
 {
     public static const log :Log = Log.getLog(GameLiaison);
 
@@ -80,7 +83,8 @@ public class GameLiaison
     // from interface ClientObserver
     public function clientDidLogon (event :ClientEvent) :void
     {
-        // nada
+        // listen for message events on our player object
+        _gctx.getPlayerObject().addListener(this);
     }
 
     // from interface ClientObserver
@@ -100,26 +104,37 @@ public class GameLiaison
     // from interface ClientObserver
     public function clientConnectionFailed (event :ClientEvent) :void
     {
-        // TODO
+        log.info("Lost connection to game server [cause=" + event.getCause() + "].");
+        shutdown();
+        // TODO: report an error message to the user
     }
 
     // from interface ClientObserver
     public function clientWillLogoff (event :ClientEvent) :void
     {
-        // TODO
+        // nada
     }
 
     // from interface ClientObserver
     public function clientDidLogoff (event :ClientEvent) :void
     {
         log.info("Logged off of game server [id=" + _gameId + "].");
-        // TODO: anything?
+        _gctx.getPlayerObject().removeListener(this);
     }
 
     // from interface ClientObserver
     public function clientDidClear (event :ClientEvent) :void
     {
         _ctx.getGameDirector().liaisonCleared(this);
+    }
+
+    // from interface MessageListener
+    public function messageReceived (event :MessageEvent) :void
+    {
+        if (event.getName() == MsoyGameCodes.TROPHY_AWARDED) {
+            // TODO: the fancy UI
+            // TODO: _ctx.displayFeedback();
+        }
     }
 
     /** Provides access to main client services. */

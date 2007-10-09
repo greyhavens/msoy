@@ -27,7 +27,6 @@ import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.parlor.game.data.GameCodes;
 import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.rating.server.RatingManagerDelegate;
@@ -57,6 +56,7 @@ import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.data.GameContentOwnership;
+import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.MsoyGameServer;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
@@ -134,7 +134,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         if (source == null) {
             log.info("Game requested to award unknown trophy [game=" + where() +
                      ", who=" + plobj.who() + ", ident=" + ident + "].");
-            throw new InvocationException(GameCodes.E_INTERNAL_ERROR);
+            throw new InvocationException(MsoyGameCodes.E_INTERNAL_ERROR);
         }
 
         // if the player already has this trophy, ignore the request
@@ -145,20 +145,12 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             return;
         }
 
-        // if this is an in-development game, we do not award trophies persistently; but we will
-        // stick it into the player's runtime record so that the game developer can see that the
-        // trophy was awarded; note also that we do load the trophies earned from the catalog
-        // version, so a developer will not constantly re-receive trophies once they have released
-        // them and earned them permanently from the catalog version of their game
-        if (_content.game.isDeveloperVersion()) {
-            log.info("Awarding transient trophy to developer [game=" + where() +
-                     ", who=" + plobj.who() + ", ident=" + ident + "].");
-            plobj.addToGameContent(
-                new GameContentOwnership(gameId, GameData.TROPHY_DATA, source.ident));
-            return;
-        }
+        // add the trophy to their runtime set now to avoid repeat-call freakoutery; if we fail to
+        // store the trophy to the database, we won't tell them that they earned it and they'll be
+        // able to earn it again next time
+        plobj.addToGameContent(
+            new GameContentOwnership(gameId, GameData.TROPHY_DATA, source.ident));
 
-        // otherwise, award them the trophy and add it to their runtime collection
         final TrophyRecord trophy = new TrophyRecord();
         trophy.gameId = gameId;
         trophy.memberId = plobj.getMemberId();
@@ -167,19 +159,29 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         trophy.trophyMediaHash = source.getThumbnailMedia().hash;
         trophy.trophyMimeType = source.getThumbnailMedia().mimeType;
 
+        // if this is an in-development game, we do not award trophies persistently; but we will
+        // stick it into the player's runtime record so that the game developer can see that the
+        // trophy was awarded; note also that we do load the trophies earned from the catalog
+        // version, so a developer will not constantly re-receive trophies once they have released
+        // them and earned them permanently from the catalog version of their game
+        if (_content.game.isDeveloperVersion()) {
+            log.info("Awarding transient trophy to developer [game=" + where() +
+                     ", who=" + plobj.who() + ", ident=" + ident + "].");
+            plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());
+            return;
+        }
+
+        // otherwise, award them the trophy, then add it to their runtime collection
         MsoyGameServer.invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
             public void invokePersistent () throws PersistenceException {
                 MsoyGameServer.gameReg.getTrophyRepository().storeTrophy(trophy);
-                // now that this has succeeded, we can create our ownership record
-                _trophy = new GameContentOwnership(gameId, GameData.TROPHY_DATA, trophy.ident);
             }
             public void handleSuccess () {
-                plobj.addToGameContent(_trophy);
+                plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());
             }
             protected String getFailureMessage () {
                 return "Failed to store trophy " + trophy + ".";
             }
-            protected GameContentOwnership _trophy;
         });
     }
 
@@ -717,7 +719,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         PlayerObject user = (PlayerObject)caller;
         if (_gobj.players.length > 0) {
             if (_gobj.getPlayerIndex(user.getMemberName()) == -1) {
-                throw new InvocationException(GameCodes.E_ACCESS_DENIED);
+                throw new InvocationException(MsoyGameCodes.E_ACCESS_DENIED);
             }
         }
         return user;

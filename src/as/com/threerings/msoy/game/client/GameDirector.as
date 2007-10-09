@@ -24,8 +24,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.AVRGameObject;
-import com.threerings.msoy.game.data.GameCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
+import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyGameMarshaller;
@@ -236,7 +236,7 @@ public class GameDirector extends BasicDirector
      */
     protected function displayFeedback (msg :String) :void
     {
-        _mctx.displayFeedback(GameCodes.GAME_BUNDLE, msg);
+        _mctx.displayFeedback(MsoyGameCodes.GAME_BUNDLE, msg);
     }
 
     // from BasicDirector
