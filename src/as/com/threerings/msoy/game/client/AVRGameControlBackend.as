@@ -136,9 +136,10 @@ public class AVRGameControlBackend extends ControlBackend
         return true;
     }
 
-    protected function offerQuest_v1 (questId :String, initialStatus :String) :Boolean
+    protected function offerQuest_v1 (questId :String, questIntro :String, initialStatus :String)
+        :Boolean
     {
-        // TODO: Popup UI and whatnot
+        // TODO: Popup UI and whatnot, using questIntro
         if (isOnQuest(questId)) {
             return false;
         }
