@@ -5,7 +5,6 @@ package client.inventory;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -43,7 +42,6 @@ public class SubItemEntry extends ItemEntry
         });
         button.setStyleName("tinyButton");
         setWidget(2, 0, button);
-//         getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_RIGHT);
     }
 
     protected SubItemPanel _spanel;
