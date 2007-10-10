@@ -152,13 +152,13 @@ public abstract class BaseItemDetailPanel extends FlexTable
         }
     }
 
-    protected void addTabBelow (String title, Widget content)
+    protected void addTabBelow (String title, Widget content, boolean select)
     {
         if (_belowTabs == null) {
             addBelow(_belowTabs = new StyledTabPanel());
         }
         _belowTabs.add(content, title);
-        if (_belowTabs.getWidgetCount() == 1) {
+        if (select) {
             _belowTabs.selectTab(0);
         }
     }

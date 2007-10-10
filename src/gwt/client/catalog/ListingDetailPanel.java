@@ -78,7 +78,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
 
         // display a comment interface below the listing details
-        addTabBelow("Comments", new CommentsPanel(detail.item.getType(), listing.catalogId));
+        addTabBelow("Comments", new CommentsPanel(detail.item.getType(), listing.catalogId), true);
 
 //         // if this item supports sub-items, add a tab for those item types
 //         byte[] types = detail.item.getSalableSubTypes();

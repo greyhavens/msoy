@@ -91,6 +91,12 @@ public class ItemPanel extends VerticalPanel
      */
     public void showDetail (ItemIdent ident)
     {
+        // if we're already showing this detail, then we're good to go
+        Widget top = (getWidgetCount() > 0) ? getWidget(0) : null;
+        if (top instanceof ItemDetailPanel && ((ItemDetailPanel)top).isShowing(ident)) {
+            return;
+        }
+
         // load up the item details
         CInventory.itemsvc.loadItemDetail(CInventory.ident, ident, new AsyncCallback() {
             public void onSuccess (Object result) {

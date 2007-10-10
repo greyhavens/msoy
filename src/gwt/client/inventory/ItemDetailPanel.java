@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
@@ -43,9 +44,17 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (types.length > 0) {
             for (int ii = 0; ii < types.length; ii++) {
                 addTabBelow(CInventory.dmsgs.getString("pItemType" + types[ii]),
-                            new SubItemPanel(types[ii], _item, panel));
+                            new SubItemPanel(types[ii], _item, panel), false);
             }
         }
+    }
+
+    /**
+     * Returns true if we're displaying the specified item.
+     */
+    public boolean isShowing (ItemIdent ident)
+    {
+        return (_item != null) && _item.getIdent().equals(ident);
     }
 
     // @Override // BaseItemDetailPanel
