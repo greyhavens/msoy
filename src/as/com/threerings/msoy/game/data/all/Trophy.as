@@ -14,6 +14,9 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 public class Trophy extends SimpleStreamableObject
 {
+    /** The game for which this trophy was awarded. */
+    public var gameId :int;
+
     /** The name of the trophy. */
     public var name :String;
 
@@ -29,6 +32,7 @@ public class Trophy extends SimpleStreamableObject
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
+        gameId = ins.readInt();
         name = (ins.readField(String) as String);
         trophyMedia = (ins.readObject() as MediaDesc);
     }
@@ -37,6 +41,7 @@ public class Trophy extends SimpleStreamableObject
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
+        out.writeInt(gameId);
         out.writeField(name);
         out.writeObject(trophyMedia);
     }
