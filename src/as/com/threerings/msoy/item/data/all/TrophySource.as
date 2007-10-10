@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.item.data.all {
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+
 /**
  * Contains the runtime data for a TrophySource item.
  */
