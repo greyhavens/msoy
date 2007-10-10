@@ -345,7 +345,9 @@ public class MemberServlet extends MsoyServiceServlet
         myWhirled.places = getRoomSceneCards(places, pps);
         myWhirled.games = getGameSceneCards(games, pps);
         myWhirled.people = new ArrayList<MemberCard>(onlineFriends.values());
-        myWhirled.photo = profile.photoHash == null ? null : profile.getPhoto();
+        if (profile != null) {
+            myWhirled.photo = (profile.photoHash == null) ? null : profile.getPhoto();
+        }
         myWhirled.ownedRooms = ownedRooms;
         myWhirled.chats = chats;
         myWhirled.whirledPopulation = pps.getPopulationCount();
