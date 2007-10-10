@@ -151,18 +151,38 @@ public class ItemManager
         final Modifier gameIdModifier = new Modifier(null) {
             public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
                 String gameId = liaison.columnSQL("gameId");
-                String set = " set " + gameId + " = " + gameId + " + 100*sign(" + gameId + ")";
+                String setUp =
+                    " set " + gameId + " = " + gameId + " + 100100*sign(" + gameId + ")";
+                String setDown =
+                    " set " + gameId + " = " + gameId + " - 100000*sign(" + gameId + ")";
+
                 String uGameId = liaison.columnSQL("GAME_ID");
-                String uSet = " set " + uGameId + " = " + uGameId + " + 100*sign(" + uGameId + ")";
+                String uSetUp =
+                    " set " + uGameId + " = " + uGameId + " + 100100*sign(" + uGameId + ")";
+                String uSetDown =
+                    " set " + uGameId + " = " + uGameId + " - 100000*sign(" + uGameId + ")";
                 Statement stmt = conn.createStatement();
                 try {
-                    stmt.executeUpdate("update " + liaison.tableSQL("GameRecord") + set);
-                    stmt.executeUpdate("update " + liaison.tableSQL("GameDetailRecord") + set);
-                    stmt.executeUpdate("update " + liaison.tableSQL("TrophyRecord") + set);
-                    stmt.executeUpdate("update " + liaison.tableSQL("RatingRecord") + set);
+                    stmt.executeUpdate("update " + liaison.tableSQL("GameDetailRecord") + setUp);
+                    stmt.executeUpdate("update " + liaison.tableSQL("GameDetailRecord") + setDown);
+
+                    stmt.executeUpdate("update " + liaison.tableSQL("GameRecord") + setUp);
+                    stmt.executeUpdate("update " + liaison.tableSQL("GameRecord") + setDown);
+
+                    stmt.executeUpdate("update " + liaison.tableSQL("TrophyRecord") + setUp);
+                    stmt.executeUpdate("update " + liaison.tableSQL("TrophyRecord") + setDown);
+
+                    stmt.executeUpdate("update " + liaison.tableSQL("RatingRecord") + setUp);
+                    stmt.executeUpdate("update " + liaison.tableSQL("RatingRecord") + setDown);
+
                     stmt.executeUpdate(
-                        "update " + liaison.tableSQL("GameFlowGrantLogRecord") + set);
-                    stmt.executeUpdate("update " + liaison.tableSQL("GAME_COOKIES") + uSet);
+                        "update " + liaison.tableSQL("GameFlowGrantLogRecord") + setUp);
+                    stmt.executeUpdate(
+                        "update " + liaison.tableSQL("GameFlowGrantLogRecord") + setDown);
+
+                    stmt.executeUpdate("update " + liaison.tableSQL("GAME_COOKIES") + uSetUp);
+                    stmt.executeUpdate("update " + liaison.tableSQL("GAME_COOKIES") + uSetDown);
+
                     if (liaison instanceof PostgreSQLLiaison) {
                         // bump the sequence 100 times - my god this is cheesy, i love it
                         for (int i = 0; i < 100; i ++) {
