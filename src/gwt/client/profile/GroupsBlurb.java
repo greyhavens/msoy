@@ -25,6 +25,12 @@ import client.util.MsoyUI;
 public class GroupsBlurb extends Blurb
 {
     // @Override // from Blurb
+    public boolean shouldDisplay (ProfileService.ProfileResult pdata)
+    {
+        return (pdata.groups != null);
+    }
+
+    // @Override // from Blurb
     protected Panel createContent ()
     {
         return (_content = new FlexTable());
@@ -33,17 +39,12 @@ public class GroupsBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (ProfileService.ProfileResult pdata)
     {
-        if (pdata.groups == null) {
-            setHeader(CProfile.msgs.errorTitle());
-            setStatus(CProfile.msgs.groupsLoadFailed());
-            return;
-        }
-
         setHeader(CProfile.msgs.groupsTitle());
 
         if (pdata.groups.size() == 0) {
             setStatus(CProfile.getMemberId() == _name.getMemberId() ?
                       CProfile.msgs.notInGroupsSelf() : CProfile.msgs.notInGroupsOther());
+
         } else {
             for (int ii = 0, ll = pdata.groups.size(); ii < ll; ii++) {
                 GroupMembership group = (GroupMembership)pdata.groups.get(ii);

@@ -11,9 +11,9 @@ import com.google.gwt.user.client.ui.Panel;
 import client.util.MediaUtil;
 import client.util.Stars;
 
-import com.threerings.msoy.data.all.GameRating;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.client.ProfileService;
+import com.threerings.msoy.web.data.GameRating;
 
 /**
  * Displays a person's game ratings.
@@ -27,6 +27,12 @@ public class RatingsBlurb extends Blurb
         _content.setWidth("100%");
         _content.addStyleName("ratingsBlurb");
         return _content;
+    }
+
+    // @Override // from Blurb
+    public boolean shouldDisplay (ProfileService.ProfileResult pdata)
+    {
+        return (pdata.ratings != null && pdata.ratings.size() > 0);
     }
 
     // @Override // from Blurb

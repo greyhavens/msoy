@@ -34,6 +34,8 @@ public abstract class Blurb extends Grid
             return new HoodBlurb();
         case BlurbData.RATINGS:
             return new RatingsBlurb();
+        case BlurbData.TROPHIES:
+            return new TrophiesBlurb();
         default:
             return null;
         }
@@ -47,6 +49,14 @@ public abstract class Blurb extends Grid
         _blurbId = blurbId;
         _name = pdata.name;
         didInit(pdata);
+    }
+
+    /**
+     * Returns true if we should display this blurb, false if we should skip it.
+     */
+    public boolean shouldDisplay (ProfileService.ProfileResult pdata)
+    {
+        return true;
     }
 
     protected Blurb ()

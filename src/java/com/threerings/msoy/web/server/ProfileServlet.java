@@ -22,18 +22,20 @@ import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.BlurbData;
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.GameRating;
-import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.web.data.GameRating;
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.ProfileLayout;
 import com.threerings.msoy.web.data.ServiceException;
@@ -136,6 +138,10 @@ public class ProfileServlet extends MsoyServiceServlet
                     result.ratings = resolveRatingsData(memrec, tgtrec);
                     break;
 
+                case BlurbData.TROPHIES:
+                    result.trophies = resolveTrophyData(memrec, tgtrec);
+                    break;
+
                 default:
                     log.log(Level.WARNING, "Requested to resolve unknown blurb " + bdata + ".");
                     break;
@@ -224,6 +230,11 @@ public class ProfileServlet extends MsoyServiceServlet
         blurb = new BlurbData();
         blurb.type = BlurbData.RATINGS;
         blurb.blurbId = 4;
+        blurbs.add(blurb);
+
+        blurb = new BlurbData();
+        blurb.type = BlurbData.TROPHIES;
+        blurb.blurbId = 5;
         blurbs.add(blurb);
 
         layout.blurbs = blurbs;
@@ -349,6 +360,17 @@ public class ProfileServlet extends MsoyServiceServlet
         return result;
     }
 
+    protected List<Trophy> resolveTrophyData (MemberRecord reqrec, MemberRecord tgtrec)
+        throws PersistenceException
+    {
+        ArrayList<Trophy> list = new ArrayList<Trophy>();
+        for (TrophyRecord record :
+                 MsoyServer.trophyRepo.loadRecentTrophies(tgtrec.memberId, MAX_PROFILE_TROPHIES)) {
+            list.add(record.toTrophy());
+        }
+        return list;
+    }
+
     protected void resolveCardData (HashIntMap<MemberCard> cards)
         throws PersistenceException
     {
@@ -362,4 +384,5 @@ public class ProfileServlet extends MsoyServiceServlet
 
     protected static final int MAX_PROFILE_MATCHES = 100;
     protected static final int MAX_PROFILE_GAMES = 10;
+    protected static final int MAX_PROFILE_TROPHIES = 6;
 }

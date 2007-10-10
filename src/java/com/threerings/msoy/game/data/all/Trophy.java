@@ -15,6 +15,9 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class Trophy extends SimpleStreamableObject
     implements Comparable, IsSerializable
 {
+    /** The game for which this trophy was awarded. */
+    public int gameId;
+
     /** The name of the trophy. */
     public String name;
 

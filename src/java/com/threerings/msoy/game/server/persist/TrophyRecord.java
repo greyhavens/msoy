@@ -107,6 +107,7 @@ public class TrophyRecord extends PersistentRecord
     public Trophy toTrophy ()
     {
         Trophy trophy = new Trophy();
+        trophy.gameId = gameId;
         trophy.name = name;
         trophy.trophyMedia = new MediaDesc(
             trophyMediaHash, trophyMimeType, MediaDesc.NOT_CONSTRAINED);

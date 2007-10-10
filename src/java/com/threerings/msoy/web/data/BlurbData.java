@@ -17,7 +17,7 @@ public class BlurbData implements IsSerializable
 
         public ResolutionFailure () {
         }
-        
+
         public ResolutionFailure (String cause) {
             this.cause = cause;
         }
@@ -34,9 +34,12 @@ public class BlurbData implements IsSerializable
 
     /** The type code for a neighborhood blurb. */
     public static final int HOOD = 3;
-    
-    /** The type code for a rating blurb. */
+
+    /** The type code for the ratings blurb. */
     public static final int RATINGS = 4;
+
+    /** The type code for the trophies blurb. */
+    public static final int TROPHIES = 5;
 
     /** Indicates which kind of blurb this is. */
     public int type;

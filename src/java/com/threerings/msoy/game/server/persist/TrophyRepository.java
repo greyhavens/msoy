@@ -14,6 +14,8 @@ import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.clause.Limit;
+import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 
 /**
@@ -33,6 +35,17 @@ public class TrophyRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID_C, memberId));
+    }
+
+    /**
+     * Loads the specified number of recently earned trophies for the specified member.
+     */
+    public List<TrophyRecord> loadRecentTrophies (int memberId, int count)
+        throws PersistenceException
+    {
+        return findAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID_C, memberId),
+                       OrderBy.descending(TrophyRecord.WHEN_EARNED_C),
+                       new Limit(0, count));
     }
 
     /**

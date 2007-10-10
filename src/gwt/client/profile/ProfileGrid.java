@@ -66,6 +66,7 @@ public class ProfileGrid extends PagedGrid
             Widget photo = MediaUtil.createMediaView(card.photo, MediaDesc.HALF_THUMBNAIL_SIZE);
             if (photo instanceof Image) {
                 ((Image) photo).addClickListener(profileClick);
+                photo.setStyleName("actionLabel");
             }
             // we do this crazy double wrapping to avoid forcing this table column to 80 pixels
             // which booches vertical layout mode

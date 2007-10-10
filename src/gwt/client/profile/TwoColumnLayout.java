@@ -17,12 +17,16 @@ public class TwoColumnLayout extends FlexTable
     public TwoColumnLayout (ProfileService.ProfileResult pdata)
     {
         setCellPadding(5);
+        int pos = 0;
         for (int ii = 0; ii < pdata.layout.blurbs.size(); ii++) {
             BlurbData bdata = (BlurbData)pdata.layout.blurbs.get(ii);
             Blurb blurb = Blurb.createBlurb(bdata.type);
-            blurb.init(bdata.blurbId, pdata);
-            setWidget(ii/2, ii%2, blurb);
-            getFlexCellFormatter().setVerticalAlignment(ii/2, ii%2, HasAlignment.ALIGN_TOP);
+            if (blurb.shouldDisplay(pdata)) {
+                blurb.init(bdata.blurbId, pdata);
+                setWidget(pos/2, pos%2, blurb);
+                getFlexCellFormatter().setVerticalAlignment(pos/2, pos%2, HasAlignment.ALIGN_TOP);
+                pos++;
+            }
         }
     }
 }

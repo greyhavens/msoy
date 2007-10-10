@@ -16,6 +16,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String searchRadioDisplayName();
 
   /**
+   * Translated "Trophies".
+   * 
+   * @return translated "Trophies"
+   * @gwt.key trophiesTitle
+   */
+  String trophiesTitle();
+
+  /**
    * Translated "Missing profile details.".
    * 
    * @return translated "Missing profile details."
@@ -144,14 +152,6 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String profileSearchTitle();
 
   /**
-   * Translated "Missing friends list.".
-   * 
-   * @return translated "Missing friends list."
-   * @gwt.key friendsLoadFailed
-   */
-  String friendsLoadFailed();
-
-  /**
    * Translated "Profile".
    * 
    * @return translated "Profile"
@@ -270,14 +270,6 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key ratingsSingle
    */
   String ratingsSingle();
-
-  /**
-   * Translated "Missing group list.".
-   * 
-   * @return translated "Missing group list."
-   * @gwt.key groupsLoadFailed
-   */
-  String groupsLoadFailed();
 
   /**
    * Translated "Display Name".

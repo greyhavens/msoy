@@ -25,6 +25,12 @@ import client.msgs.MailComposition;
 public class FriendsBlurb extends Blurb
 {
     // @Override // from Blurb
+    public boolean shouldDisplay (ProfileService.ProfileResult pdata)
+    {
+        return (pdata.friends != null);
+    }
+
+    // @Override // from Blurb
     protected Panel createContent ()
     {
         _content = new VerticalPanel();
@@ -36,12 +42,6 @@ public class FriendsBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (ProfileService.ProfileResult pdata)
     {
-        if (pdata.friends == null) {
-            setHeader(CProfile.msgs.errorTitle());
-            _content.add(new Label(CProfile.msgs.friendsLoadFailed()));
-            return;
-        }
-
         setHeader(CProfile.msgs.friendsTitle());
 
         ProfileGrid grid = new ProfileGrid(

@@ -49,9 +49,16 @@ public interface ProfileService extends RemoteService
         /**
          * This user's game ratings.
          * 
-         * @gwt.typeArgs <com.threerings.msoy.data.all.GameRating>
+         * @gwt.typeArgs <com.threerings.msoy.web.data.GameRating>
          */
         public List ratings;
+
+        /**
+         * This user's recently earned trophies.
+         * 
+         * @gwt.typeArgs <com.threerings.msoy.game.data.all.Trophy>
+         */
+        public List trophies;
     }
 
     /**
