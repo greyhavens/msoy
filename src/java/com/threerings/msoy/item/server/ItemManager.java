@@ -160,7 +160,6 @@ public class ItemManager
                     stmt.executeUpdate("update " + liaison.tableSQL("GameDetailRecord") + set);
                     stmt.executeUpdate("update " + liaison.tableSQL("TrophyRecord") + set);
                     stmt.executeUpdate("update " + liaison.tableSQL("RatingRecord") + set);
-                    stmt.executeUpdate("update " + liaison.tableSQL("GameAbuseRecord") + set);
                     stmt.executeUpdate(
                         "update " + liaison.tableSQL("GameFlowGrantLogRecord") + set);
                     stmt.executeUpdate("update " + liaison.tableSQL("GAME_COOKIES") + uSet);
