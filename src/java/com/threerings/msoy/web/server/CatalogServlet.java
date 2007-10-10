@@ -245,7 +245,7 @@ public class CatalogServlet extends MsoyServiceServlet
             listItem.description = descrip;
 
             // create our new immutable catalog prototype item
-            repo.insertOriginalItem(listItem);
+            repo.insertOriginalItem(listItem, true);
 
             // copy tags from the original item to the new listing item
             long now = System.currentTimeMillis();
