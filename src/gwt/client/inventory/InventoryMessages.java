@@ -8,9 +8,9 @@ package client.inventory;
 public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "You can update your item''s catalog description with information on any changes you''ve made for this update. Remember that some people will be seeing your item for the first time so be sure to first describe it and then explain your recent updates.".
+   * Translated "You can update your item''s catalog description with information on any changes you''ve made for this update.".
    * 
-   * @return translated "You can update your item''s catalog description with information on any changes you''ve made for this update. Remember that some people will be seeing your item for the first time so be sure to first describe it and then explain your recent updates."
+   * @return translated "You can update your item''s catalog description with information on any changes you''ve made for this update."
    * @gwt.key doUpdateNeedsDescrip
    */
   String doUpdateNeedsDescrip();
@@ -160,9 +160,11 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doListBlurb();
 
   /**
-   * Translated "Updating your catalog listing will replace the current listing with a new snapshot of the item as it is right now. People who have already purchased your item will not receive an updated copy.".
+   * Translated "Updating your catalog listing will replace the current listing with a new snapshot of the item as it is right now.
+   * <p><b>Note</b>: people who have already purchased your item <b>will automatically switch to this version</b>. If you don't want to change the item everyone is using, you should create and list a new item and delist this item (which can be done from this item's Catalog page).".
    * 
-   * @return translated "Updating your catalog listing will replace the current listing with a new snapshot of the item as it is right now. People who have already purchased your item will not receive an updated copy."
+   * @return translated "Updating your catalog listing will replace the current listing with a new snapshot of the item as it is right now.
+   * <p><b>Note</b>: people who have already purchased your item <b>will automatically switch to this version</b>. If you don't want to change the item everyone is using, you should create and list a new item and delist this item (which can be done from this item's Catalog page)."
    * @gwt.key doUpdateBlurb
    */
   String doUpdateBlurb();

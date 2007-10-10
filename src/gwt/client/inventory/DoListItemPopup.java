@@ -6,6 +6,7 @@ package client.inventory;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -45,7 +46,9 @@ public class DoListItemPopup extends BorderedDialog
         } else if (repricing) {
             _content.add(MsoyUI.createLabel(CInventory.msgs.doUppriceBlurb(), "Blurb"));
         } else {
-            _content.add(MsoyUI.createLabel(CInventory.msgs.doUpdateBlurb(), "Blurb"));
+            HTML update = new HTML(CInventory.msgs.doUpdateBlurb());
+            update.setStyleName("Blurb");
+            _content.add(update);
         }
 
         // determine whether or not this item is salable
