@@ -23,6 +23,11 @@ public interface GameServiceAsync
     public void loadGameDetail (WebIdent ident, int gameId, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link GameService#loadGameTrophies}.
+     */
+    public void loadGameTrophies (WebIdent ident, int gameId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link GameService#loadTrophyCase}.
      */
     public void loadTrophyCase (WebIdent ident, int memberId, AsyncCallback callback);

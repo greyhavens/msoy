@@ -139,7 +139,7 @@ public class ItemManager
         registerRepository(Item.VIDEO, new VideoRepository(ctx));
         registerRepository(Item.LEVEL_PACK, new LevelPackRepository(ctx));
         registerRepository(Item.ITEM_PACK, new ItemPackRepository(ctx));
-        registerRepository(Item.TROPHY_SOURCE, new TrophySourceRepository(ctx));
+        registerRepository(Item.TROPHY_SOURCE, _tsourceRepo = new TrophySourceRepository(ctx));
         _listRepo = new ItemListRepository(ctx);
 
         // register our invocation service
@@ -238,6 +238,14 @@ public class ItemManager
     public DecorRepository getDecorRepository ()
     {
         return _decorRepo;
+    }
+
+    /**
+     * Provides a reference to the {@link TrophySourceRepository}.
+     */
+    public TrophySourceRepository getTrophySourceRepository ()
+    {
+        return _tsourceRepo;
     }
 
     /**
@@ -1427,6 +1435,10 @@ public class ItemManager
 
     /** Contains a reference to our decor repository. See {@link #_gameRepository} for complaint. */
     protected DecorRepository _decorRepo;
+
+    /** Contains a reference to our game repository. We'd just look this up from the table but we
+     * can't downcast an ItemRepository to a TrophySourceRepository, annoyingly. */
+    protected TrophySourceRepository _tsourceRepo;
 
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos =

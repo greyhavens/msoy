@@ -111,17 +111,17 @@ public class GameDetailPanel extends FlexTable
             info.setText(row++, 1, Integer.toString(detail.lastAbuseRecalc));
         }
 
+        // TODO: add screen shots
+
+        StyledTabPanel tabs = new StyledTabPanel();
+        setWidget(2, 0, tabs);
+        getFlexCellFormatter().setColSpan(2, 0, 2);
         if (detail.listedItem != null) {
-            StyledTabPanel tabs = new StyledTabPanel();
-            setWidget(2, 0, tabs);
             tabs.add(new CommentsPanel(detail.listedItem.getType(),
                                        detail.listedItem.catalogId), "Comments");
             tabs.selectTab(0);
-            getFlexCellFormatter().setColSpan(2, 0, 2);
         }
-
-        // TODO: add screen shots
-        // TODO: add player's trophies
+        tabs.add(new GameTrophyPanel(detail.gameId), "Trophies");
     }
 
     protected Page _page;

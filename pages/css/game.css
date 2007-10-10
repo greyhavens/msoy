@@ -53,3 +53,21 @@
   text-align: center;
   font-size: 12px;
 }
+
+.trophyDetail {
+  font-size: 12px;
+  width: 300px;
+}
+
+.trophyDetail .Image {
+  text-align: left;
+  width: 65px;
+}
+
+.trophyDetail .Name {
+  font-weight: bold;
+}
+
+.trophyDetail .Earned {
+  font-style: italic;
+}
