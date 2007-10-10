@@ -424,7 +424,9 @@ public class MemberServlet extends MsoyServiceServlet
                 card.name = name.toMemberName();
                 ProfileRecord profile = 
                     MsoyServer.profileRepo.loadProfile(card.name.getMemberId());
-                if (profile.photoHash != null) {
+                if (profile == null) {
+                    log.warning("Missing profile for card [who=" + card.name + "].");
+                } else if (profile.photoHash != null) {
                     card.photo = new MediaDesc(profile.photoHash, profile.photoMimeType,
                                                profile.photoConstraint);
                 }
