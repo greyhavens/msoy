@@ -4,6 +4,8 @@
 package client.shell;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 
 import com.google.gwt.user.client.Command;
@@ -46,6 +48,11 @@ public class NaviPanel extends FlexTable
         FlashEvents.addListener(new FriendsListener() {
             public void friendAdded (FriendEvent event) {
                 _friends.add(event.getFriend());
+                Collections.sort(_friends, new Comparator() {
+                    public int compare (Object o1, Object o2) {
+                        return MemberName.compareNames((MemberName)o1, (MemberName)o2);
+                    }
+                });
             }
             public void friendRemoved (FriendEvent event) {
                 _friends.remove(event.getFriend());
