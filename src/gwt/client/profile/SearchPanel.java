@@ -119,6 +119,13 @@ public class SearchPanel extends VerticalPanel
             _searchString.equals(search);
     }
 
+    // @Override // from Widget
+    protected void onAttach ()
+    {
+        super.onAttach();
+        _search.setFocus(true);
+    }
+
     protected ProfileGrid _profiles;
     protected String _searchType, _searchString;
     protected RadioButton _radioName, _radioDisplayName, _radioEmail;

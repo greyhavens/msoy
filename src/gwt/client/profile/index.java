@@ -112,7 +112,7 @@ public class index extends MsgsEntryPoint
 
         final String type = args.get(1, "name");
         final int page = args.get(2, 0);
-        final String search = URL.decodeComponent(args.get(2, ""));
+        final String search = URL.decodeComponent(args.get(3, ""));
 
         if (search.length() == 0) {
             _search.clearResults();
