@@ -72,11 +72,13 @@ public class Application
      */
     public static Hyperlink createLink (String label, String page, String args)
     {
-        return new Hyperlink(label, createLinkToken(page, args)) {
+        Hyperlink link = new Hyperlink(label, createLinkToken(page, args)) {
             public void setText (String text) {
                 DOM.setInnerText(DOM.getChild(getElement(), 0), text);
             }
         };
+        link.addStyleName("inline");
+        return link;
     }
 
     /**

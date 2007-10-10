@@ -17,9 +17,10 @@ public class ItemRating extends SimplePanel
      * Construct a new display for the given item with member's previous rating of the item,
      * automatically figuring out read-only or read/write display mode.
      */
-    public ItemRating (Item item, byte memberRating)
+    public ItemRating (Item item, int memberId, byte memberRating)
     {
-        this(item, memberRating, item.isRatable() ? Stars.MODE_BOTH : Stars.MODE_READ, false);
+        this(item, memberRating, (item.isRatable() && (memberId != 0)) ?
+             Stars.MODE_BOTH : Stars.MODE_READ, false);
     }
 
     /**

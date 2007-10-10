@@ -138,7 +138,7 @@ public class BaseItemDetailPopup extends BorderedDialog
     {
         _creator.setMember(detail.creator);
         if (_item.isRatable()) {
-            _details.add(new ItemRating(detail.item, detail.memberRating));
+            _details.add(new ItemRating(detail.item, CItem.getMemberId(), detail.memberRating));
         }
     }
 

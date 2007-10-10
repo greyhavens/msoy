@@ -139,7 +139,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
     protected void createInterface (VerticalPanel details)
     {
         if (_item.isRatable()) {
-            details.add(new ItemRating(_detail.item, _detail.memberRating));
+            details.add(new ItemRating(_detail.item, CItem.getMemberId(), _detail.memberRating));
             details.add(WidgetUtil.makeShim(1, 5));
         }
         details.add(_creator = new CreatorLabel());

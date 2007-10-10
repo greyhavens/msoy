@@ -28,6 +28,7 @@ import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.RatingRecord;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -126,6 +127,7 @@ public class GameServlet extends MsoyServiceServlet
     public GameDetail loadGameDetail (WebIdent ident, int gameId)
         throws ServiceException
     {
+        MemberRecord mrec = getAuthedUser(ident);
         GameRepository repo = MsoyServer.itemMan.getGameRepository();
 
         try {
@@ -135,16 +137,33 @@ public class GameServlet extends MsoyServiceServlet
             }
 
             GameDetail detail = gdr.toGameDetail();
-            if (gdr.listedItemId != 0) {
-                ItemRecord item = repo.loadItem(gdr.listedItemId);
-                if (item != null) {
-                    detail.listedItem = (Game)item.toItem();
-                }
-            }
+            int creatorId = 0;
             if (gdr.sourceItemId != 0) {
                 ItemRecord item = repo.loadItem(gdr.sourceItemId);
                 if (item != null) {
                     detail.sourceItem = (Game)item.toItem();
+                    creatorId = item.creatorId;
+                }
+            }
+
+            if (gdr.listedItemId != 0) {
+                ItemRecord item = repo.loadItem(gdr.listedItemId);
+                if (item != null) {
+                    detail.listedItem = (Game)item.toItem();
+                    creatorId = item.creatorId;
+                }
+                if (mrec != null) {
+                    RatingRecord<GameRecord> rr = repo.getRating(item.itemId, mrec.memberId);
+                    detail.memberRating = (rr == null) ? 0 : rr.rating;
+                }
+            }
+
+            if (creatorId != 0) {
+                MemberRecord crrec = MsoyServer.memberRepo.loadMember(creatorId);
+                if (crrec == null) {
+                    log.warning("Game missing creator " + gdr + ".");
+                } else {
+                    detail.creator = crrec.getName();
                 }
             }
 
