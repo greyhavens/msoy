@@ -152,11 +152,18 @@ public class ItemManager
             public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
                 String gameId = liaison.columnSQL("gameId");
                 String set = " set " + gameId + " = " + gameId + " + 100*sign(" + gameId + ")";
+                String uGameId = liaison.columnSQL("GAME_ID");
+                String uSet = " set " + uGameId + " = " + uGameId + " + 100*sign(" + uGameId + ")";
                 Statement stmt = conn.createStatement();
                 try {
                     stmt.executeUpdate("update " + liaison.tableSQL("GameRecord") + set);
                     stmt.executeUpdate("update " + liaison.tableSQL("GameDetailRecord") + set);
                     stmt.executeUpdate("update " + liaison.tableSQL("TrophyRecord") + set);
+                    stmt.executeUpdate("update " + liaison.tableSQL("RatingRecord") + set);
+                    stmt.executeUpdate("update " + liaison.tableSQL("GameAbuseRecord") + set);
+                    stmt.executeUpdate(
+                        "update " + liaison.tableSQL("GameFlowGrantLogRecord") + set);
+                    stmt.executeUpdate("update " + liaison.tableSQL("GAME_COOKIES") + uSet);
                     if (liaison instanceof PostgreSQLLiaison) {
                         // bump the sequence 100 times - my god this is cheesy, i love it
                         for (int i = 0; i < 100; i ++) {
