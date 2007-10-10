@@ -9,6 +9,9 @@ import flash.display.Stage;
 import flash.external.ExternalInterface;
 import flash.system.Security;
 
+import flash.media.SoundMixer;
+import flash.media.SoundTransform;
+
 import mx.resources.ResourceBundle;
 
 import com.adobe.crypto.MD5;
@@ -72,6 +75,12 @@ public /*abstract*/ class BaseClient extends Client
 
         var params :Object = stage.loaderInfo.parameters;
         _featuredPlaceView = params["featuredPlace"] != null;
+        if (_featuredPlaceView) {
+            // mute all sound in featured place view.
+            var mute :SoundTransform = new SoundTransform;
+            mute.volume = 0;
+            SoundMixer.soundTransform = mute;
+        }
 
         _ctx = createContext();
         LoggingTargets.configureLogging(_ctx);
