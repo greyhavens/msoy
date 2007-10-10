@@ -17,6 +17,7 @@ import client.util.RowPanel;
  * Displays information on a sub-item.
  */
 public class SubItemEntry extends ItemEntry
+    implements DoListItemPopup.ListedListener
 {
     public SubItemEntry (SubItemPanel spanel, ItemPanel panel, Item item)
     {
@@ -39,7 +40,7 @@ public class SubItemEntry extends ItemEntry
             CInventory.msgs.detailList() : CInventory.msgs.detailUplist();
         Button button = new Button(btitle, new ClickListener() {
             public void onClick (Widget sender) {
-                new DoListItemPopup(_item, null).show();
+                new DoListItemPopup(_item, null, SubItemEntry.this).show();
             }
         });
         button.setStyleName("tinyButton");
@@ -56,6 +57,16 @@ public class SubItemEntry extends ItemEntry
         buttons.add(button);
 
         setWidget(2, 0, buttons);
+    }
+
+    // from DoListItemPopup.ListedListener
+    public void itemListed (Item item, boolean updated)
+    {
+        // if this was a first time listing, reset our item so that our "List..." button becomes
+        // "Update listing..."
+        if (!updated) {
+            setItem(item);
+        }
     }
 
     protected SubItemPanel _spanel;

@@ -27,11 +27,18 @@ import client.util.NumberTextBox;
 
 public class DoListItemPopup extends BorderedDialog
 {
-    public DoListItemPopup (Item item, final CatalogListing listing)
+    public interface ListedListener
+    {
+        public void itemListed (Item item, boolean updated);
+    }
+
+    public DoListItemPopup (Item item, final CatalogListing listing, ListedListener listener)
     {
         super(false, true);
         addStyleName("doListItem");
+
         _item = item;
+        _listener = listener;
 
         _status = new Label("");
         _status.addStyleName("Status");
@@ -141,9 +148,11 @@ public class DoListItemPopup extends BorderedDialog
                     return true;
                 }
                 public boolean gotResult (Object result) {
-                    // TODO: enhance dialog to link to catalog page to see item
+                    CatalogListing listing = (CatalogListing)result;
+                    _item.catalogId = listing.catalogId;
                     MsoyUI.info(resultMsg);
                     hide();
+                    _listener.itemListed(_item, false);
                     return false;
                 }
             };
@@ -165,6 +174,7 @@ public class DoListItemPopup extends BorderedDialog
                 public boolean gotResult (Object result) {
                     MsoyUI.info(CInventory.msgs.doListUpdated());
                     hide();
+                    _listener.itemListed(_item, true);
                     return false;
                 }
             };
@@ -223,6 +233,7 @@ public class DoListItemPopup extends BorderedDialog
     }
 
     protected Item _item;
+    protected ListedListener _listener;
 
     protected VerticalPanel _content;
     protected TextArea _description;

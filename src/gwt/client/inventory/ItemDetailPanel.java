@@ -34,6 +34,7 @@ import client.util.RowPanel;
  * Displays a popup detail view of an item from the user's inventory.
  */
 public class ItemDetailPanel extends BaseItemDetailPanel
+    implements DoListItemPopup.ListedListener
 {
     public ItemDetailPanel (ItemDetail detail, ItemPanel panel)
     {
@@ -56,6 +57,16 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     public boolean isShowing (ItemIdent ident)
     {
         return (_item != null) && _item.getIdent().equals(ident);
+    }
+
+    // from DoListItemPopup.ListedListener
+    public void itemListed (Item item, boolean updated)
+    {
+        // if this was a first time listing, change "List..." to "Update listing..."
+        if (!updated) {
+            _listTip.setText(CInventory.msgs.detailUplistTip());
+            _listBtn.setText(CInventory.msgs.detailUplist());
+        }
     }
 
     // @Override // BaseItemDetailPanel
@@ -140,13 +151,13 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 butlbl = CInventory.msgs.detailList();
             }
             _details.add(WidgetUtil.makeShim(1, 10));
-            _details.add(new Label(tip));
+            _details.add(_listTip = new Label(tip));
 
             // add a button for listing or updating the item
             RowPanel buttons = new RowPanel();
-            buttons.add(new Button(butlbl, new ClickListener() {
+            buttons.add(_listBtn = new Button(butlbl, new ClickListener() {
                 public void onClick (Widget sender) {
-                    new DoListItemPopup(_item, null).show();
+                    new DoListItemPopup(_item, null, ItemDetailPanel.this).show();
                 }
             }));
 
@@ -155,7 +166,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 // add a button for repricing the listing
                 final AsyncCallback cb = new AsyncCallback() {
                     public void onSuccess (Object result) {
-                        new DoListItemPopup(_item, (CatalogListing)result).show();
+                        new DoListItemPopup(
+                            _item, (CatalogListing)result, ItemDetailPanel.this).show();
                     }
                     public void onFailure (Throwable caught) {
                         MsoyUI.error(CInventory.serverError(caught));
@@ -197,4 +209,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     }
 
     protected ItemPanel _panel;
+    protected Label _listTip;
+    protected Button _listBtn;
 }
