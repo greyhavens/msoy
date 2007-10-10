@@ -5,17 +5,18 @@ package client.editem;
 
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.xml.client.XMLParser;
-import com.google.gwt.xml.client.Document;
-import com.google.gwt.xml.client.NodeList;
-import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.DOMException;
+import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
+import com.google.gwt.xml.client.Node;
+import com.google.gwt.xml.client.NodeList;
+import com.google.gwt.xml.client.XMLParser;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Game;
@@ -121,11 +122,10 @@ public class GameEditor extends ItemEditor
         // add a tab for configuring the game
         FlexTable bits = new FlexTable();
         tabs.add(bits, CEditem.emsgs.gameConfigTab());
-        int row = 0;
 
         // seated continuous games are disabled for now.
-        bits.setText(row, 0, CEditem.emsgs.gameGameType());
-        bits.setWidget(row++, 1, bind(_matchType = new ListBox(), new Binder() {
+        addInfoRow(bits, CEditem.emsgs.gameGameType(),
+                   bind(_matchType = new ListBox(), new Binder() {
             public void valueChanged () {
                 // TODO: disable or hide min/max players and watchable if this is a party game
             }
@@ -134,43 +134,33 @@ public class GameEditor extends ItemEditor
         _matchType.addItem(CEditem.dmsgs.getString("gameType2"));
 
         // TODO: it'd be nice to force-format this text field for integers, or something.
-        bits.setText(row, 0, CEditem.emsgs.gameMinPlayers());
-        bits.setWidget(row++, 1, _minPlayers = new TextBox());
+        addInfoRow(bits, CEditem.emsgs.gameMinPlayers(), _minPlayers = new TextBox());
         _minPlayers.setText("1");
         _minPlayers.setVisibleLength(5);
 
-        bits.setText(row, 0, CEditem.emsgs.gameMaxPlayers());
-        bits.setWidget(row++, 1, _maxPlayers = new TextBox());
+        addInfoRow(bits, CEditem.emsgs.gameMaxPlayers(), _maxPlayers = new TextBox());
         _maxPlayers.setText("1");
         _maxPlayers.setVisibleLength(5);
 
-        bits.setText(row, 0, CEditem.emsgs.gameWatchable());
-        bits.setWidget(row++, 1, _watchable = new CheckBox());
+        addInfoRow(bits, CEditem.emsgs.gameWatchable(), _watchable = new CheckBox());
         _watchable.setChecked(true);
 
-        bits.setText(row++, 0, CEditem.emsgs.gameDefinition());
-        bits.setWidget(row, 0, _extras = new TextArea());
+        addSpacer(bits);
 
-        bits.getFlexCellFormatter().setColSpan(row++, 0, 2);
+        addInfoRow(bits, new Label(CEditem.emsgs.gameDefinition()));
+        addInfoRow(bits, _extras = new TextArea());
         _extras.setCharacterWidth(60);
         _extras.setVisibleLines(5);
+        addInfoTip(bits, CEditem.emsgs.gameJavaTip());
 
-        bits.setText(row, 0, CEditem.emsgs.gameJavaTip());
-        bits.getFlexCellFormatter().setColSpan(row++, 0, 2);
+        addSpacer(bits);
 
-        bits.setText(row, 0, CEditem.emsgs.gameIdent());
-        bits.setWidget(row++, 1, _ident = new TextBox());
-
-        bits.setText(row, 0, CEditem.emsgs.gameController());
-        bits.setWidget(row++, 1, _controller = new TextBox());
+        addInfoRow(bits, CEditem.emsgs.gameIdent(), _ident = new TextBox());
+        addInfoRow(bits, CEditem.emsgs.gameController(), _controller = new TextBox());
         _controller.setVisibleLength(40);
-
-        bits.setText(row, 0, CEditem.emsgs.gameManager());
-        bits.setWidget(row++, 1, _manager = new TextBox());
+        addInfoRow(bits, CEditem.emsgs.gameManager(), _manager = new TextBox());
         _manager.setVisibleLength(40);
-
-        bits.setText(row, 0, CEditem.emsgs.gameLWJGL());
-        bits.setWidget(row++, 1, _lwjgl = new CheckBox());
+        addInfoRow(bits, CEditem.emsgs.gameLWJGL(), _lwjgl = new CheckBox());
 
         // add a tab for uploading the game media
         tabs.add(createMainUploader(CEditem.emsgs.gameMainTitle(), new MediaUpdater() {

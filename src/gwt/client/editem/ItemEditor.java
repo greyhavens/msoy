@@ -294,10 +294,10 @@ public abstract class ItemEditor extends BorderedDialog
     {
         int row = info.getRowCount();
         info.setText(row, 0, label);
+        // this aims to make the label column skinny; it even works on some browsers...
+        info.getFlexCellFormatter().setWidth(row, 0, "50px");
         info.getFlexCellFormatter().setStyleName(row, 0, "nowrapLabel");
         info.setWidget(row, 1, widget);
-        // this aims to make the label column skinny; it event works on some browsers...
-        info.getFlexCellFormatter().setWidth(row, 1, "100%");
     }
 
     /**

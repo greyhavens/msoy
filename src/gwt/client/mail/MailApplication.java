@@ -14,15 +14,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -45,20 +44,20 @@ import client.util.BorderedWidget;
  * A mail reading application, with a sidebar listing available folders, the upper
  * half of the main panel listing the message headers in the currently selected folder,
  * and the lower half displaying individual messages.
- * 
+ *
  * TODO: The mail system needs a substantial efficiency overhaul:
  *  - Make a single initial request for all the data the application needs to start up.
  *  - Don't perpetually ask the database to tell us about changes we already know happened:
  *    reading a message will flag it as read, deleting a message will delete it.
  */
 public class MailApplication extends DockPanel
-    implements PopupListener, MailUpdateListener
+    implements MailUpdateListener
 {
     /** The number of messages we display on-screen at a time. */
     public static final int HEADER_ROWS = 8;
     /** The number of page numbers to display in the pager before we shortcut with ... */
     private static final int PAGES_TO_SHOW = 3;
-    
+
     /**
      * Initialize this application and build the UI framework.
      */
@@ -66,14 +65,6 @@ public class MailApplication extends DockPanel
     {
         super();
         buildUI();
-    }
-    
-    /**
-     * When a composition popup closes, we need to refresh the folder/header displays.
-     */ 
-    public void onPopupClosed (PopupPanel sender, boolean autoClosed)
-    {
-        refresh();
     }
 
     /**
@@ -88,7 +79,7 @@ public class MailApplication extends DockPanel
 
     /**
      * Called to instruct this application to update its view.
-     * 
+     *
      * The messageId parameter may be -1, if no message body is to be displayed.
      */
     public void show (int folderId, int headerOffset, int messageId)
@@ -141,7 +132,7 @@ public class MailApplication extends DockPanel
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("groupDetailErrors");
         add(_errorContainer, DockPanel.SOUTH);
-        
+
         loadFolders();
     }
 
@@ -245,7 +236,7 @@ public class MailApplication extends DockPanel
             }
         });
         headerControls.add(_massDelete);
-        
+
         headerBar.add(headerControls);
 
         _headerPager = new HorizontalPanel();
@@ -275,7 +266,7 @@ public class MailApplication extends DockPanel
         headerBar.add(_headerPager);
 
         headerPanel.add(headerBar);
-        
+
         // construct the header panel's actual header container
         _headerContainer = new SimplePanel();
         headerPanel.add(_headerContainer);
@@ -315,7 +306,6 @@ public class MailApplication extends DockPanel
                 }
                 MailComposition composition =
                     new MailComposition(_message.headers.sender, subject, null, "");
-                composition.addPopupListener(MailApplication.this);
                 composition.show();
             }
         });
@@ -433,10 +423,10 @@ public class MailApplication extends DockPanel
             public void onFailure (Throwable caught) {
                 addError("Failed to fetch mail headers from database: " + caught.getMessage());
             }
-            
+
         });
     }
-    
+
 
     // construct the list of message headers
     protected void refreshHeaderPanel ()
@@ -586,7 +576,7 @@ public class MailApplication extends DockPanel
             public void onFailure (Throwable caught) {
                 addError("Failed to fetch mail message from database: " + caught.getMessage());
             }
-            
+
         });
     }
 
@@ -602,7 +592,7 @@ public class MailApplication extends DockPanel
         Label subject = new Label(CMail.msgs.appHdrSubject() + ": " + _message.headers.subject);
         // TODO: Figure out wrapping for long subject lines
         subject.setStyleName("Subject");
-        headers.add(subject); 
+        headers.add(subject);
         HorizontalPanel sender = new HorizontalPanel();
         sender.setSpacing(5);
         sender.setStyleName("Sender");
@@ -628,7 +618,7 @@ public class MailApplication extends DockPanel
                 messagePanel.add(panel);
             }
         }
-        
+
         // finally show the message text, if any, propped up with generated HTML
         if (_message.bodyText != null) {
             SimplePanel messageBody = new SimplePanel();
@@ -767,7 +757,7 @@ public class MailApplication extends DockPanel
         // e.g. 15:10
         return date.toString().substring(11, 16);
     }
-    
+
     protected void addError (String error)
     {
         _errorContainer.add(new Label(error));
@@ -799,7 +789,7 @@ public class MailApplication extends DockPanel
     protected int _currentMessage;
 
     protected Button _massDelete;
-    
+
     protected SimplePanel _folderContainer;
     protected SimplePanel _headerContainer;
     protected VerticalPanel _messageContainer;
