@@ -95,7 +95,7 @@ public class LobbyPanel extends VBox
         _about.text = Msgs.GAME.get("b.about");
         var thisLobbyPanel :LobbyPanel = this;
         _about.addEventListener(MouseEvent.CLICK, function () :void {
-            CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, game.getIdent());
+            CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_GAME, game.gameId);
         });
         _about.buttonMode = true;
         _about.useHandCursor = true;

@@ -135,6 +135,9 @@ public class MsoyController extends Controller
     /** Command to view a groups's page, arg is [ groupId ] */
     public static const VIEW_GROUP :String = "ViewGroup";
 
+    /** Command to view a game, arg is [ gameId ] */
+    public static const VIEW_GAME :String = "ViewGame";
+
     /** Command to view the "my avatars" page. */
     public static const VIEW_MY_AVATARS :String= "ViewMyAvatars";
 
@@ -369,6 +372,14 @@ public class MsoyController extends Controller
     public function handleViewGroup (groupId :int) :void
     {
         displayPage("group", "" + groupId);
+    }
+
+    /**
+     * Handle the VIEW_GAME command.
+     */
+    public function handleViewGame (gameId :int) :void
+    {
+        displayPage("game", "d_" + gameId);
     }
 
     /**
