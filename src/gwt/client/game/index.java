@@ -50,7 +50,7 @@ public class index extends Page
             String action = args.get(0, "");
             if (action.equals("d")) {
                 setPageTitle("Game Detail");
-                setContent(new GameDetailPanel(args.get(1, 0)));
+                setContent(new GameDetailPanel(args.get(1, 0), args.get(2, "")));
 
             } else if (action.equals("t")) {
                 setPageTitle("Trophies");

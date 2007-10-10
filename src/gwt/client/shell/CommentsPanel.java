@@ -44,8 +44,15 @@ public class CommentsPanel extends VerticalPanel
                 }
             }));
         }
+    }
 
-        setPage(0); // start on page zero of our comments
+    // @Override // from UIObject
+    public void setVisible (boolean visible)
+    {
+        super.setVisible(visible);
+        if (visible && _page == -1) {
+            setPage(0); // start on page zero of our comments
+        }
     }
 
     public void setPage (final int page)
@@ -153,7 +160,7 @@ public class CommentsPanel extends VerticalPanel
     }
 
     protected int _entityType, _entityId;
-    protected int _page;
+    protected int _page = -1;
 
     protected VerticalPanel _comments;
     protected Button _post;

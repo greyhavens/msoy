@@ -52,7 +52,8 @@ public class TrophiesBlurb extends Blurb
             final Trophy trophy = (Trophy) iter.next();
             ClickListener trophyClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.GAME, Args.compose("d", trophy.gameId));
+                    Application.go(Page.GAME, Args.compose(new String[] {
+                        "d", "" + trophy.gameId, "t" }));
                 }
             };
 

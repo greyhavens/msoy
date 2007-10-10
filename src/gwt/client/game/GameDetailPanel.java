@@ -31,7 +31,7 @@ import client.util.StyledTabPanel;
  */
 public class GameDetailPanel extends FlexTable
 {
-    public GameDetailPanel (int gameId)
+    public GameDetailPanel (int gameId, final String tab)
     {
         setStyleName("gameDetail");
         setCellPadding(0);
@@ -39,7 +39,7 @@ public class GameDetailPanel extends FlexTable
         setText(0, 0, "Loading game details...");
         CGame.gamesvc.loadGameDetail(CGame.ident, gameId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                setGameDetail((GameDetail)result);
+                setGameDetail((GameDetail)result, tab);
             }
             public void onFailure (Throwable cause) {
                 setText(0, 0, CGame.serverError(cause));
@@ -47,7 +47,7 @@ public class GameDetailPanel extends FlexTable
         });
     }
 
-    public void setGameDetail (final GameDetail detail)
+    public void setGameDetail (final GameDetail detail, String tab)
     {
         FlexTable box = new FlexTable();
         box.setStyleName("Box");
@@ -119,9 +119,14 @@ public class GameDetailPanel extends FlexTable
         if (detail.listedItem != null) {
             tabs.add(new CommentsPanel(detail.listedItem.getType(),
                                        detail.listedItem.catalogId), "Comments");
-            tabs.selectTab(0);
+            if (tab.equals("")) {
+                tabs.selectTab(tabs.getWidgetCount()-1);
+            }
         }
         tabs.add(new GameTrophyPanel(detail.gameId), "Trophies");
+        if (tab.equals("t")) {
+            tabs.selectTab(tabs.getWidgetCount()-1);
+        }
     }
 
     protected Page _page;

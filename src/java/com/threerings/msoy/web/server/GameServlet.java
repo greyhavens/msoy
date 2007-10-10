@@ -183,7 +183,7 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public Trophy[] loadGameTrophies (WebIdent ident, int gameId)
+    public List loadGameTrophies (WebIdent ident, int gameId)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser(ident);
@@ -231,16 +231,16 @@ public class GameServlet extends MsoyServiceServlet
             });
 
             // and populate the result array in the correct order
-            Trophy[] result = new Trophy[trecords.size()];
-            for (int ii = 0; ii < result.length; ii++) {
-                TrophySourceRecord record = trecords.get(ii);
-                result[ii] = trophies.get(record.ident);
+            ArrayList<Trophy> results = new ArrayList<Trophy>();
+            for (TrophySourceRecord record : trecords) {
+                Trophy trophy = trophies.get(record.ident);
                 // only provide the description for non-secret or earned trophies
-                if (!record.secret || result[ii].whenEarned != null) {
-                    result[ii].description = record.description;
+                if (!record.secret || trophy.whenEarned != null) {
+                    trophy.description = record.description;
                 }
+                results.add(trophy);
             }
-            return result;
+            return results;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure loading game trophies [id=" + gameId + "].", pe);
