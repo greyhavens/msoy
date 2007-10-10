@@ -125,10 +125,12 @@ public class NaviPanel extends FlexTable
                 }
                 if (_friends.size() > 0) {
                     MenuBar fmenu = new MenuBar(true);
-                    for (int ii = 0, ll = _friends.size(); ii < ll; ii++) {
-                        MemberName name = (MemberName)_friends.get(ii);
-                        addLink(fmenu, name + "'s Home", Page.WORLD, "m" + name.getMemberId());
-                    }
+                    createMenu(fmenu, _friends, new ItemCreator() {
+                        public void createItem (MenuBar menu, Object item) {
+                            MemberName name = (MemberName)item;
+                            addLink(menu, name + "'s Home", Page.WORLD, "m" + name.getMemberId());
+                        }
+                    });
                     menu.addItem("Friends' Homes", fmenu);
                 }
                 if (CShell.isSupport()) {
@@ -147,10 +149,12 @@ public class NaviPanel extends FlexTable
                         _popped.hide();
                     }
                 });
-                for (int ii = 0, ll = _friends.size(); ii < ll; ii++) {
-                    MemberName name = (MemberName)_friends.get(ii);
-                    addLink(fmenu, name.toString(), Page.PROFILE, "" + name.getMemberId());
-                }
+                createMenu(fmenu, _friends, new ItemCreator() {
+                    public void createItem (MenuBar menu, Object item) {
+                        MemberName name = (MemberName)item;
+                        addLink(menu, name.toString(), Page.PROFILE, "" + name.getMemberId());
+                    }
+                });
                 menu.addItem("Profiles", fmenu);
                 addLink(menu, "Groups", Page.GROUP, "");
                 addLink(menu, "Forums", Page.WRAP, "f");
@@ -196,6 +200,31 @@ public class NaviPanel extends FlexTable
                 addLink(menu, "Tutorials", Page.WRAP, Args.compose("w", "Category:Tutorials"));
             }
         });
+    }
+
+    protected void createMenu (MenuBar menu, ArrayList items, ItemCreator creator)
+    {
+        // if the menu is not too long, just put everything in directly
+        if (items.size() <= MENU_OVERFLOW) {
+            for (int ii = 0, ll = items.size(); ii < ll; ii++) {
+                creator.createItem(menu, items.get(ii));
+            }
+            return;
+        }
+
+        // otherwise switch to breakout sub-menus
+        int start = 0;
+        while (start < items.size()) {
+            int end = Math.min(items.size(), start + MENU_OVERFLOW);
+            String title = (items.get(start).toString().substring(0, 1) + " - " +
+                            items.get(end-1).toString().substring(0, 1));
+            MenuBar smenu = new MenuBar(true);
+            menu.addItem(title, smenu);
+            for (int ii = start; ii < end; ii++) {
+                creator.createItem(smenu, items.get(ii));
+            }
+            start = (end+1);
+        }
     }
 
     /**
@@ -311,6 +340,11 @@ public class NaviPanel extends FlexTable
             this.id = id;
         }
     };
+
+    protected interface ItemCreator
+    {
+        public void createItem (MenuBar menu, Object item);
+    }
     
     protected StatusPanel _status;
     protected Label _loglbl, _melbl;
@@ -323,4 +357,6 @@ public class NaviPanel extends FlexTable
 
     /** Owned scenes. */
     protected ArrayList _scenes = new ArrayList(); // of SceneData
+
+    protected static final int MENU_OVERFLOW = 20;
 }
