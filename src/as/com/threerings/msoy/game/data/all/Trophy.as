@@ -6,6 +6,7 @@ package com.threerings.msoy.game.data.all {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
+import com.threerings.util.Long;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
@@ -23,6 +24,9 @@ public class Trophy extends SimpleStreamableObject
     /** The media for the trophy image. */
     public var trophyMedia :MediaDesc;
 
+    /** When this trophy was earned. */
+    public var whenEarned :Long;
+
     public function Trophy ()
     {
         // nada
@@ -35,6 +39,7 @@ public class Trophy extends SimpleStreamableObject
         gameId = ins.readInt();
         name = (ins.readField(String) as String);
         trophyMedia = (ins.readObject() as MediaDesc);
+        whenEarned = (ins.readField(Long) as Long);
     }
 
     // from interface Streamable
@@ -44,6 +49,7 @@ public class Trophy extends SimpleStreamableObject
         out.writeInt(gameId);
         out.writeField(name);
         out.writeObject(trophyMedia);
+        out.writeField(whenEarned);
     }
 }
 }
