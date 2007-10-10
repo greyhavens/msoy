@@ -7,10 +7,8 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Event;
 
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
@@ -19,6 +17,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartFileUpload;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.util.MediaUtil;
@@ -53,31 +52,32 @@ public class MediaUploader extends VerticalPanel
         _target.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         _target.setStyleName(_thumbnail ? "Thumbnail" : "Preview");
 
-        final FormPanel form = new FormPanel();
+        _form = new FormPanel();
         _panel = new HorizontalPanel();
-        form.setWidget(_panel);
-        form.setStyleName("Controls");
+        _form.setWidget(_panel);
+        _form.setStyleName("Controls");
 
         if (GWT.isScript()) {
-            form.setAction("/uploadsvc");
+            _form.setAction("/uploadsvc");
         } else {
-            form.setAction("http://localhost:8080/uploadsvc");
+            _form.setAction("http://localhost:8080/uploadsvc");
         }
-        form.setEncoding(FormPanel.ENCODING_MULTIPART);
-        form.setMethod(FormPanel.METHOD_POST);
+        _form.setEncoding(FormPanel.ENCODING_MULTIPART);
+        _form.setMethod(FormPanel.METHOD_POST);
 
-        final FileUpload upload = new FileUpload() {
-            public void onBrowserEvent (Event event) {
-                _status.setText(event.toString());
+        _upload = new SmartFileUpload();
+        _upload.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                uploadMedia();
             }
-        };
-        upload.setName(id);
-        _panel.add(upload);
+        });
+        _upload.setName(id);
+        _panel.add(_upload);
 
-        form.addFormHandler(new FormHandler() {
+        _form.addFormHandler(new FormHandler() {
             public void onSubmit (FormSubmitEvent event) {
                 // don't let them submit until they plug in a file...
-                if (upload.getFilename().length() == 0) {
+                if (_upload.getFilename().length() == 0) {
                     event.setCancelled(true);
                 }
             }
@@ -88,20 +88,13 @@ public class MediaUploader extends VerticalPanel
                     // TODO: This is fugly as all hell, but at least we're now reporting
                     // *something* to the user
                     MsoyUI.error(result);
+                } else {
+                    _submitted = _upload.getFilename();
                 }
             }
         });
 
-        Button submit = new Button(CEditem.emsgs.upload());
-        submit.setStyleName("mediaUploader");
-        submit.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                form.submit();
-            }
-        });
-        _panel.add(submit);
-
-        add(form);
+        add(_form);
     }
 
     /**
@@ -130,12 +123,27 @@ public class MediaUploader extends VerticalPanel
         }
     }
 
+    protected void uploadMedia ()
+    {
+        if (_upload.getFilename().length() == 0) {
+            return;
+        }
+        if (_submitted != null && _submitted.equals(_upload.getFilename())) {
+            return;
+        }
+        _form.submit();
+    }
+
     protected ItemEditor.MediaUpdater _updater;
 
     protected String _title;
     protected Label _status;
     protected HorizontalPanel _target;
     protected HorizontalPanel _panel;
+
+    protected FormPanel _form;
+    protected SmartFileUpload _upload;
+    protected String _submitted;
 
     protected boolean _thumbnail;
 }
