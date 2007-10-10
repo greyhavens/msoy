@@ -267,13 +267,16 @@ public class ControlBar extends HBox
         // notifications button
         addGroupChild(_notifyBtn, [ UI_STD, UI_GUEST ]);
 
+        // snapshots are not functional; todo: revisit
+        /*
         _snapBtn = new CommandButton();
         _snapBtn.toolTip = Msgs.GENERAL.get("i.snapshot");
         _snapBtn.setCommand(ControlBarController.SNAPSHOT);
         _snapBtn.styleName = "controlBarButtonSnapshot";
         _snapBtn.enabled = true;
         addGroupChild(_snapBtn, [ UI_STD ]);
-
+        */
+        
         // some elements that are common to guest and logged in users
         var footerLeft :SkinnableImage = new SkinnableImage();
         footerLeft.styleName = "controlBarFooterLeft";
