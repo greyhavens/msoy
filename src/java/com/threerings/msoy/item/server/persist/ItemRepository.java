@@ -590,7 +590,7 @@ public abstract class ItemRepository<
      * Inserts the supplied item into the database. The {@link ItemRecord#itemId} and the
      * {@link ItemRecord#lastTouched) fields will be filled in as a result of this call.
      */
-    public void insertOriginalItem (T item, boolean catalogListing)
+    public void insertOriginalItem (T item)
         throws PersistenceException
     {
         if (item.itemId != 0) {
@@ -651,17 +651,6 @@ public abstract class ItemRepository<
             flowCost, goldCost, pricing, salesTarget);
 
         return record;
-    }
-
-    /**
-     * Updates the specified catalog listing to reference a new listed item.
-     */
-    public void updateListing (ItemRecord listItem, long updateTime)
-        throws PersistenceException
-    {
-        updatePartial(getCatalogClass(), listItem.catalogId,
-                      // TODO?: CatalogRecord.LISTED_DATE, new Timestamp(updateTime),
-                      CatalogRecord.LISTED_ITEM_ID, listItem.itemId);
     }
 
     /**

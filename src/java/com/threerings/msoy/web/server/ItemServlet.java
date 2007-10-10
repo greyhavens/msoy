@@ -101,7 +101,7 @@ public class ItemServlet extends MsoyServiceServlet
         repo = MsoyServer.itemMan.getRepository(item.getType());
         final ItemRecord record = repo.newItemRecord(item);
         try {
-            repo.insertOriginalItem(record, false);
+            repo.insertOriginalItem(record);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to create item " + item + ".", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
@@ -268,7 +268,7 @@ public class ItemServlet extends MsoyServiceServlet
             // prep the item for remixing and insert it as a new original item
             int originalId = item.sourceId;
             item.prepareForRemixing();
-            repo.insertOriginalItem(item, false);
+            repo.insertOriginalItem(item);
 
             // delete the old clone
             repo.deleteItem(iident.itemId);

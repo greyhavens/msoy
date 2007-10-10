@@ -245,7 +245,7 @@ public class CatalogServlet extends MsoyServiceServlet
             listItem.description = descrip;
 
             // create our new immutable catalog prototype item
-            repo.insertOriginalItem(listItem, true);
+            repo.insertOriginalItem(listItem);
 
             // copy tags from the original item to the new listing item
             long now = System.currentTimeMillis();
@@ -343,21 +343,8 @@ public class CatalogServlet extends MsoyServiceServlet
             // use the updated description
             listItem.description = descrip;
 
-            // create our new immutable catalog prototype item
-            repo.insertOriginalItem(listItem, true);
-
-            // acquire a current timestamp
-            long now = System.currentTimeMillis();
-
-            // copy tags from the old listing item to the new listing item
-            repo.getTagRepository().copyTags(
-                oldListItem.itemId, listItem.itemId, mrec.memberId, now);
-
-            // reassign ratings from the old prototype
-            repo.reassignRatings(oldListItem.itemId, listItem.itemId);
-
-            // update the catalog listing
-            repo.updateListing(listItem, now);
+            // update our catalog prototype item
+            repo.updateOriginalItem(listItem);
 
             // record the listing action
             String details = repo.getItemType() + " " + originalItemId;

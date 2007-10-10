@@ -222,6 +222,8 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         location = 0;
 
         if (oldListing != null) {
+            // we're going to replace the old catalog listing item
+            itemId = oldListing.itemId;
             // inherit the average rating from the old item
             rating = oldListing.rating;
             // if the old listing was mature or the new item is mature we want the new listing to
