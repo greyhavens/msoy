@@ -404,7 +404,8 @@ public class MailApplication extends DockPanel
             if (folder.unreadCount > 0) {
                 name += " (" + folder.unreadCount + ")";
             }
-            Hyperlink link = Application.createLink(name, "mail", "f" + folder.folderId);
+            Hyperlink link = Application.createLink(
+                name, "mail", Args.compose("f", folder.folderId));
             link.setStyleName("Folder");
             if (folder.unreadCount > 0) {
                 link.addStyleName("Folder-unread");
@@ -495,8 +496,9 @@ public class MailApplication extends DockPanel
 
             // next, the subject line, the only variable-width element in the row
             Widget link = Application.createLink(
-                headers.subject, "mail",
-                "f" + _currentFolder + "." + _currentOffset + "." + headers.messageId);
+                headers.subject, "mail", Args.compose(new String[] {
+                    "f", "" + _currentFolder, "" + _currentOffset, "" + headers.messageId
+                }));
             link.setStyleName("Subject");
             rows.setWidget(rowCnt, 1, link);
 //            headerRows.getFlexCellFormatter().setWidth(row, 1, "100%");
