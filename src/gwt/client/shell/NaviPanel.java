@@ -145,7 +145,7 @@ public class NaviPanel extends FlexTable
                 MenuBar fmenu = new MenuBar(true);
                 fmenu.addItem("Find People", true, new Command() {
                     public void execute () {
-                        Application.go(Page.PROFILE, "");
+                        Application.go(Page.PROFILE, "search");
                         _popped.hide();
                     }
                 });
