@@ -44,11 +44,11 @@ public class SearchPanel extends VerticalPanel
                 String[] args =  {
                     "search", null, "0", URL.encodeComponent(_search.getText().trim()) };
                 if (_radioName.isChecked()) {
-                    args[2] = "name";
+                    args[1] = "name";
                 } else if (_radioDisplayName.isChecked()) {
-                    args[2] = "display";
+                    args[1] = "display";
                 } else {
-                    args[2] = "email";
+                    args[1] = "email";
                 }
                 Application.go(Page.PROFILE, Args.compose(args));
             }
