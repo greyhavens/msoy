@@ -1283,6 +1283,9 @@ public class RoomController extends SceneController
         var args :Array = event.getArgs();
         switch (event.getName()) {
         case RoomObject.LOAD_MUSIC:
+            if (_mctx.getWorldClient().isFeaturedPlaceView()) {
+                break;
+            }
             if (_loadingMusic != null) {
                 _loadingMusic.close();
             }
@@ -1324,6 +1327,10 @@ public class RoomController extends SceneController
 
     public function setBackgroundMusic (data :AudioData) :void
     {
+        if (_mctx.getWorldClient().isFeaturedPlaceView()) {
+            return;
+        }
+
         if (!_musicIsBackground) {
             if (_music.isPlaying()) {
                 // don't disrupt the other music..
