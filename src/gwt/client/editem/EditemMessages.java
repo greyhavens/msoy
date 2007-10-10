@@ -296,6 +296,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameConfigTab();
 
   /**
+   * Translated "The description for secret trophies will not be shown until the player has earned the trophy themselves.".
+   * 
+   * @return translated "The description for secret trophies will not be shown until the player has earned the trophy themselves."
+   * @gwt.key trophySecretTip
+   */
+  String trophySecretTip();
+
+  /**
    * Translated "Minimum players".
    * 
    * @return translated "Minimum players"
@@ -560,6 +568,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String editorThumbTitle();
 
   /**
+   * Translated "Secret".
+   * 
+   * @return translated "Secret"
+   * @gwt.key trophySecret
+   */
+  String trophySecret();
+
+  /**
    * Translated "This string is used to identify this trophy in your game code.".
    * 
    * @return translated "This string is used to identify this trophy in your game code."
@@ -590,6 +606,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key upload
    */
   String upload();
+
+  /**
+   * Translated "This number will be used to sort your trophies into a particular order on your game's detail page, lowest to highest.".
+   * 
+   * @return translated "This number will be used to sort your trophies into a particular order on your game's detail page, lowest to highest."
+   * @gwt.key trophyOrderTip
+   */
+  String trophyOrderTip();
 
   /**
    * Translated "Item created.".
@@ -670,6 +694,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key avatarMainTab
    */
   String avatarMainTab();
+
+  /**
+   * Translated "Order".
+   * 
+   * @return translated "Order"
+   * @gwt.key trophyOrder
+   */
+  String trophyOrder();
 
   /**
    * Translated "Main Document media".

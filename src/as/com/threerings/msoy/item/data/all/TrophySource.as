@@ -6,13 +6,19 @@ package com.threerings.msoy.item.data.all {
 /**
  * Contains the runtime data for a TrophySource item.
  */
-public class TrophySource extends Item
+public class TrophySource extends SubItem
 {
     /** The required width for a trophy image. */
     public static const TROPHY_WIDTH :int = 60;
 
     /** The required height for a trophy image. */
     public static const TROPHY_HEIGHT :int = 60;
+
+    /** The order in which to display this trophy compared to other trophies. */
+    public var sortOrder :int;
+
+    /** Whether or not this trophy's description is a secret. */
+    public var secret :Boolean;
 
     public function TrophySource ()
     {
@@ -28,6 +34,22 @@ public class TrophySource extends Item
     override public function getType () :int
     {
         return TROPHY_SOURCE;
+    }
+
+    // from interface Streamable
+    override public function readObject (ins :ObjectInputStream) :void
+    {
+        super.readObject(ins);
+        sortOrder = ins.readInt();
+        secret = ins.readBoolean();
+    }
+
+    // from interface Streamable
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+        out.writeInt(sortOrder);
+        out.writeBoolean(secret);
     }
 }
 }

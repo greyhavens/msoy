@@ -11,6 +11,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 
 import client.editem.ItemEditor;
+import client.util.RowPanel;
 
 /**
  * Displays information on a sub-item.
@@ -33,7 +34,18 @@ public class SubItemEntry extends ItemEntry
         setText(1, 0, sitem.ident);
         getFlexCellFormatter().setStyleName(1, 0, "Ident");
 
-        Button button = new Button(CInventory.msgs.detailEdit(), new ClickListener() {
+        RowPanel buttons = new RowPanel();
+        String btitle = (item.catalogId == 0) ?
+            CInventory.msgs.detailList() : CInventory.msgs.detailUplist();
+        Button button = new Button(btitle, new ClickListener() {
+            public void onClick (Widget sender) {
+                new DoListItemPopup(_item, null).show();
+            }
+        });
+        button.setStyleName("tinyButton");
+        buttons.add(button);
+
+        button = new Button(CInventory.msgs.detailEdit(), new ClickListener() {
             public void onClick (Widget sender) {
                 ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _spanel);
                 editor.setItem(_item);
@@ -41,7 +53,9 @@ public class SubItemEntry extends ItemEntry
             }
         });
         button.setStyleName("tinyButton");
-        setWidget(2, 0, button);
+        buttons.add(button);
+
+        setWidget(2, 0, buttons);
     }
 
     protected SubItemPanel _spanel;

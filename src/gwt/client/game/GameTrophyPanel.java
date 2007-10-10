@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
@@ -72,13 +73,18 @@ public class GameTrophyPanel extends FlexTable
             setText(0, 1, trophy.name);
             getFlexCellFormatter().setStyleName(0, 1, "Name");
 
-            setText(1, 0, trophy.description);
-            getFlexCellFormatter().setStyleName(1, 0, "Description");
+            if (trophy.description == null) {
+                setText(1, 0, CGame.msgs.gameTrophySecret());
+                getFlexCellFormatter().setStyleName(1, 0, "Italic");
+            } else {
+                setText(1, 0, trophy.description);
+            }
+            getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
 
             if (CGame.getMemberId() != 0 && trophy.whenEarned != null) {
                 setText(2, 0, CGame.msgs.gameTrophyEarnedOn(
                             _pfmt.format(new Date(trophy.whenEarned.longValue()))));
-                getFlexCellFormatter().setStyleName(2, 0, "Earned");
+                getFlexCellFormatter().setStyleName(2, 0, "Italic");
             }
             getFlexCellFormatter().setRowSpan(0, 0, getRowCount());
         }

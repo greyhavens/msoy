@@ -14,6 +14,12 @@ public class TrophySource extends SubItem
     /** The required height for a trophy image. */
     public static final int TROPHY_HEIGHT = 60;
 
+    /** The order in which to display this trophy compared to other trophies. */
+    public int sortOrder;
+
+    /** Whether or not this trophy's description is a secret. */
+    public boolean secret;
+
     // @Override // from Item
     public byte getType ()
     {

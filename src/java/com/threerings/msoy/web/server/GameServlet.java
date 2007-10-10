@@ -5,8 +5,11 @@ package com.threerings.msoy.web.server;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -200,11 +203,11 @@ public class GameServlet extends MsoyServiceServlet
             }
 
             HashMap<String,Trophy> trophies = new HashMap<String,Trophy>();
-            for (TrophySourceRecord record : tsrepo.loadOriginalItemsBySuite(-grec.catalogId)) {
+            List<TrophySourceRecord> trecords = tsrepo.loadOriginalItemsBySuite(-grec.catalogId);
+            for (TrophySourceRecord record : trecords) {
                 Trophy trophy = new Trophy();
                 trophy.gameId = gameId;
                 trophy.name = record.name;
-                trophy.description = record.description;
                 trophy.trophyMedia = new MediaDesc(record.thumbMediaHash, record.thumbMimeType);
                 trophies.put(record.ident, trophy);
             }
@@ -220,7 +223,24 @@ public class GameServlet extends MsoyServiceServlet
                 }
             }
 
-            return trophies.values().toArray(new Trophy[trophies.size()]);
+            // sort the trophies in the creator's desired order
+            Collections.sort(trecords, new Comparator<TrophySourceRecord>() {
+                public int compare (TrophySourceRecord t1, TrophySourceRecord t2) {
+                    return t1.sortOrder - t2.sortOrder;
+                }
+            });
+
+            // and populate the result array in the correct order
+            Trophy[] result = new Trophy[trecords.size()];
+            for (int ii = 0; ii < result.length; ii++) {
+                TrophySourceRecord record = trecords.get(ii);
+                result[ii] = trophies.get(record.ident);
+                // only provide the description for non-secret or earned trophies
+                if (!record.secret || result[ii].whenEarned != null) {
+                    result[ii].description = record.description;
+                }
+            }
+            return result;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure loading game trophies [id=" + gameId + "].", pe);

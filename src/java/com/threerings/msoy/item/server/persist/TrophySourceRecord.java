@@ -19,6 +19,20 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class TrophySourceRecord extends SubItemRecord
 {
     // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #sortOrder} field. */
+    public static final String SORT_ORDER = "sortOrder";
+
+    /** The qualified column identifier for the {@link #sortOrder} field. */
+    public static final ColumnExp SORT_ORDER_C =
+        new ColumnExp(TrophySourceRecord.class, SORT_ORDER);
+
+    /** The column identifier for the {@link #secret} field. */
+    public static final String SECRET = "secret";
+
+    /** The qualified column identifier for the {@link #secret} field. */
+    public static final ColumnExp SECRET_C =
+        new ColumnExp(TrophySourceRecord.class, SECRET);
+
     /** The qualified column identifier for the {@link #suiteId} field. */
     public static final ColumnExp SUITE_ID_C =
         new ColumnExp(TrophySourceRecord.class, SUITE_ID);
@@ -104,7 +118,13 @@ public class TrophySourceRecord extends SubItemRecord
         new ColumnExp(TrophySourceRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+    public static final int SCHEMA_VERSION = 2 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+
+    /** The order in which to display this trophy compared to other trophies. */
+    public int sortOrder;
+
+    /** Whether or not this trophy's description is a secret. */
+    public boolean secret;
 
     @Override // from ItemRecord
     public byte getType ()
@@ -118,14 +138,16 @@ public class TrophySourceRecord extends SubItemRecord
         super.fromItem(item);
 
         TrophySource source = (TrophySource)item;
-        // nothing to do
+        sortOrder = source.sortOrder;
+        secret = source.secret;
     }
 
     @Override // from ItemRecord
     protected Item createItem ()
     {
         TrophySource object = new TrophySource();
-        // nothing to do
+        object.sortOrder = sortOrder;
+        object.secret = secret;
         return object;
     }
 

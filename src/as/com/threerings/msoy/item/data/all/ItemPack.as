@@ -6,7 +6,7 @@ package com.threerings.msoy.item.data.all {
 /**
  * Contains the runtime data for an ItemPack item.
  */
-public class ItemPack extends Item
+public class ItemPack extends SubItem
 {
     public function ItemPack ()
     {

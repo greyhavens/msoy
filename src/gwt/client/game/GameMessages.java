@@ -32,6 +32,14 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String errUnknownGameType(String arg0);
 
   /**
+   * Translated "You must earn this trophy in the game to see its description.".
+   * 
+   * @return translated "You must earn this trophy in the game to see its description."
+   * @gwt.key gameTrophySecret
+   */
+  String gameTrophySecret();
+
+  /**
    * Translated "No trophies.".
    * 
    * @return translated "No trophies."
