@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="WhirledGameControl,com.whirled.WhirledGameControl,CASCADING_PAYOUT,WINNERS_TAKE_ALL,TO_EACH_THEIR_OWN,setChatEnabled,setChatBounds,getHeadShot,getStageBounds,getLevelPacks,getItemPacks,getPlayerItemPacks,endGameWithWinners,endGameWithScores,endGameWithScore,endGame,backToWhirled,populateProperties" name="keywords">
+<meta content="WhirledGameControl,com.whirled.WhirledGameControl,CASCADING_PAYOUT,WINNERS_TAKE_ALL,TO_EACH_THEIR_OWN,setChatEnabled,setChatBounds,getHeadShot,getStageBounds,getLevelPacks,getItemPacks,getPlayerItemPacks,holdsTrophy,awardTrophy,endGameWithWinners,endGameWithScores,endGameWithScore,endGame,backToWhirled,populateProperties" name="keywords">
 <title>com.whirled.WhirledGameControl</title>
 </head>
 <body>
@@ -39,9 +39,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr>
 <td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">WhirledGameControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="../threerings/ezgame/BaseControl.html">BaseControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
-</tr>
-<tr>
-<td class="classHeaderTableLabel">Subclasses</td><td><a href="../whirled/AVRGameControl.html">AVRGameControl</a></td>
 </tr>
 </table>
 <p></p>
@@ -157,6 +154,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Returns true if we are in control of this game.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#awardTrophy()">awardTrophy</a>(ident:String):Boolean</div>
+<div class="summaryTableDescription">
+     Awards the specified trophy to this client's player.</div>
+</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -326,7 +331,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      premium - boolean indicating that content is premium or not
      </pre>
           This will contain all free level packs that are registered for this game as well as the
-     premium level packs owned by all players in the game.</div>
+     premium level packs owned by this client's player.</div>
 </td><td class="summaryTableOwnerCol">WhirledGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -356,9 +361,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getPlayerItemPacks()">getPlayerItemPacks</a>(occupant:int):Array</div>
+<a class="signatureLink" href="#getPlayerItemPacks()">getPlayerItemPacks</a>():Array</div>
 <div class="summaryTableDescription">
-     Returns all item packs owned by the specified game occupant.</div>
+     Returns all item packs owned by this client's player.</div>
 </td><td class="summaryTableOwnerCol">WhirledGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -400,6 +405,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Get the user-specific game data for the specified user.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#holdsTrophy()">holdsTrophy</a>(ident:String):Boolean</div>
+<div class="summaryTableDescription">
+     Returns true if this client's player has the trophy with the specified identifier.</div>
+</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -804,10 +817,38 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
+<a name="awardTrophy()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">awardTrophy</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function awardTrophy(ident:String):Boolean</code><p>
+     Awards the specified trophy to this client's player. If the supplied trophy identifier is
+     not valid, this will not be known until the request is processed on the server, so the
+     method will return succcessfully but no trophy will have been awarded. Thus, you should be
+     careful not to misspell your trophy identifier in your code or in the associated trophy
+     source item.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ident</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the trophy was awarded, false if the player already has that trophy.
+     </td>
+</tr>
+</table>
+</div>
 <a name="backToWhirled()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">backToWhirled</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">backToWhirled</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -1011,7 +1052,7 @@ showHideInherited();
      premium - boolean indicating that content is premium or not
      </pre>
           This will contain all free level packs that are registered for this game as well as the
-     premium level packs owned by all players in the game.
+     premium level packs owned by this client's player.
      </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -1027,15 +1068,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getPlayerItemPacks(occupant:int):Array</code><p>
-     Returns all item packs owned by the specified game occupant.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">occupant</span>:int</code></td>
-</tr>
-</table>
-<p></p>
+<code>public function getPlayerItemPacks():Array</code><p>
+     Returns all item packs owned by this client's player.
+     </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1062,6 +1097,29 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Rectangle</code></td>
+</tr>
+</table>
+</div>
+<a name="holdsTrophy()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">holdsTrophy</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function holdsTrophy(ident:String):Boolean</code><p>
+     Returns true if this client's player has the trophy with the specified identifier.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ident</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>

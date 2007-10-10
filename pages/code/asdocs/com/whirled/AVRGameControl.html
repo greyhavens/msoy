@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="AVRGameControl,com.whirled.AVRGameControl,memoryChanged,enteredRoom,leftRoom,occupantEntered,occupantLeft,occupantMoved,lookupMemory,updateMemory,getOccupantLocation,populateProperties,memoryChanged_v1,enteredRoom_v1,leftRoom_v1,occupantEntered_v1,occupantLeft_v1,occupantMoved_v1" name="keywords">
+<meta content="AVRGameControl,com.whirled.AVRGameControl,getProperty,setProperty,getPlayerProperty,setPlayerProperty,sendMessage,offerQuest,updateQuest,completeQuest,cancelQuest,getActiveQuests,isAbstract,populateProperties,avrgDispatch,stateChanged_v1,playerStateChanged_v1,messageReceived_v1" name="keywords">
 <title>com.whirled.AVRGameControl</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../all-classes.html')" href="../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../all-classes.html')" href="../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../index-list.html')" href="../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../index.html?com/whirled/AVRGameControl.html&amp;com/whirled/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
-<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;AVRGameControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;AVRGameControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
 </tr>
 <tr class="titleTableRow3">
 <td colspan="2">&nbsp;</td>
@@ -27,7 +27,7 @@
 </table>
 <script type="text/javascript" language="javascript">
 <!--
-if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class AVRGameControl"); titleBar_setSubNav(true,true,false,false,true,false,true,false,false,false,false,false,false,false);}
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class AVRGameControl"); titleBar_setSubNav(false,true,false,false,true,false,true,false,false,false,false,false,false,false);}
 --></script>
 <div class="MainContent">
 <table cellspacing="0" cellpadding="0" class="classHeaderTable">
@@ -38,80 +38,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="classHeaderTableLabel">Class</td><td class="classSignature">public class AVRGameControl</td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">AVRGameControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="WhirledGameControl.html">WhirledGameControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="../threerings/ezgame/BaseControl.html">BaseControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">AVRGameControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="WhirledControl.html">WhirledControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
 </tr>
 </table>
 <p></p>
  This file should be included by AVR games so that they can communicate
  with the whirled.
- AVRGame means: Alternate Virtual Reality Game, and refers to games
+  AVRGame means: Alternate Virtual Reality Game, and refers to games
  played within the whirled environment.
  <p></p>
 <br>
 <hr>
 </div>
-<a name="propertySummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Public Properties</div>
-<div class="showHideLinks">
-<div class="hideInheritedProperty" id="hideInheritedProperty">
-<a onclick="javascript:setInheritedVisible(false,'Property');" href="#propertySummary" class="showHideLink"><img src="../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Public Properties</a>
-</div>
-<div class="showInheritedProperty" id="showInheritedProperty">
-<a onclick="javascript:setInheritedVisible(true,'Property');" href="#propertySummary" class="showHideLink"><img src="../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Public Properties</a>
-</div>
-</div>
-<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="hideInheritedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#collections">collections</a> : <a href="../threerings/ezgame/CollectionsControl.html">CollectionsControl</a>
-<div class="summaryTableDescription">
-     Get the CollectionsControl, which contains methods for utilizing the server to dispatch
-     private information.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#enteredRoom">enteredRoom</a> : Function<div class="summaryTableDescription">
-     A function that will get called when the user enters a room.</div>
-</td><td class="summaryTableOwnerCol">AVRGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#leftRoom">leftRoom</a> : Function<div class="summaryTableDescription">
-     A function that will get called when the user leaves a room.</div>
-</td><td class="summaryTableOwnerCol">AVRGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#memoryChanged">memoryChanged</a> : Function<div class="summaryTableDescription">
-     A function that is called when the game's memory has changed.</div>
-</td><td class="summaryTableOwnerCol">AVRGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#occupantEntered">occupantEntered</a> : Function<div class="summaryTableDescription">
-     A function that will get called when an occupant enters the room.</div>
-</td><td class="summaryTableOwnerCol">AVRGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#occupantLeft">occupantLeft</a> : Function<div class="summaryTableDescription">
-     A function that will get called when an occupant leaves the room.</div>
-</td><td class="summaryTableOwnerCol">AVRGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#occupantMoved">occupantMoved</a> : Function<div class="summaryTableDescription">
-     A function that will get called when an occupant moves to a new location.</div>
-</td><td class="summaryTableOwnerCol">AVRGameControl</td>
-</tr>
-<tr class="hideInheritedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#seating">seating</a> : <a href="../threerings/ezgame/SeatingControl.html">SeatingControl</a>
-<div class="summaryTableDescription">
-     Get the SeatingControl, which contains methods for checking and assigning player seating
-     positions.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-</table>
-</div>
-<a name="protectedPropertySummary"></a>
+<a name="propertySummary"></a><a name="protectedPropertySummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Protected Properties</div>
 <div class="showHideLinks">
@@ -127,26 +66,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#_collections">_collections</a> : <a href="../threerings/ezgame/CollectionsControl.html">CollectionsControl</a>
-<div class="summaryTableDescription"> Sub-controls.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#_funcs">_funcs</a> : Object<div class="summaryTableDescription"> Contains functions exposed to us from the EZGame host.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#_gameConfig">_gameConfig</a> : Object<div class="summaryTableDescription"> Contains any custom game configuration data.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#_gameData">_gameData</a> : Object<div class="summaryTableDescription"> Contains the data properties shared by all players in the game.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#_seating">_seating</a> : <a href="../threerings/ezgame/SeatingControl.html">SeatingControl</a>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="WhirledControl.html#_props">_props</a> : Object<div class="summaryTableDescription"> The properties given us by our host.</div>
+</td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
 </tr>
 </table>
 </div>
@@ -173,444 +94,84 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Create a world game interface.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#addEventListener()">addEventListener</a>(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void</div>
+<a class="signatureLink" href="#cancelQuest()">cancelQuest</a>(questId:String):Boolean</div>
 <div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#amInControl()">amInControl</a>():Boolean</div>
-<div class="summaryTableDescription">
-     Returns true if we are in control of this game.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#backToWhirled()">backToWhirled</a>(showLobby:Boolean = false):void</div>
-<div class="summaryTableDescription">
-     Instructs the game client to return to Whirled.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#callEZCodeFriend()">callEZCodeFriend</a>(name:String, ... args):*</div>
-<div class="summaryTableDescription">
-     A "friend" version of callEZCode for subControls.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#checkDictionaryWord()">checkDictionaryWord</a>(locale:String, word:String, callback:Function):void</div>
-<div class="summaryTableDescription">
-     Requests a set of random letters from the dictionary service.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/BaseControl.html#dispatchEvent()">dispatchEvent</a>(event:Event):Boolean</div>
-<div class="summaryTableDescription">
-     Your own events may not be dispatched here.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/BaseControl.html">BaseControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#doBatch()">doBatch</a>(fn:Function):void</div>
-<div class="summaryTableDescription">
-     Execute the specified function as a batch of commands that will be sent to the server
-     together.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#endGame()">endGame</a>(winnerIds:Array):void</div>
-<div class="summaryTableDescription">
-     Don't use this method.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#endGameWithScore()">endGameWithScore</a>(score:int):void</div>
-<div class="summaryTableDescription">
-     A convenience function for ending a single player game with the supplied score.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#endGameWithScores()">endGameWithScores</a>(playerIds:Array, scores:Array, payoutType:int):void</div>
-<div class="summaryTableDescription">
-     Ends the game, reporting the scores earned by each player in the game, awarding flow
-     according to the specified strategy and updating player ratings.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#endGameWithWinners()">endGameWithWinners</a>(winnerIds:Array, loserIds:Array, payoutType:int):void</div>
-<div class="summaryTableDescription">
-     Ends the game, declaring which players are the winners (if players tie, more than one player
-     can be declared a winner.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#endRound()">endRound</a>(nextRoundDelay:int = 0):void</div>
-<div class="summaryTableDescription">
-     Ends the current round.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#endTurn()">endTurn</a>(nextPlayerId:int = 0):void</div>
-<div class="summaryTableDescription">
-     End the current turn.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#filter()">filter</a>(text:String):String</div>
-<div class="summaryTableDescription">
-     Run the specified text through the user's chat filter.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#get()">get</a>(propName:String, index:int = -1):Object</div>
-<div class="summaryTableDescription">
-     Get a property from data.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getConfig()">getConfig</a>():Object</div>
-<div class="summaryTableDescription">
-     Get any game-specific configurations that were set up in the lobby.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getControllerId()">getControllerId</a>():int</div>
-<div class="summaryTableDescription">
-     Returns the player id of the client that is in control of this game.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getDictionaryLetterSet()">getDictionaryLetterSet</a>(locale:String, count:int, callback:Function):void</div>
-<div class="summaryTableDescription">
-     Requests a set of random letters from the dictionary service.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#getHeadShot()">getHeadShot</a>(occupant:int, callback:Function):void</div>
-<div class="summaryTableDescription">
-     Return the headshot image for the given occupant in the form of a Sprite object.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#getItemPacks()">getItemPacks</a>():Array</div>
-<div class="summaryTableDescription">
-     Returns the set of all item packs available to this game as an array of objects with the
-     following properties:
-          <pre>
-     ident - string identifier of item pack
-     name - human readable name of item pack
-     mediaURL - URL for item pack content
-     </pre>
-     </div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#getLevelPacks()">getLevelPacks</a>():Array</div>
-<div class="summaryTableDescription">
-     Returns the set of level packs available to this game as an array of objects with the
-     following properties:
-          <pre>
-     ident - string identifier of level pack
-     name - human readable name of level pack
-     mediaURL - URL for level pack content
-     premium - boolean indicating that content is premium or not
-     </pre>
-          This will contain all free level packs that are registered for this game as well as the
-     premium level packs owned by all players in the game.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getMyId()">getMyId</a>():int</div>
-<div class="summaryTableDescription">
-     Returns this client's player id.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getOccupantLocation()">getOccupantLocation</a>(occupantId:int):Array</div>
-<div class="summaryTableDescription">
-     Returns the specified occupant's current location in the scene.</div>
+<a class="signatureLink" href="#completeQuest()">completeQuest</a>(questId:String, payoutLevel:int):Boolean</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getActiveQuests()">getActiveQuests</a>():Array</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getPlayerProperty()">getPlayerProperty</a>(key:String):Object</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getProperty()">getProperty</a>(key:String):Object</div>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getOccupantName()">getOccupantName</a>(playerId:int):String</div>
+<a class="signatureLink" href="WhirledControl.html#isConnected()">isConnected</a>():Boolean</div>
 <div class="summaryTableDescription">
-     Get the display name of the specified occupant.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getOccupants()">getOccupants</a>():Array</div>
-<div class="summaryTableDescription">
-     Returns the player ids of all occupants in the game room.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#getPlayerItemPacks()">getPlayerItemPacks</a>(occupant:int):Array</div>
-<div class="summaryTableDescription">
-     Returns all item packs owned by the specified game occupant.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getPropertyNames()">getPropertyNames</a>(prefix:String = ""):Array</div>
-<div class="summaryTableDescription">
-     Get the names of all currently-set properties that begin with the specified prefix.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getRound()">getRound</a>():int</div>
-<div class="summaryTableDescription">
-     Returns the current round number.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#getStageBounds()">getStageBounds</a>():Rectangle</div>
-<div class="summaryTableDescription">
-     Returns the bounds of the "stage" on which the game will be drawn.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getTurnHolder()">getTurnHolder</a>():int</div>
-<div class="summaryTableDescription">
-     Returns the player id of the current turn holder.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getUserCookie()">getUserCookie</a>(occupantId:int, callback:Function):void</div>
-<div class="summaryTableDescription">
-     Get the user-specific game data for the specified user.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#isConnected()">isConnected</a>():Boolean</div>
-<div class="summaryTableDescription">
-     Are we connected and running inside the EZGame environment, or has someone just loaded up
-     this swf by itself?
+     Are we connected and running inside the whirled, or are we
+     merely being displayed standalone?
      </div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#isInPlay()">isInPlay</a>():Boolean</div>
-<div class="summaryTableDescription">
-     Is the game currently in play?
-     </div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#isMyTurn()">isMyTurn</a>():Boolean</div>
-<div class="summaryTableDescription">
-     A convenience method to just check if it's our turn.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#localChat()">localChat</a>(msg:String):void</div>
-<div class="summaryTableDescription">
-     Display the specified message immediately locally: not sent to any other players or
-     observers in the game room.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#lookupMemory()">lookupMemory</a>(key:String, defval:Object):Object</div>
-<div class="summaryTableDescription">
-     Returns the value associated with the supplied key in this game's memory.</div>
+<a class="signatureLink" href="#offerQuest()">offerQuest</a>(questId:String, questIntro:String, initialStatus:String):Boolean</div>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#playerReady()">playerReady</a>():void</div>
-<div class="summaryTableDescription">
-     If the game was not configured to auto-start, all clients must call this function to let the
-     server know that they are ready, at which point the game will be started.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#registerListener()">registerListener</a>(obj:Object):void</div>
-<div class="summaryTableDescription">
-     Register an object to receive whatever events it should receive, based on which event
-     listeners it implements.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#removeEventListener()">removeEventListener</a>(type:String, listener:Function, useCapture:Boolean = false):void</div>
+<a class="signatureLink" href="#sendMessage()">sendMessage</a>(key:String, value:Object, playerId:int = 0):Boolean</div>
 <div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#restartGameIn()">restartGameIn</a>(seconds:int):void</div>
-<div class="summaryTableDescription">
-     Requests to start the game again in the specified number of seconds.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#sendChat()">sendChat</a>(msg:String):void</div>
-<div class="summaryTableDescription">
-     Send a message that will be heard by everyone in the game room, even observers.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#sendMessage()">sendMessage</a>(messageName:String, value:Object, playerId:int = 0):void</div>
-<div class="summaryTableDescription">
-     Send a "message" to other clients subscribed to the game.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#set()">set</a>(propName:String, value:Object, index:int = -1):void</div>
-<div class="summaryTableDescription">
-     Set a property that will be distributed.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#setChatBounds()">setChatBounds</a>(bounds:Rectangle):void</div>
-<div class="summaryTableDescription">
-     Relocates the chat overlay to the specified region.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#setChatEnabled()">setChatEnabled</a>(enabled:Boolean):void</div>
-<div class="summaryTableDescription">
-     Enables or disables chat.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#setImmediate()">setImmediate</a>(propName:String, value:Object, index:int = -1):void</div>
-<div class="summaryTableDescription">
-     Set a property, but have this client immediately set the value so that it can be
-     re-read.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#setUserCookie()">setUserCookie</a>(cookie:Object):Boolean</div>
-<div class="summaryTableDescription">
-     Store persistent data that can later be retrieved by an instance of this game.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#startTicker()">startTicker</a>(tickerName:String, msOfDelay:int):void</div>
-<div class="summaryTableDescription">
-     Start the ticker with the specified name.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#stopTicker()">stopTicker</a>(tickerName:String):void</div>
-<div class="summaryTableDescription">
-     Stop the specified ticker.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#testAndSet()">testAndSet</a>(propName:String, newValue:Object, testValue:Object, index:int = -1):void</div>
-<div class="summaryTableDescription">
-     Set a property that will be distributed, but only if it's equal to the specified test value.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#unregisterListener()">unregisterListener</a>(obj:Object):void</div>
-<div class="summaryTableDescription">
-     Unregister the specified object from receiving events.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#updateMemory()">updateMemory</a>(key:String, value:Object):Boolean</div>
-<div class="summaryTableDescription">
-     Requests that this game's memory be updated with the supplied key/value pair.</div>
+<a class="signatureLink" href="#setPlayerProperty()">setPlayerProperty</a>(key:String, value:Object, persistent:Boolean):Boolean</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setProperty()">setProperty</a>(key:String, value:Object, persistent:Boolean):Boolean</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#updateQuest()">updateQuest</a>(questId:String, step:int, status:String):Boolean</div>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 </table>
@@ -630,84 +191,69 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr>
 <th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#callEZCode()">callEZCode</a>(name:String, ... args):*</div>
-<div class="summaryTableDescription">
-     Call a method across the security boundary.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#checkIsConnected()">checkIsConnected</a>():void</div>
-<div class="summaryTableDescription">
-     Throw an error if we're not connected.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/BaseControl.html#dispatch()">dispatch</a>(event:Event):void</div>
-<div class="summaryTableDescription">
-     Secret function to dispatch property changed events.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/BaseControl.html">BaseControl</a></td>
-</tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#enteredRoom_v1()">enteredRoom_v1</a>():void</div>
+<a class="signatureLink" href="#avrgDispatch()">avrgDispatch</a>(ev:String, key:String = null, value:Object = null):void</div>
 <div class="summaryTableDescription">
-     Called when the user enters a room.</div>
+     Helper method to dispatch an AVRGameControlEvent, but only if there is an associated
+     listener.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#handleRootClick()">handleRootClick</a>(evt:MouseEvent):void</div>
+<a class="signatureLink" href="WhirledControl.html#callHostCode()">callHostCode</a>(name:String, ... args):*</div>
 <div class="summaryTableDescription">
-     Internal method that is called whenever the mouse clicks our root.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+     Call an exposed function back in our hosting Whirled.</div>
+</td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="WhirledControl.html#dispatch()">dispatch</a>(ctrlEvent:String, key:String = null, value:Object = null):void</div>
+<div class="summaryTableDescription">
+     Helper method to dispatch a ControlEvent, but only if there
+     is an associated listener.</div>
+</td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="WhirledControl.html#gotInitProperties()">gotInitProperties</a>(o:Object):void</div>
+<div class="summaryTableDescription">
+     Initialize/examine any properties sent from whirled after connecting.</div>
+</td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="WhirledControl.html#handleUnload()">handleUnload</a>(evt:Event):void</div>
+<div class="summaryTableDescription">
+     Handle any shutdown required.</div>
+</td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#leftRoom_v1()">leftRoom_v1</a>():void</div>
-<div class="summaryTableDescription">
-     Called when the user leaves the room.</div>
+<a class="signatureLink" href="#isAbstract()">isAbstract</a>():Boolean</div>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#memoryChanged_v1()">memoryChanged_v1</a>(key:String, value:Object):void</div>
+<a class="signatureLink" href="#messageReceived_v1()">messageReceived_v1</a>(key:String, value:Object):void</div>
 <div class="summaryTableDescription">
-     Called when one of this item's memory entries has changed.</div>
+     Called when a user message has arrived.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#occupantEntered_v1()">occupantEntered_v1</a>(occupant:int):void</div>
+<a class="signatureLink" href="#playerStateChanged_v1()">playerStateChanged_v1</a>(key:String, value:Object):void</div>
 <div class="summaryTableDescription">
-     Called when an occupant enters the room.</div>
-</td><td class="summaryTableOwnerCol">AVRGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#occupantLeft_v1()">occupantLeft_v1</a>(occupant:int):void</div>
-<div class="summaryTableDescription">
-     Called when an occupant leaves the room.</div>
-</td><td class="summaryTableOwnerCol">AVRGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#occupantMoved_v1()">occupantMoved_v1</a>(occupant:int):void</div>
-<div class="summaryTableDescription">
-     Called when an occupant moves to a new location within the room.</div>
+     Called when a player-local state property has changed.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="">
@@ -717,160 +263,46 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#setEZProps()">setEZProps</a>(o:Object):void</div>
+<a class="signatureLink" href="#stateChanged_v1()">stateChanged_v1</a>(key:String, value:Object):void</div>
 <div class="summaryTableDescription">
-     Sets the properties we received from the EZ game framework on the other side of the security
-     boundary.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+     Called when a game-global state property has changed.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 </table>
 </div>
 <a name="eventSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Events</div>
-<div class="showHideLinks">
-<div class="hideInheritedEvent" id="hideInheritedEvent">
-<a onclick="javascript:setInheritedVisible(false,'Event');" href="#eventSummary" class="showHideLink"><img src="../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Events</a>
-</div>
-<div class="showInheritedEvent" id="showInheritedEvent">
-<a onclick="javascript:setInheritedVisible(true,'Event');" href="#eventSummary" class="showHideLink"><img src="../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Events</a>
-</div>
-</div>
-<table id="summaryTableEvent" class="summaryTable hideInheritedEvent" cellpadding="3" cellspacing="0">
+<table id="summaryTableEvent" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Event</th><th>Summary</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:ControlChanged">ControlChanged</a>
+<a class="signatureLink" href="#event:messageReceived">messageReceived</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when the controller changes for the game.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+ Dispatched when a message has been received.</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#event:flowAwarded">flowAwarded</a>
+<a class="signatureLink" href="#event:playerPropertyChanged">playerPropertyChanged</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when this player has been awarded flow.</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
+ Dispatched when a player-local state property has changed.</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:GameEnded">GameEnded</a>
+<a class="signatureLink" href="#event:propertyChanged">propertyChanged</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when the game ends.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:GameStarted">GameStarted</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when the game starts, usually after all players are present.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:keyDown">keyDown</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when a key is pressed when the game has focus.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:keyUp">keyUp</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when a key is released when the game has focus.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:msgReceived">msgReceived</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when a message arrives with information that is not part of the shared game state.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:PropChanged">PropChanged</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when a property has changed in the shared game state.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:RoundEnded">RoundEnded</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when a round ends.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:RoundStarted">RoundStarted</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when a round starts.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:TurnChanged">TurnChanged</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when the turn changes in a turn-based game.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:UserChat">UserChat</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when a user chats.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-</table>
-</div>
-<a name="constantSummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Public Constants</div>
-<div class="showHideLinks">
-<div class="hideInheritedConstant" id="hideInheritedConstant">
-<a onclick="javascript:setInheritedVisible(false,'Constant');" href="#constantSummary" class="showHideLink"><img src="../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Public Constants</a>
-</div>
-<div class="showInheritedConstant" id="showInheritedConstant">
-<a onclick="javascript:setInheritedVisible(true,'Constant');" href="#constantSummary" class="showHideLink"><img src="../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Public Constants</a>
-</div>
-</div>
-<table id="summaryTableConstant" class="summaryTable hideInheritedConstant" cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="hideInheritedConstant">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="WhirledGameControl.html#CASCADING_PAYOUT">CASCADING_PAYOUT</a> : int = 0<div class="summaryTableDescription">[static] Cascading payout skews awards toward the winners by giving 50% of last place's payout to
-     first place, 25% to the next inner pair of opponents (third to second in a four player game,
-     for example), and so on.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedConstant">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="WhirledGameControl.html#TO_EACH_THEIR_OWN">TO_EACH_THEIR_OWN</a> : int = 2<div class="summaryTableDescription">[static] Each player receives a payout based only on their performance during the game and not
-     influenced by their relative ranking to one another.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedConstant">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="WhirledGameControl.html#WINNERS_TAKE_ALL">WINNERS_TAKE_ALL</a> : int = 1<div class="summaryTableDescription">[static] Winner takes all splits the total flow available to award to all players in the game among
-     those identified as winners at the end of the game.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
+ Dispatched when a game-global state property has changed.</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 </table>
 </div>
@@ -879,74 +311,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 showHideInherited();
 --></script>
 <div class="MainContent">
-<a name="propertyDetail"></a>
-<div class="detailSectionHeader">Property detail</div>
-<a name="enteredRoom"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">enteredRoom</td><td class="detailHeaderType">property</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public var enteredRoom:Function</code><p>
-     A function that will get called when the user enters a room.
-     </p></div>
-<a name="leftRoom"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">leftRoom</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public var leftRoom:Function</code><p>
-     A function that will get called when the user leaves a room.
-     </p></div>
-<a name="memoryChanged"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">memoryChanged</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public var memoryChanged:Function</code><p>
-     A function that is called when the game's memory has changed. It should have the following
-     signature:
-          <pre>function (key :String, value :Object) :void</pre>
-     
-     <code>key</code> will be the key that was modified or null if we have just been initialized
-     and we are being provided with our memory for the first time. <code>value</code> will be the
-     value associated with that key if key is non-null, or null.
-     </p></div>
-<a name="occupantEntered"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">occupantEntered</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public var occupantEntered:Function</code><p>
-     A function that will get called when an occupant enters the room.
-     </p></div>
-<a name="occupantLeft"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">occupantLeft</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public var occupantLeft:Function</code><p>
-     A function that will get called when an occupant leaves the room.
-     </p></div>
-<a name="occupantMoved"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">occupantMoved</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public var occupantMoved:Function</code><p>
-     A function that will get called when an occupant moves to a new location.
-     </p></div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
 <a name="AVRGameControl()"></a>
@@ -967,91 +331,166 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="enteredRoom_v1()"></a>
+<a name="avrgDispatch()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">enteredRoom_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">avrgDispatch</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function enteredRoom_v1():void</code><p>
-     Called when the user enters a room.
-     </p></div>
-<a name="getOccupantLocation()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getOccupantLocation</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function getOccupantLocation(occupantId:int):Array</code><p>
-     Returns the specified occupant's current location in the scene.
-          </p><span class="label">Parameters</span>
+<code>protected function avrgDispatch(ev:String, key:String = null, value:Object = null):void</code><p>
+     Helper method to dispatch an AVRGameControlEvent, but only if there is an associated
+     listener.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">occupantId</span>:int</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>Array</code> &mdash; an array containing [ x, y, z ]. x, y, and z are Numbers between 0 and 1 or null if
-     the location is unknown.
-     </td>
-</tr>
-</table>
-</div>
-<a name="leftRoom_v1()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">leftRoom_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function leftRoom_v1():void</code><p>
-     Called when the user leaves the room.
-     </p></div>
-<a name="lookupMemory()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">lookupMemory</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function lookupMemory(key:String, defval:Object):Object</code><p>
-     Returns the value associated with the supplied key in this game's memory. If no value is
-     mapped in the game's memory, the supplied default value will be returned.
-          </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+<td width="20px"></td><td><code><span class="label">ev</span>:String</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">defval</span>:Object</code></td>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code> (default = <code>null</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="cancelQuest()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">cancelQuest</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function cancelQuest(questId:String):Boolean</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">questId</span>:String</code></td>
 </tr>
 </table>
 <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Object</code> &mdash; the value for the specified key from this game's memory or the supplied default.
-     </td>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>
-<a name="memoryChanged_v1()"></a>
+<a name="completeQuest()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">memoryChanged_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">completeQuest</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function memoryChanged_v1(key:String, value:Object):void</code><p>
-     Called when one of this item's memory entries has changed.
+<code>public function completeQuest(questId:String, payoutLevel:int):Boolean</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">questId</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">payoutLevel</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="getActiveQuests()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getActiveQuests</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getActiveQuests():Array</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="getPlayerProperty()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getPlayerProperty</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getPlayerProperty(key:String):Object</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<a name="getProperty()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getProperty</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getProperty(key:String):Object</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<a name="isAbstract()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isAbstract</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected override function isAbstract():Boolean</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="messageReceived_v1()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">messageReceived_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function messageReceived_v1(key:String, value:Object):void</code><p>
+     Called when a user message has arrived.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1065,51 +504,58 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="occupantEntered_v1()"></a>
+<a name="offerQuest()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">occupantEntered_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">offerQuest</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function occupantEntered_v1(occupant:int):void</code><p>
-     Called when an occupant enters the room.
-     </p><span class="label">Parameters</span>
+<code>public function offerQuest(questId:String, questIntro:String, initialStatus:String):Boolean</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">occupant</span>:int</code></td>
+<td width="20px"></td><td><code><span class="label">questId</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">questIntro</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">initialStatus</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>
-<a name="occupantLeft_v1()"></a>
+<a name="playerStateChanged_v1()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">occupantLeft_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">playerStateChanged_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function occupantLeft_v1(occupant:int):void</code><p>
-     Called when an occupant leaves the room.
+<code>protected function playerStateChanged_v1(key:String, value:Object):void</code><p>
+     Called when a player-local state property has changed.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">occupant</span>:int</code></td>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
 </tr>
-</table>
-</div>
-<a name="occupantMoved_v1()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">occupantMoved_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="paramSpacer">&nbsp;</td>
 </tr>
-</table>
-<div class="detailBody">
-<code>protected function occupantMoved_v1(occupant:int):void</code><p>
-     Called when an occupant moves to a new location within the room.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">occupant</span>:int</code></td>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
 </tr>
 </table>
 </div>
@@ -1127,18 +573,115 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="updateMemory()"></a>
+<a name="sendMessage()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">updateMemory</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">sendMessage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function updateMemory(key:String, value:Object):Boolean</code><p>
-     Requests that this game's memory be updated with the supplied key/value pair. The supplied
-     value must be a simple object (Integer, Number, String) or an Array of simple objects. The
-     contents of the game's memory (keys and values) must not exceed 4096 bytes when AMF3 encoded.
-          </p><span class="label">Parameters</span>
+<code>public function sendMessage(key:String, value:Object, playerId:int = 0):Boolean</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> (default = <code>0</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="setPlayerProperty()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setPlayerProperty</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setPlayerProperty(key:String, value:Object, persistent:Boolean):Boolean</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">persistent</span>:Boolean</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="setProperty()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setProperty</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setProperty(key:String, value:Object, persistent:Boolean):Boolean</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">persistent</span>:Boolean</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="stateChanged_v1()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">stateChanged_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function stateChanged_v1(key:String, value:Object):void</code><p>
+     Called when a game-global state property has changed.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
@@ -1150,16 +693,92 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
 </tr>
 </table>
+</div>
+<a name="updateQuest()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">updateQuest</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function updateQuest(questId:String, step:int, status:String):Boolean</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">questId</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">step</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">status</span>:String</code></td>
+</tr>
+</table>
 <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Boolean</code> &mdash; true if the memory was updated, false if the memory update could not be completed
-     due to size restrictions.
-     </td>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>
+<div class="detailSectionHeader">Event detail</div>
+<a name="event:messageReceived"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">messageReceived</td><td class="detailHeaderType">event&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../whirled/AVRGameControlEvent.html"><code>com.whirled.AVRGameControlEvent</code></a>
+<br>
+<span class="label">AVRGameControlEvent.type property = </span><a href="../whirled/AVRGameControlEvent.html#MESSAGE_RECEIVED"><code>com.whirled.AVRGameControlEvent.MESSAGE_RECEIVED</code></a>
+<br><p>
+ Dispatched when a message has been received.
+ 
+ </p><p> An event type dispatched when a message is received.
+     key: message key
+     value: message value
+          </p></div>
+<a name="event:playerPropertyChanged"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">playerPropertyChanged</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../whirled/AVRGameControlEvent.html"><code>com.whirled.AVRGameControlEvent</code></a>
+<br>
+<span class="label">AVRGameControlEvent.type property = </span><a href="../whirled/AVRGameControlEvent.html#PLAYER_PROPERTY_CHANGED"><code>com.whirled.AVRGameControlEvent.PLAYER_PROPERTY_CHANGED</code></a>
+<br><p>
+ Dispatched when a player-local state property has changed.
+ 
+ </p><p> An event type dispatched when a datum of player-local game state has changed.
+     key: property key
+     value: property value
+          </p></div>
+<a name="event:propertyChanged"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">propertyChanged</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../whirled/AVRGameControlEvent.html"><code>com.whirled.AVRGameControlEvent</code></a>
+<br>
+<span class="label">AVRGameControlEvent.type property = </span><a href="../whirled/AVRGameControlEvent.html#PROPERTY_CHANGED"><code>com.whirled.AVRGameControlEvent.PROPERTY_CHANGED</code></a>
+<br><p>
+ Dispatched when a game-global state property has changed.
+ 
+ </p><p> An event type dispatched when a datum of game state has changed.
+     key: property key
+     value: property value
+          </p></div>
 <br>
 <br>
 <hr>

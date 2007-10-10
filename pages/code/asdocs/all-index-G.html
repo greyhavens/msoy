@@ -132,6 +132,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      Get the names of all the current actions.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html#getActiveQuests()">getActiveQuests</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html">AVRGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StreamableArrayList.html#getArray()">getArray</a>(otherList) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StreamableArrayList.html">StreamableArrayList</a></td>
 </tr>
 <tr>
@@ -387,7 +393,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      premium - boolean indicating that content is premium or not
      </pre>
           This will contain all free level packs that are registered for this game as well as the
-     premium level packs owned by all players in the game.</td>
+     premium level packs owned by this client's player.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#getLogicalLocation()">getLogicalLocation</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
@@ -443,13 +449,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
 <tr>
 <td width="20"></td><td>
      Convenience function to access some data as a Number.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html#getOccupantLocation()">getOccupantLocation</a>(occupantId) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html">AVRGameControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Returns the specified occupant's current location in the scene.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#getOccupantName()">getOccupantName</a>(playerId) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
@@ -508,11 +507,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      Get all the players at the table, in their seated position.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html#getPlayerItemPacks()">getPlayerItemPacks</a>(occupant) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html">WhirledGameControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html#getPlayerItemPacks()">getPlayerItemPacks</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html">WhirledGameControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Returns all item packs owned by the specified game occupant.</td>
+     Returns all item packs owned by this client's player.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SeatingControl.html#getPlayerNames()">getPlayerNames</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SeatingControl.html">SeatingControl</a></td>
@@ -529,11 +528,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      Get the player's position (seated index), or -1 if not a player.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html#getPlayerProperty()">getPlayerProperty</a>(key) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html">AVRGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/DataPack.html#getPoint()">getPoint</a>(name) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/DataPack.html">DataPack</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Convenience function to access some data as a Point.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html#getProperty()">getProperty</a>(key) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html">AVRGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#getPropertyNames()">getPropertyNames</a>(prefix) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
