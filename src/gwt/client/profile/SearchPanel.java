@@ -101,7 +101,8 @@ public class SearchPanel extends VerticalPanel
         _searchType = type;
         _searchString = search;
         clearResults();
-        add(_profiles = new ProfileGrid(ROWS, COLUMNS, CProfile.msgs.gridNoProfiles()));
+        add(_profiles = new ProfileGrid(
+                ROWS, COLUMNS, ProfileGrid.NAV_ON_TOP, CProfile.msgs.gridNoProfiles()));
         _profiles.setModel(new SimpleDataModel(cards), page);
     }
 

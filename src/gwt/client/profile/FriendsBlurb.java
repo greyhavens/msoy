@@ -44,7 +44,8 @@ public class FriendsBlurb extends Blurb
 
         setHeader(CProfile.msgs.friendsTitle());
 
-        ProfileGrid grid = new ProfileGrid(FRIEND_ROWS, FRIEND_COLUMNS, "");
+        ProfileGrid grid = new ProfileGrid(
+            FRIEND_ROWS, FRIEND_COLUMNS, ProfileGrid.NAV_ON_BOTTOM, "");
         grid.setVerticalOrienation(true);
         grid.setWidth("100%");
 

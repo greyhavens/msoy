@@ -5,6 +5,7 @@ package client.inventory;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -17,9 +18,10 @@ import client.editem.ItemEditor;
  */
 public class SubItemEntry extends ItemEntry
 {
-    public SubItemEntry (ItemPanel panel, Item item)
+    public SubItemEntry (SubItemPanel spanel, ItemPanel panel, Item item)
     {
         super(panel, item, null);
+        _spanel = spanel;
     }
 
     // @Override // from ItemEntry
@@ -32,14 +34,17 @@ public class SubItemEntry extends ItemEntry
         setText(1, 0, sitem.ident);
         getFlexCellFormatter().setStyleName(1, 0, "Ident");
 
-        Button button = new Button(CInventory.msgs.detailEdit());
-        button.addClickListener(new ClickListener() {
+        Button button = new Button(CInventory.msgs.detailEdit(), new ClickListener() {
             public void onClick (Widget sender) {
-                ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _panel);
+                ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _spanel);
                 editor.setItem(_item);
                 editor.show();
             }
         });
+        button.setStyleName("tinyButton");
         setWidget(2, 0, button);
+//         getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_RIGHT);
     }
+
+    protected SubItemPanel _spanel;
 }

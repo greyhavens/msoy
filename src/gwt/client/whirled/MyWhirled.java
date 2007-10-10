@@ -140,7 +140,7 @@ public class MyWhirled extends FlexTable
             protected String getHeaderText (int start, int limit, int total) {
                 return CWhirled.msgs.headerPeople();
             }
-            protected boolean alwaysDisplayHeader () {
+            protected boolean alwaysDisplayNavi () {
                 return true;
             }
         });

@@ -24,9 +24,9 @@ import client.util.MediaUtil;
  */
 public class ProfileGrid extends PagedGrid
 {
-    public ProfileGrid (int height, int width, String emptyMessage) 
+    public ProfileGrid (int height, int width, int navLoc, String emptyMessage) 
     {
-        super(height, width);
+        super(height, width, navLoc);
         setEmptyMessage(emptyMessage);
     }
 

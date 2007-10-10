@@ -15,13 +15,19 @@
   margin-bottom: 10px;
 }
 
+.subInventoryContents {
+  width: 650px;
+  margin-top: 10px;
+}
+
 .itemDetailPanel .StyledTabs .gwt-TabPanelBottom {
   padding: 0px;
 }
 
 .itemEntry {
-  padding-right: 15px;
-  padding-bottom: 10px;
+  width: 210px;
+  padding-right: 5px;
+  padding-bottom: 5px;
 }
 
 .itemEntry .Preview {

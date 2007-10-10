@@ -76,6 +76,17 @@ a:visited {
   cursor: pointer;
 }
 
+.tinyButton {
+  border: 1px double #000000;
+  background-image: url(/images/ui/tiny_button_middle.png);
+  background-repeat: repeat-x;
+  font-size: 8px;
+  height: 14px;
+  vertical-align: top;
+  padding-bottom: 1px;
+  cursor: pointer;
+}
+
 .gwt-TextBox {
   background: #E9F6FB;
 }

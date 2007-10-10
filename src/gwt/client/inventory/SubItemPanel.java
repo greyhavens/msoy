@@ -17,6 +17,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.SubItem;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import client.editem.EditorHost;
@@ -32,16 +33,18 @@ public class SubItemPanel extends VerticalPanel
     {
         _type = type;
         _parent = parent;
-        _contents = new PagedGrid(ROWS, ItemPanel.COLUMNS) {
+        _contents = new PagedGrid(ROWS, ItemPanel.COLUMNS, PagedGrid.NAV_ON_BOTTOM) {
             protected Widget createWidget (Object item) {
-                return new SubItemEntry(panel, (Item)item);
+                return new SubItemEntry(SubItemPanel.this, panel, (Item)item);
             }
             protected String getEmptyMessage () {
                 return CInventory.msgs.panelNoItems(CInventory.dmsgs.getString("itemType" + _type));
             }
         };
-        // _contents.addStyleName("inventoryContents");
+        _contents.addStyleName("subInventoryContents");
         add(_contents);
+
+        add(WidgetUtil.makeShim(1, 10));
 
         _create = new Button(CInventory.msgs.panelCreateNew());
         _create.addClickListener(new ClickListener() {
@@ -49,10 +52,7 @@ public class SubItemPanel extends VerticalPanel
                 ItemEditor editor = ItemEditor.createItemEditor(_type, SubItemPanel.this);
                 if (editor != null) {
                     _create.setEnabled(false);
-                    Item item = editor.createBlankItem();
-                    // TEMP: workaround null description problem
-                    item.description = "";
-                    editor.setItem(item);
+                    editor.setItem(editor.createBlankItem());
                     editor.setParentItem(_parent.getIdent());
                     editor.show();
                 }
@@ -68,6 +68,7 @@ public class SubItemPanel extends VerticalPanel
 
         if (item != null) {
             // refresh our item list
+            _items.remove(item);
             _items.add(0, item);
             _contents.setModel(new SimpleDataModel(_items), 0);
         }
