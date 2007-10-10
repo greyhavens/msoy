@@ -133,6 +133,18 @@ public abstract class Page
     }
 
     /**
+     * Sets the title of the browser window and the page (displayed below the Whirled logo).
+     */
+    public void setPageTitle (String title)
+    {
+        if (_content == null) {
+            createContentContainer();
+        }
+        _content.setWidget(0, 0, new Label(title));
+        Window.setTitle(CShell.cmsgs.windowTitle(title));
+    }
+
+    /**
      * Used to remove the close button, either because we've been removed from view, or beacuse the
      * flash client has been removed.
      */
@@ -251,15 +263,6 @@ public abstract class Page
         _content.getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
 
         setCloseButton();
-    }
-
-    protected void setPageTitle (String title)
-    {
-        if (_content == null) {
-            createContentContainer();
-        }
-        _content.setWidget(0, 0, new Label(title));
-        Window.setTitle(CShell.cmsgs.windowTitle(title));
     }
 
     protected void setPageTabs (Widget tabs)

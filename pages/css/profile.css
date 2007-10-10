@@ -4,38 +4,6 @@
  * CSS styles for the Profile interfaces.
  */
 
-.blurbBox {
-  width: 100%;
-}
-
-.blurbBox .blurbBoxHeader { 
-  width: 100%;
-}
-
-.blurbBox .blurbBoxHeader .HeaderLeft {
-  width: 33px;
-  height: 27px;
-  background: url(/images/profile/box_left.png);
-}
-
-.blurbBox .blurbBoxHeader .HeaderRight {
-  width: 31px;
-  height: 27px;
-  background: url(/images/profile/box_right.png);
-}
-
-.blurbBox .blurbBoxHeader .Header {
-  background: url(/images/profile/box_tile.png);
-  color: #EAF4F8;
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.blurbBox .Content {
-  width: 350px;
-}
-
 .profileBlurb .Photo {
   width: 160px;
   height: 120px;
@@ -108,6 +76,10 @@
 .trophiesBlurb .Name {
   text-align: center;
   font-size: 12px;
+}
+
+.trophiesBlurb .More {
+  font-size: 10px;
 }
 
 .profileWidget {

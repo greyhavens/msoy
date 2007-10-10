@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
@@ -79,6 +80,14 @@ public class TrophiesBlurb extends Blurb
             _content.setText(0, ii, "");
             _content.getFlexCellFormatter().setStyleName(0, ii, "Image");
         }
+
+        row = _content.getRowCount();
+        _content.getFlexCellFormatter().setColSpan(row, 0, COLUMNS);
+        _content.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
+        _content.getFlexCellFormatter().setStyleName(row, 0, "More");
+        String args = Args.compose("t", pdata.name.getMemberId());
+        _content.setWidget(row, 0, Application.createLink(
+                               CProfile.msgs.allTrophies(), "game", args));
     }
 
     protected FlexTable _content;

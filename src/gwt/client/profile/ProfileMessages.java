@@ -88,6 +88,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String inviteToGroup();
 
   /**
+   * Translated "All Trophies...".
+   * 
+   * @return translated "All Trophies..."
+   * @gwt.key allTrophies
+   */
+  String allTrophies();
+
+  /**
    * Translated "Search".
    * 
    * @return translated "Search"

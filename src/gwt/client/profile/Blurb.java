@@ -3,8 +3,6 @@
 
 package client.profile;
 
-import client.profile.HoodBlurb;
-
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -13,10 +11,13 @@ import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.BlurbData;
 import com.threerings.msoy.data.all.MemberName;
 
+import client.profile.HoodBlurb;
+import client.util.HeaderBox;
+
 /**
  * Contains a chunk of content that a user would want to display on their personal page.
  */
-public abstract class Blurb extends Grid
+public abstract class Blurb extends HeaderBox
 {
     /**
      * Creates the appropriate UI for the specified type of blurb.
@@ -61,23 +62,7 @@ public abstract class Blurb extends Grid
 
     protected Blurb ()
     {
-        super(2, 1);
-        setCellPadding(0);
-        setCellSpacing(0);
-        setStyleName("blurbBox");
-
-        Grid header = new Grid(1, 3);
-        header.setCellPadding(0);
-        header.setCellSpacing(0);
-        header.setStyleName("blurbBoxHeader");
-        header.getCellFormatter().setStyleName(0, 0, "HeaderLeft");
-        header.setWidget(0, 1, _header = new Label("Header"));
-        header.getCellFormatter().setStyleName(0, 1, "Header");
-        header.getCellFormatter().setStyleName(0, 2, "HeaderRight");
-        setWidget(0, 0, header);
-        
-        setWidget(1, 0, createContent());
-        getCellFormatter().setStyleName(1, 0, "Content");
+        setContent(createContent());
     }
 
     /**
@@ -85,7 +70,7 @@ public abstract class Blurb extends Grid
      */
     protected void setHeader (String header)
     {
-        _header.setText(header);
+        setTitle(header);
     }
 
     /**

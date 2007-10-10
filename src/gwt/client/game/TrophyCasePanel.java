@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.TrophyCase;
 
+import client.shell.Page;
+import client.util.HeaderBox;
 import client.util.MediaUtil;
 
 /**
@@ -16,10 +18,14 @@ import client.util.MediaUtil;
  */
 public class TrophyCasePanel extends FlexTable
 {
-    public TrophyCasePanel (int memberId)
+    public TrophyCasePanel (Page parent, int memberId)
     {
+        _parent = parent;
         setStyleName("trophyCase");
-        setText(0, 0, "Loading trophies...");
+        setCellPadding(0);
+        setCellSpacing(10);
+
+        setText(0, 0, CGame.msgs.caseLoading());
         CGame.gamesvc.loadTrophyCase(CGame.ident, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 setTrophyCase((TrophyCase)result);
@@ -30,26 +36,39 @@ public class TrophyCasePanel extends FlexTable
         });
     }
 
-    // TODO: stylings
     protected void setTrophyCase (TrophyCase tcase)
     {
-        int row = 0;
+        _parent.setPageTitle(CGame.msgs.caseTitle(tcase.owner.toString()));
+
+        if (tcase.shelves.length == 0) {
+            setText(0, 0, CGame.msgs.caseEmpty());
+            return;
+        }
+
         for (int ii = 0; ii < tcase.shelves.length; ii++) {
             TrophyCase.Shelf shelf = tcase.shelves[ii];
-            setText(row, 0, shelf.name);
-            getFlexCellFormatter().setColSpan(row++, 0, COLUMNS);
 
+            HeaderBox box = new HeaderBox();
+            setWidget(ii/2, ii%2, box);
+            box.setTitle(shelf.name);
+            FlexTable grid = new FlexTable();
+            box.setContent(grid);
+
+            int row = 0;
             for (int tt = 0; tt < shelf.trophies.length; tt++) {
                 if (tt > 0 && tt % COLUMNS == 0) {
                     row += 2;
                 }
                 int col = tt % COLUMNS;
-                setWidget(row, col, MediaUtil.createMediaView(
-                              shelf.trophies[tt].trophyMedia, MediaDesc.HALF_THUMBNAIL_SIZE));
-                setText(row+1, col,  shelf.trophies[tt].name);
+                grid.setWidget(row, col, MediaUtil.createMediaView(
+                                   shelf.trophies[tt].trophyMedia, MediaDesc.HALF_THUMBNAIL_SIZE));
+                grid.getFlexCellFormatter().setStyleName(row, col, "Trophy");
+                grid.setText(row+1, col,  shelf.trophies[tt].name);
+                grid.getFlexCellFormatter().setStyleName(row+1, col, "Name");
             }
         }
     }
 
-    protected static final int COLUMNS = 6;
+    protected Page _parent;
+    protected static final int COLUMNS = 3;
 }

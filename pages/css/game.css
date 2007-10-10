@@ -40,3 +40,16 @@
 .gameDetail .Details td {
   font-size: 14px;
 }
+
+.trophyCase {
+}
+
+.trophyCase .Trophy {
+  text-align: center;
+  width: 115px;
+}
+
+.trophyCase .Name {
+  text-align: center;
+  font-size: 12px;
+}

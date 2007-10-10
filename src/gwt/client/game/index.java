@@ -54,7 +54,7 @@ public class index extends Page
 
             } else if (action.equals("t")) {
                 setPageTitle("Trophies");
-                setContent(new TrophyCasePanel(args.get(1, 0)));
+                setContent(new TrophyCasePanel(this, args.get(1, 0)));
 
             } else {
                 // otherwise our args are 'gameId-gameOid' or just 'gameId'
