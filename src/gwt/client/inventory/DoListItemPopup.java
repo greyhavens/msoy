@@ -3,14 +3,10 @@
 
 package client.inventory;
 
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
@@ -64,7 +60,6 @@ public class DoListItemPopup extends BorderedDialog
             _description.setText(item.description);
             _description.setCharacterWidth(50);
             _description.setVisibleLines(3);
-            _description.addKeyboardListener(_valdescrip);
         }
 
         // possibly add the pricing selection UI
@@ -185,15 +180,6 @@ public class DoListItemPopup extends BorderedDialog
                 }
             };
         }
-
-        if (_description != null) {
-            validateDescription();
-        }
-    }
-
-    protected void validateDescription ()
-    {
-        _doIt.setEnabled(_description.getText().trim().length() > 0);
     }
 
     protected int getPricing ()
@@ -232,17 +218,6 @@ public class DoListItemPopup extends BorderedDialog
         _content.setVerticalAlignment(HasAlignment.ALIGN_TOP);
         return _content;
     }
-
-    protected KeyboardListenerAdapter _valdescrip = new KeyboardListenerAdapter() {
-        public void onKeyPress (Widget sender, char keyCode, int modifiers) {
-            // let the keypress go through, then validate our data
-            DeferredCommand.add(new Command() {
-                public void execute () {
-                    validateDescription();
-                }
-            });
-        }
-    };
 
     protected Item _item;
 
