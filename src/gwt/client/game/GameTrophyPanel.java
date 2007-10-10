@@ -25,7 +25,7 @@ public class GameTrophyPanel extends FlexTable
         _gameId = gameId;
         setCellPadding(0);
         setCellSpacing(5);
-        setText(0, 0, "Loading trophies.");
+        setText(0, 0, CGame.msgs.gameTrophyLoading());
     }
 
     // @Override // from UIObject
@@ -51,7 +51,7 @@ public class GameTrophyPanel extends FlexTable
     protected void gotTrophies (Trophy[] trophies)
     {
         if (trophies == null || trophies.length == 0) {
-            setText(0, 0, "This game awards no trophies.");
+            setText(0, 0, CGame.msgs.gameTrophyNoTrophies());
         } else {
             for (int ii = 0; ii < trophies.length; ii++) {
                 setWidget(ii/COLUMNS, ii%COLUMNS, new TrophyDetail(trophies[ii]));
@@ -75,10 +75,9 @@ public class GameTrophyPanel extends FlexTable
             setText(1, 0, trophy.description);
             getFlexCellFormatter().setStyleName(1, 0, "Description");
 
-            if (CGame.getMemberId() != 0) {
-                String earned = (trophy.whenEarned == null) ? "Trophy not yet earned." :
-                    "Trophy earned on " + _pfmt.format(new Date(trophy.whenEarned.longValue()));
-                setText(2, 0, earned);
+            if (CGame.getMemberId() != 0 && trophy.whenEarned != null) {
+                setText(2, 0, CGame.msgs.gameTrophyEarnedOn(
+                            _pfmt.format(new Date(trophy.whenEarned.longValue()))));
                 getFlexCellFormatter().setStyleName(2, 0, "Earned");
             }
             getFlexCellFormatter().setRowSpan(0, 0, getRowCount());

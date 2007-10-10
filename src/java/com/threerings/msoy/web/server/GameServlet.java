@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -198,19 +199,28 @@ public class GameServlet extends MsoyServiceServlet
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
 
-            ArrayList<Trophy> trophies = new ArrayList<Trophy>();
+            HashMap<String,Trophy> trophies = new HashMap<String,Trophy>();
             for (TrophySourceRecord record : tsrepo.loadOriginalItemsBySuite(-grec.catalogId)) {
                 Trophy trophy = new Trophy();
                 trophy.gameId = gameId;
                 trophy.name = record.name;
                 trophy.description = record.description;
                 trophy.trophyMedia = new MediaDesc(record.thumbMediaHash, record.thumbMimeType);
-                trophies.add(trophy);
+                trophies.put(record.ident, trophy);
             }
 
-            // TODO: fill in earned dates if caller is authenticated
+            // fill in earned dates if the caller is authenticated
+            if (mrec != null) {
+                for (TrophyRecord record :
+                         MsoyServer.trophyRepo.loadTrophies(gameId, mrec.memberId)) {
+                    Trophy trophy = trophies.get(record.ident);
+                    if (trophy != null) {
+                        trophy.whenEarned = record.whenEarned.getTime();
+                    }
+                }
+            }
 
-            return trophies.toArray(new Trophy[trophies.size()]);
+            return trophies.values().toArray(new Trophy[trophies.size()]);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure loading game trophies [id=" + gameId + "].", pe);

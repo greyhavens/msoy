@@ -8,6 +8,22 @@ package client.game;
 public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "This game awards no trophies.".
+   * 
+   * @return translated "This game awards no trophies."
+   * @gwt.key gameTrophyNoTrophies
+   */
+  String gameTrophyNoTrophies();
+
+  /**
+   * Translated "Earned on {0}".
+   * 
+   * @return translated "Earned on {0}"
+   * @gwt.key gameTrophyEarnedOn
+   */
+  String gameTrophyEarnedOn(String arg0);
+
+  /**
    * Translated "Zoiks! Uknown game type {0}.".
    * 
    * @return translated "Zoiks! Uknown game type {0}."
@@ -30,6 +46,14 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key caseTitle
    */
   String caseTitle(String arg0);
+
+  /**
+   * Translated "Loading trophies.".
+   * 
+   * @return translated "Loading trophies."
+   * @gwt.key gameTrophyLoading
+   */
+  String gameTrophyLoading();
 
   /**
    * Translated "Loading trophies...".

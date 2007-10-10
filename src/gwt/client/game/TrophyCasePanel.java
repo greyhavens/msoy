@@ -63,7 +63,7 @@ public class TrophyCasePanel extends FlexTable
                 grid.setWidget(row, col, MediaUtil.createMediaView(
                                    shelf.trophies[tt].trophyMedia, MediaDesc.HALF_THUMBNAIL_SIZE));
                 grid.getFlexCellFormatter().setStyleName(row, col, "Trophy");
-                grid.setText(row+1, col,  shelf.trophies[tt].name);
+                grid.setText(row+1, col, shelf.trophies[tt].name);
                 grid.getFlexCellFormatter().setStyleName(row+1, col, "Name");
             }
         }
