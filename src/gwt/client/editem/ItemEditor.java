@@ -123,19 +123,17 @@ public abstract class ItemEditor extends BorderedDialog
 
         populateInfoTab(info);
 
-        // add the description if desired
-        if (requiresDescription()) {
-            addSpacer(info);
-            addInfoRow(info, new Label(CEditem.emsgs.editorDescrip()));
-            addInfoRow(info, bind(_description = new TextArea(), new Binder() {
-                public void textUpdated (String text) {
-                    _item.description = text;
-                }
-            }));
-            _description.setCharacterWidth(40);
-            _description.setVisibleLines(3);
-            addInfoTip(info, CEditem.emsgs.editorDescripTip());
-        }
+        // add the description
+        addSpacer(info);
+        addInfoRow(info, new Label(CEditem.emsgs.editorDescrip()));
+        addInfoRow(info, bind(_description = new TextArea(), new Binder() {
+            public void textUpdated (String text) {
+                _item.description = text;
+            }
+        }));
+        _description.setCharacterWidth(40);
+        _description.setVisibleLines(3);
+        addInfoTip(info, CEditem.emsgs.editorDescripTip());
 
         mediaTabs.add(info, CEditem.emsgs.editorInfoTab());
 
@@ -287,11 +285,6 @@ public abstract class ItemEditor extends BorderedDialog
         if (box != null && value != null) {
             box.setText(value);
         }
-    }
-
-    protected boolean requiresDescription ()
-    {
-        return true;
     }
 
     /**

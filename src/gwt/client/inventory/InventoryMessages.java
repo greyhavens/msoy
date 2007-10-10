@@ -152,9 +152,9 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailRemoveAvatar();
 
   /**
-   * Translated "Listing your item creates a snapshot of your item as it is just now and adds it to the Catalog, where other users may purchase copies of it.".
+   * Translated "Listing your item creates a snapshot of your item as it is just now and adds it to the Catalog.".
    * 
-   * @return translated "Listing your item creates a snapshot of your item as it is just now and adds it to the Catalog, where other users may purchase copies of it."
+   * @return translated "Listing your item creates a snapshot of your item as it is just now and adds it to the Catalog."
    * @gwt.key doListBlurb
    */
   String doListBlurb();
@@ -336,9 +336,9 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailUplistTip();
 
   /**
-   * Translated "Please ensure that your item''s description is up to date as it will be displayed in the catalog listing.".
+   * Translated "Please ensure that your item''s description is up to date.".
    * 
-   * @return translated "Please ensure that your item''s description is up to date as it will be displayed in the catalog listing."
+   * @return translated "Please ensure that your item''s description is up to date."
    * @gwt.key doListNeedsDescrip
    */
   String doListNeedsDescrip();

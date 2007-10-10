@@ -15,6 +15,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
@@ -149,7 +150,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 }
             }));
 
-            if (_item.catalogId != 0) {
+            boolean salable = (!(_item instanceof SubItem) || ((SubItem)_item).isSalable());
+            if (_item.catalogId != 0 && salable) {
                 // add a button for repricing the listing
                 final AsyncCallback cb = new AsyncCallback() {
                     public void onSuccess (Object result) {

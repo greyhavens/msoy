@@ -38,12 +38,6 @@ public class TrophySourceEditor extends SubItemEditor
         // we have no furni tab
     }
 
-    // @Override // from ItemEditor
-    protected boolean requiresDescription ()
-    {
-        return false;
-    }
-
     // @Override from ItemEditor
     protected void createThumbUploader (TabPanel tabs)
     {

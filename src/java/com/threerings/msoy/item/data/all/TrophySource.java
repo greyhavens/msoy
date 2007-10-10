@@ -37,4 +37,10 @@ public class TrophySource extends SubItem
     {
         return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (thumbMedia != null);
     }
+
+    // @Override // from SubItem
+    public boolean isSalable ()
+    {
+        return false;
+    }
 }

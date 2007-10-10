@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 import client.util.BorderedDialog;
@@ -51,6 +52,9 @@ public class DoListItemPopup extends BorderedDialog
             _content.add(MsoyUI.createLabel(CInventory.msgs.doUpdateBlurb(), "Blurb"));
         }
 
+        // determine whether or not this item is salable
+        boolean salableItem = !(_item instanceof SubItem) || ((SubItem)_item).isSalable();
+
         // only add the description if we're not repricing
         if (!repricing) {
             _content.add(MsoyUI.createLabel(CInventory.msgs.doListDescripHeader(), "Header"));
@@ -64,16 +68,14 @@ public class DoListItemPopup extends BorderedDialog
         }
 
         // possibly add the pricing selection UI
-        if (firstTime || repricing) {
-            _content.add(MsoyUI.createLabel(CInventory.msgs.doListPricingHeader(), "Header"));
-
+        if (salableItem && (firstTime || repricing)) {
             SmartTable pricing = new SmartTable();
             pricing.setCellPadding(0);
             pricing.setCellSpacing(3);
 
             int row = pricing.addText(CInventory.msgs.doListStrategy(), 1, "rightLabel");
             pricing.setWidget(row, 1, _pricingBox = new ListBox(), 1, null);
-            int selectedPricing = 1;
+            int selectedPricing = (_item instanceof SubItem) ? 0 /* hidden */ : 1 /* manual */;
             for (int ii = 0; ii < CatalogListing.PRICING.length; ii++) {
                 String key = "listingPricing" + CatalogListing.PRICING[ii];
                 _pricingBox.addItem(CInventory.dmsgs.getString(key));
@@ -112,11 +114,13 @@ public class DoListItemPopup extends BorderedDialog
 //             int goldCost = (listing == null) ? DEFAULT_GOLD_COST : listing.goldCost;
 //             _goldCost.setText(String.valueOf(goldCost));
 
+            _content.add(MsoyUI.createLabel(CInventory.msgs.doListPricingHeader(), "Header"));
             _content.add(pricing);
 
             _pricingBox.setSelectedIndex(selectedPricing);
             tipper.onChange(_pricingBox); // alas setSelectedIndex() doesn't do this, yay DHTML
         }
+
         _content.add(_status);
 
         _footer.add(new Button(CInventory.msgs.doListBtnCancel(), new ClickListener() {
@@ -135,8 +139,7 @@ public class DoListItemPopup extends BorderedDialog
                 public boolean callService () {
                     CInventory.catalogsvc.listItem(
                         CInventory.ident, _item.getIdent(), _description.getText(), getPricing(),
-                        _salesTarget.getValue().intValue(), _flowCost.getValue().intValue(),
-                        0 /* _goldCost.getValue().intValue() */, this);
+                        getSalesTarget(), getFlowCost(), 0 /* getGoldCost() */, this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
@@ -150,7 +153,7 @@ public class DoListItemPopup extends BorderedDialog
         } else if (repricing) {
             new ClickCallback(_doIt) {
                 public boolean callService () {
-                    int pricing = getPricing(), salesTarget = _salesTarget.getValue().intValue();
+                    int pricing = getPricing(), salesTarget = getSalesTarget();
                     if (getPricing() == CatalogListing.PRICING_LIMITED_EDITION &&
                         listing != null && salesTarget <= listing.purchases) {
                         MsoyUI.error(CInventory.msgs.doListHitLimit(""+listing.purchases));
@@ -158,8 +161,7 @@ public class DoListItemPopup extends BorderedDialog
                     }
                     CInventory.catalogsvc.updatePricing(
                         CInventory.ident, _item.getType(), _item.catalogId, getPricing(),
-                        salesTarget, _flowCost.getValue().intValue(),
-                        0 /* _goldCost.getValue().intValue() */, this);
+                        salesTarget, getFlowCost(), 0 /* getGoldCost() */, this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
@@ -196,7 +198,30 @@ public class DoListItemPopup extends BorderedDialog
 
     protected int getPricing ()
     {
-        return CatalogListing.PRICING[Math.max(0, _pricingBox.getSelectedIndex())];
+        if (_pricingBox == null) {
+            // non-salable items have no pricing interface and are always HIDDEN
+            return CatalogListing.PRICING[0];
+        } else {
+            return CatalogListing.PRICING[Math.max(0, _pricingBox.getSelectedIndex())];
+        }
+    }
+
+    protected int getSalesTarget ()
+    {
+        // non-salable items have no pricing interface and a default sales target
+        return (_salesTarget == null) ? 100 : _salesTarget.getValue().intValue();
+    }
+
+    protected int getFlowCost ()
+    {
+        // non-salable items have no pricing interface and a default flow cost
+        return (_flowCost == null) ? 100 : _flowCost.getValue().intValue();
+    }
+
+    protected int getGoldCost ()
+    {
+        // non-salable items have no pricing interface and a default gold cost
+        return (_goldCost == null) ? 0 : _goldCost.getValue().intValue();
     }
 
     // @Override
