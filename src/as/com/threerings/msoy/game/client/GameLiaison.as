@@ -160,7 +160,6 @@ public class GameLiaison
     {
         // if we haven't yet loaded our trophy panel, do that
         if (_trophyPanel == null) {
-            trace("Loading our trophy business.");
             _trophyPanel = TROPHY_LOADING;
             var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
             loader.addEventListener(Event.COMPLETE, function (levent :Event) :void {
@@ -176,8 +175,6 @@ public class GameLiaison
         } else if (_trophyPanel == TROPHY_LOADING || _trophyPanel.stage != null ||
                    _pendingTrophies.length == 0) {
             // we're loading the trophy panel or it's being used or we're done
-            trace("Nothing doing (" + _trophyPanel + ", " + _trophyPanel.parent + ", " +
-                  _pendingTrophies.length + ")...");
 
         } else {
             // otherwise pop the next trophy from the list and display it
@@ -187,7 +184,6 @@ public class GameLiaison
 
     protected function displayTrophy (trophy :Trophy) :void
     {
-        trace("Displaying a trophy " + trophy);
         _gctx.getChatDirector().displayFeedback(
             MsoyCodes.GAME_MSGS, MessageBundle.tcompose("m.trophy_earned", trophy.name));
 
