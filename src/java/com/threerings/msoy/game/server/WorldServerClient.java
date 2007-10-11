@@ -42,7 +42,7 @@ public class WorldServerClient
                 // its I/O instead of using two threads and blocking socket I/O
                 return new BlockingCommunicator(this);
             }
-        }
+        };
         _client.setCredentials(new PeerCreds("game:" + _port, ServerConfig.sharedSecret));
         _client.setServer("localhost", new int[] { connectPort });
         _client.addServiceGroup(MsoyGameRegistry.GAME_SERVER_GROUP);
