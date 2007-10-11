@@ -84,7 +84,7 @@ public class TrophiesBlurb extends Blurb
 
         row = _content.getRowCount();
         _content.getFlexCellFormatter().setColSpan(row, 0, COLUMNS);
-        _content.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
+        _content.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_CENTER);
         _content.getFlexCellFormatter().setStyleName(row, 0, "More");
         String args = Args.compose("t", pdata.name.getMemberId());
         _content.setWidget(row, 0, Application.createLink(
