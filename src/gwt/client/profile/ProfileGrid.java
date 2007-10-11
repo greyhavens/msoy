@@ -5,6 +5,7 @@ package client.profile;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -77,11 +78,15 @@ public class ProfileGrid extends PagedGrid
 
             Label nameLabel =  new Label(card.name.toString());
             nameLabel.setStyleName("MemberCardName");
+            nameLabel.addStyleName("actionLabel");
             nameLabel.addClickListener(profileClick);
 
             if (_vertical) {
                 setCellSpacing(0);
                 setWidget(1, 0, nameLabel);
+                getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
+                getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
+
             } else {
                 setCellSpacing(5);
                 getFlexCellFormatter().setRowSpan(0, 0, 2);

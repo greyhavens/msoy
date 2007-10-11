@@ -84,20 +84,16 @@
 
 .profileWidget {
   padding-bottom: 10px;
-  width: 115px;
 }
 
 .profileWidget .Photo {
   width: 80px;
   height: 60px;
-  text-align: center;
   vertical-align: middle;
 }
 
 .profileWidget .MemberCardName {
-  text-decoration: underline;
-  cursor: pointer;
-  text-align: left;
+  width: 115px;
   padding-top: 2px;
   padding-bottom: 2px;
 }
