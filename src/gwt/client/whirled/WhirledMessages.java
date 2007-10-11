@@ -164,9 +164,9 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String headerTopGames();
 
   /**
-   * Translated "My Active Games".
+   * Translated "My Games".
    * 
-   * @return translated "My Active Games"
+   * @return translated "My Games"
    * @gwt.key headerGames
    */
   String headerGames();

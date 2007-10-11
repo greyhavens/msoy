@@ -31,6 +31,8 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
+import com.threerings.parlor.rating.server.persist.RatingRecord;
+
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -326,6 +328,28 @@ public class MemberServlet extends MsoyServiceServlet
         });
         waiter.waitForResult();
 
+        // if we don't have four games, load up our recent ratings to further populate "My Games"
+        if (games.size() < TARGET_MYWHIRLED_GAMES) {
+            try {
+                // load up twice as many as we need because we might get single and multiplayer
+                // ratings for each game
+                for (RatingRecord record : MsoyServer.ratingRepo.getRatings(
+                         memrec.memberId, -1L, (TARGET_MYWHIRLED_GAMES - games.size())*2)) {
+                    int gameId = Math.abs(record.gameId);
+                    if (!games.containsKey(gameId)) {
+                        games.put(gameId, new ArrayList<Integer>());
+                    }
+                    if (games.size() >= TARGET_MYWHIRLED_GAMES) {
+                        break;
+                    }
+                }
+            } catch (PersistenceException pe) {
+                log.log(Level.WARNING, "Failed to load recent ratings " +
+                        "[memId=" + memrec.memberId + "]", pe);
+                // oh well, just keep on keepin' on
+            }
+        }
+
         // flesh out profile data for the online friends
         try {
             for (ProfileRecord friendProfile : MsoyServer.profileRepo.loadProfiles(
@@ -617,7 +641,7 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     /**
-     * fills an array list of SceneCards, using the map to fill up the SceneCard's friends list.
+     * Fills an array list of SceneCards, using the map to fill up the SceneCard's friends list.
      */
     protected ArrayList<SceneCard> getGameSceneCards (HashIntMap<ArrayList<Integer>> map,
                                                       PopularPlacesSnapshot pps)
@@ -643,10 +667,8 @@ public class MemberServlet extends MsoyServiceServlet
                                   gameRec.thumbConstraint);
                 PopularPlacesSnapshot.Place snap = pps.getGame(gameId);
                 // if the snapshot is out of date, the display will be made sane in GWT.
-                card.population = snap == null ? 0 : snap.population;
-                if (card.population > 0 || card.friends.size() > 0) {
-                    cards.add(card);
-                }
+                card.population = (snap == null) ? 0 : snap.population;
+                cards.add(card);
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "failed to fill in SceneCards for games...", pe);
@@ -869,4 +891,6 @@ public class MemberServlet extends MsoyServiceServlet
         public PopularPlacesSnapshot.Place place;
         public ArrayList<MemberName> friends = new ArrayList<MemberName>();
     }
+
+    protected static final int TARGET_MYWHIRLED_GAMES = 4;
 }
