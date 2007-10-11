@@ -5,15 +5,22 @@ package client.profile;
 
 import java.util.Iterator;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
-
-import client.util.MediaUtil;
-import client.util.Stars;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.GameRating;
+
+import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
+import client.util.MediaUtil;
+import client.util.MsoyUI;
+import client.util.Stars;
 
 /**
  * Displays a person's game ratings.
@@ -42,16 +49,24 @@ public class RatingsBlurb extends Blurb
 
         for (Iterator iter = pdata.ratings.iterator(); iter.hasNext(); ) {
             int row = _content.getRowCount();
-            GameRating entry = (GameRating) iter.next();
+            final GameRating entry = (GameRating) iter.next();
 
-            _content.setWidget(row, 0, MediaUtil.createMediaView(
-                entry.gameThumb, MediaDesc.HALF_THUMBNAIL_SIZE));
+            ClickListener gameClick = new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.GAME, Args.compose("d", "" + entry.gameId));
+                }
+            };
+            Image image = (Image)MediaUtil.createMediaView(
+                entry.gameThumb, MediaDesc.HALF_THUMBNAIL_SIZE);
+            image.addClickListener(gameClick);
+            image.setStyleName("actionLabel");
+            _content.setWidget(row, 0, image);
             _content.getFlexCellFormatter().setStyleName(row, 0, "GameThumb");
             if (entry.singleRating > 0) {
                 _content.getFlexCellFormatter().setRowSpan(row, 0, 2);
             }
 
-            _content.setText(row, 1, entry.gameName);
+            _content.setWidget(row, 1, MsoyUI.createActionLabel(entry.gameName, gameClick));
             _content.getFlexCellFormatter().setStyleName(row, 1, "GameName");
 
             if (entry.multiRating > 0) {

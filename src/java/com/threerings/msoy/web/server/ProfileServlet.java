@@ -218,23 +218,18 @@ public class ProfileServlet extends MsoyServiceServlet
         blurbs.add(blurb);
 
         blurb = new BlurbData();
-        blurb.type = BlurbData.GROUPS;
-        blurb.blurbId = 2;
-        blurbs.add(blurb);
-
-//         blurb = new BlurbData();
-//         blurb.type = BlurbData.HOOD;
-//         blurb.blurbId = 3;
-//         blurbs.add(blurb);
-
-        blurb = new BlurbData();
         blurb.type = BlurbData.RATINGS;
-        blurb.blurbId = 4;
+        blurb.blurbId = 2;
         blurbs.add(blurb);
 
         blurb = new BlurbData();
         blurb.type = BlurbData.TROPHIES;
-        blurb.blurbId = 5;
+        blurb.blurbId = 3;
+        blurbs.add(blurb);
+
+        blurb = new BlurbData();
+        blurb.type = BlurbData.GROUPS;
+        blurb.blurbId = 4;
         blurbs.add(blurb);
 
         layout.blurbs = blurbs;
