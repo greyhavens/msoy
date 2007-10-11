@@ -41,15 +41,12 @@
   font-size: 14px;
 }
 
-.trophyCase {
-}
-
-.trophyCase .Trophy {
+.trophyGrid .Trophy {
   text-align: center;
   width: 115px;
 }
 
-.trophyCase .Name {
+.trophyGrid .Name {
   text-align: center;
   font-size: 12px;
 }

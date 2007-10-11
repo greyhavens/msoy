@@ -48,20 +48,20 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String groupsTitle();
 
   /**
-   * Translated "Send Mail".
-   * 
-   * @return translated "Send Mail"
-   * @gwt.key sendMail
-   */
-  String sendMail();
-
-  /**
    * Translated "Last online: {0}".
    * 
    * @return translated "Last online: {0}"
    * @gwt.key lastOnline
    */
   String lastOnline(String arg0);
+
+  /**
+   * Translated "Send Mail".
+   * 
+   * @return translated "Send Mail"
+   * @gwt.key sendMail
+   */
+  String sendMail();
 
   /**
    * Translated "Home Page".
@@ -88,12 +88,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String inviteToGroup();
 
   /**
-   * Translated "All Trophies...".
+   * Translated "See All".
    * 
-   * @return translated "All Trophies..."
-   * @gwt.key allTrophies
+   * @return translated "See All"
+   * @gwt.key seeAll
    */
-  String allTrophies();
+  String seeAll();
 
   /**
    * Translated "Search".
