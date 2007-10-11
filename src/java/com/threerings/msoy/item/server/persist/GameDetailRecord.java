@@ -9,6 +9,7 @@ import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
@@ -20,6 +21,8 @@ import com.threerings.msoy.web.data.GameDetail;
  * contained in the detail record, but for now it serves simply to track a unique game identifier
  * that is shared by all versions of the same game.
  */
+
+@TableGenerator(name="gameId", pkColumnValue="GAME_ID")
 public class GameDetailRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -75,13 +78,13 @@ public class GameDetailRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The default abuse factor for newly added games. */
     public static final int DEFAULT_ABUSE_FACTOR = 100;
 
     /** The unique identifier for this game. */
-    @Id @GeneratedValue(strategy=GenerationType.IDENTITY, initialValue=100)
+    @Id @GeneratedValue(strategy=GenerationType.TABLE, generator="gameId")
     public int gameId;
 
     /** The canonical game item for this game, which has been listed in the catalog. */

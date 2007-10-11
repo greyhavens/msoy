@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.item.server;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -26,13 +23,7 @@ import com.samskivert.util.Predicate;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
-import com.samskivert.jdbc.DatabaseLiaison;
-import com.samskivert.jdbc.JDBCUtil;
-import com.samskivert.jdbc.PostgreSQLLiaison;
 import com.samskivert.jdbc.RepositoryListenerUnit;
-import com.samskivert.jdbc.TransitionRepository;
-import com.samskivert.jdbc.TransitionRepository.Transition;
-import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.threerings.presents.client.InvocationService;
@@ -58,12 +49,10 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.server.RoomManager;
 
-import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import com.threerings.msoy.item.data.ItemCodes;
 
@@ -73,8 +62,6 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
-import com.threerings.msoy.item.server.persist.GameDetailRecord;
-import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemListInfoRecord;
 import com.threerings.msoy.item.server.persist.ItemListRepository;
@@ -84,7 +71,6 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
 import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
-import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.server.persist.ToyRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.item.server.persist.VideoRepository;
@@ -121,7 +107,7 @@ public class ItemManager
      * Initializes the item manager, which will establish database connections for all of its item
      * repositories.
      */
-    public void init (PersistenceContext ctx, MsoyEventLogger eventLog, TransitionRepository trans)
+    public void init (PersistenceContext ctx, MsoyEventLogger eventLog)
         throws PersistenceException
     {
         _eventLog = eventLog;
@@ -144,67 +130,6 @@ public class ItemManager
 
         // register our invocation service
         MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), MsoyCodes.WORLD_GROUP);
-
-        // BEGIN TEMP
-        final PersistenceContext fCtx = ctx;
-
-        final Modifier gameIdModifier = new Modifier(null) {
-            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                String gameId = liaison.columnSQL("gameId");
-                String setUp =
-                    " set " + gameId + " = " + gameId + " + 100100*sign(" + gameId + ")";
-                String setDown =
-                    " set " + gameId + " = " + gameId + " - 100000*sign(" + gameId + ")";
-
-                String uGameId = liaison.columnSQL("GAME_ID");
-                String uSetUp =
-                    " set " + uGameId + " = " + uGameId + " + 100100*sign(" + uGameId + ")";
-                String uSetDown =
-                    " set " + uGameId + " = " + uGameId + " - 100000*sign(" + uGameId + ")";
-                Statement stmt = conn.createStatement();
-                try {
-                    stmt.executeUpdate("update " + liaison.tableSQL("GameDetailRecord") + setUp);
-                    stmt.executeUpdate("update " + liaison.tableSQL("GameDetailRecord") + setDown);
-
-                    stmt.executeUpdate("update " + liaison.tableSQL("GameRecord") + setUp);
-                    stmt.executeUpdate("update " + liaison.tableSQL("GameRecord") + setDown);
-
-                    stmt.executeUpdate("update " + liaison.tableSQL("TrophyRecord") + setUp);
-                    stmt.executeUpdate("update " + liaison.tableSQL("TrophyRecord") + setDown);
-
-                    stmt.executeUpdate("update " + liaison.tableSQL("RatingRecord") + setUp);
-                    stmt.executeUpdate("update " + liaison.tableSQL("RatingRecord") + setDown);
-
-                    stmt.executeUpdate(
-                        "update " + liaison.tableSQL("GameFlowGrantLogRecord") + setUp);
-                    stmt.executeUpdate(
-                        "update " + liaison.tableSQL("GameFlowGrantLogRecord") + setDown);
-
-                    stmt.executeUpdate("update " + liaison.tableSQL("GAME_COOKIES") + uSetUp);
-                    stmt.executeUpdate("update " + liaison.tableSQL("GAME_COOKIES") + uSetDown);
-
-                    if (liaison instanceof PostgreSQLLiaison) {
-                        // bump the sequence 100 times - my god this is cheesy, i love it
-                        for (int i = 0; i < 100; i ++) {
-                            stmt.executeQuery("select nextval('\"GameDetailRecord_gameId_seq\"')");
-                        }
-                    } // else it's MySQL, which has AUTO_INCREMENT magic
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-                return 0;
-            }
-        };
-
-        trans.transition(GameRepository.class, "gameId-to-100", new Transition() {
-            public void run () throws PersistenceException {
-                fCtx.getMarshaller(TrophyRecord.class);
-                fCtx.getMarshaller(GameDetailRecord.class);
-                fCtx.getMarshaller(GameRecord.class);
-                fCtx.invoke(gameIdModifier);
-            }
-        });
-        // END TEMP
     }
 
     /**

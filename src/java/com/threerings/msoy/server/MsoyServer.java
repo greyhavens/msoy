@@ -365,7 +365,7 @@ public class MsoyServer extends MsoyBaseServer
         groupMan.init(groupRepo, memberRepo);
         mailMan.init(perCtx, memberRepo, eventLog);
         channelMan.init(invmgr);
-        itemMan.init(perCtx, eventLog, _transitRepo);
+        itemMan.init(perCtx, eventLog);
         swiftlyMan.init(invmgr);
         petMan.init(invmgr);
         gameReg.init(invmgr, itemMan.getGameRepository());

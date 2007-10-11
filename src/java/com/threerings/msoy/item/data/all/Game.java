@@ -14,8 +14,8 @@ public class Game extends Item
     /** Defines the number of different game types. See GameConfig. */
     public static final int GAME_TYPES = 3;
 
-    /** We reserve gameId = 1 for the tutorial. */
-    public static final int TUTORIAL_GAME_ID = 1;
+    /** We reserve a very unlikely gameId for the tutorial. */
+    public static final int TUTORIAL_GAME_ID = Integer.MAX_VALUE;
 
     /** The XML game configuration. */
     public String config;

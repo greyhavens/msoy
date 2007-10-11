@@ -3,12 +3,16 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.EntityMigration;
+import com.samskivert.jdbc.depot.FieldMarshaller;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -48,6 +52,21 @@ public class GameRepository extends ItemRepository<
     {
         super(ctx);
         _ctx.registerMigration(getItemClass(), new EntityMigration.Drop(16009, "suiteId"));
+        _ctx.registerMigration(
+            GameDetailRecord.class, new EntityMigration.Retype(3, GameDetailRecord.GAME_ID) {
+                @Override
+                public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                    // don't super.invoke(), do our own selective retype, because gameId is a
+                    // primary key field and postgres flips out of if you try to modify its
+                    // nullability
+                    liaison.changeColumn(conn, _tableName, _columnName, _newColumnDef.getType(),
+                        null, _newColumnDef.isUnique(), _newColumnDef.getDefaultValue());
+                    // now delete the sequence, which is hopefully no longer referenced
+                    liaison.deleteGenerator(conn, _tableName, GameDetailRecord.GAME_ID);
+                    return 1;
+                }
+
+            });
     }
 
     /**
