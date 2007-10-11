@@ -5,8 +5,10 @@ package com.threerings.msoy.game.server;
 
 import java.util.logging.Level;
 
+import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.client.Communicator;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.peer.net.PeerCreds;
@@ -34,7 +36,13 @@ public class WorldServerClient
         _port = listenPort;
 
         // create our client and connect to the server
-        _client = new Client(null, MsoyGameServer.omgr);
+        _client = new Client(null, MsoyGameServer.omgr) {
+            protected Communicator createCommunicator () {
+                // TODO: make a custom communicator that uses the ClientManager NIO system to do
+                // its I/O instead of using two threads and blocking socket I/O
+                return new BlockingCommunicator(this);
+            }
+        }
         _client.setCredentials(new PeerCreds("game:" + _port, ServerConfig.sharedSecret));
         _client.setServer("localhost", new int[] { connectPort });
         _client.addServiceGroup(MsoyGameRegistry.GAME_SERVER_GROUP);
