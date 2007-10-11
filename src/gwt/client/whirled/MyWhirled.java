@@ -396,9 +396,11 @@ public class MyWhirled extends FlexTable
             text.add(nameLabel);
             Iterator peopleIter = scene.friends.iterator();
             FlowPanel peopleList = new FlowPanel();
-            InlineLabel population = new InlineLabel(
-                CWhirled.msgs.population("" + Math.max(scene.population, scene.friends.size())));
-            peopleList.add(population);
+            if (peopleIter.hasNext()) {
+                InlineLabel population = new InlineLabel(CWhirled.msgs.population(
+                    "" + Math.max(scene.population, scene.friends.size())));
+                peopleList.add(population);
+            }
             String visiblePeopleList = "";
             while (peopleIter.hasNext()) {
                 final Object id = peopleIter.next();
