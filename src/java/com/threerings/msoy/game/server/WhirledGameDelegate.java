@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.server;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TreeMap;
@@ -158,6 +159,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         trophy.name = source.name;
         trophy.trophyMediaHash = source.getThumbnailMedia().hash;
         trophy.trophyMimeType = source.getThumbnailMedia().mimeType;
+        trophy.whenEarned = new Timestamp(System.currentTimeMillis());
 
         // if this is an in-development game, we do not award trophies persistently; but we will
         // stick it into the player's runtime record so that the game developer can see that the

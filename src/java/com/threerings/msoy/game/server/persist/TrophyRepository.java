@@ -4,7 +4,6 @@
 package com.threerings.msoy.game.server.persist;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -74,13 +73,11 @@ public class TrophyRepository extends DepotRepository
     }
 
     /**
-     * Stores the supplied trophy record in the database. {@link TrophyRecord#whenEarned} will be
-     * filled in by this method.
+     * Stores the supplied trophy record in the database.
      */
     public void storeTrophy (TrophyRecord trophy)
         throws PersistenceException
     {
-        trophy.whenEarned = new Timestamp(System.currentTimeMillis());
         insert(trophy);
     }
 
