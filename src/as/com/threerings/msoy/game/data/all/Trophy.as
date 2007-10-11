@@ -21,6 +21,9 @@ public class Trophy extends SimpleStreamableObject
     /** The name of the trophy. */
     public var name :String;
 
+    /** The description of how to earn this trophy (not always available). */
+    public var description :String;
+
     /** The media for the trophy image. */
     public var trophyMedia :MediaDesc;
 
@@ -38,6 +41,7 @@ public class Trophy extends SimpleStreamableObject
         super.readObject(ins);
         gameId = ins.readInt();
         name = (ins.readField(String) as String);
+        description = (ins.readField(String) as String);
         trophyMedia = (ins.readObject() as MediaDesc);
         whenEarned = (ins.readField(Long) as Long);
     }
@@ -48,6 +52,7 @@ public class Trophy extends SimpleStreamableObject
         super.writeObject(out);
         out.writeInt(gameId);
         out.writeField(name);
+        out.writeField(description);
         out.writeObject(trophyMedia);
         out.writeField(whenEarned);
     }
