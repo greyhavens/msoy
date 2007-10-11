@@ -8,9 +8,13 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.crowd.server.CrowdClientResolver;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.server.MsoyObjectAccess;
 import com.threerings.msoy.server.persist.MemberRecord;
+
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.server.persist.AvatarRecord;
+
+import com.threerings.msoy.game.data.PlayerObject;
 
 /**
  * Resolves an MSOY Game client's runtime data.
@@ -59,14 +63,12 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         userObj.humanity = member.humanity;
 
         // load up their selected avatar, we'll configure it later
-// TODO
-//         if (member.avatarId != 0) {
-//             AvatarRecord avatar =
-//                 MsoyServer.itemMan.getAvatarRepository().loadItem(member.avatarId);
-//             if (avatar != null) {
-//                 userObj.avatar = (Avatar)avatar.toItem();
-//             }
-//         }
+        if (member.avatarId != 0) {
+            AvatarRecord avatar = MsoyGameServer.avatarRepo.loadItem(member.avatarId);
+            if (avatar != null) {
+                userObj.avatar = (Avatar)avatar.toItem();
+            }
+        }
     }
 
     /**
