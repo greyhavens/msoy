@@ -72,6 +72,14 @@ public interface MailMessages extends com.google.gwt.i18n.client.Messages {
   String appBtnDelete();
 
   /**
+   * Translated "<no subject>".
+   * 
+   * @return translated "<no subject>"
+   * @gwt.key appHdrNoSubject
+   */
+  String appHdrNoSubject();
+
+  /**
    * Translated "Mail".
    * 
    * @return translated "Mail"

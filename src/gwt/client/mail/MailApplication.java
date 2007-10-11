@@ -300,7 +300,7 @@ public class MailApplication extends DockPanel
         Button replyButton = new Button(CMail.msgs.appBtnReply());
         replyButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                String subject = _message.headers.subject;
+                String subject = getSubject(_message.headers.subject);
                 if (subject.length() < 3 || !subject.substring(0, 3).equalsIgnoreCase("re:")) {
                     subject = "re: " + subject;
                 }
@@ -486,7 +486,7 @@ public class MailApplication extends DockPanel
 
             // next, the subject line, the only variable-width element in the row
             Widget link = Application.createLink(
-                headers.subject, "mail", Args.compose(new String[] {
+                getSubject(headers.subject), "mail", Args.compose(new String[] {
                     "f", "" + _currentFolder, "" + _currentOffset, "" + headers.messageId
                 }));
             link.setStyleName("Subject");
@@ -589,7 +589,8 @@ public class MailApplication extends DockPanel
         // first the header line
         HorizontalPanel headers = new HorizontalPanel();
         headers.setStyleName("Header");
-        Label subject = new Label(CMail.msgs.appHdrSubject() + ": " + _message.headers.subject);
+        Label subject = new Label(CMail.msgs.appHdrSubject() + ": " +
+                                  getSubject(_message.headers.subject));
         // TODO: Figure out wrapping for long subject lines
         subject.setStyleName("Subject");
         headers.add(subject);
@@ -732,6 +733,14 @@ public class MailApplication extends DockPanel
             }
         }
         return new HTML(html.toString());
+    }
+
+    /**
+     * Makes sure a subject has some text in it so that it can be clicked.
+     */
+    protected String getSubject (String subject)
+    {
+        return (subject == null || subject.length() == 0) ? CMail.msgs.appHdrNoSubject() : subject;
     }
 
     // generate a short string to summarize most relevantly a date in the past
