@@ -136,8 +136,6 @@ public class GameDetailRecord extends PersistentRecord
         detail.gameId = gameId;
         detail.playerGames = playerGames;
         detail.playerMinutes = playerMinutes;
-        detail.abuseFactor = getAntiAbuseFactor();
-        detail.lastAbuseRecalc = lastAbuseRecalc;
         return detail;
     }
 

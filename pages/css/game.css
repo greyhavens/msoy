@@ -10,8 +10,9 @@
 }
 
 .gameDetail .Box { 
-  padding-right: 15px;
   text-align: center;
+  padding-right: 15px;
+  padding-bottom: 10px;
 }
 
 .gameDetail .Box .Name { 
@@ -29,16 +30,28 @@
   padding: 10px;
 }
 
-.gameDetail .Box .Play {
-  padding: 10px;
-}
-
 .gameDetail .Details {
   padding-top: 20px;
 }
 
 .gameDetail .Details td {
   font-size: 14px;
+}
+
+.gameDetail .OrFriends {
+  font-size: 12px;
+}
+
+.gameDetail .PlayButton {
+  background-image: url(/images/game/play_button.png);
+  width: 124px;
+  height: 38px;
+  cursor: pointer;
+  border: none;
+}
+
+.gameDetail .InfoLabel {
+  padding-right: 5px;
 }
 
 .trophyGrid .Trophy {

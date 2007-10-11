@@ -446,12 +446,12 @@ public class RoomController extends SceneController
             NetUtil.navigateToURL(furni.actionData);
             return;
 
-        case FurniData.ACTION_LOBBY_GAME:
         case FurniData.ACTION_WORLD_GAME:
-            var actionData :Array = furni.splitActionData();
-            var gameId :int = int(actionData[0]);
-            postAction(furni.actionType == FurniData.ACTION_LOBBY_GAME ?
-                MsoyController.JOIN_GAME_LOBBY : MsoyController.JOIN_AVR_GAME, gameId);
+            postAction(MsoyController.JOIN_AVR_GAME, int(furni.splitActionData()[0]));
+            return;
+
+        case FurniData.ACTION_LOBBY_GAME:
+            postAction(MsoyController.VIEW_GAME, int(furni.splitActionData()[0]));
             return;
 
         case FurniData.ACTION_PORTAL:
@@ -459,7 +459,7 @@ public class RoomController extends SceneController
             return;
 
         case FurniData.ACTION_HELP_PAGE:
-            actionData = furni.splitActionData();
+            var actionData :Array = furni.splitActionData();
             var tabName :String = String(actionData[0]);
             var url :String = String(actionData[1]);
             (_mctx.getChatDirector() as MsoyChatDirector).displayPage(tabName, url);

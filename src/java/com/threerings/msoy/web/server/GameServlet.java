@@ -20,6 +20,8 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.presents.data.InvocationCodes;
 
+import com.threerings.parlor.game.data.GameConfig;
+
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.all.Trophy;
@@ -164,6 +166,24 @@ public class GameServlet extends MsoyServiceServlet
                     detail.memberRating = (rr == null) ? 0 : rr.rating;
                 }
             }
+
+            // determine how many players can play this game
+            MsoyMatchConfig match = new MsoyMatchConfig();
+            // start with arbitrary defaults
+            match.minSeats = 1;
+            match.maxSeats = 2;
+            Game game = detail.getGame();
+            try {
+                if (game != null && !StringUtil.isBlank(game.config)) {
+                    match = (MsoyMatchConfig)new MsoyGameParser().parseGame(game).match;
+                }
+            } catch (Exception e) {
+                log.log(Level.WARNING, "Failed to parse XML game definition [id=" + gameId +
+                        ", config=" + game.config + "]", e);
+            }
+            detail.minPlayers = match.minSeats;
+            detail.maxPlayers = (match.getMatchType() == GameConfig.PARTY) ?
+                Integer.MAX_VALUE : match.maxSeats;
 
             if (creatorId != 0) {
                 MemberRecord crrec = MsoyServer.memberRepo.loadMember(creatorId);

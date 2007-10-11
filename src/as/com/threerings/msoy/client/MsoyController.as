@@ -379,7 +379,11 @@ public class MsoyController extends Controller
      */
     public function handleViewGame (gameId :int) :void
     {
-        displayPage("game", "d_" + gameId);
+        // when a player clicks a game in the whirled, we try to display that game's detail page,
+        // but if we can't do that, then fall back to displaying the game lobby
+        if (!displayPage("game", "d_" + gameId)) {
+            handleJoinGameLobby(gameId);
+        }
     }
 
     /**
@@ -497,7 +501,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle JOIN_GAME_LOBBY.
+     * Handle JOIN_GAME_LOBBY (and gameLobby=XX).
      */
     public function handleJoinGameLobby (gameId :int) :void
     {
@@ -521,6 +525,14 @@ public class MsoyController extends Controller
 
         // replace the #game-XXX URL with a #world-sXXX URL for our current scene
         displayPageGWT("world", "s" + sceneId);
+    }
+
+    /**
+     * Handle PLAY_NOW (and playNow=XX).
+     */
+    public function handlePlayNow (gameId :int) :void
+    {
+        _ctx.getGameDirector().playNow(gameId);
     }
 
     /**
@@ -622,6 +634,9 @@ public class MsoyController extends Controller
 
         } else if (null != params["gameLobby"]) {
             handleJoinGameLobby(int(params["gameLobby"]));
+
+        } else if (null != params["playNow"]) {
+            handlePlayNow(int(params["playNow"]));
 
         } else if (null != params["worldGame"]) {
             handleJoinAVRGame(int(params["worldGame"]));

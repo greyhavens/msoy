@@ -37,13 +37,11 @@ public class GameDetail
     /** The total number of player minutes spent playing this game. */
     public int playerMinutes;
 
-    /** This game's current abuse factor. */
-    public float abuseFactor;
+    /** The minimum number of players for this game. */
+    public int minPlayers;
 
-    /** The player minutes count of our last abuse recalculation. */
-    public int lastAbuseRecalc;
-
-    // TODO: all sorts of other fancy shit
+    /** The maximum number of players for this game or Integer.MAX_VALUE if it's a party game. */
+    public int maxPlayers;
 
     /**
      * Returns the listed game if we have one, the source if not.
@@ -51,14 +49,5 @@ public class GameDetail
     public Game getGame ()
     {
         return (listedItem == null) ? sourceItem : listedItem;
-    }
-
-    /**
-     * Clears out data that we don't want to send to non-admins.
-     */
-    public void clearNonAdminData ()
-    {
-        abuseFactor = 0;
-        lastAbuseRecalc = 0;
     }
 }

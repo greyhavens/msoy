@@ -34,6 +34,7 @@ import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.WhirledwideData;
 
 import client.shell.Application;
+import client.shell.Args;
 import client.shell.Page;
 import client.shell.WorldClient;
 
@@ -223,7 +224,7 @@ public class Whirledwide extends FlexTable
     {
         ClickListener goToGame = new ClickListener() {
             public void onClick (Widget sender) {
-                Application.go(Page.GAME, "" + game.sceneId);
+                Application.go(Page.GAME, Args.compose("d", game.sceneId /* gameId */));
             }
         };
 

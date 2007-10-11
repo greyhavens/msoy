@@ -81,6 +81,20 @@ public class GameDirector extends BasicDirector
     }
 
     /**
+     * Requests that we immediately start playing the specified game id. If the game is a party
+     * game, the first available party game will be joined or one will be created. If the game
+     * supports single player, a game will be created and joined. Otherwise the lobby will be shown
+     * for the game in question. (TODO: try to join a pending table if one is available, create one
+     * if not.)
+     */
+    public function playNow (gameId :int) :void
+    {
+        log.info("TODO: play now! " + gameId);
+        // TODO
+        displayLobby(gameId);
+    }
+
+    /**
      * Requests that we join the given player in the given game.
      */
     public function joinPlayer (gameId :int, memberId :int) :void

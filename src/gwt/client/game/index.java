@@ -50,15 +50,19 @@ public class index extends Page
             String action = args.get(0, "");
             if (action.equals("d")) {
                 setPageTitle("Game Detail");
-                setContent(new GameDetailPanel(args.get(1, 0), args.get(2, "")));
+                setContent(new GameDetailPanel(this, args.get(1, 0), args.get(2, "")));
 
             } else if (action.equals("t")) {
                 setPageTitle("Trophies");
                 setContent(new TrophyCasePanel(this, args.get(1, 0)));
 
+            } else if (action.equals("s")) {
+                // head straight into this game (single player or first available party game)
+                loadLaunchConfig(args.get(1, 0), -1, true);
+
             } else {
                 // otherwise our args are 'gameId-gameOid' or just 'gameId'
-                loadLaunchConfig(args.get(0, 0), args.get(1, -1));
+                loadLaunchConfig(args.get(0, 0), args.get(1, -1), false);
             }
 
         } catch (Exception e) {
@@ -85,12 +89,12 @@ public class index extends Page
         CGame.msgs = (GameMessages)GWT.create(GameMessages.class);
     }
 
-    protected void loadLaunchConfig (int gameId, final int gameOid)
+    protected void loadLaunchConfig (int gameId, final int gameOid, final boolean playNow)
     {
         // load up the information needed to launch the game
         CGame.gamesvc.loadLaunchConfig(CGame.ident, gameId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                launchGame((LaunchConfig)result, gameOid);
+                launchGame((LaunchConfig)result, gameOid, playNow);
             }
             public void onFailure (Throwable cause) {
                 MsoyUI.error(CGame.serverError(cause));
@@ -98,7 +102,7 @@ public class index extends Page
         });
     }
 
-    protected void launchGame (LaunchConfig config, int gameOid)
+    protected void launchGame (LaunchConfig config, int gameOid, boolean playNow)
     {
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
@@ -107,7 +111,11 @@ public class index extends Page
 
         case LaunchConfig.FLASH_LOBBIED:
             if (gameOid <= 0) {
-                WorldClient.displayFlash("gameLobby=" + config.gameId);
+                if (playNow) {
+                    WorldClient.displayFlash("playNow=" + config.gameId);
+                } else {
+                    WorldClient.displayFlash("gameLobby=" + config.gameId);
+                }
             } else {
                 WorldClient.displayFlash("gameLocation=" + gameOid);
             }

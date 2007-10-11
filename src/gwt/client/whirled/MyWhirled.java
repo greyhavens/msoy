@@ -47,6 +47,7 @@ import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.data.all.MemberName;
 
 import client.shell.Application;
+import client.shell.Args;
 import client.shell.Page;
 import client.shell.WorldClient;
 import client.util.FlashClients;
@@ -366,7 +367,7 @@ public class MyWhirled extends FlexTable
                     if (scene.sceneType == SceneCard.ROOM) {
                         Application.go(Page.WORLD, "s" + scene.sceneId);
                     } else {
-                        Application.go(Page.GAME, "" + scene.sceneId);
+                        Application.go(Page.GAME, Args.compose("d", scene.sceneId /* gameId */));
                     }
                 }
             };
