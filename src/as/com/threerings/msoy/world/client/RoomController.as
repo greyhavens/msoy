@@ -77,6 +77,9 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
 
+import com.threerings.msoy.game.client.QuestOfferPanel;
+import com.threerings.msoy.game.client.GameContext;
+
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.client.updates.SceneUpdateAction;
@@ -1558,6 +1561,11 @@ public class RoomController extends SceneController
     internal function entityPopupClosed () :void
     {
         _entityPopup = null;
+    }
+
+    public function offerQuest (gctx :GameContext, questIntro :String, accept :Function) :void
+    {
+        new QuestOfferPanel(gctx, questIntro, accept).open(false);
     }
 
     /** The number of pixels we scroll the room on a keypress. */

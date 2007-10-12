@@ -30,6 +30,8 @@ import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.QuestState;
 import com.threerings.msoy.game.data.PlayerObject;
 
+import com.threerings.msoy.world.client.RoomView;
+
 public class AVRGameControlBackend extends ControlBackend
 {
     public static const log :Log = Log.getLog(AVRGameControlBackend);
@@ -139,15 +141,20 @@ public class AVRGameControlBackend extends ControlBackend
     protected function offerQuest_v1 (questId :String, questIntro :String, initialStatus :String)
         :Boolean
     {
-        // TODO: Popup UI and whatnot, using questIntro
         if (isOnQuest(questId)) {
             return false;
         }
-        _gameObj.avrgService.startQuest(
-            _gctx.getClient(), questId, initialStatus, loggingConfirmListener(
-                "startQuest", function () :void {
+        var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;
+        if (view == null) {
+            // should hopefully not happen
+            return false;
+        }
+        view.getRoomController().offerQuest(_gctx, questIntro, function() :void {
+            _gameObj.avrgService.startQuest(_gctx.getClient(), questId, initialStatus,
+                loggingConfirmListener("startQuest", function () :void {
                     _mctx.displayFeedback(null, "Quest begun: " + initialStatus);
                 }));
+            });
         return true;
     }
 
