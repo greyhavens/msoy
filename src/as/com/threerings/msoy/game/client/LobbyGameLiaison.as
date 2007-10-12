@@ -102,9 +102,19 @@ public class LobbyGameLiaison extends GameLiaison
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
+            _enterNextGameDirect = false;
             _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
             shutdown();
-        }, gotLobbyOid);
+        },
+        function (result :Object) :void {
+            if (int(result) != 0) {
+                _enterNextGameDirect = false;
+                gotLobbyOid(result);
+            }
+        });
+        // we want to avoid routing this game entry through the URL because our current URL is very
+        // nicely bookmarkable and we don't want to replace it with a non-bookmarkable URL
+        _enterNextGameDirect = true;
         lsvc.playNow(_gctx.getClient(), _gameId, cb);
     }
 
@@ -160,7 +170,12 @@ public class LobbyGameLiaison extends GameLiaison
     public function receivedGameReady (gameOid :int) :Boolean
     {
         _ctx.getTopPanel().clearTableDisplay();
-        _ctx.getMsoyController().handleGoGame(_gameId, gameOid);
+        if (_enterNextGameDirect) {
+            _enterNextGameDirect = false;
+            _ctx.getGameDirector().enterGame(gameOid);
+        } else {
+            _ctx.getMsoyController().handleGoGame(_gameId, gameOid);
+        }
         return true;
     }
 
@@ -190,13 +205,11 @@ public class LobbyGameLiaison extends GameLiaison
     protected function gotLobbyOid (result :Object) :void
     {
         var lobbyOid :int = int(result);
-        if (lobbyOid > 0) {
-            // this will create a panel and add it to the side panel on the top level
-            _lobby = new LobbyController(_gctx, this, lobbyOid);
-            if (_playerIdTable != 0) {
-                joinPlayerTable(_playerIdTable);
-            }
-        } // else, we were in playNow mode and our game will shortly start
+        // this will create a panel and add it to the side panel on the top level
+        _lobby = new LobbyController(_gctx, this, lobbyOid);
+        if (_playerIdTable != 0) {
+            joinPlayerTable(_playerIdTable);
+        }
     }
 
     protected function gotPlayerGameOid (result :Object) :void
@@ -231,5 +244,8 @@ public class LobbyGameLiaison extends GameLiaison
 
     /** True if we're shutting down. */
     protected var _shuttingDown :Boolean;
+
+    /** Used to avoid routing a gameReady through the URL when we're doing playNow(). */
+    protected var _enterNextGameDirect :Boolean;
 }
 }
