@@ -5,29 +5,48 @@ package com.threerings.msoy.game.client {
 
 import flash.geom.Rectangle;
 
-import com.threerings.crowd.data.PlaceObject;
+import mx.events.ResizeEvent;
 
+import com.threerings.flash.MediaContainer;
+import com.threerings.util.ValueEvent;
+
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.ezgame.client.EZGamePanel;
 import com.threerings.ezgame.client.GameControlBackend;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.HistoryList;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
+import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.game.data.MsoyGameObject;
 
-import com.threerings.flash.MediaContainer;
-
-import com.threerings.util.ValueEvent;
-
-import mx.events.ResizeEvent;
-
 public class MsoyGamePanel extends EZGamePanel
+    implements MsoyPlaceView
 {
     public function MsoyGamePanel (ctx :GameContext, ctrl :MsoyGameController)
     {
         super(ctx, ctrl);
     }
 
+    // from MsoyPlaceView
+    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        // don't care
+    }
+
+    // from MsoyPlaceView
+    public function setIsShowing (showing :Boolean) :void
+    {
+        // don't care
+    }
+
+    // from MsoyPlaceView
+    public function usurpsControlBar () :Boolean
+    {
+        return true;
+    }
+
+    // from EZGamePanel
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
         super.willEnterPlace(plobj);
@@ -36,6 +55,7 @@ public class MsoyGamePanel extends EZGamePanel
             displayGameChat(_ctx.getChatDirector());
     }
 
+    // from EZGamePanel
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         super.didLeavePlace(plobj);
@@ -45,6 +65,7 @@ public class MsoyGamePanel extends EZGamePanel
         (_ctx as GameContext).getTopPanel().getControlBar().setChatEnabled(true);
     }
 
+    // from EZGamePanel
     override protected function createBackend () :GameControlBackend
     {
         return new MsoyGameControlBackend(

@@ -35,7 +35,7 @@ public class ChatTabNavigator extends SuperTabNavigator
 
         // fortunately we can set our tab bar background here because it's otherwise impossible
         // with the normal TabNavigator
-        holder.setStyle("backgroundColor", "#222222");
+        holder.setStyle("backgroundColor", 0x222222);
     }
 
     override protected function updateDisplayList (uWidth :Number, uHeight :Number) :void

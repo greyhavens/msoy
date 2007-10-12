@@ -30,6 +30,7 @@ import com.threerings.msoy.chat.client.MsoyChatDirector;
 
 import com.threerings.msoy.game.client.FloatingTableDisplay;
 
+import com.threerings.msoy.world.client.AbstractRoomView;
 import com.threerings.msoy.world.client.RoomView;
 
 public class TopPanel extends Canvas 
@@ -222,7 +223,7 @@ public class TopPanel extends Canvas
     {
         _placeBox.setPlaceView(view);
         updatePlaceViewChatOverlay();
-        updatePlaceViewSize();
+        layoutPanels();
     }
 
     /**
@@ -242,12 +243,14 @@ public class TopPanel extends Canvas
         bounds.x = getLeftPanelWidth();
         bounds.y = HeaderBar.HEIGHT;
         bounds.width = stage.stageWidth - getLeftPanelWidth() - getRightPanelWidth();
-        bounds.height = stage.stageHeight - ControlBar.HEIGHT - getBottomPanelHeight() -
-            HeaderBar.HEIGHT;
-        // for real scenes, we put a small space above and below the view
-        if (_placeBox.getPlaceView() is MsoyPlaceView) {
+        bounds.height = stage.stageHeight - getBottomPanelHeight() - HeaderBar.HEIGHT;
+        // for room scenes, we put a small space above and (possibly) below the view
+        if (_placeBox.getPlaceView() is AbstractRoomView) {
             bounds.y += DECORATIVE_MARGIN_HEIGHT;
-            bounds.height -= DECORATIVE_MARGIN_HEIGHT * 2;
+            bounds.height -= DECORATIVE_MARGIN_HEIGHT;
+            if (!_placeBox.usurpsControlBar()) {
+                bounds.height -= (ControlBar.HEIGHT + DECORATIVE_MARGIN_HEIGHT);
+            }
         }
         return bounds;
     }
@@ -459,15 +462,19 @@ public class TopPanel extends Canvas
             _headerBar.setStyle("left", _leftPanel.width);
             _ctx.getWorldClient().setSeparator(_leftPanel.width - 1);
         } else {
-            _controlBar.setStyle("left", 0);
+            if (_placeBox.usurpsControlBar()) {
+                _controlBar.setStyle("left", stage.stageWidth - getRightPanelWidth());
+            } else {
+                _controlBar.setStyle("left", 0);
+            }
             _headerBar.setStyle("left", 0);
         }
 
         if (_rightPanel != null) {
             _rightPanel.setStyle("top", 0);
             _rightPanel.setStyle("right", 0);
-            _rightPanel.setStyle(
-                "bottom", getBottomPanelHeight() + ControlBar.HEIGHT + DECORATIVE_MARGIN_HEIGHT);
+            _rightPanel.setStyle("bottom", getBottomPanelHeight() + ControlBar.HEIGHT +
+                                 DECORATIVE_MARGIN_HEIGHT);
             _headerBar.setStyle("right", _rightPanel.width);
 
             // if we have no place view currently and we have no left panel, stretch it all the 
@@ -512,18 +519,23 @@ public class TopPanel extends Canvas
             return;
         }
 
-        var botHeight :int = getBottomPanelHeight();
         var w :int = stage.stageWidth - getLeftPanelWidth() - getRightPanelWidth();
-        var h :int = stage.stageHeight - ControlBar.HEIGHT - botHeight - HeaderBar.HEIGHT;
+        var h :int = stage.stageHeight - getBottomPanelHeight() - HeaderBar.HEIGHT;
         var top :int = HeaderBar.HEIGHT;
-        var bottom :int = botHeight + ControlBar.HEIGHT;
-
-        // actually, for place views, we want to insert decorative margins above and below the
-        // view, so let's tweak the sizes
-        if (_placeBox.getPlaceView() is MsoyPlaceView) {
+        if (_placeBox.getPlaceView() is AbstractRoomView) {
             top += DECORATIVE_MARGIN_HEIGHT;
+            h -= DECORATIVE_MARGIN_HEIGHT;
+        }
+
+        var bottom :int = getBottomPanelHeight();
+        if (!_placeBox.usurpsControlBar()) {
+            bottom += ControlBar.HEIGHT;
+            h -= ControlBar.HEIGHT;
+        }
+        // for place views, we want to insert decorative margins above and below the view
+        if (_placeBox.getPlaceView() is AbstractRoomView) {
             bottom += DECORATIVE_MARGIN_HEIGHT;
-            h -= DECORATIVE_MARGIN_HEIGHT * 2;
+            h -= DECORATIVE_MARGIN_HEIGHT;
         }
 
         _placeBox.setStyle("top", top);

@@ -209,7 +209,7 @@ public class TableRenderer extends HBox
         }
 
         // update our background color based on whether or not we're running
-        setStyle("backgroundColor", (table.gameOid > 0) ? "#EEEEEE" : "#FFFFFF");
+        setStyle("backgroundColor", (table.gameOid > 0) ? 0xEEEEEE : 0xFFFFFF);
 
         // maybe add a button for entering the game
         if (table.gameOid != -1) {

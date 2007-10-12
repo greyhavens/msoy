@@ -5,6 +5,8 @@ Application {
   backgroundGradientAlphas: 0.83, 1;
   themeColor: #54a9da;
   color: #0b333c;
+  width: 1024;
+  height: 546;
 }
 
 Panel {

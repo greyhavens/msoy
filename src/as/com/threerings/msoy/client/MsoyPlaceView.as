@@ -20,5 +20,10 @@ public interface MsoyPlaceView extends PlaceView
      * Inform the place view whether or not it's showing.
      */
     function setIsShowing (showing :Boolean) :void;
+
+    /**
+     * Whether or not this placeview should shove the control bar over to the right.
+     */
+    function usurpsControlBar () :Boolean;
 }
 }
