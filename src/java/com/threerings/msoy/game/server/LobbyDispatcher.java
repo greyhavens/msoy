@@ -52,6 +52,13 @@ public class LobbyDispatcher extends InvocationDispatcher
             );
             return;
 
+        case LobbyMarshaller.PLAY_NOW:
+            ((LobbyProvider)provider).playNow(
+                source,
+                ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;

@@ -370,6 +370,32 @@ public class GameGameRegistry
     }
 
     // from LobbyProvider
+    public void playNow (final ClientObject caller, final int gameId,
+                         final InvocationService.ResultListener listener)
+        throws InvocationException
+    {
+        // we need to make sure the lobby is resolved, so route through identifyLobby
+        identifyLobby(caller, gameId, new InvocationService.ResultListener() {
+            public void requestProcessed (Object result) {
+                // now the lobby should be resolved
+                LobbyManager mgr = _lobbies.get(gameId);
+                if (mgr == null) {
+                    log.warning("identifyLobby() returned non-failure but lobby manager " +
+                                "disappeared [gameId=" + gameId + "].");
+                    requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+                } else {
+                    // if we're able to start a play now game, return zero otherwise return the
+                    // lobby manager oid which will allow the client to fallback to the lobby
+                    listener.requestProcessed(mgr.playNow((PlayerObject)caller) ? 0 : result);
+                }
+            }
+            public void requestFailed (String cause) {
+                listener.requestFailed(cause);
+            }
+        });
+    }
+
+    // from LobbyProvider
     public void joinPlayerGame (ClientObject caller, final int playerId,
                                 InvocationService.ResultListener listener)
         throws InvocationException

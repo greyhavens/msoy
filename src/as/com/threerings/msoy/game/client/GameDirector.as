@@ -59,39 +59,36 @@ public class GameDirector extends BasicDirector
     public function displayLobby (gameId :int) :void
     {
         if (_liaison != null) {
-            if (_liaison is AVRGameLiaison) {
-                // automatically drop out of AVRG game
+            if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
+                LobbyGameLiaison(_liaison).showLobbyUI();
+            } else {
                 _liaison.shutdown();
                 _liaison = null;
-
-            } else if (_liaison.gameId == gameId) {
-                LobbyGameLiaison(_liaison).showLobbyUI();
-
-            } else {
-                // TODO: close current game and open new one?
-                log.info("Zoiks, asked to switch to new lobby [in=" + _liaison.gameId +
-                         ", want=" + gameId + "].");
             }
         }
-
         if (_liaison == null) {
             // create our new liaison, which will resolve the lobby and do all the business
-            _liaison = new LobbyGameLiaison(_mctx, gameId);
+            _liaison = new LobbyGameLiaison(_mctx, gameId, LobbyGameLiaison.SHOW_LOBBY);
         }
     }
 
     /**
-     * Requests that we immediately start playing the specified game id. If the game is a party
-     * game, the first available party game will be joined or one will be created. If the game
-     * supports single player, a game will be created and joined. Otherwise the lobby will be shown
-     * for the game in question. (TODO: try to join a pending table if one is available, create one
-     * if not.)
+     * Requests that we immediately start playing the specified game id.
      */
     public function playNow (gameId :int) :void
     {
-        log.info("TODO: play now! " + gameId);
-        // TODO
-        displayLobby(gameId);
+        if (_liaison != null) {
+            if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
+                LobbyGameLiaison(_liaison).playNow();
+            } else {
+                _liaison.shutdown();
+                _liaison = null;
+            }
+        }
+        if (_liaison == null) {
+            // create our new liaison, which will head on into the game once we're logged on
+            _liaison = new LobbyGameLiaison(_mctx, gameId, LobbyGameLiaison.PLAY_NOW);
+        }
     }
 
     /**

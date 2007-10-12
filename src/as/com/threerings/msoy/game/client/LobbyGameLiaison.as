@@ -27,10 +27,15 @@ public class LobbyGameLiaison extends GameLiaison
 {
     public static const log :Log = Log.getLog(LobbyGameLiaison);
 
-    public function LobbyGameLiaison (ctx :WorldContext, gameId :int, playerId :int = 0)
+    public static const SHOW_LOBBY :int = 0;
+    public static const JOIN_PLAYER :int = 1;
+    public static const PLAY_NOW :int = 2;
+
+    public function LobbyGameLiaison (ctx :WorldContext, gameId :int, mode :int, playerId :int = 0)
     {
         super(ctx, gameId);
 
+        _mode = mode;
         _playerIdGame = playerId;
 
         _gctx.getParlorDirector().addGameReadyObserver(this);
@@ -40,8 +45,8 @@ public class LobbyGameLiaison extends GameLiaison
     }
 
     /**
-     * Join the player in their running game if possible, otherwise simply display the game
-     * lobby, if it isn't up already. 
+     * Join the player in their running game if possible, otherwise simply display the game lobby,
+     * if it isn't up already.
      */
     public function joinPlayer (playerId :int) :void
     {
@@ -93,6 +98,16 @@ public class LobbyGameLiaison extends GameLiaison
         }
     }
 
+    public function playNow () :void
+    {
+        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
+        var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
+            _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+            shutdown();
+        }, gotLobbyOid);
+        lsvc.playNow(_gctx.getClient(), _gameId, cb);
+    }
+
     public function enterGame (gameOid :int) :void
     {
         _gameOid = gameOid;
@@ -125,10 +140,19 @@ public class LobbyGameLiaison extends GameLiaison
     override public function clientDidLogon (event :ClientEvent) :void
     {
         super.clientDidLogon(event);
-        if (_playerIdGame != 0) {
+        switch (_mode) {
+        case JOIN_PLAYER:
             joinPlayer(_playerIdGame);
-        } else {
+            break;
+
+        case PLAY_NOW:
+            playNow();
+            break;
+
+        default:
+        case SHOW_LOBBY:
             joinLobby();
+            break;
         }
     }
 
@@ -165,11 +189,14 @@ public class LobbyGameLiaison extends GameLiaison
 
     protected function gotLobbyOid (result :Object) :void
     {
-        // this will create a panel and add it to the side panel on the top level
-        _lobby = new LobbyController(_gctx, this, int(result));
-        if (_playerIdTable != 0) {
-            joinPlayerTable(_playerIdTable);
-        }
+        var lobbyOid :int = int(result);
+        if (lobbyOid > 0) {
+            // this will create a panel and add it to the side panel on the top level
+            _lobby = new LobbyController(_gctx, this, lobbyOid);
+            if (_playerIdTable != 0) {
+                joinPlayerTable(_playerIdTable);
+            }
+        } // else, we were in playNow mode and our game will shortly start
     }
 
     protected function gotPlayerGameOid (result :Object) :void
@@ -182,6 +209,9 @@ public class LobbyGameLiaison extends GameLiaison
             _ctx.getMsoyController().handleGoGame(_gameId, gameOid);
         }
     }
+
+    /** The action we'll take once we're connected to the game server. */
+    protected var _mode :int;
 
     /** The id of the player we'd like to join. */
     protected var _playerIdGame :int = 0;

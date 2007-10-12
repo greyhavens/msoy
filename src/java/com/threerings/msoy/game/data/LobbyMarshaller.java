@@ -44,4 +44,17 @@ public class LobbyMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2), listener3
         });
     }
+
+    /** The method id used to dispatch {@link #playNow} requests. */
+    public static final int PLAY_NOW = 3;
+
+    // from interface LobbyService
+    public void playNow (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    {
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, PLAY_NOW, new Object[] {
+            Integer.valueOf(arg2), listener3
+        });
+    }
 }

@@ -22,5 +22,8 @@ public interface LobbyService extends InvocationService
 
     // from Java interface LobbyService
     function joinPlayerGame (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+
+    // from Java interface LobbyService
+    function playNow (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 }
 }

@@ -12,11 +12,18 @@ import com.threerings.presents.client.InvocationService;
 public interface LobbyService extends InvocationService
 {
     /**
-     * Return the Oid of the lobby for the specified game item.
+     * Return the oid of the lobby for the specified game item.
      *
      * @param gameId the item id of a Game-type item.
      */
     public void identifyLobby (Client client, int gameId, ResultListener listener);
+
+    /**
+     * Requests to immediately get into the specified game. If a game could be started and/or
+     * located, 0 will be returned, otherwise the oid of the lobby will be returned so that the
+     * client can fall back to displaying the lobby.
+     */
+    public void playNow (Client client, int gameId, ResultListener listener);
 
     /**
      * Return the Oid of the game that this player is in.  Returns -1 if they are currently not

@@ -5,13 +5,21 @@ package com.threerings.msoy.game.server;
 
 import com.samskivert.util.Interval;
 
+import com.threerings.util.Name;
+
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.dobj.SetAdapter;
+import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.server.PlaceManagerDelegate;
+
+import com.threerings.parlor.data.Table;
+import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.server.GameManager;
+import com.threerings.parlor.server.ParlorSender;
 
 import com.threerings.ezgame.data.GameDefinition;
 
@@ -19,6 +27,9 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import static com.threerings.msoy.Log.log;
@@ -55,6 +66,30 @@ public class LobbyManager
     }
 
     /**
+     * Returns the metadata record for the game hosted by this lobby.
+     */
+    public Game getGame ()
+    {
+        return _content.game;
+    }
+
+    /**
+     * Return the ID of the game for which we're the lobby.
+     */
+    public int getGameId ()
+    {
+        return _content.game.gameId;
+    }
+
+    /**
+     * Return the object ID of the LobbyObject
+     */
+    public LobbyObject getLobbyObject ()
+    {
+        return _lobj;
+    }
+
+    /**
      * Called when a lobby is first created and possibly again later to refresh its game metadata.
      */
     public void setGameContent (GameContent content)
@@ -79,6 +114,57 @@ public class LobbyManager
 //         }
     }
 
+    /**
+     * Attempts to send the specified player directly into a game. If the game is a party game, the
+     * player is sent into an existing game if possible or a new game is created if not. If the
+     * game supports single player, a game will be created for the player. If there is a pending
+     * table open for a multiplayer game, the player will be sent there.
+     *
+     * @return if any game could be created for the player, true; otherwise false to indicate that
+     * we were not able to get the player into a game somehow.
+     */
+    public boolean playNow (PlayerObject player)
+    {
+        // if this is a party game (or seated continuous); send them into an existing game
+        if (_lobj.gameDef.match.getMatchType() != MsoyGameConfig.SEATED_GAME) {
+            // TODO: be smarter about picking a game to which to add this player
+            for (Table table : _lobj.tables) {
+                if (table.gameOid > 0 && !table.tconfig.privateTable) {
+                    ParlorSender.gameIsReady(player, table.gameOid);
+                    return true;
+                }
+            }
+        }
+
+        // otherwise see if we can create a new game
+        MsoyMatchConfig match = (MsoyMatchConfig)_lobj.gameDef.match;
+        if (match.isPartyGame || match.minSeats == 1) {
+            MsoyGameConfig config = new MsoyGameConfig();
+            config.init(_lobj.game, _lobj.gameDef);
+            TableConfig tconfig = new TableConfig();
+            tconfig.desiredPlayerCount = tconfig.minimumPlayerCount = 1;
+            Table table = null;
+            try {
+                table = _tableMgr.createTable(player, tconfig, config);
+            } catch (InvocationException ie) {
+                log.warning("Failed to create play now table [who=" + player.who() +
+                            ", error=" + ie.getMessage() + "].");
+                return false;
+            }
+
+            // if this is a party or seated continuous game, we need to tell the player to head
+            // into the game because the game manager ain't oging to do it for us
+            if (_lobj.gameDef.match.getMatchType() != MsoyGameConfig.SEATED_GAME) {
+                ParlorSender.gameIsReady(player, table.gameOid);
+            }
+            return true;
+        }
+
+        // TODO: look for an open table into which we can stuff the player
+
+        return false;
+    }
+
     public void shutdown ()
     {
         _lobj.subscriberListener = null;
@@ -98,30 +184,6 @@ public class LobbyManager
 
         // finally, destroy the Lobby DObject
         _omgr.destroyObject(_lobj.getOid());
-    }
-
-    /**
-     * Returns the metadata record for the game hosted by this lobby.
-     */
-    public Game getGame ()
-    {
-        return _content.game;
-    }
-
-    /**
-     * Return the ID of the game for which we're the lobby.
-     */
-    public int getGameId ()
-    {
-        return _content.game.gameId;
-    }
-
-    /**
-     * Return the object ID of the LobbyObject
-     */
-    public LobbyObject getLobbyObject ()
-    {
-        return _lobj;
     }
 
     // from LobbyObject.SubscriberListener
