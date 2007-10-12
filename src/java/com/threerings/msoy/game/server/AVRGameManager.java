@@ -17,9 +17,6 @@ import com.threerings.msoy.game.server.persist.GameStateRecord;
 import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
 import com.threerings.msoy.game.server.persist.QuestStateRecord;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
@@ -133,8 +130,16 @@ public class AVRGameManager
                     _gameId + ", oid=" + event.getOid() + "]");
             }
             PlayerObject player = _players.remove(playerOid);
-            assert(player != null);
+            if (player == null) {
+                log.warning(
+                    "Eek, unregistered player vanished from OidList [gameId=" + _gameId +
+                    "playerOid=" + playerOid + "]");
+                return;
+            }
+
             flushPlayerGameState(player);
+
+            MsoyGameServer.worldClient.updatePlayer(player.getMemberId(), null);
         }
     }
 
@@ -363,31 +368,34 @@ public class AVRGameManager
 
     public void removePlayer (PlayerObject player)
     {
-        _gameObj.removeFromPlayerOids(player.getOid());
-
-        player.startTransaction();
-        try {
-            player.setQuestState(new DSet<QuestState>());
-            player.setGameState(new DSet<GameState>());
-        } finally {
-            player.commitTransaction();
+        if (!_gameObj.playerOids.contains(player.getOid())) {
+            log.warning("Trying to remove unknown player [gameId=" + _gameId + ", playerId=" +
+                player.getMemberId() + "]");
+            return;
         }
-
-        MsoyGameServer.worldClient.updatePlayer(player.getMemberId(), null);
+        _gameObj.removeFromPlayerOids(player.getOid());
     }
 
     protected void flushPlayerGameState (final PlayerObject player)
     {
-        // flush any modified memory records to the database
+        // find any modified memory records
         final List<PlayerGameStateRecord> recs = new ArrayList<PlayerGameStateRecord>();
         for (GameState entry : player.gameState) {
             if (entry.persistent && entry.modified) {
                 recs.add(new PlayerGameStateRecord(_gameId, player.getMemberId(), entry));
             }
         }
+
+        // then clear out the state associated with this game
+        player.setQuestState(new DSet<QuestState>());
+        player.setGameState(new DSet<GameState>());
+
+        // if we didn't find any modified records we're done
         if (recs.size() == 0) {
             return;
         }
+
+        // else flush them to the database
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("removePlayer") {
             public void invokePersist () throws Exception {
                 for (PlayerGameStateRecord rec : recs) {
