@@ -3,13 +3,11 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.ArrayList;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
-import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
@@ -29,7 +27,6 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
@@ -109,8 +106,12 @@ public class MsoyGameRegistry
         // we're going to need the Game item to finish resolution
         MsoyServer.invoker.postUnit(new PersistingUnit("locateGame", listener) {
             public void invokePersistent () throws PersistenceException {
-                GameRecord grec = _gameRepo.loadGameRecord(gameId);
-                _game = (grec == null) ? null : (Game)grec.toItem();
+                if (gameId == Game.TUTORIAL_GAME_ID) {
+                    _game = AVRGameManager.getTutorialGame();
+                } else {
+                    GameRecord grec = _gameRepo.loadGameRecord(gameId);
+                    _game = (grec == null) ? null : (Game)grec.toItem();
+                }
             }
             public void handleSuccess () {
                 if (_game == null) {

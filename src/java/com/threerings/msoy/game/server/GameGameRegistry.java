@@ -37,11 +37,8 @@ import com.whirled.data.GameData;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -207,7 +204,7 @@ public class GameGameRegistry
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("activateAVRGame") {
             public void invokePersist () throws Exception {
                 if (gameId == Game.TUTORIAL_GAME_ID) {
-                    _game = _tutorial;
+                    _game = AVRGameManager.getTutorialGame();
                 } else {
                     GameRecord gRec = _gameRepo.loadGameRecord(gameId);
                     if (gRec != null) {
@@ -567,21 +564,6 @@ public class GameGameRegistry
         protected final ResultListener _listener;
     }
 
-    protected static class TutorialGame extends Game
-    {
-        public TutorialGame ()
-        {
-            this.name = "Whirled Tutorial";
-            this.gameId = Game.TUTORIAL_GAME_ID;
-            this.config = "<toggle ident=\"avrg\" start=\"true\"/>";
-            this.gameMedia = new StaticMediaDesc(
-                MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.GAME, "tutorial");
-            // TODO: if we end up using these for AVRG's we'll want hand-crafted stuffs here
-            this.thumbMedia = Item.getDefaultThumbnailMediaFor(Item.GAME);
-            this.furniMedia = Item.getDefaultFurniMediaFor(Item.GAME);
-        }
-    }
-
     /** The distributed object manager that we work with. */
     protected RootDObjectManager _omgr;
 
@@ -599,9 +581,6 @@ public class GameGameRegistry
 
     /** Maps game id -> listeners waiting for a lobby to load. */
     protected IntMap<ResultListenerList> _loadingAVRGames = new HashIntMap<ResultListenerList>();
-
-    /** A fake Game representing the Tutorial AVRG. */
-    protected TutorialGame _tutorial = new TutorialGame();
 
     // various and sundry repositories for loading persistent data
     protected GameRepository _gameRepo;

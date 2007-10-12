@@ -17,6 +17,9 @@ import com.threerings.msoy.game.server.persist.GameStateRecord;
 import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
 import com.threerings.msoy.game.server.persist.QuestStateRecord;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
@@ -41,6 +44,11 @@ import static com.threerings.msoy.Log.log;
 public class AVRGameManager
     implements AVRGameProvider, OidListListener
 {
+    public static TutorialGame getTutorialGame ()
+    {
+        return _tutorial;
+    }
+
     public AVRGameManager (int gameId, AVRGameRepository repo)
     {
         _gameId = gameId;
@@ -411,6 +419,21 @@ public class AVRGameManager
         });
     }
 
+    protected static class TutorialGame extends Game
+    {
+        public TutorialGame ()
+        {
+            this.name = "Whirled Tutorial";
+            this.gameId = Game.TUTORIAL_GAME_ID;
+            this.config = "<toggle ident=\"avrg\" start=\"true\"/>";
+            this.gameMedia = new StaticMediaDesc(
+                MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.GAME, "tutorial");
+            // TODO: if we end up using these for AVRG's we'll want hand-crafted stuffs here
+            this.thumbMedia = Item.getDefaultThumbnailMediaFor(Item.GAME);
+            this.furniMedia = Item.getDefaultFurniMediaFor(Item.GAME);
+        }
+    }
+
     protected int _gameId;
 
     protected Game _game;
@@ -420,4 +443,7 @@ public class AVRGameManager
     protected AVRGameRepository _repo;
 
     protected IntMap<PlayerObject> _players = new HashIntMap<PlayerObject>();
+
+    /** A fake Game representing the Tutorial AVRG. */
+    protected static TutorialGame _tutorial = new AVRGameManager.TutorialGame();
 }
