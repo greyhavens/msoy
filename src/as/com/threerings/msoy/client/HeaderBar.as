@@ -13,6 +13,7 @@ import mx.containers.VBox;
 import mx.controls.Label;
 
 import com.threerings.flash.TextFieldUtil;
+import com.threerings.flex.CommandButton;
 
 import com.threerings.util.CommandEvent;
 
@@ -99,10 +100,11 @@ public class HeaderBar extends HBox
         padding.percentWidth = 100;
         addChild(padding);
 
-        var embedButtonBox :VBox = new VBox();
-        embedButtonBox.styleName = "headerEmbedBox";
-        embedButtonBox.percentHeight = 100;
-        addChild(embedButtonBox);
+        var controlBox :HBox = new HBox();
+        controlBox.styleName = "headerEmbedBox";
+        controlBox.percentHeight = 100;
+        addChild(controlBox);
+
         _embedLinkButton = new Label();
         _embedLinkButton.styleName = "embedButton";
         _embedLinkButton.text = Msgs.GENERAL.get("l.share");
@@ -112,8 +114,16 @@ public class HeaderBar extends HBox
         _embedLinkButton.buttonMode = true;
         _embedLinkButton.useHandCursor = true;
         _embedLinkButton.mouseChildren = false;
-        embedButtonBox.addChild(_embedLinkButton);
+        controlBox.addChild(_embedLinkButton);
         setEmbedLinkButtonVisible(false);
+
+        var closeBox :VBox = new VBox();
+        closeBox.styleName = "headerCloseBox";
+        controlBox.addChild(closeBox);
+        var closeBtn :CommandButton = new CommandButton();
+        closeBtn.setCommand(MsoyController.CLOSE_PLACE_VIEW);
+        closeBtn.styleName = "closeButton";
+        closeBox.addChild(closeBtn);
     }
 
     protected static const WHIRLED_LOGO_WIDTH :int = 124;

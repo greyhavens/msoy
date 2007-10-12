@@ -64,6 +64,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.game.client.AVRGameService;
+import com.threerings.msoy.game.client.MsoyGamePanel;
 
 import com.threerings.msoy.world.client.RoomView;
 
@@ -146,6 +147,9 @@ public class MsoyController extends Controller
 
     /** Command to view the "mail" page. */
     public static const VIEW_MAIL :String= "ViewMail";
+
+    /** Command to close the current place view. */
+    public static const CLOSE_PLACE_VIEW :String = "ClosePlaceView";
 
     /** Command to view the app in full-screen mode. */
     public static const TOGGLE_FULLSCREEN :String = "ToggleFullscreen";
@@ -408,6 +412,20 @@ public class MsoyController extends Controller
     public function handleViewMail () :void
     {
         displayPage("mail", "");
+    }
+
+    /**
+     * Handle the CLOSE_PLACE_VIEW command.
+     */
+    public function handleClosePlaceView () : void
+    {
+        if (_ctx.getTopPanel().getPlaceView() is MsoyGamePanel) {
+            // if we're in a game, closing means closing the game and going back to our place
+            _ctx.getTopPanel().getControlBar().moveBack();
+        } else {
+            // if we're in the whirled, closing means closing the flash client totally
+            _ctx.getWorldClient().closeClient();
+        }
     }
 
     /**
