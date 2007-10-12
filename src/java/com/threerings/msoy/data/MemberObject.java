@@ -105,7 +105,7 @@ public class MemberObject extends MsoyBodyObject
     /** The name and id information for this user. */
     public MemberName memberName;
 
-    /** The Game ID of the AVR (in-world) game that the user is in, or 0. */
+    /** The id of the currently active AVR game for this user, or 0 for none. */
     public int avrGameId;
 
     /** How much lovely flow we've got jangling around on our person. */

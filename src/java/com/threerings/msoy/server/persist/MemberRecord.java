@@ -147,11 +147,18 @@ public class MemberRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #level} field. */
     public static final ColumnExp LEVEL_C =
         new ColumnExp(MemberRecord.class, LEVEL);
+
+    /** The column identifier for the {@link #avrGameId} field. */
+    public static final String AVR_GAME_ID = "avrGameId";
+
+    /** The qualified column identifier for the {@link #avrGameId} field. */
+    public static final ColumnExp AVR_GAME_ID_C =
+        new ColumnExp(MemberRecord.class, AVR_GAME_ID);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 10;
+    public static final int SCHEMA_VERSION = 11;
 
     /** A flag denoting this user as having support privileges. */
     public static final int SUPPORT_FLAG = 1 << 0;
@@ -217,6 +224,9 @@ public class MemberRecord extends PersistentRecord
     /** The currently reported level of this user. */
     @Column(defaultValue="1")
     public int level = 1;
+
+    /** The id of the currently active AVR game for this user, or 0 for none. */
+    public int avrGameId;
 
     /** A blank constructor used when loading records from the database. */
     public MemberRecord ()

@@ -31,7 +31,6 @@ import com.samskivert.jdbc.depot.SimpleCacheKey;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FieldDefinition;
-import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
@@ -350,6 +349,15 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.HOME_SCENE_ID, homeSceneId);
+    }
+
+    /**
+     * Set the player's currently active AVR game by supplying its id, or zero to clear it.
+     */
+    public boolean setAVRGameId (int memberId, int gameId)
+        throws PersistenceException
+    {
+        return updatePartial(MemberRecord.class, memberId, MemberRecord.AVR_GAME_ID, gameId) > 0;
     }
 
     /**

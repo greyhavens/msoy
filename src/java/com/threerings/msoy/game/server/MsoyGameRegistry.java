@@ -6,8 +6,10 @@ package com.threerings.msoy.game.server;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
@@ -157,7 +159,26 @@ public class MsoyGameRegistry
         }
 
         // clear their persistent AVRG affiliation
-        memobj.setAvrGameId(0);
+        updateAVRGameId(memobj, 0);
+    }
+
+    protected void updateAVRGameId (final MemberObject member, final int gameId)
+    {
+        MsoyServer.invoker.postUnit(new Invoker.Unit("updateAVRGameId") {
+            public boolean invoke () {
+                try {
+                    MsoyServer.memberRepo.setAVRGameId(member.getMemberId(), gameId);
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to update member's AVR game id [member=" +
+                        member + ", gameId=" + gameId + "]", pe);
+                    return false;
+                }
+                return true;
+            }
+            public void handleResult () {
+                member.setAvrGameId(gameId);
+            }
+        });
     }
 
     // from interface GameServerProvider
@@ -177,7 +198,7 @@ public class MsoyGameRegistry
         // set or clear their pending game
         memobj.setGame(game);
         if (game != null && game.avrGame) {
-            memobj.setAvrGameId(game.gameId);
+            updateAVRGameId(memobj, game.gameId);
         }
 
         // update their occupant info if they're in a scene
