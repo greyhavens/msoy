@@ -8,22 +8,16 @@ import flash.geom.Rectangle;
 import flash.system.Capabilities;
 
 import mx.core.Application;
-import mx.core.Container;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
-import mx.containers.VBox;
 
 import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
 
-import mx.events.ResizeEvent;
-
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.MessageBundle;
-import com.threerings.util.Name;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.client.PlaceView;
