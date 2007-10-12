@@ -297,7 +297,7 @@ public class ControlBar extends HBox
         _backBtn.setCommand(ControlBarController.MOVE_BACK, _backBtn);
         _backBtn.styleName = "controlBarButtonBack";
         _backBtn.enabled = false;
-        addGroupChild(_backBtn, [ UI_STD, UI_GUEST ]);
+        addGroupChild(_backBtn, [ UI_STD, UI_MINI, UI_GUEST ]);
 
         _channelBtn = new CommandButton();
         _channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
