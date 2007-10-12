@@ -99,6 +99,7 @@ public class ControlBarController extends Controller
         if (_ctx.getSceneDirector().getScene() == null) {
             if (_backstack.length > 0) {
                 _ctx.getMsoyController().handleGoScene(int(_backstack.pop()));
+                return;
             }
 
         // otherwise the first item on the back stack is the current location
@@ -108,7 +109,11 @@ public class ControlBarController extends Controller
             // ...and pop the previous location and move to it. When we arrive in the previous
             // location, it will be pushed back onto the location stack.
             _ctx.getMsoyController().handleGoScene(int(_backstack.pop()));
+            return;
         }
+
+        // nothing on the stack, let's just go to our home scene
+        _ctx.getMsoyController().handleGoScene(_ctx.getMemberObject().homeSceneId);
     }
 
     /**
