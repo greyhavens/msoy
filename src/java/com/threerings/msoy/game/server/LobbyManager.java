@@ -142,8 +142,10 @@ public class LobbyManager
         if (match.isPartyGame || match.minSeats == 1) {
             MsoyGameConfig config = new MsoyGameConfig();
             config.init(_lobj.game, _lobj.gameDef);
-            for (Parameter param : _lobj.gameDef.params) {
-                config.params.put(param.ident, param.getDefaultValue());
+            if (_lobj.gameDef.params != null) {
+                for (Parameter param : _lobj.gameDef.params) {
+                    config.params.put(param.ident, param.getDefaultValue());
+                }
             }
             TableConfig tconfig = new TableConfig();
             tconfig.desiredPlayerCount = tconfig.minimumPlayerCount = 1;
