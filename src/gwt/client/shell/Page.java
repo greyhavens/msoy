@@ -149,8 +149,8 @@ public abstract class Page
      */
     public void clientWasCleared ()
     {
+        _closeToken = null;
         if (_content != null) {
-            _closeToken = null;
             _content.setText(0, 2, "");
             _content.setText(0, 3, "");
         }
