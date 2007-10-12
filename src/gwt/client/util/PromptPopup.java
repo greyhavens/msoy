@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.Label;
 
+import client.shell.CShell;
+
 /**
  * A class that will prompt the user, and will call one of two abstract functions, depending
  * on the option selected.
@@ -22,7 +24,7 @@ public abstract class PromptPopup extends BorderedPopup
      */
     public PromptPopup (String prompt)
     {
-        this(prompt, "Yes", "No");
+        this(prompt, CShell.cmsgs.yes(), CShell.cmsgs.no());
     }
 
     /**
@@ -46,10 +48,12 @@ public abstract class PromptPopup extends BorderedPopup
         VerticalPanel content = new VerticalPanel();
         content.setStyleName("promptPopup");
 
-        Label headerLabel = new Label(_prompt);
+        Label headerLabel = new Label(CShell.cmsgs.promptTitle());
         headerLabel.setStyleName("Header");
         content.add(headerLabel);
         content.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+
+        content.add(MsoyUI.createLabel(_prompt, "Content"));
 
         final Button yesButton = new Button(_affirmative);
         final Button noButton = new Button(_negative);
@@ -83,7 +87,10 @@ public abstract class PromptPopup extends BorderedPopup
     /**
      * Called if the user selects the negative option.
      */
-    public abstract void onNegative ();
+    public void onNegative ()
+    {
+        // default to doing nothing, just go away
+    }
 
     protected String _prompt;
     protected String _affirmative;

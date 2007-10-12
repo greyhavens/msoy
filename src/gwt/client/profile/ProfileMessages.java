@@ -40,6 +40,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String noFriendsOther();
 
   /**
+   * Translated "Are you sure you want to remove "{0}" from your friends list?".
+   * 
+   * @return translated "Are you sure you want to remove "{0}" from your friends list?"
+   * @gwt.key friendsRemoveConfirm
+   */
+  String friendsRemoveConfirm(String arg0);
+
+  /**
    * Translated "Groups".
    * 
    * @return translated "Groups"
@@ -294,6 +302,22 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key ratingsSingle
    */
   String ratingsSingle();
+
+  /**
+   * Translated ""{0}" has been removed from your friends list.".
+   * 
+   * @return translated ""{0}" has been removed from your friends list."
+   * @gwt.key friendsRemoved
+   */
+  String friendsRemoved(String arg0);
+
+  /**
+   * Translated "[remove]".
+   * 
+   * @return translated "[remove]"
+   * @gwt.key friendsRemove
+   */
+  String friendsRemove();
 
   /**
    * Translated "Display Name".

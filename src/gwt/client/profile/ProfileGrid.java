@@ -100,7 +100,11 @@ public class ProfileGrid extends PagedGrid
                 getFlexCellFormatter().setRowSpan(0, 0, 2);
                 setWidget(0, 1, nameLabel);
                 getFlexCellFormatter().setStyleName(1, 0, "MemberCardHeadline");
-                setText(1, 0, card.headline);
+                if (card.headline == null || card.headline.length() == 0) {
+                    setHTML(1, 0, "&nbsp;");
+                } else {
+                    setText(1, 0, card.headline);
+                }
             }
         }
     }

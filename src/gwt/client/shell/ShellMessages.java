@@ -136,6 +136,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editPermaLong();
 
   /**
+   * Translated "No".
+   * 
+   * @return translated "No"
+   * @gwt.key no
+   */
+  String no();
+
+  /**
    * Translated "<b>Note:</b> your Permaname can never be changed once it is set.<br> You must create a Permaname to log into the Wiki and the Forums.".
    * 
    * @return translated "<b>Note:</b> your Permaname can never be changed once it is set.<br> You must create a Permaname to log into the Wiki and the Forums."
@@ -904,6 +912,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesNoPending();
 
   /**
+   * Translated "Question".
+   * 
+   * @return translated "Question"
+   * @gwt.key promptTitle
+   */
+  String promptTitle();
+
+  /**
    * Translated "Hello, {0}".
    * 
    * @return translated "Hello, {0}"
@@ -998,6 +1014,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key optOutReject
    */
   String optOutReject();
+
+  /**
+   * Translated "Yes".
+   * 
+   * @return translated "Yes"
+   * @gwt.key yes
+   */
+  String yes();
 
   /**
    * Translated "Enter up to {0} email address below (each on a new line), along with a custom message to invite your friends to Whirled!".
