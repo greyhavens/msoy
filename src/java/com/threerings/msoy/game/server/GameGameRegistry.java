@@ -270,6 +270,7 @@ public class GameGameRegistry
             for (ResultListener gameListener : list) {
                 if (((AVRGameJoinListener) gameListener).getPlayerId() == playerId) {
                     list.remove(gameListener);
+                    listener.requestProcessed();
                     return;
                 }
             }
@@ -277,13 +278,15 @@ public class GameGameRegistry
 
         // get the corresponding manager
         AVRGameManager mgr = _avrgManagers.get(gameId);
-        if (mgr == null) {
+        if (mgr != null) {
+            mgr.removePlayer(player);
+            MsoyGameServer.worldClient.leaveAVRGame(playerId);
+
+        } else {
             log.warning("Tried to deactivate AVRG without manager [gameId=" + gameId + "]");
-            return;
         }
 
-        mgr.removePlayer(player);
-        MsoyGameServer.worldClient.leaveAVRGame(playerId);
+        listener.requestProcessed();
     }
 
     // from LobbyProvider
