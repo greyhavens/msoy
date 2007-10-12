@@ -365,7 +365,7 @@ class SeatRenderer extends HBox
             // optional on TableManager creation, and support it here in the form of the closebox
         } else {
             prepareJoinButton();
-            _joinBtn.enabled = !weAreSeated;
+            _joinBtn.enabled = (table.gameOid <= 0) && !weAreSeated;
         }
     }
 
