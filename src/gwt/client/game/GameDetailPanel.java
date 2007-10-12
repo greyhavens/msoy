@@ -36,6 +36,7 @@ public class GameDetailPanel extends FlexTable
     public GameDetailPanel (Page page, final int gameId, final String tab)
     {
         _page = page;
+        _page.setPageTitle(CGame.msgs.gdpTitle());
         setStyleName("gameDetail");
         setCellPadding(0);
         setCellSpacing(0);
@@ -53,7 +54,7 @@ public class GameDetailPanel extends FlexTable
 
     public void setGameDetail (GameDetail detail, final int origGameId, String tab)
     {
-        _page.setPageTitle(detail.getGame().name);
+        _page.setPageTitle(CGame.msgs.gdpTitle(), detail.getGame().name);
 
         int row = 0;
         FlexTable box = new FlexTable();

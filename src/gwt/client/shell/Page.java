@@ -137,10 +137,25 @@ public abstract class Page
      */
     public void setPageTitle (String title)
     {
+        setPageTitle(title, null);
+    }
+
+    /**
+     * Sets the title and subtitle of the browser window and the page. The subtitle is displayed to
+     * the right of the title in the page and tacked onto the title for the browser window.
+     */
+    public void setPageTitle (String title, String subtitle)
+    {
         if (_content == null) {
             createContentContainer();
         }
-        _content.setWidget(0, 0, new Label(title));
+        _content.setText(0, 0, title);
+        if (subtitle != null) {
+            _content.setText(0, 1, subtitle);
+            title += " - " + subtitle;
+        } else {
+            _content.setHTML(0, 1, "&nbsp;");
+        }
         Window.setTitle(CShell.cmsgs.windowTitle(title));
     }
 
@@ -232,9 +247,9 @@ public abstract class Page
         }
         RootPanel.get("content").add(_content);
         _content.setWidget(1, 0, content);
-        // if there isn't anything in the tabs area, the name ends up centering over the whole
-        // display.
-        if (_content.getWidget(0, 1) == null) {
+        // if there isn't anything in the tabs/subtitle area, we need something there to cause IE
+        // to properly use up the space
+        if (_content.getWidget(0, 1) == null && _content.getText(0, 1).length() == 0) {
             _content.setHTML(0, 1, "&nbsp;");
         }
     }

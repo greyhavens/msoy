@@ -41,14 +41,22 @@ public class ProfileGrid extends PagedGrid
         _emptyMessage = message;
     }
 
+    // @Override // from PagedGrid
     protected Widget createWidget (Object item)
     {
         return new ProfileWidget((MemberCard) item);
     }
 
+    // @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
         return _emptyMessage;
+    }
+
+    // @Override // from PagedGrid
+    protected boolean displayNavi (int items)
+    {
+        return items > (_rows * _cols);
     }
 
     protected class ProfileWidget extends FlexTable

@@ -199,6 +199,45 @@ public class ProfileServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface ProfileService
+    public FriendsResult loadFriends (WebIdent ident, int memberId)
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser(ident);
+
+        try {
+            MemberRecord tgtrec = MsoyServer.memberRepo.loadMember(memberId);
+            if (tgtrec == null) {
+                return null;
+            }
+
+            FriendsResult result = new FriendsResult();
+            result.name = tgtrec.getName();
+
+            HashIntMap<MemberCard> cards = new HashIntMap<MemberCard>();
+            for (FriendEntry entry : MsoyServer.memberRepo.loadFriends(memberId)) {
+                MemberCard card = new MemberCard();
+                card.name = entry.name;
+                cards.put(entry.name.getMemberId(), card);
+            }
+            resolveCardData(cards);
+
+            ArrayList<MemberCard> list = new ArrayList<MemberCard>();
+            list.addAll(cards.values());
+            Collections.sort(list, new Comparator<MemberCard>() {
+                public int compare (MemberCard c1, MemberCard c2) {
+                    return MemberName.compareNames(c1.name, c2.name);
+                }
+            });
+            result.friends = list;
+            return result;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failure loading friends [memId=" + memberId + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
     protected ProfileLayout loadLayout (MemberRecord memrec)
         throws PersistenceException
     {
@@ -302,8 +341,6 @@ public class ProfileServlet extends MsoyServiceServlet
         // fetch all the rating records for the user
         List<RatingRecord> ratings = MsoyServer.ratingRepo.getRatings(
             tgtrec.memberId, -1, MAX_PROFILE_GAMES);
-
-        log.info("Loading ratings for " + tgtrec.memberId + ": " + ratings);
 
         // sort them by rating
         Collections.sort(ratings, new Comparator<RatingRecord>() {

@@ -749,6 +749,9 @@ a:visited {
   background: #222222;
   height: 20px;
   text-align: left;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
 }
 
 .pageHeaderClose {

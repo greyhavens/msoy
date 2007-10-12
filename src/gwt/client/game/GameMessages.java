@@ -8,6 +8,14 @@ package client.game;
 public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "Game Detail".
+   * 
+   * @return translated "Game Detail"
+   * @gwt.key gdpTitle
+   */
+  String gdpTitle();
+
+  /**
    * Translated "Multiplayer".
    * 
    * @return translated "Multiplayer"
@@ -144,17 +152,17 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String tabComments();
 
   /**
-   * Translated "{0}''s Trophies".
+   * Translated "Trophies".
    * 
-   * @return translated "{0}''s Trophies"
+   * @return translated "Trophies"
    * @gwt.key caseTitle
    */
-  String caseTitle(String arg0);
+  String caseTitle();
 
   /**
-   * Translated "Average duration:".
+   * Translated "Average time:".
    * 
-   * @return translated "Average duration:"
+   * @return translated "Average time:"
    * @gwt.key gdpAvgDuration
    */
   String gdpAvgDuration();

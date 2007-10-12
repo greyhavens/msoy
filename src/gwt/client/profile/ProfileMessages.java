@@ -72,6 +72,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String homepage();
 
   /**
+   * Translated "That person could not be found.".
+   * 
+   * @return translated "That person could not be found."
+   * @gwt.key friendsNoSuchMember
+   */
+  String friendsNoSuchMember();
+
+  /**
    * Translated "You''re not a member of any groups. Boo hoo.".
    * 
    * @return translated "You''re not a member of any groups. Boo hoo."
@@ -190,6 +198,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key search
    */
   String search();
+
+  /**
+   * Translated "Loading friends...".
+   * 
+   * @return translated "Loading friends..."
+   * @gwt.key friendsLoading
+   */
+  String friendsLoading();
 
   /**
    * Translated "Email".

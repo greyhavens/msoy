@@ -16,7 +16,8 @@ public class TwoColumnLayout extends FlexTable
 {
     public TwoColumnLayout (ProfileService.ProfileResult pdata)
     {
-        setCellPadding(5);
+        setCellPadding(0);
+        setCellSpacing(5);
         int pos = 0;
         for (int ii = 0; ii < pdata.layout.blurbs.size(); ii++) {
             BlurbData bdata = (BlurbData)pdata.layout.blurbs.get(ii);

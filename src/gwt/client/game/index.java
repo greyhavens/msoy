@@ -49,7 +49,6 @@ public class index extends Page
             // if we have d-NNN then we want to see game detail
             String action = args.get(0, "");
             if (action.equals("d")) {
-                setPageTitle("Game Detail");
                 setContent(new GameDetailPanel(this, args.get(1, 0), args.get(2, "")));
 
             } else if (action.equals("t")) {

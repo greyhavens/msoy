@@ -49,6 +49,11 @@ public class index extends MsgsEntryPoint
             return;
         }
 
+        if (args.get(0, "").equals("f")) {
+            setContent(new FriendsPanel(this, args.get(1, 0)));
+            return;
+        }
+
         int memberId = args.get(0, 0);
         if (memberId != 0) {
             displayMemberPage(memberId);
@@ -84,7 +89,7 @@ public class index extends MsgsEntryPoint
         CProfile.profilesvc.loadProfile(CProfile.ident, _memberId = memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 ProfileService.ProfileResult pdata = (ProfileService.ProfileResult)result;
-                setPageTitle(CProfile.msgs.profileTitle());
+                setPageTitle(CProfile.msgs.profileTitle(), pdata.name.toString());
                 switch (pdata.layout.layout) {
                 default:
                 case ProfileLayout.ONE_COLUMN_LAYOUT:

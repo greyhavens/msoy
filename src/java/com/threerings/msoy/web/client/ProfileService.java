@@ -61,6 +61,20 @@ public interface ProfileService extends RemoteService
         public List trophies;
     }
 
+    /** Provides results for {@link #loadFriends}. */
+    public static class FriendsResult implements IsSerializable
+    {
+        /** This user's name and member id. */
+        public MemberName name;
+
+        /**
+         * This user's friends.
+         *
+         * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
+         */
+        public List friends;
+    }
+
     /**
      * Requests that this user's profile be updated.
      */
@@ -82,5 +96,11 @@ public interface ProfileService extends RemoteService
      * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
      */
     public List findProfiles (String type, String search)
+        throws ServiceException;
+
+    /**
+     * Loads up all friends for the specified member.
+     */
+    public FriendsResult loadFriends (WebIdent ident, int memberId)
         throws ServiceException;
 }

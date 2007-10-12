@@ -13,6 +13,7 @@ import com.threerings.msoy.web.client.ProfileService;
 import client.game.TrophyGrid;
 import client.shell.Application;
 import client.shell.Args;
+import client.shell.Page;
 
 /**
  * Displays a member's recently earned trophies.
@@ -45,10 +46,10 @@ public class TrophiesBlurb extends Blurb
 
         int row = _content.getRowCount();
         _content.getFlexCellFormatter().setColSpan(row, 0, TrophyGrid.COLUMNS);
-        _content.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_CENTER);
-        _content.getFlexCellFormatter().setStyleName(row, 0, "More");
+        _content.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
+        _content.getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
         String args = Args.compose("t", pdata.name.getMemberId());
-        _content.setWidget(row, 0, Application.createLink(CProfile.msgs.seeAll(), "game", args));
+        _content.setWidget(row, 0, Application.createLink(CProfile.msgs.seeAll(), Page.GAME, args));
     }
 
     protected FlexTable _content;

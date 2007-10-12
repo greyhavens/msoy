@@ -62,6 +62,7 @@ public abstract class Blurb extends HeaderBox
 
     protected Blurb ()
     {
+        addStyleName("blurb");
         setContent(createContent());
     }
 

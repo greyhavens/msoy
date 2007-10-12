@@ -19,8 +19,9 @@ public class TrophyCasePanel extends FlexTable
     public TrophyCasePanel (Page parent, int memberId)
     {
         _parent = parent;
+        _parent.setPageTitle(CGame.msgs.caseTitle());
         setCellPadding(0);
-        setCellSpacing(10);
+        setCellSpacing(5);
 
         setText(0, 0, CGame.msgs.caseLoading());
         CGame.gamesvc.loadTrophyCase(CGame.ident, memberId, new AsyncCallback() {
@@ -35,7 +36,7 @@ public class TrophyCasePanel extends FlexTable
 
     protected void setTrophyCase (TrophyCase tcase)
     {
-        _parent.setPageTitle(CGame.msgs.caseTitle(tcase.owner.toString()));
+        _parent.setPageTitle(CGame.msgs.caseTitle(), tcase.owner.toString());
 
         if (tcase.shelves.length == 0) {
             setText(0, 0, CGame.msgs.caseEmpty());

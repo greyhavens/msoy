@@ -5,9 +5,10 @@ package client.profile;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -18,6 +19,9 @@ import com.threerings.msoy.web.data.MemberCard;
 
 import client.msgs.FriendInvite;
 import client.msgs.MailComposition;
+import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
 
 /**
  * Displays a person's friends list.
@@ -33,7 +37,9 @@ public class FriendsBlurb extends Blurb
     // @Override // from Blurb
     protected Panel createContent ()
     {
-        _content = new VerticalPanel();
+        _content = new FlexTable();
+        _content.setCellSpacing(0);
+        _content.setCellPadding(0);
         _content.setWidth("100%");
         _content.addStyleName("friendsBlurb");
         return _content;
@@ -54,7 +60,8 @@ public class FriendsBlurb extends Blurb
         grid.setEmptyMessage(empty);
 
         grid.setModel(new SimpleDataModel(pdata.friends), 0);
-        _content.add(grid);
+        _content.setWidget(0, 0, grid);
+        _content.getFlexCellFormatter().setColSpan(0, 0, 2);
 
         boolean canInvite = CProfile.getMemberId() > 0 &&
             CProfile.getMemberId() != _name.getMemberId();
@@ -63,8 +70,7 @@ public class FriendsBlurb extends Blurb
             canInvite = canInvite && !(friend.name.getMemberId() == CProfile.getMemberId());
         }
         if (canInvite) {
-            _content.add(WidgetUtil.makeShim(5, 5));
-            _content.add(new Button(CProfile.msgs.inviteFriend(), new ClickListener() {
+            _content.setWidget(2, 0, new Button(CProfile.msgs.inviteFriend(), new ClickListener() {
                 public void onClick (Widget sender) {
                     new MailComposition(_name, CProfile.msgs.inviteTitle(),
                                         new FriendInvite.Composer(),
@@ -72,9 +78,15 @@ public class FriendsBlurb extends Blurb
                 }
             }));
         }
+
+        Widget more = Application.createLink(
+            CProfile.msgs.seeAll(), Page.PROFILE, Args.compose("f", pdata.name.getMemberId()));
+        more.addStyleName("tipLabel");
+        _content.setWidget(2, 1, more);
+        _content.getFlexCellFormatter().setHorizontalAlignment(2, 1, HasAlignment.ALIGN_RIGHT);
     }
 
-    protected VerticalPanel _content;
+    protected FlexTable _content;
 
     protected static final int FRIEND_COLUMNS = 3;
     protected static final int FRIEND_ROWS = 2;
