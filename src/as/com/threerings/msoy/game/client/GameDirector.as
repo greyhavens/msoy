@@ -147,7 +147,7 @@ public class GameDirector extends BasicDirector
     public function leaveAVRGame () :void
     {
         if (_liaison != null && _liaison is AVRGameLiaison) {
-            _liaison.shutdown();
+            AVRGameLiaison(_liaison).leaveAVRGame();
         }
     }
 

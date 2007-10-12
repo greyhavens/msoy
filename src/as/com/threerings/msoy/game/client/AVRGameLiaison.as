@@ -5,6 +5,7 @@ package com.threerings.msoy.game.client {
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
+import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.crowd.client.LocationAdapter;
@@ -54,6 +55,16 @@ public class AVRGameLiaison extends GameLiaison
         }
 
         super.shutdown();
+    }
+
+    public function leaveAVRGame () :void
+    {
+        var svc :AVRService = (_gctx.getClient().requireService(AVRService) as AVRService);
+        svc.deactivateGame(_gctx.getClient(), _gameId, new ConfirmAdapter (
+            function (cause :String) :void {
+                log.warning("Failed to deactivate AVRG [gameId=" + _gameId +
+                            ", cause=" + cause + "].");        
+            }, shutdown));
     }
 
     /**
