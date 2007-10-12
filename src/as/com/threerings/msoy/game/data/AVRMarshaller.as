@@ -43,12 +43,12 @@ public class AVRMarshaller extends InvocationMarshaller
     public static const DEACTIVATE_GAME :int = 2;
 
     // from interface AVRService
-    public function deactivateGame (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void
+    public function deactivateGame (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
     {
-        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener2.listener = arg2;
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, DEACTIVATE_GAME, [
-            listener2
+            Integer.valueOf(arg2), listener3
         ]);
     }
 }

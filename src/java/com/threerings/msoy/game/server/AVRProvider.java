@@ -24,6 +24,6 @@ public interface AVRProvider extends InvocationProvider
     /**
      * Handles a {@link AVRService#deactivateGame} request.
      */
-    public void deactivateGame (ClientObject caller, InvocationService.ConfirmListener arg1)
+    public void deactivateGame (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 }

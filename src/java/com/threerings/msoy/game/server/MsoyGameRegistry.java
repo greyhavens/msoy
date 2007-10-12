@@ -142,6 +142,24 @@ public class MsoyGameRegistry
     }
 
     // from interface GameServerProvider
+    public void leaveAVRGame (ClientObject caller, int playerId)
+    {
+        if (!checkCallerAccess(caller, "leaveAVRGame(" + playerId + ")")) {
+            return;
+        }
+
+        MemberObject memobj = MsoyServer.lookupMember(playerId);
+        if (memobj == null) {
+            // they went bye bye, oh well
+            log.info("Dropping AVRG clear for departee [pid=" + playerId + "].");
+            return;
+        }
+
+        // clear their persistent AVRG affiliation
+        memobj.setAvrGameId(0);
+    }
+
+    // from interface GameServerProvider
     public void updatePlayer (ClientObject caller, int playerId, GameSummary game)
     {
         if (!checkCallerAccess(caller, "updatePlayer(" + playerId + ")")) {

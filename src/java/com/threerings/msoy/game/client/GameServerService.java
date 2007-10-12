@@ -24,6 +24,11 @@ public interface GameServerService extends InvocationService
     public void updatePlayer (Client client, int playerId, GameSummary game);
 
     /**
+     * Notifies us that a player has persistently left their AVRG.
+     */
+    public void leaveAVRGame (Client caller, int playerId);
+
+    /**
      * Reports that the game server on the specified port is no longer hosting the specified game.
      */
     public void clearGameHost (Client client, int port, int gameId);

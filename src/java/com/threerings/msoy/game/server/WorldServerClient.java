@@ -50,6 +50,15 @@ public class WorldServerClient
         _client.logon();
     }
 
+    public void leaveAVRGame (int playerId)
+    {
+        if (_gssvc == null) {
+            log.warning("Dropping AVRGame departure [id=" + playerId + "].");
+        } else if (playerId > 0) { // don't update guests
+            _gssvc.leaveAVRGame(_client, playerId);
+        }
+    }
+
     public void updatePlayer (int playerId, Game game)
     {
         if (_gssvc == null) {

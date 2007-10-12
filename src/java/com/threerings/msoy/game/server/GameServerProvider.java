@@ -21,6 +21,11 @@ public interface GameServerProvider extends InvocationProvider
     public void clearGameHost (ClientObject caller, int arg1, int arg2);
 
     /**
+     * Handles a {@link GameServerService#leaveAVRGame} request.
+     */
+    public void leaveAVRGame (ClientObject caller, int arg1);
+
+    /**
      * Handles a {@link GameServerService#reportFlowAward} request.
      */
     public void reportFlowAward (ClientObject caller, int arg1, int arg2);

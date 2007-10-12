@@ -35,7 +35,6 @@ import com.threerings.parlor.rating.util.Percentiler;
 import com.whirled.data.GameData;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
@@ -185,14 +184,7 @@ public class GameGameRegistry
     {
         final PlayerObject player = (PlayerObject) caller;
 
-        ResultListener joinListener = new ResultListener() {
-            public void requestProcessed (Object result) {
-                joinAVRGame(player, (AVRGameManager) result, listener);
-            }
-            public void requestFailed (String cause) {
-                listener.requestFailed(cause);
-            }
-        };
+        ResultListener joinListener = new AVRGameJoinListener(player.getMemberId(), listener);
 
         ResultListenerList list = _loadingAVRGames.get(gameId);
         if (list != null) {
@@ -266,11 +258,33 @@ public class GameGameRegistry
     }
 
     // from AVRProvider
-    public void deactivateGame (ClientObject caller, final ConfirmListener listener)
+    public void deactivateGame (ClientObject caller, int gameId, final ConfirmListener listener)
         throws InvocationException
     {
-        final PlayerObject player = (PlayerObject) caller;
+        PlayerObject player = (PlayerObject) caller;
+        int playerId = player.getMemberId();
 
+        // see if we are still just resolving the game
+        ResultListenerList list = _loadingAVRGames.get(gameId);
+        if (list != null) {
+            // yep, so just remove our associated listener, and we're done
+            for (ResultListener gameListener : list) {
+                if (((AVRGameJoinListener) gameListener).getPlayerId() == playerId) {
+                    list.remove(gameListener);
+                    return;
+                }
+            }
+        }
+
+        // get the corresponding manager
+        AVRGameManager mgr = _avrgManagers.get(gameId);
+        if (mgr == null) {
+            log.warning("Tried to deactivate AVRG without manager [gameId=" + gameId + "]");
+            return;
+        }
+
+        mgr.removePlayer(player);
+        MsoyGameServer.worldClient.leaveAVRGame(playerId);
     }
 
     // from LobbyProvider
@@ -400,8 +414,7 @@ public class GameGameRegistry
                                 InvocationService.ResultListener listener)
         throws InvocationException
     {
-        PlayerObject player =
-            (PlayerObject) MsoyGameServer.lookupBody(new MemberName("", playerId));
+        PlayerObject player = MsoyGameServer.lookupPlayer(playerId);
         if (player == null) {
             listener.requestFailed("e.player_not_found");
             return;
@@ -480,13 +493,19 @@ public class GameGameRegistry
         flushPercentiler(Math.abs(game.gameId)); // multiplayer
     }
 
-    protected void joinAVRGame (final PlayerObject player, final AVRGameManager mgr,
+    protected void joinAVRGame (final int playerId, final AVRGameManager mgr,
                                 final ResultListener listener)
     {
+        final PlayerObject player = MsoyGameServer.lookupPlayer(playerId);
+        if (player == null) {
+            // they left while we were resolving the game, oh well
+            return;
+        }
+
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("joinAVRGame") {
             public void invokePersist () throws Exception {
-                _questRecs = _avrgRepo.getQuests(mgr.getGameId(), player.getMemberId());
-                _stateRecs = _avrgRepo.getPlayerGameState(mgr.getGameId(), player.getMemberId());
+                _questRecs = _avrgRepo.getQuests(mgr.getGameId(), playerId);
+                _stateRecs = _avrgRepo.getPlayerGameState(mgr.getGameId(), playerId);
             }
             public void handleSuccess () {
                 mgr.addPlayer(player, _questRecs, _stateRecs);
@@ -495,7 +514,7 @@ public class GameGameRegistry
             public void handleFailure (Exception pe) {
                 log.warning(
                     "Unable to reslve player game state [gameId=" + mgr.getGameId() +
-                    ", player=" + player + ", error=" + pe + "]");
+                    ", player=" + playerId + ", error=" + pe + "]");
             }
             protected List<QuestStateRecord> _questRecs;
             protected List<PlayerGameStateRecord> _stateRecs;
@@ -520,6 +539,32 @@ public class GameGameRegistry
                 return false;
             }
         });
+    }
+
+    protected final class AVRGameJoinListener
+        implements ResultListener
+    {
+        protected AVRGameJoinListener (int player, ResultListener listener)
+        {
+            _listener = listener;
+            _player = player;
+        }
+
+        public int getPlayerId ()
+        {
+            return _player;
+        }
+
+        public void requestProcessed (Object result) {
+            joinAVRGame(_player, (AVRGameManager) result, _listener);
+        }
+
+        public void requestFailed (String cause) {
+            _listener.requestFailed(cause);
+        }
+
+        protected final int _player;
+        protected final ResultListener _listener;
     }
 
     protected static class TutorialGame extends Game

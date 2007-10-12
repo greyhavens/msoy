@@ -36,12 +36,12 @@ public class AVRMarshaller extends InvocationMarshaller
     public static final int DEACTIVATE_GAME = 2;
 
     // from interface AVRService
-    public void deactivateGame (Client arg1, InvocationService.ConfirmListener arg2)
+    public void deactivateGame (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
     {
-        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
-        listener2.listener = arg2;
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, DEACTIVATE_GAME, new Object[] {
-            listener2
+            Integer.valueOf(arg2), listener3
         });
     }
 }

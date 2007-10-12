@@ -30,8 +30,19 @@ public class GameServerMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #leaveAVRGame} requests. */
+    public static final int LEAVE_AVRGAME = 2;
+
+    // from interface GameServerService
+    public void leaveAVRGame (Client arg1, int arg2)
+    {
+        sendRequest(arg1, LEAVE_AVRGAME, new Object[] {
+            Integer.valueOf(arg2)
+        });
+    }
+
     /** The method id used to dispatch {@link #reportFlowAward} requests. */
-    public static final int REPORT_FLOW_AWARD = 2;
+    public static final int REPORT_FLOW_AWARD = 3;
 
     // from interface GameServerService
     public void reportFlowAward (Client arg1, int arg2, int arg3)
@@ -42,7 +53,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sayHello} requests. */
-    public static final int SAY_HELLO = 3;
+    public static final int SAY_HELLO = 4;
 
     // from interface GameServerService
     public void sayHello (Client arg1, int arg2)
@@ -53,7 +64,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updatePlayer} requests. */
-    public static final int UPDATE_PLAYER = 4;
+    public static final int UPDATE_PLAYER = 5;
 
     // from interface GameServerService
     public void updatePlayer (Client arg1, int arg2, GameSummary arg3)

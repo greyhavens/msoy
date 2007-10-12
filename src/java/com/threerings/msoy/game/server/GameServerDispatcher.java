@@ -45,6 +45,13 @@ public class GameServerDispatcher extends InvocationDispatcher
             );
             return;
 
+        case GameServerMarshaller.LEAVE_AVRGAME:
+            ((GameServerProvider)provider).leaveAVRGame(
+                source,
+                ((Integer)args[0]).intValue()
+            );
+            return;
+
         case GameServerMarshaller.REPORT_FLOW_AWARD:
             ((GameServerProvider)provider).reportFlowAward(
                 source,

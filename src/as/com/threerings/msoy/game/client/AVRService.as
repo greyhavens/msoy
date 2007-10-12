@@ -23,6 +23,6 @@ public interface AVRService extends InvocationService
     function activateGame (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface AVRService
-    function deactivateGame (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void;
+    function deactivateGame (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 }
 }

@@ -20,7 +20,7 @@ public interface AVRService extends InvocationService
     public void activateGame (Client client, int gameId, ResultListener listener);
 
     /**
-     * Requests to deactivate the current AVR Game.
+     * Requests to deactivate the given AVR Game, which must be current to the player.
      */
-    public void deactivateGame (Client client, ConfirmListener listener);
+    public void deactivateGame (Client client, int gameId, ConfirmListener listener);
 }
