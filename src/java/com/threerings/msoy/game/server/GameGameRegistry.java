@@ -225,6 +225,8 @@ public class GameGameRegistry
                 _omgr.registerObject(gameObj);
                 fmgr.startup(gameObj, _game, _recs);
 
+                _avrgManagers.put(gameId, fmgr);
+
                 ResultListenerList list = _loadingAVRGames.remove(gameId);
                 if (list != null) {
                     list.requestProcessed(fmgr);
