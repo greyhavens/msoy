@@ -215,7 +215,7 @@ public class ProfileServlet extends MsoyServiceServlet
             result.name = tgtrec.getName();
 
             HashIntMap<MemberCard> cards = new HashIntMap<MemberCard>();
-            for (FriendEntry entry : MsoyServer.memberRepo.loadFriends(memberId)) {
+            for (FriendEntry entry : MsoyServer.memberRepo.loadFriends(memberId, -1)) {
                 MemberCard card = new MemberCard();
                 card.name = entry.name;
                 cards.put(entry.name.getMemberId(), card);
@@ -291,7 +291,8 @@ public class ProfileServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         HashIntMap<MemberCard> cards = new HashIntMap<MemberCard>();
-        for (FriendEntry entry : MsoyServer.memberRepo.loadFriends(tgtrec.memberId)) {
+        for (FriendEntry entry :
+                 MsoyServer.memberRepo.loadFriends(tgtrec.memberId, MAX_PROFILE_FRIENDS)) {
             MemberCard card = new MemberCard();
             card.name = entry.name;
             cards.put(entry.name.getMemberId(), card);
@@ -415,6 +416,7 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     protected static final int MAX_PROFILE_MATCHES = 100;
+    protected static final int MAX_PROFILE_FRIENDS = 6;
     protected static final int MAX_PROFILE_GAMES = 10;
     protected static final int MAX_PROFILE_TROPHIES = 6;
 }

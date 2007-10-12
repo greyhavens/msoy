@@ -35,6 +35,7 @@ import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
+import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
@@ -691,26 +692,29 @@ public class MemberRepository extends DepotRepository
      * online status of each friend will be false.
      *
      * TODO: Bring back full collection caching to this method.
+     *
+     * @param limit a limit on the number of friends to load for all of them.
      */
-    public List<FriendEntry> loadFriends (final int memberId)
+    public List<FriendEntry> loadFriends (final int memberId, int limit)
         throws PersistenceException
     {
+        ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
+        clauses.add(new FromOverride(FriendRecord.class));
         SQLExpression condition =
             new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
                            new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITEE_ID_C)),
                    new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
                            new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITER_ID_C)));
-
+        clauses.add(new Join(MemberRecord.class, condition));
+        if (limit > 0) {
+            clauses.add(new Limit(0, limit));
+        }
         List<MemberNameRecord> records = findAll(
-            MemberNameRecord.class,
-            new FromOverride(FriendRecord.class),
-            new Join(MemberRecord.class, condition));
-
+            MemberNameRecord.class, clauses.toArray(new QueryClause[clauses.size()]));
         List<FriendEntry> list = new ArrayList<FriendEntry>();
         for (MemberNameRecord record : records) {
             list.add(new FriendEntry(new MemberName(record.name, record.memberId), false));
         }
-
         return list;
     }
 

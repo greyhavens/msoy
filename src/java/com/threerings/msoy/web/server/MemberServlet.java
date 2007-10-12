@@ -195,7 +195,7 @@ public class MemberServlet extends MsoyServiceServlet
         final Set<GroupName> groups = new HashSet<GroupName>();
         if (mrec != null) {
             try {
-                friends = MsoyServer.memberRepo.loadFriends(mrec.memberId);
+                friends = MsoyServer.memberRepo.loadFriends(mrec.memberId, -1);
                 for (GroupRecord gRec : MsoyServer.groupRepo.getFullMemberships(mrec.memberId)) {
                     groups.add(new GroupName(gRec.name, gRec.groupId));
                 }
@@ -239,7 +239,7 @@ public class MemberServlet extends MsoyServiceServlet
         final ArrayIntSet groupMemberships = new ArrayIntSet();
 
         try {
-            friends = MsoyServer.memberRepo.loadFriends(memrec.memberId);
+            friends = MsoyServer.memberRepo.loadFriends(memrec.memberId, -1);
             profile = MsoyServer.profileRepo.loadProfile(memrec.memberId);
             for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(memrec.memberId)) {
                 ownedRooms.put(scene.sceneId, scene.sceneName);

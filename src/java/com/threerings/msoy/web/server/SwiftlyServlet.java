@@ -300,7 +300,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         MemberRecord memrec = requireAuthedUser(ident);
 
         try {
-            return MsoyServer.memberRepo.loadFriends(memrec.memberId);
+            return MsoyServer.memberRepo.loadFriends(memrec.memberId, -1);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Getting member's friends failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
