@@ -22,6 +22,7 @@ import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorSender;
 
 import com.threerings.ezgame.data.GameDefinition;
+import com.threerings.ezgame.data.Parameter;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.ItemManager;
@@ -141,6 +142,9 @@ public class LobbyManager
         if (match.isPartyGame || match.minSeats == 1) {
             MsoyGameConfig config = new MsoyGameConfig();
             config.init(_lobj.game, _lobj.gameDef);
+            for (Parameter param : _lobj.gameDef.params) {
+                config.params.put(param.ident, param.getDefaultValue());
+            }
             TableConfig tconfig = new TableConfig();
             tconfig.desiredPlayerCount = tconfig.minimumPlayerCount = 1;
             Table table = null;
