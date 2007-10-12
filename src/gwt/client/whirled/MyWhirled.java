@@ -88,7 +88,7 @@ public class MyWhirled extends FlexTable
         descriptionPanel.setStyleName("Description");
         descriptionPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
         descriptionPanel.add(new HTML(CWhirled.msgs.myWhirledDescription()));
-        Hyperlink whirledwideLink = 
+        Hyperlink whirledwideLink =
             Application.createLink(CWhirled.msgs.titleWhirledwide(), "whirled", "whirledwide");
         whirledwideLink.setStyleName("Whirledwide");
         descriptionPanel.add(whirledwideLink);
@@ -123,7 +123,7 @@ public class MyWhirled extends FlexTable
         _chatsBox.setSpacing(3);
 
         _peopleAttributes = new HashMap();
-        
+
         getFlexCellFormatter().setColSpan(row, 1, 2);
         setWidget(row++, 1, _people = new PagedGrid(PEOPLE_ROWS, PEOPLE_COLUMNS) {
             protected Widget createWidget (Object item) {
@@ -165,7 +165,7 @@ public class MyWhirled extends FlexTable
         header.add(star);
         placesContainer.add(header);
         placesContainer.add(_places = new SceneList(SceneCard.ROOM));
-        
+
         VerticalPanel gamesContainer = new VerticalPanel();
         setWidget(row++, 1, gamesContainer);
         gamesContainer.setStyleName("GamesContainer");
@@ -186,7 +186,7 @@ public class MyWhirled extends FlexTable
         gamesContainer.add(_games = new SceneList(SceneCard.GAME));
     }
 
-    protected void fillUi (MyWhirledData myWhirled) 
+    protected void fillUi (MyWhirledData myWhirled)
     {
         List people = myWhirled.people;
         Object[] peopleArray = people.toArray();
@@ -225,7 +225,7 @@ public class MyWhirled extends FlexTable
                     List entry = (List) _peopleAttributes.get(id);
                     if (entry != null) {
                         if (entry.size() == 1) {
-                            // make sure there is already something at index 1 so that entry.set() 
+                            // make sure there is already something at index 1 so that entry.set()
                             // is happy
                             entry.add(null);
                         } else {
@@ -246,31 +246,41 @@ public class MyWhirled extends FlexTable
         _people.setModel(new SimpleDataModel(people), 0);
         _places.populate(myWhirled.places, _peopleAttributes);
         _games.populate(myWhirled.games, _peopleAttributes, _pendingTableMembers);
-                
-        MediaDesc photo = myWhirled.photo == null ? Profile.DEFAULT_PHOTO : myWhirled.photo;
-        _pictureBox.add(MediaUtil.createMediaView(photo, 
+
+        // add our own profile picture to the left column
+        MediaDesc photo = (myWhirled.photo == null) ? Profile.DEFAULT_PHOTO : myWhirled.photo;
+        Widget image = MediaUtil.createMediaView(
             // HALF_THUMBNAIL is too small and THUMBNAIL is too big... do something custom
-            (int)(MediaDesc.THUMBNAIL_WIDTH * 0.65), (int)(MediaDesc.THUMBNAIL_HEIGHT * 0.65)));
+            photo, (int)(MediaDesc.THUMBNAIL_WIDTH*0.65), (int)(MediaDesc.THUMBNAIL_HEIGHT*0.65));
+        if (image instanceof Image) {
+            ((Image)image).addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.PROFILE, "" + CWhirled.getMemberId());
+                }
+            });
+        }
+        _pictureBox.add(image);
 
         // show the player's rooms in purchased order by doing an ascending sort on the sceneIds
         Object[] sceneIds = myWhirled.ownedRooms.keySet().toArray();
         Arrays.sort(sceneIds);
-        // TODO: if a user has too many rooms, we need to scroll the _roomsBox vertically, 
-        // instead of letting it grow indefinitely
+        // TODO: if a user has too many rooms, we need to scroll the _roomsBox vertically, instead
+        // of letting it grow indefinitely
         for (int ii = 0; ii < sceneIds.length; ii++) {
             _roomsBox.add(Application.createLink((String)(myWhirled.ownedRooms.get(sceneIds[ii])),
-                                                 "world", "s" + sceneIds[ii]));
+                                                 Page.WORLD, "s" + sceneIds[ii]));
         }
 
         if (myWhirled.chats == null || myWhirled.chats.size() == 0) {
             _chatsBox.add(new Label(CWhirled.msgs.noChats()));
+
         } else {
             // show group chats in group-created order by sorting on group ids
             Object[] chatIds = myWhirled.chats.keySet().toArray();
             Arrays.sort(chatIds);
             for (int ii = 0; ii < chatIds.length; ii++) {
                 _chatsBox.add(Application.createLink((String)(myWhirled.chats.get(chatIds[ii])),
-                                                     "world", "c" + chatIds[ii]));
+                                                     Page.WORLD, "c" + chatIds[ii]));
             }
         }
     }
@@ -286,7 +296,7 @@ public class MyWhirled extends FlexTable
             DOM.setStyleAttribute(getElement(), "overflowX", "hidden");
         }
 
-        public void populate (List scenes, Map peopleAttributes) 
+        public void populate (List scenes, Map peopleAttributes)
         {
             populate(scenes, peopleAttributes, null);
         }
@@ -317,7 +327,7 @@ public class MyWhirled extends FlexTable
                     } else {
                         return s2.friends.size() - s1.friends.size();
                     }
-                } 
+                }
                 public boolean equals (Object obj) {
                     return obj == this;
                 }
@@ -333,7 +343,7 @@ public class MyWhirled extends FlexTable
          * adds the empty list entry to this SceneList so that the list is never completely empty,
          * which is so sad.
          */
-        protected void showEmptyEntry (VerticalPanel sceneContainer) 
+        protected void showEmptyEntry (VerticalPanel sceneContainer)
         {
             HorizontalPanel fakeSceneWidget = new HorizontalPanel();
             fakeSceneWidget.setStyleName("SceneWidget");
@@ -399,7 +409,7 @@ public class MyWhirled extends FlexTable
             FlowPanel peopleList = new FlowPanel();
             if (peopleIter.hasNext()) {
                 InlineLabel population = new InlineLabel(
-                    CWhirled.msgs.population("" + Math.max(scene.population, 
+                    CWhirled.msgs.population("" + Math.max(scene.population,
                                                            scene.friends.size())) +
                     CWhirled.msgs.populationFriends());
                 peopleList.add(population);
@@ -438,7 +448,7 @@ public class MyWhirled extends FlexTable
                                 personMenuPanel.hide();
                             }
                         });
-                    boolean inPending = 
+                    boolean inPending =
                         pendingTableMembers != null && pendingTableMembers.contains(id);
                     final String flashArg = (inPending ? "playerTable=" : "memberScene=") + id;
                     menu.addItem(CWhirled.msgs.goToGame("" + attrs.get(0)), new Command() {
@@ -448,8 +458,8 @@ public class MyWhirled extends FlexTable
                     });
                     personMenuPanel.add(menu);
                     person.addMouseListener(new MouseListenerAdapter() {
-                        public void onMouseDown (Widget sender, int x, int y) { 
-                            personMenuPanel.setPopupPosition(person.getAbsoluteLeft() + x, 
+                        public void onMouseDown (Widget sender, int x, int y) {
+                            personMenuPanel.setPopupPosition(person.getAbsoluteLeft() + x,
                                 person.getAbsoluteTop() + y);
                             personMenuPanel.show();
                         }
@@ -513,7 +523,7 @@ public class MyWhirled extends FlexTable
     protected VerticalPanel _roomsBox;
     protected VerticalPanel _chatsBox;
 
-    /** Map of member Ids to a List of attributes for the person.  
+    /** Map of member Ids to a List of attributes for the person.
      * List is: [ name, style for name label ] */
     protected Map _peopleAttributes;
 
