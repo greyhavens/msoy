@@ -1,5 +1,6 @@
 <cross-domain-policy>
    <allow-access-from domain="first.whirled.com" to-ports="*"/>
+   <allow-access-from domain="bering.sea.earth.threerings.net" to-ports="*"/>
 </cross-domain-policy>
 <!--
   Notice:
