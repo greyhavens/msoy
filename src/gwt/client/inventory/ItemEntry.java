@@ -214,6 +214,10 @@ public class ItemEntry extends FlexTable
         setWidget(1, 0, label);
         setText(1, 1, tip);
         getFlexCellFormatter().setStyleName(1, 1, "Tip");
+
+        // adjust the rest of the table to accomodate our bits
+        getFlexCellFormatter().setRowSpan(0, 0, 2);
+        getFlexCellFormatter().setColSpan(0, 1, 2);
     }
 
     protected void clearListener ()
