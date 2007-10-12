@@ -154,8 +154,8 @@ public class LobbyPanel extends VBox
     {
         if (event.getName() == MemberObject.GAME) {
             updateCreateButton();
-            if (_formingTables != null) {
-                _formingTables.refresh();
+            if (_tables != null) {
+                _tables.refresh();
             }
         }
     }
@@ -163,32 +163,36 @@ public class LobbyPanel extends VBox
     // from TableObserver
     public function tableAdded (table :Table) :void
     {
-        if (_runningTables != null && table.gameOid > 0) {
-            _runningTables.addItem(table);
+        var firstRunningIdx :int = -1;
+        for (var ii :int = 0; _tables != null && ii < _tables.length; ii++) {
+            var tt :Table = (_tables.getItemAt(ii) as Table);
+            if (tt != null && tt.gameOid > 0) {
+                firstRunningIdx = ii;
+                break;
+            }
+        }
+        if (firstRunningIdx == -1 || table.gameOid > 0) {
+            _tables.addItem(table);
         } else {
-            _formingTables.addItem(table);
+            // add the table below all other forming tables but above running tables
+            _tables.addItemAt(table, firstRunningIdx);
         }
     }
 
     // from TableObserver
     public function tableUpdated (table :Table) :void
     {
-        var idx :int = ArrayUtil.indexOf(_formingTables.source, table);
+        var idx :int = ArrayUtil.indexOf(_tables.source, table);
         if (idx >= 0) {
-            if (table.gameOid > 0 && GameConfig.SEATED_GAME ==
-                _lobbyObj.gameDef.match.getMatchType()) {
-                _formingTables.removeItemAt(idx);
-                _runningTables.addItem(table);
+            if (table.gameOid > 0 &&
+                GameConfig.SEATED_GAME == _lobbyObj.gameDef.match.getMatchType()) {
+                _tables.removeItemAt(idx);
+                tableAdded(table); // reinsert in correct position
             } else {
-                _formingTables.setItemAt(table, idx);
+                _tables.setItemAt(table, idx);
             }
         } else {
-            idx = ArrayUtil.indexOf(_runningTables.source, table);
-            if (idx >= 0) {
-                _runningTables.setItemAt(table, idx);
-            } else {
-                log.warning("Never found table to update: " + table);
-            }
+            log.warning("Unknown table updated: " + table);
         }
     }
 
@@ -196,22 +200,14 @@ public class LobbyPanel extends VBox
     public function tableRemoved (tableId :int) :void
     {
         var table :Table;
-        for (var ii :int = 0; _runningTables != null && ii < _runningTables.length; ii++) {
-            table = (_runningTables.getItemAt(ii) as Table);
-            if (table.tableId == tableId) {
-                _runningTables.removeItemAt(ii);
-                return;
-            }
-        }
-        for (ii = 0; ii < _formingTables.length; ii++) {
-            table = (_formingTables.getItemAt(ii) as Table);
+        for (var ii :int = 0; _tables != null && ii < _tables.length; ii++) {
+            table = (_tables.getItemAt(ii) as Table);
             if (table != null && table.tableId == tableId) {
-                _formingTables.removeItemAt(ii);
+                _tables.removeItemAt(ii);
                 return;
             }
         }
-
-        log.warning("Never found table to remove: " + tableId);
+        log.warning("Unknown table removed: " + tableId);
     }
 
     // from SeatednessObserver
@@ -356,73 +352,19 @@ public class LobbyPanel extends VBox
         var factory :ClassFactory = new ClassFactory(TableRenderer);
         factory.properties = { gctx: _gctx, panel: this };
         list.itemRenderer = factory;
-        _formingTables = new ArrayCollection();
-        list.dataProvider = _formingTables;
+        list.dataProvider = (_tables = new ArrayCollection());
 
-        // only display tabs for seated games
-        if (_lobbyObj.gameDef.match.getMatchType() == GameConfig.SEATED_GAME) {
-            var tabsBox :HBox = new HBox();
-            tabsBox.styleName = "tabsBox";
-            tabsBox.percentWidth = 100;
-            tabsBox.height = 20;
-            _tablesBox.addChild(tabsBox);
-            var tabFiller :HBox = new HBox();
-            tabFiller.styleName = "tabsFillerBox";
-            tabFiller.width = 5;
-            tabFiller.height = 9;
-            tabsBox.addChild(tabFiller);
-            var tabBar :TabBar = new TabBar();
-            tabBar.percentHeight = 100;
-            tabsBox.addChild(tabBar);
-            tabFiller = new HBox();
-            tabFiller.styleName = "tabsFillerBox";
-            tabFiller.percentWidth = 100;
-            tabFiller.height = 9;
-            tabsBox.addChild(tabFiller);
+        var bar :HBox = new HBox();
+        bar.styleName = "tabsFillerBox"; 
+        bar.percentWidth = 100;
+        bar.height = 9;
+        _tablesBox.addChild(bar);
+        _tablesBox.addChild(list);
 
-            var tabViews :ViewStack = new ViewStack();
-            tabViews.percentHeight = 100;
-            tabViews.percentWidth = 100;
-            _tablesBox.addChild(tabViews);
-            tabBar.dataProvider = tabViews;
-            var formingBox :VBox = new VBox();
-            formingBox.percentHeight = 100;
-            formingBox.percentWidth = 100;
-            formingBox.label = Msgs.GAME.get("t.forming");
-            tabViews.addChild(formingBox);
-            formingBox.addChild(list);
-
-            var runningList :MsoyList = new MsoyList(_wctx);
-            runningList.styleName = "lobbyTableList";
-            runningList.variableRowHeight = true;
-            runningList.percentHeight = 100;
-            runningList.percentWidth = 100;
-            runningList.selectable = false;
-            var runningFactory :ClassFactory = new ClassFactory(TableRenderer);
-            runningFactory.properties = { gctx: _gctx, panel: this };
-            runningList.itemRenderer = runningFactory;
-            _runningTables = new ArrayCollection();
-            runningList.dataProvider = _runningTables;
-            var runningBox :VBox = new VBox();
-            runningBox.percentHeight = 100;
-            runningBox.percentWidth = 100;
-            runningBox.label = Msgs.GAME.get("t.running");
-            runningBox.addChild(runningList);
-            tabViews.addChild(runningBox);
-
+        if (_tables.source.length > 0) {
+            _tables.setItemAt(null, 0);
         } else {
-            var bar :HBox = new HBox();
-            bar.styleName = "tabsFillerBox"; 
-            bar.percentWidth = 100;
-            bar.height = 9;
-            _tablesBox.addChild(bar);
-            _tablesBox.addChild(list);
-        }
-
-        if (_formingTables.source.length > 0) {
-            _formingTables.setItemAt(null, 0);
-        } else {
-            _formingTables.addItem(null);
+            _tables.addItem(null);
         }
     }
 
@@ -443,11 +385,8 @@ public class LobbyPanel extends VBox
     /** The create-a-table button. */
     protected var _createBtn :CommandButton;
 
-    /** The currently forming tables. */
-    protected var _formingTables :ArrayCollection;
-
-    /** The currently running tables. */
-    protected var _runningTables :ArrayCollection;
+    /** All forming and running tables (forming first). */
+    protected var _tables :ArrayCollection;
 
     // various UI bits that need filling in with data arrives
     protected var _logo :VBox;
