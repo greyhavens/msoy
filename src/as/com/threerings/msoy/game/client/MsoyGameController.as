@@ -33,24 +33,6 @@ public class MsoyGameController extends EZGameController
         _occReporter.didLeavePlace(plobj);
     }
 
-    /**
-     * This method is used by the WhirledGameControlBackend.
-     */
-    public function setChatEnabled_v1 (enabled :Boolean) :void
-    {
-        _panel.backend.validateConnected();
-        (_view as MsoyGamePanel).setChatEnabled(enabled);
-    }
-
-    /**
-     * This method is used by the WhirledGameControlBackend.
-     */
-    public function setChatBounds_v1 (bounds :Rectangle) :void
-    {
-        _panel.backend.validateConnected();
-        (_view as MsoyGamePanel).setChatBounds(bounds);
-    }
-
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
         return new MsoyGamePanel((ctx as GameContext), this);

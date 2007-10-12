@@ -349,10 +349,10 @@ public class ControlBar extends HBox
     protected function updateUI () :void
     {
         updateGroup(UI_ALL, false);
-        if (_isMember) {
-            if (_isMinimized) {
-                updateGroup(UI_MINI, true);
-            } else if (_isEditing) {
+        if (_isMinimized) {
+            updateGroup(UI_MINI, true);
+        } else if (_isMember) {
+            if (_isEditing) {
                 updateGroup(UI_EDIT, true);
             } else {
                 updateGroup(UI_STD, true);

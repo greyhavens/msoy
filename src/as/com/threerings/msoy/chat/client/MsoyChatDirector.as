@@ -178,6 +178,22 @@ public class MsoyChatDirector extends ChatDirector
         return _ccpanel.containsRoomTab();
     }
 
+    /**
+     * Displays the game chat sidebar.
+     */
+    public function displayGameChat (chatDtr :ChatDirector) :void
+    {
+        _ccpanel.displayGameChat(chatDtr);
+    }
+
+    /**
+     * Clears the game chat sidebar.
+     */
+    public function clearGameChat () :void
+    {
+        _ccpanel.clearGameChat();
+    }
+
     // from parent superclass BasicDirector
     override public function clientDidLogoff (event :ClientEvent) :void
     {

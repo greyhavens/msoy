@@ -32,8 +32,6 @@ public class MsoyGameControlBackend extends WhirledGameControlBackend
         super.populateProperties(o);
 
         var ctrl :MsoyGameController = (_ctrl as MsoyGameController);
-        o["setChatEnabled_v1"] = ctrl.setChatEnabled_v1;
-        o["setChatBounds_v1"] = ctrl.setChatBounds_v1;
         o["getHeadShot_v1"] = getHeadShot_v1;
         o["getStageBounds_v1"] = getStageBounds_v1;
         o["backToWhirled_v1"] = backToWhirled_v1;

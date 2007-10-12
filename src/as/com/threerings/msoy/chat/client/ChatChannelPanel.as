@@ -23,6 +23,7 @@ import com.threerings.util.CommandEvent;
 import com.threerings.util.HashMap;
 import com.threerings.util.ValueEvent;
 
+import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatDisplay;
 
 import com.threerings.msoy.client.ControlBar;
@@ -159,17 +160,7 @@ public class ChatChannelPanel extends VBox
     {
         _wtab = new WorldChatTab(_ctx);
         _wtab.label = Msgs.CHAT.xlate("l.world_channel");
-        _tabnav.addChildAt(_wtab, 0);
-        // another action that seems to need to be deferred.
-        callLater(function () :void {
-            _tabnav.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
-        });
-        // select the world tab if we're not showing at all, otherwise don't fiddle with the
-        // selected tab to avoid hiding an active chat channel or the tutorial
-        if (parent == null) {
-            selectTab(_wtab);
-        }
-        _ctx.getTopPanel().getControlBar().setTabMode(true);
+        addFixedTab(_wtab);
         // expand to take up the entire width of the client (minus the left panel)
         width = stage.stageWidth - _ctx.getTopPanel().getLeftPanelWidth();
     }
@@ -177,13 +168,12 @@ public class ChatChannelPanel extends VBox
     public function removeRoomTab () :void
     {
         if (_wtab != null) {
-            var wtab :WorldChatTab = _wtab;
+            removeFixedTab(_wtab);
             // calling shutdown on WorldChatTab causes the RoomView to call containsRoomTab() to
             // see what aspect ratio it should use, therefore _wtab needs to be null
-            _wtab = null;
-            _ctx.getTopPanel().getControlBar().setTabMode(false);
-            _tabnav.removeChild(wtab);
+            var wtab :WorldChatTab = _wtab;
             wtab.shutdown();
+            _wtab = null;
         }
         // back to our default width
         width = TopPanel.RIGHT_SIDEBAR_WIDTH;
@@ -192,6 +182,43 @@ public class ChatChannelPanel extends VBox
     public function containsRoomTab () :Boolean
     {
         return _wtab != null;
+    }
+
+    public function displayGameChat (chatDtr :ChatDirector) :void
+    {
+        _gtab = new GameChatTab(_ctx, chatDtr);
+        _gtab.label = Msgs.CHAT.xlate("l.game_channel");
+        addFixedTab(_gtab);
+    }
+
+    public function clearGameChat () :void
+    {
+        if (_gtab != null) {
+            _gtab.shutdown();
+            removeFixedTab(_gtab);
+            _gtab = null;
+        }
+    }
+
+    protected function addFixedTab (tab :ChatTab) :void
+    {
+        _tabnav.addChildAt(tab, 0);
+        // another action that seems to need to be deferred.
+        callLater(function () :void {
+            _tabnav.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
+        });
+        // select the world tab if we're not showing at all, otherwise don't fiddle with the
+        // selected tab to avoid hiding an active chat channel or the tutorial
+        if (parent == null) {
+            selectTab(tab);
+        }
+        _ctx.getTopPanel().getControlBar().setTabMode(true);
+    }
+
+    protected function removeFixedTab (tab :ChatTab) :void
+    {
+        _ctx.getTopPanel().getControlBar().setTabMode(false);
+        _tabnav.removeChild(tab);
     }
 
     protected function selectTab (tab :ChatTab, select :Boolean = true) :void
@@ -250,9 +277,12 @@ public class ChatChannelPanel extends VBox
     }
 
     protected var _ctx :WorldContext;
-    protected var _tabnav :SuperTabNavigator;
-    protected var _wtab :WorldChatTab;
+
     protected var _inputBox :HBox;
     protected var _input :ChatInput;
+
+    protected var _tabnav :SuperTabNavigator;
+    protected var _wtab :WorldChatTab;
+    protected var _gtab :GameChatTab;
 }
 }
