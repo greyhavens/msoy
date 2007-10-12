@@ -145,10 +145,9 @@ public abstract class Page
     }
 
     /**
-     * Used to remove the close button, either because we've been removed from view, or beacuse the
-     * flash client has been removed.
+     * Called when the client is removed from view. Clears the close button if one is showing.
      */
-    public void clearCloseButton ()
+    public void clientWasCleared ()
     {
         if (_content != null) {
             _closeToken = null;
