@@ -455,7 +455,13 @@ public class ComicOverlay extends ChatOverlay
 
     protected function drawThinkTail (g :Graphics, w :int, h :int, outline :int, fill :int) :void
     {
-        // TODO - two or three bubbles leading away from the think cloud
+        g.lineStyle(1, outline);
+        g.beginFill(fill);
+        // the think bubble doesn't really utilize the w and h that are sent to this method very 
+        // well... we can get a little closer than may seem wise.
+        g.drawCircle(w - 9, h - 1, 4);
+        g.drawCircle(w - 13, h + 8, 3);
+        g.endFill();
     }
 
     /** Bubble draw function. See getBubbleShape() */
