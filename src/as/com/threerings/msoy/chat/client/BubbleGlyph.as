@@ -40,8 +40,7 @@ public class BubbleGlyph extends ChatGlyph
         addChild(txt);
         _txt = txt;
         var offset :int = overlay.drawBubbleShape(
-            //this,
-            _outline.graphics, type, txt.width, txt.height);
+            _outline.graphics, type, txt.width, txt.height, true);
         txt.x = offset;
         txt.y = offset;
     }
@@ -78,18 +77,14 @@ public class BubbleGlyph extends ChatGlyph
 
     public function removeTail () :void
     {
-        // the tail is added to our own graphics area
-        graphics.clear();
+        (_overlay as ComicOverlay).drawBubbleShape(
+            _outline.graphics, _type, _txt.width, _txt.height, false);
     }
 
     public function setAgeLevel (overlay :ComicOverlay, ageLevel :int) :void
     {
         // TODO: if we keep, 7 is magic number from ComicOverlay.
         alpha = .5 + (.5 * ((7 - ageLevel) / 7));
-//        // re-draw the bubble with the new age level
-//        // TODO: ?
-//        overlay.drawBubbleShape(
-//            graphics, _type, _txt.width, _txt.height, ageLevel);
     }
 
     /**
@@ -100,26 +95,6 @@ public class BubbleGlyph extends ChatGlyph
         if (txt.textWidth < MINIMUM_SPLIT_WIDTH) {
             return;
         }
-
-// Commented out: too slow.
-//        // This method incrementally decreases the width of the field, 
-//        // causing it to re-layout and checking the results.
-//        const PAD :int = ChatOverlay.PAD * 2;
-//        var w :Number = txt.textWidth;
-//        var h :Number = txt.textHeight;
-//        var lastRatio :Number = (w + PAD) / (h + PAD);
-//        for (var hw :Number = w - 10; hw > 10; hw -= 10) {
-//            txt.width = hw + TextFieldUtil.WIDTH_PAD;
-//            var ratio :Number = (txt.textWidth + PAD) / (txt.textHeight + PAD);
-//            if (Math.abs(ratio - GOLDEN) <= Math.abs(lastRatio - GOLDEN)) {
-//                // we're getting closer
-//                lastRatio = ratio;
-//
-//            } else {
-//                txt.width = (hw + 10) + TextFieldUtil.WIDTH_PAD;
-//                break;
-//            }
-//        }
 
         // This method checks the current size and makes guesses as how smaller
         // widths will lay out, and picks the width that puts the overall bubble
@@ -146,12 +121,6 @@ public class BubbleGlyph extends ChatGlyph
         }
 
         txt.width = w + TextFieldUtil.WIDTH_PAD;
-    }
-
-    override protected function handleStartExpire (evt :TimerEvent) :void
-    {
-        removeTail();
-        super.handleStartExpire(evt);
     }
 
     /** The name of the speaker. */

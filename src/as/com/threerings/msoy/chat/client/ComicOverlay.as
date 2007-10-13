@@ -314,11 +314,6 @@ public class ComicOverlay extends ChatOverlay
         _bubbles.push(bubble);
         _overlay.addChild(bubble);
 
-        // if we have a tail, add it now, now that it's added
-        if (speakerInfo != null) {
-            drawTailShape(bubble, type, speakerInfo);
-        }
-
         // and we need to dirty all the bubbles because they'll all be painted in slightly
         // different colors
         var numbubs :int = _bubbles.length;
@@ -354,79 +349,17 @@ public class ComicOverlay extends ChatOverlay
     }
 
     /**
-     * Draw the tail for the specified bubble.
-     */
-    protected function drawTailShape (bubble :BubbleGlyph, type :int, speakerInfo :Array) :void
-    {
-        if (modeOf(type) == EMOTE) {
-            return; // no tail for emotes
-        }
-
-        // we're drawing in bubble coordinates, so the middle is just the width and height div 2.
-        var bubRect :Rectangle = bubble.getBubbleBounds();
-        var midX :Number = bubRect.width/2;
-        var midY :Number = bubRect.height/2;
-
-        // the speaker point is 1/2-width through the speaker bounding box, and 1/3 from the top.
-        var speakerRect :Rectangle = speakerInfo[0] as Rectangle;
-        var speakerP :Point = bubble.globalToLocal(
-            new Point(speakerRect.x + speakerRect.width/2, speakerRect.y + speakerRect.height/3));
-
-        var x :Number;
-        var offset :Number;
-        if (midX > speakerP.x) {
-            x = bubRect.width - PAD;
-            offset = -PAD;
-        } else {
-            x = PAD;
-            offset = PAD;
-        }
-
-        var g :Graphics = bubble.graphics;
-        g.lineStyle(1, BLACK);
-        g.beginFill(WHITE);
-        g.moveTo(x, midY);
-        g.lineTo(x, bubRect.height);
-        g.curveTo(x, bubRect.height + PAD, x + offset + offset, bubRect.height + PAD);
-        g.curveTo(x + offset, bubRect.height + PAD, x + offset, bubRect.height);
-        g.lineTo(x + offset, midY);
-        g.lineTo(x, midY);
-        g.endFill();
-
-//
-//        var g :Graphics = bubble.graphics;
-//        g.lineStyle(1, BLACK);
-//        g.beginFill(WHITE);
-//        // draw a triangle from the speaker to the center of the bubble
-//        g.moveTo(speakerP.x, speakerP.y);
-//        if (Math.abs(speakerP.x - midX) > Math.abs(speakerP.y - midY)) {
-//            g.lineTo(midX, midY - PAD);
-//            g.lineTo(midX, midY + PAD);
-//        } else {
-//            g.lineTo(midX - PAD, midY);
-//            g.lineTo(midX + PAD, midY);
-//        }
-//        g.lineTo(speakerP.x, speakerP.y);
-//        g.endFill();
-    }
-
-    /**
      * Draw the specified bubble shape.
      *
      * @return the padding that should be applied to the bubble's label.
      */
-    internal function drawBubbleShape (
-//        bubble :BubbleGlyph,
-        g :Graphics, type :int, txtWidth :int, txtHeight :int, ageLevel :int = 0) :int
+    internal function drawBubbleShape (g :Graphics, type :int, txtWidth :int, txtHeight :int,
+        tail :Boolean) :int
     {
-        // this little bit copied from superclass- if we keep: reuse
         var outline :uint = getOutlineColor(type);
         var background :uint;
         if (BLACK == outline) {
             background = WHITE;
-            if (ageLevel != 0) {
-                background = uint(BACKGROUNDS[ageLevel]);
-            }
         } else {
             background = ColorUtil.blend(WHITE, outline, .8);
         }
@@ -435,23 +368,22 @@ public class ComicOverlay extends ChatOverlay
         var width :int = txtWidth + padding * 2;
         var height :int = txtHeight + padding * 2;
 
-//        var skin :IFlexDisplayObject = IFlexDisplayObject(new BUB());
-//        var rect :Rectangle = bubble.getTextSize();
-//        skin.x = -PAD/2;
-//        skin.y = -PAD/2;
-//        skin.setActualSize(width, height);
-//        bubble.addChildAt(DisplayObject(skin), 0);
-
         var shapeFunction :Function = getBubbleShape(type);
 
         // clear any old graphics
         g.clear();
 
-        // fill and outline in the same step
         g.lineStyle(1, outline);
         g.beginFill(background);
         shapeFunction(g, width, height);
         g.endFill();
+
+        if (tail) {
+            var tailFunction :Function = getTailShape(type);
+            if (tailFunction != null) {
+                tailFunction(g, width, height, outline, background);
+            }
+        }
 
         return padding;
     }
@@ -480,10 +412,56 @@ public class ComicOverlay extends ChatOverlay
         return getSubtitleShape(type);
     }
 
+    /**
+     * Get the function that draws the tail shape for the specified type of bubble.
+     */
+    protected function getTailShape (type :int) :Function
+    {
+        switch (placeOf(type)) {
+        case INFO:
+        case ATTENTION:
+            return null;
+        }
+
+        switch(modeOf(type)) {
+        case SPEAK:
+            return drawSpeakTail;
+        case THINK:
+            return drawThinkTail;
+        }
+
+        return null;
+    }
+
+    protected function drawSpeakTail (g :Graphics, w :int, h :int, outline :int, fill :int) :void
+    {
+        // first fill the shape we want
+        g.lineStyle(1, fill);
+        g.beginFill(fill);
+        g.drawRect(w - PAD, h - PAD, PAD, PAD);
+        g.moveTo(w - PAD * 3 / 4, h);
+        g.curveTo(w - PAD / 4, h + PAD / 4, w - PAD / 2, h + PAD / 2);
+        g.curveTo(w, h + PAD * 3 / 8, w, h);
+        g.endFill();
+
+        // now draw the border
+        g.lineStyle(1, outline);
+        g.moveTo(w - PAD - 2, h);
+        g.lineTo(w - PAD * 3 / 4, h);
+        g.curveTo(w - PAD / 4, h + PAD / 4, w - PAD / 2, h + PAD / 2);
+        g.curveTo(w, h + PAD * 3 / 8, w, h);
+        g.lineTo(w, h - PAD - 2);
+    }
+
+    protected function drawThinkTail (g :Graphics, w :int, h :int, outline :int, fill :int) :void
+    {
+        // TODO - two or three bubbles leading away from the think cloud
+    }
+
     /** Bubble draw function. See getBubbleShape() */
     protected function drawRoundedBubble (g :Graphics, w :int, h :int) :void
     {
-        g.drawRoundRect(0, 0, w, h, PAD * 4, PAD * 4);
+        g.drawRoundRect(0, 0, w, h, PAD * 2, PAD * 2);
     }
 
     /** Bubble draw function. See getBubbleShape() */
