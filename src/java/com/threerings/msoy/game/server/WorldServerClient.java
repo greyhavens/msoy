@@ -18,6 +18,7 @@ import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.game.data.all.Trophy;
 
 import static com.threerings.msoy.Log.log;
 
@@ -84,6 +85,15 @@ public class WorldServerClient
             log.warning("Dropping flow award [mid=" + memberId + ", df=" + deltaFlow + "].");
         } else {
             _gssvc.reportFlowAward(_client, memberId, deltaFlow);
+        }
+    }
+
+    public void reportTrophyAward (int memberId, String gameName, Trophy trophy)
+    {
+        if (_gssvc == null) {
+            log.warning("Dropping trophy award [mid=" + memberId + ", trophy=" + trophy + "].");
+        } else {
+            _gssvc.reportTrophyAward(_client, memberId, gameName, trophy);
         }
     }
 

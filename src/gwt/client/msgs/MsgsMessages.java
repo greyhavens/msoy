@@ -112,6 +112,14 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String btnAttach();
 
   /**
+   * Translated "You earned a trophy in "{0}":".
+   * 
+   * @return translated "You earned a trophy in "{0}":"
+   * @gwt.key trophyTitle
+   */
+  String trophyTitle(String arg0);
+
+  /**
    * Translated "Your friendship invitation to "{0}" was accepted, and they are now a friend of yours. ".
    * 
    * @return translated "Your friendship invitation to "{0}" was accepted, and they are now a friend of yours. "

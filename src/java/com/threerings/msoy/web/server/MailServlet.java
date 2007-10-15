@@ -59,7 +59,7 @@ public class MailServlet extends MsoyServiceServlet
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.mailMan.deliverMessage(
-                    memrec.memberId, recipientId, subject, text, object, waiter);
+                    memrec.memberId, recipientId, subject, text, object, false, waiter);
             }
         });
         waiter.waitForResult();

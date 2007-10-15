@@ -113,7 +113,7 @@ public class AdminServlet extends MsoyServiceServlet
         String subject = MsoyServer.msgMan.getBundle("server").get("m.got_invites_subject", number);
         String body = MsoyServer.msgMan.getBundle("server").get("m.got_invites_body", number);
         MsoyServer.mailMan.deliverMessage(
-            senderId, recipientId, subject, body, null,
+            senderId, recipientId, subject, body, null, false,
             new ComplainingListener<Void>(log, "Send got invites mail failed [sid=" + senderId +
                                           ", rid=" + recipientId + "]"));
     }

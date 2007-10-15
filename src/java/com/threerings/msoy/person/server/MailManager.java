@@ -138,7 +138,7 @@ public class MailManager
      */
     public void deliverMessage (final int senderId, final int recipientId, final String subject,
                                 final String text, final MailPayload payload,
-                                ResultListener<Void> waiter)
+                                final boolean internalOnly, ResultListener<Void> waiter)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
             public Void invokePersistResult () throws Exception {
@@ -178,20 +178,23 @@ public class MailManager
                 // if all went well and the recipient is online, notify them they have new mail
                 MemberObject mObj = MsoyServer.lookupMember(recipientId);
                 if (mObj != null) {
+                    // TODO: find them on another server if they're on one
                     mObj.setHasNewMail(true);
                 }
                 super.handleSuccess();
 
                 // finally send a real email to the recipient
-                MsoyServer.mailInvoker.postUnit(
-                    new MailSender.Unit(_reciprec.accountName, "gotMail") {
-                    protected void populateContext (VelocityContext ctx) {
-                        ctx.put("subject", _record.subject);
-                        ctx.put("sender", _sendrec.name);
-                        ctx.put("body", (_record.bodyText == null) ? "" : _record.bodyText);
-                        ctx.put("server_url", ServerConfig.getServerURL());
-                    }
-                });
+                if (!internalOnly) {
+                    MsoyServer.mailInvoker.postUnit(
+                        new MailSender.Unit(_reciprec.accountName, "gotMail") {
+                            protected void populateContext (VelocityContext ctx) {
+                                ctx.put("subject", _record.subject);
+                                ctx.put("sender", _sendrec.name);
+                                ctx.put("body", (_record.bodyText == null) ? "" : _record.bodyText);
+                                ctx.put("server_url", ServerConfig.getServerURL());
+                            }
+                        });
+                }
             }
 
             protected MemberRecord _sendrec, _reciprec;

@@ -121,7 +121,7 @@ public class WebUserServlet extends MsoyServiceServlet
                         displayName + "\", and has been added to your friend's list.";
                     MsoyServer.mailMan.deliverMessage(
                         newAccount.memberId, invite.inviter.getMemberId(), "Invitation Accepted!",
-                        body, null, new ResultListener.NOOP<Void>());
+                        body, null, false, new ResultListener.NOOP<Void>());
 
                     // and possibly send a runtime notification as well
                     MsoyServer.notifyMan.notifyInvitationAccepted(

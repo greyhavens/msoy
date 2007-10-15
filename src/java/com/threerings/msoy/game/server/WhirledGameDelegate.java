@@ -14,6 +14,7 @@ import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.media.util.MathUtil;
@@ -180,6 +181,8 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             }
             public void handleSuccess () {
                 plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());
+                MsoyGameServer.worldClient.reportTrophyAward(
+                    trophy.memberId, _content.game.name, trophy.toTrophy());
             }
             protected String getFailureMessage () {
                 return "Failed to store trophy " + trophy + ".";

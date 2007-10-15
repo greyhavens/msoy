@@ -28,6 +28,8 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
+import com.threerings.msoy.web.data.TrophyAwardPayload;
+
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -40,6 +42,7 @@ import com.threerings.msoy.peer.server.PeerGameProvider;
 
 import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.game.data.all.Trophy;
 
 import static com.threerings.msoy.Log.log;
 
@@ -246,6 +249,22 @@ public class MsoyGameRegistry
                 }
             });
         }
+    }
+
+    // from interface GameServerProvider
+    public void reportTrophyAward (
+        ClientObject caller, int memberId, String gameName, Trophy trophy)
+    {
+        // send them a mail message as well
+        String subject = MsoyServer.msgMan.getBundle("server").get(
+            "m.got_trophy_subject", trophy.name);
+        String body = MsoyServer.msgMan.getBundle("server").get("m.got_trophy_body");
+        MsoyServer.mailMan.deliverMessage(
+            // TODO: sender should be special system id
+            memberId, memberId, subject, body, new TrophyAwardPayload(
+                trophy.gameId, gameName, trophy.name, trophy.trophyMedia.hash,
+                trophy.trophyMedia.mimeType),
+            true, new ResultListener.NOOP<Void>());
     }
 
     // from interface MsoyServer.Shutdowner

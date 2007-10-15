@@ -221,7 +221,7 @@ public class MemberManager
         String subject = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_subject");
         String body = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_body");
         MsoyServer.mailMan.deliverMessage(
-            user.getMemberId(), friendId, subject, body, new FriendInvitePayload(),
+            user.getMemberId(), friendId, subject, body, new FriendInvitePayload(), false,
             new ConfirmAdapter(lner));
     }
 
