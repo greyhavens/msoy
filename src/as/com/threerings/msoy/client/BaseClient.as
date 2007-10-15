@@ -77,7 +77,7 @@ public /*abstract*/ class BaseClient extends Client
         _featuredPlaceView = params["featuredPlace"] != null;
         if (_featuredPlaceView) {
             // mute all sound in featured place view.
-            var mute :SoundTransform = new SoundTransform;
+            var mute :SoundTransform = new SoundTransform();
             mute.volume = 0;
             SoundMixer.soundTransform = mute;
         }
