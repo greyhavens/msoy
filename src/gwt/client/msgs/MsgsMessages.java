@@ -112,12 +112,12 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String btnAttach();
 
   /**
-   * Translated "You earned a trophy in "{0}":".
+   * Translated "Game:".
    * 
-   * @return translated "You earned a trophy in "{0}":"
+   * @return translated "Game:"
    * @gwt.key trophyTitle
    */
-  String trophyTitle(String arg0);
+  String trophyTitle();
 
   /**
    * Translated "Your friendship invitation to "{0}" was accepted, and they are now a friend of yours. ".
@@ -182,6 +182,14 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key giftNoDelete
    */
   String giftNoDelete();
+
+  /**
+   * Translated "Trophy:".
+   * 
+   * @return translated "Trophy:"
+   * @gwt.key trophyName
+   */
+  String trophyName();
 
   /**
    * Translated "Cancel Attachment".

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.data;
 
+import com.threerings.msoy.item.data.all.MediaDesc;
+
 /**
  * Contains information on an awarded trophy.
  */
@@ -47,5 +49,13 @@ public class TrophyAwardPayload extends MailPayload
     public int getType ()
     {
         return MailPayload.TYPE_TROPHY_AWARD;
+    }
+
+    /**
+     * Returns the media descriptor for our trophy image.
+     */
+    public MediaDesc getTrophyMedia ()
+    {
+        return new MediaDesc(trophyMedia, trophyMimeType);
     }
 }
