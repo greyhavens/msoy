@@ -740,14 +740,15 @@ public abstract class ItemRepository<
     }
 
     /**
-     * Returns the rating given to the specified item by the specified member.
+     * Returns the rating given to the specified item by the specified member or 0 if they've never
+     * rated the item.
      */
-    public RatingRecord<T> getRating (int itemId, int memberId)
+    public byte getRating (int itemId, int memberId)
         throws PersistenceException
     {
-        return load(getRatingClass(),
-                    RatingRecord.ITEM_ID, itemId,
-                    RatingRecord.MEMBER_ID, memberId);
+        RatingRecord<T> record = load(
+            getRatingClass(), RatingRecord.ITEM_ID, itemId, RatingRecord.MEMBER_ID, memberId);
+        return (record == null) ? (byte)0 : record.rating;
     }
 
     /**

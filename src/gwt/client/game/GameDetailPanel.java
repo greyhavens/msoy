@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -100,9 +101,11 @@ public class GameDetailPanel extends FlexTable
             details.add(WidgetUtil.makeShim(1, 5));
         }
 
-        CreatorLabel creator = new CreatorLabel();
-        creator.setMember(detail.creator);
-        details.add(creator);
+        if (detail.creator != null) {
+            CreatorLabel creator = new CreatorLabel();
+            creator.setMember(detail.creator);
+            details.add(creator);
+        }
 
         details.add(new Label(ItemUtil.getDescription(detail.getGame())));
         details.add(WidgetUtil.makeShim(1, 15));
@@ -144,6 +147,12 @@ public class GameDetailPanel extends FlexTable
         setWidget(row, 0, tabs);
         getFlexCellFormatter().setColSpan(row++, 0, getCellCount(0));
 
+//         VerticalPanel inst = new VerticalPanel();
+//         RichTextArea area = new RichTextArea();
+//         inst.add(new RichTextToolbar(area));
+//         inst.add(area);
+//         tabs.add(inst, "Instructions");
+
         // TODO: add screen shots tab
         // TODO: add instructions tab
 
@@ -161,6 +170,12 @@ public class GameDetailPanel extends FlexTable
         if (tab.equals("t")) {
             tabs.selectTab(tabs.getWidgetCount()-1);
         }
+
+        // add top rankings tabs
+        if (CGame.getMemberId() != 0) {
+            tabs.add(new TopRankingPanel(detail.gameId, true), "My Rankings");
+        }
+        tabs.add(new TopRankingPanel(detail.gameId, false), "Top Rankings");
     }
 
     protected Page _page;

@@ -16,6 +16,7 @@ import java.util.Set;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntListUtil;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.DuplicateKeyException;
@@ -688,12 +689,28 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Loads the member ids of the specified member's friends.
+     */
+    public IntSet loadFriendIds (int memberId)
+        throws PersistenceException
+    {
+        ArrayIntSet memIds = new ArrayIntSet();
+        SQLExpression condition =
+            new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
+                   new Equals(FriendRecord.INVITEE_ID_C, memberId));
+        for (FriendRecord record : findAll(FriendRecord.class, new Where(condition))) {
+            memIds.add(record.inviterId == memberId ? record.inviteeId : record.inviterId);
+        }
+        return memIds;
+    }
+
+    /**
      * Loads the FriendEntry record for all friends (pending, too) of the specified memberId. The
      * online status of each friend will be false.
      *
      * TODO: Bring back full collection caching to this method.
      *
-     * @param limit a limit on the number of friends to load for all of them.
+     * @param limit a limit on the number of friends to load or 0 for all of them.
      */
     public List<FriendEntry> loadFriends (final int memberId, int limit)
         throws PersistenceException

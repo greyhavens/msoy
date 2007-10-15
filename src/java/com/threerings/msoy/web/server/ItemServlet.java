@@ -31,7 +31,6 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
-import com.threerings.msoy.item.server.persist.RatingRecord;
 
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.data.MailFolder;
@@ -184,8 +183,7 @@ public class ItemServlet extends MsoyServiceServlet
 
             // its ratings...
             if (memberId != 0) {
-                RatingRecord<ItemRecord> rr = repo.getRating(iident.itemId, memberId);
-                detail.memberRating = (rr == null) ? 0 : rr.rating;
+                detail.memberRating = repo.getRating(iident.itemId, memberId);
             }
 
             // the creator's name

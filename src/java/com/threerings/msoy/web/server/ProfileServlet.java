@@ -14,6 +14,9 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.parlor.rating.data.RatingCodes;
+import com.threerings.parlor.rating.server.persist.RatingRecord;
+
 import com.threerings.msoy.data.UserAction;
 
 import com.threerings.msoy.server.MsoyServer;
@@ -40,8 +43,6 @@ import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.ProfileLayout;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.parlor.rating.server.RatingManagerDelegate;
-import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -365,8 +366,8 @@ public class ProfileServlet extends MsoyServiceServlet
                 result.add(rrec);
                 map.put(rrec.gameId, rrec);
             }
-            float rating = record.rating - RatingManagerDelegate.MINIMUM_RATING;
-            rating /= (RatingManagerDelegate.MAXIMUM_RATING - RatingManagerDelegate.MINIMUM_RATING);
+            float rating = record.rating - RatingCodes.MINIMUM_RATING;
+            rating /= (RatingCodes.MAXIMUM_RATING - RatingCodes.MINIMUM_RATING);
             if (record.gameId < 0) {
                 rrec.singleRating = rating;
             } else {

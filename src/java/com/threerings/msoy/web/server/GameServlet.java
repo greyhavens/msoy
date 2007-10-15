@@ -15,18 +15,15 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.data.InvocationCodes;
 
 import com.threerings.parlor.game.data.GameConfig;
-
-import com.threerings.msoy.game.data.MsoyGameDefinition;
-import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.game.server.persist.TrophyRecord;
-import com.threerings.msoy.game.xml.MsoyGameParser;
+import com.threerings.parlor.rating.data.RatingCodes;
+import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
@@ -35,17 +32,27 @@ import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+
+import com.threerings.msoy.game.data.MsoyGameDefinition;
+import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.server.persist.TrophyRecord;
+import com.threerings.msoy.game.xml.MsoyGameParser;
+
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.LaunchConfig;
+import com.threerings.msoy.web.data.PlayerRating;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TrophyCase;
 import com.threerings.msoy.web.data.WebIdent;
@@ -162,8 +169,7 @@ public class GameServlet extends MsoyServiceServlet
                     creatorId = item.creatorId;
                 }
                 if (mrec != null) {
-                    RatingRecord<GameRecord> rr = repo.getRating(item.itemId, mrec.memberId);
-                    detail.memberRating = (rr == null) ? 0 : rr.rating;
+                    detail.memberRating = repo.getRating(item.itemId, mrec.memberId);
                 }
             }
 
@@ -323,4 +329,79 @@ public class GameServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }
+
+    // from interface GameService
+    public PlayerRating[][] loadTopRanked (WebIdent ident, int gameId, boolean onlyMyFriends)
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser(ident);
+        if (mrec == null && onlyMyFriends) {
+            log.warning("Requested friend rankings for non-authed member [gameId=" + gameId + "].");
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        try {
+            // if we should restrict to just this player's friends, figure out who those are
+            IntSet friendIds = null;
+            if (onlyMyFriends) {
+                friendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
+                friendIds.add(mrec.memberId); // us too!
+            }
+
+            // load up the single and mutiplayer ratings
+            List<RatingRecord> single = MsoyServer.ratingRepo.getTopRatings(
+                -gameId, MAX_RANKINGS, friendIds);
+            List<RatingRecord> multi = MsoyServer.ratingRepo.getTopRatings(
+                gameId, MAX_RANKINGS, friendIds);
+
+            // combine all players in question into one map for name/photo resolution
+            HashIntMap<PlayerRating> players = new HashIntMap<PlayerRating>();
+            for (RatingRecord record : single) {
+                players.put(record.playerId, new PlayerRating());
+            }
+            for (RatingRecord record : multi) {
+                players.put(record.playerId, new PlayerRating());
+            }
+
+            // resolve the member's names
+            int[] memIds = players.intKeySet().toIntArray();
+            for (MemberNameRecord name : MsoyServer.memberRepo.loadMemberNames(memIds)) {
+                PlayerRating pr = players.get(name.memberId);
+                pr.name = name.toMemberName();
+            }
+
+            // resolve their profile photos
+            for (ProfileRecord profile : MsoyServer.profileRepo.loadProfiles(memIds)) {
+                PlayerRating pr = players.get(profile.memberId);
+                pr.photo = profile.getPhoto();
+            }
+
+            // create our result arrays and fill in their actual ratings
+            return new PlayerRating[][] { toRatingResult(single, players),
+                                          toRatingResult(multi, players) };
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failure loading rankings [for=" + ident + ", gameId=" + gameId +
+                    ", friends=" + onlyMyFriends + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
+    protected PlayerRating[] toRatingResult (List<RatingRecord> records,
+                                             HashIntMap<PlayerRating> players)
+    {
+        PlayerRating[] result = new PlayerRating[records.size()];
+        for (int ii = 0; ii < result.length; ii++) {
+            RatingRecord record = records.get(ii);
+            result[ii] = new PlayerRating();
+            result[ii].name = players.get(record.playerId).name;
+            result[ii].photo = players.get(record.playerId).photo;
+            float rating = record.rating - RatingCodes.MINIMUM_RATING;
+            rating /= (RatingCodes.MAXIMUM_RATING - RatingCodes.MINIMUM_RATING);
+            result[ii].rating = rating;
+        }
+        return result;
+    }
+
+    protected static final int MAX_RANKINGS = 10;
 }

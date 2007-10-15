@@ -81,3 +81,10 @@
 .trophyDetail .Italic {
   font-style: italic;
 }
+
+.topRankingPanel {
+}
+
+.topRankingPanel .Header {
+  font-weight: bold;
+}

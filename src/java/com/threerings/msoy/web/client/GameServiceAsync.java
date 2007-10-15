@@ -31,4 +31,10 @@ public interface GameServiceAsync
      * The asynchronous version of {@link GameService#loadTrophyCase}.
      */
     public void loadTrophyCase (WebIdent ident, int memberId, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GameService#loadTopRanked}.
+     */
+    public void loadTopRanked (WebIdent ident, int gameId, boolean onlyMyFriends,
+                               AsyncCallback callback);
 }
