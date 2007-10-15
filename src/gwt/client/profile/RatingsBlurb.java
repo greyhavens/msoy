@@ -15,6 +15,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.GameRating;
 
+import client.game.GameDetailPanel;
 import client.game.RatingLabel;
 import client.shell.Application;
 import client.shell.Args;
@@ -53,7 +54,8 @@ public class RatingsBlurb extends Blurb
 
             ClickListener gameClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.GAME, Args.compose("d", "" + entry.gameId));
+                    Application.go(Page.GAME, Args.compose(new String[] {
+                        "d", "" + entry.gameId, GameDetailPanel.MYRANKINGS_TAB }));
                 }
             };
             Image image = (Image)MediaUtil.createMediaView(
