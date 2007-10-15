@@ -59,7 +59,9 @@ public class ActorBackend extends EntityBackend
      */
     protected function setMouthSpot_v1 (x :Number, y :Number, tailTermDist :Number = NaN) :void
     {
-        (_sprite as ActorSprite).setMouthSpot(x, y, tailTermDist);
+        // This is no longer supported.  I'm not sure if it was ever actually used by anyone 
+        // creating avatars, but it was in the wild for awhile, so lets leave it in here to 
+        // avoid avatar breakage.
     }
 
     /**

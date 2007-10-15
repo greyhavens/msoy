@@ -429,10 +429,13 @@ public class RoomView extends AbstractRoomView
     }
 
     // from ChatInfoProvider
-    public function getSpeakerInfo (speaker :Name) :Array
+    public function getSpeakerBounds (speaker :Name) :Rectangle
     {
         var actor :ActorSprite = getActorByName(speaker);
-        return (actor == null) ? null : actor.getChatInfo();
+        // TODO: the previous getChatInfo() method call on ActorSprite was calling 
+        // getStageRect(false), but the bubbles really should avoid things like the name and 
+        // additional decorations on the avatar... 
+        return (actor == null) ? null : actor.getStageRect();
     }
 
     // from ChatInfoProvider

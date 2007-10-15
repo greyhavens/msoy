@@ -10,14 +10,11 @@ import com.threerings.util.Name;
 public interface ChatInfoProvider
 {
     /**
-     * @return an array containing the following pieces of info:
-     * [ rectangle, point, distance ], all in screen coordinates.
-     * The rectangle is the bounds of the speaker's avatar, the point is the mouthspot,
-     * and the distance is the preferred tail termination distance.
+     * Retun the rectangle bounds of the speaker
      * 
      * Null may be returned if the speaker is not known.
      */
-    function getSpeakerInfo (speaker :Name) :Array;
+    function getSpeakerBounds (speaker :Name) :Rectangle;
 
     /**
      * Add the bounding rectangles of things that should be avoided.

@@ -166,8 +166,8 @@ public class ComicOverlay extends ChatOverlay
         case PLACE: {
             var umsg :UserMessage = (msg as UserMessage);
             var speaker :Name = umsg.getSpeakerDisplayName();
-            var speakerInfo :Array = _provider.getSpeakerInfo(speaker);
-            if (speakerInfo == null) {
+            var speakerBounds :Rectangle = _provider.getSpeakerBounds(speaker);
+            if (speakerBounds == null) {
                 log.warning("ChatOverlay.InfoProvider doesn't know the speaker! " +
                     "[speaker=" + speaker + ", type=" + type + "].");
                 return false;
@@ -197,7 +197,7 @@ public class ComicOverlay extends ChatOverlay
 //            }
 
             // TODO: adapt above code, with formats
-            if (createBubble(msg, type, speaker, speakerInfo)) {
+            if (createBubble(msg, type, speaker, speakerBounds)) {
                 return true; // EXIT
             }
             // else: turn into subtitle
@@ -239,13 +239,12 @@ public class ComicOverlay extends ChatOverlay
     /**
      * Create a chat bubble with the specified type and text.
      *
-     * @param speakerInfo if non-null, contains the speaker info described in
-     * ChatInfoProvider.getSpeakerInfo().
+     * @param speakerBounds if non-null, contains the bounds of the speaker in screen coordinates
      *
      * @return true if we successfully laid out the bubble
      */
     protected function createBubble (
-        msg :ChatMessage, type :int, speaker :Name, speakerInfo :Array) :Boolean
+        msg :ChatMessage, type :int, speaker :Name, speakerBounds :Rectangle) :Boolean
     {
         var ii :int;
         var texts :Array = formatMessage(msg, type, false, _userBubbleFmt);
@@ -260,7 +259,6 @@ public class ComicOverlay extends ChatOverlay
         var oldbubs :Array = getAndExpireBubbles(speaker);
         var numold :int = oldbubs.length;
 
-        var speakerBounds :Rectangle = (speakerInfo == null) ? null : (speakerInfo[0] as Rectangle);
         var placer :Rectangle;
         var bigR :Rectangle = null;
         if (numold == 0) {
