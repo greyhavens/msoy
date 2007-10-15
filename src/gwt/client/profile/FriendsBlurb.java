@@ -54,6 +54,7 @@ public class FriendsBlurb extends Blurb
             FRIEND_ROWS, FRIEND_COLUMNS, ProfileGrid.NAV_ON_BOTTOM, "");
         grid.setVerticalOrienation(true);
         grid.setWidth("100%");
+        grid.setHeight("100%");
 
         String empty = CProfile.getMemberId() == _name.getMemberId() ?
             CProfile.msgs.noFriendsSelf() : CProfile.msgs.noFriendsOther();
@@ -75,6 +76,12 @@ public class FriendsBlurb extends Blurb
                     new MailComposition(_name, CProfile.msgs.inviteTitle(),
                                         new FriendInvite.Composer(),
                                         CProfile.msgs.inviteBody()).show();
+                }
+            }));
+        } else if (CProfile.getMemberId() == _name.getMemberId()) {
+            _content.setWidget(2, 0, new Button(CProfile.msgs.findFriends(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.PROFILE, "search");
                 }
             }));
         }

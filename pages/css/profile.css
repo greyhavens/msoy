@@ -49,6 +49,10 @@
   padding-top: 5px;
 }
 
+.friendsBlurb .Empty {
+  padding-bottom: 10px;
+}
+
 .ratingsBlurb {
   padding-top: 5px;
 }

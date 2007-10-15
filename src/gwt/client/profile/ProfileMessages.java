@@ -280,6 +280,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String gridNoProfiles();
 
   /**
+   * Translated "Find Friends".
+   * 
+   * @return translated "Find Friends"
+   * @gwt.key findFriends
+   */
+  String findFriends();
+
+  /**
    * Translated "This person is not a member of any groups.".
    * 
    * @return translated "This person is not a member of any groups."
@@ -320,6 +328,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String friendsRemove();
 
   /**
+   * Translated "Games".
+   * 
+   * @return translated "Games"
+   * @gwt.key ratingsTitle
+   */
+  String ratingsTitle();
+
+  /**
    * Translated "Display Name".
    * 
    * @return translated "Display Name"
@@ -342,12 +358,4 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key friendsTitle
    */
   String friendsTitle();
-
-  /**
-   * Translated "Games".
-   * 
-   * @return translated "Games"
-   * @gwt.key ratingsTitle
-   */
-  String ratingsTitle();
 }
