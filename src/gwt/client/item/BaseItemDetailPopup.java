@@ -16,6 +16,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.util.BorderedDialog;
+import client.util.CreatorLabel;
 import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MediaUtil;

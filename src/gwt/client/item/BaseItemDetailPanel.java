@@ -22,6 +22,7 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.shell.Application;
 import client.shell.Args;
+import client.util.CreatorLabel;
 import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MediaUtil;

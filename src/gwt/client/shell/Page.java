@@ -205,6 +205,14 @@ public abstract class Page
     }
 
     /**
+     * Returns the content widget last configured with {@link #setContent}.
+     */
+    protected Widget getContent ()
+    {
+        return (_content != null && _content.isCellPresent(1, 0)) ? _content.getWidget(1, 0) : null;
+    }
+
+    /**
      * Clears out any existing content, creates a new Flash object from the definition, and
      * sets it as the new main page content. Returns the newly-created content as a widget.
      */

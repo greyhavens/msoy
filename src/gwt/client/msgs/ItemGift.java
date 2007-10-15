@@ -24,7 +24,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.web.data.ItemGiftObject;
+import com.threerings.msoy.web.data.ItemGiftPayload;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
 
@@ -45,7 +45,7 @@ public abstract class ItemGift
         // from MailPayloadComposer
         public MailPayload getComposedPayload ()
         {
-            return new ItemGiftObject(_item.getIdent());
+            return new ItemGiftPayload(_item.getIdent());
         }
 
         // from MailPayloadComposer
@@ -198,7 +198,7 @@ public abstract class ItemGift
         public Display (MailMessage message)
         {
             super(message);
-            _giftObject = (ItemGiftObject) message.payload;
+            _giftPayload = (ItemGiftPayload) message.payload;
         }
 
         // @Override
@@ -217,7 +217,7 @@ public abstract class ItemGift
         // @Override
         public String okToDelete ()
         {
-            if (_giftObject.item == null) {
+            if (_giftPayload.item == null) {
                 return null;
             }
             return CMsgs.mmsgs.giftNoDelete();
@@ -236,7 +236,7 @@ public abstract class ItemGift
             {
                 clear();
 
-                if (_giftObject.item == null) {
+                if (_giftPayload.item == null) {
                     _title = new Label(CMsgs.mmsgs.giftGone());
                     _title.addStyleName("Title");
                     add(_title, DockPanel.NORTH);
@@ -257,12 +257,12 @@ public abstract class ItemGift
                     }
                 };
 
-                CMsgs.itemsvc.loadItem(CShell.ident, _giftObject.item, new AsyncCallback() {
+                CMsgs.itemsvc.loadItem(CShell.ident, _giftPayload.item, new AsyncCallback() {
                     public void onSuccess (Object result) {
                          _content.add(new ItemThumbnail((Item) result, listener));
                     }
                     public void onFailure (Throwable caught) {
-                        CMsgs.log("Failed to load item [item=" + _giftObject.item + "]", caught);
+                        CMsgs.log("Failed to load item [item=" + _giftPayload.item + "]", caught);
                         _status.setText(CShell.serverError(caught));
                     }
                 });
@@ -271,17 +271,17 @@ public abstract class ItemGift
 
             protected void unwrapItem ()
             {
-                if (_giftObject.item == null) {
+                if (_giftPayload.item == null) {
                     // this happens if the user clicks the thumbnail a second time after the
                     // unwrapping suceeds, but before the payload state is updated on the
                     // server; just swallow the click.
                     return;
                 }
-                CMsgs.itemsvc.wrapItem(CMsgs.ident, _giftObject.item, false, new AsyncCallback() {
+                CMsgs.itemsvc.wrapItem(CMsgs.ident, _giftPayload.item, false, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         // the item is unwrapped, just update the payload
-                        _giftObject.item = null;
-                        updateState(_giftObject, new AsyncCallback() {
+                        _giftPayload.item = null;
+                        updateState(_giftPayload, new AsyncCallback() {
                             public void onSuccess (Object result) {
                                 // all went well: rebuild the view
                                 buildUI();
@@ -289,13 +289,13 @@ public abstract class ItemGift
                             public void onFailure (Throwable caught) {
                                 // this is an unpleasant inconsistency
                                 CMsgs.log("Failed to update payload state [item=" +
-                                          _giftObject.item + "]", caught);
+                                          _giftPayload.item + "]", caught);
                                 _status.setText(CShell.serverError(caught));
                             }
                         });
                     }
                     public void onFailure (Throwable caught) {
-                        CMsgs.log("Failed to unwrap item [item=" + _giftObject.item + "]", caught);
+                        CMsgs.log("Failed to unwrap item [item=" + _giftPayload.item + "]", caught);
                         _status.setText(CShell.serverError(caught));
                     }
                 });
@@ -307,7 +307,7 @@ public abstract class ItemGift
             protected FlowPanel _content;
         }
 
-        protected ItemGiftObject _giftObject;
+        protected ItemGiftPayload _giftPayload;
         protected MailUpdateListener _listener;
     }
 

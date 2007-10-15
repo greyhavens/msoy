@@ -35,7 +35,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-import com.threerings.msoy.web.data.FriendInviteObject;
+import com.threerings.msoy.web.data.FriendInvitePayload;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.server.persist.GroupRecord;
@@ -211,7 +211,7 @@ public class MemberManager
 
     // from interface MemberProvider
     public void inviteToBeFriend (ClientObject caller, int friendId,
-                              InvocationService.ConfirmListener lner)
+                                  InvocationService.ConfirmListener lner)
         throws InvocationException
     {
         MemberObject user = (MemberObject) caller;
@@ -221,7 +221,7 @@ public class MemberManager
         String subject = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_subject");
         String body = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_body");
         MsoyServer.mailMan.deliverMessage(
-            user.getMemberId(), friendId, subject, body, new FriendInviteObject(),
+            user.getMemberId(), friendId, subject, body, new FriendInvitePayload(),
             new ConfirmAdapter(lner));
     }
 

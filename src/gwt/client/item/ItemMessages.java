@@ -24,6 +24,22 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
   String viewProfile();
 
   /**
+   * Translated "Sort by:".
+   * 
+   * @return translated "Sort by:"
+   * @gwt.key searchSortBy
+   */
+  String searchSortBy();
+
+  /**
+   * Translated "Browse Catalog".
+   * 
+   * @return translated "Browse Catalog"
+   * @gwt.key browseCatalogFor
+   */
+  String browseCatalogFor();
+
+  /**
    * Translated "(clear)".
    * 
    * @return translated "(clear)"
@@ -40,12 +56,12 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
   String currentTag(String arg0);
 
   /**
-   * Translated "Sort by:".
+   * Translated "No tags in use.".
    * 
-   * @return translated "Sort by:"
-   * @gwt.key searchSortBy
+   * @return translated "No tags in use."
+   * @gwt.key msgNoTags
    */
-  String searchSortBy();
+  String msgNoTags();
 
   /**
    * Translated "Common tags:".
@@ -54,28 +70,4 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key cloudCommonTags
    */
   String cloudCommonTags();
-
-  /**
-   * Translated "Browse Catalog".
-   * 
-   * @return translated "Browse Catalog"
-   * @gwt.key browseCatalogFor
-   */
-  String browseCatalogFor();
-
-  /**
-   * Translated "by".
-   * 
-   * @return translated "by"
-   * @gwt.key creatorBy
-   */
-  String creatorBy();
-
-  /**
-   * Translated "No tags in use.".
-   * 
-   * @return translated "No tags in use."
-   * @gwt.key msgNoTags
-   */
-  String msgNoTags();
 }

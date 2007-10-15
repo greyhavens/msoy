@@ -6,7 +6,7 @@ package com.threerings.msoy.web.data;
 /**
  * This object holds the extra data associated with a single group invitation message.
  */
-public class GroupInviteObject extends MailPayload
+public class GroupInvitePayload extends MailPayload
 {
     /** The group to which the member has been invited. */
     public int groupId;
@@ -17,14 +17,14 @@ public class GroupInviteObject extends MailPayload
     /**
      * An empty constructor for deserialization.
      */
-    public GroupInviteObject ()
+    public GroupInvitePayload ()
     {
     }
 
     /**
-     * Create a new {@link GroupInviteObject} with the supplied configuration.
+     * Create a new {@link GroupInvitePayload} with the supplied configuration.
      */
-    public GroupInviteObject (int groupId, boolean responded)
+    public GroupInvitePayload (int groupId, boolean responded)
     {
         this.groupId = groupId;
         this.responded = responded;

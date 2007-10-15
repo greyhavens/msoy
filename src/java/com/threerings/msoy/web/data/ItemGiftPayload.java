@@ -8,7 +8,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 /**
  * This object contains a reference to an item that's included as a gift in a mail message.
  */
-public class ItemGiftObject extends MailPayload
+public class ItemGiftPayload extends MailPayload
 {
     /** The item reference. */
     public ItemIdent item;
@@ -16,14 +16,14 @@ public class ItemGiftObject extends MailPayload
     /**
      * An empty constructor for deserialization.
      */
-    public ItemGiftObject ()
+    public ItemGiftPayload ()
     {
     }
 
     /**
-     * Create a new {@link ItemGiftObject} with the supplied configuration.
+     * Create a new {@link ItemGiftPayload} with the supplied configuration.
      */
-    public ItemGiftObject (ItemIdent item)
+    public ItemGiftPayload (ItemIdent item)
     {
         this.item = item;
     }

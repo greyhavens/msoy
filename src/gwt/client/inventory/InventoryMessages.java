@@ -8,132 +8,12 @@ package client.inventory;
 public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "You can update your item''s catalog description with information on any changes you''ve made for this update.".
-   * 
-   * @return translated "You can update your item''s catalog description with information on any changes you''ve made for this update."
-   * @gwt.key doUpdateNeedsDescrip
-   */
-  String doUpdateNeedsDescrip();
-
-  /**
-   * Translated "Sales Target:".
-   * 
-   * @return translated "Sales Target:"
-   * @gwt.key doListSalesTarget
-   */
-  String doListSalesTarget();
-
-  /**
-   * Translated "Please configure the name of this item. Click Edit above to do so.".
-   * 
-   * @return translated "Please configure the name of this item. Click Edit above to do so."
-   * @gwt.key errItemMissingName
-   */
-  String errItemMissingName();
-
-  /**
-   * Translated "List...".
-   * 
-   * @return translated "List..."
-   * @gwt.key detailList
-   */
-  String detailList();
-
-  /**
-   * Translated "Item Description".
-   * 
-   * @return translated "Item Description"
-   * @gwt.key doListDescripHeader
-   */
-  String doListDescripHeader();
-
-  /**
    * Translated "You can remix this item.".
    * 
    * @return translated "You can remix this item."
    * @gwt.key detailRemixTip
    */
   String detailRemixTip();
-
-  /**
-   * Translated "Delete".
-   * 
-   * @return translated "Delete"
-   * @gwt.key detailDelete
-   */
-  String detailDelete();
-
-  /**
-   * Translated "Use this avatar ".
-   * 
-   * @return translated "Use this avatar "
-   * @gwt.key detailUseAvatar
-   */
-  String detailUseAvatar();
-
-  /**
-   * Translated "Remove avatar".
-   * 
-   * @return translated "Remove avatar"
-   * @gwt.key removeAvatar
-   */
-  String removeAvatar();
-
-  /**
-   * Translated "Upload...".
-   * 
-   * @return translated "Upload..."
-   * @gwt.key panelCreateNew
-   */
-  String panelCreateNew();
-
-  /**
-   * Translated "You have no {0} items.".
-   * 
-   * @return translated "You have no {0} items."
-   * @gwt.key panelNoItems
-   */
-  String panelNoItems(String arg0);
-
-  /**
-   * Translated "Here you can change the pricing of your catalog listing and the pricing strategy or sales target.".
-   * 
-   * @return translated "Here you can change the pricing of your catalog listing and the pricing strategy or sales target."
-   * @gwt.key doUppriceBlurb
-   */
-  String doUppriceBlurb();
-
-  /**
-   * Translated "Edit...".
-   * 
-   * @return translated "Edit..."
-   * @gwt.key detailEdit
-   */
-  String detailEdit();
-
-  /**
-   * Translated "Strategy:".
-   * 
-   * @return translated "Strategy:"
-   * @gwt.key doListStrategy
-   */
-  String doListStrategy();
-
-  /**
-   * Translated "Stop using this music".
-   * 
-   * @return translated "Stop using this music"
-   * @gwt.key detailRemoveAudio
-   */
-  String detailRemoveAudio();
-
-  /**
-   * Translated "Catalog Listing".
-   * 
-   * @return translated "Catalog Listing"
-   * @gwt.key doListHdrTop
-   */
-  String doListHdrTop();
 
   /**
    * Translated "Add item to current room ".
@@ -144,46 +24,20 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailAddToRoom();
 
   /**
-   * Translated "Stop using this avatar".
+   * Translated "Remix...".
    * 
-   * @return translated "Stop using this avatar"
-   * @gwt.key detailRemoveAvatar
+   * @return translated "Remix..."
+   * @gwt.key detailRemix
    */
-  String detailRemoveAvatar();
+  String detailRemix();
 
   /**
-   * Translated "Listing your item creates a snapshot of your item as it is just now and adds it to the Catalog.".
+   * Translated "Please configure a description for this item. Click Edit above to do so.".
    * 
-   * @return translated "Listing your item creates a snapshot of your item as it is just now and adds it to the Catalog."
-   * @gwt.key doListBlurb
+   * @return translated "Please configure a description for this item. Click Edit above to do so."
+   * @gwt.key errItemMissingDescrip
    */
-  String doListBlurb();
-
-  /**
-   * Translated "Updating your catalog listing will replace the current listing with a new snapshot of the item as it is right now.
-   * <p><b>Note</b>: people who have already purchased your item <b>will automatically switch to this version</b>. If you don't want to change the item everyone is using, you should create and list a new item and delist this item (which can be done from this item's Catalog page).".
-   * 
-   * @return translated "Updating your catalog listing will replace the current listing with a new snapshot of the item as it is right now.
-   * <p><b>Note</b>: people who have already purchased your item <b>will automatically switch to this version</b>. If you don't want to change the item everyone is using, you should create and list a new item and delist this item (which can be done from this item's Catalog page)."
-   * @gwt.key doUpdateBlurb
-   */
-  String doUpdateBlurb();
-
-  /**
-   * Translated "Please logon above to view Your Stuff.".
-   * 
-   * @return translated "Please logon above to view Your Stuff."
-   * @gwt.key logon
-   */
-  String logon();
-
-  /**
-   * Translated "You can list this item in the catalog. Click below for more information.".
-   * 
-   * @return translated "You can list this item in the catalog. Click below for more information."
-   * @gwt.key detailListTip
-   */
-  String detailListTip();
+  String errItemMissingDescrip();
 
   /**
    * Translated "My Stuff".
@@ -194,6 +48,126 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String inventoryTitle();
 
   /**
+   * Translated "Use this decor in current room".
+   * 
+   * @return translated "Use this decor in current room"
+   * @gwt.key detailUseDecor
+   */
+  String detailUseDecor();
+
+  /**
+   * Translated "Use this avatar ".
+   * 
+   * @return translated "Use this avatar "
+   * @gwt.key detailUseAvatar
+   */
+  String detailUseAvatar();
+
+  /**
+   * Translated "Here you can change the pricing of your catalog listing and the pricing strategy or sales target.".
+   * 
+   * @return translated "Here you can change the pricing of your catalog listing and the pricing strategy or sales target."
+   * @gwt.key doUppriceBlurb
+   */
+  String doUppriceBlurb();
+
+  /**
+   * Translated "Gold Cost:".
+   * 
+   * @return translated "Gold Cost:"
+   * @gwt.key doListGoldCost
+   */
+  String doListGoldCost();
+
+  /**
+   * Translated "Stop using this avatar".
+   * 
+   * @return translated "Stop using this avatar"
+   * @gwt.key detailRemoveAvatar
+   */
+  String detailRemoveAvatar();
+
+  /**
+   * Translated "Strategy:".
+   * 
+   * @return translated "Strategy:"
+   * @gwt.key doListStrategy
+   */
+  String doListStrategy();
+
+  /**
+   * Translated "Please ensure that your item''s description is up to date.".
+   * 
+   * @return translated "Please ensure that your item''s description is up to date."
+   * @gwt.key doListNeedsDescrip
+   */
+  String doListNeedsDescrip();
+
+  /**
+   * Translated "Item deleted.".
+   * 
+   * @return translated "Item deleted."
+   * @gwt.key msgItemDeleted
+   */
+  String msgItemDeleted();
+
+  /**
+   * Translated "You can list this item in the catalog. Click below for more information.".
+   * 
+   * @return translated "You can list this item in the catalog. Click below for more information."
+   * @gwt.key detailListTip
+   */
+  String detailListTip();
+
+  /**
+   * Translated "Listing cost:".
+   * 
+   * @return translated "Listing cost:"
+   * @gwt.key doListHdrPrice
+   */
+  String doListHdrPrice();
+
+  /**
+   * Translated "Item Description".
+   * 
+   * @return translated "Item Description"
+   * @gwt.key doListDescripHeader
+   */
+  String doListDescripHeader();
+
+  /**
+   * Translated "Stop using this music".
+   * 
+   * @return translated "Stop using this music"
+   * @gwt.key detailRemoveAudio
+   */
+  String detailRemoveAudio();
+
+  /**
+   * Translated "Please configure the name of this item. Click Edit above to do so.".
+   * 
+   * @return translated "Please configure the name of this item. Click Edit above to do so."
+   * @gwt.key errItemMissingName
+   */
+  String errItemMissingName();
+
+  /**
+   * Translated "Cancel".
+   * 
+   * @return translated "Cancel"
+   * @gwt.key doListBtnCancel
+   */
+  String doListBtnCancel();
+
+  /**
+   * Translated "Add to room".
+   * 
+   * @return translated "Add to room"
+   * @gwt.key addToRoom
+   */
+  String addToRoom();
+
+  /**
    * Translated "Update it!".
    * 
    * @return translated "Update it!"
@@ -202,12 +176,36 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doUpdateBtnGo();
 
   /**
-   * Translated "Use this music in current room".
+   * Translated "Please logon above to view Your Stuff.".
    * 
-   * @return translated "Use this music in current room"
-   * @gwt.key detailUseAudio
+   * @return translated "Please logon above to view Your Stuff."
+   * @gwt.key logon
    */
-  String detailUseAudio();
+  String logon();
+
+  /**
+   * Translated "Sales Target:".
+   * 
+   * @return translated "Sales Target:"
+   * @gwt.key doListSalesTarget
+   */
+  String doListSalesTarget();
+
+  /**
+   * Translated "Listing your item creates a snapshot of your item as it is just now and adds it to the Catalog.".
+   * 
+   * @return translated "Listing your item creates a snapshot of your item as it is just now and adds it to the Catalog."
+   * @gwt.key doListBlurb
+   */
+  String doListBlurb();
+
+  /**
+   * Translated "Catalog Listing".
+   * 
+   * @return translated "Catalog Listing"
+   * @gwt.key doListHdrTop
+   */
+  String doListHdrTop();
 
   /**
    * Translated "Item listed.".
@@ -226,132 +224,12 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doListHitLimit(String arg0);
 
   /**
-   * Translated "List it!".
+   * Translated "Upload...".
    * 
-   * @return translated "List it!"
-   * @gwt.key doListBtnGo
+   * @return translated "Upload..."
+   * @gwt.key panelCreateNew
    */
-  String doListBtnGo();
-
-  /**
-   * Translated "Please configure a description for this item. Click Edit above to do so.".
-   * 
-   * @return translated "Please configure a description for this item. Click Edit above to do so."
-   * @gwt.key errItemMissingDescrip
-   */
-  String errItemMissingDescrip();
-
-  /**
-   * Translated "Add to room".
-   * 
-   * @return translated "Add to room"
-   * @gwt.key addToRoom
-   */
-  String addToRoom();
-
-  /**
-   * Translated "Item deleted.".
-   * 
-   * @return translated "Item deleted."
-   * @gwt.key msgItemDeleted
-   */
-  String msgItemDeleted();
-
-  /**
-   * Translated "Update Item".
-   * 
-   * @return translated "Update Item"
-   * @gwt.key detailUplist
-   */
-  String detailUplist();
-
-  /**
-   * Translated "Wear avatar".
-   * 
-   * @return translated "Wear avatar"
-   * @gwt.key wearAvatar
-   */
-  String wearAvatar();
-
-  /**
-   * Translated "Flow Cost:".
-   * 
-   * @return translated "Flow Cost:"
-   * @gwt.key doListFlowCost
-   */
-  String doListFlowCost();
-
-  /**
-   * Translated "Remove from room".
-   * 
-   * @return translated "Remove from room"
-   * @gwt.key removeFromRoom
-   */
-  String removeFromRoom();
-
-  /**
-   * Translated "Use this decor in current room".
-   * 
-   * @return translated "Use this decor in current room"
-   * @gwt.key detailUseDecor
-   */
-  String detailUseDecor();
-
-  /**
-   * Translated "Item Pricing".
-   * 
-   * @return translated "Item Pricing"
-   * @gwt.key doListPricingHeader
-   */
-  String doListPricingHeader();
-
-  /**
-   * Translated "Remix...".
-   * 
-   * @return translated "Remix..."
-   * @gwt.key detailRemix
-   */
-  String detailRemix();
-
-  /**
-   * Translated "Listing updated.".
-   * 
-   * @return translated "Listing updated."
-   * @gwt.key doListUpdated
-   */
-  String doListUpdated();
-
-  /**
-   * Translated "Update Pricing".
-   * 
-   * @return translated "Update Pricing"
-   * @gwt.key detailUpprice
-   */
-  String detailUpprice();
-
-  /**
-   * Translated "This item is listed in the catalog. You can update the listed item or pricing below.".
-   * 
-   * @return translated "This item is listed in the catalog. You can update the listed item or pricing below."
-   * @gwt.key detailUplistTip
-   */
-  String detailUplistTip();
-
-  /**
-   * Translated "Please ensure that your item''s description is up to date.".
-   * 
-   * @return translated "Please ensure that your item''s description is up to date."
-   * @gwt.key doListNeedsDescrip
-   */
-  String doListNeedsDescrip();
-
-  /**
-   * Translated "Item remixed.".
-   * 
-   * @return translated "Item remixed."
-   * @gwt.key doListRemixed
-   */
-  String doListRemixed();
+  String panelCreateNew();
 
   /**
    * Translated "Stop using this decor".
@@ -362,26 +240,148 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailRemoveDecor();
 
   /**
-   * Translated "Listing cost:".
+   * Translated "Item remixed.".
    * 
-   * @return translated "Listing cost:"
-   * @gwt.key doListHdrPrice
+   * @return translated "Item remixed."
+   * @gwt.key doListRemixed
    */
-  String doListHdrPrice();
+  String doListRemixed();
 
   /**
-   * Translated "Cancel".
+   * Translated "Remove avatar".
    * 
-   * @return translated "Cancel"
-   * @gwt.key doListBtnCancel
+   * @return translated "Remove avatar"
+   * @gwt.key removeAvatar
    */
-  String doListBtnCancel();
+  String removeAvatar();
 
   /**
-   * Translated "Gold Cost:".
+   * Translated "List...".
    * 
-   * @return translated "Gold Cost:"
-   * @gwt.key doListGoldCost
+   * @return translated "List..."
+   * @gwt.key detailList
    */
-  String doListGoldCost();
+  String detailList();
+
+  /**
+   * Translated "Flow Cost:".
+   * 
+   * @return translated "Flow Cost:"
+   * @gwt.key doListFlowCost
+   */
+  String doListFlowCost();
+
+  /**
+   * Translated "Update Pricing".
+   * 
+   * @return translated "Update Pricing"
+   * @gwt.key detailUpprice
+   */
+  String detailUpprice();
+
+  /**
+   * Translated "Wear avatar".
+   * 
+   * @return translated "Wear avatar"
+   * @gwt.key wearAvatar
+   */
+  String wearAvatar();
+
+  /**
+   * Translated "You have no {0} items.".
+   * 
+   * @return translated "You have no {0} items."
+   * @gwt.key panelNoItems
+   */
+  String panelNoItems(String arg0);
+
+  /**
+   * Translated "Listing updated.".
+   * 
+   * @return translated "Listing updated."
+   * @gwt.key doListUpdated
+   */
+  String doListUpdated();
+
+  /**
+   * Translated "List it!".
+   * 
+   * @return translated "List it!"
+   * @gwt.key doListBtnGo
+   */
+  String doListBtnGo();
+
+  /**
+   * Translated "Item Pricing".
+   * 
+   * @return translated "Item Pricing"
+   * @gwt.key doListPricingHeader
+   */
+  String doListPricingHeader();
+
+  /**
+   * Translated "Delete".
+   * 
+   * @return translated "Delete"
+   * @gwt.key detailDelete
+   */
+  String detailDelete();
+
+  /**
+   * Translated "Updating your catalog listing will replace the current listing with a new snapshot of the item as it is right now.
+   * <p><b>Note</b>: people who have already purchased your item <b>will automatically switch to this version</b>. If you don't want to change the item everyone is using, you should create and list a new item and delist this item (which can be done from this item's Catalog page).".
+   * 
+   * @return translated "Updating your catalog listing will replace the current listing with a new snapshot of the item as it is right now.
+   * <p><b>Note</b>: people who have already purchased your item <b>will automatically switch to this version</b>. If you don't want to change the item everyone is using, you should create and list a new item and delist this item (which can be done from this item's Catalog page)."
+   * @gwt.key doUpdateBlurb
+   */
+  String doUpdateBlurb();
+
+  /**
+   * Translated "You can update your item''s catalog description with information on any changes you''ve made for this update.".
+   * 
+   * @return translated "You can update your item''s catalog description with information on any changes you''ve made for this update."
+   * @gwt.key doUpdateNeedsDescrip
+   */
+  String doUpdateNeedsDescrip();
+
+  /**
+   * Translated "Edit...".
+   * 
+   * @return translated "Edit..."
+   * @gwt.key detailEdit
+   */
+  String detailEdit();
+
+  /**
+   * Translated "This item is listed in the catalog. You can update the listed item or pricing below.".
+   * 
+   * @return translated "This item is listed in the catalog. You can update the listed item or pricing below."
+   * @gwt.key detailUplistTip
+   */
+  String detailUplistTip();
+
+  /**
+   * Translated "Remove from room".
+   * 
+   * @return translated "Remove from room"
+   * @gwt.key removeFromRoom
+   */
+  String removeFromRoom();
+
+  /**
+   * Translated "Update Item".
+   * 
+   * @return translated "Update Item"
+   * @gwt.key detailUplist
+   */
+  String detailUplist();
+
+  /**
+   * Translated "Use this music in current room".
+   * 
+   * @return translated "Use this music in current room"
+   * @gwt.key detailUseAudio
+   */
+  String detailUseAudio();
 }

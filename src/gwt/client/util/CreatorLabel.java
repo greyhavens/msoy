@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.item;
+package client.util;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 
@@ -10,8 +10,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.gwt.ui.InlineLabel;
 
 import client.shell.Application;
-
-import client.util.PopupMenu;
+import client.shell.CShell;
 
 /**
  * Displays a creator's name with "by Foozle" where Foozle is a link to the creator's profile page.
@@ -29,7 +28,7 @@ public class CreatorLabel extends FlowPanel
             remove(0);
         }
 
-        add(new InlineLabel(CItem.imsgs.creatorBy() + " "));
+        add(new InlineLabel(CShell.cmsgs.creatorBy() + " "));
         if (menu == null) {
             add(Application.memberViewLink(name.toString(), name.getMemberId()));
         } else {

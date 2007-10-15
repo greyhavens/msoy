@@ -45,27 +45,27 @@ public class index extends Page
             return;
         }
 
-        try {
-            // if we have d-NNN then we want to see game detail
-            String action = args.get(0, "");
-            if (action.equals("d")) {
-                setContent(new GameDetailPanel(this, args.get(1, 0), args.get(2, "")));
-
-            } else if (action.equals("t")) {
-                setPageTitle("Trophies");
-                setContent(new TrophyCasePanel(this, args.get(1, 0)));
-
-            } else if (action.equals("s")) {
-                // head straight into this game (single player or first available party game)
-                loadLaunchConfig(args.get(1, 0), -1, true);
-
+        // if we have d-NNN then we want to see game detail
+        String action = args.get(0, "");
+        if (action.equals("d")) {
+            GameDetailPanel panel;
+            if (getContent() instanceof GameDetailPanel) {
+                panel = (GameDetailPanel)getContent();
             } else {
-                // otherwise our args are 'gameId-gameOid' or just 'gameId'
-                loadLaunchConfig(args.get(0, 0), args.get(1, -1), false);
+                setContent(panel = new GameDetailPanel(this));
             }
+            panel.setGame(args.get(1, 0), args.get(2, ""));
 
-        } catch (Exception e) {
-            setContent(MsoyUI.createLabel(CGame.serverError(e), "infoLabel"));
+        } else if (action.equals("t")) {
+            setContent(new TrophyCasePanel(this, args.get(1, 0)));
+
+        } else if (action.equals("s")) {
+            // head straight into this game (single player or first available party game)
+            loadLaunchConfig(args.get(1, 0), -1, true);
+
+        } else {
+            // otherwise our args are 'gameId-gameOid' or just 'gameId'
+            loadLaunchConfig(args.get(0, 0), args.get(1, -1), false);
         }
     }
 

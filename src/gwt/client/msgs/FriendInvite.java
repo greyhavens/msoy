@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.web.data.FriendInviteObject;
+import com.threerings.msoy.web.data.FriendInvitePayload;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.data.all.MemberName;
@@ -34,7 +34,7 @@ public abstract class FriendInvite
         // from MailPayloadComposer
         public MailPayload getComposedPayload ()
         {
-            return new FriendInviteObject();
+            return new FriendInvitePayload();
         }
 
         // from MailPayloadComposer

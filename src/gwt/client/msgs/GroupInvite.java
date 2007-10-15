@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.web.data.GroupDetail;
-import com.threerings.msoy.web.data.GroupInviteObject;
+import com.threerings.msoy.web.data.GroupInvitePayload;
 import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.web.data.MailMessage;
@@ -46,7 +46,7 @@ public abstract class GroupInvite
         // from MailPayloadComposer
         public MailPayload getComposedPayload ()
         {
-            return new GroupInviteObject(_selectedGroupId, false);
+            return new GroupInvitePayload(_selectedGroupId, false);
         }
 
         // from MailPayloadComposer
@@ -119,14 +119,14 @@ public abstract class GroupInvite
         {
             super(message);
             // no sanity checks: if anything breaks here, it's already a disaster
-            _inviteObject = (GroupInviteObject) message.payload;
+            _invitePayload = (GroupInvitePayload) message.payload;
         }
 
         // @Override
         public Widget widgetForRecipient (MailUpdateListener listener)
         {
             _listener = listener;
-            return new DisplayWidget(_inviteObject.responded == false);
+            return new DisplayWidget(_invitePayload.responded == false);
         }
 
         // @Override
@@ -161,7 +161,7 @@ public abstract class GroupInvite
             protected void refreshUI ()
             {
                 CMsgs.groupsvc.getGroupDetail(
-                    CMsgs.ident, _inviteObject.groupId, new AsyncCallback() {
+                    CMsgs.ident, _invitePayload.groupId, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         _detail = (GroupDetail) result;
                         buildUI();
@@ -200,12 +200,12 @@ public abstract class GroupInvite
 
             protected void joinGroup ()
             {
-                CMsgs.groupsvc.joinGroup(CMsgs.ident, _inviteObject.groupId,
+                CMsgs.groupsvc.joinGroup(CMsgs.ident, _invitePayload.groupId,
                                          CMsgs.getMemberId(), new AsyncCallback() {
                     // if joining the group succeeds, mark this invitation as accepted
                     public void onSuccess (Object result) {
-                        _inviteObject.responded = true;
-                        updateState(_inviteObject, new AsyncCallback() {
+                        _invitePayload.responded = true;
+                        updateState(_invitePayload, new AsyncCallback() {
                             // and if that succeded to, let the mail app know to refresh
                             public void onSuccess (Object result) {
                                 if (_listener != null) {
@@ -233,7 +233,7 @@ public abstract class GroupInvite
             protected FlowPanel _content;
         }
 
-        protected GroupInviteObject _inviteObject;
+        protected GroupInvitePayload _invitePayload;
         protected MailUpdateListener _listener;
     }
 }
