@@ -46,7 +46,7 @@ public class TopRankingPanel extends FlexTable
         // it's possible to have this tab shown and be a guest; so we avoid freakoutage
         if (_onlyMyFriends && (CGame.getMemberId() == 0)) {
             setText(0, 0, "Log in to see your rankings.");
-            break;
+            return;
         }
 
         CGame.gamesvc.loadTopRanked(CGame.ident, _gameId, _onlyMyFriends, new AsyncCallback() {
