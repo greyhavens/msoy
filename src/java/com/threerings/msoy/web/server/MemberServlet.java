@@ -666,6 +666,10 @@ public class MemberServlet extends MsoyServiceServlet
                     new MediaDesc(gameRec.thumbMediaHash, gameRec.thumbMimeType, 
                                   gameRec.thumbConstraint);
                 PopularPlacesSnapshot.Place snap = pps.getGame(gameId);
+                // TODO: nate: this is for tracking some MyWhirled wierdness on first.  Once the
+                // issue has been tracked down, remove this log...
+                log.info("fetched game snapshot [" + snap + ", " + 
+                    (snap == null ? 0 : snap.population) + "]");
                 // if the snapshot is out of date, the display will be made sane in GWT.
                 card.population = (snap == null) ? 0 : snap.population;
                 cards.add(card);
