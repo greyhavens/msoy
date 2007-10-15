@@ -14,7 +14,6 @@ public class ActorBackend extends EntityBackend
         o["setOrientation_v1"] = setOrientation_v1;
         o["setState_v1"] = setState_v1;
         o["getState_v1"] = getState_v1;
-        o["setMouthSpot_v1"] = setMouthSpot_v1;
 
         // oldness (used for a very short time), deprecated 2007-04-24
         o["setWalkSpeed_v1"] = function (num :Number) :void {
@@ -52,16 +51,6 @@ public class ActorBackend extends EntityBackend
     protected function setOrientation_v1 (orient :Number) :void
     {
         (_sprite as ActorSprite).setOrientationFromUser(orient);
-    }
-
-    /**
-     * Called by user code to set the mouth spot and tail termination distance, for chat.
-     */
-    protected function setMouthSpot_v1 (x :Number, y :Number, tailTermDist :Number = NaN) :void
-    {
-        // This is no longer supported.  I'm not sure if it was ever actually used by anyone 
-        // creating avatars, but it was in the wild for awhile, so lets leave it in here to 
-        // avoid avatar breakage.
     }
 
     /**
