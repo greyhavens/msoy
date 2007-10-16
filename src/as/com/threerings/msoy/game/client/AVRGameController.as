@@ -33,9 +33,6 @@ public class AVRGameController extends Controller
         _gctx = ctx;
         _mctx = ctx.getWorldContext();
 
-        _subscriber = new SafeSubscriber(gameOid, this)
-        _subscriber.subscribe(_gctx.getDObjectManager());
-
         _mctx.getClient().addEventListener(
             WorldClient.MINI_WILL_CHANGE, function (ev :ValueEvent) :void {
                 miniWillChange(ev.value);
@@ -43,6 +40,9 @@ public class AVRGameController extends Controller
 
         _panel = new AVRGamePanel(_mctx, _gctx, this);
         setControlledPanel(_panel);
+
+        _subscriber = new SafeSubscriber(gameOid, this)
+        _subscriber.subscribe(_gctx.getDObjectManager());
     }
 
     public function forceShutdown () :void
