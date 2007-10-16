@@ -8,6 +8,14 @@ package client.game;
 public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "Earned on {0}".
+   * 
+   * @return translated "Earned on {0}"
+   * @gwt.key gameTrophyEarnedOn
+   */
+  String gameTrophyEarnedOn(String arg0);
+
+  /**
    * Translated "Note: this is the in-development version of this game. Trophies awarded during this game will not be saved nor will ratings be updated.".
    * 
    * @return translated "Note: this is the in-development version of this game. Trophies awarded during this game will not be saved nor will ratings be updated."
@@ -16,12 +24,12 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String gdpDevVersion();
 
   /**
-   * Translated "Earned on {0}".
+   * Translated "#{0}".
    * 
-   * @return translated "Earned on {0}"
-   * @gwt.key gameTrophyEarnedOn
+   * @return translated "#{0}"
+   * @gwt.key gameRank
    */
-  String gameTrophyEarnedOn(String arg0);
+  String gameRank(String arg0);
 
   /**
    * Translated "Last abuse recalc:".

@@ -90,15 +90,18 @@ public class TopRankingPanel extends FlexTable
         setText(0, col, header);
         getFlexCellFormatter().setStyleName(0, col, "Header");
         for (int ii = 0; ii < results.length; ii++) {
-            setWidget(1 + ii*2, col, new PlayerRatingPanel(results[ii]));
+            setWidget(1 + ii*2, col, new PlayerRatingPanel(ii, results[ii]));
         }
     }
 
     protected static class PlayerRatingPanel extends FlexTable
         implements ClickListener
     {
-        public PlayerRatingPanel (PlayerRating rating) {
+        public PlayerRatingPanel (int rank, PlayerRating rating) {
             _rating = rating;
+
+            setText(0, 0, CGame.msgs.gameRank("" + (rank+1)));
+            getFlexCellFormatter().setRowSpan(0, 0, 2);
 
             int width = 2*MediaDesc.DIMENSIONS[MediaDesc.HALF_THUMBNAIL_SIZE]/3;
             int height = 2*MediaDesc.DIMENSIONS[MediaDesc.HALF_THUMBNAIL_SIZE+1]/3;
@@ -107,12 +110,13 @@ public class TopRankingPanel extends FlexTable
                 ((Image) photo).addClickListener(this);
                 photo.setStyleName("actionLabel");
             }
-            setWidget(0, 0, photo);
-            getFlexCellFormatter().setRowSpan(0, 0, 2);
-            getFlexCellFormatter().setWidth(0, 0, width + "px");
-            getFlexCellFormatter().setHeight(0, 0, height + "px");
-            getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-            setWidget(0, 1, MsoyUI.createActionLabel(rating.name.toString(), this));
+            setWidget(0, 1, photo);
+            getFlexCellFormatter().setRowSpan(0, 1, 2);
+            getFlexCellFormatter().setWidth(0, 1, width + "px");
+            getFlexCellFormatter().setHeight(0, 1, height + "px");
+            getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
+
+            setWidget(0, 2, MsoyUI.createActionLabel(rating.name.toString(), this));
             setWidget(1, 0, new RatingLabel(rating.rating));
         }
 
