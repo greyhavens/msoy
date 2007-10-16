@@ -90,39 +90,49 @@ public class ProfileBlurb extends Blurb
 
         content.setText(0, 1, _name.toString());
         content.getFlexCellFormatter().setStyleName(0, 1, "Name");
+        content.getFlexCellFormatter().setColSpan(0, 1, 2);
 
-        int row = getRowCount();
         if (!isBlank(_profile.headline)) {
-            content.setText(row, 0, _profile.headline);
-            content.getFlexCellFormatter().setStyleName(row++, 0, "Headline");
+            addInfo(content, _profile.headline, "Headline");
         }
 
+        String ageSex = "";
         switch (_profile.sex) {
         case Profile.SEX_MALE:
-            content.setText(row++, 0, CProfile.msgs.sex(CProfile.msgs.sexMale()));
+            ageSex = CProfile.msgs.sex(CProfile.msgs.sexMale());
             break;
         case Profile.SEX_FEMALE:
-            content.setText(row++, 0, CProfile.msgs.sex(CProfile.msgs.sexFemale()));
+            ageSex = CProfile.msgs.sex(CProfile.msgs.sexFemale());
             break;
         }
-
         if (_profile.age > 0) {
-            content.setText(row++, 0, CProfile.msgs.age("" + _profile.age));
+            if (ageSex.length() > 0) {
+                ageSex += ", ";
+            }
+            ageSex += CProfile.msgs.age("" + _profile.age);
+        }
+        if (ageSex.length() > 0) {
+            addInfo(content, ageSex, null);
         }
 
         if (!isBlank(_profile.location)) {
-            content.setText(row++, 0, _profile.location);
+            addInfo(content, _profile.location, null);
         }
+
         if (!isBlank(_profile.permaName)) {
-            content.setText(row++, 0, CProfile.msgs.permaName(_profile.permaName));
+            addDetail(content, CProfile.msgs.permaName(), _profile.permaName);
+        }
+        if (_profile.memberSince > 0L) {
+            addDetail(content, CProfile.msgs.memberSince(),
+                      _lfmt.format(new Date(_profile.memberSince)));
         }
         if (_profile.lastLogon > 0L) {
-            String when = _lfmt.format(new Date(_profile.lastLogon));
-            content.setText(row++, 0, CProfile.msgs.lastOnline(when));
+            addDetail(content, CProfile.msgs.lastOnline(),
+                      _lfmt.format(new Date(_profile.lastLogon)));
         }
 
         // make the left column span everything
-        content.getFlexCellFormatter().setRowSpan(0, 0, row);
+        content.getFlexCellFormatter().setRowSpan(0, 0, content.getRowCount());
 
         // if they have a homepage configured show that button
         if (!isBlank(_profile.homePageURL)) {
@@ -164,6 +174,25 @@ public class ProfileBlurb extends Blurb
         }
 
         setContent(content);
+    }
+
+    protected void addInfo (FlexTable content, String text, String style)
+    {
+        int row = content.getRowCount();
+        content.setText(row, 0, text);
+        content.getFlexCellFormatter().setColSpan(row, 0, 2);
+        if (style != null) {
+            content.getFlexCellFormatter().setStyleName(row, 0, style);
+        }
+    }
+
+    protected void addDetail (FlexTable content, String label, String text)
+    {
+        int row = content.getRowCount();
+        content.setText(row, 0, label);
+        content.getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
+        content.setText(row, 1, text);
+        content.getFlexCellFormatter().setStyleName(row, 1, "tipLabel");
     }
 
     protected void startEdit ()

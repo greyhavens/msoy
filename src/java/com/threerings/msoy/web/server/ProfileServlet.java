@@ -279,11 +279,9 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         ProfileRecord prec = MsoyServer.profileRepo.loadProfile(tgtrec.memberId);
         int forMemberId = (reqrec == null) ? 0 : reqrec.memberId;
-        Profile profile = (prec == null) ? new Profile() :
-            prec.toProfile(forMemberId, tgtrec.permaName);
+        Profile profile = (prec == null) ? new Profile() : prec.toProfile(tgtrec, forMemberId);
 
         // TODO: if they're online right now, show that
-        profile.lastLogon = (tgtrec.lastSession != null) ? tgtrec.lastSession.getTime() : 0L;
 
         return profile;
     }

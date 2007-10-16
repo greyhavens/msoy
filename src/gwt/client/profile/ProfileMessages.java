@@ -8,12 +8,12 @@ package client.profile;
 public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "Permaname: {0}".
+   * Translated "Permaname:".
    * 
-   * @return translated "Permaname: {0}"
+   * @return translated "Permaname:"
    * @gwt.key permaName
    */
-  String permaName(String arg0);
+  String permaName();
 
   /**
    * Translated "{0}".
@@ -360,6 +360,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String displayNameInvalid(String arg0,  String arg1);
 
   /**
+   * Translated "Member since:".
+   * 
+   * @return translated "Member since:"
+   * @gwt.key memberSince
+   */
+  String memberSince();
+
+  /**
    * Translated "Please log in to view your profile.".
    * 
    * @return translated "Please log in to view your profile."
@@ -408,12 +416,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String ratingsSingle();
 
   /**
-   * Translated "Last on: {0}".
+   * Translated "Last online:".
    * 
-   * @return translated "Last on: {0}"
+   * @return translated "Last online:"
    * @gwt.key lastOnline
    */
-  String lastOnline(String arg0);
+  String lastOnline();
 
   /**
    * Translated "See All".

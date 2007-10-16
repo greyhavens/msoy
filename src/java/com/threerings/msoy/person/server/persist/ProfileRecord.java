@@ -17,6 +17,7 @@ import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.Profile;
 
 /**
@@ -204,9 +205,16 @@ public class ProfileRecord extends PersistentRecord
 
     /**
      * Creates a runtime record from this persistent record.
+     *
+     * @param member the member record of the member that owns this profile.
+     * @param forMemberId the member id of the member that will be *seeing* this profile.
      */
-    public Profile toProfile (int forMemberId, String permaName)
+    public Profile toProfile (MemberRecord member, int forMemberId)
     {
+        if (member.memberId != memberId) {
+            throw new IllegalArgumentException("toProfile() passed invalid member record.");
+        }
+
         Profile profile = new Profile();
         profile.homePageURL = homePageURL;
         profile.headline = headline;
@@ -221,7 +229,11 @@ public class ProfileRecord extends PersistentRecord
         }
         profile.location = location;
         profile.photo = getPhoto();
-        profile.permaName = permaName;
+        profile.permaName = member.permaName;
+
+        profile.memberSince = member.created.getTime();
+        profile.lastLogon = (member.lastSession != null) ? member.lastSession.getTime() : 0L;
+
         return profile;
     }
 
