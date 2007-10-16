@@ -48,17 +48,17 @@ public interface MailMessages extends com.google.gwt.i18n.client.Messages {
   String appBtnToggle();
 
   /**
-   * Translated "Subject".
+   * Translated "Subject: {0}".
    * 
-   * @return translated "Subject"
+   * @return translated "Subject: {0}"
    * @gwt.key appHdrSubject
    */
-  String appHdrSubject();
+  String appHdrSubject(String arg0);
 
   /**
-   * Translated "From".
+   * Translated "From:".
    * 
-   * @return translated "From"
+   * @return translated "From:"
    * @gwt.key appHdrFrom
    */
   String appHdrFrom();

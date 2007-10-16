@@ -491,7 +491,7 @@ public class MailApplication extends DockPanel
                 }));
             link.setStyleName("Subject");
             rows.setWidget(rowCnt, 1, link);
-//            headerRows.getFlexCellFormatter().setWidth(row, 1, "100%");
+            rows.getFlexCellFormatter().setWidth(rowCnt, 1, "100%");
 
             // the name column
             MemberName who = _currentFolder == MailFolder.SENT_FOLDER_ID ?
@@ -583,54 +583,44 @@ public class MailApplication extends DockPanel
     // display a message in its full unsummarized glory
     protected void refreshMessagePanel ()
     {
-        VerticalPanel messagePanel = new VerticalPanel();
-        messagePanel.setStyleName("Message");
+        FlexTable panel = new FlexTable();
+        panel.setCellSpacing(0);
+        panel.setCellPadding(0);
+        panel.setStyleName("Message");
 
-        // first the header line
-        HorizontalPanel headers = new HorizontalPanel();
-        headers.setStyleName("Header");
-        Label subject = new Label(CMail.msgs.appHdrSubject() + ": " +
-                                  getSubject(_message.headers.subject));
-        // TODO: Figure out wrapping for long subject lines
-        subject.setStyleName("Subject");
-        headers.add(subject);
-        HorizontalPanel sender = new HorizontalPanel();
-        sender.setSpacing(5);
-        sender.setStyleName("Sender");
-        sender.add(new Label(CMail.msgs.appHdrFrom() + ":"));
-        sender.add(Application.memberViewLink(
-            _message.headers.sender.toString(), _message.headers.sender.getMemberId()));
-        headers.add(sender);
-        Label date = new Label(formatDate(_message.headers.sent));
-        date.setStyleName("Date");
-        headers.add(date);
-        messagePanel.add(headers);
-        messagePanel.setCellWidth(headers, "100%");
+        // first add the header information
+        int row = 0;
+        FlexTable headers = new FlexTable();
+        headers.setText(0, 0, CMail.msgs.appHdrSubject(getSubject(_message.headers.subject)));
+        headers.getFlexCellFormatter().setStyleName(0, 0, "Subject");
+        headers.setText(0, 1, CMail.msgs.appHdrFrom());
+        headers.setWidget(0, 2, Application.memberViewLink(_message.headers.sender.toString(),
+                                                           _message.headers.sender.getMemberId()));
+        headers.getFlexCellFormatter().setStyleName(0, 2, "Sender");
+        headers.setText(0, 3, formatDate(_message.headers.sent));
+        headers.getFlexCellFormatter().setStyleName(0, 3, "Date");
+        panel.setWidget(0, 0, headers);
+        panel.getFlexCellFormatter().setStyleName(row++, 0, "Header");
 
         // if there is a payload, display it!
         if (_message.payload != null) {
-            Widget widget = CMail.getMemberId() == _message.headers.recipient.getMemberId() ?
+            Widget widget = (CMail.getMemberId() == _message.headers.recipient.getMemberId()) ?
                 _payloadDisplay.widgetForRecipient(this) : _payloadDisplay.widgetForOthers();
             if (widget != null) {
-                HorizontalPanel panel = new HorizontalPanel();
-                panel.setWidth("100%");
-                panel.setStyleName("Payload");
-                panel.add(widget);
-                messagePanel.add(panel);
+                panel.setWidget(row, 0, widget);
+                panel.getFlexCellFormatter().setStyleName(row++, 0, "Payload");
             }
         }
 
         // finally show the message text, if any, propped up with generated HTML
         if (_message.bodyText != null) {
-            SimplePanel messageBody = new SimplePanel();
-            messageBody.setStyleName("Body");
-            messageBody.setWidget(textToHTML(_message.bodyText));
-            messagePanel.add(messageBody);
+            panel.setWidget(row, 0, textToHTML(_message.bodyText));
+            panel.getFlexCellFormatter().setStyleName(row++, 0, "Body");
         }
 
         // switch in the fully built UI
         _messageContainer.setVisible(true);
-        _messageHolder.setWidget(messagePanel);
+        _messageHolder.setWidget(panel);
     }
 
     // since collection-to-array type checking is a lost cause anyway, just accept Object[] here

@@ -5,225 +5,219 @@
  */
 
 .App {
-    background: white;
-    width: 100%;
-    height: 100%;
+  background: white;
+  width: 100%;
+  height: 100%;
 }
 
 .App .Top {
-    height: 12em;
-    width: 100%;
+  height: 12em;
+  width: 100%;
 }
 
 .FolderPanel {
-    height: 100%;
-    width: 100%;
-    padding: 0;
+  height: 100%;
+  width: 100%;
+  padding: 0;
 }
 
 .FolderPanel .Header {
-    background-image: url(/images/mail/box_tile.png);
-    height: 27px;
-    width: 100%;
+  background-image: url(/images/mail/box_tile.png);
+  height: 27px;
+  width: 100%;
 }
 
 .FolderPanel .Header .Left {
-    background-image: url(/images/mail/button_mail.png);
-    width: 20px;
-    height: 15px;
+  background-image: url(/images/mail/button_mail.png);
+  width: 20px;
+  height: 15px;
 }
 
 .FolderPanel .Header .Right {
-    color: #CFDCE1;
-    width: 100%;
+  color: #CFDCE1;
+  width: 100%;
 }
 
 .Folders {
-    color: #000000;
-    padding: 10px;
-    height: 100%;
+  color: #000000;
+  padding: 10px;
+  height: 100%;
 }
 
  .Folder-unread {
-    font-weight: bold;
+  font-weight: bold;
 }
 
  .Folder-trash {
-    margin-top: 1em;
+  margin-top: 1em;
 }
 
 .Folder A:link {
-    color: #000000;
+  color: #000000;
 }
 .Folder A:visited {
-    color: #000000;
+  color: #000000;
 }
 .Folder A:active {
-    color: #000000;
+  color: #000000;
 }
 
 .HeaderPanel {
-    height: 100%;
-    width: 100%;
-    padding: 0;
+  height: 100%;
+  width: 100%;
+  padding: 0;
 }
 
 .HeaderPanel .Bar {
-    background-image: url(/images/mail/box_tile.png);
-    height: 27px;
-    width: 100%;
+  background-image: url(/images/mail/box_tile.png);
+  height: 27px;
+  width: 100%;
 }
 
 .HeaderPanel .Bar .Controls {
-    float: left;
-    height: 21px;
-    margin-top: 3px;
+  float: left;
+  height: 21px;
+  margin-top: 3px;
 }
 
 .HeaderPanel .Bar .Controls .gwt-Button {
-    margin-left: 5px;
+  margin-left: 5px;
 }
 
 .HeaderPanel .Bar .Pager {
-    float: right;
-    height: 21px;
-    margin-top: 3px;
+  float: right;
+  height: 21px;
+  margin-top: 3px;
 }
 
 .HeaderPanel .Bar .Pager .gwt-Button {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
 .HeaderPanel .Bar .Pager .CurrentPage {
-    color: #FFFFFF;
-    display: inline;
-    margin-right: 6px;
+  color: #FFFFFF;
+  display: inline;
+  margin-right: 6px;
 }
 
 .HeaderPanel .Bar .Pager .AnotherPage {
-    color: #FFFFFF;
-    text-decoration: underline;
-    display: inline;
-    margin-right: 6px;
+  color: #FFFFFF;
+  text-decoration: underline;
+  display: inline;
+  margin-right: 6px;
 }
 
 .HeaderPanel .Rows {
-    width: 100%;
+  width: 100%;
 }
 
 .HeaderPanel .Rows A:link {
-    text-decoration: none;
-    color: #000000;
+  text-decoration: none;
+  color: #000000;
 }
 
 .HeaderPanel .Rows A:visited {
-    text-decoration: none;
-    color: #000000;
+  text-decoration: none;
+  color: #000000;
 }
 
 .HeaderPanel .Rows A:active {
-    text-decoration: none;
-    color: #000000;
+  text-decoration: none;
+  color: #000000;
 }
 
 .HeaderPanel .Row {
-    padding: 5px;
+  padding: 5px;
 }
 
 .HeaderPanel .Row-unread {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .HeaderPanel .Row-selected {
-    background: #CAE0EB;
+  background: #CAE0EB;
 }
 
 .HeaderPanel .Row td {
-    white-space: nowrap;
-    overflow: hidden;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .HeaderPanel .Row .CheckBox {
-    width: 20px;
+  width: 20px;
 }
 
 .HeaderPanel .Row .Subject {
-    margin-left: 5px;
-    width: 100%;
+  margin-left: 5px;
+  width: 100%;
 }
 
 .HeaderPanel .Row .Sender {
-    text-decoration: underline;
-    width: 150px;
+  text-decoration: underline;
+  width: 150px;
 }
 
 .HeaderPanel .Row .Date {
-    width: 80px;
+  width: 80px;
 }
 
 .MessagePanel {
-    width: 100%;
+  width: 100%;
 }
 
 .MessagePanel .Bar {
-    background-image: url(/images/mail/box_tile.png);
-    height: 27px;
-    width: 100%;
+  background-image: url(/images/mail/box_tile.png);
+  height: 27px;
+  width: 100%;
 }
 
 .MessagePanel .Bar .Star {
-    background-image: url(/images/mail/box_left.png);
-    height: 27px;
-    width: 33px;
-    float: left;
+  background-image: url(/images/mail/box_left.png);
+  height: 27px;
+  width: 33px;
+  float: left;
 }
 
 .MessagePanel .Bar .Controls {
-    float: right;
-    height: 21px;
-    margin-top: 3px;
+  float: right;
+  height: 21px;
+  margin-top: 3px;
 }
 
 .MessagePanel .Bar .gwt-Button {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
 .MessagePanel .Message {
-    width: 100%;
+  width: 100%;
 }
 
 .Message .Header {
-    background: #CAE0EB;
-    height: 2em;
-    width: 100%;
+  background: #CAE0EB;
+  width: 100%;
+  padding-left: 8px;
 }
 
 .Message .Header .Subject {
-    margin-top: 5px;
-    margin-left: 20px;
+  width: 590px;
+  padding-right: 10px;
 }
 
 .Message .Header .Sender {
-    text-decoration: underline;
-    margin-top: 5px;
-    width: 18em;
+  white-space: nowrap;
+  padding-right: 15px;
 }
 
 .Message .Header .Date {
-    margin-top: 5px;
-    width: 8em;
+  white-space: nowrap;
 }
 
 .Message .Payload {
-    background: #CAE0EB;
-    color: black;
-    border: none;
-    width: 100%;
-    padding: 8px;
-    padding-left: 20px;
+  background: #CAE0EB;
+  padding-left: 8px;
 }
 
 .Message .Body {
-    margin-top: 4px;
-    margin-left: 20px;
+  padding-top: 4px;
+  padding-left: 10px;
 }
