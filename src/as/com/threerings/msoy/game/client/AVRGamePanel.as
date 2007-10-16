@@ -74,8 +74,9 @@ public class AVRGamePanel extends Canvas
         this.height = info.height + 2;
 
         var quit :CommandButton = new CommandButton(MsoyController.LEAVE_AVR_GAME);
-        quit.label = Msgs.GAME.get("b.leave_world_game");
-        quit.x = quit.y = 0;
+        quit.styleName = "closeButton";
+        quit.x = info.width;
+        quit.y = 0;
         this.addChild(quit);
 
         this.rawChildren.addChildAt(_mediaHolder, 0);
