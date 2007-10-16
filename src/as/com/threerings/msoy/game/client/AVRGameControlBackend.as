@@ -14,6 +14,7 @@ import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.MessageAdapter;
 import com.threerings.presents.dobj.MessageEvent;
@@ -276,11 +277,18 @@ public class AVRGameControlBackend extends ControlBackend
         function (event :EntryAddedEvent) :void {
             if (event.getName() == PlayerObject.GAME_STATE) {
                 callPlayerStateChanged(event.getEntry() as GameState);
+            } else if (event.getName() == PlayerObject.QUEST_STATE) {
+                callUserCode("questStateChanged_v1", QuestState(event.getEntry()).questId, true);
             }
         },
         function (event :EntryUpdatedEvent) :void {
             if (event.getName() == PlayerObject.GAME_STATE) {
                 callPlayerStateChanged(event.getEntry() as GameState);
+            }
+        },
+        function (event :EntryRemovedEvent) :void {
+            if (event.getName() == PlayerObject.QUEST_STATE) {
+                callUserCode("questStateChanged_v1", event.getKey(), false);
             }
         });
 
