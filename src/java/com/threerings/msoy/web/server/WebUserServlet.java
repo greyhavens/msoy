@@ -298,9 +298,11 @@ public class WebUserServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser(ident);
 
         try {
-            ProfileRecord prec = MsoyServer.profileRepo.loadProfile(mrec.memberId);
             AccountInfo accountInfo = new AccountInfo();
-            accountInfo.realName = prec.realName;
+            ProfileRecord prec = MsoyServer.profileRepo.loadProfile(mrec.memberId);
+            if (prec != null) {
+                accountInfo.realName = prec.realName;
+            }
             return accountInfo;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to fetch account info [who=" + mrec.memberId + 
