@@ -32,8 +32,11 @@ public interface ProfileService extends RemoteService
         /** This user's basic profile information. */
         public Profile profile;
 
+        /** This user's total friend count. */
+        public int totalFriendCount;
+
         /**
-         * This user's friends.
+         * This user's featured friends.
          *
          * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
          */

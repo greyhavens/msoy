@@ -123,6 +123,8 @@ public class ProfileServlet extends MsoyServiceServlet
 
                 case BlurbData.FRIENDS:
                     result.friends = resolveFriendsData(memrec, tgtrec);
+                    result.totalFriendCount =
+                        MsoyServer.memberRepo.loadFriendIds(tgtrec.memberId).size();
                     break;
 
                 case BlurbData.GROUPS:

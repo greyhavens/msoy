@@ -128,6 +128,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String elocation();
 
   /**
+   * Translated "See All {0} Friends".
+   * 
+   * @return translated "See All {0} Friends"
+   * @gwt.key seeAllFriends
+   */
+  String seeAllFriends(String arg0);
+
+  /**
    * Translated "Find Friends".
    * 
    * @return translated "Find Friends"

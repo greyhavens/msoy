@@ -86,11 +86,14 @@ public class FriendsBlurb extends Blurb
             }));
         }
 
-        Widget more = Application.createLink(
-            CProfile.msgs.seeAll(), Page.PROFILE, Args.compose("f", pdata.name.getMemberId()));
-        more.addStyleName("tipLabel");
-        _content.setWidget(2, 1, more);
-        _content.getFlexCellFormatter().setHorizontalAlignment(2, 1, HasAlignment.ALIGN_RIGHT);
+        if (pdata.totalFriendCount > FRIEND_COLUMNS * FRIEND_ROWS) {
+            Widget more = Application.createLink(
+                CProfile.msgs.seeAllFriends(""+pdata.totalFriendCount),
+                Page.PROFILE, Args.compose("f", pdata.name.getMemberId()));
+            more.addStyleName("tipLabel");
+            _content.setWidget(2, 1, more);
+            _content.getFlexCellFormatter().setHorizontalAlignment(2, 1, HasAlignment.ALIGN_RIGHT);
+        }
     }
 
     protected FlexTable _content;

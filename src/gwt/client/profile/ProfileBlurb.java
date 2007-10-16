@@ -110,6 +110,7 @@ public class ProfileBlurb extends Blurb
         // add their name in big happy font
         content.setText(0, 1, _name.toString());
         content.getFlexCellFormatter().setStyleName(0, 1, "Name");
+        content.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
 
         // display the edit button if this is our profile
         if (_name.getMemberId() == CProfile.getMemberId()) {
@@ -119,6 +120,7 @@ public class ProfileBlurb extends Blurb
                 }
             }));
             content.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
+            content.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         } else {
             content.getFlexCellFormatter().setColSpan(0, 1, 2);
         }
