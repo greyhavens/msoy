@@ -231,6 +231,7 @@ public class ProfileRecord extends PersistentRecord
         profile.photo = getPhoto();
         profile.permaName = member.permaName;
 
+        profile.level = member.level;
         profile.memberSince = member.created.getTime();
         profile.lastLogon = (member.lastSession != null) ? member.lastSession.getTime() : 0L;
 

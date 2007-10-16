@@ -80,6 +80,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String haveNoGroups();
 
   /**
+   * Translated "Level:".
+   * 
+   * @return translated "Level:"
+   * @gwt.key level
+   */
+  String level();
+
+  /**
    * Translated "Find someone:".
    * 
    * @return translated "Find someone:"

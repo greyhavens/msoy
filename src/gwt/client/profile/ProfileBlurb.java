@@ -70,32 +70,63 @@ public class ProfileBlurb extends Blurb
         content.setStyleName("profileBlurb");
 
         VerticalPanel bits = new VerticalPanel();
-        bits.setSpacing(5);
         bits.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         bits.add(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE));
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.setSpacing(5);
         bits.add(buttons);
-        // display the edit button if this is our profile
-        if (_name.getMemberId() == CProfile.getMemberId()) {
-            bits.add(new Button("Edit", new ClickListener() {
-                public void onClick (Widget source) {
-                    startEdit();
-                }
-            }));
-        }
         content.setWidget(0, 0, bits);
         content.getFlexCellFormatter().setStyleName(0, 0, "Photo");
         content.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
 
+        // add our various buttons: homepage, send mail, visit, admin info
+        if (!isBlank(_profile.homePageURL)) {
+            Anchor homepage = new Anchor(_profile.homePageURL, "");
+            homepage.setHTML("<img border=\"0\" src=\"/images/profile/homepage.png\">");
+            homepage.setFrameTarget("_blank");
+            homepage.setTitle(CProfile.msgs.showHomepage());
+            buttons.add(homepage);
+        }
+        if (_name.getMemberId() != CProfile.getMemberId()) {
+            buttons.add(newControl(CProfile.msgs.sendMail(), "SendMail", new ClickListener() {
+                public void onClick (Widget widget) {
+                    new MailComposition(_name, null, null, null).show();
+                }
+            }));
+        }
+        buttons.add(newControl(CProfile.msgs.visitHome(), "VisitHome", new ClickListener() {
+            public void onClick (Widget sender) {
+                Application.go(Page.WORLD, "m" + _name.getMemberId());
+            }
+        }));
+        if (CProfile.isAdmin()) {
+            buttons.add(newControl(CProfile.msgs.adminBrowse(), "AdminInfo", new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.ADMIN, Args.compose("browser", _name.getMemberId()));
+                }
+            }));
+        }
+
+        // add their name in big happy font
         content.setText(0, 1, _name.toString());
         content.getFlexCellFormatter().setStyleName(0, 1, "Name");
-        content.getFlexCellFormatter().setColSpan(0, 1, 2);
 
+        // display the edit button if this is our profile
+        if (_name.getMemberId() == CProfile.getMemberId()) {
+            content.setWidget(0, 2, new Button("Edit", new ClickListener() {
+                public void onClick (Widget source) {
+                    startEdit();
+                }
+            }));
+            content.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
+        } else {
+            content.getFlexCellFormatter().setColSpan(0, 1, 2);
+        }
+
+        // add our informational bits (headline, A/S/L)
         if (!isBlank(_profile.headline)) {
             addInfo(content, _profile.headline, "Headline");
         }
-
         String ageSex = "";
         switch (_profile.sex) {
         case Profile.SEX_MALE:
@@ -114,11 +145,15 @@ public class ProfileBlurb extends Blurb
         if (ageSex.length() > 0) {
             addInfo(content, ageSex, null);
         }
-
         if (!isBlank(_profile.location)) {
             addInfo(content, _profile.location, null);
         }
 
+        // make the left column span all the info
+        content.getFlexCellFormatter().setRowSpan(0, 0, content.getRowCount());
+
+        // add our various detail bits (level, permaname, first/last logon dates)
+        addDetail(content, CProfile.msgs.level(), "" + _profile.level);
         if (!isBlank(_profile.permaName)) {
             addDetail(content, CProfile.msgs.permaName(), _profile.permaName);
         }
@@ -129,48 +164,6 @@ public class ProfileBlurb extends Blurb
         if (_profile.lastLogon > 0L) {
             addDetail(content, CProfile.msgs.lastOnline(),
                       _lfmt.format(new Date(_profile.lastLogon)));
-        }
-
-        // make the left column span everything
-        content.getFlexCellFormatter().setRowSpan(0, 0, content.getRowCount());
-
-        // if they have a homepage configured show that button
-        if (!isBlank(_profile.homePageURL)) {
-            Anchor homepage = new Anchor(_profile.homePageURL, "");
-            homepage.setHTML("<img border=\"0\" src=\"/images/profile/homepage.png\">");
-            homepage.setFrameTarget("_blank");
-            homepage.setTitle(CProfile.msgs.showHomepage());
-            buttons.add(homepage);
-        }
-
-        // if this is not us, add some useful controls
-        if (_name.getMemberId() != CProfile.getMemberId()) {
-            buttons.add(newControl(CProfile.msgs.sendMail(), "SendMail", new ClickListener() {
-                public void onClick (Widget widget) {
-                    new MailComposition(_name, null, null, null).show();
-                }
-            }));
-        }
-
-//         buttons.add(new Button("Neighborhood", new ClickListener() {
-//             public void onClick (Widget sender) {
-//                 Application.go(Page.WORLD, "nm" + _name.getMemberId());
-//             }
-//         }));
-
-        buttons.add(newControl(CProfile.msgs.visitHome(), "VisitHome", new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(Page.WORLD, "m" + _name.getMemberId());
-            }
-        }));
-
-        // if we're an admin, add a button for special info
-        if (CProfile.isAdmin()) {
-            buttons.add(newControl(CProfile.msgs.adminBrowse(), "AdminInfo", new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.ADMIN, Args.compose("browser", _name.getMemberId()));
-                }
-            }));
         }
 
         setContent(content);
@@ -190,9 +183,11 @@ public class ProfileBlurb extends Blurb
     {
         int row = content.getRowCount();
         content.setText(row, 0, label);
-        content.getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
+        content.getFlexCellFormatter().setStyleName(row, 0, "Detail");
+        content.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
         content.setText(row, 1, text);
-        content.getFlexCellFormatter().setStyleName(row, 1, "tipLabel");
+        content.getFlexCellFormatter().setStyleName(row, 1, "Detail");
+        content.getFlexCellFormatter().setColSpan(row, 1, 2);
     }
 
     protected void startEdit ()

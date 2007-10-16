@@ -44,6 +44,9 @@ public class Profile implements IsSerializable
     /** A member provided homepage URL. */
     public String homePageURL;
 
+    /** This member's level. */
+    public int level;
+
     /** The time at which this member registered. */
     public long memberSince;
 

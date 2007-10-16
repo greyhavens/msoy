@@ -8,8 +8,13 @@
   width: 340px;
 }
 
+.profileBlurb {
+  width: 100%;
+}
+
 .profileBlurb .Photo {
-  width: 80px;
+  width: 100px;
+  vertical-align: top;
 }
 
 .profileBlurb .Name {
@@ -20,6 +25,10 @@
 .profileBlurb .Headline {
   font-style: italic;
   vertical-align: top;
+}
+
+.profileBlurb .Detail {
+  font-size: 14px;
 }
 
 .profileBlurb .EditLabel {
