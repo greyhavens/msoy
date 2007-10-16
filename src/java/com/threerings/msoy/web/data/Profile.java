@@ -48,8 +48,8 @@ public class Profile implements IsSerializable
      * logged on. */
     public long lastLogon;
 
-    /** This member's birthday. Only provided for the member themselves. */
-    public long birthday;
+    /** This member's birthday (year, month, day). Only provided for the member themselves. */
+    public int[] birthday;
 
     /** The member's professed age. A/S/L's A. */
     public int age;

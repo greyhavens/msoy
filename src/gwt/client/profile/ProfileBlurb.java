@@ -219,8 +219,8 @@ public class ProfileBlurb extends Blurb
 
         econtent.setText(row, 0, CProfile.msgs.ebirthday());
         econtent.setWidget(row++, 1, _ebirthday = new DateFields());
-        if (_profile.birthday != 0L) {
-            _ebirthday.setDate(new Date(_profile.birthday));
+        if (_profile.birthday != null) {
+            _ebirthday.setDate(_profile.birthday);
         }
 
         econtent.setText(row, 0, CProfile.msgs.eage());
@@ -260,12 +260,15 @@ public class ProfileBlurb extends Blurb
         _profile.homePageURL = _ehomepage.getText().trim();
         _profile.location = _elocation.getText().trim();
         _profile.sex = (byte)_esex.getSelectedIndex();
-        Date bday = _ebirthday.getDate();
-        _profile.birthday = (bday == null) ? 0L : bday.getTime();
-        if (_eshowAge.isChecked() && bday != null) {
+        int[] birthday = _ebirthday.getDate();
+        if (birthday != null) { // leave their old birthday if they booch it
+            _profile.birthday = birthday;
+        }
+        if (_eshowAge.isChecked() && _profile.birthday != null) {
             // this is not totally accurate, but it's only shown when a user completes their edit,
             // otherwise we compute their age on the server and we do so accurately
-            _profile.age = (int)((System.currentTimeMillis() - _profile.birthday) / YEAR_MILLIS);
+            long birthTime = DateFields.toDate(_profile.birthday).getTime();
+            _profile.age = (int)((System.currentTimeMillis() - birthTime) / YEAR_MILLIS);
         } else {
             _profile.age = 0;
         }

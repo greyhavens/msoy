@@ -278,8 +278,9 @@ public class ProfileServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         ProfileRecord prec = MsoyServer.profileRepo.loadProfile(tgtrec.memberId);
+        int forMemberId = (reqrec == null) ? 0 : reqrec.memberId;
         Profile profile = (prec == null) ? new Profile() :
-            prec.toProfile(reqrec.memberId, tgtrec.permaName);
+            prec.toProfile(forMemberId, tgtrec.permaName);
 
         // TODO: if they're online right now, show that
         profile.lastLogon = (tgtrec.lastSession != null) ? tgtrec.lastSession.getTime() : 0L;

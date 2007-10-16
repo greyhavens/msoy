@@ -55,13 +55,14 @@ public class WebUserServlet extends MsoyServiceServlet
 
     // from interface WebUserService
     public SessionData register (long clientVersion, String username, String password, 
-                                 final String displayName, Date birthday, AccountInfo info, 
+                                 final String displayName, int[] bdayvec, AccountInfo info, 
                                  int expireDays, final Invitation invite)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
 
         // check age restriction
+        java.sql.Date birthday = ProfileRecord.fromDateVec(bdayvec);
         Calendar thirteenYearsAgo = Calendar.getInstance();
         thirteenYearsAgo.add(Calendar.YEAR, -13);
         if (birthday.compareTo(thirteenYearsAgo.getTime()) > 0) {
@@ -89,16 +90,17 @@ public class WebUserServlet extends MsoyServiceServlet
         final MemberRecord newAccount = MsoyServer.author.createAccount(
             username, password, displayName, ignoreRestrict,
             invite != null ? invite.inviter.getMemberId() : 0);
+
+        // store the user's birthday and realname in their profile
+        ProfileRecord prec = new ProfileRecord();
+        prec.memberId = newAccount.memberId;
+        prec.birthday = birthday;
+        prec.realName = info.realName;
         try {
-            ProfileRecord prec = new ProfileRecord();
-            prec.memberId = newAccount.memberId;
-            prec.birthday = new java.sql.Date(birthday.getTime());
-            prec.realName = info.realName;
             MsoyServer.profileRepo.storeProfile(prec);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "failed to set birthday on new account's profile [memberId=" +
-                newAccount.memberId + ", birthday=" + birthday + "]", pe);
-            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+            log.log(Level.WARNING, "Failed to create initial profile [prec=" + prec + "]", pe);
+            // keep on keepin' on
         }
 
         // if we were invited by another player, wire that all up
@@ -114,14 +116,14 @@ public class WebUserServlet extends MsoyServiceServlet
             // send a notification email that the friend has accepted his invite
             MsoyServer.omgr.postRunnable(new Runnable() {
                 public void run () {
-                    // TODO: this should be a custom mail message type (perhaps just one that
-                    // displays a translatable string from the server)
-                    String body = "The invitation that you sent to " + invite.inviteeEmail +
-                        " has been accepted.  Your friend has chosen the display name \"" +
-                        displayName + "\", and has been added to your friend's list.";
+                    // send them a whirled mail informing them of the acceptance
+                    String subject = MsoyServer.msgMan.getBundle("server").get(
+                        "m.invite_accepted_subject");
+                    String body = MsoyServer.msgMan.getBundle("server").get(
+                        "m.invite_accepted_body", invite.inviteeEmail, displayName);
                     MsoyServer.mailMan.deliverMessage(
-                        newAccount.memberId, invite.inviter.getMemberId(), "Invitation Accepted!",
-                        body, null, false, new ResultListener.NOOP<Void>());
+                        newAccount.memberId, invite.inviter.getMemberId(), subject, body, null,
+                        false, new ResultListener.NOOP<Void>());
 
                     // and possibly send a runtime notification as well
                     MsoyServer.notifyMan.notifyInvitationAccepted(

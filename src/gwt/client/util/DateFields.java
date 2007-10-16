@@ -14,6 +14,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class DateFields extends HorizontalPanel
 {
+    public static Date toDate (int[] datevec)
+    {
+        return new Date(datevec[0] - 1900, datevec[1], datevec[2]);
+    }
+
     public DateFields () 
     {
         setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
@@ -55,32 +60,31 @@ public class DateFields extends HorizontalPanel
     }
 
     /**
-     * Sets the date in these fields.
+     * Sets the date in these fields (year, month, day).
      */
-    public void setDate (Date date)
+    public void setDate (int[] date)
     {
-        _month.setSelectedIndex(date.getMonth());
-        _day.setText("" + date.getDate());
-        _year.setText("" + (date.getYear()+1900));
+        _year.setText("" + date[0]);
+        _month.setSelectedIndex(date[1]);
+        _day.setText("" + date[2]);
     }
 
     /**
-     * Get the date that has been put into the fields of this DateFields widget.  If one or more
-     * of the fields hasn't been filled in properly, this method returns null.
+     * Get the date that has been put into the fields of this DateFields widget as (year, month,
+     * day). If one or more of the fields hasn't been filled in properly, this method returns null.
      */
-    public Date getDate () 
+    public int[] getDate () 
     {
-        Date date = null;
         try {
             int day = _day.getValue().intValue();
-            int year = _year.getValue().intValue() - 1900;
+            int year = _year.getValue().intValue();
             if (day > 0 && day <= 31 && year >= 0) {
-                date = new Date(year, _month.getSelectedIndex(), day);
+                return new int[] { year, _month.getSelectedIndex(), day };
             }
         } catch (NumberFormatException nfe) {
             // let us return null in this case
         }
-        return date;
+        return null;
     }
 
     /**

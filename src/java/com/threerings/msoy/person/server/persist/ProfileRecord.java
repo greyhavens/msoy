@@ -152,6 +152,31 @@ public class ProfileRecord extends PersistentRecord
     /** The user's real name.  Used for searching only. */
     public String realName = "";
 
+    /**
+     * Converts (year, month, day) to a {@link Date}. Month is 0-11, the other values are as a
+     * human would expect to read them.
+     */
+    public static Date fromDateVec (int[] datevec)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, datevec[0]);
+        cal.set(Calendar.MONTH, datevec[1]);
+        cal.set(Calendar.DATE, datevec[2]);
+        return new Date(cal.getTimeInMillis());
+    }
+
+    /**
+     * Converts a {@link Date} to a (year, month, day) vector.
+     */
+    public static int[] toDateVec (Date date)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return new int[] {
+            cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE)
+        };
+    }
+
     public ProfileRecord ()
     {
     }
@@ -166,8 +191,8 @@ public class ProfileRecord extends PersistentRecord
         headline = StringUtil.deNull(profile.headline);
         sex = profile.sex;
         location = StringUtil.deNull(profile.location);
-        if (profile.birthday != 0L) {
-            birthday = new Date(profile.birthday);
+        if (profile.birthday != null) {
+            birthday = fromDateVec(profile.birthday);
         }
         showAge = (profile.age != 0);
         if (profile.photo != null) {
@@ -188,7 +213,7 @@ public class ProfileRecord extends PersistentRecord
         profile.sex = sex;
         if (birthday != null) {
             if (forMemberId == memberId) {
-                profile.birthday = birthday.getTime();
+                profile.birthday = toDateVec(birthday);
             }
             if (showAge) {
                 profile.age = toAge(birthday);

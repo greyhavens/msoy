@@ -54,7 +54,8 @@ public class CreateAccountDialog extends BorderedDialog
                     thirteenYearsAgo += today[ii] + " ";
                 }
 
-                if (new Date(thirteenYearsAgo).compareTo(_dateOfBirth.getDate()) < 0) {
+                Date dob = DateFields.toDate(_dateOfBirth.getDate());
+                if (new Date(thirteenYearsAgo).compareTo(dob) < 0) {
                     setError(CShell.cmsgs.createNotThirteen());
                 } else {
                     createAccount();
