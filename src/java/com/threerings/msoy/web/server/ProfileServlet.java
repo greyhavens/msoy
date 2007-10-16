@@ -14,7 +14,6 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.parlor.rating.data.RatingCodes;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import com.threerings.msoy.data.UserAction;
@@ -366,12 +365,10 @@ public class ProfileServlet extends MsoyServiceServlet
                 result.add(rrec);
                 map.put(rrec.gameId, rrec);
             }
-            float rating = record.rating - RatingCodes.MINIMUM_RATING;
-            rating /= (RatingCodes.MAXIMUM_RATING - RatingCodes.MINIMUM_RATING);
             if (record.gameId < 0) {
-                rrec.singleRating = rating;
+                rrec.singleRating = record.rating;
             } else {
-                rrec.multiRating = rating;
+                rrec.multiRating = record.rating;
             }
         }
 

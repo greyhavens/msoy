@@ -23,11 +23,11 @@ public class GameRating
     /** The game's thumbnail media. */
     public MediaDesc gameThumb = Item.getDefaultThumbnailMediaFor(Item.GAME);
 
-    /** The single player rating of the user for this game. This value is scaled to [0, 1]. */
-    public float singleRating;
+    /** The single player rating of the user for this game. */
+    public int singleRating;
 
-    /** The multiplayer rating of the user for this game. This value is scaled to [0, 1]. */
-    public float multiRating;
+    /** The multiplayer rating of the user for this game. */
+    public int multiRating;
 
     /** Used when unserializing */
     public GameRating ()

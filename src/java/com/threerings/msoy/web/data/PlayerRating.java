@@ -20,5 +20,5 @@ public class PlayerRating implements IsSerializable
     public MediaDesc photo = Profile.DEFAULT_PHOTO;
 
     /** This member's rating in the game in question. */
-    public float rating;
+    public int rating;
 }

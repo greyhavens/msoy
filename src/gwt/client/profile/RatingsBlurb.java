@@ -72,14 +72,14 @@ public class RatingsBlurb extends Blurb
             _content.getFlexCellFormatter().setStyleName(row, 1, "GameName");
 
             if (entry.multiRating > 0) {
-                _content.setWidget(row, 2, new RatingLabel(entry.multiRating));
+                _content.setText(row, 2, "" + entry.multiRating);
                 _content.getFlexCellFormatter().setStyleName(row, 2, "Rating");
             }
 
             if (entry.singleRating > 0) {
                 _content.setText(++row, 0, CProfile.msgs.ratingsSingle());
                 _content.getFlexCellFormatter().setStyleName(row, 0, "Note");
-                _content.setWidget(row, 1, new RatingLabel(entry.singleRating));
+                _content.setText(row, 1, "" + entry.singleRating);
                 _content.getFlexCellFormatter().setStyleName(row, 1, "Rating");
             }
         }

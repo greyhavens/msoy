@@ -22,7 +22,6 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.data.InvocationCodes;
 
 import com.threerings.parlor.game.data.GameConfig;
-import com.threerings.parlor.rating.data.RatingCodes;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import com.threerings.msoy.item.data.ItemCodes;
@@ -396,9 +395,7 @@ public class GameServlet extends MsoyServiceServlet
             result[ii] = new PlayerRating();
             result[ii].name = players.get(record.playerId).name;
             result[ii].photo = players.get(record.playerId).photo;
-            float rating = record.rating - RatingCodes.MINIMUM_RATING;
-            rating /= (RatingCodes.MAXIMUM_RATING - RatingCodes.MINIMUM_RATING);
-            result[ii].rating = rating;
+            result[ii].rating = record.rating;
         }
         return result;
     }

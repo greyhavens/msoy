@@ -16,9 +16,9 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String headline();
 
   /**
-   * Translated "Trophies".
+   * Translated "Game Trophies".
    * 
-   * @return translated "Trophies"
+   * @return translated "Game Trophies"
    * @gwt.key trophiesTitle
    */
   String trophiesTitle();
@@ -280,9 +280,9 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String ratingsSingle();
 
   /**
-   * Translated "Profile".
+   * Translated "About Me".
    * 
-   * @return translated "Profile"
+   * @return translated "About Me"
    * @gwt.key profileTitle
    */
   String profileTitle();
@@ -344,9 +344,9 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String noFriendsSelf();
 
   /**
-   * Translated "Games".
+   * Translated "Game Ratings".
    * 
-   * @return translated "Games"
+   * @return translated "Game Ratings"
    * @gwt.key ratingsTitle
    */
   String ratingsTitle();
