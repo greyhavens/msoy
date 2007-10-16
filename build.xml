@@ -506,6 +506,12 @@
     <copy file="dist/neighborhood.swf" todir="pages/clients/${build_version}"/>
   </target>
 
+  <!-- builds our tutorial game -->
+  <target name="tutorial">
+    <ant dir="projects/games/tutorial" target="dist" inheritAll="false"/>
+    <copy file="dist/tutorial.swf" todir="pages/media/static/game"/>
+  </target>
+
   <!-- builds the ActionScript documention -->
   <target name="asdoc">
     <mkdir dir="${deploy.dir}/asdoc"/>
