@@ -10,10 +10,6 @@
 
 .profileBlurb .Photo {
   width: 80px;
-  height: 60px;
-  text-align: center;
-  vertical-align: top;
-  padding: 5px;
 }
 
 .profileBlurb .Name {
@@ -23,6 +19,7 @@
 
 .profileBlurb .Headline {
   font-style: italic;
+  vertical-align: top;
 }
 
 .profileBlurb .EditLabel {

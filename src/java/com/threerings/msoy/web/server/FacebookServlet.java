@@ -38,6 +38,7 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.ServiceException;
 
 import static com.threerings.msoy.Log.log;
@@ -284,7 +285,11 @@ public class FacebookServlet extends HttpServlet
 
             Node sex = findNode(info, "users_getInfo_response.user.sex");
             if (sex != null) {
-                prec.isMale = "male".equalsIgnoreCase(sex.getTextContent());
+                if ("male".equalsIgnoreCase(sex.getTextContent())) {
+                    prec.sex = Profile.SEX_MALE;
+                } else if ("female".equalsIgnoreCase(sex.getTextContent())) {
+                    prec.sex = Profile.SEX_FEMALE;
+                }
             }
 
         } catch (Exception e) {

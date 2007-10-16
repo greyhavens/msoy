@@ -11,6 +11,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
 
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FromOverride;
@@ -30,6 +31,10 @@ public class ProfileRepository extends DepotRepository
     public ProfileRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        // TEMP
+        _ctx.registerMigration(ProfileRecord.class, new EntityMigration.Drop(7, "isMale"));
+        // END TEMP
     }
 
     /**

@@ -67,7 +67,6 @@ public class ProfileServlet extends MsoyServiceServlet
             ProfileRecord nrec = new ProfileRecord(memrec.memberId, profile);
             if (oprof != null) {
                 nrec.modifications = oprof.modifications+1;
-                nrec.birthday = oprof.birthday;
                 nrec.realName = oprof.realName;
             } else {
                 log.warning("Account missing old profile [id=" + memrec.memberId + "].");
@@ -279,7 +278,8 @@ public class ProfileServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         ProfileRecord prec = MsoyServer.profileRepo.loadProfile(tgtrec.memberId);
-        Profile profile = (prec == null) ? new Profile() : prec.toProfile(tgtrec.permaName);
+        Profile profile = (prec == null) ? new Profile() :
+            prec.toProfile(reqrec.memberId, tgtrec.permaName);
 
         // TODO: if they're online right now, show that
         profile.lastLogon = (tgtrec.lastSession != null) ? tgtrec.lastSession.getTime() : 0L;

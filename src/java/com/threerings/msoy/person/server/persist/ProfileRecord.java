@@ -4,6 +4,7 @@
 package com.threerings.msoy.person.server.persist;
 
 import java.sql.Date;
+import java.util.Calendar;
 
 import com.samskivert.util.StringUtil;
 
@@ -76,12 +77,12 @@ public class ProfileRecord extends PersistentRecord
     public static final ColumnExp HEADLINE_C =
         new ColumnExp(ProfileRecord.class, HEADLINE);
 
-    /** The column identifier for the {@link #isMale} field. */
-    public static final String IS_MALE = "isMale";
+    /** The column identifier for the {@link #sex} field. */
+    public static final String SEX = "sex";
 
-    /** The qualified column identifier for the {@link #isMale} field. */
-    public static final ColumnExp IS_MALE_C =
-        new ColumnExp(ProfileRecord.class, IS_MALE);
+    /** The qualified column identifier for the {@link #sex} field. */
+    public static final ColumnExp SEX_C =
+        new ColumnExp(ProfileRecord.class, SEX);
 
     /** The column identifier for the {@link #birthday} field. */
     public static final String BIRTHDAY = "birthday";
@@ -110,7 +111,7 @@ public class ProfileRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 6;
+    public static final int SCHEMA_VERSION = 8;
 
     /** The unique id of the memory with whom this profile is associated. */
     @Id public int memberId;
@@ -136,11 +137,14 @@ public class ProfileRecord extends PersistentRecord
     public String headline = "";
 
     /** Whether the member identifies as male or female. */
-    public boolean isMale;
+    public byte sex;
 
     /** The date on which the member claims to be born. */
     @Column(nullable=true)
     public Date birthday;
+
+    /** Whether or not to show their age on their profile. */
+    public boolean showAge;
 
     /** The locale from which the member claims to hail (maxlen: 255). */
     public String location = "";
@@ -160,8 +164,12 @@ public class ProfileRecord extends PersistentRecord
         this.memberId = memberId;
         homePageURL = StringUtil.deNull(profile.homePageURL);
         headline = StringUtil.deNull(profile.headline);
-        isMale = profile.isMale;
+        sex = profile.sex;
         location = StringUtil.deNull(profile.location);
+        if (profile.birthday != 0L) {
+            birthday = new Date(profile.birthday);
+        }
+        showAge = (profile.age != 0);
         if (profile.photo != null) {
             photoHash = profile.photo.hash;
             photoMimeType = profile.photo.mimeType;
@@ -172,13 +180,20 @@ public class ProfileRecord extends PersistentRecord
     /**
      * Creates a runtime record from this persistent record.
      */
-    public Profile toProfile (String permaName)
+    public Profile toProfile (int forMemberId, String permaName)
     {
         Profile profile = new Profile();
         profile.homePageURL = homePageURL;
         profile.headline = headline;
-        profile.isMale = isMale;
-        // profile.age = toAge(birthday);
+        profile.sex = sex;
+        if (birthday != null) {
+            if (forMemberId == memberId) {
+                profile.birthday = birthday.getTime();
+            }
+            if (showAge) {
+                profile.age = toAge(birthday);
+            }
+        }
         profile.location = location;
         profile.photo = getPhoto();
         profile.permaName = permaName;
@@ -213,4 +228,22 @@ public class ProfileRecord extends PersistentRecord
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END
+
+    /**
+     * Converts a date into years.
+     */
+    protected static int toAge (Date birthday)
+    {
+        long now = System.currentTimeMillis();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(birthday);
+        int age = 0;
+        do {
+            cal.add(Calendar.YEAR, 1);
+            if (cal.getTimeInMillis() > now) {
+                break;
+            }
+        } while (++age < 999); // sorry methuselah
+        return age;
+    }
 }

@@ -8,22 +8,6 @@ package client.profile;
 public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "Headline".
-   * 
-   * @return translated "Headline"
-   * @gwt.key headline
-   */
-  String headline();
-
-  /**
-   * Translated "Game Trophies".
-   * 
-   * @return translated "Game Trophies"
-   * @gwt.key trophiesTitle
-   */
-  String trophiesTitle();
-
-  /**
    * Translated "Permaname: {0}".
    * 
    * @return translated "Permaname: {0}"
@@ -32,20 +16,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String permaName(String arg0);
 
   /**
-   * Translated "That person could not be found.".
+   * Translated "{0}".
    * 
-   * @return translated "That person could not be found."
-   * @gwt.key friendsNoSuchMember
+   * @return translated "{0}"
+   * @gwt.key location
    */
-  String friendsNoSuchMember();
-
-  /**
-   * Translated "Real Name".
-   * 
-   * @return translated "Real Name"
-   * @gwt.key searchRadioName
-   */
-  String searchRadioName();
+  String location(String arg0);
 
   /**
    * Translated "Email".
@@ -72,6 +48,206 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String searchType();
 
   /**
+   * Translated "Send Mail".
+   * 
+   * @return translated "Send Mail"
+   * @gwt.key sendMail
+   */
+  String sendMail();
+
+  /**
+   * Translated "You''re not a member of any groups. Boo hoo.".
+   * 
+   * @return translated "You''re not a member of any groups. Boo hoo."
+   * @gwt.key notInGroupsSelf
+   */
+  String notInGroupsSelf();
+
+  /**
+   * Translated "Male".
+   * 
+   * @return translated "Male"
+   * @gwt.key sexMale
+   */
+  String sexMale();
+
+  /**
+   * Translated "Sorry pardner. You don''t have invite privileges for any groups.".
+   * 
+   * @return translated "Sorry pardner. You don''t have invite privileges for any groups."
+   * @gwt.key haveNoGroups
+   */
+  String haveNoGroups();
+
+  /**
+   * Translated "Find someone:".
+   * 
+   * @return translated "Find someone:"
+   * @gwt.key search
+   */
+  String search();
+
+  /**
+   * Translated "{0} years old".
+   * 
+   * @return translated "{0} years old"
+   * @gwt.key age
+   */
+  String age(String arg0);
+
+  /**
+   * Translated "Birthday".
+   * 
+   * @return translated "Birthday"
+   * @gwt.key ebirthday
+   */
+  String ebirthday();
+
+  /**
+   * Translated "Sex".
+   * 
+   * @return translated "Sex"
+   * @gwt.key esex
+   */
+  String esex();
+
+  /**
+   * Translated "Location".
+   * 
+   * @return translated "Location"
+   * @gwt.key elocation
+   */
+  String elocation();
+
+  /**
+   * Translated "Find Friends".
+   * 
+   * @return translated "Find Friends"
+   * @gwt.key findFriends
+   */
+  String findFriends();
+
+  /**
+   * Translated "Home Page".
+   * 
+   * @return translated "Home Page"
+   * @gwt.key homepage
+   */
+  String homepage();
+
+  /**
+   * Translated "About Me".
+   * 
+   * @return translated "About Me"
+   * @gwt.key profileTitle
+   */
+  String profileTitle();
+
+  /**
+   * Translated "Are you sure you want to remove "{0}" from your friends list?".
+   * 
+   * @return translated "Are you sure you want to remove "{0}" from your friends list?"
+   * @gwt.key friendsRemoveConfirm
+   */
+  String friendsRemoveConfirm(String arg0);
+
+  /**
+   * Translated "Female".
+   * 
+   * @return translated "Female"
+   * @gwt.key sexFemale
+   */
+  String sexFemale();
+
+  /**
+   * Translated "[remove]".
+   * 
+   * @return translated "[remove]"
+   * @gwt.key friendsRemove
+   */
+  String friendsRemove();
+
+  /**
+   * Translated "You have no friends. Boo hoo.".
+   * 
+   * @return translated "You have no friends. Boo hoo."
+   * @gwt.key noFriendsSelf
+   */
+  String noFriendsSelf();
+
+  /**
+   * Translated "This person is not a member of any groups.".
+   * 
+   * @return translated "This person is not a member of any groups."
+   * @gwt.key notInGroupsOther
+   */
+  String notInGroupsOther();
+
+  /**
+   * Translated "Game Ratings".
+   * 
+   * @return translated "Game Ratings"
+   * @gwt.key ratingsTitle
+   */
+  String ratingsTitle();
+
+  /**
+   * Translated "Display Name".
+   * 
+   * @return translated "Display Name"
+   * @gwt.key searchRadioDisplayName
+   */
+  String searchRadioDisplayName();
+
+  /**
+   * Translated "Headline".
+   * 
+   * @return translated "Headline"
+   * @gwt.key headline
+   */
+  String headline();
+
+  /**
+   * Translated "{0}".
+   * 
+   * @return translated "{0}"
+   * @gwt.key sex
+   */
+  String sex(String arg0);
+
+  /**
+   * Translated "Game Trophies".
+   * 
+   * @return translated "Game Trophies"
+   * @gwt.key trophiesTitle
+   */
+  String trophiesTitle();
+
+  /**
+   * Translated "That person could not be found.".
+   * 
+   * @return translated "That person could not be found."
+   * @gwt.key friendsNoSuchMember
+   */
+  String friendsNoSuchMember();
+
+  /**
+   * Translated "Real Name".
+   * 
+   * @return translated "Real Name"
+   * @gwt.key searchRadioName
+   */
+  String searchRadioName();
+
+  /**
+   * Translated "Show age".
+   * 
+   * @return translated "Show age"
+   * @gwt.key eage
+   */
+  String eage();
+
+  /**
    * Translated "No profiles were found matching your search criteria.".
    * 
    * @return translated "No profiles were found matching your search criteria."
@@ -88,36 +264,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String noFriendsOther();
 
   /**
-   * Translated "Send Mail".
-   * 
-   * @return translated "Send Mail"
-   * @gwt.key sendMail
-   */
-  String sendMail();
-
-  /**
    * Translated ""{0}" has been removed from your friends list.".
    * 
    * @return translated ""{0}" has been removed from your friends list."
    * @gwt.key friendsRemoved
    */
   String friendsRemoved(String arg0);
-
-  /**
-   * Translated "You''re not a member of any groups. Boo hoo.".
-   * 
-   * @return translated "You''re not a member of any groups. Boo hoo."
-   * @gwt.key notInGroupsSelf
-   */
-  String notInGroupsSelf();
-
-  /**
-   * Translated "Sorry pardner. You don''t have invite privileges for any groups.".
-   * 
-   * @return translated "Sorry pardner. You don''t have invite privileges for any groups."
-   * @gwt.key haveNoGroups
-   */
-  String haveNoGroups();
 
   /**
    * Translated "Show Homepage".
@@ -134,14 +286,6 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key profileSearchTitle
    */
   String profileSearchTitle();
-
-  /**
-   * Translated "Find someone:".
-   * 
-   * @return translated "Find someone:"
-   * @gwt.key search
-   */
-  String search();
 
   /**
    * Translated "Error".
@@ -248,28 +392,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String inviteToGroup();
 
   /**
-   * Translated "Find Friends".
-   * 
-   * @return translated "Find Friends"
-   * @gwt.key findFriends
-   */
-  String findFriends();
-
-  /**
    * Translated "Groups".
    * 
    * @return translated "Groups"
    * @gwt.key groupsTitle
    */
   String groupsTitle();
-
-  /**
-   * Translated "Home Page".
-   * 
-   * @return translated "Home Page"
-   * @gwt.key homepage
-   */
-  String homepage();
 
   /**
    * Translated "(single player)".
@@ -280,36 +408,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String ratingsSingle();
 
   /**
-   * Translated "About Me".
+   * Translated "Last on: {0}".
    * 
-   * @return translated "About Me"
-   * @gwt.key profileTitle
-   */
-  String profileTitle();
-
-  /**
-   * Translated "Are you sure you want to remove "{0}" from your friends list?".
-   * 
-   * @return translated "Are you sure you want to remove "{0}" from your friends list?"
-   * @gwt.key friendsRemoveConfirm
-   */
-  String friendsRemoveConfirm(String arg0);
-
-  /**
-   * Translated "Last online: {0}".
-   * 
-   * @return translated "Last online: {0}"
+   * @return translated "Last on: {0}"
    * @gwt.key lastOnline
    */
   String lastOnline(String arg0);
-
-  /**
-   * Translated "[remove]".
-   * 
-   * @return translated "[remove]"
-   * @gwt.key friendsRemove
-   */
-  String friendsRemove();
 
   /**
    * Translated "See All".
@@ -320,42 +424,10 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String seeAll();
 
   /**
-   * Translated "This person is not a member of any groups.".
-   * 
-   * @return translated "This person is not a member of any groups."
-   * @gwt.key notInGroupsOther
-   */
-  String notInGroupsOther();
-
-  /**
    * Translated "Display Name".
    * 
    * @return translated "Display Name"
    * @gwt.key displayName
    */
   String displayName();
-
-  /**
-   * Translated "You have no friends. Boo hoo.".
-   * 
-   * @return translated "You have no friends. Boo hoo."
-   * @gwt.key noFriendsSelf
-   */
-  String noFriendsSelf();
-
-  /**
-   * Translated "Game Ratings".
-   * 
-   * @return translated "Game Ratings"
-   * @gwt.key ratingsTitle
-   */
-  String ratingsTitle();
-
-  /**
-   * Translated "Display Name".
-   * 
-   * @return translated "Display Name"
-   * @gwt.key searchRadioDisplayName
-   */
-  String searchRadioDisplayName();
 }

@@ -26,6 +26,15 @@ public class Profile implements IsSerializable
     /** The maximum length for a display name. */
     public static final int MAX_DISPLAY_NAME_LENGTH = 30;
 
+    /** A {@link #sex} constant. */
+    public static final byte SEX_UNSPECIFIED = 0;
+
+    /** A {@link #sex} constant. */
+    public static final byte SEX_MALE = 1;
+
+    /** A {@link #sex} constant. */
+    public static final byte SEX_FEMALE = 2;
+
     /** The the member's selected profile picture. */
     public MediaDesc photo = DEFAULT_PHOTO;
 
@@ -39,11 +48,14 @@ public class Profile implements IsSerializable
      * logged on. */
     public long lastLogon;
 
-    /** The member's professed gender. A/S/L's S. */
-    public boolean isMale;
+    /** This member's birthday. Only provided for the member themselves. */
+    public long birthday;
 
     /** The member's professed age. A/S/L's A. */
     public int age;
+
+    /** The member's professed sex. A/S/L's S. */
+    public byte sex;
 
     /** The member's professed location.  A/S/L's L. */
     public String location;
