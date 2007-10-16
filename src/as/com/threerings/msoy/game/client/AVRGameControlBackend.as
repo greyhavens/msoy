@@ -240,7 +240,7 @@ public class AVRGameControlBackend extends ControlBackend
         var i :Iterator = _playerObj.questState.iterator();
         while (i.hasNext()) {
             var state :QuestState = QuestState(i.next());
-            if (state[0] == questId) {
+            if (state.questId == questId) {
                 return true;
             }
         }
