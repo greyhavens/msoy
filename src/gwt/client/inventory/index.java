@@ -50,14 +50,15 @@ public class index extends EditemEntryPoint
 
     protected void updateInterface (Args args)
     {
-        setPageTitle(CInventory.msgs.inventoryTitle());
         if (CInventory.ident == null) {
             // if we have no creds, just display a message saying login
+            setPageTitle(CInventory.msgs.inventoryTitle());
             setContent(MsoyUI.createLabel(CInventory.msgs.logon(), "infoLabel"));
             _inventory = null;
 
         } else {
             if (_inventory == null) {
+                setPageTitle(CInventory.msgs.inventoryTitle());
                 setContent(_inventory = new InventoryPanel());
                 setPageTabs(_inventory.getTabs());
             }
