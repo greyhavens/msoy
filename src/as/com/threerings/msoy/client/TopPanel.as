@@ -313,9 +313,9 @@ public class TopPanel extends Canvas
             removeChild(_leftPanel);
             _leftPanel = null;
 
-            layoutPanels();
-
             (_ctx.getChatDirector() as MsoyChatDirector).removeRoomTab();
+
+            layoutPanels();
         }
     }
 
