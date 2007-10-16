@@ -61,8 +61,6 @@ public class AVRGameController extends Controller
         _gameObj = (obj as AVRGameObject);
 
         _panel.init(_gameObj);
-
-        miniWillChange(_mctx.getWorldClient().isMinimized());
     }
 
     // from interface Subscriber
@@ -71,6 +69,13 @@ public class AVRGameController extends Controller
         log.warning("Failed to subscribe to world game object [oid=" + oid +
                     ", cause=" + cause + "].");
         _gameObj = null;
+    }
+
+    // called by the Panel when it's finished loading the AVRG media
+    public function gameIsReady () :void
+    {
+        // if this is the tutorial, let it know what our initial minimization state is
+        miniWillChange(_mctx.getWorldClient().isMinimized());
     }
 
     public function tutorialEvent (eventName :String) :void

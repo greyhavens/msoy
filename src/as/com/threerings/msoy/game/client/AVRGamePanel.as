@@ -69,6 +69,8 @@ public class AVRGamePanel extends Canvas
         var info :LoaderInfo = (event.target as LoaderInfo);
         info.removeEventListener(Event.COMPLETE, mediaComplete);
 
+        _ctrl.gameIsReady();
+
         this.height = info.height + 2;
 
         var quit :CommandButton = new CommandButton(MsoyController.LEAVE_AVR_GAME);
