@@ -228,7 +228,7 @@ public class Whirledwide extends FlexTable
             }
         };
 
-        MediaDesc logoMedia = game.logo != null ? game.logo :
+        MediaDesc logoMedia = (game.logo != null) ? game.logo :
             Item.getDefaultThumbnailMediaFor(Item.GAME);
         Widget logo;
         if (panel instanceof VerticalPanel) {
@@ -239,7 +239,7 @@ public class Whirledwide extends FlexTable
             logoContainer.setStyleName("LogoContainer");
             logoContainer.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
             logoContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
-            logo = MediaUtil.createMediaView(logoMedia, MediaDesc.THUMBNAIL_SIZE);
+            logo = MediaUtil.createMediaView(logoMedia, MediaDesc.HALF_THUMBNAIL_SIZE);
             logoContainer.add(logo);
             panel.add(logoContainer);
         }
