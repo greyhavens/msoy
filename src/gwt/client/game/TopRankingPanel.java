@@ -103,16 +103,16 @@ public class TopRankingPanel extends FlexTable
             setText(0, 0, CGame.msgs.gameRank("" + (rank+1)));
             getFlexCellFormatter().setRowSpan(0, 0, 2);
 
-            int width = 2*MediaDesc.DIMENSIONS[MediaDesc.HALF_THUMBNAIL_SIZE]/3;
-            int height = 2*MediaDesc.DIMENSIONS[MediaDesc.HALF_THUMBNAIL_SIZE+1]/3;
-            Widget photo = MediaUtil.createMediaView(rating.photo, width, height);
+            Widget photo = MediaUtil.createMediaView(rating.photo, MediaDesc.HALF_THUMBNAIL_SIZE);
             if (photo instanceof Image) {
                 ((Image) photo).addClickListener(this);
                 photo.setStyleName("actionLabel");
             }
             setWidget(0, 1, photo);
             getFlexCellFormatter().setRowSpan(0, 1, 2);
+            int width = MediaDesc.DIMENSIONS[2*MediaDesc.HALF_THUMBNAIL_SIZE];
             getFlexCellFormatter().setWidth(0, 1, width + "px");
+            int height = MediaDesc.DIMENSIONS[2*MediaDesc.HALF_THUMBNAIL_SIZE+1];
             getFlexCellFormatter().setHeight(0, 1, height + "px");
             getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
 

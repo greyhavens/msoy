@@ -63,7 +63,7 @@ public class ItemEntry extends FlexTable
             }
         };
         Widget mview = MediaUtil.createMediaView(
-            item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE);
+            item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
         if (mview instanceof Image) {
             ((Image)mview).addClickListener(clicker);
             mview.addStyleName("actionLabel");

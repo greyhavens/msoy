@@ -26,7 +26,7 @@ public class ItemThumbnail extends FlexTable
 
         // the thumbnail is always an image, so we can cast safely here
         Image image = (Image) MediaUtil.createMediaView(
-            item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE);
+            item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
         image.addStyleName("Image");
         image.addClickListener(listener);
         setWidget(0, 0, image);

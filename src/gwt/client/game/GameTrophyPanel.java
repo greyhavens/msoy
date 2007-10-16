@@ -79,7 +79,7 @@ public class GameTrophyPanel extends PagedGrid
             setCellPadding(0);
             setStyleName("trophyDetail");
             setWidget(0, 0, MediaUtil.createMediaView(
-                          trophy.trophyMedia, MediaDesc.HALF_THUMBNAIL_SIZE));
+                          trophy.trophyMedia, MediaDesc.THUMBNAIL_SIZE));
             getFlexCellFormatter().setStyleName(0, 0, "Image");
 
             setText(0, 1, trophy.name);

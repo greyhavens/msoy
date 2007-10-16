@@ -41,7 +41,7 @@ public abstract class TrophyAward
             table.setWidget(0, 1, Application.createLink(_payload.gameName, Page.GAME, args));
             table.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
             table.setWidget(1, 1, MediaUtil.createMediaView(
-                                _payload.getTrophyMedia(), MediaDesc.HALF_THUMBNAIL_SIZE));
+                                _payload.getTrophyMedia(), MediaDesc.THUMBNAIL_SIZE));
             table.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_CENTER);
             table.setText(2, 0, CMsgs.mmsgs.trophyName());
             table.setText(2, 1, _payload.trophyName);

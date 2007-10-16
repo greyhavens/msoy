@@ -72,7 +72,7 @@ public class ProfileGrid extends PagedGrid
                 }
             };
 
-            Widget photo = MediaUtil.createMediaView(card.photo, MediaDesc.HALF_THUMBNAIL_SIZE);
+            Widget photo = MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE);
             if (photo instanceof Image) {
                 ((Image) photo).addClickListener(profileClick);
                 photo.setStyleName("actionLabel");

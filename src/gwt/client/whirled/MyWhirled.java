@@ -249,9 +249,7 @@ public class MyWhirled extends FlexTable
 
         // add our own profile picture to the left column
         MediaDesc photo = (myWhirled.photo == null) ? Profile.DEFAULT_PHOTO : myWhirled.photo;
-        Widget image = MediaUtil.createMediaView(
-            // HALF_THUMBNAIL is too small and THUMBNAIL is too big... do something custom
-            photo, (int)(MediaDesc.THUMBNAIL_WIDTH*0.65), (int)(MediaDesc.THUMBNAIL_HEIGHT*0.65));
+        Widget image = MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE);
         if (image instanceof Image) {
             ((Image)image).addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
@@ -388,10 +386,10 @@ public class MyWhirled extends FlexTable
             logoContainer.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
             Widget logo = null;
             if (scene.logo != null) {
-                logo = MediaUtil.createMediaView(scene.logo, MediaDesc.HALF_THUMBNAIL_SIZE);
+                logo = MediaUtil.createMediaView(scene.logo, MediaDesc.THUMBNAIL_SIZE);
             } else if (scene.sceneType == SceneCard.GAME) {
                 MediaDesc gameLogo = Item.getDefaultThumbnailMediaFor(Item.GAME);
-                logo = MediaUtil.createMediaView(gameLogo, MediaDesc.HALF_THUMBNAIL_SIZE);
+                logo = MediaUtil.createMediaView(gameLogo, MediaDesc.THUMBNAIL_SIZE);
             }
             if (logo instanceof Image) {
                 ((Image) logo).addClickListener(goToScene);
@@ -495,7 +493,7 @@ public class MyWhirled extends FlexTable
                 }
             };
 
-            Widget pic = MediaUtil.createMediaView(card.photo, MediaDesc.HALF_THUMBNAIL_SIZE);
+            Widget pic = MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE);
             if (pic instanceof Image && goToFriend != null) {
                 ((Image) pic).addClickListener(goToFriend);
             }

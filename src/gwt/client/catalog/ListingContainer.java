@@ -36,7 +36,7 @@ public class ListingContainer extends FlexTable
         };
 
         Widget preview = MediaUtil.createMediaView(
-            listing.item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE);
+            listing.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
         if (preview instanceof Image) {
             ((Image)preview).addClickListener(clicker);
             preview.addStyleName("actionLabel");

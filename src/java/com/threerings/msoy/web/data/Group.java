@@ -50,7 +50,7 @@ public class Group
     public static MediaDesc getDefaultGroupLogoMedia ()
     {
         return new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "group_logo",
-                                   // we know that we're 132x120
+                                   // we know that we're 66x60
                                    MediaDesc.HALF_VERTICALLY_CONSTRAINED);
     }
 

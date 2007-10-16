@@ -72,10 +72,10 @@ public class MediaDesc implements Streamable, IsSerializable
     public static final int PREVIEW_SIZE = 2;
 
     /** The thumbnail image width.  */
-    public static final int THUMBNAIL_WIDTH = 160;
+    public static final int THUMBNAIL_WIDTH = 80;
 
     /** The thumbnail image height.  */
-    public static final int THUMBNAIL_HEIGHT = 120;
+    public static final int THUMBNAIL_HEIGHT = 60;
 
     /** Defines the dimensions of our various image sizes. */
     public static final int[] DIMENSIONS = {

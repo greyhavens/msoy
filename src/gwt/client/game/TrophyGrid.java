@@ -43,8 +43,7 @@ public class TrophyGrid extends FlexTable
                 }
             };
 
-            Widget image = MediaUtil.createMediaView(
-                trophy.trophyMedia, MediaDesc.HALF_THUMBNAIL_SIZE);
+            Widget image = MediaUtil.createMediaView(trophy.trophyMedia, MediaDesc.THUMBNAIL_SIZE);
             if (image instanceof Image) {
                 ((Image)image).addClickListener(trophyClick);
                 image.setStyleName("actionLabel");
