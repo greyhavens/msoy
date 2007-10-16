@@ -9,14 +9,16 @@
 }
 
 .profileBlurb .Photo {
-  width: 160px;
-  height: 120px;
+  width: 80px;
+  height: 60px;
   text-align: center;
-  vertical-align: middle;
+  vertical-align: top;
+  padding: 5px;
 }
 
 .profileBlurb .Name {
   font-weight: bold;
+  font-size: 16px;
 }
 
 .profileBlurb .Headline {
@@ -28,8 +30,8 @@
 }
 
 .profileBlurb .ControlButton {
-  width: 28px;
-  height: 25px;
+  width: 21px;
+  height: 15px;
   border: none;
 }
 
