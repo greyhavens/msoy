@@ -43,7 +43,10 @@ public class MsoyGamePanel extends EZGamePanel
     // from MsoyPlaceView
     public function usurpsControlBar () :Boolean
     {
-        return true;
+        // NOTE: this used to usurp the control bar but the artists didn't like it; I'm leaving it
+        // in here for now in case we change our mind once everyone sees what I saw when I first
+        // decided to add the usurpage
+        return false;
     }
 
     // from EZGamePanel

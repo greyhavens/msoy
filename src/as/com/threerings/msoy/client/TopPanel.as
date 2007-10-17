@@ -244,13 +244,13 @@ public class TopPanel extends Canvas
         bounds.y = HeaderBar.HEIGHT;
         bounds.width = stage.stageWidth - getLeftPanelWidth() - getRightPanelWidth();
         bounds.height = stage.stageHeight - getBottomPanelHeight() - HeaderBar.HEIGHT;
-        // for room scenes, we put a small space above and (possibly) below the view
+        // for room scenes, we put a small space above and below the view
         if (_placeBox.getPlaceView() is AbstractRoomView) {
             bounds.y += DECORATIVE_MARGIN_HEIGHT;
-            bounds.height -= DECORATIVE_MARGIN_HEIGHT;
-            if (!_placeBox.usurpsControlBar()) {
-                bounds.height -= (ControlBar.HEIGHT + DECORATIVE_MARGIN_HEIGHT);
-            }
+            bounds.height -= 2*DECORATIVE_MARGIN_HEIGHT;
+        }
+        if (!_placeBox.usurpsControlBar()) {
+            bounds.height -= ControlBar.HEIGHT;
         }
         return bounds;
     }
