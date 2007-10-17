@@ -22,10 +22,15 @@
     </java>
   </target>
 
+  <target name="clean">
+    <delete>
+       <fileset file="${app.name}.swf"/>
+    </delete>
+  </target>
+
   <!-- builds our swf and plops it up at the top level -->
   <target name="dist" depends="compile">
     <copy file="${app.name}.swf" todir="${root.path}/dist"/>
   </target>
-
 
 </project>
