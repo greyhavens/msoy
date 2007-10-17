@@ -61,7 +61,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#setAvatar} request.
      */
-    public void setAvatar (ClientObject caller, int arg1, float arg2, InvocationService.InvocationListener arg3)
+    public void setAvatar (ClientObject caller, int arg1, float arg2, InvocationService.ConfirmListener arg3)
         throws InvocationException;
 
     /**

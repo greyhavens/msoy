@@ -123,9 +123,9 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const SET_AVATAR :int = 8;
 
     // from interface MemberService
-    public function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_InvocationListener) :void
+    public function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void
     {
-        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, SET_AVATAR, [
             Integer.valueOf(arg2), Float.valueOf(arg3), listener4

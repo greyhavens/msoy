@@ -78,6 +78,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
 
 import com.threerings.msoy.game.client.QuestOfferPanel;
+import com.threerings.msoy.game.client.QuestCompletionPanel;
 import com.threerings.msoy.game.client.GameContext;
 
 import com.threerings.msoy.world.client.MsoySprite;
@@ -1563,9 +1564,21 @@ public class RoomController extends SceneController
         _entityPopup = null;
     }
 
+    /**
+     * Pops up the UI whereby the user is presented with a quest and chooses to accept
+     * it or decline it.
+     */
     public function offerQuest (gctx :GameContext, questIntro :String, accept :Function) :void
     {
         new QuestOfferPanel(gctx, questIntro, accept).open(false);
+    }
+
+    /**
+     * Pops up the UI informing the user they completed a quest.
+     */
+    public function completeQuest (gctx :GameContext, questOutro :String, finish :Function) :void
+    {
+        new QuestCompletionPanel(gctx, questOutro, finish).open(false);
     }
 
     /** The number of pixels we scroll the room on a keypress. */

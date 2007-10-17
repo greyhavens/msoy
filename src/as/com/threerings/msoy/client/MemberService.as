@@ -42,7 +42,7 @@ public interface MemberService extends InvocationService
     function issueInvitation (arg1 :Client, arg2 :MemberName, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
-    function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_InvocationListener) :void;
+    function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
     function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;

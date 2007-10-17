@@ -265,7 +265,7 @@ public class MemberManager
     // from interface MemberProvider
     public void setAvatar (
         ClientObject caller, int avatarItemId, final float newScale,
-        final InvocationService.InvocationListener listener)
+        final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -563,7 +563,7 @@ public class MemberManager
      */
     protected void finishSetAvatar (
         final MemberObject user, final Avatar avatar, final float newScale,
-        final InvocationService.InvocationListener listener)
+        final InvocationService.ConfirmListener listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
             public void invokePersist () throws PersistenceException {
@@ -588,6 +588,7 @@ public class MemberManager
                 user.setAvatar(avatar);
                 user.avatarState = null; // clear out the state
                 updateOccupantInfo(user);
+                listener.requestProcessed();
             }
 
             public void handleFailure (Exception pe) {
