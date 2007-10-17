@@ -14,7 +14,7 @@ public class Quest
     public var payout :int;
 
     public function Quest (questId :String, trigger :String, status :String, intro :String,
-                           summary :String, extro :String, payout :uint)
+                           summary :String, outro :String, payout :uint)
     {
         this.questId = questId;
         this.trigger = trigger;
