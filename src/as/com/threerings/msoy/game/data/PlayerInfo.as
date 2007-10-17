@@ -8,21 +8,22 @@ import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.whirled.data.WhirledOccupantInfo;
+
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Contains information on occupants in a game.
  */
 public class PlayerInfo extends OccupantInfo
+    implements WhirledOccupantInfo
 {
     public function PlayerInfo (who :PlayerObject = null)
     {
         // only used for unserialization
     }
 
-    /**
-     * Returns the headshot URL of this member's avatar.
-     */
+    // from interface WhirledOccupantInfo
     public function getHeadshotURL () :String
     {
         return _headShot.getMediaPath();
