@@ -113,7 +113,8 @@ public class Quest
             "Wear your new Avatar",
             "Just as with decor and furni, your new item won't show in the world until you add it."
             "Choose My Stuff -> Avatars to view your avatars. Click the \"Wear Avatar\" button to change your avatar.",
-            "Congratulations! You received 200 flow for changing your avatar.",
+            "Congratulations! You received 200 flow for changing your avatar.<br><br>" +
+            "This concludes the tutorial. Unfortunately we don't yet know how to turn ourselves off, so you will need to click on the little 'X' to leave us. Good luck out there!<br><br>",
             200));
     }
 
