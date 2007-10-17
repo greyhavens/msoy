@@ -72,7 +72,7 @@ public class Tutorial extends Sprite
 
         var step :int = getStep();
 
-//        log.debug("Tutorial event [name=" + eventName + ", step=" + step + "]");
+//        log.debug("Tutorial event [name=" + event.value + ", step=" + step + "]");
 
         if (event.value == "willMinimize") {
             _minimized = true;
@@ -117,9 +117,7 @@ public class Tutorial extends Sprite
             var quest :Quest = Quest.getQuest(step);
             if (event.name == quest.questId && testCompletedStep(step)) {
                 _control.setPlayerProperty(PROP_STEP_COMPLETED, null, true);
-                if (step < Quest.getQuestCount()) {
-                    bumpStep();
-                } // else we're done! TODO: some way for an AVRG to decactivate itself?
+                bumpStep();
                 return;
             }
             log.warning("Deactivation of unexpected quest [questId=" + event.name +
@@ -136,6 +134,12 @@ public class Tutorial extends Sprite
         }
         // figure out which quest we ought to be on
         var step :int = getStep();
+        if (step >= Quest.getQuestCount()) {
+            // we're done!
+            _view.setSummary("<br><br>Tutorial Finished!<br><br>");
+            return;
+        }
+
         var quest :Quest = Quest.getQuest(step);
         var stepQuest :String = quest.getQuestId();
 
