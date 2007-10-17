@@ -139,7 +139,7 @@ public class AVRGameControlBackend extends ControlBackend
         return true;
     }
 
-    protected function offerQuest_v1 (questId :String, questIntro :String, initialStatus :String)
+    protected function offerQuest_v1 (questId :String, intro :String, initialStatus :String)
         :Boolean
     {
         if (isOnQuest(questId)) {
@@ -150,7 +150,7 @@ public class AVRGameControlBackend extends ControlBackend
             // should hopefully not happen
             return false;
         }
-        view.getRoomController().offerQuest(_gctx, questIntro, function() :void {
+        view.getRoomController().offerQuest(_gctx, intro, function() :void {
             _gameObj.avrgService.startQuest(_gctx.getClient(), questId, initialStatus,
                 loggingConfirmListener("startQuest", function () :void {
                     _mctx.displayFeedback(null, "Quest begun: " + initialStatus);
@@ -172,16 +172,23 @@ public class AVRGameControlBackend extends ControlBackend
         return true;
     }
 
-    protected function completeQuest_v1 (questId :String, payoutLevel :int) :Boolean
+    protected function completeQuest_v1 (questId :String, outro :String, payout :int) :Boolean
     {
         if (!isOnQuest(questId)) {
             return false;
         }
-        _gameObj.avrgService.completeQuest(
-            _gctx.getClient(), questId, payoutLevel, loggingConfirmListener(
-                "completeQuest", function () :void {
-                    _mctx.displayFeedback(null, "Quest completed!");
-                }));
+        var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;
+        if (view == null) {
+            // should hopefully not happen
+            return false;
+        }
+        view.getRoomController().completeQuest(_gctx, outro, function() :void {
+            _gameObj.avrgService.completeQuest(
+                _gctx.getClient(), questId, payout, loggingConfirmListener(
+                    "completeQuest", function () :void {
+                        _mctx.displayFeedback(null, "Quest completed!");
+                    }));
+            });
         return true;
     }
 
