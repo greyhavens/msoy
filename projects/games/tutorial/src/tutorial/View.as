@@ -42,6 +42,9 @@ public class View extends Sprite
      */
     public function init (width :Number, height :Number) :void
     {
+        _width = width;
+        _height = height;
+
         var format :TextFormat = new TextFormat();
         format.font = "Arial";
         format.size = 14;
@@ -83,7 +86,7 @@ public class View extends Sprite
 
             var square :Sprite = new Sprite();
             square.graphics.beginFill(0xFF0000);
-            square.graphics.drawRect(0, 0, SWIRL_SIZE, SWIRL_SIZE);
+            square.graphics.drawRect(0, 0, _width, SWIRL_SIZE);
             this.addChild(square);
             _clip.mask = square;
             _clip.gotoAndPlay(1, SCN_IDLE);
@@ -107,6 +110,8 @@ public class View extends Sprite
     {
     }
 
+    protected var _width :Number;
+    protected var _height :Number;
     protected var _summary :String;
     protected var _textField :TextField;
     protected var _clip :MovieClip;
