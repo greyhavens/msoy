@@ -6,6 +6,7 @@
   <property name="app.name"   value="whirled"/>
   <property name="deploy.dir" value="dist"/>
   <property name="asrc.dir"   value="src/as"/>
+  <property name="classes.dir" value="${deploy.dir}/classes"/>
 
   <!-- import some targets to enumerate library dependencies -->
   <property name="libs.dir"      value="../../${deploy.dir}/lib"/>
@@ -107,7 +108,13 @@
 
   <!-- builds our jar file -->
   <target name="dist" depends="prepare,compile,aslib">
-    <jar destfile="${deploy.dir}/${app.name}.jar" basedir="${deploy.dir}/classes"/>
+    <!-- stick all our code in one jar file -->
+    <jar file="${deploy.dir}/${app.name}-code.jar" basedir="${classes.dir}">
+      <include name="com/**"/>
+      <include name="*.properties"/>
+      <include name="rsrc/**/*.properties"/>
+      <include name="rsrc/**/*.tmpl"/>
+    </jar>
     <!-- copy the bits needed for Swiftly project building into the right location -->
     <copy file="${deploy.dir}/swiftly-whirled-config.xml"
           tofile="${swiftly.sdk.path}/etc/whirled-config.xml"/> 
