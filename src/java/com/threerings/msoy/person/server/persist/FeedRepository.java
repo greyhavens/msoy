@@ -15,7 +15,10 @@ import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.operator.Conditionals;
+import com.samskivert.jdbc.depot.operator.Logic;
+import com.samskivert.jdbc.depot.operator.SQLOperator;
 
 import com.threerings.msoy.person.util.FeedMessageType;
 
@@ -40,13 +43,11 @@ public class FeedRepository extends DepotRepository
         throws PersistenceException
     {
         ArrayList<FeedMessageRecord> messages = new ArrayList<FeedMessageRecord>();
-        messages.addAll(findAll(GlobalFeedMessageRecord.class));
-        messages.addAll(findAll(FriendFeedMessageRecord.class,
-                                new Where(new Conditionals.In(FriendFeedMessageRecord.ACTOR_ID_C,
-                                                              friendIds))));
-        messages.addAll(findAll(GroupFeedMessageRecord.class,
-                                new Where(new Conditionals.In(GroupFeedMessageRecord.GROUP_ID_C,
-                                                              groupIds))));
+        loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, since);
+        loadFeedMessages(messages, FriendFeedMessageRecord.class,
+                         new Conditionals.In(FriendFeedMessageRecord.ACTOR_ID_C, friendIds), since);
+        loadFeedMessages(messages, GroupFeedMessageRecord.class,
+                         new Conditionals.In(GroupFeedMessageRecord.GROUP_ID_C, groupIds), since);
         return messages;
     }
 
@@ -95,6 +96,26 @@ public class FeedRepository extends DepotRepository
         throws PersistenceException
     {
         // TODO: delete records older than FEED_EXPIRATION_PERIOD in all tables
+    }
+
+    /**
+     * Helper function for {@link #loadMemberFeed}.
+     */
+    protected void loadFeedMessages (List<FeedMessageRecord> messages,
+                                     Class<? extends FeedMessageRecord> pClass,
+                                     SQLOperator main, Timestamp since)
+        throws PersistenceException
+    {
+        ArrayList<SQLOperator> whereBits = new ArrayList<SQLOperator>();
+        if (main != null) {
+            whereBits.add(main);
+        }
+        if (since != null) {
+            whereBits.add(new Conditionals.GreaterThanEquals(
+                              new ColumnExp(pClass, FeedMessageRecord.POSTED), since));
+        }
+        SQLOperator[] bits = whereBits.toArray(new SQLOperator[whereBits.size()]);
+        messages.addAll(findAll(pClass, new Where(new Logic.And(bits))));
     }
 
     @Override // from DepotRepository
