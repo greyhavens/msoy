@@ -5,15 +5,13 @@ package com.threerings.msoy.person.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.person.util.FeedMessageType;
-
 /**
  * Contains information on a feed message.
  */
 public class FeedMessage
     implements IsSerializable
 {
-    /** The numeric code indicating the type of this message. See {@link FeedMessageType}. */
+    /** The numeric code indicating the type of this message. See FeedMessageType. */
     public int type;
 
     /** The arguments to this feed message. */
