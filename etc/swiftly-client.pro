@@ -15,7 +15,7 @@
 -injars ../dist/lib/vilya-parlor.jar(**/parlor/util/**)
 -injars ../dist/lib/vilya-stats.jar(!META-INF/*,!**/tools/**,!**/persist/**)
 -injars ../dist/lib/threerings.jar(!META-INF/*,**/threerings/util/**)
--injars ../dist/lib/whirled.jar(**/WhirledOccupantInfo.class)
+-injars ../dist/lib/whirled-code.jar(**/WhirledOccupantInfo.class)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class,
     **/user/client/rpc/SerializableException.class)
 -injars ../dist/msoy-code.jar(
