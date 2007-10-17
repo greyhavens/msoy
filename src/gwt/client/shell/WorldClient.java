@@ -128,9 +128,8 @@ public class WorldClient extends Widget
         Page.displayingFlash = false;
 
         if (_isFlashClientPresent || _jclient != null) {
-//             int clientWidth = Math.max(
-//                 MIN_CLIENT_WIDTH, Window.getClientWidth() - MAX_CONTENT_WIDTH);
-            int clientWidth = MIN_CLIENT_WIDTH;
+            int clientWidth = Math.max(
+                MIN_CLIENT_WIDTH, Window.getClientWidth() - MAX_CONTENT_WIDTH);
             RootPanel.get("client").setWidth(clientWidth + "px");
             RootPanel.get("content").setWidth(Window.getClientWidth() - clientWidth + "px");
             clientMinimized(true);
