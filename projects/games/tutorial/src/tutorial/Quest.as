@@ -63,7 +63,8 @@ public class Quest
             "Buy new Decor",
             "Your room's background image is known as decor. Let's go shopping.",
             "Choose Catalog -> Decor for a selection of new room settings. Buy one you like.",
-            null, 0));
+            "Good. You now own a piece of decor."
+            0));
         _quests.push(new Quest(
             "installDecor",
             "decorInstalled",
@@ -78,14 +79,15 @@ public class Quest
             "buyFurni",
             "furniBought",
             "Buy Furniture",
-            "Furniture adds depth and personality to a room.<br><br>Choose Catalog -> Furniture to find something you like.",
+            "Furniture adds depth and personality to a room. Let's shop some more.",
             "Choose Catalog -> Furniture to find something you like.",
-            null, 0));
+            "We now have furniture to install in our room.",
+            0));
         _quests.push(new Quest(
             "installFurni",
             "furniInstalled",
             "Install your furniture",
-            "Choose My Stuff -> Furniture to browse your furniture.<br><br>Clicking 'Add to Room' will place the item in the center of your room.",
+            "The furniture won't show up until you add it to your room.<br><br>We'll do that next.",
             "Choose My Stuff -> Furniture to browse your furniture. Clicking 'Add to Room' will place the item in the center of your room.",
             "Excellent. You received 150 flow for adding furniture to your room.",
             300));
@@ -93,27 +95,26 @@ public class Quest
             "placeFurni",
             "editorClosed",
             "Place your furniture",
+            "The new furniture appears in the middle of the room until you drag it to where you want it to be.",
             "Click and drag your furni to place it.  Click the Close box on the Room Editing dialog box to return to your room.",
-            "Click and drag your furni to place it.  Click the Close box on the Room Editing dialog box to return to your room.",
-            "Congratulations! You received 150 flow for positioning the furniture just right.",
+            "Congratulations! You received 150 flow for adjusting the furniture's position.",
             300));
         _quests.push(new Quest(
             "buyAvatar",
             "avatarBought",
             "Buy a new Avatar",
-            "Find a new face. Click on Catalog -> Avatars to browse the selection. Purchase one you like.",
+            "Find a new face. There's lots to choose from in the catalog.",
             "Click on Catalog -> Avatars to browse the selection. Purchase one you like.",
-            null, 0));
+            "Great. We're ready to switch into your new avatar.",
+            0));
         _quests.push(new Quest(
             "wearAvatar",
             "avatarInstalled",
             "Wear your new Avatar",
-            "Choose My Stuff -> Avatars to view your avatars. Click the \"Wear Avatar\" button to change your avatar.",
+            "Just as with decor and furni, your new item won't show in the world until you add it."
             "Choose My Stuff -> Avatars to view your avatars. Click the \"Wear Avatar\" button to change your avatar.",
             "Congratulations! You received 200 flow for changing your avatar.",
             200));
-
-        // TODO: dump friendInvited?
     }
 
     protected static var _quests :Array;
