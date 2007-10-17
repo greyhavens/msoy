@@ -847,6 +847,7 @@
     <delete dir="pages/clients"/>
     <ant dir="projects/neighborhood" target="clean" inheritAll="false"/>
     <ant dir="projects/games/tutorial" target="clean" inheritAll="false"/>
+    <delete file="pages/media/static/game/Tutorial.swf"/>
   </target>
 
   <!-- cleans out the application and all subprojects -->
