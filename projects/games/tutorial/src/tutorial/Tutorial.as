@@ -149,7 +149,7 @@ public class Tutorial extends Sprite
             if (completed == getStep()) {
                 var quest :Quest = Quest.getQuest(completed);
                 _control.setPlayerProperty(PROP_STEP_COMPLETED, null, true);
-                _control.completeQuest(quest.questId, quest.payout);
+                _control.completeQuest(quest.questId, quest.outro, quest.payout);
                 bumpStep();
                 return true;
             }

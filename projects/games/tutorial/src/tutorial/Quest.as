@@ -9,6 +9,7 @@ public class Quest
     public var trigger :String;
     public var status :String;
     public var intro :String;
+    public var outro :String;
     public var summary :String;
     public var payout :int;
 
@@ -20,6 +21,7 @@ public class Quest
         this.status = status;
         this.intro = intro;
         this.summary = summary;
+        this.outro = outro;
         this.payout = payout;
     }
 
