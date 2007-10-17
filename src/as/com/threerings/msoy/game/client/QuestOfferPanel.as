@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.client {
 
 import mx.controls.Button;
+import mx.controls.Text;
 
 import com.threerings.util.CommandEvent;
 import com.threerings.util.MessageBundle;
@@ -33,8 +34,10 @@ public class QuestOfferPanel extends FloatingPanel
     {
         super.createChildren();
 
-        addChild(MsoyUI.createLabel(Msgs.GAME.get("m.quest_offer")));
-        addChild(MsoyUI.createLabel(_intro));
+        var text :Text = new Text();
+        text.htmlText = _intro;
+        text.width = 200;
+        this.addChild(text);
 
         addButtons(DECLINE_BUTTON, ACCEPT_BUTTON);
     }
