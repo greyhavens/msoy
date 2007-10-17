@@ -509,7 +509,7 @@
   <!-- builds our tutorial game -->
   <target name="tutorial" depends="whirled">
     <ant dir="projects/games/tutorial" target="dist" inheritAll="false"/>
-    <copy file="dist/tutorial.swf" todir="pages/media/static/game"/>
+    <copy file="dist/Tutorial.swf" todir="pages/media/static/game"/>
   </target>
 
   <!-- builds the ActionScript documention -->
