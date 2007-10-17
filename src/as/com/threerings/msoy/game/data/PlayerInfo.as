@@ -6,17 +6,16 @@ package com.threerings.msoy.game.data {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.msoy.data.MemberInfo;
-import com.threerings.msoy.data.MemberObject;
+import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
- * Extends MemberInfo with game-specific information.
+ * Contains information on occupants in a game.
  */
-public class GameMemberInfo extends MemberInfo
+public class PlayerInfo extends OccupantInfo
 {
-    public function GameMemberInfo (who :MemberObject = null)
+    public function PlayerInfo (who :PlayerObject = null)
     {
         // only used for unserialization
     }
@@ -29,14 +28,14 @@ public class GameMemberInfo extends MemberInfo
         return _headShot.getMediaPath();
     }
 
-    // documentation inherited
+    // from OccupantInfo
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
         _headShot = (ins.readObject() as MediaDesc);
     }
 
-    // from interface Streamable
+    // from OccupantInfo
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);

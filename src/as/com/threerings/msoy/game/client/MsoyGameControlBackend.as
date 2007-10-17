@@ -14,7 +14,7 @@ import com.whirled.client.WhirledGameControlBackend;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
-import com.threerings.msoy.game.data.GameMemberInfo;
+import com.threerings.msoy.game.data.PlayerInfo;
 
 /**
  * Implements the various Msoy specific parts of the Whirled Game backend.
@@ -45,7 +45,7 @@ public class MsoyGameControlBackend extends WhirledGameControlBackend
     protected function getHeadShot_v1 (occupant :int, callback :Function) :void
     {
         validateConnected();
-        var info :GameMemberInfo = _ezObj.occupantInfo.get(occupant) as GameMemberInfo;
+        var info :PlayerInfo = _ezObj.occupantInfo.get(occupant) as PlayerInfo;
         if (info != null) {
             var headshot :Headshot = _headshots[occupant];
             if (headshot == null) {

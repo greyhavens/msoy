@@ -7,6 +7,8 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 
 import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.whirled.data.GameData;
@@ -140,6 +142,12 @@ public class PlayerObject extends BodyObject
     public Name getVisibleName ()
     {
         return memberName;
+    }
+
+    @Override // from BodyObject
+    public OccupantInfo createOccupantInfo (PlaceObject plobj)
+    {
+        return new PlayerInfo(this);
     }
 
     // AUTO-GENERATED: METHODS START

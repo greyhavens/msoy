@@ -29,7 +29,6 @@ import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
-import com.threerings.msoy.game.data.GameMemberInfo;
 import com.threerings.msoy.game.data.GameSummary;
 
 import com.threerings.msoy.notify.data.Notification;
@@ -311,8 +310,6 @@ public class MemberObject extends MsoyBodyObject
     {
         if (plobj instanceof RoomObject) {
             return new WorldMemberInfo(this);
-        } else if (plobj instanceof GameObject) {
-            return new GameMemberInfo(this);
         } else {
             return new MemberInfo(this);
         }
