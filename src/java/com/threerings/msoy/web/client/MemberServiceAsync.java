@@ -70,4 +70,9 @@ public interface MemberServiceAsync
      * The asynchronous version of {@link MemberService#optOut}.
      */
     public void optOut (Invitation invite, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link MemberService#loadFeed}.
+     */
+    public void loadFeed (WebIdent ident, int cutoffDays, AsyncCallback callback);
 }

@@ -51,6 +51,7 @@ import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.MailManager;
+import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
@@ -120,6 +121,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRepo;
+
+    /** The Msoy feed repository. */
+    public static FeedRepository feedRepo;
 
     /** The Msoy item manager. */
     public static ItemManager itemMan = new ItemManager();
@@ -275,6 +279,7 @@ public class MsoyServer extends MsoyBaseServer
         commentRepo = new CommentRepository(perCtx, memberRepo);
         trophyRepo = new TrophyRepository(perCtx);
         swiftlyRepo = new SwiftlyRepository(perCtx);
+        feedRepo = new FeedRepository(perCtx);
 
         // initialize the swiftly invoker
         swiftlyInvoker = new Invoker("swiftly_invoker", omgr);

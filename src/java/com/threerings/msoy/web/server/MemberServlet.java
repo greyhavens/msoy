@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.server;
 
 import java.net.URLEncoder;
+import java.sql.Timestamp;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +40,7 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
@@ -65,6 +67,7 @@ import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
+import com.threerings.msoy.person.data.FeedMessage;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.data.Group;
@@ -560,6 +563,35 @@ public class MemberServlet extends MsoyServiceServlet
             MsoyServer.memberRepo.optOutInvite(invite);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "optOut failed [inviteId=" + invite.inviteId + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
+    // from interface MemberService
+    public List loadFeed (WebIdent ident, int cutoffDays)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        try {
+            ArrayList<FeedMessage> messages = new ArrayList<FeedMessage>();
+            IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
+            IntSet groupIds = null; // TODO: call groupRepo.getMemberships(), convert to IntSet
+            Timestamp since = new Timestamp(cutoffDays * 24 * 60 * 60 * 1000L);
+
+            for (FeedMessageRecord record :
+                     MsoyServer.feedRepo.loadMemberFeed(mrec.memberId, friendIds, groupIds, since)) {
+                messages.add(record.toMessage());
+                // TODO: note member and group ids for name resolution
+            }
+
+            // TODO: load messages for member, resolve MemberName for members, GroupName for groups,
+            // fill them back into the runtime feed message records
+
+            return messages;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Load feed failed [memberId=" + mrec.memberId + "]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }

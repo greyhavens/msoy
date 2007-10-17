@@ -239,9 +239,8 @@ public class GroupRepository extends DepotRepository
 
     /**
      * Fetches the membership details for a given group and member, or null.
-     *
      */
-    public GroupMembershipRecord getMembership(int groupId, int memberId)
+    public GroupMembershipRecord getMembership (int groupId, int memberId)
         throws PersistenceException
     {
         return load(GroupMembershipRecord.class,
@@ -250,8 +249,8 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Remove a given person as member of a given group. This method returns
-     * false if there was no membership to cancel.
+     * Remove a given person as member of a given group. This method returns false if there was no
+     * membership to cancel.
      */
     public boolean leaveGroup (int groupId, int memberId)
         throws PersistenceException

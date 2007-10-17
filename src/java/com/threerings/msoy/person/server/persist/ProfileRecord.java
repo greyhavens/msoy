@@ -92,6 +92,13 @@ public class ProfileRecord extends PersistentRecord
     public static final ColumnExp BIRTHDAY_C =
         new ColumnExp(ProfileRecord.class, BIRTHDAY);
 
+    /** The column identifier for the {@link #showAge} field. */
+    public static final String SHOW_AGE = "showAge";
+
+    /** The qualified column identifier for the {@link #showAge} field. */
+    public static final ColumnExp SHOW_AGE_C =
+        new ColumnExp(ProfileRecord.class, SHOW_AGE);
+
     /** The column identifier for the {@link #location} field. */
     public static final String LOCATION = "location";
 

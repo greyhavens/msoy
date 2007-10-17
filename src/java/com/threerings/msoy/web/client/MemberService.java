@@ -93,4 +93,13 @@ public interface MemberService extends RemoteService
      */
     public void optOut (Invitation invite)
         throws ServiceException;
+
+    /**
+     * Loads all items in a player's inventory of the specified type and optionally restricted to
+     * the specified suite.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.person.data.FeedMessage>
+     */
+    public List loadFeed (WebIdent ident, int cutoffDays)
+        throws ServiceException;
 }
