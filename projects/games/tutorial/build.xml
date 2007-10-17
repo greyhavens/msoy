@@ -3,17 +3,30 @@
 
   <!-- define some basic project parameters -->
   <property name="app.name" value="Tutorial"/>
-  <property name="root.path" value="../../.."/>
-  <property name="flex.path" value="${root.path}/tools/extern/flex_sdk"/>
+  <property name="build.root" value="../../.."/>
+  <property name="flex.path" value="${build.root}/tools/extern/flex_sdk"/>
   <property name="app.source-dir" value="src"/>
   <property name="app.source-suffix" value="as"/>
   <property name="app.package-dir" value="tutorial"/>
 
+  <!-- determines whether the top-level aslib has been built -->
+  <target name="checktop">
+    <condition property="aslib.built">
+      <available file="${build.root}/dist/whirled.swc"/>
+    </condition>
+  </target>
+
+  <!-- builds the top-level aslib if necessary -->
+  <target name="buildtop" depends="checktop" unless="aslib.built">
+    <echo>Building the Whirled shared Flash library...</echo>
+    <ant dir="${build.root}" target="aslib"/>
+  </target>
+
   <!-- builds our Flash app -->
-  <target name="compile">
+  <target name="compile" depends="buildtop">
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
-      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="${build.root}/etc/msoy-config.xml"/>
       <arg value="-compiler.source-path=${app.source-dir}"/>
       <arg value="-file-specs"/>
       <arg value="${app.source-dir}/${app.package-dir}/${app.name}.${app.source-suffix}"/>
@@ -30,7 +43,8 @@
 
   <!-- builds our swf and plops it up at the top level -->
   <target name="dist" depends="compile">
-    <copy file="${app.name}.swf" todir="${root.path}/dist"/>
+    <copy file="${app.name}.swf" tofile="${build.root}/dist/tutorial.swf"/>
   </target>
+
 
 </project>

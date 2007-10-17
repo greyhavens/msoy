@@ -507,9 +507,9 @@
   </target>
 
   <!-- builds our tutorial game -->
-  <target name="tutorial" depends="whirled">
+  <target name="tutorial" depends="prepare,whirled">
     <ant dir="projects/games/tutorial" target="dist" inheritAll="false"/>
-    <copy file="dist/Tutorial.swf" todir="pages/media/static/game"/>
+    <copy file="dist/tutorial.swf" todir="pages/media/static/game"/>
   </target>
 
   <!-- builds the ActionScript documention -->
@@ -847,7 +847,7 @@
     <delete dir="pages/clients"/>
     <ant dir="projects/neighborhood" target="clean" inheritAll="false"/>
     <ant dir="projects/games/tutorial" target="clean" inheritAll="false"/>
-    <delete file="pages/media/static/game/Tutorial.swf"/>
+    <delete file="pages/media/static/game/tutorial.swf"/>
   </target>
 
   <!-- cleans out the application and all subprojects -->
