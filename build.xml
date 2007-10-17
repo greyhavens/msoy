@@ -507,7 +507,7 @@
   </target>
 
   <!-- builds our tutorial game -->
-  <target name="tutorial">
+  <target name="tutorial" depends="whirled">
     <ant dir="projects/games/tutorial" target="dist" inheritAll="false"/>
     <copy file="dist/tutorial.swf" todir="pages/media/static/game"/>
   </target>
@@ -795,7 +795,7 @@
   </target>
 
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="avatarviewer,videoviewer,decorviewer,neighborhood">
+  <target name="flashapps" depends="avatarviewer,videoviewer,decorviewer,neighborhood,tutorial">
     <antcall target="asclient"><param name="type" value="world"/></antcall>
   </target>
 
