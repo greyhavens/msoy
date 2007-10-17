@@ -117,7 +117,9 @@ public class Tutorial extends Sprite
             var quest :Quest = Quest.getQuest(step);
             if (event.name == quest.questId && testCompletedStep(step)) {
                 _control.setPlayerProperty(PROP_STEP_COMPLETED, null, true);
-                bumpStep();
+                if (step < Quest.getQuestCount()) {
+                    bumpStep();
+                } // else we're done! TODO: some way for an AVRG to decactivate itself?
                 return;
             }
             log.warning("Deactivation of unexpected quest [questId=" + event.name +
