@@ -24,9 +24,9 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.web.data.ItemGiftPayload;
-import com.threerings.msoy.web.data.MailMessage;
-import com.threerings.msoy.web.data.MailPayload;
+import com.threerings.msoy.person.data.ItemGiftPayload;
+import com.threerings.msoy.person.data.MailMessage;
+import com.threerings.msoy.person.data.MailPayload;
 
 import client.shell.CShell;
 import client.util.BorderedWidget;

@@ -34,12 +34,12 @@ import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.person.data.BlurbData;
+import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.data.ProfileLayout;
 import com.threerings.msoy.web.client.ProfileService;
-import com.threerings.msoy.web.data.BlurbData;
 import com.threerings.msoy.web.data.GameRating;
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.Profile;
-import com.threerings.msoy.web.data.ProfileLayout;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 

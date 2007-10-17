@@ -32,13 +32,13 @@ import com.samskivert.util.Tuple;
 import com.facebook.api.FacebookRestClient;
 import com.facebook.api.ProfileField;
 
-import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.web.data.Profile;
+import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.data.ServiceException;
 
 import static com.threerings.msoy.Log.log;

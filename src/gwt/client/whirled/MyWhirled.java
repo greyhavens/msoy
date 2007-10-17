@@ -39,10 +39,10 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
+import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.Profile;
-import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.MyWhirledData;
+import com.threerings.msoy.web.data.SceneCard;
 
 import com.threerings.msoy.data.all.MemberName;
 

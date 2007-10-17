@@ -7,9 +7,9 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 
-import com.threerings.msoy.web.client.ProfileService;
-import com.threerings.msoy.web.data.BlurbData;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.person.data.BlurbData;
+import com.threerings.msoy.web.client.ProfileService;
 
 import client.profile.HoodBlurb;
 import client.util.HeaderBox;

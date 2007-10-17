@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.person.data;
 
 
 import com.google.gwt.user.client.rpc.IsSerializable;

@@ -17,9 +17,7 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.presents.server.InvocationException;
 
-import com.threerings.msoy.web.data.MailFolder;
-import com.threerings.msoy.web.data.MailMessage;
-import com.threerings.msoy.web.data.MailPayload;
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -28,7 +26,9 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.JSONMarshaller;
 import com.threerings.msoy.server.util.MailSender;
 
-import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.person.data.MailFolder;
+import com.threerings.msoy.person.data.MailMessage;
+import com.threerings.msoy.person.data.MailPayload;
 import com.threerings.msoy.person.server.persist.MailFolderRecord;
 import com.threerings.msoy.person.server.persist.MailMessageRecord;
 import com.threerings.msoy.person.server.persist.MailRepository;

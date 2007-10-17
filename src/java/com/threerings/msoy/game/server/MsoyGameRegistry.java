@@ -28,7 +28,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
-import com.threerings.msoy.web.data.TrophyAwardPayload;
+import com.threerings.msoy.person.data.TrophyAwardPayload;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRecord;

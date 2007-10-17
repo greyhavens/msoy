@@ -7,9 +7,9 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-import com.threerings.msoy.web.data.MailFolder;
-import com.threerings.msoy.web.data.MailMessage;
-import com.threerings.msoy.web.data.MailPayload;
+import com.threerings.msoy.person.data.MailFolder;
+import com.threerings.msoy.person.data.MailMessage;
+import com.threerings.msoy.person.data.MailPayload;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -24,7 +24,7 @@ public interface MailService extends RemoteService
     /**
      * Returns all folders for the specified member.
      *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.MailFolder>
+     * @gwt.typeArgs <com.threerings.msoy.person.data.MailFolder>
      */
     public List getFolders (WebIdent ident)
         throws ServiceException;
@@ -35,7 +35,7 @@ public interface MailService extends RemoteService
     /**
      * Returns all message headers in the specified folder.
      *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.MailHeaders>
+     * @gwt.typeArgs <com.threerings.msoy.person.data.MailHeaders>
      */
     public List getHeaders (WebIdent ident, int folderId)
         throws ServiceException;

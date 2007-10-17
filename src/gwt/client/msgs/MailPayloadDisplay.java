@@ -6,8 +6,8 @@ package client.msgs;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.data.MailPayload;
-import com.threerings.msoy.web.data.MailMessage;
+import com.threerings.msoy.person.data.MailMessage;
+import com.threerings.msoy.person.data.MailPayload;
 
 /**
  * Base class for payload visualizers. Concrete subclasses of this object are configured with a

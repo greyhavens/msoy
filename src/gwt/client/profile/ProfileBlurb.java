@@ -26,8 +26,8 @@ import com.threerings.gwt.ui.Anchor;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
+import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.ProfileService;
-import com.threerings.msoy.web.data.Profile;
 
 import client.msgs.MailComposition;
 import client.shell.Application;

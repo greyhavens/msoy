@@ -15,6 +15,8 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 
+import com.threerings.presents.data.InvocationCodes;
+
 import com.threerings.msoy.person.server.persist.MailMessageRecord;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -32,12 +34,11 @@ import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
+import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.web.client.ItemService;
-import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.TagHistory;
-import com.threerings.presents.data.InvocationCodes;
+import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Provides the server implementation of {@link ItemService}.

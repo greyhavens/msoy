@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.web.data.MailMessage;
+import com.threerings.msoy.person.data.MailMessage;
 
-import com.threerings.msoy.web.data.TrophyAwardPayload;
+import com.threerings.msoy.person.data.TrophyAwardPayload;
 
 import client.game.GameDetailPanel;
 import client.shell.Application;

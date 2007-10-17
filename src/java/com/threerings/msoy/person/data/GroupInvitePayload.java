@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.person.data;
 
 /**
  * This object holds the extra data associated with a single group invitation message.

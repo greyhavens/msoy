@@ -27,10 +27,10 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.data.MailFolder;
-import com.threerings.msoy.web.data.MailHeaders;
-import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.person.data.MailFolder;
+import com.threerings.msoy.person.data.MailHeaders;
+import com.threerings.msoy.person.data.MailMessage;
 
 import client.msgs.MailComposition;
 import client.msgs.MailPayloadDisplay;

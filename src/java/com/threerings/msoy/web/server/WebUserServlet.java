@@ -17,19 +17,20 @@ import com.samskivert.net.MailUtil;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.person.data.MailFolder;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;

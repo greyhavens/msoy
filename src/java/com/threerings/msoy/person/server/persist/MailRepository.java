@@ -23,8 +23,8 @@ import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 
+import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.web.data.MailFolder;
 
 import static com.threerings.msoy.Log.log;
 

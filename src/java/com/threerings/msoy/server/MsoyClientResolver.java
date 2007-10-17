@@ -15,13 +15,8 @@ import com.threerings.stats.data.StatSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
-import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.person.server.persist.MailRepository;
-import com.threerings.msoy.server.persist.MemberRecord;
-
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.web.data.MailFolder;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -29,9 +24,14 @@ import com.threerings.msoy.item.server.persist.AvatarRecord;
 
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
+
 import static com.threerings.msoy.Log.log;
 
 /**

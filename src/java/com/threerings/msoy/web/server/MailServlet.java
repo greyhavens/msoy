@@ -11,18 +11,19 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
-import com.threerings.msoy.person.server.persist.MailFolderRecord;
-import com.threerings.msoy.person.server.persist.MailMessageRecord;
-import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
+import com.threerings.msoy.person.data.MailFolder;
+import com.threerings.msoy.person.data.MailHeaders;
+import com.threerings.msoy.person.data.MailMessage;
+import com.threerings.msoy.person.data.MailPayload;
+import com.threerings.msoy.person.server.persist.MailFolderRecord;
+import com.threerings.msoy.person.server.persist.MailMessageRecord;
+import com.threerings.msoy.person.server.persist.MailRepository;
+
 import com.threerings.msoy.web.client.MailService;
-import com.threerings.msoy.web.data.MailFolder;
-import com.threerings.msoy.web.data.MailHeaders;
-import com.threerings.msoy.web.data.MailMessage;
-import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 

@@ -6,8 +6,8 @@ package client.profile;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 
+import com.threerings.msoy.person.data.BlurbData;
 import com.threerings.msoy.web.client.ProfileService;
-import com.threerings.msoy.web.data.BlurbData;
 
 /**
  * Lays out a profile page in two columns.

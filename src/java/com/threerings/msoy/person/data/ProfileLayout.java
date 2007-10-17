@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.person.data;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class ProfileLayout implements IsSerializable
     /**
      * {@link BlurbData} records for every blurb on this page.
      *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.BlurbData>
+     * @gwt.typeArgs <com.threerings.msoy.person.data.BlurbData>
      */
     public List blurbs;
 }

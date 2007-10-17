@@ -10,9 +10,9 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 
+import com.threerings.msoy.person.data.ProfileLayout;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.ProfileService;
-import com.threerings.msoy.web.data.ProfileLayout;
 
 import client.util.MsoyUI;
 import client.msgs.MsgsEntryPoint;

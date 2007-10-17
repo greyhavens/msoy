@@ -5,8 +5,8 @@ package client.msgs;
 
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.person.data.MailPayload;
 
 /**
  * Assist the {@link MailComposition} UI in configuring the state of a {@link MailPayload}.

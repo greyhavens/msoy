@@ -5,7 +5,7 @@ package client.mail;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.web.data.MailFolder;
+import com.threerings.msoy.person.data.MailFolder;
 
 import client.msgs.MsgsEntryPoint;
 import client.shell.Args;

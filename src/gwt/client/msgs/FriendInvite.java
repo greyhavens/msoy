@@ -15,10 +15,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.web.data.FriendInvitePayload;
-import com.threerings.msoy.web.data.MailMessage;
-import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.person.data.FriendInvitePayload;
+import com.threerings.msoy.person.data.MailMessage;
+import com.threerings.msoy.person.data.MailPayload;
 
 public abstract class FriendInvite
 {

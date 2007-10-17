@@ -35,7 +35,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-import com.threerings.msoy.web.data.FriendInvitePayload;
+import com.threerings.msoy.person.data.FriendInvitePayload;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.server.persist.GroupRecord;
