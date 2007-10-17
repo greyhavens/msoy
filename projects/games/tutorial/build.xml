@@ -4,11 +4,23 @@
   <!-- define some basic project parameters -->
   <property name="app.name" value="Tutorial"/>
   <property name="root.path" value="../../.."/>
+  <property name="flex.path" value="${root.path}/tools/extern/flex_sdk"/>
   <property name="app.source-dir" value="src"/>
+  <property name="app.source-suffix" value="as"/>
   <property name="app.package-dir" value="tutorial"/>
 
-  <!-- include the standard build script -->
-  <import file="../../whirled/etc/project-include.xml"/>
+  <!-- builds our Flash app -->
+  <target name="compile">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=${app.source-dir}"/>
+      <arg value="-file-specs"/>
+      <arg value="${app.source-dir}/${app.package-dir}/${app.name}.${app.source-suffix}"/>
+      <arg value="-output"/>
+      <arg value="${app.name}.swf"/>
+    </java>
+  </target>
 
   <!-- builds our swf and plops it up at the top level -->
   <target name="dist" depends="compile">
