@@ -59,6 +59,10 @@ public class MailRepository extends DepotRepository
     public Tuple<Integer, Integer> getMessageCount (final int memberId, final int folderId)
         throws PersistenceException
     {
+        // make sure MailMessageRecord is resolved (TODO: depot should do this automatically based
+        // on the @Computed(shadowOf=class) annotation)
+        _ctx.getMarshaller(MailMessageRecord.class);
+
         int read = 0, unread = 0;
         List<MailCountRecord> records = findAll(
             MailCountRecord.class,
