@@ -33,6 +33,10 @@ public class GlobalFeedMessageRecord extends FeedMessageRecord
         new ColumnExp(GlobalFeedMessageRecord.class, POSTED);
     // AUTO-GENERATED: FIELDS END
 
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 1;
+
     @Override // from FeedMessageRecord
     protected FeedMessage createMessage ()
     {

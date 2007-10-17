@@ -44,6 +44,10 @@ public class GroupFeedMessageRecord extends FeedMessageRecord
         new ColumnExp(GroupFeedMessageRecord.class, POSTED);
     // AUTO-GENERATED: FIELDS END
 
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 1;
+
     /** The group id of the originator of this message. */
     public int groupId;
 
