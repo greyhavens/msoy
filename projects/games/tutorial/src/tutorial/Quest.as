@@ -63,7 +63,7 @@ public class Quest
             "Buy new Decor",
             "Your room's background image is known as decor. Let's go shopping.",
             "Choose Catalog -> Decor for a selection of new room settings. Buy one you like.",
-            "Good. You now own a piece of decor."
+            "Good. You now own a piece of decor.",
             0));
         _quests.push(new Quest(
             "installDecor",
@@ -111,7 +111,7 @@ public class Quest
             "wearAvatar",
             "avatarInstalled",
             "Wear your new Avatar",
-            "Just as with decor and furni, your new item won't show in the world until you add it."
+            "Just as with decor and furni, your new item won't show in the world until you add it.",
             "Choose My Stuff -> Avatars to view your avatars. Click the \"Wear Avatar\" button to change your avatar.",
             "Congratulations! You received 200 flow for changing your avatar.<br><br>" +
             "This concludes the tutorial. Unfortunately we don't yet know how to turn ourselves off, so you will need to click on the little 'X' to leave us. Good luck out there!<br><br>",
