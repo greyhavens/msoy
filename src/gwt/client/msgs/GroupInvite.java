@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.data.all.GroupMembersh;
+import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.data.GroupInvitePayload;
