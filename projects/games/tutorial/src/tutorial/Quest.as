@@ -76,20 +76,20 @@ public class Quest
             "buyFurni",
             "furniBought",
             "Buy Furniture",
-            "Furniture adds depth and personality to a room. Choose Catalog -> Furniture to find something you like.",
+            "Furniture adds depth and personality to a room.<br><br>Choose Catalog -> Furniture to find something you like.",
             "Choose Catalog -> Furniture to find something you like.",
             null, 0));
         _quests.push(new Quest(
             "installFurni",
             "furniInstalled",
             "Install your furniture",
-            "Choose My Stuff -> Furniture to browse your furniture. Clicking 'Add to Room' will place the item in the center of your room.",
+            "Choose My Stuff -> Furniture to browse your furniture.<br><br>Clicking 'Add to Room' will place the item in the center of your room.",
             "Choose My Stuff -> Furniture to browse your furniture. Clicking 'Add to Room' will place the item in the center of your room.",
             "Excellent. You received 150 flow for adding furniture to your room.",
             300));
         _quests.push(new Quest(
             "placeFurni",
-            "", // TODO TODO
+            "editorClosed",
             "Place your furniture",
             "Click and drag your furni to place it.  Click the Close box on the Room Editing dialog box to return to your room.",
             "Click and drag your furni to place it.  Click the Close box on the Room Editing dialog box to return to your room.",
