@@ -111,6 +111,19 @@ public class Tutorial extends Sprite
 //        log.debug("quest state changed [id=" + event.name + ", value=" + event.value + "]");
         // we've acquired a new active quest or dropped an old one; update our display
         setActiveQuest(event.value ? Quest.getQuest(getStep()) : null);
+
+        if (!event.value) {
+            var step :int = getStep();
+            var quest :Quest = Quest.getQuest(step);
+            if (event.name == quest.questId && testCompletedStep(step)) {
+                _control.setPlayerProperty(PROP_STEP_COMPLETED, null, true);
+                bumpStep();
+                return;
+            }
+            log.warning("Deactivation of unexpected quest [questId=" + event.name +
+                        ", current=" + quest.questId + "]");
+            return;
+        }
     }
 
     protected function initialize () :void
@@ -143,18 +156,11 @@ public class Tutorial extends Sprite
 
     protected function maybeCompleteQuest () :Boolean
     {
-        var tmp :Object = _control.getPlayerProperty(PROP_STEP_COMPLETED);
-        if (tmp != null) {
-            var completed :int = int(tmp);
-            if (completed == getStep()) {
-                var quest :Quest = Quest.getQuest(completed);
-                _control.setPlayerProperty(PROP_STEP_COMPLETED, null, true);
-                _control.completeQuest(quest.questId, quest.outro, quest.payout);
-                bumpStep();
-                return true;
-            }
-            log.warning(
-                "Step mismatch [current=" + getStep() + ", completed" + completed + "]");
+        var step :int = getStep();
+        if (testCompletedStep(step)) {
+            var quest :Quest = Quest.getQuest(step);
+            _control.completeQuest(quest.questId, quest.outro, quest.payout);
+            return true;
         }
         return false;
     }
@@ -172,6 +178,12 @@ public class Tutorial extends Sprite
     protected function setActiveQuest (quest :Quest) :void
     {
         _view.setSummary(quest ? quest.summary : null);
+    }
+
+    protected function testCompletedStep (step :int) :Boolean
+    {
+        var tmp :Object = _control.getPlayerProperty(PROP_STEP_COMPLETED);
+        return tmp != null && int(tmp) == step;
     }
 
     protected var _control :AVRGameControl;
