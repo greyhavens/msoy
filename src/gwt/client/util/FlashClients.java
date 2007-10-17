@@ -406,7 +406,7 @@ public class FlashClients
     // TODO: put this in Application?
     protected static final int HEADER_HEIGHT = 50;
     protected static final int BLACKBAR_HEIGHT = 20;
-    protected static final int CLIENT_HEIGHT = 550;
+    protected static final int CLIENT_HEIGHT = 544;
 
     protected static final String FEATURED_PLACE_WIDTH = "424px";
     protected static final String FEATURED_PLACE_HEIGHT = "200px";
