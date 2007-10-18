@@ -48,7 +48,7 @@ public class Tutorial extends Sprite
         var height :Number = this.loaderInfo.height;
 
         graphics.drawRect(0, 0, width, height);
-
+        
         // then initialize the actual view and pad it a little
         _view.init(width - 2*PADDING, height - 2*PADDING);
         _view.x = PADDING; _view.y = PADDING;

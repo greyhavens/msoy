@@ -118,8 +118,7 @@ public class View extends Sprite
     protected var _textField :TextField;
     protected var _clip :MovieClip;
 
-    [Embed(source="../../../../../rsrc/media/whatsnext.swf",
-           mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/whatsnext.swf", mimeType="application/octet-stream")]
     protected static const SWIRL :Class;
 
     protected static const SCN_APPEAR :String = "appear";
