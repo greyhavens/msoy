@@ -5,15 +5,12 @@ package com.threerings.msoy.game.client {
 
 import flash.events.Event;
 import flash.display.Loader;
+import flash.display.Sprite;
 import flash.display.LoaderInfo;
 
 import mx.containers.Canvas;
-import mx.containers.HBox;
-import mx.containers.VBox;
-import mx.controls.Text;
 
 import com.threerings.flash.MediaContainer;
-import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.client.Msgs;
@@ -24,6 +21,8 @@ import com.threerings.msoy.game.client.AVRGameControlBackend;
 import com.threerings.msoy.game.client.AVRGameController;
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.AVRGameObject;
+
+import com.threerings.msoy.world.client.RoomView;
 
 public class AVRGamePanel extends Canvas
 {
@@ -64,24 +63,30 @@ public class AVRGamePanel extends Canvas
         }
     }
 
+    public function shutdown () :void
+    {
+        _mctx.getMsoyController().setAVRGamePanel(null);
+        // null gameObj for mediaComplete to find if it should run after us
+        _gameObj = null;
+    }
+
     protected function mediaComplete (event :Event) :void
     {
         var info :LoaderInfo = (event.target as LoaderInfo);
         info.removeEventListener(Event.COMPLETE, mediaComplete);
 
+        if (_gameObj == null) {
+            // we've already been shut down
+            return;
+        }
+
         _ctrl.gameIsReady();
 
         this.height = info.height + 2;
 
-        var quit :CommandButton = new CommandButton(MsoyController.LEAVE_AVR_GAME);
-        quit.styleName = "closeButton";
-        quit.x = info.width;
-        quit.y = 0;
-        this.addChild(quit);
+        this.rawChildren.addChild(_mediaHolder);
 
-        this.rawChildren.addChildAt(_mediaHolder, 0);
-
-        _mctx.getTopPanel().setBottomPanel(this);
+        _mctx.getMsoyController().setAVRGamePanel(this);
     }
 
     protected var _mctx :WorldContext;

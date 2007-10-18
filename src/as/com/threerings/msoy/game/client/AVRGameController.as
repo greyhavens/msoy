@@ -101,7 +101,7 @@ public class AVRGameController extends Controller
     {
         _mctx.getClient().removeEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
         _subscriber.unsubscribe(_mctx.getDObjectManager());
-        _mctx.getTopPanel().clearBottomPanel(_panel);
+        _panel.shutdown();
     }
 
     protected var _mctx :WorldContext;

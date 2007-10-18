@@ -64,6 +64,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.game.client.AVRGameService;
+import com.threerings.msoy.game.client.AVRGamePanel;
 import com.threerings.msoy.game.client.MsoyGamePanel;
 
 import com.threerings.msoy.world.client.RoomView;
@@ -779,6 +780,7 @@ public class MsoyController extends Controller
     {
         _topPanel.clearLeftPanel(null);
         _topPanel.clearBottomPanel(null);
+        setAVRGamePanel(null);
         _topPanel.setPlaceView(new DisconnectedPanel(_ctx, _logoffMessage));
         _logoffMessage = null;
     }
@@ -813,6 +815,26 @@ public class MsoyController extends Controller
     public function getSceneIdString () :String
     {
         return _sceneIdString;
+    }
+
+    /**
+     * Sets (or clears) the current AVRG overlay.
+     */
+    public function setAVRGamePanel (panel :AVRGamePanel) :void
+    {
+        var container :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
+
+        if (_avrGamePanel) {
+            if (_avrGamePanel == panel) {
+                return;
+            }
+            container.removeOverlay(_avrGamePanel);
+            _avrGamePanel = null;
+        }
+        if (panel) {
+            container.addOverlay(panel);
+            _avrGamePanel = panel;
+        }
     }
 
     /**
@@ -1053,6 +1075,9 @@ public class MsoyController extends Controller
 
     /** A string to give up for embedding your local scene. */
     protected var _sceneIdString :String;
+
+    /** The current AVRG display, if any. */
+    protected var _avrGamePanel :AVRGamePanel;
 
     /** The URL prefix for 'command' URLs, that post CommendEvents. */
     protected static const COMMAND_URL :String = "command://";
