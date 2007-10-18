@@ -59,8 +59,6 @@ import com.threerings.msoy.world.data.RoomConfig;
 import com.threerings.msoy.game.data.AVRGameMarshaller;
 import com.threerings.msoy.game.data.AVRMarshaller;
 
-import com.threerings.msoy.game.chiyogami.client.ChiyogamiController;
-
 import com.threerings.msoy.chat.client.ReportingListener;
 
 import com.threerings.msoy.notify.data.GuestInviteNotification;
@@ -147,7 +145,6 @@ public class WorldClient extends BaseClient
         var c :Class;
         c = AVRMarshaller;
         c = AVRGameMarshaller;
-        c = ChiyogamiController;
         c = Document;
         c = Furniture;
         c = Game;
