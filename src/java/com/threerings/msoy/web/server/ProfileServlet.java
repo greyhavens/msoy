@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRecord;
@@ -26,7 +27,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
@@ -123,8 +123,10 @@ public class ProfileServlet extends MsoyServiceServlet
 
                 case BlurbData.FRIENDS:
                     result.friends = resolveFriendsData(memrec, tgtrec);
-                    result.totalFriendCount =
-                        MsoyServer.memberRepo.loadFriendIds(tgtrec.memberId).size();
+
+                    IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(tgtrec.memberId);
+                    result.isOurFriend = (memrec != null) && friendIds.contains(memrec.memberId);
+                    result.totalFriendCount = friendIds.size();
                     break;
 
                 case BlurbData.GROUPS:

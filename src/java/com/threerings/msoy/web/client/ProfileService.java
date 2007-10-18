@@ -35,6 +35,9 @@ public interface ProfileService extends RemoteService
         /** This user's total friend count. */
         public int totalFriendCount;
 
+        /** Whether or not the requesting member is a friend of this member. */
+        public boolean isOurFriend;
+
         /**
          * This user's featured friends.
          *
@@ -51,14 +54,14 @@ public interface ProfileService extends RemoteService
 
         /**
          * This user's game ratings.
-         * 
+         *
          * @gwt.typeArgs <com.threerings.msoy.web.data.GameRating>
          */
         public List ratings;
 
         /**
          * This user's recently earned trophies.
-         * 
+         *
          * @gwt.typeArgs <com.threerings.msoy.game.data.all.Trophy>
          */
         public List trophies;

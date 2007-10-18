@@ -65,11 +65,9 @@ public class FriendsBlurb extends Blurb
         _content.getFlexCellFormatter().setColSpan(0, 0, 2);
 
         boolean canInvite = CProfile.getMemberId() > 0 &&
-            CProfile.getMemberId() != _name.getMemberId();
-        for (int ii = 0, ll = pdata.friends.size(); ii < ll; ii++) {
-            MemberCard friend = (MemberCard)pdata.friends.get(ii);
-            canInvite = canInvite && !(friend.name.getMemberId() == CProfile.getMemberId());
-        }
+            CProfile.getMemberId() != _name.getMemberId() &&
+            !pdata.isOurFriend;
+
         if (canInvite) {
             _content.setWidget(2, 0, new Button(CProfile.msgs.inviteFriend(), new ClickListener() {
                 public void onClick (Widget sender) {
