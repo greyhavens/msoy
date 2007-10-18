@@ -60,6 +60,7 @@ public class View extends Sprite
         _textField.wordWrap = true;
         _textField.width = width - SWIRL_SIZE;
         _textField.height = height;
+        _textField.alpha = 0.5;
 
         // don't add the text field until the swirly is loaded
         maybeFinishUI();
@@ -84,11 +85,12 @@ public class View extends Sprite
             _clip.y = 0;
             this.addChild(_clip);
 
-            var square :Sprite = new Sprite();
-            square.graphics.beginFill(0xFF0000);
-            square.graphics.drawRect(0, 0, _width, SWIRL_SIZE);
-            this.addChild(square);
-            _clip.mask = square;
+//            var square :Sprite = new Sprite();
+//            square.graphics.beginFill(0xFF0000);
+//            square.graphics.drawRect(0, 0, _width, SWIRL_SIZE);
+//            this.addChild(square);
+//            _clip.mask = square;
+
             _clip.gotoAndPlay(1, SCN_IDLE);
 
             this.addChild(_textField);

@@ -47,10 +47,8 @@ public class Tutorial extends Sprite
         var width :Number = this.loaderInfo.width;
         var height :Number = this.loaderInfo.height;
 
-        // fill our full dimensions with a dark red
-        opaqueBackground = 0x200000;
         graphics.drawRect(0, 0, width, height);
-        
+
         // then initialize the actual view and pad it a little
         _view.init(width - 2*PADDING, height - 2*PADDING);
         _view.x = PADDING; _view.y = PADDING;
