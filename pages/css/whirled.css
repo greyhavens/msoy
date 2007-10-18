@@ -226,6 +226,10 @@
   cursor: pointer;
 }
 
+.PictureBox img {
+  cursor: pointer;
+}
+
 /**********  Whirledwide  ************/
 .WhirledwidePage {
   height: 520px;
