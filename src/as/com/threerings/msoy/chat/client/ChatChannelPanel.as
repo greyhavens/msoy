@@ -23,6 +23,8 @@ import com.threerings.util.CommandEvent;
 import com.threerings.util.HashMap;
 import com.threerings.util.ValueEvent;
 
+import com.threerings.crowd.data.PlaceObject;
+
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatDisplay;
 
@@ -184,9 +186,9 @@ public class ChatChannelPanel extends VBox
         return _wtab != null;
     }
 
-    public function displayGameChat (chatDtr :ChatDirector) :void
+    public function displayGameChat (chatDtr :ChatDirector, plobj :PlaceObject) :void
     {
-        _gtab = new GameChatTab(_ctx, chatDtr);
+        _gtab = new GameChatTab(_ctx, chatDtr, plobj);
         _gtab.label = Msgs.CHAT.xlate("l.game_channel");
         addFixedTab(_gtab);
     }

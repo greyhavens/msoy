@@ -10,6 +10,8 @@ import com.threerings.util.HashMap;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
+import com.threerings.crowd.data.PlaceObject;
+
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatCodes;
@@ -181,9 +183,9 @@ public class MsoyChatDirector extends ChatDirector
     /**
      * Displays the game chat sidebar.
      */
-    public function displayGameChat (chatDtr :ChatDirector) :void
+    public function displayGameChat (chatDtr :ChatDirector, plobj :PlaceObject) :void
     {
-        _ccpanel.displayGameChat(chatDtr);
+        _ccpanel.displayGameChat(chatDtr, plobj);
     }
 
     /**

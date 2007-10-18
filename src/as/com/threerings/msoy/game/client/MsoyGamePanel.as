@@ -55,7 +55,7 @@ public class MsoyGamePanel extends EZGamePanel
         super.willEnterPlace(plobj);
 
         ((_ctx as GameContext).getWorldContext().getChatDirector() as MsoyChatDirector).
-            displayGameChat(_ctx.getChatDirector());
+            displayGameChat(_ctx.getChatDirector(), plobj);
     }
 
     // from EZGamePanel
