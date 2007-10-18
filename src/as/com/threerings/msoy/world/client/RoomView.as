@@ -59,6 +59,7 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldClient;
@@ -152,11 +153,11 @@ public class RoomView extends AbstractRoomView
             return;
         }
 
-        var container :Container = _ctx.getTopPanel().getPlaceContainer();
+        var box :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
         if (loading) {
-            container.rawChildren.addChild(_loadingSpinner);
+            box.addOverlay(_loadingSpinner);
         } else {
-            container.rawChildren.removeChild(_loadingSpinner);
+            box.removeOverlay(_loadingSpinner);
         }
     }
 
