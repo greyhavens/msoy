@@ -42,6 +42,8 @@ public class PlaceBox extends Canvas
         clearPlaceView(null);
         _placeView = view;
 
+        Log.getLog(this).debug("Setting place view : " + disp);
+
         if (disp is UIComponent) {
             addChildAt(disp, 0);
         } else {
@@ -62,6 +64,30 @@ public class PlaceBox extends Canvas
                 rawChildren.removeChild(disp);
             }
             _placeView = null;
+        }
+    }
+
+    /**
+     * Adds a display object to overlay the main view as it changes.
+     */
+    public function addOverlay (overlay :DisplayObject) :void
+    {
+        if (overlay is UIComponent) {
+            addChild(overlay);
+        } else {
+            rawChildren.addChild(overlay);
+        }
+    }
+
+    /**
+     * Removes a previously added overlay.
+     */
+    public function removeOverlay (overlay :DisplayObject) :void
+    {
+        if (overlay is UIComponent) {
+            removeChild(overlay);
+        } else {
+            rawChildren.removeChild(overlay);
         }
     }
 
