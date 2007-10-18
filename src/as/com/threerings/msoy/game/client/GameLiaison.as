@@ -39,11 +39,13 @@ import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
 
 /**
- * Handles all the fiddly bits relating to connecting to a separate server to match-make and play a
- * game.
+ * Handles all the fiddly bits relating to connecting to a separate server to match-make and
+ * play a game. This class is subclassed by LobbyGameLiaison, which handles lobbied games
+ * that take over the view, and AVRGameLiaison, which handles in-world games.
  */
 public class GameLiaison
     implements MsoyGameService_LocationListener, ClientObserver, MessageListener
@@ -138,7 +140,10 @@ public class GameLiaison
     public function clientDidLogoff (event :ClientEvent) :void
     {
         log.info("Logged off of game server [id=" + _gameId + "].");
-        _gctx.getPlayerObject().removeListener(this);
+        var player :PlayerObject = _gctx.getPlayerObject();
+        if (player) {
+            player.removeListener(this);
+        }
     }
 
     // from interface ClientObserver
