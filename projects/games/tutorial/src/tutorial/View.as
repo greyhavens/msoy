@@ -143,13 +143,15 @@ public class View extends Sprite
             }
             _transition = SCN_APPEAR;
         } else if (state == SWIRL_IDLE) {
-            if (_swirlState == SWIRL_BOUNCY) {
-                _transition = SCN_IDLE;
-            } else if (_swirlState == SWIRL_HUGE) {
+            if (_swirlState == SWIRL_HUGE) {
                 // TODO: Does this automatically transition into SCN_IDLE?
                 _transition = SCN_MINIMIZE;
             } else {
-                log.warning("Unexpected transtion [from=" + _swirlState + ", to=" + state + "]");
+                _transition = SCN_IDLE;
+                if (_swirlState != SWIRL_BOUNCY && swirlState != SWIRL_NONE) {
+                    log.warning(
+                        "Unexpected transtion [from=" + _swirlState + ", to=" + state + "]");
+                }
             }
         } else if (state == SWIRL_BOUNCY) {
             if (_swirlState != SWIRL_IDLE) {

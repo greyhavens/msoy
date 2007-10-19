@@ -165,12 +165,12 @@ public class Tutorial extends Sprite
             _control.completeQuest(quest.questId, quest.outro, quest.payout);
             return;
         }
-        if (step == 0 && swirlState != View.SWIRL_HUGE) {
-            log.warning("Eek, unexpected huge swirl click [step=" + getStep() + "]");
-        }
         if (_activeQuest) {
             // TODO: instruct view to display summary box
             return;
+        }
+        if (step == 0 && swirlState != View.SWIRL_HUGE) {
+            log.warning("Eek, unexpected huge swirl click [step=" + getStep() + "]");
         }
         _control.offerQuest(quest.questId, quest.intro, quest.status);
         _view.gotoSwirlState(View.SWIRL_IDLE);
