@@ -144,7 +144,7 @@ public class ChatChannelObject extends DObject
         ChannelMessage[] ovalue = this.recentMessages;
         requestAttributeChange(
             RECENT_MESSAGES, value, ovalue);
-        this.recentMessages = (value == null) ? null : (ChannelMessage[])value.clone();
+        this.recentMessages = (value == null) ? null : value.clone();
     }
 
     /**
