@@ -7,6 +7,8 @@ import flash.display.DisplayObject;
 
 import flash.events.Event;
 
+import mx.core.UIComponent;
+
 import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
@@ -22,8 +24,6 @@ import com.threerings.flex.CommandButton;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.HashMap;
 import com.threerings.util.ValueEvent;
-
-import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatDisplay;
@@ -186,9 +186,9 @@ public class ChatChannelPanel extends VBox
         return _wtab != null;
     }
 
-    public function displayGameChat (chatDtr :ChatDirector, plobj :PlaceObject) :void
+    public function displayGameChat (chatDtr :ChatDirector, playerList :UIComponent) :void
     {
-        _gtab = new GameChatTab(_ctx, chatDtr, plobj);
+        _gtab = new GameChatTab(_ctx, chatDtr, playerList);
         _gtab.label = Msgs.CHAT.xlate("l.game_channel");
         addFixedTab(_gtab);
     }

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.chat.client {
 
+import mx.core.UIComponent;
+
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.util.ClassUtil;
@@ -183,9 +185,9 @@ public class MsoyChatDirector extends ChatDirector
     /**
      * Displays the game chat sidebar.
      */
-    public function displayGameChat (chatDtr :ChatDirector, plobj :PlaceObject) :void
+    public function displayGameChat (chatDtr :ChatDirector, playerList :UIComponent) :void
     {
-        _ccpanel.displayGameChat(chatDtr, plobj);
+        _ccpanel.displayGameChat(chatDtr, playerList);
     }
 
     /**

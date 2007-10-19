@@ -5,12 +5,12 @@ package com.threerings.msoy.chat.client {
 
 import flash.events.Event;
 
+import mx.core.UIComponent;
+
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.data.ChatCodes;
-
-import com.whirled.client.PlayerList;
 
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
@@ -20,14 +20,12 @@ import com.threerings.msoy.client.WorldContext;
  */
 public class GameChatTab extends ChatTab
 {
-    public function GameChatTab (ctx :WorldContext, chatDtr :ChatDirector, plobj :PlaceObject)
+    public function GameChatTab (ctx :WorldContext, chatDtr :ChatDirector, playerList :UIComponent)
     {
         super(ctx);
         _chatDtr = chatDtr;
 
-        _playerList = new PlayerList();
-        addChild(_playerList);
-        _playerList.startup(plobj);
+        addChild(playerList);
 
         _overlay = new ChatOverlay(ctx.getMessageManager());
         _overlay.setSubtitlePercentage(.5);
@@ -41,7 +39,6 @@ public class GameChatTab extends ChatTab
     public function shutdown () :void
     {
         _chatDtr.removeChatDisplay(_overlay);
-        _playerList.shutdown();
     }
 
     // @Override // from ChatTab
@@ -61,9 +58,6 @@ public class GameChatTab extends ChatTab
             _overlay.setTarget(null);
         }
     }
-
-    /** Displays the occupants and players of the game. */
-    protected var _playerList :PlayerList;
 
     /** Our game chat director. */
     protected var _chatDtr :ChatDirector;

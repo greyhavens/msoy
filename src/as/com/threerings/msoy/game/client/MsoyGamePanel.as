@@ -14,6 +14,9 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.ezgame.client.EZGamePanel;
 import com.threerings.ezgame.client.GameControlBackend;
 
+import com.whirled.client.PlayerList;
+import com.whirled.client.WhirledGamePanel;
+
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.HistoryList;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
@@ -21,11 +24,13 @@ import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.game.data.MsoyGameObject;
 
 public class MsoyGamePanel extends EZGamePanel
-    implements MsoyPlaceView
+    implements WhirledGamePanel, MsoyPlaceView
 {
     public function MsoyGamePanel (ctx :GameContext, ctrl :MsoyGameController)
     {
         super(ctx, ctrl);
+
+        _playerList = new PlayerList();
     }
 
     // from MsoyPlaceView
@@ -55,7 +60,9 @@ public class MsoyGamePanel extends EZGamePanel
         super.willEnterPlace(plobj);
 
         ((_ctx as GameContext).getWorldContext().getChatDirector() as MsoyChatDirector).
-            displayGameChat(_ctx.getChatDirector(), plobj);
+            displayGameChat(_ctx.getChatDirector(), _playerList);
+
+        _playerList.startup(plobj);
     }
 
     // from EZGamePanel
@@ -66,6 +73,14 @@ public class MsoyGamePanel extends EZGamePanel
         ((_ctx as GameContext).getWorldContext().getChatDirector() as MsoyChatDirector).
             clearGameChat();
         (_ctx as GameContext).getTopPanel().getControlBar().setChatEnabled(true);
+
+        _playerList.shutdown();
+    }
+
+    // from WhirledGamePanel
+    public function getPlayerList () :PlayerList
+    {
+        return _playerList;
     }
 
     // from EZGamePanel
@@ -74,5 +89,8 @@ public class MsoyGamePanel extends EZGamePanel
         return new MsoyGameControlBackend(
             (_ctx as GameContext), (_ezObj as MsoyGameObject), (_ctrl as MsoyGameController));
     }
+
+    /** The standard list of players. */
+    protected var _playerList :PlayerList;
 }
 }
