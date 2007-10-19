@@ -86,7 +86,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // compute our flow per minute
         float minuteRate = RuntimeConfig.server.hourlyGameFlowRate / 60f;
-        _flowPerMinute = (int)Math.round(minuteRate * _content.detail.getAntiAbuseFactor());
+        _flowPerMinute = Math.round(minuteRate * _content.detail.getAntiAbuseFactor());
 
         // let the client know what game content is available
         if (_plmgr.getPlaceObject() instanceof WhirledGame) {
@@ -662,7 +662,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             return 0;
         }
         float minutes = getAverageGameDuration(record.getPlayTime(now));
-        return (int)Math.round(record.humanity * _flowPerMinute * minutes);
+        return Math.round(record.humanity * _flowPerMinute * minutes);
     }
 
     protected void payoutPlayer (int oid)
@@ -743,7 +743,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
      */
     protected static class FlowRecord
     {
-        public double humanity;
+        public float humanity;
         public int memberId;
 
         public int beganStamp;
@@ -751,7 +751,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         public int awarded;
 
-        public FlowRecord (int memberId, double humanity) {
+        public FlowRecord (int memberId, float humanity) {
             this.humanity = humanity;
             this.memberId = memberId;
             this.awarded = 0;
