@@ -25,11 +25,6 @@ public class Quest
         this.payout = payout;
     }
 
-    public function getQuestId () :String
-    {
-        return questId;
-    }
-
     public static function getQuestCount () :uint
     {
         fillQuests();

@@ -20,8 +20,6 @@ public class Tutorial extends Sprite
 {
     public static var log :Log = Log.getLog(Tutorial);
 
-    public static const PADDING :int = 5;
-
     public function Tutorial ()
     {
         root.loaderInfo.addEventListener(Event.COMPLETE, complete);
@@ -36,7 +34,7 @@ public class Tutorial extends Sprite
             AVRGameControlEvent.QUEST_STATE_CHANGED, questStateChanged);
 
         // create but do not initialize the view
-        _view = new View();
+        _view = new View(this);
     }
 
     protected function complete (event :Event) :void
@@ -47,11 +45,8 @@ public class Tutorial extends Sprite
         var width :Number = this.loaderInfo.width;
         var height :Number = this.loaderInfo.height;
 
-        graphics.drawRect(0, 0, width, height);
-        
         // then initialize the actual view and pad it a little
-        _view.init(width - 2*PADDING, height - 2*PADDING);
-        _view.x = PADDING; _view.y = PADDING;
+        _view.init(width, height);
         addChild(_view);
 
         // now surrender control until we find out whether or not we're minimized
@@ -73,10 +68,10 @@ public class Tutorial extends Sprite
 //        log.debug("Tutorial event [name=" + event.value + ", step=" + step + "]");
 
         if (event.value == "willMinimize") {
-            _minimized = true;
+            _clientIsMinimized = true;
 
         } else if (event.value == "willUnminimize") {
-            _minimized = false;
+            _clientIsMinimized = false;
             initialize();
 
         } else if (event.value == Quest.getQuest(step).trigger) {
@@ -91,12 +86,7 @@ public class Tutorial extends Sprite
     {
         // log.debug("property changed: " + event.name + "=" + event.value);
         if (event.name == PROP_STEP_COMPLETED) {
-            // this property is used to register completed tutorial steps
-            // performed while we were minimized; they are not acted upon
-            // until we un-minimize
-            if (!_minimized) {
-                maybeCompleteQuest();
-            }
+            _view.gotoSwirlState(View.SWIRL_BOUNCY);
 
         } else if (event.name == PROP_TUTORIAL_STEP) {
             // we have arrived at a new tutorial step; reinitialize our state
@@ -108,80 +98,87 @@ public class Tutorial extends Sprite
     {
 //        log.debug("quest state changed [id=" + event.name + ", value=" + event.value + "]");
         // we've acquired a new active quest or dropped an old one; update our display
-        setActiveQuest(event.value ? Quest.getQuest(getStep()) : null);
 
-        if (!event.value) {
-            var step :int = getStep();
-            var quest :Quest = Quest.getQuest(step);
-            if (event.name == quest.questId && testCompletedStep(step)) {
-                _control.setPlayerProperty(PROP_STEP_COMPLETED, null, true);
-                bumpStep();
-                return;
+        var step :int = getStep();
+        if (event.value) {
+            // if this was the very first step, get rid of the big swirl
+            if (step == 0) {
+                _view.gotoSwirlState(View.SWIRL_IDLE);
             }
-            log.warning("Deactivation of unexpected quest [questId=" + event.name +
-                        ", current=" + quest.questId + "]");
+            // accepting a new quest triggers the summary box
+//            _view.popupSummary(step);
             return;
         }
+        // else the player dropped the quest or clicked the completion popup's "OK" button
+        var quest :Quest = Quest.getQuest(step);
+        if (event.name == quest.questId && testCompletedStep(step)) {
+            // looks like it was completed
+            _activeQuest = null;
+            _control.setPlayerProperty(PROP_STEP_COMPLETED, null, true);
+            _control.setPlayerProperty(PROP_TUTORIAL_STEP, getStep() + 1, true);
+            return;
+        }
+        log.warning("Deactivation of unexpected quest [questId=" + event.name +
+                    ", current=" + quest.questId + "]");
+        return;
     }
 
     protected function initialize () :void
     {
-        if (_minimized) {
+        if (_clientIsMinimized) {
             // sanity check - should not really happen
             return;
         }
         // figure out which quest we ought to be on
         var step :int = getStep();
         if (step >= Quest.getQuestCount()) {
-            // we're done!
-            _view.setSummary("<br><br>Tutorial Finished!<br><br>");
+            // we're done! TODO: deactivate us somehow
             return;
         }
 
         var quest :Quest = Quest.getQuest(step);
-        var stepQuest :String = quest.getQuestId();
 
         // check against our current active quests
         var quests :Array = _control.getActiveQuests();
         for (var ii :int = 0; ii < quests.length; ii ++) {
             var tuple :Array = quests[ii];
-            if (tuple[0] == stepQuest) {
-                if (maybeCompleteQuest()) {
-                    return;
+            if (tuple[0] == quest.questId) {
+                _activeQuest = quest.questId;
+                if (testCompletedStep(step)) {
+                    _view.gotoSwirlState(View.SWIRL_BOUNCY);
+                } else {
+                    _view.gotoSwirlState(View.SWIRL_IDLE);
                 }
-                setActiveQuest(quest);
                 return;
             }
         }
-
-        // we're not on the right quest, so start it
-        _control.offerQuest(stepQuest, quest.intro, quest.status);
+        // we're not on the right quest, signal the view
+        _view.gotoSwirlState(step == 0 ? View.SWIRL_HUGE : View.SWIRL_BOUNCY);
     }
 
-    protected function maybeCompleteQuest () :Boolean
+    public function swirlClicked (swirlState :int) :void
     {
         var step :int = getStep();
+        var quest :Quest = Quest.getQuest(step);
+
         if (testCompletedStep(step)) {
-            var quest :Quest = Quest.getQuest(step);
             _control.completeQuest(quest.questId, quest.outro, quest.payout);
-            return true;
+            return;
         }
-        return false;
+        if (step == 0 && swirlState != View.SWIRL_HUGE) {
+            log.warning("Eek, unexpected huge swirl click [step=" + getStep() + "]");
+        }
+        if (_activeQuest) {
+            // TODO: instruct view to display summary box
+            return;
+        }
+        _control.offerQuest(quest.questId, quest.intro, quest.status);
+        _view.gotoSwirlState(View.SWIRL_IDLE);
     }
 
     protected function getStep () :int
     {
         return int(_control.getPlayerProperty(PROP_TUTORIAL_STEP));
-    }
-
-    protected function bumpStep () :void
-    {
-        _control.setPlayerProperty(PROP_TUTORIAL_STEP, getStep() + 1, true);
-    }
-
-    protected function setActiveQuest (quest :Quest) :void
-    {
-        _view.setSummary(quest ? quest.summary : null);
     }
 
     protected function testCompletedStep (step :int) :Boolean
@@ -190,8 +187,9 @@ public class Tutorial extends Sprite
         return tmp != null && int(tmp) == step;
     }
 
+    protected var _activeQuest :String;
     protected var _control :AVRGameControl;
-    protected var _minimized :Boolean = true;
+    protected var _clientIsMinimized :Boolean = true;
     protected var _view :View;
 
     protected static const PROP_STEP_COMPLETED :String = "stepCompleted";
