@@ -151,7 +151,7 @@
        <include name="**/*"/>
       </fileset>
     </copy>
-    
+
     <!-- Fetch Three Rings Dependencies -->
     <artifact:dependencies filesetId="dependency.fileset">
         <remoteRepository refid="maven.depends.repo"/>
@@ -163,7 +163,7 @@
         <fileset refid="dependency.fileset"/>
         <mapper type="flatten"/>
     </copy>
-    
+
     <!-- create our toybox propertis from server.properties -->
     <exec executable="egrep">
       <arg line="^toybox\."/>
@@ -174,7 +174,7 @@
         </outputfilterchain>
       </redirector>
     </exec>
-    
+
     <!-- copy ehcache.xml to a classpath location -->
     <if><equals arg1="${props.dist}" arg2="production"/>
     <then>
@@ -182,7 +182,7 @@
     </then><else>
       <copy todir="${deploy.dir}" file="${basedir}/etc/ehcache.xml"/>
     </else></if>
-    
+
     <!-- create dev usable security.policy and swiftly.policy files -->
     <!-- real ones are created in prepare-server-extra -->
     <copy file="etc/security.policy.in" tofile="${deploy.dir}/security.policy" overwrite="true">
@@ -713,11 +713,11 @@
     </then><else>
         <property file="test.properties"/>
     </else></if>
-  
+
     <mkdir dir="${basedir}/${deploy.dir}/tmp"/>
     <taskdef name="unit" classpathref="classpath"
       classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
-    
+
       <unit printsummary="no" haltonfailure="yes" fork="yes" dir="${basedir}">
         <classpath refid="classpath"/>
         <formatter type="brief" usefile="false" unless="use.xml.output"/>
@@ -732,7 +732,7 @@
         <batchtest todir="${basedir}/${deploy.dir}/tmp" unless="test">
           <fileset dir="${src.dir}">
             <include name="**/*UnitTest.java"/>
-            
+
             <!-- XXX A nasty way to exclude S3 tests. This is fragile and
                  not-good, but I don't know of a better way to do it -->
             <exclude name="**/ProjectS3StorageUnitTest.java" unless="test.aws.id"/>
@@ -757,6 +757,17 @@
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
     </javac>
+  </target>
+
+  <!-- rebuilds Google Collections which doesn't fit into our standard scheme -->
+  <target name="distgoog">
+    <echo>Building in google-collections...</echo>
+    <ant dir="${projects.dir}/google-collections" target="dist" inheritAll="false"/>
+    <copy todir="${deploy.dir}/lib">
+      <fileset dir="${projects.dir}/google-collections/build/dist">
+        <include name="google-collect-snapshot.jar"/>
+      </fileset>
+    </copy>
   </target>
 
   <!-- builds the javadoc documentation -->
@@ -801,7 +812,7 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients,tests">
+  <target name="distall" depends="prepare,distgoog,distprojects,dist,flashapps,jclients,tests">
     <antcall target="gclient">
       <param name="full" value="true"/>
     </antcall>
