@@ -6,16 +6,27 @@ package com.threerings.msoy.swiftly.server;
 import static com.threerings.msoy.Log.log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+import com.google.common.collect.Maps;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
+
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.peer.server.PeerManager;
+import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.InvocationManager;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -35,13 +46,6 @@ import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.web.server.UploadFile;
-import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.peer.data.NodeObject;
-import com.threerings.presents.peer.server.PeerManager;
-import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.server.InvocationManager;
 
 /**
  * Handles the collection of Swiftly project information
@@ -437,6 +441,5 @@ public class SwiftlyManager
     protected static final int MAX_BUILD_THREADS = 5;
 
     /** Maintains a mapping of resolved projects. */
-    protected HashMap<Integer,ProjectRoomManager> _managers =
-        new HashMap<Integer,ProjectRoomManager>();
+    protected Map<Integer,ProjectRoomManager> _managers = Maps.newHashMap();
 }

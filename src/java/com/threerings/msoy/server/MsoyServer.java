@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 
+import com.google.common.collect.Maps;
 import com.samskivert.jdbc.TransitionRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
@@ -465,8 +466,7 @@ public class MsoyServer extends MsoyBaseServer
     protected static TransitionRepository _transitRepo;
 
     /** A mapping from member name to member object for all online members. */
-    protected static HashMap<MemberName,MemberObject> _online =
-        new HashMap<MemberName,MemberObject>();
+    protected static HashMap<MemberName,MemberObject> _online = Maps.newHashMap();
 
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;

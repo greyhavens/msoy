@@ -8,9 +8,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
+
+import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.HashIntMap;
@@ -227,7 +229,7 @@ public class GameServlet extends MsoyServiceServlet
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
 
-            HashMap<String,Trophy> trophies = new HashMap<String,Trophy>();
+            Map<String,Trophy> trophies = Maps.newHashMap();
             List<TrophySourceRecord> trecords = tsrepo.loadOriginalItemsBySuite(-grec.catalogId);
             for (TrophySourceRecord record : trecords) {
                 Trophy trophy = new Trophy();

@@ -14,6 +14,8 @@ import java.util.Map.Entry;
 
 import java.util.logging.Level;
 
+import com.google.common.collect.Maps;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
@@ -1366,8 +1368,7 @@ public class ItemManager
     protected TrophySourceRepository _tsourceRepo;
 
     /** Maps byte type ids to repository for all digital item types. */
-    protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos =
-        new HashMap<Byte, ItemRepository<ItemRecord, ?, ?, ?>>();
+    protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos = Maps.newHashMap();
 
     /** A mapping from item type to update listeners. */
     protected HashMap<Class<? extends ItemRecord>,ObserverList<ItemUpdateListener>> _listeners =

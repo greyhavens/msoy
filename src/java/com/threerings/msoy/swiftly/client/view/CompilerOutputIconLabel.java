@@ -4,11 +4,12 @@
 package com.threerings.msoy.swiftly.client.view;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+
+import com.google.common.collect.Maps;
 
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.CompilerOutput.Level;
@@ -46,8 +47,7 @@ public class CompilerOutputIconLabel extends JLabel
     }
 
     /** Map CompilerOutput.Level enums to icons. */
-    private static final Map<CompilerOutput.Level, ImageIcon> _levelIcons =
-        new HashMap<CompilerOutput.Level, ImageIcon>();
+    private static final Map<CompilerOutput.Level, ImageIcon> _levelIcons = Maps.newHashMap();
 
     // Initialize Enum level -> icon mapping.
     // TODO add icon for UNKNOWN and IGNORE. question mark icon?

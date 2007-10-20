@@ -3,8 +3,10 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
+
+import com.google.common.collect.Maps;
 
 import com.samskivert.util.LoggingLogProvider;
 import com.samskivert.util.OneLineLogFormatter;
@@ -235,6 +237,5 @@ public class MsoyGameServer extends MsoyBaseServer
     protected int _connectPort;
 
     /** A mapping from member name to member object for all online members. */
-    protected static HashMap<MemberName,PlayerObject> _online =
-        new HashMap<MemberName,PlayerObject>();
+    protected static Map<MemberName,PlayerObject> _online = Maps.newHashMap();
 }

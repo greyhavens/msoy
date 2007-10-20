@@ -14,6 +14,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.collect.Maps;
+
 /**
  * Handles the marshalling and unmarshalling of persistent instances to JSON objects.
  *
@@ -243,8 +245,8 @@ public class JSONMarshaller<T>
     /** The class for whom we're marshalling. */
     protected Class<T> _pclass;
     /** Names of public, non-static, non-transient fields mapped to {@link Field} instances. */
-    protected Map<String, Field> _fields = new HashMap<String, Field>();
+    protected Map<String, Field> _fields = Maps.newHashMap();
 
     /** The static cache of instantiated marshallers. */
-    protected static Map<Class, JSONMarshaller> _classMap = new HashMap<Class, JSONMarshaller>();
+    protected static Map<Class, JSONMarshaller> _classMap = Maps.newHashMap();
 }

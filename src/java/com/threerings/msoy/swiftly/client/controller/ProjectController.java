@@ -8,8 +8,6 @@ import java.awt.event.ActionEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +19,11 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import com.threerings.msoy.item.data.all.MediaDesc;
+
 import com.threerings.msoy.swiftly.client.ShutdownNotifier;
 import com.threerings.msoy.swiftly.client.SwiftlyApplication;
 import com.threerings.msoy.swiftly.client.SwiftlyContext;
@@ -51,6 +53,7 @@ import com.threerings.msoy.swiftly.client.view.ProgressBar;
 import com.threerings.msoy.swiftly.client.view.ProgressBarView;
 import com.threerings.msoy.swiftly.client.view.ProjectPanel;
 import com.threerings.msoy.swiftly.client.view.ProjectPanelView;
+import com.threerings.msoy.swiftly.client.view.SwiftlyWindow.AttachCallback;
 import com.threerings.msoy.swiftly.client.view.SwiftlyWindow;
 import com.threerings.msoy.swiftly.client.view.SwiftlyWindowView;
 import com.threerings.msoy.swiftly.client.view.TabbedEditor;
@@ -59,8 +62,8 @@ import com.threerings.msoy.swiftly.client.view.TabbedEditorScroller;
 import com.threerings.msoy.swiftly.client.view.TabbedEditorView;
 import com.threerings.msoy.swiftly.client.view.TextEditor;
 import com.threerings.msoy.swiftly.client.view.TextEditorView;
-import com.threerings.msoy.swiftly.client.view.SwiftlyWindow.AttachCallback;
 import com.threerings.msoy.swiftly.data.BuildResult;
+import com.threerings.msoy.swiftly.data.CompilerOutput.Level;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.PathElementTreeNode;
@@ -68,7 +71,6 @@ import com.threerings.msoy.swiftly.data.ProjectTreeModel;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyImageDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
-import com.threerings.msoy.swiftly.data.CompilerOutput.Level;
 
 /**
  * Acts as a controller for ProjectModel and DocumentModel data.
@@ -755,7 +757,7 @@ public class ProjectController
 
             if (line.hasPath()) {
                 PathElement element = _docModel.findPathElementByPath(line.getPath());
-                HashSet<CompilerOutputComponent> set = _compilerOutputComponents.get(element);
+                Set<CompilerOutputComponent> set = _compilerOutputComponents.get(element);
                 if (set != null) {
                     for (CompilerOutputComponent comp : set) {
                         comp.displayCompilerOutput(line);
@@ -801,9 +803,9 @@ public class ProjectController
     private void addCompilerOutputComponent (PathElement element, CompilerOutputComponent comp,
                                              JComponent jcomp)
     {
-        HashSet<CompilerOutputComponent> set = _compilerOutputComponents.get(element);
+        Set<CompilerOutputComponent> set = _compilerOutputComponents.get(element);
         if (set == null) {
-            set = new HashSet<CompilerOutputComponent>();
+            set = Sets.newHashSet();
             _compilerOutputComponents.put(element, set);
         }
 
@@ -909,23 +911,20 @@ public class ProjectController
         new ArrayList<SwiftlyDocumentEditor.FileTypes>();
 
     /** Maps PathElements to the TextEditors working on them. */
-    private final Map<PathElement, TextEditor> _openTextEditors =
-        new HashMap<PathElement, TextEditor>();
+    private final Map<PathElement, TextEditor> _openTextEditors = Maps.newHashMap();
 
     /** Maps PathElements to the ImageEditors working on them. */
-    private final Map<PathElement, ImageEditor> _openImageEditors =
-        new HashMap<PathElement, ImageEditor>();
+    private final Map<PathElement, ImageEditor> _openImageEditors = Maps.newHashMap();
 
     /**
      * Maps PathElements to the components interested in displaying CompilerOutput associated with
      * that PathElement.
      */
-    private final Map<PathElement, HashSet<CompilerOutputComponent>> _compilerOutputComponents =
-        new HashMap<PathElement, HashSet<CompilerOutputComponent>>();
+    private final Map<PathElement, Set<CompilerOutputComponent>> _compilerOutputComponents =
+        Maps.newHashMap();
 
     /** The set of all components which can display access permissions. */
-    private final Set<AccessControlComponent> _accessControlComponents =
-        new HashSet<AccessControlComponent>();
+    private final Set<AccessControlComponent> _accessControlComponents = Sets.newHashSet();
 
     /** A factory for generating new RequestIds. */
     private final RequestIdFactory _requestFactory = new RequestIdFactory();

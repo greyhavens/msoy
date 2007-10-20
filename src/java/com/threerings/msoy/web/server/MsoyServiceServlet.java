@@ -112,6 +112,6 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     }
 
     /** Contains a mapping of authenticated members. */
-    protected static Map<String,Integer> _members =
-        Collections.synchronizedMap(new HashMap<String,Integer>());
+    protected static Map<String,Integer> _members = Collections.synchronizedMap(
+        new HashMap<String,Integer>());
 }

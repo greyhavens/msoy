@@ -4,7 +4,9 @@
 package com.threerings.msoy.chat.server;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChannelMessage;
@@ -362,6 +364,5 @@ public class ChatChannelManager
     }
 
     /** Contains a mapping of all chat channels we know about, hosted or subscribed. */
-    protected HashMap<ChatChannel, ChannelWrapper> _wrappers =
-        new HashMap<ChatChannel, ChannelWrapper>();
+    protected Map<ChatChannel, ChannelWrapper> _wrappers = Maps.newHashMap();
 }

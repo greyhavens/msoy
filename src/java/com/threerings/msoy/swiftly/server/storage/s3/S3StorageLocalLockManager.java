@@ -4,11 +4,14 @@
 package com.threerings.msoy.swiftly.server.storage.s3;
 
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Map;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import com.google.common.collect.Maps;
 
 /**
  * Local-only S3 lock management.
@@ -156,5 +159,5 @@ public class S3StorageLocalLockManager implements S3StorageLockManager {
     private final Lock _lock = new ReentrantLock();
     
     /** Hash table of object lock entries. */
-    private final HashMap<String,LockEntry> _objectTable = new HashMap<String,LockEntry>();
+    private final Map<String,LockEntry> _objectTable = Maps.newHashMap();
 }

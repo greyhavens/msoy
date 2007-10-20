@@ -7,13 +7,13 @@ import static com.threerings.msoy.Log.log;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 import org.apache.commons.io.FileUtils;
 
+import com.google.common.collect.Maps;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SerialExecutor;
@@ -65,7 +65,7 @@ public class ProjectRoomManager extends PlaceManager
                       final ServletWaiter<ConnectConfig> listener)
     {
         _storage = storage;
-        _resultItems = new HashMap<MemberName, Integer>();
+        _resultItems = Maps.newHashMap();
 
         // References to our on-disk SDKs
         File flexSdk = new File(ServerConfig.serverRoot + FLEX_SDK);

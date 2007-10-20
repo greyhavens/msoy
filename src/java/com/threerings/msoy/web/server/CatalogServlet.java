@@ -4,10 +4,11 @@
 package com.threerings.msoy.web.server;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+
+import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -507,7 +508,7 @@ public class CatalogServlet extends MsoyServiceServlet
         throws ServiceException
     {
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
-        Map<String, Integer> result = new HashMap<String, Integer>();
+        Map<String, Integer> result = Maps.newHashMap();
         try {
             for (TagPopularityRecord record : repo.getTagRepository().getPopularTags(rows)) {
                 result.put(record.tag, record.count);

@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import java.sql.Date;
 
+import com.google.common.collect.Maps;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -422,7 +423,7 @@ public class GroupRecord extends PersistentRecord
     public Map<String, Object> findUpdates (Group groupDef, GroupExtras extrasDef)
         throws PersistenceException
     {
-        HashMap<String, Object> updates = new HashMap<String, Object>();
+        HashMap<String, Object> updates = Maps.newHashMap();
         if (groupDef.name != null && !groupDef.name.equals(name)) {
             updates.put(NAME, groupDef.name);
         }

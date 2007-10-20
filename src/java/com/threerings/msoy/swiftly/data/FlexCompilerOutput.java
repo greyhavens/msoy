@@ -3,11 +3,12 @@
 
 package com.threerings.msoy.swiftly.data;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
+import com.google.common.collect.Maps;
 
 import com.threerings.io.Streamable;
 
@@ -199,8 +200,7 @@ public class FlexCompilerOutput
         Pattern.compile("\\S*localbuilder[0-9]+_[0-9]+");
 
     /** Map flex compiler level strings to CompilerOutput.Level enums. */
-    protected static final Map<String,CompilerOutput.Level> _messageLevels =
-        new HashMap<String,CompilerOutput.Level>();
+    protected static final Map<String,CompilerOutput.Level> _messageLevels = Maps.newHashMap();
 
     /** Boilerplate compiler output that we don't need to report. */
     protected static final Pattern[] COMPILER_BOILER =  {

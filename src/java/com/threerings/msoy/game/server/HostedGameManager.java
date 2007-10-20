@@ -5,13 +5,15 @@ package com.threerings.msoy.game.server;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-
 import java.util.HashMap;
 import java.util.logging.Level;
+
+import com.google.common.collect.Maps;
 
 import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -53,5 +55,5 @@ public class HostedGameManager
     }
 
     /** Maps game manager class names to custom class loaders. */
-    protected HashMap<String,URLClassLoader> _loaders = new HashMap<String,URLClassLoader>();
+    protected HashMap<String,URLClassLoader> _loaders = Maps.newHashMap();
 }

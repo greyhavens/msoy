@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -24,6 +23,8 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
+
+import com.google.common.collect.Maps;
 
 import com.threerings.msoy.swiftly.client.Translator;
 import com.threerings.msoy.swiftly.client.controller.PathElementEditor;
@@ -179,7 +180,7 @@ public class ConsoleView extends JFrame
 
     /** Map CompilerOutput.Level enums to font attributes. */
     private static final Map<CompilerOutput.Level, SimpleAttributeSet> _messageLevels =
-        new HashMap<CompilerOutput.Level, SimpleAttributeSet>();
+        Maps.newHashMap();
 
     // Initialize Enum level -> font attribute mapping.
     static {

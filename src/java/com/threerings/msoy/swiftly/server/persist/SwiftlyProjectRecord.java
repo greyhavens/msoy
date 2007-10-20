@@ -4,14 +4,15 @@
 package com.threerings.msoy.swiftly.server.persist;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
+import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.samskivert.io.PersistenceException;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
 
@@ -117,7 +118,7 @@ public class SwiftlyProjectRecord extends PersistentRecord
     public Map<String, Object> findUpdates (SwiftlyProject project)
         throws PersistenceException
     {
-        HashMap<String, Object> updates = new HashMap<String, Object>();
+        Map<String, Object> updates = Maps.newHashMap();
         if (project.projectName != null && !project.projectName.equals(projectName)) {
             updates.put(PROJECT_NAME, project.projectName);
         }

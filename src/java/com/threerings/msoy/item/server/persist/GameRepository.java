@@ -5,9 +5,10 @@ package com.threerings.msoy.item.server.persist;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DatabaseLiaison;
@@ -114,7 +115,7 @@ public class GameRepository extends ItemRepository<
         Integer newAbuse = null;
         gameId = Math.abs(gameId); // how to handle playing the original?
 
-        Map<String, SQLExpression> fieldMap = new HashMap<String, SQLExpression>();
+        Map<String, SQLExpression> fieldMap = Maps.newHashMap();
         fieldMap.put(GameDetailRecord.PLAYER_GAMES,
                      new Arithmetic.Add(GameDetailRecord.PLAYER_GAMES_C, playerGames));
         fieldMap.put(GameDetailRecord.PLAYER_MINUTES,

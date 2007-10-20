@@ -13,6 +13,7 @@ import java.util.Set;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -310,7 +311,7 @@ public class GroupRepository extends DepotRepository
     protected void updateMemberCount (int groupId)
         throws PersistenceException
     {
-        Map<String, SQLExpression> fieldMap = new HashMap<String, SQLExpression>();
+        Map<String, SQLExpression> fieldMap = Maps.newHashMap();
         fieldMap.put(
             GroupRecord.MEMBER_COUNT,
             new SelectClause<GroupMembershipCount>(

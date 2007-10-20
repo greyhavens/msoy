@@ -15,7 +15,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +44,8 @@ import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 
 import org.tmatesoft.svn.core.wc.ISVNRepositoryPool;
 import org.tmatesoft.svn.core.wc.DefaultSVNRepositoryPool;
+
+import com.google.common.collect.Maps;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
 
@@ -635,8 +636,9 @@ public class ProjectSVNStorage
 
             } else if (kind == SVNNodeKind.FILE) {
                 // Fetch the file properties.
-                properties = new HashMap<String,String>();
-                svnRepo.getFile(parent.getAbsolutePath() + "/" + entry.getName(), revision, properties, null);
+                properties = Maps.newHashMap();
+                svnRepo.getFile(
+                    parent.getAbsolutePath() + "/" + entry.getName(), revision, properties, null);
 
                 // Pull out the mime type.
                 mimeType = properties.get(SVNProperty.MIME_TYPE);
@@ -645,7 +647,8 @@ public class ProjectSVNStorage
                 node = PathElement.createFile(entry.getName(), parent, mimeType);
 
             } else {
-                throw new ProjectStorageException.InternalError("Received an unhandled subversion node type: " + kind);
+                throw new ProjectStorageException.InternalError(
+                    "Received an unhandled subversion node type: " + kind);
             }
 
             // note that this element is in the repository

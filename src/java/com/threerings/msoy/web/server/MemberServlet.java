@@ -9,15 +9,17 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
@@ -238,7 +240,7 @@ public class MemberServlet extends MsoyServiceServlet
         MemberRecord memrec = requireAuthedUser(ident);
         final List<FriendEntry> friends;
         ProfileRecord profile;
-        HashMap<Integer, String> ownedRooms = new HashMap<Integer, String>();
+        Map<Integer, String> ownedRooms = Maps.newHashMap();
         final ArrayIntSet groupMemberships = new ArrayIntSet();
 
         try {
@@ -261,7 +263,7 @@ public class MemberServlet extends MsoyServiceServlet
         final HashIntMap<MemberCard> onlineFriends = new HashIntMap<MemberCard>();
         final HashIntMap<ArrayList<Integer>> places = new HashIntMap<ArrayList<Integer>>();
         final HashIntMap<ArrayList<Integer>> games = new HashIntMap<ArrayList<Integer>>();
-        final HashMap<Integer, String> chats = new HashMap<Integer, String>();
+        final Map<Integer, String> chats = Maps.newHashMap();
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
             "getMyWhirled [memberId=" + memrec.memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {

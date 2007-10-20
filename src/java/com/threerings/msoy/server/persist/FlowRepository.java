@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.CacheKey;
@@ -119,7 +120,7 @@ public class FlowRepository extends DepotRepository
             helper.noteRecord(record);
         }
 
-        Map<String, SQLExpression> fieldMap = new HashMap<String, SQLExpression>();
+        Map<String, SQLExpression> fieldMap = Maps.newHashMap();
 
         // update their action summary counts
         for (IntIntMap.IntIntEntry entry : actionCounts.entrySet()) {
@@ -226,7 +227,7 @@ public class FlowRepository extends DepotRepository
                 "Illegal flow " + type + " [memberId=" + memberId + ", amount=" + amount + "]");
         }
 
-        Map<String, SQLExpression> fieldMap = new HashMap<String, SQLExpression>();
+        Map<String, SQLExpression> fieldMap = Maps.newHashMap();
         fieldMap.put(MemberRecord.FLOW, grant ?
             new Arithmetic.Add(MemberRecord.FLOW_C, amount) :
             new Arithmetic.Sub(MemberRecord.FLOW_C, amount));

@@ -19,14 +19,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
+import com.google.common.collect.Maps;
 import com.samskivert.swing.MultiLineLabel;
 
 /**
@@ -38,7 +39,7 @@ public class SwiftlyStandAlone
     static public void main (String argv[])
     {
         // parse and check the arguments
-        HashMap<String, String> properties = parseArguments(argv);
+        Map<String, String> properties = parseArguments(argv);
 
         final SwiftlyApplet applet = new SwiftlyApplet();
         JFrame frame = new JFrame("Swiftly Applet Test Window");
@@ -61,9 +62,9 @@ public class SwiftlyStandAlone
         applet.start();
     }
 
-    private static HashMap<String, String> parseArguments (String argv[])
+    private static Map<String, String> parseArguments (String argv[])
     {
-        HashMap<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = Maps.newHashMap();
         for (int i = 0; i < argv.length; i++) {
             try {
                 StringTokenizer parser = new StringTokenizer(argv[i], "=");
@@ -101,7 +102,7 @@ public class SwiftlyStandAlone
     private static class SwiftlyAppletStub
         implements AppletStub
     {
-        SwiftlyAppletStub (SwiftlyApplet applet, HashMap<String, String> properties)
+        SwiftlyAppletStub (SwiftlyApplet applet, Map<String, String> properties)
         {
             _applet = applet;
             _properties = properties;
@@ -144,7 +145,7 @@ public class SwiftlyStandAlone
         }
 
         SwiftlyApplet _applet;
-        HashMap<String, String> _properties;
+        Map<String, String> _properties;
         AppletContext _context;
     }
 

@@ -4,16 +4,18 @@
 package com.threerings.msoy.web.server;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
+
+import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.servlet.util.CookieUtil;
@@ -42,7 +44,7 @@ public class SnapshotServlet extends UploadServlet
         // note - no call to the superclass, this is a complete replacement!
 
         // pull out form data and validate it
-        HashMap<String, String> fields = parseFormFields(allItems);
+        Map<String, String> fields = parseFormFields(allItems);
         int sceneId = validateAccess(fields, req);
         UploadFile uploadFile = new SnapshotUploadFile(file, sceneId);
 
@@ -73,7 +75,7 @@ public class SnapshotServlet extends UploadServlet
     /**
      * Validate that the uploading user is logged in, and owns the scene, and returns its sceneId.
      */
-    protected int validateAccess (HashMap<String, String> formFields, HttpServletRequest req)
+    protected int validateAccess (Map<String, String> formFields, HttpServletRequest req)
         throws AccessDeniedException
     {
         Integer sceneId = -1, memberId = -1;
@@ -126,9 +128,9 @@ public class SnapshotServlet extends UploadServlet
     /**
      * Converts all uploaded form fields into a map of field names to field values.
      */
-    protected HashMap<String, String> parseFormFields (FileItem[] items)
+    protected Map<String, String> parseFormFields (FileItem[] items)
     {
-        HashMap<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = Maps.newHashMap();
         for (FileItem item : items) {
             try {
                 if (item.isFormField()) {

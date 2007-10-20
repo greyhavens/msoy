@@ -5,11 +5,12 @@ package com.threerings.msoy.world.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
+import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 
@@ -930,7 +931,7 @@ public class RoomManager extends SpotSceneManager
     protected RoomListener _roomListener = new RoomListener();
 
     /** For all WorldMemberInfo's, a mapping of ItemIdent to the member's oid. */
-    protected HashMap<ItemIdent,Integer> _avatarIdents = new HashMap<ItemIdent,Integer>();
+    protected Map<ItemIdent,Integer> _avatarIdents = Maps.newHashMap();
 
     /** The next id to use for an effect. */
     protected short _nextEffectId;

@@ -12,10 +12,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Maps;
 
 import com.samskivert.Log;
 import com.samskivert.io.PersistenceException;
@@ -516,7 +517,7 @@ public abstract class ItemRepository<
         // load those items and map item ID's to items
         List<T> items = findAll(
             getItemClass(), new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr)));
-        Map<Integer, T> map = new HashMap<Integer, T>();
+        Map<Integer, T> map = Maps.newHashMap();
         for (T iRec : items) {
             map.put(iRec.itemId, iRec);
         }
@@ -553,7 +554,7 @@ public abstract class ItemRepository<
             return; // if the listing has been unlisted, we don't need to nudge it.
         }
 
-        Map<String, SQLExpression> updates = new HashMap<String, SQLExpression>();
+        Map<String, SQLExpression> updates = Maps.newHashMap();
         if (purchased) {
             updates.put(CatalogRecord.PURCHASES,
                         new Arithmetic.Add(getCatalogColumn(CatalogRecord.PURCHASES), 1));

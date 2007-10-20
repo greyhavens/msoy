@@ -5,10 +5,11 @@ package com.threerings.msoy.swiftly.client.view;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JTabbedPane;
+
+import com.google.common.collect.Maps;
 
 import org.jvnet.substance.SubstanceLookAndFeel;
 import org.jvnet.substance.TabCloseListener;
@@ -134,6 +135,5 @@ public class TabbedEditorView extends JTabbedPane
     }
 
     /** Maps the PathElement to the component editing/viewing that PathElement */
-    private final Map<PathElement, TabbedEditorComponent> _tabList =
-        new HashMap<PathElement, TabbedEditorComponent>();
+    private final Map<PathElement, TabbedEditorComponent> _tabList = Maps.newHashMap();
 }
