@@ -124,7 +124,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
 
-            // let admins spend flow the flow that they have before they get stuff for free
+            // let admins spend flow they have before they get stuff for free
             int flowCost = mrec.isAdmin() ?
                 Math.min(listing.flowCost, mrec.flow) : listing.flowCost;
             if (mrec.flow < flowCost) {
