@@ -82,6 +82,8 @@ public class View extends Sprite
         _textBox = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
         _textBox.gotoAndStop(1, SCN_TEXTBOX);
         _textBox.visible = false;
+        _textBox.x = 80;
+        _textBox.y = 80;
 
         var format :TextFormat = new TextFormat();
         format.font = "SunnySide";
@@ -99,7 +101,6 @@ public class View extends Sprite
         _textField.wordWrap = true;
         _textField.width = 200;
         _textField.height = 400;
-//        textField.alpha = 0.5;
 
         // don't add the swirly until the text field is loaded
         maybeFinishUI();
@@ -124,12 +125,19 @@ public class View extends Sprite
         }
     }
 
+    protected static const BOX_OFFSET_LEFT :int = 40;
+    protected static const BOX_OFFSET_TOP :int = 30;
+    protected static const BOX_OFFSET_RIGHT :int = -15;
+    protected static const BOX_OFFSET_BOTTOM :int = 5;
+
     public function displaySummary (summary :String) :void
     {
         if (summary) {
             _textField.htmlText = summary;
-            _textBox.height = _textField.height;
-            _textBox.width = _textField.width;
+            _textField.x = _textBox.x + BOX_OFFSET_LEFT;
+            _textField.y = _textBox.y + BOX_OFFSET_TOP;
+            _textBox.height = _textField.height + BOX_OFFSET_TOP + BOX_OFFSET_BOTTOM;
+            _textBox.width = _textField.width + BOX_OFFSET_LEFT + BOX_OFFSET_RIGHT;
             _textBox.visible = true;
         } else {
             _textBox.visible = false;
