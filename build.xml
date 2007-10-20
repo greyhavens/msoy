@@ -74,6 +74,7 @@
     <file name="${extlibs.dir}/commons-logging.jar"/>
     <file name="${extlibs.dir}/ehcache-1.2.jar"/>
     <file name="${extlibs.dir}/ganymed.jar"/>
+    <file name="${extlibs.dir}/google-collect.jar"/>
     <file name="${extlibs.dir}/getdown.jar"/>
     <file name="${extlibs.dir}/gwt-user.jar"/>
     <file name="${extlibs.dir}/gwt-widgets.jar"/>
@@ -595,7 +596,7 @@
     <taskdef name="grecord" classname="com.samskivert.jdbc.depot.tools.GenRecordTask"
              classpathref="classpath"/>
     <!-- make sure the record class files are all compiled -->
-    <javac srcdir="${src.dir}" destdir="${classes.dir}"
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on">
       <classpath refid="classpath"/>
       <include name="**/*Record.java"/>
@@ -612,7 +613,7 @@
              classname="com.threerings.presents.tools.GenDObjectTask"
              classpathref="classpath"/>
     <!-- make sure the dobject class files are all compiled -->
-    <javac srcdir="${src.dir}" destdir="${classes.dir}"
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on">
       <classpath refid="classpath"/>
       <include name="**/*Object.java"/>
@@ -629,7 +630,7 @@
     <taskdef name="service" classpathref="classpath"
              classname="com.threerings.presents.tools.GenServiceTask"/>
     <!-- make sure the service class files are all compiled -->
-    <javac srcdir="${src.dir}" destdir="${classes.dir}"
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on">
       <classpath refid="classpath"/>
       <include name="**/*Service.java"/>
@@ -658,7 +659,7 @@
     <taskdef name="receiver" classpathref="classpath"
              classname="com.threerings.presents.tools.GenReceiverTask"/>
     <!-- make sure the receiver class files are all compiled -->
-    <javac srcdir="${src.dir}" destdir="${classes.dir}"
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on">
       <classpath refid="classpath"/>
       <include name="**/*Receiver.java"/>
@@ -750,24 +751,13 @@
   <!-- builds the java class files only, without preparing the build directories etc. -->
   <target name="qcompile">
     <echo>Compiling MSOY...</echo>
-    <javac srcdir="${src.dir}" destdir="${classes.dir}"
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="off" deprecation="on">
       <exclude name="**/chiyogami/**/*.java"/>
       <classpath refid="classpath"/>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
     </javac>
-  </target>
-
-  <!-- rebuilds Google Collections which doesn't fit into our standard scheme -->
-  <target name="distgoog">
-    <echo>Building in google-collections...</echo>
-    <ant dir="${projects.dir}/google-collections" target="dist" inheritAll="false"/>
-    <copy todir="${deploy.dir}/lib">
-      <fileset dir="${projects.dir}/google-collections/build/dist">
-        <include name="google-collect-snapshot.jar"/>
-      </fileset>
-    </copy>
   </target>
 
   <!-- builds the javadoc documentation -->
@@ -812,7 +802,7 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="prepare,distgoog,distprojects,dist,flashapps,jclients,tests">
+  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients,tests">
     <antcall target="gclient">
       <param name="full" value="true"/>
     </antcall>
