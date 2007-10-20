@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.server;
 
-import java.util.ArrayList;
-import java.util.List;
-import com.samskivert.util.HashIntMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -125,37 +125,20 @@ public class FriendManager
 
     protected void registerFriendInterest (MemberObject memobj, int friendId)
     {
-        List<MemberObject> watchers = _friendMap.get(friendId);
-        if (watchers == null) {
-            _friendMap.put(friendId, watchers = new ArrayList<MemberObject>());
-        }
-        watchers.add(memobj);
+        _friendMap.put(friendId, memobj);
     }
 
     protected void clearFriendInterest (MemberObject memobj, int friendId)
     {
-        List<MemberObject> watchers = _friendMap.get(friendId);
-        if (watchers == null) {
-            log.warning("No watchers list for cleared friend interest? [watcher=" + memobj.who() +
-                        ", friend=" + friendId + "].");
-            return;
-        }
-        if (!watchers.remove(memobj)) {
+        if (!_friendMap.remove(friendId, memobj)) {
             log.warning("Watcher not listed when interest cleared? [watcher=" + memobj.who() +
                         ", friend=" + friendId + "].");
-        }
-        if (watchers.size() == 0) {
-            _friendMap.remove(friendId);
         }
     }
 
     protected void updateOnlineStatus (int memberId, boolean online)
     {
-        List<MemberObject> watchers = _friendMap.get(memberId);
-        if (watchers == null) {
-            return; // alas, this member is unpopular and has no online friends
-        }
-        for (MemberObject watcher : watchers) {
+        for (MemberObject watcher : _friendMap.get(memberId)) {
             FriendEntry entry = watcher.friends.get(memberId);
             if (entry == null) {
                 log.warning("Missing entry for registered watcher? [watcher=" + watcher.who() +
@@ -166,7 +149,7 @@ public class FriendManager
         }
     }
 
-    /** A mapping from member id to member object of members on this server that are friends of the
-     * member in question. */
-    protected HashIntMap<List<MemberObject>> _friendMap = new HashIntMap<List<MemberObject>>();
+    /** A mapping from member id to the member objects of members on this server that are friends
+     * of the member in question. */
+    protected Multimap<Integer,MemberObject> _friendMap = new HashMultimap<Integer,MemberObject>();
 }
