@@ -166,7 +166,7 @@ public class Tutorial extends Sprite
             return;
         }
         if (_activeQuest) {
-            // TODO: instruct view to display summary box
+            _view.displaySummary(quest.summary);
             return;
         }
         if (step == 0 && swirlState != View.SWIRL_HUGE) {

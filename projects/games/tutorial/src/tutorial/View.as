@@ -25,21 +25,22 @@ public class View extends Sprite
     {
         _tutorial = tutorial;
 
-        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
+        var swirlBytes :ByteArray = ByteArray(new SWIRL());
+
+        var loader :EmbeddedSwfLoader;
+
+        // load two separate swirls, one to use as the actual swirly
+        loader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, handleSwirlLoaded);
-        loader.load(ByteArray(new SWIRL()));
+        loader.load(swirlBytes);
+
+        // and one to use as the textbox
+        loader = new EmbeddedSwfLoader();
+        loader.addEventListener(Event.COMPLETE, handleTextboxLoaded);
+        loader.load(swirlBytes);
 
         _swirlState = SWIRL_NONE;
     }
-
-    /**
-     * Called when there's a new batch of text to display.
-     */
-//    public function setSummary (summary :String) :void
-//    {
-//        _summary = summary;
-//        updateSummary();
-//    }
 
     /**
      * Called when we know our dimensions and can set up the text field.
@@ -53,20 +54,6 @@ public class View extends Sprite
         format.font = "SunnySide";
         format.size = 14;
         format.color = 0xDD7700;
-
-        _textField = new TextField();
-        /**
-        _textField.border = false;
-        _textField.borderColor = 0xFFFFFF;
-        _textField.defaultTextFormat = format;
-        _textField.multiline = true;
-        _textField.embedFonts = true;
-        _textField.autoSize = TextFieldAutoSize.NONE;
-        _textField.wordWrap = true;
-        _textField.width = width - SWIRL_SIZE;
-        _textField.height = height;
-        _textField.alpha = 0.5;
-        */
 
         // don't add the text field until the swirly is loaded
         maybeFinishUI();
@@ -82,8 +69,37 @@ public class View extends Sprite
         _scenes = new Object();
         for (var ii :int = 0; ii < _swirl.scenes.length; ii ++) {
             var scene :Scene = _swirl.scenes[ii];
+            log.info("Scene: '" + scene.name + "'");
             _scenes[scene.name] = scene;
         }
+
+        // don't add the swirly until the text field is loaded
+        maybeFinishUI();
+    }
+
+    protected function handleTextboxLoaded (evt :Event) :void
+    {
+        _textBox = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        _textBox.gotoAndStop(1, SCN_TEXTBOX);
+        _textBox.visible = false;
+
+        var format :TextFormat = new TextFormat();
+        format.font = "SunnySide";
+        format.size = 16;
+        format.color = 0x203344;
+        format.align = TextFormatAlign.LEFT;
+
+        _textField = new TextField();
+        _textField.border = true;
+        _textField.borderColor = 0xFFFFFF;
+        _textField.defaultTextFormat = format;
+        _textField.multiline = true;
+        _textField.embedFonts = true;
+        _textField.autoSize = TextFieldAutoSize.LEFT;
+        _textField.wordWrap = true;
+        _textField.width = 200;
+        _textField.height = 400;
+//        textField.alpha = 0.5;
 
         // don't add the swirly until the text field is loaded
         maybeFinishUI();
@@ -92,11 +108,7 @@ public class View extends Sprite
     protected function maybeFinishUI () :void
     {
         // if both initializations are complete, actually add the bits
-        if (_swirl && _textField) {
-//            _swirl.scaleX = 0.2;
-//            _swirl.scaleY = 0.2;
-//            _swirl.x = -10;
-//            _swirl.y = 0;
+        if (_width && _swirl && _textBox) {
             _swirl.visible = true;
             _swirl.addEventListener(MouseEvent.CLICK, swirlClicked);
             this.addChild(_swirl);
@@ -105,25 +117,22 @@ public class View extends Sprite
             _todoDeleteMe.addEventListener(MouseEvent.CLICK, swirlClicked);
             this.addChild(_todoDeleteMe);
 
-//            var square :Sprite = new Sprite();
-//            square.graphics.beginFill(0xFF0000);
-//            square.graphics.drawRect(0, 0, _width, SWIRL_SIZE);
-//            this.addChild(square);
-//            _swirl.mask = square;
+            this.addChild(_textBox);
+            this.addChild(_textField);
 
-//            this.addChild(_textField);
-//            _textField.x = SWIRL_SIZE;
-
-            updateSummary();
             maybeTransition();
         }
     }
 
-    // only try to display our summary text when the textfield is setup
-    protected function updateSummary () :void
+    public function displaySummary (summary :String) :void
     {
-        if (_textField) {
-            _textField.htmlText = _summary ? _summary : "";
+        if (summary) {
+            _textField.htmlText = summary;
+            _textBox.height = _textField.height;
+            _textBox.width = _textField.width;
+            _textBox.visible = true;
+        } else {
+            _textBox.visible = false;
         }
     }
 
@@ -148,7 +157,7 @@ public class View extends Sprite
                 _transition = SCN_MINIMIZE;
             } else {
                 _transition = SCN_IDLE;
-                if (_swirlState != SWIRL_BOUNCY && swirlState != SWIRL_NONE) {
+                if (_swirlState != SWIRL_BOUNCY && _swirlState != SWIRL_NONE) {
                     log.warning(
                         "Unexpected transtion [from=" + _swirlState + ", to=" + state + "]");
                 }
@@ -257,12 +266,14 @@ public class View extends Sprite
 
     protected var _width :Number;
     protected var _height :Number;
-    protected var _summary :String;
-    protected var _textField :TextField;
 
     protected var _swirl :MovieClip;
     protected var _swirlState :int;
     protected var _transition :String;
+
+    protected var _textBox :MovieClip;
+    protected var _textField :TextField;
+
     protected var _scenes :Object;
 
     protected var _todoDeleteMe :DisplayObject;
@@ -281,6 +292,6 @@ public class View extends Sprite
     protected static const SCN_IDLE :String = "idle";
     protected static const SCN_LOOKATME :String = "lookatme";
     protected static const SCN_GOODJOB :String = "goodjob";
-    protected static const SCN_TEXTBOX :String = " textbox ";
+    protected static const SCN_TEXTBOX :String = "textbox";
 }
 }
