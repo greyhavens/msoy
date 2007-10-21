@@ -96,7 +96,8 @@ public class View extends Sprite
 //        _textField.borderColor = 0x000000;
         _textField.defaultTextFormat = format;
         _textField.multiline = true;
-        _textField.embedFonts = false;
+        _textField.embedFonts = true;
+        _textField.antiAliasType = flash.text.AntiAliasType.ADVANCED;
         _textField.autoSize = TextFieldAutoSize.NONE;
   
         _textField.wordWrap = true;
