@@ -69,7 +69,6 @@ public class View extends Sprite
         _scenes = new Object();
         for (var ii :int = 0; ii < _swirl.scenes.length; ii ++) {
             var scene :Scene = _swirl.scenes[ii];
-            log.info("Scene: '" + scene.name + "'");
             _scenes[scene.name] = scene;
         }
 
@@ -85,6 +84,28 @@ public class View extends Sprite
         _textBox.x = 80;
         _textBox.y = 80;
 
+        var styleSheet :StyleSheet = new StyleSheet();
+        styleSheet.parseCSS(
+            "body {" +
+            "  color: #000000;" +
+            "  font-family: SunnySide;" +
+            "}" +
+            ".title {" +
+            "  font-size: 20;" +
+            "  text-decoration: underline;" +
+            "  text-align: center;" +
+            "}" +
+            ".summary {" +
+            "  font-size: 14;" +
+            "  text-align: center;" +
+            "}" +
+            ".details {" +
+            "  font-size: 13;" +
+            "  text-align: left;" +
+            "}");
+
+        log.info(styleSheet.styleNames);
+
         var format :TextFormat = new TextFormat();
         format.font = "SunnySide";
         format.size = 14;
@@ -95,12 +116,13 @@ public class View extends Sprite
 //        _textField.border = true;
 //        _textField.borderColor = 0x000000;
         _textField.defaultTextFormat = format;
+        _textField.styleSheet = styleSheet;
+        _textField.wordWrap = true;
         _textField.multiline = true;
         _textField.embedFonts = true;
         _textField.antiAliasType = flash.text.AntiAliasType.ADVANCED;
         _textField.autoSize = TextFieldAutoSize.NONE;
   
-        _textField.wordWrap = true;
         _textField.width = _textBox.width - (BOX_OFFSET_LEFT + BOX_OFFSET_RIGHT);
         _textField.height = _textBox.height - (BOX_OFFSET_TOP + BOX_OFFSET_BOTTOM);
         _textField.x = BOX_OFFSET_LEFT;
@@ -128,11 +150,6 @@ public class View extends Sprite
             maybeTransition();
         }
     }
-
-    protected static const BOX_OFFSET_LEFT :int = 70;
-    protected static const BOX_OFFSET_TOP :int = 80;
-    protected static const BOX_OFFSET_RIGHT :int = -35;
-    protected static const BOX_OFFSET_BOTTOM :int = 5;
 
     public function displaySummary (summary :String) :void
     {
@@ -217,6 +234,7 @@ public class View extends Sprite
         topText.wordWrap = true;
         topText.selectable = false;
         topText.embedFonts = true;
+        topText.antiAliasType = AntiAliasType.ADVANCED;
         topText.x = 0;
         topText.y = 0;
         topText.width = 180;
@@ -238,6 +256,7 @@ public class View extends Sprite
         midText.multiline = true;
         midText.wordWrap = true;
         midText.embedFonts = true;
+        midText.antiAliasType = AntiAliasType.ADVANCED;
         midText.selectable = false;
         midText.x = 0;
         midText.y = 0;
@@ -259,6 +278,7 @@ public class View extends Sprite
         botText.multiline = true;
         botText.wordWrap = true;
         botText.embedFonts = true;
+        botText.antiAliasType = AntiAliasType.ADVANCED;
         botText.selectable = false;
         botText.x = 0;
         botText.y = 0;
@@ -303,5 +323,10 @@ public class View extends Sprite
     protected static const SCN_LOOKATME :String = "lookatme";
     protected static const SCN_GOODJOB :String = "goodjob";
     protected static const SCN_TEXTBOX :String = "textbox";
+
+    protected static const BOX_OFFSET_LEFT :int = 70;
+    protected static const BOX_OFFSET_TOP :int = 80;
+    protected static const BOX_OFFSET_RIGHT :int = -35;
+    protected static const BOX_OFFSET_BOTTOM :int = 5;
 }
 }

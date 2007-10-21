@@ -57,14 +57,13 @@ public class Quest
             "decorBought",
             "Buy new Decor",
             "Your room's background image is known as decor. Let's go shopping.",
-            "<p align=\"center\"><font size=\"24\"><b>Change Your Decor!</b></font></p>" +
-            "<p align=\"center\"><font face=\"Arial\" size=\"16\"><b>" +
+            "<p class='title'>Change Your Decor!</p>" +
+            "<p class='summary'>" +
             "The decor is the most fundamental element of your room's appearance. Every other item in your room appears on top the decor." +
-            "</b></font></p>" +
-            "<p align=\"left\"><font face=\"Arial\" size=\"14\">" +
-            "1. Choose <b><i>Catalog -> Decor</i></b> for a selection of new room settings.<br><br>" +
-            "2. Browse through and buy one you like.<br><br>" +
-            "3. This is a continuation of the previous paragraph because I want to see some overflow.",
+            "</p><p class='details'>" +
+            "<br><li>Choose <b><i>Catalog -> Decor</i></b> for a selection of new room settings." +
+            "<br><li>Browse through and buy one you like." +
+            "</p>",
             "Good. You now own a piece of decor.",
             0));
         _quests.push(new Quest(
