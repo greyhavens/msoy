@@ -13,6 +13,7 @@ import flash.ui.*;
 import flash.utils.*;
 
 import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.flash.SimpleTextButton;
 
 public class View extends Sprite
 {
@@ -132,6 +133,15 @@ public class View extends Sprite
         _textField.y = BOX_OFFSET_TOP;
         _textBox.addChild(_textField);
 
+        var button :SimpleButton = new SimpleTextButton(
+            "Hide", true, 0x003366, 0x6699CC, 0x0066FF, 5, format);
+        _textBox.addChild(button);
+        button.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
+                displaySummary(null);
+            });
+        button.x = 440 - button.width;
+        button.y = 335 - button.height;
+
         // don't add the swirly until the text field is loaded
         maybeFinishUI();
     }
@@ -182,7 +192,7 @@ public class View extends Sprite
     {
         // TODO: If we're really going to use the big swirly a lot we absolutely must have
         // TODO: proper transitions; this is a temporary hack
-        log.debug("ordered to change swirl state [state=" + state + ", _swirlState=" + _swirlState + "]");
+
         switch(state) {
         case SWIRL_HUGE:
             if (_swirlState != SWIRL_NONE) {
