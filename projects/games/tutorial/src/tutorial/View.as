@@ -87,20 +87,24 @@ public class View extends Sprite
 
         var format :TextFormat = new TextFormat();
         format.font = "SunnySide";
-        format.size = 16;
-        format.color = 0x203344;
+        format.size = 14;
+        format.color = 0x000000;
         format.align = TextFormatAlign.LEFT;
 
         _textField = new TextField();
-        _textField.border = true;
-        _textField.borderColor = 0xFFFFFF;
+//        _textField.border = true;
+//        _textField.borderColor = 0x000000;
         _textField.defaultTextFormat = format;
         _textField.multiline = true;
-        _textField.embedFonts = true;
-        _textField.autoSize = TextFieldAutoSize.LEFT;
+        _textField.embedFonts = false;
+        _textField.autoSize = TextFieldAutoSize.NONE;
+  
         _textField.wordWrap = true;
-        _textField.width = 200;
-        _textField.height = 400;
+        _textField.width = _textBox.width - (BOX_OFFSET_LEFT + BOX_OFFSET_RIGHT);
+        _textField.height = _textBox.height - (BOX_OFFSET_TOP + BOX_OFFSET_BOTTOM);
+        _textField.x = BOX_OFFSET_LEFT;
+        _textField.y = BOX_OFFSET_TOP;
+        _textBox.addChild(_textField);
 
         // don't add the swirly until the text field is loaded
         maybeFinishUI();
@@ -119,26 +123,23 @@ public class View extends Sprite
             this.addChild(_todoDeleteMe);
 
             this.addChild(_textBox);
-            this.addChild(_textField);
 
             maybeTransition();
         }
     }
 
-    protected static const BOX_OFFSET_LEFT :int = 40;
-    protected static const BOX_OFFSET_TOP :int = 30;
-    protected static const BOX_OFFSET_RIGHT :int = -15;
+    protected static const BOX_OFFSET_LEFT :int = 70;
+    protected static const BOX_OFFSET_TOP :int = 80;
+    protected static const BOX_OFFSET_RIGHT :int = -35;
     protected static const BOX_OFFSET_BOTTOM :int = 5;
 
     public function displaySummary (summary :String) :void
     {
         if (summary) {
-            _textField.htmlText = summary;
-            _textField.x = _textBox.x + BOX_OFFSET_LEFT;
-            _textField.y = _textBox.y + BOX_OFFSET_TOP;
-            _textBox.height = _textField.height + BOX_OFFSET_TOP + BOX_OFFSET_BOTTOM;
-            _textBox.width = _textField.width + BOX_OFFSET_LEFT + BOX_OFFSET_RIGHT;
             _textBox.visible = true;
+            _textField.htmlText = summary;
+//            _textBox.height = _textField.height + BOX_OFFSET_TOP + BOX_OFFSET_BOTTOM;
+//            _textBox.width = _textField.width + BOX_OFFSET_LEFT + BOX_OFFSET_RIGHT;
         } else {
             _textBox.visible = false;
         }
