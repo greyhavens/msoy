@@ -48,9 +48,9 @@ public class FlowRepository extends DepotRepository
     public FlowRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
     {
         super(ctx);
-        
+
         _eventLog = eventLog;
-        
+
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
             public void entryInvalidated (CacheKey key, MemberRecord member) {
@@ -127,11 +127,17 @@ public class FlowRepository extends DepotRepository
             fieldMap.put(
                 MemberActionSummaryRecord.COUNT,
                 new Arithmetic.Add(MemberActionSummaryRecord.COUNT_C, entry.getIntValue()));
-            updateLiteral(
+            int rows = updateLiteral(
                 MemberActionSummaryRecord.class,
                 MemberActionSummaryRecord.MEMBER_ID, memberId,
                 MemberActionSummaryRecord.ACTION_ID, entry.getIntKey(),
                 fieldMap);
+            // if no row was modified, this must be a first time action by this member
+            if (rows == 0) {
+                // so create a new row
+                insert(new MemberActionSummaryRecord(
+                    memberId, entry.getIntKey(), entry.getIntValue()));
+            }
         }
 
         // clear their log tables -- no cache invalidation needed because these records do not
@@ -306,7 +312,7 @@ public class FlowRepository extends DepotRepository
 
         // TODO: can we magically get the updated value from the database? stored procedure?
         MemberFlowRecord updatedFlow = loadMemberFlow(memberId);
-        
+
         // log this to the audit log as well
         int signedAmount = (grant ? amount : -amount);
         _eventLog.flowTransaction(
@@ -314,7 +320,7 @@ public class FlowRepository extends DepotRepository
         // todo: remove old logging functions:
         String loginfo = action + (details != null ? " " + details : "");
         MsoyServer.flowLog(memberId + (grant ? " G " : " S ") + amount + " " + loginfo);
-        
+
         return updatedFlow;
     }
 

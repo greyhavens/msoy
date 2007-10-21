@@ -46,9 +46,22 @@ public class MemberActionSummaryRecord extends PersistentRecord
     @Id
     /** The action performed. */
     public int actionId;
-    
+
     /** How many times this action has occured. */
     public int count;
+
+    /** An empty constructor for Depot's benefit. */
+    public MemberActionSummaryRecord ()
+    {
+    }
+
+    /** Creates a fully configured {@link MemberActionSummaryRecord}. */
+    public MemberActionSummaryRecord (int memberId, int actionId, int count)
+    {
+        this.memberId = memberId;
+        this.actionId = actionId;
+        this.count = count;
+    }
 
     // AUTO-GENERATED: METHODS START
     /**
