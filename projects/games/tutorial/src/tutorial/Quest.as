@@ -59,9 +59,9 @@ public class Quest
             "Your room's background image is known as decor. Let's go shopping.",
             "<p class='title'>Change Your Decor!</p>" +
             "<p class='summary'>" +
-            "The decor is the most fundamental element of your room's appearance. Every other item in your room appears on top the decor." +
+            "<br>The decor is the most fundamental element of your room's appearance. Every other item in your room appears on top the decor." +
             "</p><p class='details'>" +
-            "<br><li>Choose <b><i>Catalog -> Decor</i></b> for a selection of new room settings." +
+            "<br><li>Choose <b><i>Catalog -> Decor</i></b> for a selection of new room settings.<br>" +
             "<br><li>Browse through and buy one you like." +
             "</p>",
             "Good. You now own a piece of decor.",

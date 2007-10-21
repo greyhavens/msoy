@@ -88,19 +88,22 @@ public class View extends Sprite
         styleSheet.parseCSS(
             "body {" +
             "  color: #000000;" +
-            "  font-family: SunnySide;" +
             "}" +
             ".title {" +
+            "  font-family: SunnySide;" +
             "  font-size: 20;" +
             "  text-decoration: underline;" +
             "  text-align: center;" +
             "}" +
             ".summary {" +
-            "  font-size: 14;" +
+            "  font-family: Goudy;" +
+            "  font-weight: bold;" +
+            "  font-size: 16;" +
             "  text-align: center;" +
             "}" +
             ".details {" +
-            "  font-size: 13;" +
+            "  font-family: Goudy;" +
+            "  font-size: 14;" +
             "  text-align: left;" +
             "}");
 
@@ -313,8 +316,25 @@ public class View extends Sprite
     [Embed(source="../../rsrc/whatsnext.swf", mimeType="application/octet-stream")]
     protected static const SWIRL :Class;
 
-    [Embed(source="../../rsrc/SunnySide.ttf", fontName="SunnySide", fontWeight="Regular")]
-    protected static const FONT :Class;
+    [Embed(source="../../rsrc/SunnySide.ttf", fontName="SunnySide",
+           unicodeRange="U+0020-U+007E,U+2022")]
+    protected static const FONT_SUNNYSIDE :Class;
+
+    [Embed(source="../../rsrc/Goudy.ttf", fontName="Goudy",
+           unicodeRange="U+0020-U+007E,U+2022")]
+    protected static const FONT_GOUDY :Class;
+
+     [Embed(source="../../rsrc/GoudyB.ttf", fontName="Goudy", fontWeight="bold",
+             unicodeRange="U+0020-U+007E,U+2022")]
+    protected static const FONT_GOUDY_BOLD :Class;
+
+    [Embed(source="../../rsrc/GoudyI.ttf", fontName="Goudy", fontStyle="italic",
+            unicodeRange="U+0020-U+007E,U+2022")]
+    protected static const FONT_GOUDY_ITALIC :Class;
+
+    [Embed(source="../../rsrc/GoudyBI.ttf", fontName="Goudy", fontWeight="bold",
+           fontStyle="italic", unicodeRange="U+0020-U+007E,U+2022")]
+    protected static const FONT_GOUDY_BOLD_ITALIC :Class;
 
     protected static const SCN_APPEAR :String = "appear";
     protected static const SCN_MAXIMIZE :String = "maximize";
