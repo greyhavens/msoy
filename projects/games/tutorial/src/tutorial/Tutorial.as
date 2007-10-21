@@ -87,6 +87,7 @@ public class Tutorial extends Sprite
         // log.debug("property changed: " + event.name + "=" + event.value);
         if (event.name == PROP_STEP_COMPLETED) {
             _view.gotoSwirlState(View.SWIRL_BOUNCY);
+            _view.displaySummary(null);
 
         } else if (event.name == PROP_TUTORIAL_STEP) {
             // we have arrived at a new tutorial step; reinitialize our state
@@ -100,17 +101,15 @@ public class Tutorial extends Sprite
         // we've acquired a new active quest or dropped an old one; update our display
 
         var step :int = getStep();
+        var quest :Quest = Quest.getQuest(step);
         if (event.value) {
-            // if this was the very first step, get rid of the big swirl
-            if (step == 0) {
-                _view.gotoSwirlState(View.SWIRL_IDLE);
-            }
             // accepting a new quest triggers the summary box
-//            _view.popupSummary(step);
+            _view.displaySummary(quest.summary);
+            // we'll let initialize() set _activeQuest and figure out swirl state
+            initialize();
             return;
         }
         // else the player dropped the quest or clicked the completion popup's "OK" button
-        var quest :Quest = Quest.getQuest(step);
         if (event.name == quest.questId && testCompletedStep(step)) {
             // looks like it was completed
             _activeQuest = null;
@@ -147,7 +146,7 @@ public class Tutorial extends Sprite
                 if (testCompletedStep(step)) {
                     _view.gotoSwirlState(View.SWIRL_BOUNCY);
                 } else {
-                    _view.gotoSwirlState(View.SWIRL_IDLE);
+                    _view.gotoSwirlState(View.SWIRL_DEMURE);
                 }
                 return;
             }
@@ -166,14 +165,15 @@ public class Tutorial extends Sprite
             return;
         }
         if (_activeQuest) {
-            _view.displaySummary(quest.summary);
+            _view.displaySummary(_view.isShowingSummary() ? null : quest.summary);
             return;
         }
         if (step == 0 && swirlState != View.SWIRL_HUGE) {
-            log.warning("Eek, unexpected huge swirl click [step=" + getStep() + "]");
+            log.warning("Eek, unexpected click [swirlState=" + swirlState +
+                        ", step=" + getStep() + "]");
         }
         _control.offerQuest(quest.questId, quest.intro, quest.status);
-        _view.gotoSwirlState(View.SWIRL_IDLE);
+        _view.gotoSwirlState(View.SWIRL_DEMURE);
     }
 
     protected function getStep () :int

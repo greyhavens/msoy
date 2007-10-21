@@ -17,7 +17,7 @@ import com.threerings.util.EmbeddedSwfLoader;
 public class View extends Sprite
 {
     public static const SWIRL_NONE :int = 1;
-    public static const SWIRL_IDLE :int = 2;
+    public static const SWIRL_DEMURE :int = 2;
     public static const SWIRL_HUGE :int = 3;
     public static const SWIRL_BOUNCY :int = 4;
 
@@ -154,6 +154,11 @@ public class View extends Sprite
         }
     }
 
+    public function isShowingSummary () :Boolean
+    {
+        return _textBox.visible;
+    }
+
     public function displaySummary (summary :String) :void
     {
         if (summary) {
@@ -175,29 +180,31 @@ public class View extends Sprite
 
     public function gotoSwirlState (state :int) :void
     {
-        // TODO: If we continue down this path, replace with properly queued transitions.
-        if (state == SWIRL_HUGE) {
+        // TODO: If we're really going to use the big swirly a lot we absolutely must have
+        // TODO: proper transitions; this is a temporary hack
+        log.debug("ordered to change swirl state [state=" + state + ", _swirlState=" + _swirlState + "]");
+        switch(state) {
+        case SWIRL_HUGE:
             if (_swirlState != SWIRL_NONE) {
                 log.warning("Unexpected transtion [from=" + _swirlState + ", to=" + state + "]");
             }
             _transition = SCN_APPEAR;
-        } else if (state == SWIRL_IDLE) {
-            if (_swirlState == SWIRL_HUGE) {
-                // TODO: Does this automatically transition into SCN_IDLE?
+            break;
+        case SWIRL_DEMURE:
+            if (_swirlState != SWIRL_DEMURE) {
                 _transition = SCN_MINIMIZE;
-            } else {
-                _transition = SCN_IDLE;
-                if (_swirlState != SWIRL_BOUNCY && _swirlState != SWIRL_NONE) {
-                    log.warning(
-                        "Unexpected transtion [from=" + _swirlState + ", to=" + state + "]");
-                }
             }
-        } else if (state == SWIRL_BOUNCY) {
-            if (_swirlState != SWIRL_IDLE) {
+            // TODO: if we go from NONE to DEMURE, do we SCN_APPEAR first?
+            // TODO: probably not; we'd need a SMALL_APPEAR
+            break;
+        case SWIRL_BOUNCY:
+            if (_swirlState != SWIRL_DEMURE) {
+                // TODO: this will look moronic without a MAXIMIZE transition first
                 log.warning("Unexpected transtion [from=" + _swirlState + ", to=" + state + "]");
             }
             _transition = SCN_LOOKATME;
-        } else {
+            break;
+        default:
             log.warning("Can't goto unknown swirl state [state=" + state + "]");
             return;
         }
@@ -208,11 +215,6 @@ public class View extends Sprite
     protected function maybeTransition () :void
     {
         if (_swirl && _swirl.visible && _transition) {
-            if (_transition == SCN_IDLE || _transition == SCN_LOOKATME) {
-                _swirl.scaleX = _swirl.scaleY = 0.15;
-            } else {
-                _swirl.scaleX = _swirl.scaleY = 1.0;
-            }
             _swirl.gotoAndPlay(1, _transition);
             // TODO: make this appear slowly, probably as part of the .swf
             _todoDeleteMe.visible = (_transition == SCN_APPEAR || _transition == SCN_MAXIMIZE);
