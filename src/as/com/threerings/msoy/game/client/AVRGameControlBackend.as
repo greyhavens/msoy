@@ -150,12 +150,24 @@ public class AVRGameControlBackend extends ControlBackend
             // should hopefully not happen
             return false;
         }
-        view.getRoomController().offerQuest(_gctx, intro, function() :void {
+
+        var actualOffer :Function = function() :void {
             _gameObj.avrgService.startQuest(_gctx.getClient(), questId, initialStatus,
                 loggingConfirmListener("startQuest", function () :void {
                     _mctx.displayFeedback(null, "Quest begun: " + initialStatus);
                 }));
-            });
+        };
+
+        if (intro == null) {
+            // only the tutorial is allowed to skip the UI
+            if (_mctx.getGameDirector().isPlayingTutorial()) {
+                actualOffer();
+                return true;
+            }
+            return false;
+        }
+
+        view.getRoomController().offerQuest(_gctx, intro, actualOffer);
         return true;
     }
 
@@ -182,13 +194,25 @@ public class AVRGameControlBackend extends ControlBackend
             // should hopefully not happen
             return false;
         }
-        view.getRoomController().completeQuest(_gctx, outro, function() :void {
+
+        var actualComplete :Function = function() :void {
             _gameObj.avrgService.completeQuest(
                 _gctx.getClient(), questId, payout, loggingConfirmListener(
                     "completeQuest", function () :void {
                         _mctx.displayFeedback(null, "Quest completed!");
                     }));
-            });
+        };
+
+        if (outro == null) {
+            // only the tutorial is allowed to skip the UI
+            if (_mctx.getGameDirector().isPlayingTutorial()) {
+                actualComplete();
+                return true;
+            }
+            return false;
+        }
+
+        view.getRoomController().completeQuest(_gctx, outro, actualComplete);
         return true;
     }
 
