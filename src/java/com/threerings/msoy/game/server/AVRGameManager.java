@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.game.data.AVRGameMarshaller;
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.GameState;
@@ -229,13 +230,29 @@ public class AVRGameManager
                 "Member not subscribed to updated quest [questId=" + questId + "]");
         }
 
+        final int payout;
+        if (_gameId == Game.TUTORIAL_GAME_ID) {
+            payout = payoutLevel;
+        } else {
+            payout = 0;
+            log.warning("Flow payout not implemented for quests [gameId=" + _gameId + "]");
+        }
+
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("completeQuest") {
             public void invokePersist () throws PersistenceException {
                 _repo.setQuestState(
                     player.getMemberId(), _gameId, questId, QuestState.STEP_COMPLETED, null, 0);
+                if (payout > 0) {
+                    MsoyGameServer.memberRepo.getFlowRepository().grantFlow(
+                        player.getMemberId(), payout, UserAction.PLAYED_GAME,
+                        _gameId + " " + questId);
+                }
             }
             public void handleSuccess () {
                 player.removeFromQuestState(questId);
+                if (payout > 0) {
+                    MsoyGameServer.worldClient.reportFlowAward(player.getMemberId(), payout);
+                }
                 listener.requestProcessed();
             }
             public void handleFailure (Exception pe) {
