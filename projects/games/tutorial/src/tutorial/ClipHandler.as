@@ -21,6 +21,7 @@ public class ClipHandler
         scenes = new Object();
         for (var ii :int = 0; ii < clip.scenes.length; ii ++) {
             var scene :Scene = _clip.scenes[ii];
+//            log.debug("Indexing scene: " + scene.name);
             scenes[scene.name] = scene;
         }
     }

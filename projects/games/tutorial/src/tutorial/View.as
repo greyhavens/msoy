@@ -69,8 +69,6 @@ public class View extends Sprite
         _swirlHandler = new ClipHandler(_swirl);
         _swirl.visible = false;
 
-        _todoDeleteMe = buildHugeSwirlTextLayer();
-
         // don't add the swirly until the text field is loaded
         maybeFinishUI();
     }
@@ -105,8 +103,6 @@ public class View extends Sprite
             "  font-size: 14;" +
             "  text-align: left;" +
             "}");
-
-        log.info(styleSheet.styleNames);
 
         var format :TextFormat = new TextFormat();
         format.font = "SunnySide";
@@ -152,11 +148,10 @@ public class View extends Sprite
             _swirl.addEventListener(MouseEvent.CLICK, swirlClicked);
             this.addChild(_swirl);
 
-            _todoDeleteMe.visible = false;
-            _todoDeleteMe.addEventListener(MouseEvent.CLICK, swirlClicked);
-            this.addChild(_todoDeleteMe);
-
             this.addChild(_textBox);
+
+            _swirl.x = -275; _swirl.y = -225;
+            _swirl.x += 50; _swirl.y += 50;
 
             maybeTransition();
         }
@@ -232,7 +227,7 @@ public class View extends Sprite
             break;
         case SWIRL_BOUNCY:
             if (_swirlState == SWIRL_DEMURE) {
-                first = SCN_MAXIMIZE;
+//                first = SCN_MAXIMIZE;
             }
             then = SCN_LOOKATME;
             break;
@@ -244,8 +239,6 @@ public class View extends Sprite
         // there is always a 'then' transition, so write code to handle it
         var transition :Function = function () :void {
             _swirlHandler.gotoScene(then, null);
-            // TODO: Bill is making the text layer part of the SWF
-            _todoDeleteMe.visible = (then == SCN_APPEAR);
         };
 
         // then execute that code either as a second-phase callback, or immediately
@@ -257,81 +250,6 @@ public class View extends Sprite
 
         _swirlState = _swirlRequest;
         _swirlRequest = 0;
-    }
-
-    // TODO: ask Bill to simply include this in the SWF?
-    protected function buildHugeSwirlTextLayer() :DisplayObject
-    {
-        var textLayer :Sprite = new Sprite();
-
-        var format :TextFormat = new TextFormat();
-        format.font = "SunnySide";
-        format.size = 28;
-        format.color = 0x203344;
-        format.align = TextFormatAlign.CENTER;
-
-        var topText :TextField = new TextField();
-        topText.defaultTextFormat = format;
-        topText.multiline = true;
-        topText.wordWrap = true;
-        topText.selectable = false;
-        topText.embedFonts = true;
-        topText.antiAliasType = AntiAliasType.ADVANCED;
-        topText.x = 0;
-        topText.y = 0;
-        topText.width = 180;
-        topText.height = 100;
-        topText.x = 190;
-        topText.y = 90;
-        topText.htmlText = "Welcome to<br>Whirled!";
-        textLayer.addChild(topText);
-
-        format = new TextFormat();
-        format.font = "SunnySide";
-        format.size = 16;
-        format.color = 0x203344;
-        format.italic = true;
-        format.align = TextFormatAlign.CENTER;
-
-        var midText :TextField = new TextField();
-        midText.defaultTextFormat = format;
-        midText.multiline = true;
-        midText.wordWrap = true;
-        midText.embedFonts = true;
-        midText.antiAliasType = AntiAliasType.ADVANCED;
-        midText.selectable = false;
-        midText.x = 0;
-        midText.y = 0;
-        midText.width = 240;
-        midText.height = 100;
-        midText.x = 160;
-        midText.y = 180;
-        midText.htmlText = "Whirled is a web-based social world for chat, games and player-created content.";
-        textLayer.addChild(midText);
-
-        format = new TextFormat();
-        format.font = "SunnySide";
-        format.size = 18;
-        format.color = 0x323E44;
-        format.align = TextFormatAlign.CENTER;
-
-        var botText :TextField = new TextField();
-        botText.defaultTextFormat = format;
-        botText.multiline = true;
-        botText.wordWrap = true;
-        botText.embedFonts = true;
-        botText.antiAliasType = AntiAliasType.ADVANCED;
-        botText.selectable = false;
-        botText.x = 0;
-        botText.y = 0;
-        botText.width = 180;
-        botText.height = 100;
-        botText.x = 190;
-        botText.y = 260;
-        botText.htmlText = "Click me to begin exploring Whirled!";
-        textLayer.addChild(botText);
-
-        return textLayer;
     }
 
     protected var _tutorial :Tutorial;
@@ -348,8 +266,6 @@ public class View extends Sprite
 
     protected var _textBox :MovieClip;
     protected var _textField :TextField;
-
-    protected var _todoDeleteMe :DisplayObject;
 
     protected static const log :Log = Log.getLog(View);
 
@@ -376,8 +292,7 @@ public class View extends Sprite
            fontStyle="italic", unicodeRange="U+0020-U+007E,U+2022")]
     protected static const FONT_GOUDY_BOLD_ITALIC :Class;
 
-    protected static const SCN_APPEAR :String = "appear";
-    protected static const SCN_MAXIMIZE :String = "maximize";
+    protected static const SCN_APPEAR :String = "appear_text";
     protected static const SCN_MINIMIZE :String = "minimize";
     protected static const SCN_IDLE :String = "idle";
     protected static const SCN_LOOKATME :String = "lookatme";

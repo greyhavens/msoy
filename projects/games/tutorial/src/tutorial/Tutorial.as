@@ -15,7 +15,7 @@ import flash.utils.*;
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 
-[SWF(width="520", height="100")]
+[SWF(width="640", height="400")]
 public class Tutorial extends Sprite
 {
     public static var log :Log = Log.getLog(Tutorial);
@@ -44,8 +44,6 @@ public class Tutorial extends Sprite
         // when we finish loading we know our own dimensions
         var width :Number = this.loaderInfo.width;
         var height :Number = this.loaderInfo.height;
-
-        log.debug("Initializing view now...");
 
         // then initialize the actual view and pad it a little
         _view.init(_control.getStageBounds(), _control.getRoomBounds(), width, height);
