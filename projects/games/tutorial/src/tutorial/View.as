@@ -19,7 +19,7 @@ public class View extends Sprite
 {
     public static const SWIRL_NONE :int = 1;
     public static const SWIRL_DEMURE :int = 2;
-    public static const SWIRL_HUGE :int = 3;
+    public static const SWIRL_INTRO :int = 3;
     public static const SWIRL_BOUNCY :int = 4;
 
     public function View (tutorial :Tutorial)
@@ -63,15 +63,10 @@ public class View extends Sprite
     protected function handleSwirlLoaded (evt :Event) :void
     {
         _swirl = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        _swirlHandler = new ClipHandler(_swirl);
         _swirl.visible = false;
 
         _todoDeleteMe = buildHugeSwirlTextLayer();
-
-        _scenes = new Object();
-        for (var ii :int = 0; ii < _swirl.scenes.length; ii ++) {
-            var scene :Scene = _swirl.scenes[ii];
-            _scenes[scene.name] = scene;
-        }
 
         // don't add the swirly until the text field is loaded
         maybeFinishUI();
@@ -190,46 +185,75 @@ public class View extends Sprite
 
     public function gotoSwirlState (state :int) :void
     {
-        // TODO: If we're really going to use the big swirly a lot we absolutely must have
-        // TODO: proper transitions; this is a temporary hack
-
-        switch(state) {
-        case SWIRL_HUGE:
-            if (_swirlState != SWIRL_NONE) {
-                log.warning("Unexpected transtion [from=" + _swirlState + ", to=" + state + "]");
-            }
-            _transition = SCN_APPEAR;
-            break;
-        case SWIRL_DEMURE:
-            if (_swirlState != SWIRL_DEMURE) {
-                _transition = SCN_MINIMIZE;
-            }
-            // TODO: if we go from NONE to DEMURE, do we SCN_APPEAR first?
-            // TODO: probably not; we'd need a SMALL_APPEAR
-            break;
-        case SWIRL_BOUNCY:
-            if (_swirlState != SWIRL_DEMURE) {
-                // TODO: this will look moronic without a MAXIMIZE transition first
-                log.warning("Unexpected transtion [from=" + _swirlState + ", to=" + state + "]");
-            }
-            _transition = SCN_LOOKATME;
-            break;
-        default:
-            log.warning("Can't goto unknown swirl state [state=" + state + "]");
-            return;
+        if (state == _swirlRequest) {
+            log.warning("Already going to request scene [state=" + state + "]");
+        } else if (state == _swirlState) {
+            log.warning("Already in requested scene [state=" + state + "]");
+        } else {
+            _swirlRequest = state;
+            maybeTransition();
         }
-        _swirlState = state;
-        maybeTransition();
+    }
+
+    public function unload () :void
+    {
+        if (_swirlHandler) {
+            _swirlHandler.unload();
+        }
     }
 
     protected function maybeTransition () :void
     {
-        if (_swirl && _swirl.visible && _transition) {
-            _swirl.gotoAndPlay(1, _transition);
-            // TODO: make this appear slowly, probably as part of the .swf
-            _todoDeleteMe.visible = (_transition == SCN_APPEAR || _transition == SCN_MAXIMIZE);
-            _transition = null;
+        if (!(_swirl && _swirl.visible && _swirlRequest)) {
+            return;
         }
+        var first :String = null;
+        var then :String = null;
+
+        switch(_swirlRequest) {
+        case SWIRL_INTRO:
+            if (_swirlState != SWIRL_NONE) {
+                log.warning("Unexpected transtion [from=" + _swirlState + ", to=" +
+                            _swirlRequest + "]");
+            }
+            // should never need a two-phase transition
+            then = SCN_APPEAR;
+            break;
+        case SWIRL_DEMURE:
+            if (_swirlState == SWIRL_NONE) {
+                log.warning("Unexpected transtion [from=" + _swirlState + ", to=" +
+                            _swirlRequest + "]");
+                first = SCN_APPEAR;
+            }
+            then = SCN_MINIMIZE;
+            break;
+        case SWIRL_BOUNCY:
+            if (_swirlState == SWIRL_DEMURE) {
+                first = SCN_MAXIMIZE;
+            }
+            then = SCN_LOOKATME;
+            break;
+        default:
+            log.warning("Can't goto unknown swirl state [state=" + _swirlRequest + "]");
+            return;
+        }
+
+        // there is always a 'then' transition, so write code to handle it
+        var transition :Function = function () :void {
+            _swirlHandler.gotoScene(then, null);
+            // TODO: Bill is making the text layer part of the SWF
+            _todoDeleteMe.visible = (then == SCN_APPEAR);
+        };
+
+        // then execute that code either as a second-phase callback, or immediately
+        if (first) {
+            _swirlHandler.gotoScene(first, transition);
+        } else {
+            transition();
+        }
+
+        _swirlState = _swirlRequest;
+        _swirlRequest = 0;
     }
 
     // TODO: ask Bill to simply include this in the SWF?
@@ -314,12 +338,11 @@ public class View extends Sprite
 
     protected var _swirl :MovieClip;
     protected var _swirlState :int;
-    protected var _transition :String;
+    protected var _swirlRequest :int;
+    protected var _swirlHandler :ClipHandler;
 
     protected var _textBox :MovieClip;
     protected var _textField :TextField;
-
-    protected var _scenes :Object;
 
     protected var _todoDeleteMe :DisplayObject;
 

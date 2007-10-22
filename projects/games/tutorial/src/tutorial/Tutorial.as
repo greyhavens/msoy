@@ -54,6 +54,7 @@ public class Tutorial extends Sprite
 
     protected function handleUnload (event :Event) :void
     {
+        _view.unload();
     }
 
     protected function messageReceived (event :AVRGameControlEvent) :void
@@ -152,7 +153,7 @@ public class Tutorial extends Sprite
             }
         }
         // we're not on the right quest, signal the view
-        _view.gotoSwirlState(step == 0 ? View.SWIRL_HUGE : View.SWIRL_BOUNCY);
+        _view.gotoSwirlState(step == 0 ? View.SWIRL_INTRO : View.SWIRL_BOUNCY);
     }
 
     public function swirlClicked (swirlState :int) :void
@@ -168,7 +169,7 @@ public class Tutorial extends Sprite
             _view.displaySummary(_view.isShowingSummary() ? null : quest.summary);
             return;
         }
-        if (step == 0 && swirlState != View.SWIRL_HUGE) {
+        if (step == 0 && swirlState != View.SWIRL_INTRO) {
             log.warning("Eek, unexpected click [swirlState=" + swirlState +
                         ", step=" + getStep() + "]");
         }
