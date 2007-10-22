@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 
 import com.threerings.util.Name;
@@ -72,6 +73,8 @@ public class AVRGameControlBackend extends ControlBackend
     {
         super.populateControlProperties(o);
 
+        o["getStageBounds_v1"] = getStageBounds_v1;
+
         o["getProperty_v1"] = getProperty_v1;
         o["setProperty_v1"] = setProperty_v1;
 //        o["setPropertyAt_v1"] = setPropertyAt_v1;
@@ -87,6 +90,11 @@ public class AVRGameControlBackend extends ControlBackend
         o["getActiveQuests_v1"] = getActiveQuests_v1;
 
         o["deactivateGame_v1"] = deactivateGame_v1;
+    }
+
+    protected function getStageBounds_v1 () :Rectangle
+    {
+        return _mctx.getTopPanel().getPlaceViewBounds();
     }
 
     protected function getProperty_v1 (key :String) :Object
