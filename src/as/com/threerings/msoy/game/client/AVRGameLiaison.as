@@ -41,7 +41,7 @@ public class AVRGameLiaison extends GameLiaison
             },
             function (result :Object) :void {
                 log.info("Successfully activated AVRG [gameId=" + _gameId + "]");
-                _ctrl = new AVRGameController(_gctx, int(result));
+                _ctrl = new AVRGameController(_gctx, _gameId, int(result));
             }
         );
         svc.activateGame(_gctx.getClient(), _gameId, cb);

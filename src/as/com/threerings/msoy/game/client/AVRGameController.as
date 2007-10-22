@@ -26,12 +26,13 @@ public class AVRGameController extends Controller
 {
     public static const log :Log = Log.getLog(AVRGameController);
 
-    public function AVRGameController (ctx :GameContext, gameOid :int)
+    public function AVRGameController (ctx :GameContext, gameId :int, gameOid :int)
     {
         super();
 
         _gctx = ctx;
         _mctx = ctx.getWorldContext();
+        _gameId = gameId;
 
         _mctx.getClient().addEventListener(
             WorldClient.MINI_WILL_CHANGE, function (ev :ValueEvent) :void {
@@ -85,6 +86,11 @@ public class AVRGameController extends Controller
         }
     }
 
+    public function getGameId () :int
+    {
+        return _gameId;
+    }
+
     public function getAVRGameObject () :AVRGameObject
     {
         return _gameObj;
@@ -106,6 +112,7 @@ public class AVRGameController extends Controller
 
     protected var _mctx :WorldContext;
     protected var _gctx :GameContext;
+    protected var _gameId :int;
     protected var _gameObj :AVRGameObject;
     protected var _subscriber :SafeSubscriber;
     protected var _panel :AVRGamePanel;

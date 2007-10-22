@@ -38,11 +38,12 @@ public class AVRGameControlBackend extends ControlBackend
     public static const log :Log = Log.getLog(AVRGameControlBackend);
 
     public function AVRGameControlBackend (
-        gctx :GameContext, gameObj :AVRGameObject, ctrl :AVRGameController)
+        gctx :GameContext, ctrl :AVRGameController, gameObj :AVRGameObject)
     {
         _gctx = gctx;
         _mctx = gctx.getWorldContext();
         _gameObj = gameObj;
+        _ctrl = ctrl;
 
         _gameObj.addListener(_stateListener);
         _gameObj.addListener(_messageListener);
@@ -84,6 +85,8 @@ public class AVRGameControlBackend extends ControlBackend
         o["completeQuest_v1"] = completeQuest_v1;
         o["cancelQuest_v1"] = cancelQuest_v1;
         o["getActiveQuests_v1"] = getActiveQuests_v1;
+
+        o["deactivateGame_v1"] = deactivateGame_v1;
     }
 
     protected function getProperty_v1 (key :String) :Object
@@ -142,7 +145,7 @@ public class AVRGameControlBackend extends ControlBackend
     protected function offerQuest_v1 (questId :String, intro :String, initialStatus :String)
         :Boolean
     {
-        if (isOnQuest(questId)) {
+        if (!isPlaying() || isOnQuest(questId)) {
             return false;
         }
         var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;
@@ -186,7 +189,7 @@ public class AVRGameControlBackend extends ControlBackend
 
     protected function completeQuest_v1 (questId :String, outro :String, payout :int) :Boolean
     {
-        if (!isOnQuest(questId)) {
+        if (!isPlaying() || !isOnQuest(questId)) {
             return false;
         }
         var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;
@@ -218,7 +221,7 @@ public class AVRGameControlBackend extends ControlBackend
 
     protected function cancelQuest_v1 (questId :String) :Boolean
     {
-        if (!isOnQuest(questId)) {
+        if (!isPlaying() || !isOnQuest(questId)) {
             return false;
         }
         // TODO: confirmation dialog
@@ -239,6 +242,15 @@ public class AVRGameControlBackend extends ControlBackend
             list.push([ state.questId, state.step, state.status ]);
         }
         return list;
+    }
+
+    protected function deactivateGame_v1 () :Boolean
+    {
+        if (!isPlaying()) {
+            return false;
+        }
+        _mctx.getGameDirector().leaveAVRGame();
+        return true;
     }
 
     protected function callStateChanged (entry :GameState) :void
@@ -266,6 +278,11 @@ public class AVRGameControlBackend extends ControlBackend
         });
     }
 
+    protected function isPlaying () :Boolean
+    {
+        return _mctx.getGameDirector().getGameId() == _ctrl.getGameId();
+    }
+
     protected function isOnQuest (questId :String) :Boolean
     {
         var i :Iterator = _playerObj.questState.iterator();
@@ -280,6 +297,7 @@ public class AVRGameControlBackend extends ControlBackend
 
     protected var _mctx :WorldContext;
     protected var _gctx :GameContext;
+    protected var _ctrl :AVRGameController;
     protected var _gameObj :AVRGameObject;
     protected var _playerObj :PlayerObject;
 
