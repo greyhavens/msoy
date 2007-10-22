@@ -403,10 +403,6 @@ a:visited {
   border-right: 1px dotted;
 }
 
-.dottedGrid .Grid>tbody>tr {
-  border: 1px solid #000000;
-}
-
 .dottedGrid .Grid .Cell {
   background-image: url(/images/whirled/bg_gradient.png);
   background-repeat: repeat-x;

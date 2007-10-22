@@ -6,9 +6,10 @@ package client.game;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -22,17 +23,13 @@ import client.util.MsoyUI;
 /**
  * Displays top-rankings for a particular game.
  */
-public class TopRankingPanel extends FlexTable
+public class TopRankingPanel extends VerticalPanel
 {
     public TopRankingPanel (int gameId, boolean onlyMyFriends)
     {
+        setStyleName("topRankingPanel");
         _gameId = gameId;
         _onlyMyFriends = onlyMyFriends;
-
-        setStyleName("topRankingPanel");
-        setCellSpacing(0);
-        setCellPadding(0);
-        setText(0, 0, "Loading ratings...");
     }
 
     // @Override // from UIObject
@@ -45,7 +42,7 @@ public class TopRankingPanel extends FlexTable
 
         // it's possible to have this tab shown and be a guest; so we avoid freakoutage
         if (_onlyMyFriends && (CGame.getMemberId() == 0)) {
-            setText(0, 0, "Log in to see your rankings.");
+            add(new Label("Log in to see your rankings."));
             return;
         }
 
@@ -55,7 +52,7 @@ public class TopRankingPanel extends FlexTable
             }
             public void onFailure (Throwable caught) {
                 CGame.log("getTopRanked failed", caught);
-                setText(0, 0, CGame.serverError(caught));
+                add(new Label(CGame.serverError(caught)));
             }
         });
         _gameId = 0; // note that we've asked for our data
@@ -63,70 +60,97 @@ public class TopRankingPanel extends FlexTable
 
     protected void gotRankings (PlayerRating[][] results)
     {
+        int totalRows = Math.max(results[0].length, results[1].length);
+        if (totalRows == 0) {
+            add(new Label(_onlyMyFriends ? "You and your friends have no rankings in this game." :
+                          "No one is ranked in this game."));
+            return;
+        }
+
+        add(_grid = new FlexTable());
+        _grid.setStyleName("Grid");
+        _grid.setCellSpacing(0);
+        _grid.setCellPadding(3);
+        _grid.setText(0, 0, "Loading ratings...");
+
         int col = 0;
         if (results[0].length > 0) {
-            displayRankings("Single Player", col, results[0]);
-            col++;
+            displayRankings("Single Player", col, results[0], totalRows);
+            col += COLUMNS;
         }
         if (results[1].length > 0) {
-            displayRankings("Multiplayer", col, results[1]);
-            col++;
+            displayRankings("Multiplayer", col, results[1], totalRows);
+            col += COLUMNS;
         }
-        if (col == 0) {
-            setText(0, 0, _onlyMyFriends ? "You and your friends have no rankings in this game." :
-                    "No one is ranked in this game.");
-        } else {
-            int row = getRowCount();
-            setText(row, 0, _onlyMyFriends ? "Top ranked players among you and your friends." :
-                    "Top ranked players in all the Whirled.");
-            getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
-            getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_CENTER);
-            getFlexCellFormatter().setColSpan(row, 0, 2);
-        }
+
+        // add the footer
+        String text = _onlyMyFriends ? "Top ranked players among you and your friends." :
+            "Top ranked players in all the Whirled.";
+        add(MsoyUI.createLabel(text, "Footer"));
     }
 
-    protected void displayRankings (String header, int col, PlayerRating[] results)
+    protected void displayRankings (String header, int col, PlayerRating[] results, int totalRows)
     {
-        setText(0, col, header);
-        getFlexCellFormatter().setStyleName(0, col, "Header");
-        for (int ii = 0; ii < results.length; ii++) {
-            setWidget(1 + ii*2, col, new PlayerRatingPanel(ii, results[ii]));
-        }
-    }
+        int hcol = (col > 0 ? 3 : 0);
+        _grid.setText(0, hcol, header);
+        _grid.getFlexCellFormatter().setStyleName(0, hcol, "Header");
+        _grid.getFlexCellFormatter().setColSpan(0, hcol, COLUMNS-2);
+        _grid.setText(0, hcol+1, "Rating");
+        _grid.getFlexCellFormatter().setStyleName(0, hcol+1, "HeaderTip");
+        _grid.setHTML(0, hcol+2, "&nbsp;");
+        _grid.getFlexCellFormatter().setStyleName(0, hcol+2, "Header");
 
-    protected static class PlayerRatingPanel extends FlexTable
-        implements ClickListener
-    {
-        public PlayerRatingPanel (int rank, PlayerRating rating) {
-            _rating = rating;
+        for (int ii = 0; ii < totalRows; ii++) {
+            int row = 1 + ii*2;
+            if (ii >= results.length) {
+                for (int cc = 0; cc < COLUMNS; cc++) {
+                    _grid.setHTML(row, cc+col, "&nbsp;");
+                    _grid.getFlexCellFormatter().setStyleName(row, cc+col, "Cell");
+                }
+                continue;
+            }
 
-            setText(0, 0, CGame.msgs.gameRank("" + (rank+1)));
-            getFlexCellFormatter().setRowSpan(0, 0, 2);
+            final PlayerRating rating = results[ii];
+            _grid.setText(row, col, CGame.msgs.gameRank("" + (ii+1)));
+            _grid.getFlexCellFormatter().setStyleName(row, col, "Cell");
+            _grid.getFlexCellFormatter().setHorizontalAlignment(row, col, HasAlignment.ALIGN_RIGHT);
 
-            Widget photo = MediaUtil.createMediaView(rating.photo, MediaDesc.HALF_THUMBNAIL_SIZE);
+            ClickListener onClick = new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.PROFILE, "" + rating.name.getMemberId());
+                }
+            };
+            Widget photo = MediaUtil.createMediaView(
+                rating.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE);
             if (photo instanceof Image) {
-                ((Image) photo).addClickListener(this);
+                ((Image) photo).addClickListener(onClick);
                 photo.setStyleName("actionLabel");
             }
-            setWidget(0, 1, photo);
-            getFlexCellFormatter().setRowSpan(0, 1, 2);
-            int width = MediaDesc.DIMENSIONS[2*MediaDesc.HALF_THUMBNAIL_SIZE];
-            getFlexCellFormatter().setWidth(0, 1, width + "px");
-            int height = MediaDesc.DIMENSIONS[2*MediaDesc.HALF_THUMBNAIL_SIZE+1];
-            getFlexCellFormatter().setHeight(0, 1, height + "px");
-            getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
+            _grid.setWidget(row, col+1, photo);
+            _grid.getFlexCellFormatter().setStyleName(row, col+1, "Cell");
+            _grid.getFlexCellFormatter().addStyleName(row, col+1, "Photo");
+            _grid.getFlexCellFormatter().setHorizontalAlignment(
+                row, col+1, HasAlignment.ALIGN_CENTER);
+            _grid.getFlexCellFormatter().setVerticalAlignment(
+                row, col+1, HasAlignment.ALIGN_MIDDLE);
 
-            setWidget(0, 2, MsoyUI.createActionLabel(rating.name.toString(), this));
-            setWidget(1, 0, new RatingLabel(rating.rating));
+            _grid.setWidget(row, col+2, MsoyUI.createActionLabel(rating.name.toString(), onClick));
+            _grid.getFlexCellFormatter().setStyleName(row, col+2, "Cell");
+
+            _grid.setText(row, col+3, ""+rating.rating);
+            _grid.getFlexCellFormatter().setStyleName(row, col+3, "Cell");
+            _grid.getFlexCellFormatter().setHorizontalAlignment(
+                row, col+3, HasAlignment.ALIGN_RIGHT);
+
+            _grid.setHTML(row, col+4, "&nbsp;");
+            _grid.getFlexCellFormatter().setStyleName(row, col+4, "Cell");
+            _grid.getFlexCellFormatter().addStyleName(row, col+4, "Gap");
         }
-
-        public void onClick (Widget sender) {
-            Application.go(Page.PROFILE, "" + _rating.name.getMemberId());
-        }
-
-        protected PlayerRating _rating;
     }
 
     protected int _gameId;
     protected boolean _onlyMyFriends;
+    protected FlexTable _grid;
+
+    protected static final int COLUMNS = 5;
 }

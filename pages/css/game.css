@@ -101,9 +101,42 @@
   font-style: italic;
 }
 
-.topRankingPanel {
+.topRankingPanel .Grid {
+  width: 100%;
+  border-left: 1px dotted;
+  border-right: 1px dotted;
 }
 
 .topRankingPanel .Header {
+  background-color: #F4F3F4;
   font-weight: bold;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.topRankingPanel .HeaderTip {
+  background-color: #F4F3F4;
+  text-align: right;
+  vertical-align: bottom;
+  font-size: 12px;
+}
+
+.topRankingPanel .Cell {
+  border-top: 1px solid #DADADA;
+}
+
+.topRankingPanel .Photo {
+  width: 20px;
+}
+
+.topRankingPanel .Gap {
+  width: 80px;
+}
+
+.topRankingPanel .Footer {
+  color: #FFFFFF;
+  background: #424242;
+  border: 1px solid #000000;
+  font-size: 12px;
+  text-align: center;
 }

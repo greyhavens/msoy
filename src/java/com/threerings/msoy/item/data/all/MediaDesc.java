@@ -62,14 +62,17 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The MIME type for Java JAR files. */
     public static final byte APPLICATION_JAVA_ARCHIVE = 41;
 
+    /** Identifies that a "quarter thumbnail" sized image is desired. */
+    public static final int QUARTER_THUMBNAIL_SIZE = 0;
+
     /** Identifies that a "half thumbnail" sized image is desired. */
-    public static final int HALF_THUMBNAIL_SIZE = 0;
+    public static final int HALF_THUMBNAIL_SIZE = 1;
 
     /** Identifies that a thumbnail sized image is desired. */
-    public static final int THUMBNAIL_SIZE = 1;
+    public static final int THUMBNAIL_SIZE = 2;
 
     /** Identifies that a preview sized image is desired. */
-    public static final int PREVIEW_SIZE = 2;
+    public static final int PREVIEW_SIZE = 3;
 
     /** The thumbnail image width.  */
     public static final int THUMBNAIL_WIDTH = 80;
@@ -79,6 +82,7 @@ public class MediaDesc implements Streamable, IsSerializable
 
     /** Defines the dimensions of our various image sizes. */
     public static final int[] DIMENSIONS = {
+        THUMBNAIL_WIDTH/4, THUMBNAIL_HEIGHT/4, // quarter thumbnail size
         THUMBNAIL_WIDTH/2, THUMBNAIL_HEIGHT/2, // half thumbnail size
         THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, // thumbnail size
         THUMBNAIL_WIDTH*2, THUMBNAIL_HEIGHT*2, // preview size
