@@ -21,6 +21,7 @@ public enum UserAction
     ACCEPTED_FRIEND_INVITE(11, 200),
 
     PLAYED_GAME(20, 0),
+    SOLVED_QUEST(21, 0),
 
     CREATED_ITEM(30, 100),
     BOUGHT_ITEM(31, 0),
@@ -29,6 +30,7 @@ public enum UserAction
     RECEIVED_PAYOUT(34, 0),
     UPDATED_LISTING(35, 0),
     UPDATED_PRICING(36, 0),
+
     ;
 
     /**
