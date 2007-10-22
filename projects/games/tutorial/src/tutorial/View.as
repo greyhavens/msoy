@@ -46,15 +46,18 @@ public class View extends Sprite
     /**
      * Called when we know our dimensions and can set up the text field.
      */
-    public function init (width :Number, height :Number) :void
+    public function init (stageBounds :Rectangle, roomBounds :Rectangle,
+                          width :Number, height :Number) :void
     {
-        _width = width;
-        _height = height;
+        _stageBounds = stageBounds;
+        _roomBounds = roomBounds;
+        _ourWidth = width;
+        _ourHeight = height;
 
-        var format :TextFormat = new TextFormat();
-        format.font = "SunnySide";
-        format.size = 14;
-        format.color = 0xDD7700;
+//        this.graphics.lineStyle(4, 0xFF0000, 1.0, true, "normal", "none", "round");
+//        this.graphics.drawRect(0, 0, _stageBounds.width, _stageBounds.height);
+//        this.graphics.lineStyle(4, 0xFFFF00, 1.0, true, "normal", "none", "round");
+//        this.graphics.drawRect(4, 4, _roomBounds.width - 8, _roomBounds.height - 8);
 
         // don't add the text field until the swirly is loaded
         maybeFinishUI();
@@ -144,7 +147,7 @@ public class View extends Sprite
     protected function maybeFinishUI () :void
     {
         // if both initializations are complete, actually add the bits
-        if (_width && _swirl && _textBox) {
+        if (_ourWidth && _swirl && _textBox) {
             _swirl.visible = true;
             _swirl.addEventListener(MouseEvent.CLICK, swirlClicked);
             this.addChild(_swirl);
@@ -333,8 +336,10 @@ public class View extends Sprite
 
     protected var _tutorial :Tutorial;
 
-    protected var _width :Number;
-    protected var _height :Number;
+    protected var _ourWidth :Number;
+    protected var _ourHeight :Number;
+    protected var _stageBounds :Rectangle;
+    protected var _roomBounds :Rectangle;
 
     protected var _swirl :MovieClip;
     protected var _swirlState :int;

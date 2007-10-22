@@ -45,8 +45,10 @@ public class Tutorial extends Sprite
         var width :Number = this.loaderInfo.width;
         var height :Number = this.loaderInfo.height;
 
+        log.debug("Initializing view now...");
+
         // then initialize the actual view and pad it a little
-        _view.init(width, height);
+        _view.init(_control.getStageBounds(), _control.getRoomBounds(), width, height);
         addChild(_view);
 
         // now surrender control until we find out whether or not we're minimized
