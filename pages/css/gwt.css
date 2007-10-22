@@ -398,6 +398,10 @@ a:visited {
   height: 18px;
 }
 
+.pagedGrid .Empty {
+  padding: 5px;
+}
+
 .dottedGrid .Grid {
   border-left: 1px dotted;
   border-right: 1px dotted;

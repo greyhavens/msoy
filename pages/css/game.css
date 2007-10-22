@@ -110,14 +110,13 @@
 .topRankingPanel .Header {
   background-color: #F4F3F4;
   font-weight: bold;
-  text-align: center;
-  vertical-align: bottom;
+  vertical-align: baseline;
 }
 
 .topRankingPanel .HeaderTip {
   background-color: #F4F3F4;
   text-align: right;
-  vertical-align: bottom;
+  vertical-align: baseline;
   font-size: 12px;
 }
 
@@ -139,4 +138,8 @@
   border: 1px solid #000000;
   font-size: 12px;
   text-align: center;
+}
+
+.topRankingPanel .Note {
+  padding: 5px;
 }

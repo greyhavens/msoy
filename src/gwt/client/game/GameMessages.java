@@ -32,6 +32,22 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String gameRank(String arg0);
 
   /**
+   * Translated "Loading ratings...".
+   * 
+   * @return translated "Loading ratings..."
+   * @gwt.key trpLoading
+   */
+  String trpLoading();
+
+  /**
+   * Translated "Single Player".
+   * 
+   * @return translated "Single Player"
+   * @gwt.key trpSingleHeader
+   */
+  String trpSingleHeader();
+
+  /**
    * Translated "Last abuse recalc:".
    * 
    * @return translated "Last abuse recalc:"
@@ -46,6 +62,22 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key tabComments
    */
   String tabComments();
+
+  /**
+   * Translated "No one is ranked in this game.".
+   * 
+   * @return translated "No one is ranked in this game."
+   * @gwt.key trpTopNoRankings
+   */
+  String trpTopNoRankings();
+
+  /**
+   * Translated "Rating".
+   * 
+   * @return translated "Rating"
+   * @gwt.key trpRatingHeader
+   */
+  String trpRatingHeader();
 
   /**
    * Translated "Average time:".
@@ -120,6 +152,14 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String caseLoading();
 
   /**
+   * Translated "Login to see your rankings.".
+   * 
+   * @return translated "Login to see your rankings."
+   * @gwt.key trpLogin
+   */
+  String trpLogin();
+
+  /**
    * Translated "My Rankings".
    * 
    * @return translated "My Rankings"
@@ -152,6 +192,14 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String gdpMultiplayer();
 
   /**
+   * Translated "Multiplayer".
+   * 
+   * @return translated "Multiplayer"
+   * @gwt.key trpMultiHeader
+   */
+  String trpMultiHeader();
+
+  /**
    * Translated "Trophies".
    * 
    * @return translated "Trophies"
@@ -176,12 +224,36 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String gdpOrWithFriends();
 
   /**
+   * Translated "You and your friends have no rankings in this game.".
+   * 
+   * @return translated "You and your friends have no rankings in this game."
+   * @gwt.key trpMyNoRankings
+   */
+  String trpMyNoRankings();
+
+  /**
    * Translated "Loading trophies.".
    * 
    * @return translated "Loading trophies."
    * @gwt.key gameTrophyLoading
    */
   String gameTrophyLoading();
+
+  /**
+   * Translated "Top ranked players in all the Whirled.".
+   * 
+   * @return translated "Top ranked players in all the Whirled."
+   * @gwt.key trpMultiTip
+   */
+  String trpMultiTip();
+
+  /**
+   * Translated "Top ranked players among you and your friends.".
+   * 
+   * @return translated "Top ranked players among you and your friends."
+   * @gwt.key trpSingleTip
+   */
+  String trpSingleTip();
 
   /**
    * Translated "Loading game details...".

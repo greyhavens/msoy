@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -42,17 +41,18 @@ public class TopRankingPanel extends VerticalPanel
 
         // it's possible to have this tab shown and be a guest; so we avoid freakoutage
         if (_onlyMyFriends && (CGame.getMemberId() == 0)) {
-            add(new Label("Log in to see your rankings."));
+            addNote(CGame.msgs.trpLogin());
             return;
         }
 
+        addNote(CGame.msgs.trpLoading());
         CGame.gamesvc.loadTopRanked(CGame.ident, _gameId, _onlyMyFriends, new AsyncCallback() {
             public void onSuccess (Object result) {
                 gotRankings((PlayerRating[][])result);
             }
             public void onFailure (Throwable caught) {
                 CGame.log("getTopRanked failed", caught);
-                add(new Label(CGame.serverError(caught)));
+                addNote(CGame.serverError(caught));
             }
         });
         _gameId = 0; // note that we've asked for our data
@@ -60,10 +60,12 @@ public class TopRankingPanel extends VerticalPanel
 
     protected void gotRankings (PlayerRating[][] results)
     {
+        clear();
+
         int totalRows = Math.max(results[0].length, results[1].length);
         if (totalRows == 0) {
-            add(new Label(_onlyMyFriends ? "You and your friends have no rankings in this game." :
-                          "No one is ranked in this game."));
+            addNote(_onlyMyFriends ? CGame.msgs.trpMyNoRankings() :
+                      CGame.msgs.trpTopNoRankings());
             return;
         }
 
@@ -71,34 +73,32 @@ public class TopRankingPanel extends VerticalPanel
         _grid.setStyleName("Grid");
         _grid.setCellSpacing(0);
         _grid.setCellPadding(3);
-        _grid.setText(0, 0, "Loading ratings...");
 
         int col = 0;
         if (results[0].length > 0) {
-            displayRankings("Single Player", col, results[0], totalRows);
+            displayRankings(CGame.msgs.trpSingleHeader(), col, results[0], totalRows);
             col += COLUMNS;
         }
         if (results[1].length > 0) {
-            displayRankings("Multiplayer", col, results[1], totalRows);
+            displayRankings(CGame.msgs.trpMultiHeader(), col, results[1], totalRows);
             col += COLUMNS;
         }
 
-        // add the footer
-        String text = _onlyMyFriends ? "Top ranked players among you and your friends." :
-            "Top ranked players in all the Whirled.";
+        String text = _onlyMyFriends ? CGame.msgs.trpSingleTip() : CGame.msgs.trpMultiTip();
         add(MsoyUI.createLabel(text, "Footer"));
     }
 
     protected void displayRankings (String header, int col, PlayerRating[] results, int totalRows)
     {
-        int hcol = (col > 0 ? 3 : 0);
-        _grid.setText(0, hcol, header);
-        _grid.getFlexCellFormatter().setStyleName(0, hcol, "Header");
-        _grid.getFlexCellFormatter().setColSpan(0, hcol, COLUMNS-2);
-        _grid.setText(0, hcol+1, "Rating");
-        _grid.getFlexCellFormatter().setStyleName(0, hcol+1, "HeaderTip");
-        _grid.setHTML(0, hcol+2, "&nbsp;");
-        _grid.getFlexCellFormatter().setStyleName(0, hcol+2, "Header");
+        for (int cc = 0; cc < COLUMNS; cc++) {
+            int hcol = (cc + col);
+            switch (cc) {
+            case 2: _grid.setText(0, hcol, header); break;
+            case 3: _grid.setText(0, hcol, CGame.msgs.trpRatingHeader()); break;
+            default: _grid.setHTML(0, hcol, "&nbsp;"); break;
+            }
+            _grid.getFlexCellFormatter().setStyleName(0, hcol, (cc == 3) ? "HeaderTip" : "Header");
+        }
 
         for (int ii = 0; ii < totalRows; ii++) {
             int row = 1 + ii*2;
@@ -146,6 +146,11 @@ public class TopRankingPanel extends VerticalPanel
             _grid.getFlexCellFormatter().setStyleName(row, col+4, "Cell");
             _grid.getFlexCellFormatter().addStyleName(row, col+4, "Gap");
         }
+    }
+
+    protected void addNote (String text)
+    {
+        add(MsoyUI.createLabel(text, "Note"));
     }
 
     protected int _gameId;
