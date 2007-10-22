@@ -80,11 +80,9 @@ public class Quest
             "<p class='summary'>This is the paragraph where we summarize for the user what this step is about and motivate them to enter some interesting information.</p>" +
             "<p class='details'>" +
             "<br><li>Choose <b><i>My Stuff -> Decor</i></b> to see the decor you own.<br>" +
-            "<br><li>Here is the second instruction line!<br>" +
-            "<br><li>You can put in a third line too, of course." +
+            "<br><li>Apply your new decor by clicking the <b>Add to Room</b> button.<br>" +
+            "<br><li>Click the close box to return to your room." +
             "</p>",
-            "Apply your new decor by clicking the 'Add to Room' button.<br>" +
-            "Click the close box to return to your room.",
             "Congratulations! You received 200 flow for changing your decor.",
             200));
         _quests.push(new Quest(
