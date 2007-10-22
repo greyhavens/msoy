@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 
@@ -74,6 +75,7 @@ public class AVRGameControlBackend extends ControlBackend
         super.populateControlProperties(o);
 
         o["getStageBounds_v1"] = getStageBounds_v1;
+        o["getRoomBounds_v1"] = getRoomBounds_v1;
 
         o["getProperty_v1"] = getProperty_v1;
         o["setProperty_v1"] = setProperty_v1;
@@ -95,6 +97,16 @@ public class AVRGameControlBackend extends ControlBackend
     protected function getStageBounds_v1 () :Rectangle
     {
         return _mctx.getTopPanel().getPlaceViewBounds();
+    }
+
+    protected function getRoomBounds_v1 () :Rectangle
+    {
+        var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            var p :Point = view.localToGlobal(view.getScrollBounds().bottomRight);
+            return new Rectangle(0, 0, p.x, p.y);
+        }
+        return null;
     }
 
     protected function getProperty_v1 (key :String) :Object
