@@ -86,6 +86,7 @@
 
 .profileWidget {
   padding-bottom: 10px;
+  width: 100%;
 }
 
 .profileWidget .Photo {
@@ -102,12 +103,13 @@
 
 .profileWidget .MemberCardHeadline {
   font-style: italic;
+  font-size: 14px;
 }
 
 .searchResultsPanel .SearchPanel {
   font-size: 14px;
 }
 
-.friendsPanel {
-  padding: 5px;
+.friendsPanel .Grid {
+  border-bottom: 1px solid #DADADA;
 }

@@ -89,7 +89,7 @@ public class GameDetailPanel extends FlexTable
         box.setText(0, 0, detail.getGame().name);
         box.getFlexCellFormatter().setStyleName(1, 0, "Logo");
         box.setWidget(1, 0, MediaUtil.createMediaView(
-                          detail.getGame().getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE));
+                          detail.getGame().getThumbnailMedia(), MediaDesc.PREVIEW_SIZE));
         setWidget(row, 0, box);
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 

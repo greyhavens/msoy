@@ -328,21 +328,44 @@ a:visited {
 }
 
 /** Standard paged grid configuration. */
-.pagedGrid .PageHeader {
+.pagedGrid .Controls {
   width: 100%;
   background: #333333;
   color: #FFFFFF;
-  text-align: center;
   padding-left: 10px;
   padding-right: 10px;
   font-size: 12px;
 }
 
+.pagedGrid .Top {
+  text-align: center;
+}
+
+.pagedGrid .BottomLeft {
+  background: #424242;
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  border-left: 1px solid #000000;
+  text-align: left;
+}
+
+.pagedGrid .Bottom {
+  background: #424242;
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+}
+
+.pagedGrid .BottomRight {
+  background: #424242;
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  border-right: 1px solid #000000;
+  padding-right: 10px;
+}
+
 .pagedGrid .Button {
-  border: none;
   font-size: 12px;
   width: 56px;
-  height: 20px;
   vertical-align: top;
   padding-bottom: 1px;
   cursor: pointer;
@@ -352,11 +375,50 @@ a:visited {
 .pagedGrid .PrevButton {
   padding-left: 10px;
   background-image: url(/images/ui/button_prev.png);
+  height: 20px;
 }
 
 .pagedGrid .NextButton {
   padding-right: 10px;
   background-image: url(/images/ui/button_next.png);
+  height: 20px;
+}
+
+.pagedGrid .FooterNextButton {
+  padding-right: 10px;
+  background: #424242;
+  background-image: url(/images/ui/footer_button_next.png);
+  height: 18px;
+}
+
+.pagedGrid .FooterPrevButton {
+  padding-left: 10px;
+  background: #424242;
+  background-image: url(/images/ui/footer_button_prev.png);
+  height: 18px;
+}
+
+.dottedGrid .Grid {
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+}
+
+.dottedGrid .Grid>tbody>tr {
+  border: 1px solid #000000;
+}
+
+.dottedGrid .Grid .Cell {
+  background-image: url(/images/whirled/bg_gradient.png);
+  background-repeat: repeat-x;
+  background-color: #F4F3F4;
+}
+
+.dottedGrid .Grid .TopCell {
+  border-bottom: 1px solid #DADADA;
+}
+
+.dottedGrid .Grid .MiddleCell {
+  border-bottom: 1px solid #DADADA;
 }
 
 /** Configuration for our bordered popup window */

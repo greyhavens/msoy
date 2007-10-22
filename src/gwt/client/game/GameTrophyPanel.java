@@ -29,9 +29,12 @@ public class GameTrophyPanel extends PagedGrid
 {
     public GameTrophyPanel (int gameId)
     {
-        super(5, 2, NAV_ON_TOP);
+        super(5, 2, NAV_ON_BOTTOM);
         _gameId = gameId;
+        addStyleName("gameTrophyPanel");
+        addStyleName("dottedGrid");
         add(new Label(CGame.msgs.gameTrophyLoading()));
+        setCellAlignment(ALIGN_LEFT, ALIGN_TOP);
     }
 
     // @Override // from UIObject

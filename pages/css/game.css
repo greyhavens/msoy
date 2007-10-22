@@ -60,6 +60,14 @@
   padding-bottom: 10px;
 }
 
+.gameDetail .gwt-TabPanelBottom {
+  padding: 0px; /* override default */
+}
+
+.gameTrophyPanel .Grid {
+  height: 340px;
+}
+
 .trophyGrid .Trophy {
   text-align: center;
   width: 115px;
@@ -72,7 +80,12 @@
 
 .trophyDetail {
   font-size: 12px;
-  width: 300px;
+  width: 100%;
+  padding: 2px;
+
+  background-image: url(/images/whirled/bg_gradient.png);
+  background-repeat: repeat-x;
+  background-color: #F4F3F4;
 }
 
 .trophyDetail .Image {

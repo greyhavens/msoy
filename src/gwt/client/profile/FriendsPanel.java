@@ -88,6 +88,7 @@ public class FriendsPanel extends VerticalPanel
             super(Math.max(1, (int)Math.ceil(friends.size() / (float)COLUMNS)), COLUMNS,
                   ProfileGrid.NAV_ON_TOP, (CProfile.getMemberId() == _memberId) ?
                   CProfile.msgs.noFriendsSelf() : CProfile.msgs.noFriendsOther());
+            addStyleName("dottedGrid");
             setModel(new SimpleDataModel(friends), 0);
         }
 
