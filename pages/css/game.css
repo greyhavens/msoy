@@ -55,6 +55,11 @@
   padding-right: 5px;
 }
 
+.gameDetail .InDevTip {
+  font-size: 12px;
+  padding-bottom: 10px;
+}
+
 .trophyGrid .Trophy {
   text-align: center;
   width: 115px;

@@ -163,7 +163,7 @@ public class GameDetailPanel extends FlexTable
             setText(row, 0, "");
             setText(row, 1, CGame.msgs.gdpDevVersion());
             getFlexCellFormatter().setColSpan(row, 1, getCellCount(0));
-            getFlexCellFormatter().setStyleName(row++, 1, "tipLabel");
+            getFlexCellFormatter().setStyleName(row++, 1, "InDevTip");
         }
 
         _tabs = new StyledTabPanel();
