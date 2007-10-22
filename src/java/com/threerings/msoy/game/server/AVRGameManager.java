@@ -244,7 +244,7 @@ public class AVRGameManager
                     player.getMemberId(), _gameId, questId, QuestState.STEP_COMPLETED, null, 0);
                 if (payout > 0) {
                     MsoyGameServer.memberRepo.getFlowRepository().grantFlow(
-                        player.getMemberId(), payout, UserAction.SOLVED_QUEST,
+                        player.getMemberId(), payout, UserAction.COMPLETED_QUEST,
                         _gameId + " " + questId);
                 }
             }
