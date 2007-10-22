@@ -16,7 +16,7 @@ public interface CommentServiceAsync
      * The asynchronous version of {@link CommentService#loadComments}.
      */
     public void loadComments (int entityType, int entityId, int offset, int count,
-                              AsyncCallback callback);
+                              boolean needCount, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link CommentService#postComment}.

@@ -335,14 +335,11 @@ a:visited {
   padding-left: 10px;
   padding-right: 10px;
   font-size: 12px;
-}
-
-.pagedGrid .Top {
   text-align: center;
 }
 
 .pagedGrid .BottomLeft {
-  background: #424242;
+  background: #4f4f4f;
   border-top: 1px solid #000000;
   border-bottom: 1px solid #000000;
   border-left: 1px solid #000000;
@@ -350,13 +347,13 @@ a:visited {
 }
 
 .pagedGrid .Bottom {
-  background: #424242;
+  background: #4f4f4f;
   border-top: 1px solid #000000;
   border-bottom: 1px solid #000000;
 }
 
 .pagedGrid .BottomRight {
-  background: #424242;
+  background: #4f4f4f;
   border-top: 1px solid #000000;
   border-bottom: 1px solid #000000;
   border-right: 1px solid #000000;
@@ -367,6 +364,7 @@ a:visited {
   font-size: 12px;
   width: 56px;
   vertical-align: top;
+  padding-top: 0px;
   padding-bottom: 1px;
   cursor: pointer;
   border: 0px none;
@@ -386,14 +384,14 @@ a:visited {
 
 .pagedGrid .FooterNextButton {
   padding-right: 10px;
-  background: #424242;
+  background: #4f4f4f;
   background-image: url(/images/ui/footer_button_next.png);
   height: 18px;
 }
 
 .pagedGrid .FooterPrevButton {
   padding-left: 10px;
-  background: #424242;
+  background: #4f4f4f;
   background-image: url(/images/ui/footer_button_prev.png);
   height: 18px;
 }
@@ -898,12 +896,21 @@ a:visited {
   font-size: 12px;
 }
 
+.commentPanel .Photo {
+  width: 80px;
+  height: 60px;
+  background: #EDEDED;
+  padding: 5px;
+}
+
 .commentPanel .Author {
+  padding-left: 10px;
   font-weight: bold;
   font-size: 12px;
 }
 
 .commentPanel .Text {
+  padding-left: 10px;
 }
 
 .commentPanel .Posted {

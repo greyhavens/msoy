@@ -8,12 +8,16 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.fora.data.Comment;
+import com.threerings.msoy.web.client.CommentService;
 
 import client.util.MsoyUI;
 import client.util.RowPanel;
@@ -21,61 +25,53 @@ import client.util.RowPanel;
 /**
  * Displays comments on a particular entity and allows posting.
  */
-public class CommentsPanel extends VerticalPanel
+public class CommentsPanel extends PagedGrid
 {
     public CommentsPanel (int entityType, int entityId)
     {
-        setStyleName("commentsPanel");
+        super(COMMENTS_PER_PAGE, 1, NAV_ON_BOTTOM);
+        addStyleName("dottedGrid");
 
         _entityType = entityType;
         _entityId = entityId;
-
-        add(_comments = new VerticalPanel());
-        _comments.setSpacing(5);
-
-        // TODO: add "previous" and "next" links/buttons
-
-        // if we're logged in, display the posting UI
-        if (CShell.getMemberId() != 0) {
-            add(_post = new Button(CShell.cmsgs.postComment(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    _post.setEnabled(false);
-                    add(new PostPanel());
-                }
-            }));
-        }
     }
 
     // @Override // from UIObject
     public void setVisible (boolean visible)
     {
         super.setVisible(visible);
-        if (visible && _page == -1) {
-            setPage(0); // start on page zero of our comments
+        if (visible && _model == null) {
+            setModel(new CommentModel(), 0);
         }
     }
 
-    public void setPage (final int page)
+    // @Override // from PagedGrid
+    protected Widget createWidget (Object item)
     {
-        int offset = page * COMMENTS_PER_PAGE, count = COMMENTS_PER_PAGE;
-        _page = page;
-        CShell.commentsvc.loadComments(_entityType, _entityId, offset, count, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                _comments.clear();
-                List comments = (List)result;
-                for (int ii = 0; ii < comments.size(); ii++) {
-                    _comments.add(new CommentPanel(CommentsPanel.this, (Comment)comments.get(ii)));
-                }
-                if (comments.size() == 0) {
-                    _comments.add(MsoyUI.createLabel(CShell.cmsgs.noComments(), "Status"));
-                }
-            }
+        return new CommentPanel(this, (Comment)item);
+    }
 
-            public void onFailure (Throwable cause) {
-                _comments.clear();
-                _comments.add(MsoyUI.createLabel(CShell.serverError(cause), "Status"));
-            }
-        });
+    // @Override // from PagedGrid
+    protected String getEmptyMessage ()
+    {
+        return CShell.cmsgs.noComments();
+    }
+
+    // @Override // from PagedGrid
+    protected void addCustomControls (FlexTable controls)
+    {
+        super.addCustomControls(controls);
+
+        // if we're logged in, display a button for posting a comment
+        if (CShell.getMemberId() != 0) {
+            _post = new Button(CShell.cmsgs.postComment(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    _post.setEnabled(false);
+                    add(new PostPanel());
+                }
+            });
+            controls.setWidget(0, 0, _post);
+        }
     }
 
     protected void postComment (String text)
@@ -94,37 +90,54 @@ public class CommentsPanel extends VerticalPanel
     protected void postedComment (Comment comment)
     {
         if (_page == 0) {
-            int children = _comments.getWidgetCount();
-            if (children == COMMENTS_PER_PAGE) {
-                _comments.remove(COMMENTS_PER_PAGE-1);
-            }
-            // clear out the "No comments" label if we have one
-            if (children > 0 && !(_comments.getWidget(0) instanceof CommentPanel)) {
-                _comments.clear();
-            }
-            // stick this comment at the top of the list like it's the real deal
-            _comments.insert(new CommentPanel(this, comment), 0);
-
+            displayPage(0, true);
         } else {
             MsoyUI.info(CShell.cmsgs.commentPosted());
         }
     }
 
-    protected void deleteComment (final CommentPanel panel, Comment comment)
+    protected void deleteComment (final CommentPanel panel, final Comment comment)
     {
         CShell.commentsvc.deleteComment(
             CShell.ident, _entityType, _entityId, comment.posted, new AsyncCallback() {
             public void onSuccess (Object result) {
                 MsoyUI.info(CShell.cmsgs.commentDeleted());
-                _comments.remove(panel);
-                if (_page == 0 && _comments.getWidgetCount() == 0) {
-                    _comments.add(MsoyUI.createLabel(CShell.cmsgs.noComments(), "Status"));
-                }
+                _model.removeItem(comment);
             }
             public void onFailure (Throwable cause) {
                 MsoyUI.error(CShell.serverError(cause));
             }
         });
+    }
+
+    protected class CommentModel implements DataModel
+    {
+        public int getItemCount () {
+            return _commentCount;
+        }
+
+        public void doFetchRows (int start, int count, final AsyncCallback callback) {
+            CShell.commentsvc.loadComments(
+                _entityType, _entityId, start, count, _commentCount == -1, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    CommentService.CommentResult cr = (CommentService.CommentResult)result;
+                    if (_commentCount == -1) {
+                        _commentCount = cr.commentCount;
+                    }
+                    callback.onSuccess(cr.comments);
+                }
+                public void onFailure (Throwable caught) {
+                    CShell.log("loadCatalog failed", caught);
+                    MsoyUI.error(CShell.serverError(caught));
+                }
+            });
+        }
+
+        public void removeItem (Object item) {
+            // TOOD
+        }
+
+        protected int _commentCount = -1;
     }
 
     protected class PostPanel extends VerticalPanel
@@ -165,5 +178,5 @@ public class CommentsPanel extends VerticalPanel
     protected VerticalPanel _comments;
     protected Button _post;
 
-    protected static final int COMMENTS_PER_PAGE = 10;
+    protected static final int COMMENTS_PER_PAGE = 5;
 }

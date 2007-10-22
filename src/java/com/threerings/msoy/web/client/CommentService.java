@@ -5,6 +5,7 @@ package com.threerings.msoy.web.client;
 
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.fora.data.Comment;
@@ -17,12 +18,25 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface CommentService extends RemoteService
 {
+    /** Provides results for {@link #loadComment}. */
+    public static class CommentResult implements IsSerializable
+    {
+        /** The total count of comments. */
+        public int commentCount;
+
+        /**
+         * The range of comments that were requested.
+         *
+         * @gwt.typeArgs <com.threerings.msoy.fora.data.Comment>
+         */
+        public List comments;
+    }
+
     /**
      * Loads recent comments made about the specified entity.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.fora.data.Comment>
      */
-    public List loadComments (int entityType, int entityId, int offset, int count)
+    public CommentResult loadComments (int entityType, int entityId, int offset, int count,
+                                       boolean needCount)
         throws ServiceException;
 
     /**

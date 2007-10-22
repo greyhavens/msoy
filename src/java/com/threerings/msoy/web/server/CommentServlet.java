@@ -30,12 +30,17 @@ public class CommentServlet extends MsoyServiceServlet
     implements CommentService
 {
     // from interface CommentService
-    public List loadComments (int etype, int eid, int offset, int count)
+    public CommentResult loadComments (int etype, int eid, int offset, int count, boolean needCount)
         throws ServiceException
     {
         // no authentication required to view comments
         try {
-            return MsoyServer.commentRepo.loadComments(etype, eid, offset, count);
+            CommentResult result = new CommentResult();
+            result.comments = MsoyServer.commentRepo.loadComments(etype, eid, offset, count);
+            if (needCount) {
+                result.commentCount = 1; // TODO
+            }
+            return result;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load comments [entity=" + etype + ":" + eid +

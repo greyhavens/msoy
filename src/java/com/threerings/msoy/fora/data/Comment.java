@@ -7,6 +7,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.person.data.Profile;
 
 /**
  * Contains runtime data for a comment made by a member on something.
@@ -51,6 +53,9 @@ public class Comment
 
     /** The member that made this comment. */
     public MemberName commentor;
+
+    /** The member's profile photo (or the default). */
+    public MediaDesc photo = Profile.DEFAULT_PHOTO;
 
     /** The time at which this comment was posted. */
     public long posted;
