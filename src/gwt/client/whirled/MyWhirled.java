@@ -89,7 +89,7 @@ public class MyWhirled extends FlexTable
         descriptionPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
         descriptionPanel.add(new HTML(CWhirled.msgs.myWhirledDescription()));
         Hyperlink whirledwideLink =
-            Application.createLink(CWhirled.msgs.titleWhirledwide(), "whirled", "whirledwide");
+            Application.createLink(CWhirled.msgs.titleWhirledwide(), Page.WHIRLED, "whirledwide");
         whirledwideLink.setStyleName("Whirledwide");
         descriptionPanel.add(whirledwideLink);
         descriptionPanel.add(new HTML(CWhirled.msgs.whirledwideDescription()));
@@ -353,10 +353,10 @@ public class MyWhirled extends FlexTable
             if (_sceneType == SceneCard.ROOM) {
                 fakeSceneWidget.add(new HTML(CWhirled.msgs.emptyPopularPlaces(
                     Application.createLinkToken("world", "m" + CWhirled.creds.getMemberId()),
-                    Application.createLinkToken("whirled", "whirledwide"))));
+                    Application.createLinkToken(Page.WHIRLED, "whirledwide"))));
             } else if (_sceneType == SceneCard.GAME) {
                 fakeSceneWidget.add(new HTML(CWhirled.msgs.emptyActiveGames(
-                    Application.createLinkToken("whirled", "whirledwide"))));
+                    Application.createLinkToken(Page.WHIRLED, "whirledwide"))));
             }
         }
 

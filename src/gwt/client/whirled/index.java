@@ -60,7 +60,7 @@ public class index extends MsgsEntryPoint
     // @Override // from Page
     protected String getPageId ()
     {
-        return "whirled";
+        return WHIRLED;
     }
 
     // @Override // from Page

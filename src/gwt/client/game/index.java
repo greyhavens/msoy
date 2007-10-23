@@ -72,7 +72,7 @@ public class index extends Page
     // @Override // from Page
     protected String getPageId ()
     {
-        return "game";
+        return GAME;
     }
 
     // @Override // from Page
