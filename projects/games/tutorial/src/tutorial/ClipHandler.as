@@ -60,8 +60,6 @@ public class ClipHandler
 
         // otherwise perhaps we're done?
         if (_clip.currentFrame == _scene.numFrames) {
-            log.debug("Boom! [curFrame=" + _clip.currentFrame + ", numFrames=" +
-                      _scene.numFrames + "]");
             // if so trigger the callback (if any)
             if (_callback != null) {
                 _callback();
@@ -70,8 +68,6 @@ public class ClipHandler
             disengage();
             return;
         }
-        log.debug("Still playing [curFrame=" + _clip.currentFrame + ", numFrames=" +
-                  _scene.numFrames + "]");
     }
 
     protected static const log :Log = Log.getLog(ClipHandler);
