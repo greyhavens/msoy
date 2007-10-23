@@ -154,7 +154,7 @@ public class Application
         logo.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 boolean loggedIn = CShell.creds != null;
-                go("whirled", loggedIn ? "mywhirled" : "whirledwide");
+                go(Page.WHIRLED, loggedIn ? "mywhirled" : "whirledwide");
             }
         });
         RootPanel logoPanel = RootPanel.get("logo");
@@ -184,7 +184,7 @@ public class Application
     {
         _currentToken = token;
 
-        String page = (token == null || token.equals("")) ? "whirled" : token;
+        String page = (token == null || token.equals("")) ? Page.WHIRLED : token;
         Args args = new Args();
         int dashidx = token.indexOf("-");
         if (dashidx != -1) {

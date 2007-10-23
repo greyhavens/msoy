@@ -9,6 +9,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -61,7 +62,7 @@ public abstract class Page
     public static final int CONTENT_WIDTH = 700;
 
     /** The width of the separator bar displayed between the client and the content. */
-    public static final int SEPARATOR_WIDTH = 20;
+    public static final int SEPARATOR_WIDTH = 8;
 
     /**
      * Notes the history token for the current page so that it can be restored in the event that we
@@ -138,6 +139,7 @@ public abstract class Page
                 setContentMinimized(false);
             }
         });
+        _separatorLine = MsoyUI.createLabel("", "Separator");
 
         // initialize our services and translations
         initContext();
@@ -212,10 +214,12 @@ public abstract class Page
     {
         if (_closeToken != null) {
             RootPanel.get(SEPARATOR).clear();
-            RootPanel.get(SEPARATOR).setWidth("20px");
-            RootPanel.get(SEPARATOR).add(MsoyUI.createLabel("", "Separator"));
-            RootPanel.get(SEPARATOR).add(_closeContent);
+            FlowPanel closeBox = new FlowPanel();
+            closeBox.setStyleName("CloseBoxHolder");
+            closeBox.add(_closeContent);
+            RootPanel.get(SEPARATOR).add(closeBox);
             RootPanel.get(SEPARATOR).add(_minimizeContent);
+            RootPanel.get(SEPARATOR).add(_separatorLine);
         }
     }
 
@@ -231,8 +235,11 @@ public abstract class Page
             RootPanel.get(CLIENT).setWidth(
                 (Window.getClientWidth() - SEPARATOR_WIDTH) + "px");
             RootPanel.get(SEPARATOR).remove(_minimizeContent);
+            RootPanel.get(SEPARATOR).remove(_separatorLine);
             RootPanel.get(SEPARATOR).add(_maximizeContent);
+            RootPanel.get(SEPARATOR).add(_separatorLine);
             WorldClient.setMinimized(false);
+
         } else if (!minimized && _maximizeContent.isAttached()) {
             RootPanel.get(CONTENT).add(_content);
             RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
@@ -240,7 +247,9 @@ public abstract class Page
                 Window.getClientWidth() - Page.CONTENT_WIDTH - Page.SEPARATOR_WIDTH, 0);
             RootPanel.get(CLIENT).setWidth(clientWidth + "px");
             RootPanel.get(SEPARATOR).remove(_maximizeContent);
+            RootPanel.get(SEPARATOR).remove(_separatorLine);
             RootPanel.get(SEPARATOR).add(_minimizeContent);
+            RootPanel.get(SEPARATOR).add(_separatorLine);
             WorldClient.setMinimized(true);
         }
     }
@@ -382,7 +391,7 @@ public abstract class Page
     }-*/;
 
     protected FlexTable _content;
-    protected Label _closeContent, _minimizeContent, _maximizeContent;
+    protected Label _closeContent, _minimizeContent, _maximizeContent, _separatorLine;
 
     protected static String _closeToken;
 }

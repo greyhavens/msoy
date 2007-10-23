@@ -828,42 +828,43 @@ a:visited {
 }
 
 .pageSeparator {
-  background: #222222;
-  height: 100%;
   vertical-align: top;
-  border-right: 1px solid black;
 }
 
 .pageSeparator .Separator {
   position: relative;
   background: black;
-  left: 20px;
-  top: -20px;
+  left: 7px;
+  top: -560px;
   width: 1px;
   height: 20px;
 }
 
+.pageSeparator .CloseBoxHolder {
+  background: #222222;
+  width: 7px;
+  height: 15px;
+  border-right: 1px solid black;
+  padding-top: 4px;
+}
+
 .pageSeparator .CloseBox {
   background-image: url(/images/ui/close.png);
-  margin-top: -16px;
-  margin-left: 4px;
+  margin-left: -8px;
   width: 13px;
   height: 13px;
 }
 
 .pageSeparator .Minimize {
-  margin-top: 250px;
-  background-image: url(/images/whirled/scroll_left_inactive.png);
-  margin-left: 6px;
-  width: 14px;
-  height: 38px;
+  background-image: url(/images/ui/minimize_content.png);
+  width: 8px;
+  height: 525px;
 }
 
 .pageSeparator .Maximize {
-  margin-top: 250px;
-  background-image: url(/images/whirled/scroll_right_inactive.png);
-  width: 14px;
-  height: 38px;
+  background-image: url(/images/ui/maximize_content.png);
+  width: 8px;
+  height: 525px;
 }
 
 .SeparatorFromFlash {
