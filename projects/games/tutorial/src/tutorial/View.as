@@ -222,9 +222,7 @@ public class View extends Sprite
     {
         if (state == _swirlRequest) {
             log.warning("Already going to request scene [state=" + state + "]");
-        } else if (state == _swirlState) {
-            log.warning("Already in requested scene [state=" + state + "]");
-        } else {
+        } else if (state != _swirlState) {
             _swirlRequest = state;
             maybeTransition();
         }
