@@ -291,5 +291,5 @@ public class CatalogPanel extends VerticalPanel
 
     protected static final int HEADER_HEIGHT = 15 /* gap */ + 59 /* top tags, etc. */;
     protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ + 10 /* gap */;
-    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT/2 + 15 /* gap */;
+    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT + 15 /* gap */;
 }
