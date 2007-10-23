@@ -15,6 +15,9 @@ import flash.utils.*;
 import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.flash.SimpleTextButton;
 
+//            "This concludes the tutorial. Unfortunately we don't yet know how to turn ourselves off, so you will need to click on the little 'X' to leave us. Good luck out there!<br><br>" +
+//            "Oh bugger, there's no little 'X' to click on anymore.",
+
 public class View extends Sprite
 {
     public static const SWIRL_NONE :int = 1;
@@ -142,6 +145,14 @@ public class View extends Sprite
             });
         _hideButton.x = _textField.x + _textField.width - _hideButton.width * 1.5;
 
+        _farewellButton = new SimpleTextButton(
+            "Farewell", true, 0x003366, 0x6699CC, 0x0066FF, 5, format);
+        _farewellButton.visible = false;
+        _farewellButton.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
+                _tutorial.farewellClicked();
+            });
+        _farewellButton.x = _textField.x + _textField.width - _farewellButton.width * 1.5;
+
         // don't add the swirly until the text field is loaded
         maybeFinishUI();
     }
@@ -160,6 +171,7 @@ public class View extends Sprite
             this.addChild(_textBox);
             this.addChild(_textField);
             this.addChild(_hideButton);
+            this.addChild(_farewellButton);
 
             maybeTransition();
         }
@@ -181,6 +193,16 @@ public class View extends Sprite
         } else {
             _textBox.visible = _textField.visible = _hideButton.visible = false;
         }
+    }
+
+    public function displayFarewell () :void
+    {
+        _textBox.visible = _textField.visible = _farewellButton.visible = true;
+        _textField.htmlText =
+            "<p class='summary'>This is the end of the tutorial. Awesome work!</p>";
+        _textBox.width = _textField.width + 2*BOX_PADDING;
+        _textBox.height = _textField.height + _hideButton.height + BOX_HAT + 2*BOX_PADDING;
+        _farewellButton.y = _textField.y + _textField.height + BOX_PADDING/2;
     }
 
     // some day clicking on the swirly will do something
@@ -276,6 +298,7 @@ public class View extends Sprite
     protected var _textBox :Sprite;
     protected var _textField :TextField;
     protected var _hideButton :SimpleButton;
+    protected var _farewellButton :SimpleButton;
 
     protected static const log :Log = Log.getLog(View);
 

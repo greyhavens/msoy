@@ -139,9 +139,7 @@ public class Quest
             "<br><li>Choose <b><i>My Stuff -> Avatars</i></b> to view your avatars.<br>" +
             "<br><li>Click the <b>Wear Avatar</b> button to change your avatar.<br>" +
             "</p>",
-            "Congratulations! You received 200 flow for changing your avatar.<br><br>" +
-            "This concludes the tutorial. Unfortunately we don't yet know how to turn ourselves off, so you will need to click on the little 'X' to leave us. Good luck out there!<br><br>" +
-            "Oh bugger, there's no little 'X' to click on anymore.",
+            "Congratulations! You received 200 flow for changing your avatar.",
             200));
     }
 

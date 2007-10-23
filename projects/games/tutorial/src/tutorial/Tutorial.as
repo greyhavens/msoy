@@ -134,7 +134,7 @@ public class Tutorial extends Sprite
         // figure out which quest we ought to be on
         var step :int = getStep();
         if (step >= Quest.getQuestCount()) {
-            // we're done! TODO: deactivate us somehow
+            _view.displayFarewell();
             return;
         }
 
@@ -161,6 +161,11 @@ public class Tutorial extends Sprite
         // this quest will be automatically accepted, which in turn will trigger a call
         // back here to initialize(), setting activeQuest and swirl state as per above
         _control.offerQuest(quest.questId, null, quest.status);
+    }
+
+    public function farewellClicked () :void
+    {
+        _control.deactivateGame();
     }
 
     public function swirlClicked (swirlState :int) :void
