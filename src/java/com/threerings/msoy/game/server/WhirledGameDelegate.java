@@ -4,15 +4,20 @@
 package com.threerings.msoy.game.server;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
-import java.util.TreeMap;
 import java.util.logging.Level;
+
+import com.google.common.collect.Comparators;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.TreeMultimap;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
@@ -91,7 +96,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         // let the client know what game content is available
         if (_plmgr.getPlaceObject() instanceof WhirledGame) {
             WhirledGame gobj = (WhirledGame)_plmgr.getPlaceObject();
-            ArrayList<GameData> gdata = new ArrayList<GameData>();
+            List<GameData> gdata = Lists.newArrayList();
             for (LevelPack pack : content.lpacks) {
                 LevelData data = new LevelData();
                 data.ident = pack.ident;
@@ -203,7 +208,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // convert the players into record indexed on player oid which will weed out duplicates and
         // avoid funny business
-        HashIntMap<Player> players = new HashIntMap<Player>();
+        IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < playerOids.length; ii++) {
             int availFlow = getAwardableFlow(now, playerOids[ii]);
             players.put(playerOids[ii], new Player(playerOids[ii], scores[ii], availFlow));
@@ -267,16 +272,18 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // convert the players into records indexed on player oid to weed out duplicates and avoid
         // any funny business
-        HashIntMap<Player> players = new HashIntMap<Player>();
+        IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < winnerOids.length; ii++) {
             Player player = new Player(winnerOids[ii], 1, getAwardableFlow(now, winnerOids[ii]));
-            player.percentile = 74; // winners are 75th percentile
+            // everyone gets ranked as a 50% performance in multiplayer and we award portions of
+            // the losers' winnings to the winners
+            player.percentile = 50;
             player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
             players.put(winnerOids[ii], player);
         }
         for (int ii = 0; ii < loserOids.length; ii++) {
             Player player = new Player(loserOids[ii], 0, getAwardableFlow(now, loserOids[ii]));
-            player.percentile = 24; // losers are 25th percentile
+            player.percentile = 50;
             player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
             players.put(loserOids[ii], player);
         }
@@ -491,24 +498,75 @@ public class WhirledGameDelegate extends RatingManagerDelegate
                  ", diff=" + pctdiff + ", K=" + K + ", nrat=" + nrat + "].");
     }
 
-    protected void awardFlow (HashIntMap<Player> players, int payoutType)
+    protected void awardFlow (IntMap<Player> players, int payoutType)
     {
-        // figure out who ranked where
-        TreeMap<Integer,ArrayList<Player>> rankings = new TreeMap<Integer,ArrayList<Player>>();
-        for (Player player : players.values()) {
-            ArrayList<Player> list = rankings.get(player.score);
-            if (list == null) {
-                list = new ArrayList<Player>();
-            }
-            list.add(player);
+        if (players.size() == 0) { // sanity check
+            return;
         }
 
         switch (payoutType) {
-        case WINNERS_TAKE_ALL: // TODO
-//            break;
+        case WINNERS_TAKE_ALL: {
+            // map the players by score
+            TreeMultimap<Integer,Player> rankings = Multimaps.newTreeMultimap();
+            for (Player player : players.values()) {
+                rankings.put(player.score, player);
+            }
 
-        case CASCADING_PAYOUT: // TODO
-//            break;
+            // all the losers contribute their flow to a pool
+            int highestScore = rankings.keySet().last();
+            int totalLoserFlow = 0;
+            for (Integer score : rankings.keySet()) {
+                if (score != highestScore) {
+                    for (Player player : rankings.get(score)) {
+                        totalLoserFlow += player.availFlow;
+                    }
+                }
+            }
+
+            // and the winners divide it up evenly
+            int winners = rankings.get(highestScore).size();
+            for (Player player : rankings.get(highestScore)) {
+                player.flowAward = player.availFlow +
+                    (totalLoserFlow / winners); // we keep the roundoff
+            }
+            break;
+        }
+
+        case CASCADING_PAYOUT: {
+            // compute the average score
+            int totalScores = 0;
+            for (Player player : players.values()) {
+                totalScores += player.score;
+            }
+            float averageScore = totalScores / (float)players.size();
+
+            // everyone below the average contributes 50% to the pool
+            int totalLoserFlow = 0;
+            for (Player player : players.values()) {
+                if (player.score < averageScore) {
+                    player.flowAward = player.availFlow / 2;
+                    totalLoserFlow += (player.availFlow - player.flowAward);
+                }
+            }
+
+            // everyone at or above the average divides up the pool proportionally
+            int totalAboveAverageScores = 0;
+            for (Player player : players.values()) {
+                if (player.score >= averageScore) {
+                    totalAboveAverageScores += Math.round(player.score - averageScore);
+                }
+            }
+            for (Player player : players.values()) {
+                if (player.score >= averageScore) {
+                    int share = Math.round(player.score - averageScore);
+                    if (totalAboveAverageScores > 0) {
+                        player.flowAward = player.availFlow +
+                            (totalLoserFlow * share / totalAboveAverageScores);
+                    }
+                }
+            }
+            break;
+        }
 
         case TO_EACH_THEIR_OWN:
             for (Player player : players.values()) {
@@ -517,7 +575,8 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             break;
         }
 
-        log.info("Awarding flow [game=" + where() + ", to=" + players + "].");
+        log.info("Awarding flow [game=" + where() + ", type=" + payoutType +
+                 ", to=" + players + "].");
 
         // actually award flow and report it to the player
         int now = now();
@@ -775,7 +834,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         }
     }
 
-    protected static class Player
+    protected static class Player implements Comparable<Player>
     {
         public int playerOid;
         public int score;
@@ -788,6 +847,10 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             this.playerOid = playerOid;
             this.score = score;
             this.availFlow = availFlow;
+        }
+
+        public int compareTo (Player other) {
+            return Comparators.compare(playerOid, other.playerOid);
         }
 
         public String toString () {
@@ -824,7 +887,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     protected ArrayIntSet _allPlayers = new ArrayIntSet();
 
     /** Tracks accumulated playtime for all players in the game. */
-    protected HashIntMap<FlowRecord> _flowRecords = new HashIntMap<FlowRecord>();
+    protected IntMap<FlowRecord> _flowRecords = IntMaps.newHashIntMap();
 
     /** Once a game has accumulated this many player games, its average time is trusted. */
     protected static final int FRESH_GAME_CUTOFF = 10;
