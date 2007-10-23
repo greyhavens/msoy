@@ -277,13 +277,13 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             Player player = new Player(winnerOids[ii], 1, getAwardableFlow(now, winnerOids[ii]));
             // everyone gets ranked as a 50% performance in multiplayer and we award portions of
             // the losers' winnings to the winners
-            player.percentile = 50;
+            player.percentile = 49;
             player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
             players.put(winnerOids[ii], player);
         }
         for (int ii = 0; ii < loserOids.length; ii++) {
             Player player = new Player(loserOids[ii], 0, getAwardableFlow(now, loserOids[ii]));
-            player.percentile = 50;
+            player.percentile = 49;
             player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
             players.put(loserOids[ii], player);
         }
