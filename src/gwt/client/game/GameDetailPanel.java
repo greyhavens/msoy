@@ -38,7 +38,7 @@ import client.util.StyledTabPanel;
 /**
  * Displays detail information on a particular game.
  */
-public class GameDetailPanel extends FlexTable
+public class GameDetailPanel extends VerticalPanel
     implements TabListener
 {
     public static final String COMMENTS_TAB = "c";
@@ -51,9 +51,6 @@ public class GameDetailPanel extends FlexTable
         _page = page;
         _page.setPageTitle(CGame.msgs.gdpTitle());
         setStyleName("gameDetail");
-        setCellPadding(0);
-        setCellSpacing(0);
-        setText(0, 0, CGame.msgs.gdpLoading());
     }
 
     public void setGame (final int gameId, final String tab)
@@ -63,6 +60,7 @@ public class GameDetailPanel extends FlexTable
             return;
         }
 
+        add(new Label(CGame.msgs.gdpLoading()));
         CGame.gamesvc.loadGameDetail(CGame.ident, gameId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 setGameDetail(gameId, (GameDetail)result);
@@ -70,15 +68,22 @@ public class GameDetailPanel extends FlexTable
             }
             public void onFailure (Throwable cause) {
                 CGame.log("Failed to load detail [id=" +  _gameId + "]", cause);
-                setText(0, 0, CGame.serverError(cause));
+                clear();
+                add(new Label(CGame.serverError(cause)));
             }
         });
     }
 
     public void setGameDetail (int gameId, GameDetail detail)
     {
+        clear();
+
         _gameId = gameId;
         _page.setPageTitle(CGame.msgs.gdpTitle(), detail.getGame().name);
+
+        FlexTable top = new FlexTable();
+        top.setCellPadding(0);
+        top.setCellSpacing(0);
 
         int row = 0;
         FlexTable box = new FlexTable();
@@ -90,13 +95,13 @@ public class GameDetailPanel extends FlexTable
         box.getFlexCellFormatter().setStyleName(1, 0, "Logo");
         box.setWidget(1, 0, MediaUtil.createMediaView(
                           detail.getGame().getThumbnailMedia(), MediaDesc.PREVIEW_SIZE));
-        setWidget(row, 0, box);
-        getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        top.setWidget(row, 0, box);
+        top.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
         VerticalPanel details = new VerticalPanel();
         details.setStyleName("Details");
-        setWidget(row, 1, details);
-        getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
+        top.setWidget(row, 1, details);
+        top.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
 
         VerticalPanel playButtons = new VerticalPanel();
         playButtons.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
@@ -116,7 +121,8 @@ public class GameDetailPanel extends FlexTable
                 }
             }));
         }
-        setWidget(row++, 2, playButtons);
+        top.setWidget(row++, 2, playButtons);
+        add(top);
 
         if (detail.listedItem != null) {
             details.add(new ItemRating(detail.listedItem, CGame.getMemberId(),
@@ -160,16 +166,15 @@ public class GameDetailPanel extends FlexTable
 
         // note that they're playing the developer version if so
         if (_gameId < 0) {
-            setText(row, 0, "");
-            setText(row, 1, CGame.msgs.gdpDevVersion());
-            getFlexCellFormatter().setColSpan(row, 1, getCellCount(0));
-            getFlexCellFormatter().setStyleName(row++, 1, "InDevTip");
+            top.setText(row, 0, "");
+            top.setText(row, 1, CGame.msgs.gdpDevVersion());
+            top.getFlexCellFormatter().setColSpan(row, 1, top.getCellCount(0));
+            top.getFlexCellFormatter().setStyleName(row++, 1, "InDevTip");
         }
 
         _tabs = new StyledTabPanel();
         _tabs.addTabListener(this);
-        setWidget(row, 0, _tabs);
-        getFlexCellFormatter().setColSpan(row++, 0, getCellCount(0));
+        add(_tabs);
 
         // TODO: add screen shots tab
         // TODO: add instructions tab
