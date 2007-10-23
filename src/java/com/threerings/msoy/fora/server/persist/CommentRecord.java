@@ -15,7 +15,8 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.data.MemberCard;
+
 import com.threerings.msoy.fora.data.Comment;
 
 /**
@@ -89,13 +90,17 @@ public class CommentRecord extends PersistentRecord
     /**
      * Converts this persistent record to a runtime record.
      *
-     * @param names a mapping from member id to {@link MemberName} that should contain {@link
+     * @param names a mapping from member id to {@link MemberCard} that should contain {@link
      * #memberId}.
      */
-    public Comment toComment (HashIntMap<MemberName> names)
+    public Comment toComment (HashIntMap<MemberCard> cards)
     {
         Comment comment = new Comment();
-        comment.commentor = names.get(memberId);
+        MemberCard card = cards.get(memberId);
+        if (card != null) {
+            comment.commentor = card.name;
+            comment.photo = card.photo;
+        }
         comment.posted = posted.getTime();
         comment.text = text;
         return comment;

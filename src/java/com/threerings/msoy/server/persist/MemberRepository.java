@@ -124,6 +124,15 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Loads the member records with the supplied set of ids.
+     */
+    public List<MemberRecord> loadMembers (IntSet memberIds)
+        throws PersistenceException
+    {
+        return findAll(MemberRecord.class, new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)));
+    }
+
+    /**
      * Calculate a count of the active member population, currently defined as anybody
      * whose last session is within the past 60 days.
      *

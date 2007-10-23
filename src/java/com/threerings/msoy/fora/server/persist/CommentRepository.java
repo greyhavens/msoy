@@ -4,24 +4,22 @@
 package com.threerings.msoy.fora.server.persist;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.HashIntMap;
 
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.Computed;
+import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
+import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
-
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.persist.MemberNameRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.fora.data.Comment;
 
@@ -30,10 +28,17 @@ import com.threerings.msoy.fora.data.Comment;
  */
 public class CommentRepository extends DepotRepository
 {
-    public CommentRepository (PersistenceContext ctx, MemberRepository memRepo)
+    /** Used by {@link #loadCommentCount}. */
+    @Entity @Computed
+    public static class CommentCountRecord extends PersistentRecord
+    {
+        @Computed(fieldDefinition="count(*)")
+        public int count;
+    }
+
+    public CommentRepository (PersistenceContext ctx)
     {
         super(ctx);
-        _memRepo = memRepo;
     }
 
     /**
@@ -42,42 +47,15 @@ public class CommentRepository extends DepotRepository
      * @param start the offset into the comments (in reverse time order) to load.
      * @param count the number of comments to load.
      */
-    public List<Comment> loadComments (int entityType, int entityId, int start, int count)
+    public List<CommentRecord> loadComments (int entityType, int entityId, int start, int count)
         throws PersistenceException
     {
         // load up the specified comment set
-        List<CommentRecord> records = findAll(
-            CommentRecord.class,
-            new Where(CommentRecord.ENTITY_TYPE_C, entityType,
-                      CommentRecord.ENTITY_ID_C, entityId),
-            OrderBy.descending(CommentRecord.POSTED_C),
-            new Limit(start, count));
-
-        ArrayList<Comment> results = new ArrayList<Comment>();
-        if (records.size() == 0) {
-            return results;
-        }
-
-        // resolve the member names for all commentors
-        HashIntMap<MemberName> names = new HashIntMap<MemberName>();
-        ArrayIntSet memIds = new ArrayIntSet();
-        for (CommentRecord record : records) {
-            memIds.add(record.memberId);
-        }
-        for (MemberNameRecord mnr : _memRepo.loadMemberNames(memIds.toIntArray())) {
-            names.put(mnr.memberId, mnr.toMemberName());
-        }
-
-        // convert the results to runtime records
-        for (CommentRecord record : records) {
-            Comment comment = record.toComment(names);
-            if (comment.commentor == null) {
-                continue; // TODO: do we want to keep comments for deleted members? probably not.
-            }
-            results.add(comment);
-        }
-
-        return results;
+        return findAll(CommentRecord.class,
+                       new Where(CommentRecord.ENTITY_TYPE_C, entityType,
+                                 CommentRecord.ENTITY_ID_C, entityId),
+                       OrderBy.descending(CommentRecord.POSTED_C),
+                       new Limit(start, count));
     }
 
     /**
@@ -88,6 +66,21 @@ public class CommentRepository extends DepotRepository
     {
         return load(CommentRecord.class,
                     CommentRecord.getKey(entityType, entityId, new Timestamp(posted)));
+    }
+
+    /**
+     * Loads the total number of comments posted to the specified entity.
+     */
+    public int loadCommentCount (int entityType, int entityId)
+        throws PersistenceException
+    {
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new FromOverride(CommentRecord.class));
+        clauses.add(new Where(CommentRecord.ENTITY_TYPE_C, entityType,
+                              CommentRecord.ENTITY_ID_C, entityId));
+        CommentCountRecord crec = load(
+            CommentCountRecord.class, clauses.toArray(new QueryClause[clauses.size()]));
+        return crec.count;
     }
 
     /**
@@ -126,6 +119,4 @@ public class CommentRepository extends DepotRepository
     {
         classes.add(CommentRecord.class);
     }
-
-    protected MemberRepository _memRepo;
 }

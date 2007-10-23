@@ -864,9 +864,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesSendEmail();
 
   /**
-   * Translated "Comment posted. Click ''Latest'' to see it.".
+   * Translated "Comment posted.".
    * 
-   * @return translated "Comment posted. Click ''Latest'' to see it."
+   * @return translated "Comment posted."
    * @gwt.key commentPosted
    */
   String commentPosted();

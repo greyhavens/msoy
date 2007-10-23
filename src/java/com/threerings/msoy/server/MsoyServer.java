@@ -277,7 +277,7 @@ public class MsoyServer extends MsoyBaseServer
         // create our various repositories
         profileRepo = new ProfileRepository(perCtx);
         groupRepo = new GroupRepository(perCtx, eventLog);
-        commentRepo = new CommentRepository(perCtx, memberRepo);
+        commentRepo = new CommentRepository(perCtx);
         trophyRepo = new TrophyRepository(perCtx);
         swiftlyRepo = new SwiftlyRepository(perCtx);
         feedRepo = new FeedRepository(perCtx);

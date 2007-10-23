@@ -7,7 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.google.common.collect.Lists;
+
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -18,6 +22,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.CommentService;
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -35,11 +40,39 @@ public class CommentServlet extends MsoyServiceServlet
     {
         // no authentication required to view comments
         try {
-            CommentResult result = new CommentResult();
-            result.comments = MsoyServer.commentRepo.loadComments(etype, eid, offset, count);
-            if (needCount) {
-                result.commentCount = 1; // TODO
+            List<CommentRecord> records =
+                MsoyServer.commentRepo.loadComments(etype, eid, offset, count);
+
+            // resolve the member cards for all commentors
+            HashIntMap<MemberCard> cards = new HashIntMap<MemberCard>();
+            ArrayIntSet memIds = new ArrayIntSet();
+            for (CommentRecord record : records) {
+                memIds.add(record.memberId);
             }
+            for (MemberRecord mrec : MsoyServer.memberRepo.loadMembers(memIds)) {
+                MemberCard card = new MemberCard();
+                card.name = mrec.getName();
+                cards.put(mrec.memberId, card);
+            }
+            ProfileServlet.resolveCardData(cards);
+
+            // convert the comment records to runtime records
+            List<Comment> comments = Lists.newArrayList();
+            for (CommentRecord record : records) {
+                Comment comment = record.toComment(cards);
+                if (comment.commentor == null) {
+                    continue; // this member was deleted, shouldn't happen
+                }
+                comments.add(comment);
+            }
+
+            // prepare and deliver the final result
+            CommentResult result = new CommentResult();
+            result.comments = comments;
+            if (needCount) {
+                result.commentCount = MsoyServer.commentRepo.loadCommentCount(etype, eid);
+            }
+
             return result;
 
         } catch (PersistenceException pe) {

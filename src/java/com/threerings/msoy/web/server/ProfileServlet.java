@@ -405,7 +405,7 @@ public class ProfileServlet extends MsoyServiceServlet
         return list;
     }
 
-    protected void resolveCardData (HashIntMap<MemberCard> cards)
+    protected static void resolveCardData (HashIntMap<MemberCard> cards)
         throws PersistenceException
     {
         for (ProfileRecord profile : MsoyServer.profileRepo.loadProfiles(

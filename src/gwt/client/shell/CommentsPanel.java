@@ -90,6 +90,7 @@ public class CommentsPanel extends PagedGrid
     protected void postedComment (Comment comment)
     {
         if (_page == 0) {
+            _commentCount = -1;
             displayPage(0, true);
         } else {
             MsoyUI.info(CShell.cmsgs.commentPosted());
@@ -102,7 +103,8 @@ public class CommentsPanel extends PagedGrid
             CShell.ident, _entityType, _entityId, comment.posted, new AsyncCallback() {
             public void onSuccess (Object result) {
                 MsoyUI.info(CShell.cmsgs.commentDeleted());
-                _model.removeItem(comment);
+                _commentCount = -1;
+                removeItem(comment);
             }
             public void onFailure (Throwable cause) {
                 MsoyUI.error(CShell.serverError(cause));
@@ -136,8 +138,6 @@ public class CommentsPanel extends PagedGrid
         public void removeItem (Object item) {
             // TOOD
         }
-
-        protected int _commentCount = -1;
     }
 
     protected class PostPanel extends VerticalPanel
@@ -173,7 +173,7 @@ public class CommentsPanel extends PagedGrid
     }
 
     protected int _entityType, _entityId;
-    protected int _page = -1;
+    protected int _commentCount = -1;
 
     protected VerticalPanel _comments;
     protected Button _post;
