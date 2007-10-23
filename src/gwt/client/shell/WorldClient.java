@@ -122,20 +122,21 @@ public class WorldClient extends Widget
         }
     }
 
-    public static void minimize ()
-    {
-        // note that we don't need to hack our popups
-        Page.displayingFlash = false;
+// TODO: can go away?
+//     public static void minimize ()
+//     {
+//         // note that we don't need to hack our popups
+//         Page.displayingFlash = false;
 
-        if (_isFlashClientPresent || _jclient != null) {
-            RootPanel.get(Page.CONTENT).setWidth(Page.CONTENT_WIDTH + "px");
-            RootPanel.get(Page.SEPARATOR).setWidth(Page.SEPARATOR_WIDTH + "px");
-            int clientWidth = Math.max(
-                Window.getClientWidth() - Page.CONTENT_WIDTH - Page.SEPARATOR_WIDTH, 0);
-            RootPanel.get(Page.CLIENT).setWidth(clientWidth + "px");
-            clientMinimized(true);
-        }
-    }
+//         if (_isFlashClientPresent || _jclient != null) {
+//             RootPanel.get(Page.CONTENT).setWidth(Page.CONTENT_WIDTH + "px");
+//             RootPanel.get(Page.SEPARATOR).setWidth(Page.SEPARATOR_WIDTH + "px");
+//             int clientWidth = Math.max(
+//                 Window.getClientWidth() - Page.CONTENT_WIDTH - Page.SEPARATOR_WIDTH, 0);
+//             RootPanel.get(Page.CLIENT).setWidth(clientWidth + "px");
+//             clientMinimized(true);
+//         }
+//     }
 
     public static void setMinimized (boolean minimized)
     {

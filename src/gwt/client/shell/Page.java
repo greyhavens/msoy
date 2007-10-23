@@ -6,6 +6,7 @@ package client.shell;
 import java.util.ArrayList;
 
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -202,8 +203,7 @@ public abstract class Page
     {
         _closeToken = null;
         if (_content != null) {
-            _content.setText(0, 2, "");
-            _content.setText(0, 3, "");
+            RootPanel.get(SEPARATOR).clear();
         }
     }
 
@@ -214,43 +214,62 @@ public abstract class Page
     public void setContentMinimized (boolean minimized)
     {
         if (minimized && _minimizeContent.isAttached()) {
-            RootPanel.get(CONTENT).clear();
-            RootPanel.get(CONTENT).setWidth("0px");
-            RootPanel.get(CLIENT).setWidth(
-                (Window.getClientWidth() - SEPARATOR_WIDTH) + "px");
             RootPanel.get(SEPARATOR).remove(_minimizeContent);
             RootPanel.get(SEPARATOR).remove(_separatorLine);
             RootPanel.get(SEPARATOR).add(_maximizeContent);
             RootPanel.get(SEPARATOR).add(_separatorLine);
+
+            RootPanel.get(CONTENT).clear();
             WorldClient.setMinimized(false);
+            // TODO: unhack
+            new Timer() {
+                public void run () {
+                    if (_startWidth >= _endWidth) {
+                        RootPanel.get(CONTENT).setWidth("0px");
+                        RootPanel.get(CLIENT).setWidth(_endWidth + "px");
+                        cancel();
+                    } else {
+                        RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
+                        RootPanel.get(CLIENT).setWidth(_startWidth + "px");
+//                         _startWidth += Math.max((_endWidth - _startWidth) / FRAMES, 5);
+                        _startWidth += _deltaWidth;
+                    }
+                }
+                protected int _availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
+                protected int _startWidth = Math.max(_availWidth - CONTENT_WIDTH, 0);
+                protected int _endWidth = _availWidth;
+                protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
+                protected static final int FRAMES = 5;
+            }.scheduleRepeating(50);
 
         } else if (!minimized && _maximizeContent.isAttached()) {
-            RootPanel.get(CONTENT).add(_content);
-            RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
-            int clientWidth = Math.max(
-                Window.getClientWidth() - Page.CONTENT_WIDTH - Page.SEPARATOR_WIDTH, 0);
-            RootPanel.get(CLIENT).setWidth(clientWidth + "px");
             RootPanel.get(SEPARATOR).remove(_maximizeContent);
             RootPanel.get(SEPARATOR).remove(_separatorLine);
             RootPanel.get(SEPARATOR).add(_minimizeContent);
             RootPanel.get(SEPARATOR).add(_separatorLine);
-            WorldClient.setMinimized(true);
-        }
-    }
 
-    /**
-     * Configures the page with a close button and a minimization separator.
-     */
-    protected void setCloseButton ()
-    {
-        if (_closeToken != null) {
-            RootPanel.get(SEPARATOR).clear();
-            FlowPanel closeBox = new FlowPanel();
-            closeBox.setStyleName("CloseBoxHolder");
-            closeBox.add(_closeContent);
-            RootPanel.get(SEPARATOR).add(closeBox);
-            RootPanel.get(SEPARATOR).add(_minimizeContent);
-            RootPanel.get(SEPARATOR).add(_separatorLine);
+            // TODO: unhack
+            new Timer() {
+                public void run () {
+                    if (_startWidth <= _endWidth) {
+                        RootPanel.get(CONTENT).add(_content);
+                        RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
+                        RootPanel.get(CLIENT).setWidth(_endWidth + "px");
+                        WorldClient.setMinimized(true);
+                        cancel();
+                    } else {
+                        RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
+                        RootPanel.get(CLIENT).setWidth(_startWidth + "px");
+//                         _startWidth += Math.max((_endWidth - _startWidth) / FRAMES, 5);
+                        _startWidth += _deltaWidth;
+                    }
+                }
+                protected int _availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
+                protected int _endWidth = Math.max(_availWidth - CONTENT_WIDTH, 0);
+                protected int _startWidth = _availWidth;
+                protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
+                protected static final int FRAMES = 5;
+            }.scheduleRepeating(50);
         }
     }
 
@@ -314,8 +333,6 @@ public abstract class Page
      */
     protected void setContent (Widget content, boolean contentIsFlash, boolean contentIsJava)
     {
-        // make sure the world client is properly minimized
-        WorldClient.minimize();
         displayingFlash = contentIsFlash;
         displayingJava = contentIsJava;
         RootPanel.get(CONTENT).clear();
@@ -323,11 +340,49 @@ public abstract class Page
         // clear out any content height overrides
         setContentStretchHeight(false);
 
-        // now set our content
+        // create our content container if need be
         if (_content == null) {
             createContentContainer();
         }
-        RootPanel.get(CONTENT).add(_content);
+
+        // configure our content minimizer UI
+        if (_closeToken != null) {
+            RootPanel.get(SEPARATOR).clear();
+            FlowPanel closeBox = new FlowPanel();
+            closeBox.setStyleName("CloseBoxHolder");
+            closeBox.add(_closeContent);
+            RootPanel.get(SEPARATOR).add(closeBox);
+            RootPanel.get(SEPARATOR).add(_minimizeContent);
+            RootPanel.get(SEPARATOR).add(_separatorLine);
+
+            // TODO: unhack
+            new Timer() {
+                public void run () {
+                    if (_startWidth <= _endWidth) {
+                        RootPanel.get(CONTENT).add(_content);
+                        RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
+                        RootPanel.get(CLIENT).setWidth(_endWidth + "px");
+                        WorldClient.setMinimized(true);
+                        cancel();
+                    } else {
+                        RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
+                        RootPanel.get(CLIENT).setWidth(_startWidth + "px");
+//                         _startWidth += Math.max((_endWidth - _startWidth) / FRAMES, 5);
+                        _startWidth += _deltaWidth;
+                    }
+                }
+                protected int _availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
+                protected int _endWidth = Math.max(_availWidth - CONTENT_WIDTH, 0);
+                protected int _startWidth = _availWidth;
+                protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
+                protected static final int FRAMES = 5;
+            }.scheduleRepeating(50);
+
+        } else {
+            RootPanel.get(CONTENT).add(_content);
+        }
+
+        // now set our content
         _content.setWidget(1, 0, content);
 
         // if there isn't anything in the tabs/subtitle area, we need something there to cause IE
@@ -356,8 +411,6 @@ public abstract class Page
         _content.getFlexCellFormatter().setColSpan(1, 0, 2);
         _content.getFlexCellFormatter().setHeight(1, 0, "100%");
         _content.getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
-
-        setCloseButton();
     }
 
     protected void setPageTabs (Widget tabs)

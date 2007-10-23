@@ -145,12 +145,10 @@ public class index extends Page
         });
     }
 
-    protected HTML hotSpots (String hotSpots)
+    protected void hotSpots (String hotSpots)
     {
         setPageTitle(CWorld.msgs.hotSpotsTitle());
-        HTML content = setFlashContent(FlashClients.createPopularPlacesDefinition(hotSpots));
-        setCloseButton();
-        return content;
+        setFlashContent(FlashClients.createPopularPlacesDefinition(hotSpots));
     }
 
     // @Override // from Page
