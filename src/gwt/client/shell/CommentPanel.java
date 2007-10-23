@@ -65,8 +65,7 @@ public class CommentPanel extends FlexTable
             InlineLabel delete = new InlineLabel(CShell.cmsgs.deletePost(), false, true, false);
             delete.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    parent.deleteComment(CommentPanel.this, comment);
-                    setText(2, 1, CShell.cmsgs.deletingPost());
+                    parent.deleteComment(comment, false);
                 }
             });
             delete.addStyleName("Posted");

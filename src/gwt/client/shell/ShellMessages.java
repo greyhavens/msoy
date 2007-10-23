@@ -520,14 +520,6 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editNameReady();
 
   /**
-   * Translated "[deleting...]".
-   * 
-   * @return translated "[deleting...]"
-   * @gwt.key deletingPost
-   */
-  String deletingPost();
-
-  /**
    * Translated "You have no invitations available to send.".
    * 
    * @return translated "You have no invitations available to send."
@@ -1118,6 +1110,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key editTitle
    */
   String editTitle();
+
+  /**
+   * Translated "Are you sure you want to delete this comment?".
+   * 
+   * @return translated "Are you sure you want to delete this comment?"
+   * @gwt.key deletePostConfirm
+   */
+  String deletePostConfirm();
 
   /**
    * Translated "Let''s Go!".

@@ -20,6 +20,7 @@ import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.web.client.CommentService;
 
 import client.util.MsoyUI;
+import client.util.PromptPopup;
 import client.util.RowPanel;
 
 /**
@@ -97,8 +98,17 @@ public class CommentsPanel extends PagedGrid
         }
     }
 
-    protected void deleteComment (final CommentPanel panel, final Comment comment)
+    protected void deleteComment (final Comment comment, boolean confirmed)
     {
+        if (!confirmed) {
+            new PromptPopup(CShell.cmsgs.deletePostConfirm()) {
+                public void onAffirmative () {
+                    deleteComment(comment, true);
+                }
+            }.setContext("\"" + comment.text + "\"").prompt();
+            return;
+        }
+
         CShell.commentsvc.deleteComment(
             CShell.ident, _entityType, _entityId, comment.posted, new AsyncCallback() {
             public void onSuccess (Object result) {

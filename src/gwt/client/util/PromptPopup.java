@@ -41,6 +41,16 @@ public abstract class PromptPopup extends BorderedPopup
     }
 
     /**
+     * Configures a context string that will be shown below the prompt message. Returns this
+     * instance for easy chaining.
+     */
+    public PromptPopup setContext (String context)
+    {
+        _context = context;
+        return this;
+    }
+
+    /**
      * Prompt the user, call onAffirmative or onNegative depending on user's input.
      */
     public void prompt () 
@@ -54,6 +64,9 @@ public abstract class PromptPopup extends BorderedPopup
         content.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
         content.add(MsoyUI.createLabel(_prompt, "Content"));
+        if (_context != null) {
+            content.add(MsoyUI.createLabel(_context, "Content"));
+        }
 
         final Button yesButton = new Button(_affirmative);
         final Button noButton = new Button(_negative);
@@ -92,7 +105,7 @@ public abstract class PromptPopup extends BorderedPopup
         // default to doing nothing, just go away
     }
 
-    protected String _prompt;
+    protected String _prompt, _context;
     protected String _affirmative;
     protected String _negative;
 }
