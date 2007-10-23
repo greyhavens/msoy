@@ -72,7 +72,7 @@ public class Quest
             "decorInstalled",
             "Change Your Decor",
             "<p class='title'>Install the new Decor.</p>" +
-            "<p class='summary'>Let's get your new decor in your room.</p>" +
+            "<p class='summary'><br>Let's get your new decor in your room.</p>" +
             "<p class='details'>" +
             "<br><li>Choose <b><i>My Stuff -> Decor</i></b> to see the decor you own.</li><br>" +
             "<li>Apply your new decor by clicking the <b>Add to Room</b> button.</li><br>" +
@@ -85,7 +85,7 @@ public class Quest
             "furniBought",
             "Buy Furniture",
             "<p class='title'>Buy Furniture</p>" +
-            "<p class='summary'>Furniture adds depth and personality to a room. Let's shop some more.</p>" +
+            "<p class='summary'><br>Furniture adds depth and personality to a room. Let's shop some more.</p>" +
             "<p class='details'>" +
             "<br><li>Choose <b><i>Catalog -> Furniture</i></b> to find something you like.</li><br>" +
             "<li>Click <b><i>Buy!</i></b> when you find something you like.</li><br>" +
@@ -97,7 +97,7 @@ public class Quest
             "furniInstalled",
             "Install your furniture",
             "<p class='title'>Install Your Furniture</p>" +
-            "<p class='summary'>The furniture won't show up until you add it to your room.</p>" +
+            "<p class='summary'><br>The furniture won't show up until you add it to your room.</p>" +
             "<p class='details'>" +
             "<br><li>Choose <b><i>My Stuff -> Furniture</i></b> to browse your furniture.</li><br>" +
             "<li>Clicking <b>Add to Room</b> will place the item in the center of your room.</li><br>" +
@@ -109,7 +109,7 @@ public class Quest
             "editorClosed",
             "Place your furniture",
             "<p class='title'>Place Your Furniture</p>" +
-            "<p class='summary'>The new furniture appears in the middle of the room until you drag it to where you want it to be. </p>" +
+            "<p class='summary'><br>The new furniture appears in the middle of the room until you drag it to where you want it to be. </p>" +
             "<p class='details'>" +
             "<br><li>You should be in Room Editing Mode. If not, click the small hammer icon on the lower Whirled toolbar.</li><br>" +
             "<li>Click and drag your furni to place it.</li><br>" +
@@ -122,7 +122,7 @@ public class Quest
             "avatarBought",
             "Buy a new Avatar",
             "<p class='title'>Change Your Avatar</p>" +
-            "<p class='summary'>Find a new face. There's lots to choose from in the catalog.</p>" +
+            "<p class='summary'><br>Find a new face. There's lots to choose from in the catalog.</p>" +
             "<p class='details'>" +
             "<br><li>Click on <b><i>Catalog -> Avatars</i></b> to browse the selection.</li><br>" +
             "<li>Purchase one you like.</li><br>" +
@@ -134,7 +134,7 @@ public class Quest
             "avatarInstalled",
             "Wear your new Avatar",
             "<p class='title'>Change Your Avatar</p>" +
-            "<p class='summary'>Just as with decor and furni, your avatar won't show in the world until you add it.</p>" +
+            "<p class='summary'><br>Just as with decor and furni, your avatar won't show in the world until you add it.</p>" +
             "<p class='details'>" +
             "<br><li>Choose <b><i>My Stuff -> Avatars</i></b> to view your avatars.</li><br>" +
             "<li>Click the <b>Wear Avatar</b> button to change your avatar.</li><br>" +
