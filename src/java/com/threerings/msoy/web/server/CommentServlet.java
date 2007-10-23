@@ -72,7 +72,7 @@ public class CommentServlet extends MsoyServiceServlet
             CommentResult result = new CommentResult();
             result.comments = comments;
             if (needCount) {
-                result.commentCount = (records.size() < Comment.COMMENTS_PER_PAGE) ?
+                result.commentCount = (records.size() < Comment.COMMENTS_PER_PAGE && offset == 0) ?
                     records.size() : MsoyServer.commentRepo.loadCommentCount(etype, eid);
             }
 
