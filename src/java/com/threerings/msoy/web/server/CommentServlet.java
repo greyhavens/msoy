@@ -49,12 +49,14 @@ public class CommentServlet extends MsoyServiceServlet
             for (CommentRecord record : records) {
                 memIds.add(record.memberId);
             }
-            for (MemberRecord mrec : MsoyServer.memberRepo.loadMembers(memIds)) {
-                MemberCard card = new MemberCard();
-                card.name = mrec.getName();
-                cards.put(mrec.memberId, card);
+            if (memIds.size() > 0) {
+                for (MemberRecord mrec : MsoyServer.memberRepo.loadMembers(memIds)) {
+                    MemberCard card = new MemberCard();
+                    card.name = mrec.getName();
+                    cards.put(mrec.memberId, card);
+                }
+                ProfileServlet.resolveCardData(cards);
             }
-            ProfileServlet.resolveCardData(cards);
 
             // convert the comment records to runtime records
             List<Comment> comments = Lists.newArrayList();
@@ -70,7 +72,8 @@ public class CommentServlet extends MsoyServiceServlet
             CommentResult result = new CommentResult();
             result.comments = comments;
             if (needCount) {
-                result.commentCount = MsoyServer.commentRepo.loadCommentCount(etype, eid);
+                result.commentCount = (records.size() < Comment.COMMENTS_PER_PAGE) ?
+                    records.size() : MsoyServer.commentRepo.loadCommentCount(etype, eid);
             }
 
             return result;
@@ -123,12 +126,12 @@ public class CommentServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser(ident);
         try {
             // if we're not support personel, ensure that we are the poster of this comment
-//             if (!mrec.isSupport()) {
+            if (!mrec.isSupport()) {
                 CommentRecord record = MsoyServer.commentRepo.loadComment(etype, eid, posted);
                 if (record == null || record.memberId != mrec.memberId) {
                     return false;
                 }
-//             }
+            }
 
             MsoyServer.commentRepo.deleteComment(etype, eid, posted);
             return true;

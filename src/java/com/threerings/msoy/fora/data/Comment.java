@@ -31,6 +31,9 @@ public class Comment
     /** The maximum length of comment text. */
     public static final int MAX_TEXT_LENGTH = 1024;
 
+    /** The number of comments displayed per page. */
+    public static final int COMMENTS_PER_PAGE = 5;
+
     /**
      * Returns true if this is a valid comment entity type, false if not.
      */

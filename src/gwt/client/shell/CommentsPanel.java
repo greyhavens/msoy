@@ -30,7 +30,7 @@ public class CommentsPanel extends PagedGrid
 {
     public CommentsPanel (int entityType, int entityId)
     {
-        super(COMMENTS_PER_PAGE, 1, NAV_ON_BOTTOM);
+        super(Comment.COMMENTS_PER_PAGE, 1, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");
 
         _entityType = entityType;
@@ -187,6 +187,4 @@ public class CommentsPanel extends PagedGrid
 
     protected VerticalPanel _comments;
     protected Button _post;
-
-    protected static final int COMMENTS_PER_PAGE = 5;
 }
