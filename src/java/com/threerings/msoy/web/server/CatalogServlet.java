@@ -41,6 +41,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
 
 import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -53,31 +54,29 @@ public class CatalogServlet extends MsoyServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
-    public CatalogResult loadCatalog (int memberId, byte type, byte sortBy, String search,
-                                      String tag, int creator, int offset, int rows,
+    public CatalogResult loadCatalog (WebIdent ident, CatalogQuery query, int offset, int rows,
                                       boolean includeCount)
         throws ServiceException
     {
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
-
+        MemberRecord mrec = getAuthedUser(ident);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(query.itemType);
         CatalogResult result = new CatalogResult();
         List<CatalogListing> list = new ArrayList<CatalogListing>();
+
         try {
             boolean mature = false;
-            if (memberId > 0) {
-                MemberRecord mRec = MsoyServer.memberRepo.loadMember(memberId);
-                if (mRec != null) {
-                    mature |= mRec.isSet(MemberRecord.FLAG_SHOW_MATURE);
-                }
+            if (mrec != null) {
+                mature |= mrec.isSet(MemberRecord.FLAG_SHOW_MATURE);
             }
 
-            TagNameRecord tagRecord = tag != null ? repo.getTagRepository().getTag(tag) : null;
-            int tagId = tagRecord != null ? tagRecord.tagId : 0;
+            TagNameRecord tagRecord = (query.tag != null) ?
+                repo.getTagRepository().getTag(query.tag) : null;
+            int tagId = (tagRecord != null) ? tagRecord.tagId : 0;
 
             // fetch catalog records and loop over them
             IntSet members = new ArrayIntSet();
             for (CatalogRecord record : repo.loadCatalog(
-                sortBy, mature, search, tagId, creator, offset, rows)) {
+                     query.sortBy, mature, query.search, tagId, query.creatorId, offset, rows)) {
                 // convert them to listings
                 list.add(record.toListing());
                 // and keep track of which member names we need to look up
@@ -98,12 +97,13 @@ public class CatalogServlet extends MsoyServiceServlet
 
             // if they want the total number of matches, compute that as well
             if (includeCount) {
-                result.listingCount = repo.countListings(mature, search, tagId, creator);
+                result.listingCount = repo.countListings(
+                    mature, query.search, tagId, query.creatorId);
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load catalog [type=" + type + ", sort=" + sortBy +
-                    ", search=" + search + ", offset=" + offset + ", rows=" + rows + "].", pe);
+            log.log(Level.WARNING, "Failed to load catalog [for=" + ident + ", query=" + query +
+                    ", offset=" + offset + ", rows=" + rows + "].", pe);
         }
         result.listings = list;
         return result;

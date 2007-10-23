@@ -6,7 +6,9 @@ package client.catalog;
 import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
+
 import client.item.ItemEntryPoint;
+import client.item.ItemTypePanel;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
@@ -57,8 +59,9 @@ public class index extends ItemEntryPoint
 
         if (_catalog == null) {
             setPageTitle(CCatalog.msgs.catalogTitle());
-            setContent(_catalog = new CatalogPanel());
-            setPageTabs(_catalog.getTabs());
+            ItemTypePanel typeTabs = new ItemTypePanel(CATALOG);
+            setContent(_catalog = new CatalogPanel(typeTabs));
+            setPageTabs(typeTabs);
         }
         _catalog.display(args);
     }

@@ -4,6 +4,7 @@
 package client.catalog;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
@@ -70,7 +71,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 public boolean gotResult (Object result) {
                     MsoyUI.info(CCatalog.msgs.msgListingDelisted());
                     _panel.itemDelisted(_listing);
-                    _panel.showCatalog();
+                    History.back();
                     return false;
                 }
             };
@@ -134,19 +135,12 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 });
                 this.addMenuItem(CCatalog.imsgs.browseCatalogFor(), new Command() {
                     public void execute () {
-                        _panel.browseByCreator(_detail.creator.getMemberId(),
-                            _detail.creator.toString());
-                        returnToList();
+                        _panel.browseByCreator(
+                            _detail.creator.getMemberId(), _detail.creator.toString());
                     }
                 });
             }
         });
-    }
-
-    // @Override // BaseItemDetailPanel
-    protected void returnToList ()
-    {
-        _panel.showCatalog();
     }
 
     protected CatalogListing _listing;

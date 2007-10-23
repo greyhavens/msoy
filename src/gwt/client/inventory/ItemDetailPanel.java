@@ -101,12 +101,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     }
 
     // @Override // BaseItemDetailPanel
-    protected void returnToList ()
-    {
-        History.back();
-    }
-
-    // @Override // BaseItemDetailPanel
     protected boolean allowAvatarScaleEditing ()
     {
         return (_item.ownerId == CShell.getMemberId());

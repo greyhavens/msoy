@@ -3,6 +3,7 @@
 
 package client.item;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -47,7 +48,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
         Image back = new Image("/images/item/inventory_up.png");
         back.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                returnToList();
+                History.back();
             }
         });
         getFlexCellFormatter().setStyleName(0, 0, "Back");
@@ -220,12 +221,6 @@ public abstract class BaseItemDetailPanel extends FlexTable
                 });
         }
     }
-
-    /**
-     * Called when the user clicks the "up arrow" button next to the name to return to their
-     * inventory or catalog listing.
-     */
-    protected abstract void returnToList ();
 
     /**
      * Sends the new avatar scale to the whirled client.

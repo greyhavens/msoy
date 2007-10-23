@@ -27,11 +27,11 @@ public class ItemSearchSortPanel extends HorizontalPanel
         public void sort (byte sortBy);
     }
 
-    public ItemSearchSortPanel (Listener listener, String[] sortNames, final byte[] sortValues,
-                                int selectedSortIndex)
+    public ItemSearchSortPanel (Listener listener, String[] sortNames, byte[] sortValues)
     {
         setStyleName("itemSearchPanel");
         _listener = listener;
+        _sortValues = sortValues;
 
         _searchBox = new TextBox();
         _searchBox.setVisibleLength(20);
@@ -52,18 +52,25 @@ public class ItemSearchSortPanel extends HorizontalPanel
         sortLabel.setStyleName("itemSortLabel");
         add(sortLabel);
 
-        ListBox sortBox = new ListBox();
-        sortBox.addStyleName("itemSortBox");
+        _sortBox = new ListBox();
+        _sortBox.addStyleName("itemSortBox");
         for (int ii = 0; ii < sortNames.length; ii ++) {
-            sortBox.addItem(sortNames[ii]);
+            _sortBox.addItem(sortNames[ii]);
         }
-        sortBox.setSelectedIndex(selectedSortIndex);
-        sortBox.addChangeListener(new ChangeListener() {
+        _sortBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
-                _listener.sort(sortValues[((ListBox)widget).getSelectedIndex()]);
+                _listener.sort(_sortValues[((ListBox)widget).getSelectedIndex()]);
             }
         });
-        add(sortBox);
+        add(_sortBox);
+    }
+
+    /**
+     * Configures the search text.
+     */
+    public void setSearch (String text)
+    {
+        _searchBox.setText(text);
     }
 
     /**
@@ -73,7 +80,22 @@ public class ItemSearchSortPanel extends HorizontalPanel
     {
         _searchBox.setText("");
     }
-    
-    protected TextBox _searchBox;
+
+    /**
+     * Configures the selected sort type.
+     */
+    public void setSelectedSort (byte sortType)
+    {
+        for (int ii = 0; ii < _sortValues.length; ii++) {
+            if (_sortValues[ii] == sortType) {
+                _sortBox.setSelectedIndex(ii);
+            }
+        }
+    }
+
     protected Listener _listener;
+    protected byte[] _sortValues;
+
+    protected TextBox _searchBox;
+    protected ListBox _sortBox;
 }

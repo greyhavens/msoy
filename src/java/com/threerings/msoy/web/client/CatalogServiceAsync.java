@@ -6,6 +6,7 @@ package com.threerings.msoy.web.client;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -16,9 +17,8 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#loadCatalog}.
      */
-    public void loadCatalog (int memberId, byte type, byte sortBy, String search, String tag,
-                             int creator, int offset, int rows, boolean includeCount,
-                             AsyncCallback callback);
+    public void loadCatalog (WebIdent ident, CatalogQuery query, int offset, int rows,
+                             boolean includeCount, AsyncCallback callback);
     
     /**
      * The asynchronous version of {@link CatalogService#purchaseItem}

@@ -104,12 +104,12 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String catalogTitle();
 
   /**
-   * Translated "Filtered by creator: {0}".
+   * Translated "Filtered by creator".
    * 
-   * @return translated "Filtered by creator: {0}"
+   * @return translated "Filtered by creator"
    * @gwt.key catalogCreatorFilter
    */
-  String catalogCreatorFilter(String arg0);
+  String catalogCreatorFilter();
 
   /**
    * Translated "Purchases".

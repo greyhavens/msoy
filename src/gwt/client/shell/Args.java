@@ -4,6 +4,7 @@
 package client.shell;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Used to parse the arguments supplied to the page.
@@ -22,6 +23,22 @@ public class Args
                 builder.append(ARG_SEP);
             }
             builder.append(args[ii]);
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Composes multiple arguments into a single string argument that can be properly handled by
+     * the Args class.
+     */
+    public static String compose (List args)
+    {
+        StringBuffer builder = new StringBuffer();
+        for (int ii = 0; ii < args.size(); ii++) {
+            if (ii > 0) {
+                builder.append(ARG_SEP);
+            }
+            builder.append(args.get(ii));
         }
         return builder.toString();
     }
@@ -108,7 +125,7 @@ public class Args
         } while (token != null && token.length() > 0);
     }
 
-    protected ArrayList _args = new ArrayList();
+    protected List _args = new ArrayList();
 
     protected static final String ARG_SEP = "_";
 }

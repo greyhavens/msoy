@@ -13,6 +13,9 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 import client.item.ItemRating;
+import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
 import client.util.ItemUtil;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
@@ -23,7 +26,7 @@ import client.util.Stars;
  */
 public class ListingContainer extends FlexTable
 {
-    public ListingContainer (final CatalogListing listing, final CatalogPanel panel)
+    public ListingContainer (final CatalogListing listing)
     {
         setCellPadding(0);
         setCellSpacing(0);
@@ -31,7 +34,9 @@ public class ListingContainer extends FlexTable
 
         ClickListener clicker = new ClickListener() {
             public void onClick (Widget sender) {
-                panel.showListing(listing);
+                Application.go(Page.CATALOG, Args.compose(new String[] {
+                    "" + listing.item.getType(), CatalogPanel.ONE_LISTING, "" + listing.catalogId
+                }));
             }
         };
 

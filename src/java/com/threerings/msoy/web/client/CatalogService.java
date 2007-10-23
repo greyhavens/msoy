@@ -13,6 +13,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
+import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -41,8 +42,7 @@ public interface CatalogService extends RemoteService
      * @param includeCount if true, the count of all listings matching the query terms will also be
      * computed and included in the result.
      */
-    public CatalogResult loadCatalog (int memberId, byte type, byte sortBy, String search,
-                                      String tag, int creator, int offset, int rows,
+    public CatalogResult loadCatalog (WebIdent ident, CatalogQuery query, int offset, int rows,
                                       boolean includeCount)
         throws ServiceException;
 

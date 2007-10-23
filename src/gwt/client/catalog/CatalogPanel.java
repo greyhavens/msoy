@@ -3,7 +3,9 @@
 
 package client.catalog;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gwt.user.client.Window;
@@ -11,8 +13,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -24,6 +24,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.data.CatalogQuery;
 
 import client.item.ItemSearchSortPanel;
 import client.item.ItemTypePanel;
@@ -38,37 +39,39 @@ import client.util.RowPanel;
  * Displays a tabbed panel containing the catalog.
  */
 public class CatalogPanel extends VerticalPanel
-    implements TabListener, ItemSearchSortPanel.Listener, TagCloud.TagListener
+    implements ItemSearchSortPanel.Listener, TagCloud.TagListener
 {
     /** The number of columns of items to display. */
     public static final int COLUMNS = 3;
 
-    public CatalogPanel ()
+    /** An action constant passed to this page. */
+    public static final String LISTING_PAGE = "l";
+
+    /** An action constant passed to this page. */
+    public static final String ONE_LISTING = "i";
+
+    public CatalogPanel (ItemTypePanel typeTabs)
     {
         setStyleName("catalogPanel");
         setWidth("100%");
 
-        _typeTabs = new ItemTypePanel("catalog", this);
+        _typeTabs = typeTabs;
 
         int rows = (Window.getClientHeight() - Application.HEADER_HEIGHT -
                     HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT;
         _items = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
-// TODO: route our page navigation through the URL
-//                 String args = Page.composeArgs(new int[] { _type, page });
-//                 Application.go(Page.CATALOG, args);
-                CatalogPanel.this._page = page;
-                refreshItems(false);
+                Application.go(Page.CATALOG, composeArgs(_query, page));
             }
             protected Widget createWidget (Object item) {
-                return new ListingContainer((CatalogListing)item, CatalogPanel.this);
+                return new ListingContainer((CatalogListing)item);
             }
             protected String getEmptyMessage () {
-                String name = CCatalog.dmsgs.getString("itemType" + _type);
-                if (_tag != null) {
-                    return CCatalog.msgs.catalogNoTag(name, _tag);
-                } else if (_search != null) {
-                    return CCatalog.msgs.catalogNoMatch(name, _search);
+                String name = CCatalog.dmsgs.getString("itemType" + _query.itemType);
+                if (_query.tag != null) {
+                    return CCatalog.msgs.catalogNoTag(name, _query.tag);
+                } else if (_query.search != null) {
+                    return CCatalog.msgs.catalogNoMatch(name, _query.search);
                 } else {
                     return CCatalog.msgs.catalogNoList(name);
                 }
@@ -94,31 +97,119 @@ public class CatalogPanel extends VerticalPanel
                 CatalogListing.SORT_BY_LIST_DATE,
                 CatalogListing.SORT_BY_PRICE_ASC,
                 CatalogListing.SORT_BY_PRICE_DESC,
-                CatalogListing.SORT_BY_PURCHASES, },
-            0); // index of CatalogListing.SORT_BY_RATING
-        _sortBy = CatalogListing.SORT_BY_RATING;
+                CatalogListing.SORT_BY_PURCHASES, });
         _header.setWidget(0, 1, _searchSortPanel);
         _header.setText(1, 0, CCatalog.msgs.catalogNoFilter());
     }
 
-    public Widget getTabs() 
-    {
-        return _typeTabs;
-    }
-
     public void display (Args args)
     {
-        // TODO: route everything through the args (search, tag, creator, sortBy)
-        byte type = (byte)args.get(0, Item.AVATAR);
-        if (!_typeTabs.selectTab(type)) {
-            // we're already on this tab, so refresh our items in order to trigger the
-            // appropriate page selection
-            refreshItems(false);
+        _query = parseArgs(args);
+        _typeTabs.selectTab(_query.itemType);
+
+        String mode = args.get(1, LISTING_PAGE);
+        if (mode.equals(ONE_LISTING)) {
+            int catalogId = args.get(2, 0);
+            CatalogListing listing = null;
+            for (Iterator iter = _models.keySet().iterator(); iter.hasNext(); ) {
+                CatalogQuery query = (CatalogQuery)iter.next();
+                if (query.itemType != _query.itemType) {
+                    continue;
+                }
+                CatalogDataModel model = (CatalogDataModel)_models.get(query);
+                if ((listing = model.getListing(catalogId)) != null) {
+                    break;
+                }
+            }
+            if (listing != null) {
+                showListing(listing);
+            } else {
+                // TODO: load the listing and then display it
+            }
+
+        } else /* mode.equals(LISTING_PAGE) */ {
+            // configure our filter interface
+            _searchSortPanel.setSearch(_query.search == null ? "" : _query.search);
+            _searchSortPanel.setSelectedSort(_query.sortBy);
+            if (_query.search != null) {
+                setFilteredBy(CCatalog.msgs.catalogSearchFilter(_query.search));
+            } else if (_query.tag != null) {
+                setFilteredBy(CCatalog.msgs.catalogTagFilter(_query.tag));
+            } else if (_query.creatorId != 0) {
+                setFilteredBy(CCatalog.msgs.catalogCreatorFilter());
+            } else {
+                setFilteredBy(null);
+            }
+
+            // grab our data model and display it
+            DataModel model = (DataModel) _models.get(_query);
+            if (model == null) {
+                _models.put(_query, model = new CatalogDataModel(_query));
+            }
+            _items.setModel(model, args.get(4, 0)); // args 4 is page
+            if (!_items.isAttached()) {
+                clear();
+                add(_header);
+                add(_items);
+            }
+
+            // configure the appropriate tab cloud
+            Byte tabKey = new Byte(_query.itemType);
+            TagCloud cloud = (TagCloud) _clouds.get(tabKey);
+            if (cloud == null) {
+                _clouds.put(tabKey, cloud = new TagCloud(_query.itemType, this));
+            }
+            _header.setWidget(0, 0, cloud);
         }
-        showCatalog();
     }
 
-    public void showListing (final CatalogListing listing)
+    /**
+     * Called by the {@link ListingDetailPanel} if the there is a request to browse this creator's
+     * items.
+     */
+    public void browseByCreator (int creatorId, String creatorName) 
+    {
+        Application.go(Page.CATALOG, composeArgs(_query, null, null, creatorId));
+    }
+
+    /**
+     * Called by the {@link ListingDetailPanel} if the owner requests to delist an item.
+     */
+    public void itemDelisted (CatalogListing listing)
+    {
+        _items.removeItem(listing);
+    }
+
+    /**
+     * Clears any tag, creator or search filters currently in effect.
+     */
+    public void clearFilters ()
+    {
+        CatalogQuery query = new CatalogQuery();
+        query.itemType = _query.itemType;
+        Application.go(Page.CATALOG, composeArgs(query, 0));
+    }
+
+    // from ItemSearchSortPanel.Listener
+    public void search (String query)
+    {
+        Application.go(Page.CATALOG, composeArgs(_query, null, query, 0));
+    }
+
+    // from ItemSearchSortPanel.Listener
+    public void sort (byte sortBy)
+    {
+        _query.sortBy = sortBy;
+        Application.go(Page.CATALOG, composeArgs(_query, 0));
+    }
+
+    // from interface TagCloud.TagListener
+    public void tagClicked (String tag)
+    {
+        Application.go(Page.CATALOG, composeArgs(_query, tag, null, 0));
+    }
+
+    protected void showListing (final CatalogListing listing)
     {
         // load up the item details
         CCatalog.itemsvc.loadItemDetail(
@@ -133,132 +224,6 @@ public class CatalogPanel extends VerticalPanel
         });
     }
 
-    public void showCatalog ()
-    {
-        if (!_items.isAttached()) {
-            clear();
-            add(_header);
-            add(_items);
-        }
-    }
-
-    // from TabListener
-    public void onTabSelected (SourcesTabEvents sender, int tabIndex)
-    {
-        _type = (byte) tabIndex;
-        _page = 0;
-        refreshItems(true);
-
-        Byte tabKey = new Byte(_type);
-        TagCloud cloud = (TagCloud) _clouds.get(tabKey);
-        if (cloud == null) {
-            _clouds.put(tabKey, cloud = new TagCloud(_type, this));
-        }
-        _header.setWidget(0, 0, cloud);
-    }
-
-    // from TabListener
-    public boolean onBeforeTabSelected (SourcesTabEvents sender, int tabIndex)
-    {
-        // always allow any item type selection
-        return true;
-    }
-
-    // from ItemSearchSortPanel.Listener
-    public void search (String query)
-    {
-        clearFilters(false);
-        _search = query;
-        setFilteredBy(CCatalog.msgs.catalogSearchFilter(_search));
-        refreshItems(true);
-    }
-
-    // from ItemSearchSortPanel.Listener
-    public void sort (byte sortBy)
-    {
-        _sortBy = sortBy;
-        refreshItems(true);
-    }
-
-    /**
-     * Called by the {@link ListingDetailPanel} if the there is a request to browse this creator's
-     * items.
-     */
-    public void browseByCreator (int creatorId, String creatorName) 
-    {
-        clearFilters(false);
-        _creator = creatorId;
-        refreshItems(true);
-        setFilteredBy(CCatalog.msgs.catalogCreatorFilter(creatorName));
-    }
-
-    /**
-     * Called by the {@link ListingDetailPanel} if the owner requests to delist an item.
-     */
-    public void itemDelisted (CatalogListing listing)
-    {
-        _items.removeItem(listing);
-    }
-
-    /**
-     * Clears any tag, creator or search filters currently in effect.
-     */
-    public void clearFilters (boolean reload)
-    {
-        _page = 0;
-        _search = "";
-        _creator = -1;
-        _tag = null;
-        if (reload) {
-            refreshItems(true);
-            setFilteredBy(null);
-        }
-    }
-
-    // from interface TagCloud.TagListener
-    public void tagClicked (String tag)
-    {
-        clearFilters(false);
-        _tag = tag;
-        refreshItems(true);
-        setFilteredBy(CCatalog.msgs.catalogTagFilter(tag));
-    }
-
-    protected void refreshItems (boolean ignoreCache)
-    {
-        Byte tabKey = new Byte(_type);
-        DataModel model = ignoreCache ? null : (DataModel) _models.get(tabKey);
-        if (model == null) {
-            model = new DataModel() {
-                public int getItemCount () {
-                    return _listingCount;
-                }
-                public void doFetchRows (int start, int count, final AsyncCallback callback) {
-                    CCatalog.catalogsvc.loadCatalog(
-                        CCatalog.getMemberId(), _type, _sortBy, _search,
-                        _tag, _creator, start, count, _listingCount == -1, new AsyncCallback() {
-                        public void onSuccess (Object result) {
-                            CatalogService.CatalogResult cr = (CatalogService.CatalogResult)result;
-                            if (_listingCount == -1) {
-                                _listingCount = cr.listingCount;
-                            }
-                            callback.onSuccess(cr.listings);
-                        }
-                        public void onFailure (Throwable caught) {
-                            CCatalog.log("loadCatalog failed", caught);
-                            MsoyUI.error(CCatalog.serverError(caught));
-                        }
-                    });
-                }
-                public void removeItem (Object item) {
-                    // currently we do no internal caching, no problem!
-                }
-                protected int _listingCount = -1;
-            };
-        }
-        _items.setModel(model, _page);
-    }
-
     protected void setFilteredBy (String text)
     {
         if (text == null) {
@@ -271,18 +236,112 @@ public class CatalogPanel extends VerticalPanel
         String clear = CCatalog.msgs.catalogClearFilter();
         filter.add(MsoyUI.createActionLabel(clear, new ClickListener() {
             public void onClick (Widget widget) {
-                clearFilters(true);
+                clearFilters();
             }
         }));
         _header.setWidget(1, 0, filter);
     }
 
-    protected byte _sortBy,  _type;
-    protected String _search, _tag;
-    protected int _creator = -1;
-    protected int _page;
-    protected Map _models = new HashMap();
-    protected Map _clouds = new HashMap();
+    protected CatalogQuery parseArgs (Args args)
+    {
+        CatalogQuery query = new CatalogQuery();
+        query.itemType = (byte)args.get(0,  query.itemType);
+        query.sortBy = (byte)args.get(2, query.sortBy);
+        String action = args.get(3, "");
+        if (action.startsWith("s")) {
+            query.search = action.substring(1);
+        } else if (action.startsWith("t")) {
+            query.tag = action.substring(1);
+        } else if (action.startsWith("c")) {
+            try {
+                query.creatorId = Integer.parseInt(action.substring(1));
+            } catch (Exception e) {
+                // oh well
+            }
+        }
+        return query;
+    }
+
+    protected String composeArgs (CatalogQuery query, String tag, String search, int creatorId)
+    {
+        query.tag = tag;
+        query.search = search;
+        query.creatorId = creatorId;
+        return composeArgs(query, 0);
+    }
+
+    protected String composeArgs (CatalogQuery query, int page)
+    {
+        ArrayList args = new ArrayList();
+        args.add(new Byte(query.itemType));
+        args.add(LISTING_PAGE);
+        args.add(new Byte(query.sortBy));
+        if (query.tag != null) {
+            args.add("t" + query.tag);
+        } else if (query.search != null) {
+            args.add("s" + query.search);
+        } else if (query.creatorId != 0) {
+            args.add("c" + query.creatorId);
+        } else {
+            args.add("");
+        }
+        if (page > 0) {
+            args.add(new Integer(page));
+        }
+        return Args.compose(args);
+    }
+
+    protected static class CatalogDataModel implements DataModel
+    {
+        public CatalogDataModel (CatalogQuery query) {
+            _query = query;
+        }
+
+        public int getItemCount () {
+            return _listingCount;
+        }
+
+        public CatalogListing getListing (int catalogId) {
+            int count = (_result == null) ? 0 : _result.listings.size();
+            for (int ii = 0; ii < count; ii++) {
+                CatalogListing listing = (CatalogListing)_result.listings.get(ii);
+                if (listing.catalogId == catalogId) {
+                    return listing;
+                }
+            }
+            return null;
+        }
+
+        public void doFetchRows (int start, int count, final AsyncCallback callback) {
+            AsyncCallback cwrapper = new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    _result = (CatalogService.CatalogResult)result;
+                    if (_listingCount == -1) {
+                        _listingCount = _result.listingCount;
+                    }
+                    callback.onSuccess(_result.listings);
+                }
+                public void onFailure (Throwable caught) {
+                    CCatalog.log("loadCatalog failed", caught);
+                    MsoyUI.error(CCatalog.serverError(caught));
+                }
+            };
+            CCatalog.catalogsvc.loadCatalog(
+                CCatalog.ident, _query, start, count, _listingCount == -1, cwrapper);
+        }
+
+        public void removeItem (Object item) {
+            // currently we do no internal caching, no problem!
+        }
+
+        protected CatalogQuery _query;
+        protected CatalogService.CatalogResult _result;
+        protected int _listingCount = -1;
+    }
+
+    protected CatalogQuery _query;
+    protected Map _models = new HashMap(); /* Filter, CatalogDataModel */
+    protected Map _clouds = new HashMap(); /* Byte, TagCloud */
 
     protected FlexTable _header;
     protected ItemTypePanel _typeTabs;

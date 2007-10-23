@@ -7,23 +7,20 @@ import java.util.HashMap;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabListener;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import client.item.ItemTypePanel;
+import client.shell.Page;
 
 /**
  * Displays a tabbed panel containing a player's inventory.
  */
 public class InventoryPanel extends SimplePanel
-    implements TabListener
 {
     public InventoryPanel ()
     {
         setStyleName("inventoryPanel");
-
-        _itemTabs = new ItemTypePanel("inventory", this);
+        _itemTabs = new ItemTypePanel(Page.INVENTORY);
     }
 
     public Widget getTabs ()
@@ -39,19 +36,7 @@ public class InventoryPanel extends SimplePanel
             getItemPanel(itemType).showDetail(new ItemIdent(itemType, itemId));
         }
         _itemTabs.selectTab(itemType);
-    }
-
-    // from TabListener
-    public void onTabSelected (SourcesTabEvents sender, int tabIndex)
-    {
-        setWidget(getItemPanel((byte)tabIndex));
-    }
-
-    // from TabListener
-    public boolean onBeforeTabSelected (SourcesTabEvents sender, int tabIndex)
-    {
-        // always allow any item type selection 
-        return true;
+        setWidget(getItemPanel(itemType));
     }
 
     protected ItemPanel getItemPanel (byte itemType)

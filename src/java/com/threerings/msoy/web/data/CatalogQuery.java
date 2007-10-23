@@ -1,0 +1,54 @@
+//
+// $Id$
+
+package com.threerings.msoy.web.data;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.gwt.CatalogListing;
+
+/**
+ * Contains information needed to query the catalog.
+ */
+public class CatalogQuery
+    implements IsSerializable
+{
+    /** The type of item being browsed. */
+    public byte itemType = Item.AVATAR;
+
+    /** The order in which to return the catalog listings. */
+    public byte sortBy = CatalogListing.SORT_BY_RATING;
+
+    /** The tag by which to filter the listings or null. */
+    public String tag;
+
+    /** A user supplied search string, or null. */
+    public String search;
+
+    /** The member id of the creator whose listings we want exclusively to see, or 0. */
+    public int creatorId;
+
+    // @Override // from Object
+    public int hashCode ()
+    {
+        return itemType ^ sortBy ^ (tag == null ? 0 : tag.hashCode()) ^
+            (search == null ? 0 : search.hashCode()) ^ creatorId;
+    }
+
+    // @Override // from Object
+    public boolean equals (Object other)
+    {
+        CatalogQuery oquery = (CatalogQuery)other;
+        return (itemType == oquery.itemType && sortBy == oquery.sortBy &&
+                (tag == null ? (oquery.tag == null) : tag.equals(oquery.tag)) &&
+                (search == null ? (oquery.search == null) : search.equals(oquery.search)));
+    }
+
+    // @Override // from Object
+    public String toString ()
+    {
+        return "[type=" + itemType + ", sort=" + sortBy + ", tag=" + tag +
+            ", search=" + search + ", creator=" + creatorId + "]";
+    }
+}

@@ -9,8 +9,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabListener;
 
 import com.threerings.msoy.item.data.all.Item;
 
@@ -22,56 +20,31 @@ import client.shell.Application;
  * application to turn around and call {@link #selectTab} with the newly arrived history token.
  */
 public class ItemTypePanel extends FlexTable
-    implements SourcesTabEvents
 {
-    public ItemTypePanel (String page, TabListener listener)
+    public ItemTypePanel (String page)
     {
         setStyleName("itemTypePanel");
         setCellPadding(0);
         setCellSpacing(0);
         _page = page;
         _selectedType = -1;
-        addTabListener(listener);
         redrawPanel();
     }
 
     /**
-     * Select a new tab, associated with the given item type. This method is run
-     * when a tab is clicked, or it can be called programmatically.
+     * Select a new tab, associated with the given item type. This method is run when a tab is
+     * clicked, or it can be called programmatically.
+     *
+     * @return false if the sepecified tab was already selected, true if the selection changed.
      */
     public boolean selectTab (byte itemType)
     {
         if (_selectedType == itemType) {
             return false;
         }
-
-        Iterator i = _listeners.iterator();
-        while (i.hasNext()) {
-            TabListener listener = ((TabListener) i.next());
-            if (!listener.onBeforeTabSelected(ItemTypePanel.this, itemType)) {
-                // a listener forbade the selection
-                return false;
-            }
-        }
         _selectedType = itemType;
-        i = _listeners.iterator();
-        while (i.hasNext()) {
-            ((TabListener) i.next()).onTabSelected(ItemTypePanel.this, itemType);
-        }
         redrawPanel();
         return true;
-    }
-
-    // from SourcesTabEvents
-    public void addTabListener (TabListener listener)
-    {
-        _listeners.add(listener);
-    }
-
-    // from SourcesTabEvents
-    public void removeTabListener (TabListener listener)
-    {
-        _listeners.remove(listener);
     }
 
     protected void redrawPanel ()
@@ -111,9 +84,6 @@ public class ItemTypePanel extends FlexTable
 
     /** The page on which we're operating. */
     protected String _page;
-
-    /** A list of objects that want to know about our tab events. */
-    protected List _listeners = new ArrayList();
 
     /** The previous tab's right-hand bit, deferred so selected tabs can eat them. */
     protected String _rightBit;
