@@ -419,6 +419,11 @@ a:visited {
   border-bottom: 1px solid #DADADA;
 }
 
+.dottedGrid .Empty {
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+}
+
 /** Configuration for our bordered popup window */
 .borderedPopup {
    background: #FFFFFF;

@@ -103,7 +103,13 @@
 
 .profileWidget .MemberCardHeadline {
   font-style: italic;
-  font-size: 14px;
+  font-size: 12px;
+}
+
+.profileWidget .Remove {
+  background-image: url(/images/profile/remove.png);
+  width: 17px;
+  height: 17px;
 }
 
 .searchResultsPanel .SearchPanel {

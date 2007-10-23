@@ -59,6 +59,12 @@ public class CommentsPanel extends PagedGrid
     }
 
     // @Override // from PagedGrid
+    protected boolean displayNavi (int items)
+    {
+        return true; // we always need our navigation because it has the "post" button
+    }
+
+    // @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
         super.addCustomControls(controls);

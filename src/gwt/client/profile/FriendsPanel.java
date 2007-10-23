@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -107,13 +108,13 @@ public class FriendsPanel extends VerticalPanel
                     return;
                 }
 
-                setWidget(2, 0, MsoyUI.createActionLabel(
-                              CProfile.msgs.friendsRemove(), "tipLabel", new ClickListener() {
+                setWidget(0, 2, MsoyUI.createActionLabel("", "Remove", new ClickListener() {
                     public void onClick (Widget widget) {
                         removeFriend(card, false);
                     }
                 }));
-                getFlexCellFormatter().setRowSpan(0, 0, 3);
+                getFlexCellFormatter().setColSpan(1, 0, 2);
+                getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
             }
         }
     }
