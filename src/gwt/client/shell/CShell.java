@@ -44,6 +44,9 @@ public class CShell
     /** Contains translations for server-supplied messages. */
     public static ServerMessages smsgs;
 
+    /** The application that's running. */
+    public static Application app;
+
     /**
      * Returns our member id if we're logged in, 0 if we are not.
      */

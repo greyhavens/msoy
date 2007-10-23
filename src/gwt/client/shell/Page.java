@@ -208,26 +208,10 @@ public abstract class Page
     }
 
     /**
-     * Configures the page with a close button and a minimization separator.
-     */
-    protected void setCloseButton ()
-    {
-        if (_closeToken != null) {
-            RootPanel.get(SEPARATOR).clear();
-            FlowPanel closeBox = new FlowPanel();
-            closeBox.setStyleName("CloseBoxHolder");
-            closeBox.add(_closeContent);
-            RootPanel.get(SEPARATOR).add(closeBox);
-            RootPanel.get(SEPARATOR).add(_minimizeContent);
-            RootPanel.get(SEPARATOR).add(_separatorLine);
-        }
-    }
-
-    /**
      * Minimizes or maximizes the page content. NOOP if the content min/max interface is not being
      * displayed.
      */
-    protected void setContentMinimized (boolean minimized)
+    public void setContentMinimized (boolean minimized)
     {
         if (minimized && _minimizeContent.isAttached()) {
             RootPanel.get(CONTENT).clear();
@@ -251,6 +235,22 @@ public abstract class Page
             RootPanel.get(SEPARATOR).add(_minimizeContent);
             RootPanel.get(SEPARATOR).add(_separatorLine);
             WorldClient.setMinimized(true);
+        }
+    }
+
+    /**
+     * Configures the page with a close button and a minimization separator.
+     */
+    protected void setCloseButton ()
+    {
+        if (_closeToken != null) {
+            RootPanel.get(SEPARATOR).clear();
+            FlowPanel closeBox = new FlowPanel();
+            closeBox.setStyleName("CloseBoxHolder");
+            closeBox.add(_closeContent);
+            RootPanel.get(SEPARATOR).add(closeBox);
+            RootPanel.get(SEPARATOR).add(_minimizeContent);
+            RootPanel.get(SEPARATOR).add(_separatorLine);
         }
     }
 

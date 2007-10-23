@@ -94,7 +94,12 @@ public class Application
      */
     public static void go (String page, String args)
     {
-        History.newItem(createLinkToken(page, args));
+        String token = createLinkToken(page, args);
+        if (token.equals(History.getToken())) {
+            CShell.app._page.setContentMinimized(false);
+        } else {
+            History.newItem(token);
+        }
     }
 
     /**
@@ -199,6 +204,8 @@ public class Application
 
     protected void initContext ()
     {
+        CShell.app = this;
+
         // wire up our remote services
         CShell.usersvc = (WebUserServiceAsync)GWT.create(WebUserService.class);
         ((ServiceDefTarget)CShell.usersvc).setServiceEntryPoint("/usersvc");
