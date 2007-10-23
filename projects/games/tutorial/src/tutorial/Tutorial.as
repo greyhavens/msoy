@@ -113,8 +113,8 @@ public class Tutorial extends Sprite
             return;
         }
         // else the player dropped the quest or clicked the completion popup's "OK" button
-        if (event.name == quest.questId && testCompletedStep(step)) {
-            // looks like it was completed
+        if (event.name == quest.questId) {
+            // either way we move on to the next
             _activeQuest = null;
             _control.setPlayerProperty(PROP_STEP_COMPLETED, null, true);
             _control.setPlayerProperty(PROP_TUTORIAL_STEP, getStep() + 1, true);
@@ -166,6 +166,15 @@ public class Tutorial extends Sprite
     public function farewellClicked () :void
     {
         _control.deactivateGame();
+    }
+
+    public function skipQuest () :void
+    {
+        if (_activeQuest == null) {
+            log.warning("Eek, no active quest in skipQuest [step=" + getStep() + "]");
+            return;
+        }
+        _control.cancelQuest(_activeQuest);
     }
 
     public function swirlClicked (swirlState :int) :void

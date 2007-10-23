@@ -15,9 +15,6 @@ import flash.utils.*;
 import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.flash.SimpleTextButton;
 
-//            "This concludes the tutorial. Unfortunately we don't yet know how to turn ourselves off, so you will need to click on the little 'X' to leave us. Good luck out there!<br><br>" +
-//            "Oh bugger, there's no little 'X' to click on anymore.",
-
 public class View extends Sprite
 {
     public static const SWIRL_NONE :int = 1;
@@ -145,6 +142,15 @@ public class View extends Sprite
             });
         _hideButton.x = _textField.x + _textField.width - _hideButton.width * 1.5;
 
+        _skipButton = new SimpleTextButton(
+            "Skip", true, 0x003366, 0x6699CC, 0x0066FF, 5, format);
+        _skipButton.visible = false;
+        _skipButton.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
+                displaySummary(null);
+                _tutorial.skipQuest();
+            });
+        _skipButton.x = _hideButton.x - BOX_PADDING - _skipButton.width;
+
         _farewellButton = new SimpleTextButton(
             "Farewell", true, 0x003366, 0x6699CC, 0x0066FF, 5, format);
         _farewellButton.visible = false;
@@ -165,12 +171,10 @@ public class View extends Sprite
             _swirl.addEventListener(MouseEvent.CLICK, swirlClicked);
             this.addChild(_swirl);
 
-            _swirl.x = -275; _swirl.y = -225;
-            _swirl.x += 50; _swirl.y += 50;
-
             this.addChild(_textBox);
             this.addChild(_textField);
             this.addChild(_hideButton);
+            this.addChild(_skipButton);
             this.addChild(_farewellButton);
 
             maybeTransition();
@@ -185,13 +189,15 @@ public class View extends Sprite
     public function displaySummary (summary :String) :void
     {
         if (summary) {
-            _textBox.visible = _textField.visible = _hideButton.visible = true;
+            _textBox.visible = _textField.visible = _hideButton.visible =
+                _skipButton.visible = true;
             _textField.htmlText = summary;
             _textBox.width = _textField.width + 2*BOX_PADDING;
             _textBox.height = _textField.height + _hideButton.height + BOX_HAT + 2*BOX_PADDING;
-            _hideButton.y = _textField.y + _textField.height + BOX_PADDING/2;
+            _skipButton.y = _hideButton.y = _textField.y + _textField.height + BOX_PADDING/2;
         } else {
-            _textBox.visible = _textField.visible = _hideButton.visible = false;
+            _textBox.visible = _textField.visible = _hideButton.visible =
+                _skipButton.visible = false;
         }
     }
 
@@ -239,12 +245,19 @@ public class View extends Sprite
         var first :String = null;
         var then :String = null;
 
+        _swirl.x = 75 - SWIRL_OFFSET.x;
+        _swirl.y = 75 - SWIRL_OFFSET.y;
+
         switch(_swirlRequest) {
         case SWIRL_INTRO:
             if (_swirlState != SWIRL_NONE) {
                 log.warning("Unexpected transtion [from=" + _swirlState + ", to=" +
                             _swirlRequest + "]");
             }
+            // TODO: later we'll do a fancy transtion here, for now just appear
+            _swirl.x = 200 - SWIRL_OFFSET.x;
+            _swirl.y = 200 - SWIRL_OFFSET.y;
+
             // should never need a two-phase transition
             then = SCN_APPEAR;
             break;
@@ -254,6 +267,7 @@ public class View extends Sprite
                             _swirlRequest + "]");
                 first = SCN_APPEAR;
             }
+            // TODO: later we'll do a fancy transtion here too
             then = SCN_MINIMIZE;
             break;
         case SWIRL_BOUNCY:
@@ -298,6 +312,7 @@ public class View extends Sprite
     protected var _textBox :Sprite;
     protected var _textField :TextField;
     protected var _hideButton :SimpleButton;
+    protected var _skipButton :SimpleButton;
     protected var _farewellButton :SimpleButton;
 
     protected static const log :Log = Log.getLog(View);
@@ -331,6 +346,9 @@ public class View extends Sprite
     protected static const SCN_LOOKATME :String = "lookatme";
     protected static const SCN_GOODJOB :String = "goodjob";
     protected static const SCN_TEXTBOX :String = "textbox";
+
+    // how far into the clip the true origin of the swirl lies
+    protected const SWIRL_OFFSET :Point = new Point(275, 225);
 
     // how far into the clip the true origin of the box lies
     protected const BOX_OFFSET :Point = new Point(100, 115);
