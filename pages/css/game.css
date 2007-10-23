@@ -124,6 +124,10 @@
   border-top: 1px solid #DADADA;
 }
 
+.topRankingPanel .Self {
+  font-weight: bold;
+}
+
 .topRankingPanel .Photo {
   width: 20px;
 }

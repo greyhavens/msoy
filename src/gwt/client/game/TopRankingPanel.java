@@ -145,6 +145,12 @@ public class TopRankingPanel extends VerticalPanel
             _grid.setHTML(row, col+4, "&nbsp;");
             _grid.getFlexCellFormatter().setStyleName(row, col+4, "Cell");
             _grid.getFlexCellFormatter().addStyleName(row, col+4, "Gap");
+
+            if (rating.name.getMemberId() == CGame.getMemberId()) {
+                for (int cc = 0; cc < COLUMNS; cc++) {
+                    _grid.getFlexCellFormatter().addStyleName(row, col+cc, "Self");
+                }
+            }
         }
     }
 
