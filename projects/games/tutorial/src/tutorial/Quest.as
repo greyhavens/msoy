@@ -49,8 +49,8 @@ public class Quest
             "<p class='summary'>Everyone in Whirled has a Profile page to share interests, find friends, show off or just express themselves.</p>" +
             "<p class='details'>" +
             "<br><li>Choose Me -> My Profile to see your Whirled Profile page.</li><br>" +
-            "<br><li>Click <b>Edit</b> and enter your information.</li><br>" +
-            "<br><li>Finally click the <b>Done</b> button.</li>" +
+            "<li>Click <b>Edit</b> and enter your information.</li><br>" +
+            "<li>Finally click the <b>Done</b> button.</li>" +
             "</p>",
             "Congratulations! You updated your profile and received 500 flow.",
             500));
@@ -63,7 +63,7 @@ public class Quest
             "<br>The decor is the most fundamental element of your room's appearance. Every other item in your room appears on top of the decor." +
             "</p><p class='details'>" +
             "<br><li>Choose <b><i>Catalog -> Decor</i></b> for a selection of new room settings.</li><br>" +
-            "<br><li>Browse through and buy one you like.</li>" +
+            "<li>Browse through and buy one you like.</li>" +
             "</p>",
             "Fantastic! You now own a piece of decor.",
             0));
@@ -75,8 +75,8 @@ public class Quest
             "<p class='summary'>Let's get your new decor in your room.</p>" +
             "<p class='details'>" +
             "<br><li>Choose <b><i>My Stuff -> Decor</i></b> to see the decor you own.</li><br>" +
-            "<br><li>Apply your new decor by clicking the <b>Add to Room</b> button.</li><br>" +
-            "<br><li>Click the close box to return to your room.</li>" +
+            "<li>Apply your new decor by clicking the <b>Add to Room</b> button.</li><br>" +
+            "<li>Click the close box to return to your room.</li>" +
             "</p>",
             "Congratulations! You received 200 flow for changing your decor.",
             200));
@@ -88,7 +88,7 @@ public class Quest
             "<p class='summary'>Furniture adds depth and personality to a room. Let's shop some more.</p>" +
             "<p class='details'>" +
             "<br><li>Choose <b><i>Catalog -> Furniture</i></b> to find something you like.</li><br>" +
-            "<br><li>Click <b><i>Buy!</i></b> when you find something you like.</li><br>" +
+            "<li>Click <b><i>Buy!</i></b> when you find something you like.</li><br>" +
             "</p>",
             "You now have furniture to install in your room.",
             0));
@@ -100,7 +100,7 @@ public class Quest
             "<p class='summary'>The furniture won't show up until you add it to your room.</p>" +
             "<p class='details'>" +
             "<br><li>Choose <b><i>My Stuff -> Furniture</i></b> to browse your furniture.</li><br>" +
-            "<br><li>Clicking <b>Add to Room</b> will place the item in the center of your room.</li><br>" +
+            "<li>Clicking <b>Add to Room</b> will place the item in the center of your room.</li><br>" +
             "</p>",
             "Excellent. You received 300 flow for adding furniture to your room.",
             300));
@@ -112,8 +112,8 @@ public class Quest
             "<p class='summary'>The new furniture appears in the middle of the room until you drag it to where you want it to be. </p>" +
             "<p class='details'>" +
             "<br><li>You should be in Room Editing Mode. If not, click the small hammer icon on the lower Whirled toolbar.</li><br>" +
-            "<br><li>Click and drag your furni to place it.</li><br>" +
-            "<br><li>Click the <b>Close</b> box on the Room Editing dialog box to return to your room.</li><br>" +
+            "<li>Click and drag your furni to place it.</li><br>" +
+            "<li>Click the <b>Close</b> box on the Room Editing dialog box to return to your room.</li><br>" +
             "</p>",
             "Congratulations! You received 150 flow for adjusting the furniture's position.",
             150));
@@ -125,7 +125,7 @@ public class Quest
             "<p class='summary'>Find a new face. There's lots to choose from in the catalog.</p>" +
             "<p class='details'>" +
             "<br><li>Click on <b><i>Catalog -> Avatars</i></b> to browse the selection.</li><br>" +
-            "<br><li>Purchase one you like.</li><br>" +
+            "<li>Purchase one you like.</li><br>" +
             "</p>",
             "Great. You're ready to switch into your new avatar.",
             0));
@@ -137,7 +137,7 @@ public class Quest
             "<p class='summary'>Just as with decor and furni, your avatar won't show in the world until you add it.</p>" +
             "<p class='details'>" +
             "<br><li>Choose <b><i>My Stuff -> Avatars</i></b> to view your avatars.</li><br>" +
-            "<br><li>Click the <b>Wear Avatar</b> button to change your avatar.</li><br>" +
+            "<li>Click the <b>Wear Avatar</b> button to change your avatar.</li><br>" +
             "</p>",
             "Congratulations! You received 200 flow for changing your avatar.",
             200));
