@@ -152,7 +152,7 @@ public class TableRenderer extends HBox
         }
 
         // update the seats
-        var length :int = table.occupants == null ? 0 : table.occupants.length;
+        var length :int = table.occupants.length;
         if (length != 0) {
             updateSeats(table, length);
         }
@@ -193,7 +193,7 @@ public class TableRenderer extends HBox
         var btn :CommandButton;
 
         // if we are the creator, add a button for starting the game now
-        if (table.occupants != null && table.occupants.length > 0 &&
+        if (table.occupants.length > 0 &&
                 gctx.getPlayerObject().getVisibleName().equals(table.occupants[0]) &&
                 (table.tconfig.desiredPlayerCount > table.tconfig.minimumPlayerCount)) {
             var box :HBox = new HBox();
