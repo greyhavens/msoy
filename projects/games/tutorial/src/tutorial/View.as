@@ -54,14 +54,18 @@ public class View extends Sprite
         _ourWidth = width;
         _ourHeight = height;
 
+        log.debug("Stage bounds: " + _stageBounds);
+        log.debug("Room bounds: " + _roomBounds);
+
         // don't add the text field until the swirly is loaded
         maybeFinishUI();
     }
 
     protected function handleSwirlLoaded (evt :Event) :void
     {
-        _swirl = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        _swirlHandler = new ClipHandler(_swirl);
+        var swirlClip :MovieClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        _swirlHandler = new ClipHandler(swirlClip);
+        _swirl = new Buttonizer(swirlClip);
         _swirl.visible = false;
 
         // don't add the swirly until the text field is loaded
@@ -264,7 +268,7 @@ public class View extends Sprite
     protected var _stageBounds :Rectangle;
     protected var _roomBounds :Rectangle;
 
-    protected var _swirl :MovieClip;
+    protected var _swirl :DisplayObject;
     protected var _swirlState :int;
     protected var _swirlRequest :int;
     protected var _swirlHandler :ClipHandler;
