@@ -170,8 +170,12 @@ public class ItemEntry extends FlexTable
             String style = "Avatar" + (active ? "Active" : "Inactive");
             label = MsoyUI.createActionLabel("", style, new ClickListener () {
                 public void onClick (Widget sender) {
-                    FlashClients.useAvatar(active ? 0 : _item.itemId,
-                                           active ? 0 : ((Avatar) _item).scale);
+                    if (active) {
+                        FlashClients.useAvatar(0, 0);
+                    } else {
+                        FlashClients.useAvatar(_item.itemId, ((Avatar) _item).scale);
+                        _panel.minimizeInventory();
+                    }
                 }
             });
             tip = active ? CInventory.msgs.removeAvatar() : CInventory.msgs.wearAvatar();
@@ -180,7 +184,12 @@ public class ItemEntry extends FlexTable
             String style = "Room" + (active ? "Active" : "Inactive");
             label = MsoyUI.createActionLabel("", style, new ClickListener () {
                 public void onClick (Widget sender) {
-                    FlashClients.useItem(active ? 0 : _item.itemId, _item.getType());
+                    if (active) {
+                        FlashClients.useItem(0, _item.getType());
+                    } else {
+                        FlashClients.useItem(_item.itemId, _item.getType());
+                        _panel.minimizeInventory();
+                    }
                 }
             });
             tip = active ? CInventory.msgs.removeFromRoom() : CInventory.msgs.addToRoom();
@@ -193,6 +202,7 @@ public class ItemEntry extends FlexTable
                         FlashClients.removePet(_item.itemId);
                     } else {
                         FlashClients.usePet(_item.itemId);
+                        _panel.minimizeInventory();
                     }
                 }
             });
@@ -206,6 +216,7 @@ public class ItemEntry extends FlexTable
                         FlashClients.removeFurni(_item.itemId, _item.getType());
                     } else {
                         FlashClients.useItem(_item.itemId, _item.getType());
+                        _panel.minimizeInventory();
                     }
                 }
             });

@@ -40,8 +40,9 @@ public class ItemPanel extends VerticalPanel
     /** The number of columns of items to display. */
     public static final int COLUMNS = 3;
 
-    public ItemPanel (byte type)
+    public ItemPanel (Page top, byte type)
     {
+        _top = top;
         _type = type;
 
         // this will contain our items
@@ -71,6 +72,11 @@ public class ItemPanel extends VerticalPanel
         if (isCatalogItem) {
             addUploadInterface();
         }
+    }
+
+    public void minimizeInventory ()
+    {
+        _top.setContentMinimized(true);
     }
 
     /**
@@ -262,6 +268,7 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
+    protected Page _top;
     protected PagedGrid _contents;
     protected Button _create, _next, _prev;
     protected VerticalPanel _upload;

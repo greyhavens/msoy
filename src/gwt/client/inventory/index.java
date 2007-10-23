@@ -59,7 +59,7 @@ public class index extends EditemEntryPoint
         } else {
             if (_inventory == null) {
                 setPageTitle(CInventory.msgs.inventoryTitle());
-                setContent(_inventory = new InventoryPanel());
+                setContent(_inventory = new InventoryPanel(this));
                 setPageTabs(_inventory.getTabs());
             }
 
