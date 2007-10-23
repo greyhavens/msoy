@@ -399,7 +399,6 @@ public class WorldClient extends BaseClient
      */
     protected function externalSetMinimized (minimized :Boolean) :void   
     {
-        log.info("Client was notified that its minimized status has changed: " + minimized);
         dispatchEvent(new ValueEvent(MINI_WILL_CHANGE, _minimized = minimized));
     }
 
