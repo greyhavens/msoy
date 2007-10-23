@@ -164,7 +164,7 @@ public class Application
 
         // create our standard navigation panel
         _navi = new NaviPanel(_status);
-        RootPanel navi = RootPanel.get("navigation");
+        RootPanel navi = RootPanel.get(Page.NAVIGATION);
         if (navi != null) {
             navi.add(_navi);
         }
@@ -226,8 +226,9 @@ public class Application
             // locate the creator for this page
             Page.Creator creator = (Page.Creator)_creators.get(ident);
             if (creator == null) {
-                RootPanel.get("content").clear();
-                RootPanel.get("content").add(new Label("Unknown page requested '" + ident + "'."));
+                RootPanel.get(Page.CONTENT).clear();
+                RootPanel.get(Page.CONTENT).add(
+                    new Label("Unknown page requested '" + ident + "'."));
                 return;
             }
 
@@ -235,6 +236,9 @@ public class Application
             _page = creator.createPage();
             _page.init();
             _page.onPageLoad();
+
+        } else {
+            _page.setContentMinimized(false);
         }
 
         // now tell the page about its arguments
@@ -312,9 +316,9 @@ public class Application
         return openChannelNative(type, name, id);
     }
 
-    protected void restoreClient (boolean deferred)
+    protected void restoreClient ()
     {
-        Page.closePage();
+        _page.setContentMinimized(true);
     }
 
     protected void clearClient (boolean deferred)
@@ -338,7 +342,7 @@ public class Application
         div.setStyleName("SeparatorFromFlash");
         DOM.setAttribute(div.getElement(), "id", "separatorFromFlash");
         DOM.setStyleAttribute(div.getElement(), "left", x + "px");
-        RootPanel.get("navigation").add(div);
+        RootPanel.get(Page.NAVIGATION).add(div);
     }
 
     protected void clearSeparator ()
@@ -386,7 +390,7 @@ public class Application
             return true;
        }
        $wnd.restoreClient = function () {
-            app.@client.shell.Application::restoreClient(Z)(true);
+            app.@client.shell.Application::restoreClient()();
        }
        $wnd.clearClient = function () {
             app.@client.shell.Application::clearClient(Z)(true);

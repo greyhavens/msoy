@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.WebCreds;
@@ -50,6 +51,18 @@ public abstract class Page
     public static final String WORLD = "world";
     public static final String WRAP = "wrap";
 
+    // constants for our top-level page elements
+    public static final String NAVIGATION = "navigation";
+    public static final String CONTENT = "content";
+    public static final String SEPARATOR = "seppy";
+    public static final String CLIENT = "client";
+
+    /** The maximum width of our content UI, the remainder is used by the world client. */
+    public static final int CONTENT_WIDTH = 700;
+
+    /** The width of the separator bar displayed between the client and the content. */
+    public static final int SEPARATOR_WIDTH = 20;
+
     /**
      * Notes the history token for the current page so that it can be restored in the event that we
      * open a normal page and then later close it.
@@ -71,11 +84,15 @@ public abstract class Page
         displayingJava = clientIsJava;
 
         // clear out our content and the expand/close controls
-        RootPanel.get("content").clear();
-        RootPanel.get("content").setWidth("0px");
+        RootPanel.get(CONTENT).clear();
+        RootPanel.get(CONTENT).setWidth("0px");
+
+        // clear out the divider
+        RootPanel.get(SEPARATOR).clear();
+        RootPanel.get(SEPARATOR).setWidth("0px");
 
         // have the client take up all the space
-        RootPanel.get("client").setWidth("100%");
+        RootPanel.get(CLIENT).setWidth("100%");
 
         return newPage;
     }
@@ -105,6 +122,23 @@ public abstract class Page
      */
     public void init ()
     {
+        // create our content manipulation buttons
+        _closeContent = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
+            public void onClick (Widget sender) {
+                closePage();
+            }
+        });
+        _minimizeContent = MsoyUI.createActionLabel("", "Minimize", new ClickListener() {
+            public void onClick (Widget sender) {
+                setContentMinimized(true);
+            }
+        });
+        _maximizeContent = MsoyUI.createActionLabel("", "Maximize", new ClickListener() {
+            public void onClick (Widget sender) {
+                setContentMinimized(false);
+            }
+        });
+
         // initialize our services and translations
         initContext();
     }
@@ -171,15 +205,43 @@ public abstract class Page
         }
     }
 
+    /**
+     * Configures the page with a close button and a minimization separator.
+     */
     protected void setCloseButton ()
     {
         if (_closeToken != null) {
-            _content.setWidget(0, 2, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
-                public void onClick (Widget sender) {
-                    closePage();
-                }
-            }));
-            _content.setWidget(0, 3, MsoyUI.createLabel("", "Separator"));
+            RootPanel.get(SEPARATOR).clear();
+            RootPanel.get(SEPARATOR).setWidth("20px");
+            RootPanel.get(SEPARATOR).add(MsoyUI.createLabel("", "Separator"));
+            RootPanel.get(SEPARATOR).add(_closeContent);
+            RootPanel.get(SEPARATOR).add(_minimizeContent);
+        }
+    }
+
+    /**
+     * Minimizes or maximizes the page content. NOOP if the content min/max interface is not being
+     * displayed.
+     */
+    protected void setContentMinimized (boolean minimized)
+    {
+        if (minimized && _minimizeContent.isAttached()) {
+            RootPanel.get(CONTENT).clear();
+            RootPanel.get(CONTENT).setWidth("0px");
+            RootPanel.get(CLIENT).setWidth(
+                (Window.getClientWidth() - SEPARATOR_WIDTH) + "px");
+            RootPanel.get(SEPARATOR).remove(_minimizeContent);
+            RootPanel.get(SEPARATOR).add(_maximizeContent);
+            WorldClient.setMinimized(false);
+        } else if (!minimized && _maximizeContent.isAttached()) {
+            RootPanel.get(CONTENT).add(_content);
+            RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
+            int clientWidth = Math.max(
+                Window.getClientWidth() - Page.CONTENT_WIDTH - Page.SEPARATOR_WIDTH, 0);
+            RootPanel.get(CLIENT).setWidth(clientWidth + "px");
+            RootPanel.get(SEPARATOR).remove(_maximizeContent);
+            RootPanel.get(SEPARATOR).add(_minimizeContent);
+            WorldClient.setMinimized(true);
         }
     }
 
@@ -243,18 +305,22 @@ public abstract class Page
      */
     protected void setContent (Widget content, boolean contentIsFlash, boolean contentIsJava)
     {
+        // make sure the world client is properly minimized
         WorldClient.minimize();
         displayingFlash = contentIsFlash;
         displayingJava = contentIsJava;
-        RootPanel.get("content").clear();
+        RootPanel.get(CONTENT).clear();
+
         // clear out any content height overrides
         setContentStretchHeight(false);
+
         // now set our content
         if (_content == null) {
             createContentContainer();
         }
-        RootPanel.get("content").add(_content);
+        RootPanel.get(CONTENT).add(_content);
         _content.setWidget(1, 0, content);
+
         // if there isn't anything in the tabs/subtitle area, we need something there to cause IE
         // to properly use up the space
         if (_content.getWidget(0, 1) == null && _content.getText(0, 1).length() == 0) {
@@ -266,7 +332,7 @@ public abstract class Page
     {
         String height = stretch ? "99%" : ""; // fucking browsers
         RootPanel.get("ctable").setHeight(height);
-        RootPanel.get("content").setHeight(height);
+        RootPanel.get(CONTENT).setHeight(height);
     }
 
     protected void createContentContainer ()
@@ -278,9 +344,7 @@ public abstract class Page
         _content.setHeight("100%");
         _content.getFlexCellFormatter().setStyleName(0, 0, "pageHeaderTitle");
         _content.getFlexCellFormatter().setStyleName(0, 1, "pageHeaderContent");
-        _content.getFlexCellFormatter().setStyleName(0, 2, "pageHeaderClose");
-        _content.getFlexCellFormatter().setStyleName(0, 3, "pageHeaderSep");
-        _content.getFlexCellFormatter().setColSpan(1, 0, 4);
+        _content.getFlexCellFormatter().setColSpan(1, 0, 2);
         _content.getFlexCellFormatter().setHeight(1, 0, "100%");
         _content.getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
 
@@ -318,6 +382,7 @@ public abstract class Page
     }-*/;
 
     protected FlexTable _content;
+    protected Label _closeContent, _minimizeContent, _maximizeContent;
 
     protected static String _closeToken;
 }

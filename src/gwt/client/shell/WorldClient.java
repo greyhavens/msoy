@@ -93,8 +93,8 @@ public class WorldClient extends Widget
             if (CShell.ident != null) {
                 flashArgs += "&token=" + CShell.ident.token;
             }
-            RootPanel.get("client").clear();
-            FlashClients.embedWorldClient(RootPanel.get("client"), flashArgs);
+            RootPanel.get(Page.CLIENT).clear();
+            FlashClients.embedWorldClient(RootPanel.get(Page.CLIENT), flashArgs);
             _isFlashClientPresent = true;
             
         } else {
@@ -114,8 +114,8 @@ public class WorldClient extends Widget
         if (_jclient != client) {
             if (newPage) {
                 clearClient(false); // clear out our flash client if we have one
-                RootPanel.get("client").clear();
-                RootPanel.get("client").add(_jclient = client);
+                RootPanel.get(Page.CLIENT).clear();
+                RootPanel.get(Page.CLIENT).add(_jclient = client);
             }
         } else {
             clientMinimized(false);
@@ -128,12 +128,18 @@ public class WorldClient extends Widget
         Page.displayingFlash = false;
 
         if (_isFlashClientPresent || _jclient != null) {
+            RootPanel.get(Page.CONTENT).setWidth(Page.CONTENT_WIDTH + "px");
+            RootPanel.get(Page.SEPARATOR).setWidth(Page.SEPARATOR_WIDTH + "px");
             int clientWidth = Math.max(
-                MIN_CLIENT_WIDTH, Window.getClientWidth() - MAX_CONTENT_WIDTH);
-            RootPanel.get("client").setWidth(clientWidth + "px");
-            RootPanel.get("content").setWidth(Window.getClientWidth() - clientWidth + "px");
+                Window.getClientWidth() - Page.CONTENT_WIDTH - Page.SEPARATOR_WIDTH, 0);
+            RootPanel.get(Page.CLIENT).setWidth(clientWidth + "px");
             clientMinimized(true);
         }
+    }
+
+    public static void setMinimized (boolean minimized)
+    {
+        clientMinimized(minimized);
     }
 
     public static void clearClient (boolean restoreContent)
@@ -142,13 +148,13 @@ public class WorldClient extends Widget
             if (_isFlashClientPresent) {
                 clientUnload(); // TODO: make this work for jclient
             }
-            RootPanel.get("client").clear();
+            RootPanel.get(Page.CLIENT).clear();
             _isFlashClientPresent = false;
             _jclient = null;
         }
         if (restoreContent) {
-            RootPanel.get("client").setWidth("0px");
-            RootPanel.get("content").setWidth("100%");
+            RootPanel.get(Page.CLIENT).setWidth("0px");
+            RootPanel.get(Page.CONTENT).setWidth("100%");
         }
     }
 
@@ -224,10 +230,4 @@ public class WorldClient extends Widget
 
     /** Our default world server. Configured the first time Flash is used. */
     protected static ConnectConfig _defaultServer;
-
-    /** The minimum width allowed for the minimized client. */
-    protected static final int MIN_CLIENT_WIDTH = 300;
-
-    /** The maximum width of our content UI, the remainder is used by the world client. */
-    protected static final int MAX_CONTENT_WIDTH = 700;
 }
