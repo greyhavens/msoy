@@ -5,10 +5,8 @@ package com.threerings.msoy.game.client {
 
 import flash.events.Event;
 import flash.display.Loader;
-import flash.display.Sprite;
+import flash.display.DisplayObjectContainer;
 import flash.display.LoaderInfo;
-
-import mx.containers.Canvas;
 
 import com.threerings.flash.MediaContainer;
 
@@ -24,7 +22,7 @@ import com.threerings.msoy.game.data.AVRGameObject;
 
 import com.threerings.msoy.world.client.RoomView;
 
-public class AVRGamePanel extends Canvas
+public class AVRGamePanel extends DisplayObjectContainer
 {
     public static const log :Log = Log.getLog(AVRGamePanel);
 
@@ -82,9 +80,7 @@ public class AVRGamePanel extends Canvas
 
         _ctrl.gameIsReady();
 
-        this.height = info.height + 2;
-
-        this.rawChildren.addChild(_mediaHolder);
+        this.addChild(_mediaHolder);
 
         _mctx.getMsoyController().setAVRGamePanel(this);
     }
