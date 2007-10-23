@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.Window;
@@ -132,16 +133,23 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
+    // @Override // from Panel
+    protected void onAttach ()
+    {
+        _itemList.clear();
+        if (_type == Item.PET) {
+            _itemList.addAll(FlashClients.getPetList());
+        } else {
+            _itemList.addAll(FlashClients.getFurniList());
+        }
+        super.onAttach();
+    }
+
     protected void loadInventory ()
     {
         CInventory.membersvc.loadInventory(CInventory.ident, _type, 0, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _contentsModelDirty = false;
-                if (_type == Item.PET) {
-                    _itemList = FlashClients.getPetList();
-                } else {
-                    _itemList = FlashClients.getFurniList();
-                }
                 _contents.setModel(new SimpleDataModel((List)result), _startPage);
             }
             public void onFailure (Throwable caught) {
@@ -266,7 +274,7 @@ public class ItemPanel extends VerticalPanel
     protected boolean _contentsModelDirty = false;
 
     /** Only get the furni list for the current room once, and feed it to each ItemEntry */
-    protected List _itemList;
+    protected List _itemList = new ArrayList();
 
     protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ + 10 /* gap */;
     protected static final int BLURB_HEIGHT = 25 /* gap */ + 33 /* title */ + 72 /* contents */;
