@@ -54,11 +54,6 @@ public class View extends Sprite
         _ourWidth = width;
         _ourHeight = height;
 
-//        this.graphics.lineStyle(4, 0xFF0000, 1.0, true, "normal", "none", "round");
-//        this.graphics.drawRect(0, 0, _stageBounds.width, _stageBounds.height);
-//        this.graphics.lineStyle(4, 0xFFFF00, 1.0, true, "normal", "none", "round");
-//        this.graphics.drawRect(4, 4, _roomBounds.width - 8, _roomBounds.height - 8);
-
         // don't add the text field until the swirly is loaded
         maybeFinishUI();
     }
@@ -75,11 +70,20 @@ public class View extends Sprite
 
     protected function handleTextboxLoaded (evt :Event) :void
     {
-        _textBox = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        _textBox.gotoAndStop(1, SCN_TEXTBOX);
+        // create the textbox clip
+        var boxClip :MovieClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        boxClip.gotoAndStop(1, SCN_TEXTBOX);
+
+        // we stuff the clip into a container that's easier for us to handle
+        _textBox = new Sprite();
+        _textBox.addChild(boxClip);
+        // easier mostly because that way we can pick our own precise origin point
+        boxClip.x = -BOX_OFFSET.x;
+        boxClip.y = -BOX_OFFSET.y;
+
         _textBox.visible = false;
-        _textBox.x = 80;
-        _textBox.y = 80;
+        _textBox.x = 150;
+        _textBox.y = 100;
 
         var styleSheet :StyleSheet = new StyleSheet();
         styleSheet.parseCSS(
@@ -111,30 +115,28 @@ public class View extends Sprite
         format.align = TextFormatAlign.LEFT;
 
         _textField = new TextField();
-//        _textField.border = true;
-//        _textField.borderColor = 0x000000;
+        _textField.visible = false;
+        _textField.border = false;
+        _textField.borderColor = 0xFF0000;
         _textField.defaultTextFormat = format;
         _textField.styleSheet = styleSheet;
         _textField.wordWrap = true;
         _textField.multiline = true;
         _textField.embedFonts = true;
         _textField.antiAliasType = flash.text.AntiAliasType.ADVANCED;
-        _textField.autoSize = TextFieldAutoSize.NONE;
-  
-        _textField.width = _textBox.width - (BOX_OFFSET_LEFT + BOX_OFFSET_RIGHT);
-        _textField.height = _textBox.height - (BOX_OFFSET_TOP + BOX_OFFSET_BOTTOM);
-        _textField.x = BOX_OFFSET_LEFT;
-        _textField.y = BOX_OFFSET_TOP;
-        _textBox.addChild(_textField);
+        _textField.autoSize = TextFieldAutoSize.CENTER;
 
-        var button :SimpleButton = new SimpleTextButton(
+        _textField.width = 400;
+        _textField.x = _textBox.x + BOX_PADDING;
+        _textField.y = _textBox.y + BOX_PADDING;
+
+        _hideButton = new SimpleTextButton(
             "Hide", true, 0x003366, 0x6699CC, 0x0066FF, 5, format);
-        _textBox.addChild(button);
-        button.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
+        _hideButton.visible = false;
+        _hideButton.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
                 displaySummary(null);
             });
-        button.x = 440 - button.width;
-        button.y = 335 - button.height;
+        _hideButton.x = _textField.x + _textField.width - _hideButton.width * 1.5;
 
         // don't add the swirly until the text field is loaded
         maybeFinishUI();
@@ -148,10 +150,12 @@ public class View extends Sprite
             _swirl.addEventListener(MouseEvent.CLICK, swirlClicked);
             this.addChild(_swirl);
 
-            this.addChild(_textBox);
-
             _swirl.x = -275; _swirl.y = -225;
             _swirl.x += 50; _swirl.y += 50;
+
+            this.addChild(_textBox);
+            this.addChild(_textField);
+            this.addChild(_hideButton);
 
             maybeTransition();
         }
@@ -165,12 +169,13 @@ public class View extends Sprite
     public function displaySummary (summary :String) :void
     {
         if (summary) {
-            _textBox.visible = true;
+            _textBox.visible = _textField.visible = _hideButton.visible = true;
             _textField.htmlText = summary;
-//            _textBox.height = _textField.height + BOX_OFFSET_TOP + BOX_OFFSET_BOTTOM;
-//            _textBox.width = _textField.width + BOX_OFFSET_LEFT + BOX_OFFSET_RIGHT;
+            _textBox.width = _textField.width + 2*BOX_PADDING;
+            _textBox.height = _textField.height + _hideButton.height + BOX_HAT + 2*BOX_PADDING;
+            _hideButton.y = _textField.y + _textField.height + BOX_PADDING/2;
         } else {
-            _textBox.visible = false;
+            _textBox.visible = _textField.visible = _hideButton.visible = false;
         }
     }
 
@@ -264,8 +269,9 @@ public class View extends Sprite
     protected var _swirlRequest :int;
     protected var _swirlHandler :ClipHandler;
 
-    protected var _textBox :MovieClip;
+    protected var _textBox :Sprite;
     protected var _textField :TextField;
+    protected var _hideButton :SimpleButton;
 
     protected static const log :Log = Log.getLog(View);
 
@@ -299,9 +305,12 @@ public class View extends Sprite
     protected static const SCN_GOODJOB :String = "goodjob";
     protected static const SCN_TEXTBOX :String = "textbox";
 
-    protected static const BOX_OFFSET_LEFT :int = 70;
-    protected static const BOX_OFFSET_TOP :int = 80;
-    protected static const BOX_OFFSET_RIGHT :int = -35;
-    protected static const BOX_OFFSET_BOTTOM :int = 5;
+    // how far into the clip the true origin of the box lies
+    protected const BOX_OFFSET :Point = new Point(100, 115);
+    // how much unusable yet measured space surrounds the usable
+    protected static const BOX_PADDING :int = 15;
+    // how high is the flourish on top, which also appears in the clip's height
+    protected static const BOX_HAT :int = 50;
+
 }
 }
