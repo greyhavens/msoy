@@ -5,7 +5,7 @@ package com.threerings.msoy.game.client {
 
 import flash.events.Event;
 import flash.display.Loader;
-import flash.display.DisplayObjectContainer;
+import flash.display.Sprite;
 import flash.display.LoaderInfo;
 
 import com.threerings.flash.MediaContainer;
@@ -13,6 +13,8 @@ import com.threerings.flash.MediaContainer;
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.PlaceLayer;
+import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.game.client.AVRGameControlBackend;
@@ -22,7 +24,8 @@ import com.threerings.msoy.game.data.AVRGameObject;
 
 import com.threerings.msoy.world.client.RoomView;
 
-public class AVRGamePanel extends DisplayObjectContainer
+public class AVRGamePanel extends Sprite
+    implements PlaceLayer
 {
     public static const log :Log = Log.getLog(AVRGamePanel);
 
@@ -52,6 +55,16 @@ public class AVRGamePanel extends DisplayObjectContainer
 
         // set ourselves up properly once the media is loaded
         loader.contentLoaderInfo.addEventListener(Event.COMPLETE, mediaComplete);
+    }
+
+    // from PlaceLayer
+    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        // an AVRG panel should be designed for 700 x 500
+        var scale :Number = Math.min(1, unscaledWidth / TopPanel.LEFT_PANEL_WIDTH);
+        // so we'll brutally scale it accordingly
+        this.scaleX = this.scaleY = scale;
+        log.debug("AVRGamePanel: Just reset scale to " + scale);
     }
 
     public function tutorialEvent (eventName :String) :void

@@ -102,16 +102,23 @@ public class PlaceBox extends Canvas
         _mask.graphics.drawRect(0, 0, width, height);
         _mask.graphics.endFill();
 
-        if (_placeView != null) {
-            if (_placeView is UIComponent) {
-                UIComponent(_placeView).setActualSize(width, height);
-            } else if (_placeView is MsoyPlaceView) {
-                MsoyPlaceView(_placeView).setPlaceSize(width, height);
-            } else {
+        for (var ii :int = 0; ii < this.rawChildren.numChildren; ii ++) {
+            var child :DisplayObject = this.rawChildren.getChildAt(ii);
+
+            if (child is UIComponent) {
+                UIComponent(child).setActualSize(width, height);
+
+            } else if (child is PlaceLayer) {
+                PlaceLayer(child).setPlaceSize(width, height);
+
+            } else if (child == _placeView) {
                 Log.getLog(this).warning("PlaceView is not a MsoyPlaceView or an UIComponent.");
+
+            } else {
+                // don't over-police the contents of rawChildren
             }
         }
-    }
+        }
 
     /** The mask configured on the PlaceView so that it doesn't overlap our other components. */
     protected var _mask :Shape;

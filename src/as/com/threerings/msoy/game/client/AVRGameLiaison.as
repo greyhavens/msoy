@@ -40,7 +40,7 @@ public class AVRGameLiaison extends GameLiaison
                 shutdown();
             },
             function (result :Object) :void {
-                log.info("Successfully activated AVRG [gameId=" + _gameId + "]");
+                log.info("Initializing AVRG... [gameId=" + _gameId + "]");
                 _ctrl = new AVRGameController(_gctx, _gameId, int(result));
             }
         );
