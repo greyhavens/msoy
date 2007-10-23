@@ -8,18 +8,16 @@ public class Quest
     public var questId :String;
     public var trigger :String;
     public var status :String;
-    public var intro :String;
     public var outro :String;
     public var summary :String;
     public var payout :int;
 
-    public function Quest (questId :String, trigger :String, status :String, intro :String,
+    public function Quest (questId :String, trigger :String, status :String, 
                            summary :String, outro :String, payout :uint)
     {
         this.questId = questId;
         this.trigger = trigger;
         this.status = status;
-        this.intro = intro;
         this.summary = summary;
         this.outro = outro;
         this.payout = payout;
@@ -47,7 +45,6 @@ public class Quest
             "editProfile",
             "profileEdited",
             "Edit Your Profile",
-            "Fill out your profile and receive 500 flow.",
             "<p class='title'>Edit Your Profile!</p>" +
             "<p class='summary'>This is the paragraph where we summarize for the user what the profile is, how and when it's displayed, and somehow motivate them to enter some interesting information.</p>" +
             "<p class='details'>" +
@@ -61,7 +58,6 @@ public class Quest
             "buyDecor",
             "decorBought",
             "Buy new Decor",
-            "Your room's background image is known as decor. Let's go shopping.",
             "<p class='title'>Change Your Decor!</p>" +
             "<p class='summary'>" +
             "<br>The decor is the most fundamental element of your room's appearance. Every other item in your room appears on top the decor." +
@@ -75,7 +71,6 @@ public class Quest
             "installDecor",
             "decorInstalled",
             "Change Decor",
-            "Now we need to install your new decor.",
             "<p class='title'>Install the new Decor.</p>" +
             "<p class='summary'>This is the paragraph where we summarize for the user what this step is about and motivate them to enter some interesting information.</p>" +
             "<p class='details'>" +
@@ -89,7 +84,6 @@ public class Quest
             "buyFurni",
             "furniBought",
             "Buy Furniture",
-            "Furniture adds depth and personality to a room. Let's shop some more.",
             "<p class='title'>Buy Furniture!</p>" +
             "<p class='summary'>This is the paragraph where we summarize for the user what this step is about and motivate them to proceed.</p>" +
             "<p class='details'>" +
@@ -104,7 +98,6 @@ public class Quest
             "installFurni",
             "furniInstalled",
             "Install your furniture",
-            "The furniture won't show up until you add it to your room.<br><br>We'll do that next.",
             "<p class='title'>Install Your Furniture!</p>" +
             "<p class='summary'>This is the paragraph where we summarize for the user what this step is about and motivate them to proceed.</p>" +
             "<p class='details'>" +
@@ -117,7 +110,6 @@ public class Quest
             "placeFurni",
             "editorClosed",
             "Place your furniture",
-            "The new furniture appears in the middle of the room until you drag it to where you want it to be.",
             "<p class='title'>Place Your Furniture!</p>" +
             "<p class='summary'>This is the paragraph where we summarize for the user what this step is about and motivate them to proceed.</p>" +
             "<p class='details'>" +
@@ -130,7 +122,6 @@ public class Quest
             "buyAvatar",
             "avatarBought",
             "Buy a new Avatar",
-            "Find a new face. There's lots to choose <b><i>from in the catalog.",
             "<p class='title'>Change Your Avatar!</p>" +
             "<p class='summary'>This is the paragraph where we summarize for the user what this step is about and motivate them to proceed.</p>" +
             "<p class='details'>" +
@@ -143,7 +134,6 @@ public class Quest
             "wearAvatar",
             "avatarInstalled",
             "Wear your new Avatar",
-            "Just as with decor and furni, your new item won't show in the world until you add it.",
             "<p class='title'>Change Your Avatar!</p>" +
             "<p class='summary'>This is the paragraph where we summarize for the user what this step is about and motivate them to proceed.</p>" +
             "<p class='details'>" +

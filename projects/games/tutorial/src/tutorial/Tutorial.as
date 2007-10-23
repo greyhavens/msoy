@@ -87,8 +87,10 @@ public class Tutorial extends Sprite
     {
         // log.debug("property changed: " + event.name + "=" + event.value);
         if (event.name == PROP_STEP_COMPLETED) {
-            _view.gotoSwirlState(View.SWIRL_BOUNCY);
-            _view.displaySummary(null);
+            if (event.value != null) {
+                _view.gotoSwirlState(View.SWIRL_BOUNCY);
+                _view.displaySummary(null);
+            }
 
         } else if (event.name == PROP_TUTORIAL_STEP) {
             // we have arrived at a new tutorial step; reinitialize our state
@@ -152,8 +154,13 @@ public class Tutorial extends Sprite
                 return;
             }
         }
-        // we're not on the right quest, signal the view
-        _view.gotoSwirlState(step == 0 ? View.SWIRL_INTRO : View.SWIRL_BOUNCY);
+        if (step == 0) {
+            _view.gotoSwirlState(View.SWIRL_INTRO);
+            return;
+        }
+        // this quest will be automatically accepted, which in turn will trigger a call
+        // back here to initialize(), setting activeQuest and swirl state as per above
+        _control.offerQuest(quest.questId, null, quest.status);
     }
 
     public function swirlClicked (swirlState :int) :void
@@ -169,12 +176,12 @@ public class Tutorial extends Sprite
             _view.displaySummary(_view.isShowingSummary() ? null : quest.summary);
             return;
         }
-        if (step == 0 && swirlState != View.SWIRL_INTRO) {
-            log.warning("Eek, unexpected click [swirlState=" + swirlState +
+        if (step != 0 || swirlState != View.SWIRL_INTRO) {
+            log.warning("Eek, swirly click without active quest [swirlState=" + swirlState +
                         ", step=" + getStep() + "]");
+            return;
         }
-        _control.offerQuest(quest.questId, quest.intro, quest.status);
-        _view.gotoSwirlState(View.SWIRL_DEMURE);
+        _control.offerQuest(quest.questId, null, quest.status);
     }
 
     protected function getStep () :int
