@@ -57,24 +57,29 @@ public class MsoyGamePanel extends EZGamePanel
     // from EZGamePanel
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
+        // Important: we need to start the playerList prior to calling super, so that it
+        // is added as a listener to the gameObject prior to the backend being created
+        // and added as a listener. That way, when the ezgame hears about an occupantAdded
+        // event, the playerList already knows about that player!
+        _playerList.startup(plobj);
+
         super.willEnterPlace(plobj);
 
         ((_ctx as GameContext).getWorldContext().getChatDirector() as MsoyChatDirector).
             displayGameChat(_ctx.getChatDirector(), _playerList);
 
-        _playerList.startup(plobj);
     }
 
     // from EZGamePanel
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
+        _playerList.shutdown();
+
         super.didLeavePlace(plobj);
 
         ((_ctx as GameContext).getWorldContext().getChatDirector() as MsoyChatDirector).
             clearGameChat();
         (_ctx as GameContext).getTopPanel().getControlBar().setChatEnabled(true);
-
-        _playerList.shutdown();
     }
 
     // from WhirledGamePanel
