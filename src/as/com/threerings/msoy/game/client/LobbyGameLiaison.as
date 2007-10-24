@@ -108,6 +108,7 @@ public class LobbyGameLiaison extends GameLiaison
         },
         function (result :Object) :void {
             if (int(result) != 0) {
+                // we failed to start a game (see below) so join the lobby instead
                 _enterNextGameDirect = false;
                 gotLobbyOid(result);
             }
@@ -115,6 +116,10 @@ public class LobbyGameLiaison extends GameLiaison
         // we want to avoid routing this game entry through the URL because our current URL is very
         // nicely bookmarkable and we don't want to replace it with a non-bookmarkable URL
         _enterNextGameDirect = true;
+
+        // the playNow call will resolve the lobby on the game server, then attempt to start
+        // a game for us; if it succeeds, it sends back a zero result, if it fails, it sends
+        // back the lobby OID so we can join the lobby
         lsvc.playNow(_gctx.getClient(), _gameId, cb);
     }
 

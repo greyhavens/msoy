@@ -245,7 +245,7 @@ public class GameDirector extends BasicDirector
     {
         super.clientDidLogoff(event);
 
-        // shutdown and game connection we might have going
+        // shutdown any game connection we might have going
         if (_liaison != null) {
             _liaison.shutdown();
         }
