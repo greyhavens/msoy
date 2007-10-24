@@ -77,6 +77,11 @@ public class AVRGameController extends Controller
     {
         // if this is the tutorial, let it know what our initial minimization state is
         miniWillChange(_mctx.getWorldClient().isMinimized());
+
+        // if we played a lobbied game recently, tell the tutorial code
+        if (_mctx.getGameDirector().popMostRecentLobbyGame() != 0) {
+            tutorialEvent("gamePlayed");
+        }
     }
 
     public function tutorialEvent (eventName :String) :void

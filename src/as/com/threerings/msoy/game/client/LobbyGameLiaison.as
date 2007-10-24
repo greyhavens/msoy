@@ -128,6 +128,9 @@ public class LobbyGameLiaison extends GameLiaison
         _gameOid = gameOid;
         _gctx.getLocationDirector().moveTo(gameOid);
 
+        // make a note what game we're playing, for posterity
+        _ctx.getGameDirector().setMostRecentLobbyGame(_gameId);
+
         // clear out our lobby side panel in case it has not been cleared already
         _ctx.getTopPanel().clearLeftPanel(null);
     }

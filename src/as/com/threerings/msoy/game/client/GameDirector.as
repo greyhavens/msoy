@@ -252,6 +252,26 @@ public class GameDirector extends BasicDirector
     }
 
     /**
+     * Remember the most recent lobbied game we play. Currently this only used to transmit
+     * a tutorial event whenever the AVRG reconnects, but we may use it in a more general
+     * AVRG setting later.
+     */
+    public function setMostRecentLobbyGame (game :int) :void
+    {
+        _mostRecentLobbyGame = game;
+    }
+
+    /**
+     * Fetch (and destroy) the ID of the most recently played lobby game, or 0 for none.
+     */
+    public function popMostRecentLobbyGame () :int
+    {
+        var game :int = _mostRecentLobbyGame;
+        _mostRecentLobbyGame = 0;
+        return game;
+    }
+
+    /**
      * A convenience method to display feedback using the game bundle.
      */
     protected function displayFeedback (msg :String) :void
@@ -275,5 +295,7 @@ public class GameDirector extends BasicDirector
      * because by the time we get around to entering that game, we no longer have this info. */
     protected var _matchingGame :Game;
 
+    /** Remember the ID of the most recent lobbied game we played, for the tutorial. */
+    protected var _mostRecentLobbyGame :int;
 }
 }
