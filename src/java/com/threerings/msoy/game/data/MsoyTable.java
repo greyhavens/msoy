@@ -31,8 +31,7 @@ public class MsoyTable extends Table
     {
         super.init(lobbyOid, tconfig, config);
 
-        int size = (occupants == null) ? 0 : occupants.length;
-        headShots = new MediaDesc[size];
+        headShots = new MediaDesc[occupants.length];
     }
 
     @Override @ActionScript(omit=true)
