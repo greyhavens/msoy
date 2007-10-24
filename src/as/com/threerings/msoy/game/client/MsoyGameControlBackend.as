@@ -4,7 +4,6 @@
 package com.threerings.msoy.game.client {
 
 import flash.display.Loader;
-import flash.geom.Rectangle;
 import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
@@ -33,7 +32,6 @@ public class MsoyGameControlBackend extends WhirledGameControlBackend
 
         var ctrl :MsoyGameController = (_ctrl as MsoyGameController);
         o["getHeadShot_v1"] = getHeadShot_v1;
-        o["getStageBounds_v1"] = getStageBounds_v1;
         o["backToWhirled_v1"] = backToWhirled_v1;
 
         // backwards compatibility
@@ -55,11 +53,6 @@ public class MsoyGameControlBackend extends WhirledGameControlBackend
             return;
         }
         throw new Error("Failed to find occupant: " + occupant);
-    }
-
-    protected function getStageBounds_v1 () :Rectangle
-    {
-        return (_ctx as GameContext).getTopPanel().getPlaceViewBounds();
     }
 
     protected function backToWhirled_v1 (showLobby :Boolean = false) :void
