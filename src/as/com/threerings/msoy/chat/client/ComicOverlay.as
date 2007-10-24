@@ -415,9 +415,7 @@ public class ComicOverlay extends ChatOverlay
      */
     protected function getTailShape (type :int) :Function
     {
-        switch (placeOf(type)) {
-        case INFO:
-        case ATTENTION:
+        if (placeOf(type) != PLACE) {
             return null;
         }
 
@@ -533,8 +531,7 @@ public class ComicOverlay extends ChatOverlay
      * Position the rectangle in its ideal location given the type and speaker positon (which may
      * be null).
      */
-    protected function positionRectIdeally (
-        r :Rectangle, type :int, speaker :Rectangle) :void
+    protected function positionRectIdeally (r :Rectangle, type :int, speaker :Rectangle) :void
     {
         if (speaker != null) {
             // center horizontally at the top of the rectangle (it'll be moved)
