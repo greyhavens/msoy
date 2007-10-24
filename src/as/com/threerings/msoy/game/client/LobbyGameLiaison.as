@@ -118,8 +118,8 @@ public class LobbyGameLiaison extends GameLiaison
         _enterNextGameDirect = true;
 
         // the playNow call will resolve the lobby on the game server, then attempt to start
-        // a game for us; if it succeeds, it sends back a zero result, if it fails, it sends
-        // back the lobby OID so we can join the lobby
+        // a game for us; if it succeeds, it sends back a zero result and we need take no
+        // further action; if it fails, it sends back the lobby OID so we can join the lobby
         lsvc.playNow(_gctx.getClient(), _gameId, cb);
     }
 
