@@ -202,7 +202,10 @@ public class ComicOverlay extends ChatOverlay
 
         var cloud :BubbleCloud = _bubbles.get(speaker);
         if (cloud == null) {
-            cloud = new BubbleCloud(this, MAX_BUBBLES_PER_USER, speakerBounds);
+            cloud = new BubbleCloud(this, 
+                                    speaker == null ? MAX_NOTIFICATION_BUBBLES : 
+                                                      MAX_BUBBLES_PER_USER, 
+                                    speakerBounds, _target.width, _target.height);
             _bubbles.put(speaker, cloud);
         }
         cloud.addBubble(bubble);
@@ -454,10 +457,15 @@ public class ComicOverlay extends ChatOverlay
 
     /** The maximum number of bubbles to show per user. */
     protected static const MAX_BUBBLES_PER_USER :int = 3;
+
+    /** The maximum number of notification bubbles to show. */
+    protected static const MAX_NOTIFICATION_BUBBLES :int = 5;
 }
 }
 
 import flash.geom.Rectangle;
+
+import com.threerings.util.DisplayUtil;
 
 import com.threerings.msoy.chat.client.BubbleGlyph;
 import com.threerings.msoy.chat.client.ComicOverlay;
@@ -469,11 +477,14 @@ import com.threerings.msoy.chat.client.ComicOverlay;
  */
 class BubbleCloud 
 {
-    public function BubbleCloud (overlay :ComicOverlay, maxBubbles :int, bounds :Rectangle) 
+    public function BubbleCloud (overlay :ComicOverlay, maxBubbles :int, bounds :Rectangle, 
+        viewWidth :Number, viewHeight :Number) 
     {
         _overlay = overlay;
         _maxBubbles = maxBubbles;
         _location = bounds;
+        _viewWidth = viewWidth;
+        _viewHeight = viewHeight;
     }
 
     public function get bubbles () :Array 
@@ -485,21 +496,38 @@ class BubbleCloud
     {
         _location = bounds;
         if (bounds == null) {
-            // TODO: bring back in the nifty DisplayUtil stuff for laying out the bubbles in the 
-            // upper left.  BubbleClouds with null speaker bounds are those not being shown in 
-            // PLACE (non speak, think, emote, etc), and aren't being placed over an ActorSprite.
-            var yOffset :int = BUBBLE_SPACING;
-            for each (var bubble :BubbleGlyph in _bubbles) {
-                bubble.x = BUBBLE_SPACING;
-                bubble.y = yOffset;
-                var bubBounds :Rectangle = bubble.getBubbleBounds();
-                yOffset += bubBounds.height;
+            // BubbleClouds with null speaker bounds are those not being shown in PLACE (non speak, 
+            // think, emote, etc), and aren't being placed over an ActorSprite.
+            var vbounds :Rectangle = new Rectangle(BUBBLE_SPACING, BUBBLE_SPACING, 
+                _viewWidth - BUBBLE_SPACING * 2, _viewHeight - BUBBLE_SPACING * 2);
+            var avoidList :Array = [];
+            var placeList :Array = [];
+            for (var ii :int = 0; ii < _bubbles.length; ii++) {
+                var bubble :BubbleGlyph = _bubbles[ii] as BubbleGlyph;
+                if (bubble.x != 0 || bubble.y != 0) {
+                    avoidList.push(bubble.getBubbleBounds());
+                } else {
+                    placeList.push(bubble);
+                }
+            }
+            for each (bubble in placeList) {
+                var placer :Rectangle = bubble.getBubbleBounds();
+                placer.x = BUBBLE_SPACING;
+                placer.y = BUBBLE_SPACING;
+                if (!DisplayUtil.positionRect(placer, vbounds, avoidList)) {
+                    // DANGER! DANGER!
+                    Log.getLog(this).warning(
+                        "Failed to place notification bubble [avoids=" + avoidList.length + "]");
+                }
+                bubble.x = placer.x;
+                bubble.y = placer.y;
+                avoidList.push(placer);
             }
         } else {
             var centerX :Number = bounds.x + bounds.width / 2;
-            yOffset = bounds.y - BUBBLE_SPACING; 
+            var yOffset :Number = bounds.y - BUBBLE_SPACING; 
             for each (bubble in _bubbles) {
-                bubBounds = bubble.getBubbleBounds();
+                var bubBounds :Rectangle = bubble.getBubbleBounds();
                 yOffset -= bubBounds.height;
                 bubble.x = centerX - bubBounds.width / 2;
                 bubble.y = yOffset;
@@ -541,4 +569,6 @@ class BubbleCloud
     protected var _location :Rectangle;
     protected var _overlay :ComicOverlay;
     protected var _maxBubbles :int;
+    protected var _viewWidth :Number;
+    protected var _viewHeight :Number;
 }
