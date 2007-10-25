@@ -105,11 +105,8 @@ public class Tutorial extends Sprite
 
 //        log.debug("Tutorial event [name=" + event.value + ", step=" + step + "]");
 
-        if (event.value == "willMinimize") {
-            _clientIsMinimized = true;
-
-        } else if (event.value == "willUnminimize") {
-            _clientIsMinimized = false;
+        if (event.value == "willMinimize" ||event.value == "willUnminimize") {
+            // we don't really care anymore; just start things up
             initialize();
 
         } else if (event.value == Quest.getQuest(step).trigger) {
@@ -124,10 +121,7 @@ public class Tutorial extends Sprite
     {
         // log.debug("property changed: " + event.name + "=" + event.value);
         if (event.name == PROP_STEP_COMPLETED) {
-            if (event.value != null) {
-                _view.gotoSwirlState(View.SWIRL_BOUNCY);
-                _view.displayNothing();
-            }
+            initialize();
 
         } else if (event.name == PROP_TUTORIAL_STEP) {
             // we have arrived at a new tutorial step; reinitialize our state
@@ -164,7 +158,7 @@ public class Tutorial extends Sprite
 
     protected function initialize () :void
     {
-        if (_clientIsMinimized || !_viewSetup) {
+        if (_viewSetup == false) {
             return;
         }
         // figure out which quest we ought to be on
@@ -190,6 +184,7 @@ public class Tutorial extends Sprite
                 _activeQuest = quest.questId;
                 if (testCompletedStep(step)) {
                     _view.gotoSwirlState(View.SWIRL_BOUNCY);
+                    _view.displayNothing();
                 } else {
                     _view.gotoSwirlState(View.SWIRL_DEMURE);
                 }

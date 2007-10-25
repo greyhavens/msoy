@@ -105,8 +105,6 @@ public class View extends Sprite
             this.addChild(_swirl);
             this.addChild(_textBox);
 
-            _swirl.viewIsReady();
-
             _tutorial.viewIsReady();
         }
     }

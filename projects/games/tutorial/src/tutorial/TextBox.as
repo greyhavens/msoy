@@ -140,8 +140,6 @@ public class TextBox extends Sprite
         _backdrop.height = _textField.height + _buttons.height +
             Content.BOX_HAT + 2*Content.BOX_PADDING;
 
-        log.debug("Added button at (" + button.x + ", " + button.y + ") while _buttons is at (" + _buttons.x + ", " + _buttons.y + ")");
-
         return button;
     }
 

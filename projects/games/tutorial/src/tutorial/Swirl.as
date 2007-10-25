@@ -43,55 +43,18 @@ public class Swirl extends Sprite
 
     public function gotoState (state :int) :void
     {
-        if (state == _swirlRequest) {
-            log.warning("Already going to requested scene [state=" + state + "]");
-        } else if (state != _swirlState) {
-            _swirlRequest = state;
-            maybeTransition();
-        }
-    }
-
-    protected function swirlClicked (evt :Event) :void
-    {
-        _view.swirlClicked(_swirlState);
-    }
-
-    protected function handleSwirlLoaded (evt :Event) :void
-    {
-        var swirlClip :MovieClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        _swirl = new Buttonizer(swirlClip);
-        _swirl.x =  -Content.SWIRL_OFFSET.x;
-        _swirl.y =  -Content.SWIRL_OFFSET.y;
-        addChild(_swirl);
-
-        _swirlHandler = new ClipHandler(swirlClip);
-
-        this.visible = false;
-
-        _done();
-    }
-
-    public function viewIsReady () :void
-    {
         this.visible = true;
-        maybeTransition();
-    }
 
-    protected function maybeTransition () :void
-    {
-        if (!(this.visible && _swirlRequest)) {
-            return;
-        }
         var first :String = null;
         var then :String = null;
 
         this.x = this.y = 75;
 
-        switch(_swirlRequest) {
+        switch(state) {
         case View.SWIRL_INTRO:
             if (_swirlState != View.SWIRL_NONE) {
                 log.warning("Unexpected transtion [from=" + _swirlState + ", to=" +
-                            _swirlRequest + "]");
+                            state + "]");
             }
             // TODO: later we'll do a fancy transtion here, for now just appear
             this.x = 200;
@@ -102,7 +65,7 @@ public class Swirl extends Sprite
         case View.SWIRL_DEMURE:
             if (_swirlState == View.SWIRL_NONE) {
                 log.warning("Unexpected transtion [from=" + _swirlState + ", to=" +
-                            _swirlRequest + "]");
+                            state + "]");
                 first = SCN_APPEAR;
             }
             // TODO: later we'll do a fancy transtion here too
@@ -115,7 +78,7 @@ public class Swirl extends Sprite
             then = SCN_LOOKATME;
             break;
         default:
-            log.warning("Can't goto unknown swirl state [state=" + _swirlRequest + "]");
+            log.warning("Can't goto unknown swirl state [state=" + state + "]");
             return;
         }
 
@@ -131,8 +94,26 @@ public class Swirl extends Sprite
             transition();
         }
 
-        _swirlState = _swirlRequest;
-        _swirlRequest = 0;
+        _swirlState = state;
+    }
+
+    protected function handleSwirlLoaded (evt :Event) :void
+    {
+        var swirlClip :MovieClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        _swirl = new Buttonizer(swirlClip);
+        _swirl.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
+                _view.swirlClicked(_swirlState);
+            });
+
+        _swirl.x =  -Content.SWIRL_OFFSET.x;
+        _swirl.y =  -Content.SWIRL_OFFSET.y;
+        addChild(_swirl);
+
+        _swirlHandler = new ClipHandler(swirlClip);
+
+        this.visible = false;
+
+        _done();
     }
 
     protected var _view :View;
@@ -141,7 +122,6 @@ public class Swirl extends Sprite
     protected var _swirl :Sprite;
     protected var _swirlHandler :ClipHandler;
     protected var _swirlState :int;
-    protected var _swirlRequest :int;
 
     protected static const log :Log = Log.getLog(Swirl);
 
