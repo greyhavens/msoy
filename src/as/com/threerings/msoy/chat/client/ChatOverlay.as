@@ -279,6 +279,15 @@ public class ChatOverlay
         return displayMessageNow(msg);
     }
 
+    /**
+     * Remove a glyph from the overlay.
+     */
+    public function removeGlyph (glyph :ChatGlyph) :void
+    {
+        _overlay.removeChild(glyph);
+        glyph.wasRemoved();
+    }
+
     protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
     {
         switch (event.name) {
@@ -819,19 +828,9 @@ public class ChatOverlay
     {
         ArrayUtil.removeFirst(_subtitles, glyph);
         // the glyph may have already been removed, but still expire
-        // TODO: possibly fix that, so that a removed glyph is 
         if (glyph.parent == _overlay) {
             removeGlyph(glyph);
         }
-    }
-
-    /**
-     * Remove a glyph from the overlay.
-     */
-    protected function removeGlyph (glyph :ChatGlyph) :void
-    {
-        _overlay.removeChild(glyph);
-        glyph.wasRemoved();
     }
 
     /**

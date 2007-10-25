@@ -3,26 +3,19 @@
 
 package com.threerings.msoy.chat.client {
 
-import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
-import flash.display.Sprite;
 
-import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
 import mx.core.Container;
-import mx.core.IFlexDisplayObject;
 
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.MessageBundle;
+import com.threerings.util.HashMap;
 import com.threerings.util.Name;
 
 import com.threerings.flash.ColorUtil;
-import com.threerings.flash.DisplayUtil;
 
 import com.threerings.msoy.client.WorldClient;
 import com.threerings.msoy.client.WorldContext;
@@ -77,6 +70,14 @@ public class ComicOverlay extends ChatOverlay
         clearBubbles(true);
     }
 
+    public function speakerMoved (speaker :Name, bounds :Rectangle) :void
+    {
+        var cloud :BubbleCloud = _bubbles.get(speaker);
+        if (cloud != null) {
+            cloud.setSpeakerLocation(bounds);
+        }
+    }
+
     override protected function createStandardFormats () :void
     {
         super.createStandardFormats();
@@ -99,11 +100,11 @@ public class ComicOverlay extends ChatOverlay
      */
     protected function clearBubbles (all :Boolean) :void
     {
-        for (var ii :int = _bubbles.length - 1; ii >= 0; ii--) {
-            var rec :ChatGlyph = (_bubbles[ii] as ChatGlyph);
-            if (all || isPlaceOrientedType(rec.getType())) {
-                _bubbles.splice(ii, 1);
-                removeGlyph(rec);
+        for each (var cloud :BubbleCloud in _bubbles.values()) {
+            for each (var bubble :BubbleGlyph in cloud.bubbles) {
+                if (all || isPlaceOrientedType(bubble.getType())) {
+                    cloud.removeBubble(bubble);
+                }
             }
         }
     }
@@ -122,7 +123,7 @@ public class ComicOverlay extends ChatOverlay
         }
         // only show if the message was received since we last entered a new place, or if it's
         // place-less chat.
-        return ((index >= _newPlacePoint) || (! isPlaceOrientedType(getType(msg, false))));
+        return ((index >= _newPlacePoint) || (!isPlaceOrientedType(getType(msg, false))));
     }
 
     override protected function isApprovedLocalType (localtype :String) :Boolean
@@ -158,12 +159,12 @@ public class ComicOverlay extends ChatOverlay
         case ATTENTION:
         case BROADCAST:
             if (createBubble(msg, type, null, null)) {
-                return true; // EXIT;
+                return true;
             }
             // if the bubble didn't fit (unlikely), make it a subtitle
             break;
 
-        case PLACE: {
+        case PLACE: 
             var umsg :UserMessage = (msg as UserMessage);
             var speaker :Name = umsg.getSpeakerDisplayName();
             var speakerBounds :Rectangle = _provider.getSpeakerBounds(speaker);
@@ -173,68 +174,16 @@ public class ComicOverlay extends ChatOverlay
                 return false;
             }
 
-//TODO: bubble continuations
-//            // try to add all the text as a bubble, but if it doesn't
-//            // fit, add some of it and 'continue' the rest in a subtitle.
-//            var leftover :String = text;
-//            for (var ii :int = 1; ii < 7; ii++) {
-//                var bubtext :String = splitNear(text, text.length() / ii);
-//                if (createBubble(type, umsg.timestamp,
-//                                 bubtext + ((ii > 1) ? "..." : ""),
-//                                 umsg.speaker, speakerloc)) {
-//
-//                    leftover = text.substring(bubtext.length());
-//                    break;
-//                }
-//            }
-//
-//            if (leftover.length() > 0 && !isHistoryMode()) {
-//                var ltext :String = MessageBundle.tcompose(
-//                    "m.continue_format", umsg.speaker);
-//                ltext = xlate(ltext) + " \"" + leftover + "\"";
-//                addSubtitle(createSubtitle(CONTINUATION,
-//                    msg.timestamp, null, 0, ltext, true));
-//            }
-
-            // TODO: adapt above code, with formats
             if (createBubble(msg, type, speaker, speakerBounds)) {
-                return true; // EXIT
+                return true;
             }
-            // else: turn into subtitle
-            // TODO: continuations...
-            }
+            // if the bubble didn't fit (unlikely), make it a subtitle
             break;
         }
 
         // show the message as a subtitle instead
         return super.displayTypedMessageNow(msg, type);
     }
-
-//    /**
-//     * Split the text at the space nearest the specified location.
-//     */
-//    protected function splitNear (text :String, pos :int) :String
-//    {
-//        if (pos >= text.length()) {
-//            return text;
-//        }
-//
-//        var forward :int = text.indexOf(" ", pos);
-//        var backward :int = text.lastIndexOf(" ", pos);
-//
-//        int newpos = (Math.abs(pos - forward) < Math.abs(pos - backward))
-//            ? forward : backward;
-//
-//        // if we couldn't find a decent place to split, just do it wherever
-//        if (newpos == -1) {
-//            newpos = pos;
-//
-//        } else {
-//            // actually split the space onto the first part
-//            newpos++;
-//        }
-//        return text.substring(0, newpos);
-//    }
 
     /**
      * Create a chat bubble with the specified type and text.
@@ -252,98 +201,21 @@ public class ComicOverlay extends ChatOverlay
         var bubble :BubbleGlyph =
             new BubbleGlyph(this, type, lifetime, speaker, _defaultBubbleFmt, texts);
 
-        // get the size of the new bubble
-        var r :Rectangle = getBubbleSize(type, bubble.getTextSize());
-
-        // get the user's old bubbles.
-        var oldbubs :Array = getAndExpireBubbles(speaker);
-        var numold :int = oldbubs.length;
-
-        var placer :Rectangle;
-        var bigR :Rectangle = null;
-        if (numold == 0) {
-            placer = r.clone();
-            positionRectIdeally(placer, type, speakerBounds);
-
-        } else {
-            // get a big rectangle encompassing the old and new
-            bigR = getRectWithOlds(r, oldbubs);
-            placer = bigR.clone();
-
-            positionRectIdeally(placer, type, speakerBounds);
-            // we actually try to place midway between ideal and old and adjust up half the height
-            // of the new boy
-            placer.x = (placer.x + bigR.x) / 2;
-            placer.y = (placer.y + (bigR.y - (r.height / 2))) / 2;
+        var cloud :BubbleCloud = _bubbles.get(speaker);
+        if (cloud == null) {
+            cloud = new BubbleCloud(this, MAX_BUBBLES_PER_USER, speakerBounds);
+            _bubbles.put(speaker, cloud);
         }
-
-        // then look for a place nearby where it will fit (making sure we only put it in the area
-        // above the subtitles)
-        var vbounds :Rectangle = new Rectangle(0, 0, _target.width, _targetBounds.y);
-        if (!DisplayUtil.positionRect(placer, vbounds, getAvoidList(speaker))) {
-            // we couldn't fit the bubble!
-            return false;
-        }
-
-        // now 'placer' is positioned reasonably.
-        if (0 == numold) {
-            bubble.x = placer.x;
-            bubble.y = placer.y;
-
-        } else {
-            var dx :int = placer.x - bigR.x;
-            var dy :int = placer.y - bigR.y;
-            for (ii = 0; ii < numold; ii++) {
-                var bub :BubbleGlyph = (oldbubs[ii] as BubbleGlyph);
-                bub.removeTail();
-                var ob :Rectangle = bub.getBubbleBounds();
-                // recenter the translated bub within placer's width..
-                var xadjust :int = dx - (ob.x - bigR.x) + (placer.width - ob.width) / 2;
-                bub.x += xadjust;
-                bub.y += dy;
-            }
-
-            // and position 'r' in the right place relative to 'placer'
-            bubble.x = placer.x + (placer.width - r.width) / 2,
-            bubble.y = placer.y + placer.height - r.height;
-        }
-
-        // now add it
-        _bubbles.push(bubble);
+        cloud.addBubble(bubble);
         _overlay.addChild(bubble);
 
-        // and we need to dirty all the bubbles because they'll all be painted in slightly
-        // different colors
-        var numbubs :int = _bubbles.length;
-        for (ii = 0; ii < numbubs; ii++) {
-            (_bubbles[ii] as BubbleGlyph).setAgeLevel(this, numbubs - ii - 1);
-        }
+        // TODO: dirty the old bubbles
+//        var numbubs :int = _bubbles.length;
+//        for (ii = 0; ii < numbubs; ii++) {
+//            (_bubbles[ii] as BubbleGlyph).setAgeLevel(this, numbubs - ii - 1);
+//        }
 
-        return true; // success!
-    }
-
-    /**
-     * Calculate the size of the chat bubble based on the dimensions of the label and the type of
-     * chat. It will be turned into a shape later, but we manipulate it for a while as just a
-     * rectangle (which are easier to move about and do intersection tests with, and besides the
-     * Shape interface has no way to translate).
-     */
-    protected function getBubbleSize (type :int, r :Rectangle) :Rectangle
-    {
-        switch (modeOf(type)) {
-        case SHOUT:
-        case THINK:
-        case EMOTE:
-            // extra room for these two monsters
-            r.inflate(PAD * 2, PAD * 2);
-            break;
-
-        default:
-            r.inflate(PAD, PAD);
-            break;
-        }
-
-        return r;
+        return true;
     }
 
     /**
@@ -527,163 +399,15 @@ public class ComicOverlay extends ChatOverlay
         }
     }
 
-    /**
-     * Position the rectangle in its ideal location given the type and speaker positon (which may
-     * be null).
-     */
-    protected function positionRectIdeally (r :Rectangle, type :int, speaker :Rectangle) :void
-    {
-        if (speaker != null) {
-            // center horizontally at the top of the rectangle (it'll be moved)
-            r.y = speaker.y;
-            r.x = speaker.x + ((speaker.width - r.width) / 2);
-            return;
-        }
-
-        // otherwise we have different areas for different types
-        switch (placeOf(type)) {
-        case INFO:
-        case FEEDBACK:
-        case ATTENTION:
-        case BROADCAST:
-            // upper left
-            r.x = BUBBLE_SPACING;
-            r.y = BUBBLE_SPACING;
-            return;
-
-        case PLACE:
-            log.warning("Got to a place where I shouldn't get!");
-            break; // fall through
-        }
-
-        // put it in the center..
-        log.debug("Unhandled chat type in getLocation() [type=" + type + "].");
-        r.x = (_target.width - r.width) / 2;
-        r.y = (_target.height - r.height) / 2;
-    }
-
-    /**
-     * Get a rectangle based on the old bubbles, but with room for the new one.
-     */
-    protected function getRectWithOlds (r :Rectangle, oldbubs :Array) :Rectangle
-    {
-        var n :int = oldbubs.length;
-        // if no old bubs, just return the new one.
-        if (n == 0) {
-            return r;
-        }
-
-        // otherwise, encompass all the oldies
-        var bigR :Rectangle = null;
-        for (var ii :int = 0; ii < n; ii++) {
-            var bub :BubbleGlyph = (oldbubs[ii] as BubbleGlyph);
-            if (ii == 0) {
-                bigR = bub.getBubbleBounds();
-            } else {
-                bigR = bigR.union(bub.getBubbleBounds());
-            }
-        }
-
-        // and add space for the new boy
-        bigR.width = Math.max(bigR.width, r.width);
-        bigR.height += r.height;
-
-        return bigR;
-    }
-
-    /**
-     * Expire a bubble, if necessary, and return the old bubbles for the specified speaker.
-     */
-    protected function getAndExpireBubbles (speaker :Name) :Array
-    {
-        var num :int = _bubbles.length;
-        var bub :BubbleGlyph;
-
-        // first, get all the old bubbles belonging to the user
-        var oldbubs :Array = [];
-        if (speaker != null) {
-            for (var ii :int = 0; ii < num; ii++) {
-                bub = (_bubbles[ii] as BubbleGlyph);
-                if (bub.isSpeaker(speaker)) {
-                    oldbubs.push(bub);
-                }
-            }
-        }
-
-        // see if we need to expire this user's oldest bubble
-        if (oldbubs.length >= MAX_BUBBLES_PER_USER) {
-            bub = (oldbubs.shift() as BubbleGlyph);
-            ArrayUtil.removeFirst(_bubbles, bub);
-            removeGlyph(bub);
-
-            // or some other old bubble
-        } else if (num >= MAX_BUBBLES) {
-            removeGlyph(_bubbles.shift() as BubbleGlyph);
-        }
-
-        // return the speaker's old bubbles
-        return oldbubs;
-    }
-
     override internal function glyphExpired (glyph :ChatGlyph) :void
     {
-        ArrayUtil.removeFirst(_bubbles, glyph);
+        if (glyph is BubbleGlyph) {
+            var bubble :BubbleGlyph = glyph as BubbleGlyph;
+            var cloud :BubbleCloud = _bubbles.get(bubble.getSpeaker());
+            cloud.removeBubble(bubble);
+        }
         super.glyphExpired(glyph);
     }
-
-    /**
-     * Return a list of rectangular areas that we should avoid while laying out a bubble for the
-     * specified speaker.
-     */
-    protected function getAvoidList (speaker :Name) :Array
-    {
-        var avoid :Array = [];
-        if (_provider == null) {
-            return avoid;
-        }
-        var r :Rectangle;
-
-        // for now we don't accept low-priority avoids
-        _provider.getAvoidables(speaker, avoid, null);
-
-        // shift those by any offset on our overlay
-        var offset :Point = _overlay.localToGlobal(new Point(0, 0));
-        offset.x *= -1;
-        offset.y *= -1;
-        for each (r in avoid) {
-            r.offsetPoint(offset);
-        }
-
-        // add the existing chatbub non-tail areas from other speakers
-        for each (var bub :BubbleGlyph in _bubbles) {
-            if (!bub.isSpeaker(speaker)) {
-                avoid.push(bub.getBubbleTerritory());
-            }
-        }
-
-//        if (_avoids == null) {
-//            _avoids = new Sprite();
-//            _overlay.addChild(_avoids);
-//        }
-//
-//        while (_avoids.numChildren > 0) {
-//            _avoids.removeChildAt(0);
-//        }
-//
-//        for each (r in avoid) {
-//            var s :Sprite = new Sprite();
-//            s.graphics.lineStyle(1, 0xFF0000);
-//            s.graphics.drawRect(0, 0, r.width, r.height);
-//            s.x = r.x;
-//            s.y = r.y;
-//            _avoids.addChild(s);
-//        }
-//
-        return avoid;
-    }
-
-// DEBUGGING: drawing red boxes around the avoid areas
-//    protected var _avoids :Sprite;
 
     // documentation inherited
     override protected function getDisplayDurationIndex () :int
@@ -707,49 +431,96 @@ public class ComicOverlay extends ChatOverlay
     /** The place in our history at which we last entered a new place. */
     protected var _newPlacePoint :int = 0;
 
-    /** The currently displayed bubble areas. */
-    protected var _bubbles :Array = [];
+    /** Maps speaker name to BubbleCloud */
+    protected var _bubbles :HashMap = new HashMap();
+
+    /** The maximum number of bubbles to show per user. */
+    protected static const MAX_BUBBLES_PER_USER :int = 3;
+}
+}
+
+import flash.geom.Rectangle;
+
+import com.threerings.msoy.chat.client.BubbleGlyph;
+import com.threerings.msoy.chat.client.ComicOverlay;
+
+/**
+ * A class to keep track of the bubbles spoken by a speaker.  When the speaker moves, this class
+ * is told the new location so that it can layout its bubbles correctly.  This may get nixed or 
+ * fancied up on the next pass of bubble layout...
+ */
+class BubbleCloud 
+{
+    public function BubbleCloud (overlay :ComicOverlay, maxBubbles :int, bounds :Rectangle) 
+    {
+        _overlay = overlay;
+        _maxBubbles = maxBubbles;
+        _location = bounds;
+    }
+
+    public function get bubbles () :Array 
+    {
+        return _bubbles;
+    }
+
+    public function setSpeakerLocation (bounds :Rectangle) :void
+    {
+        _location = bounds;
+        if (bounds == null) {
+            // TODO: bring back in the nifty DisplayUtil stuff for laying out the bubbles in the 
+            // upper left.  BubbleClouds with null speaker bounds are those not being shown in 
+            // PLACE (non speak, think, emote, etc), and aren't being placed over an ActorSprite.
+            var yOffset :int = BUBBLE_SPACING;
+            for each (var bubble :BubbleGlyph in _bubbles) {
+                bubble.x = BUBBLE_SPACING;
+                bubble.y = yOffset;
+                var bubBounds :Rectangle = bubble.getBubbleBounds();
+                yOffset += bubBounds.height;
+            }
+        } else {
+            var centerX :Number = bounds.x + bounds.width / 2;
+            yOffset = bounds.y - BUBBLE_SPACING; 
+            for each (bubble in _bubbles) {
+                bubBounds = bubble.getBubbleBounds();
+                yOffset -= bubBounds.height;
+                bubble.x = centerX - bubBounds.width / 2;
+                bubble.y = yOffset;
+            }
+        }
+    }
+
+    public function addBubble (bubble :BubbleGlyph) :void
+    {
+        _bubbles.unshift(bubble);
+        while (_bubbles.length > _maxBubbles) {
+            _overlay.removeGlyph(_bubbles.pop() as BubbleGlyph);
+        }
+        for (var ii :int = 1; ii < _bubbles.length; ii++) {
+            (_bubbles[ii] as BubbleGlyph).removeTail();
+        }
+        // refresh the bubble display
+        setSpeakerLocation(_location);
+    }
+
+    public function removeBubble (bubble :BubbleGlyph) :void
+    {
+        for (var ii :int = 0; ii < _bubbles.length; ii++) {
+            if (_bubbles[ii] == bubble) {
+                _bubbles.splice(ii, 1);
+                // refresh the bubble display
+                setSpeakerLocation(_location);
+                break;
+            }
+        }
+        // make sure the bubble gets removed from the overlay, whether we found it here or not.
+        _overlay.removeGlyph(bubble);
+    }
 
     /** The space we force between adjacent bubbles. */
     protected static const BUBBLE_SPACING :int = 15;
 
-    /** The distance to stay from the speaker. */
-    protected static const SPEAKER_DISTANCE :int = 20;
-
-    /** The width of the end of the tail. */
-    protected static const TAIL_WIDTH :int = 12;
-
-    /** The maximum number of bubbles to show. */
-    protected static const MAX_BUBBLES :int = 8;
-
-    /** The maximum number of bubbles to show per user. */
-    protected static const MAX_BUBBLES_PER_USER :int = 3;
-
-    /** The background colors to use when drawing bubbles. */
-    protected static const BACKGROUNDS :Array = new Array(MAX_BUBBLES);
-
-    private static function staticInit () :void
-    {
-        var yellowy :uint = 0xdddd6a;
-        var blackish :uint = 0xcccccc;
-
-        var steps :Number = (MAX_BUBBLES - 1) / 2;
-        var ii :int;
-        for (ii = 0; ii < MAX_BUBBLES / 2; ii++) {
-            BACKGROUNDS[ii] = ColorUtil.blend(0xFFFFFF, yellowy,
-                (steps - ii) / steps);
-        }
-        for (ii = MAX_BUBBLES / 2; ii < MAX_BUBBLES; ii++) {
-            BACKGROUNDS[ii] = ColorUtil.blend(blackish, yellowy,
-                (ii - steps) / steps);
-        }
-    }
-    staticInit();
-
-//    [Embed(source="../../../../../../../rsrc/media/skins/bubble.png",
-//        scaleGridTop="7", scaleGridBottom="32", scaleGridLeft="9", scaleGridRight="73")]
-//    protected static const BUB :Class;
-//    [Embed(source="../../../../../../../rsrc/media/skins/bubble.swf")]
-//    protected static const BUB :Class;
-}
+    protected var _bubbles :Array = [];
+    protected var _location :Rectangle;
+    protected var _overlay :ComicOverlay;
+    protected var _maxBubbles :int;
 }

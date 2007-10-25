@@ -61,18 +61,14 @@ public class BubbleGlyph extends ChatGlyph
         return new Rectangle(int(x), int(y), int(_outline.width), int(_outline.height));
     }
 
-    /**
-     * Get the bounding box of the bubble, minus any tail.
-     */
-    public function getBubbleTerritory () :Rectangle
-    {
-        // TODO
-        return getBubbleBounds();
-    }
-
     public function isSpeaker (player :Name) :Boolean
     {
         return (_speaker != null) && _speaker.equals(player);
+    }
+
+    public function getSpeaker () :Name
+    {
+        return _speaker;
     }
 
     public function removeTail () :void

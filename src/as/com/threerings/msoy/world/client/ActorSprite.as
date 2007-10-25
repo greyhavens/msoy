@@ -26,6 +26,8 @@ import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.chat.client.ComicOverlay;
+
 import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -176,6 +178,15 @@ public class ActorSprite extends MsoySprite
     public function getMoveSpeed () :Number
     {
         return Math.max(MIN_MOVE_SPEED, _moveSpeed * _scale);
+    }
+
+    override public function setLocation (newLoc :Object) :void
+    {
+        super.setLocation(newLoc);
+
+        if (_chatOverlay != null) {
+            _chatOverlay.speakerMoved(_occInfo.username, getStageRect());
+        }
     }
 
     override public function getDesc () :String
@@ -436,6 +447,11 @@ public class ActorSprite extends MsoySprite
         // always call super, but hover is only true if we hit no decorations
         var superTip :String = super.setHovered((_hoverDecoration == null) && hovered);
         return (_hoverDecoration == null) ? superTip : decorTip;
+    }
+
+    public function setChatOverlay (chatOverlay :ComicOverlay) :void
+    {
+        _chatOverlay = chatOverlay;
     }
 
     override protected function setGlow (glow :Boolean) :void
@@ -742,6 +758,9 @@ public class ActorSprite extends MsoySprite
 
     /** A decoration added when we've idled out. */
     protected var _idleIcon :DisplayObject;
+
+    /** The chat overlay that we notify when we change position. */
+    protected var _chatOverlay :ComicOverlay;
 
     /** Display objects to be shown above the name for this actor,
      * configured by external callers. */

@@ -433,9 +433,6 @@ public class RoomView extends AbstractRoomView
     public function getSpeakerBounds (speaker :Name) :Rectangle
     {
         var actor :ActorSprite = getActorByName(speaker);
-        // TODO: the previous getChatInfo() method call on ActorSprite was calling 
-        // getStageRect(false), but the bubbles really should avoid things like the name and 
-        // additional decorations on the avatar... 
         return (actor == null) ? null : actor.getStageRect();
     }
 
@@ -749,6 +746,7 @@ public class RoomView extends AbstractRoomView
 
         if (actor == null) {
             actor = _ctx.getMediaDirector().getActor(occInfo);
+            actor.setChatOverlay(chatOverlay);
             _actors.put(bodyOid, actor);
             addChildAt(actor, 1);
             actor.setEntering(loc);
@@ -762,6 +760,7 @@ public class RoomView extends AbstractRoomView
         } else {
             // place the sprite back into the set of active sprites
             _actors.put(bodyOid, actor);
+            actor.setChatOverlay(chatOverlay);
             actor.moveTo(loc, _scene);
         }
 
