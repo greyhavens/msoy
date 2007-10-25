@@ -77,8 +77,9 @@ public class BubbleGlyph extends ChatGlyph
             _outline.graphics, _type, _txt.width, _txt.height, false);
     }
 
-    public function setAgeLevel (overlay :ComicOverlay, ageLevel :int) :void
+    public function setAgeLevel (ageLevel :int) :void
     {
+        ageLevel = Math.min(ageLevel, 7);
         // TODO: if we keep, 7 is magic number from ComicOverlay.
         alpha = .5 + (.5 * ((7 - ageLevel) / 7));
     }

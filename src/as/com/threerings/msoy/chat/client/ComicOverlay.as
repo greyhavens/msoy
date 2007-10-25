@@ -195,7 +195,6 @@ public class ComicOverlay extends ChatOverlay
     protected function createBubble (
         msg :ChatMessage, type :int, speaker :Name, speakerBounds :Rectangle) :Boolean
     {
-        var ii :int;
         var texts :Array = formatMessage(msg, type, false, _userBubbleFmt);
         var lifetime :int = getLifetime(msg, true);
         var bubble :BubbleGlyph =
@@ -209,11 +208,30 @@ public class ComicOverlay extends ChatOverlay
         cloud.addBubble(bubble);
         _overlay.addChild(bubble);
 
-        // TODO: dirty the old bubbles
-//        var numbubs :int = _bubbles.length;
-//        for (ii = 0; ii < numbubs; ii++) {
-//            (_bubbles[ii] as BubbleGlyph).setAgeLevel(this, numbubs - ii - 1);
-//        }
+        // TODO: this is a hack and illustrates why my BubbleCloud approach may not be the best 
+        // (it'll probably only get worse when we start trying to show the maximal bubbleage 
+        // reasonable at once...).  This could be alleviated by just keeping an array of all the 
+        // bubbles solely for this reason, but we'll see what we end up doing with bubble placement.
+        var allBubbles :Array = [];
+        for each (cloud in _bubbles.values()) {
+            allBubbles = allBubbles.concat(cloud.bubbles);
+        }
+        allBubbles.sort(function (bubA :BubbleGlyph, bubB :BubbleGlyph) :int {
+            if (bubA.parent != _overlay) {
+                if (bubB.parent != _overlay) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            } else if (bubB.parent != _overlay) {
+                return -1;
+            }
+
+            return _overlay.getChildIndex(bubA) > _overlay.getChildIndex(bubB) ? -1 : 1;
+        });
+        for (var ii :int = 0; ii < allBubbles.length; ii++) {
+            (allBubbles[ii] as BubbleGlyph).setAgeLevel(ii);
+        }
 
         return true;
     }
