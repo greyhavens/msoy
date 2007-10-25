@@ -465,7 +465,7 @@ public class ComicOverlay extends ChatOverlay
 
 import flash.geom.Rectangle;
 
-import com.threerings.util.DisplayUtil;
+import com.threerings.flash.DisplayUtil;
 
 import com.threerings.msoy.chat.client.BubbleGlyph;
 import com.threerings.msoy.chat.client.ComicOverlay;
