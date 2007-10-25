@@ -125,6 +125,20 @@ public class GameDirector extends BasicDirector
         LobbyGameLiaison(_liaison).joinPlayerTable(memberId);
     }
 
+    /**
+     * Called when we first login and then every time we leave a game or a lobby;
+     * checks to see if we have a persistent AVRG we should (re-)activate.
+     */
+    public function checkMemberAVRGame () :void
+    {
+        if (_liaison == null) {
+            var memberObj :MemberObject = _mctx.getMemberObject();
+            if (memberObj.avrGameId > 0) {
+                _liaison = new AVRGameLiaison(_mctx, memberObj.avrGameId);
+            }
+        }
+    }
+
     public function activateAVRGame (gameId :int) :void
     {
         if (_liaison != null) {
@@ -237,6 +251,10 @@ public class GameDirector extends BasicDirector
         // another one was active.
         if (_liaison == liaison) {
             _liaison = null;
+            // if this was a lobbied game, see about restarting the AVRG
+            if (liaison is LobbyGameLiaison) {
+                checkMemberAVRGame();
+            }
         }
     }
 
