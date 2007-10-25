@@ -76,7 +76,7 @@ public class ComicOverlay extends ChatOverlay
         var cloud :BubbleCloud = _bubbles.get(speaker);
         if (cloud != null) {
             // the bounds are in stage coordinates
-            var local :Point = _overlay.globalToLocal(new Point(bounds.x, bounds.y));
+            var local :Point = _overlay.globalToLocal(bounds.topLeft);
             bounds.x = local.x;
             bounds.y = local.y;
             cloud.setSpeakerLocation(bounds);
@@ -209,8 +209,7 @@ public class ComicOverlay extends ChatOverlay
         if (cloud == null) {
             if (speakerBounds != null) {
                 // the bounds given to this function are in stage coordinates
-                var local :Point = 
-                    _overlay.globalToLocal(new Point(speakerBounds.x, speakerBounds.y));
+                var local :Point = _overlay.globalToLocal(speakerBounds.topLeft);
                 speakerBounds.x = local.x;
                 speakerBounds.y = local.y;
             }
