@@ -23,11 +23,12 @@ import com.threerings.msoy.web.data.Invitation;
 
 import client.util.BorderedDialog;
 import client.util.BorderedPopup;
+import client.util.FlashClients;
 import client.util.MsoyUI;
 
 /**
  * Display a dialog allowing users to send out the invites that have been granted to them, as well
- * as view pending invites they've sent in the past. 
+ * as view pending invites they've sent in the past.
  */
 public class SendInvitesDialog extends BorderedDialog
 {
@@ -49,11 +50,11 @@ public class SendInvitesDialog extends BorderedDialog
         formatter.setStyleName(row, 0, "Header");
         formatter.setColSpan(row, 0, 3);
         contents.setText(row++, 0, CShell.cmsgs.sendInvitesSendHeader(
-            "" + invites.availableInvitations));    
+            "" + invites.availableInvitations));
         if (_invites.availableInvitations > 0) {
             formatter.setStyleName(row, 0, "Tip");
             formatter.setColSpan(row, 0, 3);
-            contents.setText(row++, 0, CShell.cmsgs.sendInvitesSendTip( 
+            contents.setText(row++, 0, CShell.cmsgs.sendInvitesSendTip(
                 "" + _invites.availableInvitations));
 
             formatter.setVerticalAlignment(row, 0, HasVerticalAlignment.ALIGN_TOP);
@@ -68,7 +69,7 @@ public class SendInvitesDialog extends BorderedDialog
             _customMessage.setCharacterWidth(80);
             _customMessage.setVisibleLines(6);
             _customMessage.setText(CShell.cmsgs.sendInvitesCustomDefault());
-            contents.setWidget(row++, 2, new Button(CShell.cmsgs.sendInvitesSendEmail(), 
+            contents.setWidget(row++, 2, new Button(CShell.cmsgs.sendInvitesSendEmail(),
                 new ClickListener() {
                     public void onClick (Widget widget) {
                         if ("".equals(_emailAddresses.getText())) {
@@ -91,7 +92,7 @@ public class SendInvitesDialog extends BorderedDialog
             formatter.setStyleName(row, 0, "Tip");
             formatter.setColSpan(row, 0, 3);
             contents.setText(row++, 0, CShell.cmsgs.sendInvitesPendingTip());
-            
+
             int col = 0;
 
             Iterator pendingIter = _invites.pendingInvitations.iterator();
@@ -126,7 +127,7 @@ public class SendInvitesDialog extends BorderedDialog
         }));
     }
 
-    protected void checkAndSend () 
+    protected void checkAndSend ()
     {
         final ArrayList validAddresses = new ArrayList();
         String addresses[] = _emailAddresses.getText().split("\n");
@@ -147,13 +148,14 @@ public class SendInvitesDialog extends BorderedDialog
         if (validAddresses.size() == addresses.length) {
             if (validAddresses.size() > _invites.availableInvitations) {
                 MsoyUI.error(CShell.cmsgs.sendInvitesTooMany(
-                                 "" + validAddresses.size(), 
+                                 "" + validAddresses.size(),
                                  "" + _invites.availableInvitations));
 
             } else {
                 CShell.membersvc.sendInvites(CShell.ident, validAddresses, _customMessage.getText(),
                     new AsyncCallback () {
                         public void onSuccess (Object result) {
+                            FlashClients.tutorialEvent("friendInvited");
                             new ResultsPopup(validAddresses, (InvitationResults)result).show();
                             SendInvitesDialog.this.hide();
                         }
@@ -171,7 +173,7 @@ public class SendInvitesDialog extends BorderedDialog
         return new FlexTable();
     }
 
-    protected class ResultsPopup extends BorderedPopup 
+    protected class ResultsPopup extends BorderedPopup
     {
         public ResultsPopup (ArrayList addrs, InvitationResults invRes)
         {
@@ -191,7 +193,7 @@ public class SendInvitesDialog extends BorderedDialog
                 String addr = (String)addrs.get(ii);
                 if (invRes.results[ii] == InvitationResults.SUCCESS) { // null == null
                     contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsSuccessful(addr));
-                } else if (invRes.results[ii].startsWith("e.")) { 
+                } else if (invRes.results[ii].startsWith("e.")) {
                     contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsFailed(
                                          addr, CShell.serverError(invRes.results[ii])));
                 } else {
