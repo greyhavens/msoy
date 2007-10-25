@@ -102,13 +102,8 @@ public class View extends Sprite
     {
         // if all initializations are complete, actually add the bits
         if (_stageBounds && _swirl.isReady() && _textBox.isReady()) {
-            _swirl.visible = true;
-            _swirl.addEventListener(MouseEvent.CLICK, swirlClicked);
             this.addChild(_swirl);
-
             this.addChild(_textBox);
-            _textBox.x = 150;
-            _textBox.y = 100;
 
             _swirl.viewIsReady();
 

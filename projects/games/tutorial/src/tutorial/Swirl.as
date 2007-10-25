@@ -31,7 +31,7 @@ public class Swirl extends Sprite
 
     public function isReady () :Boolean
     {
-        return !! _swirl;
+        return _swirl != null;
     }
 
     public function unload () :void
@@ -73,12 +73,13 @@ public class Swirl extends Sprite
 
     public function viewIsReady () :void
     {
+        this.visible = true;
         maybeTransition();
     }
 
     protected function maybeTransition () :void
     {
-        if (!(_swirl && _swirl.visible && _swirlRequest)) {
+        if (!(this.visible && _swirlRequest)) {
             return;
         }
         var first :String = null;

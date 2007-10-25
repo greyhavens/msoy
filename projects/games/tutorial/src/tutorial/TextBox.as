@@ -63,6 +63,8 @@ public class TextBox extends Sprite
 
         // we start off invisible
         this.visible = false;
+        this.x = 150;
+        this.y = 100;
     }
 
     public function unload () :void
@@ -96,7 +98,7 @@ public class TextBox extends Sprite
 
     public function isReady () :Boolean
     {
-        return !! _buttons;
+        return _buttons != null;
     }
 
     public function newBox (text :String) :TextField
