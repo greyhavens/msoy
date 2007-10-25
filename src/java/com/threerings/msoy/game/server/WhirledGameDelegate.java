@@ -61,12 +61,15 @@ import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
+import com.threerings.msoy.server.MsoyServer;
+
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.MsoyGameServer;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
+import com.threerings.msoy.person.util.FeedMessageType;
 
 import static com.threerings.msoy.Log.log;
 
@@ -183,6 +186,15 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         MsoyGameServer.invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
             public void invokePersistent () throws PersistenceException {
                 MsoyGameServer.gameReg.getTrophyRepository().storeTrophy(trophy);
+
+                // publish the trophy earning to the member's feed, but don't let it
+                // throw a wrench in things if it fails
+                try {
+                    MsoyServer.feedRepo.publishMemberMessage(trophy.memberId,
+                        FeedMessageType.FRIEND_WON_TROPHY, trophy.name + "\t" + trophy.gameId);
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to publish feed [trophy=" + trophy + "].", pe);
+                }
             }
             public void handleSuccess () {
                 plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());

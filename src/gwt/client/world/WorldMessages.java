@@ -8,6 +8,14 @@ package client.world;
 public interface WorldMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "That address is not recognized.".
+   * 
+   * @return translated "That address is not recognized."
+   * @gwt.key unknownLocation
+   */
+  String unknownLocation();
+
+  /**
    * Translated "That member could not be found.".
    * 
    * @return translated "That member could not be found."
@@ -16,12 +24,12 @@ public interface WorldMessages extends com.google.gwt.i18n.client.Messages {
   String noSuchMember();
 
   /**
-   * Translated "That address is not recognized.".
+   * Translated "Neighborhood".
    * 
-   * @return translated "That address is not recognized."
-   * @gwt.key unknownLocation
+   * @return translated "Neighborhood"
+   * @gwt.key neighborhoodTitle
    */
-  String unknownLocation();
+  String neighborhoodTitle();
 
   /**
    * Translated "My Whirled".
@@ -32,14 +40,6 @@ public interface WorldMessages extends com.google.gwt.i18n.client.Messages {
   String hotSpotsTitle();
 
   /**
-   * Translated "That neighborhood could not be found.".
-   * 
-   * @return translated "That neighborhood could not be found."
-   * @gwt.key noSuchNeighborhood
-   */
-  String noSuchNeighborhood();
-
-  /**
    * Translated "temp".
    * 
    * @return translated "temp"
@@ -48,10 +48,10 @@ public interface WorldMessages extends com.google.gwt.i18n.client.Messages {
   String temp();
 
   /**
-   * Translated "Neighborhood".
+   * Translated "That neighborhood could not be found.".
    * 
-   * @return translated "Neighborhood"
-   * @gwt.key neighborhoodTitle
+   * @return translated "That neighborhood could not be found."
+   * @gwt.key noSuchNeighborhood
    */
-  String neighborhoodTitle();
+  String noSuchNeighborhood();
 }

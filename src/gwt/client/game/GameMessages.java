@@ -8,12 +8,36 @@ package client.game;
 public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "Earned on {0}".
+   * Translated "Top Rankings".
    * 
-   * @return translated "Earned on {0}"
-   * @gwt.key gameTrophyEarnedOn
+   * @return translated "Top Rankings"
+   * @gwt.key tabTopRankings
    */
-  String gameTrophyEarnedOn(String arg0);
+  String tabTopRankings();
+
+  /**
+   * Translated "You and your friends have no rankings in this game.".
+   * 
+   * @return translated "You and your friends have no rankings in this game."
+   * @gwt.key trpMyNoRankings
+   */
+  String trpMyNoRankings();
+
+  /**
+   * Translated "Multiplayer".
+   * 
+   * @return translated "Multiplayer"
+   * @gwt.key gdpMultiplayer
+   */
+  String gdpMultiplayer();
+
+  /**
+   * Translated "Top ranked players among you and your friends.".
+   * 
+   * @return translated "Top ranked players among you and your friends."
+   * @gwt.key trpSingleTip
+   */
+  String trpSingleTip();
 
   /**
    * Translated "Note: this is the in-development version of this game. Trophies awarded during this game will not be saved nor will ratings be updated.".
@@ -24,68 +48,12 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String gdpDevVersion();
 
   /**
-   * Translated "#{0}".
+   * Translated "My Rankings".
    * 
-   * @return translated "#{0}"
-   * @gwt.key gameRank
+   * @return translated "My Rankings"
+   * @gwt.key tabMyRankings
    */
-  String gameRank(String arg0);
-
-  /**
-   * Translated "Loading ratings...".
-   * 
-   * @return translated "Loading ratings..."
-   * @gwt.key trpLoading
-   */
-  String trpLoading();
-
-  /**
-   * Translated "Single Player".
-   * 
-   * @return translated "Single Player"
-   * @gwt.key trpSingleHeader
-   */
-  String trpSingleHeader();
-
-  /**
-   * Translated "Last abuse recalc:".
-   * 
-   * @return translated "Last abuse recalc:"
-   * @gwt.key gdpLastRecalc
-   */
-  String gdpLastRecalc();
-
-  /**
-   * Translated "Comments".
-   * 
-   * @return translated "Comments"
-   * @gwt.key tabComments
-   */
-  String tabComments();
-
-  /**
-   * Translated "No one is ranked in this game.".
-   * 
-   * @return translated "No one is ranked in this game."
-   * @gwt.key trpTopNoRankings
-   */
-  String trpTopNoRankings();
-
-  /**
-   * Translated "Rating".
-   * 
-   * @return translated "Rating"
-   * @gwt.key trpRatingHeader
-   */
-  String trpRatingHeader();
-
-  /**
-   * Translated "Average time:".
-   * 
-   * @return translated "Average time:"
-   * @gwt.key gdpAvgDuration
-   */
-  String gdpAvgDuration();
+  String tabMyRankings();
 
   /**
    * Translated "No trophies.".
@@ -96,52 +64,12 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String caseEmpty();
 
   /**
-   * Translated "This game awards no trophies.".
+   * Translated "#{0}".
    * 
-   * @return translated "This game awards no trophies."
-   * @gwt.key gameTrophyNoTrophies
+   * @return translated "#{0}"
+   * @gwt.key gameRank
    */
-  String gameTrophyNoTrophies();
-
-  /**
-   * Translated "Player minutes:".
-   * 
-   * @return translated "Player minutes:"
-   * @gwt.key gdpPlayerMinutes
-   */
-  String gdpPlayerMinutes();
-
-  /**
-   * Translated "Trophies".
-   * 
-   * @return translated "Trophies"
-   * @gwt.key tabTrophies
-   */
-  String tabTrophies();
-
-  /**
-   * Translated "Games played:".
-   * 
-   * @return translated "Games played:"
-   * @gwt.key gdpGamesPlayed
-   */
-  String gdpGamesPlayed();
-
-  /**
-   * Translated "Zoiks! Uknown game type {0}.".
-   * 
-   * @return translated "Zoiks! Uknown game type {0}."
-   * @gwt.key errUnknownGameType
-   */
-  String errUnknownGameType(String arg0);
-
-  /**
-   * Translated "Players:".
-   * 
-   * @return translated "Players:"
-   * @gwt.key gdpPlayers
-   */
-  String gdpPlayers();
+  String gameRank(String arg0);
 
   /**
    * Translated "Loading trophies...".
@@ -152,6 +80,38 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String caseLoading();
 
   /**
+   * Translated "or play with friends:".
+   * 
+   * @return translated "or play with friends:"
+   * @gwt.key gdpOrWithFriends
+   */
+  String gdpOrWithFriends();
+
+  /**
+   * Translated "Players:".
+   * 
+   * @return translated "Players:"
+   * @gwt.key gdpPlayers
+   */
+  String gdpPlayers();
+
+  /**
+   * Translated "Last abuse recalc:".
+   * 
+   * @return translated "Last abuse recalc:"
+   * @gwt.key gdpLastRecalc
+   */
+  String gdpLastRecalc();
+
+  /**
+   * Translated "Loading ratings...".
+   * 
+   * @return translated "Loading ratings..."
+   * @gwt.key trpLoading
+   */
+  String trpLoading();
+
+  /**
    * Translated "Login to see your rankings.".
    * 
    * @return translated "Login to see your rankings."
@@ -160,20 +120,44 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String trpLogin();
 
   /**
-   * Translated "My Rankings".
+   * Translated "Average time:".
    * 
-   * @return translated "My Rankings"
-   * @gwt.key tabMyRankings
+   * @return translated "Average time:"
+   * @gwt.key gdpAvgDuration
    */
-  String tabMyRankings();
+  String gdpAvgDuration();
 
   /**
-   * Translated "{0} to {1}".
+   * Translated "Trophies".
    * 
-   * @return translated "{0} to {1}"
-   * @gwt.key gdpPlayersFixed
+   * @return translated "Trophies"
+   * @gwt.key caseTitle
    */
-  String gdpPlayersFixed(String arg0,  String arg1);
+  String caseTitle();
+
+  /**
+   * Translated "Abuse factor:".
+   * 
+   * @return translated "Abuse factor:"
+   * @gwt.key gdpAbuseFactor
+   */
+  String gdpAbuseFactor();
+
+  /**
+   * Translated "Single Player".
+   * 
+   * @return translated "Single Player"
+   * @gwt.key trpSingleHeader
+   */
+  String trpSingleHeader();
+
+  /**
+   * Translated "Top ranked players in all the Whirled.".
+   * 
+   * @return translated "Top ranked players in all the Whirled."
+   * @gwt.key trpMultiTip
+   */
+  String trpMultiTip();
 
   /**
    * Translated "Game Detail".
@@ -187,25 +171,9 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Multiplayer".
    * 
    * @return translated "Multiplayer"
-   * @gwt.key gdpMultiplayer
-   */
-  String gdpMultiplayer();
-
-  /**
-   * Translated "Multiplayer".
-   * 
-   * @return translated "Multiplayer"
    * @gwt.key trpMultiHeader
    */
   String trpMultiHeader();
-
-  /**
-   * Translated "Trophies".
-   * 
-   * @return translated "Trophies"
-   * @gwt.key caseTitle
-   */
-  String caseTitle();
 
   /**
    * Translated "{0}+".
@@ -216,44 +184,28 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String gdpPlayersParty(String arg0);
 
   /**
-   * Translated "or play with friends:".
+   * Translated "You must earn this trophy in the game to see its description.".
    * 
-   * @return translated "or play with friends:"
-   * @gwt.key gdpOrWithFriends
+   * @return translated "You must earn this trophy in the game to see its description."
+   * @gwt.key gameTrophySecret
    */
-  String gdpOrWithFriends();
+  String gameTrophySecret();
 
   /**
-   * Translated "You and your friends have no rankings in this game.".
+   * Translated "Rating".
    * 
-   * @return translated "You and your friends have no rankings in this game."
-   * @gwt.key trpMyNoRankings
+   * @return translated "Rating"
+   * @gwt.key trpRatingHeader
    */
-  String trpMyNoRankings();
+  String trpRatingHeader();
 
   /**
-   * Translated "Loading trophies.".
+   * Translated "Games played:".
    * 
-   * @return translated "Loading trophies."
-   * @gwt.key gameTrophyLoading
+   * @return translated "Games played:"
+   * @gwt.key gdpGamesPlayed
    */
-  String gameTrophyLoading();
-
-  /**
-   * Translated "Top ranked players in all the Whirled.".
-   * 
-   * @return translated "Top ranked players in all the Whirled."
-   * @gwt.key trpMultiTip
-   */
-  String trpMultiTip();
-
-  /**
-   * Translated "Top ranked players among you and your friends.".
-   * 
-   * @return translated "Top ranked players among you and your friends."
-   * @gwt.key trpSingleTip
-   */
-  String trpSingleTip();
+  String gdpGamesPlayed();
 
   /**
    * Translated "Loading game details...".
@@ -264,26 +216,74 @@ public interface GameMessages extends com.google.gwt.i18n.client.Messages {
   String gdpLoading();
 
   /**
-   * Translated "Abuse factor:".
+   * Translated "This game awards no trophies.".
    * 
-   * @return translated "Abuse factor:"
-   * @gwt.key gdpAbuseFactor
+   * @return translated "This game awards no trophies."
+   * @gwt.key gameTrophyNoTrophies
    */
-  String gdpAbuseFactor();
+  String gameTrophyNoTrophies();
 
   /**
-   * Translated "Top Rankings".
+   * Translated "Earned on {0}".
    * 
-   * @return translated "Top Rankings"
-   * @gwt.key tabTopRankings
+   * @return translated "Earned on {0}"
+   * @gwt.key gameTrophyEarnedOn
    */
-  String tabTopRankings();
+  String gameTrophyEarnedOn(String arg0);
 
   /**
-   * Translated "You must earn this trophy in the game to see its description.".
+   * Translated "No one is ranked in this game.".
    * 
-   * @return translated "You must earn this trophy in the game to see its description."
-   * @gwt.key gameTrophySecret
+   * @return translated "No one is ranked in this game."
+   * @gwt.key trpTopNoRankings
    */
-  String gameTrophySecret();
+  String trpTopNoRankings();
+
+  /**
+   * Translated "Player minutes:".
+   * 
+   * @return translated "Player minutes:"
+   * @gwt.key gdpPlayerMinutes
+   */
+  String gdpPlayerMinutes();
+
+  /**
+   * Translated "Zoiks! Uknown game type {0}.".
+   * 
+   * @return translated "Zoiks! Uknown game type {0}."
+   * @gwt.key errUnknownGameType
+   */
+  String errUnknownGameType(String arg0);
+
+  /**
+   * Translated "{0} to {1}".
+   * 
+   * @return translated "{0} to {1}"
+   * @gwt.key gdpPlayersFixed
+   */
+  String gdpPlayersFixed(String arg0,  String arg1);
+
+  /**
+   * Translated "Comments".
+   * 
+   * @return translated "Comments"
+   * @gwt.key tabComments
+   */
+  String tabComments();
+
+  /**
+   * Translated "Loading trophies.".
+   * 
+   * @return translated "Loading trophies."
+   * @gwt.key gameTrophyLoading
+   */
+  String gameTrophyLoading();
+
+  /**
+   * Translated "Trophies".
+   * 
+   * @return translated "Trophies"
+   * @gwt.key tabTrophies
+   */
+  String tabTrophies();
 }

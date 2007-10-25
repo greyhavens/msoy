@@ -46,6 +46,8 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.person.util.FeedMessageType;
+
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.EffectData;
@@ -335,7 +337,7 @@ public class RoomManager extends SpotSceneManager
     {
         if (!((MsoyScene) _scene).canEnter((MemberObject)body)) {
             throw new InvocationException(RoomCodes.E_ENTRANCE_DENIED);
-        } 
+        }
     }
 
     /**
@@ -464,7 +466,7 @@ public class RoomManager extends SpotSceneManager
         _roomObj.addListener(_roomListener);
 
         // register ourselves in our peer object
-        MsoyServer.peerMan.roomDidStartup(_scene.getId(), _scene.getName(), 
+        MsoyServer.peerMan.roomDidStartup(_scene.getId(), _scene.getName(),
                                           ((MsoyScene) _scene).getAccessControl());
 
         // determine which (if any) items in this room have memories and load them up
@@ -586,7 +588,7 @@ public class RoomManager extends SpotSceneManager
                 // if the name or access controls were modified, we need to update our HostedPlace
                 if (msoyScene.getAccessControl() != up.accessControl ||
                     !msoyScene.getName().equals(up.name)) {
-                    MsoyServer.peerMan.roomUpdated(_scene.getId(), up.name, 
+                    MsoyServer.peerMan.roomUpdated(_scene.getId(), up.name,
                                                   up.accessControl);
                 }
             }
@@ -661,6 +663,9 @@ public class RoomManager extends SpotSceneManager
         if (!newIdents.isEmpty()) {
             resolveMemories(newIdents);
         }
+
+        // mark this room change in the member's feed
+        publishMemberUpdate(user.getMemberId());
     }
 
     /**
@@ -849,6 +854,25 @@ public class RoomManager extends SpotSceneManager
                 }
             });
         }
+    }
+
+    /**
+     * Publishes to the room owner's feed that they've updated the room.
+     */
+    protected void publishMemberUpdate (final int memberId)
+    {
+        MsoyServer.invoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                try {
+                    MsoyServer.feedRepo.publishMemberMessage(memberId,
+                            FeedMessageType.FRIEND_UPDATED_ROOM, String.valueOf(_scene.getId()));
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to publish feed [where=" + where() +
+                            ", memberId=" + memberId + "].", pe);
+                }
+                return false;
+            }
+        });
     }
 
     /** Listens to the room. */

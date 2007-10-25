@@ -14,6 +14,9 @@ import com.samskivert.util.IntSet;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.annotation.Computed;
+import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.operator.Conditionals;
@@ -27,6 +30,14 @@ import com.threerings.msoy.person.util.FeedMessageType;
  */
 public class FeedRepository extends DepotRepository
 {
+
+    @Computed
+    @Entity
+    public static class FeedMessageCount extends PersistentRecord {
+        @Computed(fieldDefinition="count(*)")
+        public int count;
+    }
+
     public FeedRepository (PersistenceContext perCtx)
     {
         super(perCtx);
@@ -44,10 +55,16 @@ public class FeedRepository extends DepotRepository
     {
         ArrayList<FeedMessageRecord> messages = new ArrayList<FeedMessageRecord>();
         loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, since);
-        loadFeedMessages(messages, FriendFeedMessageRecord.class,
-                         new Conditionals.In(FriendFeedMessageRecord.ACTOR_ID_C, friendIds), since);
-        loadFeedMessages(messages, GroupFeedMessageRecord.class,
-                         new Conditionals.In(GroupFeedMessageRecord.GROUP_ID_C, groupIds), since);
+        SQLOperator actors = null;
+        if (!friendIds.isEmpty()) {
+            actors = new Conditionals.In(FriendFeedMessageRecord.ACTOR_ID_C, friendIds);
+        }
+        loadFeedMessages(messages, FriendFeedMessageRecord.class, actors, since);
+        SQLOperator groups = null;
+        if (!groupIds.isEmpty()) {
+            actors = new Conditionals.In(GroupFeedMessageRecord.GROUP_ID_C, groupIds);
+        }
+        loadFeedMessages(messages, GroupFeedMessageRecord.class, groups, since);
         return messages;
     }
 
@@ -58,8 +75,11 @@ public class FeedRepository extends DepotRepository
     public void publishGlobalMessage (FeedMessageType type, String data)
         throws PersistenceException
     {
-        // TODO: store the message
-        throw new PersistenceException("stub");
+        GlobalFeedMessageRecord message = new GlobalFeedMessageRecord();
+        message.type = type.getCode();
+        message.data = data;
+        message.posted = new Timestamp(System.currentTimeMillis());
+        insert(message);
     }
 
     /**
@@ -71,9 +91,29 @@ public class FeedRepository extends DepotRepository
     public boolean publishMemberMessage (int actorId, FeedMessageType type, String data)
         throws PersistenceException
     {
-        // TODO: check that the message does not exceed its throttle
-        // TODO: store the message
-        throw new PersistenceException("stub");
+        if (type.getThrottleCount() > 0) {
+            Timestamp throttle =
+                new Timestamp(System.currentTimeMillis() - type.getThrottlePeriod());
+            SQLOperator[] bits = new SQLOperator[2];
+            bits[0] = new Conditionals.Equals(FriendFeedMessageRecord.ACTOR_ID_C, actorId);
+            bits[1] = new Conditionals.GreaterThan(FriendFeedMessageRecord.POSTED_C, throttle);
+
+            FeedMessageCount count = load(FeedMessageCount.class,
+                    new FromOverride(FriendFeedMessageRecord.class),
+                    new Where(new Logic.And(bits)));
+
+            if (count.count >= type.getThrottleCount()) {
+                return false;
+            }
+        }
+
+        FriendFeedMessageRecord message = new FriendFeedMessageRecord();
+        message.type = type.getCode();
+        message.data = data;
+        message.actorId = actorId;
+        message.posted = new Timestamp(System.currentTimeMillis());
+        insert(message);
+        return true;
     }
 
     /**
@@ -82,9 +122,29 @@ public class FeedRepository extends DepotRepository
     public boolean publishGroupMessage (int groupId, FeedMessageType type, String data)
         throws PersistenceException
     {
-        // TODO: check that the message does not exceed its throttle
-        // TODO: store the message
-        throw new PersistenceException("stub");
+        if (type.getThrottleCount() > 0) {
+            Timestamp throttle =
+                new Timestamp(System.currentTimeMillis() - type.getThrottlePeriod());
+            SQLOperator[] bits = new SQLOperator[2];
+            bits[0] = new Conditionals.Equals(GroupFeedMessageRecord.GROUP_ID_C, groupId);
+            bits[1] = new Conditionals.GreaterThan(GroupFeedMessageRecord.POSTED_C, throttle);
+
+            FeedMessageCount count = load(FeedMessageCount.class,
+                    new FromOverride(GroupFeedMessageRecord.class),
+                    new Where(new Logic.And(bits)));
+
+            if (count.count >= type.getThrottleCount()) {
+                return false;
+            }
+        }
+
+        GroupFeedMessageRecord message = new GroupFeedMessageRecord();
+        message.type = type.getCode();
+        message.data = data;
+        message.groupId = groupId;
+        message.posted = new Timestamp(System.currentTimeMillis());
+        insert(message);
+        return true;
     }
 
     // TODO: call this method periodically on the server... I'm not immediately thinking of a good

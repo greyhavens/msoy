@@ -40,6 +40,8 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
 
+import com.threerings.msoy.person.util.FeedMessageType;
+
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.ServiceException;
@@ -268,6 +270,12 @@ public class CatalogServlet extends MsoyServiceServlet
             } else {
                 logUserAction(mrec, UserAction.LISTED_ITEM, details);
             }
+
+            // publish to the member's feed
+            MsoyServer.feedRepo.publishMemberMessage(mrec.memberId,
+                    FeedMessageType.FRIEND_LISTED_ITEM, listItem.name + "\t" +
+                    String.valueOf(repo.getItemType()) + "\t" + String.valueOf(record.catalogId));
+
 
             return record.toListing();
 

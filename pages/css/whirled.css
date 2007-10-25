@@ -5,7 +5,7 @@
  */
 
 /**********  My Whirled ************/
-.PeopleContainer, .PlacesContainer, .GamesContainer {
+.PeopleContainer, .PlacesContainer, .GamesContainer, .FeedContainer {
   margin: 7px;
 }
 
@@ -20,7 +20,7 @@
   font-size: 12px;
 }
 
-.PlacesContainer, .GamesContainer {
+.PlacesContainer, .GamesContainer, .FeedContainer {
   width: 264px;
 }
 
@@ -59,6 +59,25 @@
 }
 
 .GamesContainer .HeaderCenter {
+  width: 100%;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+}
+
+.FeedContainer .HeaderLeft, .FeedContainer .HeaderRight {
+  background-image: url(/images/whirled/default_star.png);
+  width: 20px;
+  height: 20px;
+}
+
+.FeedContainer .Header {
+  background-image: url(/images/whirled/default_tile.png);
+  height: 20px;
+}
+
+.FeedContainer .HeaderCenter {
   width: 100%;
   color: white;
   font-weight: bold;
@@ -173,7 +192,7 @@
   height: 245px;
 }
 
-.SceneListContainer { 
+.SceneListContainer {
   width: 100%;
 }
 
@@ -224,6 +243,31 @@
 .SceneWidget .Underline {
   text-decoration: underline;
   cursor: pointer;
+}
+
+.FeedList {
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+  border-bottom: 1px dotted;
+  width: 539px;
+  height: 245px;
+}
+
+.FeedListContainer {
+  width: 100%;
+}
+
+.FeedWidget {
+  width: 100%;
+  background-image: url(/images/whirled/bg_gradient.png);
+  background-repeat: repeat-x;
+  background-color: #F4F3F4;
+  border-bottom: 1px solid #DADADA;
+}
+
+.FeedBasic {
+  font-size: 12px;
+  padding: 3px;
 }
 
 .PictureBox img {

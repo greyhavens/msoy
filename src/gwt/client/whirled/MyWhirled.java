@@ -79,7 +79,7 @@ public class MyWhirled extends FlexTable
         setCellPadding(0);
         setCellSpacing(0);
 
-        getFlexCellFormatter().setRowSpan(row, 0, 2);
+        getFlexCellFormatter().setRowSpan(row, 0, 3);
         getFlexCellFormatter().setStyleName(row, 0, "MePanelContainer");
         VerticalPanel mePanel = new VerticalPanel();
         mePanel.setStyleName("MePanel");
@@ -146,6 +146,9 @@ public class MyWhirled extends FlexTable
             }
         });
         _people.addStyleName("PeopleContainer");
+
+        getFlexCellFormatter().setColSpan(row, 0, 2);
+        setWidget(row++, 0, new FeedPanel());
 
         VerticalPanel placesContainer = new VerticalPanel();
         setWidget(row, 0, placesContainer);
