@@ -5,6 +5,7 @@ package com.threerings.msoy.chat.client {
 
 import flash.display.Graphics;
 
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.text.TextFormat;
@@ -74,6 +75,10 @@ public class ComicOverlay extends ChatOverlay
     {
         var cloud :BubbleCloud = _bubbles.get(speaker);
         if (cloud != null) {
+            // the bounds are in stage coordinates
+            var local :Point = _overlay.globalToLocal(new Point(bounds.x, bounds.y));
+            bounds.x = local.x;
+            bounds.y = local.y;
             cloud.setSpeakerLocation(bounds);
         }
     }
@@ -202,10 +207,15 @@ public class ComicOverlay extends ChatOverlay
 
         var cloud :BubbleCloud = _bubbles.get(speaker);
         if (cloud == null) {
-            cloud = new BubbleCloud(this, 
-                                    speaker == null ? MAX_NOTIFICATION_BUBBLES : 
-                                                      MAX_BUBBLES_PER_USER, 
-                                    speakerBounds, _target.width, _target.height);
+            if (speakerBounds != null) {
+                // the bounds given to this function are in stage coordinates
+                var local :Point = 
+                    _overlay.globalToLocal(new Point(speakerBounds.x, speakerBounds.y));
+                speakerBounds.x = local.x;
+                speakerBounds.y = local.y;
+            }
+            var maxBubbles :int = speaker == null ? MAX_NOTIFICATION_BUBBLES : MAX_BUBBLES_PER_USER;
+            cloud = new BubbleCloud(this, maxBubbles, speakerBounds, _target.width, _target.height);
             _bubbles.put(speaker, cloud);
         }
         cloud.addBubble(bubble);
@@ -563,7 +573,7 @@ class BubbleCloud
     }
 
     /** The space we force between adjacent bubbles. */
-    protected static const BUBBLE_SPACING :int = 15;
+    protected static const BUBBLE_SPACING :int = 5;
 
     protected var _bubbles :Array = [];
     protected var _location :Rectangle;
