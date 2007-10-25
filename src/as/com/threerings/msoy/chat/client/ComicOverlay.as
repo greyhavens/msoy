@@ -381,8 +381,8 @@ public class ComicOverlay extends ChatOverlay
     /** Bubble draw function. See getBubbleShape() */
     protected function drawThinkBubble (g :Graphics, w :int, h :int) :void
     {
-        const V_DIA :int = 16; //16;
-        const H_DIA :int = 16; //12;
+        const V_DIA :int = 16;
+        const H_DIA :int = 16;
 
         var thinkPad :Number = PAD / 2;
 
