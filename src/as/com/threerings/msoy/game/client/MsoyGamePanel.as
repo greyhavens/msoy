@@ -67,7 +67,6 @@ public class MsoyGamePanel extends EZGamePanel
 
         ((_ctx as GameContext).getWorldContext().getChatDirector() as MsoyChatDirector).
             displayGameChat(_ctx.getChatDirector(), _playerList);
-
     }
 
     // from EZGamePanel
