@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.person.server.persist;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Set;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntSet;
 
+import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -155,7 +157,34 @@ public class FeedRepository extends DepotRepository
     public void pruneFeeds ()
         throws PersistenceException
     {
-        // TODO: delete records older than FEED_EXPIRATION_PERIOD in all tables
+        final Timestamp cutoff = new Timestamp(System.currentTimeMillis() - FEED_EXPIRATION_PERIOD);
+        deleteAll(GlobalFeedMessageRecord.class,
+                new Where(new Conditionals.LessThan(GlobalFeedMessageRecord.POSTED_C, cutoff)),
+                new CacheInvalidator.TraverseWithFilter<GlobalFeedMessageRecord>(
+                    GlobalFeedMessageRecord.class) {
+                    public boolean testForEviction (
+                        Serializable key, GlobalFeedMessageRecord record) {
+                        return (record != null) && record.posted.before(cutoff);
+                    }
+                });
+        deleteAll(FriendFeedMessageRecord.class,
+                new Where(new Conditionals.LessThan(FriendFeedMessageRecord.POSTED_C, cutoff)),
+                new CacheInvalidator.TraverseWithFilter<FriendFeedMessageRecord>(
+                    FriendFeedMessageRecord.class) {
+                    public boolean testForEviction (
+                        Serializable key, FriendFeedMessageRecord record) {
+                        return (record != null) && record.posted.before(cutoff);
+                    }
+                });
+        deleteAll(GroupFeedMessageRecord.class,
+                new Where(new Conditionals.LessThan(GroupFeedMessageRecord.POSTED_C, cutoff)),
+                new CacheInvalidator.TraverseWithFilter<GroupFeedMessageRecord>(
+                    GroupFeedMessageRecord.class) {
+                    public boolean testForEviction (
+                        Serializable key, GroupFeedMessageRecord record) {
+                        return (record != null) && record.posted.before(cutoff);
+                    }
+                });
     }
 
     /**

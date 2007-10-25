@@ -592,7 +592,8 @@ public class MemberServlet extends MsoyServiceServlet
             for (GroupMembershipRecord record : groups) {
                 groupIds.add(record.groupId);
             }
-            Timestamp since = new Timestamp(cutoffDays * 24 * 60 * 60 * 1000L);
+            Timestamp since =
+                new Timestamp(System.currentTimeMillis() - cutoffDays * 24 * 60 * 60 * 1000L);
             ArrayIntSet feedFriendIds = new ArrayIntSet();
             ArrayIntSet feedGroupIds = new ArrayIntSet();
 
