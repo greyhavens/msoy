@@ -60,7 +60,7 @@ public class Tutorial extends Sprite
             return;
         }
         if (step == 0) {
-            _view.displayTextBox(
+            _view.displayMessage(
                 "Let's Go!",
                 "<p class='summary'>Follow these steps to get a feel for Whirled and earn some easy flow, the currency in Whirled.</p><br>",
                 function () :void {
@@ -82,12 +82,8 @@ public class Tutorial extends Sprite
     {
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        // when we finish loading we know our own dimensions
-        var width :Number = this.loaderInfo.width;
-        var height :Number = this.loaderInfo.height;
-
-        // then initialize the actual view and pad it a little
-        _view.init(_control.getStageBounds(), _control.getRoomBounds(), width, height);
+        // then initialize the actual view
+        _view.init(_control.getStageBounds(), _control.getRoomBounds());
         addChild(_view);
 
         // now surrender control until we find out whether or not we're minimized
@@ -130,7 +126,7 @@ public class Tutorial extends Sprite
         if (event.name == PROP_STEP_COMPLETED) {
             if (event.value != null) {
                 _view.gotoSwirlState(View.SWIRL_BOUNCY);
-                _view.displaySummary(null);
+                _view.displayNothing();
             }
 
         } else if (event.name == PROP_TUTORIAL_STEP) {
@@ -174,7 +170,7 @@ public class Tutorial extends Sprite
         // figure out which quest we ought to be on
         var step :int = getStep();
         if (step >= Quest.getQuestCount()) {
-            _view.displayTextBox(
+            _view.displayMessage(
                 "Finish",
                 "<p class='title'>Farewell</p>" +
                 "<p class='summary'><br>This is the end of the tutorial, and you are ready to step into the world.</p>",
