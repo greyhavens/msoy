@@ -5,6 +5,7 @@ package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
 import flash.display.Shape;
+import flash.geom.Point;
 
 import mx.containers.Canvas;
 import mx.core.UIComponent;
@@ -80,7 +81,9 @@ public class PlaceBox extends Canvas
     }
 
     /**
-     * Removes a previously added overlay.
+     * Removes a previously added overlay. TODO: It might be wise to keep our own array
+     * of overlays and do some sanity checking here so we don't accidentally start removing
+     * chrome or whatnot.
      */
     public function removeOverlay (overlay :DisplayObject) :void
     {
@@ -89,6 +92,24 @@ public class PlaceBox extends Canvas
         } else {
             rawChildren.removeChild(overlay);
         }
+    }
+
+    /**
+     * @return true if there are glyphs under the specified point.
+     */
+    public function overlaysPoint (stageX :Number, stageY :Number) :Boolean
+    {
+        var stagePoint :Point = new Point(stageX, stageY);
+        for (var ii :int = 0; ii < this.rawChildren.numChildren; ii ++) {
+            var child :DisplayObject = this.rawChildren.getChildAt(ii);
+            if (child == _placeView) {
+                continue;
+            }
+            if (child.hitTestPoint(stageX, stageY, true)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

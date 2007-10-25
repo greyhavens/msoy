@@ -697,6 +697,12 @@ public class RoomController extends SceneController
                 return undefined;
             }
         }
+
+        // then check with the PlaceBox
+        if (_mctx.getTopPanel().getPlaceContainer().overlaysPoint(stageX, stageY)) {
+            return undefined;
+        }
+
         // then avoid any chat glyphs that are clickable
         if (_roomView.chatOverlay.hasClickableGlyphsAtPoint(stageX, stageY)) {
             return undefined;
