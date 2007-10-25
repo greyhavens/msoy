@@ -15,6 +15,7 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.FlashClients;
 import client.util.MsoyUI;
 
 public class index extends MsgsEntryPoint
@@ -54,6 +55,7 @@ public class index extends MsgsEntryPoint
         } else if ("mywhirled".equals(action)) {
             setPageTitle(CWhirled.msgs.titleMyWhirled());
             setContent(new MyWhirled(popDisplay));
+            FlashClients.tutorialEvent("myWhirledVisited");
         }
     }
 

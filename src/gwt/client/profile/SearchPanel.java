@@ -24,6 +24,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.FlashClients;
 
 public class SearchPanel extends VerticalPanel
 {
@@ -50,6 +51,7 @@ public class SearchPanel extends VerticalPanel
                 } else {
                     args[1] = "email";
                 }
+                FlashClients.tutorialEvent("friendsSought");
                 Application.go(Page.PROFILE, Args.compose(args));
             }
         };
@@ -60,7 +62,7 @@ public class SearchPanel extends VerticalPanel
         int row = 0;
         searchPanel.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         searchPanel.setText(row, 0, CProfile.msgs.searchType());
-        searchPanel.setWidget(row, 1, _radioName = new RadioButton("searchType", 
+        searchPanel.setWidget(row, 1, _radioName = new RadioButton("searchType",
             CProfile.msgs.searchRadioName()));
         searchPanel.setWidget(row, 2, _radioDisplayName = new RadioButton("searchType",
             CProfile.msgs.searchRadioDisplayName()));
@@ -81,7 +83,7 @@ public class SearchPanel extends VerticalPanel
         });
         _search.addKeyboardListener(new EnterClickAdapter(goButtonListener));
         _search.setVisibleLength(40);
-        searchPanel.setWidget(row++, 5, 
+        searchPanel.setWidget(row++, 5,
             _go = new Button(CProfile.msgs.searchGo(), goButtonListener));
         _go.setEnabled(false);
     }
@@ -106,7 +108,7 @@ public class SearchPanel extends VerticalPanel
         _profiles.setModel(new SimpleDataModel(cards), page);
     }
 
-    public void displayPage (int page) 
+    public void displayPage (int page)
     {
         if (_profiles != null) {
             _profiles.displayPage(page, false);

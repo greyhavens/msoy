@@ -4,6 +4,7 @@
 package client.msgs;
 
 import client.util.ClickCallback;
+import client.util.FlashClients;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -43,11 +44,12 @@ public abstract class FriendInvite
             // we're always ready to be sent
             return null;
         }
-        
+
         // from MailPayloadComposer
         public void messageSent (MemberName recipient)
         {
-            // there is no invitation backend, nothing to do here
+            // the successful dispatch of an invite finishes one of the tutorial steps
+            FlashClients.tutorialEvent("friendInvited");
         }
 
         /**
@@ -101,7 +103,7 @@ public abstract class FriendInvite
                 add(_status, DockPanel.SOUTH);
                 _content = new VerticalPanel();
                 add(_content, DockPanel.CENTER);
-                
+
                 refreshUI(false);
             }
 
@@ -122,7 +124,7 @@ public abstract class FriendInvite
             {
                 _content.clear();
                 if (friendStatus) {
-                    _content.add(new InlineLabel(roundtrip ? 
+                    _content.add(new InlineLabel(roundtrip ?
                         CMsgs.mmsgs.friendAccepted(_message.headers.sender.toString()) :
                         CMsgs.mmsgs.friendAlreadyFriend(_message.headers.sender.toString())));
                     return;
@@ -164,7 +166,7 @@ public abstract class FriendInvite
                     new AsyncCallback() {
                         public void onSuccess (Object result) {
                             // Well that's nice.
-                        }   
+                        }
                         public void onFailure (Throwable caught) {
                             // I am not sure anything useful can be done here.
                         }
