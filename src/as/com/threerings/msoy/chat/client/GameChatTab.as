@@ -28,7 +28,7 @@ public class GameChatTab extends ChatTab
         addChild(playerList);
 
         _overlay = new ChatOverlay(ctx.getMessageManager());
-        _overlay.setSubtitlePercentage(.5);
+        _overlay.setSubtitlePercentage(.75);
         _overlay.setClickableGlyphs(true);
         _chatDtr.addChatDisplay(_overlay);
 
