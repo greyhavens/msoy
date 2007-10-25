@@ -3,6 +3,8 @@
 
 package client.whirled;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -91,7 +93,21 @@ public class FeedPanel extends VerticalPanel
                 return;
             }
 
-            feedContainer.add(new BasicWidget("Got " + messages.size() + " messages."));
+            // sort in descending order by posted
+            Object[] messageArray = messages.toArray();
+            Arrays.sort(messageArray, new Comparator () {
+                public int compare (Object o1, Object o2) {
+                    if (!(o1 instanceof FeedMessage) || !(o2 instanceof FeedMessage)) {
+                        return 0;
+                    }
+
+                    return (int)(((FeedMessage)o2).posted - ((FeedMessage)o1).posted);
+                }
+                public boolean equals (Object obj) {
+                    return obj == this;
+                }
+            });
+            messages = Arrays.asList(messageArray);
 
             Iterator msgIter = messages.iterator();
             while (msgIter.hasNext()) {
@@ -138,7 +154,6 @@ public class FeedPanel extends VerticalPanel
 
             // FRIEND_LISTED_ITEM
             case 103:
-                feedContainer.add(new BasicWidget("Got a friend listed item message"));
                 feedContainer.add(new BasicWidget(CWhirled.msgs.friendListedItem(friendLink,
                                 CShell.dmsgs.getString("itemType" + message.data[1]),
                                 Application.createLinkHtml(message.data[0], Page.CATALOG,
