@@ -381,35 +381,66 @@ public class ComicOverlay extends ChatOverlay
     /** Bubble draw function. See getBubbleShape() */
     protected function drawThinkBubble (g :Graphics, w :int, h :int) :void
     {
-        const V_DIA :int = 16;
-        const H_DIA :int = 16;
+        var hDia :int = 16;
+        // if we're over halfway to a new bump, sub a little from each bump to fill out a new one
+        if ((w - PAD) % hDia > hDia / 2) {
+            hDia -= Math.ceil((hDia - ((w - PAD) % hDia)) / Math.floor((w - PAD) / hDia));
+
+        // else if we're less than halfway to a new bump, add a little to each bump.
+        } else if ((w - PAD) % hDia != 0) {
+            hDia += Math.floor(((w - PAD) % hDia) / Math.floor((w - PAD) / hDia));
+        }
+        var hBumps :int = Math.round((w - PAD) / hDia);
+
+        var vDia :int = 16;
+        // if we're over halfway to a new bump, sub a little from each bump to fill out a new one
+        if ((h - PAD) % vDia > vDia / 2) {
+            vDia -= Math.ceil((vDia - ((h - PAD) % vDia)) / Math.floor((h - PAD) / vDia));
+            
+        // else if we're less than halfway to a new bump, add a little to each bump.
+        } else if ((h - PAD) % vDia != 0) {
+            vDia += Math.floor(((h - PAD) % vDia) / Math.floor((h - PAD) / vDia));
+        }
+        var vBumps :int = Math.round((h - PAD) / vDia);
 
         var thinkPad :Number = PAD / 2;
 
         g.moveTo(thinkPad, thinkPad);
 
         var yy :int;
-        var ty :int;
         var xx :int;
-        var tx :int;
-        for (xx = thinkPad; xx < (w - thinkPad); xx += H_DIA) {
-            tx = Math.min(w - thinkPad, xx + H_DIA);
-            g.curveTo((xx + tx)/2, -thinkPad, tx, thinkPad);
+        var ii :int;
+
+        for (ii = 0, xx = thinkPad; ii < hBumps; ii++, xx += hDia) {
+            if (ii == hBumps - 1) {
+                g.curveTo((xx + w - thinkPad) / 2, -thinkPad, w - thinkPad, thinkPad);
+            } else {
+                g.curveTo(xx + hDia / 2, -thinkPad, xx + hDia, thinkPad);
+            }
         }
 
-        for (yy = thinkPad; yy < (h - thinkPad); yy += V_DIA) {
-            ty = Math.min(h - thinkPad, yy + V_DIA);
-            g.curveTo(w + thinkPad, (yy + ty)/2, w - thinkPad, ty);
+        for (ii = 0, yy = thinkPad; ii < vBumps; ii++, yy += vDia) {
+            if (ii == vBumps - 1) {
+                g.curveTo(w + thinkPad, (yy + h - thinkPad) / 2, w - thinkPad, h - thinkPad);
+            } else {
+                g.curveTo(w + thinkPad, yy + vDia / 2, w - thinkPad, yy + vDia);
+            }
         }
 
-        for (xx = (w - thinkPad); xx > 0; xx -= H_DIA) {
-            tx = Math.max(thinkPad, xx - H_DIA);
-            g.curveTo((xx + tx)/2, h + thinkPad, tx, h - thinkPad);
+        for (ii = 0, xx = (w - thinkPad); ii < hBumps; ii++, xx -= hDia) {
+            if (ii == hBumps - 1) {
+                g.curveTo((xx + thinkPad) / 2, h + thinkPad, thinkPad, h - thinkPad);
+            } else {
+                g.curveTo(xx - hDia / 2, h + thinkPad, xx - hDia, h - thinkPad);
+            }
         }
 
-        for (yy = (h - thinkPad); yy > 0; yy -= V_DIA) {
-            ty = Math.max(thinkPad, yy - V_DIA);
-            g.curveTo(-thinkPad, (yy + ty)/2, thinkPad, ty);
+        for (ii = 0, yy = (h - thinkPad); ii < vBumps; ii++, yy -= vDia)  {
+            if (ii == vBumps - 1) {
+                g.curveTo(-thinkPad, (yy + thinkPad) / 2, thinkPad, thinkPad);
+            } else {
+                g.curveTo(-thinkPad, yy - vDia / 2, thinkPad, yy - vDia);
+            }
         }
     }
 
