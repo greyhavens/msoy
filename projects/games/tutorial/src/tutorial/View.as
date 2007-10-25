@@ -41,6 +41,42 @@ public class View extends Sprite
         loader.load(swirlBytes);
 
         _swirlState = SWIRL_NONE;
+
+        var styleSheet :StyleSheet = new StyleSheet();
+        styleSheet.parseCSS(
+            "body {" +
+            "  color: #000000;" +
+            "}" +
+            ".title {" +
+            "  font-family: SunnySide;" +
+            "  font-size: 20;" +
+            "  text-decoration: underline;" +
+            "  text-align: center;" +
+            "}" +
+            ".summary {" +
+            "  font-family: Goudy;" +
+            "  font-weight: bold;" +
+            "  font-size: 16;" +
+            "  text-align: center;" +
+            "}" +
+            ".details {" +
+            "  font-family: Goudy;" +
+            "  font-size: 14;" +
+            "  text-align: left;" +
+            "}");
+
+        _textField = new TextField();
+        _textField.visible = false;
+        _textField.border = false;
+        _textField.borderColor = 0xFF0000;
+        _textField.defaultTextFormat = getDefaultFormat();
+        _textField.styleSheet = styleSheet;
+        _textField.wordWrap = true;
+        _textField.multiline = true;
+        _textField.embedFonts = true;
+        _textField.antiAliasType = flash.text.AntiAliasType.ADVANCED;
+        _textField.autoSize = TextFieldAutoSize.CENTER;
+        _textField.width = 400;
     }
 
     /**
@@ -59,6 +95,69 @@ public class View extends Sprite
 
         // don't add the text field until the swirly is loaded
         maybeFinishUI();
+    }
+
+    public function isShowingSummary () :Boolean
+    {
+        return _textBox.visible;
+    }
+
+    public function displaySummary (summary :String) :void
+    {
+        if (summary) {
+            if (_farewellButton) {
+                _farewellButton.visible = false;
+            }
+            _textBox.visible = _textField.visible = _hideButton.visible =
+                _skipButton.visible = true;
+            _textField.htmlText = summary;
+            _textBox.width = _textField.width + 2*BOX_PADDING;
+            _textBox.height = _textField.height + _hideButton.height + BOX_HAT + 2*BOX_PADDING;
+            _skipButton.y = _hideButton.y = _textField.y + _textField.height + BOX_PADDING/2;
+        } else {
+            _textBox.visible = _textField.visible = _hideButton.visible =
+                _skipButton.visible = false;
+        }
+    }
+
+    public function displayTextBox (button :String, text :String, okPressed :Function) :void
+    {
+        if (_farewellButton) {
+            this.removeChild(_farewellButton);
+        }
+        _farewellButton = new SimpleTextButton(
+            button, true, 0x003366, 0x6699CC, 0x0066FF, 5, getDefaultFormat());
+        _farewellButton.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
+                okPressed();
+            });
+        this.addChild(_farewellButton);
+
+        _textField.htmlText = text;
+
+        _textBox.width = _textField.width + 2*BOX_PADDING;
+        _textBox.height = _textField.height + _hideButton.height + BOX_HAT + 2*BOX_PADDING;
+
+        _farewellButton.x = _textField.x + _textField.width - _farewellButton.width * 1.5;
+        _farewellButton.y = _textField.y + _textField.height + BOX_PADDING/2;
+
+        _textBox.visible = _textField.visible = _farewellButton.visible = true;
+    }
+
+    public function gotoSwirlState (state :int) :void
+    {
+        if (state == _swirlRequest) {
+            log.warning("Already going to requested scene [state=" + state + "]");
+        } else if (state != _swirlState) {
+            _swirlRequest = state;
+            maybeTransition();
+        }
+    }
+
+    public function unload () :void
+    {
+        if (_swirlHandler) {
+            _swirlHandler.unload();
+        }
     }
 
     protected function handleSwirlLoaded (evt :Event) :void
@@ -89,53 +188,11 @@ public class View extends Sprite
         _textBox.x = 150;
         _textBox.y = 100;
 
-        var styleSheet :StyleSheet = new StyleSheet();
-        styleSheet.parseCSS(
-            "body {" +
-            "  color: #000000;" +
-            "}" +
-            ".title {" +
-            "  font-family: SunnySide;" +
-            "  font-size: 20;" +
-            "  text-decoration: underline;" +
-            "  text-align: center;" +
-            "}" +
-            ".summary {" +
-            "  font-family: Goudy;" +
-            "  font-weight: bold;" +
-            "  font-size: 16;" +
-            "  text-align: center;" +
-            "}" +
-            ".details {" +
-            "  font-family: Goudy;" +
-            "  font-size: 14;" +
-            "  text-align: left;" +
-            "}");
-
-        var format :TextFormat = new TextFormat();
-        format.font = "SunnySide";
-        format.size = 14;
-        format.color = 0x000000;
-        format.align = TextFormatAlign.LEFT;
-
-        _textField = new TextField();
-        _textField.visible = false;
-        _textField.border = false;
-        _textField.borderColor = 0xFF0000;
-        _textField.defaultTextFormat = format;
-        _textField.styleSheet = styleSheet;
-        _textField.wordWrap = true;
-        _textField.multiline = true;
-        _textField.embedFonts = true;
-        _textField.antiAliasType = flash.text.AntiAliasType.ADVANCED;
-        _textField.autoSize = TextFieldAutoSize.CENTER;
-
-        _textField.width = 400;
         _textField.x = _textBox.x + BOX_PADDING;
         _textField.y = _textBox.y + BOX_PADDING;
 
         _hideButton = new SimpleTextButton(
-            "Hide", true, 0x003366, 0x6699CC, 0x0066FF, 5, format);
+            "Hide", true, 0x003366, 0x6699CC, 0x0066FF, 5, getDefaultFormat());
         _hideButton.visible = false;
         _hideButton.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
                 displaySummary(null);
@@ -143,7 +200,7 @@ public class View extends Sprite
         _hideButton.x = _textField.x + _textField.width - _hideButton.width * 1.5;
 
         _skipButton = new SimpleTextButton(
-            "Skip", true, 0x003366, 0x6699CC, 0x0066FF, 5, format);
+            "Skip", true, 0x003366, 0x6699CC, 0x0066FF, 5, getDefaultFormat());
         _skipButton.visible = false;
         _skipButton.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
                 displaySummary(null);
@@ -151,16 +208,15 @@ public class View extends Sprite
             });
         _skipButton.x = _hideButton.x - BOX_PADDING - _skipButton.width;
 
-        _farewellButton = new SimpleTextButton(
-            "Farewell", true, 0x003366, 0x6699CC, 0x0066FF, 5, format);
-        _farewellButton.visible = false;
-        _farewellButton.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
-                _tutorial.farewellClicked();
-            });
-        _farewellButton.x = _textField.x + _textField.width - _farewellButton.width * 1.5;
-
         // don't add the swirly until the text field is loaded
         maybeFinishUI();
+    }
+
+    // some day clicking on the swirly will do something
+    protected function swirlClicked (evt :Event) :void
+    {
+        // when the swirly is big, clicking it offers the first quest
+        _tutorial.swirlClicked(_swirlState);
     }
 
     protected function maybeFinishUI () :void
@@ -175,64 +231,21 @@ public class View extends Sprite
             this.addChild(_textField);
             this.addChild(_hideButton);
             this.addChild(_skipButton);
-            this.addChild(_farewellButton);
 
             maybeTransition();
+
+            _tutorial.viewIsReady();
         }
     }
 
-    public function isShowingSummary () :Boolean
+    protected function getDefaultFormat () :TextFormat
     {
-        return _textBox.visible;
-    }
-
-    public function displaySummary (summary :String) :void
-    {
-        if (summary) {
-            _textBox.visible = _textField.visible = _hideButton.visible =
-                _skipButton.visible = true;
-            _textField.htmlText = summary;
-            _textBox.width = _textField.width + 2*BOX_PADDING;
-            _textBox.height = _textField.height + _hideButton.height + BOX_HAT + 2*BOX_PADDING;
-            _skipButton.y = _hideButton.y = _textField.y + _textField.height + BOX_PADDING/2;
-        } else {
-            _textBox.visible = _textField.visible = _hideButton.visible =
-                _skipButton.visible = false;
-        }
-    }
-
-    public function displayFarewell () :void
-    {
-        _textBox.visible = _textField.visible = _farewellButton.visible = true;
-        _textField.htmlText =
-            "<p class='summary'>This is the end of the tutorial. Awesome work!</p>";
-        _textBox.width = _textField.width + 2*BOX_PADDING;
-        _textBox.height = _textField.height + _hideButton.height + BOX_HAT + 2*BOX_PADDING;
-        _farewellButton.y = _textField.y + _textField.height + BOX_PADDING/2;
-    }
-
-    // some day clicking on the swirly will do something
-    protected function swirlClicked (evt :Event) :void
-    {
-        // when the swirly is big, clicking it offers the first quest
-        _tutorial.swirlClicked(_swirlState);
-    }
-
-    public function gotoSwirlState (state :int) :void
-    {
-        if (state == _swirlRequest) {
-            log.warning("Already going to request scene [state=" + state + "]");
-        } else if (state != _swirlState) {
-            _swirlRequest = state;
-            maybeTransition();
-        }
-    }
-
-    public function unload () :void
-    {
-        if (_swirlHandler) {
-            _swirlHandler.unload();
-        }
+        var format :TextFormat = new TextFormat();
+        format.font = "SunnySide";
+        format.size = 14;
+        format.color = 0x000000;
+        format.align = TextFormatAlign.LEFT;
+        return format;
     }
 
     protected function maybeTransition () :void

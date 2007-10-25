@@ -37,6 +37,47 @@ public class Tutorial extends Sprite
         _view = new View(this);
     }
 
+    public function skipQuest () :void
+    {
+        if (_activeQuest == null) {
+            log.warning("Eek, no active quest in skipQuest [step=" + getStep() + "]");
+            return;
+        }
+        _control.cancelQuest(_activeQuest);
+    }
+
+    public function swirlClicked (swirlState :int) :void
+    {
+        var step :int = getStep();
+        var quest :Quest = Quest.getQuest(step);
+
+        if (testCompletedStep(step)) {
+            _control.completeQuest(quest.questId, quest.outro, quest.payout);
+            return;
+        }
+        if (_activeQuest) {
+            _view.displaySummary(_view.isShowingSummary() ? null : quest.summary);
+            return;
+        }
+        if (step == 0) {
+            _view.displayTextBox(
+                "Let's Go!",
+                "<p class='summary'>Follow these steps to get a feel for Whirled and earn some easy flow, the currency in Whirled.</p><br>",
+                function () :void {
+                    _control.offerQuest(quest.questId, null, quest.status);
+                });
+            return;
+        }
+        log.warning("Eek, swirly clicked without active quest [swirlState=" + swirlState +
+                    ", step=" + getStep() + "]");
+    }
+
+    public function viewIsReady () :void
+    {
+        _viewSetup = true;
+        initialize();
+    }
+
     protected function complete (event :Event) :void
     {
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
@@ -127,14 +168,19 @@ public class Tutorial extends Sprite
 
     protected function initialize () :void
     {
-        if (_clientIsMinimized) {
-            // sanity check - should not really happen
+        if (_clientIsMinimized || !_viewSetup) {
             return;
         }
         // figure out which quest we ought to be on
         var step :int = getStep();
         if (step >= Quest.getQuestCount()) {
-            _view.displayFarewell();
+            _view.displayTextBox(
+                "Finish",
+                "<p class='title'>Farewell</p>" +
+                "<p class='summary'><br>This is the end of the tutorial, and you are ready to step into the world.</p>",
+                function () :void {
+                    _control.deactivateGame();
+                });
             return;
         }
 
@@ -163,41 +209,6 @@ public class Tutorial extends Sprite
         _control.offerQuest(quest.questId, null, quest.status);
     }
 
-    public function farewellClicked () :void
-    {
-        _control.deactivateGame();
-    }
-
-    public function skipQuest () :void
-    {
-        if (_activeQuest == null) {
-            log.warning("Eek, no active quest in skipQuest [step=" + getStep() + "]");
-            return;
-        }
-        _control.cancelQuest(_activeQuest);
-    }
-
-    public function swirlClicked (swirlState :int) :void
-    {
-        var step :int = getStep();
-        var quest :Quest = Quest.getQuest(step);
-
-        if (testCompletedStep(step)) {
-            _control.completeQuest(quest.questId, quest.outro, quest.payout);
-            return;
-        }
-        if (_activeQuest) {
-            _view.displaySummary(_view.isShowingSummary() ? null : quest.summary);
-            return;
-        }
-        if (step != 0 || swirlState != View.SWIRL_INTRO) {
-            log.warning("Eek, swirly click without active quest [swirlState=" + swirlState +
-                        ", step=" + getStep() + "]");
-            return;
-        }
-        _control.offerQuest(quest.questId, null, quest.status);
-    }
-
     protected function getStep () :int
     {
         return int(_control.getPlayerProperty(PROP_TUTORIAL_STEP));
@@ -213,6 +224,7 @@ public class Tutorial extends Sprite
     protected var _control :AVRGameControl;
     protected var _clientIsMinimized :Boolean = true;
     protected var _view :View;
+    protected var _viewSetup :Boolean;
 
     protected static const PROP_STEP_COMPLETED :String = "stepCompleted";
     protected static const PROP_TUTORIAL_STEP :String = "tutorialStep";
