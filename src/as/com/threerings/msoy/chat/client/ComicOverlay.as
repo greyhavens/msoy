@@ -355,10 +355,8 @@ public class ComicOverlay extends ChatOverlay
     {
         g.lineStyle(1, outline);
         g.beginFill(fill);
-        // the think bubble doesn't really utilize the w and h that are sent to this method very 
-        // well... we can get a little closer than may seem wise.
-        g.drawCircle(w - 9, h - 1, 4);
-        g.drawCircle(w - 13, h + 8, 3);
+        g.drawCircle(w - 9, h + 5, 4);
+        g.drawCircle(w - 13, h + 14, 3);
         g.endFill();
     }
 
@@ -383,33 +381,35 @@ public class ComicOverlay extends ChatOverlay
     /** Bubble draw function. See getBubbleShape() */
     protected function drawThinkBubble (g :Graphics, w :int, h :int) :void
     {
-        const V_DIA :int = 16;
-        const H_DIA :int = 12;
+        const V_DIA :int = 16; //16;
+        const H_DIA :int = 16; //12;
 
-        g.moveTo(PAD, PAD);
+        var thinkPad :Number = PAD / 2;
+
+        g.moveTo(thinkPad, thinkPad);
 
         var yy :int;
         var ty :int;
         var xx :int;
         var tx :int;
-        for (xx = PAD; xx < (w - PAD); xx += H_DIA) {
-            tx = Math.min(w - PAD, xx + H_DIA);
-            g.curveTo((xx + tx)/2, 0, tx, PAD);
+        for (xx = thinkPad; xx < (w - thinkPad); xx += H_DIA) {
+            tx = Math.min(w - thinkPad, xx + H_DIA);
+            g.curveTo((xx + tx)/2, -thinkPad, tx, thinkPad);
         }
 
-        for (yy = PAD; yy < (h - PAD); yy += V_DIA) {
-            ty = Math.min(h - PAD, yy + V_DIA);
-            g.curveTo(w, (yy + ty)/2, w - PAD, ty);
+        for (yy = thinkPad; yy < (h - thinkPad); yy += V_DIA) {
+            ty = Math.min(h - thinkPad, yy + V_DIA);
+            g.curveTo(w + thinkPad, (yy + ty)/2, w - thinkPad, ty);
         }
 
-        for (xx = (w - PAD); xx > 0; xx -= H_DIA) {
-            tx = Math.max(PAD, xx - H_DIA);
-            g.curveTo((xx + tx)/2, h, tx, h - PAD);
+        for (xx = (w - thinkPad); xx > 0; xx -= H_DIA) {
+            tx = Math.max(thinkPad, xx - H_DIA);
+            g.curveTo((xx + tx)/2, h + thinkPad, tx, h - thinkPad);
         }
 
-        for (yy = (h - PAD); yy > 0; yy -= V_DIA) {
-            ty = Math.max(PAD, yy - V_DIA);
-            g.curveTo(0, (yy + ty)/2, PAD, ty);
+        for (yy = (h - thinkPad); yy > 0; yy -= V_DIA) {
+            ty = Math.max(thinkPad, yy - V_DIA);
+            g.curveTo(-thinkPad, (yy + ty)/2, thinkPad, ty);
         }
     }
 
