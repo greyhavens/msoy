@@ -4,14 +4,14 @@
 package client.whirled;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.DOM;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -115,8 +115,20 @@ public class FeedPanel extends VerticalPanel
             });
             messages = Arrays.asList(messageArray);
 
+            long header = startofDay(System.currentTimeMillis());
+            long yesterday = header - ONE_DAY;
+
             for (Iterator msgIter = messages.iterator(); msgIter.hasNext(); ) {
                 FeedMessage message = (FeedMessage)msgIter.next();
+                if (header > message.posted) {
+                    header = startofDay(message.posted);
+                    add(new BlankWidget());
+                    if (yesterday < message.posted) {
+                        add(new DateWidget(CWhirled.msgs.yesterday()));
+                    } else {
+                        add(new DateWidget(new Date(header)));
+                    }
+                }
                 if (message instanceof FriendFeedMessage) {
                     addFriendMessage((FriendFeedMessage)message);
                 } else if (message instanceof GroupFeedMessage) {
@@ -125,6 +137,15 @@ public class FeedPanel extends VerticalPanel
                     addMessage(message);
                 }
             }
+        }
+
+        protected long startofDay (long timestamp)
+        {
+            Date date = new Date(timestamp);
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            return date.getTime();
         }
 
         protected void addMessage (FeedMessage message)
@@ -190,6 +211,32 @@ public class FeedPanel extends VerticalPanel
         }
     }
 
+    protected static class DateWidget extends HorizontalPanel
+    {
+        public DateWidget (Date date)
+        {
+            this(dateFormater.format(date));
+        }
+
+        public DateWidget (String label)
+        {
+            setStyleName("FeedWidget");
+            addStyleName("FeedDate");
+            setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            setHorizontalAlignment(HorizontalPanel.ALIGN_LEFT);
+            add(new Label(label));
+        }
+    }
+
+    protected static class BlankWidget extends HorizontalPanel
+    {
+        public BlankWidget ()
+        {
+            setStyleName("FeedWidget");
+            addStyleName("FeedBlank");
+        }
+    }
+
     protected static class FeedWidget extends HorizontalPanel
     {
         public FeedWidget (FeedMessage message)
@@ -207,4 +254,10 @@ public class FeedPanel extends VerticalPanel
 
     /** The default number of days of feed information to show. */
     protected static final int FULL_CUTOFF = 14;
+
+    /** The length of one day in milliseconds. */
+    protected static final long ONE_DAY = 24 * 60 * 60 * 1000L;
+
+    /** Date formater. */
+    protected static final DateTimeFormat dateFormater = DateTimeFormat.getFormat("MMMM d:");
 }
