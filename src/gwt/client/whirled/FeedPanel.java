@@ -60,6 +60,7 @@ public class FeedPanel extends VerticalPanel
     protected void buildUi ()
     {
         setStyleName("FeedContainer");
+
         HorizontalPanel header = new HorizontalPanel();
         header.setStyleName("Header");
         header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
@@ -76,26 +77,23 @@ public class FeedPanel extends VerticalPanel
         add(header);
 
         add(_feeds = new FeedList());
-        add(_moreLabel = new Label());
-        _moreLabel.setStyleName("FeedMore");
-        _moreLabel.addClickListener(new ClickListener() {
+        setHorizontalAlignment(ALIGN_RIGHT);
+        add(_moreLabel = MsoyUI.createActionLabel("", "tipLabel", new ClickListener() {
             public void onClick (Widget sender) {
                 loadFeed(!_fullPage);
             }
-        });
+        }));
     }
 
     protected static class FeedList extends VerticalPanel
     {
         public FeedList ()
         {
-            setStyleName("FeedListFull");
-            setSpacing(0);
+            setStyleName("FeedList");
         }
 
         public void populate (List messages)
         {
-
             if (messages.size() == 0) {
                 add(new BasicWidget(CWhirled.msgs.emptyFeed(
                             Application.createLinkToken(Page.WHIRLED, "whirledwide"))));
