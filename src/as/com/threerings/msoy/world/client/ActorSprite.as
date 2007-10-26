@@ -217,8 +217,8 @@ public class ActorSprite extends MsoySprite
         var r :Rectangle = _label.getRect(this.stage);
 
         if (_decorations != null) {
-            for each (var dispObj :DisplayObject in _decorations) {
-                r = r.union(dispObj.getRect(this.stage));
+            for each (var obj :Object in _decorations) {
+                r = r.union(DisplayObject(obj.dec).getRect(this.stage));
             }
         }
 
