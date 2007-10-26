@@ -25,7 +25,7 @@ rsync -avrq $WHIRLED_DIR/dist/sdk/whirled/docs/* -type f $MSOY_DIR/pages/code/as
 echo ""
 echo "Now delete the old SDK and commit the new one:"
 echo ""
-echo "  svn rm data/whirled_sdk_*.zip"
+echo "  svn rm" data/whirled_sdk_*.zip
 echo "  svn add data/whirled_sdk_$1.zip"
 echo ""
 echo "Add any new files in pages/code/asdocs:"
