@@ -8,17 +8,23 @@ import java.util.Iterator;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.SimpleDataModel;
+
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 
 import client.shell.CShell;
 import client.util.BorderedPopup;
+import client.util.MediaUtil;
 
 /**
  * Allows a member to select an image from their inventory. In the future, will support fancy
@@ -26,7 +32,6 @@ import client.util.BorderedPopup;
  * and possibly doing a Google images or Flickr search.
  */
 public class ImageChooserPopup extends BorderedPopup
-    implements ClickListener
 {
     public static void displayImageChooser (final AsyncCallback callback)
     {
@@ -57,38 +62,30 @@ public class ImageChooserPopup extends BorderedPopup
         if (images.size() > 0) {
             contents.add(MsoyUI.createLabel(CShell.cmsgs.pickImage(), "Title"));
 
-            HorizontalPanel itemPanel = new HorizontalPanel();
-            ScrollPanel chooser = new ScrollPanel(itemPanel);
-            contents.add(chooser);
-
-            for (Iterator iter = images.iterator(); iter.hasNext(); ) {
-                Image image = new PhotoThumbnailImage(((Photo) iter.next()));
-                image.addClickListener(this);
-                itemPanel.add(image);
-            }
+            PagedGrid grid = new PagedGrid(3, 5, PagedGrid.NAV_ON_BOTTOM) {
+                protected Widget createWidget (Object item) {
+                    final Photo photo = (Photo)item;
+                    Widget image = MediaUtil.createMediaView(
+                        photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
+                    ((Image)image).addClickListener(new ClickListener() {
+                        public void onClick (Widget sender) {
+                            _callback.onSuccess(photo);
+                            ImageChooserPopup.this.hide();
+                        }
+                    });
+                    image.setStyleName("Photo");
+                    return image;
+                }
+                protected String getEmptyMessage () {
+                    return ""; // not used
+                }
+            };
+            grid.setCellAlignment(HasAlignment.ALIGN_CENTER, HasAlignment.ALIGN_MIDDLE);
+            grid.setModel(new SimpleDataModel(images), 0);
+            contents.add(grid);
 
         } else {
             contents.add(MsoyUI.createLabel(CShell.cmsgs.haveNoImages(), "Title"));
-        }
-    }
-
-    // from interface ClickListener
-    public void onClick (Widget sender)
-    {
-        _callback.onSuccess(((PhotoThumbnailImage)sender).photo);
-        hide();
-    }
-
-    /**
-     * A tiny helper class that carries a Photo in a Widget.
-     */
-    protected static class PhotoThumbnailImage extends Image
-    {
-        public Photo photo;
-
-        protected PhotoThumbnailImage (Photo photo) {
-            super(photo.getThumbnailPath());
-            this.photo = photo;
         }
     }
 

@@ -303,12 +303,15 @@ a:visited {
 }
 
 .imageChooser {
-  width: 800px;
+  padding: 10px;
 }
 
 .imageChooser .Title {
   font-size: 18px;
-  padding: 10px;
+}
+
+.imageChooser .Photo {
+  padding: 5px;
 }
 
 .itemThumbnail {
