@@ -98,22 +98,30 @@ public class ItemPanel extends VerticalPanel
      */
     public void showDetail (ItemIdent ident)
     {
-        // if we're already showing this detail, then we're good to go
-        Widget top = (getWidgetCount() > 0) ? getWidget(0) : null;
-        if (top instanceof ItemDetailPanel && ((ItemDetailPanel)top).isShowing(ident)) {
+        if (_detail != null && _detail.item.getIdent().equals(ident)) {
+            showDetail(_detail);
             return;
         }
 
         // load up the item details
         CInventory.itemsvc.loadItemDetail(CInventory.ident, ident, new AsyncCallback() {
             public void onSuccess (Object result) {
-                clear();
-                add(new ItemDetailPanel((ItemDetail)result, ItemPanel.this));
+                showDetail((ItemDetail)result);
             }
             public void onFailure (Throwable caught) {
                 MsoyUI.error(CInventory.serverError(caught));
             }
         });
+    }
+
+    /**
+     * Displays the supplied item detail.
+     */
+    public void showDetail (ItemDetail detail)
+    {
+        _detail = detail;
+        clear();
+        add(new ItemDetailPanel(_detail, this));
     }
 
     /**
@@ -132,10 +140,14 @@ public class ItemPanel extends VerticalPanel
         _create.setEnabled(true);
 
         if (item != null) {
-            // indicate that we need to refresh the loaded inventory list
-            _contentsModelDirty = true;
             // refresh the detail view
-            showDetail(new ItemIdent(item.getType(), item.itemId));
+            if (_detail != null && _detail.item.getIdent().equals(item.getIdent())) {
+                _detail.item = item;
+                showDetail(_detail);
+            } else {
+                ((SimpleDataModel)_contents.getModel()).addItem(0, item);
+                _contents.displayPage(0, true);
+            }
         }
     }
 
@@ -155,7 +167,6 @@ public class ItemPanel extends VerticalPanel
     {
         CInventory.membersvc.loadInventory(CInventory.ident, _type, 0, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _contentsModelDirty = false;
                 _contents.setModel(new SimpleDataModel((List)result), _startPage);
             }
             public void onFailure (Throwable caught) {
@@ -163,6 +174,12 @@ public class ItemPanel extends VerticalPanel
                 add(new Label(CInventory.serverError(caught)));
             }
         });
+    }
+
+    protected boolean isShowing (ItemIdent ident)
+    {
+        Widget top = (getWidgetCount() > 0) ? getWidget(0) : null;
+        return (top instanceof ItemDetailPanel && ((ItemDetailPanel)top).isShowing(ident));
     }
 
     protected void createNewItem ()
@@ -238,7 +255,7 @@ public class ItemPanel extends VerticalPanel
         }
 
         // trigger the loading of our inventory the first time we're displayed
-        if (!_contents.hasModel() || _contentsModelDirty) {
+        if (!_contents.hasModel()) {
             loadInventory();
         }
     }
@@ -275,10 +292,7 @@ public class ItemPanel extends VerticalPanel
 
     protected byte _type;
     protected int _startPage;
-
-    /** A flag to indicate that the next time we display this item panel, the data needs to be
-     * refetched from the server. */
-    protected boolean _contentsModelDirty = false;
+    protected ItemDetail _detail;
 
     /** Only get the furni list for the current room once, and feed it to each ItemEntry */
     protected List _itemList = new ArrayList();
