@@ -85,7 +85,7 @@ public class GameDetailRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     /** The default abuse factor for newly added games. */
     public static final int DEFAULT_ABUSE_FACTOR = 100;
@@ -101,7 +101,7 @@ public class GameDetailRecord extends PersistentRecord
     public int sourceItemId;
 
     /** The creator supplied instructions for this game. */
-    @Column(length=4096)
+    @Column(length=4096, nullable=true)
     public String instructions;
 
     /** Contains the total number of "player games" accumulated for this game. Each time a game is
