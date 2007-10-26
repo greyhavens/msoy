@@ -39,8 +39,7 @@ public class FeedPanel extends VerticalPanel
         CWhirled.membersvc.loadFeed(
                 CWhirled.ident, _fullPage ? FULL_CUTOFF : SHORT_CUTOFF, new AsyncCallback() {
             public void onSuccess (Object result) {
-                List messages = (List)result;
-                fillUi(messages);
+                _feeds.populate((List)result);
             }
             public void onFailure(Throwable caught) {
                 MsoyUI.error(CWhirled.serverError(caught));
@@ -81,11 +80,6 @@ public class FeedPanel extends VerticalPanel
         }
     }
 
-    protected void fillUi (List messages)
-    {
-        _feeds.populate(messages);
-    }
-
     protected static class FeedList extends VerticalPanel
     {
         public FeedList (boolean fullPage)
@@ -103,6 +97,12 @@ public class FeedPanel extends VerticalPanel
                 return;
             }
 
+            // be small if we have few messages and expand incrementally to a certain height after
+            // which we start scrolling
+            if (messages.size() > MAX_ITEMS) {
+                setHeight(MAX_HEIGHT + "px");
+            }
+
             // sort in descending order by posted
             Object[] messageArray = messages.toArray();
             Arrays.sort(messageArray, new Comparator () {
@@ -110,7 +110,6 @@ public class FeedPanel extends VerticalPanel
                     if (!(o1 instanceof FeedMessage) || !(o2 instanceof FeedMessage)) {
                         return 0;
                     }
-
                     return (int)(((FeedMessage)o2).posted - ((FeedMessage)o1).posted);
                 }
                 public boolean equals (Object obj) {
@@ -119,8 +118,7 @@ public class FeedPanel extends VerticalPanel
             });
             messages = Arrays.asList(messageArray);
 
-            Iterator msgIter = messages.iterator();
-            while (msgIter.hasNext()) {
+            for (Iterator msgIter = messages.iterator(); msgIter.hasNext(); ) {
                 FeedMessage message = (FeedMessage)msgIter.next();
                 if (message instanceof FriendFeedMessage) {
                     addFriendMessage((FriendFeedMessage)message);
@@ -130,7 +128,6 @@ public class FeedPanel extends VerticalPanel
                     addMessage(message);
                 }
             }
-
             if (!_fullPage) {
                 add(new BasicWidget(CWhirled.msgs.fullFeed(
                                 Application.createLinkToken(Page.WHIRLED, "feed"))));
@@ -218,4 +215,10 @@ public class FeedPanel extends VerticalPanel
 
     /** The default number of days of feed information to show. */
     protected static final int FULL_CUTOFF = 14;
+
+    /** The maxiumum height of the feed display. */
+    protected static final int MAX_HEIGHT = 185;
+
+    /** The number of items after which we cap our height at the maximum. */
+    protected static final int MAX_ITEMS = 8;
 }
