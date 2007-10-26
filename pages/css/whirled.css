@@ -277,14 +277,6 @@
   border-bottom: 1px solid #AAAAAA;
 }
 
-.FeedMore {
-  font-size: 12px;
-  padding: 3px;
-  text-decoration: underline;
-  text-align: right;
-  cursor: pointer;
-}
-
 .PictureBox img {
   cursor: pointer;
 }
