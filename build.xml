@@ -244,7 +244,7 @@
   </target>
 
   <!-- regenerates our i18n messages classes -->
-  <target name="gmsgs" description="Regenerates GWT i18n message classes.">
+  <target name="gmsgs">
     <uptodate property="gmsgs.uptodate">
       <srcfiles dir= "${gsrc.dir}" includes="client/*/*Messages.properties">
         <exclude name="**/ServerMessages.properties"/>
@@ -293,7 +293,8 @@
   <!-- builds our GWT web client -->
   <property name="pages" value="msoy"/>
   <property name="gwtc.style" value="OBF"/>
-  <target name="gclient" depends="jprepare,gmsgs">
+  <target name="gclient" depends="jprepare,gmsgs"
+          description="Rebuilds the GWT client (but only for Mozilla).">
     <for list="${pages}" param="page"><sequential>
       <echo>Compiling @{page} module...</echo>
       <delete dir="pages/@{page}"/>
