@@ -8,6 +8,7 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.TimerEvent;
 
+import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
@@ -61,6 +62,7 @@ public class ChatGlyph extends Sprite
         txt.wordWrap = true;
         txt.selectable = true; // enable copy/paste
         txt.alwaysShowSelection = true; // show selection even when not focused
+        txt.antiAliasType = AntiAliasType.ADVANCED;
         TextFieldUtil.trackSingleSelectable(txt);
         return txt;
     }
