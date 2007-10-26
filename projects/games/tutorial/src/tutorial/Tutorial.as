@@ -26,11 +26,11 @@ public class Tutorial extends Sprite
 
         // immediately set up the control and listen for all relevant events
         _control = new AVRGameControl(this);
-        _control.addEventListener(
+        _control.state.addEventListener(
             AVRGameControlEvent.PLAYER_PROPERTY_CHANGED, playerPropertyChanged);
-        _control.addEventListener(
+        _control.state.addEventListener(
             AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
-        _control.addEventListener(
+        _control.quests.addEventListener(
             AVRGameControlEvent.QUEST_STATE_CHANGED, questStateChanged);
 
         // create but do not initialize the view
@@ -43,7 +43,7 @@ public class Tutorial extends Sprite
             log.warning("Eek, no active quest in skipQuest [step=" + getStep() + "]");
             return;
         }
-        _control.cancelQuest(_activeQuest);
+        _control.quests.cancelQuest(_activeQuest);
     }
 
     public function swirlClicked (swirlState :int) :void
@@ -52,7 +52,7 @@ public class Tutorial extends Sprite
         var quest :Quest = Quest.getQuest(step);
 
         if (testCompletedStep(step)) {
-            _control.completeQuest(quest.questId, quest.outro, quest.payout);
+            _control.quests.completeQuest(quest.questId, quest.outro, quest.payout);
             return;
         }
         if (_activeQuest) {
@@ -64,7 +64,7 @@ public class Tutorial extends Sprite
                 "Let's Go!",
                 "<p class='summary'>Follow these steps to get a feel for Whirled and earn some easy flow, the currency in Whirled.</p><br>",
                 function () :void {
-                    _control.offerQuest(quest.questId, null, quest.status);
+                    _control.quests.offerQuest(quest.questId, null, quest.status);
                 });
             return;
         }
@@ -110,7 +110,7 @@ public class Tutorial extends Sprite
             initialize();
 
         } else if (event.value == Quest.getQuest(step).trigger) {
-            _control.setPlayerProperty(PROP_STEP_COMPLETED, step, true);
+            _control.state.setPlayerProperty(PROP_STEP_COMPLETED, step, true);
 
         } else {
             log.warning("Unknown tutorial event: " + event.value);
@@ -147,8 +147,8 @@ public class Tutorial extends Sprite
         if (event.name == quest.questId) {
             // either way we move on to the next
             _activeQuest = null;
-            _control.setPlayerProperty(PROP_STEP_COMPLETED, null, true);
-            _control.setPlayerProperty(PROP_TUTORIAL_STEP, getStep() + 1, true);
+            _control.state.setPlayerProperty(PROP_STEP_COMPLETED, null, true);
+            _control.state.setPlayerProperty(PROP_TUTORIAL_STEP, getStep() + 1, true);
             return;
         }
         log.warning("Deactivation of unexpected quest [questId=" + event.name +
@@ -177,7 +177,7 @@ public class Tutorial extends Sprite
         var quest :Quest = Quest.getQuest(step);
 
         // check against our current active quests
-        var quests :Array = _control.getActiveQuests();
+        var quests :Array = _control.quests.getActiveQuests();
         for (var ii :int = 0; ii < quests.length; ii ++) {
             var tuple :Array = quests[ii];
             if (tuple[0] == quest.questId) {
@@ -197,17 +197,17 @@ public class Tutorial extends Sprite
         }
         // this quest will be automatically accepted, which in turn will trigger a call
         // back here to initialize(), setting activeQuest and swirl state as per above
-        _control.offerQuest(quest.questId, null, quest.status);
+        _control.quests.offerQuest(quest.questId, null, quest.status);
     }
 
     protected function getStep () :int
     {
-        return int(_control.getPlayerProperty(PROP_TUTORIAL_STEP));
+        return int(_control.state.getPlayerProperty(PROP_TUTORIAL_STEP));
     }
 
     protected function testCompletedStep (step :int) :Boolean
     {
-        var tmp :Object = _control.getPlayerProperty(PROP_STEP_COMPLETED);
+        var tmp :Object = _control.state.getPlayerProperty(PROP_STEP_COMPLETED);
         return tmp != null && int(tmp) == step;
     }
 
