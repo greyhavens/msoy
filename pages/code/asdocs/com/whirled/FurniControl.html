@@ -40,6 +40,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr>
 <td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">FurniControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="EntityControl.html">EntityControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="WhirledControl.html">WhirledControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
 </tr>
+<tr>
+<td class="classHeaderTableLabel">Subclasses</td><td><a href="../whirled/PropControl.html">PropControl</a></td>
+</tr>
 </table>
 <p></p>
  This file should be included by furniture, so that it can communicate
@@ -111,6 +114,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="WhirledControl.html#callHostCodeFriend()">callHostCodeFriend</a>(name:String, ... args):*</div>
+<div class="summaryTableDescription">
+     A "friend" version of callHostCode for WhirledSubControls.</div>
+</td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#canEditRoom()">canEditRoom</a>():Boolean</div>
 <div class="summaryTableDescription">
      Returns true if the local client has editing privileges in the current room.</div>
@@ -123,6 +134,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Clear any showing popup.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="WhirledControl.html#dispatch()">dispatch</a>(ctrlEvent:String, key:String = null, value:Object = null):void</div>
+<div class="summaryTableDescription">
+     Helper method to dispatch a ControlEvent, but only if there
+     is an associated listener.</div>
+</td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -271,15 +291,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="WhirledControl.html#callHostCode()">callHostCode</a>(name:String, ... args):*</div>
 <div class="summaryTableDescription">
      Call an exposed function back in our hosting Whirled.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledControl.html#dispatch()">dispatch</a>(ctrlEvent:String, key:String = null, value:Object = null):void</div>
-<div class="summaryTableDescription">
-     Helper method to dispatch a ControlEvent, but only if there
-     is an associated listener.</div>
 </td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
 </tr>
 <tr class="hideInheritedProtectedMethod">
