@@ -35,6 +35,8 @@ public class CommentsPanel extends PagedGrid
 
         _entityType = entityType;
         _entityId = entityId;
+
+        add(new Label(CShell.cmsgs.loadingComments()));
     }
 
     // @Override // from UIObject

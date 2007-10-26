@@ -210,6 +210,34 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
+    public void updateGameInstructions (WebIdent ident, int gameId, String instructions)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+        GameRepository repo = MsoyServer.itemMan.getGameRepository();
+
+        try {
+            GameDetailRecord gdr = repo.loadGameDetail(gameId);
+            if (gdr == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            }
+
+            GameRecord source = repo.loadItem(gdr.sourceItemId);
+            if (source == null || source.ownerId != mrec.memberId) {
+                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            }
+
+            // now that we've confirmed that they're allowed, update the instructions
+            repo.updateGameInstructions(gameId, instructions);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to update instructions [for=" + mrec.who() +
+                    ", gameId=" + gameId + "].", pe);
+            throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+        }
+    }
+
+    // from interface GameService
     public List loadGameTrophies (WebIdent ident, int gameId)
         throws ServiceException
     {

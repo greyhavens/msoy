@@ -153,6 +153,15 @@ public class GameRepository extends ItemRepository<
         return newAbuse;
     }
 
+    /**
+     * Updates the instructions for the specified game.
+     */
+    public void updateGameInstructions (int gameId, String instructions)
+        throws PersistenceException
+    {
+        updatePartial(GameDetailRecord.class, gameId, GameDetailRecord.INSTRUCTIONS, instructions);
+    }
+
     @Override // from ItemRepository
     public void insertOriginalItem (GameRecord item, boolean catalogListing)
         throws PersistenceException

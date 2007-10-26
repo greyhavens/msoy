@@ -32,6 +32,13 @@ public interface GameService extends RemoteService
         throws ServiceException;
 
     /**
+     * Updates the instructions for the specified game. The caller must be the owner of the game's
+     * source item.
+     */
+    public void updateGameInstructions (WebIdent ident, int gameId, String instructions)
+        throws ServiceException;
+
+    /**
      * Loads and returns the trophies awarded by the specified game. Filling in when they were
      * earned by the caller if possible.
      *

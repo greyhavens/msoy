@@ -47,6 +47,13 @@ public class GameDetailRecord extends PersistentRecord
     public static final ColumnExp SOURCE_ITEM_ID_C =
         new ColumnExp(GameDetailRecord.class, SOURCE_ITEM_ID);
 
+    /** The column identifier for the {@link #instructions} field. */
+    public static final String INSTRUCTIONS = "instructions";
+
+    /** The qualified column identifier for the {@link #instructions} field. */
+    public static final ColumnExp INSTRUCTIONS_C =
+        new ColumnExp(GameDetailRecord.class, INSTRUCTIONS);
+
     /** The column identifier for the {@link #playerGames} field. */
     public static final String PLAYER_GAMES = "playerGames";
 
@@ -78,7 +85,7 @@ public class GameDetailRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /** The default abuse factor for newly added games. */
     public static final int DEFAULT_ABUSE_FACTOR = 100;
@@ -92,6 +99,10 @@ public class GameDetailRecord extends PersistentRecord
 
     /** The mutable item which is edited by the developer(s) working on this game. */
     public int sourceItemId;
+
+    /** The creator supplied instructions for this game. */
+    @Column(length=4096)
+    public String instructions;
 
     /** Contains the total number of "player games" accumulated for this game. Each time a game is
      * played to completion, this field is incremented by the number of players in the game. See
@@ -134,6 +145,7 @@ public class GameDetailRecord extends PersistentRecord
     {
         GameDetail detail = new GameDetail();
         detail.gameId = gameId;
+        detail.instructions = instructions;
         detail.playerGames = playerGames;
         detail.playerMinutes = playerMinutes;
         return detail;

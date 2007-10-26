@@ -64,6 +64,10 @@
   padding: 0px; /* override default */
 }
 
+.instructionsPanel {
+  border: 1px solid #000000;
+}
+
 .gameTrophyPanel .Grid {
   height: 340px;
 }

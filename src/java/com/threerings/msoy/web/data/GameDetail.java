@@ -31,6 +31,9 @@ public class GameDetail
     /** The source item maintained by the creator for this game. */
     public Game sourceItem;
 
+    /** The creator supplied instructions for this game. */
+    public String instructions;
+
     /** The number of "player games" played (games times the number of players in each game). */
     public int playerGames;
 

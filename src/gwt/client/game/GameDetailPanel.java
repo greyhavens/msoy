@@ -41,6 +41,7 @@ import client.util.StyledTabPanel;
 public class GameDetailPanel extends VerticalPanel
     implements TabListener
 {
+    public static final String INSTRUCTIONS_TAB = "i";
     public static final String COMMENTS_TAB = "c";
     public static final String TROPHIES_TAB = "t";
     public static final String MYRANKINGS_TAB = "mr";
@@ -176,8 +177,8 @@ public class GameDetailPanel extends VerticalPanel
         _tabs.addTabListener(this);
         add(_tabs);
 
-        // TODO: add screen shots tab
-        // TODO: add instructions tab
+        // add the about/instructions tab
+        addTab(INSTRUCTIONS_TAB, CGame.msgs.tabInstructions(), new InstructionsPanel(detail));
 
         // add comments tab
         if (detail.listedItem != null) {
