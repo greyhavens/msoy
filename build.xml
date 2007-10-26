@@ -428,7 +428,8 @@
   </target>
 
   <!-- builds our Flash client -->
-  <target name="asclient" depends="asprepare,aslib,asquick"/>
+  <target name="asclient" depends="asprepare,aslib,asquick"
+          description="Rebuilds the Flash client."/>
 
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare,aslib">
@@ -585,7 +586,8 @@
 
   <!-- builds our Java clients -->
   <property name="jclients" value="admin,game,lwjgl-game,swiftly"/>
-  <target name="jclients" depends="dist">
+  <target name="jclients" depends="dist"
+          description="Rebuilds the Java clients. Use -Djclients=IDENT to just rebuild just one.">
     <for list="${jclients}" param="ident">
       <sequential>
         <antcall target="proguard"><param name="ident" value="@{ident}"/></antcall>
