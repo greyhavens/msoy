@@ -186,7 +186,7 @@ public class ActorSprite extends MsoySprite
 
         if (_chatOverlay != null) {
             // let our the chat overlay thats carrying our chat bubbles know we moved
-            _chatOverlay.speakerMoved(_occInfo.username, getStageRect());
+            _chatOverlay.speakerMoved(_occInfo.username, getDecorationsRect());
         }
     }
 
@@ -206,15 +206,19 @@ public class ActorSprite extends MsoySprite
         var r :Rectangle = super.getStageRect();
 
         if (includeExtras) {
-            // But it seems to work for these other bits...
-            // Add the bounds of the name label.
-            r = r.union(_label.getRect(this.stage));
+            r = r.union(getDecorationsRect());
+        }
 
-            // Add the bounds of any decorations.
-            if (_decorations != null) {
-                for each (var obj :Object in _decorations) {
-                    r = r.union(DisplayObject(obj.dec).getRect(this.stage));
-                }
+        return r;
+    }
+
+    public function getDecorationsRect () :Rectangle
+    {
+        var r :Rectangle = _label.getRect(this.stage);
+
+        if (_decorations != null) {
+            for each (var dispObj :DisplayObject in _decorations) {
+                r = r.union(dispObj.getRect(this.stage));
             }
         }
 

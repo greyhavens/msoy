@@ -433,7 +433,7 @@ public class RoomView extends AbstractRoomView
     public function getSpeakerBounds (speaker :Name) :Rectangle
     {
         var actor :ActorSprite = getActorByName(speaker);
-        return (actor == null) ? null : actor.getStageRect();
+        return (actor == null) ? null : actor.getDecorationsRect();
     }
 
     // from ChatInfoProvider
@@ -452,10 +452,10 @@ public class RoomView extends AbstractRoomView
             var actorInfo :ActorInfo = actor.getActorInfo();
             if ((actorInfo.bodyOid == myOid) ||
                     (speaker != null && speaker.equals(actorInfo.username))) {
-                high.push(actor.getStageRect());
+                high.push(actor.getDecorationsRect());
 
             } else if (low != null) {
-                low.push(actor.getStageRect());
+                low.push(actor.getDecorationsRect());
             }
         }
     }
