@@ -250,11 +250,15 @@
   border-right: 1px dotted;
   border-bottom: 1px dotted;
   width: 539px;
-  height: 245px;
+  height: 185px;
 }
 
 .FeedListContainer {
   width: 100%;
+}
+
+.FeedListFull {
+  width: 539px;
 }
 
 .FeedWidget {

@@ -66,6 +66,14 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String noPeople();
 
   /**
+   * Translated "<a href="/#{0}">Show older messages</a>.".
+   * 
+   * @return translated "<a href="/#{0}">Show older messages</a>."
+   * @gwt.key fullFeed
+   */
+  String fullFeed(String arg0);
+
+  /**
    * Translated "My Friends Online".
    * 
    * @return translated "My Friends Online"

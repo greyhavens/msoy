@@ -56,6 +56,9 @@ public class index extends MsgsEntryPoint
             setPageTitle(CWhirled.msgs.titleMyWhirled());
             setContent(new MyWhirled(popDisplay));
             FlashClients.tutorialEvent("myWhirledVisited");
+        } else if ("feed".equals(action)) {
+            setPageTitle(CWhirled.msgs.headerFeed());
+            setContent(new FeedPanel(true));
         }
     }
 

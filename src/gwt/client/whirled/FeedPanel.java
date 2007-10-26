@@ -31,11 +31,13 @@ import client.game.GameDetailPanel;
 
 public class FeedPanel extends VerticalPanel
 {
-    public FeedPanel ()
+    public FeedPanel (boolean fullPage)
     {
+        _fullPage = fullPage;
         buildUi();
 
-        CWhirled.membersvc.loadFeed(CWhirled.ident, DEFAULT_CUTOFF, new AsyncCallback() {
+        CWhirled.membersvc.loadFeed(
+                CWhirled.ident, _fullPage ? FULL_CUTOFF : SHORT_CUTOFF, new AsyncCallback() {
             public void onSuccess (Object result) {
                 List messages = (List)result;
                 fillUi(messages);
@@ -64,7 +66,19 @@ public class FeedPanel extends VerticalPanel
         header.add(star);
         add(header);
 
-        add(_feeds = new FeedList());
+        _feeds = new FeedList(_fullPage);
+
+        if (_fullPage) {
+            add(_feeds);
+
+        } else {
+            ScrollPanel scroll = new ScrollPanel();
+            scroll.setStyleName("FeedList");
+            scroll.setAlwaysShowScrollBars(true);
+            DOM.setStyleAttribute(scroll.getElement(), "overflowX", "hidden");
+            scroll.setWidget(_feeds);
+            add(scroll);
+        }
     }
 
     protected void fillUi (List messages)
@@ -72,24 +86,20 @@ public class FeedPanel extends VerticalPanel
         _feeds.populate(messages);
     }
 
-    protected static class FeedList extends ScrollPanel
+    protected static class FeedList extends VerticalPanel
     {
-        public FeedList ()
+        public FeedList (boolean fullPage)
         {
-            setStyleName("FeedList");
-            setAlwaysShowScrollBars(true);
-            DOM.setStyleAttribute(getElement(), "overflowX", "hidden");
+            _fullPage = fullPage;
+            setStyleName(_fullPage ? "FeedListFull" : "FeedListContainer");
+            setSpacing(0);
         }
 
         public void populate (List messages)
         {
-            VerticalPanel feedContainer = new VerticalPanel();
-            feedContainer.setStyleName("FeedListContainer");
-            feedContainer.setSpacing(0);
-            setWidget(feedContainer);
-
             if (messages.size() == 0) {
-                showEmptyEntry(feedContainer);
+                add(new BasicWidget(CWhirled.msgs.emptyFeed(
+                            Application.createLinkToken(Page.WHIRLED, "whirledwide"))));
                 return;
             }
 
@@ -113,40 +123,44 @@ public class FeedPanel extends VerticalPanel
             while (msgIter.hasNext()) {
                 FeedMessage message = (FeedMessage)msgIter.next();
                 if (message instanceof FriendFeedMessage) {
-                    addFriendMessage((FriendFeedMessage)message, feedContainer);
+                    addFriendMessage((FriendFeedMessage)message);
                 } else if (message instanceof GroupFeedMessage) {
-                    addGroupMessage((GroupFeedMessage)message, feedContainer);
+                    addGroupMessage((GroupFeedMessage)message);
                 } else {
-                    addMessage(message, feedContainer);
+                    addMessage(message);
                 }
             }
 
+            if (!_fullPage) {
+                add(new BasicWidget(CWhirled.msgs.fullFeed(
+                                Application.createLinkToken(Page.WHIRLED, "feed"))));
+            }
         }
 
-        protected void addMessage (FeedMessage message, VerticalPanel feedContainer)
+        protected void addMessage (FeedMessage message)
         {
         }
 
-        protected void addFriendMessage (FriendFeedMessage message, VerticalPanel feedContainer)
+        protected void addFriendMessage (FriendFeedMessage message)
         {
             String friendLink = profileLink(
                     message.friend.toString(), String.valueOf(message.friend.getMemberId()));
             switch (message.type) {
             // FRIEND_ADDED_FRIEND
             case 100:
-                feedContainer.add(new BasicWidget(CWhirled.msgs.friendAddedFriend(
+                add(new BasicWidget(CWhirled.msgs.friendAddedFriend(
                             friendLink, profileLink(message.data[0], message.data[1]))));
                 break;
 
             // FRIEND_UPDATED_ROOM
             case 101:
-                feedContainer.add(new BasicWidget(CWhirled.msgs.friendUpdatedRoom(friendLink,
+                add(new BasicWidget(CWhirled.msgs.friendUpdatedRoom(friendLink,
                                 Application.createLinkToken(Page.WORLD, "s" + message.data[0]))));
                 break;
 
             // FRIEND_WON_TROPHY
             case 102:
-                feedContainer.add(new BasicWidget(CWhirled.msgs.friendWonTrophy(friendLink,
+                add(new BasicWidget(CWhirled.msgs.friendWonTrophy(friendLink,
                                 Application.createLinkHtml(message.data[0], Page.GAME,
                                     Args.compose(new String[] {
                                         "d", message.data[1], GameDetailPanel.TROPHIES_TAB })))));
@@ -154,7 +168,7 @@ public class FeedPanel extends VerticalPanel
 
             // FRIEND_LISTED_ITEM
             case 103:
-                feedContainer.add(new BasicWidget(CWhirled.msgs.friendListedItem(friendLink,
+                add(new BasicWidget(CWhirled.msgs.friendListedItem(friendLink,
                                 CShell.dmsgs.getString("itemType" + message.data[1]),
                                 Application.createLinkHtml(message.data[0], Page.CATALOG,
                                     Args.compose(new String[] {
@@ -164,7 +178,7 @@ public class FeedPanel extends VerticalPanel
 
         }
 
-        protected void addGroupMessage (GroupFeedMessage message, VerticalPanel feedContainer)
+        protected void addGroupMessage (GroupFeedMessage message)
         {
         }
 
@@ -173,12 +187,7 @@ public class FeedPanel extends VerticalPanel
             return Application.createLinkHtml(name, Page.PROFILE, id);
         }
 
-        protected void showEmptyEntry (VerticalPanel feedContainer)
-        {
-            feedContainer.add(new BasicWidget(CWhirled.msgs.emptyFeed(
-                            Application.createLinkToken("whirled", "whirledwide"))));
-        }
-
+        protected boolean _fullPage;
     }
 
     protected static class BasicWidget extends HorizontalPanel
@@ -202,6 +211,11 @@ public class FeedPanel extends VerticalPanel
 
     protected FeedList _feeds;
 
+    protected boolean _fullPage;
+
     /** The default number of days of feed information to show. */
-    protected static final int DEFAULT_CUTOFF = 2;
+    protected static final int SHORT_CUTOFF = 2;
+
+    /** The default number of days of feed information to show. */
+    protected static final int FULL_CUTOFF = 14;
 }

@@ -148,7 +148,7 @@ public class MyWhirled extends FlexTable
         _people.addStyleName("PeopleContainer");
 
         getFlexCellFormatter().setColSpan(row, 0, 2);
-        setWidget(row++, 0, new FeedPanel());
+        setWidget(row++, 0, new FeedPanel(false));
 
         VerticalPanel placesContainer = new VerticalPanel();
         setWidget(row, 0, placesContainer);
