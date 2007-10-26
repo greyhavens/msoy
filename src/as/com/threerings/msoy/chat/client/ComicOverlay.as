@@ -355,8 +355,8 @@ public class ComicOverlay extends ChatOverlay
     {
         g.lineStyle(1, outline);
         g.beginFill(fill);
-        g.drawCircle(w - 9, h + 5, 4);
-        g.drawCircle(w - 13, h + 14, 3);
+        g.drawCircle(w - 9, h, 4);
+        g.drawCircle(w - 13, h + 9, 3);
         g.endFill();
     }
 
@@ -381,67 +381,95 @@ public class ComicOverlay extends ChatOverlay
     /** Bubble draw function. See getBubbleShape() */
     protected function drawThinkBubble (g :Graphics, w :int, h :int) :void
     {
-        var hDia :int = 16;
-        // if we're over halfway to a new bump, sub a little from each bump to fill out a new one
-        if ((w - PAD) % hDia > hDia / 2) {
-            hDia -= Math.ceil((hDia - ((w - PAD) % hDia)) / Math.floor((w - PAD) / hDia));
-
-        // else if we're less than halfway to a new bump, add a little to each bump.
-        } else if ((w - PAD) % hDia != 0) {
-            hDia += Math.floor(((w - PAD) % hDia) / Math.floor((w - PAD) / hDia));
-        }
-        var hBumps :int = Math.round((w - PAD) / hDia);
-
-        var vDia :int = 16;
-        // if we're over halfway to a new bump, sub a little from each bump to fill out a new one
-        if ((h - PAD) % vDia > vDia / 2) {
-            vDia -= Math.ceil((vDia - ((h - PAD) % vDia)) / Math.floor((h - PAD) / vDia));
-            
-        // else if we're less than halfway to a new bump, add a little to each bump.
-        } else if ((h - PAD) % vDia != 0) {
-            vDia += Math.floor(((h - PAD) % vDia) / Math.floor((h - PAD) / vDia));
-        }
-        var vBumps :int = Math.round((h - PAD) / vDia);
-
         var thinkPad :Number = PAD / 2;
+        var targetDia :int = 16;
+        // amount of space we need to leave at each end of the lines, so that the corner bubble 
+        // is about the same size as the rest of the bubbles.
+        var endBuf :int = Math.round(Math.sin(45 * Math.PI / 180) * targetDia);
 
-        g.moveTo(thinkPad, thinkPad);
+        var bumpyWidth :Number = w - thinkPad * 2 - endBuf * 2;
+        var hDia :int = distributeCloselyWithin(bumpyWidth, targetDia, 4);
+        var hBumps :int = Math.round(bumpyWidth / hDia);
+
+        var bumpyHeight :Number = h - thinkPad * 2 - endBuf * 2;
+        var vDia :int = distributeCloselyWithin(bumpyHeight, targetDia, 4);
+        var vBumps :int = Math.round(bumpyHeight / vDia);
 
         var yy :int;
         var xx :int;
         var ii :int;
+        var control :Point;
 
-        for (ii = 0, xx = thinkPad; ii < hBumps; ii++, xx += hDia) {
-            if (ii == hBumps - 1) {
-                g.curveTo((xx + w - thinkPad) / 2, -thinkPad, w - thinkPad, thinkPad);
-            } else {
-                g.curveTo(xx + hDia / 2, -thinkPad, xx + hDia, thinkPad);
+        // top edge
+        g.moveTo(xx = (thinkPad + endBuf), thinkPad);
+        for (ii = 0; ii < hBumps; ii++, xx += hDia) {
+            g.curveTo(xx + hDia / 2, -thinkPad, xx + hDia, thinkPad);
+        }
+        control = findControlPoint(new Point(xx, thinkPad), 
+                                   new Point(w - thinkPad, yy = (thinkPad + endBuf)),
+                                   thinkPad * 2);
+        g.curveTo(control.x, control.y, w - thinkPad, yy);
+
+        // right edge
+        for (ii = 0; ii < vBumps; ii++, yy += vDia) {
+            g.curveTo(w + thinkPad, yy + vDia / 2, w - thinkPad, yy + vDia);
+        }
+        control = findControlPoint(new Point(xx = (w - thinkPad - endBuf), h - thinkPad), 
+                                   new Point(w - thinkPad, yy),
+                                   thinkPad * 2);
+        g.curveTo(control.x, control.y, xx, h - thinkPad);
+
+        // bottom edge
+        for (ii = 0; ii < hBumps; ii++, xx -= hDia) {
+            g.curveTo(xx - hDia / 2, h + thinkPad, xx - hDia, h - thinkPad);
+        }
+        control = findControlPoint(new Point(xx, h - thinkPad),
+                                   new Point(thinkPad, yy = (h - thinkPad - endBuf)),
+                                   thinkPad * 2);
+        g.curveTo(control.x, control.y, thinkPad, yy);
+
+        // left edge
+        for (ii = 0; ii < vBumps; ii++, yy -= vDia)  {
+            g.curveTo(-thinkPad, yy - vDia / 2, thinkPad, yy - vDia);
+        }
+        control = findControlPoint(new Point(xx = (thinkPad + endBuf), thinkPad),
+                                   new Point(thinkPad, yy),
+                                   thinkPad * 2);
+        g.curveTo(control.x, control.y, xx, thinkPad);
+    }
+
+    protected function findControlPoint (from :Point, to :Point, length :Number) :Point 
+    {
+        // find the control point that draws a perpendicular line from the center of the line
+        // between the two points, and is length away from that line.
+        var control :Point = Point.interpolate(from, to, 0.5);
+        control = control.add(
+            Point.polar(length, Math.atan2(from.y - control.y, to.x - control.x)));
+        return control;
+    }
+
+    protected function distributeCloselyWithin (length :int, target :int, tolerance :int) :int
+    {
+        // find the number that divides the most closely into length, and is closest to target,
+        // within the given tolerance.
+        var best :int = target - tolerance;
+        for (var ii :int = target - tolerance; ii <= target + 2; ii++) {
+            var bestResult :int = length % best;
+            bestResult = 
+                bestResult > length - (length % best) ? length - (length % best) : bestResult;
+
+            var iiResult :int = length % ii;
+            iiResult = iiResult > length - (length % ii) ? length - (length % ii) : iiResult;
+
+            if (bestResult > iiResult) {
+                best = ii;
+            } else if (bestResult == iiResult) {
+                if (Math.abs(best - length) > Math.abs(ii - length)) {
+                    best = ii;
+                }
             }
         }
-
-        for (ii = 0, yy = thinkPad; ii < vBumps; ii++, yy += vDia) {
-            if (ii == vBumps - 1) {
-                g.curveTo(w + thinkPad, (yy + h - thinkPad) / 2, w - thinkPad, h - thinkPad);
-            } else {
-                g.curveTo(w + thinkPad, yy + vDia / 2, w - thinkPad, yy + vDia);
-            }
-        }
-
-        for (ii = 0, xx = (w - thinkPad); ii < hBumps; ii++, xx -= hDia) {
-            if (ii == hBumps - 1) {
-                g.curveTo((xx + thinkPad) / 2, h + thinkPad, thinkPad, h - thinkPad);
-            } else {
-                g.curveTo(xx - hDia / 2, h + thinkPad, xx - hDia, h - thinkPad);
-            }
-        }
-
-        for (ii = 0, yy = (h - thinkPad); ii < vBumps; ii++, yy -= vDia)  {
-            if (ii == vBumps - 1) {
-                g.curveTo(-thinkPad, (yy + thinkPad) / 2, thinkPad, thinkPad);
-            } else {
-                g.curveTo(-thinkPad, yy - vDia / 2, thinkPad, yy - vDia);
-            }
-        }
+        return best;
     }
 
     /**
