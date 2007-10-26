@@ -244,7 +244,7 @@
   </target>
 
   <!-- regenerates our i18n messages classes -->
-  <target name="gmsgs">
+  <target name="gmsgs" description="Regenerates GWT i18n message classes.">
     <uptodate property="gmsgs.uptodate">
       <srcfiles dir= "${gsrc.dir}" includes="client/*/*Messages.properties">
         <exclude name="**/ServerMessages.properties"/>
@@ -747,7 +747,7 @@
   </target>
 
   <!-- build the java class files -->
-  <target name="compile" depends="jprepare,qcompile"/>
+  <target name="compile" depends="jprepare,qcompile" description="Builds java class files."/>
 
   <!-- builds the java class files only, without preparing the build directories etc. -->
   <target name="qcompile">
@@ -803,7 +803,8 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients,tests">
+  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients,tests"
+        description="Rebuilds all subprojects and whole top-level distribution.">
     <antcall target="gclient">
       <param name="full" value="true"/>
     </antcall>
@@ -822,7 +823,7 @@
   <target name="distpkg" depends="assignversion,distall,javadoc"/>
 
   <!-- cleans out the compiled code -->
-  <target name="clean">
+  <target name="clean" description="Cleans out compiled code.">
     <delete dir="${classes.dir}/com"/>
     <delete file="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java"/>
   </target>
@@ -859,7 +860,8 @@
   </target>
 
   <!-- fully cleans out the application and all subprojects -->
-  <target name="distcleanall" depends="distcleanprojects,distclean"/>
+  <target name="distcleanall" depends="distcleanprojects,distclean"
+        description="Fully cleans out the application and all subprojects."/>
 
   <!-- prepare ${destroot} for all the packages being built -->
   <target name="preppkg">
