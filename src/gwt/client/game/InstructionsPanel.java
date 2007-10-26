@@ -84,6 +84,10 @@ public class InstructionsPanel extends VerticalPanel
 
     protected void saveInstructions (final String instructions)
     {
+        if (instructions.length() > MAX_INSTRUCTIONS_LENGTH) {
+            MsoyUI.error(CGame.msgs.ipInstructionsTooLong());
+            return;
+        }
         CGame.gamesvc.updateGameInstructions(CGame.ident, _detail.gameId, instructions,
                                              new AsyncCallback() {
             public void onSuccess (Object result) {
@@ -97,4 +101,6 @@ public class InstructionsPanel extends VerticalPanel
     }
 
     protected GameDetail _detail;
+
+    protected static final int MAX_INSTRUCTIONS_LENGTH = 4096;
 }
