@@ -77,12 +77,6 @@ public class ProfileGrid extends PagedGrid
                 ((Image) photo).addClickListener(profileClick);
                 photo.setStyleName("actionLabel");
             }
-            // we do this crazy double wrapping to avoid forcing this table column to 80 pixels
-            // which booches vertical layout mode
-            SimplePanel photoPanel = new SimplePanel();
-            photoPanel.add(photo);
-            photoPanel.setStyleName("Photo");
-            setWidget(0, 0, photoPanel);
 
             Label nameLabel =  new Label(card.name.toString());
             nameLabel.setStyleName("MemberCardName");
@@ -91,13 +85,24 @@ public class ProfileGrid extends PagedGrid
 
             if (_vertical) {
                 setCellSpacing(0);
+
+                // avoid forcing this table column to 80 pixels which booches vertical layout mode
+                SimplePanel photoPanel = new SimplePanel();
+                photoPanel.add(photo);
+                photoPanel.setStyleName("Photo");
+                setWidget(0, 0, photoPanel);
+
                 setWidget(1, 0, nameLabel);
                 getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
                 getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
 
             } else {
                 setCellSpacing(5);
+
+                setWidget(0, 0, photo);
+                getFlexCellFormatter().setStyleName(0, 0, "Photo");
                 getFlexCellFormatter().setRowSpan(0, 0, 2);
+
                 setWidget(0, 1, nameLabel);
                 getFlexCellFormatter().setStyleName(1, 0, "MemberCardHeadline");
                 if (card.headline == null || card.headline.length() == 0) {
