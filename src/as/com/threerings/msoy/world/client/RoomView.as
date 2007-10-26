@@ -710,6 +710,13 @@ public class RoomView extends AbstractRoomView
         _suppressAutoScroll = true;
     }
 
+    override protected function scrollRectUpdated () :void
+    {
+        super.scrollRectUpdated();
+
+        chatOverlay.setScrollRect(scrollRect);
+    }
+
     protected function tick (event :Event) :void
     {
         if (!_suppressAutoScroll) {

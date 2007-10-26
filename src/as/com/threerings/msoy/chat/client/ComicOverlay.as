@@ -51,6 +51,11 @@ public class ComicOverlay extends ChatOverlay
         clearBubbles(false);
     }
 
+    public function setScrollRect (rect :Rectangle) :void
+    {
+        _overlay.scrollRect = rect;
+    }
+
     override protected function layout (bounds :Rectangle, targetWidth :int) :void
     {
         clearBubbles(true); // these will get repopulated from the history
