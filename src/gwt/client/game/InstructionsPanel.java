@@ -59,12 +59,14 @@ public class InstructionsPanel extends VerticalPanel
         editor.setWidth("100%");
         editor.setHeight("300px");
         if (_detail.instructions != null) {
-            editor.setText(_detail.instructions);
+            editor.setHTML(_detail.instructions);
         }
 
+        setHorizontalAlignment(ALIGN_LEFT);
         add(new RichTextToolbar(editor));
         add(editor);
 
+        setHorizontalAlignment(ALIGN_RIGHT);
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.setSpacing(5);
         buttons.add(new Button("Cancel", new ClickListener() {
