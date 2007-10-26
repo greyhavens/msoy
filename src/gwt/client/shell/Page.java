@@ -346,7 +346,8 @@ public abstract class Page
         }
 
         // configure our content minimizer UI
-        if (_closeToken != null) {
+        boolean isMinimized = (RootPanel.get(SEPARATOR).getWidgetCount() > 0);
+        if (_closeToken != null && !isMinimized) {
             RootPanel.get(SEPARATOR).clear();
             FlowPanel closeBox = new FlowPanel();
             closeBox.setStyleName("CloseBoxHolder");
