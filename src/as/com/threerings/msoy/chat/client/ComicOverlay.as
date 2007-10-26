@@ -13,6 +13,7 @@ import flash.text.TextFormatAlign;
 
 import mx.core.Container;
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Name;
 
@@ -51,11 +52,6 @@ public class ComicOverlay extends ChatOverlay
         clearBubbles(false);
     }
 
-    public function setScrollRect (rect :Rectangle) :void
-    {
-        _overlay.scrollRect = rect;
-    }
-
     override protected function layout (bounds :Rectangle, targetWidth :int) :void
     {
         clearBubbles(true); // these will get repopulated from the history
@@ -81,7 +77,7 @@ public class ComicOverlay extends ChatOverlay
         var cloud :BubbleCloud = _bubbles.get(speaker);
         if (cloud != null) {
             // the bounds are in stage coordinates
-            var local :Point = _overlay.globalToLocal(bounds.topLeft);
+            var local :Point = _scrollOverlay.globalToLocal(bounds.topLeft);
             bounds.x = local.x;
             bounds.y = local.y;
             cloud.setSpeakerLocation(bounds);
@@ -214,7 +210,7 @@ public class ComicOverlay extends ChatOverlay
         if (cloud == null) {
             if (speakerBounds != null) {
                 // the bounds given to this function are in stage coordinates
-                var local :Point = _overlay.globalToLocal(speakerBounds.topLeft);
+                var local :Point = _scrollOverlay.globalToLocal(speakerBounds.topLeft);
                 speakerBounds.x = local.x;
                 speakerBounds.y = local.y;
             }
@@ -223,31 +219,15 @@ public class ComicOverlay extends ChatOverlay
             _bubbles.put(speaker, cloud);
         }
         cloud.addBubble(bubble);
-        _overlay.addChild(bubble);
-
-        // TODO: this is a hack and illustrates why my BubbleCloud approach may not be the best 
-        // (it'll probably only get worse when we start trying to show the maximal bubbleage 
-        // reasonable at once...).  This could be alleviated by just keeping an array of all the 
-        // bubbles solely for this reason, but we'll see what we end up doing with bubble placement.
-        var allBubbles :Array = [];
-        for each (cloud in _bubbles.values()) {
-            allBubbles = allBubbles.concat(cloud.bubbles);
+        if (placeOf(type) == PLACE) {
+            _scrollOverlay.addChild(bubble);
+        } else {
+            _staticOverlay.addChild(bubble);
         }
-        allBubbles.sort(function (bubA :BubbleGlyph, bubB :BubbleGlyph) :int {
-            if (bubA.parent != _overlay) {
-                if (bubB.parent != _overlay) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            } else if (bubB.parent != _overlay) {
-                return -1;
-            }
+        _allBubbles.unshift(bubble);
 
-            return _overlay.getChildIndex(bubA) > _overlay.getChildIndex(bubB) ? -1 : 1;
-        });
-        for (var ii :int = 0; ii < allBubbles.length; ii++) {
-            (allBubbles[ii] as BubbleGlyph).setAgeLevel(ii);
+        for (var ii :int = 0; ii < _allBubbles.length; ii++) {
+            (_allBubbles[ii] as BubbleGlyph).setAgeLevel(ii);
         }
 
         return true;
@@ -499,6 +479,7 @@ public class ComicOverlay extends ChatOverlay
             var bubble :BubbleGlyph = glyph as BubbleGlyph;
             var cloud :BubbleCloud = _bubbles.get(bubble.getSpeaker());
             cloud.removeBubble(bubble);
+            ArrayUtil.removeFirst(_allBubbles, bubble);
         }
         super.glyphExpired(glyph);
     }
@@ -528,6 +509,8 @@ public class ComicOverlay extends ChatOverlay
     /** Maps speaker name to BubbleCloud */
     protected var _bubbles :HashMap = new HashMap();
 
+    protected var _allBubbles :Array = [];
+
     /** The maximum number of bubbles to show per user. */
     protected static const MAX_BUBBLES_PER_USER :int = 3;
 
@@ -553,7 +536,7 @@ class BubbleCloud
     public function BubbleCloud (overlay :ComicOverlay, maxBubbles :int, bounds :Rectangle, 
         viewWidth :Number, viewHeight :Number) 
     {
-        _overlay = overlay;
+        _scrollOverlay = overlay;
         _maxBubbles = maxBubbles;
         _location = bounds;
         _viewWidth = viewWidth;
@@ -612,7 +595,7 @@ class BubbleCloud
     {
         _bubbles.unshift(bubble);
         while (_bubbles.length > _maxBubbles) {
-            _overlay.removeGlyph(_bubbles.pop() as BubbleGlyph);
+            _scrollOverlay.removeGlyph(_bubbles.pop() as BubbleGlyph);
         }
         for (var ii :int = 1; ii < _bubbles.length; ii++) {
             (_bubbles[ii] as BubbleGlyph).removeTail();
@@ -632,7 +615,7 @@ class BubbleCloud
             }
         }
         // make sure the bubble gets removed from the overlay, whether we found it here or not.
-        _overlay.removeGlyph(bubble);
+        _scrollOverlay.removeGlyph(bubble);
     }
 
     /** The space we force between adjacent bubbles. */
@@ -640,7 +623,7 @@ class BubbleCloud
 
     protected var _bubbles :Array = [];
     protected var _location :Rectangle;
-    protected var _overlay :ComicOverlay;
+    protected var _scrollOverlay :ComicOverlay;
     protected var _maxBubbles :int;
     protected var _viewWidth :Number;
     protected var _viewHeight :Number;

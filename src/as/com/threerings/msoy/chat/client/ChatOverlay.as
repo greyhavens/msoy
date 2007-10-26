@@ -63,11 +63,13 @@ public class ChatOverlay
     {
         _msgMan = msgMan;
 
-        _overlay = new Sprite();
-//        _overlay.mouseChildren = false;
-        _overlay.mouseEnabled = false;
-//        _overlay.alpha = ALPHA;
-        _overlay.blendMode = BlendMode.LAYER;
+        _scrollOverlay = new Sprite();
+        _scrollOverlay.mouseEnabled = false;
+        _scrollOverlay.blendMode = BlendMode.LAYER;
+
+        _staticOverlay = new Sprite();
+        _staticOverlay.mouseEnabled = false;
+        _staticOverlay.blendMode = BlendMode.LAYER;
 
         createStandardFormats();
 
@@ -82,11 +84,14 @@ public class ChatOverlay
     {
         // NOTE: The docs swear up and down that the point needs to be in stage coords,
         // but only local coords seem to work. Bug?
-        var p :Point = _overlay.globalToLocal(new Point(stageX, stageY));
-        var objs :Array = _overlay.getObjectsUnderPoint(p);
-        for each (var obj :DisplayObject in objs) {
-            if (obj is InteractiveObject && InteractiveObject(obj).mouseEnabled) {
-                return true;
+        var overlays :Array = [_scrollOverlay, _staticOverlay];
+        for each (var overlay :Sprite in overlays) {
+            var p :Point = overlay.globalToLocal(new Point(stageX, stageY));
+            var objs :Array = overlay.getObjectsUnderPoint(p);
+            for each (var obj :DisplayObject in objs) {
+                if (obj is InteractiveObject && InteractiveObject(obj).mouseEnabled) {
+                    return true;
+                }
             }
         }
         return false;
@@ -147,7 +152,8 @@ public class ChatOverlay
             // removing from the old
             _target.removeEventListener("childrenChanged", handleContainerPopulate);
             _target.removeEventListener(ResizeEvent.RESIZE, handleContainerResize);
-            _target.rawChildren.removeChild(_overlay);
+            _target.rawChildren.removeChild(_scrollOverlay);
+            _target.rawChildren.removeChild(_staticOverlay);
 
             // stop listening to our chat history
             _history.removeChatOverlay(this);
@@ -162,10 +168,14 @@ public class ChatOverlay
 
         if (_target != null) {
             // adding to the new
-            _overlay.x = 0;
-            _overlay.y = 0;
+            _scrollOverlay.x = 0;
+            _scrollOverlay.y = 0;
             _target.rawChildren.addChildAt(
-                _overlay, Math.max(0, _target.rawChildren.numChildren - 1));
+                _scrollOverlay, Math.max(0, _target.rawChildren.numChildren - 1));
+            _staticOverlay.x = 0;
+            _staticOverlay.y = 0;
+            _target.rawChildren.addChildAt(
+                _staticOverlay, Math.max(0, _target.rawChildren.numChildren - 1));
             _target.addEventListener(ResizeEvent.RESIZE, handleContainerResize);
             _target.addEventListener("childrenChanged", handleContainerPopulate);
 
@@ -186,6 +196,14 @@ public class ChatOverlay
     {
         log.info("Setting chat bounds " + bounds);
         layout(bounds, -1);
+    }
+
+    /**
+     * Scrolls the scrollable glyphs by applying a scroll rect to the sprite that they are on.
+     */
+    public function setScrollRect (rect :Rectangle) :void
+    {
+        _scrollOverlay.scrollRect = rect;
     }
 
     /**
@@ -245,8 +263,8 @@ public class ChatOverlay
      */
     public function setClickableGlyphs (clickable :Boolean) :void
     {
-        //_overlay.mouseEnabled = clickable;
-        _overlay.mouseChildren = clickable;
+        _scrollOverlay.mouseChildren = clickable;
+        _staticOverlay.mouseChildren = clickable;
     }
 
     /**
@@ -284,7 +302,11 @@ public class ChatOverlay
      */
     public function removeGlyph (glyph :ChatGlyph) :void
     {
-        _overlay.removeChild(glyph);
+        if (glyph.parent == _scrollOverlay) {
+            _scrollOverlay.removeChild(glyph);
+        } else if (glyph.parent == _staticOverlay) {
+            _staticOverlay.removeChild(glyph);
+        }
         glyph.wasRemoved();
     }
 
@@ -449,7 +471,7 @@ public class ChatOverlay
         glyph.y = _targetBounds.bottom - height - PAD;
         scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
         _subtitles.push(glyph);
-        _overlay.addChild(glyph);
+        _staticOverlay.addChild(glyph);
     }
 
     /**
@@ -828,7 +850,7 @@ public class ChatOverlay
     {
         ArrayUtil.removeFirst(_subtitles, glyph);
         // the glyph may have already been removed, but still expire
-        if (glyph.parent == _overlay) {
+        if (glyph.parent == _scrollOverlay || glyph.parent == _staticOverlay) {
             removeGlyph(glyph);
         }
     }
@@ -969,7 +991,7 @@ public class ChatOverlay
      */
     protected function clearGlyphs (glyphs :Array) :void
     {
-        if (_overlay != null) {
+        if (_scrollOverlay != null && _staticOverlay != null) {
             for each (var glyph :ChatGlyph in glyphs) {
                 removeGlyph(glyph);
             }
@@ -1088,7 +1110,8 @@ public class ChatOverlay
     {
         _popping = true;
         try {
-            _target.rawChildren.setChildIndex(_overlay, _target.rawChildren.numChildren - 1);
+            _target.rawChildren.setChildIndex(_scrollOverlay, _target.rawChildren.numChildren - 1);
+            _target.rawChildren.setChildIndex(_staticOverlay, _target.rawChildren.numChildren - 1);
         } finally {
             _popping = false;
         }
@@ -1163,11 +1186,12 @@ public class ChatOverlay
         // the screen correctly
         for (ii = _showingHistory.length - 1; ii >= 0; ii--) {
             glyph = (_showingHistory[ii] as SubtitleGlyph);
-            var managed :Boolean = _overlay.contains(glyph);
+            // only the static overlay contains subtitles
+            var managed :Boolean = _staticOverlay.contains(glyph);
             if (glyph.histIndex <= first && glyph.histIndex > (first - count)) {
                 // it should be showing
                 if (!managed) {
-                    _overlay.addChild(glyph);
+                    _staticOverlay.addChild(glyph);
                 }
             } else {
                 // it shouldn't be showing
@@ -1226,8 +1250,13 @@ public class ChatOverlay
     /** Used to translate messages. */
     protected var _msgMan :MessageManager;
 
-    /** The overlay we place on top of our target that contains all the chat glyphs. */
-    protected var _overlay :Sprite;
+    /** The overlay we place on top of our target that contains all the chat glyphs that can 
+     * scroll. */
+    protected var _scrollOverlay :Sprite;
+
+    /** The overlay we place on top of our target that contains all the chat glyphs that should
+     * not scroll. */
+    protected var _staticOverlay :Sprite;
 
     /** The target container over which we're overlaying chat. */
     protected var _target :Container;
