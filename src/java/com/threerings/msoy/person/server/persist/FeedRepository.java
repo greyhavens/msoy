@@ -28,8 +28,6 @@ import com.samskivert.jdbc.depot.operator.SQLOperator;
 
 import com.threerings.msoy.person.util.FeedMessageType;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Maintains persistent data for feeds.
  */
@@ -107,8 +105,6 @@ public class FeedRepository extends DepotRepository
                     new Where(new Logic.And(bits)));
 
             if (count.count >= type.getThrottleCount()) {
-                log.info("Throttling member post... [actor=" + actorId + ", type=" + type +
-                         ", count=" + count.count + "].");
                 return false;
             }
         }
