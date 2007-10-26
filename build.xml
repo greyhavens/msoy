@@ -134,6 +134,13 @@
     <file name="lib/aperture/winlaf-0.5.1.jar"/>
   </filelist>
 
+  <!-- enumerate our translation files -->
+  <property name="msgs1.list" value="shell.Shell,admin.Admin,catalog.Catalog,game.Game"/>
+  <property name="msgs2.list" value="group.Group,inventory.Inventory,editem.Editem,item.Item"/>
+  <property name="msgs3.list" value="mail.Mail,msgs.Msgs,profile.Profile,swiftly.Swiftly"/>
+  <property name="msgs4.list" value="world.World,whirled.Whirled"/>
+  <property name="gmsgs.list" value="${msgs1.list},${msgs2.list},${msgs3.list},${msgs4.list}"/>
+
   <!-- declare our classpath -->
   <path id="classpath">
     <pathelement location="${classes.dir}"/>
@@ -236,37 +243,31 @@
     </else></if>
   </target>
 
-  <!-- regenerates a single i18n messages class -->
-  <target name="gmsg">
-    <java fork="true" classname="com.google.gwt.i18n.tools.I18NSync">
-      <classpath>
-        <fileset dir="${extlibs.dir}" includes="gwt-user.jar"/>
-        <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/>
-        <pathelement location="${gsrc.dir}"/>
-      </classpath>
-      <arg value="-createMessages"/>
-      <arg value="-out"/>
-      <arg value="${gsrc.dir}"/>
-      <arg value="client.${which}Messages"/>
-    </java>
-  </target>
-
   <!-- regenerates our i18n messages classes -->
   <target name="gmsgs">
-    <antcall target="gmsg"><param name="which" value="shell.Shell"/></antcall>
-    <antcall target="gmsg"><param name="which" value="admin.Admin"/></antcall>
-    <antcall target="gmsg"><param name="which" value="catalog.Catalog"/></antcall>
-    <antcall target="gmsg"><param name="which" value="game.Game"/></antcall>
-    <antcall target="gmsg"><param name="which" value="group.Group"/></antcall>
-    <antcall target="gmsg"><param name="which" value="inventory.Inventory"/></antcall>
-    <antcall target="gmsg"><param name="which" value="editem.Editem"/></antcall>
-    <antcall target="gmsg"><param name="which" value="item.Item"/></antcall>
-    <antcall target="gmsg"><param name="which" value="mail.Mail"/></antcall>
-    <antcall target="gmsg"><param name="which" value="msgs.Msgs"/></antcall>
-    <antcall target="gmsg"><param name="which" value="profile.Profile"/></antcall>
-    <antcall target="gmsg"><param name="which" value="swiftly.Swiftly"/></antcall>
-    <antcall target="gmsg"><param name="which" value="world.World"/></antcall>
-    <antcall target="gmsg"><param name="which" value="whirled.Whirled"/></antcall>
+    <uptodate property="gmsgs.uptodate">
+      <srcfiles dir= "${gsrc.dir}" includes="client/*/*Messages.properties">
+        <exclude name="**/ServerMessages.properties"/>
+        <exclude name="**/DynamicMessages.properties"/>
+      </srcfiles>
+      <mapper type="glob" from="*.properties" to="*.java"/>
+    </uptodate>
+    <if><not><isset property="gmsgs.uptodate"/></not><then>
+      <for list="${gmsgs.list}" param="which"><sequential>
+        <echo>Regenerating Java for @{which}Messages.properties...</echo>
+        <java fork="true" classname="com.google.gwt.i18n.tools.I18NSync">
+          <classpath>
+            <fileset dir="${extlibs.dir}" includes="gwt-user.jar"/>
+            <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/>
+            <pathelement location="${gsrc.dir}"/>
+          </classpath>
+          <arg value="-createMessages"/>
+          <arg value="-out"/>
+          <arg value="${gsrc.dir}"/>
+          <arg value="client.@{which}Messages"/>
+        </java>
+      </sequential></for>
+    </then></if>
   </target>
 
   <!-- prepares to build our GWT client -->
@@ -292,7 +293,7 @@
   <!-- builds our GWT web client -->
   <property name="pages" value="msoy"/>
   <property name="gwtc.style" value="OBF"/>
-  <target name="gclient" depends="jprepare">
+  <target name="gclient" depends="jprepare,gmsgs">
     <for list="${pages}" param="page"><sequential>
       <echo>Compiling @{page} module...</echo>
       <delete dir="pages/@{page}"/>
@@ -850,6 +851,11 @@
     <ant dir="projects/neighborhood" target="clean" inheritAll="false"/>
     <ant dir="projects/games/tutorial" target="clean" inheritAll="false"/>
     <delete file="pages/media/static/game/tutorial.swf"/>
+    <for list="${gmsgs.list}" param="which"><sequential>
+      <propertyregex property="file" input="@{which}" regexp="\." replace="/"/>
+      <delete file="${gsrc.dir}/client/${file}Messages.java"/>
+      <var name="file" unset="true"/>
+    </sequential></for>
   </target>
 
   <!-- cleans out the application and all subprojects -->
