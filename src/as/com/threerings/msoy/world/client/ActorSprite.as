@@ -180,11 +180,12 @@ public class ActorSprite extends MsoySprite
         return Math.max(MIN_MOVE_SPEED, _moveSpeed * _scale);
     }
 
-    override public function setLocation (newLoc :Object) :void
+    override public function setScreenLocation (x :Number, y :Number, scale :Number) :void
     {
-        super.setLocation(newLoc);
+        super.setScreenLocation(x, y, scale);
 
         if (_chatOverlay != null) {
+            // let our the chat overlay thats carrying our chat bubbles know we moved
             _chatOverlay.speakerMoved(_occInfo.username, getStageRect());
         }
     }
