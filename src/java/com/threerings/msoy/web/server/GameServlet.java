@@ -217,6 +217,8 @@ public class GameServlet extends MsoyServiceServlet
         GameRepository repo = MsoyServer.itemMan.getGameRepository();
 
         try {
+            // TODO: sanitize the supplied instructions HTML
+
             GameDetailRecord gdr = repo.loadGameDetail(gameId);
             if (gdr == null) {
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);

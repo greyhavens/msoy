@@ -6,16 +6,17 @@ package client.game;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import com.threerings.gwt.ui.StyledTextPanel;
 
 import com.threerings.msoy.web.data.GameDetail;
 
 import client.util.MsoyUI;
+import client.util.RichTextToolbar;
 
 /**
  * Displays the instructions for a game.
@@ -31,11 +32,13 @@ public class InstructionsPanel extends VerticalPanel
 
     protected void showInstructions ()
     {
-        String instructions = (_detail.instructions == null || _detail.instructions.length() == 0) ?
-            CGame.msgs.ipNoInstructions() : _detail.instructions;
         clear();
         setHorizontalAlignment(ALIGN_LEFT);
-        add(new StyledTextPanel(instructions));
+        if (_detail.instructions == null || _detail.instructions.length() == 0) {
+            add(new Label(CGame.msgs.ipNoInstructions()));
+        } else {
+            add(new HTML(_detail.instructions));
+        }
 
         // if this is the owner of the game, add an edit button below the instructions
         if (_detail.sourceItem != null && _detail.sourceItem.ownerId == CGame.getMemberId()) {
@@ -52,12 +55,14 @@ public class InstructionsPanel extends VerticalPanel
     {
         clear();
 
-        final TextArea editor = new TextArea();
+        final RichTextArea editor = new RichTextArea();
         editor.setWidth("100%");
-        editor.setVisibleLines(20);
+        editor.setHeight("300px");
         if (_detail.instructions != null) {
             editor.setText(_detail.instructions);
         }
+
+        add(new RichTextToolbar(editor));
         add(editor);
 
         HorizontalPanel buttons = new HorizontalPanel();
@@ -69,7 +74,7 @@ public class InstructionsPanel extends VerticalPanel
         }));
         buttons.add(new Button("Update", new ClickListener() {
             public void onClick (Widget source) {
-                saveInstructions(editor.getText());
+                saveInstructions(editor.getHTML());
             }
         }));
         add(buttons);
