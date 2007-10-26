@@ -147,9 +147,6 @@ public class MyWhirled extends FlexTable
         });
         _people.addStyleName("PeopleContainer");
 
-        getFlexCellFormatter().setColSpan(row, 0, 2);
-        setWidget(row++, 0, new FeedPanel(false));
-
         VerticalPanel placesContainer = new VerticalPanel();
         setWidget(row, 0, placesContainer);
         placesContainer.setStyleName("PlacesContainer");
@@ -187,6 +184,9 @@ public class MyWhirled extends FlexTable
         header.add(star);
         gamesContainer.add(header);
         gamesContainer.add(_games = new SceneList(SceneCard.GAME));
+
+        getFlexCellFormatter().setColSpan(row, 0, 2);
+        setWidget(row++, 0, new FeedPanel(false));
     }
 
     protected void fillUi (MyWhirledData myWhirled)

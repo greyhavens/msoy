@@ -97,12 +97,6 @@ public class FeedPanel extends VerticalPanel
                 return;
             }
 
-            // be small if we have few messages and expand incrementally to a certain height after
-            // which we start scrolling
-            if (messages.size() > MAX_ITEMS) {
-                setHeight(MAX_HEIGHT + "px");
-            }
-
             // sort in descending order by posted
             Object[] messageArray = messages.toArray();
             Arrays.sort(messageArray, new Comparator () {
@@ -215,10 +209,4 @@ public class FeedPanel extends VerticalPanel
 
     /** The default number of days of feed information to show. */
     protected static final int FULL_CUTOFF = 14;
-
-    /** The maxiumum height of the feed display. */
-    protected static final int MAX_HEIGHT = 185;
-
-    /** The number of items after which we cap our height at the maximum. */
-    protected static final int MAX_ITEMS = 8;
 }
