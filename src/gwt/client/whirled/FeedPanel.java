@@ -12,11 +12,13 @@ import com.google.gwt.user.client.DOM;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.person.data.FeedMessage;
 import com.threerings.msoy.person.data.FriendFeedMessage;
@@ -33,13 +35,21 @@ public class FeedPanel extends VerticalPanel
 {
     public FeedPanel (boolean fullPage)
     {
-        _fullPage = fullPage;
         buildUi();
 
+        loadFeed(fullPage);
+    }
+
+    protected void loadFeed (boolean fullPage)
+    {
+        _fullPage = fullPage;
         CWhirled.membersvc.loadFeed(
                 CWhirled.ident, _fullPage ? FULL_CUTOFF : SHORT_CUTOFF, new AsyncCallback() {
             public void onSuccess (Object result) {
+                _feeds.clear();
                 _feeds.populate((List)result);
+                _moreLabel.setText(
+                    _fullPage ? CWhirled.msgs.shortFeed() : CWhirled.msgs.fullFeed());
             }
             public void onFailure(Throwable caught) {
                 MsoyUI.error(CWhirled.serverError(caught));
@@ -65,32 +75,27 @@ public class FeedPanel extends VerticalPanel
         header.add(star);
         add(header);
 
-        _feeds = new FeedList(_fullPage);
-
-        if (_fullPage) {
-            add(_feeds);
-
-        } else {
-            ScrollPanel scroll = new ScrollPanel();
-            scroll.setStyleName("FeedList");
-            scroll.setAlwaysShowScrollBars(true);
-            DOM.setStyleAttribute(scroll.getElement(), "overflowX", "hidden");
-            scroll.setWidget(_feeds);
-            add(scroll);
-        }
+        add(_feeds = new FeedList());
+        add(_moreLabel = new Label());
+        _moreLabel.setStyleName("FeedMore");
+        _moreLabel.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                loadFeed(!_fullPage);
+            }
+        });
     }
 
     protected static class FeedList extends VerticalPanel
     {
-        public FeedList (boolean fullPage)
+        public FeedList ()
         {
-            _fullPage = fullPage;
-            setStyleName(_fullPage ? "FeedListFull" : "FeedListContainer");
+            setStyleName("FeedListFull");
             setSpacing(0);
         }
 
         public void populate (List messages)
         {
+
             if (messages.size() == 0) {
                 add(new BasicWidget(CWhirled.msgs.emptyFeed(
                             Application.createLinkToken(Page.WHIRLED, "whirledwide"))));
@@ -121,10 +126,6 @@ public class FeedPanel extends VerticalPanel
                 } else {
                     addMessage(message);
                 }
-            }
-            if (!_fullPage) {
-                add(new BasicWidget(CWhirled.msgs.fullFeed(
-                                Application.createLinkToken(Page.WHIRLED, "feed"))));
             }
         }
 
@@ -177,8 +178,6 @@ public class FeedPanel extends VerticalPanel
         {
             return Application.createLinkHtml(name, Page.PROFILE, id);
         }
-
-        protected boolean _fullPage;
     }
 
     protected static class BasicWidget extends HorizontalPanel
@@ -201,6 +200,7 @@ public class FeedPanel extends VerticalPanel
     }
 
     protected FeedList _feeds;
+    protected Label _moreLabel;
 
     protected boolean _fullPage;
 
