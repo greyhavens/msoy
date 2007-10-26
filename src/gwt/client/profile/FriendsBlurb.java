@@ -84,10 +84,11 @@ public class FriendsBlurb extends Blurb
             }));
         }
 
-        if (pdata.totalFriendCount > FRIEND_COLUMNS * FRIEND_ROWS ||
-                // Currently we can only remove friends from the all friends view, so always
-                // show the link if it's your own profile
-                CProfile.getMemberId() == _name.getMemberId()) {
+        // always show the link if it's your own profile and you have at least one friend because
+        // the all friends page is the only way to remove friends
+        int allCount = (CProfile.getMemberId() == _name.getMemberId()) ?
+            0 : FRIEND_COLUMNS * FRIEND_ROWS;
+        if (pdata.totalFriendCount > allCount) {
             Widget more = Application.createLink(
                 CProfile.msgs.seeAllFriends(""+pdata.totalFriendCount),
                 Page.PROFILE, Args.compose("f", pdata.name.getMemberId()));
