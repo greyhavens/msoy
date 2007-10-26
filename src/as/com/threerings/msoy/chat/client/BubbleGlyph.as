@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.chat.client {
 
+import flash.display.BlendMode;
 import flash.display.Shape;
 
 import flash.events.TimerEvent;
@@ -25,6 +26,7 @@ public class BubbleGlyph extends ChatGlyph
     {
         super(overlay, type, lifetime);
         _speaker = speaker;
+        blendMode = BlendMode.LAYER;
 
         var txt :TextField = createTextField();
         txt.width = overlay.getTargetTextWidth();
@@ -34,13 +36,10 @@ public class BubbleGlyph extends ChatGlyph
         makeGolden(txt);
         sizeFieldToText(txt);
 
-        _outline = new Shape();
-        addChild(_outline);
-
         addChild(txt);
         _txt = txt;
         var offset :int = overlay.drawBubbleShape(
-            _outline.graphics, type, txt.width, txt.height, true);
+            graphics, type, txt.width, txt.height, true);
         txt.x = offset;
         txt.y = offset;
     }
@@ -58,7 +57,7 @@ public class BubbleGlyph extends ChatGlyph
      */
     public function getBubbleBounds () :Rectangle
     {
-        return new Rectangle(int(x), int(y), int(_outline.width), int(_outline.height));
+        return new Rectangle(int(x), int(y), int(width), int(height));
     }
 
     public function isSpeaker (player :Name) :Boolean
@@ -74,7 +73,7 @@ public class BubbleGlyph extends ChatGlyph
     public function removeTail () :void
     {
         (_overlay as ComicOverlay).drawBubbleShape(
-            _outline.graphics, _type, _txt.width, _txt.height, false);
+            graphics, _type, _txt.width, _txt.height, false);
     }
 
     public function setAgeLevel (ageLevel :int) :void
@@ -125,8 +124,6 @@ public class BubbleGlyph extends ChatGlyph
 
     /** A reference to our textfield. */
     protected var _txt :TextField;
-
-    protected var _outline :Shape;
 
     /** The minimum width of a bubble's label before we consider splitting
      * lines. */
