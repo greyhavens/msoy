@@ -72,15 +72,12 @@ public class ComicOverlay extends ChatOverlay
         clearBubbles(true);
     }
 
-    public function speakerMoved (speaker :Name, bounds :Rectangle) :void
+    public function speakerMoved (speaker :Name, pos :Point) :void
     {
         var cloud :BubbleCloud = _bubbles.get(speaker);
         if (cloud != null) {
-            // the bounds are in stage coordinates
-            var local :Point = _scrollOverlay.globalToLocal(bounds.topLeft);
-            bounds.x = local.x;
-            bounds.y = local.y;
-            cloud.setSpeakerLocation(bounds);
+            // the position is in stage coordinates
+            cloud.setSpeakerLocation(_scrollOverlay.globalToLocal(pos));
         }
     }
 
@@ -173,14 +170,14 @@ public class ComicOverlay extends ChatOverlay
         case PLACE: 
             var umsg :UserMessage = (msg as UserMessage);
             var speaker :Name = umsg.getSpeakerDisplayName();
-            var speakerBounds :Rectangle = _provider.getSpeakerBounds(speaker);
-            if (speakerBounds == null) {
+            var speakerBubblePos :Point = _provider.getBubblePosition(speaker);
+            if (speakerBubblePos == null) {
                 log.warning("ChatOverlay.InfoProvider doesn't know the speaker! " +
                     "[speaker=" + speaker + ", type=" + type + "].");
                 return false;
             }
 
-            if (createBubble(msg, type, speaker, speakerBounds)) {
+            if (createBubble(msg, type, speaker, speakerBubblePos)) {
                 return true;
             }
             // if the bubble didn't fit (unlikely), make it a subtitle
@@ -194,12 +191,13 @@ public class ComicOverlay extends ChatOverlay
     /**
      * Create a chat bubble with the specified type and text.
      *
-     * @param speakerBounds if non-null, contains the bounds of the speaker in screen coordinates
+     * @param speakerBubblePos if non-null, contains the position of where to put the bubbles for 
+     *                         this speaker in screen coordinates
      *
      * @return true if we successfully laid out the bubble
      */
     protected function createBubble (
-        msg :ChatMessage, type :int, speaker :Name, speakerBounds :Rectangle) :Boolean
+        msg :ChatMessage, type :int, speaker :Name, speakerBubblePos :Point) :Boolean
     {
         var texts :Array = formatMessage(msg, type, false, _userBubbleFmt);
         var lifetime :int = getLifetime(msg, true);
@@ -208,14 +206,10 @@ public class ComicOverlay extends ChatOverlay
 
         var cloud :BubbleCloud = _bubbles.get(speaker);
         if (cloud == null) {
-            if (speakerBounds != null) {
-                // the bounds given to this function are in stage coordinates
-                var local :Point = _scrollOverlay.globalToLocal(speakerBounds.topLeft);
-                speakerBounds.x = local.x;
-                speakerBounds.y = local.y;
-            }
+            var local :Point = 
+                speakerBubblePos == null ? null : _scrollOverlay.globalToLocal(speakerBubblePos);
             var maxBubbles :int = speaker == null ? MAX_NOTIFICATION_BUBBLES : MAX_BUBBLES_PER_USER;
-            cloud = new BubbleCloud(this, maxBubbles, speakerBounds, _target.width, _target.height);
+            cloud = new BubbleCloud(this, maxBubbles, local, _target.width, _target.height);
             _bubbles.put(speaker, cloud);
         }
         cloud.addBubble(bubble);
@@ -519,6 +513,7 @@ public class ComicOverlay extends ChatOverlay
 }
 }
 
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import com.threerings.flash.DisplayUtil;
@@ -533,12 +528,12 @@ import com.threerings.msoy.chat.client.ComicOverlay;
  */
 class BubbleCloud 
 {
-    public function BubbleCloud (overlay :ComicOverlay, maxBubbles :int, bounds :Rectangle, 
+    public function BubbleCloud (overlay :ComicOverlay, maxBubbles :int, pos :Point,
         viewWidth :Number, viewHeight :Number) 
     {
         _scrollOverlay = overlay;
         _maxBubbles = maxBubbles;
-        _location = bounds;
+        _pos = pos;
         _viewWidth = viewWidth;
         _viewHeight = viewHeight;
     }
@@ -548,13 +543,13 @@ class BubbleCloud
         return _bubbles;
     }
 
-    public function setSpeakerLocation (bounds :Rectangle) :void
+    public function setSpeakerLocation (pos :Point) :void
     {
-        _location = bounds;
-        if (bounds == null) {
-            // BubbleClouds with null speaker bounds are those not being shown in PLACE (non speak, 
+        _pos = pos;
+        if (pos == null) {
+            // BubbleClouds with null speaker pos are those not being shown in PLACE (non speak, 
             // think, emote, etc), and aren't being placed over an ActorSprite.
-            var vbounds :Rectangle = new Rectangle(BUBBLE_SPACING, BUBBLE_SPACING, 
+            var vpos :Rectangle = new Rectangle(BUBBLE_SPACING, BUBBLE_SPACING, 
                 _viewWidth - BUBBLE_SPACING * 2, _viewHeight - BUBBLE_SPACING * 2);
             var avoidList :Array = [];
             var placeList :Array = [];
@@ -570,7 +565,7 @@ class BubbleCloud
                 var placer :Rectangle = bubble.getBubbleBounds();
                 placer.x = BUBBLE_SPACING;
                 placer.y = BUBBLE_SPACING;
-                if (!DisplayUtil.positionRect(placer, vbounds, avoidList)) {
+                if (!DisplayUtil.positionRect(placer, vpos, avoidList)) {
                     // DANGER! DANGER!
                     Log.getLog(this).warning(
                         "Failed to place notification bubble [avoids=" + avoidList.length + "]");
@@ -580,12 +575,11 @@ class BubbleCloud
                 avoidList.push(placer);
             }
         } else {
-            var centerX :Number = bounds.x + bounds.width / 2;
-            var yOffset :Number = bounds.y - BUBBLE_SPACING; 
+            var yOffset :Number = pos.y - BUBBLE_SPACING; 
             for each (bubble in _bubbles) {
                 var bubBounds :Rectangle = bubble.getBubbleBounds();
                 yOffset -= bubBounds.height;
-                bubble.x = centerX - bubBounds.width / 2;
+                bubble.x = pos.x - bubBounds.width / 2;
                 bubble.y = yOffset;
             }
         }
@@ -601,7 +595,7 @@ class BubbleCloud
             (_bubbles[ii] as BubbleGlyph).removeTail();
         }
         // refresh the bubble display
-        setSpeakerLocation(_location);
+        setSpeakerLocation(_pos);
     }
 
     public function removeBubble (bubble :BubbleGlyph) :void
@@ -610,7 +604,7 @@ class BubbleCloud
             if (_bubbles[ii] == bubble) {
                 _bubbles.splice(ii, 1);
                 // refresh the bubble display
-                setSpeakerLocation(_location);
+                setSpeakerLocation(_pos);
                 break;
             }
         }
@@ -622,7 +616,7 @@ class BubbleCloud
     protected static const BUBBLE_SPACING :int = 5;
 
     protected var _bubbles :Array = [];
-    protected var _location :Rectangle;
+    protected var _pos :Point;
     protected var _scrollOverlay :ComicOverlay;
     protected var _maxBubbles :int;
     protected var _viewWidth :Number;

@@ -430,10 +430,10 @@ public class RoomView extends AbstractRoomView
     }
 
     // from ChatInfoProvider
-    public function getSpeakerBounds (speaker :Name) :Rectangle
+    public function getBubblePosition (speaker :Name) :Point
     {
         var actor :ActorSprite = getActorByName(speaker);
-        return (actor == null) ? null : actor.getDecorationsRect();
+        return (actor == null) ? null : actor.getBubblePosition();
     }
 
     // from ChatInfoProvider
@@ -452,10 +452,10 @@ public class RoomView extends AbstractRoomView
             var actorInfo :ActorInfo = actor.getActorInfo();
             if ((actorInfo.bodyOid == myOid) ||
                     (speaker != null && speaker.equals(actorInfo.username))) {
-                high.push(actor.getDecorationsRect());
+                high.push(actor.getStageRect());
 
             } else if (low != null) {
-                low.push(actor.getDecorationsRect());
+                low.push(actor.getStageRect());
             }
         }
     }

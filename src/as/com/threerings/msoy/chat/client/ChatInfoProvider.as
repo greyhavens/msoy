@@ -3,18 +3,18 @@
 
 package com.threerings.msoy.chat.client {
 
-import flash.geom.Rectangle;
+import flash.geom.Point;
 
 import com.threerings.util.Name;
 
 public interface ChatInfoProvider
 {
     /**
-     * Retun the rectangle bounds of the speaker
+     * Return the position to place bubbles attributed to this speaker.
      * 
      * Null may be returned if the speaker is not known.
      */
-    function getSpeakerBounds (speaker :Name) :Rectangle;
+    function getBubblePosition (speaker :Name) :Point;
 
     /**
      * Add the bounding rectangles of things that should be avoided.

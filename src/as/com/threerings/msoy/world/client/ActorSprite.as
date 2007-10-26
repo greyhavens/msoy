@@ -147,10 +147,8 @@ public class ActorSprite extends MsoySprite
                     removeChild(dec);
                     if (_decorations.length == 0) {
                         _decorations = null;
-
-                    } else {
-                        arrangeDecorations();
                     }
+                    arrangeDecorations();
 
                     return; // no need to continue
                 }
@@ -170,6 +168,8 @@ public class ActorSprite extends MsoySprite
             removeChild(_decorations[ii].dec as DisplayObject);
         }
         _decorations = null;
+        // this function sets _bubblePosition, even if there are no decorations
+        arrangeDecorations();
     }
 
     /**
@@ -186,7 +186,7 @@ public class ActorSprite extends MsoySprite
 
         if (_chatOverlay != null) {
             // let our the chat overlay thats carrying our chat bubbles know we moved
-            _chatOverlay.speakerMoved(_occInfo.username, getDecorationsRect());
+            _chatOverlay.speakerMoved(_occInfo.username, getBubblePosition());
         }
     }
 
@@ -198,6 +198,15 @@ public class ActorSprite extends MsoySprite
         return "m.actor";
     }
 
+    /**
+     * Retuns the position, in stage coordinates, where bubbles should draw up from (vertically), 
+     * and center on (horizontally).
+     */
+    public function getBubblePosition () :Point
+    {
+        return localToGlobal(_bubblePosition);
+    }
+
     // from MsoySprite
     override public function getStageRect (includeExtras :Boolean = true) :Rectangle
     {
@@ -206,19 +215,12 @@ public class ActorSprite extends MsoySprite
         var r :Rectangle = super.getStageRect();
 
         if (includeExtras) {
-            r = r.union(getDecorationsRect());
-        }
+            r = r.union(_label.getRect(this.stage));
 
-        return r;
-    }
-
-    public function getDecorationsRect () :Rectangle
-    {
-        var r :Rectangle = _label.getRect(this.stage);
-
-        if (_decorations != null) {
-            for each (var obj :Object in _decorations) {
-                r = r.union(DisplayObject(obj.dec).getRect(this.stage));
+            if (_decorations != null) {
+                for each (var obj :Object in _decorations) {
+                    r = r.union(DisplayObject(obj.dec).getRect(this.stage));
+                }
             }
         }
 
@@ -576,17 +578,24 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
-     * Arrange any external decorations above our name label.
+     * Arrange any external decorations above our name label.  Will notify the chat overlay 
+     * displaying this speaker's bubbles that the bubble location has moved.
      */
     protected function arrangeDecorations () :void
     {
+        var oldBubblePos :Point = _bubblePosition;
+        // note: may overflow the media area..
+        var hotSpot :Point = getMediaHotSpot();
+        var hotX :Number = Math.abs(getMediaScaleX() * _locScale * _fxScaleX) * hotSpot.x;
         if (_decorations == null) {
+            _bubblePosition = new Point(hotX, _label.y);
+            if (_chatOverlay != null && !_bubblePosition.equals(oldBubblePos)) {
+                // notify the overlay that its bubble position for this speaker moved
+                _chatOverlay.speakerMoved(_occInfo.username, getBubblePosition());
+            }
             return;
         }
 
-        var hotSpot :Point = getMediaHotSpot();
-        // note: may overflow the media area..
-        var hotX :Number = Math.abs(getMediaScaleX() * _locScale * _fxScaleX) * hotSpot.x;
         var baseY :Number = _label.y; // we depend on recheckLabel()
 
         // place the decorations over the name label, with our best guess as to their size
@@ -599,6 +608,12 @@ public class ActorSprite extends MsoySprite
             baseY -= (rect.height + DECORATION_PAD);
             dec.x = hotX - (rect.width/2) - rect.x;
             dec.y = baseY - rect.y;
+        }
+
+        _bubblePosition = new Point(hotX, baseY);
+        if (_chatOverlay != null && !_bubblePosition.equals(oldBubblePos)) {
+            // notify the overlay that its bubble position for this speaker moved
+            _chatOverlay.speakerMoved(_occInfo.username, getBubblePosition());
         }
     }
 
@@ -773,6 +788,9 @@ public class ActorSprite extends MsoySprite
 
     /** The current decoration being hovered over, if any. */
     protected var _hoverDecoration :DisplayObject;
+
+    /** The point to center this speaker's bubbles on, in local coords. */
+    protected var _bubblePosition :Point;
 
     protected static const DECORATION_PAD :int = 5;
 
