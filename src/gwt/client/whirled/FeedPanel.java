@@ -122,7 +122,6 @@ public class FeedPanel extends VerticalPanel
                 FeedMessage message = (FeedMessage)msgIter.next();
                 if (header > message.posted) {
                     header = startofDay(message.posted);
-                    add(new BlankWidget());
                     if (yesterday < message.posted) {
                         add(new DateWidget(CWhirled.msgs.yesterday()));
                     } else {
@@ -225,15 +224,6 @@ public class FeedPanel extends VerticalPanel
             setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
             setHorizontalAlignment(HorizontalPanel.ALIGN_LEFT);
             add(new Label(label));
-        }
-    }
-
-    protected static class BlankWidget extends HorizontalPanel
-    {
-        public BlankWidget ()
-        {
-            setStyleName("FeedWidget");
-            addStyleName("FeedBlank");
         }
     }
 

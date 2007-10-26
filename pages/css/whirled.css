@@ -265,14 +265,10 @@
   padding: 3px;
 }
 
-.FeedBlank {
-  height: 20px;
-}
-
 .FeedDate {
   font-size: 12px;
   font-weight: bold;
-  padding: 3px;
+  padding: 8px 3px 3px 3px;
   background-color: #DADADA;
   border-bottom: 1px solid #AAAAAA;
 }
