@@ -182,7 +182,6 @@ public class AbstractRoomView extends Sprite
         var bounds :Rectangle = getScrollBounds();
         rect.x = Math.min(_scene.getWidth() - bounds.width, Math.max(0, rect.x + xpixels));
         scrollRect = rect;
-        scrollRectUpdated();
         return true;
     }
 
@@ -329,6 +328,15 @@ public class AbstractRoomView extends Sprite
         _roomObj = null;
         _scene = null;
     }
+    
+    override public function set scrollRect (r :Rectangle) :void
+    {
+        super.scrollRect = r;
+
+        if (_bg != null && _scene.getSceneType() == Decor.FIXED_IMAGE) {
+            locationUpdated(_bg);
+        }
+    }
 
     /**
      * Layout everything.
@@ -376,13 +384,6 @@ public class AbstractRoomView extends Sprite
             scrollRect = null;
         } else {
             scrollRect = getScrollBounds();
-        }
-    }
-
-    protected function scrollRectUpdated () :void
-    {
-        if (_bg != null && _scene.getSceneType() == Decor.FIXED_IMAGE) {
-            locationUpdated(_bg);
         }
     }
 

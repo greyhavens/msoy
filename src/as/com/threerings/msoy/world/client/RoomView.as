@@ -563,6 +563,13 @@ public class RoomView extends AbstractRoomView
         return canScroll;
     }
 
+    override public function set scrollRect (r :Rectangle) :void
+    {
+        super.scrollRect = r;
+
+        chatOverlay.setScrollRect(r);
+    }
+
     /**
      * Once the background image is finished, we want to load all the rest of the sprites.
      */
@@ -630,7 +637,6 @@ public class RoomView extends AbstractRoomView
                     newX = Math.min(_scene.getWidth() - rect.width, Math.max(0, newX));
                     rect.x = newX;
                     scrollRect = rect;
-                    scrollRectUpdated();
                 }
             }
         }
@@ -706,15 +712,7 @@ public class RoomView extends AbstractRoomView
 
         // assign the new scrolling rectangle
         scrollRect = rect;
-        scrollRectUpdated();
         _suppressAutoScroll = true;
-    }
-
-    override protected function scrollRectUpdated () :void
-    {
-        super.scrollRectUpdated();
-
-        chatOverlay.setScrollRect(scrollRect);
     }
 
     protected function tick (event :Event) :void
