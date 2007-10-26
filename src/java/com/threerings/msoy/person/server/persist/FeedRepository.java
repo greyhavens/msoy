@@ -5,9 +5,10 @@ package com.threerings.msoy.person.server.persist;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntSet;
@@ -27,14 +28,14 @@ import com.samskivert.jdbc.depot.operator.SQLOperator;
 
 import com.threerings.msoy.person.util.FeedMessageType;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Maintains persistent data for feeds.
  */
 public class FeedRepository extends DepotRepository
 {
-
-    @Computed
-    @Entity
+    @Computed @Entity
     public static class FeedMessageCount extends PersistentRecord {
         @Computed(fieldDefinition="count(*)")
         public int count;
@@ -55,7 +56,7 @@ public class FeedRepository extends DepotRepository
         int memberId, IntSet friendIds, IntSet groupIds, Timestamp since)
         throws PersistenceException
     {
-        ArrayList<FeedMessageRecord> messages = new ArrayList<FeedMessageRecord>();
+        List<FeedMessageRecord> messages = Lists.newArrayList();
         loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, since);
         SQLOperator actors = null;
         if (!friendIds.isEmpty()) {
@@ -96,15 +97,18 @@ public class FeedRepository extends DepotRepository
         if (type.getThrottleCount() > 0) {
             Timestamp throttle =
                 new Timestamp(System.currentTimeMillis() - type.getThrottlePeriod());
-            SQLOperator[] bits = new SQLOperator[2];
-            bits[0] = new Conditionals.Equals(FriendFeedMessageRecord.ACTOR_ID_C, actorId);
-            bits[1] = new Conditionals.GreaterThan(FriendFeedMessageRecord.POSTED_C, throttle);
+            List<SQLOperator> bits = Lists.newArrayList();
+            bits.add(new Conditionals.Equals(FriendFeedMessageRecord.ACTOR_ID_C, actorId));
+            bits.add(new Conditionals.Equals(FriendFeedMessageRecord.TYPE_C, type.getCode()));
+            bits.add(new Conditionals.GreaterThan(FriendFeedMessageRecord.POSTED_C, throttle));
 
             FeedMessageCount count = load(FeedMessageCount.class,
                     new FromOverride(FriendFeedMessageRecord.class),
                     new Where(new Logic.And(bits)));
 
             if (count.count >= type.getThrottleCount()) {
+                log.info("Throttling member post... [actor=" + actorId + ", type=" + type +
+                         ", count=" + count.count + "].");
                 return false;
             }
         }
@@ -127,9 +131,10 @@ public class FeedRepository extends DepotRepository
         if (type.getThrottleCount() > 0) {
             Timestamp throttle =
                 new Timestamp(System.currentTimeMillis() - type.getThrottlePeriod());
-            SQLOperator[] bits = new SQLOperator[2];
-            bits[0] = new Conditionals.Equals(GroupFeedMessageRecord.GROUP_ID_C, groupId);
-            bits[1] = new Conditionals.GreaterThan(GroupFeedMessageRecord.POSTED_C, throttle);
+            List<SQLOperator> bits = Lists.newArrayList();
+            bits.add(new Conditionals.Equals(GroupFeedMessageRecord.GROUP_ID_C, groupId));
+            bits.add(new Conditionals.Equals(GroupFeedMessageRecord.TYPE_C, type.getCode()));
+            bits.add(new Conditionals.GreaterThan(GroupFeedMessageRecord.POSTED_C, throttle));
 
             FeedMessageCount count = load(FeedMessageCount.class,
                     new FromOverride(GroupFeedMessageRecord.class),
@@ -195,7 +200,7 @@ public class FeedRepository extends DepotRepository
                                      SQLOperator main, Timestamp since)
         throws PersistenceException
     {
-        ArrayList<SQLOperator> whereBits = new ArrayList<SQLOperator>();
+        List<SQLOperator> whereBits = Lists.newArrayList();
         if (main != null) {
             whereBits.add(main);
         }
@@ -203,8 +208,7 @@ public class FeedRepository extends DepotRepository
             whereBits.add(new Conditionals.GreaterThanEquals(
                               new ColumnExp(pClass, FeedMessageRecord.POSTED), since));
         }
-        SQLOperator[] bits = whereBits.toArray(new SQLOperator[whereBits.size()]);
-        messages.addAll(findAll(pClass, new Where(new Logic.And(bits))));
+        messages.addAll(findAll(pClass, new Where(new Logic.And(whereBits))));
     }
 
     @Override // from DepotRepository
