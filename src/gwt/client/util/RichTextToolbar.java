@@ -18,6 +18,7 @@ package client.util;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -31,6 +32,8 @@ import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.msoy.item.data.all.Photo;
 
 import client.util.images.RichTextToolbarImages;
 
@@ -165,10 +168,14 @@ public class RichTextToolbar extends Composite {
       } else if (sender == justifyRight) {
         basic.setJustification(RichTextArea.Justification.RIGHT);
       } else if (sender == insertImage) {
-        String url = Window.prompt("Enter an image URL:", "http://");
-        if (url != null) {
-          extended.insertImage(url);
-        }
+          ImageChooserPopup.displayImageChooser(new AsyncCallback() {
+              public void onSuccess (Object result) {
+                  extended.insertImage(((Photo)result).photoMedia.getMediaPath());
+              }
+              public void onFailure (Throwable t) {
+                  // not used
+              }
+          });
       } else if (sender == createLink) {
         String url = Window.prompt("Enter a link URL:", "http://");
         if (url != null) {
