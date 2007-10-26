@@ -583,16 +583,11 @@ public class ActorSprite extends MsoySprite
      */
     protected function arrangeDecorations () :void
     {
-        var oldBubblePos :Point = _bubblePosition;
         // note: may overflow the media area..
         var hotSpot :Point = getMediaHotSpot();
         var hotX :Number = Math.abs(getMediaScaleX() * _locScale * _fxScaleX) * hotSpot.x;
         if (_decorations == null) {
-            _bubblePosition = new Point(hotX, _label.y);
-            if (_chatOverlay != null && !_bubblePosition.equals(oldBubblePos)) {
-                // notify the overlay that its bubble position for this speaker moved
-                _chatOverlay.speakerMoved(_occInfo.username, getBubblePosition());
-            }
+            checkAndSetBubblePosition(new Point(hotX, _label.y));
             return;
         }
 
@@ -610,7 +605,13 @@ public class ActorSprite extends MsoySprite
             dec.y = baseY - rect.y;
         }
 
-        _bubblePosition = new Point(hotX, baseY);
+        checkAndSetBubblePosition(new Point(hotX, baseY));
+    }
+
+    protected function checkAndSetBubblePosition (pos :Point) :void
+    {
+        var oldBubblePos :Point = _bubblePosition;
+        _bubblePosition = pos;
         if (_chatOverlay != null && !_bubblePosition.equals(oldBubblePos)) {
             // notify the overlay that its bubble position for this speaker moved
             _chatOverlay.speakerMoved(_occInfo.username, getBubblePosition());
