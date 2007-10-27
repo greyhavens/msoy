@@ -220,8 +220,6 @@ public class AVRGameManager
                                final ConfirmListener listener)
         throws InvocationException
     {
-        // TODO: Handle Flow Payout
-
         final PlayerObject player = (PlayerObject) caller;
 
         QuestState oldState = player.questState.get(questId);

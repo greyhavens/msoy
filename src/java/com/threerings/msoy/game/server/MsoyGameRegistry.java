@@ -199,7 +199,9 @@ public class MsoyGameRegistry
         }
 
         // set or clear their pending game
-        memobj.setGame(game);
+        if (game == null || game.gameId != Game.TUTORIAL_GAME_ID) {
+        	memobj.setGame(game);
+        }
         if (game != null && game.avrGame) {
             updateAVRGameId(memobj, game.gameId);
         }
