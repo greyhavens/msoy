@@ -30,6 +30,7 @@ import com.threerings.msoy.chat.client.ComicOverlay;
 
 import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.client.WorldContext;
@@ -261,7 +262,8 @@ public class ActorSprite extends MsoySprite
                 _tableIcon.shutdown();
                 _tableIcon = null;
             }
-            if (_tableIcon == null && minfo.game != null) {
+            if (_tableIcon == null && minfo.game != null &&
+                minfo.game.gameId != Game.TUTORIAL_GAME_ID) {
                 _tableIcon = new TableIcon(this, minfo.game);
             }
         }
