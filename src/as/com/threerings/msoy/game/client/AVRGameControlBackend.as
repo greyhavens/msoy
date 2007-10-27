@@ -7,8 +7,16 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 
+import com.threerings.util.Iterator;
 import com.threerings.util.Name;
 import com.threerings.util.ObjectMarshaller;
+
+import com.threerings.crowd.client.LocationAdapter;
+import com.threerings.crowd.client.LocationObserver;
+import com.threerings.crowd.client.OccupantAdapter;
+import com.threerings.crowd.client.OccupantObserver;
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.InvocationAdapter;
@@ -23,7 +31,7 @@ import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetAdapter;
 
-import com.threerings.util.Iterator;
+import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.ControlBackend;
@@ -34,6 +42,7 @@ import com.threerings.msoy.game.data.QuestState;
 import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.data.RoomObject;
 
 public class AVRGameControlBackend extends ControlBackend
 {
@@ -50,19 +59,35 @@ public class AVRGameControlBackend extends ControlBackend
         _gameObj.addListener(_stateListener);
         _gameObj.addListener(_messageListener);
 
+        _mctx.getLocationDirector().addLocationObserver(_locationObserver);
+        _mctx.getOccupantDirector().addOccupantObserver(_occupantObserver);
+
+        // will be null if not a room
+        _roomObj = (_mctx.getLocationDirector().getPlaceObject() as RoomObject);
+        if (_roomObj != null) {
+            _roomObj.addListener(_movementListener);
+        }
         _playerObj = _gctx.getPlayerObject();
         _playerObj.addListener(_playerStateListener);
         _playerObj.addListener(_playerMessageListener);
     }
 
     // from ControlBackend
-     override public function shutdown () :void
-     {
+    override public function shutdown () :void
+    {
          super.shutdown();
         
          _gameObj.removeListener(_stateListener);
          _playerObj.removeListener(_playerStateListener);
-     }
+
+         _mctx.getLocationDirector().removeLocationObserver(_locationObserver);
+         _mctx.getOccupantDirector().removeOccupantObserver(_occupantObserver);
+        
+         if (_roomObj != null) {
+             _roomObj.removeListener(_movementListener);
+             _roomObj = null;
+         }
+    }
 
     public function tutorialEvent (eventName :String) :void
     {
@@ -294,7 +319,7 @@ public class AVRGameControlBackend extends ControlBackend
     protected function loggingInvocationListener (svc :String) :InvocationService_InvocationListener
     {
         return new InvocationAdapter(function (cause :String) :void {
-            log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
+            log.warning("Service failure [service=" + svc + ", cause=" + cause + "].</li>");
         });
     }
 
@@ -320,6 +345,7 @@ public class AVRGameControlBackend extends ControlBackend
     protected var _ctrl :AVRGameController;
     protected var _gameObj :AVRGameObject;
     protected var _playerObj :PlayerObject;
+    protected var _roomObj :RoomObject;
 
     protected var _stateListener :SetAdapter = new SetAdapter(
         function (event :EntryAddedEvent) :void {
@@ -370,5 +396,37 @@ public class AVRGameControlBackend extends ControlBackend
             }
         });
 
+    // TODO: These events are not in themselves a complete API
+    protected var _locationObserver :LocationObserver = new LocationAdapter(
+        null, function (place :PlaceObject) :void {
+            if (_roomObj != null) {
+                _roomObj.removeListener(_movementListener);
+                callUserCode("leftRoom_v1");
+            }
+            _roomObj = (place as RoomObject);
+            if (_roomObj != null) {
+                _roomObj.addListener(_movementListener);
+                callUserCode("enteredRoom_v1");
+            }
+    }, null);
+
+    protected var _movementListener :SetAdapter = new SetAdapter(null,
+        function (event :EntryUpdatedEvent) :void {
+            if (event.getName() == SpotSceneObject.OCCUPANT_LOCS) {
+                callUserCode("occupantMoved_v1", int(event.getEntry().getKey()));
+            }
+        });
+    
+    protected var _occupantObserver :OccupantObserver = new OccupantAdapter(
+        function (info :OccupantInfo) :void {
+            if (_roomObj != null) {
+                callUserCode("occupantEntered_v1", info.getBodyOid());
+            }
+        },
+        function (info :OccupantInfo) :void {
+            if (_roomObj != null) {
+                callUserCode("occupantLeft_v1", info.getBodyOid());
+            }
+        });
 }
 }
