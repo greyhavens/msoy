@@ -11,6 +11,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.shell.CShell;
 import client.util.MsoyUI;
 import client.util.NumberTextBox;
 import client.util.RowPanel;
@@ -38,17 +39,17 @@ public class TrophySourceEditor extends SubItemEditor
     // @Override // from ItemEditor
     protected void populateInfoTab (FlexTable info)
     {
-        addInfoTip(info, CEditem.emsgs.trophyNameTip());
+        addInfoTip(info, CShell.emsgs.trophyNameTip());
 
         super.populateInfoTab(info);
 
         addSpacer(info);
-        addInfoRow(info, CEditem.emsgs.trophyOrder(), _order = new NumberTextBox(false, 3, 3));
-        addInfoTip(info, CEditem.emsgs.trophyOrderTip());
+        addInfoRow(info, CShell.emsgs.trophyOrder(), _order = new NumberTextBox(false, 3, 3));
+        addInfoTip(info, CShell.emsgs.trophyOrderTip());
 
         addSpacer(info);
-        addInfoRow(info, CEditem.emsgs.trophySecret(), _secret = new CheckBox());
-        addInfoTip(info, CEditem.emsgs.trophySecretTip());
+        addInfoRow(info, CShell.emsgs.trophySecret(), _secret = new CheckBox());
+        addInfoTip(info, CShell.emsgs.trophySecretTip());
     }
 
     // @Override from ItemEditor
@@ -61,18 +62,18 @@ public class TrophySourceEditor extends SubItemEditor
     protected void createThumbUploader (TabPanel tabs)
     {
         // trophy' thumb media are their primary media
-        String title = CEditem.emsgs.trophyMainTitle();
+        String title = CShell.emsgs.trophyMainTitle();
         _thumbUploader = createUploader(Item.THUMB_MEDIA, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 if (width != TrophySource.TROPHY_WIDTH || height != TrophySource.TROPHY_HEIGHT ||
                     !desc.isImage()) {
-                    return CEditem.emsgs.invalidTrophy();
+                    return CShell.emsgs.invalidTrophy();
                 }
                 _item.thumbMedia = desc;
                 return null;
             }
         });
-        tabs.add(_thumbUploader, CEditem.emsgs.trophyMainTab());
+        tabs.add(_thumbUploader, CShell.emsgs.trophyMainTab());
     }
 
     // @Override // from ItemEditor

@@ -14,6 +14,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 
+import client.shell.CShell;
+
 public class ItemSearchSortPanel extends HorizontalPanel
 {
     /** An interface to use for instantiating an ItemSearchSortPanel. */
@@ -44,11 +46,11 @@ public class ItemSearchSortPanel extends HorizontalPanel
         _searchBox.addKeyboardListener(new EnterClickAdapter(clickListener));
         add(_searchBox);
 
-        Button searchButton = new Button(CItem.imsgs.searchSearch());
+        Button searchButton = new Button(CShell.imsgs.searchSearch());
         searchButton.addClickListener(clickListener);
         add(searchButton);
 
-        Label sortLabel = new Label(CItem.imsgs.searchSortBy());
+        Label sortLabel = new Label(CShell.imsgs.searchSortBy());
         sortLabel.setStyleName("itemSortLabel");
         add(sortLabel);
 

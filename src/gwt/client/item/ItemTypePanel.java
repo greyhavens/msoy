@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.Application;
+import client.shell.CShell;
 
 /**
  * Displays an item type selection tab bar. The tabs are designed to work with the history system,
@@ -74,7 +75,7 @@ public class ItemTypePanel extends FlexTable
                 getFlexCellFormatter().setStyleName(0, _column++, _rightBit);
             }
         }
-        String name = CItem.dmsgs.getString("pItemType" + itemType);
+        String name = CShell.dmsgs.getString("pItemType" + itemType);
         Hyperlink button = Application.createLink(name, _page, ""+itemType);
         button.setStyleName("Button");
         getFlexCellFormatter().setStyleName(0, _column, prefix + "Tab");

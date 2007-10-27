@@ -3,13 +3,14 @@
 
 package client.item;
 
-import client.util.Stars;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+
+import client.shell.CShell;
+import client.util.Stars;
 
 public class ItemRating extends SimplePanel
 {
@@ -41,7 +42,7 @@ public class ItemRating extends SimplePanel
         _itemId = new ItemIdent(_item.getType(), _item.getPrototypeId());
 
         // if we're not logged in, force MODE_READ
-        setWidget(new ItemStars((CItem.ident == null) ? Stars.MODE_READ : mode, halfSize));
+        setWidget(new ItemStars((CShell.ident == null) ? Stars.MODE_READ : mode, halfSize));
     }
 
     /** The subclass of {#link Stars} that implements most of the item rating. */
@@ -87,14 +88,14 @@ public class ItemRating extends SimplePanel
         protected void rateItem (byte newRating)
         {
             _memberRating = newRating;
-            CItem.itemsvc.rateItem(CItem.ident, _itemId, newRating, new AsyncCallback() {
+            CShell.itemsvc.rateItem(CShell.ident, _itemId, newRating, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _item.rating = ((Float)result).floatValue();
                     _mode = MODE_READ;
                     update();
                 }
                 public void onFailure (Throwable caught) {
-                    CItem.log("rateItem failed", caught);
+                    CShell.log("rateItem failed", caught);
                     // TODO: Error image?
                 }
             });

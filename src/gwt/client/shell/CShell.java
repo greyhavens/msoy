@@ -7,13 +7,18 @@ import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.client.CommentServiceAsync;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
+
+import client.editem.EditemMessages;
+import client.item.ItemMessages;
 
 /**
  * Contains a reference to the various bits that we're likely to need in the web client interface.
@@ -35,8 +40,20 @@ public class CShell
     /** Provides comment-related service. */
     public static CommentServiceAsync commentsvc;
 
+    /** Provides item-related services. */
+    public static ItemServiceAsync itemsvc;
+
+    /** Provides catalog-related services. */
+    public static CatalogServiceAsync catalogsvc;
+
     /** Messages shared by all client interfaces. */
     public static ShellMessages cmsgs;
+
+    /** Messages used by the item interfaces. */
+    public static ItemMessages imsgs;
+
+    /** Messages used by the editor interfaces. */
+    public static EditemMessages emsgs;
 
     /** Messages that must be looked up dynamically. */
     public static DynamicMessages dmsgs;

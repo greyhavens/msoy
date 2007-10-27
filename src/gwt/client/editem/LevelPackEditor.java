@@ -11,6 +11,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.shell.CShell;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -39,15 +40,15 @@ public class LevelPackEditor extends SubItemEditor
         super.populateInfoTab(info);
 
         addSpacer(info);
-        addInfoRow(info, CEditem.emsgs.packPremium(), _premium = new CheckBox());
-        addInfoTip(info, CEditem.emsgs.lpackPremiumTip());
+        addInfoRow(info, CShell.emsgs.packPremium(), _premium = new CheckBox());
+        addInfoTip(info, CShell.emsgs.lpackPremiumTip());
     }
 
     // @Override from ItemEditor
     protected void createFurniUploader (TabPanel tabs)
     {
         // level packs' furni media are their primary media
-        String title = CEditem.emsgs.lpackMainTitle();
+        String title = CShell.emsgs.lpackMainTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 // TODO: validate media type
@@ -55,7 +56,7 @@ public class LevelPackEditor extends SubItemEditor
                 return null;
             }
         });
-        tabs.add(_furniUploader, CEditem.emsgs.lpackMainTab());
+        tabs.add(_furniUploader, CShell.emsgs.lpackMainTab());
     }
 
     // @Override // from ItemEditor

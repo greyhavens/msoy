@@ -11,6 +11,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.shell.CShell;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -34,15 +35,15 @@ public class ItemPackEditor extends SubItemEditor
         CheckBox box = new CheckBox();
         box.setChecked(true);
         box.setEnabled(false);
-        addInfoRow(info, CEditem.emsgs.packPremium(), box);
-        addInfoTip(info, CEditem.emsgs.ipackPremiumTip());
+        addInfoRow(info, CShell.emsgs.packPremium(), box);
+        addInfoTip(info, CShell.emsgs.ipackPremiumTip());
     }
 
     // @Override from ItemEditor
     protected void createFurniUploader (TabPanel tabs)
     {
         // item packs' furni media are their primary media
-        String title = CEditem.emsgs.ipackMainTitle();
+        String title = CShell.emsgs.ipackMainTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 // TODO: validate media type
@@ -50,6 +51,6 @@ public class ItemPackEditor extends SubItemEditor
                 return null;
             }
         });
-        tabs.add(_furniUploader, CEditem.emsgs.ipackMainTab());
+        tabs.add(_furniUploader, CShell.emsgs.ipackMainTab());
     }
 }

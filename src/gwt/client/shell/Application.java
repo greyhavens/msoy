@@ -23,14 +23,21 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.client.CommentService;
 import com.threerings.msoy.web.client.CommentServiceAsync;
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
+
+import client.editem.EditemMessages;
+import client.item.ItemMessages;
 
 /**
  * Our main application and entry point. This dispatches a requests to the appropriate {@link
@@ -213,9 +220,15 @@ public class Application
         ((ServiceDefTarget)CShell.membersvc).setServiceEntryPoint("/membersvc");
         CShell.commentsvc = (CommentServiceAsync)GWT.create(CommentService.class);
         ((ServiceDefTarget)CShell.commentsvc).setServiceEntryPoint("/commentsvc");
+        CShell.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
+        ((ServiceDefTarget)CShell.itemsvc).setServiceEntryPoint("/itemsvc");
+        CShell.catalogsvc = (CatalogServiceAsync)GWT.create(CatalogService.class);
+        ((ServiceDefTarget)CShell.catalogsvc).setServiceEntryPoint("/catalogsvc");
 
         // load up our translation dictionaries
         CShell.cmsgs = (ShellMessages)GWT.create(ShellMessages.class);
+        CShell.imsgs = (ItemMessages)GWT.create(ItemMessages.class);
+        CShell.emsgs = (EditemMessages)GWT.create(EditemMessages.class);
         CShell.dmsgs = (DynamicMessages)GWT.create(DynamicMessages.class);
         CShell.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
     }

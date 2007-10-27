@@ -3,12 +3,12 @@
 
 package client.catalog;
 
-import client.item.CItem;
+import client.shell.CShell;
 
 /**
- * Extends {@link CItem} and provides catalog-specific services.
+ * Extends {@link CShell} and provides catalog-specific services.
  */
-public class CCatalog extends CItem
+public class CCatalog extends CShell
 {
     /** Messages used by the catalog interfaces. */
     public static CatalogMessages msgs;

@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.item.data.all.Item;
 
-import client.editem.EditemEntryPoint;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
@@ -15,7 +14,7 @@ import client.util.MsoyUI;
 /**
  * Handles the MetaSOY inventory application.
  */
-public class index extends EditemEntryPoint
+public class index extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()

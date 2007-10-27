@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Widget;
 
+import client.shell.CShell;
 import client.util.MsoyUI;
 
 /**
@@ -31,7 +32,7 @@ public class TagCloud extends Grid
         setStyleName("tagCloud");
         _type = type;
         _listener = listener;
-        CItem.catalogsvc.getPopularTags(_type, TAG_ROWS * TAG_COLS, new TagCallback());
+        CShell.catalogsvc.getPopularTags(_type, TAG_ROWS * TAG_COLS, new TagCallback());
     }
 
     protected class TagCallback implements AsyncCallback
@@ -41,7 +42,7 @@ public class TagCloud extends Grid
 
             HashMap _tagMap = (HashMap) result;
             if (_tagMap.size() == 0) {
-                setText(0, 0, CItem.imsgs.msgNoTags());
+                setText(0, 0, CShell.imsgs.msgNoTags());
                 return;
             }
 
@@ -83,9 +84,9 @@ public class TagCloud extends Grid
         }
 
         public void onFailure (Throwable caught) {
-            CItem.log("getPopularTags failed", caught);
+            CShell.log("getPopularTags failed", caught);
             clear();
-            setText(0, 0, CItem.serverError(caught));
+            setText(0, 0, CShell.serverError(caught));
         }
     }
 

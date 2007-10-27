@@ -23,6 +23,7 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.shell.Application;
 import client.shell.Args;
+import client.shell.CShell;
 import client.util.CreatorLabel;
 import client.util.FlashClients;
 import client.util.ItemUtil;
@@ -86,31 +87,31 @@ public abstract class BaseItemDetailPanel extends FlexTable
         getFlexCellFormatter().setHeight(1, 0, "10px");
         _footer.add(new TagDetailPanel(new TagDetailPanel.TagService() {
             public void tag (String tag, AsyncCallback callback) {
-                CItem.itemsvc.tagItem(CItem.ident, _item.getIdent(), tag, true, callback);
+                CShell.itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, true, callback);
             } 
             public void untag (String tag, AsyncCallback callback) {
-                CItem.itemsvc.tagItem(CItem.ident, _item.getIdent(), tag, false, callback);
+                CShell.itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, false, callback);
             }
             public void getRecentTags (AsyncCallback callback) {
-                CItem.itemsvc.getRecentTags(CItem.ident, callback);
+                CShell.itemsvc.getRecentTags(CShell.ident, callback);
             }
             public void getTags (AsyncCallback callback) {
-                CItem.itemsvc.getTags(CItem.ident, _item.getIdent(), callback);
+                CShell.itemsvc.getTags(CShell.ident, _item.getIdent(), callback);
             }
             public boolean supportFlags () {
                 return true;
             }
             public void setFlags (final byte flag, final Label statusLabel) {
-                CItem.itemsvc.setFlags(CItem.ident, _item.getIdent(), flag, flag,
+                CShell.itemsvc.setFlags(CShell.ident, _item.getIdent(), flag, flag,
                                        new AsyncCallback () {
                     public void onSuccess (Object result) {
                         _item.flagged |= flag;
                     }
                     public void onFailure (Throwable caught) {
-                        CItem.log("Failed to update item flags [item=" + _item.getIdent() +
+                        CShell.log("Failed to update item flags [item=" + _item.getIdent() +
                                   ", flag=" + flag + "]", caught);
                         if (statusLabel != null) {
-                            statusLabel.setText(CItem.serverError(caught));
+                            statusLabel.setText(CShell.serverError(caught));
                         }
                     }
                 });
@@ -141,7 +142,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
     protected void createInterface (VerticalPanel details)
     {
         if (_item.isRatable()) {
-            details.add(new ItemRating(_detail.item, CItem.getMemberId(), _detail.memberRating));
+            details.add(new ItemRating(_detail.item, CShell.getMemberId(), _detail.memberRating));
             details.add(WidgetUtil.makeShim(1, 5));
         }
         details.add(_creator = new CreatorLabel());
@@ -210,13 +211,14 @@ public abstract class BaseItemDetailPanel extends FlexTable
 
         // persist our new scale to the server
         if (_scaleUpdated) {
-            CItem.itemsvc.scaleAvatar(CItem.ident, _item.itemId, ((Avatar) _item).scale,
+            CShell.itemsvc.scaleAvatar(CShell.ident, _item.itemId, ((Avatar) _item).scale,
                 new AsyncCallback () {
                     public void onSuccess (Object result) {
                         // nada
                     }
                     public void onFailure (Throwable caught) {
-                        CItem.log("Failed to update scale [item=" + _item.getIdent() + "]", caught);
+                        CShell.log(
+                            "Failed to update scale [item=" + _item.getIdent() + "]", caught);
                     }
                 });
         }

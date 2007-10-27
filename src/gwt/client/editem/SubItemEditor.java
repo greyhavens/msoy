@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 
+import client.shell.CShell;
+
 /**
  * Handles the editing of sub-items.
  */
@@ -28,13 +30,13 @@ public abstract class SubItemEditor extends ItemEditor
         super.populateInfoTab(info);
 
         addSpacer(info);
-        addInfoRow(info, CEditem.emsgs.subIdent(), bind(_ident = new TextBox(), new Binder() {
+        addInfoRow(info, CShell.emsgs.subIdent(), bind(_ident = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _subi.ident = text;
             }
         }));
         _ident.setMaxLength(SubItem.MAX_IDENT_LENGTH);
-        addInfoTip(info, CEditem.emsgs.subIdentTip());
+        addInfoTip(info, CShell.emsgs.subIdentTip());
     }
 
     protected SubItem _subi;

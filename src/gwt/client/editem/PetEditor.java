@@ -8,6 +8,8 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.shell.CShell;
+
 /**
  * A class for creating and editing {@link Pet} digital items.
  */
@@ -30,17 +32,17 @@ public class PetEditor extends ItemEditor
     protected void createFurniUploader (TabPanel tabs)
     {
         // pets are special; their furni media are their primary media
-        String title = CEditem.emsgs.petMainTitle();
+        String title = CShell.emsgs.petMainTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
-                    return CEditem.emsgs.errPetNotFlash();
+                    return CShell.emsgs.errPetNotFlash();
                 }
                 _item.furniMedia = desc;
                 return null;
             }
         });
-        tabs.add(_furniUploader, CEditem.emsgs.petMainTab());
+        tabs.add(_furniUploader, CShell.emsgs.petMainTab());
     }
 
     protected Pet _pet;

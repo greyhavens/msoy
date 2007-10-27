@@ -150,7 +150,7 @@ public class TagDetailPanel extends FlexTable
 //             return;
 //         }
 
-//         CItem.itemsvc.getTagHistory(CItem.ident, _itemId, new AsyncCallback() {
+//         CShell.itemsvc.getTagHistory(CShell.ident, _itemId, new AsyncCallback() {
 //             public void onSuccess (Object result) {
 //                 _tagHistory = new FlexTable();
 //                 _tagHistory.setBorderWidth(0);

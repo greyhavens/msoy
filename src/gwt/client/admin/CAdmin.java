@@ -3,14 +3,14 @@
 
 package client.admin;
 
-import client.editem.CEditem;
-
 import com.threerings.msoy.web.client.AdminServiceAsync;
 
+import client.shell.CShell;
+
 /**
- * Extends {@link CMsgs} and provides admin-specific services.
+ * Extends {@link CShell} and provides admin-specific services.
  */
-public class CAdmin extends CEditem
+public class CAdmin extends CShell
 {
     /** Provides admin-related GWT services. */
     public static AdminServiceAsync adminsvc;

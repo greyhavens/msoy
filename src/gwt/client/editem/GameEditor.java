@@ -22,6 +22,8 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.shell.CShell;
+
 /**
  * A class for creating and editing {@link Game} digital items.
  */
@@ -49,7 +51,7 @@ public class GameEditor extends ItemEditor
         try {
             xml = XMLParser.parse(_game.config);
         } catch (DOMException de) {
-            CEditem.log("XML Parse Failed", de);
+            CShell.log("XML Parse Failed", de);
             return; // leave everything at defaults
         }
 
@@ -121,55 +123,55 @@ public class GameEditor extends ItemEditor
     {
         // add a tab for configuring the game
         FlexTable bits = new FlexTable();
-        tabs.add(bits, CEditem.emsgs.gameConfigTab());
+        tabs.add(bits, CShell.emsgs.gameConfigTab());
 
         // seated continuous games are disabled for now.
-        addInfoRow(bits, CEditem.emsgs.gameGameType(),
+        addInfoRow(bits, CShell.emsgs.gameGameType(),
                    bind(_matchType = new ListBox(), new Binder() {
             public void valueChanged () {
                 // TODO: disable or hide min/max players and watchable if this is a party game
             }
         }));
-        _matchType.addItem(CEditem.dmsgs.getString("gameType0"));
-        _matchType.addItem(CEditem.dmsgs.getString("gameType2"));
+        _matchType.addItem(CShell.dmsgs.getString("gameType0"));
+        _matchType.addItem(CShell.dmsgs.getString("gameType2"));
 
         // TODO: it'd be nice to force-format this text field for integers, or something.
-        addInfoRow(bits, CEditem.emsgs.gameMinPlayers(), _minPlayers = new TextBox());
+        addInfoRow(bits, CShell.emsgs.gameMinPlayers(), _minPlayers = new TextBox());
         _minPlayers.setText("1");
         _minPlayers.setVisibleLength(5);
 
-        addInfoRow(bits, CEditem.emsgs.gameMaxPlayers(), _maxPlayers = new TextBox());
+        addInfoRow(bits, CShell.emsgs.gameMaxPlayers(), _maxPlayers = new TextBox());
         _maxPlayers.setText("1");
         _maxPlayers.setVisibleLength(5);
 
-        addInfoRow(bits, CEditem.emsgs.gameWatchable(), _watchable = new CheckBox());
+        addInfoRow(bits, CShell.emsgs.gameWatchable(), _watchable = new CheckBox());
         _watchable.setChecked(true);
 
         addSpacer(bits);
 
-        addInfoRow(bits, new Label(CEditem.emsgs.gameDefinition()));
+        addInfoRow(bits, new Label(CShell.emsgs.gameDefinition()));
         addInfoRow(bits, _extras = new TextArea());
         _extras.setCharacterWidth(60);
         _extras.setVisibleLines(5);
-        addInfoTip(bits, CEditem.emsgs.gameJavaTip());
+        addInfoTip(bits, CShell.emsgs.gameJavaTip());
 
         addSpacer(bits);
 
-        addInfoRow(bits, CEditem.emsgs.gameIdent(), _ident = new TextBox());
-        addInfoRow(bits, CEditem.emsgs.gameController(), _controller = new TextBox());
+        addInfoRow(bits, CShell.emsgs.gameIdent(), _ident = new TextBox());
+        addInfoRow(bits, CShell.emsgs.gameController(), _controller = new TextBox());
         _controller.setVisibleLength(40);
-        addInfoRow(bits, CEditem.emsgs.gameManager(), _manager = new TextBox());
+        addInfoRow(bits, CShell.emsgs.gameManager(), _manager = new TextBox());
         _manager.setVisibleLength(40);
-        addInfoRow(bits, CEditem.emsgs.gameLWJGL(), _lwjgl = new CheckBox());
+        addInfoRow(bits, CShell.emsgs.gameLWJGL(), _lwjgl = new CheckBox());
 
         // add a tab for uploading the game media
-        tabs.add(createMainUploader(CEditem.emsgs.gameMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(CShell.emsgs.gameMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _game.gameMedia = desc;
                 return null;
             }
-        }), CEditem.emsgs.gameMainTab());
+        }), CShell.emsgs.gameMainTab());
 
         super.createInterface(contents, tabs);
     }
@@ -238,7 +240,7 @@ public class GameEditor extends ItemEditor
                 }
 
             } catch (DOMException de) {
-                throw new Exception(CEditem.emsgs.gameDefinitionError(de.getMessage()));
+                throw new Exception(CShell.emsgs.gameDefinitionError(de.getMessage()));
             }
         }
 

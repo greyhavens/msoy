@@ -10,6 +10,8 @@ import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.shell.CShell;
+
 /**
  * A class for creating and editing {@link Photo} digital items.
  */
@@ -32,15 +34,15 @@ public class AudioEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader(CEditem.emsgs.audioMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(CShell.emsgs.audioMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.isAudio()) {
-                    return CEditem.emsgs.errAudioNotAudio();
+                    return CShell.emsgs.errAudioNotAudio();
                 }
                 _audio.audioMedia = desc;
                 return null;
             }
-        }), CEditem.emsgs.audioMainTab());
+        }), CShell.emsgs.audioMainTab());
 
         super.createInterface(contents, tabs);
     }

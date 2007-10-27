@@ -10,6 +10,8 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 
+import client.shell.CShell;
+
 /**
  * A class for creating and editing {@link Photo} digital items.
  */
@@ -32,17 +34,17 @@ public class PhotoEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader(CEditem.emsgs.photoMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(CShell.emsgs.photoMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
-                    return CEditem.emsgs.errPhotoNotFlash();
+                    return CShell.emsgs.errPhotoNotFlash();
                 }
                 _photo.photoMedia = desc;
                 _photo.photoWidth = width;
                 _photo.photoHeight = height;
                 return null;
             }
-        }), CEditem.emsgs.photoMainTab());
+        }), CShell.emsgs.photoMainTab());
 
         super.createInterface(contents, tabs);
     }

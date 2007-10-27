@@ -10,6 +10,8 @@ import com.threerings.msoy.item.data.all.Document;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.shell.CShell;
+
 /**
  * A class for creating and editing {@link Document} digital items.
  */
@@ -31,13 +33,13 @@ public class DocumentEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader(CEditem.emsgs.documentMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(CShell.emsgs.documentMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _doc.docMedia = desc;
                 return null;
             }
-        }), CEditem.emsgs.documentMainTab());
+        }), CShell.emsgs.documentMainTab());
 
         super.createInterface(contents, tabs);
     }

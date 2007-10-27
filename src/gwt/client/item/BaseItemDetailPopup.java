@@ -15,6 +15,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
+import client.shell.CShell;
 import client.util.BorderedDialog;
 import client.util.CreatorLabel;
 import client.util.FlashClients;
@@ -47,31 +48,31 @@ public class BaseItemDetailPopup extends BorderedDialog
         // add our tag business at the bottom
         _footer.add(new TagDetailPanel(new TagDetailPanel.TagService() {
             public void tag (String tag, AsyncCallback callback) {
-                CItem.itemsvc.tagItem(CItem.ident, _item.getIdent(), tag, true, callback);
+                CShell.itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, true, callback);
             } 
             public void untag (String tag, AsyncCallback callback) {
-                CItem.itemsvc.tagItem(CItem.ident, _item.getIdent(), tag, false, callback);
+                CShell.itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, false, callback);
             }
             public void getRecentTags (AsyncCallback callback) {
-                CItem.itemsvc.getRecentTags(CItem.ident, callback);
+                CShell.itemsvc.getRecentTags(CShell.ident, callback);
             }
             public void getTags (AsyncCallback callback) {
-                CItem.itemsvc.getTags(CItem.ident, _item.getIdent(), callback);
+                CShell.itemsvc.getTags(CShell.ident, _item.getIdent(), callback);
             }
             public boolean supportFlags () {
                 return true;
             }
             public void setFlags (final byte flag, final Label statusLabel) {
-                CItem.itemsvc.setFlags(CItem.ident, _item.getIdent(), flag, flag,
+                CShell.itemsvc.setFlags(CShell.ident, _item.getIdent(), flag, flag,
                                        new AsyncCallback () {
                     public void onSuccess (Object result) {
                         _item.flagged |= flag;
                     }
                     public void onFailure (Throwable caught) {
-                        CItem.log("Failed to update item flags [item=" + _item.getIdent() +
+                        CShell.log("Failed to update item flags [item=" + _item.getIdent() +
                                   ", flag=" + flag + "]", caught);
                         if (statusLabel != null) {
-                            statusLabel.setText(CItem.serverError(caught));
+                            statusLabel.setText(CShell.serverError(caught));
                         }
                     }
                 });
@@ -80,13 +81,13 @@ public class BaseItemDetailPopup extends BorderedDialog
         }));
 
         // load up the item details
-        CItem.itemsvc.loadItemDetail(CItem.ident, _item.getIdent(), new AsyncCallback() {
+        CShell.itemsvc.loadItemDetail(CShell.ident, _item.getIdent(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 gotDetail(_detail = (ItemDetail)result);
                 center();
             }
             public void onFailure (Throwable caught) {
-                _description.setText(CItem.serverError(caught));
+                _description.setText(CShell.serverError(caught));
             }
         });
     }
@@ -139,7 +140,7 @@ public class BaseItemDetailPopup extends BorderedDialog
     {
         _creator.setMember(detail.creator);
         if (_item.isRatable()) {
-            _details.add(new ItemRating(detail.item, CItem.getMemberId(), detail.memberRating));
+            _details.add(new ItemRating(detail.item, CShell.getMemberId(), detail.memberRating));
         }
     }
 

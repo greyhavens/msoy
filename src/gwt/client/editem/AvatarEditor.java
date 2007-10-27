@@ -10,6 +10,8 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.shell.CShell;
+
 /**
  * A class for creating and editing {@link Avatar} digital items.
  */
@@ -32,16 +34,16 @@ public class AvatarEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader(CEditem.emsgs.avatarMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(CShell.emsgs.avatarMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
-                    return CEditem.emsgs.errAvatarNotFlash();
+                    return CShell.emsgs.errAvatarNotFlash();
                 }
                 _avatar.avatarMedia = desc;
                 _avatar.scale = 1f;
                 return null;
             }
-        }), CEditem.emsgs.avatarMainTab());
+        }), CShell.emsgs.avatarMainTab());
 
         super.createInterface(contents, tabs);
     }
@@ -55,17 +57,17 @@ public class AvatarEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createThumbUploader (TabPanel tabs)
     {
-        String title = CEditem.emsgs.avatarThumbTitle();
+        String title = CShell.emsgs.avatarThumbTitle();
         _thumbUploader = createUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
-                    return CEditem.emsgs.errThumbNotImage();
+                    return CShell.emsgs.errThumbNotImage();
                 }
                 _item.thumbMedia = desc;
                 return null;
             }
         });
-        tabs.add(_thumbUploader, CEditem.emsgs.avatarThumbTab());
+        tabs.add(_thumbUploader, CShell.emsgs.avatarThumbTab());
     }
 
     protected Avatar _avatar;

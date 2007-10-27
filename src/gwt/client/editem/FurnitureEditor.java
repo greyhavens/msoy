@@ -12,6 +12,7 @@ import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.shell.CShell;
 import client.util.RowPanel;
 
 /**
@@ -46,11 +47,11 @@ public class FurnitureEditor extends ItemEditor
     {
         FlexTable furni = new FlexTable();
 
-        String title = CEditem.emsgs.editorFurniTitle();
+        String title = CShell.emsgs.editorFurniTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
-                    return CEditem.emsgs.errFurniNotFlash();
+                    return CShell.emsgs.errFurniNotFlash();
                 }
                 _item.furniMedia = desc;
                 return null;
@@ -63,10 +64,10 @@ public class FurnitureEditor extends ItemEditor
         hsrow.add(_hotSpotY = new TextBox());
         _hotSpotX.setVisibleLength(5);
         _hotSpotY.setVisibleLength(5);
-        addInfoRow(furni, CEditem.emsgs.furniHotSpot(), hsrow);
-        addInfoTip(furni, CEditem.emsgs.furniHotSpotTip());
+        addInfoRow(furni, CShell.emsgs.furniHotSpot(), hsrow);
+        addInfoTip(furni, CShell.emsgs.furniHotSpotTip());
 
-        tabs.add(furni, CEditem.emsgs.editorFurniTab());
+        tabs.add(furni, CShell.emsgs.editorFurniTab());
     }
 
     // @Override from ItemEditor

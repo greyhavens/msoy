@@ -11,6 +11,7 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.shell.CShell;
 import client.util.FlashClients;
 
 
@@ -42,7 +43,7 @@ public class DecorEditor extends ItemEditor
 
         // note: the container has to be added to the page *before* we add the flash viewer
         VerticalPanel bits = new VerticalPanel();
-        tabs.add(bits, CEditem.emsgs.decorConfigTab());
+        tabs.add(bits, CShell.emsgs.decorConfigTab());
 
         FlashClients.embedDecorViewer(bits); 
         bits.add(_label = new HTML());
@@ -52,11 +53,11 @@ public class DecorEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createFurniUploader (TabPanel tabs)
     {
-        String title = CEditem.emsgs.decorMainTitle();
+        String title = CShell.emsgs.decorMainTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
-                    return CEditem.emsgs.errFurniNotFlash();
+                    return CShell.emsgs.errFurniNotFlash();
                 }
                 _item.furniMedia = desc;
                 if (width > 0 && height > 0) {
@@ -71,7 +72,7 @@ public class DecorEditor extends ItemEditor
                 return null;
             }
         });
-        tabs.add(_furniUploader, CEditem.emsgs.decorMainTab());
+        tabs.add(_furniUploader, CShell.emsgs.decorMainTab());
     }
 
     // @Override from ItemEditor
@@ -92,10 +93,10 @@ public class DecorEditor extends ItemEditor
         // the following is useful while debugging gwt/flash interop
         
         /*
-        String typelabel = CEditem.emsgs.decorType_None();
+        String typelabel = CShell.emsgs.decorType_None();
         switch (_decor.type) {
-        case Decor.IMAGE_OVERLAY: typelabel = CEditem.emsgs.decorType_Standard(); break;
-        case Decor.FIXED_IMAGE: typelabel = CEditem.emsgs.decorType_Fixed(); break;
+        case Decor.IMAGE_OVERLAY: typelabel = CShell.emsgs.decorType_Standard(); break;
+        case Decor.FIXED_IMAGE: typelabel = CShell.emsgs.decorType_Fixed(); break;
         }
 
         // GWT doesn't emulate java.text.NumberFormat...
@@ -103,11 +104,11 @@ public class DecorEditor extends ItemEditor
         String horizon = Float.toString(Math.round (_decor.horizon * 1000f) / 1000f);
         
         _label.setHTML(
-            CEditem.emsgs.decorDimensions() + " " + _decor.width + " x " +
+            CShell.emsgs.decorDimensions() + " " + _decor.width + " x " +
             _decor.height + " x " + _decor.depth + "<br/>" +
-            CEditem.emsgs.decorHorizon() + " " + horizon + " / " +
+            CShell.emsgs.decorHorizon() + " " + horizon + " / " +
             _decor.offsetX + ", " + _decor.offsetY + ", " + _decor.hideWalls + "<br/>" +
-            CEditem.emsgs.decorType() + " " + typelabel);
+            CShell.emsgs.decorType() + " " + typelabel);
         */
     }
     

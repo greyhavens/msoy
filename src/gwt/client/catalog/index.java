@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 
-import client.item.ItemEntryPoint;
 import client.item.ItemTypePanel;
 import client.shell.Args;
 import client.shell.Page;
@@ -16,7 +15,7 @@ import client.util.MsoyUI;
 /**
  * Handles the MetaSOY inventory application.
  */
-public class index extends ItemEntryPoint
+public class index extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()

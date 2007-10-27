@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.threerings.msoy.web.client.AdminService;
 import com.threerings.msoy.web.client.AdminServiceAsync;
 
-import client.editem.EditemEntryPoint;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
@@ -18,7 +17,7 @@ import client.util.MsoyUI;
  * Displays an admin dashboard with various server status information and administrative
  * functionality.
  */
-public class index extends EditemEntryPoint
+public class index extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()

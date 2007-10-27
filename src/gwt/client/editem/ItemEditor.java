@@ -25,6 +25,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.shell.CShell;
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
 import client.util.StyledTabPanel;
@@ -114,7 +115,7 @@ public abstract class ItemEditor extends BorderedDialog
         FlexTable info = new FlexTable();
 
         // create a name entry field
-        addInfoRow(info, CEditem.emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
+        addInfoRow(info, CShell.emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _item.name = text;
             }
@@ -125,7 +126,7 @@ public abstract class ItemEditor extends BorderedDialog
 
         // add the description
         addSpacer(info);
-        addInfoRow(info, new Label(CEditem.emsgs.editorDescrip()));
+        addInfoRow(info, new Label(CShell.emsgs.editorDescrip()));
         addInfoRow(info, bind(_description = new TextArea(), new Binder() {
             public void textUpdated (String text) {
                 _item.description = text;
@@ -133,9 +134,9 @@ public abstract class ItemEditor extends BorderedDialog
         }));
         _description.setCharacterWidth(40);
         _description.setVisibleLines(3);
-        addInfoTip(info, CEditem.emsgs.editorDescripTip());
+        addInfoTip(info, CShell.emsgs.editorDescripTip());
 
-        mediaTabs.add(info, CEditem.emsgs.editorInfoTab());
+        mediaTabs.add(info, CShell.emsgs.editorInfoTab());
 
         // create the rest of the interface
         createInterface(contents, mediaTabs);
@@ -151,7 +152,7 @@ public abstract class ItemEditor extends BorderedDialog
             }
         });
         Button ecancel;
-        _footer.add(ecancel = new Button(CEditem.cmsgs.cancel()));
+        _footer.add(ecancel = new Button(CShell.cmsgs.cancel()));
         ecancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 hide();
@@ -182,8 +183,8 @@ public abstract class ItemEditor extends BorderedDialog
     {
         _item = item;
         _etitle.setText((item.itemId <= 0) ?
-                        CEditem.emsgs.editorUploadTitle() : CEditem.emsgs.editorEditTitle());
-        _esubmit.setText(CEditem.emsgs.editorSave());
+                        CShell.emsgs.editorUploadTitle() : CShell.emsgs.editorEditTitle());
+        _esubmit.setText(CShell.emsgs.editorSave());
 
         safeSetText(_name, _item.name);
         safeSetText(_description, _item.description);
@@ -244,32 +245,32 @@ public abstract class ItemEditor extends BorderedDialog
 
     protected void createFurniUploader (TabPanel tabs)
     {
-        String title = CEditem.emsgs.editorFurniTitle();
+        String title = CShell.emsgs.editorFurniTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
-                    return CEditem.emsgs.errFurniNotFlash();
+                    return CShell.emsgs.errFurniNotFlash();
                 }
                 _item.furniMedia = desc;
                 return null;
             }
         });
-        tabs.add(_furniUploader, CEditem.emsgs.editorFurniTab());
+        tabs.add(_furniUploader, CShell.emsgs.editorFurniTab());
     }
 
     protected void createThumbUploader (TabPanel tabs)
     {
-        String title = CEditem.emsgs.editorThumbTitle();
+        String title = CShell.emsgs.editorThumbTitle();
         _thumbUploader = createUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
-                    return CEditem.emsgs.errThumbNotImage();
+                    return CShell.emsgs.errThumbNotImage();
                 }
                 _item.thumbMedia = desc;
                 return null;
             }
         });
-        tabs.add(_thumbUploader, CEditem.emsgs.editorThumbTab());
+        tabs.add(_thumbUploader, CShell.emsgs.editorThumbTab());
     }
 
     /**
@@ -453,7 +454,7 @@ public abstract class ItemEditor extends BorderedDialog
      */
     protected static void uploadError ()
     {
-        MsoyUI.error(CEditem.emsgs.errUploadError());
+        MsoyUI.error(CShell.emsgs.errUploadError());
     }
     
     /**
@@ -462,7 +463,7 @@ public abstract class ItemEditor extends BorderedDialog
      */
     protected static void uploadTooLarge ()
     {
-        MsoyUI.error(CEditem.emsgs.errUploadTooLarge());
+        MsoyUI.error(CShell.emsgs.errUploadTooLarge());
     }
 
     /**
@@ -489,22 +490,22 @@ public abstract class ItemEditor extends BorderedDialog
         AsyncCallback cb = new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (_item.itemId == 0) {
-                    MsoyUI.info(CEditem.emsgs.msgItemCreated());
+                    MsoyUI.info(CShell.emsgs.msgItemCreated());
                     _item.itemId = ((Integer)result).intValue();
                 } else {
-                    MsoyUI.info(CEditem.emsgs.msgItemUpdated());
+                    MsoyUI.info(CShell.emsgs.msgItemUpdated());
                 }
                 _updatedItem = _item; // this will be passed to our parent in onClosed()
                 hide();
             }
             public void onFailure (Throwable caught) {
-                MsoyUI.error(CEditem.serverError(caught));
+                MsoyUI.error(CShell.serverError(caught));
             }
         };
         if (_item.itemId == 0) {
-            CEditem.itemsvc.createItem(CEditem.ident, _item, _parentItem, cb);
+            CShell.itemsvc.createItem(CShell.ident, _item, _parentItem, cb);
         } else {
-            CEditem.itemsvc.updateItem(CEditem.ident, _item, cb);
+            CShell.itemsvc.updateItem(CShell.ident, _item, cb);
         }
     }
 
