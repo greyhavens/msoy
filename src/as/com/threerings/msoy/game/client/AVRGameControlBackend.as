@@ -298,6 +298,16 @@ public class AVRGameControlBackend extends ControlBackend
         return true;
     }
 
+    protected function playerEntered (info :OccupantInfo) :void
+    {
+        callUserCode("playerEntered_v1", info.getBodyOid());
+    }
+
+    protected function playerLeft (info :OccupantInfo) :void
+    {
+        callUserCode("playerLeft_v1", info.getBodyOid());
+    }
+
     protected function callStateChanged (entry :GameState) :void
     {
         callUserCode("stateChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
@@ -352,10 +362,30 @@ public class AVRGameControlBackend extends ControlBackend
             if (event.getName() == AVRGameObject.STATE) {
                 callStateChanged(event.getEntry() as GameState);
             }
+            if (event.getName() == AVRGameObject.PLAYERS) {
+                if (_roomObj != null) {
+                    var occInfo :OccupantInfo = event.getEntry();
+                    if (_roomObj.occupantInfo.contains(occInfo)) {
+                        // an occupant of our current room began playing this AVRG
+                        playerEntered(occInfo);
+                    }
+                }
+            }
         },
         function (event :EntryUpdatedEvent) :void {
             if (event.getName() == AVRGameObject.STATE) {
                 callStateChanged(event.getEntry() as GameState);
+            }
+        },
+        function (event :EntryRemovedEvent) :void {
+            if (event.getName() == AVRGameObject.PLAYERS) {
+                if (_roomObj != null) {
+                    var occInfo :OccupantInfo = event.getOldEntry();
+                    if (_roomObj.occupantInfo.contains(occInfo)) {
+                        // an occupant of our current room stopped playing this AVRG
+                        playerLeft(occInfo);
+                    }
+                }
             }
         });
 
@@ -396,7 +426,6 @@ public class AVRGameControlBackend extends ControlBackend
             }
         });
 
-    // TODO: These events are not in themselves a complete API
     protected var _locationObserver :LocationObserver = new LocationAdapter(
         null, function (place :PlaceObject) :void {
             if (_roomObj != null) {
@@ -416,16 +445,16 @@ public class AVRGameControlBackend extends ControlBackend
                 callUserCode("occupantMoved_v1", int(event.getEntry().getKey()));
             }
         });
-    
+
     protected var _occupantObserver :OccupantObserver = new OccupantAdapter(
         function (info :OccupantInfo) :void {
-            if (_roomObj != null) {
-                callUserCode("occupantEntered_v1", info.getBodyOid());
+            if (_roomObj != null && _gameObj.players.contains(info)) {
+                playerEntered(info);
             }
         },
         function (info :OccupantInfo) :void {
-            if (_roomObj != null) {
-                callUserCode("occupantLeft_v1", info.getBodyOid());
+            if (_roomObj != null && _gameObj.players.contains(info)) {
+                playerLeft(info);
             }
         });
 }
