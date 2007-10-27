@@ -319,7 +319,7 @@ public class AVRGameControlBackend extends ControlBackend
     protected function loggingInvocationListener (svc :String) :InvocationService_InvocationListener
     {
         return new InvocationAdapter(function (cause :String) :void {
-            log.warning("Service failure [service=" + svc + ", cause=" + cause + "].</li>");
+            log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
         });
     }
 
