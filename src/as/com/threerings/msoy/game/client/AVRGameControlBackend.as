@@ -23,6 +23,8 @@ import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 
+import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.dobj.DSet_Entry;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -99,9 +101,13 @@ public class AVRGameControlBackend extends ControlBackend
     {
         super.populateControlProperties(o);
 
+        // AVRGameControl
         o["getStageBounds_v1"] = getStageBounds_v1;
         o["getRoomBounds_v1"] = getRoomBounds_v1;
+        o["deactivateGame_v1"] = deactivateGame_v1;
+        o["getPlayerIds_v1"] = getPlayerIds_v1;
 
+        // StateControl (sub)
         o["getProperty_v1"] = getProperty_v1;
         o["setProperty_v1"] = setProperty_v1;
 //        o["setPropertyAt_v1"] = setPropertyAt_v1;
@@ -110,13 +116,13 @@ public class AVRGameControlBackend extends ControlBackend
 //        o["setPlayerPropertyAt_v1"] = setPlayerPropertyAt_v1;
         o["sendMessage_v1"] = sendMessage_v1;
 
+        // QuestControl (sub)
         o["offerQuest_v1"] = offerQuest_v1;
         o["updateQuest_v1"] = updateQuest_v1;
         o["completeQuest_v1"] = completeQuest_v1;
         o["cancelQuest_v1"] = cancelQuest_v1;
         o["getActiveQuests_v1"] = getActiveQuests_v1;
 
-        o["deactivateGame_v1"] = deactivateGame_v1;
     }
 
     protected function getStageBounds_v1 () :Rectangle
@@ -132,6 +138,23 @@ public class AVRGameControlBackend extends ControlBackend
             return new Rectangle(0, 0, p.x, p.y);
         }
         return null;
+    }
+
+    protected function deactivateGame_v1 () :Boolean
+    {
+        if (!isPlaying()) {
+            return false;
+        }
+        _mctx.getGameDirector().leaveAVRGame();
+        return true;
+    }
+
+    protected function getPlayerIds_v1 () :Array
+    {
+        if (_roomObj == null) {
+            return new Array();
+        }
+        return intersect(_gameObj.players, _roomObj.occupantInfo);
     }
 
     protected function getProperty_v1 (key :String) :Object
@@ -289,15 +312,6 @@ public class AVRGameControlBackend extends ControlBackend
         return list;
     }
 
-    protected function deactivateGame_v1 () :Boolean
-    {
-        if (!isPlaying()) {
-            return false;
-        }
-        _mctx.getGameDirector().leaveAVRGame();
-        return true;
-    }
-
     protected function playerEntered (info :OccupantInfo) :void
     {
         callUserCode("playerEntered_v1", info.getBodyOid());
@@ -348,6 +362,27 @@ public class AVRGameControlBackend extends ControlBackend
             }
         }
         return false;
+    }
+
+    // TODO: figure out a version of this that could go in some Util package
+    protected static function intersect (big :DSet, small :DSet) :Array
+    {
+        // make sure we iterate over the small set rather than the large, because one
+        // day DSet lookup will hopefully be better than O(N)
+        if (big.size() < small.size()) {
+            return intersect(small, big);
+        }
+
+        var result :Array = new Array();
+
+        var iterator :Iterator = small.iterator();
+        while (iterator.hasNext()) {
+            var entry :DSet_Entry = iterator.next() as DSet_Entry;
+            if (big.contains(entry)) {
+                result.push(entry);
+            }
+        }
+        return result;
     }
 
     protected var _mctx :WorldContext;
