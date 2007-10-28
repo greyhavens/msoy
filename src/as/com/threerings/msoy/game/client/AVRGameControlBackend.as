@@ -151,8 +151,8 @@ public class AVRGameControlBackend extends ControlBackend
 
     protected function getPlayerIds_v1 () :Array
     {
-        if (_roomObj == null) {
-            return new Array();
+        if (!isPlaying() || _roomObj == null) {
+            return null;
         }
         return intersect(_gameObj.players, _roomObj.occupantInfo);
     }
