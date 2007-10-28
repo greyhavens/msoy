@@ -189,12 +189,12 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
                 // publish the trophy earning to the member's feed, but don't let it
                 // throw a wrench in things if it fails
-                try {
-                    MsoyServer.feedRepo.publishMemberMessage(trophy.memberId,
-                        FeedMessageType.FRIEND_WON_TROPHY, trophy.name + "\t" + trophy.gameId);
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to publish feed [trophy=" + trophy + "].", pe);
-                }
+//                try {
+//                    MsoyServer.feedRepo.publishMemberMessage(trophy.memberId,
+//                        FeedMessageType.FRIEND_WON_TROPHY, trophy.name + "\t" + trophy.gameId);
+//                } catch (PersistenceException pe) {
+//                    log.log(Level.WARNING, "Failed to publish feed [trophy=" + trophy + "].", pe);
+//                }
             }
             public void handleSuccess () {
                 plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());
