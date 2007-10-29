@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.GameDetail;
+import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.PlayerRating;
 import com.threerings.msoy.web.data.ServiceException;
@@ -29,6 +30,12 @@ public interface GameService extends RemoteService
      * Loads the details for the specified game.
      */
     public GameDetail loadGameDetail (WebIdent ident, int gameId)
+        throws ServiceException;
+
+    /**
+     * Loads the metrics for the specified game. Caller must be an admin or the owner of the game.
+     */
+    public GameMetrics loadGameMetrics (WebIdent ident, int gameId)
         throws ServiceException;
 
     /**

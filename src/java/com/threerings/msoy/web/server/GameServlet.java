@@ -25,6 +25,7 @@ import com.threerings.presents.data.InvocationCodes;
 
 import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
+import com.threerings.parlor.rating.util.Percentiler;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
@@ -52,6 +53,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.GameDetail;
+import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.PlayerRating;
 import com.threerings.msoy.web.data.ServiceException;
@@ -210,24 +212,51 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
+    public GameMetrics loadGameMetrics (WebIdent ident, int gameId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+        requireIsGameOwner(gameId, mrec);
+
+        GameRepository repo = MsoyServer.itemMan.getGameRepository();
+        try {
+            GameMetrics metrics = new GameMetrics();
+            metrics.gameId = gameId;
+
+            Percentiler stiler = MsoyServer.ratingRepo.loadPercentile(-gameId);
+            if (stiler != null) {
+                metrics.singleTotalCount = stiler.getRecordedCount();
+                metrics.singleCounts = stiler.getCounts();
+                metrics.singleScores = stiler.getRequiredScores();
+                metrics.singleMaxScore = stiler.getMaxScore();
+            }
+
+            Percentiler mtiler = MsoyServer.ratingRepo.loadPercentile(gameId);
+            if (stiler != null) {
+                metrics.multiTotalCount = mtiler.getRecordedCount();
+                metrics.multiCounts = mtiler.getCounts();
+                metrics.multiScores = mtiler.getRequiredScores();
+                metrics.multiMaxScore = mtiler.getMaxScore();
+            }
+
+            return metrics;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load game metrics [id=" + gameId + "].", pe);
+            throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+        }
+    }
+
+    // from interface GameService
     public void updateGameInstructions (WebIdent ident, int gameId, String instructions)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
-        GameRepository repo = MsoyServer.itemMan.getGameRepository();
+        requireIsGameOwner(gameId, mrec);
 
+        GameRepository repo = MsoyServer.itemMan.getGameRepository();
         try {
             // TODO: sanitize the supplied instructions HTML
-
-            GameDetailRecord gdr = repo.loadGameDetail(gameId);
-            if (gdr == null) {
-                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-            }
-
-            GameRecord source = repo.loadItem(gdr.sourceItemId);
-            if (source == null || source.ownerId != mrec.memberId) {
-                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
-            }
 
             // now that we've confirmed that they're allowed, update the instructions
             repo.updateGameInstructions(gameId, instructions);
@@ -430,6 +459,27 @@ public class GameServlet extends MsoyServiceServlet
             result[ii].rating = record.rating;
         }
         return result;
+    }
+
+    protected void requireIsGameOwner (int gameId, MemberRecord mrec)
+        throws ServiceException
+    {
+        GameRepository repo = MsoyServer.itemMan.getGameRepository();
+        try {
+            // load the source record
+            GameRecord grec = repo.loadGameRecord(-gameId);
+            if (grec == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            }
+            // verify that the member in question owns the game or is an admin
+            if (grec.ownerId != mrec.memberId && !mrec.isAdmin()) {
+                throw new ServiceException(InvocationCodes.E_ACCESS_DENIED);
+            }
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load game source record to verify ownership " +
+                    "[gameId=" + gameId + ", mrec=" + mrec.who() + "].");
+        }
     }
 
     protected static final int MAX_RANKINGS = 10;

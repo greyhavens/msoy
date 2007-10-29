@@ -46,6 +46,7 @@ public class GameDetailPanel extends VerticalPanel
     public static final String TROPHIES_TAB = "t";
     public static final String MYRANKINGS_TAB = "mr";
     public static final String TOPRANKINGS_TAB = "tr";
+    public static final String METRICS_TAB = "m";
 
     public GameDetailPanel (Page page)
     {
@@ -196,6 +197,14 @@ public class GameDetailPanel extends VerticalPanel
         }
         addTab(TOPRANKINGS_TAB, CGame.msgs.tabTopRankings(),
                new TopRankingPanel(detail.gameId, false));
+
+        // if we're the owner of the game or an admin, add the metrics tab
+        if ((detail.sourceItem != null && detail.sourceItem.ownerId == CGame.getMemberId()) ||
+            CGame.isAdmin()) {
+            addTab(METRICS_TAB, CGame.msgs.tabMetrics(), new GameMetricsPanel(detail));
+        } else {
+            CGame.log("No metrics! " + detail.sourceItem + " (" + CGame.getMemberId() + ")");
+        }
     }
 
     // from interface TabListener

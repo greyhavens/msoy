@@ -7,6 +7,7 @@
   <public path="public"/>
   <source path="client"/>
   <source path="org/gwtwidgets/client"/>
+  <source path="com/kisgergely/gwt/canvas/client"/>
   <source path="com/threerings/presents/dobj"/>
   <source path="com/threerings/io"/>
   <source path="com/threerings/gwt"/>
