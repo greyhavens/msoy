@@ -778,7 +778,8 @@ public abstract class ItemRepository<
                  new FromOverride(getRatingClass()),
                  new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId));
 
-        float newRating = (float) ((average.count == 0) ? 0.0 : average.sum/average.count);
+        float newRating = 
+            (float) ((average.count == 0) ? 0.0 : ((float) average.sum)/average.count);
         // and then smack the new value into the item using yummy depot code
         updatePartial(getItemClass(), itemId, ItemRecord.RATING, newRating,
                       ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
