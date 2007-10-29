@@ -108,7 +108,7 @@
     <file name="lib/lwjgl-applet.jar"/>
 
     <!-- we need the mxmlc library to build FlexCompilerDelegate -->
-    <file name="tools/extern/flex_sdk/lib/mxmlc.jar"/>
+    <file name="${flexsdk.dir}/lib/mxmlc.jar"/>
 
     <!-- The following are used for aperture -->
     <file name="lib/aperture/aperture-2006.1-alpha-3.jar"/>
