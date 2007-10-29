@@ -33,6 +33,9 @@ public class Tutorial extends Sprite
 //        _control.addEventListener(AVRGameControlEvent.ENTERED_ROOM, debugEvent);
 
         _control.state.addEventListener(
+            AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
+
+        _control.state.addEventListener(
             AVRGameControlEvent.PLAYER_PROPERTY_CHANGED, playerPropertyChanged);
 
         _control.quests.addEventListener(
