@@ -21,7 +21,7 @@ public class ClipHandler
         scenes = new Object();
         for (var ii :int = 0; ii < clip.scenes.length; ii ++) {
             var scene :Scene = _clip.scenes[ii];
-//            log.debug("Indexing scene: " + scene.name);
+            log.debug("Indexing scene: " + scene.name);
             scenes[scene.name] = scene;
         }
     }
@@ -38,6 +38,7 @@ public class ClipHandler
             _callback = done;
             _clip.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
             _clip.gotoAndPlay(1, sceneName);
+//            log.debug("Playing: " + sceneName);
             return true;
         }
         return false;
@@ -60,6 +61,7 @@ public class ClipHandler
 
         // otherwise perhaps we're done?
         if (_clip.currentFrame == _scene.numFrames) {
+            log.debug("DONE [scene=" + _scene.name + ", frames=" + _scene.numFrames + "]");
             // if so trigger the callback (if any)
             if (_callback != null) {
                 _callback();

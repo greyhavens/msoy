@@ -60,21 +60,25 @@ public class View extends Sprite
 
     public function isShowingSummary () :Boolean
     {
-        return _textBox.visible;
+        return _boxShowing;
     }
 
     public function displayNothing () :void
     {
-        _textBox.visible = false;
+        _textBox.hideBox();
+        _boxShowing = false;
     }
 
     public function displaySummary (summary :String) :void
     {
+        log.debug("displaySummary [summary=" + summary + "]");
         if (!summary) {
-            _textBox.visible = false;
+            _textBox.hideBox();
+            _boxShowing = false;
             return;
         }
-        _textBox.newBox(summary);
+        _textBox.showBox(summary);
+        _boxShowing = true;
 
         _textBox.addButton("Hide", true, function () :void {
                 _textBox.visible = false;
@@ -88,7 +92,8 @@ public class View extends Sprite
 
     public function displayMessage (button :String, message :String, pressed :Function) :void
     {
-        _textBox.newBox(message);
+        _textBox.showBox(message);
+        _boxShowing = true;
         _textBox.addButton(button, true, pressed);
     }
 
@@ -117,6 +122,7 @@ public class View extends Sprite
     protected var _swirl :Swirl;
 
     protected var _textBox :TextBox;
+    protected var _boxShowing :Boolean;
 
     protected static const log :Log = Log.getLog(View);
 

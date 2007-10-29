@@ -26,15 +26,25 @@ public class Tutorial extends Sprite
 
         // immediately set up the control and listen for all relevant events
         _control = new AVRGameControl(this);
+//        _control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, debugEvent);
+//        _control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, debugEvent);
+//        _control.addEventListener(AVRGameControlEvent.PLAYER_MOVED, debugEvent);
+//        _control.addEventListener(AVRGameControlEvent.LEFT_ROOM, debugEvent);
+//        _control.addEventListener(AVRGameControlEvent.ENTERED_ROOM, debugEvent);
+
         _control.state.addEventListener(
             AVRGameControlEvent.PLAYER_PROPERTY_CHANGED, playerPropertyChanged);
-        _control.state.addEventListener(
-            AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
+
         _control.quests.addEventListener(
             AVRGameControlEvent.QUEST_STATE_CHANGED, questStateChanged);
 
         // create but do not initialize the view
         _view = new View(this);
+    }
+
+    protected function debugEvent (evt :Event) :void
+    {
+        log.debug("event: " + evt);
     }
 
     public function skipQuest () :void
@@ -48,6 +58,7 @@ public class Tutorial extends Sprite
 
     public function swirlClicked (swirlState :int) :void
     {
+//        log.debug("swirlClicked [state=" + swirlState + "]");
         var step :int = getStep();
         var quest :Quest = Quest.getQuest(step);
 

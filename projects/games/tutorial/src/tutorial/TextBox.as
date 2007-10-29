@@ -14,6 +14,7 @@ import flash.utils.*;
 
 import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.flash.SimpleTextButton;
+import com.threerings.flash.AlphaFade;
 
 public class TextBox extends Sprite
 {
@@ -75,23 +76,34 @@ public class TextBox extends Sprite
     {
         // create the textbox clip
         var boxClip :MovieClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        boxClip.gotoAndStop(1, SCN_TEXTBOX);
-
         boxClip.x = -Content.BOX_OFFSET.x;
         boxClip.y = -Content.BOX_OFFSET.y;
+
+        _boxHandler = new ClipHandler(boxClip);
 
         _backdrop = new Sprite();
         _backdrop.addChild(boxClip);
 
         this.addChild(_backdrop);
 
+        _foreground = new Sprite();
+
         _textField.x = _backdrop.x + Content.BOX_PADDING;
         _textField.y = _backdrop.y + Content.BOX_PADDING;
-        this.addChild(_textField);
+        _foreground.addChild(_textField);
 
         _buttons = new Sprite();
         _buttons.x = _textField.x;
-        this.addChild(_buttons);
+        _foreground.addChild(_buttons);
+
+        this.addChild(_foreground);
+
+        _fadeIn = new AlphaFade(_foreground, 0, 1, 300);
+        _fadeOut = new AlphaFade(_foreground, 1, 0, 300, function () :void {
+            _boxHandler.gotoScene(SCN_TEXTBOX_SHRINK, function () :void {
+                _foreground.visible = false;
+            });
+        });
 
         _done();
     }
@@ -101,11 +113,22 @@ public class TextBox extends Sprite
         return _buttons != null;
     }
 
-    public function newBox (text :String) :TextField
+    public function hideBox () :void
+    {
+        _fadeOut.startAnimation();
+    }
+
+    public function showBox (text :String) :TextField
     {
         while (_buttons.numChildren > 0) {
             _buttons.removeChildAt(0);
         }
+
+        _boxHandler.gotoScene(SCN_TEXTBOX, function () :void {
+            _fadeIn.startAnimation();
+            _foreground.visible = true;
+        });
+
         _rightButtonEdge = _textField.width;
         _leftButtonEdge = 0;
 
@@ -116,7 +139,8 @@ public class TextBox extends Sprite
 
         _buttons.y = _textField.y + _textField.height;
 
-        this.visible = true;
+        _foreground.visible = false;
+        _backdrop.visible = this.visible = true;
 
         return _textField;
     }
@@ -155,16 +179,23 @@ public class TextBox extends Sprite
 
     protected var _view :View;
     protected var _done :Function;
+    protected var _boxHandler :ClipHandler;
 
     protected var _backdrop :Sprite;
+    protected var _foreground :Sprite;
     protected var _textField :TextField;
 
     protected var _buttons :Sprite;
     protected var _leftButtonEdge :int;
     protected var _rightButtonEdge :int;
 
+    protected var _fadeOut :AlphaFade;
+    protected var _fadeIn :AlphaFade;
+
     protected static const log :Log = Log.getLog(Swirl);
 
     protected static const SCN_TEXTBOX :String = "textbox";
+    protected static const SCN_TEXTBOX_GROW :String = "textbox_grow";
+    protected static const SCN_TEXTBOX_SHRINK :String = "textbox_shrink";
 }
 }
