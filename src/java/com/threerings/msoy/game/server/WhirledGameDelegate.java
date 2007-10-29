@@ -185,16 +185,12 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         // otherwise, award them the trophy, then add it to their runtime collection
         MsoyGameServer.invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
             public void invokePersistent () throws PersistenceException {
+                // store the trophy in the database
                 MsoyGameServer.gameReg.getTrophyRepository().storeTrophy(trophy);
-
-                // publish the trophy earning to the member's feed, but don't let it
-                // throw a wrench in things if it fails
-//                try {
-//                    MsoyServer.feedRepo.publishMemberMessage(trophy.memberId,
-//                        FeedMessageType.FRIEND_WON_TROPHY, trophy.name + "\t" + trophy.gameId);
-//                } catch (PersistenceException pe) {
-//                    log.log(Level.WARNING, "Failed to publish feed [trophy=" + trophy + "].", pe);
-//                }
+                // publish the trophy earning event to the member's feed
+                MsoyGameServer.feedRepo.publishMemberMessage(
+                    trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
+                    trophy.name + "\t" + trophy.gameId);
             }
             public void handleSuccess () {
                 plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());

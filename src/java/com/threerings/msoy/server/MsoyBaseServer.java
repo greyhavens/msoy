@@ -30,6 +30,7 @@ import com.threerings.admin.server.DatabaseConfigRegistry;
 import com.threerings.whirled.server.WhirledServer;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.server.persist.MemoryRepository;
 
@@ -69,6 +70,9 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Sends event information to an external log database. */
     public static MsoyEventLogger eventLog;
+
+    /** The Msoy feed repository. */
+    public static FeedRepository feedRepo;
     
     /**
      * Creates an audit log with the specified name (which should not include
@@ -145,6 +149,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         memoryRepo = new MemoryRepository(perCtx);
         statRepo = new StatRepository(perCtx);
         gameCookieRepo = new GameCookieRepository(perCtx);
+        feedRepo = new FeedRepository(perCtx);
 
         // create and set up our configuration registry and admin service
         confReg = createConfigRegistry();
