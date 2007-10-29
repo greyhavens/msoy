@@ -58,9 +58,9 @@ public class ItemRating extends SimplePanel
         {
             // show average rating unless we're in write-only mode
             if (_mode == MODE_WRITE) {
-                updateStarImages(_memberRating, true);
+                updateStarImage(0, _memberRating);
             } else {
-                updateStarImages(_item.rating, false);
+                updateStarImage(_item.rating, _memberRating);
             }
         }
 
@@ -70,9 +70,9 @@ public class ItemRating extends SimplePanel
         {
             // show the changing user rating as user hovers over widget, unless we're read-only
             if (_mode == MODE_READ) {
-                updateStarImages(_item.rating, true);
+                updateStarImage(_item.rating, _memberRating);
             } else {
-                updateStarImages(rating, true);
+                updateStarImage(_item.rating, rating);
             }
         }
 
@@ -91,7 +91,6 @@ public class ItemRating extends SimplePanel
             CShell.itemsvc.rateItem(CShell.ident, _itemId, newRating, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _item.rating = ((Float)result).floatValue();
-                    _mode = MODE_READ;
                     update();
                 }
                 public void onFailure (Throwable caught) {

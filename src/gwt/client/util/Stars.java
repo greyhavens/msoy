@@ -40,17 +40,18 @@ public abstract class Stars extends FlowPanel
         update();
     }
 
-    protected void updateStarImages (double ratingToDisplay, boolean isUserRating)
+    protected void updateStarImage (double averageRating, double userRating)
     {
-        int filledStars = (int) (ratingToDisplay * 2);
+        int filledStars = (int) (averageRating * 2);
         String prefix = "/images/ui/stars/" + (_halfSize ? "half" : "full") + "/";
-        String filledUrl = prefix + (isUserRating ? "user" : "average");
         for (int ii = 0; ii < filledStars; ii++) {
+            String filledUrl = prefix + (ii < userRating * 2 ? "user" : "average");
             String path = filledUrl + "_" + ((ii % 2) == 0 ? "lhalf" : "rhalf") + ".png";
             ((Image) getWidget(ii)).setUrl(path);
         }
         for (int ii = filledStars; ii < 10; ii++) {
-            String path = prefix + "empty_" + ((ii % 2) == 0 ? "lhalf" : "rhalf") + ".png";
+            String emptyUrl = prefix + (ii < userRating * 2 ? "user" : "average");
+            String path = emptyUrl + "_empty_" + ((ii % 2) == 0 ? "lhalf" : "rhalf") + ".png";
             ((Image) getWidget(ii)).setUrl(path);
         }
     }
