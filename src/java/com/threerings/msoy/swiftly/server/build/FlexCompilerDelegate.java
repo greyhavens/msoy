@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.swiftly.server.build;
 
+import java.lang.reflect.Method;
+
 import java.util.Timer;
 import java.util.TimerTask;
-
-import flex2.tools.Compiler;
 
 /**
  * A wrapper around the Flex compiler used to ensure the process terminates.
@@ -61,7 +61,16 @@ public class FlexCompilerDelegate
         Timer killer = new Timer();
         killer.schedule(new CompilerKiller(delay), delay);
 
-        Compiler.main(args);
+        try {
+            Class<?> compiler = Class.forName("flex2.tools.Compiler");
+            Method mainMethod = compiler.getMethod(
+                "main", new Class[] { STRING_ARRAY_PROTOTYPE.getClass() });
+            mainMethod.invoke(null, (Object)args);
+        } catch (Exception e) {
+            System.err.println("Failed to load and invoke compiler " + e);
+            System.exit(1);
+        }
     }
 
+    protected static final String[] STRING_ARRAY_PROTOTYPE = new String[0];
 }
