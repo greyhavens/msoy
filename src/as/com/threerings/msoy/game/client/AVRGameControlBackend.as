@@ -5,11 +5,8 @@ package com.threerings.msoy.game.client {
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flash.utils.ByteArray;
 
 import com.threerings.util.Iterator;
-import com.threerings.util.Name;
-import com.threerings.util.ObjectMarshaller;
 
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.LocationObserver;
@@ -23,15 +20,7 @@ import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 
-import com.threerings.presents.dobj.DSet;
-import com.threerings.presents.dobj.DSet_Entry;
-import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.EntryRemovedEvent;
-import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.MessageAdapter;
-import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.dobj.MessageListener;
-import com.threerings.presents.dobj.SetAdapter;
+import com.threerings.presents.dobj.*;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
@@ -58,8 +47,9 @@ public class AVRGameControlBackend extends ControlBackend
         _gameObj = gameObj;
         _ctrl = ctrl;
 
-        _gameObj.addListener(_stateListener);
-        _gameObj.addListener(_messageListener);
+        _playerObj = _gctx.getPlayerObject();
+
+        _gameObj.addListener(_gameListener);
 
         _mctx.getLocationDirector().addLocationObserver(_locationObserver);
         _mctx.getOccupantDirector().addOccupantObserver(_occupantObserver);
@@ -69,26 +59,33 @@ public class AVRGameControlBackend extends ControlBackend
         if (_roomObj != null) {
             _roomObj.addListener(_movementListener);
         }
-        _playerObj = _gctx.getPlayerObject();
-        _playerObj.addListener(_playerStateListener);
-        _playerObj.addListener(_playerMessageListener);
+
+        _stateBackend = new StateControlBackend(gctx, this, gameObj);
+        _questBackend = new QuestControlBackend(gctx, this, gameObj);
     }
 
     // from ControlBackend
     override public function shutdown () :void
     {
-         super.shutdown();
-        
-         _gameObj.removeListener(_stateListener);
-         _playerObj.removeListener(_playerStateListener);
+         _stateBackend.shutdown();
+         _questBackend.shutdown();
 
-         _mctx.getLocationDirector().removeLocationObserver(_locationObserver);
-         _mctx.getOccupantDirector().removeOccupantObserver(_occupantObserver);
-        
          if (_roomObj != null) {
              _roomObj.removeListener(_movementListener);
              _roomObj = null;
          }
+
+         _mctx.getLocationDirector().removeLocationObserver(_locationObserver);
+         _mctx.getOccupantDirector().removeOccupantObserver(_occupantObserver);
+        
+         _gameObj.removeListener(_gameListener);
+
+         super.shutdown();
+    }
+
+    public function get room () :RoomObject
+    {
+        return _roomObj;
     }
 
     public function tutorialEvent (eventName :String) :void
@@ -96,7 +93,12 @@ public class AVRGameControlBackend extends ControlBackend
         callUserCode("messageReceived_v1", "tutorialEvent", eventName);
     }
 
-    // from GameControlBackend
+    public function isPlaying () :Boolean
+    {
+        return _mctx.getGameDirector().getGameId() == _ctrl.getGameId();
+    }
+
+    // from ControlBackend
     override protected function populateControlProperties (o :Object) :void
     {
         super.populateControlProperties(o);
@@ -107,22 +109,8 @@ public class AVRGameControlBackend extends ControlBackend
         o["deactivateGame_v1"] = deactivateGame_v1;
         o["getPlayerIds_v1"] = getPlayerIds_v1;
 
-        // StateControl (sub)
-        o["getProperty_v1"] = getProperty_v1;
-        o["setProperty_v1"] = setProperty_v1;
-//        o["setPropertyAt_v1"] = setPropertyAt_v1;
-        o["getPlayerProperty_v1"] = getPlayerProperty_v1;
-        o["setPlayerProperty_v1"] = setPlayerProperty_v1;
-//        o["setPlayerPropertyAt_v1"] = setPlayerPropertyAt_v1;
-        o["sendMessage_v1"] = sendMessage_v1;
-
-        // QuestControl (sub)
-        o["offerQuest_v1"] = offerQuest_v1;
-        o["updateQuest_v1"] = updateQuest_v1;
-        o["completeQuest_v1"] = completeQuest_v1;
-        o["cancelQuest_v1"] = cancelQuest_v1;
-        o["getActiveQuests_v1"] = getActiveQuests_v1;
-
+        _stateBackend.populateSubProperties(o);
+        _questBackend.populateSubProperties(o);
     }
 
     protected function getStageBounds_v1 () :Rectangle
@@ -157,161 +145,6 @@ public class AVRGameControlBackend extends ControlBackend
         return intersect(_gameObj.players, _roomObj.occupantInfo);
     }
 
-    protected function getProperty_v1 (key :String) :Object
-    {
-        var entry :GameState = GameState(_gameObj.state.get(key));
-        return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
-    }
-
-    protected function setProperty_v1 (
-        key :String, value: Object, persistent :Boolean) :Boolean
-    {
-        var wgsvc :AVRGameService = _gameObj.avrgService;
-        if (value == null) {
-            wgsvc.deleteProperty(_gctx.getClient(), key,
-                                 loggingConfirmListener("deleteProperty"));
-
-        } else {
-            wgsvc.setProperty(_gctx.getClient(), key,
-                              ObjectMarshaller.validateAndEncode(value), persistent,
-                              loggingConfirmListener("setProperty"));
-
-        }
-        return true;
-    }
-    
-    protected function getPlayerProperty_v1 (key :String) :Object
-    {
-        var entry :GameState = GameState(_playerObj.gameState.get(key));
-        return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
-    }
-
-    protected function setPlayerProperty_v1 (
-        key :String, value: Object, persistent :Boolean) :Boolean
-    {
-        var wgsvc :AVRGameService = _gameObj.avrgService;
-        if (value == null) {
-            wgsvc.deletePlayerProperty(_gctx.getClient(), key,
-                                       loggingConfirmListener("deletePlayerProperty"));
-
-        } else {
-            wgsvc.setPlayerProperty(_gctx.getClient(), key,
-                                    ObjectMarshaller.validateAndEncode(value), persistent,
-                                    loggingConfirmListener("setPlayerProperty"));
-        }
-        return true;
-    }
-
-    protected function sendMessage_v1 (key :String, value :Object, playerId :int) :Boolean
-    {
-        _gameObj.avrgService.sendMessage(_gctx.getClient(), key,
-                                         ObjectMarshaller.validateAndEncode(value),
-                                         playerId, loggingInvocationListener("sendMessage"));
-        return true;
-    }
-
-    protected function offerQuest_v1 (questId :String, intro :String, initialStatus :String)
-        :Boolean
-    {
-        if (!isPlaying() || isOnQuest(questId)) {
-            return false;
-        }
-        var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;
-        if (view == null) {
-            // should hopefully not happen
-            return false;
-        }
-
-        var actualOffer :Function = function() :void {
-            _gameObj.avrgService.startQuest(_gctx.getClient(), questId, initialStatus,
-                loggingConfirmListener("startQuest", function () :void {
-                    _mctx.displayFeedback(null, "Quest begun: " + initialStatus);
-                }));
-        };
-
-        if (intro == null) {
-            // only the tutorial is allowed to skip the UI
-            if (_mctx.getGameDirector().isPlayingTutorial()) {
-                actualOffer();
-                return true;
-            }
-            return false;
-        }
-
-        view.getRoomController().offerQuest(_gctx, intro, actualOffer);
-        return true;
-    }
-
-    protected function updateQuest_v1 (questId :String, step :int, status :String) :Boolean
-    {
-        if (!isOnQuest(questId)) {
-            return false;
-        }
-        _gameObj.avrgService.updateQuest(
-            _gctx.getClient(), questId, step, status, loggingConfirmListener(
-                "updateQuest", function () :void {
-                    _mctx.displayFeedback(null, "Quest update: " + status);
-                }));
-        return true;
-    }
-
-    protected function completeQuest_v1 (questId :String, outro :String, payout :int) :Boolean
-    {
-        if (!isPlaying() || !isOnQuest(questId)) {
-            return false;
-        }
-        var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;
-        if (view == null) {
-            // should hopefully not happen
-            return false;
-        }
-
-        var actualComplete :Function = function() :void {
-            _gameObj.avrgService.completeQuest(
-                _gctx.getClient(), questId, payout, loggingConfirmListener(
-                    "completeQuest", function () :void {
-                        _mctx.displayFeedback(null, "Quest completed!");
-                    }));
-        };
-
-        if (outro == null) {
-            // only the tutorial is allowed to skip the UI
-            if (_mctx.getGameDirector().isPlayingTutorial()) {
-                actualComplete();
-                return true;
-            }
-            return false;
-        }
-
-        view.getRoomController().completeQuest(_gctx, outro, actualComplete);
-        return true;
-    }
-
-    protected function cancelQuest_v1 (questId :String) :Boolean
-    {
-        if (!isPlaying() || !isOnQuest(questId)) {
-            return false;
-        }
-        // TODO: confirmation dialog
-        _gameObj.avrgService.cancelQuest(
-            _gctx.getClient(), questId, loggingConfirmListener(
-                "cancelQuest", function () :void {
-                    _mctx.displayFeedback(null, "Quest cancelled!");
-                }));
-        return true;
-    }
-
-    protected function getActiveQuests_v1 () :Array
-    {
-        var list :Array = new Array();
-        var i :Iterator = _playerObj.questState.iterator();
-        while (i.hasNext()) {
-            var state :QuestState = QuestState(i.next());
-            list.push([ state.questId, state.step, state.status ]);
-        }
-        return list;
-    }
-
     protected function playerEntered (info :OccupantInfo) :void
     {
         callUserCode("playerEntered_v1", info.getBodyOid());
@@ -320,16 +153,6 @@ public class AVRGameControlBackend extends ControlBackend
     protected function playerLeft (info :OccupantInfo) :void
     {
         callUserCode("playerLeft_v1", info.getBodyOid());
-    }
-
-    protected function callStateChanged (entry :GameState) :void
-    {
-        callUserCode("stateChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
-    }
-    
-    protected function callPlayerStateChanged (entry :GameState) :void
-    {
-        callUserCode("playerStateChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
     }
 
     protected function loggingConfirmListener (svc :String, processed :Function = null)
@@ -345,23 +168,6 @@ public class AVRGameControlBackend extends ControlBackend
         return new InvocationAdapter(function (cause :String) :void {
             log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
         });
-    }
-
-    protected function isPlaying () :Boolean
-    {
-        return _mctx.getGameDirector().getGameId() == _ctrl.getGameId();
-    }
-
-    protected function isOnQuest (questId :String) :Boolean
-    {
-        var i :Iterator = _playerObj.questState.iterator();
-        while (i.hasNext()) {
-            var state :QuestState = QuestState(i.next());
-            if (state.questId == questId) {
-                return true;
-            }
-        }
-        return false;
     }
 
     // TODO: figure out a version of this that could go in some Util package
@@ -388,15 +194,16 @@ public class AVRGameControlBackend extends ControlBackend
     protected var _mctx :WorldContext;
     protected var _gctx :GameContext;
     protected var _ctrl :AVRGameController;
+
+    protected var _stateBackend :StateControlBackend;
+    protected var _questBackend :QuestControlBackend;
+
     protected var _gameObj :AVRGameObject;
     protected var _playerObj :PlayerObject;
     protected var _roomObj :RoomObject;
 
-    protected var _stateListener :SetAdapter = new SetAdapter(
+    protected var _gameListener :SetAdapter = new SetAdapter(
         function (event :EntryAddedEvent) :void {
-            if (event.getName() == AVRGameObject.STATE) {
-                callStateChanged(event.getEntry() as GameState);
-            }
             if (event.getName() == AVRGameObject.PLAYERS) {
                 if (_roomObj != null) {
                     var occInfo :OccupantInfo = event.getEntry();
@@ -407,11 +214,7 @@ public class AVRGameControlBackend extends ControlBackend
                 }
             }
         },
-        function (event :EntryUpdatedEvent) :void {
-            if (event.getName() == AVRGameObject.STATE) {
-                callStateChanged(event.getEntry() as GameState);
-            }
-        },
+        null,
         function (event :EntryRemovedEvent) :void {
             if (event.getName() == AVRGameObject.PLAYERS) {
                 if (_roomObj != null) {
@@ -421,43 +224,6 @@ public class AVRGameControlBackend extends ControlBackend
                         playerLeft(occInfo);
                     }
                 }
-            }
-        });
-
-    protected var _messageListener :MessageListener = new MessageAdapter(
-        function (event :MessageEvent) :void {
-            if (AVRGameObject.USER_MESSAGE == event.getName()) {
-                var args :Array = event.getArgs();
-                var key :String = (args[0] as String);
-                callUserCode("messageReceived_v1", key, ObjectMarshaller.decode(args[1]));
-            }
-        });
-
-    protected var _playerStateListener :SetAdapter = new SetAdapter(
-        function (event :EntryAddedEvent) :void {
-            if (event.getName() == PlayerObject.GAME_STATE) {
-                callPlayerStateChanged(event.getEntry() as GameState);
-            } else if (event.getName() == PlayerObject.QUEST_STATE) {
-                callUserCode("questStateChanged_v1", QuestState(event.getEntry()).questId, true);
-            }
-        },
-        function (event :EntryUpdatedEvent) :void {
-            if (event.getName() == PlayerObject.GAME_STATE) {
-                callPlayerStateChanged(event.getEntry() as GameState);
-            }
-        },
-        function (event :EntryRemovedEvent) :void {
-            if (event.getName() == PlayerObject.QUEST_STATE) {
-                callUserCode("questStateChanged_v1", event.getKey(), false);
-            }
-        });
-
-    protected var _playerMessageListener :MessageListener = new MessageAdapter(
-        function (event :MessageEvent) :void {
-            if (AVRGameObject.USER_MESSAGE + ":" + _gameObj.getOid() == event.getName()) {
-                var args :Array = event.getArgs();
-                var key :String = (args[0] as String);
-                callUserCode("messageReceived_v1", key, ObjectMarshaller.decode(args[1]));
             }
         });
 
