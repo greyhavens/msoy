@@ -288,64 +288,60 @@
   </target>
 
   <!-- builds our GWT web client -->
-  <property name="pages" value="msoy"/>
   <property name="gwtc.style" value="OBF"/>
   <target name="gclient" depends="jprepare,gmsgs"
           description="Rebuilds the GWT client (but only for Mozilla).">
-    <for list="${pages}" param="page"><sequential>
-      <echo>Compiling @{page} module...</echo>
-      <delete dir="pages/@{page}"/>
-      <mkdir dir="pages/@{page}"/>
-      <if><isset property="full"/><then>
-         <copy file="${gsrc.dir}/@{page}.gwt.xml.in"
-               tofile="${gsrc.dir}/@{page}.gwt.xml" overwrite="true"/>
-      </then><else>
-         <echo>Doing Gecko-only compile...</echo>
-         <exec executable="bin/quickify" failonerror="true">
-           <arg value="${gsrc.dir}/@{page}.gwt.xml"/>
-         </exec>
-      </else></if>
-      <java fork="true" maxmemory="512M" failonerror="false" resultproperty="gwt.result"
-            classname="com.google.gwt.dev.GWTCompiler">
-        <classpath>
-          <pathelement location="${classes.dir}"/>
-          <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
-          <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
-          <pathelement location="${src.dir}"/>
-          <pathelement location="${gsrc.dir}"/>
-        </classpath>
-        <arg value="-style"/><arg value="${gwtc.style}"/>
-        <arg value="-out"/>
-        <arg value="${gwtout.dir}"/>
-        <arg value="@{page}"/>
-        <!-- gather all the compiler output into a property -->
-        <redirector outputproperty="redirector.out"/>
-      </java>
+    <delete dir="pages/msoy"/>
+    <mkdir dir="pages/msoy"/>
+    <if><isset property="full"/><then>
+       <copy file="${gsrc.dir}/msoy.gwt.xml.in"
+             tofile="${gsrc.dir}/msoy.gwt.xml" overwrite="true"/>
+    </then><else>
+       <echo>Doing Gecko-only compile...</echo>
+       <exec executable="bin/quickify" failonerror="true">
+         <arg value="${gsrc.dir}/msoy.gwt.xml"/>
+       </exec>
+    </else></if>
+    <java fork="true" maxmemory="512M" failonerror="false" resultproperty="gwt.result"
+          classname="com.google.gwt.dev.GWTCompiler">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+        <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
+        <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
+        <pathelement location="${src.dir}"/>
+        <pathelement location="${gsrc.dir}"/>
+      </classpath>
+      <arg value="-style"/><arg value="${gwtc.style}"/>
+      <arg value="-out"/>
+      <arg value="${gwtout.dir}"/>
+      <arg value="msoy"/>
+      <!-- gather all the compiler output into a property -->
+      <redirector outputproperty="redirector.out"/>
+    </java>
 
-      <!-- until the GWT compiler does the right thing echo errors/warnings correctly -->
-      <if><contains string="${redirector.out}" substring="[ERROR]"/><then>
-        <echo level="error">${redirector.out}</echo>
-        <!-- be really, really sure that the build fails if we get an error logs -->
-        <property name="has.errors" value="true"/>
-      </then><elseif><contains string="${redirector.out}" substring="[WARNING]"/><then>
-        <echo level="warning">${redirector.out}</echo>
-      </then></elseif><else>
-        <echo level="info">${redirector.out}</echo>
-      </else></if>
+    <!-- until the GWT compiler does the right thing echo errors/warnings correctly -->
+    <if><contains string="${redirector.out}" substring="[ERROR]"/><then>
+      <echo level="error">${redirector.out}</echo>
+      <!-- be really, really sure that the build fails if we get an error logs -->
+      <property name="has.errors" value="true"/>
+    </then><elseif><contains string="${redirector.out}" substring="[WARNING]"/><then>
+      <echo level="warning">${redirector.out}</echo>
+    </then></elseif><else>
+      <echo level="info">${redirector.out}</echo>
+    </else></if>
 
-      <!-- fail the build if the GWT compiler returned 1 or errors were detected -->
-      <fail message="The GWT build failed. See output for details.">
-        <condition><or>
-          <equals arg1="${gwt.result}" arg2="1"/>
-          <isset property="has.errors"/>
-        </or></condition>
-      </fail>
+    <!-- fail the build if the GWT compiler returned 1 or errors were detected -->
+    <fail message="The GWT build failed. See output for details.">
+      <condition><or>
+        <equals arg1="${gwt.result}" arg2="1"/>
+        <isset property="has.errors"/>
+      </or></condition>
+    </fail>
 
-      <!-- clear out some variables -->
-      <var name="gwt.result" unset="true"/>
-      <var name="redirector.out" unset="true"/>
-      <var name="has.errors" unset="true"/>
-    </sequential></for>
+    <!-- clear out some variables -->
+    <var name="gwt.result" unset="true"/>
+    <var name="redirector.out" unset="true"/>
+    <var name="has.errors" unset="true"/>
   </target>
 
   <!-- prepares to build our Flash client -->
@@ -837,12 +833,8 @@
   <!-- cleans out the compiled GWT bits and caches -->
   <target name="gclean">
     <delete dir=".gwt-cache"/>
-    <for list="${pages}" param="page">
-      <sequential>
-        <delete dir="pages/@{page}"/>
-        <delete file="${gsrc.dir}/@{page}.gwt.xml"/>
-      </sequential>
-    </for>
+    <delete dir="pages/msoy"/>
+    <delete file="${gsrc.dir}/msoy.gwt.xml"/>
   </target>
 
   <!-- fully cleans out all build results -->
