@@ -154,7 +154,7 @@
 
 .gameMetrics .Header {
   padding-top: 5px;
-  font-style: bold;
+  font-weight: bold;
 }
 
 .gameMetrics .TinyNumber {
