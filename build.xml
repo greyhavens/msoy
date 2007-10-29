@@ -507,13 +507,13 @@
   <!-- builds our neighborhood visualization client -->
   <target name="neighborhood">
     <ant dir="projects/neighborhood" target="dist" inheritAll="false"/>
-    <copy file="dist/neighborhood.swf" todir="pages/clients/${build_version}"/>
+    <copy file="${deploy.dir}/neighborhood.swf" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- builds our tutorial game -->
   <target name="tutorial" depends="prepare,whirled">
     <ant dir="projects/games/tutorial" target="dist" inheritAll="false"/>
-    <copy file="dist/tutorial.swf" todir="pages/media/static/game"/>
+    <copy file="${deploy.dir}/tutorial.swf" todir="pages/media/static/game"/>
   </target>
 
   <!-- builds the ActionScript documention -->
