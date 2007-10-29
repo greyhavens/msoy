@@ -53,6 +53,9 @@ public class ClipHandler
 
     protected function handleEnterFrame (event :Event) :void
     {
+        log.debug("_clip data: [width=" + _clip.width + ", height=" + _clip.height +
+                  ", bounds=" + _clip.getBounds(_clip.parent) + "]");
+
         // if the clip was manipuulated from elsewhere, let's lose interest
         if (_clip.currentScene.name != _scene.name) {
             disengage();

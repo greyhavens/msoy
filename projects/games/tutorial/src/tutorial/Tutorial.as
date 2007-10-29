@@ -66,8 +66,12 @@ public class Tutorial extends Sprite
             _control.quests.completeQuest(quest.questId, quest.outro, quest.payout);
             return;
         }
+        if (_view.isBoxShowing()) {
+            _view.displayNothing();
+            return;
+        }
         if (_activeQuest) {
-            _view.displaySummary(_view.isShowingSummary() ? null : quest.summary);
+            _view.displaySummary(quest.summary);
             return;
         }
         if (step == 0) {

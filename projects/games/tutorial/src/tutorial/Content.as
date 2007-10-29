@@ -24,7 +24,7 @@ public class Content
     public static const SWIRL_OFFSET :Point = new Point(275, 225);
 
     // how far into the clip the true origin of the box lies
-    public static const BOX_OFFSET :Point = new Point(100, 115);
+    public static const BOX_OFFSET :Point = new Point(75, 115);
     // how much unusable yet measured space surrounds the usable
     public static const BOX_PADDING :int = 15;
     // how high is the flourish on top, which also appears in the clip's height

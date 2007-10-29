@@ -75,14 +75,19 @@ public class TextBox extends Sprite
     protected function handleTextboxLoaded (evt :Event) :void
     {
         // create the textbox clip
-        var boxClip :MovieClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        boxClip.x = -Content.BOX_OFFSET.x;
-        boxClip.y = -Content.BOX_OFFSET.y;
+        _boxClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        _boxClip.x = -Content.BOX_OFFSET.x;
+        _boxClip.y = -Content.BOX_OFFSET.y;
 
-        _boxHandler = new ClipHandler(boxClip);
+        // just move the playhead to a 'full textbox' position and stop there
+        _boxClip.gotoAndStop(1, SCN_TEXTBOX_SHRINK);
+
+        // so we can measure it
+        _boxWidth = _boxClip.width;
+        _boxHeight = _boxClip.height;
 
         _backdrop = new Sprite();
-        _backdrop.addChild(boxClip);
+        _backdrop.addChild(_boxClip);
 
         this.addChild(_backdrop);
 
@@ -100,9 +105,8 @@ public class TextBox extends Sprite
 
         _fadeIn = new AlphaFade(_foreground, 0, 1, 300);
         _fadeOut = new AlphaFade(_foreground, 1, 0, 300, function () :void {
-            _boxHandler.gotoScene(SCN_TEXTBOX_SHRINK, function () :void {
-                _foreground.visible = false;
-            });
+            _foreground.visible = false;
+            _boxClip.gotoAndPlay(1, SCN_TEXTBOX_SHRINK);
         });
 
         _done();
@@ -124,18 +128,19 @@ public class TextBox extends Sprite
             _buttons.removeChildAt(0);
         }
 
-        _boxHandler.gotoScene(SCN_TEXTBOX, function () :void {
+        _boxClip.gotoAndPlay(1, SCN_TEXTBOX_GROW);
+        setTimeout(function () :void {
             _fadeIn.startAnimation();
             _foreground.visible = true;
-        });
+        }, 400);
 
         _rightButtonEdge = _textField.width;
         _leftButtonEdge = 0;
 
         _textField.htmlText = text;
 
-        _backdrop.width = _textField.width + 2*Content.BOX_PADDING;
-        _backdrop.height = _textField.height + Content.BOX_HAT + 2*Content.BOX_PADDING;
+        scaleBackdrop(_textField.width + 2*Content.BOX_PADDING,
+                      _textField.height + Content.BOX_HAT + 2*Content.BOX_PADDING);
 
         _buttons.y = _textField.y + _textField.height;
 
@@ -161,10 +166,19 @@ public class TextBox extends Sprite
             _leftButtonEdge += button.width + Content.BOX_PADDING;
         }
 
-        _backdrop.height = _textField.height + _buttons.height +
-            Content.BOX_HAT + 2*Content.BOX_PADDING;
-
+        scaleBackdrop(-1, _textField.height + _buttons.height + Content.BOX_HAT +
+                      2*Content.BOX_PADDING);
         return button;
+    }
+
+    protected function scaleBackdrop (x :Number, y :Number) :void
+    {
+        if (x >= 0) {
+            _backdrop.scaleX = x / _boxWidth;
+        }
+        if (y >= 0) {
+            _backdrop.scaleY = y / _boxHeight;
+        }
     }
 
     protected function getDefaultFormat () :TextFormat
@@ -179,7 +193,9 @@ public class TextBox extends Sprite
 
     protected var _view :View;
     protected var _done :Function;
-    protected var _boxHandler :ClipHandler;
+    protected var _boxClip :MovieClip;
+    protected var _boxWidth :Number;
+    protected var _boxHeight :Number;
 
     protected var _backdrop :Sprite;
     protected var _foreground :Sprite;

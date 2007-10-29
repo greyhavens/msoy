@@ -58,7 +58,7 @@ public class View extends Sprite
         _swirl.gotoState(state);
     }
 
-    public function isShowingSummary () :Boolean
+    public function isBoxShowing () :Boolean
     {
         return _boxShowing;
     }
@@ -73,21 +73,20 @@ public class View extends Sprite
     {
         log.debug("displaySummary [summary=" + summary + "]");
         if (!summary) {
-            _textBox.hideBox();
-            _boxShowing = false;
+            displayNothing();
             return;
         }
         _textBox.showBox(summary);
         _boxShowing = true;
 
         _textBox.addButton("Hide", true, function () :void {
-                _textBox.visible = false;
-            });
+            displayNothing();
+        });
 
         _textBox.addButton("Skip", true, function () :void {
-                _textBox.visible = false;
-                _tutorial.skipQuest();
-            });
+            displayNothing();
+            _tutorial.skipQuest();
+        });
     }
 
     public function displayMessage (button :String, message :String, pressed :Function) :void
