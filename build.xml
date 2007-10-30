@@ -884,6 +884,7 @@
     <!-- create some runtime directories -->
     <copy file="log/README" todir="${pkg.base}/log"/>
     <mkdir dir="${pkg.base}/logs"/>
+    <mkdir dir="${pkg.base}/logs/lighttpd"/>
     <mkdir dir="${pkg.base}/run"/>
     <mkdir dir="${pkg.base}/tmp"/>
     <!-- create our production security.policy file -->

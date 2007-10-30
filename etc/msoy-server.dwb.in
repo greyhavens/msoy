@@ -30,4 +30,12 @@
         Group       @APPUSER@
         Recursive   yes
     </Permissions>
+
+    # the lighttpd user needs to be able to write to logs/lighttpd
+    <Permissions>
+        Path        @PREFIX@/logs/lighttpd
+        User        www
+        Group       www
+        Recursive   yes
+    </Permissions>
 </Package>
