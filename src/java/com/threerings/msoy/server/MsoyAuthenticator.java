@@ -513,9 +513,10 @@ public class MsoyAuthenticator extends Authenticator
         // start the new member up with the tutorial
         // TODO: only on the development server for the moment
         if (ServerConfig.config.getValue("auto_restart", false)) {
-        	mrec.avrGameId = Game.TUTORIAL_GAME_ID;
+            mrec.avrGameId = Game.TUTORIAL_GAME_ID;
         }
 
+        // store their member record in the repository making them a real Whirled citizen
         MsoyServer.memberRepo.insertMember(mrec);
 
         // create their mail account
