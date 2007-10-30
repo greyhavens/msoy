@@ -32,6 +32,7 @@ import com.threerings.crowd.client.BodyService;
 import com.threerings.crowd.data.CrowdCodes;
 import com.threerings.crowd.chat.data.ChatCodes;
 
+import com.threerings.flex.ChatControl;
 import com.threerings.flex.CommandMenu;
 
 import com.threerings.presents.client.Client;
@@ -56,7 +57,6 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
-import com.threerings.msoy.chat.client.ChatControl;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.client.ReportingListener;
 

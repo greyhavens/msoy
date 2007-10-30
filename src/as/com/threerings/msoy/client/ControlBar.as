@@ -20,6 +20,7 @@ import mx.controls.Spacer;
 
 import mx.events.FlexEvent;
 
+import com.threerings.flex.ChatControl;
 import com.threerings.flex.CommandButton;
 import com.threerings.util.ValueEvent;
 
@@ -34,8 +35,6 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
-
-import com.threerings.msoy.chat.client.ChatControl;
 
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 
@@ -211,7 +210,7 @@ public class ControlBar extends HBox
         _avatarBtn = null;
         _channelBtn = null;
 
-        _chatControl = new ChatControl(_ctx, this.height - 4);
+        _chatControl = new ChatControl(_ctx, Msgs.CHAT.get("b.send"), this.height - 4);
         addGroupChild(_chatControl, [ UI_STD, UI_EDIT, UI_GUEST ]);
 
         var chatBtn :CommandButton = new CommandButton();

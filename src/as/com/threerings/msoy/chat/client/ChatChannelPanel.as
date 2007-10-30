@@ -20,6 +20,7 @@ import mx.utils.StringUtil;
 import flexlib.containers.SuperTabNavigator;
 import flexlib.controls.tabBarClasses.SuperTab;
 
+import com.threerings.flex.ChatInput;
 import com.threerings.flex.CommandButton;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.HashMap;
@@ -53,6 +54,8 @@ public class ChatChannelPanel extends VBox
         _tabnav.addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, tabRemoved);
 
         // create a UI for sending chat which we'll show when we're active
+        // TODO: we shouldn't be rolling our own ChatControl here, but this'll go away anyway
+        // once we only have one ChatInput in the entire client.
         _inputBox = new HBox();
         _inputBox.styleName = "chatControl";
         _inputBox.addChild(_input = new ChatInput());
