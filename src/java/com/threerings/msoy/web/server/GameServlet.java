@@ -269,6 +269,25 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
+    public void resetGameScores (WebIdent ident, int gameId, boolean single)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+        requireIsGameOwner(gameId, mrec);
+
+        GameRepository repo = MsoyServer.itemMan.getGameRepository();
+        try {
+            int uGameId = single ? -gameId : gameId;
+            MsoyServer.ratingRepo.updatePercentile(uGameId, new Percentiler());
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to update instructions [for=" + mrec.who() +
+                    ", gameId=" + gameId + "].", pe);
+            throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+        }
+    }
+
+    // from interface GameService
     public List loadGameTrophies (WebIdent ident, int gameId)
         throws ServiceException
     {

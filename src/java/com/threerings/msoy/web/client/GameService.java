@@ -46,6 +46,16 @@ public interface GameService extends RemoteService
         throws ServiceException;
 
     /**
+     * Requests to reset the percentiler scores for the game in question. Caller must be an admin
+     * or the owner of the game.
+     *
+     * @param single if true the single player scores will be reset, if false the multiplayer
+     * scores will be reset.
+     */
+    public void resetGameScores (WebIdent ident, int gameId, boolean single)
+        throws ServiceException;
+
+    /**
      * Loads and returns the trophies awarded by the specified game. Filling in when they were
      * earned by the caller if possible.
      *

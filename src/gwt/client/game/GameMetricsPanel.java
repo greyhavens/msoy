@@ -4,17 +4,23 @@
 package client.game;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.kisgergely.gwt.canvas.client.Canvas;
 import com.kisgergely.gwt.canvas.client.CanvasRenderingContext2D;
 
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameMetrics;
 
+import client.util.ClickCallback;
 import client.util.MsoyUI;
+import client.util.RowPanel;
 
 /**
  * Displays the metrics like score distributions for a particular game.
@@ -53,15 +59,23 @@ public class GameMetricsPanel extends VerticalPanel
         clear();
 
         if (metrics.singleTotalCount > 0) {
-            add(MsoyUI.createLabel("Single-player Metrics", "Header"));
+            add(MsoyUI.createLabel(CGame.msgs.gmpSingleHeader(), "Header"));
             add(createTilerDisplay(metrics.singleTotalCount, metrics.singleCounts,
                                    metrics.singleMaxScore, metrics.singleScores));
+            add(WidgetUtil.makeShim(5, 5));
+            add(createResetUI(true));
         }
 
         if (metrics.multiTotalCount > 0) {
-            add(MsoyUI.createLabel("Multiplayer Metrics", "Header"));
+            add(MsoyUI.createLabel(CGame.msgs.gmpMultiHeader(), "Header"));
             add(createTilerDisplay(metrics.multiTotalCount, metrics.multiCounts,
                                    metrics.multiMaxScore, metrics.multiScores));
+            add(WidgetUtil.makeShim(5, 5));
+            add(createResetUI(false));
+        }
+
+        if (metrics.singleTotalCount + metrics.multiTotalCount == 0) {
+            add(new Label(CGame.msgs.gmpNoMetrics()));
         }
     }
 
@@ -70,14 +84,14 @@ public class GameMetricsPanel extends VerticalPanel
     {
         FlexTable table = new FlexTable();
         int row = 0;
-        table.setText(row, 0, "Total count:");
-        table.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        table.setText(row++, 1, ""+totalCount);
 
-        float delta = maxScore / 100f;
-        table.setText(row, 0, "Counts:");
-        table.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        // display the hints
+        table.getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
+        table.setText(row, 0, CGame.msgs.gmpCountsHint());
+        table.getFlexCellFormatter().setStyleName(row, 1, "tipLabel");
+        table.setText(row++, 1, CGame.msgs.gmpScoresHint());
 
+        // display a graph of the raw counts by bucket
         int maxCount = 0;
         for (int ii = 0; ii < counts.length; ii++) {
             maxCount = Math.max(counts[ii], maxCount);
@@ -86,25 +100,44 @@ public class GameMetricsPanel extends VerticalPanel
         for (int ii = 0; ii < counts.length; ii++) {
             data[ii] = (counts[ii] * GRAPH_HEIGHT) / maxCount;
         }
-        table.setWidget(row++, 1, createGraph(data, ""+maxCount));
+        String xLabel = CGame.msgs.gmpCountsX(format(maxScore / 100f));
+        table.setWidget(row, 0, createGraph(data, ""+maxScore, ""+maxCount, xLabel));
 
-        table.setText(row, 0, "Max score:");
-        table.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        table.setText(row++, 1, ""+maxScore);
-
-        table.setText(row, 0, "Scores:");
-        table.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-
+        // display a graph of the scores needed to achieve a particular percentile
         data = new int[scores.length];
         for (int ii = 0; ii < counts.length; ii++) {
             data[ii] = Math.round((scores[ii] * GRAPH_HEIGHT) / maxScore);
         }
-        table.setWidget(row++, 1, createGraph(data, format(maxScore)));
+        table.setWidget(row++, 1, createGraph(data, ""+(counts.length-1), format(maxScore),
+                                              CGame.msgs.gmpScoresX()));
+
+        // display the total number of scores recorded
+        table.setText(row, 0, CGame.msgs.gmpTotalCount(""+totalCount));
+        table.setText(row++, 1, CGame.msgs.gmpMaxPercentile(""+scores[scores.length-1]));
 
         return table;
     }
 
-    protected FlexTable createGraph (int[] data, String maxY)
+    protected RowPanel createResetUI (final boolean single)
+    {
+        RowPanel row = new RowPanel();
+        row.add(MsoyUI.createLabel(CGame.msgs.gmpResetHint(), "tipLabel"));
+        Button reset = new Button(CGame.msgs.gmpResetScores());
+        row.add(reset);
+        new ClickCallback(reset, CGame.msgs.gmpResetConfirm()) {
+            public boolean callService () {
+                CGame.gamesvc.resetGameScores(CGame.ident, _detail.gameId, single, this);
+                return true;
+            }
+            public boolean gotResult (Object result) {
+                MsoyUI.info(CGame.msgs.gmpScoresReset());
+                return true;
+            }
+        };
+        return row;
+    }
+
+    protected FlexTable createGraph (int[] data, String maxX, String maxY, String xLabel)
     {
         FlexTable holder = new FlexTable();
 
@@ -145,14 +178,23 @@ public class GameMetricsPanel extends VerticalPanel
 
         holder.setWidget(0, 0, canvas);
         holder.getFlexCellFormatter().setRowSpan(0, 0, 2);
+        holder.getFlexCellFormatter().setColSpan(0, 0, 3);
 
+        // create the y-axis
         holder.setText(0, 1, maxY);
         holder.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
         holder.getFlexCellFormatter().setStyleName(0, 1, "tipLabel");
-
         holder.setText(1, 0, "0");
         holder.getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_BOTTOM);
         holder.getFlexCellFormatter().setStyleName(1, 0, "tipLabel");
+
+        // create the x-axis
+        holder.setText(2, 0, "0");
+        holder.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_LEFT);
+        holder.setText(2, 1, xLabel);
+        holder.getFlexCellFormatter().setHorizontalAlignment(2, 1, HasAlignment.ALIGN_CENTER);
+        holder.setText(2, 2, maxX);
+        holder.getFlexCellFormatter().setHorizontalAlignment(2, 2, HasAlignment.ALIGN_RIGHT);
 
         return holder;
     }
@@ -165,6 +207,6 @@ public class GameMetricsPanel extends VerticalPanel
     protected GameDetail _detail;
     protected GameMetrics _metrics;
 
-    protected static final int BAR_WIDTH = 4;
-    protected static final int GRAPH_HEIGHT = 200;
+    protected static final int BAR_WIDTH = 3;
+    protected static final int GRAPH_HEIGHT = 100;
 }
