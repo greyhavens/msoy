@@ -31,9 +31,9 @@
         Recursive   yes
     </Permissions>
 
-    # the lighttpd user needs to be able to write to logs/lighttpd
+    # the lighttpd user needs to be able to write to log/lighttpd
     <Permissions>
-        Path        @PREFIX@/logs/lighttpd
+        Path        @PREFIX@/log/lighttpd
         User        www
         Group       www
         Recursive   yes
