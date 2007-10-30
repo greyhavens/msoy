@@ -8,6 +8,9 @@ import flash.display.Shape;
 
 import flash.events.TimerEvent;
 
+import flash.filters.BevelFilter;
+import flash.filters.BitmapFilterQuality;
+
 import flash.geom.Rectangle;
 
 import flash.text.TextField;
@@ -27,6 +30,11 @@ public class BubbleGlyph extends ChatGlyph
         super(overlay, type, lifetime);
         _speaker = speaker;
         blendMode = BlendMode.LAYER;
+
+        if (speaker != null) {
+            filters = [new BevelFilter(5, 100, 0xFFFFFF, 1.0, 0, 1.0, 50, 50, 1,
+                                       BitmapFilterQuality.MEDIUM)];
+        }
 
         var txt :TextField = createTextField();
         txt.width = overlay.getTargetTextWidth();

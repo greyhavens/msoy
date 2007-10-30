@@ -349,7 +349,7 @@ public class ComicOverlay extends ChatOverlay
 
     protected function getRoundedCornerSize (w :int, h :int) :Number
     {
-        return Math.min(Math.max(Math.max(w, h) / 2, PAD * 2), 85);
+        return Math.min(Math.max(Math.max(w, h) / 2, PAD * 2), 75);
     }
 
     /** Bubble draw function. See getBubbleShape() */
