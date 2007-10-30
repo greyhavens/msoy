@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.client {
 
 import flash.display.Loader;
+import flash.geom.Point;
 import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
@@ -62,6 +63,14 @@ public class MsoyGameControlBackend extends WhirledGameControlBackend
             var cfg :MsoyGameConfig = _ctrl.getPlaceConfig() as MsoyGameConfig;
             (_ctx as GameContext).displayLobby(cfg.getGameId());
         }
+    }
+
+    override protected function getSize_v1 () :Point
+    {
+        var p :Point = super.getSize_v1();
+        p.x = Math.max(p.x, 700);
+        p.y = Math.max(p.y, 500);
+        return p;
     }
 
     // from WhirledGameControlBackend
