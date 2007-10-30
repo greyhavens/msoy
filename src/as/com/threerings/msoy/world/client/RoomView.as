@@ -656,16 +656,6 @@ public class RoomView extends AbstractRoomView
         }
     }
 
-    override protected function computeScale () :Number
-    {
-        // when minimized, use a TV aspect ratio with a target size of 300x240
-        if ((_ctx.getChatDirector() as MsoyChatDirector).containsRoomTab()) {
-            return (4 * TopPanel.RIGHT_SIDEBAR_WIDTH / 5) / _actualHeight;
-        } else {
-            return super.computeScale();
-        }
-    }
-
     override protected function shouldLoadAll () :Boolean
     {
         return _loadAllMedia;

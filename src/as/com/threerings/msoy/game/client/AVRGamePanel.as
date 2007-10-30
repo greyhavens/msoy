@@ -61,7 +61,7 @@ public class AVRGamePanel extends Sprite
     public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
     {
         // an AVRG panel should be designed for 700 x 500
-        var scale :Number = Math.min(1, unscaledWidth / TopPanel.LEFT_PANEL_WIDTH);
+        var scale :Number = Math.min(1, unscaledHeight / stage.stageHeight);
         // so we'll brutally scale it accordingly
         this.scaleX = this.scaleY = scale;
     }

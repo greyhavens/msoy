@@ -88,7 +88,7 @@ public class WorldChatTab extends ChatTab
         _placeBox.width = width;
         _placeBox.height = height / 2;
         _placeBox.move(0, 0);
-        _placeBox.wasResized(width, height);
+        _placeBox.wasResized(width, height / 2);
 
         _chatContainer.width = width;
         _chatContainer.height = height / 2;
