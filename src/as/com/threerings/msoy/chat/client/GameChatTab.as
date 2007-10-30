@@ -24,7 +24,9 @@ public class GameChatTab extends ChatTab
     {
         super(ctx);
         _chatDtr = chatDtr;
+        _playerList = playerList;
 
+        playerList.includeInLayout = false;
         addChild(playerList);
 
         _overlay = new ChatOverlay(ctx.getMessageManager());
@@ -59,10 +61,28 @@ public class GameChatTab extends ChatTab
         }
     }
 
+    // from Container
+    override protected function updateDisplayList (
+        unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        // hand-position the playerList so that it consumes 25% of the height
+        // (The chat is set to use 75%, in our constructor.)
+        const GAP :int = 10;
+        _playerList.x = GAP;
+        _playerList.y = 0;
+        _playerList.width = unscaledWidth - GAP;
+        _playerList.height = int(unscaledHeight * .25) - GAP;
+
+        super.updateDisplayList(unscaledWidth, unscaledHeight);
+    }
+
     /** Our game chat director. */
     protected var _chatDtr :ChatDirector;
 
     /** Actually renders chat. */
     protected var _overlay :ChatOverlay;
+
+    /** Displays occupants and scores. */
+    protected var _playerList :UIComponent;
 }
 }
