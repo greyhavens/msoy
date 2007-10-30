@@ -88,6 +88,11 @@ public class AVRGameControlBackend extends ControlBackend
         return _roomObj;
     }
 
+    public function panelResized () :void
+    {
+        callUserCode("panelResized_v1");
+    }
+
     public function tutorialEvent (eventName :String) :void
     {
         callUserCode("messageReceived_v1", "tutorialEvent", eventName);

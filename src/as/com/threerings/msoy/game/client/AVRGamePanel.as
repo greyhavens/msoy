@@ -64,6 +64,8 @@ public class AVRGamePanel extends Sprite
         var scale :Number = Math.min(1, unscaledHeight / stage.stageHeight);
         // so we'll brutally scale it accordingly
         this.scaleX = this.scaleY = scale;
+
+        _backend.panelResized();
     }
 
     public function tutorialEvent (eventName :String) :void
