@@ -313,37 +313,50 @@ public class ComicOverlay extends ChatOverlay
 
     protected function drawSpeakTail (g :Graphics, w :int, h :int, outline :int, fill :int) :void
     {
+        // draw the tail 1/6 of the width from the right;
+        var tailWidth :Number = PAD * 3 / 4;
+        var tailX :Number = w - Math.max(getRoundedCornerSize(w, h) * 3 / 8, w / 6) - tailWidth;
+
         // first fill the shape we want
         g.lineStyle(1, fill);
         g.beginFill(fill);
-        g.drawRect(w - PAD, h - PAD, PAD, PAD);
-        g.moveTo(w - PAD * 3 / 4, h);
-        g.curveTo(w - PAD / 4, h + PAD / 4, w - PAD / 2, h + PAD / 2);
-        g.curveTo(w, h + PAD * 3 / 8, w, h);
+        g.drawRect(tailX, h - PAD, tailWidth, PAD);
+        g.moveTo(tailX, h);
+        g.curveTo(
+            tailX + tailWidth * 2 / 3, h + PAD / 2, tailX + tailWidth * 1 / 3, h + PAD * 3 / 4);
+        g.curveTo(tailX + tailWidth, h + PAD * 3 / 8, tailX + tailWidth, h);
         g.endFill();
 
         // now draw the border
         g.lineStyle(1, outline);
-        g.moveTo(w - PAD - 2, h);
-        g.lineTo(w - PAD * 3 / 4, h);
-        g.curveTo(w - PAD / 4, h + PAD / 4, w - PAD / 2, h + PAD / 2);
-        g.curveTo(w, h + PAD * 3 / 8, w, h);
-        g.lineTo(w, h - PAD - 2);
+        g.moveTo(tailX - 2, h);
+        g.lineTo(tailX, h);
+        g.curveTo(
+            tailX + tailWidth * 2 / 3, h + PAD / 2, tailX + tailWidth * 1 / 3, h + PAD * 3 / 4);
+        g.curveTo(tailX + tailWidth, h + PAD * 3 / 8, tailX + tailWidth, h);
     }
 
     protected function drawThinkTail (g :Graphics, w :int, h :int, outline :int, fill :int) :void
     {
+        var tailX :Number = w - w / 6 - PAD * 3 / 4;
+
         g.lineStyle(1, outline);
         g.beginFill(fill);
-        g.drawCircle(w - 9, h, 4);
-        g.drawCircle(w - 13, h + 9, 3);
+        g.drawCircle(tailX, h + 6, 4);
+        g.drawCircle(tailX - 4, h + 15, 3);
         g.endFill();
+    }
+
+    protected function getRoundedCornerSize (w :int, h :int) :Number
+    {
+        return Math.min(Math.max(Math.max(w, h) / 2, PAD * 2), 85);
     }
 
     /** Bubble draw function. See getBubbleShape() */
     protected function drawRoundedBubble (g :Graphics, w :int, h :int) :void
     {
-        g.drawRoundRect(0, 0, w, h, PAD * 2, PAD * 2);
+        var cornerSize :Number = getRoundedCornerSize(w, h);
+        g.drawRoundRect(0, 0, w, h, cornerSize, cornerSize);
     }
 
     /** Bubble draw function. See getBubbleShape() */
