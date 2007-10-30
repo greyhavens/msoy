@@ -32,18 +32,8 @@ public class View extends Sprite
         _swirl = new Swirl(this, swirlBytes, maybeFinishUI);
     }
 
-    /**
-     * Called when we know our dimensions.
-     */
-    public function init (stageBounds :Rectangle, roomBounds :Rectangle) :void
+    public function init () :void
     {
-        _stageBounds = stageBounds;
-        _roomBounds = roomBounds;
-
-        log.debug("Stage bounds: " + _stageBounds);
-        log.debug("Room bounds: " + _roomBounds);
-
-        // don't add the text field until the swirly is loaded
         maybeFinishUI();
     }
 
@@ -83,7 +73,7 @@ public class View extends Sprite
             displayNothing();
         });
 
-        _textBox.addButton("Skip", true, function () :void {
+        _textBox.addButton("Skip", false, function () :void {
             displayNothing();
             _tutorial.skipQuest();
         });
@@ -102,10 +92,15 @@ public class View extends Sprite
         _tutorial.swirlClicked(state);
     }
 
+    public function sizeChanged () :void
+    {
+        _textBox.sizeChanged();
+    }
+
     protected function maybeFinishUI () :void
     {
         // if all initializations are complete, actually add the bits
-        if (_stageBounds && _swirl.isReady() && _textBox.isReady()) {
+        if (this.parent && _swirl.isReady() && _textBox.isReady()) {
             this.addChild(_swirl);
             this.addChild(_textBox);
 
@@ -114,9 +109,6 @@ public class View extends Sprite
     }
 
     protected var _tutorial :Tutorial;
-
-    protected var _stageBounds :Rectangle;
-    protected var _roomBounds :Rectangle;
 
     protected var _swirl :Swirl;
 

@@ -64,8 +64,6 @@ public class TextBox extends Sprite
 
         // we start off invisible
         this.visible = false;
-        this.x = 150;
-        this.y = 100;
     }
 
     public function unload () :void
@@ -122,6 +120,23 @@ public class TextBox extends Sprite
         _fadeOut.startAnimation();
     }
 
+    public function sizeChanged () :void
+    {
+        log.debug("stage: (" + stage.stageWidth + ", " + stage.stageHeight + ")");
+
+        this.scaleX = this.scaleY = 500 / Math.max(320, Math.min(500, stage.stageWidth));
+        log.debug("this.width = " + this.width);
+        log.debug("this.scale now = " + this.scaleX);
+
+        var offset :Number = Math.min(
+            stage.stageWidth - this.width, stage.stageHeight - this.height) / 2;
+
+        this.x = Math.max(0, offset);
+        this.y = Math.max(50 * this.scaleY, offset);
+
+        log.debug("Set (x, y) = (" + this.x + ", " + this.y + ")");
+    }
+
     public function showBox (text :String) :TextField
     {
         while (_buttons.numChildren > 0) {
@@ -147,6 +162,8 @@ public class TextBox extends Sprite
         _foreground.visible = false;
         _backdrop.visible = this.visible = true;
 
+        sizeChanged();
+
         return _textField;
     }
 
@@ -168,6 +185,9 @@ public class TextBox extends Sprite
 
         scaleBackdrop(-1, _textField.height + _buttons.height + Content.BOX_HAT +
                       2*Content.BOX_PADDING);
+
+        sizeChanged();
+
         return button;
     }
 
@@ -208,7 +228,7 @@ public class TextBox extends Sprite
     protected var _fadeOut :AlphaFade;
     protected var _fadeIn :AlphaFade;
 
-    protected static const log :Log = Log.getLog(Swirl);
+    protected static const log :Log = Log.getLog(TextBox);
 
     protected static const SCN_TEXTBOX :String = "textbox";
     protected static const SCN_TEXTBOX_GROW :String = "textbox_grow";

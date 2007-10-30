@@ -32,6 +32,8 @@ public class Tutorial extends Sprite
 //        _control.addEventListener(AVRGameControlEvent.LEFT_ROOM, debugEvent);
 //        _control.addEventListener(AVRGameControlEvent.ENTERED_ROOM, debugEvent);
 
+        _control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
+
         _control.state.addEventListener(
             AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
 
@@ -100,11 +102,15 @@ public class Tutorial extends Sprite
     {
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        // then initialize the actual view
-        _view.init(_control.getStageBounds(), _control.getRoomBounds());
         addChild(_view);
+        _view.init();
 
         // now surrender control until we find out whether or not we're minimized
+    }
+
+    protected function handleSizeChanged (event :Event) :void
+    {
+        _view.sizeChanged();
     }
 
     protected function handleUnload (event :Event) :void
@@ -118,13 +124,11 @@ public class Tutorial extends Sprite
         if (event.name != "tutorialEvent") {
             return;
         }
-
         var step :int = getStep();
 
 //        log.debug("Tutorial event [name=" + event.value + ", step=" + step + "]");
 
-        if (event.value == "willMinimize" ||event.value == "willUnminimize") {
-            // we don't really care anymore; just start things up
+        if (event.value == "willUnminimize") {
             initialize();
 
         } else if (event.value == Quest.getQuest(step).trigger) {
