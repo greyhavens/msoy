@@ -530,8 +530,9 @@ public class MsoyAuthenticator extends Authenticator
         mrec.setFlag(MemberRecord.ADMIN_FLAG, account.tokens.isAdmin());
 
         // create a blank room for them, store it
+        String name = MsoyServer.msgMan.getBundle("server").get("m.new_room_name", mrec.name);
         mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
-            mrec.memberId, /* TODO: */ mrec.name + "'s room", portalAction, true);
+            mrec.memberId, name, portalAction, true);
         MsoyServer.memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
         return mrec;
