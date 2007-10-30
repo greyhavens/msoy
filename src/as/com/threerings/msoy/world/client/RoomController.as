@@ -1160,18 +1160,6 @@ public class RoomController extends SceneController
             return;
         }
 
-        // if we're minimized, then request to be unminimized
-        if (_mctx.getWorldClient().isMinimized()) {
-            _mctx.getWorldClient().restoreClient();
-            return;
-        }
-
-        // if a left panel is open and we're minimized that way, close it and unminimize
-        if ((_mctx.getChatDirector() as MsoyChatDirector).containsRoomTab()) {
-            _mctx.getTopPanel().clearLeftPanel(null);
-            return;
-        }
-
         // at this point, the mouse click is bubbling back out, and the entity is no
         // longer allowed to pop up a popup.
         _entityAllowedToPop = null;

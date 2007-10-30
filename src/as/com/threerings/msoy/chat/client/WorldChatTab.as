@@ -4,6 +4,7 @@
 package com.threerings.msoy.chat.client {
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 
 import mx.events.ResizeEvent;
 
@@ -35,6 +36,7 @@ public class WorldChatTab extends ChatTab
             Log.getLog(this).warning("Failed to get PlaceBox.");
             return;
         }
+        _placeBox.addEventListener(MouseEvent.CLICK, mouseClickedOnRoom);
 
         addChildAt(_placeBox, 0);
         addEventListener(Event.ADDED_TO_STAGE, checkSizes);
@@ -91,6 +93,27 @@ public class WorldChatTab extends ChatTab
         _chatContainer.width = width;
         _chatContainer.height = height / 2;
         _chatContainer.move(0, height/2);
+
+        _placeBox.buttonMode = true;
+        _placeBox.mouseChildren = false;
+        _placeBox.useHandCursor = true;
+    }
+
+    protected function mouseClickedOnRoom (event :MouseEvent) :void
+    {
+        _placeBox.removeEventListener(MouseEvent.CLICK, mouseClickedOnRoom);
+        _placeBox.buttonMode = false;
+        _placeBox.mouseChildren = true;
+        _placeBox.useHandCursor = false;
+
+        // if we're minimized, then request to be unminimized
+        if (_ctx.getWorldClient().isMinimized()) {
+            _ctx.getWorldClient().restoreClient();
+            return;
+        }
+
+        // if a left panel is open and we're minimized that way, close it and unminimize
+        _ctx.getTopPanel().clearLeftPanel(null);
     }
 
     protected var _chatContainer :ChatContainer;
