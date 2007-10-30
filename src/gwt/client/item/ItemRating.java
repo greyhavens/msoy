@@ -4,6 +4,7 @@
 package client.item;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -42,25 +43,34 @@ public class ItemRating extends SimplePanel
         _itemId = new ItemIdent(_item.getType(), _item.getPrototypeId());
 
         // if we're not logged in, force MODE_READ
-        setWidget(new ItemStars((CShell.ident == null) ? Stars.MODE_READ : mode, halfSize));
+        if (CShell.ident == null || mode == Stars.MODE_READ) {
+            setWidget(_averageStars = new ItemStars(Stars.MODE_READ, true, halfSize));
+        } else {
+            Grid ratingsGrid = new Grid(2, 2);
+            setWidget(ratingsGrid);
+            ratingsGrid.setText(0, 0, CShell.cmsgs.averageRating());
+            ratingsGrid.setWidget(0, 1, 
+                _averageStars = new ItemStars(Stars.MODE_READ, true, halfSize));
+            ratingsGrid.setText(1, 0, CShell.cmsgs.playerRating());
+            ratingsGrid.setWidget(1, 1, _playerStars = new ItemStars(mode, false, halfSize));
+        }
     }
 
     /** The subclass of {#link Stars} that implements most of the item rating. */
     protected class ItemStars extends Stars
     {
-        protected ItemStars (int mode, boolean halfSize)
+        protected ItemStars (int mode, boolean averageRating, boolean halfSize)
         {
-            super(mode, halfSize);
+            super(mode, averageRating, halfSize);
         }
 
         // @Override
         protected void update ()
         {
-            // show average rating unless we're in write-only mode
-            if (_mode == MODE_WRITE) {
-                updateStarImage(0, _memberRating);
+            if (_averageRating) {
+                updateStarImage(_item.rating);
             } else {
-                updateStarImage(_item.rating, _memberRating);
+                updateStarImage(_memberRating);
             }
         }
 
@@ -68,12 +78,8 @@ public class ItemRating extends SimplePanel
         // @Override
         protected void update (double rating)
         {
-            // show the changing user rating as user hovers over widget, unless we're read-only
-            if (_mode == MODE_READ) {
-                updateStarImage(_item.rating, _memberRating);
-            } else {
-                updateStarImage(_item.rating, rating);
-            }
+            // we only allow mouse updates on player stars
+            updateStarImage(rating);
         }
 
         // @Override
@@ -91,7 +97,10 @@ public class ItemRating extends SimplePanel
             CShell.itemsvc.rateItem(CShell.ident, _itemId, newRating, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _item.rating = ((Float)result).floatValue();
-                    update();
+                    _averageStars.update();
+                    if (_playerStars != null) {
+                        _playerStars.update();
+                    }
                 }
                 public void onFailure (Throwable caught) {
                     CShell.log("rateItem failed", caught);
@@ -104,4 +113,6 @@ public class ItemRating extends SimplePanel
     protected Item _item;
     protected ItemIdent _itemId;
     protected byte _memberRating;
+    protected ItemStars _averageStars;
+    protected ItemStars _playerStars;
 }

@@ -22,11 +22,12 @@ public abstract class Stars extends FlowPanel
     /** Supply this for memberRating when using MODE_READ. */
     public static final byte NO_RATING = 0;
 
-    public Stars (int mode, boolean halfSize)
+    public Stars (int mode, boolean averageRating, boolean halfSize)
     {
         super();
         
         _mode = mode;
+        _averageRating = averageRating;
         _halfSize = halfSize;
 
         // add the 10 images whose src url's we mercilessly mutate throughout this widget
@@ -40,18 +41,17 @@ public abstract class Stars extends FlowPanel
         update();
     }
 
-    protected void updateStarImage (double averageRating, double userRating)
+    protected void updateStarImage (double rating)
     {
-        int filledStars = (int) (averageRating * 2);
-        String prefix = "/images/ui/stars/" + (_halfSize ? "half" : "full") + "/";
+        int filledStars = (int) (rating * 2);
+        String prefix = "/images/ui/stars/" + (_halfSize ? "half" : "full") + "/" + 
+            (_averageRating ? "average" : "user") + "_";
         for (int ii = 0; ii < filledStars; ii++) {
-            String filledUrl = prefix + (ii < userRating * 2 ? "user" : "average");
-            String path = filledUrl + "_" + ((ii % 2) == 0 ? "lhalf" : "rhalf") + ".png";
+            String path = prefix + ((ii % 2) == 0 ? "lhalf" : "rhalf") + ".png";
             ((Image) getWidget(ii)).setUrl(path);
         }
         for (int ii = filledStars; ii < 10; ii++) {
-            String emptyUrl = prefix + (ii < userRating * 2 ? "user" : "average");
-            String path = emptyUrl + "_empty_" + ((ii % 2) == 0 ? "lhalf" : "rhalf") + ".png";
+            String path = prefix + "empty_" + ((ii % 2) == 0 ? "lhalf" : "rhalf") + ".png";
             ((Image) getWidget(ii)).setUrl(path);
         }
     }
@@ -119,6 +119,11 @@ public abstract class Stars extends FlowPanel
      * Are we in half-size mode?
      */
     protected boolean _halfSize;
+
+    /**
+     * Are we displaying average rating stars or player rating stars?
+     */
+    protected boolean _averageRating;
     
     /**
      * Are we read-only, write-only, or both?
