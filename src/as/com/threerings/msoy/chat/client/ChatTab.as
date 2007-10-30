@@ -6,12 +6,13 @@ package com.threerings.msoy.chat.client {
 import mx.core.Container;
 import mx.core.ScrollPolicy;
 
+import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.WorldContext;
 
 /**
  * A base for our channel chat tabs.
  */
-public class ChatTab extends Container
+public class ChatTab extends LayeredContainer
 {
     public function ChatTab (ctx :WorldContext)
     {

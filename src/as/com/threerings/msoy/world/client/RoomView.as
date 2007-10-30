@@ -95,6 +95,9 @@ public class RoomView extends AbstractRoomView
     implements ContextMenuProvider, SetListener, MessageListener,
                ChatDisplay, ChatInfoProvider, LoadingWatcher
 {
+    // the layer priority of the spinner
+    public static const LAYER_ROOM_SPINNER :int = 50;
+
     /** The chat overlay. */
     public var chatOverlay :ComicOverlay;
 
@@ -155,7 +158,7 @@ public class RoomView extends AbstractRoomView
 
         var box :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
         if (loading) {
-            box.addOverlay(_loadingSpinner);
+            box.addOverlay(_loadingSpinner, LAYER_ROOM_SPINNER);
         } else {
             box.removeOverlay(_loadingSpinner);
         }

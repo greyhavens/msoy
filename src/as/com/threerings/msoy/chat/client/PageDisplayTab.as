@@ -70,7 +70,7 @@ public class PageDisplayTab extends ChatTab
         super.createChildren();
 
         _textbox.text = "";
-        addChild(_textbox);
+        setBaseLayer(_textbox);
     }
 
     // from Container

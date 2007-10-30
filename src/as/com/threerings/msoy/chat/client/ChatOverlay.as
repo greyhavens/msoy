@@ -48,6 +48,7 @@ import com.threerings.flash.ColorUtil;
 import com.threerings.whirled.spot.data.SpotCodes;
 
 import com.threerings.msoy.client.ControlBar;
+import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
@@ -57,6 +58,10 @@ import com.threerings.msoy.notify.data.NotifyMessage;
 public class ChatOverlay
     implements ChatDisplay
 {
+    // the layer priority of the chat overlays
+    public static const LAYER_CHAT_SCROLL :int = 200;
+    public static const LAYER_CHAT_STATIC :int = 201;
+
     public var log :Log = Log.getLog(this);
 
     public function ChatOverlay (msgMan :MessageManager)
@@ -146,14 +151,13 @@ public class ChatOverlay
      * that message layout will work properly even if the target has not yet been laid out and does
      * not yet have its proper width.
      */
-    public function setTarget (target :Container, targetWidth :int = -1) :void
+    public function setTarget (target :LayeredContainer, targetWidth :int = -1) :void
     {
         if (_target != null) {
             // removing from the old
-            _target.removeEventListener("childrenChanged", handleContainerPopulate);
+            _target.removeOverlay(_scrollOverlay);
+            _target.removeOverlay(_staticOverlay);
             _target.removeEventListener(ResizeEvent.RESIZE, handleContainerResize);
-            _target.rawChildren.removeChild(_scrollOverlay);
-            _target.rawChildren.removeChild(_staticOverlay);
 
             // stop listening to our chat history
             _history.removeChatOverlay(this);
@@ -170,14 +174,12 @@ public class ChatOverlay
             // adding to the new
             _scrollOverlay.x = 0;
             _scrollOverlay.y = 0;
-            _target.rawChildren.addChildAt(
-                _scrollOverlay, Math.max(0, _target.rawChildren.numChildren - 1));
+            _target.addOverlay(_scrollOverlay, LAYER_CHAT_SCROLL);
+
             _staticOverlay.x = 0;
             _staticOverlay.y = 0;
-            _target.rawChildren.addChildAt(
-                _staticOverlay, Math.max(0, _target.rawChildren.numChildren - 1));
+            _target.addOverlay(_staticOverlay, LAYER_CHAT_STATIC);
             _target.addEventListener(ResizeEvent.RESIZE, handleContainerResize);
-            _target.addEventListener("childrenChanged", handleContainerPopulate);
 
             // resume listening to our chat history
             _history.addChatOverlay(this);
@@ -1080,18 +1082,6 @@ public class ChatOverlay
     }
 
     /**
-     * React to child changes in the container, ensure the overlay
-     * is the last thing visible.
-     */
-    protected function handleContainerPopulate (event :Event) :void
-    {
-        if (!_popping) {
-            // goddamn flash can't keep a child at a location anymore
-            popOverlayToFront();
-        }
-    }
-
-    /**
      * Configure the history scrollbar size.
      */
     protected function configureHistoryBarSize (... ignored) :void
@@ -1100,20 +1090,6 @@ public class ChatOverlay
             _historyBar.height = _targetBounds.height;
             _historyBar.move(_targetBounds.x + _targetBounds.width -
                 _historyBar.getExplicitOrMeasuredWidth(), _targetBounds.y);
-        }
-    }
-
-    /**
-     * Ensure that the overlay is the top-level component in the container.
-     */
-    protected function popOverlayToFront () :void
-    {
-        _popping = true;
-        try {
-            _target.rawChildren.setChildIndex(_scrollOverlay, _target.rawChildren.numChildren - 1);
-            _target.rawChildren.setChildIndex(_staticOverlay, _target.rawChildren.numChildren - 1);
-        } finally {
-            _popping = false;
         }
     }
 
@@ -1259,7 +1235,7 @@ public class ChatOverlay
     protected var _staticOverlay :Sprite;
 
     /** The target container over which we're overlaying chat. */
-    protected var _target :Container;
+    protected var _target :LayeredContainer;
 
     /** The region of our target over which we render. */
     protected var _targetBounds :Rectangle;
@@ -1307,9 +1283,6 @@ public class ChatOverlay
     /** True while we're setting the position on the scrollbar, so that we
      * know to ignore the event. */
     protected var _settingBar :Boolean = false;
-
-    /** True while popping the overlay to the front. */
-    protected var _popping :Boolean = false;
 
     /* The history used by this overlay. */
     protected var _history :HistoryList;

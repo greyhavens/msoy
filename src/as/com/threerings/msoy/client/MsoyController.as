@@ -158,6 +158,9 @@ public class MsoyController extends Controller
     /** Command to issue an invite to a current guest. */
     public static const INVITE_GUEST :String = "InviteGuest";
 
+    // the layer priority of the AVRG panel
+    public static const LAYER_AVRG_PANEL :int = 500;
+
     /**
      * Create the msoy controller.
      */
@@ -828,7 +831,7 @@ public class MsoyController extends Controller
             _avrGamePanel = null;
         }
         if (panel) {
-            container.addOverlay(panel);
+            container.addOverlay(panel, LAYER_AVRG_PANEL);
             _avrGamePanel = panel;
         }
     }

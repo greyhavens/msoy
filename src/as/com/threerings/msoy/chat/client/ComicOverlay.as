@@ -19,6 +19,7 @@ import com.threerings.util.Name;
 
 import com.threerings.flash.ColorUtil;
 
+import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.WorldClient;
 import com.threerings.msoy.client.WorldContext;
 
@@ -58,7 +59,7 @@ public class ComicOverlay extends ChatOverlay
         super.layout(bounds, targetWidth);
     }
 
-    override public function setTarget (target :Container, targetWidth :int = -1) :void
+    override public function setTarget (target :LayeredContainer, targetWidth :int = -1) :void
     {
         if (_target != null) {
             clearBubbles(true);

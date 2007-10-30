@@ -17,7 +17,7 @@ import com.threerings.msoy.client.MsoyPlaceView;
  * A component that holds our place views and sets up a mask to ensure that the place view does not
  * render outside the box's bounds.
  */
-public class PlaceBox extends Canvas
+public class PlaceBox extends LayeredContainer
 {
     public function PlaceBox ()
     {
@@ -39,58 +39,19 @@ public class PlaceBox extends Canvas
     {
         // throw an exception now if it's not a display object
         var disp :DisplayObject = DisplayObject(view);
-
-        clearPlaceView(null);
+        setBaseLayer(disp);
         _placeView = view;
 
-        Log.getLog(this).debug("Setting place view : " + disp);
-
-        if (disp is UIComponent) {
-            addChildAt(disp, 0);
-        } else {
-            rawChildren.addChildAt(disp, 0);
-            if (_placeView is MsoyPlaceView) {
-                MsoyPlaceView(_placeView).setPlaceSize(_mask.width, _mask.height);
-            }
+        if (_placeView is MsoyPlaceView) {
+            MsoyPlaceView(_placeView).setPlaceSize(_mask.width, _mask.height);
         }
     }
 
     public function clearPlaceView (view :PlaceView) :void
     {
         if ((_placeView != null) && (view == null || view == _placeView)) {
-            var disp :DisplayObject = DisplayObject(_placeView);
-            if (disp is UIComponent) {
-                removeChild(disp);
-            } else {
-                rawChildren.removeChild(disp);
-            }
+            clearBaseLayer();
             _placeView = null;
-        }
-    }
-
-    /**
-     * Adds a display object to overlay the main view as it changes.
-     */
-    public function addOverlay (overlay :DisplayObject) :void
-    {
-        if (overlay is UIComponent) {
-            addChild(overlay);
-        } else {
-            rawChildren.addChild(overlay);
-        }
-    }
-
-    /**
-     * Removes a previously added overlay. TODO: It might be wise to keep our own array
-     * of overlays and do some sanity checking here so we don't accidentally start removing
-     * chrome or whatnot.
-     */
-    public function removeOverlay (overlay :DisplayObject) :void
-    {
-        if (overlay is UIComponent) {
-            removeChild(overlay);
-        } else {
-            rawChildren.removeChild(overlay);
         }
     }
 

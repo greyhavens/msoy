@@ -7,12 +7,13 @@ import flash.events.Event;
 
 import mx.core.Container;
 
+import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.WorldContext;
 
 /**
  * A very simple container that merely hosts the chat overlay.
  */
-public class ChatContainer extends Container
+public class ChatContainer extends LayeredContainer
 {
     public function ChatContainer (ctx :WorldContext)
     {
