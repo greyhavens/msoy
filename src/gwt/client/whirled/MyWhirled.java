@@ -410,9 +410,9 @@ public class MyWhirled extends FlexTable
             FlowPanel peopleList = new FlowPanel();
             if (peopleIter.hasNext()) {
                 InlineLabel population = new InlineLabel(
-                    CWhirled.msgs.population("" + Math.max(scene.population,
-                                                           scene.friends.size())) +
-                    CWhirled.msgs.populationFriends());
+                    CWhirled.msgs.populationFriends(CWhirled.msgs.population(
+                        "" + Math.max(scene.population, scene.friends.size()))));
+                population.addStyleName("PopulationLabel");
                 peopleList.add(population);
             } else {
                 InlineLabel population = new InlineLabel(CWhirled.msgs.population(

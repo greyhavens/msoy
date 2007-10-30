@@ -245,6 +245,10 @@
   cursor: pointer;
 }
 
+.SceneWidget .PopulationLabel {
+  padding-right: 5px;
+}
+
 .FeedList {
   border-left: 1px dotted;
   border-right: 1px dotted;
