@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.CShell;
-import client.util.MsoyUI;
 
 /**
  * Allows one to wire up a button and a service call into one concisely specified little chunk of
@@ -25,14 +24,25 @@ public abstract class ClickCallback
      */
     public ClickCallback (Button trigger)
     {
+        this(trigger, null);
+    }
+
+    /**
+     * Creates a callback for the supplied trigger (the constructor will automatically add this
+     * callback to the trigger as a click listener). Failure will automatically be reported.
+     *
+     * @param confirmMessage if non-null, a confirm dialog will be popped up when the button is
+     * clicked and the service call wil only be made if the user confirms the dialog.
+     */
+    public ClickCallback (Button trigger, String confirmMessage)
+    {
         _trigger = trigger;
         _trigger.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                if (callService()) {
-                    _trigger.setEnabled(false);
-                }
+                takeAction(false);
             }
         });
+        _confirmMessage = confirmMessage;
     }
 
     /**
@@ -62,5 +72,29 @@ public abstract class ClickCallback
         MsoyUI.error(CShell.serverError(cause));
     }
 
+    protected void takeAction (boolean confirmed)
+    {
+        // if we have not yet confirmed and desire to do so, show the confirm popup
+        if (_confirmMessage != null && !confirmed) {
+            _trigger.setEnabled(false);
+            new PromptPopup(_confirmMessage) {
+                public void onAffirmative () {
+                    _trigger.setEnabled(true);
+                    takeAction(true);
+                }
+                public void onNegative () {
+                    _trigger.setEnabled(true);
+                }
+            }.prompt();
+            return;
+        }
+
+        // we're confirmed or don't want to, so go ahead and call the service
+        if (callService()) {
+            _trigger.setEnabled(false);
+        }
+    }
+
     protected Button _trigger;
+    protected String _confirmMessage;
 }
