@@ -26,6 +26,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.data.ServiceException;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -504,7 +505,7 @@ public class MsoyAuthenticator extends Authenticator
                     }
                 }
             } catch (NoSuchSceneException nsse) {
-                // If we can't load this scene, its not that big of a deal - just let the new 
+                // If we can't load this scene, its not that big of a deal - just let the new
                 // portal point to the default room.
             }
         }
@@ -522,7 +523,7 @@ public class MsoyAuthenticator extends Authenticator
         mrec.setFlag(MemberRecord.ADMIN_FLAG, account.tokens.isAdmin());
 
         // create a blank room for them, store it
-        mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER, 
+        mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
             mrec.memberId, /* TODO: */ mrec.name + "'s room", portalAction, true);
         MsoyServer.memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
@@ -531,7 +532,7 @@ public class MsoyAuthenticator extends Authenticator
 
     /** Reference to the event logger. */
     protected MsoyEventLogger _eventLog;
-    
+
     /** The default domain against which we authenticate. */
     protected Domain _defaultDomain;
 
