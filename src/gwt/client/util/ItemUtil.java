@@ -35,7 +35,8 @@ public class ItemUtil
      */
     public static String getName (Item item, boolean truncate)
     {
-        String name = (item.name.trim().length() == 0) ? CShell.cmsgs.noName() : item.name;
+        String name = (item.name == null || item.name.trim().length() == 0) ?
+            CShell.cmsgs.noName() : item.name;
         if (name.length() > 32 && truncate) {
             name = CShell.cmsgs.truncName(name.substring(0, 29));
         }

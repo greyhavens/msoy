@@ -34,7 +34,7 @@ public class DocumentEditor extends ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
         tabs.add(createMainUploader(CShell.emsgs.documentMainTitle(), new MediaUpdater() {
-            public String updateMedia (MediaDesc desc, int width, int height) {
+            public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _doc.docMedia = desc;
                 return null;

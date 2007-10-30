@@ -35,7 +35,7 @@ public class AvatarEditor extends ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
         tabs.add(createMainUploader(CShell.emsgs.avatarMainTitle(), new MediaUpdater() {
-            public String updateMedia (MediaDesc desc, int width, int height) {
+            public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errAvatarNotFlash();
                 }
@@ -59,7 +59,7 @@ public class AvatarEditor extends ItemEditor
     {
         String title = CShell.emsgs.avatarThumbTitle();
         _thumbUploader = createUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc, int width, int height) {
+            public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
                     return CShell.emsgs.errThumbNotImage();
                 }

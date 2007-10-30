@@ -48,12 +48,14 @@ public abstract class ItemEditor extends BorderedDialog
         /**
          * Return null, or a message indicating why the specified media will not do.
          *
-         * @param width if the media is a (non-thumbnail) image this will contain the width of the
+         * @param name the name of the uploaded file (from the user's local filesystem).
+         * @param desc a media descriptor referencing the uploaded media.
+         * @param width if the media is a non-thumbnail image this will contain the width of the
          * image, otherwise zero.
-         * @param height if the media is a (non-thumbnail) image this will contain the height of
-         * the image, otherwise zero.
+         * @param height if the media is a non-thumbnail image this will contain the height of the
+         * image, otherwise zero.
          */
-        public String updateMedia (MediaDesc desc, int width, int height);
+        public String updateMedia (String name, MediaDesc desc, int width, int height);
     }
 
     /**
@@ -108,8 +110,7 @@ public abstract class ItemEditor extends BorderedDialog
         _header.add(_etitle = createTitleLabel("title", "Title"));
 
         VerticalPanel contents = (VerticalPanel)_contents;
-        TabPanel mediaTabs = new StyledTabPanel();
-        contents.add(mediaTabs);
+        contents.add(_mediaTabs = new StyledTabPanel());
 
         // create and populate our info tab
         FlexTable info = new FlexTable();
@@ -136,13 +137,10 @@ public abstract class ItemEditor extends BorderedDialog
         _description.setVisibleLines(3);
         addInfoTip(info, CShell.emsgs.editorDescripTip());
 
-        mediaTabs.add(info, CShell.emsgs.editorInfoTab());
+        _mediaTabs.add(info, CShell.emsgs.editorInfoTab());
 
         // create the rest of the interface
-        createInterface(contents, mediaTabs);
-
-        // start with main selected
-        mediaTabs.selectTab(0);
+        createInterface(contents, _mediaTabs);
 
         _footer.add(_esubmit = new Button("submit"));
         _esubmit.setEnabled(false);
@@ -158,6 +156,13 @@ public abstract class ItemEditor extends BorderedDialog
                 hide();
             }
         });
+    }
+
+    // @Override // from BorderedPopup
+    public void show ()
+    {
+        _mediaTabs.selectTab(getDefaultTabIndex());
+        super.show();
     }
 
     // @Override // from BorderedPopup
@@ -243,11 +248,19 @@ public abstract class ItemEditor extends BorderedDialog
         createThumbUploader(tabs);
     }
 
+    /**
+     * Returns the index of the tab to be selected by default when this dialog is shown.
+     */
+    protected int getDefaultTabIndex ()
+    {
+        return 0;
+    }
+
     protected void createFurniUploader (TabPanel tabs)
     {
         String title = CShell.emsgs.editorFurniTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc, int width, int height) {
+            public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errFurniNotFlash();
                 }
@@ -262,7 +275,7 @@ public abstract class ItemEditor extends BorderedDialog
     {
         String title = CShell.emsgs.editorThumbTitle();
         _thumbUploader = createUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc, int width, int height) {
+            public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
                     return CShell.emsgs.errThumbNotImage();
                 }
@@ -376,6 +389,44 @@ public abstract class ItemEditor extends BorderedDialog
         } else {
             return null;
         }
+    }
+
+    /**
+     * If an item wishes to use the filename of its primary as a default name for the item if one
+     * is not already set, it should call this method with the filename when its primary media is
+     * uploaded. This method will massage the supplied name (stripping its extension) and configure
+     * it as the item name iff the item has no name already configured.
+     */
+    protected void maybeSetNameFromFilename (String name)
+    {
+        if (_name.getText().length() != 0) {
+            return;
+        }
+
+        // if the name has a path, strip it
+        int idx = name.lastIndexOf("\\"); // window
+        if (idx != -1) {
+            name = name.substring(idx+1);
+        }
+        idx = name.lastIndexOf("//"); // joonix (and Mac OS X by association)
+        if (idx != -1) {
+            name = name.substring(idx+1);
+        }
+
+        // if the name has a file suffix, strip it
+        idx = name.lastIndexOf(".");
+        switch (name.length() - idx) {
+        case 3:
+        case 4:
+            name = name.substring(0, idx);
+            break;
+        }
+
+        // replace _ with space
+        name = name.replaceAll("_", " ");
+
+        _name.setText(name); // this doesn't trigger a text edited event
+        _item.name = name; // so we have to do this by hand
     }
 
     /**
@@ -572,6 +623,7 @@ public abstract class ItemEditor extends BorderedDialog
 
     protected EditorHost _parent;
 
+    protected TabPanel _mediaTabs;
     protected Item _item, _updatedItem;
     protected ItemIdent _parentItem;
 

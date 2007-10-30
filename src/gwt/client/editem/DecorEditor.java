@@ -55,7 +55,7 @@ public class DecorEditor extends ItemEditor
     {
         String title = CShell.emsgs.decorMainTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc, int width, int height) {
+            public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errFurniNotFlash();
                 }

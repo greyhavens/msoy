@@ -45,7 +45,7 @@ public class ItemPackEditor extends SubItemEditor
         // item packs' furni media are their primary media
         String title = CShell.emsgs.ipackMainTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc, int width, int height) {
+            public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _item.furniMedia = desc;
                 return null;

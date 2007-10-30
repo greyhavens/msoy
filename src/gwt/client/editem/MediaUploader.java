@@ -115,7 +115,7 @@ public class MediaUploader extends VerticalPanel
      */
     public void setUploadedMedia (MediaDesc desc, int width, int height)
     {
-        String result = _updater.updateMedia(desc, width, height);
+        String result = _updater.updateMedia(_upload.getFilename(), desc, width, height);
         if (result == null) {
             setMedia(desc);
         } else {

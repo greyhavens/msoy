@@ -64,7 +64,7 @@ public class TrophySourceEditor extends SubItemEditor
         // trophy' thumb media are their primary media
         String title = CShell.emsgs.trophyMainTitle();
         _thumbUploader = createUploader(Item.THUMB_MEDIA, title, false, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc, int width, int height) {
+            public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (width != TrophySource.TROPHY_WIDTH || height != TrophySource.TROPHY_HEIGHT ||
                     !desc.isImage()) {
                     return CShell.emsgs.invalidTrophy();

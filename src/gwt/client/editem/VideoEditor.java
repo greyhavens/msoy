@@ -44,7 +44,7 @@ public class VideoEditor extends ItemEditor
     {
         Widget mainUploader = createMainUploader(CShell.emsgs.videoMainTitle(), 
             new MediaUpdater() {
-                public String updateMedia (MediaDesc desc, int width, int height) {
+                public String updateMedia (String name, MediaDesc desc, int width, int height) {
                     // TODO: remove this hack?
                     if (!desc.isVideo()) {
                         return CShell.emsgs.errVideoNotVideo();
