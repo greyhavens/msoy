@@ -982,5 +982,5 @@ public class MemberServlet extends MsoyServiceServlet
         public ArrayList<MemberName> friends = new ArrayList<MemberName>();
     }
 
-    protected static final int TARGET_MYWHIRLED_GAMES = 4;
+    protected static final int TARGET_MYWHIRLED_GAMES = 6;
 }
