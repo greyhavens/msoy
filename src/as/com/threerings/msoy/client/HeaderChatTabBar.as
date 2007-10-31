@@ -45,15 +45,26 @@ public class HeaderChatTabBar extends SuperTabBar
         } else {
             _tabNames.setItemAt(name, 0);
         }
-        closePolicy = SuperTab.CLOSE_NEVER;
         selectedIndex = 0;
+        tabSelected();
     }
 
     public function addChatTab (name :String) :void
     {
         _tabNames.addItem(name);
-        closePolicy = SuperTab.CLOSE_SELECTED;
         selectedIndex = _tabNames.length - 1;
+        tabSelected();
+    }
+
+    /** 
+     * Thanks a lot flex team - you've got at least two classes in this hierarchy with
+     * _selectedIndex variables that mean exactly the same damn thing, and they're both private...
+     * so I have to make a third one.
+     */
+    override public function set selectedIndex (ii :int) :void
+    {
+        super.selectedIndex = ii;
+        _selectedIndex = ii;
     }
 
     // yay for this not actually being private like they labeled it in the docs.
@@ -61,18 +72,28 @@ public class HeaderChatTabBar extends SuperTabBar
     {
         super.onCloseTabClicked(event);
 
+        // default back to room chat when a tab is closed
+        selectedIndex = 0;
+        tabSelected();
+
         // TODO: close chat channel
     }
 
-    protected function tabSelected (event :ItemClickEvent) :void 
+    protected function tabSelected (event :ItemClickEvent = null) :void
     {
+        var index :int = event == null ? _selectedIndex : event.index;
         // this is a stupid hack, but it seems to be the only way to get "Super"TabNav to actually
         // do what's its supposed to and allow some tabs to be closeable and others not.
-        closePolicy = event.index == 0 ? SuperTab.CLOSE_NEVER : SuperTab.CLOSE_SELECTED;
+        closePolicy = index == 0 ? SuperTab.CLOSE_NEVER : SuperTab.CLOSE_SELECTED;
+        Log.getLog(this).debug("selected tab [" + _tabNames.getItemAt(index) + "]");
 
         // TODO: update chat history shown on the chat overlay
     }
 
     protected var _tabNames :ArrayCollection = new ArrayCollection;
+
+    // The value returned from get selectedIndex() does not always reflect the value that was 
+    // just immeadiately set via set selectedIndex(), so lets keep track of what we really want.
+    protected var _selectedIndex :int = -1;
 }
 }
