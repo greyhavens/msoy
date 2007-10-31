@@ -8,6 +8,8 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.TimerEvent;
 
+import flash.geom.Point;
+
 import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -41,6 +43,26 @@ public class ChatGlyph extends Sprite
     public function getType () :int
     {
         return _type;
+    }
+
+    /**
+     * Returns true if the text under the given stage coordinates should be clickable (such as a
+     * URL).
+     */
+    public function isClickableAtPoint (stagePoint :Point) :Boolean
+    {
+        var textPoint :Point = _txt.globalToLocal(stagePoint);
+        var charIndex :int = _txt.getCharIndexAtPoint(textPoint.x, textPoint.y);
+        if (charIndex == -1) {
+            // make sure we're not showing the text-selection cursor
+            _txt.mouseEnabled = false;
+            return false;
+        }
+
+        var format :TextFormat = _txt.getTextFormat(charIndex);
+        var clickable :Boolean = !(format == null || format.url == null || format.url == "");
+        _txt.mouseEnabled = clickable;
+        return clickable;
     }
 
     /**
@@ -79,7 +101,6 @@ public class ChatGlyph extends Sprite
     {
         var fmt :TextFormat = null;
         var length :int = 0;
-        var hasLinks :Boolean = false;
         for each (var o :Object in texts) {
             if (o is TextFormat) {
                 fmt = (o as TextFormat);
@@ -97,16 +118,14 @@ public class ChatGlyph extends Sprite
                 }
                 if (length != newLength) {
                     txt.setTextFormat(fmt, length, newLength);
-                    if (fmt.url != null) {
-                        hasLinks = true;
-                    }
                 }
                 fmt = null;
                 length = newLength;
             }
         }
 
-        txt.mouseEnabled = hasLinks;
+        // mouse enabled will get turned on when/if the mouse is hovering over an actual URL.
+        txt.mouseEnabled = false;
     }
 
     /**
@@ -153,6 +172,10 @@ public class ChatGlyph extends Sprite
 
     /** The time to die, fully. Used during fade. */
     protected var _deathStamp :int;
+
+    /** A reference to our textfield. Subclasses are responsible for adding it. */
+    protected var _txt :TextField;
+
 
     protected static const FADE_DURATION :int = 600;
 }

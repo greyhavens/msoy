@@ -35,7 +35,7 @@ public class SubtitleGlyph extends ChatGlyph
         sizeFieldToText(txt);
 
         // add the text and draw a shape around it
-        addChild(txt);
+        addChild(_txt = txt);
         txt.x = overlay.drawSubtitleShape(graphics, type, txt.width, txt.height);
     }
 }

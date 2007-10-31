@@ -44,8 +44,7 @@ public class BubbleGlyph extends ChatGlyph
         makeGolden(txt);
         sizeFieldToText(txt);
 
-        addChild(txt);
-        _txt = txt;
+        addChild(_txt = txt);
         var offset :int = overlay.drawBubbleShape(
             graphics, type, txt.width, txt.height, true);
         txt.x = offset;
@@ -129,9 +128,6 @@ public class BubbleGlyph extends ChatGlyph
 
     /** The name of the speaker. */
     protected var _speaker :Name;
-
-    /** A reference to our textfield. */
-    protected var _txt :TextField;
 
     /** The minimum width of a bubble's label before we consider splitting
      * lines. */

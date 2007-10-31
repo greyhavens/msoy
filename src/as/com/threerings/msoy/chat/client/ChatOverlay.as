@@ -90,11 +90,17 @@ public class ChatOverlay
         // NOTE: The docs swear up and down that the point needs to be in stage coords,
         // but only local coords seem to work. Bug?
         var overlays :Array = [_scrollOverlay, _staticOverlay];
+        var stagePoint :Point = new Point(stageX, stageY);
         for each (var overlay :Sprite in overlays) {
-            var p :Point = overlay.globalToLocal(new Point(stageX, stageY));
+            var p :Point = overlay.globalToLocal(stagePoint);
             var objs :Array = overlay.getObjectsUnderPoint(p);
             for each (var obj :DisplayObject in objs) {
-                if (obj is InteractiveObject && InteractiveObject(obj).mouseEnabled) {
+                // the obj returned when hovering over text is the TextField, not the Chat Glyph
+                if (obj.parent is ChatGlyph) {
+                    if ((obj.parent as ChatGlyph).isClickableAtPoint(stagePoint)) {
+                        return true;
+                    }
+                } else if (obj is InteractiveObject && InteractiveObject(obj).mouseEnabled) {
                     return true;
                 }
             }
@@ -1194,11 +1200,6 @@ public class ChatOverlay
     internal function getTargetTextWidth () :int
     {
         var w :int = _targetBounds.width;
-        if (_historyBar != null) {
-            // ScrollBar.THICKNESS is thicker than our scrollbars actually are, but it's
-            // a decent estimate and works even when the scrollbar hasn't measured itself.
-            w -= ScrollBar.THICKNESS;
-        }
         // there is PAD between the text and the edges of the bubble, and another PAD between the
         // bubble and the container edges, on each side for a total of 4 pads.
         w -= (PAD * 4);
