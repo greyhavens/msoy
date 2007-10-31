@@ -126,10 +126,7 @@ public class RoomView extends AbstractRoomView
     {
         super.setScene(scene);
 
-        var chatHeight :Number = _layout.recommendedChatHeight();
-        var totalHeight :Number = _layout.metrics.sceneHeight;
-        chatOverlay.setSubtitlePercentage(
-            Math.min(1, Math.max(.25, chatHeight / totalHeight)));
+        chatOverlay.setSubtitlePercentage(1);
     }
 
     /**

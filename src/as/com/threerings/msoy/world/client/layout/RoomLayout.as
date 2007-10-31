@@ -130,6 +130,9 @@ public interface RoomLayout {
 
     /**
      * Finds a recommended height of the chat overlay, in room units.
+     * 
+     * TODO: depending on what we do with subtitles, this should either be renamed to 
+     * recommendedSubtitleHeight(), or should be nixed altogether
      */
     function recommendedChatHeight () :Number;
 

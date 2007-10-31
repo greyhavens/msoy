@@ -53,10 +53,16 @@ public class ComicOverlay extends ChatOverlay
         clearBubbles(false);
     }
 
-    override protected function layout (bounds :Rectangle, targetWidth :int) :void
+    override public function setHistoryEnabled (historyEnabled :Boolean) :void
     {
-        clearBubbles(true); // these will get repopulated from the history
-        super.layout(bounds, targetWidth);
+        super.setHistoryEnabled(historyEnabled);
+
+        // if the history was enabled or unenabled, we need to move our notification and feedback
+        // bubbles, because the position they're supposed to sit in has changed.
+        var nullCloud :BubbleCloud = _bubbles.get(null);
+        if (nullCloud != null) {
+            nullCloud.setSpeakerLocation(null);
+        }
     }
 
     override public function setTarget (target :LayeredContainer, targetWidth :int = -1) :void
@@ -80,6 +86,12 @@ public class ComicOverlay extends ChatOverlay
             // the position is in stage coordinates
             cloud.setSpeakerLocation(_scrollOverlay.globalToLocal(pos));
         }
+    }
+
+    override protected function layout (targetWidth :int = -1) :void
+    {
+        clearBubbles(true); // these will get repopulated from the history
+        super.layout(targetWidth);
     }
 
     override protected function createStandardFormats () :void
@@ -563,12 +575,28 @@ class BubbleCloud
         if (pos == null) {
             // BubbleClouds with null speaker pos are those not being shown in PLACE (non speak, 
             // think, emote, etc), and aren't being placed over an ActorSprite.
-            var vpos :Rectangle = new Rectangle(BUBBLE_SPACING, BUBBLE_SPACING, 
-                _viewWidth - BUBBLE_SPACING * 2, _viewHeight - BUBBLE_SPACING * 2);
+            var startX :int = _scrollOverlay.getHistoryWidth();
+            if (_startX != startX) {
+                // reposition the bubbles we've already layed out before putting up any new ones
+                for each (var bubble :BubbleGlyph in _bubbles) {
+                    if (bubble.x != 0) {
+                        bubble.x -= (_startX - startX);
+                    }
+                }
+                
+                // save off the new startX
+                _startX = startX;
+            }
+            // TODO: we're putting these types in a place that kind of hovers by itself until 
+            // there's enough chat history to show that it isn't actually floating, but is 
+            // next to the history.  Maybe it would be better to anchor it over on the right in 
+            // the corner?
+            var vpos :Rectangle = new Rectangle(_startX + BUBBLE_SPACING, BUBBLE_SPACING, 
+                _viewWidth - startX - BUBBLE_SPACING * 2, _viewHeight - BUBBLE_SPACING * 2);
             var avoidList :Array = [];
             var placeList :Array = [];
             for (var ii :int = 0; ii < _bubbles.length; ii++) {
-                var bubble :BubbleGlyph = _bubbles[ii] as BubbleGlyph;
+                bubble = _bubbles[ii] as BubbleGlyph;
                 if (bubble.x != 0 || bubble.y != 0) {
                     avoidList.push(bubble.getBubbleBounds());
                 } else {
@@ -635,4 +663,5 @@ class BubbleCloud
     protected var _maxBubbles :int;
     protected var _viewWidth :Number;
     protected var _viewHeight :Number;
+    protected var _startX :Number;
 }

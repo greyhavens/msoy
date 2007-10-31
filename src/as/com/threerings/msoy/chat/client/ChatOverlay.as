@@ -184,20 +184,9 @@ public class ChatOverlay
             // resume listening to our chat history
             _history.addChatOverlay(this);
 
-            layout(null, targetWidth);
+            layout(targetWidth);
             setHistoryEnabled(Prefs.getShowingChatHistory());
         }
-    }
-
-    /**
-     * Configures the region of our target over which we will render. This overrides our natural
-     * calculations based on the target's reported width and the percentage of the target's height
-     * to use for chat.
-     */
-    public function setTargetBounds (bounds :Rectangle) :void
-    {
-        log.info("Setting chat bounds " + bounds);
-        layout(bounds, -1);
     }
 
     /**
@@ -261,6 +250,14 @@ public class ChatOverlay
     }
 
     /**
+     * Gets the current width of the chat history, or 0 if we aren't showing it.
+     */
+    public function getHistoryWidth () :Number
+    {
+        return _historyBar == null ? 0 : _targetBounds.x + _targetBounds.width;
+    }
+
+    /**
      * Sets whether or not the glyphs are clickable.
      */
     public function setClickableGlyphs (clickable :Boolean) :void
@@ -278,7 +275,7 @@ public class ChatOverlay
         if (_subtitlePercentage != perc) {
             _subtitlePercentage = perc;
             if (_target) {
-                layout(null, -1);
+                layout();
             }
         }
     }
@@ -328,7 +325,7 @@ public class ChatOverlay
                 figureCurrentHistory();
             }
             if (_target != null) {
-                layout(null, -1);
+                layout();
             }
             break;
         }
@@ -337,19 +334,13 @@ public class ChatOverlay
     /**
      * Layout.
      */
-    protected function layout (bounds :Rectangle, targetWidth :int) :void
+    protected function layout (targetWidth :int = -1) :void
     {
         clearGlyphs(_subtitles);
 
-        // if special bounds were provided, use them, otherwise compute them
-        if (bounds == null) {
-            var height :int = _target.height * _subtitlePercentage;
-            _targetBounds = new Rectangle(0, _target.height - height,
-                                          targetWidth == -1 ? _target.width : targetWidth, height);
-        } else {
-            _targetBounds = bounds;
-        }
-
+        var height :int = _target.height * _subtitlePercentage;
+        _targetBounds = new Rectangle(ScrollBar.THICKNESS, 0, 
+                                      targetWidth == -1 ? DEFAULT_WIDTH : targetWidth, height);
         // make a guess as to the extent of the history (how many avg sized subtitles will fit in
         // the subtitle area
         _historyExtent = (_targetBounds.height - PAD) / SUBTITLE_HEIGHT_GUESS;
@@ -1078,7 +1069,7 @@ public class ChatOverlay
      */
     protected function handleContainerResize (event :ResizeEvent) :void
     {
-        layout(null, -1);
+        layout();
     }
 
     /**
@@ -1088,8 +1079,7 @@ public class ChatOverlay
     {
         if (_targetBounds != null) {
             _historyBar.height = _targetBounds.height;
-            _historyBar.move(_targetBounds.x + _targetBounds.width -
-                _historyBar.getExplicitOrMeasuredWidth(), _targetBounds.y);
+            _historyBar.move(_targetBounds.x - ScrollBar.THICKNESS, _targetBounds.y);
         }
     }
 
@@ -1356,6 +1346,9 @@ public class ChatOverlay
 
     /** Pixel padding surrounding most things. */
     public static const PAD :int = 10;
+
+    /** The default width to use for the chat history */
+    protected static const DEFAULT_WIDTH :int = 300;
 
     // used to color chat bubbles
     protected static const BROADCAST_COLOR :uint = 0x990000;
