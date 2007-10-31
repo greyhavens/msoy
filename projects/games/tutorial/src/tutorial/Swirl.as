@@ -63,13 +63,10 @@ public class Swirl extends Sprite
             then = SCN_APPEAR;
             break;
         case View.SWIRL_DEMURE:
-            if (_swirlState == View.SWIRL_NONE) {
-                log.warning("Unexpected transtion [from=" + _swirlState + ", to=" +
-                            state + "]");
-                first = SCN_APPEAR;
+            if (_swirlState == View.SWIRL_INTRO) {
+                first = SCN_MINIMIZE;
             }
-            // TODO: later we'll do a fancy transtion here too
-            then = SCN_MINIMIZE;
+            then = SCN_IDLE;
             break;
         case View.SWIRL_BOUNCY:
             if (_swirlState == View.SWIRL_DEMURE) {
@@ -102,8 +99,9 @@ public class Swirl extends Sprite
         var swirlClip :MovieClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
         _swirl = new Buttonizer(swirlClip);
         _swirl.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
-                _view.swirlClicked(_swirlState);
-            });
+            log.debug("Swirly clicked!");
+            _view.swirlClicked(_swirlState);
+        });
 
         _swirl.x =  -Content.SWIRL_OFFSET.x;
         _swirl.y =  -Content.SWIRL_OFFSET.y;

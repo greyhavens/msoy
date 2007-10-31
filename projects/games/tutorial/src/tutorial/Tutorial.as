@@ -68,28 +68,30 @@ public class Tutorial extends Sprite
         var quest :Quest = Quest.getQuest(step);
 
         if (testCompletedStep(step)) {
-            _control.quests.completeQuest(quest.questId, quest.outro, quest.payout);
-            return;
-        }
-        if (_view.isBoxShowing()) {
+            _view.gotoSwirlState(View.SWIRL_DEMURE);
+            _view.displayMessage("Onward", quest.outro, function () :void {
+                _view.displayNothing();
+                _control.quests.completeQuest(quest.questId, null, quest.payout);
+            });
+
+        } else if (_view.isBoxShowing()) {
             _view.displayNothing();
-            return;
-        }
-        if (_activeQuest) {
+
+        } else if (_activeQuest) {
             _view.displaySummary(quest.summary);
-            return;
-        }
-        if (step == 0) {
+
+        } else if (step == 0) {
             _view.displayMessage(
                 "Let's Go!",
                 "<p class='summary'>Follow these steps to get a feel for Whirled and earn some easy flow, the currency in Whirled.</p><br>",
                 function () :void {
                     _control.quests.offerQuest(quest.questId, null, quest.status);
                 });
-            return;
+
+        } else {
+            log.warning("Eek, swirly clicked without active quest [swirlState=" + swirlState +
+                        ", step=" + getStep() + "]");
         }
-        log.warning("Eek, swirly clicked without active quest [swirlState=" + swirlState +
-                    ", step=" + getStep() + "]");
     }
 
     public function viewIsReady () :void
