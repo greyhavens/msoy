@@ -5,6 +5,7 @@ package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
 import flash.display.Shape;
+import flash.display.Sprite;
 import flash.geom.Point;
 
 import mx.containers.Canvas;
@@ -56,9 +57,10 @@ public class PlaceBox extends LayeredContainer
     }
 
     /**
-     * @return true if there are glyphs under the specified point.
+     * @return true if there are glyphs under the specified point.  If the glyph extends Sprite
+     * and the glyph sprite has mouseEnabled == false, it is not checked.
      */
-    public function overlaysPoint (stageX :Number, stageY :Number) :Boolean
+    public function overlaysMousePoint (stageX :Number, stageY :Number) :Boolean
     {
         var stagePoint :Point = new Point(stageX, stageY);
         for (var ii :int = 0; ii < this.rawChildren.numChildren; ii ++) {
@@ -66,7 +68,8 @@ public class PlaceBox extends LayeredContainer
             if (child == _placeView) {
                 continue;
             }
-            if (child.hitTestPoint(stageX, stageY, true)) {
+            if ((!(child is Sprite) || (child as Sprite).mouseEnabled) && 
+                    child.hitTestPoint(stageX, stageY, true)) {
                 return true;
             }
         }

@@ -699,7 +699,7 @@ public class RoomController extends SceneController
         }
 
         // then check with the PlaceBox
-        if (_mctx.getTopPanel().getPlaceContainer().overlaysPoint(stageX, stageY)) {
+        if (_mctx.getTopPanel().getPlaceContainer().overlaysMousePoint(stageX, stageY)) {
             return undefined;
         }
 
