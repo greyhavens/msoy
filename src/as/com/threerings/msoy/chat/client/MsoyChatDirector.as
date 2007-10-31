@@ -115,6 +115,8 @@ public class MsoyChatDirector extends ChatDirector
             }
         };
         _chandlers.put(channel.toLocalType(), new ChannelHandler(_wctx, channel, showTabFn));
+
+        _wctx.getTopPanel().getHeaderBar().addTab("" + name);
     }
 
     /**

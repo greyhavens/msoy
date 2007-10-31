@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.client {
 
+import flash.events.Event;
 import flash.events.MouseEvent;
 
 import mx.core.ScrollPolicy;
@@ -44,15 +45,17 @@ public class HeaderBar extends HBox
 
     public function getLocationText () :String
     {
-        return _loc.text;
+        return _tabs.getLocationName();
     }
 
     public function setLocationText (loc :String) :void
     {
-        _loc.text = loc;
-        _loc.validateNow();
-        // allow text to center under the whirled logo if its not too long.
-        _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
+        _tabs.setLocationName(loc);
+    }
+
+    public function addTab (tabName :String) :void
+    {
+        _tabs.addChatTab(tabName);
     }
 
     public function setOwnerLink (owner :String, onClick :Function = null) :void 
@@ -86,10 +89,8 @@ public class HeaderBar extends HBox
     {
         super.createChildren();
 
-        _loc = new Label();
-        _loc.styleName = "locationName";
-        _loc.width = WHIRLED_LOGO_WIDTH;
-        addChild(_loc);
+        _tabs = new HeaderChatTabBar();
+        addChild(_tabs);
 
         _owner = new HBox();
         _owner.styleName = "ownerNameBox";
@@ -132,8 +133,9 @@ public class HeaderBar extends HBox
 
     protected var _controller :HeaderBarController;
 
-    protected var _loc :Label;
     protected var _owner :HBox;
     protected var _embedLinkButton :Label;
+
+    protected var _tabs :HeaderChatTabBar;
 }
 }
