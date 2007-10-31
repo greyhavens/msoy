@@ -41,19 +41,6 @@ public class Quest
             return;
         }
         _quests = new Array();
-        _quests.push(new Quest(
-            "playGame",
-            "gamePlayed",
-            "Play a Game!",
-            "<p class='title'>Play a Game!</p>" +
-            "<p class='summary'><br>Whirled is full of fun games to play that earn you flow. You can play by yourself or with friends.</p>" +
-            "<p class='details'>" +
-            "<br><li>Click on <b><i>Places -> Whirledwide</i></b> to see the top games in Whirled.</li><br>" +
-            "<li>Pick one from the list on the left to see more about it.</li><br>" +
-            "<li>Click <b><i>Play!</i></b> to try it.</li><br>" +
-            "</p>",
-            "Great! Playing games is a fun way to earn flow.",
-            0));
 	  _quests.push(new Quest(
             "buyAvatar",
             "avatarBought",
@@ -79,6 +66,43 @@ public class Quest
             "</p>",
             "Slick! Here's 200 flow for more shopping.",
             200));
+	  _quests.push(new Quest(
+            "walkAround",
+            "playerMoved",
+            "Strut Your Stuff",
+            "<p class='title'>Strut Your Stuff!</p>" +      
+            "<p class='summary'><br>Try walking around your room in your new avatar.</p>" +
+            "<p class='details'>" +
+            "<br><li>Point and click your mouse where you'd like to walk to.</li><br>" +
+            "</p>",
+            "Good! Here's 100 flow for more shopping.",
+            100));
+	  _quests.push(new Quest(
+            "talk",
+            "playerSpoke",
+            "Wear your new Avatar",
+            "<p class='title'>Find Your Voice!</p>" +      
+            "<p class='summary'><br>Chatting with friends in your room is easy.</p>" +
+            "<p class='details'>" +
+            "<br><li>Place your cursor in the chat box in the lower left corner of the Whirled toolbar.</li><br>" +
+		"<li>Type a message and click <b><i>Send</i></b> to see it displayed in your room.</li><br>" +
+		"<li>You can also press Enter on your keyboard to send chat messages.</li><br>" +
+            "</p>",
+            "Excellent! Here's 100 flow for more shopping.",
+            100));
+	  _quests.push(new Quest(
+            "playGame",
+            "gamePlayed",
+            "Play a Game!",
+            "<p class='title'>Play a Game!</p>" +
+            "<p class='summary'><br>Whirled is full of fun games to play that earn you flow. You can play by yourself or with friends.</p>" +
+            "<p class='details'>" +
+            "<br><li>Click on <b><i>Places -> Whirledwide</i></b> to see the top games in Whirled.</li><br>" +
+            "<li>Pick one from the list on the left to see more about it.</li><br>" +
+            "<li>Click <b><i>Play!</i></b> to try it.</li><br>" +
+            "</p>",
+            "Great! Playing games is a fun way to earn flow.",
+            0));
         _quests.push(new Quest(
             "buyDecor",
             "decorBought",

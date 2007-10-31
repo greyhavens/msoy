@@ -72,9 +72,11 @@ public class Tutorial extends Sprite
 
         } else if (testCompletedStep(step)) {
             _view.gotoSwirlState(View.SWIRL_DEMURE);
-            _view.displayMessage("Onward", quest.outro, function () :void {
-                _view.displayNothing();
-                _control.quests.completeQuest(quest.questId, null, quest.payout);
+            _view.displayMessage(
+                "Onward", "<p class='message'>" + quest.outro + "</p>",
+                function () :void {
+                    _view.displayNothing();
+                    _control.quests.completeQuest(quest.questId, null, quest.payout);
             });
 
         } else if (_activeQuest) {
@@ -83,7 +85,7 @@ public class Tutorial extends Sprite
         } else if (step == 0) {
             _view.displayMessage(
                 "Let's Go!",
-                "<p class='summary'>Follow these steps to get a feel for Whirled and earn some easy flow, the currency in Whirled.</p><br>",
+                "<p class='message'>Follow these steps to get a feel for Whirled and earn some easy flow, the currency in Whirled.</p><br>",
                 function () :void {
                     _control.quests.offerQuest(quest.questId, null, quest.status);
                 });
@@ -191,7 +193,7 @@ public class Tutorial extends Sprite
             _view.displayMessage(
                 "Finish",
                 "<p class='title'>Farewell</p>" +
-                "<p class='summary'><br>This is the end of the tutorial, and you are ready to step into the world.</p>",
+                "<p class='message'><br>This is the end of the tutorial, and you are ready to step into the world.</p>",
                 function () :void {
                     _control.deactivateGame();
                 });

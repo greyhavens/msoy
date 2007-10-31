@@ -44,6 +44,11 @@ public class TextBox extends Sprite
             "  font-size: 16;" +
             "  text-align: center;" +
             "}" +
+            ".message {" +
+            "  font-family: SunnySide;" +
+            "  font-size: 16;" +
+            "  text-align: left;" +
+            "}" +
             ".details {" +
             "  font-family: Goudy;" +
             "  font-size: 14;" +
