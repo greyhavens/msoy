@@ -403,9 +403,8 @@ class ChannelHandler implements Subscriber
 
     public function connect () :void
     {
-        if (! _isConnected) {
-            _ccsvc.joinChannel(
-                _ctx.getClient(), channel, new ResultWrapper(failed, gotChannelOid));
+        if (!_isConnected) {
+            _ccsvc.joinChannel(_ctx.getClient(), channel, new ResultWrapper(failed, gotChannelOid));
         }
     }
 
