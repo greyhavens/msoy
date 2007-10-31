@@ -318,6 +318,10 @@ public class MemberServlet extends MsoyServiceServlet
 
                             // for now, we're going to list all active games...
                             for (HostedGame game : mnobj.hostedGames) {
+                                // except the tutorial!
+                                if (game.placeId == Game.TUTORIAL_GAME_ID) {
+                                    continue;
+                                }
                                 if (games.get(game.placeId) == null) {
                                     games.put(game.placeId, new ArrayList<Integer>());
                                 }
