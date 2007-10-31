@@ -38,6 +38,7 @@ import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
