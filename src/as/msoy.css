@@ -66,6 +66,7 @@ TabNavigator, TabBar {
 
 .selectedMsoyTabButton {
   color: black;
+  textRollOverColor: black;
 }
 
 SuperTabNavigator { 
