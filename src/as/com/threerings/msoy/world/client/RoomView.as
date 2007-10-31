@@ -185,6 +185,10 @@ public class RoomView extends AbstractRoomView
 //
 //    public function whirlDone (sprite :ActorSprite) :void
 //    {
+        if (sprite.getOid() == _ctx.getMemberObject().getOid()) {
+            _ctx.getGameDirector().tutorialEvent("playerMoved");
+        }
+
         if (null != _pendingRemovals.remove(sprite.getOid())) {
             // trigger a portal traversal
             portalTraversed(sprite.getLocation(), false);
@@ -471,6 +475,9 @@ public class RoomView extends AbstractRoomView
     {
         if (msg.localtype == ChatCodes.PLACE_CHAT_TYPE && msg is UserMessage) {
             var umsg :UserMessage = (msg as UserMessage);
+            if (umsg.speaker.equals(_ctx.getMemberObject().memberName)) {
+                _ctx.getGameDirector().tutorialEvent("playerSpoke");
+            }
             var avatar :AvatarSprite =
                 (getActorByName(umsg.getSpeakerDisplayName()) as AvatarSprite);
             if (avatar != null) {
