@@ -73,46 +73,6 @@ public class TextBox extends Sprite
     {
     }
 
-    protected function handleTextboxLoaded (evt :Event) :void
-    {
-        // create the textbox clip
-        _boxClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        _boxClip.x = -Content.BOX_OFFSET.x;
-        _boxClip.y = -Content.BOX_OFFSET.y;
-
-        // just move the playhead to a 'full textbox' position and stop there
-        _boxClip.gotoAndStop(1, SCN_TEXTBOX_SHRINK);
-
-        // so we can measure it
-        _boxWidth = _boxClip.width;
-        _boxHeight = _boxClip.height;
-
-        _backdrop = new Sprite();
-        _backdrop.addChild(_boxClip);
-
-        this.addChild(_backdrop);
-
-        _foreground = new Sprite();
-
-        _textField.x = _backdrop.x + Content.BOX_PADDING;
-        _textField.y = _backdrop.y + Content.BOX_PADDING;
-        _foreground.addChild(_textField);
-
-        _buttons = new Sprite();
-        _buttons.x = _textField.x;
-        _foreground.addChild(_buttons);
-
-        this.addChild(_foreground);
-
-        _fadeIn = new AlphaFade(_foreground, 0, 1, 300);
-        _fadeOut = new AlphaFade(_foreground, 1, 0, 300, function () :void {
-            _foreground.visible = false;
-            _boxClip.gotoAndPlay(1, SCN_TEXTBOX_SHRINK);
-        });
-
-        _done();
-    }
-
     public function isReady () :Boolean
     {
         return _buttons != null;
@@ -120,6 +80,10 @@ public class TextBox extends Sprite
 
     public function hideBox () :void
     {
+        clearTimer();
+        if (_fadeIn.isPlaying()) {
+            _fadeIn.stopAnimation();
+        }
         _fadeOut.startAnimation();
     }
 
@@ -135,24 +99,20 @@ public class TextBox extends Sprite
         this.y = Math.max(Content.BOX_HAT * this.scaleY, offset);
     }
 
-    protected function figureWidth () :Number
-    {
-        return _textField.width + 2*Content.BOX_PADDING;
-    }
-
-    protected function figureHeight () :Number
-    {
-        return _textField.height + _buttons.height + Content.BOX_HAT + 2*Content.BOX_PADDING;
-    }
-
     public function showBox (text :String) :TextField
     {
+        clearTimer();
+        if (_fadeOut.isPlaying()) {
+            _fadeOut.stopAnimation();
+        }
+
         while (_buttons.numChildren > 0) {
             _buttons.removeChildAt(0);
         }
 
         _boxClip.gotoAndPlay(1, SCN_TEXTBOX_GROW);
-        setTimeout(function () :void {
+
+        replaceTimer(function () :void {
             _fadeIn.startAnimation();
             _foreground.visible = true;
         }, 400);
@@ -197,6 +157,69 @@ public class TextBox extends Sprite
         return button;
     }
 
+    protected function clearTimer () :void
+    {
+        if (_timer) {
+            clearTimeout(_timer);
+        }
+    }
+
+    protected function replaceTimer (fun :Function, delay :Number) :void
+    {
+        clearTimer();
+        _timer = setTimeout(function () :void { _timer = 0; fun(); }, delay);
+    }
+
+    protected function handleTextboxLoaded (evt :Event) :void
+    {
+        // create the textbox clip
+        _boxClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        _boxClip.x = -Content.BOX_OFFSET.x;
+        _boxClip.y = -Content.BOX_OFFSET.y;
+
+        // just move the playhead to a 'full textbox' position and stop there
+        _boxClip.gotoAndStop(1, SCN_TEXTBOX_SHRINK);
+
+        // so we can measure it
+        _boxWidth = _boxClip.width;
+        _boxHeight = _boxClip.height;
+
+        _backdrop = new Sprite();
+        _backdrop.addChild(_boxClip);
+
+        this.addChild(_backdrop);
+
+        _foreground = new Sprite();
+
+        _textField.x = _backdrop.x + Content.BOX_PADDING;
+        _textField.y = _backdrop.y + Content.BOX_PADDING;
+        _foreground.addChild(_textField);
+
+        _buttons = new Sprite();
+        _buttons.x = _textField.x;
+        _foreground.addChild(_buttons);
+
+        this.addChild(_foreground);
+
+        _fadeIn = new AlphaFade(_foreground, 0, 1, 300);
+        _fadeOut = new AlphaFade(_foreground, 1, 0, 300, function () :void {
+            _foreground.visible = false;
+            _boxClip.gotoAndPlay(1, SCN_TEXTBOX_SHRINK);
+        });
+
+        _done();
+    }
+
+    protected function figureWidth () :Number
+    {
+        return _textField.width + 2*Content.BOX_PADDING;
+    }
+
+    protected function figureHeight () :Number
+    {
+        return _textField.height + _buttons.height + Content.BOX_HAT + 2*Content.BOX_PADDING;
+    }
+
     protected function scaleBackdrop (x :Number, y :Number) :void
     {
         if (x >= 0) {
@@ -231,6 +254,7 @@ public class TextBox extends Sprite
     protected var _leftButtonEdge :int;
     protected var _rightButtonEdge :int;
 
+    protected var _timer :int;
     protected var _fadeOut :AlphaFade;
     protected var _fadeIn :AlphaFade;
 
