@@ -202,8 +202,6 @@ public class GameDetailPanel extends VerticalPanel
         if ((detail.sourceItem != null && detail.sourceItem.ownerId == CGame.getMemberId()) ||
             CGame.isAdmin()) {
             addTab(METRICS_TAB, CGame.msgs.tabMetrics(), new GameMetricsPanel(detail));
-        } else {
-            CGame.log("No metrics! " + detail.sourceItem + " (" + CGame.getMemberId() + ")");
         }
     }
 
