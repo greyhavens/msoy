@@ -51,8 +51,6 @@ public class TextBox extends Sprite
             "}");
 
         _textField = new TextField();
-        _textField.border = false;
-        _textField.borderColor = 0xFF0000;
         _textField.defaultTextFormat = getDefaultFormat();
         _textField.styleSheet = styleSheet;
         _textField.wordWrap = true;
@@ -122,19 +120,24 @@ public class TextBox extends Sprite
 
     public function sizeChanged () :void
     {
-        log.debug("stage: (" + stage.stageWidth + ", " + stage.stageHeight + ")");
+        var scale :Number = 500 / Math.max(320, Math.min(500, stage.stageWidth));
+        this.scaleX = this.scaleY = scale;
 
-        this.scaleX = this.scaleY = 500 / Math.max(320, Math.min(500, stage.stageWidth));
-        log.debug("this.width = " + this.width);
-        log.debug("this.scale now = " + this.scaleX);
-
-        var offset :Number = Math.min(
-            stage.stageWidth - this.width, stage.stageHeight - this.height) / 2;
+        var offset :Number = Math.min(stage.stageWidth - figureWidth()*scale,
+                                      stage.stageHeight - figureHeight()*scale) / 2;
 
         this.x = Math.max(0, offset);
-        this.y = Math.max(50 * this.scaleY, offset);
+        this.y = Math.max(Content.BOX_HAT * this.scaleY, offset);
+    }
 
-        log.debug("Set (x, y) = (" + this.x + ", " + this.y + ")");
+    protected function figureWidth () :Number
+    {
+        return _textField.width + 2*Content.BOX_PADDING;
+    }
+
+    protected function figureHeight () :Number
+    {
+        return _textField.height + _buttons.height + Content.BOX_HAT + 2*Content.BOX_PADDING;
     }
 
     public function showBox (text :String) :TextField
@@ -149,13 +152,12 @@ public class TextBox extends Sprite
             _foreground.visible = true;
         }, 400);
 
+        _textField.htmlText = text;
+
         _rightButtonEdge = _textField.width;
         _leftButtonEdge = 0;
 
-        _textField.htmlText = text;
-
-        scaleBackdrop(_textField.width + 2*Content.BOX_PADDING,
-                      _textField.height + Content.BOX_HAT + 2*Content.BOX_PADDING);
+        scaleBackdrop(figureWidth(), figureHeight());
 
         _buttons.y = _textField.y + _textField.height;
 
@@ -183,8 +185,7 @@ public class TextBox extends Sprite
             _leftButtonEdge += button.width + Content.BOX_PADDING;
         }
 
-        scaleBackdrop(-1, _textField.height + _buttons.height + Content.BOX_HAT +
-                      2*Content.BOX_PADDING);
+        scaleBackdrop(-1, figureHeight());
 
         sizeChanged();
 
@@ -230,7 +231,6 @@ public class TextBox extends Sprite
 
     protected static const log :Log = Log.getLog(TextBox);
 
-    protected static const SCN_TEXTBOX :String = "textbox";
     protected static const SCN_TEXTBOX_GROW :String = "textbox_grow";
     protected static const SCN_TEXTBOX_SHRINK :String = "textbox_shrink";
 }

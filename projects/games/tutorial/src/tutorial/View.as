@@ -82,8 +82,8 @@ public class View extends Sprite
     public function displayMessage (button :String, message :String, pressed :Function) :void
     {
         _textBox.showBox(message);
-        _boxShowing = true;
         _textBox.addButton(button, true, pressed);
+        _boxShowing = true;
     }
 
     public function swirlClicked (state :int) :void

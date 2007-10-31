@@ -67,15 +67,15 @@ public class Tutorial extends Sprite
         var step :int = getStep();
         var quest :Quest = Quest.getQuest(step);
 
-        if (testCompletedStep(step)) {
+        if (_view.isBoxShowing()) {
+            _view.displayNothing();
+
+        } else if (testCompletedStep(step)) {
             _view.gotoSwirlState(View.SWIRL_DEMURE);
             _view.displayMessage("Onward", quest.outro, function () :void {
                 _view.displayNothing();
                 _control.quests.completeQuest(quest.questId, null, quest.payout);
             });
-
-        } else if (_view.isBoxShowing()) {
-            _view.displayNothing();
 
         } else if (_activeQuest) {
             _view.displaySummary(quest.summary);
