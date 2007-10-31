@@ -58,7 +58,7 @@ public class MyWhirled extends FlexTable
 {
     public MyWhirled (final PopulationDisplay popDisplay)
     {
-        buildUi();
+        buildUI();
 
         CWhirled.membersvc.getMyWhirled(CWhirled.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
@@ -72,7 +72,7 @@ public class MyWhirled extends FlexTable
         });
     }
 
-    protected void buildUi ()
+    protected void buildUI ()
     {
         int row = 0;
 

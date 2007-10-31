@@ -46,13 +46,13 @@ public class Whirledwide extends FlexTable
     public Whirledwide (final PopulationDisplay popDisplay)
     {
         setStyleName("WhirledwidePage");
-        buildUi();
+        buildUI();
 
         CWhirled.membersvc.getWhirledwide(new AsyncCallback() {
             public void onSuccess (Object result) {
                 WhirledwideData data = (WhirledwideData) result;
                 popDisplay.displayPopulation(data.whirledPopulation);
-                fillUi(data);
+                fillUI(data);
             }
             public void onFailure (Throwable caught) {
                 MsoyUI.error(CWhirled.serverError(caught));
@@ -60,7 +60,7 @@ public class Whirledwide extends FlexTable
         });
     }
 
-    protected void buildUi ()
+    protected void buildUI ()
     {
         int row = 0;
 
@@ -167,7 +167,7 @@ public class Whirledwide extends FlexTable
         DOM.setStyleAttribute(_news.getElement(), "overflowX", "hidden");
     }
 
-    protected void fillUi (WhirledwideData whirledwide) 
+    protected void fillUI (WhirledwideData whirledwide) 
     {
         _featuredPlace.setSceneList(whirledwide.places);
         _news.setWidget(new HTML(whirledwide.newsHtml));
