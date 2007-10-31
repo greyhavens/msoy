@@ -30,13 +30,21 @@ public abstract class SubItemEditor extends ItemEditor
         super.populateInfoTab(info);
 
         addSpacer(info);
-        addInfoRow(info, CShell.emsgs.subIdent(), bind(_ident = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _subi.ident = text;
-            }
-        }));
+        addInfoRow(info, CShell.emsgs.subIdent(), _ident = new TextBox());
         _ident.setMaxLength(SubItem.MAX_IDENT_LENGTH);
         addInfoTip(info, CShell.emsgs.subIdentTip());
+    }
+
+    // @Override // from ItemEditor
+    protected void prepareItem ()
+        throws Exception
+    {
+        super.prepareItem();
+
+        _subi.ident = _ident.getText();
+        if (!nonBlank(_subi.ident, SubItem.MAX_IDENT_LENGTH)) {
+            throw new Exception(CShell.emsgs.subIdentMissing(""+SubItem.MAX_IDENT_LENGTH));
+        }
     }
 
     protected SubItem _subi;

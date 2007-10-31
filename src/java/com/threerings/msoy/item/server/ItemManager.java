@@ -73,6 +73,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
 import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
+import com.threerings.msoy.item.server.persist.PrizeRepository;
 import com.threerings.msoy.item.server.persist.ToyRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.item.server.persist.VideoRepository;
@@ -128,6 +129,7 @@ public class ItemManager
         registerRepository(Item.LEVEL_PACK, new LevelPackRepository(ctx));
         registerRepository(Item.ITEM_PACK, new ItemPackRepository(ctx));
         registerRepository(Item.TROPHY_SOURCE, _tsourceRepo = new TrophySourceRepository(ctx));
+        registerRepository(Item.PRIZE, new PrizeRepository(ctx));
         _listRepo = new ItemListRepository(ctx);
 
         // register our invocation service
@@ -1349,22 +1351,20 @@ public class ItemManager
         public void update (Item item);
     }
 
-    /** Contains a reference to our game repository. We'd just look this up from the table but we
-     * can't downcast an ItemRepository to a GameRepository, annoyingly. */
+    /** A reference to our game repository. We'd just look this up from the table but we can't
+     * downcast an ItemRepository to a GameRepository, annoyingly. */
     protected GameRepository _gameRepo;
 
-    /** Contains a reference to our pet repository. See {@link #_gameRepository} for complaint. */
+    /** A reference to our pet repository. See {@link #_gameRepository} for complaint. */
     protected PetRepository _petRepo;
 
-    /** Contains a reference to our avatar repository. See {@link #_gameRepository} for
-     * complaint. */
+    /** A reference to our avatar repository. See {@link #_gameRepository} for complaint. */
     protected AvatarRepository _avatarRepo;
 
-    /** Contains a reference to our decor repository. See {@link #_gameRepository} for complaint. */
+    /** A reference to our decor repository. See {@link #_gameRepository} for complaint. */
     protected DecorRepository _decorRepo;
 
-    /** Contains a reference to our game repository. We'd just look this up from the table but we
-     * can't downcast an ItemRepository to a TrophySourceRepository, annoyingly. */
+    /** A reference to our trophy source repository. See {@link #_gameRepository} for complaint. */
     protected TrophySourceRepository _tsourceRepo;
 
     /** Maps byte type ids to repository for all digital item types. */

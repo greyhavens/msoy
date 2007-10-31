@@ -35,6 +35,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public static final byte LEVEL_PACK = registerItemType(LevelPack.class, 11);
     public static final byte ITEM_PACK = registerItemType(ItemPack.class, 12);
     public static final byte TROPHY_SOURCE = registerItemType(TrophySource.class, 13);
+    public static final byte PRIZE = registerItemType(Prize.class, 14);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     //
     // Note: If the number of item types surpasses 31, we need to change the loadedInventory field
@@ -215,6 +216,8 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
             return "item_pack";
         } else if (type == TROPHY_SOURCE) {
             return "trophy_source";
+        } else if (type == PRIZE) {
+            return "prize";
         } else {
             return "unknown:" + type;
         }

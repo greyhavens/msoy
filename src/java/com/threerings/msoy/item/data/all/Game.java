@@ -54,7 +54,7 @@ public class Game extends Item
     public byte[] getSubTypes ()
     {
         return new byte[] {
-            LEVEL_PACK, ITEM_PACK, TROPHY_SOURCE, /* PRIZE */
+            LEVEL_PACK, ITEM_PACK, TROPHY_SOURCE, PRIZE,
         };
     }
 

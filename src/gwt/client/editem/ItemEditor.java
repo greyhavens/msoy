@@ -91,6 +91,8 @@ public abstract class ItemEditor extends BorderedDialog
             editor = new ItemPackEditor();
         } else if (type == Item.TROPHY_SOURCE) {
             editor = new TrophySourceEditor();
+        } else if (type == Item.PRIZE) {
+            editor = new PrizeEditor();
         } else {
             return null; // woe be the caller
         }
@@ -124,26 +126,13 @@ public abstract class ItemEditor extends BorderedDialog
         _name.setMaxLength(Item.MAX_NAME_LENGTH);
 
         populateInfoTab(info);
-
-        // add the description
-        addSpacer(info);
-        addInfoRow(info, new Label(CShell.emsgs.editorDescrip()));
-        addInfoRow(info, bind(_description = new TextArea(), new Binder() {
-            public void textUpdated (String text) {
-                _item.description = text;
-            }
-        }));
-        _description.setCharacterWidth(40);
-        _description.setVisibleLines(3);
-        addInfoTip(info, CShell.emsgs.editorDescripTip());
-
+        addDescription(info);
         _mediaTabs.add(info, CShell.emsgs.editorInfoTab());
 
         // create the rest of the interface
         createInterface(contents, _mediaTabs);
 
         _footer.add(_esubmit = new Button("submit"));
-        _esubmit.setEnabled(false);
         _esubmit.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 commitEdit();
@@ -196,8 +185,6 @@ public abstract class ItemEditor extends BorderedDialog
 
         recheckFurniMedia();
         recheckThumbMedia();
-
-        updateSubmittable();
     }
 
     /**
@@ -294,6 +281,20 @@ public abstract class ItemEditor extends BorderedDialog
     {
     }
 
+    protected void addDescription (FlexTable info)
+    {
+        addSpacer(info);
+        addInfoRow(info, new Label(CShell.emsgs.editorDescrip()));
+        addInfoRow(info, bind(_description = new TextArea(), new Binder() {
+            public void textUpdated (String text) {
+                _item.description = text;
+            }
+        }));
+        _description.setCharacterWidth(40);
+        _description.setVisibleLines(3);
+        addInfoTip(info, CShell.emsgs.editorDescripTip());
+    }
+
     protected void safeSetText (TextBoxBase box, String value)
     {
         if (box != null && value != null) {
@@ -361,15 +362,6 @@ public abstract class ItemEditor extends BorderedDialog
         String id, String title, boolean thumbnail, MediaUpdater updater)
     {
         return new MediaUploader(id, title, thumbnail, updater);
-    }
-
-    /**
-     * Editors should override this method to indicate when the item is in a consistent state and
-     * may be uploaded.
-     */
-    protected boolean itemConsistent ()
-    {
-        return (_item != null) && _item.isConsistent();
     }
 
     /**
@@ -462,9 +454,6 @@ public abstract class ItemEditor extends BorderedDialog
         if (!Item.FURNI_MEDIA.equals(id)) {
             recheckFurniMedia();
         }
-
-        // re-check submittable
-        updateSubmittable();
     }
 
     /**
@@ -518,15 +507,6 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * Editors should call this method when something changes that might render an item consistent
-     * or inconsistent. It will update the enabled status of the submit button.
-     */
-    protected void updateSubmittable ()
-    {
-        _esubmit.setEnabled(itemConsistent());
-    }
-
-    /**
      * Called when the user clicks the "save" button to commit their edits or create a new item.
      */
     protected void commitEdit ()
@@ -535,6 +515,12 @@ public abstract class ItemEditor extends BorderedDialog
             prepareItem();
         } catch (Exception e) {
             MsoyUI.error(e.getMessage());
+            return;
+        }
+
+        // make sure the item is consistent
+        if (_item == null || !_item.isConsistent()) {
+            MsoyUI.error(CShell.emsgs.editorNotConsistent());
             return;
         }
 
@@ -586,7 +572,6 @@ public abstract class ItemEditor extends BorderedDialog
                         DeferredCommand.add(new Command() {
                             public void execute () {
                                 binder.textUpdated(textbox.getText());
-                                updateSubmittable();
                             }
                         });
                     }
@@ -598,12 +583,21 @@ public abstract class ItemEditor extends BorderedDialog
                 public void onChange (Widget sender) {
                     if (_item != null) {
                         binder.valueChanged();
-                        updateSubmittable();
                     }
                 }
             });
         }
         return widget;
+    }
+
+    /**
+     * Makes sure that the specified text is not null or all-whitespace and is less than or equal
+     * to the specified maximum length.  Usually used in {@link #prepareItem}.
+     */
+    protected static boolean nonBlank (String text, int maxLength)
+    {
+        text = (text == null) ? "" : text.trim();
+        return (text.length() > 0 && text.length() <= maxLength);
     }
 
     /**
