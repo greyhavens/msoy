@@ -42,7 +42,7 @@ public class FeedPanel extends VerticalPanel
     {
         _fullPage = fullPage;
         _feeds.clear();
-        _feeds.populate(feed);
+        _feeds.populate(feed, _fullPage);
         _moreLabel.setText(_fullPage ? CWhirled.msgs.shortFeed() : CWhirled.msgs.fullFeed());
     }
 
@@ -94,7 +94,7 @@ public class FeedPanel extends VerticalPanel
             setStyleName("FeedList");
         }
 
-        public void populate (List messages)
+        public void populate (List messages, boolean fullPage)
         {
             if (messages.size() == 0) {
                 add(new BasicWidget(CWhirled.msgs.emptyFeed(
@@ -126,10 +126,17 @@ public class FeedPanel extends VerticalPanel
                     header = startofDay(message.posted);
                     if (yesterday < message.posted) {
                         add(new DateWidget(CWhirled.msgs.yesterday()));
+                    } else if (!fullPage) {
+                        // stop after displaying today and yesterday; we let the server send us 48
+                        // hours of feed messages to account for timezone differences, but we
+                        // actually only want to see things that happened today and yesterday in
+                        // our timezone
+                        break;
                     } else {
                         add(new DateWidget(new Date(header)));
                     }
                 }
+
                 if (message instanceof FriendFeedMessage) {
                     addFriendMessage((FriendFeedMessage)message);
                 } else if (message instanceof GroupFeedMessage) {
