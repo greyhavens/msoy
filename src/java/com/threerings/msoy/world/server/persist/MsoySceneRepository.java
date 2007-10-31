@@ -3,9 +3,11 @@
 
 package com.threerings.msoy.world.server.persist;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -16,8 +18,9 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 
-import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntListUtil;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
+
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.server.persist.SceneRepository;
@@ -70,10 +73,10 @@ public class MsoySceneRepository extends DepotRepository
     /**
      * Retrieve a list of all the scenes that the user directly owns.
      */
-    public ArrayList<SceneBookmarkEntry> getOwnedScenes (byte ownerType, int memberId)
+    public List<SceneBookmarkEntry> getOwnedScenes (byte ownerType, int memberId)
         throws PersistenceException
     {
-        ArrayList<SceneBookmarkEntry> marks = new ArrayList<SceneBookmarkEntry>();
+        List<SceneBookmarkEntry> marks = Lists.newArrayList();
         Where where = new Where(new And(new Equals(SceneRecord.OWNER_TYPE_C, ownerType),
                                         new Equals(SceneRecord.OWNER_ID_C, memberId)));
         // TODO: use a @Computed record?
@@ -86,7 +89,7 @@ public class MsoySceneRepository extends DepotRepository
     /**
      * Retrieve a list of all the member scenes that the user directly owns.
      */
-    public ArrayList<SceneBookmarkEntry> getOwnedScenes (int memberId)
+    public List<SceneBookmarkEntry> getOwnedScenes (int memberId)
         throws PersistenceException
     {
         return getOwnedScenes(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
@@ -95,12 +98,12 @@ public class MsoySceneRepository extends DepotRepository
     /**
      * Given a list of scene ids, return a map containing the current names, indexed by scene id.
      */
-    public HashIntMap<String> identifyScenes (int[] scenes)
+    public IntMap<String> identifyScenes (Set<Integer> sceneIds)
         throws PersistenceException
     {
-        HashIntMap<String> names = new HashIntMap<String>();
+        IntMap<String> names = IntMaps.newHashIntMap();
         // TODO: use a @Computed record?
-        Where where = new Where(new In(SceneRecord.SCENE_ID_C, IntListUtil.box(scenes)));
+        Where where = new Where(new In(SceneRecord.SCENE_ID_C, sceneIds));
         for (SceneRecord scene : findAll(SceneRecord.class, where)) {
             names.put(scene.sceneId, scene.name);
         }
@@ -140,7 +143,7 @@ public class MsoySceneRepository extends DepotRepository
         MsoySceneModel model = scene.toSceneModel();
 
         // load up all of our furni data
-        ArrayList<FurniData> flist = new ArrayList<FurniData>();
+        List<FurniData> flist = Lists.newArrayList();
         Where where = new Where(SceneFurniRecord.SCENE_ID_C, sceneId);
         for (SceneFurniRecord furni : findAll(SceneFurniRecord.class, where)) {
             flist.add(furni.toFurniData());
@@ -174,15 +177,14 @@ public class MsoySceneRepository extends DepotRepository
     /**
      * Load the SceneRecords for the given sceneIds.
      */
-    public List<SceneRecord> loadScenes (int[] sceneIds)
+    public List<SceneRecord> loadScenes (Set<Integer> sceneIds)
         throws PersistenceException
     {
-        // In() requires at least one value
-        if (sceneIds == null || sceneIds.length == 0) {
-            return new ArrayList<SceneRecord>();
+        if (sceneIds.size() == 0) {
+            return Collections.emptyList();
+        } else {
+            return findAll(SceneRecord.class, new Where(new In(SceneRecord.SCENE_ID_C, sceneIds)));
         }
-        return findAll(SceneRecord.class,
-                new Where(new In(SceneRecord.SCENE_ID_C, IntListUtil.box(sceneIds))));
     }
 
     /**

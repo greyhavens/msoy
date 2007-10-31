@@ -87,8 +87,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
             // now look up the names and build a map of memberId -> MemberName
             IntMap<MemberName> map = new HashIntMap<MemberName>();
-            int[] idArr = members.toIntArray();
-            for (MemberNameRecord record: MsoyServer.memberRepo.loadMemberNames(idArr)) {
+            for (MemberNameRecord record: MsoyServer.memberRepo.loadMemberNames(members)) {
                 map.put(record.memberId, record.toMemberName());
             }
 

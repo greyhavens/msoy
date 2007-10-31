@@ -39,6 +39,13 @@ public class MyWhirledData
     public List people = new ArrayList();
 
     /** 
+     * Our recent feed messages.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.person.data.FeedMessage>
+     */
+    public List feed = new ArrayList();
+
+    /** 
      * This person's profile pic.
      */
     public MediaDesc photo;

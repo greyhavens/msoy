@@ -8,6 +8,7 @@ import com.threerings.presents.client.InvocationService;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.item.data.all.Prize;
 
 /**
  * Invocation services called by our external game servers.
@@ -43,4 +44,10 @@ public interface GameServerService extends InvocationService
      * Reports a trophy award made by a game to a player.
      */
     public void reportTrophyAward (Client client, int memberId, String gameName, Trophy trophy);
+
+    /**
+     * Awards the specified prize to the specified player.
+     */
+    public void awardPrize (Client client, int memberId, String gameName, Prize prize,
+                            ResultListener listener);
 }

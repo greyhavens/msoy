@@ -31,6 +31,7 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.person.data.TrophyAwardPayload;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
@@ -40,6 +41,7 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.peer.server.PeerGameDispatcher;
 import com.threerings.msoy.peer.server.PeerGameProvider;
 
+import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
@@ -265,6 +267,13 @@ public class MsoyGameRegistry
                 trophy.gameId, gameName, trophy.name, trophy.trophyMedia.hash,
                 trophy.trophyMedia.mimeType),
             true, new ResultListener.NOOP<Void>());
+    }
+
+    // from interface GameServerProvider
+    public void awardPrize (ClientObject caller, int memberId, String gameName, Prize prize,
+                            GameServerService.ResultListener listener)
+    {
+        // TODO
     }
 
     // from interface MsoyServer.Shutdowner

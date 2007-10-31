@@ -57,6 +57,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -208,7 +209,22 @@ public class WhirledGameDelegate extends RatingManagerDelegate
                             InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        // TODO
+        final PlayerObject plobj = verifyIsPlayer(caller);
+
+        // locate the prize record in question
+        Prize prize = null;
+        for (Prize cprize : _content.prizes) {
+            if (cprize.ident.equals(ident)) {
+                prize = cprize;
+                break;
+            }
+        }
+        if (prize == null) {
+            log.info("Game requested to award unknown prize [game=" + where() +
+                     ", who=" + plobj.who() + ", ident=" + ident + "].");
+            throw new InvocationException(MsoyGameCodes.E_INTERNAL_ERROR);
+        }
+
     }
 
     // from interface WhirledGameProvider

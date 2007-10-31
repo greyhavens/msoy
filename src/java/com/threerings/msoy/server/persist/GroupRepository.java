@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +12,7 @@ import java.util.Set;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
 
@@ -29,8 +29,6 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
-
-import com.samskivert.util.IntListUtil;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
@@ -109,7 +107,7 @@ public class GroupRepository extends DepotRepository
     public List<GroupRecord> searchForTag (String tag)
         throws PersistenceException
     {
-        ArrayList<Integer> groupIds = new ArrayList<Integer>();
+        List<Integer> groupIds = Lists.newArrayList();
         int tagId = _tagRepo.getOrCreateTag(tag).tagId;
         Where where = new Where(new ColumnExp(GroupTagRecord.class, GroupTagRecord.TAG_ID), tagId);
         for (GroupTagRecord tagRec : findAll(GroupTagRecord.class, where)) {
@@ -131,15 +129,14 @@ public class GroupRepository extends DepotRepository
     /**
      * Fetches multiple groups by id.
      */
-    public List<GroupRecord> loadGroups (int[] groupIds)
+    public List<GroupRecord> loadGroups (Set<Integer> groupIds)
         throws PersistenceException
     {
-        if (groupIds.length == 0) {
+        if (groupIds.size() == 0) {
             return Collections.emptyList();
+        } else {
+            return findAll(GroupRecord.class, new Where(new In(GroupRecord.GROUP_ID_C, groupIds)));
         }
-        Comparable[] idArr = IntListUtil.box(groupIds);
-        return findAll(GroupRecord.class,
-                       new Where(new In(GroupRecord.class, GroupRecord.GROUP_ID, idArr)));
     }
 
     /**

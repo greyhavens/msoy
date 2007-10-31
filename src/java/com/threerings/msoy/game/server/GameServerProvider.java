@@ -6,7 +6,9 @@ package com.threerings.msoy.game.server;
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
@@ -16,6 +18,12 @@ import com.threerings.presents.server.InvocationProvider;
  */
 public interface GameServerProvider extends InvocationProvider
 {
+    /**
+     * Handles a {@link GameServerService#awardPrize} request.
+     */
+    public void awardPrize (ClientObject caller, int arg1, String arg2, Prize arg3, InvocationService.ResultListener arg4)
+        throws InvocationException;
+
     /**
      * Handles a {@link GameServerService#clearGameHost} request.
      */

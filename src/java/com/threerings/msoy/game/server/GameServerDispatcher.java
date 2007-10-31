@@ -7,7 +7,9 @@ import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.GameServerMarshaller;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
@@ -39,6 +41,13 @@ public class GameServerDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case GameServerMarshaller.AWARD_PRIZE:
+            ((GameServerProvider)provider).awardPrize(
+                source,
+                ((Integer)args[0]).intValue(), (String)args[1], (Prize)args[2], (InvocationService.ResultListener)args[3]
+            );
+            return;
+
         case GameServerMarshaller.CLEAR_GAME_HOST:
             ((GameServerProvider)provider).clearGameHost(
                 source,

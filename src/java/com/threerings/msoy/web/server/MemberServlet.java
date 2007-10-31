@@ -249,7 +249,8 @@ public class MemberServlet extends MsoyServiceServlet
         final List<FriendEntry> friends;
         ProfileRecord profile;
         Map<Integer, String> ownedRooms = Maps.newHashMap();
-        final ArrayIntSet groupMemberships = new ArrayIntSet();
+        final IntSet groupMemberships = new ArrayIntSet();
+        List<FeedMessage> feed;
 
         try {
             friends = MsoyServer.memberRepo.loadFriends(memrec.memberId, -1);
@@ -257,13 +258,15 @@ public class MemberServlet extends MsoyServiceServlet
             for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(memrec.memberId)) {
                 ownedRooms.put(scene.sceneId, scene.sceneName);
             }
-            for (GroupMembershipRecord groupMembershipRec :
-                    MsoyServer.groupRepo.getMemberships(memrec.memberId)) {
-                groupMemberships.add(groupMembershipRec.groupId);
+            for (GroupMembershipRecord gmr : MsoyServer.groupRepo.getMemberships(memrec.memberId)) {
+                groupMemberships.add(gmr.groupId);
             }
+            // load up our feed information before we start fiddling with groupMemberships
+            feed = loadFeed(memrec, groupMemberships, DEFAULT_FEED_DAYS);
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Fetching friend list, profile, or room list failed! " +
-                "[memberId=" + memrec.memberId + "]", pe);
+                    "[memberId=" + memrec.memberId + "]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
@@ -366,7 +369,7 @@ public class MemberServlet extends MsoyServiceServlet
         // flesh out profile data for the online friends
         try {
             for (ProfileRecord friendProfile : MsoyServer.profileRepo.loadProfiles(
-                    onlineFriends.intKeySet().toIntArray())) {
+                     onlineFriends.keySet())) {
                 MemberCard card = onlineFriends.get(friendProfile.memberId);
                 card.photo = friendProfile.getPhoto();
                 card.headline = friendProfile.headline;
@@ -382,6 +385,7 @@ public class MemberServlet extends MsoyServiceServlet
         myWhirled.places = getRoomSceneCards(places, pps);
         myWhirled.games = getGameSceneCards(games, pps);
         myWhirled.people = new ArrayList<MemberCard>(onlineFriends.values());
+        myWhirled.feed = feed;
         if (profile != null) {
             myWhirled.photo = (profile.photoHash == null) ? null : profile.getPhoto();
         }
@@ -584,70 +588,75 @@ public class MemberServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser(ident);
 
         try {
-            ArrayList<FeedMessage> messages = new ArrayList<FeedMessage>();
-            IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
-            List<GroupMembershipRecord> groups =
-                MsoyServer.groupRepo.getMemberships(mrec.memberId);
+            List<GroupMembershipRecord> groups = MsoyServer.groupRepo.getMemberships(mrec.memberId);
             ArrayIntSet groupIds = new ArrayIntSet(groups.size());
             for (GroupMembershipRecord record : groups) {
                 groupIds.add(record.groupId);
             }
-            Timestamp since =
-                new Timestamp(System.currentTimeMillis() - cutoffDays * 24 * 60 * 60 * 1000L);
-            ArrayIntSet feedFriendIds = new ArrayIntSet();
-            ArrayIntSet feedGroupIds = new ArrayIntSet();
-
-            List<FeedMessageRecord> records =
-                    MsoyServer.feedRepo.loadMemberFeed(mrec.memberId, friendIds, groupIds, since);
-
-            // Find out which member and group names we'll need
-            for (FeedMessageRecord record : records) {
-                if (record instanceof FriendFeedMessageRecord) {
-                    feedFriendIds.add(((FriendFeedMessageRecord)record).actorId);
-                } else if (record instanceof GroupFeedMessageRecord) {
-                    feedGroupIds.add(((GroupFeedMessageRecord)record).groupId);
-                }
-            }
-
-            // generate a lookup for the member names
-            HashIntMap<MemberName> memberLookup = null;
-            if (!feedFriendIds.isEmpty()) {
-                memberLookup = new HashIntMap<MemberName>();
-                for (MemberNameRecord name :
-                        MsoyServer.memberRepo.loadMemberNames(feedFriendIds.toIntArray())) {
-                    memberLookup.put(name.memberId, name.toMemberName());
-                }
-            }
-
-            // generate a lookup for the group names
-            HashIntMap<GroupName> groupLookup = null;
-            if (!feedGroupIds.isEmpty()) {
-                groupLookup = new HashIntMap<GroupName>();
-                for (GroupRecord group :
-                        MsoyServer.groupRepo.loadGroups(feedGroupIds.toIntArray())) {
-                    groupLookup.put(group.groupId, group.toGroupName());
-                }
-            }
-
-            // create our list of feed messages
-            for (FeedMessageRecord record : records) {
-                FeedMessage message = record.toMessage();
-                if (record instanceof FriendFeedMessageRecord) {
-                    ((FriendFeedMessage)message).friend =
-                        memberLookup.get(((FriendFeedMessageRecord)record).actorId);
-                } else if (record instanceof GroupFeedMessageRecord) {
-                    ((GroupFeedMessage)message).group =
-                        groupLookup.get(((GroupFeedMessageRecord)record).groupId);
-                }
-                messages.add(message);
-            }
-
-            return messages;
+            return loadFeed(mrec, groupIds, cutoffDays);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Load feed failed [memberId=" + mrec.memberId + "]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
+    }
+
+    /**
+     * Helper function for {@link #loadFeed} and {@link #getMyWhirled}.
+     */
+    protected List<FeedMessage> loadFeed (MemberRecord mrec, IntSet groupIds, int cutoffDays)
+        throws PersistenceException
+    {
+        Timestamp since =
+            new Timestamp(System.currentTimeMillis() - cutoffDays * 24 * 60 * 60 * 1000L);
+
+        ArrayList<FeedMessage> messages = new ArrayList<FeedMessage>();
+        IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
+        List<FeedMessageRecord> records = MsoyServer.feedRepo.loadMemberFeed(
+            mrec.memberId, friendIds, groupIds, since);
+
+        // find out which member and group names we'll need
+        IntSet feedFriendIds = new ArrayIntSet(), feedGroupIds = new ArrayIntSet();
+        for (FeedMessageRecord record : records) {
+            if (record instanceof FriendFeedMessageRecord) {
+                feedFriendIds.add(((FriendFeedMessageRecord)record).actorId);
+            } else if (record instanceof GroupFeedMessageRecord) {
+                feedGroupIds.add(((GroupFeedMessageRecord)record).groupId);
+            }
+        }
+
+        // generate a lookup for the member names
+        HashIntMap<MemberName> memberLookup = null;
+        if (!feedFriendIds.isEmpty()) {
+            memberLookup = new HashIntMap<MemberName>();
+            for (MemberNameRecord name : MsoyServer.memberRepo.loadMemberNames(feedFriendIds)) {
+                memberLookup.put(name.memberId, name.toMemberName());
+            }
+        }
+
+        // generate a lookup for the group names
+        HashIntMap<GroupName> groupLookup = null;
+        if (!feedGroupIds.isEmpty()) {
+            groupLookup = new HashIntMap<GroupName>();
+            for (GroupRecord group : MsoyServer.groupRepo.loadGroups(feedGroupIds)) {
+                groupLookup.put(group.groupId, group.toGroupName());
+            }
+        }
+
+        // create our list of feed messages
+        for (FeedMessageRecord record : records) {
+            FeedMessage message = record.toMessage();
+            if (record instanceof FriendFeedMessageRecord) {
+                ((FriendFeedMessage)message).friend =
+                    memberLookup.get(((FriendFeedMessageRecord)record).actorId);
+            } else if (record instanceof GroupFeedMessageRecord) {
+                ((GroupFeedMessage)message).group =
+                    groupLookup.get(((GroupFeedMessageRecord)record).groupId);
+            }
+            messages.add(message);
+        }
+
+        return messages;
     }
 
     /**
@@ -664,8 +673,7 @@ public class MemberServlet extends MsoyServiceServlet
             IntMap<IntSet> groupIds = new HashIntMap<IntSet>();
             // maps member id to the scene(s) that are owned by them
             IntMap<IntSet> memberIds = new HashIntMap<IntSet>();
-            for (SceneRecord sceneRec :
-                    MsoyServer.sceneRepo.loadScenes(map.intKeySet().toIntArray())) {
+            for (SceneRecord sceneRec : MsoyServer.sceneRepo.loadScenes(map.keySet())) {
                 SceneCard card = new SceneCard();
                 card.sceneId = sceneRec.sceneId;
                 card.name = sceneRec.name;
@@ -693,8 +701,7 @@ public class MemberServlet extends MsoyServiceServlet
             }
 
             // fill in logos for group-owned scenes
-            for (GroupRecord groupRec :
-                    MsoyServer.groupRepo.loadGroups(groupIds.intKeySet().toIntArray())) {
+            for (GroupRecord groupRec : MsoyServer.groupRepo.loadGroups(groupIds.keySet())) {
                 for (int sceneId : groupIds.get(groupRec.groupId)) {
                     SceneCard card = cards.get(sceneId);
                     if (card != null) {
@@ -707,8 +714,7 @@ public class MemberServlet extends MsoyServiceServlet
             }
 
             // fill in logos for member-owned scenes
-            for (ProfileRecord profileRec :
-                    MsoyServer.profileRepo.loadProfiles(memberIds.intKeySet().toIntArray())) {
+            for (ProfileRecord profileRec : MsoyServer.profileRepo.loadProfiles(memberIds.keySet())) {
                 for (int sceneId : memberIds.get(profileRec.memberId)) {
                     SceneCard card = cards.get(sceneId);
                     if (card != null) {
@@ -718,6 +724,7 @@ public class MemberServlet extends MsoyServiceServlet
                     }
                 }
             }
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "failed to fill in SceneCards for rooms...", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
@@ -983,4 +990,5 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
+    protected static final int DEFAULT_FEED_DAYS = 2;
 }

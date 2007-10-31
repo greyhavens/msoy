@@ -126,7 +126,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads the member records with the supplied set of ids.
      */
-    public List<MemberRecord> loadMembers (IntSet memberIds)
+    public List<MemberRecord> loadMembers (Set<Integer> memberIds)
         throws PersistenceException
     {
         return findAll(MemberRecord.class, new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)));
@@ -159,7 +159,7 @@ public class MemberRepository extends DepotRepository
     public MemberNameRecord loadMemberName (int memberId)
         throws PersistenceException
     {
-        List<MemberNameRecord> result = loadMemberNames(new int[] { memberId });
+        List<MemberNameRecord> result = loadMemberNames(Collections.singleton(memberId));
         return result.isEmpty() ? null : result.get(0);
     }
 
@@ -169,16 +169,16 @@ public class MemberRepository extends DepotRepository
      * TODO: Implement findAll(Persistent.class, Comparable... keys) or the like,
      *       as per MDB's suggestion, say so we can cache properly.
      */
-    public List<MemberNameRecord> loadMemberNames (int[] memberIds)
+    public List<MemberNameRecord> loadMemberNames (Set<Integer> memberIds)
         throws PersistenceException
     {
-        if (memberIds.length == 0) {
+        if (memberIds.size() == 0) {
             return Collections.emptyList();
+        } else {
+            return findAll(MemberNameRecord.class,
+                           new FromOverride(MemberRecord.class),
+                           new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)));
         }
-        Comparable[] idArr = IntListUtil.box(memberIds);
-        return findAll(MemberNameRecord.class,
-                       new FromOverride(MemberRecord.class),
-                       new Where(new In(MemberRecord.MEMBER_ID_C, idArr)));
     }
 
     /**
@@ -509,7 +509,7 @@ public class MemberRepository extends DepotRepository
             activeUsers = findAll(MemberRecord.class);
         }
 
-        ArrayIntSet ids = new ArrayIntSet();
+        IntSet ids = new ArrayIntSet();
         for (MemberRecord memRec : activeUsers) {
             grantInvites(memRec.memberId, number);
             ids.add(memRec.memberId);
@@ -703,7 +703,7 @@ public class MemberRepository extends DepotRepository
     public IntSet loadFriendIds (int memberId)
         throws PersistenceException
     {
-        ArrayIntSet memIds = new ArrayIntSet();
+        IntSet memIds = new ArrayIntSet();
         SQLExpression condition =
             new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
                    new Equals(FriendRecord.INVITEE_ID_C, memberId));

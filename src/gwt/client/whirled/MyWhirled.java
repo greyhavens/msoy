@@ -64,7 +64,7 @@ public class MyWhirled extends FlexTable
             public void onSuccess (Object result) {
                 MyWhirledData data = (MyWhirledData) result;
                 popDisplay.displayPopulation(data.whirledPopulation);
-                fillUi(data);
+                fillUI(data);
             }
             public void onFailure (Throwable caught) {
                 MsoyUI.error(CWhirled.serverError(caught));
@@ -186,10 +186,10 @@ public class MyWhirled extends FlexTable
         gamesContainer.add(_games = new SceneList(SceneCard.GAME));
 
         getFlexCellFormatter().setColSpan(row, 0, 2);
-        setWidget(row++, 0, new FeedPanel(false));
+        setWidget(row++, 0, _feed = new FeedPanel());
     }
 
-    protected void fillUi (MyWhirledData myWhirled)
+    protected void fillUI (MyWhirledData myWhirled)
     {
         List people = myWhirled.people;
         Object[] peopleArray = people.toArray();
@@ -284,6 +284,9 @@ public class MyWhirled extends FlexTable
                                                      Page.WORLD, "c" + chatIds[ii]));
             }
         }
+
+        // configure the feed panel
+        _feed.setFeed(myWhirled.feed, false);
     }
 
     protected static class SceneList extends ScrollPanel
@@ -519,6 +522,7 @@ public class MyWhirled extends FlexTable
     protected PagedGrid _people;
     protected SceneList _places;
     protected SceneList _games;
+    protected FeedPanel _feed;
 
     protected VerticalPanel _pictureBox;
     protected VerticalPanel _roomsBox;

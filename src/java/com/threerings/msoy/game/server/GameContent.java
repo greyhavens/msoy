@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameDetailRecord;
 
@@ -26,4 +27,6 @@ public class GameContent
     public ArrayList<ItemPack> ipacks = new ArrayList<ItemPack>();
 
     public ArrayList<TrophySource> tsources = new ArrayList<TrophySource>();
+
+    public ArrayList<Prize> prizes = new ArrayList<Prize>();
 }

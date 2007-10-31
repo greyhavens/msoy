@@ -39,6 +39,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -46,6 +47,8 @@ import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRecord;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
+import com.threerings.msoy.item.server.persist.PrizeRecord;
+import com.threerings.msoy.item.server.persist.PrizeRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
@@ -83,11 +86,13 @@ public class GameGameRegistry
         // create our various game-related repositories
         _gameRepo = new GameRepository(perCtx);
         _avrgRepo = new AVRGameRepository(perCtx);
+        _trophyRepo = new TrophyRepository(perCtx);
+        _ratingRepo = ratingRepo;
+
         _lpackRepo = new LevelPackRepository(perCtx);
         _ipackRepo = new ItemPackRepository(perCtx);
         _tsourceRepo = new TrophySourceRepository(perCtx);
-        _trophyRepo = new TrophyRepository(perCtx);
-        _ratingRepo = ratingRepo;
+        _prizeRepo = new PrizeRepository(perCtx);
 
         // register game-related bootstrap services
         invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
@@ -335,6 +340,11 @@ public class GameGameRegistry
                     for (TrophySourceRecord record :
                              _tsourceRepo.loadOriginalItemsBySuite(_content.game.getSuiteId())) {
                         _content.tsources.add((TrophySource)record.toItem());
+                    }
+                    // load up our prize items
+                    for (PrizeRecord record :
+                             _prizeRepo.loadOriginalItemsBySuite(_content.game.getSuiteId())) {
+                        _content.prizes.add((Prize)record.toItem());
                     }
                 }
             }
@@ -595,4 +605,5 @@ public class GameGameRegistry
     protected LevelPackRepository _lpackRepo;
     protected ItemPackRepository _ipackRepo;
     protected TrophySourceRepository _tsourceRepo;
+    protected PrizeRepository _prizeRepo;
 }

@@ -3,12 +3,11 @@
 
 package com.threerings.msoy.person.server.persist;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.IntListUtil;
 
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
@@ -50,15 +49,15 @@ public class ProfileRepository extends DepotRepository
     /**
      * Loads the profile photos for all of the specified members.
      */
-    public List<ProfileRecord> loadProfiles (int[] memberIds)
+    public List<ProfileRecord> loadProfiles (Set<Integer> memberIds)
         throws PersistenceException
     {
-        // In() requires at least one value
-        if (memberIds == null || memberIds.length == 0) {
-            return new ArrayList<ProfileRecord>();
+        if (memberIds.size() == 0) {
+            return Collections.emptyList();
+        } else {
+            Where where = new Where(new In(ProfileRecord.MEMBER_ID_C, memberIds));
+            return findAll(ProfileRecord.class, where);
         }
-        return findAll(ProfileRecord.class,
-                       new Where(new In(ProfileRecord.MEMBER_ID_C, IntListUtil.box(memberIds))));
     }
 
     /**
@@ -82,7 +81,7 @@ public class ProfileRepository extends DepotRepository
         throws PersistenceException
     {
         if (search == null) {
-            return new ArrayList<MemberNameRecord>();
+            return Collections.emptyList();
         }
 
         return findAll(MemberNameRecord.class,

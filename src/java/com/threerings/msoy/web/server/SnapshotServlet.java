@@ -6,7 +6,7 @@ package com.threerings.msoy.web.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -101,7 +101,7 @@ public class SnapshotServlet extends UploadServlet
             member = MsoyServiceServlet.requireAuthedUser(ident);
 
             // now load the scene, and check who's the owner (todo: deal with group rooms)
-            ArrayList<SceneBookmarkEntry> scenes = MsoyServer.sceneRepo.getOwnedScenes(memberId);
+            List<SceneBookmarkEntry> scenes = MsoyServer.sceneRepo.getOwnedScenes(memberId);
             for (SceneBookmarkEntry scene : scenes) {
                 if (scene.sceneId == sceneId) {
                     return sceneId; // we found the owner - all done!

@@ -3,20 +3,20 @@
 
 package com.threerings.msoy.web.server;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
@@ -336,7 +336,7 @@ public class GameServlet extends MsoyServiceServlet
             });
 
             // and populate the result array in the correct order
-            ArrayList<Trophy> results = new ArrayList<Trophy>();
+            List<Trophy> results = Lists.newArrayList();
             for (TrophySourceRecord record : trecords) {
                 Trophy trophy = trophies.get(record.ident);
                 // only provide the description for non-secret or earned trophies
@@ -368,18 +368,18 @@ public class GameServlet extends MsoyServiceServlet
             TrophyCase tcase = new TrophyCase();
             tcase.owner= tgtrec.getName();
 
-            HashIntMap<ArrayList<Trophy>> tmap = new HashIntMap<ArrayList<Trophy>>();
+            IntMap<List<Trophy>> tmap = IntMaps.newHashIntMap();
             for (TrophyRecord trec : MsoyServer.trophyRepo.loadTrophies(memberId)) {
-                ArrayList<Trophy> tlist = tmap.get(trec.gameId);
+                List<Trophy> tlist = tmap.get(trec.gameId);
                 if (tlist == null) {
-                    tmap.put(trec.gameId, tlist = new ArrayList<Trophy>());
+                    tmap.put(trec.gameId, tlist = Lists.newArrayList());
                 }
                 tlist.add(trec.toTrophy());
             }
 
             tcase.shelves = new TrophyCase.Shelf[tmap.size()];
             int ii = 0;
-            for (IntMap.IntEntry<ArrayList<Trophy>> entry : tmap.intEntrySet()) {
+            for (IntMap.IntEntry<List<Trophy>> entry : tmap.intEntrySet()) {
                 TrophyCase.Shelf shelf = new TrophyCase.Shelf();
                 shelf.gameId = entry.getIntKey();
                 shelf.trophies = entry.getValue().toArray(new Trophy[entry.getValue().size()]);
@@ -434,7 +434,7 @@ public class GameServlet extends MsoyServiceServlet
                 gameId, MAX_RANKINGS, friendIds);
 
             // combine all players in question into one map for name/photo resolution
-            HashIntMap<PlayerRating> players = new HashIntMap<PlayerRating>();
+            IntMap<PlayerRating> players = IntMaps.newHashIntMap();
             for (RatingRecord record : single) {
                 players.put(record.playerId, new PlayerRating());
             }
@@ -443,7 +443,7 @@ public class GameServlet extends MsoyServiceServlet
             }
 
             // resolve the member's names
-            int[] memIds = players.intKeySet().toIntArray();
+            Set<Integer> memIds = players.keySet();
             for (MemberNameRecord name : MsoyServer.memberRepo.loadMemberNames(memIds)) {
                 PlayerRating pr = players.get(name.memberId);
                 pr.name = name.toMemberName();
@@ -466,8 +466,8 @@ public class GameServlet extends MsoyServiceServlet
         }
     }
 
-    protected PlayerRating[] toRatingResult (List<RatingRecord> records,
-                                             HashIntMap<PlayerRating> players)
+    protected PlayerRating[] toRatingResult (
+        List<RatingRecord> records, IntMap<PlayerRating> players)
     {
         PlayerRating[] result = new PlayerRating[records.size()];
         for (int ii = 0; ii < result.length; ii++) {

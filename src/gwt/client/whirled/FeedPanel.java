@@ -33,23 +33,25 @@ import client.game.GameDetailPanel;
 
 public class FeedPanel extends VerticalPanel
 {
-    public FeedPanel (boolean fullPage)
+    public FeedPanel ()
     {
-        buildUi();
-
-        loadFeed(fullPage);
+        buildUI();
     }
 
-    protected void loadFeed (boolean fullPage)
+    public void setFeed (List feed, boolean fullPage)
     {
         _fullPage = fullPage;
-        CWhirled.membersvc.loadFeed(
-                CWhirled.ident, _fullPage ? FULL_CUTOFF : SHORT_CUTOFF, new AsyncCallback() {
+        _feeds.clear();
+        _feeds.populate(feed);
+        _moreLabel.setText(_fullPage ? CWhirled.msgs.shortFeed() : CWhirled.msgs.fullFeed());
+    }
+
+    protected void loadFeed (final boolean fullPage)
+    {
+        int feedDays = fullPage ? FULL_CUTOFF : SHORT_CUTOFF;
+        CWhirled.membersvc.loadFeed(CWhirled.ident, feedDays, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _feeds.clear();
-                _feeds.populate((List)result);
-                _moreLabel.setText(
-                    _fullPage ? CWhirled.msgs.shortFeed() : CWhirled.msgs.fullFeed());
+                setFeed((List)result, fullPage);
             }
             public void onFailure(Throwable caught) {
                 MsoyUI.error(CWhirled.serverError(caught));
@@ -57,7 +59,7 @@ public class FeedPanel extends VerticalPanel
         });
     }
 
-    protected void buildUi ()
+    protected void buildUI ()
     {
         setStyleName("FeedContainer");
 
