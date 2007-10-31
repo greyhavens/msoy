@@ -250,14 +250,6 @@ public class ChatOverlay
     }
 
     /**
-     * Gets the current width of the chat history, or 0 if we aren't showing it.
-     */
-    public function getHistoryWidth () :Number
-    {
-        return _historyBar == null ? 0 : _targetBounds.x + _targetBounds.width;
-    }
-
-    /**
      * Sets whether or not the glyphs are clickable.
      */
     public function setClickableGlyphs (clickable :Boolean) :void
