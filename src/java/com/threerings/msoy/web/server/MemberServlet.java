@@ -983,7 +983,8 @@ public class MemberServlet extends MsoyServiceServlet
             return InvitationResults.SUCCESS;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "sendInvites failed.", pe);
+            log.log(Level.WARNING, "sendInvite failed [inviter=" + inviter.who() +
+                    ", email=" + email + "].", pe);
             return ServiceException.INTERNAL_ERROR;
         }
     }
