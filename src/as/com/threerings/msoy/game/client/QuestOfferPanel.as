@@ -62,7 +62,11 @@ public class QuestOfferPanel extends FloatingPanel
     override protected function buttonClicked (buttonId :int) :void
     {
         if (buttonId == ACCEPT_BUTTON) {
-            _accept();
+            // it's possible for the AVRG to go away while this popup is around
+            if (_accept != null) {
+                _accept();
+            }
+
         } else if (buttonId != DECLINE_BUTTON) {
             return super.buttonClicked(buttonId);
         }

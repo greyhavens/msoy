@@ -34,7 +34,10 @@ public class QuestCompletionPanel extends FloatingPanel
     override protected function buttonClicked (buttonId :int) :void
     {
         if (buttonId == OK_BUTTON) {
-            _finish();
+            // it's possible for the AVRG to go away while this popup is around
+            if (_finish != null) {
+                _finish();
+            }
         }
         return super.buttonClicked(buttonId);
     }
