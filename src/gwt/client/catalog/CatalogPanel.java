@@ -110,6 +110,8 @@ public class CatalogPanel extends VerticalPanel
         String mode = args.get(1, LISTING_PAGE);
         if (mode.equals(ONE_LISTING)) {
             int catalogId = args.get(2, 0);
+
+            // search for the listing in our resolved data models
             CatalogListing listing = null;
             for (Iterator iter = _models.keySet().iterator(); iter.hasNext(); ) {
                 CatalogQuery query = (CatalogQuery)iter.next();
@@ -121,10 +123,20 @@ public class CatalogPanel extends VerticalPanel
                     break;
                 }
             }
-            if (listing != null) {
-                showListing(listing);
+
+            // if we found the listing, display it, otherwise load it from the server
+            AsyncCallback gotListing = new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    showListing((CatalogListing)result);
+                }
+                public void onFailure (Throwable caught) {
+                    MsoyUI.error(CCatalog.serverError(caught));
+                }
+            };
+            if (listing == null) {
+                CCatalog.catalogsvc.loadListing(_query.itemType, catalogId, true, gotListing);
             } else {
-                // TODO: load the listing and then display it
+                gotListing.onSuccess(listing);
             }
 
         } else /* mode.equals(LISTING_PAGE) */ {
