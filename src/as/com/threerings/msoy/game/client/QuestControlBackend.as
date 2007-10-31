@@ -66,7 +66,7 @@ public class QuestControlBackend
         var actualOffer :Function = function() :void {
             _gameObj.avrgService.startQuest(_gctx.getClient(), questId, initialStatus,
                 loggingConfirmListener("startQuest", function () :void {
-                    _mctx.displayFeedback(null, "Quest begun: " + initialStatus);
+//                    _mctx.displayFeedback(null, "Quest begun: " + initialStatus);
                 }));
         };
 
@@ -91,7 +91,7 @@ public class QuestControlBackend
         _gameObj.avrgService.updateQuest(
             _gctx.getClient(), questId, step, status, loggingConfirmListener(
                 "updateQuest", function () :void {
-                    _mctx.displayFeedback(null, "Quest update: " + status);
+//                    _mctx.displayFeedback(null, "Quest update: " + status);
                 }));
         return true;
     }
@@ -111,7 +111,7 @@ public class QuestControlBackend
             _gameObj.avrgService.completeQuest(
                 _gctx.getClient(), questId, payout, loggingConfirmListener(
                     "completeQuest", function () :void {
-                        _mctx.displayFeedback(null, "Quest completed!");
+//                        _mctx.displayFeedback(null, "Quest completed!");
                     }));
         };
 
@@ -137,7 +137,7 @@ public class QuestControlBackend
         _gameObj.avrgService.cancelQuest(
             _gctx.getClient(), questId, loggingConfirmListener(
                 "cancelQuest", function () :void {
-                    _mctx.displayFeedback(null, "Quest cancelled!");
+//                    _mctx.displayFeedback(null, "Quest cancelled!");
                 }));
         return true;
     }
