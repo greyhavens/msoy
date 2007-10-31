@@ -38,6 +38,8 @@ public class WorldChatTab extends ChatTab
         }
         _placeBox.addEventListener(MouseEvent.CLICK, mouseClickedOnRoom);
 
+        _placeBox.mouseChildren = false;
+
         addChildAt(_placeBox, 0);
         addEventListener(Event.ADDED_TO_STAGE, checkSizes);
         addEventListener(ResizeEvent.RESIZE, checkSizes);
@@ -60,6 +62,9 @@ public class WorldChatTab extends ChatTab
     public function shutdown () :void
     {
         if (_placeBox != null) {
+            _placeBox.removeEventListener(MouseEvent.CLICK, mouseClickedOnRoom);
+            _placeBox.mouseChildren = true;
+
             removeChild(_placeBox);
             _ctx.getTopPanel().restorePlaceContainer();
         }
@@ -93,19 +98,10 @@ public class WorldChatTab extends ChatTab
         _chatContainer.width = width;
         _chatContainer.height = height / 2;
         _chatContainer.move(0, height/2);
-
-        _placeBox.buttonMode = true;
-        _placeBox.mouseChildren = false;
-        _placeBox.useHandCursor = true;
     }
 
     protected function mouseClickedOnRoom (event :MouseEvent) :void
     {
-        _placeBox.removeEventListener(MouseEvent.CLICK, mouseClickedOnRoom);
-        _placeBox.buttonMode = false;
-        _placeBox.mouseChildren = true;
-        _placeBox.useHandCursor = false;
-
         // if we're minimized, then request to be unminimized
         if (_ctx.getWorldClient().isMinimized()) {
             _ctx.getWorldClient().restoreClient();
