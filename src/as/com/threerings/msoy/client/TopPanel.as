@@ -26,6 +26,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.game.data.GameObject;
 
+import com.threerings.msoy.chat.client.ChatTabBar;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 
 import com.threerings.msoy.game.client.FloatingTableDisplay;
@@ -53,8 +54,11 @@ public class TopPanel extends Canvas
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
+        var chatTabs :ChatTabBar = new ChatTabBar();
+        (_ctx.getChatDirector() as MsoyChatDirector).setChatTabs(chatTabs);
+
         if (!_ctx.getWorldClient().isFeaturedPlaceView()) {
-            _headerBar = new HeaderBar(ctx);
+            _headerBar = new HeaderBar(ctx, chatTabs);
             _headerBar.includeInLayout = false;
             _headerBar.setStyle("top", 0);
             _headerBar.setStyle("left", 0);

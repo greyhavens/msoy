@@ -36,7 +36,7 @@ public class HeaderBarController extends Controller
         _ctx.getLocationDirector().addLocationObserver(
             new LocationAdapter(null, this.locationChanged, null));
         _headerBar.addEventListener(Event.ADDED_TO_STAGE, function (evt :Event) :void {
-            _ctx.getWorldClient().setWindowTitle(_headerBar.getLocationText());
+            _ctx.getWorldClient().setWindowTitle(_headerBar.getChatTabs().getLocationName());
         });
     }
 
@@ -45,7 +45,7 @@ public class HeaderBarController extends Controller
         var scene :Scene = _ctx.getSceneDirector().getScene();
         if (scene != null) {
             _ctx.getWorldClient().setWindowTitle(scene.getName());
-            _headerBar.setLocationText(scene.getName());
+            _headerBar.getChatTabs().setLocationName(scene.getName());
             // we know the WorldClient is initialized at this point, so it is safe to check whether
             // we are embedded or not.
             _headerBar.setEmbedLinkButtonVisible(!_ctx.getWorldClient().isEmbedded());
@@ -93,7 +93,7 @@ public class HeaderBarController extends Controller
             if (cfg != null) {
                 var name :String = cfg.name;
                 _ctx.getWorldClient().setWindowTitle(name);
-                _headerBar.setLocationText(name);
+                _headerBar.getChatTabs().setLocationName(name);
                 _headerBar.setOwnerLink("");
             }
         }

@@ -59,6 +59,15 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     /**
+     * Whoever creates the chat tab bar is responsible for setting it here, so that we can properly
+     * handle chat channels.
+     */
+    public function setChatTabs (tabs :ChatTabBar) :void
+    {
+        _chatTabs = tabs;
+    }
+
+    /**
      * Return true if we've already got a chat channel open with the specified Name.
      */
     public function hasOpenChannel (name :Name) :Boolean
@@ -95,7 +104,7 @@ public class MsoyChatDirector extends ChatDirector
         };
         _chandlers.put(channel.toLocalType(), new ChannelHandler(_wctx, channel, showTabFn));
 
-        _wctx.getTopPanel().getHeaderBar().addTab("" + name);
+        _chatTabs.addChatTab("" + name);
     }
 
     /**
@@ -293,6 +302,7 @@ public class MsoyChatDirector extends ChatDirector
 
     protected var _wctx :WorldContext;
     protected var _ccpanel :ChatChannelPanel;
+    protected var _chatTabs :ChatTabBar;
 
     /** Contains a mapping from chat localtype to channel handler. */
     protected var _chandlers :HashMap = new HashMap();

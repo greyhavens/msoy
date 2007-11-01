@@ -18,15 +18,18 @@ import com.threerings.flex.CommandButton;
 
 import com.threerings.util.CommandEvent;
 
+import com.threerings.msoy.chat.client.ChatTabBar;
+
 import com.threerings.msoy.client.EmbedDialog;
 
 public class HeaderBar extends HBox
 {
     public static const HEIGHT :int = 20;
 
-    public function HeaderBar (ctx :WorldContext) 
+    public function HeaderBar (ctx :WorldContext, chatTabs :ChatTabBar) 
     {
         _ctx = ctx;
+        _tabs = chatTabs;
         styleName = "headerBar";
 
         verticalScrollPolicy = ScrollPolicy.OFF;
@@ -43,19 +46,9 @@ public class HeaderBar extends HBox
         return _controller;
     }
 
-    public function getLocationText () :String
+    public function getChatTabs () :ChatTabBar
     {
-        return _tabs.getLocationName();
-    }
-
-    public function setLocationText (loc :String) :void
-    {
-        _tabs.setLocationName(loc);
-    }
-
-    public function addTab (tabName :String) :void
-    {
-        _tabs.addChatTab(tabName);
+        return _tabs;
     }
 
     public function setOwnerLink (owner :String, onClick :Function = null) :void 
@@ -95,7 +88,6 @@ public class HeaderBar extends HBox
         channelBtn.styleName = "headerBarButtonChannel";
         addChild(channelBtn);
 
-        _tabs = new HeaderChatTabBar();
         addChild(_tabs);
 
         _owner = new HBox();
@@ -142,6 +134,6 @@ public class HeaderBar extends HBox
     protected var _owner :HBox;
     protected var _embedLinkButton :Label;
 
-    protected var _tabs :HeaderChatTabBar;
+    protected var _tabs :ChatTabBar;
 }
 }

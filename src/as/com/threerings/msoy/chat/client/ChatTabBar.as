@@ -1,7 +1,7 @@
 // 
 // $Id$
 
-package com.threerings.msoy.client {
+package com.threerings.msoy.chat.client {
 
 import flash.events.Event;
 
@@ -17,9 +17,9 @@ import flexlib.controls.tabBarClasses.SuperTab;
  * SuperTabBar doesn't leave any way of notifying its creator when a tab is closed, so since we
  * need that information, we have to extend it and do it ourselves.
  */
-public class HeaderChatTabBar extends SuperTabBar
+public class ChatTabBar extends SuperTabBar
 {
-    public function HeaderChatTabBar ()
+    public function ChatTabBar ()
     {
         super();
 
