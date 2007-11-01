@@ -406,16 +406,22 @@ public class ItemManager
     /**
      * Awards the specified prize to the specified member.
      */
-    public void awardPrize (final int memberId, Prize prize, ResultListener<Item> listener)
+    public void awardPrize (final int memberId, final Prize prize, ResultListener<Item> listener)
     {
         final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(prize.targetType, listener);
-        final int catalogId = prize.targetCatalogId;
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>("awardPrize", listener) {
             public Item invokePersistResult () throws Exception {
-                CatalogRecord<ItemRecord> listing = repo.loadListing(catalogId, true);
+                CatalogRecord<ItemRecord> listing = repo.loadListing(prize.targetCatalogId, true);
                 if (listing == null) {
                     throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
                 }
+                if (listing.item.creatorId != prize.creatorId) {
+                    log.warning("Refusing request to award prize due to owner mismatch " +
+                                "[prize=" + prize + ", item=" + listing.item + "].");
+                    throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
+                }
+                // TODO: log something
+                log.info("Awarding prize " + listing + " to " + memberId + ".");
                 return repo.insertClone(listing.item, memberId, 0, 0).toItem();
             }
         });
