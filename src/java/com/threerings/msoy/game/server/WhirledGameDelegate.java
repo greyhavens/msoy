@@ -55,6 +55,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
@@ -206,7 +207,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
     // from interface WhirledGameProvider
     public void awardPrize (ClientObject caller, String ident,
-                            InvocationService.InvocationListener listener)
+                            final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final PlayerObject plobj = verifyIsPlayer(caller);
@@ -225,6 +226,30 @@ public class WhirledGameDelegate extends RatingManagerDelegate
             throw new InvocationException(MsoyGameCodes.E_INTERNAL_ERROR);
         }
 
+        // if the player has already earned this prize during this session, ignore the request
+        final int gameId = _content.game.gameId;
+        if (plobj.ownsGameContent(gameId, GameData.PRIZE_MARKER, ident)) {
+            log.info("Game requested to award already earned prize [game=" + where() +
+                     ", who=" + plobj.who() + ", ident=" + ident + "].");
+            return;
+        }
+
+        // add the prize to the runtime set now to avoid repeat-call freakoutery; if the prize
+        // award fails for other wacky reasons, they'll just have to re-earn it later
+        plobj.addToGameContent(
+            new GameContentOwnership(gameId, GameData.PRIZE_MARKER, prize.ident));
+
+        // because we don't have a full item manager, we have to pass the buck to a world server to
+        // do the actual prize awarding
+        MsoyGameServer.worldClient.awardPrize(
+            plobj.getMemberId(), prize, new InvocationService.ResultListener() {
+            public void requestProcessed (Object result) {
+                plobj.postMessage(MsoyGameCodes.PRIZE_AWARDED, (Item)result);
+            }
+            public void requestFailed (String cause) {
+                listener.requestFailed(cause);
+            }
+        });
     }
 
     // from interface WhirledGameProvider

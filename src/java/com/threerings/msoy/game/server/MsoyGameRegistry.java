@@ -20,6 +20,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.util.PersistingUnit;
+import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.parlor.game.data.GameCodes;
 
@@ -31,9 +32,11 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.person.data.TrophyAwardPayload;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.data.PeerGameMarshaller;
@@ -257,6 +260,10 @@ public class MsoyGameRegistry
     public void reportTrophyAward (
         ClientObject caller, int memberId, String gameName, Trophy trophy)
     {
+        if (!checkCallerAccess(caller, "reportTrophyAward(" + memberId + ", " + gameName + ")")) {
+            return;
+        }
+
         // send them a mail message as well
         String subject = MsoyServer.msgMan.getBundle("server").get(
             "m.got_trophy_subject", trophy.name);
@@ -270,10 +277,15 @@ public class MsoyGameRegistry
     }
 
     // from interface GameServerProvider
-    public void awardPrize (ClientObject caller, int memberId, String gameName, Prize prize,
+    public void awardPrize (ClientObject caller, int memberId, Prize prize,
                             GameServerService.ResultListener listener)
+        throws InvocationException
     {
-        // TODO
+        if (!checkCallerAccess(caller, "awardPrize(" + memberId + ", " + prize.ident + ")")) {
+            return;
+        }
+        // pass the buck to the item manager
+        MsoyServer.itemMan.awardPrize(memberId, prize, new ResultAdapter<Item>(listener));
     }
 
     // from interface MsoyServer.Shutdowner

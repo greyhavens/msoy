@@ -12,4 +12,7 @@ public interface MsoyGameCodes extends GameCodes
 {
     /** A message sent when the player earns a trophy. The payload will be a Trophy object. */
     public static final String TROPHY_AWARDED = "TrophyAwarded";
+
+    /** A message sent when the player earns a prize. The payload will be an Item object. */
+    public static final String PRIZE_AWARDED = "PrizeAwarded";
 }

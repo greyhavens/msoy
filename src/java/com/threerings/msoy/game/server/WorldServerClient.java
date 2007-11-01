@@ -9,11 +9,13 @@ import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.Communicator;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.peer.net.PeerCreds;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.game.client.GameServerService;
@@ -94,6 +96,15 @@ public class WorldServerClient
             log.warning("Dropping trophy award [mid=" + memberId + ", trophy=" + trophy + "].");
         } else {
             _gssvc.reportTrophyAward(_client, memberId, gameName, trophy);
+        }
+    }
+
+    public void awardPrize (int memberId, Prize prize, InvocationService.ResultListener listener)
+    {
+        if (_gssvc == null) {
+            log.warning("Dropping prize award [mid=" + memberId + ", prize=" + prize + "].");
+        } else {
+            _gssvc.awardPrize(_client, memberId, prize, listener);
         }
     }
 

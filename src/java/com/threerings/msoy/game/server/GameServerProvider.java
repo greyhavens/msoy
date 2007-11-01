@@ -21,7 +21,7 @@ public interface GameServerProvider extends InvocationProvider
     /**
      * Handles a {@link GameServerService#awardPrize} request.
      */
-    public void awardPrize (ClientObject caller, int arg1, String arg2, Prize arg3, InvocationService.ResultListener arg4)
+    public void awardPrize (ClientObject caller, int arg1, Prize arg2, InvocationService.ResultListener arg3)
         throws InvocationException;
 
     /**

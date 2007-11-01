@@ -8,6 +8,7 @@ import com.threerings.presents.client.InvocationService;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Prize;
 
 /**
@@ -46,8 +47,8 @@ public interface GameServerService extends InvocationService
     public void reportTrophyAward (Client client, int memberId, String gameName, Trophy trophy);
 
     /**
-     * Awards the specified prize to the specified player.
+     * Awards the specified prize to the specified player. Returns the awarded {@link Item} to the
+     * caller via the supplied result listener.
      */
-    public void awardPrize (Client client, int memberId, String gameName, Prize prize,
-                            ResultListener listener);
+    public void awardPrize (Client client, int memberId, Prize prize, ResultListener listener);
 }

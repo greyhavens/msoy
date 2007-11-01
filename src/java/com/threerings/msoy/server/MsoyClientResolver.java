@@ -3,11 +3,12 @@
 
 package com.threerings.msoy.server;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
+
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.stats.data.Stat;
@@ -103,7 +104,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             MsoyServer.memberRepo.loadFriends(member.memberId, -1));
 
         // load up this member's group memberships (TODO: do this in one lookup)
-        ArrayList<GroupMembership> groups = new ArrayList<GroupMembership>();
+        List<GroupMembership> groups = Lists.newArrayList();
         for (GroupMembershipRecord record : MsoyServer.groupRepo.getMemberships(member.memberId)) {
             GroupRecord group = MsoyServer.groupRepo.loadGroup(record.groupId);
             if (group == null) {
@@ -152,8 +153,8 @@ public class MsoyClientResolver extends CrowdClientResolver
             // load up their recently used avatars
             MsoyServer.itemMan.loadRecentlyTouched(
                 user.getMemberId(), Item.AVATAR, MemberObject.AVATAR_CACHE_SIZE,
-                new ResultListener<ArrayList<Item>>() {
-                public void requestCompleted (ArrayList<Item> items) {
+                new ResultListener<List<Item>>() {
+                public void requestCompleted (List<Item> items) {
                     Avatar[] avatars = new Avatar[items.size()];
                     for (int ii = 0; ii < avatars.length; ii++) {
                         avatars[ii] = (Avatar) items.get(ii);

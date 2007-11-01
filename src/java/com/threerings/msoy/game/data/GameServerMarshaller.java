@@ -26,12 +26,12 @@ public class GameServerMarshaller extends InvocationMarshaller
     public static final int AWARD_PRIZE = 1;
 
     // from interface GameServerService
-    public void awardPrize (Client arg1, int arg2, String arg3, Prize arg4, InvocationService.ResultListener arg5)
+    public void awardPrize (Client arg1, int arg2, Prize arg3, InvocationService.ResultListener arg4)
     {
-        InvocationMarshaller.ResultMarshaller listener5 = new InvocationMarshaller.ResultMarshaller();
-        listener5.listener = arg5;
+        InvocationMarshaller.ResultMarshaller listener4 = new InvocationMarshaller.ResultMarshaller();
+        listener4.listener = arg4;
         sendRequest(arg1, AWARD_PRIZE, new Object[] {
-            Integer.valueOf(arg2), arg3, arg4, listener5
+            Integer.valueOf(arg2), arg3, listener4
         });
     }
 
