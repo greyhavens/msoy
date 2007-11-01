@@ -43,69 +43,79 @@ public class Swirl extends Sprite
         }
     }
 
-    protected static const SMALL_SWIRL_LOC :Point = new Point(75, 75);
-    protected static const BIG_SWIRL_LOC :Point = new Point(200, 200);
-
     public function gotoState (state :int) :void
     {
         this.visible = true;
 
-        var transition :String = null;
-
-        var x :Number, y :Number;
-
-        x = SMALL_SWIRL_LOC.x;
-        y = SMALL_SWIRL_LOC.y;
+        var moveFrom :Point = new Point(this.x, this.y);
+        var moveTo :Point = null;
+        var transScene :String = null;
+        var endScene :String = null;
 
         switch(state) {
         case View.SWIRL_INTRO:
-            if (_swirlState != View.SWIRL_NONE) {
+            if (_swirlState == View.SWIRL_NONE) {
+                moveFrom = BIG_SWIRL_LOC;
+
+            } else {
                 log.warning("Unexpected transtion [from=" + _swirlState + ", to=" +
                             state + "]");
             }
-            x = BIG_SWIRL_LOC.x;
-            y = BIG_SWIRL_LOC.y;
 
-            transition = SCN_BIG_APPEAR;
+            moveTo = BIG_SWIRL_LOC;
+            transScene = SCN_BIG_APPEAR;
             break;
+
         case View.SWIRL_DEMURE:
             if (_swirlState == View.SWIRL_NONE) {
-                transition = SCN_SMALL_APPEAR;
+                moveFrom = SMALL_SWIRL_LOC;
+                transScene = SCN_SMALL_APPEAR;
 
             } else if (_swirlState == View.SWIRL_INTRO) {
-                transition = SCN_MINIMIZE;
+                transScene = SCN_MINIMIZE;
 
-            } else {
-                transition = SCN_IDLE;
             }
+
+            moveTo = SMALL_SWIRL_LOC;
+            endScene = SCN_IDLE;
             break;
+
         case View.SWIRL_BOUNCY:
             if (_swirlState == View.SWIRL_INTRO) {
                 log.warning("Unexpected transtion [from=" + _swirlState + ", to=" +
                             state + "]");
             }
-            transition = SCN_LOOKATME;
+
+            endScene = SCN_LOOKATME;
             break;
+
         default:
             log.warning("Can't goto unknown swirl state [state=" + state + "]");
             return;
         }
 
-        _swirlHandler.gotoScene(transition);
-
-        if (transition == SCN_MINIMIZE) {
-            var path :Path = new LinePath(
-                this, new HermiteFunc(BIG_SWIRL_LOC.x, SMALL_SWIRL_LOC.x),
-                new HermiteFunc(BIG_SWIRL_LOC.y, SMALL_SWIRL_LOC.y), 400);
-            path.setOnComplete(function (path :Path) :void {
-                if (_swirlState == View.SWIRL_DEMURE) {
-                    _swirlHandler.gotoScene(SCN_IDLE);
-                }
-            });
+        if (moveTo && transScene) {
+            var path :Path = new LinePath(this, new HermiteFunc(moveFrom.x, moveTo.x),
+                                          new HermiteFunc(moveFrom.y, moveTo.y), 400);
+            if (endScene) {
+                path.setOnComplete(function (path :Path) :void {
+                    // make sure we are still relevant after the delay
+                    if (_swirlState == state) {
+                        _swirlHandler.gotoScene(endScene);
+                    }
+                });
+            }
             path.start();
+            _swirlHandler.gotoScene(transScene);
+
         } else {
-            this.x = x;
-            this.y = y;
+            if (moveTo) {
+                this.x = moveTo.x;
+                this.y = moveTo.y;
+            }
+            if (endScene) {
+                _swirlHandler.gotoScene(endScene);
+            }
         }
 
         _swirlState = state;
@@ -139,6 +149,9 @@ public class Swirl extends Sprite
     protected var _swirlState :int;
 
     protected static const log :Log = Log.getLog(Swirl);
+
+    protected static const SMALL_SWIRL_LOC :Point = new Point(75, 75);
+    protected static const BIG_SWIRL_LOC :Point = new Point(200, 200);
 
     protected static const SCN_BIG_APPEAR :String = "appear_text";
     protected static const SCN_SMALL_APPEAR :String = "appear_no_text";

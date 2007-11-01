@@ -130,7 +130,7 @@ public class Tutorial extends Sprite
         }
         var step :int = getStep();
 
-//        log.debug("Tutorial event [name=" + event.value + ", step=" + step + "]");
+        log.debug("Tutorial event [name=" + event.value + ", step=" + step + "]");
 
         if (event.value == "willUnminimize") {
             initialize();
@@ -145,9 +145,12 @@ public class Tutorial extends Sprite
 
     protected function playerPropertyChanged (event: AVRGameControlEvent) :void
     {
-        // log.debug("property changed: " + event.name + "=" + event.value);
+        log.debug("property changed: " + event.name + "=" + event.value);
         if (event.name == PROP_STEP_COMPLETED) {
-            initialize();
+            // we ignore clearing this value; a step bump will come in a moment
+            if (event.value) {
+                initialize();
+            }
 
         } else if (event.name == PROP_TUTORIAL_STEP) {
             // we have arrived at a new tutorial step; reinitialize our state
@@ -157,7 +160,7 @@ public class Tutorial extends Sprite
 
     protected function questStateChanged (event :AVRGameControlEvent) :void
     {
-//        log.debug("quest state changed [id=" + event.name + ", value=" + event.value + "]");
+        log.debug("quest state changed [id=" + event.name + ", value=" + event.value + "]");
         // we've acquired a new active quest or dropped an old one; update our display
 
         var step :int = getStep();
