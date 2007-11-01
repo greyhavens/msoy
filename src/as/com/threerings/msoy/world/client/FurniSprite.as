@@ -128,6 +128,9 @@ public class FurniSprite extends MsoySprite
         case FurniData.ACTION_PORTAL:
             return Msgs.GENERAL.get("i.trav_portal", String(actionData[actionData.length-1]));
 
+        case FurniData.ACTION_HELP_PAGE:
+            return Msgs.GENERAL.get("i.help_page", String(actionData[0]));
+
         default:
             log.warning("Tooltip requested for unhandled furni action type " +
                 "[actionType=" + _furni.actionType +
