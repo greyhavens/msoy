@@ -462,13 +462,6 @@ public class RoomController extends SceneController
             (_mctx.getSceneDirector() as MsoySceneDirector).traversePortal(furni.id);
             return;
 
-        case FurniData.ACTION_HELP_PAGE:
-            var actionData :Array = furni.splitActionData();
-            var tabName :String = String(actionData[0]);
-            var url :String = String(actionData[1]);
-            (_mctx.getChatDirector() as MsoyChatDirector).displayPage(tabName, url);
-            return;
-
         default:
             log.warning("Clicked on unhandled furni action type [actionType=" + furni.actionType +
                         ", actionData=" + furni.actionData + "].");

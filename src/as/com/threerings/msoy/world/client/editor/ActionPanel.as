@@ -216,29 +216,6 @@ public class ActionPanel extends BasePanel
         }
     }
 
-    // HELP_PAGE functions
-
-    protected function createHelpTabPanel () :UIComponent
-    {
-        var grid :Grid = new Grid();
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.help_tab"));
-        GridUtil.addRow(grid, _helpTabAction = new TextInput());
-
-        _helpTabAction.addEventListener(Event.CHANGE, changedHandler);
-        _helpTabAction.addEventListener(FlexEvent.ENTER, applyHandler);
-
-        return grid;
-    }
-
-    protected function updateHelpTabPanel () :void
-    {
-        if (_furniData != null) {
-            var url :String = _furniData.actionData;
-            // maybe validation here?
-            _helpTabAction.text = url;
-        }
-    }
-
     // door functions
 
     protected function createPortalPanel () :UIComponent
@@ -314,9 +291,6 @@ public class ActionPanel extends BasePanel
                 newData.actionData = DEFAULT_PORTAL_DEST;
             }
             break;
-        case FurniData.ACTION_HELP_PAGE:
-            newData.actionData = _helpTabAction.text;
-            break;
         }
 
         if (! _furniData.equivalent(newData)) {
@@ -389,13 +363,6 @@ public class ActionPanel extends BasePanel
           label: Msgs.EDITING.get("l.action_world_game"),
           supportOnly: true },
 
-        { data: FurniData.ACTION_HELP_PAGE,
-          label: Msgs.EDITING.get("l.action_help_page"),
-          editable: true,
-          supportOnly: true,
-          panelCreateFn: createHelpTabPanel,
-          panelUpdateFn: updateHelpTabPanel },
-
         ];
 
     /** Default location for doors, in case they get interrupted mid-editing. */
@@ -407,7 +374,6 @@ public class ActionPanel extends BasePanel
     protected var _actionPanels :ViewStack;
     protected var _captureMouse :CheckBox;
     protected var _url :TextInput;
-    protected var _helpTabAction :TextInput;
     protected var _door :TextInput;
     protected var _debug :TextInput;
 }

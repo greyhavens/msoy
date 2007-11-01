@@ -122,22 +122,6 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     /**
-     * Displays the specified HTML page inside a tab in the chat panel. If the url points to a
-     * ".html" file, and a ".css" file exists at the same location and with the same root name
-     * (e.g. "foo.html" and "foo.css" exist in the same directory), the style sheet will be
-     * automatically loaded as well. Once loaded, the style sheet is applied to the current and all
-     * subsequent pages until replaced by another style sheet.
-     *
-     * If the named tab doesn't exist, it will be created, otherwise the existing tab is pushed to
-     * the foreground. The tab display is not related to a chat channel - it's merely a display
-     * vehicle that doesn't support chatting at all. 
-     */
-    public function displayPage (tabName :String, url :String) :void
-    {
-        _ccpanel.displayPageTab(tabName, url, true);
-    }
-
-    /**
      * Tells the chat panel to grab the room display and put it into a tab.
      */
     public function sendRoomToTab () :void
