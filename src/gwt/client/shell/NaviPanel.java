@@ -234,9 +234,9 @@ public class NaviPanel extends FlexTable
     public void didLogoff ()
     {
         int menuidx = 0;
-        setMenu(menuidx++, "Me", CShell.cmsgs.menuLogon(), new MenuPopper() {
-            protected void populateMenu (Widget sender, MenuBar menu) {
-                _status.showLogonPopup(sender.getAbsoluteLeft(), getMenuY(sender));
+        setMenu(menuidx++, "Me", CShell.cmsgs.menuLogon(), new ClickListener() {
+            public void onClick (Widget sender) {
+                LogonPanel.toggleShowLogon(_status);
             }
         });
 

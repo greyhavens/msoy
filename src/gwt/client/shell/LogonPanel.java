@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -18,26 +20,31 @@ import com.threerings.gwt.util.CookieUtil;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.SessionData;
 
-import client.util.BorderedPopup;
 import client.util.MsoyUI;
 
 /**
  * Displays a logon user interface.
  */
-public class LogonPopup extends BorderedPopup
+public class LogonPanel extends SimplePanel
 {
-    public LogonPopup (StatusPanel parent)
+    public static void toggleShowLogon (StatusPanel parent)
     {
-        super(true);
-        _centerOnShow = false;
-        _parent = parent;
-        displayLogon();
+        RootPanel content = RootPanel.get("content");
+        if (content.getWidgetCount() == 1) {
+            Widget main = content.getWidget(0);
+            content.remove(main);
+            // TODO: animate this sliding down from the header
+            content.add(new LogonPanel(parent));
+            content.add(main);
+        } else {
+            content.remove(0); // remove the logon panel
+        }
     }
 
-    // @Override // from PopupPanel
-    public void show ()
+    // @Override // from Wiget
+    public void onAttach ()
     {
-        super.show();
+        super.onAttach();
         if (_email.getText().length() == 0) {
             _email.setFocus(true);
         } else {
@@ -45,20 +52,23 @@ public class LogonPopup extends BorderedPopup
         }
     }
 
+    protected LogonPanel (StatusPanel parent)
+    {
+        setStyleName("logonPanel");
+        _parent = parent;
+        displayLogon();
+    }
+
     protected void displayLogon ()
     {
         FlexTable contents = new FlexTable();
-        contents.setStyleName("logonPopup");
         contents.setCellSpacing(10);
         setWidget(contents);
 
-        int row = 0, cols = 3;
-        contents.setText(row, 0, CShell.cmsgs.logonHelp());
-        contents.getFlexCellFormatter().setColSpan(row++, 0, cols);
-
-        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.logonEmail());
-        contents.setWidget(row++, 1, _email = new TextBox());
+        int col = 0;
+        contents.getFlexCellFormatter().setStyleName(0, col, "rightLabel");
+        contents.setText(0, col++, CShell.cmsgs.logonEmail());
+        contents.setWidget(0, col++, _email = new TextBox());
         _email.setText(CookieUtil.get("who"));
         _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
@@ -66,55 +76,58 @@ public class LogonPopup extends BorderedPopup
             }
         }));
 
-        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.logonPassword());
-        contents.setWidget(row, 1, _password = new PasswordTextBox());
+        contents.getFlexCellFormatter().setStyleName(0, col, "rightLabel");
+        contents.setText(0, col++, CShell.cmsgs.logonPassword());
+        contents.setWidget(0, col++, _password = new PasswordTextBox());
         _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 doLogon();
             }
         }));
-        contents.setWidget(row++, 2, new Button(CShell.cmsgs.menuLogon(), new ClickListener() {
+        contents.setWidget(0, col++, new Button(CShell.cmsgs.menuLogon(), new ClickListener() {
             public void onClick (Widget sender) {
                 doLogon();
             }
         }));
 
         String lbl = CShell.cmsgs.forgotPassword();
-        contents.setWidget(row, 0, MsoyUI.createActionLabel(lbl, "Forgot", new ClickListener() {
+        contents.setWidget(0, col++, MsoyUI.createActionLabel(lbl, "tipLabel", new ClickListener() {
             public void onClick (Widget widget) {
                 displayForgotPassword();
             }
         }));
-        contents.getFlexCellFormatter().setColSpan(row++, 0, cols);
 
-        contents.setWidget(row, 0, _status = new Label(""));
-        contents.getFlexCellFormatter().setColSpan(row++, 0, cols);
+        contents.setWidget(1, 0, _status = new Label(""));
+        contents.getFlexCellFormatter().setColSpan(1, 0, contents.getCellCount(0));
     }
 
     protected void displayForgotPassword ()
     {
         FlexTable contents = new FlexTable();
-        contents.setStyleName("logonPopup");
         contents.setCellSpacing(10);
         setWidget(contents);
 
-        int row = 0;
-        contents.setText(row, 0, CShell.cmsgs.forgotPasswordHelp());
-        contents.getFlexCellFormatter().setColSpan(row++, 0, 2);
-
-        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.logonEmail());
-        contents.setWidget(row++, 1, _email = new TextBox());
+        int col = 0;
+        contents.getFlexCellFormatter().setStyleName(0, col, "rightLabel");
+        contents.setText(0, col++, CShell.cmsgs.logonEmail());
+        contents.setWidget(0, col++, _email = new TextBox());
         _email.setText(CookieUtil.get("who"));
         _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 doForgotPassword();
             }
         }));
+        contents.setWidget(0, col++, new Button(CShell.cmsgs.submit(), new ClickListener() {
+            public void onClick (Widget sender) {
+                doForgotPassword();
+            }
+        }));
 
-        contents.setWidget(row, 0, _status = new Label(""));
-        contents.getFlexCellFormatter().setColSpan(row++, 0, 2);
+        contents.getFlexCellFormatter().setStyleName(0, col, "tipLabel");
+        contents.setText(0, col++, CShell.cmsgs.forgotPasswordHelp());
+
+        contents.setWidget(1, 0, _status = new Label(""));
+        contents.getFlexCellFormatter().setColSpan(1, 0, contents.getCellCount(0));
     }
 
     protected void doLogon ()
@@ -128,7 +141,7 @@ public class LogonPopup extends BorderedPopup
         CShell.usersvc.login(
             DeploymentConfig.version, account, CShell.md5hex(password), 1, new AsyncCallback() {
             public void onSuccess (Object result) {
-                hide();
+                dismiss();
                 _parent.didLogon((SessionData)result);
             }
             public void onFailure (Throwable caught) {
@@ -148,13 +161,18 @@ public class LogonPopup extends BorderedPopup
         _status.setText(CShell.cmsgs.sendingForgotEmail());
         CShell.usersvc.sendForgotPasswordEmail(account, new AsyncCallback() {
             public void onSuccess (Object result) {
-                hide();
+                dismiss();
                 MsoyUI.info(CShell.cmsgs.forgotEmailSent());
             }
             public void onFailure (Throwable caught) {
                 _status.setText(CShell.serverError(caught));
             }
         });
+    }
+
+    protected void dismiss ()
+    {
+        RootPanel.get("content").remove(this);
     }
 
     protected StatusPanel _parent;

@@ -254,15 +254,6 @@ a:visited {
    height: 10px;
 }
 
-.logonPopup {
-  width: 350px;
-}
-
-.logonPopup .Forgot {
-  font-size: 12px;
-  text-align: right;
-}
-
 .formDialog .Intro {
   width: 400px;
 }

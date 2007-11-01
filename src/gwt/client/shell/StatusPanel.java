@@ -96,25 +96,6 @@ public class StatusPanel extends FlexTable
     }
 
     /**
-     * Requests that we display our logon popup.
-     */
-    public void showLogonPopup ()
-    {
-        showLogonPopup(-1, -1);
-    }
-
-    /**
-     * Requests that we display our logon popup at the specified position.
-     */
-    public void showLogonPopup (int px, int py)
-    {
-        LogonPopup popup = new LogonPopup(this);
-        popup.show();
-        popup.setPopupPosition(px == -1 ? (Window.getClientWidth() - popup.getOffsetWidth()) : px,
-                               py == -1 ? HEADER_HEIGHT : py);
-    }
-
-    /**
      * Configures whether or not we have new mail.
      */
     public void setNewMailCount (int newMailCount)
@@ -196,15 +177,6 @@ public class StatusPanel extends FlexTable
             FlashEvents.dispatchEvent(new SceneBookmarkEvent(
                                           SceneBookmarkEvent.SCENEBOOKMARK_ADDED,
                                           entry.sceneName, entry.sceneId));
-        }
-    }
-
-    protected void actionClicked ()
-    {
-        if (_creds == null) {
-            showLogonPopup();
-        } else {
-            logoff();
         }
     }
 
