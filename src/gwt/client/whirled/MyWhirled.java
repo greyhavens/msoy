@@ -445,19 +445,20 @@ public class MyWhirled extends FlexTable
                 if (scene.sceneType == SceneCard.GAME) {
                     final PopupPanel personMenuPanel = new PopupPanel(true);
                     MenuBar menu = new MenuBar(true);
-                    menu.addItem(
-                        Application.createLinkHtml(CWhirled.msgs.viewProfile(), "profile", "" + id),
-                        true, new Command() {
-                            public void execute () {
-                                personMenuPanel.hide();
-                            }
-                        });
-                    boolean inPending =
-                        pendingTableMembers != null && pendingTableMembers.contains(id);
+                    String link = Application.createLinkHtml(
+                        CWhirled.msgs.viewProfile(), "profile", "" + id);
+                    menu.addItem(link, true, new Command() {
+                        public void execute () {
+                            personMenuPanel.hide();
+                        }
+                    });
+                    boolean inPending = (pendingTableMembers != null) &&
+                        pendingTableMembers.contains(id);
                     final String flashArg = (inPending ? "playerTable=" : "memberScene=") + id;
                     menu.addItem(CWhirled.msgs.goToGame("" + attrs.get(0)), new Command() {
                         public void execute () {
                             WorldClient.displayFlash(flashArg);
+                            personMenuPanel.hide();
                         }
                     });
                     personMenuPanel.add(menu);
