@@ -948,8 +948,7 @@ public class RoomController extends SceneController
     protected function checkMouse (event :Event) :void
     {
         // no mouse fiddling while we're minimized
-        if ((_mctx.getChatDirector() as MsoyChatDirector).containsRoomTab() ||
-                _mctx.getWorldClient().isFeaturedPlaceView()) {
+        if (_mctx.getTopPanel().isMinimized() || _mctx.getWorldClient().isFeaturedPlaceView()) {
             setHoverSprite(null);
             return;
         }

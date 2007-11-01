@@ -147,34 +147,6 @@ public class ChatChannelPanel extends VBox
         return tab;
     }
 
-    public function sendRoomToTab () :void
-    {
-        _wtab = new WorldChatTab(_ctx);
-        _wtab.label = Msgs.CHAT.xlate("l.world_channel");
-        addFixedTab(_wtab);
-        // expand to take up the entire width of the client (minus the left panel)
-        width = stage.stageWidth - _ctx.getTopPanel().getLeftPanelWidth();
-    }
-
-    public function removeRoomTab () :void
-    {
-        if (_wtab != null) {
-            removeFixedTab(_wtab);
-            // calling shutdown on WorldChatTab causes the RoomView to call containsRoomTab() to
-            // see what aspect ratio it should use, therefore _wtab needs to be null
-            var wtab :WorldChatTab = _wtab;
-            wtab.shutdown();
-            _wtab = null;
-        }
-        // back to our default width
-        width = TopPanel.RIGHT_SIDEBAR_WIDTH;
-    }
-
-    public function containsRoomTab () :Boolean
-    {
-        return _wtab != null;
-    }
-
     public function displayGameChat (chatDtr :ChatDirector, playerList :UIComponent) :void
     {
         _gtab = new GameChatTab(_ctx, chatDtr, playerList);
@@ -249,7 +221,6 @@ public class ChatChannelPanel extends VBox
     protected var _ctx :WorldContext;
 
     protected var _tabnav :SuperTabNavigator;
-    protected var _wtab :WorldChatTab;
     protected var _gtab :GameChatTab;
 }
 }

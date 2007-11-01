@@ -175,40 +175,6 @@ public class TopPanel extends Canvas
     }
 
     /**
-     * Instructs the TopPanel to remove the PlaceView container from its UI hierarchy and return it
-     * to the caller so that they can place it into some temporary special location in the UI. If
-     * the place container has already been taken, the method returns null.
-     */
-    public function takePlaceContainer () :PlaceBox
-    {
-        if (_placeBox.parent != this) {
-            return null;
-        }
-        removeChild(_headerBar);
-        removeChild(_placeBox);
-        layoutPanels();
-        updatePlaceViewChatOverlay();
-        return _placeBox;
-    }
-
-    /**
-     * Informs the TopPanel that the place container can be readded to its UI hierarchy as the
-     * caller has finished with it. The caller must have removed the PlaceBox from their UI
-     * hierarchy before calling this method.
-     */
-    public function restorePlaceContainer () :void
-    {
-        if (_placeBox.parent != null) {
-            Log.getLog(this).warning("Requested to restore PlaceBox but it's still added.");
-            _placeBox.parent.removeChild(_placeBox);
-        }
-        addChild(_headerBar);
-        addChildAt(_placeBox, 0);
-        updatePlaceViewChatOverlay();
-        layoutPanels();
-    }
-
-    /**
      * Returns the currently configured place view.
      */
     public function getPlaceView () :PlaceView
@@ -293,7 +259,7 @@ public class TopPanel extends Canvas
         addChild(_leftPanel); // add to end
         layoutPanels();
 
-        (_ctx.getChatDirector() as MsoyChatDirector).sendRoomToTab();
+        minimizeRoomView();
     }
 
     /**
@@ -313,7 +279,7 @@ public class TopPanel extends Canvas
             removeChild(_leftPanel);
             _leftPanel = null;
 
-            (_ctx.getChatDirector() as MsoyChatDirector).removeRoomTab();
+            restoreRoomView();
 
             layoutPanels();
         }
@@ -427,6 +393,11 @@ public class TopPanel extends Canvas
         return (_bottomPanel == null ? 0 : _bottomPanel.height);
     }
 
+    public function isMinimized () :Boolean
+    {
+        return _minimized;
+    }
+
     protected function stageResized (event :Event) :void
     {
         layoutPanels();
@@ -437,12 +408,34 @@ public class TopPanel extends Canvas
         // clear out our left panel if we are about to be minimized
         if (event.value as Boolean) {
             clearLeftPanel(null);
-            (_ctx.getChatDirector() as MsoyChatDirector).sendRoomToTab();
+            minimizeRoomView();
         } else if (_leftPanel == null) {
-            // if we are not minimized, and we don't have a left panel, restore the room to its
-            // previous glory
-            (_ctx.getChatDirector() as MsoyChatDirector).removeRoomTab();
+            restoreRoomView();
         }
+    }
+
+    /**
+     * Take care of any bits that need to be changed when the room view is getting mini'd.
+     */
+    protected function minimizeRoomView () :void
+    {
+        _minimized = true;
+
+        // TODO: bits and bobs
+        //  - stop accepting clicks on room view - a click should bring it back to full size as 
+        //    before
+        //  - remove owner/share links from header bar
+        //  - remove everything from the control bar except chat entry, send button and skin
+    }
+
+    /**
+     * Undo any bits that were changed in minimizeRoomView()
+     */
+    protected function restoreRoomView () :void
+    {
+        _minimized = false;
+        
+        // TODO: undo bits and bobs
     }
 
     protected function layoutPanels () :void
@@ -493,14 +486,13 @@ public class TopPanel extends Canvas
     }
 
     /**
-     * Check to see if the placeview should be using its own chat overlay.
+     * Check to see if the placeview should be using its chat overlay.
      */
     protected function updatePlaceViewChatOverlay () :void
     {
         var pv :PlaceView = getPlaceView();
         if (pv is RoomView) {
-            (pv as RoomView).setUseChatOverlay(_placeBox.parent == this && 
-                !_ctx.getWorldClient().isFeaturedPlaceView());
+            (pv as RoomView).setUseChatOverlay(!_ctx.getWorldClient().isFeaturedPlaceView());
         }
     }
 
@@ -574,6 +566,9 @@ public class TopPanel extends Canvas
 
     /** the currently active table display */
     protected var _tableDisp :FloatingTableDisplay;
+
+    /** A flag to indicate if we're working in mini-view or not. */
+    protected var _minimized :Boolean = false;
 
     protected static const MIN_FLASH_VERSION :int = 9;
     protected static const MIN_FLASH_REVISION :int = 28;
