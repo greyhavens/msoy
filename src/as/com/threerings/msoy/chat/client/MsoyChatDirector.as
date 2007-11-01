@@ -46,7 +46,6 @@ public class MsoyChatDirector extends ChatDirector
     {
         super(ctx, ctx.getMessageManager(), MsoyCodes.CHAT_MSGS);
         _wctx = ctx;
-        _ccpanel = new ChatChannelPanel(_wctx);
 
         // let the compiler know that these must be compiled into the client
         var c :Class = ChatChannelMarshaller;
@@ -67,12 +66,17 @@ public class MsoyChatDirector extends ChatDirector
         _chatTabs = tabs;
     }
 
+    public function getRoomHistory () :HistoryList
+    {
+        return _roomHistory;
+    }
+
     /**
      * Return true if we've already got a chat channel open with the specified Name.
      */
     public function hasOpenChannel (name :Name) :Boolean
     {
-        return (null != _ccpanel.findChatDisplay(makeChannel(name)));
+        return _chatTabs.containsTab(makeChannel(name));
     }
 
     /**
@@ -87,24 +91,19 @@ public class MsoyChatDirector extends ChatDirector
 
         // if this is a member or already open channel, open/select the UI immediately
         if (channel.type == ChatChannel.MEMBER_CHANNEL ||
-            _chandlers.containsKey(channel.toLocalType())) {
-            _ccpanel.getChatDisplay(channel, getHistory(channel), true);
+                _chandlers.containsKey(channel.toLocalType())) {
+            _chatTabs.displayChat(channel, getHistory(channel));
             return;
         }
 
         // otherwise we have to subscribe to the channel first
         var showTabFn :Function = function (ccobj :ChatChannelObject) :void {
             // once the subscription went through, show the chat history
-            _ccpanel.getChatDisplay(channel, getHistory(channel), true);
+            _chatTabs.displayChat(channel, getHistory(channel));
             // if this is a tabbed channel, make sure to update its distributed object reference
-            var tab :ChannelChatTab = _ccpanel.findChatTab(channel);
-            if (tab != null) {
-                tab.reinit(ccobj);
-            }
+            _chatTabs.reinitController(channel, ccobj);
         };
         _chandlers.put(channel.toLocalType(), new ChannelHandler(_wctx, channel, showTabFn));
-
-        _chatTabs.addChatTab("" + name);
     }
 
     /**
@@ -130,6 +129,9 @@ public class MsoyChatDirector extends ChatDirector
         getHistory(channel).filterTransient();
     }
 
+
+    // TODO: do the new thing wrt game chat ////////////
+
     /**
      * Displays the game chat sidebar.
      */
@@ -145,6 +147,9 @@ public class MsoyChatDirector extends ChatDirector
     {
         _ccpanel.clearGameChat();
     }
+
+    ////////////////////////////////////////////////////
+
 
     // from parent superclass BasicDirector
     override public function clientDidLogoff (event :ClientEvent) :void
@@ -207,19 +212,7 @@ public class MsoyChatDirector extends ChatDirector
         if (channel != null) {
             var history :HistoryList = getHistory(channel);
             history.addMessage(msg);
-            // if it's a message from a member, we open the UI even if it's not open
-            if (channel.type == ChatChannel.MEMBER_CHANNEL) {
-                _ccpanel.getChatDisplay(channel, history, false).displayMessage(msg, false);
-            } else {
-                // if not, the UI should already be open and if it's not then a message must have
-                // come in between the time that we closed the UI and our unsubscribe went through
-                var cd :ChatDisplay = _ccpanel.findChatDisplay(channel);
-                if (cd != null) {
-                    cd.displayMessage(msg, false);
-                } else {
-                    log.info("Dropping late arriving channel chat message [msg=" + msg + "].");
-                }
-            }
+            _chatTabs.displayMessage(channel, msg, history);
 
         } else {
             // add this message to the room chat history

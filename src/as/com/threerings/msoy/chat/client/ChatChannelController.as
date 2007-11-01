@@ -21,6 +21,7 @@ import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.SystemMessage;
 
 import com.threerings.msoy.client.Msgs;
@@ -37,25 +38,19 @@ import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.ChatterInfo;
 
 /**
- * Displays an actual chat channel.
+ * Controlles the chat that gets displayed for a given chat channel.
  */
-public class ChannelChatTab extends ChatTab
+public class ChatChannelController
     implements SetListener, MessageListener
 {
-    public var channel :ChatChannel;
-
-    public function ChannelChatTab (ctx :WorldContext, channel :ChatChannel)
+    public function ChatChannelController (ctx :WorldContext, channel :ChatChannel, 
+        history :HistoryList)
     {
-        super(ctx);
-        this.channel = channel;
-
-        _overlay = new ChatOverlay(ctx.getMessageManager());
-        _overlay.setClickableGlyphs(true);
+        _ctx = ctx;
+        _channel = channel;
+        _history = history;
 
         _departing = new ExpiringSet(3.0, handleDeparted);
-
-        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
-        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
     }
 
     public function init (ccobj :ChatChannelObject, serverSwitch :Boolean = false) :void
@@ -79,6 +74,19 @@ public class ChannelChatTab extends ChatTab
         }
     }
 
+    public function getChannel () :ChatChannel
+    {
+        return _channel;
+    }
+
+    public function displayChat () :void
+    {
+        var overlay :ChatOverlay = _ctx.getTopPanel().getChatOverlay();
+        if (overlay != null) {
+            overlay.setHistory(_history);
+        }
+    }
+
     public function shutdown () :void
     {
         if (_ccobj != null) {
@@ -95,11 +103,6 @@ public class ChannelChatTab extends ChatTab
         }
     }
 
-    public function getOverlay () :ChatOverlay
-    {
-        return _overlay;
-    }
-
     // from interface SetListener
     public function entryAdded (event :EntryAddedEvent) :void
     {
@@ -113,7 +116,7 @@ public class ChannelChatTab extends ChatTab
             }
 
             // if I just saw myself entering the channel, ignore the event
-            var me :MemberObject = _ctx.getMemberObject();
+           var me :MemberObject = _ctx.getMemberObject();
             if (Util.equals(ci.name, me.memberName)) {
                 return;
             }
@@ -143,11 +146,10 @@ public class ChannelChatTab extends ChatTab
         // todo: react to the ChannelChat messages
     }
 
-    // @Override // from ChatTab
-    override public function sendChat (message :String) :void
+    public function sendChat (message :String) :void
     {
-        if (channel.type == ChatChannel.MEMBER_CHANNEL) {
-            _ctx.getChatDirector().requestTell(channel.ident as Name, message, null);
+        if (_channel.type == ChatChannel.MEMBER_CHANNEL) {
+            _ctx.getChatDirector().requestTell(_channel.ident as Name, message, null);
 
         } else {
             var result :String =
@@ -158,20 +160,23 @@ public class ChannelChatTab extends ChatTab
         }
     }
 
+    public function displayMessage (msg :ChatMessage) :void
+    {
+        var overlay :ChatOverlay = _ctx.getTopPanel().getChatOverlay();
+        if (overlay == null) {
+            return;
+        }
+
+        if (overlay.getHistory() == _history) {
+            overlay.displayMessage(msg, false);
+        }
+    }
+
     protected function displayFeedback (message :String) :void
     {
         var msg :SystemMessage = new SystemMessage(
             message, MsoyCodes.CHAT_MSGS, SystemMessage.FEEDBACK);
-        _ctx.getChatDirector().dispatchMessage(msg, channel.toLocalType());
-    }
-
-    protected function handleAddRemove (event :Event) :void
-    {
-        if (event.type == Event.ADDED_TO_STAGE) {
-            _overlay.setTarget(this, TopPanel.RIGHT_SIDEBAR_WIDTH);
-        } else {
-            _overlay.setTarget(null);
-        }
+        _ctx.getChatDirector().dispatchMessage(msg, _channel.toLocalType());
     }
 
     protected function handleDeparted (name :MemberName) :void
@@ -181,14 +186,13 @@ public class ChannelChatTab extends ChatTab
 
     protected function redispatchMissedMessages () :void
     {
-        var history :HistoryList = _overlay.getHistory();
         var recentMessageCount :int = _ccobj.recentMessages.length;
         var missedMessages :Array = new Array();
 
         // find the last chat message this client knows about
         var lastHistoryMessage :ChannelMessage = null;
-        for (var hc :int = history.size(), hi :int = hc - 1; hi >= 0; hi--) {
-            lastHistoryMessage = history.get(hi) as ChannelMessage;
+        for (var hc :int = _history.size(), hi :int = hc - 1; hi >= 0; hi--) {
+            lastHistoryMessage = _history.get(hi) as ChannelMessage;
             if (lastHistoryMessage != null) {
                 break;
             }
@@ -211,17 +215,19 @@ public class ChannelChatTab extends ChatTab
         // we have them all - redispatch on this channel
         while (missedMessages.length > 0) {
             var msg :ChannelMessage = missedMessages.pop() as ChannelMessage;
-            _ctx.getChatDirector().dispatchMessage(msg, channel.toLocalType());
+            _ctx.getChatDirector().dispatchMessage(msg, _channel.toLocalType());
         }
     }
 
-    /** Actually renders chat. */
-    protected var _overlay :ChatOverlay;
+    protected var _ctx :WorldContext;
 
     /** A reference to our chat channel object if we're a non-friend channel. */
     protected var _ccobj :ChatChannelObject;
 
     /** Queue of DepartureInfo objects, holding on to those recently departed. */
     protected var _departing :ExpiringSet;
+
+    protected var _channel :ChatChannel;
+    protected var _history :HistoryList;
 }
 }

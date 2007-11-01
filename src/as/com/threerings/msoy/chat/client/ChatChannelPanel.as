@@ -54,99 +54,6 @@ public class ChatChannelPanel extends VBox
         _tabnav.addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, tabRemoved);
     }
 
-    /**
-     * Locates the specified chat display, returning null if it is not open.
-     */
-    public function findChatDisplay (channel :ChatChannel) :ChatDisplay
-    {
-        var tab :ChannelChatTab = findChatTab(channel);
-        return (tab == null) ? null : tab.getOverlay();
-    }
-
-    /**
-     * Returns the chat display to use for the specified channel.
-     */
-    public function getChatDisplay (
-        channel :ChatChannel, history :HistoryList, select :Boolean) :ChatDisplay
-    {
-        var tab :ChannelChatTab = findChatTab(channel);
-
-        // create a new tab if we did not find one already in use
-        if (tab == null) {
-            tab = new ChannelChatTab(_ctx, channel);
-            tab.label = channel.ident.toString();
-            tab.getOverlay().setHistory(history);
-            tab.init((_ctx.getChatDirector() as MsoyChatDirector).getChannelObject(channel));
-            _tabnav.addChild(tab);
-        }
-
-        selectTab(tab, select);
-
-        return tab.getOverlay();
-    }
-
-    /**
-     * Iterates over chat tabs, returning the first one that passes the /predicate/ function.
-     * @param predicate Function of the form: <pre>function (tab :ChatTab) :Boolean</pre>
-     */
-    protected function findAnyTab (predicate :Function) :ChatTab
-    {
-        for (var ii :int = _tabnav.numChildren - 1; ii >= 0; ii--) {
-            var tab :ChatTab = _tabnav.getChildAt(ii) as ChatTab;
-            if (predicate(tab)) {
-                return tab;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Find the ChannelChatTab instance being used for the specified ChatChannel.
-     */
-    public function findChatTab (channel :ChatChannel) :ChannelChatTab
-    {
-        return findAnyTab(function (tab :ChatTab) :Boolean {
-                var channeltab :ChannelChatTab = tab as ChannelChatTab;
-                return (channeltab != null && channeltab.channel.equals(channel));
-            }) as ChannelChatTab;
-    }
-
-    /**
-     * Returns a named page display tab. If this named tab does not exist, it creates
-     * a new one, and fills its page with contents from the specified location.
-     */
-    public function displayPageTab (
-        tabName :String, pageUrl :String, select :Boolean = true) :PageDisplayTab
-    {
-        // find the tab
-        var tab :PageDisplayTab = findAnyTab(function (tab :ChatTab) :Boolean {
-                var pagetab :PageDisplayTab = tab as PageDisplayTab;
-                return (pagetab != null && pagetab.tabName == tabName);
-            }) as PageDisplayTab;
-
-        // the display doesn't exist - let's create one
-        if (tab == null) {
-            tab = new PageDisplayTab(_ctx, tabName);
-            tab.label = tabName;
-            tab.init();
-            _tabnav.addChild(tab);
-        }
-
-        // start loading the page
-        CommandEvent.dispatch(tab, PageDisplayController.HELP_PAGE_DISPLAY_COMMAND, pageUrl);
-
-        // try to guess a css url from the page url, and maybe start loading it
-        var segments :Array = pageUrl.split(/(.+)\.html$/);
-        if (segments.length == 3) {
-            var cssUrl :String = String(segments[1] + ".css");
-            CommandEvent.dispatch(tab, PageDisplayController.HELP_PAGE_SET_STYLE_COMMAND, cssUrl);
-        }
-
-        selectTab(tab, select);
-
-        return tab;
-    }
-
     public function displayGameChat (chatDtr :ChatDirector, playerList :UIComponent) :void
     {
         _gtab = new GameChatTab(_ctx, chatDtr, playerList);
@@ -207,14 +114,6 @@ public class ChatChannelPanel extends VBox
             if (_tabnav.numChildren == 1) {
                 _ctx.getTopPanel().clearRightPanel(this);
             }
-        }
-        if (event.relatedObject is ChannelChatTab) {
-            (event.relatedObject as ChannelChatTab).shutdown();
-            var channel :ChatChannel = (event.relatedObject as ChannelChatTab).channel;
-            (_ctx.getChatDirector() as MsoyChatDirector).closeChannel(channel);
-        }
-        if (event.relatedObject is PageDisplayTab) {
-            (event.relatedObject as PageDisplayTab).shutdown();
         }
     }
 

@@ -27,6 +27,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.parlor.game.data.GameObject;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
+import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 
 import com.threerings.msoy.game.client.FloatingTableDisplay;
@@ -54,11 +55,11 @@ public class TopPanel extends Canvas
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
-        var chatTabs :ChatTabBar = new ChatTabBar();
+        var chatTabs :ChatTabBar = new ChatTabBar(_ctx);
         (_ctx.getChatDirector() as MsoyChatDirector).setChatTabs(chatTabs);
 
         if (!_ctx.getWorldClient().isFeaturedPlaceView()) {
-            _headerBar = new HeaderBar(ctx, chatTabs);
+            _headerBar = new HeaderBar(_ctx, chatTabs);
             _headerBar.includeInLayout = false;
             _headerBar.setStyle("top", 0);
             _headerBar.setStyle("left", 0);
@@ -184,6 +185,15 @@ public class TopPanel extends Canvas
     public function getPlaceView () :PlaceView
     {
         return _placeBox.getPlaceView();
+    }
+
+    /**
+     * Returns the chat overlay that is in use, or null if there is none.
+     */
+    public function getChatOverlay () :ChatOverlay
+    {
+        var view :PlaceView = _placeBox.getPlaceView();
+        return view is RoomView ? (view as RoomView).chatOverlay : null;
     }
 
     /**
