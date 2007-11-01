@@ -34,6 +34,8 @@ import com.threerings.parlor.client.GameReadyObserver;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.ui.MsoyMediaContainer;
 
@@ -155,69 +157,91 @@ public class GameLiaison
     // from interface MessageListener
     public function messageReceived (event :MessageEvent) :void
     {
-        if (event.getName() == MsoyGameCodes.TROPHY_AWARDED) {
-            _pendingTrophies.push(event.getArgs()[0]);
-            checkPendingTrophies();
+        if (event.getName() == MsoyGameCodes.TROPHY_AWARDED ||
+            event.getName() == MsoyGameCodes.PRIZE_AWARDED) {
+            _pendingAwards.push(event.getArgs()[0]);
+            checkPendingAwards();
         }
     }
 
-    protected function checkPendingTrophies () :void
+    protected function checkPendingAwards () :void
     {
         // if we haven't yet loaded our trophy panel, do that
-        if (_trophyPanel == null) {
-            _trophyPanel = TROPHY_LOADING;
+        if (_awardPanel == null) {
+            _awardPanel = AWARD_LOADING;
             var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
             loader.addEventListener(Event.COMPLETE, function (levent :Event) :void {
-                _trophyPanel = (loader.getContent() as DisplayObjectContainer);
-                // adjust the position of this clip as Rick put it somewhere funny
-                var clip :MovieClip = (_trophyPanel.getChildByName("trophy") as MovieClip);
-                clip.x -= TrophySource.TROPHY_WIDTH/2;
-                clip.y -= TrophySource.TROPHY_HEIGHT/2;
-                checkPendingTrophies();
+                _awardPanel = (loader.getContent() as DisplayObjectContainer);
+                checkPendingAwards();
             });
-            loader.load(ByteArray(new TROPHY_PANEL()));
+            loader.load(ByteArray(new AWARD_PANEL()));
 
-        } else if (_trophyPanel == TROPHY_LOADING || _trophyPanel.stage != null ||
-                   _pendingTrophies.length == 0) {
-            // we're loading the trophy panel or it's being used or we're done
+        } else if (_awardPanel == AWARD_LOADING || _awardPanel.stage != null ||
+                   _pendingAwards.length == 0) {
+            // we're loading the award panel or it's being used or we're done
 
         } else {
-            // otherwise pop the next trophy from the list and display it
-            displayTrophy(_pendingTrophies.pop() as Trophy);
+            // otherwise pop the next award from the list and display it
+            displayAward(_pendingAwards.pop());
         }
     }
 
-    protected function displayTrophy (trophy :Trophy) :void
+    protected function displayAward (award :Object) :void
     {
-        _gctx.getChatDirector().displayFeedback(
-            MsoyCodes.GAME_MSGS, MessageBundle.tcompose("m.trophy_earned", trophy.name));
+        var feedback :String, name :String, title :String;
+        var media :MediaDesc;
+        if (award is Trophy) {
+            var trophy :Trophy = (award as Trophy);
+            feedback = MessageBundle.tcompose("m.trophy_earned", trophy.name);
+            name = trophy.name;
+            title = "m.trophy_title";
+            media = trophy.trophyMedia;
 
-        // configure the trophy display panel with this trophy's info
-        (_trophyPanel.getChildByName("statement") as TextField).text =
-            _ctx.xlate(MsoyCodes.GAME_MSGS, "m.trophy_title");
-        (_trophyPanel.getChildByName("trophy_name") as TextField).text = trophy.name;
-        var clip :MovieClip = (_trophyPanel.getChildByName("trophy") as MovieClip);
+        } else if (award is Item) {
+            var item :Item = (award as Item);
+            feedback = MessageBundle.tcompose("m.prize_earned", item.name);
+            name = item.name;
+            title = "m.prize_title";
+            media = item.getThumbnailMedia();
+
+        } else {
+            log.warning("Requested to display unknown award " + award + ".");
+            checkPendingAwards();
+            return;
+        }
+
+        // display a chat message reporting their award
+        _gctx.getChatDirector().displayFeedback(MsoyCodes.GAME_MSGS, feedback);
+
+        // configure the award display panel with the award info
+        (_awardPanel.getChildByName("statement") as TextField).text =
+            _ctx.xlate(MsoyCodes.GAME_MSGS, title);
+        (_awardPanel.getChildByName("trophy_name") as TextField).text = name;
+        var clip :MovieClip = (_awardPanel.getChildByName("trophy") as MovieClip);
         while (clip.numChildren > 0) { // remove any old trophy image or the sample
             clip.removeChildAt(0);
         }
-        var image :MsoyMediaContainer = new MsoyMediaContainer(trophy.trophyMedia);
+        var image :MsoyMediaContainer = new MsoyMediaContainer(media);
         clip.addChild(image);
 
-        // wait for the trophy image to load
+        // wait for the award image to load
         var linfo :LoaderInfo = (image.getMedia() as Loader).contentLoaderInfo;
         linfo.addEventListener(Event.COMPLETE, function (event :Event) :void {
-            // then slide the trophy panel onto the screen, pause for a sec, then back off
+            // center the award image
+            image.x -= image.getContentWidth()/2;
+            image.y -= image.getContentHeight()/2;
+            // then slide the award panel onto the screen, pause for a sec, then back off
             var container :Container = _ctx.getTopPanel().getPlaceContainer();
             var path :Path = Path.connect(
-                Path.move(_trophyPanel, 250, -_trophyPanel.height, 250, 0, 500),
+                Path.move(_awardPanel, 250, -_awardPanel.height, 250, 0, 500),
                 Path.delay(3000), // TODO: play a sound when this path starts
-                Path.move(_trophyPanel, 250, 0, 250, -_trophyPanel.height, 500));
+                Path.move(_awardPanel, 250, 0, 250, -_awardPanel.height, 500));
             path.setOnComplete(function (path :Path) :void {
-                container.rawChildren.removeChild(_trophyPanel);
-                checkPendingTrophies();
+                container.rawChildren.removeChild(_awardPanel);
+                checkPendingAwards();
             });
             path.start();
-            container.rawChildren.addChild(_trophyPanel);
+            container.rawChildren.addChild(_awardPanel);
         });
     }
 
@@ -230,17 +254,17 @@ public class GameLiaison
     /** The id of the game with which we're dealing. */
     protected var _gameId :int;
 
-    /** The trophy display movie. */
-    protected var _trophyPanel :DisplayObjectContainer;
+    /** The award display movie. */
+    protected var _awardPanel :DisplayObjectContainer;
 
-    /** Trophies waiting to be displayed. */
-    protected var _pendingTrophies :Array = [];
+    /** Awards waiting to be displayed. Either Trophy or Item. */
+    protected var _pendingAwards :Array = [];
 
-    /** Used to note that we're loading the trophy display SWF. */
-    protected const TROPHY_LOADING :Sprite = new Sprite();
+    /** Used to note that we're loading the award display SWF. */
+    protected const AWARD_LOADING :Sprite = new Sprite();
 
-    [Embed(source="../../../../../../../rsrc/media/trophy_panel.swf",
+    [Embed(source="../../../../../../../rsrc/media/award_panel.swf",
            mimeType="application/octet-stream")]
-    protected static const TROPHY_PANEL :Class;
+    protected static const AWARD_PANEL :Class;
 }
 }
