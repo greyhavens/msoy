@@ -158,6 +158,9 @@ public class MsoyController extends Controller
     /** Command to issue an invite to a current guest. */
     public static const INVITE_GUEST :String = "InviteGuest";
 
+    /** Command to issue to toggle the chat display. */
+    public static const TOGGLE_CHAT :String = "ToggleChat";
+
     // the layer priority of the AVRG panel
     public static const LAYER_AVRG_PANEL :int = 500;
 
@@ -195,6 +198,10 @@ public class MsoyController extends Controller
      */
     public function handlePopChannelMenu (trigger :Button) :void
     {
+        var toggleHideLabel :String = Prefs.getShowingChatHistory() ?
+            Msgs.GENERAL.get("m.hide_chat") : Msgs.GENERAL.get("m.show_chat");
+        var toggleHide :Object = { label: toggleHideLabel, command: TOGGLE_CHAT };
+
         var me :MemberObject = _ctx.getMemberObject();
         var friends :Array = new Array();
         for each (var fe :FriendEntry in me.getSortedEstablishedFriends()) {
@@ -222,6 +229,8 @@ public class MsoyController extends Controller
         }
 
         var menuData :Array = [];
+        menuData.push(toggleHide);
+        menuData.push({ type: "separator" });
         menuData = menuData.concat(friends);
         menuData.push({ type: "separator" });
         menuData = menuData.concat(groups);
@@ -625,6 +634,14 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Handle the TOGGLE_CHAT command.
+     */
+    public function handleToggleChat () :void
+    {
+        Prefs.setShowingChatHistory(!Prefs.getShowingChatHistory());
+    }
+
+    /**
      * Figure out where we should be going, and go there.
      */
     public function goToPlace (params :Object) :void
@@ -981,7 +998,7 @@ public class MsoyController extends Controller
         switch (event.keyCode) {
         // TODO: not F7
         case Keyboard.F7:
-            Prefs.setShowingChatHistory(!Prefs.getShowingChatHistory());
+            handleToggleChat();
             break;
         }
 

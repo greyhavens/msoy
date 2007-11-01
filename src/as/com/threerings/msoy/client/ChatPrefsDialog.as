@@ -48,12 +48,6 @@ public class ChatPrefsDialog extends FloatingPanel
 
         GridUtil.addRow(grid, Msgs.PREFS.get("l.chat_size"), createFontSizeControl());
 
-        _history = new CheckBox();
-        _history.label = "(shortcut: F7)"; // TODO
-        _history.selected = Prefs.getShowingChatHistory();
-        BindingUtils.bindSetter(Prefs.setShowingChatHistory, _history, "selected");
-        GridUtil.addRow(grid, Msgs.PREFS.get("l.chat_history"), _history);
-
         var decay :ComboBox = new ComboBox();
         var choices :Array = [];
         for (ii = 0; ii < 3; ii++) {
