@@ -265,10 +265,19 @@ public class WhirledGameDelegate extends RatingManagerDelegate
 
         // convert the players into record indexed on player oid which will weed out duplicates and
         // avoid funny business
+        boolean haveNonZeroScore = false;
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < playerOids.length; ii++) {
             int availFlow = getAwardableFlow(now, playerOids[ii]);
             players.put(playerOids[ii], new Player(playerOids[ii], scores[ii], availFlow));
+            haveNonZeroScore = haveNonZeroScore || (scores[ii] > 0);
+        }
+
+        // if we have no non-zero scores then end the game without awarding flow or updating
+        // ratings or percentilers
+        if (!haveNonZeroScore) {
+            _gmgr.endGame();
+            return;
         }
 
         // record the scores of all players in the game
