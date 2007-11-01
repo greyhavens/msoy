@@ -52,20 +52,6 @@ public class ChatChannelPanel extends VBox
         _tabnav.percentWidth = 100;
         _tabnav.percentHeight = 100;
         _tabnav.addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, tabRemoved);
-
-        // create a UI for sending chat which we'll show when we're active
-        // TODO: we shouldn't be rolling our own ChatControl here, but this'll go away anyway
-        // once we only have one ChatInput in the entire client.
-        _inputBox = new HBox();
-        _inputBox.styleName = "chatControl";
-        _inputBox.addChild(_input = new ChatInput());
-        _input.height = ControlBar.HEIGHT-4;
-        _input.addEventListener(FlexEvent.ENTER, sendChat, false, 0, true);
-        var send :CommandButton = new CommandButton();
-        send.label = Msgs.CHAT.get("b.send");
-        send.setCallback(sendChat);
-        send.height = ControlBar.HEIGHT-4;
-        _inputBox.addChild(send);
     }
 
     /**
@@ -240,7 +226,6 @@ public class ChatChannelPanel extends VBox
         // if we're not visible, add ourselves
         if (parent == null) {
             _ctx.getTopPanel().setRightPanel(this);
-            _ctx.getTopPanel().getControlBar().setChannelChatInput(_inputBox);
         }
     }
 
@@ -249,7 +234,6 @@ public class ChatChannelPanel extends VBox
         if (event.relatedObject is ChatTab) {
             if (_tabnav.numChildren == 1) {
                 _ctx.getTopPanel().clearRightPanel(this);
-                _ctx.getTopPanel().getControlBar().setChannelChatInput(null);
             }
         }
         if (event.relatedObject is ChannelChatTab) {
@@ -262,29 +246,7 @@ public class ChatChannelPanel extends VBox
         }
     }
 
-    /**
-     * Called when the user presses enter in the chat input field or clicks the "Send" button.
-     */
-    protected function sendChat (... ignored) :void
-    {
-        var message :String = StringUtil.trim(_input.text);
-        if ("" == message) {
-            return;
-        }
-
-        var tab :ChatTab = (_tabnav.getChildAt(_tabnav.selectedIndex) as ChatTab);
-        if (tab != null) {
-            tab.sendChat(message);
-            _input.text = "";
-        } else {
-            Log.getLog(this).warning("Missing selected chat tab?! Dropping '" + message + "'.");
-        }
-    }
-
     protected var _ctx :WorldContext;
-
-    protected var _inputBox :HBox;
-    protected var _input :ChatInput;
 
     protected var _tabnav :SuperTabNavigator;
     protected var _wtab :WorldChatTab;

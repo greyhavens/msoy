@@ -89,6 +89,12 @@ public class HeaderBar extends HBox
     {
         super.createChildren();
 
+        var channelBtn :CommandButton = new CommandButton();
+        channelBtn.setCommand(MsoyController.POP_CHANNEL_MENU, channelBtn);
+        channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
+        channelBtn.styleName = "headerBarButtonChannel";
+        addChild(channelBtn);
+
         _tabs = new HeaderChatTabBar();
         addChild(_tabs);
 

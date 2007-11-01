@@ -225,7 +225,7 @@ public class MsoyController extends Controller
         menuData = menuData.concat(friends);
         menuData.push({ type: "separator" });
         menuData = menuData.concat(groups);
-        CommandMenu.createMenu(menuData).popUp(trigger, true, true);
+        CommandMenu.createMenu(menuData).popUp(trigger);
     }
 
     /**

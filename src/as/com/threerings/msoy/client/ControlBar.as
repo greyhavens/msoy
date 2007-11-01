@@ -138,22 +138,6 @@ public class ControlBar extends HBox
         _notifyBtn.selected = showing;
     }
 
-    /**
-     * Called by the ChannelChatPanel when it needs to stuff a chat input field into the control
-     * bar while it's open. Setting it to null removes it.
-     */
-    public function setChannelChatInput (input :Container) :void
-    {
-        if (_channelInput != null) {
-            removeChild(_channelInput);
-            _channelInput = null;
-        }
-        if (input != null) {
-            _channelInput = input;
-            recheckChannelChatInput();
-        }
-    }
-
     public function setTabMode (tabbed :Boolean) :void
     {
         _isMinimized = tabbed;
@@ -208,7 +192,6 @@ public class ControlBar extends HBox
 
         _chatControl = null;
         _avatarBtn = null;
-        _channelBtn = null;
 
         _chatControl = new ChatControl(_ctx, Msgs.CHAT.get("b.send"), this.height - 4);
         addGroupChild(_chatControl, [ UI_STD, UI_EDIT, UI_GUEST ]);
@@ -298,19 +281,12 @@ public class ControlBar extends HBox
         _backBtn.enabled = false;
         addGroupChild(_backBtn, [ UI_STD, UI_MINI, UI_GUEST ]);
 
-        _channelBtn = new CommandButton();
-        _channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
-        _channelBtn.setCommand(MsoyController.POP_CHANNEL_MENU, _channelBtn);
-        _channelBtn.styleName = "controlBarButtonChannel";
-        addGroupChild(_channelBtn, [ UI_STD, UI_MINI, UI_GUEST ]);
-
         // and remember how things are set for now
         _isMember = isMember;
         _isMinimized = false;
         _isEditing = false;
 
         updateUI();
-        recheckChannelChatInput();
         recheckAvatarControl();
     }
 
@@ -383,23 +359,6 @@ public class ControlBar extends HBox
         }
     }
 
-    /** If the channel input box is defined, let's make sure it's displayed. */
-    protected function recheckChannelChatInput () :void
-    {
-        if (_channelInput != null && !contains(_channelInput)) {
-            var chidx :int = -1;
-            if (_channelBtn == null) {
-                chidx = numChildren;
-            } else {
-                // insert it to the left of the channel button
-                chidx = getChildIndex(_channelBtn);
-            }
-            if (chidx >= 0) {
-                addChildAt(_channelInput, chidx);
-            }
-        }
-    }
-
     /**
      * Changes the visibility and parameters of the navigation widgets.
      *
@@ -466,9 +425,6 @@ public class ControlBar extends HBox
     /** Object that contains all the different groups of UI elements. */
     protected var _groups :Object = new Object();
 
-    /** A list of children that can be hidden when we are minimized. */
-    //protected var _hiders :Array = new Array();
-
     /** Our chat control. */
     protected var _chatControl :ChatControl;
 
@@ -490,12 +446,6 @@ public class ControlBar extends HBox
     /** Displays notification status. */
     protected var _notifyBtn :CommandButton;
 
-    /** Button for selecting/creating chat channels. */
-    protected var _channelBtn :CommandButton;
-
-    /** Our channel chat input. */
-    protected var _channelInput :Container;
-
     /** Notifies us of changes to the userControlsAvatar property. */
     protected var _avatarControlWatcher :ChangeWatcher;
 
@@ -516,7 +466,7 @@ import mx.core.IFlexDisplayObject;
 import mx.core.ScrollPolicy;
 import mx.core.UITextField;
 
-/** Internal: helper function that extends ms.control.Image functionality with automatic image
+/** Internal: helper function that extends mx.control.Image functionality with automatic image
  * loading from the style sheet (e.g. via an external style sheet file). */
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 internal class SkinnableImage extends Image
@@ -552,7 +502,7 @@ internal class SkinnableImage extends Image
     protected var _skin : DisplayObject;
 }
 
-/** Internal: helper class that extends ms.containers.Canvas
+/** Internal: helper class that extends mx.containers.Canvas
     with automatic background loading from the style sheet (e.g. via an
     external style sheet file). */
 internal class CanvasWithText extends Canvas

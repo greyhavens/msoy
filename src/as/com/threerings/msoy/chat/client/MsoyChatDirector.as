@@ -59,27 +59,6 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     /**
-     * Makes the specified chat overlay the current target for room chat. Any previous target will
-     * no longer receive chat until {@link #popRoomChatOverlay} is called to remove this overlay
-     * from the top of the stack.
-     */
-    public function pushRoomChatOverlay (target :ChatOverlay) :void
-    {
-        _roomTargets.unshift(target);
-    }
-
-    /**
-     * Removes the specified room chat overlay from the list.
-     */
-    public function popRoomChatOverlay (target :ChatOverlay) :void
-    {
-        var idx :int = _roomTargets.indexOf(target);
-        if (idx != -1) {
-            _roomTargets.splice(idx, 1);
-        }
-    }
-
-    /**
      * Return true if we've already got a chat channel open with the specified Name.
      */
     public function hasOpenChannel (name :Name) :Boolean
@@ -360,7 +339,6 @@ public class MsoyChatDirector extends ChatDirector
     /** Contains a mapping from chat localtype to channel handler. */
     protected var _chandlers :HashMap = new HashMap();
 
-    protected var _roomTargets :Array = new Array();
     protected var _roomHistory :HistoryList = new HistoryList();
     protected var _histories :HashMap = new HashMap();
 }
