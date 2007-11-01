@@ -127,18 +127,11 @@ public class ChatPrefsDialog extends FloatingPanel
     protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
     {
         switch (event.name) {
-        case Prefs.CHAT_HISTORY:
-            _history.selected = Boolean(event.value);
-            break;
-
         case Prefs.CHAT_FONT_SIZE:
             _fontTest.reloadFont();
             break;
         }
     }
-
-    /** The chat history checkbox. */
-    protected var _history :CheckBox;
 
     /** A place where the currently configured chat font is tested. */
     protected var _fontTest :FontTestArea;
