@@ -236,6 +236,11 @@ public class MsoyServer extends MsoyBaseServer
         com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
         OneLineLogFormatter.configureDefaultHandler();
 
+        // if we're on the dev server, up our long invoker warning to 3 seconds
+        if (ServerConfig.config.getValue("auto_restart", false)) {
+            Invoker.setDefaultLongThreshold(3000L);
+        }
+
         MsoyServer server = new MsoyServer();
         try {
             server.init();
