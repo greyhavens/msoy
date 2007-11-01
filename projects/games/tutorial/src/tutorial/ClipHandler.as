@@ -21,7 +21,8 @@ public class ClipHandler
         scenes = new Object();
         for (var ii :int = 0; ii < clip.scenes.length; ii ++) {
             var scene :Scene = _clip.scenes[ii];
-            log.debug("Indexing scene: " + scene.name);
+            log.debug("Indexing [scene=" + scene.name + ", frames=" + scene.numFrames +
+                      ", labels=" + scene.labels + "]");
             scenes[scene.name] = scene;
         }
     }
@@ -31,7 +32,7 @@ public class ClipHandler
         disengage();
     }
 
-    public function gotoScene (sceneName :String, done :Function) :Boolean
+    public function gotoScene (sceneName :String, done :Function = null) :Boolean
     {
         _scene = scenes[sceneName];
         if (_scene) {

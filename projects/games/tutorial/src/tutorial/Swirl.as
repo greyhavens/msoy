@@ -15,6 +15,8 @@ import flash.utils.*;
 import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.flash.SimpleTextButton;
 
+import com.threerings.flash.path.*;
+
 public class Swirl extends Sprite
 {
     public function Swirl (view :View, swirlBytes :ByteArray, done :Function)
@@ -41,14 +43,19 @@ public class Swirl extends Sprite
         }
     }
 
+    protected static const SMALL_SWIRL_LOC :Point = new Point(75, 75);
+    protected static const BIG_SWIRL_LOC :Point = new Point(200, 200);
+
     public function gotoState (state :int) :void
     {
         this.visible = true;
 
-        var first :String = null;
-        var then :String = null;
+        var transition :String = null;
 
-        this.x = this.y = 75;
+        var x :Number, y :Number;
+
+        x = SMALL_SWIRL_LOC.x;
+        y = SMALL_SWIRL_LOC.y;
 
         switch(state) {
         case View.SWIRL_INTRO:
@@ -56,39 +63,49 @@ public class Swirl extends Sprite
                 log.warning("Unexpected transtion [from=" + _swirlState + ", to=" +
                             state + "]");
             }
-            // TODO: later we'll do a fancy transtion here, for now just appear
-            this.x = 200;
-            this.y = 200;
+            x = BIG_SWIRL_LOC.x;
+            y = BIG_SWIRL_LOC.y;
 
-            then = SCN_APPEAR;
+            transition = SCN_BIG_APPEAR;
             break;
         case View.SWIRL_DEMURE:
-            if (_swirlState == View.SWIRL_INTRO) {
-                first = SCN_MINIMIZE;
+            if (_swirlState == View.SWIRL_NONE) {
+                transition = SCN_SMALL_APPEAR;
+
+            } else if (_swirlState == View.SWIRL_INTRO) {
+                transition = SCN_MINIMIZE;
+
+            } else {
+                transition = SCN_IDLE;
             }
-            then = SCN_IDLE;
             break;
         case View.SWIRL_BOUNCY:
-            if (_swirlState == View.SWIRL_DEMURE) {
-//                first = SCN_MAXIMIZE;
+            if (_swirlState == View.SWIRL_INTRO) {
+                log.warning("Unexpected transtion [from=" + _swirlState + ", to=" +
+                            state + "]");
             }
-            then = SCN_LOOKATME;
+            transition = SCN_LOOKATME;
             break;
         default:
             log.warning("Can't goto unknown swirl state [state=" + state + "]");
             return;
         }
 
-        // there is always a 'then' transition, so write code to handle it
-        var transition :Function = function () :void {
-            _swirlHandler.gotoScene(then, null);
-        };
+        _swirlHandler.gotoScene(transition);
 
-        // then execute that code either as a second-phase callback, or immediately
-        if (first) {
-            _swirlHandler.gotoScene(first, transition);
+        if (transition == SCN_MINIMIZE) {
+            var path :Path = new LinePath(
+                this, new HermiteFunc(BIG_SWIRL_LOC.x, SMALL_SWIRL_LOC.x),
+                new HermiteFunc(BIG_SWIRL_LOC.y, SMALL_SWIRL_LOC.y), 400);
+            path.setOnComplete(function (path :Path) :void {
+                if (_swirlState == View.SWIRL_DEMURE) {
+                    _swirlHandler.gotoScene(SCN_IDLE);
+                }
+            });
+            path.start();
         } else {
-            transition();
+            this.x = x;
+            this.y = y;
         }
 
         _swirlState = state;
@@ -123,7 +140,8 @@ public class Swirl extends Sprite
 
     protected static const log :Log = Log.getLog(Swirl);
 
-    protected static const SCN_APPEAR :String = "appear_text";
+    protected static const SCN_BIG_APPEAR :String = "appear_text";
+    protected static const SCN_SMALL_APPEAR :String = "appear_no_text";
     protected static const SCN_MINIMIZE :String = "minimize";
     protected static const SCN_IDLE :String = "idle";
     protected static const SCN_LOOKATME :String = "lookatme";
