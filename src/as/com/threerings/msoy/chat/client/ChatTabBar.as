@@ -6,6 +6,7 @@ package com.threerings.msoy.chat.client {
 import flash.display.DisplayObject;
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 
 import mx.events.ItemClickEvent;
 
@@ -43,6 +44,9 @@ public class ChatTabBar extends SuperTabBar
 
         // listen for preferences changes, update history mode
         Prefs.config.addEventListener(ConfigValueSetEvent.TYPE, handlePrefsUpdated, false, 0, true);
+
+        // hackery to accept a click on the tabs, even when we do our no-tab-is-selected business
+        addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
     }
 
     public function getLocationName () :String
@@ -62,7 +66,6 @@ public class ChatTabBar extends SuperTabBar
             _tabs.setItemAt(tab, 0);
         }
         selectedIndex = 0;
-        tabSelected();
     }
 
     public function displayChat (channel :ChatChannel, history :HistoryList = null) :void
@@ -70,7 +73,6 @@ public class ChatTabBar extends SuperTabBar
         var index :int = getControllerIndex(channel);
         if (index != -1) {
             selectedIndex = index;
-            tabSelected();
             return;
         }
 
@@ -129,6 +131,10 @@ public class ChatTabBar extends SuperTabBar
     {
         super.selectedIndex = ii;
         _selectedIndex = ii;
+        // when a tab is actually clicked on, one of our parent's _selectedIndex's is changed in the
+        // background, without calling this setter, so this won't actually make tabSelected get 
+        // called twice.
+        tabSelected();
     }
 
     // yay for this not actually being private like they labeled it in the docs.
@@ -145,7 +151,14 @@ public class ChatTabBar extends SuperTabBar
 
         // default back to room chat when a tab is closed
         selectedIndex = 0;
-        tabSelected();
+    }
+
+    protected function onMouseDown (event :MouseEvent) :void
+    {
+        // any click on the tab bar should ensure that the chat history is showing
+        if (!Prefs.getShowingChatHistory()) {
+            Prefs.setShowingChatHistory(true);
+        }
     }
 
     protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
@@ -153,18 +166,22 @@ public class ChatTabBar extends SuperTabBar
         switch (event.name) {
         case Prefs.CHAT_HISTORY:
             if (Boolean(event.value)) {
-                if (_selectedIndex == -1) {
-                    selectedIndex = _unhideIndex;
+                if (_unhideIndex >= 0 && _unhideIndex < numChildren) {
+                    if (_selectedIndex == -1) {
+                        selectedIndex = _unhideIndex;
+                    }
                     var tab :SuperTab = getChildAt(_unhideIndex) as SuperTab;
-                    setStyle("selectedTabTextStyleName", "selectedMsoyTabButton");
                     tab.styleName = "msoyTabButton";
                     _unhideIndex = -1;
-                    tabSelected();
                 }
+                setStyle("selectedTabTextStyleName", "selectedMsoyTabButton");
             } else {
                 _unhideIndex = _selectedIndex;
-                deselectSelected(); // also sets selectedIndex to -1
-                tabSelected();
+                // hackery to get the tab to look like it was unselected
+                selectedIndex = -1;
+                setStyle("selectedTabTextStyleName", "");
+                tab = getChildAt(_unhideIndex) as SuperTab;
+                tab.styleName = "msoyForcedUpTab";
             }
         }
     }
@@ -174,7 +191,6 @@ public class ChatTabBar extends SuperTabBar
         var controller :ChatChannelController = new ChatChannelController(_ctx, channel, history);
         _tabs.addItem({ label: channel.ident, controller: controller });
         selectedIndex = _tabs.length - 1;
-        tabSelected();
         controller.init((_ctx.getChatDirector() as MsoyChatDirector).getChannelObject(channel));
     }
 
@@ -208,8 +224,8 @@ public class ChatTabBar extends SuperTabBar
 
         // if our _selectedIndex is -1, we've just hidden the history, so no change to the display.
         if (_selectedIndex != -1) {
-            if (_unhideIndex != -1) {
-                // if we clicked on a tab without showing the history first, re-enable it as well.
+            // make sure our chat history is visible before we notify the overlay.
+            if (!Prefs.getShowingChatHistory()) {
                 Prefs.setShowingChatHistory(true);
             }
 
@@ -227,19 +243,6 @@ public class ChatTabBar extends SuperTabBar
         } else {
             // if the history is hidden, make sure chat goes to the room.
             _currentController = null;
-        }
-    }
-
-    protected function deselectSelected () :void
-    {
-        // I think you should be able to set the selectedIndex to -1 to disable all tabs, but 
-        // adobe disagrees...
-        if (_selectedIndex >= 0) {
-            var ii :int = _selectedIndex;
-            selectedIndex = -1;
-            setStyle("selectedTabTextStyleName", "");
-            var tab :SuperTab = getChildAt(ii) as SuperTab;
-            tab.styleName = "msoyForcedUpTab";
         }
     }
 
