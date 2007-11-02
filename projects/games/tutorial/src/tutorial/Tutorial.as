@@ -71,13 +71,7 @@ public class Tutorial extends Sprite
             _view.displayNothing();
 
         } else if (testCompletedStep(step)) {
-            _view.gotoSwirlState(View.SWIRL_DEMURE);
-            _view.displayMessage(
-                "Onward", "<p class='message'>" + quest.outro + "</p>",
-                function () :void {
-                    _view.displayNothing();
-                    _control.quests.completeQuest(quest.questId, null, quest.payout);
-            });
+            initialize();
 
         } else if (_activeQuest) {
             _view.displaySummary(quest.summary);
@@ -212,8 +206,11 @@ public class Tutorial extends Sprite
             if (tuple[0] == quest.questId) {
                 _activeQuest = quest.questId;
                 if (testCompletedStep(step)) {
-                    _view.gotoSwirlState(View.SWIRL_BOUNCY);
-                    _view.displayNothing();
+                    _view.displayMessage(
+                        "Onward", "<p class='message'>" + quest.outro + "</p>", function () :void {
+                            _view.displayNothing();
+                            _control.quests.completeQuest(quest.questId, null, quest.payout);
+                        });
                 } else {
                     _view.gotoSwirlState(View.SWIRL_DEMURE);
                 }
