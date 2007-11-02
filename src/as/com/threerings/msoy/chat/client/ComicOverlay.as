@@ -135,7 +135,6 @@ public class ComicOverlay extends ChatOverlay
         if (ChatCodes.PLACE_CHAT_TYPE == localtype || ChatCodes.USER_CHAT_TYPE == localtype) {
             return true;
         }
-        log.debug("Ignoring non-standard system/feedback chat [localtype=" + localtype + "].");
         return false;
     }
 
