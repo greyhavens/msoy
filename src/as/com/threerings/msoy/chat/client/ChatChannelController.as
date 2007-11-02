@@ -3,12 +3,6 @@
 
 package com.threerings.msoy.chat.client {
 
-import flash.events.Event;
-import flash.events.TimerEvent;    
-import flash.utils.Timer;
-import flash.utils.getTimer; // function import
-
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.Util;
@@ -24,8 +18,6 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.SystemMessage;
 
-import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.data.MemberObject;
