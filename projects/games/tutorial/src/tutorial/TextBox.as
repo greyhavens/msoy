@@ -183,7 +183,7 @@ public class TextBox extends Sprite
 
         // so we can measure it
         _boxWidth = _boxClip.width;
-        _boxHeight = _boxClip.height;
+        _boxHeight = _boxClip.height - Content.BOX_HAT;
 
         _backdrop = new Sprite();
         _backdrop.addChild(_boxClip);
@@ -218,7 +218,7 @@ public class TextBox extends Sprite
 
     protected function figureHeight () :Number
     {
-        return _textField.height + _buttons.height + Content.BOX_HAT + 2*Content.BOX_PADDING;
+        return _textField.height + _buttons.height + 2*Content.BOX_PADDING;
     }
 
     protected function scaleBackdrop (x :Number, y :Number) :void
