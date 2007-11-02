@@ -6,11 +6,13 @@ package client.shell;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -19,6 +21,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
+import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -97,7 +100,7 @@ public class NaviPanel extends FlexTable
                         CShell.usersvc.getAccountInfo(CShell.ident, new AsyncCallback() {
                             public void onSuccess (Object result) {
                                 new EditAccountDialog((AccountInfo) result).show();
-                                _popped.hide();
+                                clearPopup();
                             }
                             public void onFailure (Throwable cause) {
                                 MsoyUI.error(CShell.serverError(cause));
@@ -108,7 +111,7 @@ public class NaviPanel extends FlexTable
                 menu.addItem("Logoff", true, new Command() {
                     public void execute () {
                         _status.logoff();
-                        _popped.hide();
+                        clearPopup();
                     }
                 });
             }
@@ -155,7 +158,7 @@ public class NaviPanel extends FlexTable
                 fmenu.addItem("Find People", true, new Command() {
                     public void execute () {
                         Application.go(Page.PROFILE, "search");
-                        _popped.hide();
+                        clearPopup();
                     }
                 });
                 createMenu(fmenu, _friends, new ItemCreator() {
@@ -172,7 +175,7 @@ public class NaviPanel extends FlexTable
                         CShell.membersvc.getInvitationsStatus(CShell.ident, new AsyncCallback() {
                             public void onSuccess (Object result) {
                                 new SendInvitesDialog((MemberInvites)result).show();
-                                _popped.hide();
+                                clearPopup();
                             }
                             public void onFailure (Throwable cause) {
                                 MsoyUI.error(CShell.serverError(cause));
@@ -305,40 +308,78 @@ public class NaviPanel extends FlexTable
         menu.addItem(text, false, new Command() {
             public void execute () {
                 Application.go(page, args);
-                _popped.hide();
+                clearPopup();
             }
         });
     }
 
-    protected abstract class MenuPopper implements ClickListener
+    protected void clearPopup ()
     {
-        public void onClick (Widget sender)
+        if (_popped != null) {
+            _popped.hide();
+            _popped = null;
+        }
+    }
+
+    protected abstract class MenuPopper implements ClickListener, PopupListener
+    {
+        public void showMenu (Widget sender)
         {
-            if (_popped != null && _popped.isAttached()) {
-                _popped.hide();
-            }
+            clearPopup();
+            _popped = this;
+
             MenuBar menu = new MenuBar(true);
             menu.setAutoOpen(true);
             populateMenu(sender, menu);
-            _popped = new PopupPanel(true);
-            _popped.add(menu);
-            _popped.setPopupPosition(sender.getAbsoluteLeft(), getMenuY(sender));
-            _popped.show();
+            _panel = new PopupPanel(true);
+            _panel.add(menu);
+            _panel.addPopupListener(this);
+            _panel.setPopupPosition(sender.getAbsoluteLeft(),
+                                    sender.getAbsoluteTop() + sender.getOffsetHeight());
+            _panel.show();
         }
 
-        protected int getMenuY (Widget from)
+        public void hide ()
         {
-            Widget box = from.getParent();
-            return box.getAbsoluteTop() + box.getOffsetHeight();
+            if (_panel != null) {
+                _panel.hide();
+                _panel = null;
+            }
+        }
+
+        // from interface ClickListener
+        public void onClick (Widget sender)
+        {
+            // because popups are closed on MOUSEDOWN and opened on MOUSEUP, it's possible for the
+            // MOUSEDOWN event to come through and clear out the current popup and any number of
+            // events to get through before the MOUSEUP that triggers the reopening of this same
+            // popup; so instead we treat any onClick() within 500ms of our last close as being a
+            // second click on the same menu which we want to close the menu rather than reopen it
+            if (_popped == this && new Date().getTime() < _nextOpenStamp) {
+                clearPopup();
+            } else {
+                showMenu(sender);
+            }
+        }
+
+        // from interface PopupListener
+        public void onPopupClosed (PopupPanel sender, boolean autoClosed)
+        {
+            if (autoClosed) {
+                _nextOpenStamp = new Date().getTime() + REOPEN_HYSTERESIS;
+            }
         }
 
         protected abstract void populateMenu (Widget sender, MenuBar menu);
+
+        protected PopupPanel _panel;
+        protected long _nextOpenStamp;
     }
 
-    protected static class NaviButton extends Label
+    protected class NaviButton extends Label
     {
         public NaviButton (String text, AbstractImagePrototype upImage,
-                           AbstractImagePrototype overImage, ClickListener listener)
+                           AbstractImagePrototype overImage, final ClickListener listener)
         {
             setStyleName("Button");
 
@@ -348,6 +389,11 @@ public class NaviPanel extends FlexTable
             addMouseListener(new MouseListenerAdapter() {
                 public void onMouseEnter (Widget sender) {
                     setBackgroundImage(_overImage);
+                    // if any menu is already open, open this menu since the user has moved the
+                    // mouse over it and they are in "menu open" mode; it's how phat menus roll
+                    if (_popped != null && listener instanceof MenuPopper) {
+                        ((MenuPopper)listener).showMenu(NaviButton.this);
+                    }
                 }
                 public void onMouseLeave (Widget sender) {
                     setBackgroundImage(_upImage);
@@ -391,8 +437,8 @@ public class NaviPanel extends FlexTable
     /** Our navigation menu images. */
     protected NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
 
-    /** The currently popped up menu, for easy closing. */
-    protected PopupPanel _popped;
+    /** The currently popped up menu, for easy closing and fiddling. */
+    protected MenuPopper _popped;
 
     /** Our friends. */
     protected ArrayList _friends = new ArrayList();
@@ -401,4 +447,5 @@ public class NaviPanel extends FlexTable
     protected ArrayList _scenes = new ArrayList(); // of SceneData
 
     protected static final int MENU_OVERFLOW = 20;
+    protected static final long REOPEN_HYSTERESIS = 500L;
 }
