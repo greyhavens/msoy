@@ -318,13 +318,20 @@ public class TopPanel extends Canvas
     /**
      * Clear the specified side panel, or null to clear any.
      */
-    public function clearRightPanel (side :UIComponent) :void
+    public function clearRightPanel (side :UIComponent = null) :void
     {
         if ((_rightPanel != null) && (side == null || side == _rightPanel)) {
-            removeChild(_rightPanel);
+            if (_rightPanel.parent == this) {
+                removeChild(_rightPanel);
+            }
             _rightPanel = null;
             layoutPanels();
         }
+    }
+
+    public function getRightPanel () :UIComponent
+    {
+        return _rightPanel;
     }
 
     /**
@@ -517,11 +524,10 @@ public class TopPanel extends Canvas
         }
 
         if (_rightPanel != null) {
-            _rightPanel.setStyle("top", 0);
+            _rightPanel.setStyle("top", HeaderBar.HEIGHT + DECORATIVE_MARGIN_HEIGHT);
             _rightPanel.setStyle("right", 0);
             _rightPanel.setStyle("bottom", getBottomPanelHeight() + ControlBar.HEIGHT +
                                  DECORATIVE_MARGIN_HEIGHT);
-            _headerBar.setStyle("right", _rightPanel.width);
 
             // if we have no place view currently and we have no left panel, stretch it all the 
             // way to the left.  Otherwise, let it be as wide as it wants to be.
@@ -530,9 +536,6 @@ public class TopPanel extends Canvas
             } else {
                 _rightPanel.setStyle("left", 0);
             }
-
-        } else {
-            _headerBar.setStyle("right", 0);
         }
 
         updatePlaceViewSize();

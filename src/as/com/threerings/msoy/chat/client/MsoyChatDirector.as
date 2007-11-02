@@ -48,8 +48,6 @@ public class MsoyChatDirector extends ChatDirector
         super(ctx, ctx.getMessageManager(), MsoyCodes.CHAT_MSGS);
         _wctx = ctx;
 
-        _ccpanel = new ChatChannelPanel(_wctx);
-
         // let the compiler know that these must be compiled into the client
         var c :Class = ChatChannelMarshaller;
         c = ChatterInfo;
@@ -132,14 +130,12 @@ public class MsoyChatDirector extends ChatDirector
         getHistory(channel).filterTransient();
     }
 
-    // TODO: do the new thing wrt game chat ////////////
-
     /**
      * Displays the game chat sidebar.
      */
     public function displayGameChat (chatDtr :ChatDirector, playerList :UIComponent) :void
     {
-        _ccpanel.displayGameChat(chatDtr, playerList);
+        _wctx.getTopPanel().setRightPanel(new GameChatContainer(_wctx, chatDtr, playerList));
     }
 
     /**
@@ -147,11 +143,12 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function clearGameChat () :void
     {
-        _ccpanel.clearGameChat();
+        var gameChat :GameChatContainer = _wctx.getTopPanel().getRightPanel() as GameChatContainer;
+        if (gameChat != null) {
+            gameChat.shutdown();
+            _wctx.getTopPanel().clearRightPanel();
+        }
     }
-
-    ////////////////////////////////////////////////////
-
 
     // from parent superclass BasicDirector
     override public function clientDidLogoff (event :ClientEvent) :void
@@ -318,7 +315,6 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     protected var _wctx :WorldContext;
-    protected var _ccpanel :ChatChannelPanel;
     protected var _chatTabs :ChatTabBar;
 
     /** Contains a mapping from chat localtype to channel handler. */

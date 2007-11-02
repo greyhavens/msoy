@@ -7,24 +7,23 @@ import flash.events.Event;
 
 import mx.core.UIComponent;
 
-import com.threerings.crowd.data.PlaceObject;
-
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.data.ChatCodes;
 
+import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
 
-/**
- * Displays chat during a game in the sidebar.
- */
-public class GameChatTab extends ChatTab
+public class GameChatContainer extends LayeredContainer
 {
-    public function GameChatTab (ctx :WorldContext, chatDtr :ChatDirector, playerList :UIComponent)
+    public function GameChatContainer (ctx :WorldContext, chatDtr :ChatDirector, 
+        playerList :UIComponent)
     {
-        super(ctx);
+        _ctx = ctx;
         _chatDtr = chatDtr;
         _playerList = playerList;
+
+        width = 300;
 
         playerList.includeInLayout = false;
         addChild(playerList);
@@ -33,6 +32,9 @@ public class GameChatTab extends ChatTab
         _overlay.setSubtitlePercentage(.75);
         _overlay.setClickableGlyphs(true);
         _chatDtr.addChatDisplay(_overlay);
+
+        _chatDtr = chatDtr;
+        _playerList = playerList;
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
         addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
@@ -43,8 +45,7 @@ public class GameChatTab extends ChatTab
         _chatDtr.removeChatDisplay(_overlay);
     }
 
-    // @Override // from ChatTab
-    override public function sendChat (message :String) :void
+    public function sendChat (message :String) :void
     {
         var result :String = _chatDtr.requestChat(null, message, true);
         if (result != ChatCodes.SUCCESS) {
@@ -76,13 +77,9 @@ public class GameChatTab extends ChatTab
         super.updateDisplayList(unscaledWidth, unscaledHeight);
     }
 
-    /** Our game chat director. */
-    protected var _chatDtr :ChatDirector;
-
-    /** Actually renders chat. */
+    protected var _ctx :WorldContext;
     protected var _overlay :ChatOverlay;
-
-    /** Displays occupants and scores. */
+    protected var _chatDtr :ChatDirector;
     protected var _playerList :UIComponent;
 }
 }
