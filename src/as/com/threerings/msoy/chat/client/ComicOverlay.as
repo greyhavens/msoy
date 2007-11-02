@@ -121,10 +121,6 @@ public class ComicOverlay extends ChatOverlay
 
     override protected function shouldShowFromHistory (msg :ChatMessage, index :int) :Boolean
     {
-        // if we're minimized, show nothing
-        if ((_ctx.getClient() as WorldClient).isMinimized()) {
-            return false;
-        }
         // only show if the message was received since we last entered a new place, or if it's
         // place-less chat.
         return ((index >= _newPlacePoint) || (!isPlaceOrientedType(getType(msg, false))));
@@ -144,14 +140,6 @@ public class ComicOverlay extends ChatOverlay
     protected function isPlaceOrientedType (type :int) :Boolean
     {
         return (placeOf(type)) == PLACE;
-    }
-
-    override public function displayMessage (msg :ChatMessage, alreadyDisp :Boolean) :Boolean
-    {
-        if ((_ctx.getClient() as WorldClient).isMinimized()) {
-            return false; // no comic messages while minimized
-        }
-        return super.displayMessage(msg, alreadyDisp);
     }
 
     override protected function displayTypedMessageNow (msg :ChatMessage, type :int) :Boolean
