@@ -14,8 +14,11 @@ import mx.collections.ArrayCollection;
 import flexlib.controls.SuperTabBar;
 import flexlib.controls.tabBarClasses.SuperTab;
 
+import com.threerings.util.ConfigValueSetEvent;
+
 import com.threerings.crowd.chat.data.ChatMessage;
 
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -37,6 +40,9 @@ public class ChatTabBar extends SuperTabBar
         dragEnabled = false;
         dropEnabled = false;
         addEventListener(ItemClickEvent.ITEM_CLICK, tabSelected);
+
+        // listen for preferences changes, update history mode
+        Prefs.config.addEventListener(ConfigValueSetEvent.TYPE, handlePrefsUpdated, false, 0, true);
     }
 
     public function getLocationName () :String
@@ -142,6 +148,27 @@ public class ChatTabBar extends SuperTabBar
         tabSelected();
     }
 
+    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
+    {
+        switch (event.name) {
+        case Prefs.CHAT_HISTORY:
+            if (Boolean(event.value)) {
+                if (_selectedIndex == -1) {
+                    selectedIndex = _unhideIndex;
+                    var tab :SuperTab = getChildAt(_unhideIndex) as SuperTab;
+                    setStyle("selectedTabTextStyleName", "selectedMsoyTabButton");
+                    tab.styleName = "msoyTabButton";
+                    _unhideIndex = -1;
+                    tabSelected();
+                }
+            } else {
+                _unhideIndex = _selectedIndex;
+                deselectSelected(); // also sets selectedIndex to -1
+                tabSelected();
+            }
+        }
+    }
+
     protected function createAndSelectChatTab (channel :ChatChannel, history :HistoryList) :void 
     {
         var controller :ChatChannelController = new ChatChannelController(_ctx, channel, history);
@@ -174,14 +201,20 @@ public class ChatTabBar extends SuperTabBar
 
     protected function tabSelected (event :ItemClickEvent = null) :void
     {
-        var index :int = event == null ? _selectedIndex : event.index;
+        _selectedIndex = event == null ? _selectedIndex : event.index;
         // this is a stupid hack, but it seems to be the only way to get "Super"TabNav to actually
         // do what's its supposed to and allow some tabs to be closeable and others not.
-        closePolicy = index == 0 ? SuperTab.CLOSE_NEVER : SuperTab.CLOSE_SELECTED;
+        closePolicy = _selectedIndex < 1 ? SuperTab.CLOSE_NEVER : SuperTab.CLOSE_SELECTED;
 
-        // if our index is -1, we've just hidden the history, so no change to the display.
-        if (index != -1) {
-            _currentController = _tabs.getItemAt(index).controller as ChatChannelController;
+        // if our _selectedIndex is -1, we've just hidden the history, so no change to the display.
+        if (_selectedIndex != -1) {
+            if (_unhideIndex != -1) {
+                // if we clicked on a tab without showing the history first, re-enable it as well.
+                Prefs.setShowingChatHistory(true);
+            }
+
+            _currentController = 
+                _tabs.getItemAt(_selectedIndex).controller as ChatChannelController;
             if (_currentController != null) {
                 _currentController.displayChat();
             } else {
@@ -197,11 +230,28 @@ public class ChatTabBar extends SuperTabBar
         }
     }
 
+    protected function deselectSelected () :void
+    {
+        // I think you should be able to set the selectedIndex to -1 to disable all tabs, but 
+        // adobe disagrees...
+        if (_selectedIndex >= 0) {
+            var ii :int = _selectedIndex;
+            selectedIndex = -1;
+            setStyle("selectedTabTextStyleName", "");
+            var tab :SuperTab = getChildAt(ii) as SuperTab;
+            tab.styleName = "msoyForcedUpTab";
+        }
+    }
+
     protected var _tabs :ArrayCollection = new ArrayCollection;
 
     // The value returned from get selectedIndex() does not always reflect the value that was 
     // just immeadiately set via set selectedIndex(), so lets keep track of what we really want.
     protected var _selectedIndex :int = -1;
+
+    // The tab to re-enable when chat is un-hidden, if it was done some other way from clicking
+    // directly on a tab.
+    protected var _unhideIndex :int = -1;
 
     protected var _currentController :ChatChannelController;
 
