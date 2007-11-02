@@ -182,7 +182,7 @@ public class ChatOverlay
      * that message layout will work properly even if the target has not yet been laid out and does
      * not yet have its proper width.
      */
-    public function setTarget (target :LayeredContainer, targetWidth :int = -1) :void
+    public function setTarget (target :LayeredContainer, targetBounds :Rectangle = null) :void
     {
         if (_target != null) {
             // removing from the old
@@ -215,7 +215,8 @@ public class ChatOverlay
             // resume listening to our chat history
             _history.addChatOverlay(this);
 
-            layout(targetWidth);
+            _targetBounds = targetBounds;
+            layout();
             setHistoryEnabled(Prefs.getShowingChatHistory());
         }
     }
@@ -357,13 +358,14 @@ public class ChatOverlay
     /**
      * Layout.
      */
-    protected function layout (targetWidth :int = -1) :void
+    protected function layout () :void
     {
         clearGlyphs(_subtitles);
 
-        var height :int = _target.height * _subtitlePercentage;
-        _targetBounds = new Rectangle(ScrollBar.THICKNESS, 0, 
-                                      targetWidth == -1 ? DEFAULT_WIDTH : targetWidth, height);
+        if (_targetBounds == null) {
+            var height :int = _target.height * _subtitlePercentage;
+            _targetBounds = new Rectangle(0, 0, DEFAULT_WIDTH + ScrollBar.THICKNESS, height);
+        } 
         // make a guess as to the extent of the history (how many avg sized subtitles will fit in
         // the subtitle area
         _historyExtent = (_targetBounds.height - PAD) / SUBTITLE_HEIGHT_GUESS;
@@ -483,7 +485,7 @@ public class ChatOverlay
     protected function addSubtitle (glyph :SubtitleGlyph) :void
     {
         var height :int = int(glyph.height);
-        glyph.x = _targetBounds.x + PAD;
+        glyph.x = _targetBounds.x + PAD + ScrollBar.THICKNESS;
         glyph.y = _targetBounds.bottom - height - PAD;
         scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
         _subtitles.push(glyph);
@@ -702,7 +704,7 @@ public class ChatOverlay
     protected function getOutlineColor (type :int) :uint
     {
         // mask out the bits we don't need for determining outline color
-        switch (type & (0xFFFFFF << 4)) {
+        switch (placeOf(type)) {
         case BROADCAST: return BROADCAST_COLOR;
         case TELL: return TELL_COLOR;
         case TELLFEEDBACK: return TELLFEEDBACK_COLOR;
@@ -1111,7 +1113,7 @@ public class ChatOverlay
     {
         if (_targetBounds != null) {
             _historyBar.height = _targetBounds.height;
-            _historyBar.move(_targetBounds.x - ScrollBar.THICKNESS, _targetBounds.y);
+            _historyBar.move(_targetBounds.x, _targetBounds.y);
         }
     }
 
@@ -1173,7 +1175,7 @@ public class ChatOverlay
                 }
 
                 // position it
-                glyph.x = _targetBounds.x + PAD;
+                glyph.x = _targetBounds.x + PAD + ScrollBar.THICKNESS;
                 glyph.y = ypos;
                 ypos -= getHistorySubtitleSpacing(ii);
             }
@@ -1233,7 +1235,7 @@ public class ChatOverlay
 
     internal function getTargetTextWidth () :int
     {
-        var w :int = _targetBounds.width;
+        var w :int = _targetBounds.width - ScrollBar.THICKNESS;
         // there is PAD between the text and the edges of the bubble, and another PAD between the
         // bubble and the container edges, on each side for a total of 4 pads.
         w -= (PAD * 4);

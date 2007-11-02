@@ -5,6 +5,8 @@ package com.threerings.msoy.chat.client {
 
 import flash.events.Event;
 
+import flash.geom.Rectangle;
+
 import mx.core.UIComponent;
 
 import com.threerings.crowd.chat.client.ChatDirector;
@@ -21,23 +23,22 @@ public class GameChatContainer extends LayeredContainer
     {
         _ctx = ctx;
         _chatDtr = chatDtr;
-        _playerList = playerList;
 
-        width = 300;
+        var topPanel :TopPanel = _ctx.getTopPanel();
+        width = TopPanel.RIGHT_SIDEBAR_WIDTH;
+        height = 500; // games are given 500 vertical pixels, so so are we.
 
-        playerList.includeInLayout = false;
-        addChild(playerList);
 
-        _overlay = new ChatOverlay(ctx.getMessageManager());
-        _overlay.setSubtitlePercentage(.75);
+        _overlay = new ChatOverlay(_ctx.getMessageManager());
         _overlay.setClickableGlyphs(true);
         _chatDtr.addChatDisplay(_overlay);
 
         _chatDtr = chatDtr;
         _playerList = playerList;
+        _playerList.x = (width - _playerList.width) / 2;
+        addChild(playerList);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
-        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
     }
 
     public function shutdown () :void
@@ -55,27 +56,11 @@ public class GameChatContainer extends LayeredContainer
 
     protected function handleAddRemove (event :Event) :void
     {
-        if (event.type == Event.ADDED_TO_STAGE) {
-            _overlay.setTarget(this, TopPanel.RIGHT_SIDEBAR_WIDTH);
-        } else {
-            _overlay.setTarget(null);
-        }
+        var chatTop :Number = _playerList.y + _playerList.height + PAD;
+        _overlay.setTarget(this, new Rectangle(0, chatTop, width, height - chatTop));
     }
 
-    // from Container
-    override protected function updateDisplayList (
-        unscaledWidth :Number, unscaledHeight :Number) :void
-    {
-        // hand-position the playerList so that it consumes 25% of the height
-        // (The chat is set to use 75%, in our constructor.)
-        const GAP :int = 10;
-        _playerList.x = GAP;
-        _playerList.y = 0;
-        _playerList.width = unscaledWidth - GAP;
-        _playerList.height = int(unscaledHeight * .25) - GAP;
-
-        super.updateDisplayList(unscaledWidth, unscaledHeight);
-    }
+    protected static const PAD :int = 10;
 
     protected var _ctx :WorldContext;
     protected var _overlay :ChatOverlay;

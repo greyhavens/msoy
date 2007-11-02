@@ -53,12 +53,13 @@ public class ComicOverlay extends ChatOverlay
         clearBubbles(false);
     }
 
-    override public function setTarget (target :LayeredContainer, targetWidth :int = -1) :void
+    override public function setTarget (target :LayeredContainer, 
+        targetBounds :Rectangle = null) :void
     {
         if (_target != null) {
             clearBubbles(true);
         }
-        super.setTarget(target, targetWidth);
+        super.setTarget(target, targetBounds);
     }
 
     override public function clear () :void
@@ -76,10 +77,10 @@ public class ComicOverlay extends ChatOverlay
         }
     }
 
-    override protected function layout (targetWidth :int = -1) :void
+    override protected function layout () :void
     {
         clearBubbles(true); // these will get repopulated from the history
-        super.layout(targetWidth);
+        super.layout();
     }
 
     override protected function createStandardFormats () :void
