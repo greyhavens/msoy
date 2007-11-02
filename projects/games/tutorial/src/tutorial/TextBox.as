@@ -45,7 +45,7 @@ public class TextBox extends Sprite
             "  text-align: center;" +
             "}" +
             ".message {" +
-            "  font-family: SunnySide;" +
+            "  font-family: Goudy;" +
             "  font-size: 16;" +
             "  text-align: left;" +
             "}" +
@@ -125,7 +125,7 @@ public class TextBox extends Sprite
 
         scaleBackdrop(figureWidth(), figureHeight());
 
-        _buttons.y = _textField.y + _textField.height;
+        _buttons.y = _textField.y + _textField.height + Content.BOX_PADDING/2;
 
         _foreground.visible = false;
         _backdrop.visible = this.visible = true;
@@ -218,7 +218,7 @@ public class TextBox extends Sprite
 
     protected function figureHeight () :Number
     {
-        return _textField.height + _buttons.height + 2*Content.BOX_PADDING;
+        return _textField.height + _buttons.height + 2.5*Content.BOX_PADDING;
     }
 
     protected function scaleBackdrop (x :Number, y :Number) :void
