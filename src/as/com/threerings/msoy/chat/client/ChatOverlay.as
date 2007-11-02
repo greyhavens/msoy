@@ -47,6 +47,8 @@ import com.threerings.flash.ColorUtil;
 
 import com.threerings.whirled.spot.data.SpotCodes;
 
+import com.threerings.msoy.chat.data.ChannelMessage;
+
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.Prefs;
@@ -707,6 +709,7 @@ public class ChatOverlay
         case FEEDBACK: return FEEDBACK_COLOR;
         case ATTENTION: return ATTENTION_COLOR;
         case NOTIFICATION: return NOTIFY_COLOR;
+        case CHANNEL: return CHANNEL_COLOR;
         default:
             switch (placeOf(type)) {
             case GAME: return GAME_COLOR;
@@ -883,7 +886,14 @@ public class ChatOverlay
             return IGNORECHAT;
 
         } else if (msg is UserMessage) {
-            var type :int = (ChatCodes.USER_CHAT_TYPE == localtype) ? TELL : PLACE;
+            var type :int;
+            if (msg is ChannelMessage) {
+                type = CHANNEL;
+            } else if (ChatCodes.USER_CHAT_TYPE == localtype) {
+                type = TELL;
+            } else {
+                type = PLACE;
+            }
             // factor in the mode
             switch ((msg as UserMessage).mode) {
             case ChatCodes.DEFAULT_MODE:
@@ -1327,7 +1337,7 @@ public class ChatOverlay
 
     /** Our internal code for tell chat. */
     protected static const TELL :int = 2 << 4;
-    
+
     /** Our internal code for tell feedback chat. */
     protected static const TELLFEEDBACK :int = 3 << 4;
     
@@ -1357,6 +1367,9 @@ public class ChatOverlay
     /** Type code for notifications. */
     protected static const NOTIFICATION :int = 11 << 4;
 
+    /** Our internal code for channel chat. */
+    protected static const CHANNEL :int = 12 << 4;
+
     /** Our internal code for a chat type we will ignore. */
     protected static const IGNORECHAT :int = -1;
 
@@ -1375,6 +1388,7 @@ public class ChatOverlay
     protected static const ATTENTION_COLOR :uint = 0xFF5000;
     protected static const GAME_COLOR :uint = 0x777777;
     protected static const NOTIFY_COLOR :uint = 0x008A83;
+    protected static const CHANNEL_COLOR :uint = 0x5500AA;
     protected static const BLACK :uint = 0x222222; // same black as other Whirled UI bits
     protected static const WHITE :uint = 0xFFFFFF;
 
