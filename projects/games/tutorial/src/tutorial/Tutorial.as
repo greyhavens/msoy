@@ -79,9 +79,9 @@ public class Tutorial extends Sprite
         } else if (step == 0) {
             _view.displayMessage(
                 "Let's Go!",
-                "<p class='message'>" +
-                "This tour will help you get a feel for whirled in just a few simple steps. You'll learn how to customize your room, buy a new avatar, play games, and connect with friends. It's also a quick way to earn some easy flow, the local currency." +
-                "</p>",
+                "<p class='message'>This tour will help you get a feel for <b><i>Whirled</i></b> in just a few simple steps.</p><br>" +
+                "<p class='message'>You'll learn how to <b>customize</b> your room, <b>buy</b> a new avatar, <b>play</b> games, and <b>connect</b> with friends.</p><br>" +
+                "<p class='message'>It's also a quick way to earn some easy <i>flow</i>, the local currency.</p>",
                 function () :void {
                     _control.quests.offerQuest(quest.questId, null, quest.status);
                 });
