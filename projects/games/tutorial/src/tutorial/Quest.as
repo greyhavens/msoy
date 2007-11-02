@@ -202,7 +202,7 @@ public class Quest
             "<p class='details'>" +
             "<br><li>Click on <b><i>People -> Profiles -> Find People</i></b> and enter your friend's name.</li><br>" +
             "<li>You can also search by their Whirled display name or Email.</li><br>" +
-            "<li>Click<b><i>Search</i></b>.</li><br>" +
+            "<li>Click <b><i>Search</i></b>.</li><br>" +
             "</p>",
             "If your friends aren't on Whirled yet, go ahead and invite them!",
             0));
