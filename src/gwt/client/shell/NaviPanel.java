@@ -347,15 +347,15 @@ public class NaviPanel extends FlexTable
 
             addMouseListener(new MouseListenerAdapter() {
                 public void onMouseEnter (Widget sender) {
-                    setBackgroundImage(NaviButton.this, _overImage, false);
+                    setBackgroundImage(_overImage);
                 }
                 public void onMouseLeave (Widget sender) {
-                    setBackgroundImage(NaviButton.this, _upImage, false);
+                    setBackgroundImage(_upImage);
                 }
             });
             addClickListener(listener);
             setText(text);
-            setBackgroundImage(NaviButton.this, _upImage, false);
+            setBackgroundImage(_upImage);
         }
 
         protected void setBackgroundImage (Image image)
