@@ -49,7 +49,7 @@
 
 .playerBrowser .PlayerList .Title {
   border-style: none;
-  text-decoration: bold;
+  font-weight: bold;
   font-size: 18px;
   padding: 2px;
 }

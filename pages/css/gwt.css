@@ -147,92 +147,15 @@ a:visited {
   vertical-align: bottom;
 }
 
-.naviPanel {
-}
-
 .naviPanel .Button {
-  width: 45px;
-  height: 35px;
-
-  cursor: pointer;
-  cursor: hand;
-}
-
-.naviPanel .Link {
   font-size: 10px;
   text-align: center;
+  width: 45px;
   height: 15px;
+  padding-top: 35px;
 
   cursor: pointer;
   cursor: hand;
-}
-
-.naviPanel .Me {
-  background: url(/images/header/navi/me.png) no-repeat;
-}
-.naviPanel .MeHover {
-  background: url(/images/header/navi/me_over.png) no-repeat;
-}
-
-.naviPanel .Places {
-  background: url(/images/header/navi/places.png);
-}
-.naviPanel .PlacesHover {
-  background: url(/images/header/navi/places_over.png);
-}
-
-.naviPanel .People {
-  background: url(/images/header/navi/people.png);
-}
-.naviPanel .PeopleHover {
-  background: url(/images/header/navi/people_over.png);
-}
-
-.naviPanel .Stuff {
-  background: url(/images/header/navi/stuff.png);
-}
-.naviPanel .StuffHover {
-  background: url(/images/header/navi/stuff_over.png);
-}
-
-.naviPanel .Catalog {
-  background: url(/images/header/navi/catalog.png);
-}
-.naviPanel .CatalogHover {
-  background: url(/images/header/navi/catalog_over.png);
-}
-
-.naviPanel .Games {
-  background: url(/images/header/navi/games.png);
-}
-.naviPanel .GamesHover {
-  background: url(/images/header/navi/games_over.png);
-}
-
-.naviPanel .Help {
-  background: url(/images/header/navi/help.png);
-}
-.naviPanel .HelpHover {
-  background: url(/images/header/navi/help_over.png);
-}
-
-.naviPanel .SelLink {
-  background-image: url(/images/header/seltab_middle.png);
-  background-repeat: repeat;
-  padding-left: 2px;
-  padding-right: 2px;
-
-  font-family: Arial, Verdana, Helvetica, sans-serif;
-  font-size: 12px;
-
-  cursor: pointer;
-  cursor: hand;
-}
-
-.naviPanel .SelLink a {
-  font-family: Arial, Verdana, Helvetica, sans-serif;
-  font-size: 12px;
-  text-decoration: none;
 }
 
 .statusPanel {
