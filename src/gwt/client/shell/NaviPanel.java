@@ -8,15 +8,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -24,6 +27,8 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.WebCreds;
+
+import client.shell.images.NaviImages;
 
 import client.util.MsoyUI;
 import client.util.events.FlashEvents;
@@ -80,9 +85,8 @@ public class NaviPanel extends FlexTable
      */
     public void didLogon (final WebCreds creds)
     {
-        // replace our logon menu item with the "me" menu item
         int menuidx = 0;
-        setMenu(menuidx++, "Me", CShell.cmsgs.menuMe(), new MenuPopper() {
+        ClickListener click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
                 addLink(menu, "My Home", Page.WORLD, "m" + creds.getMemberId());
@@ -108,9 +112,11 @@ public class NaviPanel extends FlexTable
                     }
                 });
             }
-        });
+        };
+        setWidget(0, menuidx++, new NaviButton(
+                      CShell.cmsgs.menuMe(), _images.me(), _images.ome(), click));
 
-        setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new MenuPopper() {
+        click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
                 addLink(menu, "Whirledwide", Page.WHIRLED, "whirledwide");
@@ -139,9 +145,11 @@ public class NaviPanel extends FlexTable
                 }
                 addLink(menu, "Projects", Page.SWIFTLY, "");
             }
-        });
+        };
+        setWidget(0, menuidx++, new NaviButton(
+                      CShell.cmsgs.menuPlaces(), _images.places(), _images.oplaces(), click));
 
-        setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new MenuPopper() {
+        click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 MenuBar fmenu = new MenuBar(true);
                 fmenu.addItem("Find People", true, new Command() {
@@ -173,9 +181,11 @@ public class NaviPanel extends FlexTable
                     }
                 });
             }
-        });
+        };
+        setWidget(0, menuidx++, new NaviButton(
+                      CShell.cmsgs.menuPeople(), _images.people(), _images.opeople(), click));
 
-        setMenu(menuidx++, "Stuff", CShell.cmsgs.menuStuff(), new MenuPopper() {
+        click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 for (int ii = 0; ii < Item.TYPES.length; ii++) {
                     byte type = Item.TYPES[ii];
@@ -183,9 +193,11 @@ public class NaviPanel extends FlexTable
                             Page.INVENTORY, "" + type);
                 }
             }
-        });
+        };
+        setWidget(0, menuidx++, new NaviButton(
+                      CShell.cmsgs.menuStuff(), _images.stuff(), _images.ostuff(), click));
 
-        setMenu(menuidx++, "Catalog", CShell.cmsgs.menuCatalog(), new MenuPopper() {
+        click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 for (int ii = 0; ii < Item.TYPES.length; ii++) {
                     byte type = Item.TYPES[ii];
@@ -193,14 +205,18 @@ public class NaviPanel extends FlexTable
                             Page.CATALOG, "" + type);
                 }
             }
-        });
+        };
+        setWidget(0, menuidx++, new NaviButton(
+                      CShell.cmsgs.menuCatalog(), _images.catalog(), _images.ocatalog(), click));
 
-        setMenu(menuidx++, "Help", CShell.cmsgs.menuHelp(), new MenuPopper() {
+        click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "About Whirled", Page.WRAP, "w");
                 addLink(menu, "Tutorials", Page.WRAP, Args.compose("w", "Category:Tutorials"));
             }
-        });
+        };
+        setWidget(0, menuidx++, new NaviButton(
+                      CShell.cmsgs.menuHelp(), _images.help(), _images.ohelp(), click));
     }
 
     protected void createMenu (MenuBar menu, ArrayList items, ItemCreator creator)
@@ -234,25 +250,31 @@ public class NaviPanel extends FlexTable
     public void didLogoff ()
     {
         int menuidx = 0;
-        setMenu(menuidx++, "Me", CShell.cmsgs.menuLogon(), new ClickListener() {
+        ClickListener click = new ClickListener() {
             public void onClick (Widget sender) {
                 LogonPanel.toggleShowLogon(_status);
             }
-        });
+        };
+        setWidget(0, menuidx++, new NaviButton(
+                      CShell.cmsgs.menuLogon(), _images.me(), _images.ome(), click));
 
-        setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new MenuPopper() {
+        click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "Whirledwide", Page.WHIRLED, "whirledwide");
             }
-        });
+        };
+        setWidget(0, menuidx++, new NaviButton(
+                      CShell.cmsgs.menuPlaces(), _images.places(), _images.oplaces(), click));
 
-        setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new MenuPopper() {
+        click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "Groups", Page.GROUP, "");
             }
-        });
+        };
+        setWidget(0, menuidx++, new NaviButton(
+                      CShell.cmsgs.menuPeople(), _images.people(), _images.opeople(), click));
 
-        setMenu(menuidx++, "Catalog", CShell.cmsgs.menuCatalog(), new MenuPopper() {
+        click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 for (int ii = 0; ii < Item.TYPES.length; ii++) {
                     byte type = Item.TYPES[ii];
@@ -260,38 +282,22 @@ public class NaviPanel extends FlexTable
                             Page.CATALOG, "" + type);
                 }
             }
-        });
+        };
+        setWidget(0, menuidx++, new NaviButton(
+                      CShell.cmsgs.menuCatalog(), _images.catalog(), _images.ocatalog(), click));
 
-        setMenu(menuidx++, "Help", CShell.cmsgs.menuHelp(), new MenuPopper() {
+        click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "About Whirled", Page.WRAP, "w");
                 addLink(menu, "Tutorials", Page.WRAP, Args.compose("w", "Category:Tutorials"));
             }
-        });
+        };
+        setWidget(0, menuidx++, new NaviButton(
+                      CShell.cmsgs.menuHelp(), _images.help(), _images.ohelp(), click));
 
         setText(0, menuidx++, ""); // clear the last menu
         _friends.clear();
         _scenes.clear();
-    }
-
-    protected void setMenu (int menuidx, final String ident, String text, ClickListener listener)
-    {
-        final VerticalPanel box = new VerticalPanel();
-        box.setStyleName(ident);
-        MouseListenerAdapter fiddle = new MouseListenerAdapter() {
-            public void onMouseEnter (Widget sender) {
-                box.setStyleName(ident + "Hover");
-            }
-            public void onMouseLeave (Widget sender) {
-                box.setStyleName(ident);
-            }
-        };
-        Label lbl;
-        box.add(lbl = MsoyUI.createCustomActionLabel("", "Button", listener));
-        lbl.addMouseListener(fiddle);
-        box.add(lbl = MsoyUI.createCustomActionLabel(text, "Link", listener));
-        lbl.addMouseListener(fiddle);
-        setWidget(0, menuidx, box);
     }
 
     protected void addLink (MenuBar menu, String text, final String page, final String args)
@@ -306,7 +312,8 @@ public class NaviPanel extends FlexTable
 
     protected abstract class MenuPopper implements ClickListener
     {
-        public void onClick (Widget sender) {
+        public void onClick (Widget sender)
+        {
             if (_popped != null && _popped.isAttached()) {
                 _popped.hide();
             }
@@ -321,19 +328,54 @@ public class NaviPanel extends FlexTable
 
         protected int getMenuY (Widget from)
         {
-            int height = from.getAbsoluteTop() + from.getOffsetHeight();
-            if (((Label)from).getText().equals("")) { // doris the hackasaurus!
-                height += 15;
-            }
-            return height;
+            Widget box = from.getParent();
+            return box.getAbsoluteTop() + box.getOffsetHeight();
         }
 
         protected abstract void populateMenu (Widget sender, MenuBar menu);
     }
 
-    protected class SceneData {
-        String name;
-        int id;
+    protected static class NaviButton extends FlowPanel
+    {
+        public NaviButton (String text, AbstractImagePrototype upImage,
+                           AbstractImagePrototype overImage, ClickListener listener)
+        {
+            MouseListenerAdapter fiddle = new MouseListenerAdapter() {
+                public void onMouseEnter (Widget sender) {
+                    clear();
+                    add(_overImage);
+                    add(_label);
+                }
+                public void onMouseLeave (Widget sender) {
+                    clear();
+                    add(_upImage);
+                    add(_label);
+                }
+            };
+
+            _upImage = upImage.createImage();
+            _upImage.setStyleName("actionLabel");
+            _upImage.addMouseListener(fiddle);
+            _overImage = overImage.createImage();
+            _overImage.setStyleName("actionLabel");
+            _overImage.addMouseListener(fiddle);
+            _overImage.addClickListener(listener);
+
+            _label = MsoyUI.createCustomActionLabel(text, "Link", listener);
+            _label.addMouseListener(fiddle);
+
+            add(_upImage);
+            add(_label);
+        }
+
+        protected Image _upImage, _overImage;
+        protected Label _label;
+    }
+
+    protected static class SceneData
+    {
+        public String name;
+        public int id;
 
         public SceneData (String name, int id)
         {
@@ -349,6 +391,9 @@ public class NaviPanel extends FlexTable
     
     protected StatusPanel _status;
     protected Label _loglbl, _melbl;
+
+    /** Our navigation menu images. */
+    protected NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
 
     /** The currently popped up menu, for easy closing. */
     protected PopupPanel _popped;
