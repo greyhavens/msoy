@@ -524,10 +524,9 @@ public class TopPanel extends Canvas
         }
 
         if (_rightPanel != null) {
-            _rightPanel.setStyle("top", HeaderBar.HEIGHT + DECORATIVE_MARGIN_HEIGHT);
+            _rightPanel.setStyle("top", HeaderBar.HEIGHT);
             _rightPanel.setStyle("right", 0);
-            _rightPanel.setStyle("bottom", getBottomPanelHeight() + ControlBar.HEIGHT +
-                                 DECORATIVE_MARGIN_HEIGHT);
+            _rightPanel.setStyle("bottom", getBottomPanelHeight() + ControlBar.HEIGHT);
 
             // if we have no place view currently and we have no left panel, stretch it all the 
             // way to the left.  Otherwise, let it be as wide as it wants to be.

@@ -28,14 +28,15 @@ public class GameChatContainer extends LayeredContainer
         width = TopPanel.RIGHT_SIDEBAR_WIDTH;
         height = 500; // games are given 500 vertical pixels, so so are we.
 
-
         _overlay = new ChatOverlay(_ctx.getMessageManager());
         _overlay.setClickableGlyphs(true);
         _chatDtr.addChatDisplay(_overlay);
 
         _chatDtr = chatDtr;
         _playerList = playerList;
-        _playerList.x = (width - _playerList.width) / 2;
+        _playerList.x = PAD;
+        _playerList.y = PAD;
+        _playerList.width = width - PAD * 2;
         addChild(playerList);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
@@ -56,11 +57,12 @@ public class GameChatContainer extends LayeredContainer
 
     protected function handleAddRemove (event :Event) :void
     {
-        var chatTop :Number = _playerList.y + _playerList.height + PAD;
-        _overlay.setTarget(this, new Rectangle(0, chatTop, width, height - chatTop));
+        var chatTop :Number = _playerList.y + _playerList.height;
+        _overlay.setTarget(this, new Rectangle(PAD, chatTop, width - PAD * 2, 
+            height - chatTop - PAD));
     }
 
-    protected static const PAD :int = 10;
+    protected static const PAD :int = 0; // set to non-0 for some padding around the edges
 
     protected var _ctx :WorldContext;
     protected var _overlay :ChatOverlay;
