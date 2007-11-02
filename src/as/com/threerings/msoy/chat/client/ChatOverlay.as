@@ -701,7 +701,8 @@ public class ChatOverlay
      */
     protected function getOutlineColor (type :int) :uint
     {
-        switch (type) {
+        // mask out the bits we don't need for determining outline color
+        switch (type & (0xFFFFFF << 4)) {
         case BROADCAST: return BROADCAST_COLOR;
         case TELL: return TELL_COLOR;
         case TELLFEEDBACK: return TELLFEEDBACK_COLOR;
