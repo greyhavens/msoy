@@ -18,6 +18,7 @@ import mx.containers.HBox;
 import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
 
+import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.ValueEvent;
 
@@ -107,6 +108,7 @@ public class TopPanel extends Canvas
         app.stage.addEventListener(Event.RESIZE, stageResized);
 
         _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
+        Prefs.config.addEventListener(ConfigValueSetEvent.TYPE, handlePrefsUpdated, false, 0, true);
     }
 
     /**
@@ -434,6 +436,13 @@ public class TopPanel extends Canvas
      */
     protected function minimizeRoomView () :void
     {
+        _showingChatHistory = Prefs.getShowingChatHistory();
+        if (!_showingChatHistory) {
+            // make sure the history is visible when it gets minimized... if they chose to hide
+            // it again after that, so be it.
+            Prefs.setShowingChatHistory(true);
+        }
+
         _minimized = true;
 
         _placeBox.mouseChildren = false;
@@ -459,6 +468,22 @@ public class TopPanel extends Canvas
 
         _headerBar.miniChanged();
         _controlBar.miniChanged();
+
+        if (_showingChatHistory != Prefs.getShowingChatHistory()) {
+            Prefs.setShowingChatHistory(_showingChatHistory);
+        }
+    }
+
+    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
+    {
+        switch (event.name) {
+        case Prefs.CHAT_HISTORY:
+            // if the prefs are changed while we're mini'd, stick to the update when un-mini'd
+            if (_minimized) {
+                _showingChatHistory = Boolean(event.value);
+            }
+            break;
+        }
     }
 
     protected function placeBoxClicked (event :MouseEvent) :void
@@ -597,6 +622,9 @@ public class TopPanel extends Canvas
 
     /** A flag to indicate if we're working in mini-view or not. */
     protected var _minimized :Boolean = false;
+
+    /** Remember what the chat history setting was at before we minimized. */
+    protected var _showingChatHistory :Boolean;
 
     protected static const MIN_FLASH_VERSION :int = 9;
     protected static const MIN_FLASH_REVISION :int = 28;
