@@ -9,12 +9,14 @@ import java.net.MalformedURLException;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
+/*
 import com.threerings.panopticon.data.Schema;
 import com.threerings.panopticon.client.logging.EventLogger;
 import com.threerings.panopticon.client.logging.EchoStorage;
 import com.threerings.panopticon.client.logging.LogStorage;
 import com.threerings.panopticon.client.logging.NullStorage;
 import com.threerings.panopticon.client.logging.ServerStorage;
+*/
 
 import com.threerings.msoy.Log;
 
@@ -24,6 +26,8 @@ import com.threerings.msoy.Log;
  * Logging functions are safe for concurrent access from different threads. All logging requests
  * will be scheduled on the invoker thread, to serialize them, and to avoid tying up
  * the rest of the server.
+ *
+ * NB: most functionality is stubbed out due to panopticon client API revamp -- robert
  */
 public class MsoyEventLogger
 {
@@ -32,11 +36,11 @@ public class MsoyEventLogger
     {
         Log.log.info("Events will be logged to " + serverURL);
         
-        //_storage = new EchoStorage();
-        _storage = new NullStorage();
+        // _storage = new EchoStorage();
+        // _storage = new NullStorage();
         // _storage = new ServerStorage(serverURL);
-        
-        _logger = new EventLogger(_storage, MSOY_SCHEMAS);
+        //
+        // _logger = new EventLogger(_storage, MSOY_SCHEMAS);
     }
 
     /** Event: periodic system snapshot of player counts. */
@@ -119,6 +123,7 @@ public class MsoyEventLogger
     /** Wraps a logging action in a work unit, and posts it on the queue. */
     protected void post (final String event, final Object ... values)
     {
+        /*
         if (_logger == null) {
             throw new RuntimeException("MsoyEventLogger not initialized, cannot log events.");
         } else {
@@ -129,6 +134,7 @@ public class MsoyEventLogger
                 }
             });
         }
+        */
     }
 
     /** Convenience function to return a boxed value for current time
@@ -137,6 +143,7 @@ public class MsoyEventLogger
         return System.currentTimeMillis();
     }
 
+    /*
     protected static final String MSOY = "com.threerings.msoy";
     protected static final Schema[] MSOY_SCHEMAS = new Schema[] {
         new Schema(
@@ -186,10 +193,11 @@ public class MsoyEventLogger
             new String[] { "timestamp", "playerId",    "groupId",     "newRank"      },
             new Class[]  { Long.class,   Integer.class, Integer.class, Integer.class    })
     };        
-
+    */
+    
     /** Singleton reference to log storage. */
-    protected LogStorage _storage;
+    // protected LogStorage _storage;
 
     /** Singleton reference to the event logger instance. */
-    protected EventLogger _logger;
+    // protected EventLogger _logger;
 }
