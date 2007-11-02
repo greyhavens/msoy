@@ -30,7 +30,6 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.images.NaviImages;
 
-import client.util.ImageBundleUtil;
 import client.util.MsoyUI;
 import client.util.events.FlashEvents;
 import client.util.events.FriendEvent;
@@ -348,15 +347,15 @@ public class NaviPanel extends FlexTable
 
             addMouseListener(new MouseListenerAdapter() {
                 public void onMouseEnter (Widget sender) {
-                    ImageBundleUtil.setBackgroundImage(NaviButton.this, _overImage, false);
+                    setBackgroundImage(NaviButton.this, _overImage, false);
                 }
                 public void onMouseLeave (Widget sender) {
-                    ImageBundleUtil.setBackgroundImage(NaviButton.this, _upImage, false);
+                    setBackgroundImage(NaviButton.this, _upImage, false);
                 }
             });
             addClickListener(listener);
             setText(text);
-            ImageBundleUtil.setBackgroundImage(NaviButton.this, _upImage, false);
+            setBackgroundImage(NaviButton.this, _upImage, false);
         }
 
         protected void setBackgroundImage (Image image)
