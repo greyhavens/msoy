@@ -226,6 +226,7 @@ public class MsoyGameRegistry
         GameServerHandler handler = _handmap.get(gameId);
         if (handler != null) {
             handler.clearGame(gameId);
+            _handmap.remove(gameId);
         } else {
             log.warning("Game cleared by unknown handler? [port=" + port + ", id=" + gameId + "].");
         }
