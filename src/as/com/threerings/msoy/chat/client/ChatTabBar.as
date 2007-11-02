@@ -109,6 +109,11 @@ public class ChatTabBar extends SuperTabBar
         return getControllerIndex(channel) != -1;
     }
 
+    public function getCurrentController () :ChatChannelController
+    {
+        return _currentController;
+    }
+
     /** 
      * Thanks a lot flex team - you've got at least two classes in this hierarchy with
      * _selectedIndex variables that mean exactly the same damn thing, and they're both private...
@@ -176,10 +181,9 @@ public class ChatTabBar extends SuperTabBar
 
         // if our index is -1, we've just hidden the history, so no change to the display.
         if (index != -1) {
-            var controller :ChatChannelController = 
-                _tabs.getItemAt(index).controller as ChatChannelController;
-            if (controller != null) {
-                controller.displayChat();
+            _currentController = _tabs.getItemAt(index).controller as ChatChannelController;
+            if (_currentController != null) {
+                _currentController.displayChat();
             } else {
                 var overlay :ChatOverlay = _ctx.getTopPanel().getChatOverlay();
                 if (overlay != null) {
@@ -187,6 +191,9 @@ public class ChatTabBar extends SuperTabBar
                         (_ctx.getChatDirector() as MsoyChatDirector).getRoomHistory());
                 }
             }
+        } else {
+            // if the history is hidden, make sure chat goes to the room.
+            _currentController = null;
         }
     }
 
@@ -195,6 +202,8 @@ public class ChatTabBar extends SuperTabBar
     // The value returned from get selectedIndex() does not always reflect the value that was 
     // just immeadiately set via set selectedIndex(), so lets keep track of what we really want.
     protected var _selectedIndex :int = -1;
+
+    protected var _currentController :ChatChannelController;
 
     protected var _ctx :WorldContext;
 }

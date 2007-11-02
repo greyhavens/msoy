@@ -16,6 +16,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatDisplay;
+import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.TellFeedbackMessage;
@@ -131,7 +132,6 @@ public class MsoyChatDirector extends ChatDirector
         getHistory(channel).filterTransient();
     }
 
-
     // TODO: do the new thing wrt game chat ////////////
 
     /**
@@ -205,6 +205,28 @@ public class MsoyChatDirector extends ChatDirector
             super.messageReceived(event);
         }
     }
+
+    // from ChatDirector
+    override public function requestChat (speakSvc :SpeakService, text :String, 
+        record :Boolean) :String
+    {
+        if (speakSvc != null) {
+            // this came from someone who knows what they want... pass on the request
+            return super.requestChat(speakSvc, text, record);
+        }
+
+        var controller :ChatChannelController = _chatTabs.getCurrentController();
+        if (controller == null) {
+            // this really is going to the room chat.
+            return super.requestChat(speakSvc, text, record);
+        }
+
+        // let the controller handle its own error reporting.
+        controller.sendChat(text);
+        // this prevents the ChatControl from reporting errors on its own.
+        return ChatCodes.SUCCESS;
+    }
+
 
     // from ChatDirector
     override protected function dispatchPreparedMessage (msg :ChatMessage) :void
