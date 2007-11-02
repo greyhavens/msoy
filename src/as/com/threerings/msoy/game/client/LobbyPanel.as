@@ -3,24 +3,16 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
-
 import flash.events.Event;
 import flash.events.MouseEvent;
-import flash.events.TextEvent;
 
 import mx.collections.ArrayCollection;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
-import mx.containers.ViewStack;
 import mx.controls.Label;
-import mx.controls.Alert;
 import mx.controls.Text;
-import mx.controls.TabBar;
 
-import mx.core.Container;
 import mx.core.ClassFactory;
 
 import com.threerings.util.ArrayUtil;
@@ -45,10 +37,7 @@ import com.threerings.msoy.client.EmbedDialog;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
-import com.threerings.msoy.client.HeaderBarController;
 import com.threerings.msoy.data.MemberObject;
-
-import com.threerings.msoy.chat.client.ChatContainer;
 
 import com.threerings.msoy.ui.MsoyList;
 import com.threerings.msoy.ui.MediaWrapper;
