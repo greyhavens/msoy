@@ -116,7 +116,7 @@ public class ChatChannelController
             }
 
             // if I just saw myself entering the channel, ignore the event
-           var me :MemberObject = _ctx.getMemberObject();
+            var me :MemberObject = _ctx.getMemberObject();
             if (Util.equals(ci.name, me.memberName)) {
                 return;
             }

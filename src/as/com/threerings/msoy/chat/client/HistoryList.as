@@ -81,14 +81,6 @@ public class HistoryList
         });
     }
 
-//     // from ChatDisplay
-//     public function clear () :void
-//     {
-//         var adjusted :int = _history.length;
-//         _history.length = 0; // array truncation
-//         notify(adjusted);
-//     }
-
     /**
      * Notifies interested ChatOverlays that there has been a change to the history.
      */

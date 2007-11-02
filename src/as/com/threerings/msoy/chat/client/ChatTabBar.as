@@ -81,19 +81,19 @@ public class ChatTabBar extends SuperTabBar
         history :HistoryList) :void
     {
         var controller :ChatChannelController = getController(channel);
-        if (controller == null) {
-            // if this is a message from a member, we can pop up the new display.
-            if (channel.type == ChatChannel.MEMBER_CHANNEL) {
-                createAndSelectChatTab(channel, history);
-            } else {
-                // else this arrived (most likely) after we already closed the channel tab.
-                Log.getLog(this).info(
-                    "Dropping late arriving channel chat message [msg=" + msg + "].");
-            }
+        if (controller != null) {
+            controller.displayMessage(msg);
             return;
         }
 
-        controller.displayMessage(msg);
+        // if this is a message from a member, we can pop up the new display.
+        if (channel.type == ChatChannel.MEMBER_CHANNEL) {
+            createAndSelectChatTab(channel, history);
+        } else {
+            // else this arrived (most likely) after we already closed the channel tab.
+            Log.getLog(this).info(
+                "Dropping late arriving channel chat message [msg=" + msg + "].");
+        }
     }
 
     public function reinitController (channel :ChatChannel, ccobj :ChatChannelObject) :void
@@ -143,6 +143,7 @@ public class ChatTabBar extends SuperTabBar
         _tabs.addItem({ label: channel.ident, controller: controller });
         selectedIndex = _tabs.length - 1;
         tabSelected();
+        controller.init((_ctx.getChatDirector() as MsoyChatDirector).getChannelObject(channel));
     }
 
     protected function getController (channel :ChatChannel) :ChatChannelController

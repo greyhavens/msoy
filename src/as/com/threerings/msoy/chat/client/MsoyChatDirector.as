@@ -47,6 +47,8 @@ public class MsoyChatDirector extends ChatDirector
         super(ctx, ctx.getMessageManager(), MsoyCodes.CHAT_MSGS);
         _wctx = ctx;
 
+        _ccpanel = new ChatChannelPanel(_wctx);
+
         // let the compiler know that these must be compiled into the client
         var c :Class = ChatChannelMarshaller;
         c = ChatterInfo;
@@ -210,6 +212,7 @@ public class MsoyChatDirector extends ChatDirector
         // determine which channel to which this message is targeted
         var channel :ChatChannel = determineChannel(msg);
         if (channel != null) {
+            Log.getLog(this).debug("got channel for msg [" + msg.message + "]");
             var history :HistoryList = getHistory(channel);
             history.addMessage(msg);
             _chatTabs.displayMessage(channel, msg, history);

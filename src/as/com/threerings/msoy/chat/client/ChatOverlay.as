@@ -136,7 +136,30 @@ public class ChatOverlay
      */
     public function setHistory (history :HistoryList) :void
     {
+        if (history == _history) {
+            return;
+        }
+
+        if (_history != null) {
+            _history.removeChatOverlay(this);
+        }
+
         _history = history;
+
+        if (_history != null) {
+            _history.addChatOverlay(this);
+
+            configureHistoryBarSize();
+            resetHistoryOffset();
+
+            // "scroll" down to the latest history entry
+            if (_historyBar != null) {
+                updateHistBar(_history.size() - 1);
+
+                // figure our history
+                figureCurrentHistory();
+            }
+        }
     }
 
     /**
@@ -148,8 +171,7 @@ public class ChatOverlay
     }
 
     /**
-     * Set the target container where this chat should add its overlay. This resets any custom
-     * target bounds previously set via {@link #setTargetBounds}.
+     * Set the target container where this chat should add its overlay. 
      *
      * @param target the container to which a chat overlay should be added; or null to release
      * references and internal resources associated with the previous target.
@@ -903,7 +925,7 @@ public class ChatOverlay
     }
 
     /**
-     * Check to see if we want ti display the specified localtype.
+     * Check to see if we want to display the specified localtype.
      */
     protected function isApprovedLocalType (localtype :String) :Boolean
     {
