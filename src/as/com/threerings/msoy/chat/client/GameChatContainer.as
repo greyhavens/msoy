@@ -7,6 +7,8 @@ import flash.events.Event;
 
 import flash.geom.Rectangle;
 
+import mx.containers.HBox;
+
 import mx.core.UIComponent;
 
 import com.threerings.crowd.chat.client.ChatDirector;
@@ -34,10 +36,17 @@ public class GameChatContainer extends LayeredContainer
 
         _chatDtr = chatDtr;
         _playerList = playerList;
-        _playerList.x = PAD;
-        _playerList.y = PAD;
-        _playerList.width = width - PAD * 2;
+        _playerList.width = width;
         addChild(playerList);
+
+        var tabs :UIComponent = _ctx.getTopPanel().getHeaderBar().removeTabsContainer();
+        _tabBar = new HBox();
+        _tabBar.y = _playerList.height
+        _tabBar.height = _ctx.getTopPanel().getHeaderBar().height;
+        _tabBar.width = width;
+        _tabBar.styleName = "headerBar";
+        _tabBar.addChild(tabs);
+        addChild(_tabBar);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
     }
@@ -45,6 +54,7 @@ public class GameChatContainer extends LayeredContainer
     public function shutdown () :void
     {
         _chatDtr.removeChatDisplay(_overlay);
+        _ctx.getTopPanel().getHeaderBar().replaceTabsContainer();
     }
 
     public function sendChat (message :String) :void
@@ -57,16 +67,14 @@ public class GameChatContainer extends LayeredContainer
 
     protected function handleAddRemove (event :Event) :void
     {
-        var chatTop :Number = _playerList.y + _playerList.height;
-        _overlay.setTarget(this, new Rectangle(PAD, chatTop, width - PAD * 2, 
-            height - chatTop - PAD));
+        var chatTop :Number = _tabBar.y + _tabBar.height;
+        _overlay.setTarget(this, new Rectangle(0, chatTop, width, height - chatTop));
     }
-
-    protected static const PAD :int = 0; // set to non-0 for some padding around the edges
 
     protected var _ctx :WorldContext;
     protected var _overlay :ChatOverlay;
     protected var _chatDtr :ChatDirector;
     protected var _playerList :UIComponent;
+    protected var _tabBar :HBox;
 }
 }

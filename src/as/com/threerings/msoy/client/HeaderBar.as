@@ -97,17 +97,39 @@ public class HeaderBar extends HBox
         }
     }
 
+    /**
+     * Grab the tabs and the associated trimmings in the container that contains them, so they
+     * can be moved somewhere else.
+     */
+    public function removeTabsContainer () :UIComponent
+    {
+        if (_tabsContainer.parent == this) {
+            removeChild(_tabsContainer);
+        }
+        return _tabsContainer;
+    }
+
+    public function replaceTabsContainer () :void
+    {
+        if (_tabsContainer.parent != null) {
+            _tabsContainer.parent.removeChild(_tabsContainer);
+        }
+        addChildAt(_tabsContainer, 0);
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
 
+        _tabsContainer = new HBox();
+        _tabsContainer.setStyle("horizontalGap", 0);
+        addChild(_tabsContainer);
         var channelBtn :CommandButton = new CommandButton();
         channelBtn.setCommand(MsoyController.POP_CHANNEL_MENU, channelBtn);
         channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
         channelBtn.styleName = "headerBarButtonChannel";
-        addChild(channelBtn);
-
-        addChild(_tabs);
+        _tabsContainer.addChild(channelBtn);
+        _tabsContainer.addChild(_tabs);
 
         _owner = new HBox();
         _owner.styleName = "ownerNameBox";
@@ -161,5 +183,7 @@ public class HeaderBar extends HBox
     protected var _extras :Array = [];
 
     protected var _embedVisible :Boolean;
+
+    protected var _tabsContainer :UIComponent;
 }
 }
