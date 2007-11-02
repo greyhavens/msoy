@@ -38,4 +38,11 @@
       <when-property-is name="user.agent" value="gecko1_8"/>
     </any>
   </replace-with>
+
+  <replace-with class="com.threerings.gwt.ui.WidgetUtilImplIE6">
+    <when-type-is class="com.threerings.gwt.ui.WidgetUtilImpl"/>
+    <any>
+      <when-property-is name="user.agent" value="ie6"/>
+    </any>
+  </replace-with>
 </module>
