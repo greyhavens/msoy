@@ -140,6 +140,7 @@ public class ControlBar extends HBox
 
     public function setTabMode (tabbed :Boolean) :void
     {
+        // TODO: when we're done with the ChatChannelPanel, tab mode goes away as well
         _isMinimized = tabbed;
         _isEditing = (_isEditing && ! _isMinimized);
         updateUI();
@@ -151,6 +152,13 @@ public class ControlBar extends HBox
     public function moveBack () :void
     {
         _controller.handleMoveBack(_backBtn);
+    }
+
+    public function miniChanged () :void
+    {
+        _isMinimized = _ctx.getTopPanel().isMinimized();
+        _isEditing = (_isEditing && !_isMinimized);
+        updateUI();
     }
 
     override protected function updateDisplayList (w :Number, h :Number) :void
@@ -194,7 +202,7 @@ public class ControlBar extends HBox
         _avatarBtn = null;
 
         _chatControl = new ChatControl(_ctx, Msgs.CHAT.get("b.send"), this.height - 4);
-        addGroupChild(_chatControl, [ UI_STD, UI_EDIT, UI_GUEST ]);
+        addGroupChild(_chatControl, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST ]);
 
         var chatBtn :CommandButton = new CommandButton();
         chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
@@ -206,7 +214,7 @@ public class ControlBar extends HBox
         volBtn.toolTip = Msgs.GENERAL.get("i.volume");
         volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
         volBtn.styleName = "controlBarButtonVolume";
-        addGroupChild(volBtn, [ UI_STD, UI_GUEST, UI_EDIT ]);
+        addGroupChild(volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT ]);
 
         // avatar selection is now handled from GWT - however, this may be useful in embedded mode
         // in the future.
@@ -262,7 +270,7 @@ public class ControlBar extends HBox
         // some elements that are common to guest and logged in users
         var footerLeft :SkinnableImage = new SkinnableImage();
         footerLeft.styleName = "controlBarFooterLeft";
-        addGroupChild(footerLeft, [ UI_STD, UI_GUEST ]);
+        addGroupChild(footerLeft, [ UI_STD, UI_MINI,  UI_GUEST ]);
 
         var blank :Canvas = new Canvas();
         blank.styleName = "controlBarSpacer";
@@ -279,7 +287,7 @@ public class ControlBar extends HBox
         _backBtn.setCommand(ControlBarController.MOVE_BACK, _backBtn);
         _backBtn.styleName = "controlBarButtonBack";
         _backBtn.enabled = false;
-        addGroupChild(_backBtn, [ UI_STD, UI_MINI, UI_GUEST ]);
+        addGroupChild(_backBtn, [ UI_STD, UI_GUEST ]);
 
         // and remember how things are set for now
         _isMember = isMember;

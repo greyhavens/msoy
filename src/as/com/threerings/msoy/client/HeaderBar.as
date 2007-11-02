@@ -7,6 +7,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 
 import mx.core.ScrollPolicy;
+import mx.core.UIComponent;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
@@ -75,7 +76,25 @@ public class HeaderBar extends HBox
 
     public function setEmbedLinkButtonVisible (visible :Boolean) :void
     {
+        _embedVisible = visible;
         _embedLinkButton.includeInLayout = _embedLinkButton.visible = visible;
+    }
+
+    public function miniChanged () :void
+    {
+        if (_ctx.getTopPanel().isMinimized()) {
+            for each (var comp :UIComponent in _extras) {
+                comp.includeInLayout = comp.visible = false;
+            }
+        } else {
+            for each (comp in _extras) {
+                if (comp == _embedLinkButton) {
+                    comp.includeInLayout = comp.visible = _embedVisible;
+                } else {
+                    comp.includeInLayout = comp.visible = true;
+                }
+            }
+        }
     }
 
     override protected function createChildren () :void
@@ -94,6 +113,7 @@ public class HeaderBar extends HBox
         _owner.styleName = "ownerNameBox";
         _owner.percentHeight = 100;
         addChild(_owner);
+        _extras.push(_owner);
 
         var padding :HBox = new HBox();
         padding.percentWidth = 100;
@@ -115,6 +135,7 @@ public class HeaderBar extends HBox
         _embedLinkButton.mouseChildren = false;
         controlBox.addChild(_embedLinkButton);
         setEmbedLinkButtonVisible(false);
+        _extras.push(_embedLinkButton);
 
         var closeBox :VBox = new VBox();
         closeBox.styleName = "headerCloseBox";
@@ -135,5 +156,10 @@ public class HeaderBar extends HBox
     protected var _embedLinkButton :Label;
 
     protected var _tabs :ChatTabBar;
+
+    /** Bits that get removed when in minimized view */
+    protected var _extras :Array = [];
+
+    protected var _embedVisible :Boolean;
 }
 }

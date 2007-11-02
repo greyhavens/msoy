@@ -4,6 +4,7 @@
 package com.threerings.msoy.client {
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.system.Capabilities;
 
@@ -435,11 +436,13 @@ public class TopPanel extends Canvas
     {
         _minimized = true;
 
-        // TODO: bits and bobs
-        //  - stop accepting clicks on room view - a click should bring it back to full size as 
-        //    before
-        //  - remove owner/share links from header bar
-        //  - remove everything from the control bar except chat entry, send button and skin
+        _placeBox.mouseChildren = false;
+        _placeBox.buttonMode = true;
+        _placeBox.useHandCursor = true;
+        _placeBox.addEventListener(MouseEvent.CLICK, placeBoxClicked);
+
+        _headerBar.miniChanged();
+        _controlBar.miniChanged();
     }
 
     /**
@@ -449,7 +452,18 @@ public class TopPanel extends Canvas
     {
         _minimized = false;
         
-        // TODO: undo bits and bobs
+        _placeBox.useHandCursor = false;
+        _placeBox.buttonMode = false;
+        _placeBox.mouseChildren = true;
+        _placeBox.removeEventListener(MouseEvent.CLICK, placeBoxClicked);
+
+        _headerBar.miniChanged();
+        _controlBar.miniChanged();
+    }
+
+    protected function placeBoxClicked (event :MouseEvent) :void
+    {
+        _ctx.getWorldClient().restoreClient();
     }
 
     protected function layoutPanels () :void
