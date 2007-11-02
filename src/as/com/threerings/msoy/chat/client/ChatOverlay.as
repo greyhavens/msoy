@@ -142,6 +142,7 @@ public class ChatOverlay
 
         if (_history != null) {
             _history.removeChatOverlay(this);
+            clearGlyphs(_showingHistory);
         }
 
         _history = history;
