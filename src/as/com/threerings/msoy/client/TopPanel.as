@@ -190,13 +190,23 @@ public class TopPanel extends Canvas
         return _placeBox.getPlaceView();
     }
 
+    public function setActiveOverlay (overlay :ChatOverlay) :void
+    {
+        _activeOverlay = overlay;
+    }
+
     /**
      * Returns the chat overlay that is in use, or null if there is none.
      */
     public function getChatOverlay () :ChatOverlay
     {
-        var view :PlaceView = _placeBox.getPlaceView();
-        return view is RoomView ? (view as RoomView).chatOverlay : null;
+        if (_activeOverlay == null) {
+            var view :RoomView = getPlaceView() as RoomView;
+            if (view != null) {
+                _activeOverlay = view.chatOverlay;
+            }
+        }
+        return _activeOverlay;
     }
 
     /**
@@ -627,6 +637,8 @@ public class TopPanel extends Canvas
 
     /** Remember what the chat history setting was at before we minimized. */
     protected var _showingChatHistory :Boolean;
+
+    protected var _activeOverlay :ChatOverlay;
 
     protected static const MIN_FLASH_VERSION :int = 9;
     protected static const MIN_FLASH_REVISION :int = 28;

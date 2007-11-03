@@ -5,6 +5,8 @@ package com.threerings.msoy.chat.client {
 
 import mx.core.UIComponent;
 
+import com.threerings.util.ArrayUtil;
+
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.util.ClassUtil;
@@ -169,6 +171,7 @@ public class MsoyChatDirector extends ChatDirector
     {
         if (display is ChatOverlay) {
             (display as ChatOverlay).setHistory(_roomHistory);
+            (_ctx as WorldContext).getTopPanel().setActiveOverlay(display as ChatOverlay);
         }
         super.pushChatDisplay(display);
     }
@@ -178,10 +181,11 @@ public class MsoyChatDirector extends ChatDirector
     {
         if (display is ChatOverlay) {
             (display as ChatOverlay).setHistory(_roomHistory);
+            (_ctx as WorldContext).getTopPanel().setActiveOverlay(display as ChatOverlay);
         }
         super.addChatDisplay(display);
     }
-
+    
     // from ChatDirector
     override public function clearDisplays () :void
     {
@@ -223,7 +227,6 @@ public class MsoyChatDirector extends ChatDirector
         // this prevents the ChatControl from reporting errors on its own.
         return ChatCodes.SUCCESS;
     }
-
 
     // from ChatDirector
     override protected function dispatchPreparedMessage (msg :ChatMessage) :void

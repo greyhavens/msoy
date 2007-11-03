@@ -1111,7 +1111,7 @@ public class ChatOverlay
      */
     protected function configureHistoryBarSize (... ignored) :void
     {
-        if (_targetBounds != null) {
+        if (_targetBounds != null && _historyBar != null) {
             _historyBar.height = _targetBounds.height;
             _historyBar.move(_targetBounds.x, _targetBounds.y);
         }

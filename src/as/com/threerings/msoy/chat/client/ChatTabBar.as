@@ -19,11 +19,17 @@ import com.threerings.util.ConfigValueSetEvent;
 
 import com.threerings.crowd.chat.data.ChatMessage;
 
+import com.threerings.crowd.chat.client.ChatDirector;
+
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.WorldContext;
 
+import com.threerings.msoy.chat.client.MsoyChatDirector;
+
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
+
+import com.threerings.msoy.game.client.GameChatDirector;
 
 /**
  * SuperTabBar doesn't leave any way of notifying its creator when a tab is closed, so since we
@@ -66,6 +72,11 @@ public class ChatTabBar extends SuperTabBar
             _tabs.setItemAt(tab, 0);
         }
         selectedIndex = 0;
+    }
+
+    public function setChatDirector (dir :ChatDirector) :void
+    {
+        _chatDirector = dir;
     }
 
     public function displayChat (channel :ChatChannel, history :HistoryList = null) :void
@@ -215,6 +226,18 @@ public class ChatTabBar extends SuperTabBar
         return -1;
     }
 
+    protected function getDirectorHistory () :HistoryList
+    {
+        if (_chatDirector == null) {
+            return (_ctx.getChatDirector() as MsoyChatDirector).getRoomHistory();
+        } else if (_chatDirector is MsoyChatDirector) {
+            return (_chatDirector as MsoyChatDirector).getRoomHistory();
+        } else if (_chatDirector is GameChatDirector) {
+            return (_chatDirector as GameChatDirector).getGameHistory();
+        }
+        return null;
+    }
+
     protected function tabSelected (event :ItemClickEvent = null) :void
     {
         _selectedIndex = event == null ? _selectedIndex : event.index;
@@ -236,8 +259,7 @@ public class ChatTabBar extends SuperTabBar
             } else {
                 var overlay :ChatOverlay = _ctx.getTopPanel().getChatOverlay();
                 if (overlay != null) {
-                    overlay.setHistory(
-                        (_ctx.getChatDirector() as MsoyChatDirector).getRoomHistory());
+                    overlay.setHistory(getDirectorHistory());
                 }
             }
         } else {
@@ -257,7 +279,7 @@ public class ChatTabBar extends SuperTabBar
     protected var _unhideIndex :int = -1;
 
     protected var _currentController :ChatChannelController;
-
     protected var _ctx :WorldContext;
+    protected var _chatDirector :ChatDirector;
 }
 }

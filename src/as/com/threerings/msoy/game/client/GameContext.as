@@ -16,6 +16,8 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.parlor.client.ParlorDirector;
 import com.threerings.parlor.util.ParlorContext;
 
+import com.threerings.msoy.chat.client.MsoyChatDirector;
+
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
@@ -46,6 +48,11 @@ public class GameContext
         _locDtr = new LocationDirector(this);
         _chatDtr = new GameChatDirector(this);
         _parDtr = new ParlorDirector(this);
+    }
+
+    public function getMsoyChatDirector () :MsoyChatDirector
+    {
+        return _wctx.getChatDirector() as MsoyChatDirector;
     }
 
     // from PresentsContext
