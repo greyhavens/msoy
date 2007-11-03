@@ -142,6 +142,7 @@
   <path id="classpath">
     <pathelement location="${classes.dir}"/>
     <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
+    <fileset dir="${java.home}/lib" includes="plugin.jar"/>
   </path>
 
   <!-- prepares the application directories -->
@@ -586,6 +587,10 @@
         <antcall target="proguard"><param name="ident" value="@{ident}"/></antcall>
       </sequential>
     </for>
+    <!-- build the howdy pardner jar -->
+    <jar file="pages/clients/${build_version}/howdy.jar" basedir="${classes.dir}">
+      <include name="com/threerings/msoy/client/HowdyPardner.class"/>
+    </jar>
   </target>
 
   <!-- generates fields for persistent record classes -->
