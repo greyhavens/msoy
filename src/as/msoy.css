@@ -631,7 +631,7 @@ Window {
 }
 
 .locationName {
-  fontSize: 14px;
+  fontSize: 12px;
   fontWeight: bold;
   color: white;
   textAlign: center;

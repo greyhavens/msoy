@@ -52,6 +52,20 @@ public class HeaderBar extends HBox
         return _tabs;
     }
 
+    public function setLocationName (loc :String) :void
+    {
+        _loc.text = loc;
+        _loc.validateNow();
+        // allow text to center under the whirled logo if its not too long.
+        _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
+
+        if (_tabsContainer.parent == this) {
+            _tabs.setLocationName(loc);
+        } else {
+            _tabs.setLocationName(Msgs.CHAT.get("l.game_channel"));
+        }
+    }
+
     public function setOwnerLink (owner :String, onClick :Function = null) :void 
     {
         while (_owner.numChildren > 0) {
@@ -106,6 +120,10 @@ public class HeaderBar extends HBox
         if (_tabsContainer.parent == this) {
             removeChild(_tabsContainer);
         }
+        _loc.visible = _loc.includeInLayout = true;
+        _loc.validateNow();
+        // allow text to center under the whirled logo if its not too long.
+        _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
         return _tabsContainer;
     }
 
@@ -114,12 +132,22 @@ public class HeaderBar extends HBox
         if (_tabsContainer.parent != null) {
             _tabsContainer.parent.removeChild(_tabsContainer);
         }
-        addChildAt(_tabsContainer, 0);
+        _tabs.setLocationName(_loc.text);
+        if (_loc.parent == this) {
+            _loc.visible = _loc.includeInLayout = false;
+        }
+        addChildAt(_tabsContainer, 1);
     }
 
     override protected function createChildren () :void
     {
         super.createChildren();
+
+        _loc = new Label();
+        _loc.styleName = "locationName";
+        _loc.width = WHIRLED_LOGO_WIDTH;
+        _loc.visible = _loc.includeInLayout = false;
+        addChild(_loc);
 
         _tabsContainer = new HBox();
         _tabsContainer.setStyle("horizontalGap", 0);
@@ -174,6 +202,7 @@ public class HeaderBar extends HBox
 
     protected var _controller :HeaderBarController;
 
+    protected var _loc :Label;
     protected var _owner :HBox;
     protected var _embedLinkButton :Label;
 
