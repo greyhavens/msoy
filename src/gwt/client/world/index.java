@@ -106,7 +106,7 @@ public class index extends Page
     }
 
     // @Override // from Page
-    public void clientWasCleared ()
+    protected void clientWasCleared ()
     {
         super.clientWasCleared();
         // head to Whirledwide

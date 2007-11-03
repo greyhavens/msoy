@@ -4,9 +4,13 @@
 package client.game;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
@@ -70,6 +74,20 @@ public class index extends Page
     }
 
     // @Override // from Page
+    public void onPageLoad ()
+    {
+        super.onPageLoad();
+        configureCallbacks(this);
+    }
+
+    // @Override // from Page
+    public void onPageUnload ()
+    {
+        super.onPageUnload();
+        clearCallbacks();
+    }
+
+    // @Override // from Page
     protected String getPageId ()
     {
         return GAME;
@@ -101,7 +119,7 @@ public class index extends Page
         });
     }
 
-    protected void launchGame (LaunchConfig config, int gameOid, boolean playNow)
+    protected void launchGame (final LaunchConfig config, final int gameOid, boolean playNow)
     {
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
@@ -126,25 +144,28 @@ public class index extends Page
                 WorldClient.displayFlash("gameLobby=" + config.gameId);
 
             } else {
-                String[] args = new String[] {
-                    "game_id", "" + config.gameId,
-                    "game_oid", "" + gameOid,
-                    "server", config.server,
-                    "port", "" + config.port,
-                    "authtoken", (CGame.ident == null) ? "" : CGame.ident.token };
-                // we have to serve game-client.jar from the server to which it will connect back
-                // due to security restrictions and proxy the game jar through there as well
+                // clear out the client as we're going into Java land
+                clearClient(false);
+
+                // prepare a command to be invoked once we know Java is loaded
+                _javaReadyCommand = new Command() {
+                    public void execute () {
+                        displayJava(config, gameOid);
+                    }
+                };
+
+                // stick up a loading message and the HowdyPardner Java applet
+                FlowPanel bits = new FlowPanel();
+                bits.setStyleName("javaLoading");
+                bits.add(new Label("Loading game..."));
+
                 String gameServer = "http://" + config.server + ":" + config.httpPort;
-                String gameJar = gameServer + "/clients/" +
-                    DeploymentConfig.version + "/" + (config.lwjgl ? "lwjgl-" : "") +
-                    "game-client.jar";
-                WorldClient.displayJava(
-                    WidgetUtil.createApplet(
-                        "game", gameJar + "," + gameServer + config.gameMediaPath,
-                        // TODO: allow games to specify their dimensions in their config
-                        "com.threerings.msoy.game.client." +
-                            (config.lwjgl ? "LWJGL" : "") + "GameApplet",
-                        "100%", "600", args));
+                String howdyJar =
+                    gameServer + "/clients/" + DeploymentConfig.version + "/howdy.jar";
+                bits.add(WidgetUtil.createApplet("game", howdyJar,
+                                                 "com.threerings.msoy.client.HowdyPardner",
+                                                 "100", "10", true, new String[0]));
+                setContent(bits);
             }
             break;
 
@@ -165,4 +186,47 @@ public class index extends Page
             break;
         }
     }
+
+    protected void displayJava (LaunchConfig config, int gameOid)
+    {
+        String[] args = new String[] {
+            "game_id", "" + config.gameId, "game_oid", "" + gameOid,
+            "server", config.server, "port", "" + config.port,
+            "authtoken", (CGame.ident == null) ? "" : CGame.ident.token };
+
+        // we have to serve game-client.jar from the server to which it will connect back due to
+        // security restrictions and proxy the game jar through there as well
+        String gameServer = "http://" + config.server + ":" + config.httpPort;
+        String gameJar = gameServer + "/clients/" +
+            DeploymentConfig.version + "/" + (config.lwjgl ? "lwjgl-" : "") +
+            "game-client.jar";
+
+        WorldClient.displayJava(
+            WidgetUtil.createApplet(
+                "game", gameJar + "," + gameServer + config.gameMediaPath,
+                // TODO: allow games to specify their dimensions in their config
+                "com.threerings.msoy.game.client." +
+                (config.lwjgl ? "LWJGL" : "") + "GameApplet",
+                "100%", "600", false, args));
+    }
+
+    protected void javaReady ()
+    {
+        if (_javaReadyCommand != null) {
+            DeferredCommand.addCommand(_javaReadyCommand);
+            _javaReadyCommand = null;
+        }
+    }
+
+    protected Command _javaReadyCommand;
+
+    protected static native void configureCallbacks (index page) /*-{
+       $wnd.howdyPardner = function () {
+            page.@client.game.index::javaReady()();
+       }
+    }-*/;
+
+    protected static native void clearCallbacks () /*-{
+       $wnd.howdyPardner = null;
+    }-*/;
 }

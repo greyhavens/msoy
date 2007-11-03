@@ -3,22 +3,28 @@
 
 package com.threerings.msoy.game.client;
 
-import java.net.URL;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.net.URL;
+
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.samskivert.swing.GroupLayout;
 import com.samskivert.util.Config;
 import com.samskivert.util.RunQueue;
-import com.threerings.util.IdleTracker;
-import com.threerings.util.KeyDispatcher;
-import com.threerings.util.MessageManager;
+
 import com.threerings.media.FrameManager;
 import com.threerings.media.image.ImageManager;
 import com.threerings.media.sound.SoundManager;
 import com.threerings.media.tile.TileManager;
+
 import com.threerings.resource.ResourceManager;
+import com.threerings.util.IdleTracker;
+import com.threerings.util.KeyDispatcher;
+import com.threerings.util.MessageManager;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
@@ -66,6 +72,12 @@ public class GameClient
 
         // stuff our top-level pane into the top-level of our shell
         _shell.setContentPane(_root);
+
+        // display a "loading..." panel until our first placeview is set
+        JPanel loading = GroupLayout.makeVBox();
+        loading.setBackground(Color.white);
+        loading.add(new JLabel("Loading..."));
+        setMainPanel(loading);
 
         // start our idle tracker
         IdleTracker idler = new IdleTracker(ChatCodes.DEFAULT_IDLE_TIME, LOGOFF_DELAY) {

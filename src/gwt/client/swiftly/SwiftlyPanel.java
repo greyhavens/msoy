@@ -110,7 +110,7 @@ public class SwiftlyPanel extends FlexTable
             DeploymentConfig.version + "/swiftly-client.jar";
         _applet = WidgetUtil.createApplet(
             "swiftly", swiftlyJar, "com.threerings.msoy.swiftly.client.SwiftlyApplet",
-            "100%", "100%", args);
+            "100%", "100%", false, args);
         _applet.setHeight("100%");
         setWidget(1, 0, _applet);
         getFlexCellFormatter().setHeight(1, 0, "100%");

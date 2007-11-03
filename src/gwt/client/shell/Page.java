@@ -5,6 +5,8 @@ package client.shell;
 
 import java.util.ArrayList;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -197,13 +199,19 @@ public abstract class Page
     }
 
     /**
-     * Called when the client is removed from view. Clears the close button if one is showing.
+     * Clears any open client and restores the content display.
      */
-    public void clientWasCleared ()
+    public void clearClient (boolean deferred)
     {
-        _closeToken = null;
-        if (_content != null) {
-            RootPanel.get(SEPARATOR).clear();
+        if (deferred) {
+            DeferredCommand.add(new Command() {
+                public void execute () {
+                    clearClient(false);
+                }
+            });
+        } else {
+            WorldClient.clearClient(true);
+            clientWasCleared();
         }
     }
 
@@ -300,6 +308,17 @@ public abstract class Page
     protected Widget getContent ()
     {
         return (_content != null && _content.isCellPresent(1, 0)) ? _content.getWidget(1, 0) : null;
+    }
+
+    /**
+     * Called when the client is removed from view. Clears the close button if one is showing.
+     */
+    protected void clientWasCleared ()
+    {
+        _closeToken = null;
+        if (_content != null) {
+            RootPanel.get(SEPARATOR).clear();
+        }
     }
 
     /**

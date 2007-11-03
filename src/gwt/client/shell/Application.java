@@ -7,17 +7,15 @@ import java.util.HashMap;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -343,16 +341,7 @@ public class Application
 
     protected void clearClient (boolean deferred)
     {
-        if (deferred) {
-            DeferredCommand.add(new Command() {
-                public void execute () {
-                    clearClient(false);
-                }
-            });
-        } else {
-            WorldClient.clearClient(true);
-            _page.clientWasCleared();
-        }
+        _page.clearClient(deferred);
     }
 
     protected void setSeparator (int x)

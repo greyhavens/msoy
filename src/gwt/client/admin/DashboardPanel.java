@@ -98,7 +98,7 @@ public class DashboardPanel extends FlexTable
         getFlexCellFormatter().setStyleName(row, 0, "Applet");
         setWidget(row, 0, WidgetUtil.createApplet(
                       "admin", appletURL,
-                      "com.threerings.msoy.admin.client.AdminApplet", 800, 400,
+                      "com.threerings.msoy.admin.client.AdminApplet", 800, 400, false,
                       new String[] { "server", config.server,
                                      "port", "" + config.port,
                                      "authtoken", CAdmin.ident.token }));

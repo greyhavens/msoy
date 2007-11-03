@@ -4,6 +4,13 @@
  * CSS styles for the Game interfaces.
  */
 
+.javaLoading {
+  width: 100%;
+  text-align: center;
+  padding-top: 50px;
+  font-size: 24px;
+}
+
 .gameDetail {
   padding: 5px;
   width: 650px;
