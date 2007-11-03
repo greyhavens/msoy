@@ -14,6 +14,8 @@ import mx.containers.VBox;
 
 import mx.controls.Label;
 
+import flexlib.containers.ButtonScrollingCanvas;
+
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.flex.CommandButton;
 
@@ -151,12 +153,28 @@ public class HeaderBar extends HBox
 
         _tabsContainer = new HBox();
         _tabsContainer.setStyle("horizontalGap", 0);
+        _tabsContainer.setStyle("borderStyle", "none");
+        _tabsContainer.setStyle("paddingTop", 0);
+        _tabsContainer.setStyle("paddingBottom", 0);
+        (_tabsContainer as HBox).horizontalScrollPolicy = "off"; 
         addChild(_tabsContainer);
+
         var channelBtn :CommandButton = new CommandButton();
         channelBtn.setCommand(MsoyController.POP_CHANNEL_MENU, channelBtn);
         channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
         channelBtn.styleName = "headerBarButtonChannel";
         _tabsContainer.addChild(channelBtn);
+
+//        var canvas :ButtonScrollingCanvas = new ButtonScrollingCanvas();
+//        canvas.setStyle("borderStyle", "none");
+//        canvas.setStyle("backgroundAlpha", 0);
+//        canvas.setStyle("paddingTop", 0);
+//        canvas.setStyle("paddingBottom", 0);
+//        canvas.startScrollingEvent = MouseEvent.MOUSE_DOWN;
+//        canvas.stopScrollingEvent = MouseEvent.MOUSE_UP;
+//        canvas.scrollSpeed = 100;
+//        canvas.addChild(_tabs);
+//        _tabsContainer.addChild(canvas);
         _tabsContainer.addChild(_tabs);
 
         _owner = new HBox();
