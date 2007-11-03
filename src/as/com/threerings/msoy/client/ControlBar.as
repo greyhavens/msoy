@@ -68,8 +68,10 @@ public class ControlBar extends HBox
     public static const UI_MINI :String = "Member UI Mini";
     public static const UI_EDIT :String = "Member UI Edit";
     public static const UI_GUEST :String = "Guest UI";
+    public static const UI_SIDEBAR :String = "Member UI Sidebar";
 
-    public static const ALL_UI_GROUPS :Array = [ UI_ALL, UI_STD, UI_MINI, UI_EDIT, UI_GUEST ];
+    public static const ALL_UI_GROUPS :Array = [ UI_ALL, UI_STD, UI_SIDEBAR, UI_MINI, UI_EDIT, 
+        UI_GUEST ];
 
     public function ControlBar (ctx :WorldContext, top :TopPanel)
     {
@@ -138,14 +140,6 @@ public class ControlBar extends HBox
         _notifyBtn.selected = showing;
     }
 
-    public function setTabMode (tabbed :Boolean) :void
-    {
-        // TODO: when we're done with the ChatChannelPanel, tab mode goes away as well
-        _isMinimized = tabbed;
-        _isEditing = (_isEditing && ! _isMinimized);
-        updateUI();
-    }
-
     /**
      * Moves back to the previous scene we occupied, if possible.
      */
@@ -159,6 +153,17 @@ public class ControlBar extends HBox
         _isMinimized = _ctx.getTopPanel().isMinimized();
         _isEditing = (_isEditing && !_isMinimized);
         updateUI();
+    }
+
+    public function inSidebar (sidebaring :Boolean) :void
+    {
+        _inSidebar = sidebaring;
+        updateUI();
+    }
+
+    public function setSpacerWidth (width :Number) :void
+    {
+        _spacer.width = width;
     }
 
     override protected function updateDisplayList (w :Number, h :Number) :void
@@ -198,11 +203,17 @@ public class ControlBar extends HBox
         removeAllChildren();
         clearAllGroups();
 
+        _spacer = new Canvas();
+        _spacer.styleName = "controlBarSpacer";
+        _spacer.height = this.height;
+        _spacer.percentWidth = 100;
+        addGroupChild(_spacer, [ UI_SIDEBAR ]);
+
         _chatControl = null;
         _avatarBtn = null;
 
         _chatControl = new ChatControl(_ctx, Msgs.CHAT.get("b.send"), this.height - 4);
-        addGroupChild(_chatControl, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST ]);
+        addGroupChild(_chatControl, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
 
         var chatBtn :CommandButton = new CommandButton();
         chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
@@ -214,7 +225,7 @@ public class ControlBar extends HBox
         volBtn.toolTip = Msgs.GENERAL.get("i.volume");
         volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
         volBtn.styleName = "controlBarButtonVolume";
-        addGroupChild(volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT ]);
+        addGroupChild(volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR ]);
 
         // avatar selection is now handled from GWT - however, this may be useful in embedded mode
         // in the future.
@@ -276,7 +287,7 @@ public class ControlBar extends HBox
         blank.styleName = "controlBarSpacer";
         blank.height = this.height;
         blank.percentWidth = 100;
-        addGroupChild(blank, [ UI_STD, UI_MINI, UI_GUEST ]);
+        addGroupChild(blank, [ UI_STD, UI_MINI, UI_GUEST, UI_SIDEBAR ]);
 
         var footerRight :SkinnableImage = new SkinnableImage();
         footerRight.styleName = "controlBarFooterRight";
@@ -334,6 +345,8 @@ public class ControlBar extends HBox
         updateGroup(UI_ALL, false);
         if (_isMinimized) {
             updateGroup(UI_MINI, true);
+        } else if (_inSidebar) {
+            updateGroup(UI_SIDEBAR, true);
         } else if (_isMember) {
             if (_isEditing) {
                 updateGroup(UI_EDIT, true);
@@ -427,6 +440,9 @@ public class ControlBar extends HBox
     /** Are we in a minimized mode? */
     protected var _isMinimized :Boolean;
 
+    /** Are we in a sidebar? */
+    protected var _inSidebar :Boolean;
+
     /** Are we in room editing mode? */
     protected var _isEditing :Boolean;
 
@@ -462,6 +478,9 @@ public class ControlBar extends HBox
 
     /** Bookend image at the other end of name label. */
     protected var _bookend :SkinnableImage;
+
+    /** A spacer to bump the UI bits over to the right if needed */
+    protected var _spacer :Canvas;
 }
 }
 

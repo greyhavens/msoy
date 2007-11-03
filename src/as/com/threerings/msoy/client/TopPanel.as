@@ -242,9 +242,7 @@ public class TopPanel extends Canvas
             bounds.y += DECORATIVE_MARGIN_HEIGHT;
             bounds.height -= 2*DECORATIVE_MARGIN_HEIGHT;
         }
-        if (!_placeBox.usurpsControlBar()) {
-            bounds.height -= ControlBar.HEIGHT;
-        }
+        bounds.height -= ControlBar.HEIGHT;
         return bounds;
     }
 
@@ -525,11 +523,7 @@ public class TopPanel extends Canvas
             _headerBar.setStyle("left", _leftPanel.width);
             _ctx.getWorldClient().setSeparator(_leftPanel.width - 1);
         } else {
-            if (_placeBox.usurpsControlBar()) {
-                _controlBar.setStyle("left", stage.stageWidth - getRightPanelWidth());
-            } else {
-                _controlBar.setStyle("left", 0);
-            }
+            _controlBar.setStyle("left", 0);
             _headerBar.setStyle("left", 0);
         }
 
@@ -545,6 +539,10 @@ public class TopPanel extends Canvas
             } else {
                 _rightPanel.setStyle("left", 0);
             }
+
+            _controlBar.setSpacerWidth(stage.stageWidth - _rightPanel.width);
+        } else {
+            _controlBar.setSpacerWidth(0);
         }
 
         updatePlaceViewSize();
@@ -585,15 +583,13 @@ public class TopPanel extends Canvas
         }
 
         var bottom :int = getBottomPanelHeight();
-        if (!_placeBox.usurpsControlBar()) {
-            bottom += ControlBar.HEIGHT;
-            h -= ControlBar.HEIGHT;
-        }
         // for place views, we want to insert decorative margins above and below the view
         if (_placeBox.getPlaceView() is AbstractRoomView) {
             bottom += DECORATIVE_MARGIN_HEIGHT;
             h -= DECORATIVE_MARGIN_HEIGHT;
         }
+        bottom += ControlBar.HEIGHT;
+        h -= ControlBar.HEIGHT;
 
         _placeBox.setStyle("top", top);
         _placeBox.setStyle("bottom", bottom);

@@ -48,6 +48,8 @@ public class GameChatContainer extends LayeredContainer
         _tabBar.addChild(tabs);
         addChild(_tabBar);
 
+        _ctx.getTopPanel().getControlBar().inSidebar(true);
+
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
     }
 
@@ -55,6 +57,7 @@ public class GameChatContainer extends LayeredContainer
     {
         _chatDtr.removeChatDisplay(_overlay);
         _ctx.getTopPanel().getHeaderBar().replaceTabsContainer();
+        _ctx.getTopPanel().getControlBar().inSidebar(false);
     }
 
     public function sendChat (message :String) :void

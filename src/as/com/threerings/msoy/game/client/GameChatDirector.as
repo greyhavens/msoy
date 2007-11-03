@@ -38,8 +38,7 @@ public class GameChatDirector extends ChatDirector
         super.pushChatDisplay(display);
 
         // redirect chat to this chat director
-        (_ctx as GameContext).getTopPanel().getControlBar().setChatDirector(this);
-        (_ctx as GameContext).getTopPanel().getHeaderBar().getChatTabs().setChatDirector(this);
+        grabChatControl();
     }
 
     // from ChatDirector
@@ -52,8 +51,7 @@ public class GameChatDirector extends ChatDirector
         super.addChatDisplay(display);
 
         // redirect chat to this chat director
-        (_ctx as GameContext).getTopPanel().getControlBar().setChatDirector(this);
-        (_ctx as GameContext).getTopPanel().getHeaderBar().getChatTabs().setChatDirector(this);
+        grabChatControl();
     }
 
     // from ChatDirector
@@ -63,9 +61,7 @@ public class GameChatDirector extends ChatDirector
 
         if (_displays.size() == 0) {
             // restore chat to the default director
-            (_ctx as GameContext).getTopPanel().getControlBar().setChatDirector(null);
-            (_ctx as GameContext).getTopPanel().getHeaderBar().getChatTabs().setChatDirector(null);
-            (_ctx as GameContext).getTopPanel().setActiveOverlay(null);
+            releaseChatControl();
         }
     }
 
@@ -86,6 +82,19 @@ public class GameChatDirector extends ChatDirector
             return (_ctx as GameContext).getMsoyChatDirector().requestChat(speakSvc, text, record);
         }
         return super.requestChat(speakSvc, text, record);
+    }
+
+    protected function grabChatControl () :void
+    {
+        (_ctx as GameContext).getTopPanel().getControlBar().setChatDirector(this);
+        (_ctx as GameContext).getTopPanel().getHeaderBar().getChatTabs().setChatDirector(this);
+    }
+
+    protected function releaseChatControl () :void
+    {
+        (_ctx as GameContext).getTopPanel().getControlBar().setChatDirector(null);
+        (_ctx as GameContext).getTopPanel().getHeaderBar().getChatTabs().setChatDirector(null);
+        (_ctx as GameContext).getTopPanel().setActiveOverlay(null);
     }
 
     // from ChatDirector

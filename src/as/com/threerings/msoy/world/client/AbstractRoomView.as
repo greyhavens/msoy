@@ -76,12 +76,6 @@ public class AbstractRoomView extends Sprite
         _showing = showing;
     }
 
-    // from MsoyPlaceView
-    public function usurpsControlBar () :Boolean
-    {
-        return false;
-    }
-
     /**
      * Are we actually showing?
      */

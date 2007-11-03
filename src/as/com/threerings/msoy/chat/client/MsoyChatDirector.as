@@ -5,8 +5,6 @@ package com.threerings.msoy.chat.client {
 
 import mx.core.UIComponent;
 
-import com.threerings.util.ArrayUtil;
-
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.util.ClassUtil;

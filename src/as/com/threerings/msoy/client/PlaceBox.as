@@ -31,11 +31,6 @@ public class PlaceBox extends LayeredContainer
         return _placeView;
     }
 
-    public function usurpsControlBar () :Boolean
-    {
-        return (_placeView is MsoyPlaceView) && (_placeView as MsoyPlaceView).usurpsControlBar();
-    }
-
     public function setPlaceView (view :PlaceView) :void
     {
         // throw an exception now if it's not a display object
