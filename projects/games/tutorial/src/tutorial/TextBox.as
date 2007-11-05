@@ -89,8 +89,7 @@ public class TextBox extends Sprite
 
     public function sizeChanged () :void
     {
-//        var scale :Number = 500 / Math.max(320, Math.min(500, stage.stageWidth));
-        var scale :Number = 1;
+        var scale :Number = Math.max(300, Math.min(400, stage.stageWidth)) / 400;
         this.scaleX = this.scaleY = scale;
 
         var offset :Number = Math.min(stage.stageWidth - figureWidth()*scale,
