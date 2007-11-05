@@ -64,12 +64,16 @@ public class ChatOverlay
     public static const LAYER_CHAT_SCROLL :int = 200;
     public static const LAYER_CHAT_STATIC :int = 201;
 
+    public static const SCROLL_BAR_LEFT :int = 1;
+    public static const SCROLL_BAR_RIGHT :int = 2;
+
     public var log :Log = Log.getLog(this);
 
-    public function ChatOverlay (msgMan :MessageManager)
+    public function ChatOverlay (msgMan :MessageManager, scrollBarSide :int = SCROLL_BAR_LEFT)
     {
         _msgMan = msgMan;
 
+        _scrollBarSide = scrollBarSide;
         _scrollOverlay = new Sprite();
         _scrollOverlay.mouseEnabled = false;
         _scrollOverlay.blendMode = BlendMode.LAYER;
@@ -485,7 +489,8 @@ public class ChatOverlay
     protected function addSubtitle (glyph :SubtitleGlyph) :void
     {
         var height :int = int(glyph.height);
-        glyph.x = _targetBounds.x + PAD + ScrollBar.THICKNESS;
+        glyph.x = _targetBounds.x + PAD + 
+            (_scrollBarSide == SCROLL_BAR_LEFT ? ScrollBar.THICKNESS : 0);
         glyph.y = _targetBounds.bottom - height - PAD;
         scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
         _subtitles.push(glyph);
@@ -1107,13 +1112,18 @@ public class ChatOverlay
     }
 
     /**
-     * Configure the history scrollbar size.
+     * Configure the history scrollbar size and location.
      */
     protected function configureHistoryBarSize (... ignored) :void
     {
         if (_targetBounds != null && _historyBar != null) {
             _historyBar.height = _targetBounds.height;
-            _historyBar.move(_targetBounds.x, _targetBounds.y);
+            if (_scrollBarSide == SCROLL_BAR_LEFT) {
+                _historyBar.move(_targetBounds.x, _targetBounds.y);
+            } else {
+                _historyBar.move(
+                    _targetBounds.x + _targetBounds.width - ScrollBar.THICKNESS, _targetBounds.y);
+            }
         }
     }
 
@@ -1175,7 +1185,8 @@ public class ChatOverlay
                 }
 
                 // position it
-                glyph.x = _targetBounds.x + PAD + ScrollBar.THICKNESS;
+                glyph.x = _targetBounds.x + PAD + 
+                    (_scrollBarSide == SCROLL_BAR_LEFT ? ScrollBar.THICKNESS : 0);
                 glyph.y = ypos;
                 ypos -= getHistorySubtitleSpacing(ii);
             }
@@ -1305,6 +1316,9 @@ public class ChatOverlay
 
     /* The history used by this overlay. */
     protected var _history :HistoryList;
+
+    /** The side to keep the scroll bar for this overlay on. */
+    protected var _scrollBarSide :int;
 
     /** Used to guess at the 'page size' for the scrollbar. */
     protected static const SUBTITLE_HEIGHT_GUESS :int = 26;
