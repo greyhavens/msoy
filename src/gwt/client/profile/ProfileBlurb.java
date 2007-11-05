@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -207,11 +208,20 @@ public class ProfileBlurb extends Blurb
         _ename.setMaxLength(Profile.MAX_DISPLAY_NAME_LENGTH);
         _ename.setText(_name.toString());
 
+        econtent.setText(row, 0, "Photo");
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.setSpacing(5);
+        panel.setVerticalAlignment(HasAlignment.ALIGN_TOP);
+        panel.add(_ephoto = new SimplePanel());
+        _ephoto.setWidget(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE));
+
         final AsyncCallback callback = new AsyncCallback() {
             public void onSuccess (Object result) {
                 Photo photo = (Photo)result;
                 if (photo != null) {
                     _profile.photo = photo.getThumbnailMedia();
+                    _ephoto.setWidget(MediaUtil.createMediaView(
+                        _profile.photo, MediaDesc.THUMBNAIL_SIZE));
                 }
             }
             public void onFailure (Throwable cause) {
@@ -219,12 +229,12 @@ public class ProfileBlurb extends Blurb
                 MsoyUI.error(CProfile.serverError(cause));
             }
         };
-        econtent.setText(row, 0, "Photo");
-        econtent.setWidget(row++, 1, _ephoto = new Button("Select...", new ClickListener() {
+        panel.add(new Button("Select New...", new ClickListener() {
             public void onClick (Widget source) {
                 ImageChooserPopup.displayImageChooser(callback);
             }
         }));
+        econtent.setWidget(row++, 1, panel);
 
         econtent.setText(row, 0, CProfile.msgs.headline());
         econtent.setWidget(row++, 1, _eheadline = new TextBox());
@@ -342,7 +352,7 @@ public class ProfileBlurb extends Blurb
 
     protected FlexTable _content;
 
-    protected Button _ephoto;
+    protected SimplePanel _ephoto;
     protected TextBox _ename, _eheadline, _ehomepage, _elocation;
     protected CheckBox _eshowAge;
     protected ListBox _esex;
