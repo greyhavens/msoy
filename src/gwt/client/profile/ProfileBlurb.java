@@ -39,6 +39,7 @@ import client.util.FlashClients;
 import client.util.ImageChooserPopup;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
+import client.util.RowPanel;
 
 /**
  * Displays a person's basic profile information.
@@ -209,11 +210,9 @@ public class ProfileBlurb extends Blurb
         _ename.setText(_name.toString());
 
         econtent.setText(row, 0, "Photo");
-        HorizontalPanel panel = new HorizontalPanel();
-        panel.setSpacing(5);
-        panel.setVerticalAlignment(HasAlignment.ALIGN_TOP);
+        RowPanel panel = new RowPanel();
         panel.add(_ephoto = new SimplePanel());
-        _ephoto.setWidget(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE));
+        _ephoto.setWidget(MediaUtil.createMediaView(_profile.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
 
         final AsyncCallback callback = new AsyncCallback() {
             public void onSuccess (Object result) {
