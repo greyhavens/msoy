@@ -3,9 +3,12 @@
 
 package tutorial {
 
-import flash.display.*;
-import flash.events.*;
-import flash.geom.*;
+import flash.display.InteractiveObject;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.events.MouseEvent;
+import flash.geom.ColorTransform;
+import flash.geom.Matrix;
 
 /**
  * This class turns any existing display object and turns it into an ez-button by adjusting
@@ -21,9 +24,7 @@ public class Buttonizer extends Sprite
         this.addChild(_pane);
 
         _downMatrix = new Matrix(1, 0, 0, 1, 3, 3);
-
         _overColor = new ColorTransform(1.1, 1.1, 1.1);
-
         this.addEventListener(Event.ADDED_TO_STAGE, start);
     }
 

@@ -3,14 +3,22 @@
 
 package tutorial {
 
-import flash.display.*;
-import flash.text.*;
-import flash.geom.*;
-import flash.events.*;
-import flash.filters.*;
-import flash.net.*;
-import flash.ui.*;
-import flash.utils.*;
+import flash.display.MovieClip;
+import flash.display.SimpleButton;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.events.MouseEvent;
+
+import flash.utils.ByteArray;
+import flash.utils.clearTimeout;
+import flash.utils.setTimeout;
+
+import flash.text.AntiAliasType;
+import flash.text.StyleSheet;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
+import flash.text.TextFormatAlign;
 
 import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.flash.SimpleTextButton;
@@ -61,7 +69,7 @@ public class TextBox extends Sprite
         _textField.wordWrap = true;
         _textField.multiline = true;
         _textField.embedFonts = true;
-        _textField.antiAliasType = flash.text.AntiAliasType.ADVANCED;
+        _textField.antiAliasType = AntiAliasType.ADVANCED;
         _textField.autoSize = TextFieldAutoSize.CENTER;
         _textField.width = 400;
 
@@ -96,7 +104,7 @@ public class TextBox extends Sprite
                                       stage.stageHeight - figureHeight()*scale) / 2;
 
         this.x = Math.max(0, offset);
-        this.y = Math.max(Content.BOX_HAT * this.scaleY, offset);
+        this.y = Content.BOX_HAT + 5; // Math.max(Content.BOX_HAT * this.scaleY, offset);
     }
 
     public function showBox (text :String) :TextField

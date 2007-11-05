@@ -3,19 +3,18 @@
 
 package tutorial {
 
-import flash.display.*;
-import flash.text.*;
-import flash.geom.*;
-import flash.events.*;
-import flash.filters.*;
-import flash.net.*;
-import flash.ui.*;
-import flash.utils.*;
+import flash.display.MovieClip;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.events.MouseEvent;
+import flash.geom.Point;
+import flash.utils.ByteArray;
+
+import com.threerings.flash.path.HermiteFunc;
+import com.threerings.flash.path.LinePath;
+import com.threerings.flash.path.Path;
 
 import com.threerings.util.EmbeddedSwfLoader;
-import com.threerings.flash.SimpleTextButton;
-
-import com.threerings.flash.path.*;
 
 public class Swirl extends Sprite
 {
@@ -56,12 +55,9 @@ public class Swirl extends Sprite
         case View.SWIRL_INTRO:
             if (_swirlState == View.SWIRL_NONE) {
                 moveFrom = BIG_SWIRL_LOC;
-
             } else {
-                log.warning("Unexpected transtion [from=" + _swirlState + ", to=" +
-                            state + "]");
+                log.warning("Unexpected transtion [from=" + _swirlState + ", to=" + state + "].");
             }
-
             moveTo = BIG_SWIRL_LOC;
             transScene = SCN_BIG_APPEAR;
             break;
@@ -70,27 +66,22 @@ public class Swirl extends Sprite
             if (_swirlState == View.SWIRL_NONE) {
                 moveFrom = SMALL_SWIRL_LOC;
                 transScene = SCN_SMALL_APPEAR;
-
             } else if (_swirlState == View.SWIRL_INTRO) {
                 transScene = SCN_MINIMIZE;
-
             }
-
             moveTo = SMALL_SWIRL_LOC;
             endScene = SCN_IDLE;
             break;
 
         case View.SWIRL_BOUNCY:
             if (_swirlState == View.SWIRL_INTRO) {
-                log.warning("Unexpected transtion [from=" + _swirlState + ", to=" +
-                            state + "]");
+                log.warning("Unexpected transtion [from=" + _swirlState + ", to=" + state + "].");
             }
-
             endScene = SCN_LOOKATME;
             break;
 
         default:
-            log.warning("Can't goto unknown swirl state [state=" + state + "]");
+            log.warning("Can't goto unknown swirl state [state=" + state + "].");
             return;
         }
 
@@ -135,9 +126,7 @@ public class Swirl extends Sprite
         addChild(_swirl);
 
         _swirlHandler = new ClipHandler(swirlClip);
-
         this.visible = false;
-
         _done();
     }
 

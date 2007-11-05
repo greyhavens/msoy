@@ -3,17 +3,8 @@
 
 package tutorial {
 
-import flash.display.*;
-import flash.text.*;
-import flash.geom.*;
-import flash.events.*;
-import flash.filters.*;
-import flash.net.*;
-import flash.ui.*;
-import flash.utils.*;
-
-import com.threerings.util.EmbeddedSwfLoader;
-import com.threerings.flash.SimpleTextButton;
+import flash.display.Sprite;
+import flash.utils.ByteArray;
 
 public class View extends Sprite
 {

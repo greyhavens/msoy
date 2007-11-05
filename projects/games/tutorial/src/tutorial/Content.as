@@ -3,17 +3,7 @@
 
 package tutorial {
 
-import flash.display.*;
-import flash.text.*;
-import flash.geom.*;
-import flash.events.*;
-import flash.filters.*;
-import flash.net.*;
-import flash.ui.*;
-import flash.utils.*;
-
-import com.threerings.util.EmbeddedSwfLoader;
-import com.threerings.flash.SimpleTextButton;
+import flash.geom.Point;
 
 public class Content
 {
@@ -49,6 +39,5 @@ public class Content
     [Embed(source="../../rsrc/GoudyBI.ttf", fontName="Goudy", fontWeight="bold",
            fontStyle="italic", unicodeRange="U+0020-U+007E,U+2022")]
     protected static const FONT_GOUDY_BOLD_ITALIC :Class;
-
 }
 }
