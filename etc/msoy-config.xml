@@ -196,7 +196,7 @@
    </compiler>
    <default-script-limits>
       <max-recursion-depth>1000</max-recursion-depth>
-      <max-execution-time>4</max-execution-time>
+      <max-execution-time>2</max-execution-time>
    </default-script-limits>
    <!-- A list of runtime shared library URLs to be loaded before applications start. -->
    <!-- not set -->
