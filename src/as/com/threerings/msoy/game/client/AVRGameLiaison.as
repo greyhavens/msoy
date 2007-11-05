@@ -33,7 +33,7 @@ public class AVRGameLiaison extends GameLiaison
     
     override public function clientDidLogon (event :ClientEvent) :void
     {
-        super(event);
+        super.clientDidLogon(event);
 
         var svc :AVRService = (_gctx.getClient().requireService(AVRService) as AVRService);
         var cb :ResultWrapper = new ResultWrapper(
