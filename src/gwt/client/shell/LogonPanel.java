@@ -107,11 +107,17 @@ public class LogonPanel extends SimplePanel
         contents.setCellSpacing(10);
         setWidget(contents);
 
+        // if they entered an email address, use that one, otherwise use the cookie
+        String oemail = _email.getText().trim();
+        if (oemail.length() == 0) {
+            oemail = CookieUtil.get("who");
+        }
+
         int col = 0;
         contents.getFlexCellFormatter().setStyleName(0, col, "rightLabel");
         contents.setText(0, col++, CShell.cmsgs.logonEmail());
         contents.setWidget(0, col++, _email = new TextBox());
-        _email.setText(CookieUtil.get("who"));
+        _email.setText(oemail);
         _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 doForgotPassword();
