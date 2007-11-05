@@ -153,10 +153,7 @@ public class HeaderBar extends HBox
 
         _tabsContainer = new HBox();
         _tabsContainer.setStyle("horizontalGap", 0);
-        _tabsContainer.setStyle("borderStyle", "none");
-        _tabsContainer.setStyle("paddingTop", 0);
-        _tabsContainer.setStyle("paddingBottom", 0);
-        (_tabsContainer as HBox).horizontalScrollPolicy = "off"; 
+        (_tabsContainer as HBox).horizontalScrollPolicy = ScrollPolicy.OFF;
         addChild(_tabsContainer);
 
         var channelBtn :CommandButton = new CommandButton();
@@ -166,6 +163,8 @@ public class HeaderBar extends HBox
         _tabsContainer.addChild(channelBtn);
 
 //        var canvas :ButtonScrollingCanvas = new ButtonScrollingCanvas();
+//        canvas.verticalScrollPolicy = ScrollPolicy.OFF;
+//        canvas.buttonWidth = 5;
 //        canvas.setStyle("borderStyle", "none");
 //        canvas.setStyle("backgroundAlpha", 0);
 //        canvas.setStyle("paddingTop", 0);
@@ -173,6 +172,8 @@ public class HeaderBar extends HBox
 //        canvas.startScrollingEvent = MouseEvent.MOUSE_DOWN;
 //        canvas.stopScrollingEvent = MouseEvent.MOUSE_UP;
 //        canvas.scrollSpeed = 100;
+//        canvas.percentWidth = 100; // make sure the parent container's width is constrained.
+//        canvas.height = HEIGHT;
 //        canvas.addChild(_tabs);
 //        _tabsContainer.addChild(canvas);
         _tabsContainer.addChild(_tabs);
