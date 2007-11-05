@@ -142,7 +142,7 @@
   <path id="classpath">
     <pathelement location="${classes.dir}"/>
     <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
-    <fileset dir="${java.home}/lib" includes="plugin.jar"/>
+    <fileset dir="lib" includes="plugin.jar"/>
   </path>
 
   <!-- prepares the application directories -->
