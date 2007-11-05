@@ -192,7 +192,9 @@ public class ChatTabBar extends SuperTabBar
                 selectedIndex = -1;
                 setStyle("selectedTabTextStyleName", "");
                 tab = getChildAt(_unhideIndex) as SuperTab;
-                tab.styleName = "msoyForcedUpTab";
+                if (tab != null) {
+                    tab.styleName = "msoyForcedUpTab";
+                }
             }
         }
     }
