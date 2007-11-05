@@ -30,14 +30,17 @@ public class LogonPanel extends SimplePanel
     public static void toggleShowLogon (StatusPanel parent)
     {
         RootPanel content = RootPanel.get("content");
-        if (content.getWidgetCount() == 1) {
+        int count = content.getWidgetCount();
+        if (count > 0 && content.getWidget(0) instanceof LogonPanel) {
+            content.remove(0); // remove the logon panel
+        } else if (count > 0) {
             Widget main = content.getWidget(0);
             content.remove(main);
             // TODO: animate this sliding down from the header
             content.add(new LogonPanel(parent));
             content.add(main);
         } else {
-            content.remove(0); // remove the logon panel
+            content.add(new LogonPanel(parent));
         }
     }
 
