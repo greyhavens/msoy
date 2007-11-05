@@ -220,7 +220,7 @@ public class ProfileBlurb extends Blurb
                 if (photo != null) {
                     _profile.photo = photo.getThumbnailMedia();
                     _ephoto.setWidget(MediaUtil.createMediaView(
-                        _profile.photo, MediaDesc.THUMBNAIL_SIZE));
+                        _profile.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
                 }
             }
             public void onFailure (Throwable cause) {
