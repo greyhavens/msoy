@@ -524,9 +524,8 @@ public class GameGameRegistry
                 listener.requestProcessed(mgr.getGameObject().getOid());
             }
             public void handleFailure (Exception pe) {
-                log.warning(
-                    "Unable to reslve player game state [gameId=" + mgr.getGameId() +
-                    ", player=" + playerId + ", error=" + pe + "]");
+                log.log(Level.WARNING, "Unable to resolve player state [gameId=" +
+                    mgr.getGameId() + ", player=" + playerId + "]", pe);
             }
             protected List<QuestStateRecord> _questRecs;
             protected List<PlayerGameStateRecord> _stateRecs;
