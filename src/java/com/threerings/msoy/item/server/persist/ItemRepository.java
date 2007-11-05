@@ -21,7 +21,10 @@ import com.google.common.collect.Maps;
 import com.samskivert.Log;
 import com.samskivert.io.PersistenceException;
 
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntListUtil;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
 
 import com.samskivert.jdbc.DatabaseLiaison;
@@ -34,7 +37,6 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.FullTextIndex;
 import com.samskivert.jdbc.depot.clause.FieldDefinition;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
@@ -42,6 +44,7 @@ import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.QueryClause;
+import com.samskivert.jdbc.depot.clause.SelectClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
@@ -879,10 +882,40 @@ public abstract class ItemRepository<
                                     int tag, int creator)
         throws PersistenceException
     {
-        ArrayList<SQLOperator> whereBits = new ArrayList<SQLOperator>();
+        List<SQLOperator> whereBits = new ArrayList<SQLOperator>();
 
         if (search != null && search.length() > 0) {
-            whereBits.add(new FullTextMatch(getItemClass(), ItemRecord.FTS_ND, search));
+            // an item matches the search query either if there is a full-text match against name
+            // and/or description, or if one or more of the search words match one or more of the
+            // item's tags; this is accomplished with an 'exists' subquery
+
+            SQLOperator ftMatch = new FullTextMatch(getItemClass(), ItemRecord.FTS_ND, search);
+
+            // to match tags we first have to split our search up into words
+            String[] searchTerms = search.toLowerCase().split("\\W+");
+            if (searchTerms.length > 0 && searchTerms[0].length() == 0) {
+                searchTerms = ArrayUtil.splice(searchTerms, 0, 1);
+            }
+
+            // then look up each word as a tag
+            IntSet tagIds = new ArrayIntSet();
+            for (TagNameRecord tRec : getTagRepository().getTags(searchTerms)) {
+                tagIds.add(tRec.tagId);
+            }
+
+            if (tagIds.size() == 0) {
+                whereBits.add(ftMatch);
+
+            } else {
+                // a search match is either a full-text match, or a hit on the tag sub-query
+                whereBits.add(new Or(ftMatch, new Exists<TagRecord>(new SelectClause<TagRecord>(
+                    getTagRepository().getTagClass(),
+                    new String[] { TagRecord.TAG_ID },
+                    new Where(new And(
+                        new Equals(getTagColumn(TagRecord.TARGET_ID),
+                                   getCatalogColumn(CatalogRecord.LISTED_ITEM_ID)),
+                        new In(getTagColumn(TagRecord.TAG_ID), tagIds)))))));
+            }
         }
 
         if (tag > 0) {
