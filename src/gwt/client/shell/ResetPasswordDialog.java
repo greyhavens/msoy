@@ -30,7 +30,7 @@ public class ResetPasswordDialog extends BorderedDialog
     {
         int memberId = args.get(0, 0);
         String code = args.get(1, "");
-        if (memberId != 0 && code.equals("")) {
+        if (memberId != 0 && !code.equals("")) {
             new ResetPasswordDialog(memberId, code).show();
         } else {
             MsoyUI.error(CShell.cmsgs.resetInvalid());
