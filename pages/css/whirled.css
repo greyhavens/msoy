@@ -250,9 +250,9 @@
 }
 
 .FeedList {
-  border-left: 1px dotted;
-  border-right: 1px dotted;
-  border-bottom: 1px dotted;
+  border-color: black;
+  border-style: dotted;
+  border-width: 0px 1px 1px 1px;
   width: 539px;
 }
 
@@ -312,8 +312,9 @@
 .TopGamesList {
   width: 124px;
   height: 481px;
-  border-left: 1px dotted;
-  border-right: 1px dotted;
+  border-color: black;
+  border-style: dotted;
+  border-width: 0px 1px 0px 1px;
   background-color: #DCDCDC;
 }
 
@@ -321,9 +322,9 @@
   width: 124px;
   height: 20px;
   background-color: #84939F;
-  border-bottom: 1px dotted;
-  border-left: 1px dotted;
-  border-right: 1px dotted;
+  border-color: black;
+  border-style: dotted;
+  border-width: 0px 1px 1px 1px;
   padding: 3px 2px 1px 1px;
 }
 
@@ -358,9 +359,9 @@
 .PlayersList {
   width: 124px;
   height: 501px;
-  border-left: 1px dotted;
-  border-right: 1px dotted;
-  border-bottom: 1px dotted;
+  border-color: black;
+  border-style: dotted;
+  border-width: 0px 1px 1px 1px;
   background-color: #DCDCDC;
 }
 
