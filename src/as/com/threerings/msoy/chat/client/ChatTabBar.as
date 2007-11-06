@@ -55,6 +55,38 @@ public class ChatTabBar extends SuperTabBar
         addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
     }
 
+    /**
+     * Set the active tab one to the right, or wrap around to the first tab.
+     */
+    public function nextTab () :void
+    {
+        if (_tabs.length < 2) {
+            return;
+        }
+
+        if (_selectedIndex == _tabs.length - 1) {
+            selectedIndex = 0;
+        } else {
+            selectedIndex = _selectedIndex + 1;
+        }
+    }
+
+    /**
+     * Set the active tab one to the left, or wrap around to the last tab.
+     */
+    public function prevTab () :void
+    {
+        if (_tabs.length < 2) {
+            return;
+        }
+
+        if (_selectedIndex == 0) {
+            selectedIndex = _tabs.length - 1;
+        } else {
+            selectedIndex = _selectedIndex - 1;
+        }
+    }
+
     public function getLocationName () :String
     {
         if (_tabs.length == 0) {

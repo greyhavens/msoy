@@ -1010,6 +1010,15 @@ public class MsoyController extends Controller
         case Keyboard.F7:
             handleToggleChat();
             break;
+        case Keyboard.LEFT:
+            if (event.ctrlKey) {
+                _ctx.getTopPanel().getHeaderBar().getChatTabs().prevTab();
+            }
+            break;
+        case Keyboard.RIGHT:
+            if (event.ctrlKey) {
+                _ctx.getTopPanel().getHeaderBar().getChatTabs().nextTab();
+            }
         }
 
         // We check every keyboard event, see if it's a "word" character,
