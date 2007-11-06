@@ -191,15 +191,15 @@ public abstract class Page
      */
     public void setPageTitle (String title, String subtitle)
     {
-        if (_content == null) {
+        if (_tabs == null) {
             createContentContainer();
         }
-        _content.setText(0, 0, title);
+        _tabs.setText(0, 0, title);
         if (subtitle != null) {
-            _content.setText(0, 1, subtitle);
+            _tabs.setText(0, 1, subtitle);
             title += " - " + subtitle;
         } else {
-            _content.setHTML(0, 1, "&nbsp;");
+            _tabs.setHTML(0, 1, "&nbsp;");
         }
         Window.setTitle(CShell.cmsgs.windowTitle(title));
     }
@@ -354,8 +354,8 @@ public abstract class Page
 
         // if there isn't anything in the tabs/subtitle area, we need something there to cause IE
         // to properly use up the space
-        if (_content.getWidget(0, 1) == null && _content.getText(0, 1).length() == 0) {
-            _content.setHTML(0, 1, "&nbsp;");
+        if (_tabs.getWidget(0, 1) == null && _tabs.getText(0, 1).length() == 0) {
+            _tabs.setHTML(0, 1, "&nbsp;");
         }
     }
 
@@ -373,19 +373,27 @@ public abstract class Page
         _content.setCellSpacing(0);
         _content.setWidth("100%");
         _content.setHeight("100%");
-        _content.getFlexCellFormatter().setStyleName(0, 0, "pageHeaderTitle");
-        _content.getFlexCellFormatter().setStyleName(0, 1, "pageHeaderContent");
-        _content.getFlexCellFormatter().setColSpan(1, 0, 2);
+
+        // a separate table for this entire row, so that
+        // we can set individual cell widths correctly
+        _tabs = new FlexTable();
+        _tabs.setCellPadding(0);
+        _tabs.setCellSpacing(0);
+        _tabs.setWidth("100%");
+        _tabs.getFlexCellFormatter().setStyleName(0, 0, "pageHeaderTitle");
+        _tabs.getFlexCellFormatter().setStyleName(0, 1, "pageHeaderContent");
+        _content.setWidget(0, 0, _tabs);
+
         _content.getFlexCellFormatter().setHeight(1, 0, "100%");
         _content.getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
     }
 
     protected void setPageTabs (Widget tabs)
     {
-        if (_content == null) {
+        if (_tabs == null) {
             createContentContainer();
         }
-        _content.setWidget(0, 1, tabs);
+        _tabs.setWidget(0, 1, tabs);
     }
 
     /**
@@ -472,7 +480,7 @@ public abstract class Page
         protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
     }
 
-    protected FlexTable _content;
+    protected FlexTable _content, _tabs;
 
     protected static String _closeToken;
     protected static Label _closeContent, _minimizeContent, _maximizeContent, _separatorLine;
