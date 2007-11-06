@@ -75,9 +75,6 @@ public class AVRGameController extends Controller
     // called by the Panel when it's finished loading the AVRG media
     public function gameIsReady () :void
     {
-        // if this is the tutorial, let it know what our initial minimization state is
-        miniWillChange(_mctx.getWorldClient().isMinimized());
-
         // if we played a lobbied game recently, tell the tutorial code
         if (_mctx.getGameDirector().popMostRecentLobbyGame() != 0) {
             tutorialEvent("gamePlayed");
