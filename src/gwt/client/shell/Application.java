@@ -297,11 +297,10 @@ public class Application
         _navi.didLogon(creds);
         WorldClient.didLogon(creds);
 
-        if (_page == null) {
-            // we can now load our starting page
-            onHistoryChanged(_currentToken);
-        } else {
+        if (_page != null) {
             _page.didLogon(creds);
+        } else if (_currentToken != null) {
+            onHistoryChanged(_currentToken);
         }
     }
 

@@ -333,7 +333,6 @@ public abstract class Page
         // if we're displaying the client or we have a minimized page, unminimize things first
         if (_maximizeContent.isAttached() ||
             (_closeToken != null && !_minimizeContent.isAttached())) {
-            CShell.log("Sliding content [close=" + _closeToken + ", ident=" + getPageId() + "]...");
             RootPanel.get(SEPARATOR).clear();
             FlowPanel closeBox = new FlowPanel();
             closeBox.setStyleName("CloseBoxHolder");
@@ -344,7 +343,6 @@ public abstract class Page
             new SlideContentOn().start(null);
 
         } else {
-            CShell.log("Setting content [close=" + _closeToken + ", ident=" + getPageId() + "]...");
             RootPanel.get(CONTENT).add(_content);
             RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
         }
@@ -425,6 +423,13 @@ public abstract class Page
             scheduleRepeating(25);
         }
 
+        protected void done () {
+            cancel();
+            if (_onComplete != null) {
+                _onComplete.execute();
+            }
+        }
+
         protected Command _onComplete;
         protected static final int FRAMES = 5;
     }
@@ -440,10 +445,7 @@ public abstract class Page
             if (_startWidth >= _endWidth) {
                 RootPanel.get(CONTENT).setWidth("0px");
                 RootPanel.get(CLIENT).setWidth(_endWidth + "px");
-                cancel();
-                if (_onComplete != null) {
-                    _onComplete.execute();
-                }
+                done();
 
             } else {
                 RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
@@ -466,7 +468,8 @@ public abstract class Page
                 RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
                 RootPanel.get(CLIENT).setWidth(_endWidth + "px");
                 WorldClient.setMinimized(true);
-                cancel();
+                done();
+
             } else {
                 RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
                 RootPanel.get(CLIENT).setWidth(_startWidth + "px");

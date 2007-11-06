@@ -191,10 +191,12 @@ public class CreateAccountDialog extends BorderedDialog
             _dateOfBirth.getDate(), info, 1, _invite, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     hide();
-                    // override the dialog token with the world
-                    Application.setCurrentToken("world");
-                    // TODO: display some sort of welcome to whirled business
+                    // clear our current token otherwise didLogon() will try to load it
+                    Application.setCurrentToken(null);
+                    // pass our credentials into the application
                     _parent.didLogon((SessionData)result);
+                    // then head to our home
+                    Application.go(Page.WORLD, "m" + CShell.creds.getMemberId());
                 }
                 public void onFailure (Throwable caught) {
                     setError(CShell.serverError(caught));
