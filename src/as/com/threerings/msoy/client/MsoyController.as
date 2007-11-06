@@ -607,7 +607,13 @@ public class MsoyController extends Controller
      */
     public function handleLogon (creds :MsoyCredentials) :void
     {
+        // if we're currently logged on, save our current scene so that we can go back there once
+        // we're relogged on as a non-guest; otherwise go to Brave New Whirled
+        var scene :Scene = _ctx.getSceneDirector().getScene();
+        _postLogonScene = (scene == null) ? 1 : scene.getId();
         _ctx.getClient().logoff(false);
+
+        // give the client a chance to log off, then log back on
         _topPanel.callLater(function () :void {
             var client :Client = _ctx.getClient();
             if (creds == null) {
@@ -784,6 +790,9 @@ public class MsoyController extends Controller
         if (!_didFirstLogonGo) {
             _didFirstLogonGo = true;
             goToPlace(_topPanel.loaderInfo.parameters);
+        } else {
+            // we gotta go somewhere
+            _ctx.getSceneDirector().moveTo(_postLogonScene);
         }
 
         _ctx.getGameDirector().checkMemberAVRGame();
@@ -1077,6 +1086,9 @@ public class MsoyController extends Controller
     /** Tracks whether we've done our first-logon movement so that we avoid trying to redo it as we
      * subsequently move between servers (and log off and on in the process). */
     protected var _didFirstLogonGo :Boolean;
+
+    /** A scene to which to go after we logon. */
+    protected var _postLogonScene :int;
 
     /** A special logoff message to use when we disconnect. */
     protected var _logoffMessage :String;
