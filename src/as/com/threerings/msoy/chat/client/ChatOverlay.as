@@ -51,6 +51,7 @@ import com.threerings.msoy.chat.data.ChannelMessage;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;
+import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
@@ -60,10 +61,6 @@ import com.threerings.msoy.notify.data.NotifyMessage;
 public class ChatOverlay
     implements ChatDisplay
 {
-    // the layer priority of the chat overlays
-    public static const LAYER_CHAT_SCROLL :int = 200;
-    public static const LAYER_CHAT_STATIC :int = 201;
-
     public static const SCROLL_BAR_LEFT :int = 1;
     public static const SCROLL_BAR_RIGHT :int = 2;
 
@@ -209,11 +206,11 @@ public class ChatOverlay
             // adding to the new
             _scrollOverlay.x = 0;
             _scrollOverlay.y = 0;
-            _target.addOverlay(_scrollOverlay, LAYER_CHAT_SCROLL);
+            _target.addOverlay(_scrollOverlay, PlaceBox.LAYER_CHAT_SCROLL);
 
             _staticOverlay.x = 0;
             _staticOverlay.y = 0;
-            _target.addOverlay(_staticOverlay, LAYER_CHAT_STATIC);
+            _target.addOverlay(_staticOverlay, PlaceBox.LAYER_CHAT_STATIC);
             _target.addEventListener(ResizeEvent.RESIZE, handleContainerResize);
 
             // resume listening to our chat history

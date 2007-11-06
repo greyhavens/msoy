@@ -161,9 +161,6 @@ public class MsoyController extends Controller
     /** Command to issue to toggle the chat display. */
     public static const TOGGLE_CHAT :String = "ToggleChat";
 
-    // the layer priority of the AVRG panel
-    public static const LAYER_AVRG_PANEL :int = 500;
-
     /**
      * Create the msoy controller.
      */
@@ -861,7 +858,7 @@ public class MsoyController extends Controller
             _avrGamePanel = null;
         }
         if (panel) {
-            container.addOverlay(panel, LAYER_AVRG_PANEL);
+            container.addOverlay(panel, PlaceBox.LAYER_AVRG_PANEL);
             _avrGamePanel = panel;
         }
     }

@@ -20,6 +20,21 @@ import com.threerings.msoy.client.MsoyPlaceView;
  */
 public class PlaceBox extends LayeredContainer
 {
+    /** The layer priority of the loading spinner. */
+    public static const LAYER_ROOM_SPINNER :int = 10;
+
+    /** The layer priority of the scrolling chat. */
+    public static const LAYER_CHAT_SCROLL :int = 20;
+
+    /** The layer priority of fading chat messages. */
+    public static const LAYER_CHAT_STATIC :int = 30;
+
+    /** The layer priority of the AVRG panel. */
+    public static const LAYER_AVRG_PANEL :int = 40;
+
+    /** The layer priority of the AVRG panel. */
+    public static const LAYER_TROPHY :int = 50;
+
     public function PlaceBox ()
     {
         mask = (_mask = new Shape());
@@ -58,8 +73,8 @@ public class PlaceBox extends LayeredContainer
     public function overlaysMousePoint (stageX :Number, stageY :Number) :Boolean
     {
         var stagePoint :Point = new Point(stageX, stageY);
-        for (var ii :int = 0; ii < this.rawChildren.numChildren; ii ++) {
-            var child :DisplayObject = this.rawChildren.getChildAt(ii);
+        for (var ii :int = 0; ii < numChildren; ii ++) {
+            var child :DisplayObject = unwrap(getChildAt(ii));
             if (child == _placeView) {
                 continue;
             }
@@ -82,20 +97,14 @@ public class PlaceBox extends LayeredContainer
         _mask.graphics.drawRect(0, 0, width, height);
         _mask.graphics.endFill();
 
-        for (var ii :int = 0; ii < this.rawChildren.numChildren; ii ++) {
-            var child :DisplayObject = this.rawChildren.getChildAt(ii);
-
+        for (var ii :int = 0; ii < numChildren; ii ++) {
+            var child :DisplayObject = unwrap(getChildAt(ii));
             if (child is UIComponent) {
                 UIComponent(child).setActualSize(width, height);
-
             } else if (child is PlaceLayer) {
                 PlaceLayer(child).setPlaceSize(width, height);
-
             } else if (child == _placeView) {
                 Log.getLog(this).warning("PlaceView is not a MsoyPlaceView or an UIComponent.");
-
-            } else {
-                // don't over-police the contents of rawChildren
             }
         }
     }

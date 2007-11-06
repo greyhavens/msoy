@@ -32,6 +32,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.parlor.client.GameReadyObserver;
 
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.item.data.all.Item;
@@ -231,17 +232,17 @@ public class GameLiaison
             image.x -= image.getContentWidth()/2;
             image.y -= image.getContentHeight()/2;
             // then slide the award panel onto the screen, pause for a sec, then back off
-            var container :Container = _ctx.getTopPanel().getPlaceContainer();
+            var container :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
             var path :Path = Path.connect(
                 Path.move(_awardPanel, 250, -_awardPanel.height, 250, 0, 500),
                 Path.delay(3000), // TODO: play a sound when this path starts
                 Path.move(_awardPanel, 250, 0, 250, -_awardPanel.height, 500));
             path.setOnComplete(function (path :Path) :void {
-                container.rawChildren.removeChild(_awardPanel);
+                container.removeOverlay(_awardPanel);
                 checkPendingAwards();
             });
             path.start();
-            container.rawChildren.addChild(_awardPanel);
+            container.addOverlay(_awardPanel, PlaceBox.LAYER_TROPHY);
         });
     }
 
