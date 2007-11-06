@@ -74,18 +74,16 @@ public class TopPanel extends Canvas
         _placeBox.includeInLayout = false;
         addChild(_placeBox);
 
-        // set up the control bar
         if (!_ctx.getWorldClient().isFeaturedPlaceView()) {
+            // set up the control bar
             _controlBar = new ControlBar(ctx, this);
             _controlBar.includeInLayout = false;
             _controlBar.setStyle("bottom", 0);
             _controlBar.setStyle("left", 0);
             _controlBar.setStyle("right", 0);
             addChild(_controlBar);
-        }
 
-        // show a subtle build-stamp
-        if (!_ctx.getWorldClient().isFeaturedPlaceView()) {
+            // show a subtle build-stamp
             var buildStamp :Label = new Label();
             buildStamp.includeInLayout = false;
             buildStamp.mouseEnabled = false;
@@ -214,8 +212,8 @@ public class TopPanel extends Canvas
     public function setPlaceView (view :PlaceView) :void
     {
         _placeBox.setPlaceView(view);
-        updatePlaceViewChatOverlay();
         layoutPanels();
+        callLater(updatePlaceViewChatOverlay);
     }
 
     /**

@@ -98,7 +98,7 @@ public class PlaceBox extends LayeredContainer
                 // don't over-police the contents of rawChildren
             }
         }
-        }
+    }
 
     /** The mask configured on the PlaceView so that it doesn't overlap our other components. */
     protected var _mask :Shape;
