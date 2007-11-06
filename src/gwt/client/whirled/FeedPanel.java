@@ -173,8 +173,16 @@ public class FeedPanel extends VerticalPanel
 
             // FRIEND_UPDATED_ROOM
             case 101:
-                add(new BasicWidget(CWhirled.msgs.friendUpdatedRoom(friendLink,
-                                Application.createLinkToken(Page.WORLD, "s" + message.data[0]))));
+                // TEMP: Remove once all servers are 2 weeks past 11/06/2007 update
+                if (message.data[1] == null) {
+                    add(new BasicWidget(CWhirled.msgs.friendUpdatedRoom(friendLink,
+                                    Application.createLinkToken(Page.WORLD, "s" + message.data[0]))));
+                } else {
+                // ENDTEMP
+                    add(new BasicWidget(CWhirled.msgs.friendUpdatedRoomv2(friendLink,
+                                    Application.createLinkToken(Page.WORLD, "s" + message.data[0]),
+                                    message.data[1])));
+                }
                 break;
 
             // FRIEND_WON_TROPHY
@@ -192,6 +200,11 @@ public class FeedPanel extends VerticalPanel
                                 Application.createLinkHtml(message.data[0], Page.CATALOG,
                                     Args.compose(new String[] {
                                         message.data[1], "i", message.data[2] })))));
+                break;
+
+            // FRIEND_GAINED_LEVEL
+            case 104:
+                add(new BasicWidget(CWhirled.msgs.friendGainedLevel(friendLink, message.data[0])));
                 break;
             }
 

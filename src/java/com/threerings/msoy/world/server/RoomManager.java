@@ -865,7 +865,8 @@ public class RoomManager extends SpotSceneManager
             public boolean invoke () {
                 try {
                     MsoyServer.feedRepo.publishMemberMessage(memberId,
-                            FeedMessageType.FRIEND_UPDATED_ROOM, String.valueOf(_scene.getId()));
+                            FeedMessageType.FRIEND_UPDATED_ROOM,
+                            String.valueOf(_scene.getId()) + "\t" + _scene.getName());
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to publish feed [where=" + where() +
                             ", memberId=" + memberId + "].", pe);

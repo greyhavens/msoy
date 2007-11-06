@@ -21,6 +21,7 @@ public enum FeedMessageType
     FRIEND_UPDATED_ROOM(101, 1, oneDay()),
     FRIEND_WON_TROPHY(102, 3, oneDay()),
     FRIEND_LISTED_ITEM(103, 3, oneDay()),
+    FRIEND_GAINED_LEVEL(104, 1, oneDay()),
 
     // group messages
     GROUP_ANNOUNCEMENT(200, 2, oneDay()),

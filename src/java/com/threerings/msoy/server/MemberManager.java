@@ -36,6 +36,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.person.data.FriendInvitePayload;
+import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.server.persist.GroupRecord;
@@ -529,9 +530,13 @@ public class MemberManager
             final int levelToSet = level;
             MsoyServer.invoker.postUnit(new RepositoryUnit("updateLevel") {
                 public void invokePersist () throws PersistenceException {
+                    int memberId = member.memberName.getMemberId();
                     // record the new level, and grant a new invite
-                    _memberRepo.setUserLevel(member.memberName.getMemberId(), levelToSet);
-                    _memberRepo.grantInvites(member.memberName.getMemberId(), 1);
+                    _memberRepo.setUserLevel(memberId, levelToSet);
+                    _memberRepo.grantInvites(memberId, 1);
+                    // mark the level gain in their feed
+                    MsoyServer.feedRepo.publishMemberMessage(memberId,
+                        FeedMessageType.FRIEND_GAINED_LEVEL, String.valueOf(levelToSet));
                 }
                 public void handleSuccess () {
                     member.setLevel(levelToSet);
