@@ -84,6 +84,15 @@ public class ItemPanel extends VerticalPanel
      */
     public void setPage (int page)
     {
+        // refresh our item list every time we switch pages; it's cheap
+        _itemList.clear();
+        if (_type == Item.PET) {
+            _itemList.addAll(FlashClients.getPetList());
+        } else {
+            _itemList.addAll(FlashClients.getFurniList());
+        }
+
+        // make sure we're shoing and have our data
         showInventory();
 
         if (_contents.hasModel()) {
@@ -149,18 +158,6 @@ public class ItemPanel extends VerticalPanel
                 _contents.displayPage(0, true);
             }
         }
-    }
-
-    // @Override // from Panel
-    protected void onAttach ()
-    {
-        _itemList.clear();
-        if (_type == Item.PET) {
-            _itemList.addAll(FlashClients.getPetList());
-        } else {
-            _itemList.addAll(FlashClients.getFurniList());
-        }
-        super.onAttach();
     }
 
     protected void loadInventory ()
