@@ -55,7 +55,7 @@ public class RoomPanel extends BasePanel
         // container for name and lock buttons
         var box :HBox = new HBox();
         addChild(box);
-        
+
         _name = new TextInput();
         _name.percentWidth = 100;
         box.addChild(_name);
@@ -63,6 +63,8 @@ public class RoomPanel extends BasePanel
         _buttonbar = new ToggleButtonBar();
         _buttonbar.styleName = "roomEditAccessButtons";
         box.addChild(_buttonbar);
+
+        // TODO: add "make this my home" button
 
         addChild(makePanelButtons());
     }

@@ -49,7 +49,16 @@ public class Hotspot extends Sprite
     {
         return _anchor != null;
     }
-    
+
+    /**
+     * Called when this hotspot should implicitly start its action because the user clicked and
+     * dragged a piece of furni as they selected it.
+     */
+    public function implicitStartAction (event :MouseEvent) :void
+    {
+        startAction(event);
+    }
+
     /**
      * This function is called every time the target's location or size change, and should be
      * used to adjust this hotspot's location relative to the target edges.
@@ -64,7 +73,7 @@ public class Hotspot extends Sprite
             switchDisplay(_displayStandard);
         }
     }
-    
+
     /**
      * This function is called when the user presses a mouse button on this hotspot.
      * Subclasses should override it to provide their own functionality,
@@ -85,7 +94,7 @@ public class Hotspot extends Sprite
         _editor.roomView.addEventListener(MouseEvent.MOUSE_MOVE, updateAction);
         _editor.roomView.addEventListener(MouseEvent.MOUSE_UP, endAction);
     }
-        
+
     /**
      * This function is called when the user moves the mouse while holding down the mouse button.
      * Subclasses should override it to provide their own functionality,
@@ -128,7 +137,7 @@ public class Hotspot extends Sprite
     {
         // don't let the room view see this click, otherwise it will think we're trying to
         // select another object, and all sorts of fun will ensue.
-        event.stopPropagation(); 
+        event.stopPropagation();
     }
 
     /** Switches bitmaps on rollover. */
@@ -173,7 +182,7 @@ public class Hotspot extends Sprite
 
         switchDisplay(_displayStandard);
     }
-    
+
     /**
      * If the new display differs from the current one, removes current display object
      * and inserts the specified one in its place.
@@ -207,7 +216,7 @@ public class Hotspot extends Sprite
         const SIZE :int = 9;
         var bitmap :Shape;
         var g :Graphics;
-        
+
         bitmap = new Shape();
         g = bitmap.graphics;
         g.clear();
@@ -236,15 +245,15 @@ public class Hotspot extends Sprite
      * a modification action is currently taking place (in which case its value is non-null).
      */
     protected var _anchor :Point;
-    
+
     /**
      * Target sprite hotspot at the beginning of the action, in stage coordinates.
      */
     protected var _originalHotspot :Point;
-    
+
     /** Bitmap used for hotspot display. */
     protected var _displayStandard :DisplayObject;
-    
+
     /** Bitmap used for hotspot with mouseover. */
     protected var _displayMouseOver :DisplayObject;
 

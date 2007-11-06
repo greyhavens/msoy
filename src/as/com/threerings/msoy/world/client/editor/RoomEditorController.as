@@ -92,6 +92,9 @@ public class RoomEditorController
         _hover.start();
         _panel.open();
 
+        // listen for mouse down
+        _view.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+
         // clear out the names cache, and ping the server
         _names = new HashMap();
         queryServerForNames(this.scene.getFurni());
@@ -110,6 +113,9 @@ public class RoomEditorController
     public function endEditing () :void
     {
         _panel.close();
+
+        // stop listening for mouse down
+        _view.removeEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
 
         // note: the rest of cleanup will happen in actionEditorClosed
     }
@@ -162,7 +168,7 @@ public class RoomEditorController
                         return furni.getItemIdent().equals(targetIdent);
                     });
                 if (targetRemoved) {
-                    setTarget(null);
+                    setTarget(null, null);
                 }
             }
         }
@@ -217,13 +223,13 @@ public class RoomEditorController
         // if the player selected the special "new item" option, pop up the inventory panel
         if (ident == NEW_ITEM_SELECTION) {
             CommandEvent.dispatch(_panel.parent, MsoyController.VIEW_MY_FURNITURE);
-            setTarget(null);
+            setTarget(null, null);
             return;
         }
 
         // is this our special entrance sprite? if so, it's not in the room contents list.
         if (ident.equals(EntranceFurniData.ITEM_IDENT)) {
-            setTarget(_entranceSprite);
+            setTarget(_entranceSprite, null);
             return;
         }
         
@@ -234,7 +240,7 @@ public class RoomEditorController
             var index :int = ArrayUtil.indexIf(sprites, function (sprite :FurniSprite) :Boolean {
                     return sprite.getFurniData().getItemIdent().equals(ident);
                 });
-            setTarget(index == -1 ? null : sprites[index]);
+            setTarget(index == -1 ? null : sprites[index], null);
         }
     }        
 
@@ -299,21 +305,10 @@ public class RoomEditorController
     public function mouseOverSprite (sprite :MsoySprite) :void
     {
         var sprite :MsoySprite = _edit.isIdle() ? sprite : null;
-        if (_hover.target != sprite &&
-            (_edit.target != null ? _edit.target != sprite : true))
-        {
+        if (_hover.target != sprite && (_edit.target != null ? _edit.target != sprite : true)) {
             // either the player is hovering over a new sprite, or switching from an old
             // target to nothing at all. in either case, update!
             _hover.target = sprite as FurniSprite;
-        }
-    }
-
-    /** Called by the room controller, when the user clicks on a valid sprite. */
-    public function mouseClickOnSprite (sprite :MsoySprite, event :MouseEvent) :void
-    {
-        if (_edit.isIdle()) {
-            _hover.target = null;
-            setTarget(sprite as FurniSprite);
         }
     }
 
@@ -324,6 +319,21 @@ public class RoomEditorController
     {
         _edit.updateDisplay();
         _panel.updateDisplay(_edit.target != null ? _edit.target.getFurniData() : null);
+    }
+
+    /**
+     * Handles mouse presses, starts editing furniture.
+     */
+    protected function mouseDown (event :MouseEvent) :void
+    {
+        var hit :MsoySprite =
+            (_view.getRoomController().getHitSprite(event.stageX, event.stageY, true) as MsoySprite);
+        if (hit is FurniSprite) {
+            if (_edit.isIdle()) {
+                _hover.target = null;
+                setTarget(hit as FurniSprite, event);
+            }
+        }
     }
 
     /**
@@ -438,9 +448,12 @@ public class RoomEditorController
     }
 
     /** Sets the currently edited target to the specified sprite. */
-    protected function setTarget (targetSprite :FurniSprite) :void
+    protected function setTarget (targetSprite :FurniSprite, event :MouseEvent) :void
     {
         _edit.target = targetSprite;
+        if (event != null) {
+            _edit.defaultHotspot.implicitStartAction(event);
+        }
         targetSpriteUpdated();
         selectTargetName();
     }
@@ -450,14 +463,14 @@ public class RoomEditorController
     {
         // if the player selected the singleton entrance sprite, our work is done
         if (_edit.target is EntranceSprite) {
-            setTarget(_entranceSprite);
+            setTarget(_entranceSprite, null);
             return;
         }
 
         // otherwise, try to find the right sprite in the room, and refresh the target from that
         if (_edit.target != null) {
             var sprites :HashMap = _view.getFurniSprites();
-            setTarget(sprites.get(_edit.target.getFurniData().id) as FurniSprite);
+            setTarget(sprites.get(_edit.target.getFurniData().id) as FurniSprite, null);
         } else {
             targetSpriteUpdated();
         }

@@ -25,8 +25,7 @@ public class ScalingHotspot extends Hotspot
      * this number of pixels away from where it was clicked.
      */
     public static const SNAP_DEAD_RADIUS :Number = 20;
-    
-    
+
     public function ScalingHotspot (editor :FurniEditor)
     {
         super(editor);
@@ -43,7 +42,7 @@ public class ScalingHotspot extends Hotspot
         // figure out if this hotspot is leaving the display area
         var roomPos :Point = _editor.roomView.globalToLocal(
             _editor.target.localToGlobal(new Point(this.x, this.y)));
-        
+
         if (roomPos.y < _currentDisplay.height / 2) {
             roomPos.y = _currentDisplay.height / 2;
             var localPos :Point = _editor.target.globalToLocal(
@@ -52,21 +51,18 @@ public class ScalingHotspot extends Hotspot
         }
 
     }
-    
+
     // @Override from Hotspot
     override protected function startAction (event :MouseEvent) :void
     {
         super.startAction(event);
-        
-        _originalScale =
-            new Point(_editor.target.getMediaScaleX(), _editor.target.getMediaScaleY());
+        _originalScale = new Point(_editor.target.getMediaScaleX(), _editor.target.getMediaScaleY());
     }
 
     // @Override from Hotspot
     override protected function updateAction (event :MouseEvent) :void
     {
         super.updateAction(event);
-
         updateTargetScale(event.stageX, event.stageY);
     }
 
@@ -74,7 +70,6 @@ public class ScalingHotspot extends Hotspot
     override protected function endAction (event :MouseEvent) :void
     {
         super.endAction(event);
-        
         _originalScale = null;
     }
 
@@ -95,16 +90,16 @@ public class ScalingHotspot extends Hotspot
             Log.getLog(this).warning("Scaling hotspot updated without an editing target!");
             return;
         }
-        
+
         // find pixel distance from hotspot to the current and the original mouse pointer
         var mouse :Point = new Point(sx, sy);
         var newoffset :Point = mouse.subtract(_originalHotspot);
         var oldoffset :Point = _anchor.subtract(_originalHotspot);
-        
+
         // find scaling factor based on mouse movement
         var ratioX :Number = newoffset.x / oldoffset.x;
         var ratioY :Number = newoffset.y / oldoffset.y;
-        
+
         var x :Number = ratioX * _originalScale.x;
         var y :Number = ratioY * _originalScale.y;
 
@@ -122,10 +117,10 @@ public class ScalingHotspot extends Hotspot
                 switchDisplay(_displayMouseOver);
             }
         }
-        
+
         _editor.updateTargetScale(x, y);
     }
-    
+
     /** Sprite scale at the beginning of modifications. Only valid during action. */
     protected var _originalScale :Point;
 

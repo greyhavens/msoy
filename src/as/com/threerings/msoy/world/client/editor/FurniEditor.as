@@ -27,46 +27,16 @@ public class FurniEditor extends FurniHighlight
         super(controller);
     }
 
-    // @Override from FurniHighlight
-    override public function start () :void
-    {
-        super.start();
-
-        _hotspots = new Array();
-        _hotspots.push(new MovementWallHotspot(this));
-        _hotspots.push(new ScalingHotspot(this));
-        _hotspots.push(new MovementYHotspot(this));
-        _hotspots.push(new MovementXZHotspot(this));
-
-        for each (var hotspot :Hotspot in _hotspots) {
-            _border.addChild(hotspot);
-            hotspot.init();
-        }
-
-    }
-
-    // @Override from FurniHighlight
-    override public function end () :void
-    {
-        for each (var hotspot :Hotspot in _hotspots) {
-            hotspot.deinit();
-            _border.removeChild(hotspot);
-        }            
-
-        super.end();
-    }
-
-    // @Override from FurniHighlight
-    override public function set target (sprite :FurniSprite) :void
-    {
-        super.target = sprite;
-        _controller.updateDeleteStatus(_target != null && ! (_target is EntranceSprite));
-    }
-
     /** Accessor to the room view. */
     public function get roomView () :RoomView
     {
         return _controller.roomView;
+    }
+
+    /** Returns the hotspot to be used when the user immediately clicks and drags. */
+    public function get defaultHotspot () :Hotspot
+    {
+        return _defaultHotspot;
     }
 
     /** Returns true if no hotspot is active (i.e., currently being dragged). */
@@ -109,6 +79,41 @@ public class FurniEditor extends FurniHighlight
         target.getFurniData().loc = loc;  // ...and in the data parameters
         
         _controller.targetSpriteUpdated();
+    }
+
+    // @Override from FurniHighlight
+    override public function start () :void
+    {
+        super.start();
+
+        _hotspots = new Array();
+        _hotspots.push(_defaultHotspot = new MovementWallHotspot(this));
+        _hotspots.push(new ScalingHotspot(this));
+        _hotspots.push(new MovementYHotspot(this));
+        _hotspots.push(new MovementXZHotspot(this));
+
+        for each (var hotspot :Hotspot in _hotspots) {
+            _border.addChild(hotspot);
+            hotspot.init();
+        }
+    }
+
+    // @Override from FurniHighlight
+    override public function end () :void
+    {
+        for each (var hotspot :Hotspot in _hotspots) {
+            hotspot.deinit();
+            _border.removeChild(hotspot);
+        }            
+
+        super.end();
+    }
+
+    // @Override from FurniHighlight
+    override public function set target (sprite :FurniSprite) :void
+    {
+        super.target = sprite;
+        _controller.updateDeleteStatus(_target != null && ! (_target is EntranceSprite));
     }
 
     // @Override from FurniHighlight
@@ -171,7 +176,10 @@ public class FurniEditor extends FurniHighlight
     
     /** Copy of the target's original furni data, created when the user activates a hotspot. */
     protected var _originalTargetData :FurniData;
-    
+
+    /** The default hotspot; chosen if the player immediately clicks and drags a furni. */
+    protected var _defaultHotspot :MovementWallHotspot;
+
     /** Reference to the currently active hotspot. */
     protected var _activeHotspot :Hotspot;
 

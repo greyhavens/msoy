@@ -762,7 +762,8 @@ public class RoomController extends SceneController
             return;
         }
 
-        if (itemType != Item.DECOR && itemType != Item.AUDIO) {
+        if (itemType != Item.DECOR && itemType != Item.AUDIO &&
+            !_mctx.getGameDirector().isPlayingTutorial()) {
             _openEditor = true;
         }
 
@@ -1163,8 +1164,8 @@ public class RoomController extends SceneController
         // longer allowed to pop up a popup.
         _entityAllowedToPop = null;
 
-        // if shift is being held down, we're looking for locations only, so
-        // skip looking for hitSprites.
+        // if shift is being held down, we're looking for locations only, so skip looking for
+        // hitSprites.
         var hit :* = (_shiftDownSpot == null) ?
             getHitSprite(event.stageX, event.stageY, isRoomEditing()) : null;
         if (hit === undefined) {
@@ -1197,11 +1198,6 @@ public class RoomController extends SceneController
                 newLoc.orient = (degrees + 90 + 360) % 360;
                 _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
             }
-        }
-
-        // and in any case, tell the editor
-        if (isRoomEditing()) {
-            _editor.mouseClickOnSprite(hitter, event);
         }
     }
 
