@@ -253,20 +253,6 @@ public class RoomController extends SceneController
         _mctx = (ctx as WorldContext);
         _editor = new RoomEditorController(_mctx, _roomView);
 
-        // watch for when we're un-minimized and the display list is valid, so that we can
-        // open the editor, and place things correctly when necessary
-        var controlBar :ControlBar = _mctx.getTopPanel().getControlBar();
-        if (controlBar != null) {
-            controlBar.addEventListener(ControlBar.DISPLAY_LIST_VALID,
-                function (evt :ValueEvent) :void {
-                    if (_openEditor && !isRoomEditing()) {
-                        beginRoomEditing(_mctx.getTopPanel().getControlBar().roomEditBtn);
-                    }
-                    _openEditor = false;
-                }
-            );
-        }
-
         if (_mctx.getWorldClient().isFeaturedPlaceView()) {
             // show the pointer cursor 
             _roomView.buttonMode = true;
@@ -306,6 +292,10 @@ public class RoomController extends SceneController
         _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
+
+        // watch for when we're un-minimized and the display list is valid, so that we can open the
+        // editor, and place things correctly when necessary
+        _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
     }
 
     // documentation inherited
@@ -315,6 +305,8 @@ public class RoomController extends SceneController
         if (isRoomEditing()) {
             cancelRoomEditing();
         }
+
+        _ctx.getClient().removeEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
 
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(MouseEvent.CLICK, mouseWillClick, true);
@@ -353,25 +345,6 @@ public class RoomController extends SceneController
     {
         var avatar :AvatarSprite = _roomView.getMyAvatar();
         setActorState(avatar.getItemIdent(), avatar.getOid(), state);
-    }
-
-    /**
-     * Close and reset all music.
-     */
-    protected function closeAllMusic (resumeBackground :Boolean) :void
-    {
-        if (_music != null && !(resumeBackground && _musicIsBackground)) {
-            _music.close();
-            _music = null;
-            _musicIsBackground = true;
-        }
-        if (_loadingMusic != null) {
-            _loadingMusic.close();
-            _loadingMusic = null;
-        }
-        if (resumeBackground && _music == null) {
-            setBackgroundMusic(_scene.getAudioData());
-        }
     }
 
     /**
@@ -588,44 +561,6 @@ public class RoomController extends SceneController
     {
         _snap.takeScreenshot(_roomView);
     };   
-
-    /**
-     * Create the menu item that allows a user to change their own avatar.
-     */
-    protected function createChangeAvatarMenu (us :MemberObject, canControl :Boolean) :Object
-    {
-        var avItems :Array = [];
-        var avatars :Array = (us.avatarCache != null) ? us.avatarCache.toArray() : [];
-        ArrayUtil.sort(avatars);
-        // TODO: showing the thumbnails at half-thumbnail size is currently broken due
-        // to layout bugs in ScrollableMenu when there are icons and scrollbars are needed.
-        // Additonally, setting variableRowHeight=true breaks the ScrollableMenu. Both
-        // are needed to make this feature work correctly.
-//            var iconW :Number = 20; //*/ MediaDesc.DIMENSIONS[0];
-//            var iconH :Number = 20; //*/ MediaDesc.DIMENSIONS[1];
-        for (var ii :int = 0; ii < Math.min(avatars.length, 5); ii++) {
-            var av :Avatar = avatars[ii] as Avatar;
-            avItems.push({ label: av.name, enabled: !av.equals(us.avatar),
-                // TODO
-                // iconObject: MediaWrapper.createScaled(av.getThumbnailMedia(), iconW, iconH),
-                callback: _mctx.getWorldDirector().setAvatar, arg: av.itemId });
-        }
-        // add defaults
-        avItems.push({ label: Msgs.ITEM.get("m.default"), enabled: (us.avatar != null),
-            // TODO
-            // iconObject: MediaWrapper.createScaled(
-            //    Avatar.getDefaultMemberAvatarMedia(), iconW, iconH),
-            callback: _mctx.getWorldDirector().setAvatar, arg: 0 });
-
-        avItems.push({ type: "separator" });
-        avItems.push({ label: Msgs.GENERAL.get("b.avatars_full"),
-            command: MsoyController.VIEW_MY_AVATARS,
-            enabled: !_mctx.getWorldClient().isEmbedded() });
-
-        // return a menu item for changing their avatar
-        return { label: Msgs.GENERAL.get("b.change_avatar"), children: avItems,
-            enabled: canControl };
-    }
 
     /**
      * Handles PET_CLICKED.
@@ -868,50 +803,6 @@ public class RoomController extends SceneController
         return furnis;
     }
 
-    // used to clear out items like decor and audio of which there can be only one in a scene
-    protected function clearItem (itemType :int) :void
-    {
-        var oldScene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
-        var newScene :MsoyScene = oldScene.clone() as MsoyScene;
-        if (itemType == Item.DECOR) {
-            var newSceneModel :MsoySceneModel = (newScene.getSceneModel() as MsoySceneModel);
-            newSceneModel.decor = MsoySceneModel.defaultMsoySceneModelDecor();
-            applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
-        } else if (itemType == Item.AUDIO) {
-            (newScene.getSceneModel() as MsoySceneModel).audioData.itemId = 0;
-            applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
-        }
-    }
-
-    /**
-     * Begin editing the room.
-     */
-    protected function beginRoomEditing (button :CommandButton) :void
-    {
-        _walkTarget.visible = false;
-        _flyTarget.visible = false;
-        setHoverSprite(null);
-
-        button.selected = true;
-
-        // this function will be called when the edit panel is closing
-        var wrapupFn :Function = function () :void {
-            if (_music != null && ! _musicIsBackground) {
-                _music.play(); // restart non-background music
-            }
-            button.selected = false;
-        }
-
-        if (_music != null && ! _musicIsBackground) {
-            _music.close();    // stop non-background music
-            _music = null;
-            _musicIsBackground = true;
-        }
-
-        _editor.startEditing(wrapupFn);
-        _editor.updateUndoStatus(_updates.length != 0);
-    }
-
     /**
      * End editing the room.
      */
@@ -940,8 +831,235 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Set the hover for all furniture on or off.
+     */
+    public function hoverAllFurni (on :Boolean) :void
+    {
+        var sprite :FurniSprite;
+
+        if (on) {
+            for each (sprite in _roomView.getFurniSprites().values()) {
+                if (!sprite.isActive() || !sprite.capturesMouse() || !sprite.hasAction()) {
+                    continue;
+                }
+                var tipText :String = sprite.setHovered(true);
+                var p :Point = sprite.getLayoutHotSpot();
+                p = sprite.localToGlobal(p);
+                addHoverTip(sprite, tipText, p.x, p.y);
+            }
+        } else {
+            for each (sprite in _roomView.getFurniSprites().values()) {
+                sprite.setHovered(false);
+            }
+
+            removeHoverTips();
+        }
+    }
+
+    public function setBackgroundMusic (data :AudioData) :void
+    {
+        if (_mctx.getWorldClient().isFeaturedPlaceView()) {
+            return;
+        }
+
+        if (!_musicIsBackground) {
+            if (_music.isPlaying()) {
+                // don't disrupt the other music..
+                return;
+
+            } else {
+                // oh, this other music is done. Sure, let's go for
+                // the background music again
+                _music.close();
+                _music = null;
+                _musicIsBackground = true;
+            }
+        }
+
+        var isPathValid :Boolean = data.isInitialized() && data.media != null;
+        var path :String = isPathValid ? data.media.getMediaPath() : null;
+
+        // maybe shutdown old music
+        // if _music is playing the right thing, let it keep on playing
+        if (_music != null && _music.getURL() != path) {
+            _music.close();
+            _music = null;
+        }
+        // set up new music, if needed
+        if (_music == null && isPathValid) {
+            _music = new SoundPlayer(path);
+            _music.addEventListener(Event.COMPLETE, musicFinishedPlaying);
+            // TODO: we probably need to wait for COMPLETE
+            _music.loop();
+        }
+        // set the volume, even if we're just re-setting it on
+        // already-playing music
+        if (_music != null) {
+            _music.setVolume(data.volume);
+        }
+    }
+
+    /**
+     * Do any needed clientside adjustments to the effect data.
+     */
+    public function adjustEffectData (effect :EffectData) :EffectData
+    {
+        switch (effect.actionType) {
+        default:
+            log.warning("Unhandled EffectData parameter mode: " + effect.actionType);
+            Log.dumpStack();
+            // fall through to MODE_NONE...
+
+        case EffectData.MODE_NONE:
+            return effect;
+
+        case EffectData.MODE_XLATE:
+            effect.actionData = Msgs.GENERAL.xlate(effect.actionData);
+            break;
+        }
+
+        // set the mode to MODE_NONE to indicate that we've adjusted
+        effect.actionType = EffectData.MODE_NONE;
+        return effect;
+    }
+
+    /**
+     * Pops up the UI whereby the user is presented with a quest and chooses to accept
+     * it or decline it.
+     */
+    public function offerQuest (gctx :GameContext, questIntro :String, accept :Function) :void
+    {
+        new QuestOfferPanel(gctx, questIntro, accept).open(false);
+    }
+
+    /**
+     * Pops up the UI informing the user they completed a quest.
+     */
+    public function completeQuest (gctx :GameContext, questOutro :String, finish :Function) :void
+    {
+        new QuestCompletionPanel(gctx, questOutro, finish).open(false);
+    }
+
+    /**
+     * Called when the client is minimized and unminimized.
+     */
+    protected function miniWillChange (event :ValueEvent) :void
+    {
+        if (!(event.value as Boolean)) {
+            if (_openEditor && !isRoomEditing()) {
+                beginRoomEditing(_mctx.getTopPanel().getControlBar().roomEditBtn);
+            }
+            _openEditor = false;
+        }
+    }
+
+    /**
+     * Close and reset all music.
+     */
+    protected function closeAllMusic (resumeBackground :Boolean) :void
+    {
+        if (_music != null && !(resumeBackground && _musicIsBackground)) {
+            _music.close();
+            _music = null;
+            _musicIsBackground = true;
+        }
+        if (_loadingMusic != null) {
+            _loadingMusic.close();
+            _loadingMusic = null;
+        }
+        if (resumeBackground && _music == null) {
+            setBackgroundMusic(_scene.getAudioData());
+        }
+    }
+
+    /**
+     * Create the menu item that allows a user to change their own avatar.
+     */
+    protected function createChangeAvatarMenu (us :MemberObject, canControl :Boolean) :Object
+    {
+        var avItems :Array = [];
+        var avatars :Array = (us.avatarCache != null) ? us.avatarCache.toArray() : [];
+        ArrayUtil.sort(avatars);
+        // TODO: showing the thumbnails at half-thumbnail size is currently broken due
+        // to layout bugs in ScrollableMenu when there are icons and scrollbars are needed.
+        // Additonally, setting variableRowHeight=true breaks the ScrollableMenu. Both
+        // are needed to make this feature work correctly.
+//            var iconW :Number = 20; //*/ MediaDesc.DIMENSIONS[0];
+//            var iconH :Number = 20; //*/ MediaDesc.DIMENSIONS[1];
+        for (var ii :int = 0; ii < Math.min(avatars.length, 5); ii++) {
+            var av :Avatar = avatars[ii] as Avatar;
+            avItems.push({ label: av.name, enabled: !av.equals(us.avatar),
+                // TODO
+                // iconObject: MediaWrapper.createScaled(av.getThumbnailMedia(), iconW, iconH),
+                callback: _mctx.getWorldDirector().setAvatar, arg: av.itemId });
+        }
+        // add defaults
+        avItems.push({ label: Msgs.ITEM.get("m.default"), enabled: (us.avatar != null),
+            // TODO
+            // iconObject: MediaWrapper.createScaled(
+            //    Avatar.getDefaultMemberAvatarMedia(), iconW, iconH),
+            callback: _mctx.getWorldDirector().setAvatar, arg: 0 });
+
+        avItems.push({ type: "separator" });
+        avItems.push({ label: Msgs.GENERAL.get("b.avatars_full"),
+            command: MsoyController.VIEW_MY_AVATARS,
+            enabled: !_mctx.getWorldClient().isEmbedded() });
+
+        // return a menu item for changing their avatar
+        return { label: Msgs.GENERAL.get("b.change_avatar"), children: avItems,
+            enabled: canControl };
+    }
+
+    /**
+     * Clears out items like decor and audio of which there can be only one in a scene.
+     */
+    protected function clearItem (itemType :int) :void
+    {
+        var oldScene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
+        var newScene :MsoyScene = oldScene.clone() as MsoyScene;
+        if (itemType == Item.DECOR) {
+            var newSceneModel :MsoySceneModel = (newScene.getSceneModel() as MsoySceneModel);
+            newSceneModel.decor = MsoySceneModel.defaultMsoySceneModelDecor();
+            applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
+        } else if (itemType == Item.AUDIO) {
+            (newScene.getSceneModel() as MsoySceneModel).audioData.itemId = 0;
+            applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
+        }
+    }
+
+    /**
+     * Begins editing the room.
+     */
+    protected function beginRoomEditing (button :CommandButton) :void
+    {
+        _walkTarget.visible = false;
+        _flyTarget.visible = false;
+        setHoverSprite(null);
+
+        button.selected = true;
+
+        // this function will be called when the edit panel is closing
+        var wrapupFn :Function = function () :void {
+            if (_music != null && ! _musicIsBackground) {
+                _music.play(); // restart non-background music
+            }
+            button.selected = false;
+        }
+
+        if (_music != null && ! _musicIsBackground) {
+            _music.close();    // stop non-background music
+            _music = null;
+            _musicIsBackground = true;
+        }
+
+        _editor.startEditing(wrapupFn);
+        _editor.updateUndoStatus(_updates.length != 0);
+    }
+
+    /**
      * Sends the entire array of room edits to the server.
-     *  @param updates a TypedArray containing instances of SceneUpdate object.
+     *
+     * @param updates a TypedArray containing instances of SceneUpdate object.
      */
     protected function updateRoom (updates :TypedArray /* of SceneUpdate */) :void
     {
@@ -949,7 +1067,7 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Handle ENTER_FRAME and see if the mouse is now over anything.  Normally the flash player
+     * Handles ENTER_FRAME and see if the mouse is now over anything.  Normally the flash player
      * will dispatch mouseOver/mouseLeft for an object even if the mouse isn't moving: the sprite
      * could move.  Since we're hacking in our own mouseOver handling, we emulate that.  Gah.
      */
@@ -1112,32 +1230,6 @@ public class RoomController extends SceneController
             ToolTipManager.destroyToolTip(tip);
         }
         _hoverTips.length = 0; // truncate
-    }
-
-    /**
-     * Set the hover for all furniture on or off.
-     */
-    public function hoverAllFurni (on :Boolean) :void
-    {
-        var sprite :FurniSprite;
-
-        if (on) {
-            for each (sprite in _roomView.getFurniSprites().values()) {
-                if (!sprite.isActive() || !sprite.capturesMouse() || !sprite.hasAction()) {
-                    continue;
-                }
-                var tipText :String = sprite.setHovered(true);
-                var p :Point = sprite.getLayoutHotSpot();
-                p = sprite.localToGlobal(p);
-                addHoverTip(sprite, tipText, p.x, p.y);
-            }
-        } else {
-            for each (sprite in _roomView.getFurniSprites().values()) {
-                sprite.setHovered(false);
-            }
-
-            removeHoverTips();
-        }
     }
 
     protected function mouseWillClick (event :MouseEvent) :void
@@ -1318,73 +1410,6 @@ public class RoomController extends SceneController
         }
     }
 
-    public function setBackgroundMusic (data :AudioData) :void
-    {
-        if (_mctx.getWorldClient().isFeaturedPlaceView()) {
-            return;
-        }
-
-        if (!_musicIsBackground) {
-            if (_music.isPlaying()) {
-                // don't disrupt the other music..
-                return;
-
-            } else {
-                // oh, this other music is done. Sure, let's go for
-                // the background music again
-                _music.close();
-                _music = null;
-                _musicIsBackground = true;
-            }
-        }
-
-        var isPathValid :Boolean = data.isInitialized() && data.media != null;
-        var path :String = isPathValid ? data.media.getMediaPath() : null;
-
-        // maybe shutdown old music
-        // if _music is playing the right thing, let it keep on playing
-        if (_music != null && _music.getURL() != path) {
-            _music.close();
-            _music = null;
-        }
-        // set up new music, if needed
-        if (_music == null && isPathValid) {
-            _music = new SoundPlayer(path);
-            _music.addEventListener(Event.COMPLETE, musicFinishedPlaying);
-            // TODO: we probably need to wait for COMPLETE
-            _music.loop();
-        }
-        // set the volume, even if we're just re-setting it on
-        // already-playing music
-        if (_music != null) {
-            _music.setVolume(data.volume);
-        }
-    }
-
-    /**
-     * Do any needed clientside adjustments to the effect data.
-     */
-    public function adjustEffectData (effect :EffectData) :EffectData
-    {
-        switch (effect.actionType) {
-        default:
-            log.warning("Unhandled EffectData parameter mode: " + effect.actionType);
-            Log.dumpStack();
-            // fall through to MODE_NONE...
-
-        case EffectData.MODE_NONE:
-            return effect;
-
-        case EffectData.MODE_XLATE:
-            effect.actionData = Msgs.GENERAL.xlate(effect.actionData);
-            break;
-        }
-
-        // set the mode to MODE_NONE to indicate that we've adjusted
-        effect.actionType = EffectData.MODE_NONE;
-        return effect;
-    }
-
     /**
      * Callback when the music finishes.
      */
@@ -1551,23 +1576,6 @@ public class RoomController extends SceneController
     internal function entityPopupClosed () :void
     {
         _entityPopup = null;
-    }
-
-    /**
-     * Pops up the UI whereby the user is presented with a quest and chooses to accept
-     * it or decline it.
-     */
-    public function offerQuest (gctx :GameContext, questIntro :String, accept :Function) :void
-    {
-        new QuestOfferPanel(gctx, questIntro, accept).open(false);
-    }
-
-    /**
-     * Pops up the UI informing the user they completed a quest.
-     */
-    public function completeQuest (gctx :GameContext, questOutro :String, finish :Function) :void
-    {
-        new QuestCompletionPanel(gctx, questOutro, finish).open(false);
     }
 
     /** The number of pixels we scroll the room on a keypress. */
