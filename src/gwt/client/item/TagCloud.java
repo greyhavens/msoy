@@ -9,6 +9,7 @@ import java.util.Iterator;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -30,6 +31,16 @@ public class TagCloud extends Grid
     {
         super(TAG_ROWS, TAG_COLS);
         setStyleName("tagCloud");
+
+        HTMLTable.CellFormatter cellFormatter = getCellFormatter();
+        HTMLTable.RowFormatter rowFormatter = getRowFormatter();
+        for (int row = 0; row < TAG_ROWS; row++) {
+            rowFormatter.setStyleName(row, "tagCloudRow");
+            for (int col = 0; col < TAG_COLS; col++) {
+                cellFormatter.setStyleName(row, col, "tagCloudElt");
+            }
+        }
+
         _type = type;
         _listener = listener;
         CShell.catalogsvc.getPopularTags(_type, TAG_ROWS * TAG_COLS, new TagCallback());
