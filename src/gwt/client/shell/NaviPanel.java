@@ -121,8 +121,8 @@ public class NaviPanel extends FlexTable
 
         click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
                 addLink(menu, "Whirledwide", Page.WHIRLED, "whirledwide");
+                addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
                 addLink(menu, "My Home", Page.WORLD, "m" + creds.getMemberId());
                 if (_scenes.size() > 0) {
                     MenuBar smenu = new MenuBar(true);
