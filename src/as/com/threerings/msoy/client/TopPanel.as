@@ -213,6 +213,9 @@ public class TopPanel extends Canvas
     {
         _placeBox.setPlaceView(view);
         layoutPanels();
+        // update the overlay later so that it gets the updated width and height from layoutPanels,
+        // which doesn't set the width and height directly, but sets the top and bottom style
+        // properties and lets it figure it out for itself.
         callLater(updatePlaceViewChatOverlay);
     }
 
