@@ -76,7 +76,7 @@ public class ItemPanel extends VerticalPanel
 
     public void minimizeInventory ()
     {
-        _top.setContentMinimized(true);
+        _top.setContentMinimized(true, null);
     }
 
     /**

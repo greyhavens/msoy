@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
@@ -101,7 +102,7 @@ public class Application
     {
         String token = createLinkToken(page, args);
         if (token.equals(History.getToken())) {
-            CShell.app._page.setContentMinimized(false);
+            CShell.app._page.setContentMinimized(false, null);
         } else {
             History.newItem(token);
         }
@@ -231,7 +232,7 @@ public class Application
         CShell.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
     }
 
-    protected void displayPage (String ident, Args args)
+    protected void displayPage (String ident, final Args args)
     {
         // replace the page if necessary
         if (_page == null || !_page.getPageId().equals(ident)) {
@@ -255,12 +256,17 @@ public class Application
             _page.init();
             _page.onPageLoad();
 
-        } else {
-            _page.setContentMinimized(false);
-        }
+            // tell the page about its arguments
+            _page.onHistoryChanged(args);
 
-        // now tell the page about its arguments
-        _page.onHistoryChanged(args);
+        } else {
+            _page.setContentMinimized(false, new Command() {
+                public void execute () {
+                    // now tell the page about its arguments
+                    _page.onHistoryChanged(args);
+                }
+            });
+        }
     }
 
     protected boolean displayPopup (String ident, Args args)
@@ -336,7 +342,7 @@ public class Application
 
     protected void restoreClient ()
     {
-        _page.setContentMinimized(true);
+        _page.setContentMinimized(true, null);
     }
 
     protected void clearClient (boolean deferred)

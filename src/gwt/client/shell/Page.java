@@ -107,7 +107,11 @@ public abstract class Page
     public static void closePage ()
     {
         if (_closeToken != null) {
-            History.newItem(_closeToken);
+            new SlideContentOff().start(new Command() {
+                public void execute () {
+                    History.newItem(_closeToken);
+                }
+            });
         }
     }
 
@@ -126,26 +130,28 @@ public abstract class Page
      */
     public void init ()
     {
-        // create our content manipulation buttons
-        _closeContent = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
-            public void onClick (Widget sender) {
-                closePage();
-            }
-        });
-        _minimizeContent = MsoyUI.createActionLabel("", "Minimize", new ClickListener() {
-            public void onClick (Widget sender) {
-                setContentMinimized(true);
-            }
-        });
-        _maximizeContent = MsoyUI.createActionLabel("", "Maximize", new ClickListener() {
-            public void onClick (Widget sender) {
-                setContentMinimized(false);
-            }
-        });
-        _separatorLine = MsoyUI.createLabel("", "Separator");
-
         // initialize our services and translations
         initContext();
+
+        // create our content manipulation buttons (these are shared by all pages)
+        if (_closeContent == null) {
+            _closeContent = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
+                public void onClick (Widget sender) {
+                    CShell.app._page.closePage();
+                }
+            });
+            _minimizeContent = MsoyUI.createActionLabel("", "Minimize", new ClickListener() {
+                public void onClick (Widget sender) {
+                    CShell.app._page.setContentMinimized(true, null);
+                }
+            });
+            _maximizeContent = MsoyUI.createActionLabel("", "Maximize", new ClickListener() {
+                public void onClick (Widget sender) {
+                    CShell.app._page.setContentMinimized(false, null);
+                }
+            });
+            _separatorLine = MsoyUI.createLabel("", "Separator");
+        }
     }
 
     /**
@@ -219,65 +225,25 @@ public abstract class Page
      * Minimizes or maximizes the page content. NOOP if the content min/max interface is not being
      * displayed.
      */
-    public void setContentMinimized (boolean minimized)
+    public void setContentMinimized (boolean minimized, Command onComplete)
     {
         if (minimized && _minimizeContent.isAttached()) {
             RootPanel.get(SEPARATOR).remove(_minimizeContent);
             RootPanel.get(SEPARATOR).remove(_separatorLine);
             RootPanel.get(SEPARATOR).add(_maximizeContent);
             RootPanel.get(SEPARATOR).add(_separatorLine);
-
-            RootPanel.get(CONTENT).clear();
-            WorldClient.setMinimized(false);
-            // TODO: unhack
-            new Timer() {
-                public void run () {
-                    if (_startWidth >= _endWidth) {
-                        RootPanel.get(CONTENT).setWidth("0px");
-                        RootPanel.get(CLIENT).setWidth(_endWidth + "px");
-                        cancel();
-                    } else {
-                        RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
-                        RootPanel.get(CLIENT).setWidth(_startWidth + "px");
-//                         _startWidth += Math.max((_endWidth - _startWidth) / FRAMES, 5);
-                        _startWidth += _deltaWidth;
-                    }
-                }
-                protected int _availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
-                protected int _startWidth = Math.max(_availWidth - CONTENT_WIDTH, 0);
-                protected int _endWidth = _availWidth;
-                protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
-                protected static final int FRAMES = 5;
-            }.scheduleRepeating(50);
+            new SlideContentOff().start(onComplete);
 
         } else if (!minimized && _maximizeContent.isAttached()) {
             RootPanel.get(SEPARATOR).remove(_maximizeContent);
             RootPanel.get(SEPARATOR).remove(_separatorLine);
             RootPanel.get(SEPARATOR).add(_minimizeContent);
             RootPanel.get(SEPARATOR).add(_separatorLine);
+            new SlideContentOn().start(onComplete);
 
-            // TODO: unhack
-            new Timer() {
-                public void run () {
-                    if (_startWidth <= _endWidth) {
-                        RootPanel.get(CONTENT).add(_content);
-                        RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
-                        RootPanel.get(CLIENT).setWidth(_endWidth + "px");
-                        WorldClient.setMinimized(true);
-                        cancel();
-                    } else {
-                        RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
-                        RootPanel.get(CLIENT).setWidth(_startWidth + "px");
-//                         _startWidth += Math.max((_endWidth - _startWidth) / FRAMES, 5);
-                        _startWidth += _deltaWidth;
-                    }
-                }
-                protected int _availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
-                protected int _endWidth = Math.max(_availWidth - CONTENT_WIDTH, 0);
-                protected int _startWidth = _availWidth;
-                protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
-                protected static final int FRAMES = 5;
-            }.scheduleRepeating(50);
+        } else if (onComplete != null) {
+            // no action needed, just run the onComplete
+            onComplete.execute();
         }
     }
 
@@ -364,9 +330,10 @@ public abstract class Page
             createContentContainer();
         }
 
-        // configure our content minimizer UI
-        boolean isMinimized = (RootPanel.get(SEPARATOR).getWidgetCount() > 0);
-        if (_closeToken != null && !isMinimized) {
+        // if we're displaying the client or we have a minimized page, unminimize things first
+        if (_maximizeContent.isAttached() ||
+            (_closeToken != null && !_minimizeContent.isAttached())) {
+            CShell.log("Sliding content [close=" + _closeToken + ", ident=" + getPageId() + "]...");
             RootPanel.get(SEPARATOR).clear();
             FlowPanel closeBox = new FlowPanel();
             closeBox.setStyleName("CloseBoxHolder");
@@ -374,32 +341,12 @@ public abstract class Page
             RootPanel.get(SEPARATOR).add(closeBox);
             RootPanel.get(SEPARATOR).add(_minimizeContent);
             RootPanel.get(SEPARATOR).add(_separatorLine);
-
-            // TODO: unhack
-            new Timer() {
-                public void run () {
-                    if (_startWidth <= _endWidth) {
-                        RootPanel.get(CONTENT).add(_content);
-                        RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
-                        RootPanel.get(CLIENT).setWidth(_endWidth + "px");
-                        WorldClient.setMinimized(true);
-                        cancel();
-                    } else {
-                        RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
-                        RootPanel.get(CLIENT).setWidth(_startWidth + "px");
-//                         _startWidth += Math.max((_endWidth - _startWidth) / FRAMES, 5);
-                        _startWidth += _deltaWidth;
-                    }
-                }
-                protected int _availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
-                protected int _endWidth = Math.max(_availWidth - CONTENT_WIDTH, 0);
-                protected int _startWidth = _availWidth;
-                protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
-                protected static final int FRAMES = 5;
-            }.scheduleRepeating(50);
+            new SlideContentOn().start(null);
 
         } else {
+            CShell.log("Setting content [close=" + _closeToken + ", ident=" + getPageId() + "]...");
             RootPanel.get(CONTENT).add(_content);
+            RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
         }
 
         // now set our content
@@ -463,8 +410,70 @@ public abstract class Page
         return (navigator.userAgent.toLowerCase().indexOf("linux") != -1);
     }-*/;
 
+    protected abstract class Slider extends Timer
+    {
+        public void start (Command onComplete) {
+            _onComplete = onComplete;
+            scheduleRepeating(25);
+        }
+
+        protected Command _onComplete;
+        protected static final int FRAMES = 5;
+    }
+
+    protected class SlideContentOff extends Slider
+    {
+        public SlideContentOff () {
+            RootPanel.get(CONTENT).clear();
+            WorldClient.setMinimized(false);
+        }
+
+        public void run () {
+            if (_startWidth >= _endWidth) {
+                RootPanel.get(CONTENT).setWidth("0px");
+                RootPanel.get(CLIENT).setWidth(_endWidth + "px");
+                cancel();
+                if (_onComplete != null) {
+                    _onComplete.execute();
+                }
+
+            } else {
+                RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
+                RootPanel.get(CLIENT).setWidth(_startWidth + "px");
+                _startWidth += _deltaWidth;
+            }
+        }
+
+        protected int _availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
+        protected int _startWidth = Math.max(_availWidth - CONTENT_WIDTH, 0);
+        protected int _endWidth = _availWidth;
+        protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
+    }
+
+    protected class SlideContentOn extends Slider
+    {
+        public void run () {
+            if (_startWidth <= _endWidth) {
+                RootPanel.get(CONTENT).add(_content);
+                RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
+                RootPanel.get(CLIENT).setWidth(_endWidth + "px");
+                WorldClient.setMinimized(true);
+                cancel();
+            } else {
+                RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
+                RootPanel.get(CLIENT).setWidth(_startWidth + "px");
+                _startWidth += _deltaWidth;
+            }
+        }
+
+        protected int _availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
+        protected int _endWidth = Math.max(_availWidth - CONTENT_WIDTH, 0);
+        protected int _startWidth = _availWidth;
+        protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
+    }
+
     protected FlexTable _content;
-    protected Label _closeContent, _minimizeContent, _maximizeContent, _separatorLine;
 
     protected static String _closeToken;
+    protected static Label _closeContent, _minimizeContent, _maximizeContent, _separatorLine;
 }
