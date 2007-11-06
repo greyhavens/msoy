@@ -59,8 +59,7 @@ public class MailManager
     }
 
     /**
-     * Called when a new member is created. Configures their mail folders and sends them a welcome
-     * message.
+     * Called when a new member is created. Configures their mail folders.
      */
     public void memberCreated (int memberId)
     {
@@ -74,21 +73,12 @@ public class MailManager
             folders.add(record);
         }
 
-        final MailMessageRecord welcome = new MailMessageRecord();
-        welcome.recipientId = memberId;
-        // TODO: We need to be able to send system messages somehow.
-        welcome.senderId = memberId;
-        welcome.subject = MsoyServer.msgMan.getBundle("server").get("m.welcome_mail_subject");
-        welcome.bodyText = MsoyServer.msgMan.getBundle("server").get("m.welcome_mail_body");
-
-        // now actually save this stuff to the database
         MsoyServer.invoker.postUnit(new Invoker.Unit("MailManager.memberCreated") {
             public boolean invoke () {
                 try {
                     for (MailFolderRecord record : folders) {
                         _mailRepo.createFolder(record);
                     }
-                    _mailRepo.deliverMessage(welcome);
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Member mailbox initialization failure.", pe);
                 }
