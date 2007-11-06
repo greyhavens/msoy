@@ -172,7 +172,8 @@ public class HeaderBar extends HBox
 //        canvas.startScrollingEvent = MouseEvent.MOUSE_DOWN;
 //        canvas.stopScrollingEvent = MouseEvent.MOUSE_UP;
 //        canvas.scrollSpeed = 100;
-//        canvas.percentWidth = 100; // make sure the parent container's width is constrained.
+//        canvas.minWidth = 100;
+//        //canvas.percentWidth = 100; // make sure the parent container's width is constrained.
 //        canvas.height = HEIGHT;
 //        canvas.addChild(_tabs);
 //        _tabsContainer.addChild(canvas);
@@ -184,9 +185,9 @@ public class HeaderBar extends HBox
         addChild(_owner);
         _extras.push(_owner);
 
-        var padding :HBox = new HBox();
-        padding.percentWidth = 100;
-        addChild(padding);
+        _spacer = new HBox();
+        _spacer.percentWidth = 100;
+        addChild(_spacer);
 
         var controlBox :HBox = new HBox();
         controlBox.styleName = "headerEmbedBox";
@@ -215,6 +216,32 @@ public class HeaderBar extends HBox
         closeBox.addChild(closeBtn);
     }
 
+//    override protected function updateDisplayList (unscaledWidth :Number, 
+//        unscaledHeight :Number) :void
+//    {
+//        super.updateDisplayList(unscaledWidth, unscaledHeight);
+//
+//        if (_tabsContainer.parent != this) {
+//            if (isNaN(_tabs.percentWidth)) {
+//                _tabs.percentWidth = 100;
+//            }
+//            return;
+//        }
+//
+//        if (isNaN(_tabs.percentWidth) && _spacer.width == 0) {
+//            Log.getLog(this).debug("stretching tabs container");
+//            _tabs.percentWidth = 100;
+//            _tabsContainer.percentWidth = 100;
+//            _spacer.percentWidth = NaN;
+//        } else if (isNaN(_spacer.percentWidth) && 
+//                _tabsContainer.width > _tabsContainer.getExplicitOrMeasuredWidth()) {
+//            Log.getLog(this).debug("stretching spacer");
+//            _tabs.percentWidth = NaN;
+//            _tabsContainer.percentWidth = NaN;
+//            _spacer.percentWidth = 100; 
+//        }
+//    }
+
     protected static const WHIRLED_LOGO_WIDTH :int = 124;
 
     protected var _ctx :WorldContext;
@@ -224,6 +251,7 @@ public class HeaderBar extends HBox
     protected var _loc :Label;
     protected var _owner :HBox;
     protected var _embedLinkButton :Label;
+    protected var _spacer :HBox;
 
     protected var _tabs :ChatTabBar;
 
