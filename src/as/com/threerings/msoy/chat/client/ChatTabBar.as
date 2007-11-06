@@ -60,15 +60,7 @@ public class ChatTabBar extends SuperTabBar
      */
     public function nextTab () :void
     {
-        if (_tabs.length < 2) {
-            return;
-        }
-
-        if (_selectedIndex == _tabs.length - 1) {
-            selectedIndex = 0;
-        } else {
-            selectedIndex = _selectedIndex + 1;
-        }
+        selectedIndex = (_selectedIndex + 1) % _tabs.length;
     }
 
     /**
@@ -76,15 +68,7 @@ public class ChatTabBar extends SuperTabBar
      */
     public function prevTab () :void
     {
-        if (_tabs.length < 2) {
-            return;
-        }
-
-        if (_selectedIndex == 0) {
-            selectedIndex = _tabs.length - 1;
-        } else {
-            selectedIndex = _selectedIndex - 1;
-        }
+        selectedIndex = _selectedIndex <= 0 ? _tabs.length - 1 : _selectedIndex - 1;
     }
 
     public function getLocationName () :String
@@ -173,11 +157,13 @@ public class ChatTabBar extends SuperTabBar
     override public function set selectedIndex (ii :int) :void
     {
         super.selectedIndex = ii;
-        _selectedIndex = ii;
-        // when a tab is actually clicked on, one of our parent's _selectedIndex's is changed in the
-        // background, without calling this setter, so this won't actually make tabSelected get 
-        // called twice.
-        tabSelected();
+        if (_selectedIndex != ii) {
+            _selectedIndex = ii;
+            // when a tab is actually clicked on, one of our parent's _selectedIndex's is changed 
+            // in the background, without calling this setter, so this won't actually make 
+            // tabSelected get called twice.
+            tabSelected();
+        }
     }
 
     // yay for this not actually being private like they labeled it in the docs.
