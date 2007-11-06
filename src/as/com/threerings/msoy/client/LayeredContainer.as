@@ -21,34 +21,45 @@ import mx.core.UIComponent;
  */
 public class LayeredContainer extends Container
 {
+    public static const log :Log = Log.getLog(LayeredContainer);
+
     public function setBaseLayer (base :DisplayObject) :void
     {
         clearBaseLayer();
         addChildAt(_base = wrap(base), 0);
-        Log.getLog(this).debug("Base layer set [base=" + base + ", parent=" + base.parent + "]");
+        log.debug("Base layer set [base=" + base + "]");
     }
 
     public function clearBaseLayer () :void
     {
         if (_base != null) {
             removeChild(_base);
-            Log.getLog(this).debug("Base layer cleared [base=" + _base + "]");
+            log.debug("Base layer cleared [base=" + _base + "]");
             _base = null;
         }
     }
 
     /**
      * Adds a display object to overlay the main view as it changes. The lower the layer argument,
-     * the lower the overdraw priority the layer has among other layers.
+     * the lower the overdraw priority the layer has among other layers. The supplied DisplayObject
+     * must have a name and it mustn't conflict with any other overlay name. Fortunately if you
+     * don't name your display object it will be assigned a unique name.
      */
     public function addOverlay (overlay :DisplayObject, layer :int) :void
     {
-        _layers[overlay] = layer;
+        if (overlay.name == null || overlay.name == "") {
+            log.warning("Refusing to add overlay with no name. Name that sucker!");
+            return;
+        } else if (_layers[overlay.name] != null) {
+            log.warning("Refusing to add duplicate overlay [overlay=" + overlay.name + "].");
+            return;
+        }
+        _layers[overlay.name] = layer;
 
         // step through the children until we find one whose layer is larger than ours
         for (var ii :int = 0; ii < numChildren; ii ++) {
             var child :DisplayObject = unwrap(getChildAt(ii));
-            var childLayer :int = int(_layers[child]);
+            var childLayer :int = int(_layers[child.name]);
             if (childLayer > layer) {
                 addChildAt(wrap(overlay), ii);
                 return;
@@ -64,10 +75,10 @@ public class LayeredContainer extends Container
      */
     public function removeOverlay (overlay :DisplayObject) :void
     {
-        if (_layers[overlay]) {
-            _layers[overlay] = null;
+        if (_layers[overlay.name]) {
+            _layers[overlay.name] = null;
         } else {
-            Log.getLog(this).warning("Removing unknown overlay [overlay=" + overlay + "]");
+            log.warning("Removing unknown overlay [overlay=" + overlay.name + "]");
             // but I guess we'll remove it anyway
         }
 
@@ -75,7 +86,10 @@ public class LayeredContainer extends Container
         for (var ii :int = 0; ii < numChildren; ii++) {
             var child :DisplayObject = unwrap(getChildAt(ii));
             if (child == overlay) {
-                removeChildAt(ii);
+                child = removeChildAt(ii);
+                if (child is FlexWrapper) {
+                    (child as FlexWrapper).removeChildAt(0);
+                }
                 break;
             }
         }
@@ -88,7 +102,7 @@ public class LayeredContainer extends Container
 
     protected function unwrap (object :DisplayObject) :DisplayObject
     {
-        return (object is FlexWrapper) ? (object as FlexWrapper).getWrapped() : object;
+        return (object is FlexWrapper) ? (object as FlexWrapper).getChildAt(0) : object;
     }
 
     /** A mapping of overlays to the numerical layer priority at which they were added. */
@@ -107,10 +121,5 @@ class FlexWrapper extends UIComponent
     public function FlexWrapper (object :DisplayObject)
     {
         addChild(object);
-    }
-
-    public function getWrapped () :DisplayObject
-    {
-        return getChildAt(0);
     }
 }
