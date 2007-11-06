@@ -102,20 +102,6 @@ public abstract class Page
     }
 
     /**
-     * Let the currently showing client reign supreme.
-     */
-    public static void closePage ()
-    {
-        if (_closeToken != null) {
-            new SlideContentOff().start(new Command() {
-                public void execute () {
-                    History.newItem(_closeToken);
-                }
-            });
-        }
-    }
-
-    /**
      * Returns true if we need to do our popup hackery, false if not.
      */
     public static boolean needPopupHack ()
@@ -151,6 +137,20 @@ public abstract class Page
                 }
             });
             _separatorLine = MsoyUI.createLabel("", "Separator");
+        }
+    }
+
+    /**
+     * Let the currently showing client reign supreme.
+     */
+    public void closePage ()
+    {
+        if (_closeToken != null) {
+            new SlideContentOff().start(new Command() {
+                public void execute () {
+                    History.newItem(_closeToken);
+                }
+            });
         }
     }
 
