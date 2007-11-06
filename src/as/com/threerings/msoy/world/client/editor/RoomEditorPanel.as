@@ -53,7 +53,7 @@ public class RoomEditorPanel extends FloatingPanel
     {
         super.open(modal, parent, avoid);
 
-        this.x = TopPanel.DECORATIVE_MARGIN_HEIGHT;
+        this.x = stage.width - width - TopPanel.DECORATIVE_MARGIN_HEIGHT;
         this.y = HeaderBar.HEIGHT + TopPanel.DECORATIVE_MARGIN_HEIGHT;
     }
 
