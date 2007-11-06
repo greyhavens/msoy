@@ -28,6 +28,11 @@ public class View extends Sprite
         maybeFinishUI();
     }
 
+    public function isReady () :Boolean
+    {
+        return (this.parent && _swirl.isReady() && _textBox.isReady());
+    }
+
     public function unload () :void
     {
         _swirl.unload();
@@ -57,7 +62,7 @@ public class View extends Sprite
             displayNothing();
             return;
         }
-        _textBox.showBox(summary);
+        _textBox.showBox(summary, true);
         _boxShowing = true;
 
         _textBox.addButton("Hide", true, function () :void {
@@ -72,7 +77,7 @@ public class View extends Sprite
 
     public function displayMessage (button :String, message :String, pressed :Function) :void
     {
-        _textBox.showBox(message);
+        _textBox.showBox(message, false);
         _textBox.addButton(button, true, pressed);
         _boxShowing = true;
     }
@@ -91,22 +96,18 @@ public class View extends Sprite
     protected function maybeFinishUI () :void
     {
         // if all initializations are complete, actually add the bits
-        if (this.parent && _swirl.isReady() && _textBox.isReady()) {
+        if (isReady()) {
             this.addChild(_swirl);
             this.addChild(_textBox);
-
             _tutorial.viewIsReady();
         }
     }
 
     protected var _tutorial :Tutorial;
-
     protected var _swirl :Swirl;
-
     protected var _textBox :TextBox;
     protected var _boxShowing :Boolean;
 
     protected static const log :Log = Log.getLog(View);
-
 }
 }

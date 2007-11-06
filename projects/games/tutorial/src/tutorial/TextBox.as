@@ -44,13 +44,14 @@ public class TextBox extends Sprite
             "  font-family: SunnySide;" +
             "  font-size: 20;" +
             "  text-decoration: underline;" +
-            "  text-align: center;" +
+            "  text-align: left;" +
+            "  margin-left: 20;" +
             "}" +
             ".summary {" +
             "  font-family: Goudy;" +
             "  font-weight: bold;" +
             "  font-size: 16;" +
-            "  text-align: center;" +
+            "  text-align: left;" +
             "}" +
             ".message {" +
             "  font-family: Goudy;" +
@@ -97,17 +98,17 @@ public class TextBox extends Sprite
 
     public function sizeChanged () :void
     {
+        if (stage == null) {
+            return; // god knows
+        }
+
         var scale :Number = Math.max(300, Math.min(400, stage.stageWidth)) / 400;
         this.scaleX = this.scaleY = scale;
-
-        var offset :Number = Math.min(stage.stageWidth - figureWidth()*scale,
-                                      stage.stageHeight - figureHeight()*scale) / 2;
-
-        this.x = Math.max(0, offset);
+        this.x = Math.max(0, Math.min(100, stage.stageWidth - figureWidth()*scale));
         this.y = Content.BOX_HAT + 5; // Math.max(Content.BOX_HAT * this.scaleY, offset);
     }
 
-    public function showBox (text :String) :TextField
+    public function showBox (text :String, titled :Boolean) :void
     {
         clearTimer();
         if (_fadeOut.isPlaying()) {
@@ -126,20 +127,23 @@ public class TextBox extends Sprite
         }, 400);
 
         _textField.htmlText = text;
+        _titled = titled;
 
         _rightButtonEdge = _textField.width;
         _leftButtonEdge = 0;
 
         scaleBackdrop(figureWidth(), figureHeight());
 
+        _textField.y = _backdrop.y + Content.BOX_PADDING;
+        if (!_titled) {
+            _textField.y += NO_TITLE_PADDING;
+        }
         _buttons.y = _textField.y + _textField.height + Content.BOX_PADDING/2;
 
         _foreground.visible = false;
         _backdrop.visible = this.visible = true;
 
         sizeChanged();
-
-        return _textField;
     }
 
     public function addButton (label :String, right :Boolean, onClick :Function) :SimpleButton
@@ -159,7 +163,6 @@ public class TextBox extends Sprite
         }
 
         scaleBackdrop(-1, figureHeight());
-
         sizeChanged();
 
         return button;
@@ -200,7 +203,6 @@ public class TextBox extends Sprite
         _foreground = new Sprite();
 
         _textField.x = _backdrop.x + Content.BOX_PADDING;
-        _textField.y = _backdrop.y + Content.BOX_PADDING;
         _foreground.addChild(_textField);
 
         _buttons = new Sprite();
@@ -225,7 +227,8 @@ public class TextBox extends Sprite
 
     protected function figureHeight () :Number
     {
-        return _textField.height + _buttons.height + 2.5*Content.BOX_PADDING;
+        return _textField.height + _buttons.height + 2.5*Content.BOX_PADDING +
+            (_titled ? 0 : NO_TITLE_PADDING);
     }
 
     protected function scaleBackdrop (x :Number, y :Number) :void
@@ -257,6 +260,7 @@ public class TextBox extends Sprite
     protected var _backdrop :Sprite;
     protected var _foreground :Sprite;
     protected var _textField :TextField;
+    protected var _titled :Boolean;
 
     protected var _buttons :Sprite;
     protected var _leftButtonEdge :int;
@@ -270,5 +274,7 @@ public class TextBox extends Sprite
 
     protected static const SCN_TEXTBOX_GROW :String = "textbox_grow";
     protected static const SCN_TEXTBOX_SHRINK :String = "textbox_shrink";
+
+    protected static const NO_TITLE_PADDING :int = 20;
 }
 }

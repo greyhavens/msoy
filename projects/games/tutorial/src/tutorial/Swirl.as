@@ -51,7 +51,7 @@ public class Swirl extends Sprite
         var transScene :String = null;
         var endScene :String = null;
 
-        switch(state) {
+        switch (state) {
         case View.SWIRL_INTRO:
             if (_swirlState == View.SWIRL_NONE) {
                 moveFrom = BIG_SWIRL_LOC;
@@ -117,7 +117,6 @@ public class Swirl extends Sprite
         var swirlClip :MovieClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
         _swirl = new Buttonizer(swirlClip);
         _swirl.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
-            log.debug("Swirly clicked!");
             _view.swirlClicked(_swirlState);
         });
 

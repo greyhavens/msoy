@@ -5,6 +5,8 @@ package tutorial {
 
 public class Quest
 {
+    public static var log :Log = Log.getLog(Quest);
+
     public var questId :String;
     public var trigger :String;
     public var status :String;
@@ -12,215 +14,272 @@ public class Quest
     public var summary :String;
     public var payout :int;
 
-    public function Quest (questId :String, trigger :String, status :String, 
-                           summary :String, outro :String, payout :uint)
+    public static function getFirstQuest () :Quest
     {
-        this.questId = questId;
-        this.trigger = trigger;
-        this.status = status;
-        this.summary = summary;
-        this.outro = outro;
-        this.payout = payout;
+        return _quests[0];
     }
 
-    public static function getQuestCount () :uint
+    public static function getQuest (questId :String) :Quest
     {
-        fillQuests();
-        return _quests.length;
-    }
-
-    public static function getQuest (step :uint) :Quest
-    {
-        fillQuests();
-        return _quests[step];
-    }
-
-    protected static function fillQuests () :void
-    {
-        if (_quests) {
-            return;
+        for each (var quest :Quest in _quests) {
+            if (quest.questId == questId) {
+                return quest;
+            }
         }
-        _quests = new Array();
-	  _quests.push(new Quest(
-            "buyAvatar",
-            "avatarBought",
-            "Buy a new Avatar",
-            "<p class='title'>Get a New Avatar</p>" +
-            "<p class='summary'><br>Find a new look! There are lots to choose from in the catalog.</p>" +
-            "<p class='details'>" +
-            "<br><li>Click on <b><i>Catalog -> Avatars</i></b> to check them out.</li><br>" +
-            "<li>Pick one you like and buy it.</li><br>" +
-            "</p>",
-            "Okay! You're ready to switch into your new avatar.",
-            0));
-        _quests.push(new Quest(
-            "wearAvatar",
-            "avatarInstalled",
-            "Wear your new Avatar",
-            "<p class='title'>Wear Your Avatar</p>" +
-            "<p class='summary'><br>Show off your extreme makeover.</p>" +
-            "<p class='details'>" +
-            "<br><li>Choose <b><i>My Stuff -> Avatars</i></b> to see your avatars.</li><br>" +
-            "<li>All items bought in Whirled are stored in <b><i>My Stuff</i></b>.</li><br>" +
-            "<li>Click the <b>Wear Avatar</b> button to change your avatar.</li><br>" +
-            "</p>",
-            "Slick! Here's 200 flow for more shopping.",
-            200));
-	  _quests.push(new Quest(
+        log.warning("Requested invalid quest " + questId + ".");
+        return null;
+    }
+
+    public static function getNextQuest (questId :String) :Quest
+    {
+        for (var ii :int = 0; ii < _quests.length; ii++) {
+            var quest :Quest = (_quests[ii] as Quest);
+            if (quest.questId == questId) {
+                if (ii >= _quests.length-1) {
+                    return null;
+                } else {
+                    return (_quests[ii+1] as Quest);
+                }
+            }
+        }
+        return null;
+    }
+
+    public function toString () :String
+    {
+        return questId + " (" + trigger + ")";
+    }
+
+    protected static function makeQuest (questId :String, trigger :String, status :String,
+                                         title :String, summary :String, details :Array,
+                                         footer :String, outro :String, payout :uint) :Quest
+    {
+        var quest :Quest = new Quest();
+        quest.questId = questId;
+        quest.trigger = trigger;
+        quest.status = status;
+        quest.summary = "<p class='title'>" + title + "</p>" +
+            "<p class='summary'>" + summary + "</p><p class='details'><br>";
+        for each (var detail :String in details) {
+            quest.summary += "<li>" + detail + "</li>";
+        }
+        if (footer != null && footer.length > 0) {
+            quest.summary += "<br><p>" + footer + "</p>";
+        }
+        quest.summary += "</p>";
+        quest.outro = outro;
+        quest.payout = payout;
+        return quest;
+    }
+
+    protected static function em (text :String) :String
+    {
+        return "<b><i>" + text + "</i></b>";
+    }
+
+    protected static var _quests :Array = [
+        makeQuest(
             "walkAround",
             "playerMoved",
-            "Strut Your Stuff",
-            "<p class='title'>Strut Your Stuff!</p>" +      
-            "<p class='summary'><br>Try walking around your room in your new avatar.</p>" +
-            "<p class='details'>" +
-            "<br><li>Point and click your mouse where you'd like to walk to.</li><br>" +
-            "</p>",
-            "Good! Here's 100 flow for more shopping.",
-            100));
-	  _quests.push(new Quest(
+            "Learning to Walk",
+            "Take a Walk Around",
+            "In Whirled, everyone has an Avatar which represents them and can walk around. " +
+            "Try moving around your room:",
+            [ "Move your mouse on the floor and you'll see a little dot.",
+              "Click your mouse and you'll walk to the dot." ],
+            "",
+            "Nice work. Now let's learn how to talk.<br><br>" +
+            "Click the " + em("Onward") + " button below...",
+            0),
+
+        makeQuest(
             "talk",
             "playerSpoke",
-            "Wear your new Avatar",
-            "<p class='title'>Find Your Voice!</p>" +      
-            "<p class='summary'><br>Chatting with friends in your room is easy.</p>" +
-            "<p class='details'>" +
-            "<br><li>Place your cursor in the chat box in the lower left corner of the Whirled toolbar.</li><br>" +
-		"<li>Type a message and click <b><i>Send</i></b> to see it displayed in your room.</li><br>" +
-		"<li>You can also press Enter on your keyboard to send chat messages.</li><br>" +
-            "</p>",
-            "Excellent! Here's 100 flow for more shopping.",
-            100));
-	  _quests.push(new Quest(
-            "playGame",
-            "gamePlayed",
-            "Play a Game!",
-            "<p class='title'>Play a Game!</p>" +
-            "<p class='summary'><br>Whirled is full of fun games to play that earn you flow. You can play by yourself or with friends.</p>" +
-            "<p class='details'>" +
-            "<br><li>Click on <b><i>Places -> Whirledwide</i></b> to see the top games in Whirled.</li><br>" +
-            "<li>Pick one from the list on the left to see more about it.</li><br>" +
-            "<li>Click <b><i>Play!</i></b> to try it.</li><br>" +
-            "</p>",
-            "Great! Playing games is a fun way to earn flow.",
-            0));
-        _quests.push(new Quest(
-            "buyDecor",
-            "decorBought",
-            "Buy New Decor",
-            "<p class='title'>Shop For Decor</p>" +
-            "<p class='summary'>" +
-            "<br>The decor is the most fundamental element of your room's appearance. Every other item in your room appears on top of the decor." +
-            "</p><p class='details'>" +
-            "<br><li>Choose <b><i>Catalog -> Decor</i></b> for a selection of new room settings.</li><br>" +
-            "<li>Browse through and buy one you like.</li><br>" +
-            "</p>",
-            "Fantastic! You now own a piece of decor.",
-            0));
-        _quests.push(new Quest(
-            "installDecor",
-            "decorInstalled",
-            "Change Your Decor",
-            "<p class='title'>Use Your New Decor</p>" +
-            "<p class='summary'><br>Let's get your new decor in your room.</p>" +
-            "<p class='details'>" +
-            "<br><li>Choose <b><i>My Stuff -> Decor</i></b> to see the decor you own.</li><br>" +
-            "<li>Apply your new decor by clicking the <b>Add to Room</b> button.</li><br>" +
-            "<li>Click the close box to return to your room.</li><br>" +
-            "</p>",
-            "Congratulations! Here's 200 flow for learning how to change your decor.",
-            200));
-        _quests.push(new Quest(
-            "buyFurni",
-            "furniBought",
-            "Buy Furniture",
-            "<p class='title'>Buy Furniture</p>" +
-            "<p class='summary'><br>Furniture adds personality to a room. Let's shop some more.</p>" +
-            "<p class='details'>" +
-            "<br><li>Choose <b><i>Catalog -> Furniture</i></b> to start shopping.</li><br>" +
-            "<li>Click <b><i>Buy!</i></b> when you find something you like.</li><br>" +
-            "</p>",
-            "You now have furniture to place in your room.",
-            0));
-        _quests.push(new Quest(
-            "installFurni",
-            "furniInstalled",
-            "Install your furniture",
-            "<p class='title'>Add Your Furniture</p>" +
-            "<p class='summary'><br>Now let's add your furniture to the room.</p>" +
-            "<p class='details'>" +
-            "<br><li>Choose <b><i>My Stuff -> Furniture</i></b> to browse your furniture.</li><br>" +
-            "<li>Clicking <b>Add to Room</b> will place the item in the center of your room.</li><br>" +
-            "<li>The Build Panel will open. Click the 'X' to close it.</li><br>" +
-            "</p>",
-            "Excellent! You got 300 flow for adding furniture to your room.",
-            300));
-        _quests.push(new Quest(
-            "placeFurni",
-            "editorClosed",
-            "Place your furniture",
-            "<p class='title'>Place Your Furniture</p>" +
-            "<p class='summary'><br>The new furniture appears in the middle of the room until you drag it to where you want it to be. </p>" +
-            "<p class='details'>" +
-            "<br><li>Click the hammer icon on the toolbar to enter Build Mode.</li><br>" +
-            "<li>Click and drag your furniture to put it anywhere you want.</li><br>" +
-            "<li>Click the <b>Close</b> box on the Build Panel to return to your room.</li><br>" +
-            "</p>",
-            "Congratulations! Here's 150 flow toward getting more furniture.",
-            150));
-	  _quests.push(new Quest(
-            "editProfile",
-            "profileEdited",
-            "Edit Your Profile",
-            "<p class='title'>Edit Your Profile!</p>" +
-            "<p class='summary'><br>Everyone in Whirled has a Profile page to share interests, find friends, show off or just express themselves.</p>" +
-            "<p class='details'>" +
-            "<br><li>Choose Me -> My Profile to see your Whirled Profile page.</li><br>" +
-            "<li>Click <b>Edit</b> and enter your information.</li><br>" +
-            "<li>Finally click the <b>Done</b> button.</li><br>" +
-            "</p>",
-            "Congratulations! Here's 500 flow.",
-            500));
-	  _quests.push(new Quest(
-            "visitMyWhirled",
-            "myWhirledVisited",
-            "My Whirled",
-            "<p class='title'>My Whirled</p>" +
-            "<p class='summary'><br>My Whirled is an easy way to see what your friends are doing and join in on the fun.</p>" +
-            "<p class='details'>" +
-            "<br><li>Click on <b><i>Places -> My Whirled</i></b> to see which friends are online now.</li><br>" +
-            "<li>Click a name to go to your friend.</li><br>" +
-            "<li>If you have no friends online, click on Whirledwide to see popular spots and meet new people.</li><br>" +
-            "</p>",
-            "Great! Now you can use My Whirled to keep up with your friends.",
-            500));
-	  _quests.push(new Quest(
+            "Learning to Speak",
+            "Find Your Voice!",
+            "Chatting with friends in your room is easy:",
+            [ "Click in the chat box in the lower left corner of the Whirled toolbar.",
+              "Type a message and click " + em("Send") + " or press the " + em("Enter") + " key." ],
+            "",
+            "Excellent! We'll give you " + em("200 flow") + " for your efforts.<br><br>" +
+            "Notice in the upper right of the page, next to your name, it shows you how much " +
+            em("flow") + " you have.<br><br>" +
+            "Click " + em("Onward") + " and we'll show you how to spend that flow on something fun!",
+            200),
+
+        makeQuest(
+            "buyAvatar",
+            "avatarBought",
+            "Shopping for an Avatar",
+            "Get a New Avatar",
+            "In " + em("Whirled") + ", you can change your avatar as easily as you can change " +
+            "your mind. Let's go shopping and pick out a new one:",
+            [ "Click on " + em("Catalog -> Avatars") + " at the top of the page.",
+              "Pick one you like and click on it.",
+              "Press the " + em("Buy") + " button below the avatar image to buy it." ],
+            "",
+            "Okay! You're ready to switch into your new avatar.<br><br>" +
+            "Click anywhere in this window to return to the " + em("Whirled") +
+            " and then click " + em("Onward") + ".",
+            0),
+
+        makeQuest(
+            "wearAvatar",
+            "avatarInstalled",
+            "Wearing an Avatar",
+            "Wear Your Avatar",
+            "Now that you own a new avatar, you're going to want to wear it. Here's how:",
+            [ "Choose " + em("My Stuff -> Avatars") + " to see your avatars.",
+              "Click the " + em("Wear Avatar") + " button to change your avatar.",
+              "All items bought in Whirled are stored in " + em("My Stuff") + "." ],
+            "",
+            "Now you're looking mighty fine!<br><br>" +
+            "We've given you another " + em("200 flow") + " to do some more shopping.<br><br>" +
+            "But don't run off just yet! Let's learn how to " + em("find our friends") + ".",
+            200),
+
+        makeQuest(
             "findFriends",
             "friendsSought",
-            "Invite Your Friends!",
-            "<p class='title'>Find Friends!</p>" +
-            "<p class='summary'><br>You can search for friends that are already Whirled players.</p>" +
-            "<p class='details'>" +
-            "<br><li>Click on <b><i>People -> Profiles -> Find People</i></b> and enter your friend's name.</li><br>" +
-            "<li>You can also search by their Whirled display name or Email.</li><br>" +
-            "<li>Click <b><i>Search</i></b>.</li><br>" +
-            "</p>",
-            "If your friends aren't on Whirled yet, go ahead and invite them!",
-            0));
-	  _quests.push(new Quest(
+            "Finding Friends",
+            "Find Your Friends",
+            "You can easily search for friends that are already " + em("Whirled") + " players. " +
+            "Here's how:",
+            [ "Click on " + em("People -> Profiles -> Find People") + ".", 
+              "You can search by their " + em("real name") + ", " + em("Whirled name") + " or " +
+              em("Email address") + ".",
+              "Enter your friend's name and click " + em("Search") + "." ],
+            "",
+            "If your friends aren't on Whirled yet, you can " + em("invite them!") + "<br><br>" +
+            "Click " + em("Onward") + " and we'll show you how.",
+            0),
+
+        makeQuest(
             "inviteFriends",
             "friendInvited",
+            "Inviting Friends",
             "Invite Your Friends!",
-            "<p class='title'>Invite Your Friends!</p>" +
-            "<p class='summary'><br>Invite your friends to Whirled so you can play games, chat and make cool new rooms. Let's send some invitations!</p>" +
-            "<p class='details'>" +
-            "<br><li>Click on <b><i>People -> Invitations</i></b> and enter your friends' e-mail addresses.</li><br>" +
-            "<li>Add a custom message if you like.</li><br>" +
-            "<li>Click <b><i>Send Invites!</i></b>.</li><br>" +
-            "</p>",
-            "Thanks! You received 500 flow for inviting friends. You'll get an extra bonus for each friend that joins!",
-            500));
-    }
+            "Invite your friends to Whirled and you can play games and chat with them. It's easy:",
+            [ "Click on " + em("People -> Invitations") + ".",
+              "Enter your friends' e-mail addresses.",
+              "Add a custom message if you like.", 
+              "Click " + em("Send Invites") + "." ],
+            "If you don't want to send invites right now, don't worry. Just click " + em("Skip") +
+            " and you can send invites later.",
+            "Swell! Here's an extra " + em("500 flow") + " for inviting your friends.<br><br>" +
+            "Next we'll show you how to find out whether your friends are online.",
+            500),
 
-    protected static var _quests :Array;
+        makeQuest(
+            "visitMyWhirled",
+            "willUnminimize",
+            "Using My Whirled",
+            "My Whirled",
+            "My Whirled is an easy way to see what your friends are doing and join in on the fun.",
+            [ "Click on " + em("Places -> My Whirled") + " or the logo in the upper left to see " +
+              "which of your friends are online now.", 
+              "Click any friend's name to " + em("go to where they are") + ".", 
+              "If you have no friends online, click on " + em("Whirledwide") + " to find " +
+              "popular spots and meet new people." ],
+            "When you're ready, close " + em("My Whirled") + " by clicking back in this window.",
+            "Great! Now you can use " + em("My Whirled") + " to keep up with your friends.",
+            500),
+
+        makeQuest(
+            "playGame",
+            "gamePlayed",
+            "Playing a Game",
+            "Play a Game!",
+            "Whirled is full of fun games to play that earn you flow. " +
+            "You can play by yourself or with friends.",
+            [ "Click on " + em("Places -> Whirledwide") + " to see the top games in Whirled.", 
+              "Pick one from the list on the left to see more about it.", 
+              "Click " + em("Play!") + " to try it." ],
+            "When you're done come back home using " + em("Me -> My Home") + ".",
+            "You're back! Playing games is a fun way to earn flow. You can also " +
+            em("earn Trophies") + " and get onto " + em("Top Ranked lists") + ".<br><br>" +
+            "But now let's get back to some home improvement.",
+            0),
+
+        makeQuest(
+            "buyDecor",
+            "decorBought",
+            "Shopping for Decor",
+            "Shop For Decor",
+            "The decor is the most fundamental element of your room's appearance. " +
+            "Every other item in your room appears on top of the decor.",
+            [ "Choose " + em("Catalog -> Decor") + " for a selection of new room settings.", 
+              "Browse through and buy one you like." ],
+            "",
+            "Fantastic! You now own a piece of decor. Next we'll show you how to use that " +
+            em("Decor") + " in your room.",
+            0),
+
+        makeQuest(
+            "installDecor",
+            "decorInstalled",
+            "Changing Decor",
+            "Use Your New Decor",
+            "Let's get your new decor in your room.",
+            [ "Choose " + em("My Stuff -> Decor") + " to see the decor you own.", 
+              "Apply your new decor by clicking the <b>Add to Room</b> button.", 
+              "Click the close box to return to your room." ],
+            "",
+            "Congratulations! Here's 200 flow for learning how to change your decor.",
+            200),
+
+        makeQuest(
+            "buyFurni",
+            "furniBought",
+            "Shopping for Furniture",
+            "Buy Furniture",
+            "Furniture adds personality to a room. Let's shop some more.",
+            [ "Choose " + em("Catalog -> Furniture") + " to start shopping.", 
+              "Click " + em("Buy!") + " when you find something you like." ],
+            "",
+            "You now have furniture to place in your room.",
+            0),
+
+        makeQuest(
+            "installFurni",
+            "furniInstalled",
+            "Installing Furniture",
+            "Add Your Furniture",
+            "Now let's add your furniture to the room.",
+            [ "Choose " + em("My Stuff -> Furniture") + " to browse your furniture.", 
+              "Clicking <b>Add to Room</b> will place the item in the center of your room.", 
+              "The Build Panel will open. Click the 'X' to close it." ],
+            "",
+            "Excellent! You got 300 flow for adding furniture to your room.",
+            300),
+
+        makeQuest(
+            "placeFurni",
+            "editorClosed",
+            "Rearranging the Furniture",
+            "Place Your Furniture",
+            "The new furniture appears in the middle of the room until you drag it to where " +
+            "you want it to be. ",
+            [ "Click the hammer icon on the toolbar to enter Build Mode.", 
+              "Click and drag your furniture to put it anywhere you want.", 
+              "Click the <b>Close</b> box on the Build Panel to return to your room." ],
+            "",
+            "Congratulations! Here's 150 flow toward getting more furniture.",
+            150),
+
+        makeQuest(
+            "editProfile",
+            "profileEdited",
+            "Editing Your Profile",
+            "Edit Your Profile!",
+            "Everyone in Whirled has a Profile page to share interests, find friends, show off " +
+            "or just express themselves.",
+            [ "Choose Me -> My Profile to see your Whirled Profile page.", 
+              "Click <b>Edit</b> and enter your information.", 
+              "Finally click the <b>Done</b> button.", ],
+            "",
+            "Congratulations! Here's 500 flow.",
+            500),
+        ];
 }
 }

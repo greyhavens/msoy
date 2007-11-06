@@ -20,86 +20,66 @@ public class Tutorial extends Sprite
 
         // immediately set up the control and listen for all relevant events
         _control = new AVRGameControl(this);
-//        _control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, debugEvent);
-//        _control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, debugEvent);
-//        _control.addEventListener(AVRGameControlEvent.PLAYER_MOVED, debugEvent);
-//        _control.addEventListener(AVRGameControlEvent.LEFT_ROOM, debugEvent);
-//        _control.addEventListener(AVRGameControlEvent.ENTERED_ROOM, debugEvent);
-
         _control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
+        _control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
+        _control.quests.addEventListener(AVRGameControlEvent.QUEST_STATE_CHANGED, questStateChanged);
 
-        _control.state.addEventListener(
-            AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
-
-        _control.state.addEventListener(
-            AVRGameControlEvent.PLAYER_PROPERTY_CHANGED, playerPropertyChanged);
-
-        _control.quests.addEventListener(
-            AVRGameControlEvent.QUEST_STATE_CHANGED, questStateChanged);
+        // look up our active quest
+        var questId :String = (_control.state.getPlayerProperty(PROP_TUTORIAL_STEP) as String);
+        _activeQuest = Quest.getQuest(questId);
 
         // create but do not initialize the view
         _view = new View(this);
     }
 
-    protected function debugEvent (evt :Event) :void
+    public function viewIsReady () :void
     {
-        log.debug("event: " + evt);
+        _view.gotoSwirlState(_activeQuest == null ? View.SWIRL_INTRO : View.SWIRL_DEMURE);
+
+        // if we have a pending tutorial completion, do it now that we're ready to display
+        if (_pendingCompletion) {
+            _pendingCompletion = false;
+            displayQuestCompletion();
+        }
+    }
+
+    public function swirlClicked (swirlState :int) :void
+    {
+        log.debug("swirlClicked [state=" + swirlState + "]");
+
+        if (_view.isBoxShowing()) {
+            _view.displayNothing();
+
+        } else if (_activeQuest == null) {
+            displayIntro();
+
+        } else {
+            _view.displaySummary(_activeQuest.summary);
+        }
     }
 
     public function skipQuest () :void
     {
         if (_activeQuest == null) {
-            log.warning("Eek, no active quest in skipQuest [step=" + getStep() + "]");
+            log.warning("Eek, no active quest in skipQuest");
             return;
         }
-        _control.quests.cancelQuest(_activeQuest);
-    }
+        _control.quests.cancelQuest(_activeQuest.questId);
 
-    public function swirlClicked (swirlState :int) :void
-    {
-//        log.debug("swirlClicked [state=" + swirlState + "]");
-        var step :int = getStep();
-        var quest :Quest = Quest.getQuest(step);
-
-        if (_view.isBoxShowing()) {
-            _view.displayNothing();
-
-        } else if (testCompletedStep(step)) {
-            initialize();
-
-        } else if (_activeQuest) {
-            _view.displaySummary(quest.summary);
-
-        } else if (step == 0) {
-            _view.displayMessage(
-                "Let's Go!",
-                "<p class='message'>This tour will help you get a feel for <b><i>Whirled</i></b> in just a few simple steps.</p><br>" +
-                "<p class='message'>You'll learn how to <b>customize</b> your room, <b>buy</b> a new avatar, <b>play</b> games, and <b>connect</b> with friends.</p><br>" +
-                "<p class='message'>It's also a quick way to earn some easy <i>flow</i>, the local currency.</p>",
-                function () :void {
-                    _control.quests.offerQuest(quest.questId, null, quest.status);
-                });
-
+        var nquest :Quest = Quest.getNextQuest(_activeQuest.questId);
+        if (nquest != null) {
+            startQuest(nquest);
         } else {
-            log.warning("Eek, swirly clicked without active quest [swirlState=" + swirlState +
-                        ", step=" + getStep() + "]");
+            displayTutorialComplete();
         }
-    }
-
-    public function viewIsReady () :void
-    {
-        _viewSetup = true;
-        initialize();
     }
 
     protected function complete (event :Event) :void
     {
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
-
         addChild(_view);
         _view.init();
-
-        // now surrender control until we find out whether or not we're minimized
+        // the view will call us back when it's ready
     }
 
     protected function handleSizeChanged (event :Event) :void
@@ -118,128 +98,99 @@ public class Tutorial extends Sprite
         if (event.name != "tutorialEvent") {
             return;
         }
-        var step :int = getStep();
+        log.debug("Tutorial event [name=" + event.value + ", active=" + _activeQuest + "]");
 
-        log.debug("Tutorial event [name=" + event.value + ", step=" + step + "]");
-
-        if (event.value == "willUnminimize") {
-            initialize();
-
-        } else if (event.value == Quest.getQuest(step).trigger) {
-            _control.state.setPlayerProperty(PROP_STEP_COMPLETED, step, true);
-
-        } else {
-            log.warning("Unknown tutorial event: " + event.value);
+        // if we have no active quest or this isn't our trigger action, ignore it
+        if (_activeQuest == null || event.value != _activeQuest.trigger) {
+            return;
         }
-    }
 
-    protected function playerPropertyChanged (event: AVRGameControlEvent) :void
-    {
-        log.debug("property changed: " + event.name + "=" + event.value);
-        if (event.name == PROP_STEP_COMPLETED) {
-            // we ignore clearing this value; a step bump will come in a moment
-            if (event.value) {
-                initialize();
-            }
-
-        } else if (event.name == PROP_TUTORIAL_STEP) {
-            // we have arrived at a new tutorial step; reinitialize our state
-            initialize();
+        // we may end up here before our view is ready because when we finish playing a game the
+        // tutorial is started back up and immediately sent a gamePlayed event
+        if (_view.isReady()) {
+            displayQuestCompletion();
+        } else {
+            _pendingCompletion = true;
         }
     }
 
     protected function questStateChanged (event :AVRGameControlEvent) :void
     {
-        log.debug("quest state changed [id=" + event.name + ", value=" + event.value + "]");
-        // we've acquired a new active quest or dropped an old one; update our display
+        log.debug("Quest state changed [id=" + event.name + ", value=" + event.value + "]");
 
-        var step :int = getStep();
-        var quest :Quest = Quest.getQuest(step);
+        // if we've acquired a new quest...
         if (event.value) {
-            // accepting a new quest triggers the summary box
-            _view.displaySummary(quest.summary);
-            // we'll let initialize() set _activeQuest and figure out swirl state
-            initialize();
-            return;
-        }
-        // else the player dropped the quest or clicked the completion popup's "OK" button
-        if (event.name == quest.questId) {
-            // either way we move on to the next
-            _activeQuest = null;
-            _control.state.setPlayerProperty(PROP_STEP_COMPLETED, null, true);
-            _control.state.setPlayerProperty(PROP_TUTORIAL_STEP, getStep() + 1, true);
-            return;
-        }
-        log.warning("Deactivation of unexpected quest [questId=" + event.name +
-                    ", current=" + quest.questId + "]");
-        return;
-    }
-
-    protected function initialize () :void
-    {
-        if (_viewSetup == false) {
-            return;
-        }
-        // figure out which quest we ought to be on
-        var step :int = getStep();
-        if (step >= Quest.getQuestCount()) {
-            _view.displayMessage(
-                "Finish",
-                "<p class='title'>Farewell</p>" +
-                "<p class='message'><br>This is the end of the tutorial, and you are ready to step into the world.</p>",
-                function () :void {
-                    _control.deactivateGame();
-                });
-            return;
-        }
-
-        var quest :Quest = Quest.getQuest(step);
-
-        // check against our current active quests
-        var quests :Array = _control.quests.getActiveQuests();
-        for (var ii :int = 0; ii < quests.length; ii ++) {
-            var tuple :Array = quests[ii];
-            if (tuple[0] == quest.questId) {
-                _activeQuest = quest.questId;
-                if (testCompletedStep(step)) {
-                    _view.displayMessage(
-                        "Onward", "<p class='message'>" + quest.outro + "</p>", function () :void {
-                            _view.displayNothing();
-                            _control.quests.completeQuest(quest.questId, null, quest.payout);
-                        });
-                } else {
-                    _view.gotoSwirlState(View.SWIRL_DEMURE);
-                }
-                return;
+            // ...note the quest; display it's summary and smallen our swirl
+            _activeQuest = Quest.getQuest(event.name);
+            if (_activeQuest == null) {
+                log.warning("Unknown quest started? [id=" + event.name + "].");
+            } else {
+                _view.displaySummary(_activeQuest.summary);
+                _view.gotoSwirlState(View.SWIRL_DEMURE);
             }
         }
-        if (step == 0) {
-            _view.gotoSwirlState(View.SWIRL_INTRO);
-            return;
-        }
-        // this quest will be automatically accepted, which in turn will trigger a call
-        // back here to initialize(), setting activeQuest and swirl state as per above
+    }
+
+    protected function displayIntro () :void
+    {
+        _view.displayMessage(
+            "Let's Go!",
+            "<p class='title'>Whirled Tour</p><br>" +
+            "<p class='message'>This tour will help you get a feel for <b><i>Whirled</i></b> in just a few simple steps.</p><br>" +
+            "<p class='message'>You'll learn how to <b>customize</b> your room, <b>buy</b> a new avatar, <b>play</b> games, and <b>connect</b> with friends.</p><br>" +
+            "<p class='message'>It's also a quick way to earn some easy <i>flow</i>, the local currency.</p>",
+            function () :void {
+                _view.displayNothing();
+                startQuest(Quest.getFirstQuest());
+            });
+        _view.gotoSwirlState(View.SWIRL_DEMURE);
+    }
+
+    protected function startQuest (quest :Quest) :void
+    {
+        log.info("Starting quest [id=" + quest + "].");
+        _control.state.setPlayerProperty(PROP_TUTORIAL_STEP, quest.questId, true);
         _control.quests.offerQuest(quest.questId, null, quest.status);
     }
 
-    protected function getStep () :int
+    protected function displayQuestCompletion () :void
     {
-        return int(_control.state.getPlayerProperty(PROP_TUTORIAL_STEP));
+        log.info("Marking step complete " + _activeQuest + ".");
+        _view.displayNothing();
+        _control.quests.completeQuest(_activeQuest.questId, null, _activeQuest.payout);
+        var nquest :Quest = Quest.getNextQuest(_activeQuest.questId);
+
+        // now move on to the next quest or the end of the tutorial if we have no more quests
+        if (nquest != null) {
+            _view.displayMessage("Onward", "<p class='message'>" + _activeQuest.outro + "</p>",
+                                 function () :void {
+                                     startQuest(nquest);
+                                 });
+        } else {
+            displayTutorialComplete();
+        }
+
+        // clear out our active quest so that we don't retrigger its completion
+        _activeQuest = null;
     }
 
-    protected function testCompletedStep (step :int) :Boolean
+    protected function displayTutorialComplete () :void
     {
-        var tmp :Object = _control.state.getPlayerProperty(PROP_STEP_COMPLETED);
-        return tmp != null && int(tmp) == step;
+        _view.displayMessage(
+            "Finish",
+            "<p class='title'>Farewell</p><br>" +
+            "<p class='message'><br>This is the end of the tutorial, and you are ready to " +
+            "step into the world.</p>",
+            function () :void {
+                _control.deactivateGame();
+            });
     }
 
-    protected var _activeQuest :String;
+    protected var _activeQuest :Quest;
     protected var _control :AVRGameControl;
-    protected var _clientIsMinimized :Boolean = true;
     protected var _view :View;
-    protected var _viewSetup :Boolean;
+    protected var _pendingCompletion :Boolean;
 
-    protected static const PROP_STEP_COMPLETED :String = "stepCompleted";
     protected static const PROP_TUTORIAL_STEP :String = "tutorialStep";
 }
 }
