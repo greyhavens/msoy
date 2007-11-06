@@ -6,7 +6,7 @@
 
 .catalogContents {
   width: 650px;
-  padding: 10px;
+  border: white solid 10px;
 }
 
 .listingContainer {
