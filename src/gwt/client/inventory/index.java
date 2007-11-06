@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.item.data.all.Item;
 
+import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
@@ -45,6 +46,13 @@ public class index extends Page
 
         // load up our translation dictionaries
         CInventory.msgs = (InventoryMessages)GWT.create(InventoryMessages.class);
+    }
+
+    // @Override // from Page
+    protected void didLogoff ()
+    {
+        // go to whirledwide instead of reloading as a non-member
+        Application.go(Page.WHIRLED, "whirledwide");
     }
 
     protected void updateInterface (Args args)

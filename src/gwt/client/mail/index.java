@@ -8,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.person.data.MailFolder;
 
 import client.msgs.MsgsEntryPoint;
+import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
@@ -64,6 +65,13 @@ public class index extends MsgsEntryPoint
 
         // load up our translation dictionaries
         CMail.msgs = (MailMessages)GWT.create(MailMessages.class);
+    }
+
+    // @Override // from Page
+    protected void didLogoff ()
+    {
+        // go to whirledwide instead of reloading as a non-member
+        Application.go(Page.WHIRLED, "whirledwide");
     }
 
     protected MailApplication _mainView;

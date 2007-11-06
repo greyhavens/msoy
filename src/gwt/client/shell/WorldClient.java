@@ -151,11 +151,6 @@ public class WorldClient extends Widget
         // TODO: let jclient know about logon?
     }
 
-    public static void didLogoff ()
-    {
-        clearClient(true);
-    }
-
     /**
      * Tells the featured places view to show a particular location.
      */

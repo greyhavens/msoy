@@ -313,12 +313,12 @@ public class Application
         CShell.creds = null;
         CShell.ident = null;
         _navi.didLogoff();
-        WorldClient.didLogoff();
 
         if (_page == null) {
             // we can now load our starting page
             onHistoryChanged(_currentToken);
         } else {
+            _page.clearClient(false);
             _page.didLogoff();
         }
     }

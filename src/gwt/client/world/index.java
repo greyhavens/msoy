@@ -116,8 +116,7 @@ public class index extends Page
     // @Override // from Page
     protected void didLogoff ()
     {
-        // instead of reloading the current page, go to whirledwide
-        Application.go(Page.WHIRLED, "whirledwide");
+        // logging off will clear the client which will send us to whirledwide
     }
 
     // @Override // from Page
