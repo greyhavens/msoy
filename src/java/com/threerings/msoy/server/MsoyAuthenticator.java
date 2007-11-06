@@ -513,9 +513,6 @@ public class MsoyAuthenticator extends Authenticator
         // start the new member up with the tutorial
         mrec.avrGameId = Game.TUTORIAL_GAME_ID;
 
-        // and enough flow to buy something nice
-        mrec.flow = mrec.accFlow = 150;
-
         // store their member record in the repository making them a real Whirled citizen
         MsoyServer.memberRepo.insertMember(mrec);
 
