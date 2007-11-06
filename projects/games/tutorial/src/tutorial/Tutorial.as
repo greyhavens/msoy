@@ -126,13 +126,14 @@ public class Tutorial extends Sprite
                 log.warning("Unknown quest started? [id=" + event.name + "].");
             } else {
                 _view.displayQuest(_activeQuest);
-                _view.gotoSwirlState(View.SWIRL_DEMURE);
+                _view.gotoSwirlState(View.SWIRL_NONE);
             }
         }
     }
 
     protected function displayIntro () :void
     {
+        _view.gotoSwirlState(View.SWIRL_NONE);
         _view.displayMessage(
             "Let's Go!",
             "<p class='title'>Whirled Tour</p><br>" +
@@ -146,7 +147,6 @@ public class Tutorial extends Sprite
                 _view.displayNothing();
                 startQuest(Quest.getFirstQuest());
             });
-        _view.gotoSwirlState(View.SWIRL_DEMURE);
     }
 
     protected function startQuest (quest :Quest) :void

@@ -108,7 +108,7 @@ public class TextBox extends Sprite
 
         var scale :Number = Math.max(300, Math.min(400, stage.stageWidth)) / 400;
         this.scaleX = this.scaleY = scale;
-        this.x = Math.max(0, Math.min(100, stage.stageWidth - figureWidth()*scale));
+        this.x = Math.max(0, Math.min(25, stage.stageWidth - figureWidth()*scale));
         this.y = Content.BOX_HAT + 5; // Math.max(Content.BOX_HAT * this.scaleY, offset);
     }
 

@@ -80,6 +80,10 @@ public class Swirl extends Sprite
             endScene = SCN_LOOKATME;
             break;
 
+        case View.SWIRL_NONE:
+            this.visible = false;
+            break;
+
         default:
             log.warning("Can't goto unknown swirl state [state=" + state + "].");
             return;
