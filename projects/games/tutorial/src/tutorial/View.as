@@ -55,24 +55,27 @@ public class View extends Sprite
         _boxShowing = false;
     }
 
-    public function displaySummary (summary :String) :void
+    public function displayQuest (quest :Quest) :void
     {
-        log.debug("displaySummary [summary=" + summary + "]");
-        if (!summary) {
+        log.debug("displayQuest [quest=" + quest + "]");
+        if (!quest) {
             displayNothing();
             return;
         }
-        _textBox.showBox(summary, true);
+
+        _textBox.showBox(quest.summary, true);
         _boxShowing = true;
 
         _textBox.addButton("Hide", true, function () :void {
             displayNothing();
         });
 
-        _textBox.addButton("Skip", false, function () :void {
-            displayNothing();
-            _tutorial.skipQuest();
-        });
+        if (quest.skippable) {
+            _textBox.addButton("Skip", false, function () :void {
+                    displayNothing();
+                    _tutorial.skipQuest();
+                });
+        }
     }
 
     public function displayMessage (button :String, message :String, pressed :Function) :void

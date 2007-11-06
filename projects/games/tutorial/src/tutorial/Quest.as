@@ -13,6 +13,7 @@ public class Quest
     public var outro :String;
     public var summary :String;
     public var payout :int;
+    public var skippable :Boolean;
 
     public static function getFirstQuest () :Quest
     {
@@ -50,15 +51,15 @@ public class Quest
         return questId + " (" + trigger + ")";
     }
 
-    protected static function makeQuest (questId :String, trigger :String, status :String,
-                                         title :String, summary :String, details :Array,
-                                         footer :String, outro :String, payout :uint) :Quest
+    protected static function makeQuest (
+        questId :String, trigger :String, status :String, title :String, summary :String,
+        details :Array, footer :String, outro :String, payout :uint, skippable :Boolean) :Quest
     {
         var quest :Quest = new Quest();
         quest.questId = questId;
         quest.trigger = trigger;
         quest.status = status;
-        quest.summary = "<p class='title'>" + title + "</p>" +
+        quest.summary = "<p class='title'>" + title + "</p><p class='shim'>&nbsp;</p>" +
             "<p class='summary'>" + summary + "</p><p class='details'><br>";
         for each (var detail :String in details) {
             quest.summary += "<li>" + detail + "</li>";
@@ -69,12 +70,8 @@ public class Quest
         quest.summary += "</p>";
         quest.outro = outro;
         quest.payout = payout;
+        quest.skippable = skippable;
         return quest;
-    }
-
-    protected static function em (text :String) :String
-    {
-        return "<b><i>" + text + "</i></b>";
     }
 
     protected static var _quests :Array = [
@@ -88,40 +85,39 @@ public class Quest
             [ "Move your mouse on the floor and you'll see a little dot.",
               "Click your mouse and you'll walk to the dot." ],
             "",
-            "Nice work. Now let's learn how to talk.<br><br>" +
-            "Click the " + em("Onward") + " button below...",
-            0),
+            null,
+            0, false),
 
         makeQuest(
             "talk",
             "playerSpoke",
             "Learning to Speak",
             "Find Your Voice!",
+            "Nice work! Now let's learn how to talk.<br><br>" +
             "Chatting with friends in your room is easy:",
-            [ "Click in the chat box in the lower left corner of the Whirled toolbar.",
-              "Type a message and click " + em("Send") + " or press the " + em("Enter") + " key." ],
+            [ "Click in the chat box in the lower left corner of the [[Whirled]] toolbar.",
+              "Type a message and click [[Send]] or press the [[Enter]] key." ],
             "",
-            "Excellent! We'll give you " + em("200 flow") + " for your efforts.<br><br>" +
+            "Excellent! We'll give you [[200 flow]] for your efforts.<br><br>" +
             "Notice in the upper right of the page, next to your name, it shows you how much " +
-            em("flow") + " you have.<br><br>" +
-            "Click " + em("Onward") + " and we'll show you how to spend that flow on something fun!",
-            200),
+            "[[flow]] you have.<br><br>" +
+            "Click [[Onward]] and we'll show you how to spend that flow on " +
+            "something fun!",
+            200, false),
 
         makeQuest(
             "buyAvatar",
             "avatarBought",
             "Shopping for an Avatar",
             "Get a New Avatar",
-            "In " + em("Whirled") + ", you can change your avatar as easily as you can change " +
+            "In Whirled, you can change your avatar as easily as you can change " +
             "your mind. Let's go shopping and pick out a new one:",
-            [ "Click on " + em("Catalog -> Avatars") + " at the top of the page.",
-              "Pick one you like and click on it.",
-              "Press the " + em("Buy") + " button below the avatar image to buy it." ],
+            [ "Click on [[Catalog -> Avatars]] at the top of the page.",
+              "Pick one you like and [[click on it]].",
+              "Press the [[Buy]] button below the avatar image to buy it." ],
             "",
-            "Okay! You're ready to switch into your new avatar.<br><br>" +
-            "Click anywhere in this window to return to the " + em("Whirled") +
-            " and then click " + em("Onward") + ".",
-            0),
+            null,
+            0, false),
 
         makeQuest(
             "wearAvatar",
@@ -129,46 +125,47 @@ public class Quest
             "Wearing an Avatar",
             "Wear Your Avatar",
             "Now that you own a new avatar, you're going to want to wear it. Here's how:",
-            [ "Choose " + em("My Stuff -> Avatars") + " to see your avatars.",
-              "Click the " + em("Wear Avatar") + " button to change your avatar.",
-              "All items bought in Whirled are stored in " + em("My Stuff") + "." ],
+            [ "All items bought in [[Whirled]] are stored in [[My Stuff]].",
+              "Choose [[My Stuff -> Avatars]] to see your avatars.",
+              "Click the [[Wear avatar]] button next to your new avatar to wear it." ],
             "",
-            "Now you're looking mighty fine!<br><br>" +
-            "We've given you another " + em("200 flow") + " to do some more shopping.<br><br>" +
-            "But don't run off just yet! Let's learn how to " + em("find our friends") + ".",
-            200),
+            "Now you're looking mighty fine! Try walking around in your new duds and strut " +
+            "your stuff.<br><br>" +
+            "We've given you another [[200 flow]] to do some more shopping.<br><br>" +
+            "But don't run off just yet! Let's learn how to [[find our friends]].",
+            200, false),
 
         makeQuest(
             "findFriends",
-            "friendsSought",
+            "willUnminimize",
             "Finding Friends",
             "Find Your Friends",
-            "You can easily search for friends that are already " + em("Whirled") + " players. " +
-            "Here's how:",
-            [ "Click on " + em("People -> Profiles -> Find People") + ".", 
-              "You can search by their " + em("real name") + ", " + em("Whirled name") + " or " +
-              em("Email address") + ".",
-              "Enter your friend's name and click " + em("Search") + "." ],
-            "",
-            "If your friends aren't on Whirled yet, you can " + em("invite them!") + "<br><br>" +
-            "Click " + em("Onward") + " and we'll show you how.",
-            0),
+            "You can easily search for friends that are already Whirled players. Here's how:",
+            [ "Click on [[People -> Profiles -> Find People]].", 
+              "You can search by their [[real name]], [[Whirled name]] or [[Email address]].",
+              "Enter your friend's name and click [[Search]]." ],
+            "If you find someone you know, [[click their name]] then click [[Invite To Be " +
+            "Your Friend]]. If you don't find anyone you know, don't worry! We'll show you " +
+            "how to invite your friends to [[Whirled]] in the next step.<br><br>" + 
+            "When you're ready to continue, click back in this window.",
+            null,
+            0, false),
 
         makeQuest(
             "inviteFriends",
             "friendInvited",
             "Inviting Friends",
-            "Invite Your Friends!",
-            "Invite your friends to Whirled and you can play games and chat with them. It's easy:",
-            [ "Click on " + em("People -> Invitations") + ".",
+            "Invite Your Friends",
+            "If your friends aren't on Whirled yet, you can invite them! It's easy:",
+            [ "Click on [[People -> Invitations]].",
               "Enter your friends' e-mail addresses.",
               "Add a custom message if you like.", 
-              "Click " + em("Send Invites") + "." ],
-            "If you don't want to send invites right now, don't worry. Just click " + em("Skip") +
-            " and you can send invites later.",
-            "Swell! Here's an extra " + em("500 flow") + " for inviting your friends.<br><br>" +
+              "Click [[Send Invites]]." ],
+            "If you don't want to send invites right now, don't worry. Just click [[Skip]] and " +
+            "you can send invites later.",
+            "Swell! Here's an extra [[500 flow]] for inviting your friends.<br><br>" +
             "Next we'll show you how to find out whether your friends are online.",
-            500),
+            500, true),
 
         makeQuest(
             "visitMyWhirled",
@@ -176,14 +173,14 @@ public class Quest
             "Using My Whirled",
             "My Whirled",
             "My Whirled is an easy way to see what your friends are doing and join in on the fun.",
-            [ "Click on " + em("Places -> My Whirled") + " or the logo in the upper left to see " +
+            [ "Click on [[Places -> My Whirled]] or the [[logo]] in the upper left to see " +
               "which of your friends are online now.", 
-              "Click any friend's name to " + em("go to where they are") + ".", 
-              "If you have no friends online, click on " + em("Whirledwide") + " to find " +
-              "popular spots and meet new people." ],
-            "When you're ready, close " + em("My Whirled") + " by clicking back in this window.",
-            "Great! Now you can use " + em("My Whirled") + " to keep up with your friends.",
-            500),
+              "Click any friend's name to [[go to where they are]].", 
+              "If you have no friends online, click [[Whirledwide]] to find popular spots and " +
+              "meet new people." ],
+            "When you're ready, close [[My Whirled]] by clicking back in this window.",
+            null,
+            0, false),
 
         makeQuest(
             "playGame",
@@ -191,67 +188,68 @@ public class Quest
             "Playing a Game",
             "Play a Game!",
             "Whirled is full of fun games to play that earn you flow. " +
-            "You can play by yourself or with friends.",
-            [ "Click on " + em("Places -> Whirledwide") + " to see the top games in Whirled.", 
-              "Pick one from the list on the left to see more about it.", 
-              "Click " + em("Play!") + " to try it." ],
-            "When you're done come back home using " + em("Me -> My Home") + ".",
+            "You can play solo or with friends.",
+            [ "Click on [[Places -> Whirledwide]] to see the most popular games.", 
+              "Pick a game from [[Top Games]] and [[click on it]] to read about it.", 
+              "Click [[Play!]] to try it." ],
+            "When you're done come back home using [[Me -> My Home]]. If you don't feel like " +
+            "playing a game right now, just click [[Skip]] and we'll move on.",
             "You're back! Playing games is a fun way to earn flow. You can also " +
-            em("earn Trophies") + " and get onto " + em("Top Ranked lists") + ".<br><br>" +
+            "[[earn Trophies]] and get onto [[Top Ranked lists]].<br><br>" +
             "But now let's get back to some home improvement.",
-            0),
+            0, true),
 
         makeQuest(
             "buyDecor",
             "decorBought",
             "Shopping for Decor",
             "Shop For Decor",
-            "The decor is the most fundamental element of your room's appearance. " +
-            "Every other item in your room appears on top of the decor.",
-            [ "Choose " + em("Catalog -> Decor") + " for a selection of new room settings.", 
+            "The decor is the background image for your room. Everything in your room " +
+            "appears on top of the decor.",
+            [ "Choose [[Catalog -> Decor]] for a selection of new room settings.", 
               "Browse through and buy one you like." ],
             "",
-            "Fantastic! You now own a piece of decor. Next we'll show you how to use that " +
-            em("Decor") + " in your room.",
-            0),
+            null,
+            0, false),
 
         makeQuest(
             "installDecor",
             "decorInstalled",
             "Changing Decor",
             "Use Your New Decor",
-            "Let's get your new decor in your room.",
-            [ "Choose " + em("My Stuff -> Decor") + " to see the decor you own.", 
-              "Apply your new decor by clicking the <b>Add to Room</b> button.", 
-              "Click the close box to return to your room." ],
+            "Great! Let's get that new Decor into your room.",
+            [ "Choose [[My Stuff -> Decor]] to see the decor you own.", 
+              "Apply your new decor by clicking the [[Add to room]] button." ],
             "",
-            "Congratulations! Here's 200 flow for learning how to change your decor.",
-            200),
+            "Nice work! Here's another [[200 flow]] for future shopping adventures.<br><br>" +
+            "Click [[Onward]] and we'll pick up a little something to go with your new decor.",
+            200, false),
 
         makeQuest(
             "buyFurni",
             "furniBought",
             "Shopping for Furniture",
             "Buy Furniture",
-            "Furniture adds personality to a room. Let's shop some more.",
-            [ "Choose " + em("Catalog -> Furniture") + " to start shopping.", 
-              "Click " + em("Buy!") + " when you find something you like." ],
+            "Furniture adds personality to a room. You might say it really brings a room " +
+            "together. Let's head to the Catalog and pick some up:",
+            [ "Choose [[Catalog -> Furniture]] to see what's available.", 
+              "Click [[Buy!]] when you find something you like." ],
             "",
-            "You now have furniture to place in your room.",
-            0),
+            null,
+            0, false),
 
         makeQuest(
             "installFurni",
             "furniInstalled",
             "Installing Furniture",
             "Add Your Furniture",
-            "Now let's add your furniture to the room.",
-            [ "Choose " + em("My Stuff -> Furniture") + " to browse your furniture.", 
-              "Clicking <b>Add to Room</b> will place the item in the center of your room.", 
-              "The Build Panel will open. Click the 'X' to close it." ],
+            "Excellent! Now let's add that new Furniture to your room.",
+            [ "Choose [[My Stuff -> Furniture]] to browse your furniture.", 
+              "Clicking [[Add to Room]] will place the item in the center of your room." ],
             "",
-            "Excellent! You got 300 flow for adding furniture to your room.",
-            300),
+            "Excellent! Here's another [[300 flow]] to pick up more furniture later.<br><br>" +
+            "But before you do that, let's learn how to [[rearrange]] our furniture.",
+            300, false),
 
         makeQuest(
             "placeFurni",
@@ -262,10 +260,13 @@ public class Quest
             "you want it to be. ",
             [ "Click the hammer icon on the toolbar to enter Build Mode.", 
               "Click and drag your furniture to put it anywhere you want.", 
-              "Click the <b>Close</b> box on the Build Panel to return to your room." ],
+              "Click the [[Close]] box on the Build Panel to return to your room." ],
             "",
-            "Congratulations! Here's 150 flow toward getting more furniture.",
-            150),
+            "You're a born interior decorator! Here's another [[200 flow]] to celebrate your " +
+            "newfound skills.<br><br>" +
+            "We're almost done, but we've got one more thing to show you before we turn you " +
+            "loose in the [[Whirled]].",
+            200, false),
 
         makeQuest(
             "editProfile",
@@ -274,12 +275,13 @@ public class Quest
             "Edit Your Profile!",
             "Everyone in Whirled has a Profile page to share interests, find friends, show off " +
             "or just express themselves.",
-            [ "Choose Me -> My Profile to see your Whirled Profile page.", 
-              "Click <b>Edit</b> and enter your information.", 
-              "Finally click the <b>Done</b> button.", ],
+            [ "Choose [[Me -> My Profile]] to see your [[Whirled Profile]] page.", 
+              "Click [[Edit]] and enter your information.", 
+              "Finally click the [[Done]] button.", ],
             "",
-            "Congratulations! Here's 500 flow.",
-            500),
+            "Awesome! Now your friends will know it's you if they see your profile.<br><br>" +
+            "Plus you get [[500 flow]] for editing your profile for the first time.",
+            0, false),
         ];
 }
 }

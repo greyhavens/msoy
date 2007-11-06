@@ -47,6 +47,9 @@ public class TextBox extends Sprite
             "  text-align: left;" +
             "  margin-left: 20;" +
             "}" +
+            ".shim {" +
+            "  font-size: 8;" +
+            "}" +
             ".summary {" +
             "  font-family: Goudy;" +
             "  font-weight: bold;" +
@@ -67,6 +70,7 @@ public class TextBox extends Sprite
         _textField = new TextField();
         _textField.defaultTextFormat = getDefaultFormat();
         _textField.styleSheet = styleSheet;
+        _textField.selectable = false;
         _textField.wordWrap = true;
         _textField.multiline = true;
         _textField.embedFonts = true;
@@ -126,7 +130,7 @@ public class TextBox extends Sprite
             _foreground.visible = true;
         }, 400);
 
-        _textField.htmlText = text;
+        _textField.htmlText = em(text);
         _titled = titled;
 
         _rightButtonEdge = _textField.width;
@@ -249,6 +253,11 @@ public class TextBox extends Sprite
         format.color = 0x000000;
         format.align = TextFormatAlign.LEFT;
         return format;
+    }
+
+    protected static function em (text :String) :String
+    {
+        return text.replace(/\[\[/g, "<b><i>").replace(/\]\]/g, "</i></b>");
     }
 
     protected var _view :View;

@@ -54,7 +54,7 @@ public class Tutorial extends Sprite
             displayIntro();
 
         } else {
-            _view.displaySummary(_activeQuest.summary);
+            _view.displayQuest(_activeQuest);
         }
     }
 
@@ -125,7 +125,7 @@ public class Tutorial extends Sprite
             if (_activeQuest == null) {
                 log.warning("Unknown quest started? [id=" + event.name + "].");
             } else {
-                _view.displaySummary(_activeQuest.summary);
+                _view.displayQuest(_activeQuest);
                 _view.gotoSwirlState(View.SWIRL_DEMURE);
             }
         }
@@ -136,9 +136,12 @@ public class Tutorial extends Sprite
         _view.displayMessage(
             "Let's Go!",
             "<p class='title'>Whirled Tour</p><br>" +
-            "<p class='message'>This tour will help you get a feel for <b><i>Whirled</i></b> in just a few simple steps.</p><br>" +
-            "<p class='message'>You'll learn how to <b>customize</b> your room, <b>buy</b> a new avatar, <b>play</b> games, and <b>connect</b> with friends.</p><br>" +
-            "<p class='message'>It's also a quick way to earn some easy <i>flow</i>, the local currency.</p>",
+            "<p class='message'>This tour will help you get a feel for [[Whirled]] in just a " +
+            "few simple steps.</p><br>" +
+            "<p class='message'>You'll learn how to [[customize]] your room, [[buy]] a new " +
+            "avatar, [[play]] games, and [[connect]] with friends.</p><br>" +
+            "<p class='message'>It's also a quick way to earn some easy <i>flow</i>, the " +
+            "local currency.</p>",
             function () :void {
                 _view.displayNothing();
                 startQuest(Quest.getFirstQuest());
@@ -160,14 +163,30 @@ public class Tutorial extends Sprite
         _control.quests.completeQuest(_activeQuest.questId, null, _activeQuest.payout);
         var nquest :Quest = Quest.getNextQuest(_activeQuest.questId);
 
-        // now move on to the next quest or the end of the tutorial if we have no more quests
+        // now move on to the next quest...
         if (nquest != null) {
+            // some quest steps move right into the next step, others have a confirmation step
+            if (_activeQuest.outro == null) {
+                startQuest(nquest);
+            } else {
+                // note that they're on the next quest now so that we don't give them this same
+                // quest if they quit their browser now and come back
+                _control.state.setPlayerProperty(PROP_TUTORIAL_STEP, nquest.questId, true);
+                _view.displayMessage("Onward", "<p class='message'>" + _activeQuest.outro + "</p>",
+                                     function () :void {
+                                         startQuest(nquest);
+                                     });
+            }
+
+        // ...or the end of the tutorial if we have no more quests
+        } else if (_activeQuest.outro == null) {
+            displayTutorialComplete();
+
+        } else {
             _view.displayMessage("Onward", "<p class='message'>" + _activeQuest.outro + "</p>",
                                  function () :void {
-                                     startQuest(nquest);
+                                     displayTutorialComplete();
                                  });
-        } else {
-            displayTutorialComplete();
         }
 
         // clear out our active quest so that we don't retrigger its completion
@@ -177,10 +196,15 @@ public class Tutorial extends Sprite
     protected function displayTutorialComplete () :void
     {
         _view.displayMessage(
-            "Finish",
-            "<p class='title'>Farewell</p><br>" +
-            "<p class='message'><br>This is the end of the tutorial, and you are ready to " +
-            "step into the world.</p>",
+            "Bye Bye",
+            "<p class='title'>That's All Folks!</p><br>" +
+            "<p class='message'>You made it to the end of the tutorial. You're a " +
+            "[[champ]]!<br><br>" +
+            "You are now fully prepared to [[decorate your room]], [[play games]] and " +
+            "[[chat with your friends]].<br><br>" +
+            "Keep an eye on [[Places -> Whirledwide]] for fun new games and activities and " +
+            "check [[Me -> My Whirled]] to see what your friends are up to.<br><br>" +
+            "So long and thanks for all the clicks!</p>",
             function () :void {
                 _control.deactivateGame();
             });
