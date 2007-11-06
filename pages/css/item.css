@@ -118,7 +118,7 @@
 }
 
 .itemDetailPanel .Details {
-  padding-top: 20px;
+  border-top: white solid 20px;
   width: 250px;
 }
 
