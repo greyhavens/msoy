@@ -108,7 +108,6 @@ public class TopPanel extends Canvas
         app.stage.addEventListener(Event.RESIZE, stageResized);
 
         _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
-        Prefs.config.addEventListener(ConfigValueSetEvent.TYPE, handlePrefsUpdated, false, 0, true);
     }
 
     /**
@@ -453,8 +452,8 @@ public class TopPanel extends Canvas
     {
         _showingChatHistory = Prefs.getShowingChatHistory();
         if (!_showingChatHistory) {
-            // make sure the history is visible when it gets minimized... if they chose to hide
-            // it again after that, so be it.
+            // make sure the history is visible when it gets minimized
+            // TODO: add a capability for temp settings to Prefs?
             Prefs.setShowingChatHistory(true);
         }
 
@@ -486,18 +485,6 @@ public class TopPanel extends Canvas
 
         if (_showingChatHistory != Prefs.getShowingChatHistory()) {
             Prefs.setShowingChatHistory(_showingChatHistory);
-        }
-    }
-
-    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
-    {
-        switch (event.name) {
-        case Prefs.CHAT_HISTORY:
-            // if the prefs are changed while we're mini'd, stick to the update when un-mini'd
-            if (_minimized) {
-                _showingChatHistory = Boolean(event.value);
-            }
-            break;
         }
     }
 
