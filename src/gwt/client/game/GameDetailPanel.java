@@ -114,14 +114,16 @@ public class GameDetailPanel extends VerticalPanel
                 Application.go(Page.GAME, Args.compose("s", _gameId));
             }
         }));
-        play.setStyleName("PlayButton");
+        play.addStyleName("PlayButton");
+
         if (detail.maxPlayers > 1) {
             playButtons.add(MsoyUI.createLabel(CGame.msgs.gdpOrWithFriends(), "OrFriends"));
-            playButtons.add(new Button(CGame.msgs.gdpMultiplayer(), new ClickListener() {
+            Button multiplayer = new Button(CGame.msgs.gdpMultiplayer(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.GAME, "" + _gameId);
-                }
-            }));
+                }});
+            multiplayer.addStyleName("MultiplayerButton");
+            playButtons.add(multiplayer);
         }
         top.setWidget(row++, 2, playButtons);
         add(top);

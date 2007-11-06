@@ -58,6 +58,10 @@
   border: none;
 }
 
+.gameDetail .MultiplayerButton {
+  width: 124px;
+}
+
 .gameDetail .InfoLabel {
   padding-right: 5px;
 }
