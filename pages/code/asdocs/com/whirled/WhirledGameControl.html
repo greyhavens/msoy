@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="WhirledGameControl,com.whirled.WhirledGameControl,CASCADING_PAYOUT,WINNERS_TAKE_ALL,TO_EACH_THEIR_OWN,getHeadShot,setOccupantsLabel,clearScores,setPlayerScores,setMappedScores,getLevelPacks,getItemPacks,getPlayerItemPacks,holdsTrophy,awardTrophy,endGameWithWinners,endGameWithScores,endGameWithScore,endGame,backToWhirled,populateProperties" name="keywords">
+<meta content="WhirledGameControl,com.whirled.WhirledGameControl,CASCADING_PAYOUT,WINNERS_TAKE_ALL,TO_EACH_THEIR_OWN,getHeadShot,setOccupantsLabel,clearScores,setPlayerScores,setMappedScores,getLevelPacks,getItemPacks,getPlayerItemPacks,holdsTrophy,awardTrophy,awardPrize,endGameWithWinners,endGameWithScores,endGameWithScore,endGame,backToWhirled,populateProperties" name="keywords">
 <title>com.whirled.WhirledGameControl</title>
 </head>
 <body>
@@ -154,6 +154,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Returns true if we are in control of this game.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#awardPrize()">awardPrize</a>(ident:String):void</div>
+<div class="summaryTableDescription">
+     Awards the specified prize item to this client's player.</div>
+</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -770,6 +778,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:unload">unload</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when the game client is unloaded and you should clean up any Timers or
+ other bits left hanging.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="hideInheritedEvent">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:UserChat">UserChat</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
@@ -842,10 +859,46 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
+<a name="awardPrize()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">awardPrize</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function awardPrize(ident:String):void</code><p>
+     Awards the specified prize item to this client's player. If the supplied prize identifier is
+     not valid, this will not be known until the request is processed on the server, so the
+     method will return successfully but no prize will have been awarded. Thus you should be
+     careful not to misspell your prize identifier in your code or in the associated prize item.
+          </p><p> Note: a game is only allowed to award a prize once per game session. This is to guard
+     against bugs that might try to award many hundreds of the same prize to a user while playing
+     a game. If you eallywant to award multiple instances of a prize, you will need to make
+     different prize items with unique identifiers which all reference the same target item. </p>
+          <p> Note also: because a game anaward the same prize more than once if the player earns
+     the prize in separate game sessions, a game that wishes to only award a prize once should
+     couple the award of the prize with the award of a trophy and then structure their code like
+     so: </p>
+          <pre>
+     if (_ctrl.awardTrophy("special_award_trophy")) {
+         _ctrl.awardPrize("special_award_avatar");
+     }
+     </pre>
+          <p> The first time the player accomplishes the necessary goal, they will be awarded the
+     trophy and the prize. Subsequently, awardTrophy() will return false indicating that the
+     player already has the trophy in question and the prize will not be awarded. Alternatively
+     the game could store whether or not the player has earned the prize in a user cookie. </p>
+     <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ident</span>:String</code></td>
+</tr>
+</table>
+</div>
 <a name="awardTrophy()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">awardTrophy</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">awardTrophy</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -937,7 +990,10 @@ showHideInherited();
 <code>public function endGameWithScore(score:int):void</code><p>
      A convenience function for ending a single player game with the supplied score. This is
      equivalent to: <code>endGameWithScores([ getMyId() ], [ score ], TO_EACH_THEIR_OWN)</code>.
-     </p><span class="label">Parameters</span>
+          </p><p> Note that if a single player game is ended with a score of zero, it will be assumed that
+     the player in question abandoned the game and no flow will be paid out, nor will their
+     rating be updated. </p>
+     <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">score</span>:int</code></td>
@@ -957,20 +1013,23 @@ showHideInherited();
           </p><p> Flow is awarded based on the supplied payout type, either CASCADING_PAYOUT,
      WINNERS_TAKE_ALL or TO_EACH_THEIR_OWN. In the case of WINNERS_TAKE_CALL, the highest scoring
      player or players will be considered the winner(s) and in the case of CASCADING_PAYOUT,
-     players will be ranked according to their scores, higher scores being considered better.
+     players will be ranked according to their scores, higher scores being considered better. </p>
           <p> If flow is awarded, a FLOW_AWARDED event will be dispatched <em>before</em> the
-     GAME_ENDED event is dispatched informing the client that the game has ended.
+     GAME_ENDED event is dispatched informing the client that the game has ended. </p>
           <p> Both rating and a player's flow payout will be adjusted based on their score. Whirled
      will track every score reported by your game for its entire existence and will convert newly
      reported scores to a percentile value between 0 and 99 (inclusive) indicating the percentage
      of scores in the entire score history that are below the reported score. That percentile
      ranking will be used to adjust the players rating as well as to determine their individual
-     flow payout.
+     flow payout. </p>
           <p> Note that scores must be integers >= 0 and higher scores are considered better, so if
      your game naturally operates with scores where lower is better (elapsed time in a racing
      game, for example), then you must convert your score to a positive integer by, for example,
-     subtracting your score from a hypothentical worse possible score. For example:
-          <p><code>score = Math.max(WORST_POSSIBLE_TIME - actualTime, 0)</code>
+     subtracting your score from a hypothentical worse possible score. For example: </p>
+          <p><code>score = Math.max(WORST_POSSIBLE_TIME - actualTime, 1)</code>
+          <p> Note that if a game is ended with all players scores equal of zero, it will be assumed
+     that the players in question abandoned the game and no flow will be paid out, nor will their
+     ratings be updated. </p>
      <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1006,12 +1065,12 @@ showHideInherited();
      individual flow payouts combined into a pool and that pool will be evenly divided among the
      winners and added to their respective individual flow payouts. In the case of
      CASCADING_PAYOUT, the losers will only have 50% of their individual flow payouts given to
-     the winners.
+     the winners. </p>
           <p> If flow is awarded, a FLOW_AWARDED event will be dispatched <em>before</em> the
-     GAME_ENDED event is dispatched informing the client that the game has ended.
+     GAME_ENDED event is dispatched informing the client that the game has ended. </p>
           <p> Players' ratings will also be updated using the Elo algorigthm wherein each player is
      rated against the average ratings of the players that the defeated or were defeated by.  In
-     a two player game this degenerates into the standard Elo algorithm.
+     a two player game this degenerates into the standard Elo algorithm. </p>
           <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
