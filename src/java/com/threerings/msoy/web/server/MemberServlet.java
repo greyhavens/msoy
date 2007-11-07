@@ -307,7 +307,7 @@ public class MemberServlet extends MsoyServiceServlet
                                     list.add(memberCard.name.getMemberId());
                                 }
 
-                                if (memLoc.gameId != 0) {
+                                if (memLoc.gameId != 0 && memLoc.gameId != Game.TUTORIAL_GAME_ID) {
                                     ArrayList<Integer> list = games.get(memLoc.gameId);
                                     if (list == null) {
                                         list = new ArrayList<Integer>();
@@ -319,9 +319,8 @@ public class MemberServlet extends MsoyServiceServlet
 
                             // for now, we're going to list all active games...
                             for (HostedGame game : mnobj.hostedGames) {
-                                // except the tutorial!
                                 if (game.placeId == Game.TUTORIAL_GAME_ID) {
-                                    continue;
+                                    continue; // except the tutorial!
                                 }
                                 if (games.get(game.placeId) == null) {
                                     games.put(game.placeId, new ArrayList<Integer>());
