@@ -3,9 +3,11 @@
 
 package client.whirled;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -87,6 +89,26 @@ public class FeedPanel extends VerticalPanel
         }));
     }
 
+    protected static MessageKey getKey (FeedMessage message)
+    {
+        switch (message.type) {
+        case 100:
+        case 102:
+        case 103:
+            return new MessageKey(message.type, ((FriendFeedMessage)message).friend.toString());
+
+        // FRIEND_UPDATED_ROOM
+        case 101:
+            return new MessageKey(message.type, null);
+        }
+        return null;
+    }
+
+    protected interface StringBuilder
+    {
+        public String build (FeedMessage message);
+    }
+
     protected static class FeedList extends VerticalPanel
     {
         public FeedList ()
@@ -116,12 +138,63 @@ public class FeedPanel extends VerticalPanel
                 }
             });
             messages = Arrays.asList(messageArray);
+            HashMap messageMap = new HashMap();
 
             long header = startofDay(System.currentTimeMillis());
             long yesterday = header - ONE_DAY;
+            while (!messages.isEmpty()) {
+                FeedMessage message = null;
+                for (Iterator msgIter = messages.iterator(); msgIter.hasNext(); ) {
+                    message = (FeedMessage)msgIter.next();
+                    if (header > message.posted) {
+                        break;
+                    }
+                    MessageKey key = getKey(message);
+                    if (key == null) {
+                        continue;
+                    }
+                    Object value = messageMap.get(key);
+                    if (value == null) {
+                        messageMap.put(key, message);
+                        continue;
+                    }
+                    msgIter.remove();
+                    if (value instanceof FeedMessage) {
+                        ArrayList list = new ArrayList();
+                        list.add(value);
+                        list.add(message);
+                        messageMap.put(key, list);
+                    } else {
+                        ((ArrayList)value).add(message);
+                    }
+                }
 
-            for (Iterator msgIter = messages.iterator(); msgIter.hasNext(); ) {
-                FeedMessage message = (FeedMessage)msgIter.next();
+                for (Iterator msgIter = messages.iterator(); msgIter.hasNext(); ) {
+                    message = (FeedMessage)msgIter.next();
+                    if (header > message.posted) {
+                        break;
+                    }
+                    msgIter.remove();
+                    MessageKey key = getKey(message);
+                    Object value = null;
+                    if (key != null) {
+                        value = messageMap.get(key);
+                    }
+                    if (value == null || value instanceof FeedMessage) {
+                        if (message instanceof FriendFeedMessage) {
+                            addFriendMessage((FriendFeedMessage)message);
+                        } else if (message instanceof GroupFeedMessage) {
+                            addGroupMessage((GroupFeedMessage)message);
+                        } else {
+                            addMessage(message);
+                        }
+
+                    } else {
+                        // currently friend messages are the only ones that aggregate
+                        addAggregateFriendMessage((ArrayList)value);
+                    }
+
+                }
                 if (header > message.posted) {
                     header = startofDay(message.posted);
                     if (yesterday < message.posted) {
@@ -136,14 +209,7 @@ public class FeedPanel extends VerticalPanel
                         add(new DateWidget(new Date(header)));
                     }
                 }
-
-                if (message instanceof FriendFeedMessage) {
-                    addFriendMessage((FriendFeedMessage)message);
-                } else if (message instanceof GroupFeedMessage) {
-                    addGroupMessage((GroupFeedMessage)message);
-                } else {
-                    addMessage(message);
-                }
+                messageMap.clear();
             }
         }
 
@@ -160,6 +226,46 @@ public class FeedPanel extends VerticalPanel
         {
         }
 
+        /**
+         * Helper function which creates translated strings of a feed messages data.
+         */
+        protected String buildString (FeedMessage message)
+        {
+            switch (message.type) {
+            // FRIEND_ADDED_FRIEND
+            case 100:
+                return profileLink(message.data[0], message.data[1]);
+            // FRIEND_UPDATED_ROOM
+            case 101:
+                // TEMP: remove after servers are 2 weeks past 11/06/2007
+                if (message.data.length == 1) {
+                    return Application.createLinkHtml(
+                            CWhirled.msgs.room(((FriendFeedMessage)message).friend.toString()),
+                            Page.WORLD, "s" + message.data[0]);
+                }
+                // ENDTEMP
+                return Application.createLinkHtml(
+                        message.data[1], Page.WORLD, "s" + message.data[0]);
+            // FRIEND_WON_TROPHY
+            case 102:
+                return Application.createLinkHtml(message.data[0], Page.GAME,
+                            Args.compose(new String[] {
+                                "d", message.data[1], GameDetailPanel.TROPHIES_TAB }));
+            // FRIEND_LISTED_ITEM
+            case 103:
+                return CWhirled.msgs.descCombine(
+                            CShell.dmsgs.getString("itemType" + message.data[1]),
+                            Application.createLinkHtml(message.data[0], Page.CATALOG,
+                                Args.compose(new String[] {
+                                    message.data[1], "i", message.data[2] })));
+            // FRIEND_GAINED_LEVEL
+            case 104:
+                return message.data[0];
+            }
+
+            return null;
+        }
+
         protected void addFriendMessage (FriendFeedMessage message)
         {
             String friendLink = profileLink(
@@ -168,46 +274,100 @@ public class FeedPanel extends VerticalPanel
             // FRIEND_ADDED_FRIEND
             case 100:
                 add(new BasicWidget(CWhirled.msgs.friendAddedFriend(
-                            friendLink, profileLink(message.data[0], message.data[1]))));
+                                friendLink, buildString(message))));
                 break;
 
             // FRIEND_UPDATED_ROOM
             case 101:
-                // TEMP: Remove once all servers are 2 weeks past 11/06/2007 update
-                if (message.data[1] == null) {
-                    add(new BasicWidget(CWhirled.msgs.friendUpdatedRoom(friendLink,
-                                    Application.createLinkToken(Page.WORLD, "s" + message.data[0]))));
-                } else {
-                // ENDTEMP
-                    add(new BasicWidget(CWhirled.msgs.friendUpdatedRoomv2(friendLink,
-                                    Application.createLinkToken(Page.WORLD, "s" + message.data[0]),
-                                    message.data[1])));
-                }
+                add(new BasicWidget(CWhirled.msgs.friendUpdatedRoom(
+                                friendLink, buildString(message))));
                 break;
 
             // FRIEND_WON_TROPHY
             case 102:
-                add(new BasicWidget(CWhirled.msgs.friendWonTrophy(friendLink,
-                                Application.createLinkHtml(message.data[0], Page.GAME,
-                                    Args.compose(new String[] {
-                                        "d", message.data[1], GameDetailPanel.TROPHIES_TAB })))));
+                add(new BasicWidget(CWhirled.msgs.friendWonTrophy(
+                                friendLink, buildString(message))));
                 break;
 
             // FRIEND_LISTED_ITEM
             case 103:
-                add(new BasicWidget(CWhirled.msgs.friendListedItem(friendLink,
-                                CShell.dmsgs.getString("itemType" + message.data[1]),
-                                Application.createLinkHtml(message.data[0], Page.CATALOG,
-                                    Args.compose(new String[] {
-                                        message.data[1], "i", message.data[2] })))));
+                add(new BasicWidget(CWhirled.msgs.friendListedItem(
+                                friendLink, buildString(message))));
                 break;
 
             // FRIEND_GAINED_LEVEL
             case 104:
-                add(new BasicWidget(CWhirled.msgs.friendGainedLevel(friendLink, message.data[0])));
+                add(new BasicWidget(CWhirled.msgs.friendGainedLevel(
+                                friendLink, buildString(message))));
                 break;
             }
+        }
 
+        protected String standardCombine (ArrayList list)
+        {
+
+            return standardCombine(list, new StringBuilder() {
+                public String build (FeedMessage message) {
+                    return buildString(message);
+                }
+            });
+        }
+
+        /**
+         * Helper function which combines the core feed message data into a translated, comma
+         * separated and ending in 'and' list.
+         */
+        protected String standardCombine (ArrayList list, StringBuilder builder)
+        {
+            String combine = builder.build((FeedMessage)list.get(0));
+            for (int ii = 1, ll = list.size(); ii < ll; ii++) {
+                FeedMessage message = (FeedMessage)list.get(ii);
+                if (ii + 1 == ll) {
+                    combine = CWhirled.msgs.andCombine(combine, builder.build(message));
+                } else {
+                    combine = CWhirled.msgs.commaCombine(combine, builder.build(message));
+                }
+            }
+            return combine;
+        }
+
+        protected void addAggregateFriendMessage (ArrayList list)
+        {
+            FriendFeedMessage message = (FriendFeedMessage)((ArrayList)list).get(0);
+            String friendLink = profileLink(
+                    message.friend.toString(), String.valueOf(message.friend.getMemberId()));
+            switch (message.type) {
+            // FRIEND_ADDED_FRIEND
+            case 100:
+                add(new BasicWidget(CWhirled.msgs.friendAddedFriends(
+                                friendLink, standardCombine(list))));
+                break;
+
+            // FRIEND_UPDATED_ROOM
+            case 101:
+                add(new BasicWidget(CWhirled.msgs.friendsUpdatedRoom(standardCombine(list,
+                    new StringBuilder() {
+                        public String build (FeedMessage message) {
+                            FriendFeedMessage ffm = (FriendFeedMessage)message;
+                            return CWhirled.msgs.colonCombine(profileLink(ffm.friend.toString(),
+                                        String.valueOf(ffm.friend.getMemberId())),
+                                    buildString(message));
+                        }
+                    }))));
+                break;
+
+            // FRIEND_WON_TROPHY
+            case 102:
+                add(new BasicWidget(CWhirled.msgs.friendWonTrophies(
+                                friendLink, standardCombine(list))));
+                break;
+
+            // FRIEND_LISTED_ITEM
+            case 103:
+                add(new BasicWidget(CWhirled.msgs.friendListedItem(
+                                friendLink, standardCombine(list))));
+                break;
+            }
         }
 
         protected void addGroupMessage (GroupFeedMessage message)
@@ -253,6 +413,42 @@ public class FeedPanel extends VerticalPanel
     {
         public FeedWidget (FeedMessage message)
         {
+        }
+    }
+
+    /**
+     * A hashable key used for storing FeedMessages that will be aggregated.
+     */
+    protected class MessageKey
+    {
+        public Integer type;
+        public String key;
+
+        public MessageKey (int type, String key)
+        {
+            this.type = new Integer(type);
+            this.key = key;
+        }
+
+        public int hashCode ()
+        {
+            int code = type.hashCode();
+            if (key != null) {
+                code ^= key.hashCode();
+            }
+            return code;
+        }
+
+        public boolean equals (Object o)
+        {
+            MessageKey other = (MessageKey)o;
+            if (!type.equals(other.type)) {
+                return false;
+            }
+            if (key == null) {
+                return other.key == null;
+            }
+            return key.equals(other.key);
         }
     }
 
