@@ -517,7 +517,7 @@ public class MyWhirled extends FlexTable
         }
     }
 
-    protected static final int PEOPLE_ROWS = 4;
+    protected static final int PEOPLE_ROWS = 2;
     protected static final int PEOPLE_COLUMNS = 6;
 
     protected PagedGrid _people;
