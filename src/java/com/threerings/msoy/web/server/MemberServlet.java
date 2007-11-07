@@ -287,17 +287,18 @@ public class MemberServlet extends MsoyServiceServlet
                             for (FriendEntry friend : friends) {
                                 MemberLocation memLoc =
                                     mnobj.memberLocs.get(friend.name.getMemberId());
-                                if (memLoc == null) {
+                                if (memLoc == null || (memLoc.sceneId == 0 && memLoc.gameId == 0)) {
+                                    if (memLoc != null) {
+                                        log.info("online friend has empty memloc [" + 
+                                            friend.name + ", " + friend.name.getMemberId() + 
+                                            ", server=" + nodeobj.nodeName + "]");
+                                    }
                                     continue;
                                 }
 
                                 MemberCard memberCard = new MemberCard();
                                 memberCard.name = friend.name;
                                 onlineFriends.put(memberCard.name.getMemberId(), memberCard);
-                                if (memLoc.sceneId == 0 && memLoc.gameId == 0) {
-                                    continue;
-                                }
-
                                 if (memLoc.sceneId != 0) {
                                     ArrayList<Integer> list = places.get(memLoc.sceneId);
                                     if (list == null) {
