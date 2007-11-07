@@ -760,27 +760,31 @@ a:visited {
 
 .pageSeparator .CloseBoxHolder {
   background: #222222;
-  width: 7px;
-  height: 15px;
+  width: "100%";
+  height: 16px;
   border-right: 1px solid black;
   padding-top: 4px;
 }
 
 .pageSeparator .CloseBox {
   background-image: url(/images/ui/close.png);
-  margin-left: -8px;
+  margin-left: 2px;
   width: 13px;
   height: 13px;
 }
 
 .pageSeparator .Minimize {
   background-image: url(/images/ui/minimize_content.png);
-  width: 8px;
+  background-repeat: no-repeat;
+  background-position: top right;
+  width: 18px;
   height: 525px;
 }
 
 .pageSeparator .Maximize {
   background-image: url(/images/ui/maximize_content.png);
+  background-repeat: no-repeat;
+  background-position: top right;
   width: 8px;
   height: 525px;
 }
