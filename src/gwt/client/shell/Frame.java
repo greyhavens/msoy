@@ -31,6 +31,9 @@ public class Frame
     /** The width of the separator bar displayed between the client and the content. */
     public static final int SEPARATOR_WIDTH = 8;
 
+    /** The offset of the content close button, from the left edge of the separator bar. */
+    public static final int CLOSE_BUTTON_OFFSET = -16;
+
     /** Indicates whether we are currently displaying a Flash applet over the parts of the page
      * where popups might show up. */
     public static boolean displayingFlash = false;
@@ -67,11 +70,16 @@ public class Frame
         }
 
         // create our content manipulation buttons
-        _closeContent = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
+        Label closeBox = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
             public void onClick (Widget sender) {
                 closeContent();
             }
         });
+        _closeContent = new FlowPanel();
+        _closeContent.add(closeBox);
+        _closeContent.setVisible(false); 
+        _closeContent.setStyleName("CloseBoxHolder");
+        
         _minimizeContent = MsoyUI.createActionLabel("", "Minimize", new ClickListener() {
             public void onClick (Widget sender) {
                 setContentMinimized(true, null);
@@ -225,10 +233,7 @@ public class Frame
         if (_maximizeContent.isAttached() ||
             (_closeToken != null && !_minimizeContent.isAttached())) {
             RootPanel.get(SEPARATOR).clear();
-            FlowPanel closeBox = new FlowPanel();
-            closeBox.setStyleName("CloseBoxHolder");
-            closeBox.add(_closeContent);
-            RootPanel.get(SEPARATOR).add(closeBox);
+            RootPanel.get(SEPARATOR).add(_closeContent);
             RootPanel.get(SEPARATOR).add(_minimizeContent);
             RootPanel.get(SEPARATOR).add(_separatorLine);
             new SlideContentOn().start(null);
@@ -316,6 +321,7 @@ public class Frame
                 done();
 
             } else {
+                _closeContent.setVisible(false);
                 RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
                 RootPanel.get(CLIENT).setWidth(_startWidth + "px");
                 _startWidth += _deltaWidth;
@@ -332,6 +338,9 @@ public class Frame
     {
         public void run () {
             if (_startWidth <= _endWidth) {
+                _closeContent.setVisible(true);
+                DOM.setStyleAttribute(_closeContent.getElement(), "left",
+                                      (CONTENT_WIDTH + CLOSE_BUTTON_OFFSET) + "px");
                 RootPanel.get(CONTENT).add(_content);
                 RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
                 RootPanel.get(CLIENT).setWidth(_endWidth + "px");
@@ -353,7 +362,8 @@ public class Frame
 
     protected static Widget _content;
     protected static String _closeToken;
-    protected static Label _closeContent, _minimizeContent, _maximizeContent, _separatorLine;
+    protected static Label _minimizeContent, _maximizeContent, _separatorLine;
+    protected static FlowPanel _closeContent;
 
     // constants for our top-level elements
     protected static final String NAVIGATION = "navigation";
