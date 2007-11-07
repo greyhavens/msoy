@@ -307,7 +307,7 @@ public class MemberServlet extends MsoyServiceServlet
                                     list.add(memberCard.name.getMemberId());
                                 }
 
-                                if (memLoc.gameId != 0 && memLoc.gameId != Game.TUTORIAL_GAME_ID) {
+                                if (memLoc.gameId != 0) {
                                     ArrayList<Integer> list = games.get(memLoc.gameId);
                                     if (list == null) {
                                         list = new ArrayList<Integer>();
