@@ -841,10 +841,10 @@ public class MemberServlet extends MsoyServiceServlet
                     if (memloc == null) {
                         continue;
                     }
-                    if (memloc.sceneId > 0) {
+                    if (memloc.sceneId != 0) {
                         noteFriend(scenes, entry, snap.getScene(memloc.sceneId));
                     }
-                    if (memloc.gameId > 0) {
+                    if (memloc.gameId != 0) {
                         noteFriend(games, entry, snap.getGame(memloc.gameId));
                     }
                 }
