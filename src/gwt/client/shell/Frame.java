@@ -262,10 +262,6 @@ public class Frame
         }
     }
 
-    protected static void clientDidMinimize ()
-    {
-    }
-
     /**
      * Configures top-level functions that can be called by Flash.
      */
@@ -281,9 +277,6 @@ public class Frame
        };
        $wnd.clearSeparator = function () {
             @client.shell.Frame::clearSeparator()();
-       };
-       $wnd.clientDidMinimize = function () {
-            @client.shell.Frame::clientDidMinimize()();
        };
     }-*/;
 
@@ -306,7 +299,7 @@ public class Frame
         }
 
         protected Command _onComplete;
-        protected static final int FRAMES = 5;
+        protected static final int FRAMES = 10;
     }
 
     protected static class SlideContentOff extends Slider
