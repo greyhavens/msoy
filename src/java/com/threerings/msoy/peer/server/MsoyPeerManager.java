@@ -91,7 +91,13 @@ public class MsoyPeerManager extends CrowdPeerManager
         MemberLocation newloc = new MemberLocation();
         newloc.memberId = memobj.getMemberId();
         newloc.sceneId = Math.max(ScenePlace.getSceneId(memobj), 0); // we use 0 for no scene
-        newloc.gameId = (memobj.game == null || memobj.game.avrGame) ? 0 : memobj.game.gameId;
+        if (memobj.game != null) {
+            newloc.gameId = memobj.game.gameId;
+            newloc.avrGame = memobj.game.avrGame;
+        } else {
+            newloc.gameId = 0;
+            newloc.avrGame = false;
+        }
 
         if (_mnobj.memberLocs.contains(newloc)) {
             _mnobj.updateMemberLocs(newloc);

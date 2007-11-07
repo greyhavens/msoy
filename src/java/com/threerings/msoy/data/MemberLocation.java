@@ -21,6 +21,9 @@ public class MemberLocation extends SimpleStreamableObject
     /** The id of the game or game lobby occupied by this member. */
     public int gameId;
 
+    /** Whether or not this is an AVRGame. */
+    public boolean avrGame;
+
     // from DSet.Entry
     public Comparable getKey ()
     {

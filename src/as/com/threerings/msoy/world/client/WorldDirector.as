@@ -109,7 +109,8 @@ public class WorldDirector extends BasicDirector
     protected function finishGoToMemberLocation (location :MemberLocation) :void
     {
         var goToGame :Function = function () :void {};
-        if (location.gameId != 0) {
+        // TODO: Do something more interesting for AVR Games.
+        if (!location.avrGame && location.gameId != 0) {
             goToGame = function () :void {
                 _mctx.getGameDirector().joinPlayer(location.gameId, location.memberId);
             };

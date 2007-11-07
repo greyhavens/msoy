@@ -26,6 +26,9 @@ public class MemberLocation
     /** The id of the game or game lobby occupied by this member. */
     public var gameId :int;
 
+    /** Whether or not this is an AVRGame. */
+    public var avrGame :Boolean;
+
     // from DSet_Entry
     public function getKey () :Object
     {
@@ -38,6 +41,7 @@ public class MemberLocation
         out.writeObject(new Integer(memberId));
         out.writeInt(sceneId);
         out.writeInt(gameId);
+        out.writeBoolean(avrGame);
     }
 
     // from Streamable
@@ -46,6 +50,7 @@ public class MemberLocation
         memberId = (ins.readField(Integer) as Integer).value;
         sceneId = ins.readInt();
         gameId = ins.readInt();
+        avrGame = ins.readBoolean();
     }
 }
 }

@@ -307,7 +307,7 @@ public class MemberServlet extends MsoyServiceServlet
                                     list.add(memberCard.name.getMemberId());
                                 }
 
-                                if (memLoc.gameId != 0) {
+                                if (memLoc.gameId != 0 && memLoc.gameId != Game.TUTORIAL_GAME_ID) {
                                     ArrayList<Integer> list = games.get(memLoc.gameId);
                                     if (list == null) {
                                         list = new ArrayList<Integer>();
@@ -844,7 +844,7 @@ public class MemberServlet extends MsoyServiceServlet
                     if (memloc.sceneId != 0) {
                         noteFriend(scenes, entry, snap.getScene(memloc.sceneId));
                     }
-                    if (memloc.gameId != 0) {
+                    if (memloc.gameId != 0 && memloc.gameId != Game.TUTORIAL_GAME_ID) {
                         noteFriend(games, entry, snap.getGame(memloc.gameId));
                     }
                 }
