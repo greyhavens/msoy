@@ -419,7 +419,7 @@ public class FeedPanel extends VerticalPanel
     /**
      * A hashable key used for storing FeedMessages that will be aggregated.
      */
-    protected class MessageKey
+    protected static class MessageKey
     {
         public Integer type;
         public String key;
