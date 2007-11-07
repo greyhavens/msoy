@@ -374,7 +374,7 @@ public class AbstractRoomView extends Sprite
      */
     protected function configureScrollRect () :void
     {
-        if (_actualWidth >= _scene.getWidth()) {
+        if (_scene != null && _actualWidth >= _scene.getWidth()) {
             scrollRect = null;
         } else {
             scrollRect = getScrollBounds();
