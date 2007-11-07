@@ -50,6 +50,6 @@ public class index extends Page
         Frame frame = new Frame(url);
         frame.setStyleName("wrappedFrame");
         setContent(frame);
-        setContentStretchHeight(true);
+        client.shell.Frame.setContentStretchHeight(true);
     }
 }

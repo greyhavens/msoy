@@ -17,6 +17,7 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ConnectConfig;
 
 import client.shell.Application;
+import client.shell.Frame;
 import client.shell.Page;
 import client.shell.WorldClient;
 
@@ -86,8 +87,8 @@ public class DashboardPanel extends FlexTable
 
     protected void finishDisplayDashboard (ConnectConfig config)
     {
-        Page.displayingJava = true;
-        WorldClient.clearClient(true);
+        Frame.displayingJava = true;
+        Frame.closeClient(false);
 
         // we have to serve admin-client.jar from the server to which it will connect back due to
         // security restrictions and proxy the game jar through there as well

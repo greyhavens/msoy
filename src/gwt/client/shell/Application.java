@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -102,7 +101,7 @@ public class Application
     {
         String token = createLinkToken(page, args);
         if (token.equals(History.getToken())) {
-            CShell.app._page.setContentMinimized(false, null);
+            Frame.setContentMinimized(false, null);
         } else {
             History.newItem(token);
         }
@@ -153,32 +152,10 @@ public class Application
         // set up the callbackd that our flash clients can call
         configureCallbacks(this);
 
-        // create our status/logon panel
+        // create our status and navigation panels and stuff them into the frame
         _status = new StatusPanel(this);
-        RootPanel status = RootPanel.get("status");
-        if (status != null) {
-            status.add(_status);
-        }
-
-        // add the logo, with link to My Whirled/Whirledwide
-        Image logo = new Image("/images/header/header_logo.png");
-        logo.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                boolean loggedIn = CShell.creds != null;
-                go(Page.WHIRLED, loggedIn ? "mywhirled" : "whirledwide");
-            }
-        });
-        RootPanel logoPanel = RootPanel.get("logo");
-        if (logoPanel != null) {
-            logoPanel.add(logo);
-        }
-
-        // create our standard navigation panel
         _navi = new NaviPanel(_status);
-        RootPanel navi = RootPanel.get(Page.NAVIGATION);
-        if (navi != null) {
-            navi.add(_navi);
-        }
+        Frame.init(_navi, _status);
 
         // wire ourselves up to the history-based navigation mechanism
         History.addHistoryListener(this);
@@ -245,9 +222,7 @@ public class Application
             // locate the creator for this page
             Page.Creator creator = (Page.Creator)_creators.get(ident);
             if (creator == null) {
-                RootPanel.get(Page.CONTENT).clear();
-                RootPanel.get(Page.CONTENT).add(
-                    new Label("Unknown page requested '" + ident + "'."));
+                Frame.setContent(new Label("Unknown page requested '" + ident + "'."), false, false);
                 return;
             }
 
@@ -260,7 +235,7 @@ public class Application
             _page.onHistoryChanged(args);
 
         } else {
-            _page.setContentMinimized(false, new Command() {
+            Frame.setContentMinimized(false, new Command() {
                 public void execute () {
                     // now tell the page about its arguments
                     _page.onHistoryChanged(args);
@@ -317,7 +292,7 @@ public class Application
             // we can now load our starting page
             onHistoryChanged(_currentToken);
         } else {
-            _page.clearClient(false);
+            Frame.closeClient(false);
             _page.didLogoff();
         }
     }
@@ -337,34 +312,6 @@ public class Application
     protected boolean openChannelRequest (int type, String name, int id)
     {
         return openChannelNative(type, name, id);
-    }
-
-    protected void restoreClient ()
-    {
-        _page.setContentMinimized(true, null);
-    }
-
-    protected void clearClient (boolean deferred)
-    {
-        _page.clearClient(deferred);
-    }
-
-    protected void setSeparator (int x)
-    {
-        clearSeparator();
-        Label div = new Label();
-        div.setStyleName("SeparatorFromFlash");
-        DOM.setAttribute(div.getElement(), "id", "separatorFromFlash");
-        DOM.setStyleAttribute(div.getElement(), "left", x + "px");
-        RootPanel.get(Page.NAVIGATION).add(div);
-    }
-
-    protected void clearSeparator ()
-    {
-        Element div = DOM.getElementById("separatorFromFlash");
-        if (div != null) {
-            DOM.removeChild(DOM.getParent(div), div);
-        }
     }
 
     protected void createMappings ()
@@ -402,24 +349,12 @@ public class Application
        };
        $wnd.helloWhirled = function () {
             return true;
-       }
-       $wnd.restoreClient = function () {
-            app.@client.shell.Application::restoreClient()();
-       }
-       $wnd.clearClient = function () {
-            app.@client.shell.Application::clearClient(Z)(true);
-       }
-       $wnd.setSeparator = function (x) {
-            app.@client.shell.Application::setSeparator(I)(x);
-       }
-       $wnd.clearSeparator = function () {
-            app.@client.shell.Application::clearSeparator()();
-       }
+       };
        $wnd.setWindowTitle = function (title) {
             var xlater = @client.shell.CShell::cmsgs;
             var msg = xlater.@client.shell.ShellMessages::windowTitle(Ljava/lang/String;)(title);
             @com.google.gwt.user.client.Window::setTitle(Ljava/lang/String;)(msg);
-       }
+       };
        $wnd.displayPage = function (page, args) {
            @client.shell.Application::go(Ljava/lang/String;Ljava/lang/String;)(page, args);
        };

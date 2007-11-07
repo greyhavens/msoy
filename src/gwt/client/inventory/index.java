@@ -66,7 +66,7 @@ public class index extends Page
         } else {
             if (_inventory == null) {
                 setPageTitle(CInventory.msgs.inventoryTitle());
-                setContent(_inventory = new InventoryPanel(this));
+                setContent(_inventory = new InventoryPanel());
                 setPageTabs(_inventory.getTabs());
             }
 

@@ -6,7 +6,7 @@ package client.util;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.impl.PopupImplMozilla;
 
-import client.shell.Page;
+import client.shell.Frame;
 
 /**
  * Mozilla implementation of {@link PopupImpl} that does the right thing with Flash and other
@@ -18,7 +18,7 @@ public class PopupImplMozillaHack extends PopupImplMozilla
     public void onShow (Element popup)
     {
         super.onShow(popup);
-        if (Page.needPopupHack()) {
+        if (Frame.needPopupHack()) {
             createIFrame(popup);
         }
     }

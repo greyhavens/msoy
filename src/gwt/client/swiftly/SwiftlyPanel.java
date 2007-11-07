@@ -3,9 +3,6 @@
 
 package client.swiftly;
 
-import client.shell.Application;
-import client.shell.WorldClient;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -16,11 +13,16 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.SwiftlyConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
+
+import com.threerings.gwt.ui.WidgetUtil;
+
+import client.shell.Application;
+import client.shell.Frame;
 
 /**
  * Displays the client interface for a particular Swiftly project.
@@ -116,7 +118,7 @@ public class SwiftlyPanel extends FlexTable
         getFlexCellFormatter().setHeight(1, 0, "100%");
 
         // clear out any world client because Swiftly currently kills it anyway
-        WorldClient.clearClient(true);
+        Frame.closeClient(false);
     }
 
     protected void updateProjectLink ()

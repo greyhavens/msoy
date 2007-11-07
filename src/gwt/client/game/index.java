@@ -19,6 +19,7 @@ import com.threerings.msoy.web.client.GameServiceAsync;
 import com.threerings.msoy.web.data.LaunchConfig;
 
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.shell.WorldClient;
 import client.util.MsoyUI;
@@ -145,7 +146,7 @@ public class index extends Page
 
             } else {
                 // clear out the client as we're going into Java land
-                clearClient(false);
+                Frame.closeClient(false);
 
                 // prepare a command to be invoked once we know Java is loaded
                 _javaReadyCommand = new Command() {

@@ -27,6 +27,7 @@ import client.editem.EditorHost;
 import client.editem.ItemEditor;
 import client.shell.Application;
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.FlashClients;
 import client.util.MsoyUI;
@@ -40,9 +41,8 @@ public class ItemPanel extends VerticalPanel
     /** The number of columns of items to display. */
     public static final int COLUMNS = 3;
 
-    public ItemPanel (Page top, byte type)
+    public ItemPanel (byte type)
     {
-        _top = top;
         _type = type;
 
         // this will contain our items
@@ -76,7 +76,7 @@ public class ItemPanel extends VerticalPanel
 
     public void minimizeInventory ()
     {
-        _top.setContentMinimized(true, null);
+        Frame.setContentMinimized(true, null);
     }
 
     /**
@@ -282,7 +282,6 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
-    protected Page _top;
     protected PagedGrid _contents;
     protected Button _create, _next, _prev;
     protected VerticalPanel _upload;

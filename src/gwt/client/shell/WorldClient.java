@@ -78,11 +78,11 @@ public class WorldClient extends Widget
         }
 
         // let the page know that we're displaying a client
-        boolean newPage = Page.setShowingClient(true, false, pageToken);
+        boolean newPage = Frame.setShowingClient(true, false, pageToken);
 
         // create our client if necessary
-        if (! _isFlashClientPresent) {
-            clearClient(false); // clear our Java client if we have one
+        if (!_isFlashClientPresent) {
+            closeClient(false); // clear our Java client if we have one
             flashArgs += "&host=" + _defaultServer.server +
                 "&port=" + _defaultServer.port +
                 "&httpPort=" + _defaultServer.httpPort;
@@ -93,8 +93,8 @@ public class WorldClient extends Widget
             if (CShell.ident != null) {
                 flashArgs += "&token=" + CShell.ident.token;
             }
-            RootPanel.get(Page.CLIENT).clear();
-            FlashClients.embedWorldClient(RootPanel.get(Page.CLIENT), flashArgs);
+            RootPanel.get(Frame.CLIENT).clear();
+            FlashClients.embedWorldClient(RootPanel.get(Frame.CLIENT), flashArgs);
             _isFlashClientPresent = true;
             
         } else {
@@ -109,13 +109,13 @@ public class WorldClient extends Widget
     public static void displayJava (Widget client)
     {
         // let the page know that we're displaying a client
-        boolean newPage = Page.setShowingClient(false, true, History.getToken());
+        boolean newPage = Frame.setShowingClient(false, true, History.getToken());
 
         if (_jclient != client) {
             if (newPage) {
-                clearClient(false); // clear out our flash client if we have one
-                RootPanel.get(Page.CLIENT).clear();
-                RootPanel.get(Page.CLIENT).add(_jclient = client);
+                closeClient(false); // clear out our flash client if we have one
+                RootPanel.get(Frame.CLIENT).clear();
+                RootPanel.get(Frame.CLIENT).add(_jclient = client);
             }
         } else {
             clientMinimized(false);
@@ -127,19 +127,19 @@ public class WorldClient extends Widget
         clientMinimized(minimized);
     }
 
-    public static void clearClient (boolean restoreContent)
+    public static void closeClient (boolean restoreContent)
     {
         if (_isFlashClientPresent || _jclient != null) {
             if (_isFlashClientPresent) {
                 clientUnload(); // TODO: make this work for jclient
             }
-            RootPanel.get(Page.CLIENT).clear();
+            RootPanel.get(Frame.CLIENT).clear();
             _isFlashClientPresent = false;
             _jclient = null;
         }
         if (restoreContent) {
-            RootPanel.get(Page.CLIENT).setWidth("0px");
-            RootPanel.get(Page.CONTENT).setWidth("100%");
+            RootPanel.get(Frame.CLIENT).setWidth("0px");
+            RootPanel.get(Frame.CONTENT).setWidth("100%");
         }
     }
 

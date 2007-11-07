@@ -14,6 +14,7 @@ import com.threerings.msoy.web.client.SwiftlyServiceAsync;
 import com.threerings.msoy.web.data.SwiftlyConnectConfig;
 
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -84,7 +85,7 @@ public class index extends Page
             CSwiftly.swiftlysvc.getConnectConfig(CSwiftly.ident, projectId, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     setJavaContent(new SwiftlyPanel((SwiftlyConnectConfig)result, projectId));
-                    setContentStretchHeight(true);
+                    Frame.setContentStretchHeight(true);
                 }
                 public void onFailure (Throwable cause) {
                     CSwiftly.serverError(cause);

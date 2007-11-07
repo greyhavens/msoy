@@ -106,17 +106,10 @@ public class index extends Page
     }
 
     // @Override // from Page
-    protected void clientWasCleared ()
-    {
-        super.clientWasCleared();
-        // head to Whirledwide
-        Application.go(Page.WHIRLED, "whirledwide");
-    }
-
-    // @Override // from Page
     protected void didLogoff ()
     {
-        // logging off will clear the client which will send us to whirledwide
+        // head to Whirledwide
+        Application.go(Page.WHIRLED, "whirledwide");
     }
 
     // @Override // from Page

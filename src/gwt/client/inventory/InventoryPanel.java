@@ -17,10 +17,9 @@ import client.shell.Page;
  */
 public class InventoryPanel extends SimplePanel
 {
-    public InventoryPanel (Page page)
+    public InventoryPanel ()
     {
         setStyleName("inventoryPanel");
-        _page = page;
         _itemTabs = new ItemTypePanel(Page.INVENTORY);
     }
 
@@ -44,13 +43,12 @@ public class InventoryPanel extends SimplePanel
     {
         ItemPanel panel = (ItemPanel) _itemPanes.get(new Byte(itemType));
         if (panel == null) {
-            panel = new ItemPanel(_page, itemType);
+            panel = new ItemPanel(itemType);
             _itemPanes.put(new Byte(itemType), panel);
         }
         return panel;
     }
 
-    protected Page _page;
     protected ItemTypePanel _itemTabs;
     protected HashMap _itemPanes = new HashMap();
 }

@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import client.shell.Page;
+import client.shell.Frame;
 
 /**
  * Displays a popup with a nice border around it.
@@ -67,7 +67,7 @@ public class BorderedPopup extends PopupPanel
      */
     protected void updateFrame ()
     {
-        if (Page.needPopupHack()) {
+        if (Frame.needPopupHack()) {
             // if I could access 'impl' here, I wouldn't have to do this lame hack, but the GWT
             // engineers conveniently made it private, so I can't
             hide();
