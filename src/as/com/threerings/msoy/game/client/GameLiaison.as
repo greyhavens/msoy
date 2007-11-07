@@ -9,6 +9,7 @@ import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.system.Security;
 import flash.events.Event;
 import flash.text.TextField;
 import flash.utils.ByteArray;
