@@ -3,6 +3,10 @@
 
 package client.msgs;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -26,6 +30,15 @@ import client.util.MsoyUI;
  */
 public class MailComposition extends BorderedDialog
 {
+    public static interface MailSentListener
+    {
+        /**
+         * Notifies this object that the message being composed was successfully sent, and that it may
+         * perform any side-effects that should be associated with the event.
+         */
+        public void messageSent (MemberName recipient);
+    }
+
     /**
      * Initializes a new composer.
      */
@@ -34,7 +47,15 @@ public class MailComposition extends BorderedDialog
     {
         super(false);
         _recipient = recipient;
+        addListener(bodyObjectComposer);
         buildUI(subject, bodyText, bodyObjectComposer);
+    }
+
+    public void addListener(MailSentListener listener)
+    {
+        if (listener != null) {
+            _listeners.add(listener);
+        }
     }
 
     /**
@@ -158,8 +179,9 @@ public class MailComposition extends BorderedDialog
     {
         AsyncCallback callback = new AsyncCallback() {
             public void onSuccess (Object result) {
-                if (_payloadComposer != null) {
-                    _payloadComposer.messageSent(_recipient);
+                Iterator i = _listeners.iterator();
+                while (i.hasNext()) {
+                    ((MailSentListener) i.next()).messageSent(_recipient);
                 }
                 hide();
                 MsoyUI.info(CMsgs.mmsgs.messageSent());
@@ -177,6 +199,7 @@ public class MailComposition extends BorderedDialog
     protected MemberName _recipient;
     protected VerticalPanel _panel;
     protected MailPayloadComposer _payloadComposer;
+    protected Set _listeners = new HashSet();
 
     protected Button _attachButton;
 

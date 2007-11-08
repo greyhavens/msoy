@@ -3,6 +3,8 @@
 
 package client.msgs;
 
+import client.msgs.MailComposition.MailSentListener;
+
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -10,15 +12,15 @@ import com.threerings.msoy.person.data.MailPayload;
 
 /**
  * Assist the {@link MailComposition} UI in configuring the state of a {@link MailPayload}.
- * 
+ *
  * Some {@link MailPayload} subclasses are best configured visually as part of the {@link
  * MailComposition} UI. In such cases, an object should implement this interface and use {@link
  * #widgetForComposition()} to hand out a Widget with the appropriate configuration elements.
- * 
+ *
  * When the message is ready for delivery, {@link #getComposedPayload()} is called, and the {@link
  * MailPayload} returned (if any) is included in the message.
  */
-public interface MailPayloadComposer
+public interface MailPayloadComposer extends MailSentListener
 {
     /**
      * Returns the {@link Widget} to be displayed to the composer of this message.  The widget will
@@ -31,7 +33,7 @@ public interface MailPayloadComposer
      * Asks if this composision widget ss ready to be sent, in which case it should return null;
      * if not, a string giving the reason is returned and displayed to the user. This is mostly
      * used for multi-stage UI's.
-     * 
+     *
      * TODO: Ideally this should be some kind of send-button-outgraying callback mechanism, but
      * that may be over the top.
      */
@@ -44,10 +46,4 @@ public interface MailPayloadComposer
      * MailPayload} is sent.
      */
     public MailPayload getComposedPayload ();
-    
-    /**
-     * Notifies this object that the message being composed was successfully sent, and that it may
-     * perform any side-effects that should be associated with the event.
-     */
-    public void messageSent (MemberName recipient);
 }

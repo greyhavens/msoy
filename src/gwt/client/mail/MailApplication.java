@@ -31,9 +31,11 @@ import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.person.data.MailHeaders;
 import com.threerings.msoy.person.data.MailMessage;
 
+import client.msgs.CMsgs;
 import client.msgs.MailComposition;
 import client.msgs.MailPayloadDisplay;
 import client.msgs.MailUpdateListener;
+import client.msgs.MailComposition.MailSentListener;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
@@ -309,6 +311,15 @@ public class MailApplication extends DockPanel
                 }
                 MailComposition composition =
                     new MailComposition(_message.headers.sender, subject, null, "");
+                composition.addListener(new MailSentListener() {
+                    public void messageSent (MemberName recipient) {
+                        if (recipient.getMemberId() == CMsgs.getMemberId()) {
+                            // if we're sending mail to ourselves, refresh the whole thing
+                            // TODO: if this becomes common do it more cleverly
+                            refresh();
+                        }
+                    }
+                });
                 composition.show();
             }
         });
@@ -368,7 +379,7 @@ public class MailApplication extends DockPanel
         }
         return false;
     }
-    
+
     // construct the list of folders, including unread count
     protected void refreshFolderPanel ()
     {
@@ -455,7 +466,7 @@ public class MailApplication extends DockPanel
         }
         return false;
     }
-    
+
     // construct the list of message headers
     protected void refreshHeaderPanel ()
     {
