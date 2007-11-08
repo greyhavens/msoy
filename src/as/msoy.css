@@ -64,24 +64,56 @@ TabNavigator, TabBar {
           scaleGridLeft="3", scaleGridRight="9");
 }
 
-.unselectedChatTab, .selectedChatTab {
+.unselectedRoomTab, .attentionRoomTab, .unselectedTellTab, .attentionTellTab, .unselectedGroupTab,
+    .attentionGroupTab {
+  color: white;
   fontFamily: Arial;
   fontWeight: bold;
   closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
 }
 
-.unselectedChatTab {
-  color: #b4cbd7;
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
+.selectedRoomTab, .selectedTellTab, .selectedGroupTab {
+  color: black;
+  fontFamily: Arial;
+  fontWeight: bold;
+  closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
 }
 
-.selectedChatTab {
-  color: black;
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
+.unselectedRoomTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#room_unselected");
+}
+
+.selectedRoomTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#room_selected");
+}
+
+.attentionRoomTab {
+  /*missed symbol buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#room_attention");*/
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#tell_attention");
+}
+
+.unselectedTellTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#tell_unselected");
+}
+
+.selectedTellTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#tell_selected");
+}
+
+.attentionTellTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#tell_attention");
+}
+
+.unselectedGroupTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#group_unselected");
+}
+
+.selectedGroupTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#group_selected");
+}
+
+.attentionGroupTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#group_attention");
 }
 
 Accordion {

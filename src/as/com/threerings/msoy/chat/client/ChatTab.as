@@ -31,6 +31,10 @@ public class ChatTab extends HBox
 
     /** Event that gets fired when this tab's close box is clicked */
     public static const TAB_CLOSE_CLICK :String = "tabCloseClick"
+
+    public static const SELECTED :int = 1;
+    public static const UNSELECTED :int = 2;
+    public static const ATTENTION :int = 3;
     
     public function ChatTab (ctx :WorldContext, bar :ChatTabBar, channel :ChatChannel, 
         history :HistoryList, roomName :String = null)
@@ -99,6 +103,45 @@ public class ChatTab extends HBox
         }
     }
 
+    public function setVisualState (state :int) :void
+    {
+        var style :String;
+        switch (state) {
+        case SELECTED: 
+            style = "selected"; 
+            displayCloseBox(_controller != null);
+            break;
+
+        case UNSELECTED: 
+            style = "unselected"; 
+            displayCloseBox(false);
+            break;
+
+        case ATTENTION: 
+            style = "attention"; 
+            displayCloseBox(false);
+            break;
+
+        default:
+            Log.getLog(this).warning("Unknown visual state [" + state + "]");
+            return;
+        }
+
+        if (_controller == null) {
+            style += "RoomTab";
+        } else if (_controller.channel.type == ChatChannel.GROUP_CHANNEL) {
+            style += "GroupTab";
+        } else if (_controller.channel.type == ChatChannel.MEMBER_CHANNEL) {
+            style += "TellTab";
+        } else {
+            Log.getLog(this).warning("Unkown channel type for skinning [" + 
+                _controller.channel.type + "]");
+            return;
+        }
+
+        styleName = style;
+    }
+
     protected function tabClicked (event :MouseEvent) :void
     {
         dispatchEvent(new Event(TAB_CLICK));
@@ -124,7 +167,9 @@ public class ChatTab extends HBox
     {
         var newSkin :Class = getStyle(BUTTON_SKIN) as Class;
         if (newSkin == _buttonSkinClass) {
-            (_currentSkin as IFlexDisplayObject).setActualSize(uw, uh);
+            if (_currentSkin != null) {
+                (_currentSkin as IFlexDisplayObject).setActualSize(uw, uh);
+            }
             return;
         }
 

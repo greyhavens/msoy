@@ -43,14 +43,12 @@ public class ChatTabBar extends HBox
         var activeTab :ChatTab;
         if (_selectedIndex != -1) {
             activeTab = _tabs[_selectedIndex] as ChatTab;
-            activeTab.displayCloseBox(false);
-            activeTab.styleName = "unselectedChatTab";
+            activeTab.setVisualState(ChatTab.UNSELECTED);
         }
         
         _selectedIndex = (ii + _tabs.length) % _tabs.length;
         activeTab = _tabs[_selectedIndex] as ChatTab;
-        activeTab.styleName = "selectedChatTab";
-        activeTab.displayCloseBox(_selectedIndex != 0);
+        activeTab.setVisualState(ChatTab.SELECTED);
         activeTab.displayChat();
     }
 
@@ -99,6 +97,10 @@ public class ChatTabBar extends HBox
         var controller :ChatChannelController = getController(channel);
         if (controller != null) {
             controller.addMessage(msg);
+            var index :int = getControllerIndex(channel);
+            if (index != _selectedIndex) {
+                (_tabs[index] as ChatTab).setVisualState(ChatTab.ATTENTION);
+            }
             return;
         }
 
@@ -110,6 +112,13 @@ public class ChatTabBar extends HBox
             // else this arrived (most likely) after we already closed the channel tab.
             Log.getLog(this).info(
                 "Dropping late arriving channel chat message [msg=" + msg + "].");
+        }
+    }
+
+    public function locationReceivedMessage () :void
+    {
+        if (_selectedIndex != 0) {
+            (_tabs[0] as ChatTab).setVisualState(ChatTab.ATTENTION);
         }
     }
 
@@ -152,7 +161,7 @@ public class ChatTabBar extends HBox
 
         // init the controller with its previously set channel
         if (tab.controller != null) {
-            var channel :ChatChannel = tab.controller.getChannel();
+            var channel :ChatChannel = tab.controller.channel;
             tab.controller.init(_ctx.getMsoyChatDirector().getChannelObject(channel));
         }
 
@@ -179,7 +188,7 @@ public class ChatTabBar extends HBox
             return;
         }
         tab.controller.shutdown();
-        _ctx.getMsoyChatDirector().closeChannel(tab.controller.getChannel());
+        _ctx.getMsoyChatDirector().closeChannel(tab.controller.channel);
 
         var index :int = ArrayUtil.indexOf(_tabs, event.target);
         if (index < 0) {
@@ -212,7 +221,7 @@ public class ChatTabBar extends HBox
     {
         for (var ii :int = 0; ii < _tabs.length; ii++) {
             var controller :ChatChannelController = (_tabs[ii] as ChatTab).controller;
-            if (controller != null && controller.getChannel().equals(channel)) {
+            if (controller != null && controller.channel.equals(channel)) {
                 return ii;
             }
         }

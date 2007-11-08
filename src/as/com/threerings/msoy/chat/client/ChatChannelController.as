@@ -66,7 +66,7 @@ public class ChatChannelController
         }
     }
 
-    public function getChannel () :ChatChannel
+    public function get channel () :ChatChannel
     {
         return _channel;
     }

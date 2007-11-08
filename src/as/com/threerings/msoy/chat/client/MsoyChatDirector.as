@@ -251,6 +251,8 @@ public class MsoyChatDirector extends ChatDirector
             _roomHistory.addMessage(msg);
             // dispatch it normally as room chat displays are registered normally
             super.dispatchPreparedMessage(msg);
+            // notify the tab bar that the room received chat
+            _chatTabs.locationReceivedMessage();
         }
     }
 
