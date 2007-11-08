@@ -108,6 +108,11 @@ public class GameEditor extends ItemEditor
         if (lwjgl.getLength() > 0) {
             _lwjgl.setChecked(true);
         }
+
+        NodeList avrg = xml.getElementsByTagName("avrg");
+        if (avrg.getLength() > 0) {
+            _avrg.setChecked(true);
+        }
     }
 
     // @Override from ItemEditor
@@ -163,6 +168,7 @@ public class GameEditor extends ItemEditor
         addInfoRow(bits, CShell.emsgs.gameManager(), _manager = new TextBox());
         _manager.setVisibleLength(40);
         addInfoRow(bits, CShell.emsgs.gameLWJGL(), _lwjgl = new CheckBox());
+        addInfoRow(bits, CShell.emsgs.gameAVRG(), _avrg = new CheckBox());
 
         // add a tab for uploading the game media
         tabs.add(createMainUploader(CShell.emsgs.gameMainTitle(), new MediaUpdater() {
@@ -216,6 +222,10 @@ public class GameEditor extends ItemEditor
 
         if (_lwjgl.isChecked()) {
             xml.getFirstChild().appendChild(xml.createElement("lwjgl"));
+        }
+
+        if (_avrg.isChecked()) {
+            xml.getFirstChild().appendChild(xml.createElement("avrg"));
         }
 
         String extras = _extras.getText();
@@ -272,5 +282,6 @@ public class GameEditor extends ItemEditor
     protected CheckBox _watchable;
     protected TextBox _ident, _controller, _manager;
     protected CheckBox _lwjgl;
+    protected CheckBox _avrg;
     protected TextArea _extras;
 }

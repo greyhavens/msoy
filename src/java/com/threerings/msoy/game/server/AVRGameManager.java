@@ -440,7 +440,7 @@ public class AVRGameManager
         {
             this.name = "Whirled Tutorial";
             this.gameId = Game.TUTORIAL_GAME_ID;
-            this.config = "<toggle ident=\"avrg\" start=\"true\"/>";
+            this.config = "<avrg/>";
             this.gameMedia = new StaticMediaDesc(
                 MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.GAME, "tutorial");
             // TODO: if we end up using these for AVRG's we'll want hand-crafted stuffs here
