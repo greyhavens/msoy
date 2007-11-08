@@ -48,7 +48,6 @@ import com.threerings.flash.ColorUtil;
 import com.threerings.whirled.spot.data.SpotCodes;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
-import com.threerings.msoy.chat.data.TimedMessage;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;

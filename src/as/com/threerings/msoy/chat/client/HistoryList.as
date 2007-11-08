@@ -8,7 +8,7 @@ import com.threerings.util.ObserverList;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.SystemMessage;
 
-import com.threerings.msoy.chat.data.TimedMessage;
+import com.threerings.msoy.chat.data.TimedMessageDisplay;
 
 public class HistoryList
 {
@@ -33,9 +33,9 @@ public class HistoryList
     /**
      * Get the history entry at the specified index.
      */
-    public function get (index :int) :TimedMessage
+    public function get (index :int) :TimedMessageDisplay
     {
-        return (_history[index] as TimedMessage);
+        return (_history[index] as TimedMessageDisplay);
     }
 
     /**
@@ -69,7 +69,7 @@ public class HistoryList
             adjusted = 0;
         }
 
-        _history.push(new TimedMessage(msg));
+        _history.push(new TimedMessageDisplay(msg));
         notify(adjusted);
     }
 
@@ -78,7 +78,7 @@ public class HistoryList
      */
     public function filterTransient () :void
     {
-        _history = _history.filter(function (item :TimedMessage, index :int, 
+        _history = _history.filter(function (item :TimedMessageDisplay, index :int, 
                                              array :Array) :Boolean {
             return !(item.msg is SystemMessage);
         });

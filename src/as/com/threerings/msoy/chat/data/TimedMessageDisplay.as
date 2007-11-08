@@ -10,9 +10,9 @@ import com.threerings.crowd.chat.data.ChatMessage;
 /**
  * A class to keep track of a given Chat Message and the time at which it was shown to the player.
  */
-public class TimedMessage
+public class TimedMessageDisplay
 {
-    public function TimedMessage (msg :ChatMessage) 
+    public function TimedMessageDisplay (msg :ChatMessage) 
     {
         _msg = msg;
     }
