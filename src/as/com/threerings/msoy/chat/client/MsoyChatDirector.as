@@ -241,7 +241,7 @@ public class MsoyChatDirector extends ChatDirector
     // from ChatDirector
     override protected function dispatchPreparedMessage (msg :ChatMessage) :void
     {
-        // determine which channel to which this message is targeted
+        // determine which channel this message is targeted to.
         var channel :ChatChannel = determineChannel(msg);
         if (channel != null) {
             var history :HistoryList = getHistory(channel);

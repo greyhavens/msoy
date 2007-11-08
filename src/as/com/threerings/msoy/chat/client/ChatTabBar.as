@@ -148,6 +148,12 @@ public class ChatTabBar extends HBox
         addChild(tab);
         _tabs.push(tab);
 
+        // init the controller with its previously set channel
+        if (tab.controller != null) {
+            var channel :ChatChannel = tab.controller.getChannel();
+            tab.controller.init(_ctx.getMsoyChatDirector().getChannelObject(channel));
+        }
+
         tab.addEventListener(ChatTab.TAB_CLICK, selectTab);
         tab.addEventListener(ChatTab.TAB_CLOSE_CLICK, removeTab);
         selectedIndex = _tabs.length - 1;
