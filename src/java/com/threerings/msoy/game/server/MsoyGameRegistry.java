@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
@@ -36,7 +35,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.data.PeerGameMarshaller;
@@ -152,68 +150,63 @@ public class MsoyGameRegistry
         log.warning("Got hello from unknown game server [port=" + port + "].");
     }
 
-    // from interface GameServerProvider
-    public void leaveAVRGame (ClientObject caller, int playerId)
+    // from interfaces GameServerProvider and PeerGameProvider
+    public void leaveAVRGame (ClientObject caller, final int playerId)
     {
         if (!checkCallerAccess(caller, "leaveAVRGame(" + playerId + ")")) {
             return;
         }
 
         MemberObject memobj = MsoyServer.lookupMember(playerId);
-        if (memobj == null) {
-            // they went bye bye, oh well
-            log.info("Dropping AVRG clear for departee [pid=" + playerId + "].");
-            return;
-        }
+        if (memobj != null) {
+            // clear their persistent AVRG affiliation
+            MsoyServer.memberMan.updateAVRGameId(memobj, 0);
 
-        // clear their persistent AVRG affiliation
-        updateAVRGameId(memobj, 0);
-    }
-
-    protected void updateAVRGameId (final MemberObject member, final int gameId)
-    {
-        MsoyServer.invoker.postUnit(new Invoker.Unit("updateAVRGameId") {
-            public boolean invoke () {
-                try {
-                    MsoyServer.memberRepo.setAVRGameId(member.getMemberId(), gameId);
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to update member's AVR game id [member=" +
-                        member + ", gameId=" + gameId + "]", pe);
-                    return false;
+        } else {
+            // locate the peer that is hosting this member and forward the request there
+            MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+                public void invoke (Client client, NodeObject nodeobj) {
+                    MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+                    if (msnobj.memberLocs.containsKey(playerId)) {
+                        msnobj.peerGameService.leaveAVRGame(client, playerId);
+                    }
                 }
-                return true;
-            }
-            public void handleResult () {
-                member.setAvrGameId(gameId);
-            }
-        });
+            });
+        }
     }
 
-    // from interface GameServerProvider
-    public void updatePlayer (ClientObject caller, int playerId, GameSummary game)
+    // from interfaces GameServerProvider and PeerGameProvider
+    public void updatePlayer (ClientObject caller, final int playerId, final GameSummary game)
     {
         if (!checkCallerAccess(caller, "updatePlayer(" + playerId + ")")) {
             return;
         }
 
         MemberObject memobj = MsoyServer.lookupMember(playerId);
-        if (memobj == null) {
-            // they went bye bye, oh well
-            log.info("Dropping update for departee [pid=" + playerId + ", game=" + game + "].");
-            return;
+        if (memobj != null) {
+            // set or clear their pending game
+            memobj.setGame(game);
+            if (game != null && game.avrGame) {
+                MsoyServer.memberMan.updateAVRGameId(memobj, game.gameId);
+            }
+
+            // update their occupant info if they're in a scene
+            MsoyServer.memberMan.updateOccupantInfo(memobj);
+
+            // update their published location in our peer object
+            MsoyServer.peerMan.updateMemberLocation(memobj);
+
+        } else {
+            // locate the peer that is hosting this member and forward the update there
+            MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+                public void invoke (Client client, NodeObject nodeobj) {
+                    MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+                    if (msnobj.memberLocs.containsKey(playerId)) {
+                        msnobj.peerGameService.updatePlayer(client, playerId, game);
+                    }
+                }
+            });
         }
-
-        // set or clear their pending game
-        memobj.setGame(game);
-        if (game != null && game.avrGame) {
-            updateAVRGameId(memobj, game.gameId);
-        }
-
-        // update their occupant info if they're in a scene
-        MsoyServer.memberMan.updateOccupantInfo(memobj);
-
-        // update their published location in our peer object
-        MsoyServer.peerMan.updateMemberLocation(memobj);
     }
 
     // from interface GameServerProvider

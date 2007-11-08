@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.peer.server;
 
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.peer.client.PeerGameService;
 import com.threerings.msoy.peer.data.PeerGameMarshaller;
 import com.threerings.presents.client.Client;
@@ -37,10 +38,24 @@ public class PeerGameDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case PeerGameMarshaller.LEAVE_AVRGAME:
+            ((PeerGameProvider)provider).leaveAVRGame(
+                source,
+                ((Integer)args[0]).intValue()
+            );
+            return;
+
         case PeerGameMarshaller.REPORT_FLOW_AWARD:
             ((PeerGameProvider)provider).reportFlowAward(
                 source,
                 ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue()
+            );
+            return;
+
+        case PeerGameMarshaller.UPDATE_PLAYER:
+            ((PeerGameProvider)provider).updatePlayer(
+                source,
+                ((Integer)args[0]).intValue(), (GameSummary)args[1]
             );
             return;
 

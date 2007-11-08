@@ -12,6 +12,7 @@ import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.samskivert.util.Interval;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.threerings.util.MessageBundle;
 
@@ -561,6 +562,30 @@ public class MemberManager
                 }
             });
         }
+    }
+
+    /**
+     * Update a member's persistent AVR membership in the database, and in dobj-land
+     * as well.
+     */
+    public void updateAVRGameId (final MemberObject member, final int gameId)
+    {
+        // assumes member != null i.e. we're on the right world server
+        MsoyServer.invoker.postUnit(new Invoker.Unit("updateAVRGameId") {
+            public boolean invoke () {
+                try {
+                    MsoyServer.memberRepo.setAVRGameId(member.getMemberId(), gameId);
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to update member's AVR game id [member=" +
+                            member + ", gameId=" + gameId + "]", pe);
+                    return false;
+                }
+                return true;
+            }
+            public void handleResult () {
+                member.setAvrGameId(gameId);
+            }
+        });
     }
 
     /**
