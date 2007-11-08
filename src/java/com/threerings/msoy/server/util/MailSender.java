@@ -3,9 +3,17 @@
 
 package com.threerings.msoy.server.util;
 
+import java.io.File;
 import java.io.StringWriter;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.activation.FileTypeMap;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.Invoker;
@@ -14,6 +22,7 @@ import com.samskivert.velocity.VelocityUtil;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
+import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.data.ServiceException;
 
@@ -81,14 +90,17 @@ public class MailSender
      *
      * @return null or a string indicating the problem in the event of failure.
      */
-    public static String sendEmail (String recip, String sender, String template,
-                                    VelocityContext ctx)
+    public static String sendEmail (
+        String recip, String sender, String template, VelocityContext ctx)
     {
+        MsoyBaseServer.refuseDObjThread(); // avoid unhappy accidents
+
         // skip emails to placeholder addresses
         if (isPlaceholderAddress(recip)) {
             return null; // feign success
         }
 
+        // create a velocity engine that we'll use to merge text into templates
         VelocityEngine ve;
         try {
             ve = VelocityUtil.createEngine();
@@ -97,19 +109,82 @@ public class MailSender
             return ServiceException.INTERNAL_ERROR;
         }
 
+        // create a mime message which will contain text and possibly HTML parts
+        MimeMultipart parts = new MimeMultipart("alternative");
+
         StringWriter sw = new StringWriter();
         try {
             // TODO: have a server language and select templates based on that
             ve.mergeTemplate("rsrc/email/" + template + ".tmpl", "UTF-8", ctx, sw);
+
             String body = sw.toString();
             int nidx = body.indexOf("\n"); // first line is the subject
-            MailUtil.deliverMail(recip, sender, body.substring(0, nidx), body.substring(nidx+1));
+            String subject = body.substring(0, nidx);
+            body = body.substring(nidx+1);
+            MimeBodyPart textPart = new MimeBodyPart();
+            textPart.setContent(body, "text/plain");
+            parts.addBodyPart(textPart);
+
+            // if there's a directory with the same name as the template, it's our HTML message
+            // (and optional images), so put that all together
+            File htmlDir = new File(ServerConfig.serverRoot, "rsrc/email/" + template);
+            if (htmlDir.isDirectory()) {
+                MimeMultipart htmlParts = new MimeMultipart("related");
+
+                sw = new StringWriter();
+                ve.mergeTemplate("rsrc/email/" + template + "/message.html", "UTF-8", ctx, sw);
+                MimeBodyPart htmlPart = new MimeBodyPart();
+                htmlPart.setContent(sw.toString(), "text/html");
+                htmlParts.addBodyPart(htmlPart);
+
+                // now add any images in the same directory
+                for (File file : htmlDir.listFiles()) {
+                    // we only add png and jpg images
+                    if (!file.getName().endsWith(".png") && !file.getName().endsWith(".jpg")) {
+                        continue;
+                    }
+
+                    MimeBodyPart ipart = new MimeBodyPart();
+                    FileDataSource source = new FileDataSource(file);
+                    source.setFileTypeMap(FT_MAP);
+                    ipart.setDataHandler(new DataHandler(source));
+                    ipart.setFileName(file.getName());
+                    ipart.setContentID("<" + file.getName() + ">");
+                    htmlParts.addBodyPart(ipart);
+                }
+
+                MimeBodyPart alternativePart = new MimeBodyPart();
+                alternativePart.setContent(htmlParts);
+                parts.addBodyPart(alternativePart);
+            }
+
+            // finally send that message off to the lucky recipient
+            MimeMessage message = MailUtil.createEmptyMessage();
+            message.setContent(parts);
+            MailUtil.deliverMail(new String[] { recip }, sender, subject, message);
             return null;
 
         } catch (Exception e) {
             return e.getMessage();
         }
     }
+
+    /** Used to map files to mimem types. */
+    protected static final FileTypeMap FT_MAP = new FileTypeMap() {
+        public String getContentType (File file) {
+            return getContentType(file.getName());
+        }
+        public String getContentType (String name) {
+            name = name.toLowerCase();
+            if (name.endsWith(".png")) {
+                return "image/png";
+            } else if (name.endsWith(".jpg")) {
+                return "image/jpeg";
+            } else {
+                return "application/octet-stream";
+            }
+        }
+    };
 
     /** Used by {@link #isPlaceholderAddress}. */
     protected static final Pattern[] PLACEHOLDER_PATTERNS = {
