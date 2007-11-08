@@ -95,7 +95,7 @@ public class MemberManager
 
         MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.BASE_GROUP);
 
-        // register and initialize our peer game service
+        // register and initialize our peer service
         ((MsoyNodeObject)MsoyServer.peerMan.getNodeObject()).setPeerMemberService(
             (PeerMemberMarshaller)MsoyServer.invmgr.registerDispatcher(
                 new PeerMemberDispatcher(this)));
