@@ -15,11 +15,13 @@ import com.samskivert.util.Interval;
 import com.samskivert.util.ResultListener;
 import com.threerings.util.MessageBundle;
 
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ConfirmAdapter;
 
@@ -35,6 +37,11 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.data.PeerMemberMarshaller;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.peer.server.PeerMemberDispatcher;
+import com.threerings.msoy.peer.server.PeerMemberProvider;
 import com.threerings.msoy.person.data.FriendInvitePayload;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -52,7 +59,7 @@ import static com.threerings.msoy.Log.log;
  * Manage msoy members.
  */
 public class MemberManager
-    implements MemberProvider
+    implements MemberProvider, PeerMemberProvider
 {
     /**
      * This can be called from any thread to queue an update of the member's current flow if they
@@ -85,7 +92,13 @@ public class MemberManager
     {
         _memberRepo = memberRepo;
         _groupRepo = groupRepo;
+
         MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.BASE_GROUP);
+
+        // register and initialize our peer game service
+        ((MsoyNodeObject)MsoyServer.peerMan.getNodeObject()).setPeerMemberService(
+            (PeerMemberMarshaller)MsoyServer.invmgr.registerDispatcher(
+                new PeerMemberDispatcher(this)));
 
         _ppSnapshot = new PopularPlacesSnapshot();
         _ppInvalidator = new Interval(MsoyServer.omgr) {
@@ -548,6 +561,46 @@ public class MemberManager
                 }
             });
         }
+    }
+
+    /**
+     * Notify us that this member has the given number of unread pieces of mail. If we're not
+     * hosting the member and somebody else is, forward it there.
+     */
+    public void reportUnreadMail (final int memberId, final int unreadCount)
+    {
+        MemberObject mobj = MsoyServer.lookupMember(memberId);
+        if (mobj != null) {
+            mobj.setHasNewMail(unreadCount > 0);
+
+        } else {
+            // locate the peer that is hosting this member and forward the request there
+            MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+                public void invoke (Client client, NodeObject nodeobj) {
+                    MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+                    if (msnobj.memberLocs.containsKey(memberId)) {
+                        log.info("Forwarding mail request to node: " + msnobj);
+                        msnobj.peerMemberService.reportUnreadMail(client, memberId, unreadCount);
+                    }
+                }
+            });
+        }
+    }
+
+    // from PeerMemberProvider
+    public void reportUnreadMail (ClientObject caller, int memberId, int unreadCount)
+    {
+        if (caller instanceof MemberObject) {
+            log.warning("Peer version of reportUnreadMail called by non-peer client.");
+            return;
+        }
+        MemberObject mobj = MsoyServer.lookupMember(memberId);
+        if (mobj == null) {
+            // they managed to log out
+            log.warning("Member vanished while reporting unread mail [memberId=" + memberId + "]");
+            return;
+        }
+        mobj.setHasNewMail(unreadCount > 0);
     }
 
     /**
