@@ -233,6 +233,8 @@ public abstract class ItemEditor extends BorderedDialog
     {
         createFurniUploader(tabs);
         createThumbUploader(tabs);
+        _thumbUploader.setHint(CShell.emsgs.editorThumbHint(
+            String.valueOf(MediaDesc.THUMBNAIL_WIDTH), String.valueOf(MediaDesc.THUMBNAIL_HEIGHT)));
     }
 
     /**

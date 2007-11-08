@@ -47,10 +47,16 @@ public class MediaUploader extends VerticalPanel
 
         add(_status = MsoyUI.createLabel(_title, "Status"));
 
-        add(_target = new HorizontalPanel());
+        HorizontalPanel hpan = new HorizontalPanel();
+        hpan.setVerticalAlignment(HorizontalPanel.ALIGN_BOTTOM);
+        hpan.setSpacing(10);
+        hpan.add(_target = new HorizontalPanel());
         _target.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
         _target.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         _target.setStyleName(_thumbnail ? "Thumbnail" : "Preview");
+        hpan.add(_hint = MsoyUI.createLabel("", "Tip"));
+        _hint.setWidth((2 * MediaDesc.THUMBNAIL_WIDTH) + "px");
+        add(hpan);
 
         _form = new FormPanel();
         _panel = new HorizontalPanel();
@@ -123,6 +129,14 @@ public class MediaUploader extends VerticalPanel
         }
     }
 
+    /**
+     * Set a hint to be displayed next to the media area.
+     */
+    public void setHint (String hint)
+    {
+        _hint.setText(hint);
+    }
+
     protected void uploadMedia ()
     {
         if (_upload.getFilename().length() == 0) {
@@ -138,6 +152,7 @@ public class MediaUploader extends VerticalPanel
 
     protected String _title;
     protected Label _status;
+    protected Label _hint;
     protected HorizontalPanel _target;
     protected HorizontalPanel _panel;
 
