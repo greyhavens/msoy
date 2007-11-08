@@ -48,6 +48,7 @@ import com.threerings.flash.ColorUtil;
 import com.threerings.whirled.spot.data.SpotCodes;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
+import com.threerings.msoy.chat.data.TimedMessage;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;
@@ -376,7 +377,7 @@ public class ChatOverlay
         var histSize :int = _history.size();
         var index :int = histSize - 1;
         for ( ; index >= 0; index--) {
-            msg = _history.get(index);
+            msg = _history.get(index).msg;
             _lastExpire = 0;
             if (now > getChatExpire(msg.timestamp, msg.message)) {
                 break;
@@ -390,7 +391,7 @@ public class ChatOverlay
 
         // now dispatch from that point
         for ( ; index < histSize; index++) {
-            msg = _history.get(index);
+            msg = _history.get(index).msg;
             if (shouldShowFromHistory(msg, index)) {
                 displayMessage(msg, false);
             }
@@ -965,7 +966,7 @@ public class ChatOverlay
      */
     protected function getHistorySubtitleSpacing (index :int) :int
     {
-        var msg :ChatMessage = _history.get(index);
+        var msg :ChatMessage = _history.get(index).msg;
         return getSubtitleSpacing(getType(msg, true));
     }
 
@@ -1237,7 +1238,7 @@ public class ChatOverlay
      */
     protected function createHistorySubtitle (index :int) :SubtitleGlyph
     {
-        var msg :ChatMessage = _history.get(index);
+        var msg :ChatMessage = _history.get(index).msg;
         return createSubtitle(msg, getType(msg, true), false);
     }
 
