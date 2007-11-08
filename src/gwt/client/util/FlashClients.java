@@ -34,7 +34,7 @@ public class FlashClients
         WidgetUtil.embedFlashObject(
             container, WidgetUtil.createFlashObjectDefinition(
                 "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-                "100%", getClientHeight(false), flashVars));
+                "100%", String.valueOf(CLIENT_HEIGHT), flashVars));
     }
 
     /**
@@ -60,25 +60,6 @@ public class FlashClients
                 600, 400, ""));
     }
 
-//     public static HTML createLobbyClient (int gameId, String token)
-//     {
-//         return WidgetUtil.createFlashContainer(
-//             "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-//             "100%", getClientHeight(false), "gameLobby=" + gameId + "&token=" + token);
-//     }
-
-//     public static HTML createNeighborhood (String hoodData)
-//     {
-//         return createNeighborhood(hoodData, "100%", getClientHeight(true));
-//     }
-
-//     public static HTML createNeighborhood (String hoodData, String width, String height)
-//     {
-//         return WidgetUtil.createFlashContainer(
-//             "hood", "/clients/" + DeploymentConfig.version + "/neighborhood.swf", width, height,
-//             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hoodData);
-//     }
-
     /**
      * Creates a neighborhood view definition, as an object definition string. The resulting
      * string can be turned into an embedded Flash object using a call to
@@ -88,7 +69,7 @@ public class FlashClients
     {
         return WidgetUtil.createFlashObjectDefinition(
             "hotspots", "/clients/" + DeploymentConfig.version + "/neighborhood.swf",
-            "100%", getClientHeight(true),
+            "100%", String.valueOf(CLIENT_HEIGHT - BLACKBAR_HEIGHT),
             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
     }
 
@@ -214,20 +195,6 @@ public class FlashClients
     public static void tutorialEvent (String eventName)
     {
         tutorialEventNative(eventName);
-    }
-
-    /**
-     * Computes the height to use for our Flash clients based on the smaller of our desired client
-     * height and the vertical room available minus the header and an annoying "we don't know how
-     * to implement scrollbars" bullshit browser factor.
-     */
-    protected static String getClientHeight (boolean subtractBlackBarHeight)
-    {
-        int height = Math.min(Window.getClientHeight()-HEADER_HEIGHT-1, CLIENT_HEIGHT);
-        if (subtractBlackBarHeight) {
-            height -= BLACKBAR_HEIGHT;
-        }
-        return String.valueOf(height);
     }
 
     /**
