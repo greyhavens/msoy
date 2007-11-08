@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -73,7 +72,7 @@ public class MailApplication extends DockPanel
     public void messageChanged (int ownerId, int folderId, int messageId)
     {
         if (folderId == _currentFolder && messageId == _currentMessage) {
-            loadMessage(true);
+            loadMessage();
         }
     }
 
@@ -85,16 +84,20 @@ public class MailApplication extends DockPanel
     public void show (int folderId, int headerOffset, int messageId)
     {
         clearErrors();
+        _messageContainer.setVisible(false);
+        if (_currentFolder == folderId && _currentOffset == headerOffset) {
+            if (_currentMessage == messageId) {
+                // there's nothing to do
+                return;
+            }
+            _currentMessage = messageId;
+        }
         _currentFolder = folderId;
         _currentOffset = headerOffset;
-        _currentMessage = messageId;
+        loadHeaders();
 
         if (messageId >= 0) {
-            // loadMessage will call loadFolders() and loadHeaders()
-            loadMessage(true);
-        } else {
-            loadHeaders();
-            _messageContainer.setVisible(false);
+            loadMessage();
         }
     }
 
@@ -338,7 +341,6 @@ public class MailApplication extends DockPanel
         return _messageContainer;
     }
 
-
     // fetch the folder list from the backend and trigger a display
     protected void loadFolders ()
     {
@@ -353,6 +355,20 @@ public class MailApplication extends DockPanel
         });
     }
 
+    protected boolean clearFolderUnread (int folderId)
+    {
+        for (int ii = 0; ii < _folders.size(); ii ++) {
+            MailFolder folder = (MailFolder) _folders.get(ii);
+            if (folder.folderId == folderId) {
+                folder.readCount ++;
+                folder.unreadCount --;
+                refreshFolderPanel();
+                return true;
+            }
+        }
+        return false;
+    }
+    
     // construct the list of folders, including unread count
     protected void refreshFolderPanel ()
     {
@@ -427,13 +443,25 @@ public class MailApplication extends DockPanel
         });
     }
 
-
+    protected boolean clearRowUnread (int messageId)
+    {
+        for (int row = 0; row < _headerRows.getRowCount(); row ++) {
+            MailHeaders headers = (MailHeaders) _headers.get(_currentOffset + row);
+            if (headers.messageId == messageId) {
+                headers.unread = false;
+                refreshHeaderPanel();
+                return true;
+            }
+        }
+        return false;
+    }
+    
     // construct the list of message headers
     protected void refreshHeaderPanel ()
     {
         // initialize our collection of currently checked messages
         _checkedMessages.clear();
-        // and keep track of the currently displayed checkboxes too
+        // and of header rows, too
         _checkboxes.clear();
 
         if (_headers.size() == 0) {
@@ -443,24 +471,24 @@ public class MailApplication extends DockPanel
         }
 
         // build the actual headers
-        FlexTable rows = new FlexTable();
-        rows.setCellPadding(0);
-        rows.setCellSpacing(0);
-        rows.setStyleName("Rows");
-        rows.setWidth("100%");
+        _headerRows = new FlexTable();
+        _headerRows.setCellPadding(0);
+        _headerRows.setCellSpacing(0);
+        _headerRows.setStyleName("Rows");
+        _headerRows.setWidth("100%");
 
         // now build row after row of data
         int lastMsg = Math.min(_headers.size(), _currentOffset + HEADER_ROWS);
         for (int msg = _currentOffset; msg < lastMsg; msg ++) {
             MailHeaders headers = (MailHeaders) _headers.get(msg);
-            int rowCnt = rows.getRowCount();
+            int rowCnt = _headerRows.getRowCount();
 
-            rows.getRowFormatter().setStyleName(rowCnt, "Row");
+            _headerRows.getRowFormatter().setStyleName(rowCnt, "Row");
             if (headers.unread) {
-                rows.getRowFormatter().addStyleName(rowCnt, "Row-unread");
+                _headerRows.getRowFormatter().addStyleName(rowCnt, "Row-unread");
             }
             if (_currentMessage == headers.messageId) {
-                rows.getRowFormatter().addStyleName(rowCnt, "Row-selected");
+                _headerRows.getRowFormatter().addStyleName(rowCnt, "Row-selected");
             }
 
             // first, a checkbox with a listener that maintains a set of checked messages
@@ -480,8 +508,8 @@ public class MailApplication extends DockPanel
                     }
                 }
             });
-            rows.setWidget(rowCnt, 0, cBox);
-            rows.getFlexCellFormatter().setWidth(rowCnt, 0, "20px");
+            _headerRows.setWidget(rowCnt, 0, cBox);
+            _headerRows.getFlexCellFormatter().setWidth(rowCnt, 0, "20px");
             _checkboxes.add(cBox);
 
             // next, the subject line, the only variable-width element in the row
@@ -490,27 +518,27 @@ public class MailApplication extends DockPanel
                     "f", "" + _currentFolder, "" + _currentOffset, "" + headers.messageId
                 }));
             link.setStyleName("Subject");
-            rows.setWidget(rowCnt, 1, link);
-            rows.getFlexCellFormatter().setWidth(rowCnt, 1, "100%");
+            _headerRows.setWidget(rowCnt, 1, link);
+            _headerRows.getFlexCellFormatter().setWidth(rowCnt, 1, "100%");
 
             // the name column
             MemberName who = _currentFolder == MailFolder.SENT_FOLDER_ID ?
                 headers.recipient : headers.sender;
             Widget sender = Application.memberViewLink(who.toString(), who.getMemberId());
             sender.setStyleName("Sender");
-            rows.setWidget(rowCnt, 2, sender);
-            rows.getFlexCellFormatter().setWidth(rowCnt, 2, "150px");
+            _headerRows.setWidget(rowCnt, 2, sender);
+            _headerRows.getFlexCellFormatter().setWidth(rowCnt, 2, "150px");
 
             // the date the message was sent, in fancy shorthand form
             Label date = new Label(formatDate(headers.sent));
             date.setStyleName("Date");
-            rows.setWidget(rowCnt, 3, date);
-            rows.getFlexCellFormatter().setWidth(rowCnt, 3, "80px");
+            _headerRows.setWidget(rowCnt, 3, date);
+            _headerRows.getFlexCellFormatter().setWidth(rowCnt, 3, "80px");
 
             rowCnt ++;
         }
         // when the UI is fully constructed, switch it in
-        _headerContainer.setWidget(rows);
+        _headerContainer.setWidget(_headerRows);
 
         boolean nextButton = _currentOffset + HEADER_ROWS < _headers.size();
         boolean prevButton = _currentOffset > 0;
@@ -549,8 +577,8 @@ public class MailApplication extends DockPanel
         }
     }
 
-    // fetch the entirity (body, specifically) of a given message from the backend
-    protected void loadMessage (final boolean cascadeUpdate)
+    // fetch the entirety (body, specifically) of a given message from the backend
+    protected void loadMessage ()
     {
         if (_currentFolder < 0) {
             addError("Internal error: asked to load a message, but no folder selected.");
@@ -565,12 +593,10 @@ public class MailApplication extends DockPanel
                 _payloadDisplay = _message.payload != null ?
                     MailPayloadDisplay.getDisplay(_message) : null;
                 refreshMessagePanel();
-                // unread status may have changed: update dependent folders
-                if (cascadeUpdate) {
-                    if (_currentFolder > 0) {
-                        loadHeaders();
-                    }
-                    loadFolders();
+
+                if (_message.wasUnread) {
+                    clearRowUnread(_currentMessage);
+                    clearFolderUnread(_currentFolder);
                 }
             }
             public void onFailure (Throwable caught) {
@@ -786,6 +812,8 @@ public class MailApplication extends DockPanel
     protected int _currentFolder;
     protected int _currentOffset;
     protected int _currentMessage;
+
+    protected FlexTable _headerRows;
 
     protected Button _massDelete;
 

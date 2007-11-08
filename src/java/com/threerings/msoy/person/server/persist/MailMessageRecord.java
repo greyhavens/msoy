@@ -212,6 +212,8 @@ public class MailMessageRecord extends PersistentRecord
         MailMessage message = new MailMessage();
         message.headers = toMailHeaders(memberRepo);
         message.bodyText = bodyText;
+        message.wasUnread = unread;
+        
         if (payloadType != 0) {
             if (payloadState != null) {
                 try {

@@ -21,6 +21,9 @@ final public class MailMessage
     
     /** The (optional) object part of the message body. */
     public MailPayload payload;
+
+    /** Was this message unread before it was read just now? */
+    public boolean wasUnread;
     
     // @Override
     public int hashCode ()
