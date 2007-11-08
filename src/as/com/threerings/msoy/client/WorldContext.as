@@ -126,6 +126,11 @@ public class WorldContext extends BaseContext
         return _controller;
     }
 
+    public function getMsoyChatDirector () :MsoyChatDirector
+    {
+        return _chatDir as MsoyChatDirector;
+    }
+
     // from BaseContext
     override public function setPlaceView (view :PlaceView) :void
     {

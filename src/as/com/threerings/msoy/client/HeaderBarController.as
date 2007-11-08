@@ -36,7 +36,7 @@ public class HeaderBarController extends Controller
         _ctx.getLocationDirector().addLocationObserver(
             new LocationAdapter(null, this.locationChanged, null));
         _headerBar.addEventListener(Event.ADDED_TO_STAGE, function (evt :Event) :void {
-            _ctx.getWorldClient().setWindowTitle(_headerBar.getChatTabs().getLocationName());
+            _ctx.getWorldClient().setWindowTitle(_headerBar.getChatTabs().locationName);
         });
     }
 

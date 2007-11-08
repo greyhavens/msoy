@@ -1,5 +1,4 @@
-// 
-// $Id$
+// // $Id$
 
 package com.threerings.msoy.chat.client {
 
@@ -8,20 +7,15 @@ import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
-import mx.events.ItemClickEvent;
+import mx.containers.HBox;
 
-import mx.collections.ArrayCollection;
-
-import flexlib.controls.SuperTabBar;
-import flexlib.controls.tabBarClasses.SuperTab;
-
-import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.ArrayUtil;
 
 import com.threerings.crowd.chat.data.ChatMessage;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 
-import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
@@ -31,61 +25,50 @@ import com.threerings.msoy.chat.data.ChatChannelObject;
 
 import com.threerings.msoy.game.client.GameChatDirector;
 
-/**
- * SuperTabBar doesn't leave any way of notifying its creator when a tab is closed, so since we
- * need that information, we have to extend it and do it ourselves.
- */
-public class ChatTabBar extends SuperTabBar
+public class ChatTabBar extends HBox
 {
     public function ChatTabBar (ctx :WorldContext)
     {
         super();
         _ctx = ctx;
-
-        closePolicy = SuperTab.CLOSE_NEVER;
-        dataProvider = _tabs;
-        dragEnabled = false;
-        dropEnabled = false;
-        addEventListener(ItemClickEvent.ITEM_CLICK, tabSelected);
-
-        // listen for preferences changes, update history mode
-        Prefs.config.addEventListener(ConfigValueSetEvent.TYPE, handlePrefsUpdated, false, 0, true);
-
-        // hackery to accept a click on the tabs, even when we do our no-tab-is-selected business
-        addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+        setStyle("horizontalGap", 0);
     }
 
-    /**
-     * Set the active tab one to the right, or wrap around to the first tab.
-     */
-    public function nextTab () :void
+    public function get selectedIndex () :int
     {
-        selectedIndex = (_selectedIndex + 1) % _tabs.length;
+        return _selectedIndex;
     }
 
-    /**
-     * Set the active tab one to the left, or wrap around to the last tab.
-     */
-    public function prevTab () :void
+    public function set selectedIndex (ii :int) :void
     {
-        selectedIndex = _selectedIndex <= 0 ? _tabs.length - 1 : _selectedIndex - 1;
+        var activeTab :ChatTab;
+        if (_selectedIndex != -1) {
+            activeTab = _tabs[_selectedIndex] as ChatTab;
+            activeTab.displayCloseBox(false);
+            activeTab.styleName = "unselectedChatTab";
+        }
+        
+        _selectedIndex = (ii + _tabs.length) % _tabs.length;
+        activeTab = _tabs[_selectedIndex] as ChatTab;
+        activeTab.styleName = "selectedChatTab";
+        activeTab.displayCloseBox(_selectedIndex != 0);
+        activeTab.displayChat();
     }
 
-    public function getLocationName () :String
+    public function get locationName () :String
     {
         if (_tabs.length == 0) {
             return null;
         }
-        return _tabs.getItemAt(0).label as String;
+        return (_tabs[0] as ChatTab).text;
     }
 
-    public function setLocationName (name :String) :void
+    public function set locationName (name :String) :void
     {
-        var tab :Object = { label: name, controller: null };
         if (_tabs.length == 0) {
-            _tabs.addItem(tab);
+            addAndSelect(new ChatTab(_ctx, this, null, null, name));
         } else {
-            _tabs.setItemAt(tab, 0);
+            (_tabs[0] as ChatTab).text = name;
         }
         selectedIndex = 0;
     }
@@ -109,11 +92,10 @@ public class ChatTabBar extends SuperTabBar
                 "Cannot display chat for an unknown channel without a history [" + channel + "]");
             return;
         }
-        createAndSelectChatTab(channel, history);
+        addAndSelect(new ChatTab(_ctx, this, channel, history));
     }
 
-    public function displayMessage (channel :ChatChannel, msg :ChatMessage, 
-        history :HistoryList) :void
+    public function addMessage (channel :ChatChannel, msg :ChatMessage) :void
     {
         var controller :ChatChannelController = getController(channel);
         if (controller != null) {
@@ -123,7 +105,8 @@ public class ChatTabBar extends SuperTabBar
 
         // if this is a message from a member, we can pop up the new display.
         if (channel.type == ChatChannel.MEMBER_CHANNEL) {
-            createAndSelectChatTab(channel, history);
+            var history :HistoryList = _ctx.getMsoyChatDirector().getHistory(channel);
+            addAndSelect(new ChatTab(_ctx, this, channel, history));
         } else {
             // else this arrived (most likely) after we already closed the channel tab.
             Log.getLog(this).info(
@@ -146,110 +129,13 @@ public class ChatTabBar extends SuperTabBar
 
     public function getCurrentController () :ChatChannelController
     {
-        return _currentController;
+        return (_tabs[_selectedIndex] as ChatTab).controller;
     }
 
-    /** 
-     * Thanks a lot flex team - you've got at least two classes in this hierarchy with
-     * _selectedIndex variables that mean exactly the same damn thing, and they're both private...
-     * so I have to make a third one.
-     */
-    override public function set selectedIndex (ii :int) :void
-    {
-        super.selectedIndex = ii;
-        if (_selectedIndex != ii) {
-            _selectedIndex = ii;
-            // when a tab is actually clicked on, one of our parent's _selectedIndex's is changed 
-            // in the background, without calling this setter, so this won't actually make 
-            // tabSelected get called twice.
-            tabSelected();
-        }
-    }
-
-    // yay for this not actually being private like they labeled it in the docs.
-    override public function onCloseTabClicked (event :Event) :void
-    {
-        var index :int = getChildIndex(event.currentTarget as DisplayObject);
-        var controller :ChatChannelController = 
-            _tabs.getItemAt(index).controller as ChatChannelController;
-
-        super.onCloseTabClicked(event);
-
-        controller.shutdown();
-        (_ctx.getChatDirector() as MsoyChatDirector).closeChannel(controller.getChannel());
-
-        // default back to room chat when a tab is closed
-        selectedIndex = 0;
-    }
-
-    protected function onMouseDown (event :MouseEvent) :void
-    {
-        // any click on the tab bar should ensure that the chat history is showing
-        if (!Prefs.getShowingChatHistory()) {
-            Prefs.setShowingChatHistory(true);
-        }
-    }
-
-    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
-    {
-        switch (event.name) {
-        case Prefs.CHAT_HISTORY:
-            if (Boolean(event.value)) {
-                if (_unhideIndex >= 0 && _unhideIndex < numChildren) {
-                    if (_selectedIndex == -1) {
-                        selectedIndex = _unhideIndex;
-                    }
-                    var tab :SuperTab = getChildAt(_unhideIndex) as SuperTab;
-                    tab.styleName = "msoyTabButton";
-                    _unhideIndex = -1;
-                }
-                setStyle("selectedTabTextStyleName", "selectedMsoyTabButton");
-            } else {
-                _unhideIndex = _selectedIndex;
-                // hackery to get the tab to look like it was unselected
-                selectedIndex = -1;
-                setStyle("selectedTabTextStyleName", "");
-                tab = getChildAt(_unhideIndex) as SuperTab;
-                if (tab != null) {
-                    tab.styleName = "msoyForcedUpTab";
-                }
-            }
-        }
-    }
-
-    protected function createAndSelectChatTab (channel :ChatChannel, history :HistoryList) :void 
-    {
-        var controller :ChatChannelController = new ChatChannelController(_ctx, channel, history);
-        _tabs.addItem({ label: channel.ident, controller: controller });
-        selectedIndex = _tabs.length - 1;
-        controller.init((_ctx.getChatDirector() as MsoyChatDirector).getChannelObject(channel));
-    }
-
-    protected function getController (channel :ChatChannel) :ChatChannelController
-    {
-        var index :int = getControllerIndex(channel);
-        if (index != -1) {
-            return _tabs.getItemAt(index).controller as ChatChannelController;
-        }
-        return null;
-    }
-
-    protected function getControllerIndex (channel :ChatChannel) :int
-    {
-        for (var ii :int = 0; ii < _tabs.length; ii++) {
-            var controller :ChatChannelController = 
-                _tabs.getItemAt(ii).controller as ChatChannelController;
-            if (controller != null && controller.getChannel().equals(channel)) {
-                return ii;
-            }
-        }
-        return -1;
-    }
-
-    protected function getDirectorHistory () :HistoryList
+    public function getLocationHistory () :HistoryList
     {
         if (_chatDirector == null) {
-            return (_ctx.getChatDirector() as MsoyChatDirector).getRoomHistory();
+            return _ctx.getMsoyChatDirector().getRoomHistory();
         } else if (_chatDirector is MsoyChatDirector) {
             return (_chatDirector as MsoyChatDirector).getRoomHistory();
         } else if (_chatDirector is GameChatDirector) {
@@ -258,47 +144,88 @@ public class ChatTabBar extends SuperTabBar
         return null;
     }
 
-    protected function tabSelected (event :ItemClickEvent = null) :void
+    protected function addAndSelect (tab :ChatTab) :void
     {
-        _selectedIndex = event == null ? _selectedIndex : event.index;
-        // this is a stupid hack, but it seems to be the only way to get "Super"TabNav to actually
-        // do what's its supposed to and allow some tabs to be closeable and others not.
-        closePolicy = _selectedIndex < 1 ? SuperTab.CLOSE_NEVER : SuperTab.CLOSE_SELECTED;
+        addChild(tab);
+        _tabs.push(tab);
 
-        // if our _selectedIndex is -1, we've just hidden the history, so no change to the display.
-        if (_selectedIndex != -1) {
-            // make sure our chat history is visible before we notify the overlay.
-            if (!Prefs.getShowingChatHistory()) {
-                Prefs.setShowingChatHistory(true);
-            }
+        tab.addEventListener(MouseEvent.CLICK, selectTab);
+        selectedIndex = _tabs.length - 1;
+    }
 
-            _currentController = 
-                _tabs.getItemAt(_selectedIndex).controller as ChatChannelController;
-            if (_currentController != null) {
-                _currentController.displayChat();
-            } else {
-                var overlay :ChatOverlay = _ctx.getTopPanel().getChatOverlay();
-                if (overlay != null) {
-                    overlay.setHistory(getDirectorHistory());
-                }
-            }
-        } else {
-            // if the history is hidden, make sure chat goes to the room.
-            _currentController = null;
+    protected function selectTab (event :MouseEvent) :void
+    {
+        var tab :ChatTab = findChatTab(event.target as DisplayObject);
+        if (tab == null) {
+            Log.getLog(this).debug("wtf @ not chat tab >< [" + event.target + "]");
+            return;
+        }
+
+        var ii :int = ArrayUtil.indexOf(_tabs, tab);
+        if (ii >= 0) {
+            selectedIndex = ii;
         }
     }
 
-    protected var _tabs :ArrayCollection = new ArrayCollection;
+    protected function removeTab (event :MouseEvent) :void
+    {
+        var tab :ChatTab = findChatTab(event.target as DisplayObject);
+        if (tab == null) {
+            return;
+        }
+        tab.controller.shutdown();
+        _ctx.getMsoyChatDirector().closeChannel(tab.controller.getChannel());
 
-    // The value returned from get selectedIndex() does not always reflect the value that was 
-    // just immeadiately set via set selectedIndex(), so lets keep track of what we really want.
+        var index :int = ArrayUtil.indexOf(_tabs, event.target);
+        if (index < 0) {
+            return;
+        }
+        for (var ii :int = index; ii < _tabs.length; ii++) {
+            (_tabs[ii] as ChatTab).x -= tab.width;
+        }
+        removeChild(tab);
+        _tabs.splice(index, 1);
+
+        // default back to location chat when a tab is closed
+        selectedIndex = 0;
+    }
+
+    protected function findChatTab (dispObj :DisplayObject) :ChatTab
+    {
+        // head up the display list 3 time at most
+        for (var ii :int = 0; ii < 3; ii++) {
+            if (dispObj is ChatTab) {
+                return dispObj as ChatTab;
+            } else if (dispObj == null) {
+                return null;
+            }
+            dispObj = dispObj.parent;
+        }
+        return null;
+    }
+
+    protected function getController (channel :ChatChannel) :ChatChannelController
+    {
+        var index :int = getControllerIndex(channel);
+        if (index != -1) {
+            return (_tabs[index] as ChatTab).controller;
+        }
+        return null;
+    }
+
+    protected function getControllerIndex (channel :ChatChannel) :int
+    {
+        for (var ii :int = 0; ii < _tabs.length; ii++) {
+            var controller :ChatChannelController = (_tabs[ii] as ChatTab).controller;
+            if (controller != null && controller.getChannel().equals(channel)) {
+                return ii;
+            }
+        }
+        return -1;
+    }
+
+    protected var _tabs :Array = [];
     protected var _selectedIndex :int = -1;
-
-    // The tab to re-enable when chat is un-hidden, if it was done some other way from clicking
-    // directly on a tab.
-    protected var _unhideIndex :int = -1;
-
-    protected var _currentController :ChatChannelController;
     protected var _ctx :WorldContext;
     protected var _chatDirector :ChatDirector;
 }

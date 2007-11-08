@@ -226,6 +226,18 @@ public class MsoyChatDirector extends ChatDirector
         return ChatCodes.SUCCESS;
     }
 
+    /**
+     * Returns the chat history for the specified channel, creating it if necessary.
+     */
+    public function getHistory (channel :ChatChannel) :HistoryList
+    {
+        var history :HistoryList = (_histories.get(channel) as HistoryList);
+        if (history == null) {
+            _histories.put(channel, history = new HistoryList());
+        }
+        return history;
+    }
+
     // from ChatDirector
     override protected function dispatchPreparedMessage (msg :ChatMessage) :void
     {
@@ -234,7 +246,7 @@ public class MsoyChatDirector extends ChatDirector
         if (channel != null) {
             var history :HistoryList = getHistory(channel);
             history.addMessage(msg);
-            _chatTabs.displayMessage(channel, msg, history);
+            _chatTabs.addMessage(channel, msg);
 
         } else {
             // add this message to the room chat history
@@ -301,18 +313,6 @@ public class MsoyChatDirector extends ChatDirector
             return handler.channel;
         }
         return null;
-    }
-
-    /**
-     * Returns the chat history for the specified channel, creating it if necessary.
-     */
-    protected function getHistory (channel :ChatChannel) :HistoryList
-    {
-        var history :HistoryList = (_histories.get(channel) as HistoryList);
-        if (history == null) {
-            _histories.put(channel, history = new HistoryList());
-        }
-        return history;
     }
 
     protected var _wctx :WorldContext;

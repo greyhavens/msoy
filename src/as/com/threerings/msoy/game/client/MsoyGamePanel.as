@@ -19,7 +19,6 @@ import com.whirled.client.WhirledGamePanel;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.HistoryList;
-import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.game.data.MsoyGameObject;
 
@@ -29,6 +28,7 @@ public class MsoyGamePanel extends EZGamePanel
     public function MsoyGamePanel (ctx :GameContext, ctrl :MsoyGameController)
     {
         super(ctx, ctrl);
+        _gctx = ctx;
 
         _playerList = new PlayerList();
     }
@@ -56,8 +56,7 @@ public class MsoyGamePanel extends EZGamePanel
 
         super.willEnterPlace(plobj);
 
-        ((_ctx as GameContext).getWorldContext().getChatDirector() as MsoyChatDirector).
-            displayGameChat(_ctx.getChatDirector(), _playerList);
+        _gctx.getMsoyChatDirector().displayGameChat(_gctx.getChatDirector(), _playerList);
     }
 
     // from EZGamePanel
@@ -67,9 +66,8 @@ public class MsoyGamePanel extends EZGamePanel
 
         super.didLeavePlace(plobj);
 
-        ((_ctx as GameContext).getWorldContext().getChatDirector() as MsoyChatDirector).
-            clearGameChat();
-        (_ctx as GameContext).getTopPanel().getControlBar().setChatEnabled(true);
+        _gctx.getMsoyChatDirector().clearGameChat();
+        _gctx.getTopPanel().getControlBar().setChatEnabled(true);
     }
 
     // from WhirledGamePanel
@@ -81,11 +79,14 @@ public class MsoyGamePanel extends EZGamePanel
     // from EZGamePanel
     override protected function createBackend () :GameControlBackend
     {
-        return new MsoyGameControlBackend(
-            (_ctx as GameContext), (_ezObj as MsoyGameObject), (_ctrl as MsoyGameController));
+        return new MsoyGameControlBackend(_gctx, _ezObj as MsoyGameObject, 
+                                          _ctrl as MsoyGameController);
     }
 
     /** The standard list of players. */
     protected var _playerList :PlayerList;
+
+    /** convenience reference to our game context */
+    protected var _gctx :GameContext;
 }
 }

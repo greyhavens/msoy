@@ -190,7 +190,7 @@ public class MsoyController extends Controller
         if (!Prefs.getShowingChatHistory()) {
             Prefs.setShowingChatHistory(true);
         }
-        (_ctx.getChatDirector() as MsoyChatDirector).openChannel(name);
+        _ctx.getMsoyChatDirector().openChannel(name);
     }
 
     /**
@@ -869,7 +869,7 @@ public class MsoyController extends Controller
      */
     protected function checkChatChannelOpen (name :Name, menuItem :Object) :void
     {
-        if ((_ctx.getChatDirector() as MsoyChatDirector).hasOpenChannel(name)) {
+        if (_ctx.getMsoyChatDirector().hasOpenChannel(name)) {
             // TODO: use an icon or something instead?
             menuItem["type"] = "check";
             menuItem["toggled"] = true;
@@ -1012,12 +1012,12 @@ public class MsoyController extends Controller
             break;
         case Keyboard.LEFT:
             if (event.ctrlKey) {
-                _ctx.getTopPanel().getHeaderBar().getChatTabs().prevTab();
+                _ctx.getTopPanel().getHeaderBar().getChatTabs().selectedIndex--;
             }
             break;
         case Keyboard.RIGHT:
             if (event.ctrlKey) {
-                _ctx.getTopPanel().getHeaderBar().getChatTabs().nextTab();
+                _ctx.getTopPanel().getHeaderBar().getChatTabs().selectedIndex++;
             }
         }
 

@@ -52,7 +52,7 @@ public class GameContext
 
     public function getMsoyChatDirector () :MsoyChatDirector
     {
-        return _wctx.getChatDirector() as MsoyChatDirector;
+        return _wctx.getMsoyChatDirector();
     }
 
     // from PresentsContext

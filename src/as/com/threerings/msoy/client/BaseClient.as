@@ -248,7 +248,7 @@ public /*abstract*/ class BaseClient extends Client
         } else {
             throw new Error("Unknown channel type: " + type);
         }
-        (_ctx.getChatDirector() as MsoyChatDirector).openChannel(nameObj);
+        (_ctx as WorldContext).getMsoyChatDirector().openChannel(nameObj);
     }
 
     /**

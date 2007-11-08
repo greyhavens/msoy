@@ -62,9 +62,9 @@ public class HeaderBar extends HBox
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
 
         if (_tabsContainer.parent == this) {
-            _tabs.setLocationName(loc);
+            _tabs.locationName = loc;
         } else {
-            _tabs.setLocationName(Msgs.CHAT.get("l.game_channel"));
+            _tabs.locationName = Msgs.CHAT.get("l.game_channel");
         }
     }
 
@@ -134,7 +134,7 @@ public class HeaderBar extends HBox
         if (_tabsContainer.parent != null) {
             _tabsContainer.parent.removeChild(_tabsContainer);
         }
-        _tabs.setLocationName(_loc.text);
+        _tabs.locationName = _loc.text;
         if (_loc.parent == this) {
             _loc.visible = _loc.includeInLayout = false;
         }

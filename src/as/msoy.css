@@ -64,62 +64,24 @@ TabNavigator, TabBar {
           scaleGridLeft="3", scaleGridRight="9");
 }
 
-.msoyForcedUpTab {
+.unselectedChatTab {
   color: #b4cbd7;
   fontFamily: Arial;
-  textRollOverColor: #b4cbd7;
-  overSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
+  fontWeight: bold;
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
           scaleGridTop="3", scaleGridBottom="17",
           scaleGridLeft="3", scaleGridRight="9");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-  upSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
+  closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
 }
 
-.selectedMsoyTabButton {
+.selectedChatTab {
   color: black;
-  textRollOverColor: black;
-}
-
-SuperTabNavigator { 
-  leftButtonStyleName: "msoyLeftArrowTabButton";
-  rightButtonStyleName: "msoyRightArrowTabButton";
-  popUpButtonPolicy: off;
-  buttonWidth: 10;
-}
-
-.msoyLeftArrowTabButton {
-  upSkin: Embed(source="../../rsrc/media/skins/tab/tab_left.png");
-  overSkin: Embed(source="../../rsrc/media/skins/tab/tab_left.png");
-  downSkin: Embed(source="../../rsrc/media/skins/tab/tab_left.png");
-}
-
-.msoyRightArrowTabButton {
-  upSkin: Embed(source="../../rsrc/media/skins/tab/tab_right.png");
-  overSkin: Embed(source="../../rsrc/media/skins/tab/tab_right.png");
-  downSkin: Embed(source="../../rsrc/media/skins/tab/tab_right.png");
-}
-
-SuperTab { 
-  tabCloseButtonStyleName: "msoyCloseTabButton";
-}
-
-.msoyCloseTabButton {
-  upSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
-  overSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
-  downSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
-}
-
-.channelChatTab {
-  borderStyle: none;
-  borderThickness: 0;
-  backgroundColor: #FFFFFF;
+  fontFamily: Arial;
+  fontWeight: bold;
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
+          scaleGridTop="3", scaleGridBottom="17",
+          scaleGridLeft="3", scaleGridRight="9");
+  closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
 }
 
 Accordion {

@@ -43,6 +43,8 @@ public class ChatChannelController
         _history = history;
 
         _departing = new ExpiringSet(3.0, handleDeparted);
+
+        init(_ctx.getMsoyChatDirector().getChannelObject(channel));
     }
 
     public function init (ccobj :ChatChannelObject, serverSwitch :Boolean = false) :void

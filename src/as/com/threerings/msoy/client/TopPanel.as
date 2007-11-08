@@ -58,7 +58,7 @@ public class TopPanel extends Canvas
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
         var chatTabs :ChatTabBar = new ChatTabBar(_ctx);
-        (_ctx.getChatDirector() as MsoyChatDirector).setChatTabs(chatTabs);
+        _ctx.getMsoyChatDirector().setChatTabs(chatTabs);
 
         if (!_ctx.getWorldClient().isFeaturedPlaceView()) {
             _headerBar = new HeaderBar(_ctx, chatTabs);
