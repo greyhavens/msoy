@@ -98,7 +98,7 @@ public class ChatTabBar extends HBox
     {
         var controller :ChatChannelController = getController(channel);
         if (controller != null) {
-            controller.displayMessage(msg);
+            controller.addMessage(msg);
             return;
         }
 
@@ -146,6 +146,8 @@ public class ChatTabBar extends HBox
     protected function addAndSelect (tab :ChatTab) :void
     {
         addChild(tab);
+        tab.addEventListener(ChatTab.TAB_CLICK, selectTab);
+        tab.addEventListener(ChatTab.TAB_CLOSE_CLICK, removeTab);
         _tabs.push(tab);
 
         // init the controller with its previously set channel
@@ -154,8 +156,6 @@ public class ChatTabBar extends HBox
             tab.controller.init(_ctx.getMsoyChatDirector().getChannelObject(channel));
         }
 
-        tab.addEventListener(ChatTab.TAB_CLICK, selectTab);
-        tab.addEventListener(ChatTab.TAB_CLOSE_CLICK, removeTab);
         selectedIndex = _tabs.length - 1;
     }
 

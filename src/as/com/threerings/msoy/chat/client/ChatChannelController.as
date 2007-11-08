@@ -152,16 +152,11 @@ public class ChatChannelController
         }
     }
 
-    public function displayMessage (msg :ChatMessage) :void
+    public function addMessage (msg :ChatMessage) :void
     {
-        var overlay :ChatOverlay = _ctx.getTopPanel().getChatOverlay();
-        if (overlay == null) {
-            return;
-        }
-
-        if (overlay.getHistory() == _history) {
-            overlay.displayMessage(msg, false);
-        }
+        // if our history is currently being displayed somewhere, it will take care of getting
+        // this message to that display.
+        _history.addMessage(msg);
     }
 
     protected function displayFeedback (message :String) :void

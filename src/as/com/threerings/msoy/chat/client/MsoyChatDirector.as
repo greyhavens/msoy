@@ -244,8 +244,6 @@ public class MsoyChatDirector extends ChatDirector
         // determine which channel this message is targeted to.
         var channel :ChatChannel = determineChannel(msg);
         if (channel != null) {
-            var history :HistoryList = getHistory(channel);
-            history.addMessage(msg);
             _chatTabs.addMessage(channel, msg);
 
         } else {
