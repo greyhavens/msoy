@@ -192,7 +192,13 @@ public class Frame
      */
     public static void closeContent ()
     {
-        if (_closeToken != null) {
+        if (_closeToken == null) {
+            return;
+        }
+
+        if (_maximizeContent.isAttached()) {
+            History.newItem(_closeToken);
+        } else {
             new SlideContentOff().start(new Command() {
                 public void execute () {
                     History.newItem(_closeToken);
