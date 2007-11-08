@@ -23,6 +23,10 @@ public class EntranceSprite extends FurniSprite
 
         setMediaClass(MEDIA_CLASS);
         setLocation(location);
+
+        // since this is an embedded image, we'll never get the COMPLETED event -
+        // so let's just clean up right here.
+        stoppedLoading();
     }
 }
 }
