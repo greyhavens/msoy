@@ -64,24 +64,24 @@ TabNavigator, TabBar {
           scaleGridLeft="3", scaleGridRight="9");
 }
 
-.unselectedChatTab {
-  color: #b4cbd7;
+.unselectedChatTab, .selectedChatTab {
   fontFamily: Arial;
   fontWeight: bold;
+  closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
+}
+
+.unselectedChatTab {
+  color: #b4cbd7;
   buttonSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
           scaleGridTop="3", scaleGridBottom="17",
           scaleGridLeft="3", scaleGridRight="9");
-  closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
 }
 
 .selectedChatTab {
   color: black;
-  fontFamily: Arial;
-  fontWeight: bold;
   buttonSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
           scaleGridTop="3", scaleGridBottom="17",
           scaleGridLeft="3", scaleGridRight="9");
-  closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
 }
 
 Accordion {

@@ -5,6 +5,9 @@ package com.threerings.msoy.chat.client {
 
 import flash.display.DisplayObject;
 
+import flash.events.Event;
+import flash.events.MouseEvent;
+
 import mx.containers.Canvas;
 import mx.containers.HBox;
 
@@ -18,9 +21,17 @@ import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.WorldContext;
 
 [Style(name="buttonSkin", type="Class", inherit="no")]
+[Event(name="tabClick", type="flash.events.Event")]
+[Event(name="tabCloseClick", type="flash.events.Event")]
 
 public class ChatTab extends HBox
 {
+    /** Event that gets fired when this tab is clicked */
+    public static const TAB_CLICK :String = "tabClick";
+
+    /** Event that gets fired when this tab's close box is clicked */
+    public static const TAB_CLOSE_CLICK :String = "tabCloseClick"
+    
     public function ChatTab (ctx :WorldContext, bar :ChatTabBar, channel :ChatChannel, 
         history :HistoryList, roomName :String = null)
     {
@@ -47,6 +58,9 @@ public class ChatTab extends HBox
         setStyle("paddingLeft", PADDING);
         setStyle("verticalAlign", "middle");
         setStyle("horizontalGap", 3);
+
+        addEventListener(MouseEvent.CLICK, tabClicked);
+        _closeButton.addEventListener(MouseEvent.CLICK, closeClicked);
     }
 
     public function set text (label :String) :void
@@ -85,6 +99,19 @@ public class ChatTab extends HBox
         }
     }
 
+    protected function tabClicked (event :MouseEvent) :void
+    {
+        dispatchEvent(new Event(TAB_CLICK));
+    }
+
+    protected function closeClicked (event :MouseEvent) :void
+    {
+        // prevent tabClicked from getting called.
+        event.stopImmediatePropagation();
+
+        dispatchEvent(new Event(TAB_CLOSE_CLICK));
+    }
+
     override protected function updateDisplayList (uw :Number, uh :Number) :void
     {
         super.updateDisplayList(unscaledWidth, unscaledHeight);
@@ -97,6 +124,7 @@ public class ChatTab extends HBox
     {
         var newSkin :Class = getStyle(BUTTON_SKIN) as Class;
         if (newSkin == _buttonSkinClass) {
+            (_currentSkin as IFlexDisplayObject).setActualSize(uw, uh);
             return;
         }
 

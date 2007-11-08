@@ -5,7 +5,6 @@ package com.threerings.msoy.chat.client {
 import flash.display.DisplayObject;
 
 import flash.events.Event;
-import flash.events.MouseEvent;
 
 import mx.containers.HBox;
 
@@ -149,15 +148,15 @@ public class ChatTabBar extends HBox
         addChild(tab);
         _tabs.push(tab);
 
-        tab.addEventListener(MouseEvent.CLICK, selectTab);
+        tab.addEventListener(ChatTab.TAB_CLICK, selectTab);
+        tab.addEventListener(ChatTab.TAB_CLOSE_CLICK, removeTab);
         selectedIndex = _tabs.length - 1;
     }
 
-    protected function selectTab (event :MouseEvent) :void
+    protected function selectTab (event :Event) :void
     {
-        var tab :ChatTab = findChatTab(event.target as DisplayObject);
+        var tab :ChatTab = event.target as ChatTab;
         if (tab == null) {
-            Log.getLog(this).debug("wtf @ not chat tab >< [" + event.target + "]");
             return;
         }
 
@@ -167,9 +166,9 @@ public class ChatTabBar extends HBox
         }
     }
 
-    protected function removeTab (event :MouseEvent) :void
+    protected function removeTab (event :Event) :void
     {
-        var tab :ChatTab = findChatTab(event.target as DisplayObject);
+        var tab :ChatTab = event.target as ChatTab;
         if (tab == null) {
             return;
         }
@@ -185,23 +184,13 @@ public class ChatTabBar extends HBox
         }
         removeChild(tab);
         _tabs.splice(index, 1);
+        if (_selectedIndex == index) {
+            // if this was the selected tab, we no longer have a selected tab.
+            _selectedIndex = -1;
+        }
 
         // default back to location chat when a tab is closed
         selectedIndex = 0;
-    }
-
-    protected function findChatTab (dispObj :DisplayObject) :ChatTab
-    {
-        // head up the display list 3 time at most
-        for (var ii :int = 0; ii < 3; ii++) {
-            if (dispObj is ChatTab) {
-                return dispObj as ChatTab;
-            } else if (dispObj == null) {
-                return null;
-            }
-            dispObj = dispObj.parent;
-        }
-        return null;
     }
 
     protected function getController (channel :ChatChannel) :ChatChannelController
