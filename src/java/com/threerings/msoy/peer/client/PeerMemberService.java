@@ -14,5 +14,5 @@ public interface PeerMemberService extends InvocationService
     /**
      * Reports the number of unread mail messages the member has.
      */
-    public void reportUnreadMail (Client client, int memberId, int unreadCount);
+    public void reportUnreadMail (Client client, int memberId, boolean unread);
 }

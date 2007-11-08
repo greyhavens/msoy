@@ -592,11 +592,11 @@ public class MemberManager
      * Notify us that this member has the given number of unread pieces of mail. If we're not
      * hosting the member and somebody else is, forward it there.
      */
-    public void reportUnreadMail (final int memberId, final int unreadCount)
+    public void reportUnreadMail (final int memberId, final boolean unread)
     {
         MemberObject mobj = MsoyServer.lookupMember(memberId);
         if (mobj != null) {
-            mobj.setHasNewMail(unreadCount > 0);
+            mobj.setHasNewMail(unread);
 
         } else {
             // locate the peer that is hosting this member and forward the request there
@@ -604,8 +604,7 @@ public class MemberManager
                 public void invoke (Client client, NodeObject nodeobj) {
                     MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
                     if (msnobj.memberLocs.containsKey(memberId)) {
-                        log.info("Forwarding mail request to node: " + msnobj);
-                        msnobj.peerMemberService.reportUnreadMail(client, memberId, unreadCount);
+                        msnobj.peerMemberService.reportUnreadMail(client, memberId, unread);
                     }
                 }
             });
@@ -613,7 +612,7 @@ public class MemberManager
     }
 
     // from PeerMemberProvider
-    public void reportUnreadMail (ClientObject caller, int memberId, int unreadCount)
+    public void reportUnreadMail (ClientObject caller, int memberId, boolean unread)
     {
         if (caller instanceof MemberObject) {
             log.warning("Peer version of reportUnreadMail called by non-peer client.");
@@ -625,7 +624,7 @@ public class MemberManager
             log.warning("Member vanished while reporting unread mail [memberId=" + memberId + "]");
             return;
         }
-        mobj.setHasNewMail(unreadCount > 0);
+        mobj.setHasNewMail(unread);
     }
 
     /**

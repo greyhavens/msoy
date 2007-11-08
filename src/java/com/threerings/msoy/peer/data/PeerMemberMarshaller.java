@@ -22,10 +22,10 @@ public class PeerMemberMarshaller extends InvocationMarshaller
     public static final int REPORT_UNREAD_MAIL = 1;
 
     // from interface PeerMemberService
-    public void reportUnreadMail (Client arg1, int arg2, int arg3)
+    public void reportUnreadMail (Client arg1, int arg2, boolean arg3)
     {
         sendRequest(arg1, REPORT_UNREAD_MAIL, new Object[] {
-            Integer.valueOf(arg2), Integer.valueOf(arg3)
+            Integer.valueOf(arg2), Boolean.valueOf(arg3)
         });
     }
 }

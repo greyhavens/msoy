@@ -165,12 +165,9 @@ public class MailManager
             }
 
             public void handleSuccess () {
-                // if all went well and the recipient is online, notify them they have new mail
-                MemberObject mObj = MsoyServer.lookupMember(recipientId);
-                if (mObj != null) {
-                    // TODO: find them on another server if they're on one
-                    mObj.setHasNewMail(true);
-                }
+                // if all went well, attempt to notify the recipient they have new mail
+                MsoyServer.memberMan.reportUnreadMail(recipientId, true);
+
                 super.handleSuccess();
 
                 // finally send a real email to the recipient
