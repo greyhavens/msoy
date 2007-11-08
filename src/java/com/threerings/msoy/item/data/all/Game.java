@@ -70,8 +70,7 @@ public class Game extends Item
     public boolean isInWorld ()
     {
         // TODO: this will change
-        return (0 <= config.indexOf("<toggle ident=\"avrg\" start=\"true\"/>")) ||
-            (0 <= config.indexOf("<toggle ident=\"chiyogami\" start=\"true\"/>"));
+        return 0 <= config.indexOf("<avrg/>");
     }
 
     // @Override
