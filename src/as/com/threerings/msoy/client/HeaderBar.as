@@ -162,21 +162,6 @@ public class HeaderBar extends HBox
         channelBtn.styleName = "headerBarButtonChannel";
         _tabsContainer.addChild(channelBtn);
 
-//        var canvas :ButtonScrollingCanvas = new ButtonScrollingCanvas();
-//        canvas.verticalScrollPolicy = ScrollPolicy.OFF;
-//        canvas.buttonWidth = 5;
-//        canvas.setStyle("borderStyle", "none");
-//        canvas.setStyle("backgroundAlpha", 0);
-//        canvas.setStyle("paddingTop", 0);
-//        canvas.setStyle("paddingBottom", 0);
-//        canvas.startScrollingEvent = MouseEvent.MOUSE_DOWN;
-//        canvas.stopScrollingEvent = MouseEvent.MOUSE_UP;
-//        canvas.scrollSpeed = 100;
-//        canvas.minWidth = 100;
-//        //canvas.percentWidth = 100; // make sure the parent container's width is constrained.
-//        canvas.height = HEIGHT;
-//        canvas.addChild(_tabs);
-//        _tabsContainer.addChild(canvas);
         _tabsContainer.addChild(_tabs);
 
         _owner = new HBox();
@@ -215,32 +200,6 @@ public class HeaderBar extends HBox
         closeBtn.styleName = "closeButton";
         closeBox.addChild(closeBtn);
     }
-
-//    override protected function updateDisplayList (unscaledWidth :Number, 
-//        unscaledHeight :Number) :void
-//    {
-//        super.updateDisplayList(unscaledWidth, unscaledHeight);
-//
-//        if (_tabsContainer.parent != this) {
-//            if (isNaN(_tabs.percentWidth)) {
-//                _tabs.percentWidth = 100;
-//            }
-//            return;
-//        }
-//
-//        if (isNaN(_tabs.percentWidth) && _spacer.width == 0) {
-//            Log.getLog(this).debug("stretching tabs container");
-//            _tabs.percentWidth = 100;
-//            _tabsContainer.percentWidth = 100;
-//            _spacer.percentWidth = NaN;
-//        } else if (isNaN(_spacer.percentWidth) && 
-//                _tabsContainer.width > _tabsContainer.getExplicitOrMeasuredWidth()) {
-//            Log.getLog(this).debug("stretching spacer");
-//            _tabs.percentWidth = NaN;
-//            _tabsContainer.percentWidth = NaN;
-//            _spacer.percentWidth = 100; 
-//        }
-//    }
 
     protected static const WHIRLED_LOGO_WIDTH :int = 124;
 

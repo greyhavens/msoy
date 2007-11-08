@@ -9,6 +9,7 @@ import flash.geom.Rectangle;
 
 import mx.containers.HBox;
 
+import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
 import com.threerings.crowd.chat.client.ChatDirector;
@@ -41,6 +42,7 @@ public class GameChatContainer extends LayeredContainer
 
         var tabs :UIComponent = _ctx.getTopPanel().getHeaderBar().removeTabsContainer();
         _tabBar = new HBox();
+        _tabBar.horizontalScrollPolicy = ScrollPolicy.OFF;
         _tabBar.y = _playerList.height
         _tabBar.height = _ctx.getTopPanel().getHeaderBar().height;
         _tabBar.width = width;
