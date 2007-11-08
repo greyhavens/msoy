@@ -310,7 +310,7 @@ public class Frame
         }
 
         protected Command _onComplete;
-        protected static final int FRAMES = 10;
+        protected static final int FRAMES = 6;
     }
 
     protected static class SlideContentOff extends Slider
