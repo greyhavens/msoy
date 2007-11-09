@@ -3,22 +3,29 @@
 
 package com.threerings.msoy.server.util;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.URL;
+
+import java.util.Set;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.activation.FileTypeMap;
+import javax.activation.URLDataSource;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
+import com.google.common.collect.Sets;
 
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.Invoker;
 import com.samskivert.velocity.VelocityUtil;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
@@ -125,31 +132,43 @@ public class MailSender
             textPart.setContent(body, "text/plain");
             parts.addBodyPart(textPart);
 
-            // if there's a directory with the same name as the template, it's our HTML message
-            // (and optional images), so put that all together
-            File htmlDir = new File(ServerConfig.serverRoot, "rsrc/email/" + template);
-            if (htmlDir.isDirectory()) {
+            // check for an HTML message template as well
+            String htmlPath = "rsrc/email/" + template + "/message.html", htmlData = null;
+            try {
+                InputStream htmlIn = MailSender.class.getClassLoader().getResourceAsStream(htmlPath);
+                if (htmlIn != null) {
+                    htmlData = IOUtils.toString(htmlIn);
+                } else {
+                    log.info("Found no HTML template [path=" + htmlPath + "].");
+                }
+            } catch (IOException ioe) {
+                log.warning("Failed to load HTML template [path=" + htmlPath +
+                            ", error=" + ioe + "].");
+            }
+
+            if (htmlData != null) {
                 MimeMultipart htmlParts = new MimeMultipart("related");
 
                 sw = new StringWriter();
-                ve.mergeTemplate("rsrc/email/" + template + "/message.html", "UTF-8", ctx, sw);
+                ve.mergeTemplate(htmlPath, "UTF-8", ctx, sw);
                 MimeBodyPart htmlPart = new MimeBodyPart();
                 htmlPart.setContent(sw.toString(), "text/html");
                 htmlParts.addBodyPart(htmlPart);
 
-                // now add any images in the same directory
-                for (File file : htmlDir.listFiles()) {
-                    // we only add png and jpg images
-                    if (!file.getName().endsWith(".png") && !file.getName().endsWith(".jpg")) {
-                        continue;
-                    }
+                // now add any images referenced in the HTML message
+                Set<String> images = Sets.newHashSet();
+                Matcher m = CID_REGEX.matcher(htmlData);
+                while (m.find()) {
+                    images.add(m.group(1));
+                }
 
+                for (String image : images) {
                     MimeBodyPart ipart = new MimeBodyPart();
-                    FileDataSource source = new FileDataSource(file);
-                    source.setFileTypeMap(FT_MAP);
-                    ipart.setDataHandler(new DataHandler(source));
-                    ipart.setFileName(file.getName());
-                    ipart.setContentID("<" + file.getName() + ">");
+                    URL iurl = MailSender.class.getClassLoader().getResource(
+                        "rsrc/email/" + template + "/" + image);
+                    ipart.setDataHandler(new DataHandler(new URLDataSource(iurl)));
+                    ipart.setFileName(image);
+                    ipart.setContentID("<" + image + ">");
                     htmlParts.addBodyPart(ipart);
                 }
 
@@ -169,25 +188,10 @@ public class MailSender
         }
     }
 
-    /** Used to map files to mimem types. */
-    protected static final FileTypeMap FT_MAP = new FileTypeMap() {
-        public String getContentType (File file) {
-            return getContentType(file.getName());
-        }
-        public String getContentType (String name) {
-            name = name.toLowerCase();
-            if (name.endsWith(".png")) {
-                return "image/png";
-            } else if (name.endsWith(".jpg")) {
-                return "image/jpeg";
-            } else {
-                return "application/octet-stream";
-            }
-        }
-    };
-
     /** Used by {@link #isPlaceholderAddress}. */
     protected static final Pattern[] PLACEHOLDER_PATTERNS = {
         Pattern.compile("[0-9]+@facebook.com"),
     };
+
+    protected static final Pattern CID_REGEX = Pattern.compile("cid\\:(\\S+\\....)");
 }
