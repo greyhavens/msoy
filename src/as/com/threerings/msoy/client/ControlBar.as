@@ -166,6 +166,11 @@ public class ControlBar extends HBox
         _spacer.width = width;
     }
 
+    public function setChatColor (color :int) :void
+    {
+        _chatControl.setChatColor(color);
+    }
+
     override protected function updateDisplayList (w :Number, h :Number) :void
     {
         super.updateDisplayList(w, h);

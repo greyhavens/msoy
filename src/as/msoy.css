@@ -79,41 +79,34 @@ TabNavigator, TabBar {
   closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
 }
 
-.unselectedRoomTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#room_unselected");
+.unselectedRoomTab, .attentionRoomTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_room_unselected.png",
+    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
 .selectedRoomTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#room_selected");
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_room_selected.png",
+    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
-.attentionRoomTab {
-  /*missed symbol buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#room_attention");*/
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#tell_attention");
-}
-
-.unselectedTellTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#tell_unselected");
+.unselectedTellTab, .attentionTellTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_tell_unselected.png",
+    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
 .selectedTellTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#tell_selected");
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_tell_selected.png",
+    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
-.attentionTellTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#tell_attention");
-}
-
-.unselectedGroupTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#group_unselected");
+.unselectedGroupTab, .attentionGroupTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_group_unselected.png",
+    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
 .selectedGroupTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#group_selected");
-}
-
-.attentionGroupTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tabs.swf#group_attention");
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_group_selected.png",
+    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
 Accordion {
