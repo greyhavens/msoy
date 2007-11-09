@@ -195,9 +195,14 @@ public class MsoyController extends Controller
      */
     public function handlePopChannelMenu (trigger :Button) :void
     {
-        var toggleHideLabel :String = Prefs.getShowingChatHistory() ?
-            Msgs.GENERAL.get("m.hide_chat") : Msgs.GENERAL.get("m.show_chat");
-        var toggleHide :Object = { label: toggleHideLabel, command: TOGGLE_CHAT };
+        var menuData :Array = [];
+        if (!(_ctx.getTopPanel().getPlaceView() is MsoyGamePanel)) {
+            var toggleHideLabel :String = Prefs.getShowingChatHistory() ?
+                Msgs.GENERAL.get("m.hide_chat") : Msgs.GENERAL.get("m.show_chat");
+            var toggleHide :Object = { label: toggleHideLabel, command: TOGGLE_CHAT };
+            menuData.push(toggleHide);
+            menuData.push({ type: "separator" });
+        }
 
         var me :MemberObject = _ctx.getMemberObject();
         var friends :Array = new Array();
@@ -213,6 +218,8 @@ public class MsoyController extends Controller
             friends.push({ label: Msgs.GENERAL.get("m.no_friends"),
                            enabled: false });
         }
+        menuData = menuData.concat(friends);
+        menuData.push({ type: "separator" });
 
         var groups :Array = (me.groups != null) ? me.groups.toArray() : [];
         groups = groups.map(function (gm :GroupMembership, index :int, array :Array) :Object {
@@ -224,13 +231,8 @@ public class MsoyController extends Controller
             groups.push({ label: Msgs.GENERAL.get("m.no_groups"),
                           enabled : false });
         }
-
-        var menuData :Array = [];
-        menuData.push(toggleHide);
-        menuData.push({ type: "separator" });
-        menuData = menuData.concat(friends);
-        menuData.push({ type: "separator" });
         menuData = menuData.concat(groups);
+
         CommandMenu.createMenu(menuData).popUp(trigger);
     }
 

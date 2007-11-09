@@ -74,6 +74,7 @@ public class GameChatContainer extends LayeredContainer
     {
         var chatTop :Number = _tabBar.y + _tabBar.height;
         _overlay.setTarget(this, new Rectangle(0, chatTop, width, height - chatTop));
+        _overlay.setHistoryEnabled(true);
     }
 
     protected var _ctx :WorldContext;
