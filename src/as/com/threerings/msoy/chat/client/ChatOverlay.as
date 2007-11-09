@@ -170,7 +170,7 @@ public class ChatOverlay
                     figureCurrentHistory();
                 }
 
-            } else if (_target != null) {
+            } else {
                 showCurrentSubtitles();
             }
         }
@@ -347,6 +347,10 @@ public class ChatOverlay
 
     protected function showCurrentSubtitles () :void
     {
+        if (_target == null) {
+            return;
+        }
+
         clearGlyphs(_subtitles);
         _subtitles = [];
         if (_history.size() == 0) {
