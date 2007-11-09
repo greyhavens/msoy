@@ -130,7 +130,7 @@ public class AdminServlet extends MsoyServiceServlet
 
         // loop through 100 members at a time and load up their record and send emails
         String from = ServerConfig.getFromAddress();
-        int found = 0, startId = 0;
+        int found, startId = 0;
         try {
             do {
                 IntSet memIds = new ArrayIntSet();
@@ -139,7 +139,10 @@ public class AdminServlet extends MsoyServiceServlet
                 }
                 startId += MEMBERS_PER_LOOP;
 
+                found = 0;
                 for (MemberRecord mrec : MsoyServer.memberRepo.loadMembers(memIds)) {
+                    found++;
+
                     if (mrec.isSet(MemberRecord.FLAG_NO_ANNOUNCE_EMAIL)) {
                         results[2]++;
                         continue;
