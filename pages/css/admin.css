@@ -109,3 +109,7 @@
 .playerBrowser .PlayerList .DataRow td {
   font-size: 10px;
 }
+
+.spamPlayers { 
+  margin: 10px;
+}

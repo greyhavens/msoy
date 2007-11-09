@@ -52,6 +52,11 @@ public class DashboardPanel extends FlexTable
                     Application.go(Page.ADMIN, "browser");
                 }
             }));
+            controls.add(new Button(CAdmin.msgs.spamPlayers(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    new SpamPlayersDialog().show();
+                }
+            }));
         }
         controls.add(new Button(CAdmin.msgs.reviewButton(), new ClickListener() {
             public void onClick (Widget sender) {

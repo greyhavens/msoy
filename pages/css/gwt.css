@@ -174,8 +174,8 @@ a:visited {
 }
 
 .statusPanel .MailNotification {
-   border: none;
-   height: 10px;
+  border: none;
+  height: 10px;
 }
 
 .formDialog .Intro {
@@ -344,98 +344,98 @@ a:visited {
 
 /** Configuration for our bordered popup window */
 .borderedPopup {
-   background: #FFFFFF;
+  background: #FFFFFF;
 }
 
 /** First the four verticals */
 .borderedWidget .westOut {
-   background-image: url(/images/ui/quads/e.png);
-   width: 2px;
+  background-image: url(/images/ui/quads/e.png);
+  width: 2px;
 }
 
 .borderedWidget .westIn {
-   background-image: url(/images/ui/quads/w.png);
-   width: 2px;
+  background-image: url(/images/ui/quads/w.png);
+  width: 2px;
 }
 
 .borderedWidget .eastOut {
-   background-image: url(/images/ui/quads/w.png);
-   width: 2px;
+  background-image: url(/images/ui/quads/w.png);
+  width: 2px;
 }
 
 .borderedWidget .eastIn {
-   background-image: url(/images/ui/quads/e.png);
-   width: 2px;
+  background-image: url(/images/ui/quads/e.png);
+  width: 2px;
 }
 
 /** Then the four horizontals */
 .borderedWidget .northOut {
-   background-image: url(/images/ui/quads/s.png);
-   height: 2px;
+  background-image: url(/images/ui/quads/s.png);
+  height: 2px;
 }
 
 .borderedWidget .northIn {
-   background-image: url(/images/ui/quads/n.png);
-   height: 2px;
+  background-image: url(/images/ui/quads/n.png);
+  height: 2px;
 }
 
 .borderedWidget .southOut {
-   background-image: url(/images/ui/quads/n.png);
-   height: 2px;
+  background-image: url(/images/ui/quads/n.png);
+  height: 2px;
 }
 
 .borderedWidget .southIn {
-   background-image: url(/images/ui/quads/s.png);
-   height: 2px;
+  background-image: url(/images/ui/quads/s.png);
+  height: 2px;
 }
 
 /** Then eight corners */
 .borderedWidget .northWestIn {
-   background-image: url(/images/ui/quads/nw_in.png);
-   width: 2px;
-   height: 2px;
+  background-image: url(/images/ui/quads/nw_in.png);
+  width: 2px;
+  height: 2px;
 }
 
 .borderedWidget .northWestOut {
-   background-image: url(/images/ui/quads/se_out.png);
-   width: 2px;
-   height: 2px;
+  background-image: url(/images/ui/quads/se_out.png);
+  width: 2px;
+  height: 2px;
 }
 
 .borderedWidget .southWestIn {
-   background-image: url(/images/ui/quads/sw_in.png);
-   width: 2px;
-   height: 2px;
+  background-image: url(/images/ui/quads/sw_in.png);
+  width: 2px;
+  height: 2px;
 }
 
 .borderedWidget .southWestOut {
-   background-image: url(/images/ui/quads/ne_out.png);
-   width: 2px;
-   height: 2px;
+  background-image: url(/images/ui/quads/ne_out.png);
+  width: 2px;
+  height: 2px;
 }
 
 .borderedWidget .northEastIn {
-   background-image: url(/images/ui/quads/ne_in.png);
-   width: 2px;
-   height: 2px;
+  background-image: url(/images/ui/quads/ne_in.png);
+  width: 2px;
+  height: 2px;
 }
 
 .borderedWidget .northEastOut {
-   background-image: url(/images/ui/quads/sw_out.png);
-   width: 2px;
-   height: 2px;
+  background-image: url(/images/ui/quads/sw_out.png);
+  width: 2px;
+  height: 2px;
 }
 
 .borderedWidget .southEastIn {
-   background-image: url(/images/ui/quads/se_in.png);
-   width: 2px;
-   height: 2px;
+  background-image: url(/images/ui/quads/se_in.png);
+  width: 2px;
+  height: 2px;
 }
 
 .borderedWidget .southEastOut {
-   background-image: url(/images/ui/quads/nw_out.png);
-   width: 2px;
-   height: 2px;
+  background-image: url(/images/ui/quads/nw_out.png);
+  width: 2px;
+  height: 2px;
 }
 
 
@@ -571,23 +571,23 @@ a:visited {
 
 /** General UI styles. */
 .inline {
-   display: inline;
+  display: inline;
 }   
 
 .inlineL {
-   display: inline;
-   margin-left: 5px;
+  display: inline;
+  margin-left: 5px;
 }   
 
 .inlineR {
-   display: inline;
-   margin-right: 5px;
+  display: inline;
+  margin-right: 5px;
 }   
 
 .inlineLR {
-   display: inline;
-   margin-left: 5px;
-   margin-right: 5px;
+  display: inline;
+  margin-left: 5px;
+  margin-right: 5px;
 }   
 
 .actionLabel {
@@ -619,27 +619,27 @@ a:visited {
 }
 
 .infoPopup {
-   padding: 15px;
+  padding: 15px;
 }
 
 .itemPopup {
-   border: 2px solid #0066FF;
-   background: #6699CC;
-   padding: 5px;
+  border: 2px solid #0066FF;
+  background: #6699CC;
+  padding: 5px;
 }
 
 .itemDetailErrors {
-   font-weight: bold;
-   background: #FFFFFF;
+  font-weight: bold;
+  background: #FFFFFF;
 }
 
 .headerValueTable {
-   border: 1px solid black;
+  border: 1px solid black;
 }
 
 .headerRow {
-   font-style: italic;
-   background: #6699CC;
+  font-style: italic;
+  background: #6699CC;
 }
 
 .groupLogoPopup {

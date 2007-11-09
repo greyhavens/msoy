@@ -10,12 +10,16 @@ import java.util.List;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.net.MailUtil;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ComplainingListener;
+import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.AdminService;
 import com.threerings.msoy.web.data.MemberInviteResult;
@@ -48,8 +52,8 @@ public class AdminServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations +
-                ", activeSince=" + activeSince + "]", pe);
-            throw new ServiceException(pe.getMessage());
+                    ", activeSince=" + activeSince + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }
 
@@ -69,7 +73,7 @@ public class AdminServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations +
                 ", memberId=" + memberId + "]", pe);
-            throw new ServiceException(pe.getMessage());
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }
 
@@ -102,16 +106,65 @@ public class AdminServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getPlayerList failed [inviterId=" + inviterId + "]", pe);
-            throw new ServiceException(pe.getMessage());
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         return res;
     }
 
     // from interface AdminService
-    public void spamPlayers (WebIdent ident, String subject, String body)
+    public int[] spamPlayers (WebIdent ident, String subject, String body)
         throws ServiceException
     {
+        MemberRecord memrec = requireAuthedUser(ident);
+        if (!memrec.isAdmin()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+
+        // TODO: if we want to continue to use this mechanism to send mass emails to our members,
+        // we will need to farm out the mail deliver task to all nodes in the network so that we
+        // don't task one node with sending out a million email messages
+
+        // we'll track the number of sent, failed and opted out accounts
+        int[] results = new int[] { 0, 0, 0 };
+
+        // loop through 100 members at a time and load up their record and send emails
+        String from = ServerConfig.getFromAddress();
+        int found = 0, startId = 0;
+        try {
+            do {
+                IntSet memIds = new ArrayIntSet();
+                for (int ii = 0; ii < MEMBERS_PER_LOOP; ii++) {
+                    memIds.add(ii + startId);
+                }
+                startId += MEMBERS_PER_LOOP;
+
+                for (MemberRecord mrec : MsoyServer.memberRepo.loadMembers(memIds)) {
+                    if (mrec.isSet(MemberRecord.FLAG_NO_ANNOUNCE_EMAIL)) {
+                        results[2]++;
+                        continue;
+                    }
+
+                    try {
+                        MailUtil.deliverMail(new String[] { mrec.accountName }, from, subject, body);
+                        results[0]++;
+                    } catch (Exception e) {
+                        results[1]++;
+                        log.warning("Failed to spam member [subject=" + subject +
+                                    ", email=" + mrec.accountName + ", error=" + e + "].");
+                        // roll on through and try the next one
+                    }
+                }
+
+            } while (found > 0);
+
+            return results;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "spamPlayers failed [subject=" + subject +
+                    ", startId=" + startId + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     protected void sendGotInvitesMail (int senderId, int recipientId, int number)
@@ -123,4 +176,6 @@ public class AdminServlet extends MsoyServiceServlet
             new ComplainingListener<Void>(log, "Send got invites mail failed [sid=" + senderId +
                                           ", rid=" + recipientId + "]"));
     }
+
+    protected static final int MEMBERS_PER_LOOP = 100;
 }
