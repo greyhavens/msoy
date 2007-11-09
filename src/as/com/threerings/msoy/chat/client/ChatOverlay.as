@@ -371,7 +371,7 @@ public class ChatOverlay
             if (timed.displayedAt == -1) {
                 timed.showingNow();
             }
-            expire = getChatExpire(timed.displayedAt, timed.msg.message);
+            expire = getChatExpire(timed.displayedAt, timed.msg.message) - timed.displayedAt;
             type = getType(timed.msg, true);
             texts = formatMessage(timed.msg, type, true, _userSpeakFmt);
             addSubtitle(new SubtitleGlyph(this, type, expire, _defaultFmt, texts));

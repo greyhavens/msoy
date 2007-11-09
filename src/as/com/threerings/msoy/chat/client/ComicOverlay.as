@@ -77,6 +77,30 @@ public class ComicOverlay extends ChatOverlay
         }
     }
 
+    /**
+     * Get the expire time for the specified chat.
+     */
+    protected function getBubbleExpire (stamp :int, text :String) :int
+    {
+        // load the configured durations
+        var durations :Array =
+            (DISPLAY_DURATION_PARAMS[getDisplayDurationIndex()] as Array);
+
+        // start the computation from the maximum of the timestamp
+        // or our last expire time.
+        var start :int = Math.max(stamp, _lastBubbleExpire);
+
+        // set the next expire to a time proportional to the text length.
+        _lastBubbleExpire = start + Math.min(text.length * int(durations[0]),
+                                       int(durations[2]));
+
+        // but don't let it be longer than the maximum display time.
+        _lastBubbleExpire = Math.min(stamp + int(durations[2]), _lastBubbleExpire);
+
+        // and be sure to pop up the returned time so that it is above the min.
+        return Math.max(stamp + int(durations[1]), _lastBubbleExpire);
+    }
+
     override protected function layout () :void
     {
         clearBubbles(true); // these will get repopulated from the history
@@ -180,7 +204,7 @@ public class ComicOverlay extends ChatOverlay
         msg :ChatMessage, type :int, speaker :Name, speakerBubblePos :Point) :Boolean
     {
         var texts :Array = formatMessage(msg, type, false, _userBubbleFmt);
-        var lifetime :int = getLifetime(msg, true);
+        var lifetime :int = getBubbleExpire(msg.timestamp, msg.message) - msg.timestamp;
         var bubble :BubbleGlyph =
             new BubbleGlyph(this, type, lifetime, speaker, _defaultBubbleFmt, texts);
 
@@ -497,6 +521,8 @@ public class ComicOverlay extends ChatOverlay
     protected var _bubbles :HashMap = new HashMap();
 
     protected var _allBubbles :Array = [];
+
+    protected var _lastBubbleExpire :int = 0;
 
     /** The maximum number of bubbles to show per user. */
     protected static const MAX_BUBBLES_PER_USER :int = 3;
