@@ -357,6 +357,7 @@ public class ChatOverlay
             return;
         }
 
+        _lastExpire = 0;
         var ii :int = _history.size() - 1;
         for (; ii >= 0 && shouldShowSubtitleNow(_history.get(ii)); ii--);
         ii++;
