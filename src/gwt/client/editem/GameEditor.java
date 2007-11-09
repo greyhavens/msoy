@@ -158,17 +158,22 @@ public class GameEditor extends ItemEditor
         addInfoRow(bits, _extras = new TextArea());
         _extras.setCharacterWidth(60);
         _extras.setVisibleLines(5);
-        addInfoTip(bits, CShell.emsgs.gameJavaTip());
-
+        addInfoRow(bits, CShell.emsgs.gameAVRG(), _avrg = new CheckBox());
         addSpacer(bits);
 
+        addInfoTip(bits, CShell.emsgs.gameJavaTip());
         addInfoRow(bits, CShell.emsgs.gameIdent(), _ident = new TextBox());
         addInfoRow(bits, CShell.emsgs.gameController(), _controller = new TextBox());
         _controller.setVisibleLength(40);
-        addInfoRow(bits, CShell.emsgs.gameManager(), _manager = new TextBox());
-        _manager.setVisibleLength(40);
-        addInfoRow(bits, CShell.emsgs.gameLWJGL(), _lwjgl = new CheckBox());
-        addInfoRow(bits, CShell.emsgs.gameAVRG(), _avrg = new CheckBox());
+
+        // these are only available to OOO presently
+        _manager = new TextBox();
+        _lwjgl = new CheckBox();
+        if (CShell.isAdmin()) {
+            addInfoRow(bits, CShell.emsgs.gameManager(), _manager);
+            _manager.setVisibleLength(40);
+            addInfoRow(bits, CShell.emsgs.gameLWJGL(), _lwjgl);
+        }
 
         // add a tab for uploading the game media
         tabs.add(createMainUploader(CShell.emsgs.gameMainTitle(), new MediaUpdater() {
