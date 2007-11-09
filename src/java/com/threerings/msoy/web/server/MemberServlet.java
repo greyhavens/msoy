@@ -992,7 +992,8 @@ public class MemberServlet extends MsoyServiceServlet
                 return e.getMessage();
             }
 
-            MsoyServer.memberRepo.addInvite(email, inviter.memberId, inviteId);
+            int inviterId = (inviter == null) ? 0 : inviter.memberId;
+            MsoyServer.memberRepo.addInvite(email, inviterId, inviteId);
             return InvitationResults.SUCCESS;
 
         } catch (PersistenceException pe) {

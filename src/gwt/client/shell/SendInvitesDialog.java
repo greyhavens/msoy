@@ -5,13 +5,15 @@ package client.shell;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -69,6 +71,10 @@ public class SendInvitesDialog extends BorderedDialog
             _customMessage.setCharacterWidth(80);
             _customMessage.setVisibleLines(6);
             _customMessage.setText(CShell.cmsgs.sendInvitesCustomDefault());
+            _anonymous = new CheckBox(CShell.cmsgs.sendInvitesAnonymous());
+            if (CShell.isAdmin()) {
+                contents.setWidget(row, 1, _anonymous);
+            }
             contents.setWidget(row++, 2, new Button(CShell.cmsgs.sendInvitesSendEmail(),
                 new ClickListener() {
                     public void onClick (Widget widget) {
@@ -153,7 +159,7 @@ public class SendInvitesDialog extends BorderedDialog
 
             } else {
                 CShell.membersvc.sendInvites(CShell.ident, validAddresses, _customMessage.getText(),
-                                             false, new AsyncCallback() {
+                                             _anonymous.isChecked(), new AsyncCallback() {
                     public void onSuccess (Object result) {
                         FlashClients.tutorialEvent("friendInvited");
                         new ResultsPopup(validAddresses, (InvitationResults)result).show();
@@ -216,5 +222,6 @@ public class SendInvitesDialog extends BorderedDialog
 
     protected TextArea _emailAddresses;
     protected TextArea _customMessage;
+    protected CheckBox _anonymous;
     protected MemberInvites _invites;
 }

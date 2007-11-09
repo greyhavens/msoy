@@ -555,17 +555,19 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Add a new invitation. Also decrements the available invitation count for the inviterId and
-     * increments the number of invites sent.
+     * increments the number of invites sent, iff the inviterId is non-zero.
      */
     public void addInvite (String inviteeEmail, int inviterId, String inviteId)
         throws PersistenceException
     {
         insert(new InvitationRecord(inviteeEmail, inviterId, inviteId));
 
-        InviterRecord inviterRec = load(InviterRecord.class, inviterId);
-        inviterRec.invitesGranted--;
-        inviterRec.invitesSent++;
-        update(inviterRec);
+        if (inviterId > 0) {
+            InviterRecord inviterRec = load(InviterRecord.class, inviterId);
+            inviterRec.invitesGranted--;
+            inviterRec.invitesSent++;
+            update(inviterRec);
+        }
     }
 
     /**
