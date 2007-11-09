@@ -104,10 +104,12 @@ public class ChatTabBar extends HBox
             return;
         }
 
-        // if this is a message from a member, we can pop up the new display.
+        // if this is a message from a member, we can pop up a new tab, and set it to ATTENTION
         if (channel.type == ChatChannel.MEMBER_CHANNEL) {
             var history :HistoryList = _ctx.getMsoyChatDirector().getHistory(channel);
-            addAndSelect(new ChatTab(_ctx, this, channel, history));
+            history.addMessage(msg);
+            addTab(new ChatTab(_ctx, this, channel, history));
+            (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
         } else {
             // else this arrived (most likely) after we already closed the channel tab.
             Log.getLog(this).info(
@@ -152,7 +154,7 @@ public class ChatTabBar extends HBox
         return null;
     }
 
-    protected function addAndSelect (tab :ChatTab) :void
+    protected function addTab (tab :ChatTab) :void
     {
         addChild(tab);
         tab.addEventListener(ChatTab.TAB_CLICK, selectTab);
@@ -164,7 +166,11 @@ public class ChatTabBar extends HBox
             var channel :ChatChannel = tab.controller.channel;
             tab.controller.init(_ctx.getMsoyChatDirector().getChannelObject(channel));
         }
+    }
 
+    protected function addAndSelect (tab :ChatTab) :void
+    {
+        addTab(tab);
         selectedIndex = _tabs.length - 1;
     }
 
