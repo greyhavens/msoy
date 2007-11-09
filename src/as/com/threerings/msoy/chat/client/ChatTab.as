@@ -128,19 +128,10 @@ public class ChatTab extends HBox
         }
 
         if (_controller == null) {
-            if (style == "selected") {
-                _ctx.getTopPanel().setStyle("backgroundColor", ROOM_COLOR);
-            }
             style += "RoomTab";
         } else if (_controller.channel.type == ChatChannel.GROUP_CHANNEL) {
-            if (style == "selected") {
-                _ctx.getTopPanel().setStyle("backgroundColor", GROUP_COLOR);
-            }
             style += "GroupTab";
         } else if (_controller.channel.type == ChatChannel.MEMBER_CHANNEL) {
-            if (style == "selected") {
-                _ctx.getTopPanel().setStyle("backgroundColor", TELL_COLOR);
-            }
             style += "TellTab";
         } else {
             Log.getLog(this).warning("Unkown channel type for skinning [" + 
@@ -224,10 +215,6 @@ public class ChatTab extends HBox
     protected static const CLOSE_SKIN :String = "closeSkin";
 
     protected static const PADDING :int = 5;
-
-    protected static const ROOM_COLOR :int = 0xFFFFFF;
-    protected static const GROUP_COLOR :int = 0xF0AF75;
-    protected static const TELL_COLOR :int = 0xB6D2E3;
 
     protected var _label :Label;
     protected var _controller :ChatChannelController;
