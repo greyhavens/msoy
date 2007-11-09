@@ -35,4 +35,10 @@ public interface AdminService extends RemoteService
      */
     public MemberInviteResult getPlayerList (WebIdent ident, int inviterId)
         throws ServiceException;
+
+    /**
+     * Sends an email to all registered players who have not opted out of email communications.
+     */
+    public void spamPlayers (WebIdent ident, String subject, String body)
+        throws ServiceException;
 }

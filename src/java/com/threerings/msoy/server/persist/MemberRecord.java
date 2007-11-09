@@ -169,6 +169,12 @@ public class MemberRecord extends PersistentRecord
     /** A flag denoting this user has having elected to see mature content. */
     public static final int FLAG_SHOW_MATURE = 1 << 2;
 
+    /** A flag denoting this user does not want to receive real email for Whirled mail. */
+    public static final int FLAG_NO_WHIRLED_MAIL_TO_EMAIL = 1 << 3;
+
+    /** A flag denoting this user does not want to receive announcement mail. */
+    public static final int FLAG_NO_ANNOUNCE_EMAIL = 1 << 4;
+
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int memberId;
@@ -283,7 +289,7 @@ public class MemberRecord extends PersistentRecord
      */
     public void setFlag (int flag, boolean value)
     {
-        flags = value ? flags | flag : flags ^ ~flag;
+        flags = value ? (flags | flag) : (flags & ~flag);
     }
 
     /** Returns this member's name as a proper {@link Name} instance. */

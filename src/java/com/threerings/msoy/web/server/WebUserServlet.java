@@ -233,6 +233,28 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
+    public void updateEmailPrefs (WebIdent ident, boolean emailOnWhirledMail,
+                                  boolean emailAnnouncements)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        // update their mail preferences if appropriate
+        int oflags = mrec.flags;
+        mrec.setFlag(MemberRecord.FLAG_NO_WHIRLED_MAIL_TO_EMAIL, !emailOnWhirledMail);
+        mrec.setFlag(MemberRecord.FLAG_NO_ANNOUNCE_EMAIL, !emailAnnouncements);
+        if (mrec.flags != oflags) {
+            try {
+                MsoyServer.memberRepo.configureFlags(mrec.memberId, mrec.flags);
+            } catch (PersistenceException pe) {
+                log.log(Level.WARNING, "Failed to update flags [who=" + mrec.memberId +
+                        ", flags=" + mrec.flags + "].", pe);
+                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            }
+        }
+    }
+
+    // from interface WebUserService
     public void updatePassword (WebIdent ident, String newPassword)
         throws ServiceException
     {
@@ -306,12 +328,15 @@ public class WebUserServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser(ident);
 
         try {
-            AccountInfo accountInfo = new AccountInfo();
+            AccountInfo ainfo = new AccountInfo();
             ProfileRecord prec = MsoyServer.profileRepo.loadProfile(mrec.memberId);
             if (prec != null) {
-                accountInfo.realName = prec.realName;
+                ainfo.realName = prec.realName;
             }
-            return accountInfo;
+            ainfo.emailWhirledMail = !mrec.isSet(MemberRecord.FLAG_NO_WHIRLED_MAIL_TO_EMAIL);
+            ainfo.emailAnnouncements = !mrec.isSet(MemberRecord.FLAG_NO_ANNOUNCE_EMAIL);
+            return ainfo;
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to fetch account info [who=" + mrec.memberId + 
                 "].", pe);

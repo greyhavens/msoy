@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.KeyboardListener;
@@ -22,6 +23,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.AccountInfo;
 
 import client.util.BorderedDialog;
+import client.util.MsoyUI;
+import client.util.RowPanel;
 
 /**
  * Displays account information, allows twiddling.
@@ -39,6 +42,7 @@ public class EditAccountDialog extends BorderedDialog
 
         int row = 0;
 
+        // configure or display permaname interface
         if (CShell.creds.permaName == null) {
             contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
             contents.getFlexCellFormatter().setColSpan(row, 0, 3);
@@ -67,6 +71,7 @@ public class EditAccountDialog extends BorderedDialog
             contents.setText(row++, 1, CShell.creds.permaName);
         }
 
+        // configure real name interface
         contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
         contents.getFlexCellFormatter().setColSpan(row, 0, 3);
         contents.setText(row++, 0, CShell.cmsgs.editRealNameHeader());
@@ -88,6 +93,7 @@ public class EditAccountDialog extends BorderedDialog
         contents.getFlexCellFormatter().setColSpan(row, 0, 3);
         contents.setHTML(row++, 0, CShell.cmsgs.editRealNameTip());
 
+        // configure email address interface
         contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
         contents.getFlexCellFormatter().setColSpan(row, 0, 3);
         contents.setText(row++, 0, CShell.cmsgs.editEmailHeader());
@@ -105,6 +111,37 @@ public class EditAccountDialog extends BorderedDialog
         _upemail.setEnabled(false);
         contents.setWidget(row++, 2, _upemail);
 
+        // configure email preferences interface
+        contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
+        contents.getFlexCellFormatter().setColSpan(row, 0, 3);
+        contents.setText(row++, 0, CShell.cmsgs.editEPrefsHeader());
+
+        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        contents.setText(row, 0, CShell.cmsgs.editWhirledMailEmail());
+        RowPanel bits = new RowPanel();
+        bits.add(_whirledEmail = new CheckBox());
+        bits.add(MsoyUI.createLabel(CShell.cmsgs.editWhirledMailEmailTip(), "tipLabel"));
+        contents.getFlexCellFormatter().setColSpan(row, 1, 2);
+        contents.setWidget(row++, 1, bits);
+        _whirledEmail.setChecked(_accountInfo.emailWhirledMail);
+
+        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        contents.setText(row, 0, CShell.cmsgs.editAnnounceEmail());
+        bits = new RowPanel();
+        bits.add(_announceEmail = new CheckBox());
+        bits.add(MsoyUI.createLabel(CShell.cmsgs.editAnnounceEmailTip(), "tipLabel"));
+        contents.getFlexCellFormatter().setColSpan(row, 1, 2);
+        contents.setWidget(row++, 1, bits);
+        _announceEmail.setChecked(_accountInfo.emailAnnouncements);
+
+        _upeprefs = new Button(CShell.cmsgs.update(), new ClickListener() {
+            public void onClick (Widget widget) {
+                updateEmailPrefs();
+            }
+        });
+        contents.setWidget(row++, 2, _upeprefs);
+
+        // configure password interface
         contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
         contents.getFlexCellFormatter().setColSpan(row, 0, 3);
         contents.setText(row++, 0, CShell.cmsgs.editPasswordHeader());
@@ -167,16 +204,29 @@ public class EditAccountDialog extends BorderedDialog
     {
         final String email = _email.getText().trim();
         _upemail.setEnabled(false);
-        _email.setEnabled(false);
         CShell.usersvc.updateEmail(CShell.ident, email, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _email.setEnabled(true);
                 CShell.creds.accountName = email;
                 setStatus(CShell.cmsgs.emailUpdated());
             }
             public void onFailure (Throwable cause) {
-                _email.setEnabled(true);
                 _upemail.setEnabled(true);
+                setError(CShell.serverError(cause));
+            }
+        });
+    }
+
+    protected void updateEmailPrefs ()
+    {
+        _upeprefs.setEnabled(false);
+        CShell.usersvc.updateEmailPrefs(CShell.ident, _whirledEmail.isChecked(),
+                                        _announceEmail.isChecked(), new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _upeprefs.setEnabled(true);
+                setStatus(CShell.cmsgs.eprefsUpdated());
+            }
+            public void onFailure (Throwable cause) {
+                _upeprefs.setEnabled(true);
                 setError(CShell.serverError(cause));
             }
         });
@@ -359,10 +409,13 @@ public class EditAccountDialog extends BorderedDialog
         }
     };
 
-    protected TextBox _email, _pname, _rname;
-    protected PasswordTextBox _password, _confirm;
-    protected Button _upemail, _uppass, _uppname, _uprname;
-    protected int _permaRow;
-    protected Label _status;
     protected AccountInfo _accountInfo;
+    protected int _permaRow;
+
+    protected TextBox _email, _pname, _rname;
+    protected CheckBox _whirledEmail, _announceEmail;
+    protected PasswordTextBox _password, _confirm;
+    protected Button _upemail, _upeprefs, _uppass, _uppname, _uprname;
+
+    protected Label _status;
 }

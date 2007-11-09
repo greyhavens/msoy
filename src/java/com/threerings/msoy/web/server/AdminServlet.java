@@ -47,7 +47,7 @@ public class AdminServlet extends MsoyServiceServlet
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations + 
+            log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations +
                 ", activeSince=" + activeSince + "]", pe);
             throw new ServiceException(pe.getMessage());
         }
@@ -84,7 +84,7 @@ public class AdminServlet extends MsoyServiceServlet
 
         MemberInviteResult res = new MemberInviteResult();
         try {
-            MemberRecord memRec = inviterId == 0 ? null : 
+            MemberRecord memRec = inviterId == 0 ? null :
                 MsoyServer.memberRepo.loadMember(inviterId);
             if (memRec != null) {
                 res.name = memRec.permaName == null || memRec.permaName.equals("") ?
@@ -94,7 +94,7 @@ public class AdminServlet extends MsoyServiceServlet
             }
 
             List<MemberInviteStatus> players = new ArrayList<MemberInviteStatus>();
-            for (MemberInviteStatusRecord rec : 
+            for (MemberInviteStatusRecord rec :
                     MsoyServer.memberRepo.getMembersInvitedBy(inviterId)) {
                 players.add(rec.toWebObject());
             }
@@ -106,6 +106,12 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         return res;
+    }
+
+    // from interface AdminService
+    public void spamPlayers (WebIdent ident, String subject, String body)
+        throws ServiceException
+    {
     }
 
     protected void sendGotInvitesMail (int senderId, int recipientId, int number)

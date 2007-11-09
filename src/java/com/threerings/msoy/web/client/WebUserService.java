@@ -65,6 +65,13 @@ public interface WebUserService extends RemoteService
         throws ServiceException;
 
     /**
+     * Updates the email preferences for this account.
+     */
+    public void updateEmailPrefs (WebIdent ident, boolean emailOnWhirledMail,
+                                  boolean emailAnnouncements)
+        throws ServiceException;
+
+    /**
      * Updates the password on file for this account.
      */
     public void updatePassword (WebIdent ident, String newPassword)

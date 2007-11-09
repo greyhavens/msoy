@@ -319,6 +319,15 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Configures this member's flags.
+     */
+    public void configureFlags (int memberId, int flags)
+        throws PersistenceException
+    {
+        updatePartial(MemberRecord.class, memberId, MemberRecord.FLAGS, flags);
+    }
+
+    /**
      * Configures a member's avatar.
      */
     public void configureAvatarId (int memberId, int avatarId)

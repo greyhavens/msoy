@@ -49,6 +49,12 @@ public interface WebUserServiceAsync
     public void updateEmail (WebIdent ident, String newEmail, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link WebUserService#updateEmailPrefs}.
+     */
+    public void updateEmailPrefs (WebIdent ident, boolean emailOnWhirledMail,
+                                  boolean emailAnnouncements, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link WebUserService#updatePassword}.
      */
     public void updatePassword (WebIdent ident, String newPassword, AsyncCallback callback);
