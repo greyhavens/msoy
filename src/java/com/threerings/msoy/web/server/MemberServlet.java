@@ -569,8 +569,12 @@ public class MemberServlet extends MsoyServiceServlet
             if (invRec == null) {
                 return null;
             }
-            MemberNameRecord mnr = MsoyServer.memberRepo.loadMemberName(invRec.inviterId);
-            return invRec.toInvitation(mnr.toMemberName());
+            MemberName inviter = null;
+            if (invRec.inviterId > 0) {
+                MemberNameRecord mnr = MsoyServer.memberRepo.loadMemberName(invRec.inviterId);
+                inviter = mnr.toMemberName();
+            }
+            return invRec.toInvitation(inviter);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitation failed [inviteId=" + inviteId + "]", pe);

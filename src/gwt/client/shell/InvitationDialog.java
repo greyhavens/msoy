@@ -50,7 +50,11 @@ public class InvitationDialog extends BorderedDialog
 
         formatter.setColSpan(row, 0, 2);
         formatter.setStyleName(row, 0, "Body");
-        contents.setText(row++, 0, CShell.cmsgs.inviteBody1(invite.inviter.toString()));
+        if (invite.inviter == null) {
+            contents.setText(row++, 0, CShell.cmsgs.inviteBody1anon());
+        } else {
+            contents.setText(row++, 0, CShell.cmsgs.inviteBody1(invite.inviter.toString()));
+        }
 
         formatter.setColSpan(row, 0, 2);
         formatter.setStyleName(row, 0, "Body");

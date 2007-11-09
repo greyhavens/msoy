@@ -73,6 +73,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // check invitation validity
         boolean ignoreRestrict = false;
+        int inviterId = 0;
         if (invite != null) {
             try {
                 if (!MsoyServer.memberRepo.inviteAvailable(invite.inviteId)) {
@@ -84,13 +85,15 @@ public class WebUserServlet extends MsoyServiceServlet
                         "[inviteId=" + invite.inviteId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
+            if (invite.inviter != null) {
+                inviterId = invite.inviter.getMemberId();
+            }
         }
 
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         final MemberRecord newAccount = MsoyServer.author.createAccount(
-            username, password, displayName, ignoreRestrict,
-            invite != null ? invite.inviter.getMemberId() : 0);
+            username, password, displayName, ignoreRestrict, inviterId);
 
         // store the user's birthday and realname in their profile
         ProfileRecord prec = new ProfileRecord();
@@ -104,7 +107,7 @@ public class WebUserServlet extends MsoyServiceServlet
             // keep on keepin' on
         }
 
-        // if we were invited by another player, wire that all up
+        // if we are responding to an invitation, wire that all up
         if (invite != null) {
             try {
                 MsoyServer.memberRepo.linkInvite(invite, newAccount);
@@ -114,23 +117,25 @@ public class WebUserServlet extends MsoyServiceServlet
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
 
-            // send a notification email that the friend has accepted his invite
-            MsoyServer.omgr.postRunnable(new Runnable() {
-                public void run () {
-                    // send them a whirled mail informing them of the acceptance
-                    String subject = MsoyServer.msgMan.getBundle("server").get(
-                        "m.invite_accepted_subject");
-                    String body = MsoyServer.msgMan.getBundle("server").get(
-                        "m.invite_accepted_body", invite.inviteeEmail, displayName);
-                    MsoyServer.mailMan.deliverMessage(
-                        newAccount.memberId, invite.inviter.getMemberId(), subject, body, null,
-                        false, new ResultListener.NOOP<Void>());
+            if (invite.inviter != null) {
+                // send a notification email to the inviter that the friend has accepted
+                MsoyServer.omgr.postRunnable(new Runnable() {
+                    public void run () {
+                        // send them a whirled mail informing them of the acceptance
+                        String subject = MsoyServer.msgMan.getBundle("server").get(
+                            "m.invite_accepted_subject");
+                        String body = MsoyServer.msgMan.getBundle("server").get(
+                            "m.invite_accepted_body", invite.inviteeEmail, displayName);
+                        MsoyServer.mailMan.deliverMessage(
+                            newAccount.memberId, invite.inviter.getMemberId(), subject, body, null,
+                            false, new ResultListener.NOOP<Void>());
 
-                    // and possibly send a runtime notification as well
-                    MsoyServer.notifyMan.notifyInvitationAccepted(
-                        invite.inviter, displayName, invite.inviteeEmail);
-                }
-            });
+                        // and possibly send a runtime notification as well
+                        MsoyServer.notifyMan.notifyInvitationAccepted(
+                            invite.inviter, displayName, invite.inviteeEmail);
+                    }
+                });
+            }
         }
 
         return startSession(newAccount, expireDays);

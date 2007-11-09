@@ -590,7 +590,9 @@ public class MemberRepository extends DepotRepository
         invRec.inviteeId = member.memberId;
         update(invRec, InvitationRecord.INVITEE_ID);
 
-        noteFriendship(invite.inviter.getMemberId(), member.memberId);
+        if (invite.inviter != null) {
+            noteFriendship(invite.inviter.getMemberId(), member.memberId);
+        }
     }
 
     /**
