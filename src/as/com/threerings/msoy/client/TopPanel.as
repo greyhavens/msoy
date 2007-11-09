@@ -451,13 +451,6 @@ public class TopPanel extends Canvas
      */
     protected function minimizeRoomView () :void
     {
-        _showingChatHistory = Prefs.getShowingChatHistory();
-        if (!_showingChatHistory) {
-            // make sure the history is visible when it gets minimized
-            // TODO: add a capability for temp settings to Prefs?
-            Prefs.setShowingChatHistory(true);
-        }
-
         _minimized = true;
 
         _placeBox.mouseChildren = false;
@@ -483,10 +476,6 @@ public class TopPanel extends Canvas
 
         _headerBar.miniChanged();
         _controlBar.miniChanged();
-
-        if (_showingChatHistory != Prefs.getShowingChatHistory()) {
-            Prefs.setShowingChatHistory(_showingChatHistory);
-        }
     }
 
     protected function placeBoxClicked (event :MouseEvent) :void
@@ -618,9 +607,6 @@ public class TopPanel extends Canvas
 
     /** A flag to indicate if we're working in mini-view or not. */
     protected var _minimized :Boolean = false;
-
-    /** Remember what the chat history setting was at before we minimized. */
-    protected var _showingChatHistory :Boolean;
 
     protected var _activeOverlay :ChatOverlay;
 
