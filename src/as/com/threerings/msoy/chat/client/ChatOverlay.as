@@ -169,7 +169,8 @@ public class ChatOverlay
                     // figure our history
                     figureCurrentHistory();
                 }
-            } else {
+
+            } else if (_target != null) {
                 showCurrentSubtitles();
             }
         }
