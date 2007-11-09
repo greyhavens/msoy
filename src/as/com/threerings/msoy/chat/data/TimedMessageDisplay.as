@@ -32,7 +32,12 @@ public class TimedMessageDisplay
 
     public function showingNow () :void
     {
-        _timestamp = getTimer();
+        if (_timestamp == -1) {
+            _timestamp = getTimer();
+        } else {
+            Log.getLog(this).debug("refusing to set timestamp thats already set [cur=" + 
+                _timestamp + ", now=" + getTimer() + "]");
+        }
     }
 
     protected var _msg :ChatMessage;

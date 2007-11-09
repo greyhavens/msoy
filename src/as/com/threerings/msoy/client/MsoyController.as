@@ -187,9 +187,6 @@ public class MsoyController extends Controller
      */
     public function handleOpenChannel (name :Name) :void
     {
-        if (!Prefs.getShowingChatHistory()) {
-            Prefs.setShowingChatHistory(true);
-        }
         _ctx.getMsoyChatDirector().openChannel(name);
     }
 

@@ -48,6 +48,7 @@ import com.threerings.flash.ColorUtil;
 import com.threerings.whirled.spot.data.SpotCodes;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
+import com.threerings.msoy.chat.data.TimedMessageDisplay;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;
@@ -149,6 +150,7 @@ public class ChatOverlay
         if (_history != null) {
             _history.removeChatOverlay(this);
             clearGlyphs(_showingHistory);
+            clearGlyphs(_subtitles);
         }
 
         _history = history;
@@ -391,10 +393,12 @@ public class ChatOverlay
         _lastExpire = 0;
 
         // now dispatch from that point
+        var timed :TimedMessageDisplay;
         for ( ; index < histSize; index++) {
-            msg = _history.get(index).msg;
-            if (shouldShowFromHistory(msg, index)) {
-                displayMessage(msg, false);
+            timed = _history.get(index);
+            if (shouldShowFromHistory(timed.msg, index)) {
+                displayMessage(timed.msg, false);
+                timed.showingNow();
             }
         }
 
@@ -856,13 +860,27 @@ public class ChatOverlay
             resetHistoryOffset();
         }
 
-        if (_target != null && isHistoryMode()) {
-            var val :int = _historyBar.scrollPosition;
-            updateHistBar(val - adjustment);
+        if (_target != null) {
+            if (isHistoryMode()) {
+                var val :int = _historyBar.scrollPosition;
+                updateHistBar(val - adjustment);
 
-            // only refigure if needed
-            if ((val != _historyBar.scrollPosition) || (adjustment != 0) || !_histOffsetFinal) {
-                figureCurrentHistory();
+                // only refigure if needed
+                if ((val != _historyBar.scrollPosition) || (adjustment != 0) || !_histOffsetFinal) {
+                    figureCurrentHistory();
+                }
+            } else {
+                var timed :TimedMessageDisplay = _history.get(_history.size() - 1);
+                var newGlyph :SubtitleGlyph = 
+                    createSubtitle(timed.msg, getType(timed.msg, true), true);
+                for each (glyph in _subtitles) {
+                    glyph.y -= newGlyph.height;
+                }
+                newGlyph.x = _targetBounds.x + PAD;
+                newGlyph.y = _targetBounds.y + _targetBounds.height - newGlyph.height - PAD;
+                _staticOverlay.addChild(newGlyph);
+                _subtitles.push(newGlyph);
+                timed.showingNow();
             }
         }
     }
