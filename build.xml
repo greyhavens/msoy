@@ -777,7 +777,7 @@
   </target>
 
   <!-- a target for rebuilding everything -->
-  <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
+  <target name="all" depends="clean,prepare,compile,dist"/>
 
   <!-- builds the distribution jar files -->
   <target name="dist" depends="prepare,compile,procstream">
@@ -864,7 +864,6 @@
   <target name="preppkg">
     <antcallback target="prepare-server" return="pkg.base"/>
     <antcall target="prepare-server-extra"/>
-    <antcall target="prepare-docs"/>
   </target>
 
   <!-- install project specific server code into ${pkg.base} -->
