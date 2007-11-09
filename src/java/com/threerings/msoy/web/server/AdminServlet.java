@@ -113,7 +113,7 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public int[] spamPlayers (WebIdent ident, String subject, String body)
+    public int[] spamPlayers (WebIdent ident, String subject, String body, int startId, int endId)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
@@ -130,14 +130,24 @@ public class AdminServlet extends MsoyServiceServlet
 
         // loop through 100 members at a time and load up their record and send emails
         String from = ServerConfig.getFromAddress();
-        int found, startId = 0;
+        int found;
         try {
-            do {
+            // if we don't have an endId, go all the way
+            if (endId <= 0) {
+                endId = Integer.MAX_VALUE;
+            }
+            for (startId = Math.max(startId, 1); startId < endId; startId += MEMBERS_PER_LOOP) {
                 IntSet memIds = new ArrayIntSet();
                 for (int ii = 0; ii < MEMBERS_PER_LOOP; ii++) {
-                    memIds.add(ii + startId);
+                    int memberId = ii + startId;
+                    if (memberId > endId) {
+                        break;
+                    }
+                    memIds.add(memberId);
                 }
-                startId += MEMBERS_PER_LOOP;
+                if (memIds.size() == 0) {
+                    break;
+                }
 
                 found = 0;
                 for (MemberRecord mrec : MsoyServer.memberRepo.loadMembers(memIds)) {
@@ -158,8 +168,7 @@ public class AdminServlet extends MsoyServiceServlet
                         // roll on through and try the next one
                     }
                 }
-
-            } while (found > 0);
+            }
 
             return results;
 

@@ -34,5 +34,6 @@ public interface AdminServiceAsync
     /**
      * The asynchronous version of {@link AdminService#spamPlayers}.
      */
-    public void spamPlayers (WebIdent ident, String subject, String body, AsyncCallback callback);
+    public void spamPlayers (WebIdent ident, String subject, String body, int startId, int endId,
+                             AsyncCallback callback);
 }

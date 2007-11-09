@@ -39,9 +39,12 @@ public interface AdminService extends RemoteService
     /**
      * Sends an email to all registered players who have not opted out of email communications.
      *
+     * @param startId the first user id to mail or zero to email all users.
+     * @param endId the last user id to mail or zero to email all users.
+     *
      * @return a three element array containing the count of successfully sent emails, the count of
      * failures and the count of opt-out accounts.
      */
-    public int[] spamPlayers (WebIdent ident, String subject, String body)
+    public int[] spamPlayers (WebIdent ident, String subject, String body, int startId, int endId)
         throws ServiceException;
 }

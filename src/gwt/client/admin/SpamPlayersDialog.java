@@ -14,7 +14,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
+import client.util.NumberTextBox;
 import client.util.PromptPopup;
+import client.util.RowPanel;
 
 /**
  * Sends an "announcement message" to all registered players (who have not opted out of
@@ -29,7 +31,7 @@ public class SpamPlayersDialog extends BorderedDialog
         FlexTable contents = (FlexTable)_contents;
         contents.setStyleName("spamPlayers");
 
-        contents.setWidget(0, 0, new Label(CAdmin.msgs.spamIntro()));
+        contents.setText(0, 0, CAdmin.msgs.spamIntro());
         contents.getFlexCellFormatter().setColSpan(0, 0, 2);
         contents.getFlexCellFormatter().setWidth(0, 0, "500px");
 
@@ -42,6 +44,15 @@ public class SpamPlayersDialog extends BorderedDialog
         contents.getFlexCellFormatter().setColSpan(2, 0, 2);
         _body.setCharacterWidth(60);
         _body.setVisibleLines(20);
+
+        RowPanel niggles = new RowPanel();
+        niggles.add(new Label(CAdmin.msgs.spamNiggles()));
+        niggles.add(_startId = new NumberTextBox(false, 8));
+        _startId.setText("0");
+        niggles.add(_endId = new NumberTextBox(false, 8));
+        _endId.setText("0");
+        contents.setWidget(3, 0, niggles);
+        contents.getFlexCellFormatter().setColSpan(3, 0, 2);
 
         _footer.add(new Button(CAdmin.msgs.spamSend(), new ClickListener() {
             public void onClick (Widget sender) {
@@ -72,7 +83,8 @@ public class SpamPlayersDialog extends BorderedDialog
             return;
         }
 
-        CAdmin.adminsvc.spamPlayers(CAdmin.ident, subject, body, new AsyncCallback() {
+        int sid = _startId.getValue().intValue(), eid = _endId.getValue().intValue();
+        CAdmin.adminsvc.spamPlayers(CAdmin.ident, subject, body, sid, eid, new AsyncCallback() {
             public void onSuccess (Object result) {
                 int[] counts = (int[])result;
                 MsoyUI.info(CAdmin.msgs.spamSent(Integer.toString(counts[0]),
@@ -88,4 +100,5 @@ public class SpamPlayersDialog extends BorderedDialog
 
     protected TextBox _subject;
     protected TextArea _body;
+    protected NumberTextBox _startId, _endId;
 }
