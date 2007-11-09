@@ -521,14 +521,10 @@ public class ChatOverlay
      */
     protected function displayTypedMessageNow (msg :ChatMessage, type :int) :Boolean
     {
-        // if we're in history mode, this will show up in the history and we'll rebuild our
-        // subtitle list if and when history goes away
-        if (isHistoryMode()) {
-            return false;
-        }
-
-        addSubtitle(createSubtitle(msg, type, true));
-        return true;
+        // This implementation never displays messages via this method.  All messages are either 
+        // shown in the history or in subtitles via HistoryList's historyUpdated() call on this
+        // class.
+        return false;
     }
 
     /**

@@ -153,7 +153,6 @@ public class ComicOverlay extends ChatOverlay
             if (createBubble(msg, type, null, null)) {
                 return true;
             }
-            // if the bubble didn't fit (unlikely), make it a subtitle
             break;
 
         case PLACE: 
@@ -169,12 +168,13 @@ public class ComicOverlay extends ChatOverlay
             if (createBubble(msg, type, speaker, speakerBubblePos)) {
                 return true;
             }
-            // if the bubble didn't fit (unlikely), make it a subtitle
             break;
         }
 
-        // show the message as a subtitle instead
-        return super.displayTypedMessageNow(msg, type);
+        // createBubble does not currently return false, so this path won't get hit.  This warning
+        // is to act as a reminder for the possible future in which it does.
+        Log.getLog(this).warning("Message didn't fit - it won't be displayed [" + msg + "]");
+        return false;
     }
 
     /**
