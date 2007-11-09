@@ -158,15 +158,19 @@ public class ChatOverlay
         if (_history != null) {
             _history.addChatOverlay(this);
 
-            configureHistoryBarSize();
-            resetHistoryOffset();
+            if (isHistoryMode()) {
+                configureHistoryBarSize();
+                resetHistoryOffset();
 
-            // "scroll" down to the latest history entry
-            if (_historyBar != null) {
-                updateHistBar(_history.size() - 1);
-
-                // figure our history
-                figureCurrentHistory();
+                // "scroll" down to the latest history entry
+                if (_historyBar != null) {
+                    updateHistBar(_history.size() - 1);
+    
+                    // figure our history
+                    figureCurrentHistory();
+                }
+            } else {
+                showCurrentSubtitles();
             }
         }
     }
@@ -276,6 +280,8 @@ public class ChatOverlay
             _historyBar = null;
 
             clearGlyphs(_showingHistory);
+
+            showCurrentSubtitles();
         }
     }
 
@@ -336,6 +342,44 @@ public class ChatOverlay
             _staticOverlay.removeChild(glyph);
         }
         glyph.wasRemoved();
+    }
+
+    protected function showCurrentSubtitles () :void
+    {
+        clearGlyphs(_subtitles);
+        _subtitles = [];
+        if (_history.size() == 0) {
+            return;
+        }
+
+        var ii :int = _history.size() - 1;
+        for (; ii >= 0 && shouldShowSubtitleNow(_history.get(ii)); ii--);
+        ii++;
+
+        var timed :TimedMessageDisplay;
+        var expire :int;
+        var type :int;
+        var texts :Array;
+        _lastExpire = 0;
+        for (; ii < _history.size(); ii++) {
+            timed = _history.get(ii);
+            if (timed.displayedAt == -1) {
+                timed.showingNow();
+            }
+            expire = getChatExpire(timed.displayedAt, timed.msg.message);
+            type = getType(timed.msg, true);
+            texts = formatMessage(timed.msg, type, true, _userSpeakFmt);
+            addSubtitle(new SubtitleGlyph(this, type, expire, _defaultFmt, texts));
+        }
+    }
+
+    protected function shouldShowSubtitleNow (timed :TimedMessageDisplay) :Boolean
+    {
+        if (timed.displayedAt == -1) {
+            return true;
+        } else {
+            return getChatExpire(timed.displayedAt, timed.msg.message) > getTimer();
+        }
     }
 
     protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
@@ -492,8 +536,7 @@ public class ChatOverlay
     protected function addSubtitle (glyph :SubtitleGlyph) :void
     {
         var height :int = int(glyph.height);
-        glyph.x = _targetBounds.x + PAD + 
-            (_scrollBarSide == SCROLL_BAR_LEFT ? ScrollBar.THICKNESS : 0);
+        glyph.x = _targetBounds.x + PAD;
         glyph.y = _targetBounds.bottom - height - PAD;
         scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
         _subtitles.push(glyph);
@@ -873,14 +916,8 @@ public class ChatOverlay
                 var timed :TimedMessageDisplay = _history.get(_history.size() - 1);
                 var newGlyph :SubtitleGlyph = 
                     createSubtitle(timed.msg, getType(timed.msg, true), true);
-                for each (glyph in _subtitles) {
-                    glyph.y -= newGlyph.height;
-                }
-                newGlyph.x = _targetBounds.x + PAD;
-                newGlyph.y = _targetBounds.y + _targetBounds.height - newGlyph.height - PAD;
-                _staticOverlay.addChild(newGlyph);
-                _subtitles.push(newGlyph);
                 timed.showingNow();
+                addSubtitle(newGlyph);
             }
         }
     }
