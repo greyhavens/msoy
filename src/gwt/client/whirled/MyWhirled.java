@@ -139,7 +139,11 @@ public class MyWhirled extends FlexTable
                 return CWhirled.msgs.noPeople();
             }
             protected String getHeaderText (int start, int limit, int total) {
-                return CWhirled.msgs.headerPeople();
+                if (start == 0 && limit == total) {
+                    return CWhirled.msgs.headerPeople();
+                } else {
+                    return CWhirled.msgs.headerPeoplePart(""+(start+1), ""+(start+limit), ""+total);
+                }
             }
             protected boolean alwaysDisplayNavi () {
                 return true;
@@ -215,6 +219,12 @@ public class MyWhirled extends FlexTable
             _peopleAttributes.put(new Integer(person.getMemberId()), list);
         }
         people = Arrays.asList(peopleArray);
+
+        List npeople = new ArrayList();
+        for (int ii = 0; ii < 1000; ii++) {
+            npeople.addAll(people);
+        }
+        people = npeople;
 
         // populate _peopleAttributes with scene type info
         List[] scenes = { myWhirled.places, myWhirled.games };
