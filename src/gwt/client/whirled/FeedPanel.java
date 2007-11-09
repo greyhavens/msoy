@@ -99,6 +99,8 @@ public class FeedPanel extends VerticalPanel
 
         // FRIEND_UPDATED_ROOM
         case 101:
+        // FRIEND_GAINED_LEVEL
+        case 104:
             return new MessageKey(message.type, null);
         }
         return null;
@@ -313,6 +315,18 @@ public class FeedPanel extends VerticalPanel
             });
         }
 
+        protected String friendLinkCombine (ArrayList list)
+        {
+            return standardCombine(list, new StringBuilder() {
+                public String build (FeedMessage message) {
+                    FriendFeedMessage ffm = (FriendFeedMessage)message;
+                    return CWhirled.msgs.colonCombine(profileLink(ffm.friend.toString(),
+                                String.valueOf(ffm.friend.getMemberId())),
+                            buildString(message));
+                }
+            });
+        }
+
         /**
          * Helper function which combines the core feed message data into a translated, comma
          * separated and ending in 'and' list.
@@ -345,15 +359,7 @@ public class FeedPanel extends VerticalPanel
 
             // FRIEND_UPDATED_ROOM
             case 101:
-                add(new BasicWidget(CWhirled.msgs.friendsUpdatedRoom(standardCombine(list,
-                    new StringBuilder() {
-                        public String build (FeedMessage message) {
-                            FriendFeedMessage ffm = (FriendFeedMessage)message;
-                            return CWhirled.msgs.colonCombine(profileLink(ffm.friend.toString(),
-                                        String.valueOf(ffm.friend.getMemberId())),
-                                    buildString(message));
-                        }
-                    }))));
+                add(new BasicWidget(CWhirled.msgs.friendsUpdatedRoom(friendLinkCombine(list))));
                 break;
 
             // FRIEND_WON_TROPHY
@@ -366,6 +372,11 @@ public class FeedPanel extends VerticalPanel
             case 103:
                 add(new BasicWidget(CWhirled.msgs.friendListedItem(
                                 friendLink, standardCombine(list))));
+                break;
+
+            // FRIEND_GAINED_LEVEL
+            case 104:
+                add(new BasicWidget(CWhirled.msgs.friendsGainedLevel(friendLinkCombine(list))));
                 break;
             }
         }
