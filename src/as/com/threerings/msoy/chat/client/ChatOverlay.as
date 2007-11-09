@@ -414,8 +414,6 @@ public class ChatOverlay
      */
     protected function layout () :void
     {
-        clearGlyphs(_subtitles);
-
         if (_targetBounds == null) {
             var height :int = _target.height * _subtitlePercentage;
             _targetBounds = new Rectangle(0, 0, DEFAULT_WIDTH + ScrollBar.THICKNESS, height);
@@ -447,7 +445,6 @@ public class ChatOverlay
             timed = _history.get(index);
             if (shouldShowFromHistory(timed.msg, index)) {
                 displayMessage(timed.msg, false);
-                timed.showingNow();
             }
         }
 
