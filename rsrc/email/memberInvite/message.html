@@ -3,14 +3,23 @@
 <head>
 <title>You have been invited to join Whirled!</title>
 </head>
-<body bgcolor="#FFFFFF" style="background: url(cid:side_image.jpg) repeat-x; font-family: Arial, Helvetica; margin: 0px; color: #172d38;">
 
-<center>
+<body bgcolor="#C2DCE9" style="margin: 0px;">
+<style type="text/css">
+<!--
+a {
+  color: #172d38;
+}
+-->
+</style>
+
+<div align="center" style="font-family: Arial, Helvetica; color: #172d38">
 <img src="cid:top_image.jpg">
 
-<table cellpadding="0" cellspacing="0" style="border: 1px solid #000000; background: #FFFFFF; margin: 0px 25px 25px 25px;">
+<table cellpadding="0" cellspacing="0" width="700"
+       style="border: 1px solid #000000; margin: 0px 25px 25px 25px; background: #FFFFFF;">
 <tr><td><img src="cid:header_star_left.png"></td>
-    <td><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"><img src="cid:header_star_left.png"></td>
+    <td><img src="cid:header_bar.png" width="660" height="19"></td>
     <td><img src="cid:header_star_right.png"></td></tr>
 
 <tr><td colspan="3">
@@ -25,19 +34,20 @@
 
 <p> You have been invited to join Three Rings' exciting new player-created online
 world filled with games, chat and adventure. </p>
-
-<p> ${friend} &lt;${email}&gt; sent you this invitation and said:
+#if ($friend)
+<p> <b>${friend} &lt;${email}&gt;</b> sent you this invitation and said:
 
 <blockquote>
 "${custom_message}"
 </blockquote>
 </p>
+#end
 
 </td></tr>
 
 <tr><td colspan="3">
 <p> Use the following URL to accept this invitation and explore the Whirled:</p>
-<p><font color="#3b86b0"><b>${server_url}/#invite-${invite_id}</b></font></p>
+<p><font color="#3b86b0"><b><a href="${server_url}/#invite-${invite_id}">${server_url}/#invite-${invite_id}</a></b></font></p>
 <p align="right">- The Keepers of the Peas at Three Rings</p>
 
 </td></tr>
@@ -55,11 +65,19 @@ world filled with games, chat and adventure. </p>
     <td><img src="cid:ss_catalog.jpg"></td></tr>
 </table>
 
-<div style="margin: 0px 25px; font-size: small">
+<div style="margin: 0px 25px; font-size: small" align="center">
+#if ($friend)
 <p> If you would prefer not to receive invitations to Whirled from your friends,
 please visit this link:</p>
 
-<p>${server_url}/#optout-${invite_id}</p>
+<p><a href="${server_url}/#optout-${invite_id}">${server_url}/#optout-${invite_id}</a></p>
+#else
+This invitation is a result of this email address having been submitted at
+http://www.threerings.net/whirled/ for inclusion in Whirled testing. If you've
+received this email in error please accept our apologies and ignore it. If you
+do not create an account using this invitation to Whirled you will not receive
+further email.
+#end
 </div>
 
 <table cellpadding="0" cellspacing="0" style="margin: 0px 35px 15px 35px">
@@ -71,6 +89,6 @@ please visit this link:</p>
 </td></tr>
 </table>
 
-</center>
+</div>
 </body>
 </html>
