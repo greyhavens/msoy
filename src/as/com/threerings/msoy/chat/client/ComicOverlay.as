@@ -150,10 +150,7 @@ public class ComicOverlay extends ChatOverlay
         case FEEDBACK:
         case ATTENTION:
         case BROADCAST:
-            if (createBubble(msg, type, null, null)) {
-                return true;
-            }
-            break;
+            return createBubble(msg, type, null, null);
 
         case PLACE: 
             var umsg :UserMessage = (msg as UserMessage);
@@ -164,17 +161,11 @@ public class ComicOverlay extends ChatOverlay
                     "[speaker=" + speaker + ", type=" + type + "].");
                 return false;
             }
+            return createBubble(msg, type, speaker, speakerBubblePos);
 
-            if (createBubble(msg, type, speaker, speakerBubblePos)) {
-                return true;
-            }
-            break;
+        default:
+            return false;
         }
-
-        // createBubble does not currently return false, so this path won't get hit.  This warning
-        // is to act as a reminder for the possible future in which it does.
-        Log.getLog(this).warning("Message didn't fit - it won't be displayed [" + msg + "]");
-        return false;
     }
 
     /**
