@@ -152,7 +152,7 @@ public class SendInvitesDialog extends BorderedDialog
         }
 
         if (validAddresses.size() == addresses.length) {
-            if (validAddresses.size() > _invites.availableInvitations) {
+            if (!CShell.isAdmin() && (validAddresses.size() > _invites.availableInvitations)) {
                 MsoyUI.error(CShell.cmsgs.sendInvitesTooMany(
                                  "" + validAddresses.size(),
                                  "" + _invites.availableInvitations));
