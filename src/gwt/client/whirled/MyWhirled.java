@@ -220,12 +220,6 @@ public class MyWhirled extends FlexTable
         }
         people = Arrays.asList(peopleArray);
 
-        List npeople = new ArrayList();
-        for (int ii = 0; ii < 1000; ii++) {
-            npeople.addAll(people);
-        }
-        people = npeople;
-
         // populate _peopleAttributes with scene type info
         List[] scenes = { myWhirled.places, myWhirled.games };
         for (int ii = 0; ii < scenes.length; ii++) {
