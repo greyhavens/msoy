@@ -46,9 +46,9 @@ public class index extends MsgsEntryPoint
         }
 
         // display the requested folder, header and/or message
-        int folderId = args.get(1, MailFolder.INBOX_FOLDER_ID);
-        int headerOffset = args.get(2, 0);
-        int messageId = args.get(3, -1);
+        int folderId = args.get(0, MailFolder.INBOX_FOLDER_ID);
+        int headerOffset = args.get(1, 0);
+        int messageId = args.get(2, -1);
         _mainView.show(folderId, headerOffset, messageId);
     }
 
