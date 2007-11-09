@@ -26,12 +26,10 @@ public class GameWrapper
     // from interface GameApplet.Delegate
     public void init (final JApplet applet, String server, int port)
     {
-        log.info("Creating frame manager...");
-
         // create our frame manager
         _framemgr = FrameManager.newInstance(new FrameManager.ManagedRoot() {
             public void init (FrameManager fmgr) {
-                // TODO?
+                // don't need it
             }
             public Window getWindow () {
                 Component parent = applet.getParent();
@@ -46,10 +44,8 @@ public class GameWrapper
         });
 
         try {
-            log.info("Creating client...");
             // create and initialize our client instance
             _client = new GameClient();
-            log.info("Initializing client...");
             _client.init(applet, _framemgr);
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to create the game client.", e);
@@ -58,29 +54,21 @@ public class GameWrapper
 
         log.info("Using [server=" + server + ", port=" + port + "].");
         _client.getContext().getClient().setServer(server, new int[] { port });
-
-        log.info("GameApplet finished init.");
     }
 
     // from interface GameApplet.Delegate
     public void start (String authToken, int gameId, int gameOid)
     {
-        log.info("GameApplet starting.");
-
         // start up our frame manager
         _framemgr.start();
 
         // pass our credentials and game information to the client
         _client.start(authToken, gameId, gameOid);
-
-        log.info("GameApplet started.");
     }
 
     // from interface GameApplet.Delegate
     public void stop ()
     {
-        log.info("GameApplet stopping.");
-
         _framemgr.stop();
 
         // if we're logged on, log off
@@ -90,20 +78,13 @@ public class GameWrapper
                 client.logoff(true);
             }
         }
-
-        log.info("GameApplet stopped.");
     }
 
     // from interface GameApplet.Delegate
     public void destroy ()
     {
-        log.info("GameApplet destroying.");
-
-        // we need to cope with our threads being destroyed but our classes not
-        // being unloaded
+        // we need to cope with our threads being destroyed but our classes not being unloaded
         Interval.resetTimer();
-
-        log.info("GameApplet destroyed.");
     }
 
     protected GameClient _client;
