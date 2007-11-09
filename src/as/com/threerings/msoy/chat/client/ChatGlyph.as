@@ -55,14 +55,19 @@ public class ChatGlyph extends Sprite
         var charIndex :int = _txt.getCharIndexAtPoint(textPoint.x, textPoint.y);
         if (charIndex == -1) {
             // make sure we're not showing the text-selection cursor
-            _txt.mouseEnabled = false;
+            setClickable(false);
             return false;
         }
 
         var format :TextFormat = _txt.getTextFormat(charIndex);
         var clickable :Boolean = !(format == null || format.url == null || format.url == "");
-        _txt.mouseEnabled = clickable;
+        setClickable(clickable);
         return clickable;
+    }
+
+    public function setClickable (clickable :Boolean) :void
+    {
+        _txt.mouseEnabled = clickable;
     }
 
     /**

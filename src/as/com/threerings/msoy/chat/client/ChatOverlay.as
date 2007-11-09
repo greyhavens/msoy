@@ -100,7 +100,10 @@ public class ChatOverlay
             for each (var obj :DisplayObject in objs) {
                 // the obj returned when hovering over text is the TextField, not the Chat Glyph
                 if (obj.parent is ChatGlyph) {
-                    if ((obj.parent as ChatGlyph).isClickableAtPoint(stagePoint)) {
+                    if (_glyphsClickableAlways) {
+                        (obj.parent as ChatGlyph).setClickable(true);
+                        return true;
+                    } else if ((obj.parent as ChatGlyph).isClickableAtPoint(stagePoint)) {
                         return true;
                     }
                 } else if (obj is InteractiveObject && InteractiveObject(obj).mouseEnabled) {
@@ -287,8 +290,7 @@ public class ChatOverlay
      */
     public function setClickableGlyphs (clickable :Boolean) :void
     {
-        _scrollOverlay.mouseChildren = clickable;
-        _staticOverlay.mouseChildren = clickable;
+        _glyphsClickableAlways = clickable;
     }
 
     /**
@@ -1316,6 +1318,9 @@ public class ChatOverlay
 
     /** The side to keep the scroll bar for this overlay on. */
     protected var _scrollBarSide :int;
+
+    /** Whether we should always allow the chat glyphs to capture the mouse (for text selection) */
+    protected var _glyphsClickableAlways :Boolean = false;
 
     /** Used to guess at the 'page size' for the scrollbar. */
     protected static const SUBTITLE_HEIGHT_GUESS :int = 26;
