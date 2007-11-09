@@ -263,6 +263,10 @@ Window {
   paddingRight: 0;
 }
 
+.controlBar {
+  backgroundColor: white;
+}
+
 .controlBarText { 
   color: #dddddd;
 }
