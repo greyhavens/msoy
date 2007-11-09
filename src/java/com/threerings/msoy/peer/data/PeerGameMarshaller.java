@@ -19,35 +19,35 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
 public class PeerGameMarshaller extends InvocationMarshaller
     implements PeerGameService
 {
-    /** The method id used to dispatch {@link #leaveAVRGame} requests. */
-    public static final int LEAVE_AVRGAME = 1;
+    /** The method id used to dispatch {@link #peerLeaveAVRGame} requests. */
+    public static final int PEER_LEAVE_AVRGAME = 1;
 
     // from interface PeerGameService
-    public void leaveAVRGame (Client arg1, int arg2)
+    public void peerLeaveAVRGame (Client arg1, int arg2)
     {
-        sendRequest(arg1, LEAVE_AVRGAME, new Object[] {
+        sendRequest(arg1, PEER_LEAVE_AVRGAME, new Object[] {
             Integer.valueOf(arg2)
         });
     }
 
-    /** The method id used to dispatch {@link #reportFlowAward} requests. */
-    public static final int REPORT_FLOW_AWARD = 2;
+    /** The method id used to dispatch {@link #peerReportFlowAward} requests. */
+    public static final int PEER_REPORT_FLOW_AWARD = 2;
 
     // from interface PeerGameService
-    public void reportFlowAward (Client arg1, int arg2, int arg3)
+    public void peerReportFlowAward (Client arg1, int arg2, int arg3)
     {
-        sendRequest(arg1, REPORT_FLOW_AWARD, new Object[] {
+        sendRequest(arg1, PEER_REPORT_FLOW_AWARD, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3)
         });
     }
 
-    /** The method id used to dispatch {@link #updatePlayer} requests. */
-    public static final int UPDATE_PLAYER = 3;
+    /** The method id used to dispatch {@link #peerUpdatePlayer} requests. */
+    public static final int PEER_UPDATE_PLAYER = 3;
 
     // from interface PeerGameService
-    public void updatePlayer (Client arg1, int arg2, GameSummary arg3)
+    public void peerUpdatePlayer (Client arg1, int arg2, GameSummary arg3)
     {
-        sendRequest(arg1, UPDATE_PLAYER, new Object[] {
+        sendRequest(arg1, PEER_UPDATE_PLAYER, new Object[] {
             Integer.valueOf(arg2), arg3
         });
     }

@@ -38,22 +38,22 @@ public class PeerGameDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
-        case PeerGameMarshaller.LEAVE_AVRGAME:
-            ((PeerGameProvider)provider).leaveAVRGame(
+        case PeerGameMarshaller.PEER_LEAVE_AVRGAME:
+            ((PeerGameProvider)provider).peerLeaveAVRGame(
                 source,
                 ((Integer)args[0]).intValue()
             );
             return;
 
-        case PeerGameMarshaller.REPORT_FLOW_AWARD:
-            ((PeerGameProvider)provider).reportFlowAward(
+        case PeerGameMarshaller.PEER_REPORT_FLOW_AWARD:
+            ((PeerGameProvider)provider).peerReportFlowAward(
                 source,
                 ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue()
             );
             return;
 
-        case PeerGameMarshaller.UPDATE_PLAYER:
-            ((PeerGameProvider)provider).updatePlayer(
+        case PeerGameMarshaller.PEER_UPDATE_PLAYER:
+            ((PeerGameProvider)provider).peerUpdatePlayer(
                 source,
                 ((Integer)args[0]).intValue(), (GameSummary)args[1]
             );

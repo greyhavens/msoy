@@ -16,17 +16,17 @@ import com.threerings.presents.server.InvocationProvider;
 public interface PeerGameProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link PeerGameService#leaveAVRGame} request.
+     * Handles a {@link PeerGameService#peerLeaveAVRGame} request.
      */
-    public void leaveAVRGame (ClientObject caller, int arg1);
+    public void peerLeaveAVRGame (ClientObject caller, int arg1);
 
     /**
-     * Handles a {@link PeerGameService#reportFlowAward} request.
+     * Handles a {@link PeerGameService#peerReportFlowAward} request.
      */
-    public void reportFlowAward (ClientObject caller, int arg1, int arg2);
+    public void peerReportFlowAward (ClientObject caller, int arg1, int arg2);
 
     /**
-     * Handles a {@link PeerGameService#updatePlayer} request.
+     * Handles a {@link PeerGameService#peerUpdatePlayer} request.
      */
-    public void updatePlayer (ClientObject caller, int arg1, GameSummary arg2);
+    public void peerUpdatePlayer (ClientObject caller, int arg1, GameSummary arg2);
 }

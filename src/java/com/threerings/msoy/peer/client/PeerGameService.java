@@ -15,15 +15,15 @@ public interface PeerGameService extends InvocationService
     /**
      * Reports to the supplied member that they have earned the specified amount of flow.
      */
-    public void reportFlowAward (Client client, int memberId, int deltaFlow);
+    public void peerReportFlowAward (Client client, int memberId, int deltaFlow);
 
     /**
      * Notes that a player is either lobbying for, playing or no longer playing the specified game.
      */
-    public void updatePlayer (Client client, int playerId, GameSummary game);
+    public void peerUpdatePlayer (Client client, int playerId, GameSummary game);
 
     /**
      * Notifies us that a player has persistently left their AVRG.
      */
-    public void leaveAVRGame (Client caller, int playerId);
+    public void peerLeaveAVRGame (Client caller, int playerId);
 }

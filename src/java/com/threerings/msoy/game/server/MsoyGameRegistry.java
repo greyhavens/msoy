@@ -36,6 +36,7 @@ import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
+import com.threerings.msoy.peer.client.PeerGameService;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.data.PeerGameMarshaller;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -150,7 +151,7 @@ public class MsoyGameRegistry
         log.warning("Got hello from unknown game server [port=" + port + "].");
     }
 
-    // from interfaces GameServerProvider and PeerGameProvider
+    // from interface GameServerProvider
     public void leaveAVRGame (ClientObject caller, final int playerId)
     {
         if (!checkCallerAccess(caller, "leaveAVRGame(" + playerId + ")")) {
@@ -159,23 +160,18 @@ public class MsoyGameRegistry
 
         MemberObject memobj = MsoyServer.lookupMember(playerId);
         if (memobj != null) {
-            // clear their persistent AVRG affiliation
-            MsoyServer.memberMan.updateAVRGameId(memobj, 0);
+            peerLeaveAVRGame(null, playerId);
 
         } else {
-            // locate the peer that is hosting this member and forward the request there
-            MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-                public void invoke (Client client, NodeObject nodeobj) {
-                    MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
-                    if (msnobj.memberLocs.containsKey(playerId)) {
-                        msnobj.peerGameService.leaveAVRGame(client, playerId);
-                    }
+            applyToNodes(playerId, new GameServiceOperation() {
+                public void execute (Client client, PeerGameService service) {
+                    service.peerLeaveAVRGame(client, playerId);
                 }
             });
         }
     }
 
-    // from interfaces GameServerProvider and PeerGameProvider
+    // from interface GameServerProvider
     public void updatePlayer (ClientObject caller, final int playerId, final GameSummary game)
     {
         if (!checkCallerAccess(caller, "updatePlayer(" + playerId + ")")) {
@@ -184,26 +180,32 @@ public class MsoyGameRegistry
 
         MemberObject memobj = MsoyServer.lookupMember(playerId);
         if (memobj != null) {
-            // set or clear their pending game
-            memobj.setGame(game);
-            if (game != null && game.avrGame) {
-                MsoyServer.memberMan.updateAVRGameId(memobj, game.gameId);
-            }
-
-            // update their occupant info if they're in a scene
-            MsoyServer.memberMan.updateOccupantInfo(memobj);
-
-            // update their published location in our peer object
-            MsoyServer.peerMan.updateMemberLocation(memobj);
+            peerUpdatePlayer(null, playerId, game);
 
         } else {
-            // locate the peer that is hosting this member and forward the update there
-            MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-                public void invoke (Client client, NodeObject nodeobj) {
-                    MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
-                    if (msnobj.memberLocs.containsKey(playerId)) {
-                        msnobj.peerGameService.updatePlayer(client, playerId, game);
-                    }
+            applyToNodes(playerId, new GameServiceOperation() {
+                public void execute (Client client, PeerGameService service) {
+                    service.peerUpdatePlayer(client, playerId, game);
+                }
+            });
+        }
+    }
+
+    // from interface GameServerProvider
+    public void reportFlowAward (ClientObject caller, final int memberId, final int deltaFlow)
+    {
+        if (!checkCallerAccess(caller, "reportFlowAward(" + memberId + ", " + deltaFlow + ")")) {
+            return;
+        }
+
+        MemberObject mobj = MsoyServer.lookupMember(memberId);
+        if (mobj != null) {
+            peerReportFlowAward(null, memberId, deltaFlow);
+
+        } else {
+            applyToNodes(memberId, new GameServiceOperation() {
+                public void execute (Client client, PeerGameService service) {
+                    service.peerReportFlowAward(client, memberId, deltaFlow);
                 }
             });
         }
@@ -224,29 +226,87 @@ public class MsoyGameRegistry
         }
     }
 
-    // from interface GameServerProvider and PeerGameProvider
-    public void reportFlowAward (ClientObject caller, final int memberId, final int deltaFlow)
+    // from interface PeerGameProvider
+    public void peerUpdatePlayer (ClientObject caller, int playerId, GameSummary game)
     {
-        if (!checkCallerAccess(caller, "reportFlowAward(" + memberId + ", " + deltaFlow + ")")) {
+        if (caller != null && !checkCallerAccess(caller, "updatePlayer(" + playerId + ")")) {
             return;
         }
 
-        MemberObject mobj = MsoyServer.lookupMember(memberId);
-        if (mobj != null) {
-            mobj.setFlow(mobj.flow + deltaFlow);
-            mobj.setAccFlow(mobj.accFlow + deltaFlow);
-
-        } else {
-            // locate the peer that is hosting this member and forward the flow update there
-            MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-                public void invoke (Client client, NodeObject nodeobj) {
-                    MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
-                    if (msnobj.memberLocs.containsKey(memberId)) {
-                        msnobj.peerGameService.reportFlowAward(client, memberId, deltaFlow);
-                    }
-                }
-            });
+        MemberObject memobj = MsoyServer.lookupMember(playerId);
+        if (memobj == null) {
+            // TODO: this happens *all the time* when somebody's in an AVRG and quits; we've
+            // TODO: got to rearrange operations somehow
+            log.warning("Player vanished, dropping playerUpdate [caller=" + caller + ", player=" +
+                        playerId + ", game=" + game + "]");
+            return;
         }
+        // set or clear their pending game
+        memobj.setGame(game);
+        if (game != null && game.avrGame) {
+            MsoyServer.memberMan.updateAVRGameId(memobj, game.gameId);
+        }
+
+        // update their occupant info if they're in a scene
+        MsoyServer.memberMan.updateOccupantInfo(memobj);
+
+        // update their published location in our peer object
+        MsoyServer.peerMan.updateMemberLocation(memobj);
+    }
+
+    // from interface PeerGameProvider
+    public void peerLeaveAVRGame (ClientObject caller, int playerId)
+    {
+        if (caller != null && !checkCallerAccess(caller, "peerLeaveAVRGame(" + playerId + ")")) {
+            return;
+        }
+
+        MemberObject memobj = MsoyServer.lookupMember(playerId);
+        if (memobj == null) {
+            log.warning("Player vanished, dropping AVRG departure [caller=" + caller +
+                        ", player=" + playerId + "]");
+            return;
+        }
+
+        // clear their persistent AVRG affiliation
+        MsoyServer.memberMan.updateAVRGameId(memobj, 0);
+    }
+
+    // from interface PeerGameProvider
+    public void peerReportFlowAward (ClientObject caller, int playerId, int deltaFlow)
+    {
+        if (caller != null && !checkCallerAccess(
+                caller, "peerReportFlowAward(" + playerId + ", " + deltaFlow + ")")) {
+            return;
+        }
+
+        MemberObject mobj = MsoyServer.lookupMember(playerId);
+        if (mobj == null) {
+            log.warning("Player vanished, dropping flow award [caller=" + caller +
+                        ", player=" + playerId + ", deltaFlow=" + deltaFlow + "]");
+            return;
+        }
+
+        mobj.setFlow(mobj.flow + deltaFlow);
+        mobj.setAccFlow(mobj.accFlow + deltaFlow);
+    }
+
+    protected void applyToNodes (final int memberId, final GameServiceOperation op)
+    {
+        // locate the peer that is hosting this member and forward the request there
+        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+            public void invoke (Client client, NodeObject nodeobj) {
+                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+                if (msnobj.memberLocs.containsKey(memberId)) {
+                    op.execute(client, msnobj.peerGameService);
+                }
+            }
+        });
+    }
+
+    protected static interface GameServiceOperation
+    {
+        void execute(Client client, PeerGameService service);
     }
 
     // from interface GameServerProvider
