@@ -258,9 +258,9 @@ public class Quest
             "Place Your Furniture",
             "The new furniture appears in the middle of the room until you drag it to where " +
             "you want it to be. ",
-            [ "Click the hammer icon on the toolbar to enter Build Mode.", 
-              "Click and drag your furniture to put it anywhere you want.", 
-              "Click the [[Close]] box on the Build Panel to return to your room." ],
+            [ "Click the hammer icon on the toolbar to enter [[Arranging Room Mode]].", 
+              "[[Click and drag]] your furniture to put it anywhere you want.", 
+              "Click the [[Close]] box on the [[Arranging Room]] to return to your room." ],
             "",
             "You're a born interior decorator! Here's another [[200 flow]] to celebrate your " +
             "newfound skills.<br><br>" +
