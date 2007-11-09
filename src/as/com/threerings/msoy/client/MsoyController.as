@@ -787,7 +787,10 @@ public class MsoyController extends Controller
         if (!_didFirstLogonGo) {
             _didFirstLogonGo = true;
             goToPlace(_topPanel.loaderInfo.parameters);
-        }
+        } else if (_postLogonScene != 0) {
+            // we gotta go somewhere
+            _ctx.getSceneDirector().moveTo(_postLogonScene);
+        } 
 
         _ctx.getGameDirector().checkMemberAVRGame();
     }
