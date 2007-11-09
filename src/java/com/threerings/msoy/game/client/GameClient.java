@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.net.URL;
 
+import javax.swing.JApplet;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -57,7 +58,7 @@ public class GameClient
     /**
      * Initializes a new client and provides it with a frame in which to display everything.
      */
-    public void init (GameApplet shell)
+    public void init (JApplet applet, FrameManager fmgr)
         throws Exception
     {
         // create our context
@@ -66,12 +67,13 @@ public class GameClient
         // create the directors/managers/etc. provided by the context
         createContextServices();
 
-        // keep this for later
-        _shell = shell;
-        _keydisp = new KeyDispatcher(_shell.getWindow());
+        // keep these for later
+        _applet = applet;
+        _fmgr = fmgr;
+        _keydisp = new KeyDispatcher(_fmgr.getManagedRoot().getWindow());
 
         // stuff our top-level pane into the top-level of our shell
-        _shell.setContentPane(_root);
+        _applet.setContentPane(_root);
 
         // display a "loading..." panel until our first placeview is set
         JPanel loading = GroupLayout.makeVBox();
@@ -82,7 +84,7 @@ public class GameClient
         // start our idle tracker
         IdleTracker idler = new IdleTracker(ChatCodes.DEFAULT_IDLE_TIME, LOGOFF_DELAY) {
             protected long getTimeStamp () {
-                return _shell.getFrameManager().getTimeStamp();
+                return _fmgr.getTimeStamp();
             }
             protected void idledIn () {
                 updateIdle(false);
@@ -104,7 +106,7 @@ public class GameClient
                 }
             }
         };
-        idler.start(null, _shell.getWindow(), _ctx.getClient().getRunQueue());
+        idler.start(null, _fmgr.getManagedRoot().getWindow(), _ctx.getClient().getRunQueue());
     }
 
     public void start (String authtoken, int gameId, final int gameOid)
@@ -130,6 +132,7 @@ public class GameClient
                 // TODO: display message to user
             }
         });
+        log.info("Logging on [creds=" + creds + ", version=" + DeploymentConfig.version + "]...");
         _ctx.getClient().logon();
     }
 
@@ -193,7 +196,7 @@ public class GameClient
         // create our managers
         _rsrcmgr = new ResourceManager("rsrc");
         _msgmgr = new MessageManager(MESSAGE_MANAGER_PREFIX);
-        _imgmgr = new ImageManager(_rsrcmgr, _shell);
+        _imgmgr = new ImageManager(_rsrcmgr, _applet);
         _tilemgr = new TileManager(_imgmgr);
         _sndmgr = new SoundManager(_rsrcmgr);
 
@@ -201,7 +204,7 @@ public class GameClient
         _locdir = new LocationDirector(_ctx) {
             public boolean moveBack () {
                 try {
-                    _shell.getAppletContext().showDocument(new URL("javascript:back()"));
+                    _applet.getAppletContext().showDocument(new URL("javascript:back()"));
                 } catch (Exception e) {
                     log.warning("Failed to move back: " + e);
                 }
@@ -289,7 +292,7 @@ public class GameClient
         }
 
         public FrameManager getFrameManager () {
-            return _shell.getFrameManager();
+            return _fmgr;
         }
 
         public KeyDispatcher getKeyDispatcher () {
@@ -310,7 +313,8 @@ public class GameClient
     }
 
     protected WhirledContext _ctx;
-    protected GameApplet _shell;
+    protected JApplet _applet;
+    protected FrameManager _fmgr;
     protected JPanel _root = new JPanel(new BorderLayout()); // TODO?
     protected Config _config = new Config("toybox");
 
