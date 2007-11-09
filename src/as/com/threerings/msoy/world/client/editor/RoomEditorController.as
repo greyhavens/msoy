@@ -108,16 +108,16 @@ public class RoomEditorController
     }
 
     /**
-     * Called by the room controller, cancels any current editing functions.
+     * Called by the room controller to close the editor.
      */
     public function endEditing () :void
     {
+        // tell the panel to close
         _panel.close();
 
-        // stop listening for mouse down
-        _view.removeEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-
-        // note: the rest of cleanup will happen in actionEditorClosed
+        // note: this function does *not* get called when the player closes the editor by
+        // clicking on the close button. all significant editor cleanup should happen in 
+        // actionEditorClosed()
     }
 
     /**
@@ -285,6 +285,9 @@ public class RoomEditorController
         if (_panel != null && _panel.isOpen) {
             Log.getLog(this).warning("Room editor failed to close!");
         }
+
+        // stop listening for mouse down
+        _view.removeEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
 
         _entranceSprite.setEditing(false);
         _view.removeOtherSprite(_entranceSprite);
