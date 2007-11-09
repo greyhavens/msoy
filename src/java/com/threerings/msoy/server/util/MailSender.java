@@ -138,8 +138,6 @@ public class MailSender
                 InputStream htmlIn = MailSender.class.getClassLoader().getResourceAsStream(htmlPath);
                 if (htmlIn != null) {
                     htmlData = IOUtils.toString(htmlIn);
-                } else {
-                    log.info("Found no HTML template [path=" + htmlPath + "].");
                 }
             } catch (IOException ioe) {
                 log.warning("Failed to load HTML template [path=" + htmlPath +
