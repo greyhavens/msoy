@@ -49,13 +49,13 @@ public class GameApplet extends JApplet
             return;
         }
 
+        // don't ask
         List<URL> urls = new ArrayList<URL>();
         for (URL url : ((URLClassLoader)getClass().getClassLoader()).getURLs()) {
             if (url.getPath().endsWith(".jar")) {
                 urls.add(url);
             }
         }
-
         URLClassLoader loader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), null);
         try {
             Class<?> dclass = loader.loadClass("com.threerings.msoy.game.client.GameWrapper");
@@ -65,7 +65,6 @@ public class GameApplet extends JApplet
             _stop = dclass.getMethod("stop");
             _destroy = dclass.getMethod("destroy");
             _init.invoke(_delegate, this, server, port);
-
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to load wrapper class.", e);
         }
