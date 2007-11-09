@@ -109,7 +109,7 @@ public class MemberServlet extends MsoyServiceServlet
             return MsoyServer.memberRepo.getFriendStatus(memrec.memberId, memberId);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getFriendStatus failed [for=" + memberId + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -136,7 +136,7 @@ public class MemberServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "addFriend failed [for=" + memrec.memberId +
                     ", friendId=" + friendId + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -156,7 +156,7 @@ public class MemberServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "removeFriend failed [for=" + memrec.memberId +
                     ", friendId=" + friendId + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -170,7 +170,7 @@ public class MemberServlet extends MsoyServiceServlet
         if (Item.getClassForType(type) == null) {
             log.warning("Requested to load inventory for invalid item type " +
                         "[who=" + ident + ", type=" + type + "].");
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
@@ -193,7 +193,7 @@ public class MemberServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "loadInventory failed [for=" + memrec.memberId + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -268,7 +268,7 @@ public class MemberServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Fetching friend list, profile, or room list failed! " +
                     "[memberId=" + memrec.memberId + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
         // filter out who's not online on the dobj thread
@@ -381,7 +381,7 @@ public class MemberServlet extends MsoyServiceServlet
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to fill member cards", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
         PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
@@ -427,7 +427,7 @@ public class MemberServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to get popular games info", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
         final ArrayList<MemberCard> whirledPeople = new ArrayList<MemberCard>();
@@ -482,7 +482,7 @@ public class MemberServlet extends MsoyServiceServlet
             whirledwide.people = whirledPeople;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to flesh out MemberCards", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
         // Scene cards
@@ -523,12 +523,13 @@ public class MemberServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitationsStatus failed [id=" + mrec.memberId +"]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from MemberService
-    public InvitationResults sendInvites (WebIdent ident, List addresses, String customMessage)
+    public InvitationResults sendInvites (WebIdent ident, List addresses, String customMessage,
+                                          boolean anonymous)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
@@ -537,18 +538,24 @@ public class MemberServlet extends MsoyServiceServlet
             // make sure this user still has available invites; we already check this value in GWT
             // land, and deal with it sensibly there
             if (MsoyServer.memberRepo.getInvitesGranted(mrec.memberId) < addresses.size()) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+                throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
             }
+
+            // if they're requesting anonymous invites and are not an admin, rejecto!
+            if (anonymous && !mrec.isAdmin()) {
+                throw new ServiceException(InvocationCodes.E_ACCESS_DENIED);
+            }
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitesGranted failed [id=" + mrec.memberId +"]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
         InvitationResults ir = new InvitationResults();
         ir.results = new String[addresses.size()];
         for (int ii = 0; ii < addresses.size(); ii++) {
             String email = (String)addresses.get(ii);
-            ir.results[ii] = sendInvite(mrec, email, customMessage);
+            ir.results[ii] = sendInvite(anonymous ? null : mrec, email, customMessage);
         }
         return ir;
     }
@@ -567,7 +574,7 @@ public class MemberServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitation failed [inviteId=" + inviteId + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -577,12 +584,12 @@ public class MemberServlet extends MsoyServiceServlet
     {
         try {
             if (!MsoyServer.memberRepo.inviteAvailable(invite.inviteId)) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+                throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
             }
             MsoyServer.memberRepo.optOutInvite(invite);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "optOut failed [inviteId=" + invite.inviteId + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -602,7 +609,7 @@ public class MemberServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Load feed failed [memberId=" + mrec.memberId + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -677,7 +684,7 @@ public class MemberServlet extends MsoyServiceServlet
             // maps group id to the scene(s) that are owned by it
             IntMap<IntSet> groupIds = new HashIntMap<IntSet>();
             // maps member id to the scene(s) that are owned by them
-            IntMap<IntSet> memberIds = new HashIntMap<IntSet>();
+            IntMap<IntSet> memIds = new HashIntMap<IntSet>();
             for (SceneRecord sceneRec : MsoyServer.sceneRepo.loadScenes(map.keySet())) {
                 SceneCard card = new SceneCard();
                 card.sceneId = sceneRec.sceneId;
@@ -696,10 +703,10 @@ public class MemberServlet extends MsoyServiceServlet
                     }
                     groupScenes.add(sceneRec.sceneId);
                 } else if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                    IntSet memberScenes = memberIds.get(sceneRec.ownerId);
+                    IntSet memberScenes = memIds.get(sceneRec.ownerId);
                     if (memberScenes == null) {
                         memberScenes = new ArrayIntSet();
-                        memberIds.put(sceneRec.ownerId, memberScenes);
+                        memIds.put(sceneRec.ownerId, memberScenes);
                     }
                     memberScenes.add(sceneRec.sceneId);
                 }
@@ -719,8 +726,8 @@ public class MemberServlet extends MsoyServiceServlet
             }
 
             // fill in logos for member-owned scenes
-            for (ProfileRecord profileRec : MsoyServer.profileRepo.loadProfiles(memberIds.keySet())) {
-                for (int sceneId : memberIds.get(profileRec.memberId)) {
+            for (ProfileRecord profileRec : MsoyServer.profileRepo.loadProfiles(memIds.keySet())) {
+                for (int sceneId : memIds.get(profileRec.memberId)) {
                     SceneCard card = cards.get(sceneId);
                     if (card != null) {
                         card.logo = profileRec.photoHash == null ? Profile.DEFAULT_PHOTO :
@@ -732,7 +739,7 @@ public class MemberServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "failed to fill in SceneCards for rooms...", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
         return new ArrayList<SceneCard>(cards.values());
@@ -774,7 +781,7 @@ public class MemberServlet extends MsoyServiceServlet
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "failed to fill in SceneCards for games...", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
         return cards;
@@ -960,21 +967,27 @@ public class MemberServlet extends MsoyServiceServlet
             }
 
             // make sure this user hasn't already invited this address
-            if (MsoyServer.memberRepo.loadInvite(email, inviter.memberId) != null) {
-                return InvitationResults.ALREADY_INVITED;
+            if (inviter != null) {
+                if (MsoyServer.memberRepo.loadInvite(email, inviter.memberId) != null) {
+                    return InvitationResults.ALREADY_INVITED;
+                }
             }
 
             String inviteId = MsoyServer.memberRepo.generateInviteId();
 
             // create and send the invitation
             VelocityContext ctx = new VelocityContext();
-            ctx.put("friend", inviter.name);
+            if (inviter != null) {
+                ctx.put("friend", inviter.name);
+                ctx.put("email", inviter.accountName);
+            }
             ctx.put("custom_message", customMessage);
             ctx.put("invite_id", inviteId);
             ctx.put("server_url", ServerConfig.getServerURL());
 
+            String from = (inviter == null) ? ServerConfig.getFromAddress() : inviter.accountName;
             try {
-                MailSender.sendEmail(email, inviter.accountName, "memberInvite", ctx);
+                MailSender.sendEmail(email, from, "memberInvite", ctx);
             } catch (Exception e) {
                 return e.getMessage();
             }

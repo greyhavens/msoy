@@ -74,9 +74,13 @@ public interface MemberService extends RemoteService
     /** 
      * Send out some of this person's available invites.
      *
+     * @param anonymous if true, the invitations will not be from the caller but will be
+     * anonymous. This is only allowed for admin callers.
+     *
      * @gwt.typeArgs addresses <java.lang.String>
      */
-    public InvitationResults sendInvites (WebIdent ident, List addresses, String customMessage)
+    public InvitationResults sendInvites (WebIdent ident, List addresses, String customMessage,
+                                          boolean anonymous)
         throws ServiceException;
 
     /** 

@@ -153,16 +153,16 @@ public class SendInvitesDialog extends BorderedDialog
 
             } else {
                 CShell.membersvc.sendInvites(CShell.ident, validAddresses, _customMessage.getText(),
-                    new AsyncCallback () {
-                        public void onSuccess (Object result) {
-                            FlashClients.tutorialEvent("friendInvited");
-                            new ResultsPopup(validAddresses, (InvitationResults)result).show();
-                            SendInvitesDialog.this.hide();
-                        }
-                        public void onFailure (Throwable cause) {
-                            MsoyUI.error(CShell.serverError(cause));
-                        }
-                    });
+                                             false, new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        FlashClients.tutorialEvent("friendInvited");
+                        new ResultsPopup(validAddresses, (InvitationResults)result).show();
+                        SendInvitesDialog.this.hide();
+                    }
+                    public void onFailure (Throwable cause) {
+                        MsoyUI.error(CShell.serverError(cause));
+                    }
+                });
             }
         }
     }

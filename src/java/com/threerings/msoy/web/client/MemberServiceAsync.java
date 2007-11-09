@@ -58,8 +58,8 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#sendInvites}.
      */
-    public void sendInvites (WebIdent ident, List addresses, String customMessage, 
-                             AsyncCallback callback);
+    public void sendInvites (WebIdent ident, List addresses, String customMessage,
+                             boolean anonymous, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MemberService#getInvitation}.
