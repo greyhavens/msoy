@@ -25,6 +25,7 @@ import com.threerings.parlor.game.data.GameCodes;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
@@ -290,13 +291,14 @@ public class MsoyGameRegistry
         mobj.setAccFlow(mobj.accFlow + deltaFlow);
     }
 
-    protected void applyToNodes (final int memberId, final GameServiceOperation op)
+    protected void applyToNodes (int memberId, final GameServiceOperation op)
     {
         // locate the peer that is hosting this member and forward the request there
+        final MemberName memkey = new MemberName(null, memberId);
         MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
             public void invoke (Client client, NodeObject nodeobj) {
                 MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
-                if (msnobj.memberLocs.containsKey(memberId)) {
+                if (msnobj.clients.containsKey(memkey)) {
                     op.execute(client, msnobj.peerGameService);
                 }
             }

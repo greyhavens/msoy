@@ -594,21 +594,23 @@ public class MemberManager
      */
     public void reportUnreadMail (final int memberId, final boolean hasNewMail)
     {
+        // if they're on this server, update them directly
         MemberObject mobj = MsoyServer.lookupMember(memberId);
         if (mobj != null) {
             reportUnreadMail(null, memberId, hasNewMail);
-
-        } else {
-            // locate the peer that is hosting this member and forward the request there
-            MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-                public void invoke (Client client, NodeObject nodeobj) {
-                    MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
-                    if (msnobj.memberLocs.containsKey(memberId)) {
-                        msnobj.peerMemberService.reportUnreadMail(client, memberId, hasNewMail);
-                    }
-                }
-            });
+            return;
         }
+
+        // otherwise locate the peer that is hosting this member and forward the request there
+        final MemberName memkey = new MemberName(null, memberId);
+        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+            public void invoke (Client client, NodeObject nodeobj) {
+                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+                if (msnobj.clients.containsKey(memkey)) {
+                    msnobj.peerMemberService.reportUnreadMail(client, memberId, hasNewMail);
+                }
+            }
+        });
     }
 
     // from PeerMemberProvider
