@@ -113,7 +113,7 @@ public class MailManager
             }
             public void handleSuccess () {
                 if (_count != null) {
-                    mObj.setHasNewMail(_count.right > 0);
+                    MsoyServer.memberMan.reportUnreadMail(memberId, _count.right > 0);
                 }
                 super.handleSuccess();
             }
