@@ -38,13 +38,6 @@ public class MsoyTableManager extends TableManager
         _tableClass = MsoyTable.class;
     }
 
-    /**
-     * Should be called whenever the game is updated, so that we create a new GameSummary.
-     */
-    public void gameUpdated ()
-    {
-    }
-
     @Override 
     protected GameConfig createConfig (Table table) 
     {

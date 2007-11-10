@@ -217,7 +217,7 @@ public class LobbyManager
             return;
         }
 
-        // Accept the new game, and update the lobby object
+        // accept the new game, and update the lobby object
         _content.game = game;
         _lobj.startTransaction();
         try {
@@ -226,7 +226,6 @@ public class LobbyManager
         } finally {
             _lobj.commitTransaction();
         }
-        _tableMgr.gameUpdated();
     }
 
     /**
