@@ -100,8 +100,10 @@ public class MsoyPeerManager extends CrowdPeerManager
         }
 
         if (_mnobj.memberLocs.contains(newloc)) {
+            log.info("Updating member " + newloc + ".");
             _mnobj.updateMemberLocs(newloc);
         } else {
+            log.info("Hosting member " + newloc + ".");
             _mnobj.addToMemberLocs(newloc);
         }
     }
@@ -313,6 +315,7 @@ public class MsoyPeerManager extends CrowdPeerManager
         // clear out their location in our node object (if they were in one)
         Integer memberId = ((MsoyClientInfo)info).getMemberId();
         if (_mnobj.memberLocs.containsKey(memberId)) {
+            log.info("Clearing member " + _mnobj.memberLocs.get(memberId) + ".");
             _mnobj.removeFromMemberLocs(memberId);
         }
     }
