@@ -257,7 +257,7 @@ public class MsoyGameRegistry
     // from interface PeerGameProvider
     public void peerLeaveAVRGame (ClientObject caller, int playerId)
     {
-        if (caller != null && !checkCallerAccess(caller, "peerLeaveAVRGame(" + playerId + ")")) {
+        if (!checkCallerAccess(caller, "peerLeaveAVRGame(" + playerId + ")")) {
             return;
         }
 
@@ -275,8 +275,7 @@ public class MsoyGameRegistry
     // from interface PeerGameProvider
     public void peerReportFlowAward (ClientObject caller, int playerId, int deltaFlow)
     {
-        if (caller != null && !checkCallerAccess(
-                caller, "peerReportFlowAward(" + playerId + ", " + deltaFlow + ")")) {
+        if (!checkCallerAccess(caller, "peerReportFlowAward(" + playerId + ", " + deltaFlow + ")")) {
             return;
         }
 
