@@ -3,8 +3,11 @@
 
 package com.threerings.msoy.game.server;
 
-import com.samskivert.util.Interval;
+import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import com.samskivert.util.Interval;
 import com.threerings.util.Name;
 
 import com.threerings.presents.client.InvocationService;
@@ -18,6 +21,7 @@ import com.threerings.crowd.server.PlaceManagerDelegate;
 
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableConfig;
+import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorSender;
 
@@ -226,15 +230,14 @@ public class LobbyManager
     }
 
     /**
-     * Called by the {@link MsoyTableManager} when a game is created.
+     * Called by {@link MsoyTableManager} when it wants to create a game.
      */
-    protected void gameCreated (GameManager gmgr)
+    protected GameManager createGameManager (GameConfig config)
+        throws InstantiationException, InvocationException
     {
-        if (gmgr instanceof EZGameManager) {
-            WhirledGameDelegate delegate = new WhirledGameDelegate();
-            delegate.setGameContent(_content);
-            gmgr.addDelegate(delegate);
-        }
+        List<PlaceManagerDelegate> delegates = Lists.newArrayList();
+        delegates.add(new WhirledGameManagerDelegate(_content));
+        return (GameManager)MsoyGameServer.plreg.createPlace(config, delegates);
     }
 
     /**

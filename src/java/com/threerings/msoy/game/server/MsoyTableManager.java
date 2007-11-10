@@ -5,19 +5,18 @@ package com.threerings.msoy.game.server;
 
 import com.samskivert.util.ArrayIntSet;
 
-import com.threerings.crowd.data.BodyObject;
-
-import com.threerings.parlor.data.Table;
-
-import com.threerings.parlor.game.data.GameConfig;
-import com.threerings.parlor.game.data.GameObject;
-import com.threerings.parlor.game.server.GameManager;
-
-import com.threerings.parlor.server.TableManager;
-
 import com.threerings.presents.dobj.ObjectAddedEvent;
 import com.threerings.presents.dobj.ObjectRemovedEvent;
 import com.threerings.presents.dobj.OidListListener;
+import com.threerings.presents.server.InvocationException;
+
+import com.threerings.crowd.data.BodyObject;
+
+import com.threerings.parlor.data.Table;
+import com.threerings.parlor.game.data.GameConfig;
+import com.threerings.parlor.game.data.GameObject;
+import com.threerings.parlor.game.server.GameManager;
+import com.threerings.parlor.server.TableManager;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -78,6 +77,13 @@ public class MsoyTableManager extends TableManager
     }
 
     @Override
+    protected GameManager createGameManager (GameConfig config)
+        throws InstantiationException, InvocationException
+    {
+        return _lmgr.createGameManager(config);
+    }
+
+    @Override
     protected void gameCreated (Table table, GameObject gameobj, GameManager gmgr)
     {
         for (int ii = 0; table.occupants != null && ii < table.occupants.length; ii++) {
@@ -90,9 +96,6 @@ public class MsoyTableManager extends TableManager
 
         super.gameCreated(table, gameobj, gmgr);
         gameobj.addListener(_playerUpdater);
-
-        // let the lobby manager talk to the game manager if desired
-        _lmgr.gameCreated(gmgr);
     }
 
     @Override

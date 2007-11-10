@@ -44,7 +44,7 @@ import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.game.data.AVRGameConfig;
 import com.threerings.msoy.game.data.PerfRecord;
-import com.threerings.msoy.game.server.WhirledGameDelegate;
+import com.threerings.msoy.game.server.WhirledGameManagerDelegate;
 
 import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
 
@@ -58,7 +58,7 @@ public class ChiyogamiManager extends GameManager
     public ChiyogamiManager ()
     {
 //        addDelegate(_worldDelegate = new AVRGameManagerDelegate(this));
-//        addDelegate(_whirledDelegate = new WhirledGameDelegate());
+//        addDelegate(_whirledDelegate = new WhirledGameManagerDelegate());
     }
 
     /**
@@ -1080,7 +1080,7 @@ public class ChiyogamiManager extends GameManager
     protected RoomListener _roomListener = new RoomListener();
 
     /** Handles Whirled game services. */
-    protected WhirledGameDelegate _whirledDelegate;
+    protected WhirledGameManagerDelegate _whirledDelegate;
 
     /** A casted ref to our gameobject, this hides our superclass _gameObj. */
     protected ChiyogamiObject _gameObj;

@@ -78,49 +78,16 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles Whirled game services like awarding flow.
  */
-public class WhirledGameDelegate extends RatingManagerDelegate
+public class WhirledGameManagerDelegate extends RatingManagerDelegate
     implements WhirledGameProvider
 {
     /**
-     * Called by the lobby manager once we're started to inform us of our level and item packs.
+     * Creates a Whirled game manager delegate with the supplied game content.
      */
-    public void setGameContent (GameContent content)
+    public WhirledGameManagerDelegate (GameContent content)
     {
         // keep our game content around for later
         _content = content;
-
-        // compute our flow per minute
-        float minuteRate = RuntimeConfig.server.hourlyGameFlowRate / 60f;
-        _flowPerMinute = Math.round(minuteRate * _content.detail.getAntiAbuseFactor());
-
-        // let the client know what game content is available
-        if (_plmgr.getPlaceObject() instanceof WhirledGame) {
-            WhirledGame gobj = (WhirledGame)_plmgr.getPlaceObject();
-            List<GameData> gdata = Lists.newArrayList();
-            for (LevelPack pack : content.lpacks) {
-                LevelData data = new LevelData();
-                data.ident = pack.ident;
-                data.name = pack.name;
-                data.mediaURL = pack.getFurniMedia().getMediaPath();
-                data.premium = pack.premium;
-                gdata.add(data);
-            }
-            for (ItemPack pack : content.ipacks) {
-                ItemData data = new ItemData();
-                data.ident = pack.ident;
-                data.name = pack.name;
-                data.mediaURL = pack.getFurniMedia().getMediaPath();
-                gdata.add(data);
-            }
-            for (TrophySource source : content.tsources) {
-                TrophyData data = new TrophyData();
-                data.ident = source.ident;
-                data.name = source.name;
-                data.mediaURL = source.getThumbnailMedia().getMediaPath();
-                gdata.add(data);
-            }
-            gobj.setGameData(gdata.toArray(new GameData[gdata.size()]));
-        }
     }
 
     // from interface WhirledGameProvider
@@ -376,10 +343,41 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     {
         super.didStartup(plobj);
 
+        // compute our flow per minute
+        float minuteRate = RuntimeConfig.server.hourlyGameFlowRate / 60f;
+        _flowPerMinute = Math.round(minuteRate * _content.detail.getAntiAbuseFactor());
+
         // wire up our WhirledGameService
         if (plobj instanceof WhirledGame) {
+            WhirledGame gobj = (WhirledGame)plobj;
             _invmarsh = MsoyGameServer.invmgr.registerDispatcher(new WhirledGameDispatcher(this));
-            ((WhirledGame)plobj).setWhirledGameService((WhirledGameMarshaller)_invmarsh);
+            gobj.setWhirledGameService((WhirledGameMarshaller)_invmarsh);
+
+            // let the client know what game content is available
+            List<GameData> gdata = Lists.newArrayList();
+            for (LevelPack pack : _content.lpacks) {
+                LevelData data = new LevelData();
+                data.ident = pack.ident;
+                data.name = pack.name;
+                data.mediaURL = pack.getFurniMedia().getMediaPath();
+                data.premium = pack.premium;
+                gdata.add(data);
+            }
+            for (ItemPack pack : _content.ipacks) {
+                ItemData data = new ItemData();
+                data.ident = pack.ident;
+                data.name = pack.name;
+                data.mediaURL = pack.getFurniMedia().getMediaPath();
+                gdata.add(data);
+            }
+            for (TrophySource source : _content.tsources) {
+                TrophyData data = new TrophyData();
+                data.ident = source.ident;
+                data.name = source.name;
+                data.mediaURL = source.getThumbnailMedia().getMediaPath();
+                gdata.add(data);
+            }
+            gobj.setGameData(gdata.toArray(new GameData[gdata.size()]));
         }
     }
 
