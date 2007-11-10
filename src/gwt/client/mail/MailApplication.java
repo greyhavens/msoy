@@ -252,9 +252,7 @@ public class MailApplication extends DockPanel
         _pagerPrevious = new Button(CMail.msgs.appBtnPrevious());
         _pagerPrevious.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                _currentOffset -= HEADER_ROWS;
-                refreshHeaderPanel();
-                updateHistory();
+                goToConfiguration(_currentFolder, _currentOffset - HEADER_ROWS);
             }
         });
         _headerPager.add(_pagerPrevious);
@@ -262,9 +260,7 @@ public class MailApplication extends DockPanel
         _pagerNext = new Button(CMail.msgs.appBtnNext());
         _pagerNext.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                _currentOffset += HEADER_ROWS;
-                refreshHeaderPanel();
-                updateHistory();
+                goToConfiguration(_currentFolder, _currentOffset + HEADER_ROWS);
             }
         });
         _headerPager.add(_pagerNext);;
@@ -422,7 +418,7 @@ public class MailApplication extends DockPanel
                 name += " (" + folder.unreadCount + ")";
             }
             Hyperlink link = Application.createLink(
-                name, "mail", Args.compose("f", folder.folderId));
+                name, "mail", Args.compose(new String[] { "" + folder.folderId }));
             link.setStyleName("Folder");
             if (folder.unreadCount > 0) {
                 link.addStyleName("Folder-unread");
@@ -526,7 +522,7 @@ public class MailApplication extends DockPanel
             // next, the subject line, the only variable-width element in the row
             Widget link = Application.createLink(
                 getSubject(headers.subject), "mail", Args.compose(new String[] {
-                    "f", "" + _currentFolder, "" + _currentOffset, "" + headers.messageId
+                    "" + _currentFolder, "" + _currentOffset, "" + headers.messageId
                 }));
             link.setStyleName("Subject");
             _headerRows.setWidget(rowCnt, 1, link);
@@ -575,9 +571,7 @@ public class MailApplication extends DockPanel
                     page.setStyleName("AnotherPage");
                     page.addClickListener(new ClickListener() {
                         public void onClick (Widget sender) {
-                            _currentOffset = offset;
-                            refreshHeaderPanel();
-                            updateHistory();
+                            goToConfiguration(_currentFolder, offset);
                         }
                     });
                 }
@@ -696,13 +690,10 @@ public class MailApplication extends DockPanel
         });
     }
 
-    // anytime we wish to update the URL with a snapshot of the state, we call this
-    protected void updateHistory ()
+    // anytime we wish to move to a new view state, we call this
+    protected void goToConfiguration (int folder, int offset)
     {
-        String[] args = (_currentMessage >= 0) ?
-            new String[] { ""+_currentFolder, ""+_currentOffset, ""+_currentMessage } :
-            new String[] { ""+_currentFolder, ""+_currentOffset };
-        Application.go(Page.MAIL, Args.compose(args));
+        Application.go(Page.MAIL, Args.compose(new String[] { ""+folder, ""+offset }));
     }
 
     // scans a text, generating HTML that respects leading/consecutive spaces and newlines,
