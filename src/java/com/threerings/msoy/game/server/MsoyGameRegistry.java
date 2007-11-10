@@ -236,10 +236,14 @@ public class MsoyGameRegistry
 
         MemberObject memobj = MsoyServer.lookupMember(playerId);
         if (memobj == null) {
-            // TODO: this happens *all the time* when somebody's in an AVRG and quits; we've
-            // TODO: got to rearrange operations somehow
-            log.warning("Player vanished, dropping playerUpdate [caller=" + caller + ", player=" +
-                        playerId + ", game=" + game + "]");
+            // TODO: this method gets called with game == null and memobj == null constantly;
+            // TODO: my suspicion is this happens when you log out and the AVRG clears as part
+            // TODO: of your logging out -- but I am turning off logging in the specific case
+            // TODO: of game == null until I can investigate.
+            if (game != null) {
+                log.warning("Player vanished, dropping playerUpdate [caller=" + caller + ", player=" +
+                            playerId + ", game=" + game + "]");
+            }
             return;
         }
         // set or clear their pending game
