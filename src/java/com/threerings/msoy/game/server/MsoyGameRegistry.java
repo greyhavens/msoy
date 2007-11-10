@@ -291,25 +291,6 @@ public class MsoyGameRegistry
         mobj.setAccFlow(mobj.accFlow + deltaFlow);
     }
 
-    protected void applyToNodes (int memberId, final GameServiceOperation op)
-    {
-        // locate the peer that is hosting this member and forward the request there
-        final MemberName memkey = new MemberName(null, memberId);
-        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-            public void invoke (Client client, NodeObject nodeobj) {
-                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
-                if (msnobj.clients.containsKey(memkey)) {
-                    op.execute(client, msnobj.peerGameService);
-                }
-            }
-        });
-    }
-
-    protected static interface GameServiceOperation
-    {
-        void execute(Client client, PeerGameService service);
-    }
-
     // from interface GameServerProvider
     public void reportTrophyAward (
         ClientObject caller, int memberId, String gameName, Trophy trophy)
@@ -351,6 +332,20 @@ public class MsoyGameRegistry
                 handler.shutdown();
             }
         }
+    }
+
+    protected void applyToNodes (int memberId, final GameServiceOperation op)
+    {
+        // locate the peer that is hosting this member and forward the request there
+        final MemberName memkey = new MemberName(null, memberId);
+        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+            public void invoke (Client client, NodeObject nodeobj) {
+                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+                if (msnobj.clients.containsKey(memkey)) {
+                    op.execute(client, msnobj.peerGameService);
+                }
+            }
+        });
     }
 
     protected boolean checkAndSendToNode (int gameId, MsoyGameService.LocationListener listener)
@@ -429,6 +424,12 @@ public class MsoyGameRegistry
             return false;
         }
         return true;
+    }
+
+    /** Used by {@link #applyToNodes}. */
+    protected static interface GameServiceOperation
+    {
+        public void execute (Client client, PeerGameService service);
     }
 
     /** Handles communications with a delegate game server. */
