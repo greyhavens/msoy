@@ -87,16 +87,15 @@ public class MailApplication extends DockPanel
     {
         clearErrors();
         _messageContainer.setVisible(false);
-        if (_currentFolder == folderId && _currentOffset == headerOffset) {
-            if (_currentMessage == messageId) {
-                // there's nothing to do
-                return;
-            }
-            _currentMessage = messageId;
-        }
-        _currentFolder = folderId;
+
         _currentOffset = headerOffset;
-        loadHeaders();
+        _currentMessage = messageId;
+        if (_currentFolder != folderId) {
+            _currentFolder = folderId;
+            loadHeaders();
+        } else {
+            refreshHeaderPanel();
+        }
 
         if (messageId >= 0) {
             loadMessage();
