@@ -81,11 +81,6 @@ import static com.threerings.msoy.Log.log;
 public class WhirledGameDelegate extends RatingManagerDelegate
     implements WhirledGameProvider
 {
-    public WhirledGameDelegate (GameManager gmgr)
-    {
-        super(gmgr);
-    }
-
     /**
      * Called by the lobby manager once we're started to inform us of our level and item packs.
      */

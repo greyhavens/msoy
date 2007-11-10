@@ -231,7 +231,7 @@ public class LobbyManager
     protected void gameCreated (GameManager gmgr)
     {
         if (gmgr instanceof EZGameManager) {
-            WhirledGameDelegate delegate = new WhirledGameDelegate((EZGameManager)gmgr);
+            WhirledGameDelegate delegate = new WhirledGameDelegate();
             delegate.setGameContent(_content);
             gmgr.addDelegate(delegate);
         }

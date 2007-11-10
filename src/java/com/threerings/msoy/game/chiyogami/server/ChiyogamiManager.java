@@ -58,7 +58,7 @@ public class ChiyogamiManager extends GameManager
     public ChiyogamiManager ()
     {
 //        addDelegate(_worldDelegate = new AVRGameManagerDelegate(this));
-        addDelegate(_whirledDelegate = new WhirledGameDelegate(this));
+//        addDelegate(_whirledDelegate = new WhirledGameDelegate());
     }
 
     /**
