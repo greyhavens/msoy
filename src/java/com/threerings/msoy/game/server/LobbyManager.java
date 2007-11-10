@@ -23,6 +23,7 @@ import com.threerings.parlor.server.ParlorSender;
 
 import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.ezgame.data.Parameter;
+import com.threerings.ezgame.server.EZGameManager;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.ItemManager;
@@ -229,13 +230,11 @@ public class LobbyManager
      */
     protected void gameCreated (GameManager gmgr)
     {
-        gmgr.applyToDelegates(new GameManager.DelegateOp() {
-            public void apply (PlaceManagerDelegate delegate) {
-                if (delegate instanceof WhirledGameDelegate) {
-                    ((WhirledGameDelegate)delegate).setGameContent(_content);
-                }
-            }
-        });
+        if (gmgr instanceof EZGameManager) {
+            WhirledGameDelegate delegate = new WhirledGameDelegate((EZGameManager)gmgr);
+            delegate.setGameContent(_content);
+            gmgr.addDelegate(delegate);
+        }
     }
 
     /**

@@ -23,7 +23,6 @@ public class MsoyGameManager extends EZGameManager
     public MsoyGameManager ()
     {
         super();
-        addDelegate(_whirledDelegate = new WhirledGameDelegate(this));
     }
 
     @Override // from PlaceManager
@@ -48,6 +47,4 @@ public class MsoyGameManager extends EZGameManager
     {
         return new GameCookieManager(MsoyGameServer.gameCookieRepo);
     }
-
-    protected WhirledGameDelegate _whirledDelegate;
 }
