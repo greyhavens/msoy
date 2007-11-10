@@ -119,7 +119,7 @@ public class ChatTabBar extends HBox
 
     public function locationReceivedMessage () :void
     {
-        if (_selectedIndex != 0) {
+        if (_selectedIndex != 0 && _tabs.length > 0) {
             (_tabs[0] as ChatTab).setVisualState(ChatTab.ATTENTION);
         }
     }
