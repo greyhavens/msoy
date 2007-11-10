@@ -849,7 +849,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         throws InvocationException
     {
         PlayerObject user = (PlayerObject)caller;
-        if (_gobj.players.length > 0) {
+        if (caller != null && _gobj.players.length > 0) {
             if (_gobj.getPlayerIndex(user.getMemberName()) == -1) {
                 throw new InvocationException(MsoyGameCodes.E_ACCESS_DENIED);
             }
