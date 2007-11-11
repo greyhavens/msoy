@@ -9,7 +9,9 @@ MSOY_HOME=`cd $MSOY_HOME/.. ; pwd`
 
 JAVA_ARGS="-Djava.awt.headless=true \
            -Djava.security.manager \
-           -Djava.security.policy=$MSOY_HOME/dist/security.policy"
+           -Djava.security.policy=$MSOY_HOME/dist/security.policy \
+           -Djava.util.logging.config.file=$MSOY_HOME/dist/logging.properties"
+
 NODE="msoy1"
 HOSTNAME=`hostname`
 
