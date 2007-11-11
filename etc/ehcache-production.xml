@@ -307,10 +307,12 @@
                         replicateUpdates=true,
                         replicateUpdatesViaCopy=false,
                         replicateRemovals=true"/>
+        <!--
         <bootstrapCacheLoaderFactory
             class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory"
             properties="bootstrapAsynchronously=true"/>
             />
+        -->
 
     <!--
     Sample caches. Following are some example caches. Remove these before use.
