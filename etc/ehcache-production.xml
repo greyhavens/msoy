@@ -300,6 +300,16 @@
             diskPersistent="false"
             diskExpiryThreadIntervalSeconds="120"
             memoryStoreEvictionPolicy="LRU"
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+            properties="replicateAsynchronously=true,
+                        replicatePuts=true,
+                        replicateUpdates=true,
+                        replicateUpdatesViaCopy=false,
+                        replicateRemovals=true"/>
+        <bootstrapCacheLoaderFactory
+            class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory"
+            properties="bootstrapAsynchronously=true"/>
             />
 
     <!--
