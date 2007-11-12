@@ -288,11 +288,6 @@ public class MemberServlet extends MsoyServiceServlet
                                 MemberLocation memLoc =
                                     mnobj.memberLocs.get(friend.name.getMemberId());
                                 if (memLoc == null || (memLoc.sceneId == 0 && memLoc.gameId == 0)) {
-                                    if (memLoc != null) {
-                                        log.info("online friend has empty memloc [" + 
-                                            friend.name + ", " + friend.name.getMemberId() + 
-                                            ", server=" + nodeobj.nodeName + "]");
-                                    }
                                     continue;
                                 }
 
@@ -775,10 +770,6 @@ public class MemberServlet extends MsoyServiceServlet
                     new MediaDesc(gameRec.thumbMediaHash, gameRec.thumbMimeType,
                                   gameRec.thumbConstraint);
                 PopularPlacesSnapshot.Place snap = pps.getGame(gameId);
-                // TODO: nate: this is for tracking some MyWhirled wierdness on first.  Once the
-                // issue has been tracked down, remove this log...
-                log.info("fetched game snapshot [" + gameId + ", " + snap + ", " +
-                    (snap == null ? 0 : snap.population) + "]");
                 // if the snapshot is out of date, the display will be made sane in GWT.
                 card.population = (snap == null) ? 0 : snap.population;
                 cards.add(card);
