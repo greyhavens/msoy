@@ -15,6 +15,7 @@ import com.threerings.flash.path.LinePath;
 import com.threerings.flash.path.Path;
 
 import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.util.Log;
 
 public class Swirl extends Sprite
 {

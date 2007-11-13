@@ -20,9 +20,10 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
-import com.threerings.util.EmbeddedSwfLoader;
-import com.threerings.flash.SimpleTextButton;
 import com.threerings.flash.AlphaFade;
+import com.threerings.flash.SimpleTextButton;
+import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.util.Log;
 
 public class TextBox extends Sprite
 {

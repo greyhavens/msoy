@@ -7,6 +7,8 @@ import flash.display.MovieClip;
 import flash.display.Scene;
 import flash.events.Event;
 
+import com.threerings.util.Log;
+
 /**
  * A simple utility class that binds to a MovieClip and then plays scenes of that clip on request,
  * executing a callback method when the scene is finished.

@@ -6,6 +6,8 @@ package tutorial {
 import flash.display.Sprite;
 import flash.utils.ByteArray;
 
+import com.threerings.util.Log;
+
 public class View extends Sprite
 {
     public static const SWIRL_NONE :int = 1;

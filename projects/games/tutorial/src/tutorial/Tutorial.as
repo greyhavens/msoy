@@ -6,6 +6,8 @@ package tutorial {
 import flash.display.Sprite;
 import flash.events.Event;
 
+import com.threerings.util.Log;
+
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 

@@ -3,6 +3,8 @@
 
 package tutorial {
 
+import com.threerings.util.Log;
+
 public class Quest
 {
     public static var log :Log = Log.getLog(Quest);
