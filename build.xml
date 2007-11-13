@@ -468,7 +468,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/AvatarViewer.mxml"/>
     </exec>
-    <fail message="The avatar viewer build failed. Output: &#xa;${avatar.out}">
+    <fail message="The avatar viewer build failed. Output: &#xa; ${avatar.out}">
       <condition><equals arg1="${avatar.result}" arg2="1"/></condition>
     </fail>
     <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients/${build_version}"/>
@@ -487,7 +487,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/VideoViewer.as"/>
     </exec>
-    <fail message="The video viewer build failed. Output: &#xa;${video.out}">
+    <fail message="The video viewer build failed. Output: &#xa; ${video.out}">
       <condition><equals arg1="${video.result}" arg2="1"/></condition>
     </fail>
     <copy file="${deploy.dir}/videoviewer.swf" todir="pages/clients/${build_version}"/>
@@ -507,7 +507,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/DecorViewer.mxml"/>
     </exec>
-    <fail message="The decor viewer build failed. Output: &#xa;${decor.out}">
+    <fail message="The decor viewer build failed. Output: &#xa; ${decor.out}">
       <condition><equals arg1="${decor.result}" arg2="1"/></condition>
     </fail>
     <copy file="${deploy.dir}/decorviewer.swf" todir="pages/clients/${build_version}"/>
