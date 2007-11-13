@@ -117,7 +117,7 @@ public class NotificationDirector extends BasicDirector
     {
         var name :String = event.getName();
         if (name == MemberObject.NEW_MAIL_COUNT) {
-            if ((event.getValue() as int) > (event.getOldValue() as int)) {
+            if (event.getValue() > 0 && !event.getOldValue()) {
                 dispatchChatNotification("m.new_mail");
             }
         }
