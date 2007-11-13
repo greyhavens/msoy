@@ -24,10 +24,10 @@ public class WorldClient extends Widget
     /**
      * Display a scene in the Whirledwide Featured Places area.
      *
-     * The scene will not display chat from the people talking, and the player will not 
-     * have an avatar in the scene, and thus will not be walking around or chatting.  
+     * The scene will not display chat from the people talking, and the player will not
+     * have an avatar in the scene, and thus will not be walking around or chatting.
      */
-    public static void displayFeaturedPlace (final int sceneId, final Panel container) 
+    public static void displayFeaturedPlace (final int sceneId, final Panel container)
     {
         if (_defaultServer == null) {
             CShell.usersvc.getConnectConfig(new AsyncCallback() {
@@ -44,7 +44,7 @@ public class WorldClient extends Widget
 
         String flashArgs = "featuredPlace=" + sceneId;
         if (!featuredPlaceGo(flashArgs)) {
-            flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port + 
+            flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port +
                          "&httpPort=" + _defaultServer.httpPort;
             String partner = Application.getPartner();
             if (partner != null) {
@@ -96,7 +96,7 @@ public class WorldClient extends Widget
             RootPanel.get(Frame.CLIENT).clear();
             FlashClients.embedWorldClient(RootPanel.get(Frame.CLIENT), flashArgs);
             _isFlashClientPresent = true;
-            
+
         } else {
             // don't tell the client anything if we're just restoring our URL
             if (newPage) {
