@@ -7,11 +7,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -90,11 +93,17 @@ public class MailComposition extends BorderedDialog
         grid.setWidget(0, 1, _recipientBox = new Label(_recipient.toString()));
         formatter.setStyleName(0, 1, "Value");
 
+        KeyboardListener keyListener = new KeyboardListenerAdapter() {
+            public void onKeyUp (Widget sender, char keyCode, int modifiers) {
+                updateButtons();
+            }
+        };
         grid.setText(1, 0, CMsgs.mmsgs.hdrSubject());
         formatter.setStyleName(1, 0, "Label");
         _subjectBox = new TextBox();
         _subjectBox.addStyleName("SubjectBox");
         _subjectBox.setText(subject);
+        _subjectBox.addKeyboardListener(keyListener);
         grid.setWidget(1, 1, _subjectBox);
         formatter.setStyleName(1, 1, "Value");
         _panel.add(grid);
@@ -109,6 +118,7 @@ public class MailComposition extends BorderedDialog
         _messageBox.setVisibleLines(10);
         _messageBox.addStyleName("Body");
         _messageBox.setText(bodyText);
+        _messageBox.addKeyboardListener(keyListener);
         _panel.add(_messageBox);
 
         // then a button box
@@ -117,9 +127,10 @@ public class MailComposition extends BorderedDialog
         buttonBox.addStyleName("MailControls");
 
         // with a send button
-        Button replyButton = new Button(CMsgs.mmsgs.btnSend());
-        replyButton.addClickListener(new ClickListener() {
+        _sendButton = new Button(CMsgs.mmsgs.btnSend());
+        _sendButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
+                _sendButton.setEnabled(false);
                 if (_payloadComposer != null) {
                     String msg = _payloadComposer.okToSend();
                     if (msg != null) {
@@ -130,17 +141,7 @@ public class MailComposition extends BorderedDialog
                 deliverMail();
             }
         });
-        buttonBox.add(replyButton);
-
-        // and a discard button
-        Button discardButton = new Button(CMsgs.mmsgs.btnDiscard());
-        discardButton.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                // TODO: confirmation dialog?
-                hide();
-            }
-        });
-        buttonBox.add(discardButton);
+        buttonBox.add(_sendButton);
 
         // add a button for attaching items
         _attachButton = new Button(CMsgs.mmsgs.btnAttach());
@@ -152,6 +153,17 @@ public class MailComposition extends BorderedDialog
         });
         buttonBox.add(_attachButton);
 
+        // and a discard button
+        Button discardButton = new Button(CMsgs.mmsgs.btnDiscard());
+        discardButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                // TODO: confirmation dialog?
+                hide();
+            }
+        });
+        buttonBox.add(discardButton);
+
+        // setting the payload composer will properly set the state of all the buttons
         setPayloadComposer(composer);
 
         _footer.add(buttonBox);
@@ -166,12 +178,11 @@ public class MailComposition extends BorderedDialog
                 widget.addStyleName("Payload");
                 _payloadBox.setWidget(widget);
             }
-            _attachButton.setEnabled(false);
 
         } else {
             _payloadBox.clear();
-            _attachButton.setEnabled(true);
         }
+        updateButtons();
     }
 
     // send the message off to the backend for delivery
@@ -196,12 +207,19 @@ public class MailComposition extends BorderedDialog
                                      null : _payloadComposer.getComposedPayload(), callback);
     }
 
+    protected void updateButtons ()
+    {
+        _sendButton.setEnabled(
+            _subjectBox.getText().length() > 0 && _messageBox.getText().length() > 0);
+        _attachButton.setEnabled(_payloadBox.getWidget() == null);
+    }
+
     protected MemberName _recipient;
     protected VerticalPanel _panel;
     protected MailPayloadComposer _payloadComposer;
     protected Set _listeners = new HashSet();
 
-    protected Button _attachButton;
+    protected Button _attachButton, _sendButton;
 
     protected TextBox _subjectBox;
     protected SimplePanel _payloadBox;
