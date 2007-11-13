@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.data.FeedMessage;
 import com.threerings.msoy.person.data.FriendFeedMessage;
 import com.threerings.msoy.person.data.GroupFeedMessage;
@@ -89,17 +90,32 @@ public class FeedPanel extends VerticalPanel
         }));
     }
 
-    protected static MessageKey getKey (FeedMessage message)
+    /**
+     * Get the key for left side aggregation.
+     */
+    protected static MessageKey getLeftKey (FeedMessage message)
     {
         switch (message.type) {
-        case 100:
-        case 102:
-        case 103:
-            return new MessageKey(message.type, ((FriendFeedMessage)message).friend.toString());
+        case 100: // FRIEND_ADDED_FRIEND
+        case 102: // FRIEND_WON_TROPHY
+        case 103: // FRIEND_LISTED_ITEM
+            return new MessageKey(message.type, ((FriendFeedMessage)message).friend.getMemberId());
 
         case 101: // FRIEND_UPDATED_ROOM
         case 104: // FRIEND_GAINED_LEVEL
-            return new MessageKey(message.type, null);
+            return new MessageKey(message.type, 0);
+        }
+        return null;
+    }
+
+    /**
+     * Get the key for right side aggregation.
+     */
+    protected static MessageKey getRightKey (FeedMessage message)
+    {
+        switch (message.type) {
+        case 100: // FRIEND_ADDED_FRIEND
+            return new MessageKey(message.type, message.data[1]);
         }
         return null;
     }
@@ -138,62 +154,46 @@ public class FeedPanel extends VerticalPanel
                 }
             });
             messages = Arrays.asList(messageArray);
-            HashMap messageMap = new HashMap();
+            HashMap messageMapLeft = new HashMap();
+            HashMap messageMapRight = new HashMap();
 
             long header = startofDay(System.currentTimeMillis());
             long yesterday = header - ONE_DAY;
             while (!messages.isEmpty()) {
+                buildMessageMap(messages, header, messageMapLeft, null);
+                buildMessageMap(messages, header, messageMapRight, messageMapLeft);
+
                 FeedMessage message = null;
                 for (Iterator msgIter = messages.iterator(); msgIter.hasNext(); ) {
                     message = (FeedMessage)msgIter.next();
                     if (header > message.posted) {
                         break;
                     }
-                    MessageKey key = getKey(message);
-                    if (key == null) {
-                        continue;
-                    }
-                    Object value = messageMap.get(key);
-                    if (value == null) {
-                        messageMap.put(key, message);
-                        continue;
-                    }
                     msgIter.remove();
-                    if (value instanceof FeedMessage) {
-                        ArrayList list = new ArrayList();
-                        list.add(value);
-                        list.add(message);
-                        messageMap.put(key, list);
-                    } else {
-                        ((ArrayList)value).add(message);
-                    }
-                }
-
-                for (Iterator msgIter = messages.iterator(); msgIter.hasNext(); ) {
-                    message = (FeedMessage)msgIter.next();
-                    if (header > message.posted) {
-                        break;
-                    }
-                    msgIter.remove();
-                    MessageKey key = getKey(message);
+                    MessageKey key = getLeftKey(message);
                     Object value = null;
                     if (key != null) {
-                        value = messageMap.get(key);
-                    }
-                    if (value == null || value instanceof FeedMessage) {
-                        if (message instanceof FriendFeedMessage) {
-                            addFriendMessage((FriendFeedMessage)message);
-                        } else if (message instanceof GroupFeedMessage) {
-                            addGroupMessage((GroupFeedMessage)message);
-                        } else {
-                            addMessage(message);
+                        value = messageMapLeft.get(key);
+                        if (value instanceof ArrayList) {
+                            addLeftAggregateFriendMessage((ArrayList)value);
+                            continue;
                         }
-
-                    } else {
-                        // currently friend messages are the only ones that aggregate
-                        addAggregateFriendMessage((ArrayList)value);
                     }
-
+                    key = getRightKey(message);
+                    if (key != null) {
+                        value = messageMapRight.get(key);
+                        if (value instanceof ArrayList) {
+                            addRightAggregateFriendMessage((ArrayList)value);
+                            continue;
+                        }
+                    }
+                    if (message instanceof FriendFeedMessage) {
+                        addFriendMessage((FriendFeedMessage)message);
+                    } else if (message instanceof GroupFeedMessage) {
+                        addGroupMessage((GroupFeedMessage)message);
+                    } else {
+                        addMessage(message);
+                    }
                 }
                 if (header > message.posted) {
                     header = startofDay(message.posted);
@@ -209,7 +209,47 @@ public class FeedPanel extends VerticalPanel
                         add(new DateWidget(new Date(header)));
                     }
                 }
-                messageMap.clear();
+                messageMapLeft.clear();
+                messageMapRight.clear();
+            }
+        }
+
+        /**
+         * Builds a left side aggregation map if only one HashMap is supplied, otherwise builds
+         * a right side aggregation map.
+         */
+        protected void buildMessageMap (List messages, long header, HashMap map, HashMap lmap)
+        {
+            // build right side aggregation map
+            for (Iterator msgIter = messages.iterator(); msgIter.hasNext(); ) {
+                FeedMessage message = (FeedMessage)msgIter.next();
+                if (header > message.posted) {
+                    break;
+                }
+                MessageKey key = (lmap == null ? getLeftKey(message) : getRightKey(message));
+                if (key == null) {
+                    continue;
+                }
+                if (lmap != null) {
+                    MessageKey lkey = getLeftKey(message);
+                    if (lkey != null && lmap.get(lkey) instanceof ArrayList) {
+                        continue;
+                    }
+                }
+                Object value = map.get(key);
+                if (value == null) {
+                    map.put(key, message);
+                    continue;
+                }
+                msgIter.remove();
+                if (value instanceof FeedMessage) {
+                    ArrayList list = new ArrayList();
+                    list.add(value);
+                    list.add(message);
+                    map.put(key, list);
+                } else {
+                    ((ArrayList)value).add(message);
+                }
             }
         }
 
@@ -265,8 +305,7 @@ public class FeedPanel extends VerticalPanel
 
         protected void addFriendMessage (FriendFeedMessage message)
         {
-            String friendLink = profileLink(
-                    message.friend.toString(), String.valueOf(message.friend.getMemberId()));
+            String friendLink = profileLink(message.friend);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
                 add(new BasicWidget(CWhirled.msgs.friendAddedFriend(
@@ -309,10 +348,17 @@ public class FeedPanel extends VerticalPanel
         {
             return standardCombine(list, new StringBuilder() {
                 public String build (FeedMessage message) {
-                    FriendFeedMessage ffm = (FriendFeedMessage)message;
-                    return CWhirled.msgs.colonCombine(profileLink(ffm.friend.toString(),
-                                String.valueOf(ffm.friend.getMemberId())),
-                            buildString(message));
+                    return CWhirled.msgs.colonCombine(
+                        profileLink(((FriendFeedMessage)message).friend), buildString(message));
+                }
+            });
+        }
+
+        protected String profileCombine (ArrayList list)
+        {
+            return standardCombine(list, new StringBuilder() {
+                public String build (FeedMessage message) {
+                    return profileLink(((FriendFeedMessage)message).friend);
                 }
             });
         }
@@ -335,44 +381,56 @@ public class FeedPanel extends VerticalPanel
             return combine;
         }
 
-        protected void addAggregateFriendMessage (ArrayList list)
+        protected void addLeftAggregateFriendMessage (ArrayList list)
         {
             FriendFeedMessage message = (FriendFeedMessage)((ArrayList)list).get(0);
-            String friendLink = profileLink(
-                    message.friend.toString(), String.valueOf(message.friend.getMemberId()));
+            String friendLink = profileLink(message.friend);
             switch (message.type) {
-            // FRIEND_ADDED_FRIEND
-            case 100:
+            case 100: // FRIEND_ADDED_FRIEND
                 add(new BasicWidget(CWhirled.msgs.friendAddedFriends(
                                 friendLink, standardCombine(list))));
                 break;
 
-            // FRIEND_UPDATED_ROOM
-            case 101:
+            case 101: // FRIEND_UPDATED_ROOM
                 add(new BasicWidget(CWhirled.msgs.friendsUpdatedRoom(friendLinkCombine(list))));
                 break;
 
-            // FRIEND_WON_TROPHY
-            case 102:
+            case 102: // FRIEND_WON_TROPHY
                 add(new BasicWidget(CWhirled.msgs.friendWonTrophies(
                                 friendLink, standardCombine(list))));
                 break;
 
-            // FRIEND_LISTED_ITEM
-            case 103:
+            case 103: // FRIEND_LISTED_ITEM
                 add(new BasicWidget(CWhirled.msgs.friendListedItem(
                                 friendLink, standardCombine(list))));
                 break;
 
-            // FRIEND_GAINED_LEVEL
-            case 104:
+            case 104: // FRIEND_GAINED_LEVEL
                 add(new BasicWidget(CWhirled.msgs.friendsGainedLevel(friendLinkCombine(list))));
                 break;
             }
         }
 
+        protected void addRightAggregateFriendMessage (ArrayList list)
+        {
+            FriendFeedMessage message = (FriendFeedMessage)((ArrayList)list).get(0);
+            String friendLinks = profileCombine(list);
+            switch (message.type) {
+            case 100: // FRIEND_ADDED_FRIEND
+                add(new BasicWidget(CWhirled.msgs.friendAddedFriendsRight(
+                                friendLinks, buildString(message))));
+                break;
+            }
+        }
+
+
         protected void addGroupMessage (GroupFeedMessage message)
         {
+        }
+
+        protected String profileLink (MemberName friend)
+        {
+            return profileLink(friend.toString(), String.valueOf(friend.getMemberId()));
         }
 
         protected String profileLink (String name, String id)
@@ -399,7 +457,6 @@ public class FeedPanel extends VerticalPanel
         {
             this(dateFormater.format(date));
         }
-
         public DateWidget (String label)
         {
             setStyleName("FeedWidget");
@@ -423,12 +480,21 @@ public class FeedPanel extends VerticalPanel
     protected static class MessageKey
     {
         public Integer type;
-        public String key;
+        public Integer key;
 
         public MessageKey (int type, String key)
         {
             this.type = new Integer(type);
-            this.key = key;
+            try {
+                this.key = new Integer(key);
+            } catch (Exception e) {
+                this.key = new Integer(0);
+            }
+        }
+        public MessageKey (int type, int key)
+        {
+            this.type = new Integer(type);
+            this.key = new Integer(key);
         }
 
         public int hashCode ()
@@ -443,13 +509,7 @@ public class FeedPanel extends VerticalPanel
         public boolean equals (Object o)
         {
             MessageKey other = (MessageKey)o;
-            if (!type.equals(other.type)) {
-                return false;
-            }
-            if (key == null) {
-                return other.key == null;
-            }
-            return key.equals(other.key);
+            return type.equals(other.type) && key.equals(other.key);
         }
     }
 
