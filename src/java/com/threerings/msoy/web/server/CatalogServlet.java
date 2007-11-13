@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
@@ -282,10 +283,12 @@ public class CatalogServlet extends MsoyServiceServlet
                 logUserAction(mrec, UserAction.LISTED_ITEM, details);
             }
 
-            // publish to the member's feed
-            MsoyServer.feedRepo.publishMemberMessage(mrec.memberId,
+            // publish to the member's feed if it's a basic item type
+            if (ArrayUtil.indexOf(Item.TYPES, repo.getItemType()) != -1) {
+                MsoyServer.feedRepo.publishMemberMessage(mrec.memberId,
                     FeedMessageType.FRIEND_LISTED_ITEM, listItem.name + "\t" +
                     String.valueOf(repo.getItemType()) + "\t" + String.valueOf(record.catalogId));
+            }
 
 
             return record.toListing();
