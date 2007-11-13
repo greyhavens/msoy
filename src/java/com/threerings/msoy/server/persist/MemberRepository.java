@@ -38,6 +38,7 @@ import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
@@ -190,7 +191,8 @@ public class MemberRepository extends DepotRepository
     {
         return findAll(MemberNameRecord.class,
                        new FromOverride(MemberRecord.class),
-                       new Where(new Equals(MemberRecord.NAME_C, search)),
+                       new Where(new Equals(new FunctionExp("LOWER", MemberRecord.NAME_C),
+                                            search.toLowerCase())),
                        new Limit(0, limit));
     }
 
