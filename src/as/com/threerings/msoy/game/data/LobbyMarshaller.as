@@ -54,12 +54,12 @@ public class LobbyMarshaller extends InvocationMarshaller
     public static const PLAY_NOW :int = 3;
 
     // from interface LobbyService
-    public function playNow (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function playNow (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
+        var listener4 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener4.listener = arg4;
         sendRequest(arg1, PLAY_NOW, [
-            Integer.valueOf(arg2), listener3
+            Integer.valueOf(arg2), langBoolean.valueOf(arg3), listener4
         ]);
     }
 }

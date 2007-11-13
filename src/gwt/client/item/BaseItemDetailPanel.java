@@ -52,7 +52,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
                 History.back();
             }
         });
-        getFlexCellFormatter().setStyleName(0, 0, "Back");
+        getFlexCellFormatter().setVerticalAlignment(0, 0, VerticalPanel.ALIGN_TOP);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
         setWidget(0, 0, back);
 
@@ -71,6 +71,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
         box.getFlexCellFormatter().setStyleName(2, 1, "Buttons");
         box.setWidget(2, 1, _buttons = new HorizontalPanel());
         getFlexCellFormatter().setRowSpan(0, 1, 2);
+        getFlexCellFormatter().setVerticalAlignment(0, 1, VerticalPanel.ALIGN_TOP);
         setWidget(0, 1, box);
 
         // a place for details

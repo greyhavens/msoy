@@ -97,42 +97,58 @@ public class GameDetailPanel extends VerticalPanel
         box.getFlexCellFormatter().setStyleName(1, 0, "Logo");
         box.setWidget(1, 0, MediaUtil.createMediaView(
                           detail.getGame().getThumbnailMedia(), MediaDesc.PREVIEW_SIZE));
+        top.getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);
         top.setWidget(row, 0, box);
-        top.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
         VerticalPanel details = new VerticalPanel();
         details.setStyleName("Details");
+        top.getFlexCellFormatter().setVerticalAlignment(row, 1, HasAlignment.ALIGN_TOP);
         top.setWidget(row, 1, details);
-        top.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
 
         VerticalPanel playButtons = new VerticalPanel();
         playButtons.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        playButtons.setSpacing(15);
+        playButtons.add(MsoyUI.createLabel(CGame.msgs.gdpPlay(), "PlayTitle"));
+        playButtons.add(WidgetUtil.makeShim(5, 5));
         Button play;
-        playButtons.add(play = new Button("", new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(Page.GAME, Args.compose("s", _gameId));
-            }
-        }));
-        play.addStyleName("PlayButton");
 
+        // if the game supports single-player play, it gets a "Quick Single" button
+        if (detail.minPlayers == 1 && !detail.isPartyGame()) {
+            play = new Button(CGame.msgs.gdpQuickSingle(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.GAME, Args.compose("s", _gameId));
+                }
+            });
+            play.addStyleName("PlayButton");
+            playButtons.add(play);
+            playButtons.add(MsoyUI.createLabel(CGame.msgs.gdpQuickSingleTip(), "tipLabel"));
+            playButtons.add(WidgetUtil.makeShim(10, 10));
+        }
+
+        // if the game supports multiplayer play, it gets "Quick Multi" and "Custom Game" buttons
         if (detail.maxPlayers > 1) {
-            playButtons.add(MsoyUI.createLabel(CGame.msgs.gdpOrWithFriends(), "OrFriends"));
-            Button multiplayer = new Button(CGame.msgs.gdpMultiplayer(), new ClickListener() {
+            play = new Button(CGame.msgs.gdpQuickMulti(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.GAME, Args.compose("m", _gameId));
+                }
+            });
+            play.addStyleName("PlayButton");
+            playButtons.add(play);
+            playButtons.add(MsoyUI.createLabel(CGame.msgs.gdpQuickMultiTip(), "tipLabel"));
+            playButtons.add(WidgetUtil.makeShim(10, 10));
+
+            play = new Button(CGame.msgs.gdpCustomGame(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.GAME, "" + _gameId);
-                }});
-            multiplayer.addStyleName("MultiplayerButton");
-            playButtons.add(multiplayer);
+                }
+            });
+            play.addStyleName("PlayButton");
+            playButtons.add(play);
+            playButtons.add(MsoyUI.createLabel(CGame.msgs.gdpCustomGameTip(), "tipLabel"));
         }
+
+        top.getFlexCellFormatter().setVerticalAlignment(row, 2, HasAlignment.ALIGN_TOP);
         top.setWidget(row++, 2, playButtons);
         add(top);
-
-        if (detail.listedItem != null) {
-            details.add(new ItemRating(detail.listedItem, CGame.getMemberId(),
-                                       detail.memberRating));
-            details.add(WidgetUtil.makeShim(1, 5));
-        }
 
         if (detail.creator != null) {
             CreatorLabel creator = new CreatorLabel();
@@ -141,7 +157,13 @@ public class GameDetailPanel extends VerticalPanel
         }
 
         details.add(new Label(ItemUtil.getDescription(detail.getGame())));
-        details.add(WidgetUtil.makeShim(1, 15));
+        details.add(WidgetUtil.makeShim(1, 5));
+
+        if (detail.listedItem != null) {
+            details.add(new ItemRating(detail.listedItem, CGame.getMemberId(),
+                                       detail.memberRating));
+            details.add(WidgetUtil.makeShim(1, 5));
+        }
 
         // set up the game info table
         float avg = detail.playerMinutes / (float)detail.playerGames;
@@ -154,12 +176,18 @@ public class GameDetailPanel extends VerticalPanel
         String[] ilabels = {
             CGame.msgs.gdpPlayers(), CGame.msgs.gdpGamesPlayed(), CGame.msgs.gdpAvgDuration()
         };
+        String playersStr;
+        if (detail.isPartyGame()) {
+            playersStr = CGame.msgs.gdpPlayersParty("" + detail.minPlayers);
+        } else if (detail.minPlayers == detail.maxPlayers) {
+            playersStr = CGame.msgs.gdpPlayersSame("" + detail.minPlayers);
+        } else {
+            playersStr = CGame.msgs.gdpPlayersFixed("" + detail.minPlayers, "" + detail.maxPlayers);
+        }
         String[] ivalues = {
-            (detail.maxPlayers == Integer.MAX_VALUE ?
-             CGame.msgs.gdpPlayersParty("" + detail.minPlayers) :
-             CGame.msgs.gdpPlayersFixed("" + detail.minPlayers, "" + detail.maxPlayers)),
+            playersStr,
             Integer.toString(detail.playerGames),
-            avgMins + ":" + avgSecs,
+            avgMins + ":" + (avgSecs < 10 ? "0" : "") + avgSecs,
         };
         for (int ii = 0; ii < ilabels.length; ii++) {
             info.setText(ii, 0, ilabels[ii]);

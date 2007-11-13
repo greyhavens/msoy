@@ -74,12 +74,15 @@ public class GameDirector extends BasicDirector
 
     /**
      * Requests that we immediately start playing the specified game id.
+     *
+     * @param singlePlayer if true we'll start a single player game, if false we'll create or join
+     * a multiplayer game.
      */
-    public function playNow (gameId :int) :void
+    public function playNow (gameId :int, singlePlayer: Boolean) :void
     {
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
-                LobbyGameLiaison(_liaison).playNow();
+                LobbyGameLiaison(_liaison).playNow(singlePlayer);
             } else {
                 _liaison.shutdown();
                 _liaison = null;
@@ -87,7 +90,8 @@ public class GameDirector extends BasicDirector
         }
         if (_liaison == null) {
             // create our new liaison, which will head on into the game once we're logged on
-            _liaison = new LobbyGameLiaison(_mctx, gameId, LobbyGameLiaison.PLAY_NOW);
+            _liaison = new LobbyGameLiaison(_mctx, gameId, singlePlayer ?
+                LobbyGameLiaison.PLAY_NOW_SINGLE : LobbyGameLiaison.PLAY_NOW_MULTI);
         }
     }
 

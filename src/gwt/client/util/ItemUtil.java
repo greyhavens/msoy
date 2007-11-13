@@ -12,6 +12,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.Application;
+import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
 
@@ -62,7 +63,7 @@ public class ItemUtil
         if (item instanceof Game) {
             panel.add(new Button(CShell.cmsgs.detailPlay(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.GAME, "" + ((Game)item).gameId);
+                    Application.go(Page.GAME, Args.compose("d" , ((Game)item).gameId));
                 }
             }));
         }

@@ -558,14 +558,6 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle PLAY_NOW (and playNow=XX).
-     */
-    public function handlePlayNow (gameId :int) :void
-    {
-        _ctx.getGameDirector().playNow(gameId);
-    }
-
-    /**
      * Handle JOIN_AVR_GAME.
      */
     public function handleJoinAVRGame (gameId :int) :void
@@ -680,7 +672,9 @@ public class MsoyController extends Controller
             handleJoinGameLobby(int(params["gameLobby"]));
 
         } else if (null != params["playNow"]) {
-            handlePlayNow(int(params["playNow"]));
+            var singlePlayer :Boolean = String(params["single"]) == "true";
+//            _ctx.getGameDirector().playNow(int(params["playNow"]), singlePlayer);
+            _ctx.getGameDirector().playNow(int(params["playNow"]), params["single"] == "true");
 
         } else if (null != params["worldGame"]) {
             handleJoinAVRGame(int(params["worldGame"]));

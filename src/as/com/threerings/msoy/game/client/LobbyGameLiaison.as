@@ -29,7 +29,8 @@ public class LobbyGameLiaison extends GameLiaison
 
     public static const SHOW_LOBBY :int = 0;
     public static const JOIN_PLAYER :int = 1;
-    public static const PLAY_NOW :int = 2;
+    public static const PLAY_NOW_SINGLE :int = 2;
+    public static const PLAY_NOW_MULTI :int = 3;
 
     public function LobbyGameLiaison (ctx :WorldContext, gameId :int, mode :int, playerId :int = 0)
     {
@@ -38,6 +39,9 @@ public class LobbyGameLiaison extends GameLiaison
         _mode = mode;
         _playerIdGame = playerId;
 
+        log.info("Started game liaison [gameId=" + _gameId + ", mode=" + _mode + "].");
+
+        // listen for our game to be ready so that we can display it
         _gctx.getParlorDirector().addGameReadyObserver(this);
 
         // listen for changes in world location so that we can shutdown if we move
@@ -98,7 +102,7 @@ public class LobbyGameLiaison extends GameLiaison
         }
     }
 
-    public function playNow () :void
+    public function playNow (singlePlayer :Boolean) :void
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
@@ -117,10 +121,10 @@ public class LobbyGameLiaison extends GameLiaison
         // nicely bookmarkable and we don't want to replace it with a non-bookmarkable URL
         _enterNextGameDirect = true;
 
-        // the playNow call will resolve the lobby on the game server, then attempt to start
-        // a game for us; if it succeeds, it sends back a zero result and we need take no
-        // further action; if it fails, it sends back the lobby OID so we can join the lobby
-        lsvc.playNow(_gctx.getClient(), _gameId, cb);
+        // the playNow() call will resolve the lobby on the game server, then attempt to start a
+        // game for us; if it succeeds, it sends back a zero result and we need take no further
+        // action; if it fails, it sends back the lobby OID so we can join the lobby
+        lsvc.playNow(_gctx.getClient(), _gameId, singlePlayer, cb);
     }
 
     public function enterGame (gameOid :int) :void
@@ -163,8 +167,12 @@ public class LobbyGameLiaison extends GameLiaison
             joinPlayer(_playerIdGame);
             break;
 
-        case PLAY_NOW:
-            playNow();
+        case PLAY_NOW_SINGLE:
+            playNow(true);
+            break;
+
+        case PLAY_NOW_MULTI:
+            playNow(false);
             break;
 
         default:

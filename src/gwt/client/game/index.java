@@ -64,13 +64,8 @@ public class index extends Page
         } else if (action.equals("t")) {
             setContent(new TrophyCasePanel(this, args.get(1, 0)));
 
-        } else if (action.equals("s")) {
-            // head straight into this game (single player or first available party game)
-            loadLaunchConfig(args.get(1, 0), -1, true);
-
         } else {
-            // otherwise our args are 'gameId-gameOid' or just 'gameId'
-            loadLaunchConfig(args.get(0, 0), args.get(1, -1), false);
+            loadLaunchConfig(args.get(1, 0), -1, action);
         }
     }
 
@@ -107,12 +102,12 @@ public class index extends Page
         CGame.msgs = (GameMessages)GWT.create(GameMessages.class);
     }
 
-    protected void loadLaunchConfig (int gameId, final int gameOid, final boolean playNow)
+    protected void loadLaunchConfig (int gameId, final int gameOid, final String action)
     {
         // load up the information needed to launch the game
         CGame.gamesvc.loadLaunchConfig(CGame.ident, gameId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                launchGame((LaunchConfig)result, gameOid, playNow);
+                launchGame((LaunchConfig)result, gameOid, action);
             }
             public void onFailure (Throwable cause) {
                 MsoyUI.error(CGame.serverError(cause));
@@ -120,7 +115,7 @@ public class index extends Page
         });
     }
 
-    protected void launchGame (final LaunchConfig config, final int gameOid, boolean playNow)
+    protected void launchGame (final LaunchConfig config, final int gameOid, String action)
     {
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
@@ -129,8 +124,10 @@ public class index extends Page
 
         case LaunchConfig.FLASH_LOBBIED:
             if (gameOid <= 0) {
-                if (playNow) {
-                    WorldClient.displayFlash("playNow=" + config.gameId);
+                if (action.equals("m")) {
+                    WorldClient.displayFlash("playNow=" + config.gameId + "&single=false");
+                } else if (action.equals("s")) {
+                    WorldClient.displayFlash("playNow=" + config.gameId + "&single=true");
                 } else {
                     WorldClient.displayFlash("gameLobby=" + config.gameId);
                 }

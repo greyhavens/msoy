@@ -121,15 +121,52 @@ public class LobbyManager
     }
 
     /**
-     * Attempts to send the specified player directly into a game. If the game is a party game, the
-     * player is sent into an existing game if possible or a new game is created if not. If the
-     * game supports single player, a game will be created for the player. If there is a pending
-     * table open for a multiplayer game, the player will be sent there.
+     * Attempts to create and place the player into a single player game.
      *
-     * @return if any game could be created for the player, true; otherwise false to indicate that
-     * we were not able to get the player into a game somehow.
+     * @return if a game was created for the player, false if we were unable to create a game.
      */
-    public boolean playNow (PlayerObject player)
+    public boolean playNowSingle (PlayerObject player)
+    {
+        MsoyMatchConfig match = (MsoyMatchConfig)_lobj.gameDef.match;
+        if (match.minSeats != 1 && !match.isPartyGame) {
+            log.warning("Requested single player for non-single player game " +
+                        "[who=" + player.who() + ", match=" + match + "].");
+            return false;
+        }
+
+        // start up a single player game
+        MsoyGameConfig config = new MsoyGameConfig();
+        config.init(_lobj.game, _lobj.gameDef);
+        if (_lobj.gameDef.params != null) {
+            for (Parameter param : _lobj.gameDef.params) {
+                config.params.put(param.ident, param.getDefaultValue());
+            }
+        }
+        TableConfig tconfig = new TableConfig();
+        tconfig.desiredPlayerCount = tconfig.minimumPlayerCount = 1;
+        Table table = null;
+        try {
+            table = _tableMgr.createTable(player, tconfig, config);
+        } catch (InvocationException ie) {
+            log.warning("Failed to create play now table [who=" + player.who() +
+                        ", error=" + ie.getMessage() + "].");
+            return false;
+        }
+
+        // if this is a party or seated continuous game, we need to tell the player to head
+        // into the game because the game manager ain't oging to do it for us
+        if (_lobj.gameDef.match.getMatchType() != MsoyGameConfig.SEATED_GAME) {
+            ParlorSender.gameIsReady(player, table.gameOid);
+        }
+        return true;
+    }
+
+    /**
+     * Attempts to send the specified player directly into a game.
+     *
+     * @return if the player was sent into a game, false if they should display the lobby.
+     */
+    public boolean playNowMulti (PlayerObject player)
     {
         // if this is a party game (or seated continuous); send them into an existing game
         if (_lobj.gameDef.match.getMatchType() != MsoyGameConfig.SEATED_GAME) {
@@ -142,36 +179,16 @@ public class LobbyManager
             }
         }
 
-        // otherwise see if we can create a new game
-        MsoyMatchConfig match = (MsoyMatchConfig)_lobj.gameDef.match;
-        if (match.isPartyGame || match.minSeats == 1) {
-            MsoyGameConfig config = new MsoyGameConfig();
-            config.init(_lobj.game, _lobj.gameDef);
-            if (_lobj.gameDef.params != null) {
-                for (Parameter param : _lobj.gameDef.params) {
-                    config.params.put(param.ident, param.getDefaultValue());
-                }
-            }
-            TableConfig tconfig = new TableConfig();
-            tconfig.desiredPlayerCount = tconfig.minimumPlayerCount = 1;
-            Table table = null;
-            try {
-                table = _tableMgr.createTable(player, tconfig, config);
-            } catch (InvocationException ie) {
-                log.warning("Failed to create play now table [who=" + player.who() +
-                            ", error=" + ie.getMessage() + "].");
-                return false;
-            }
-
-            // if this is a party or seated continuous game, we need to tell the player to head
-            // into the game because the game manager ain't oging to do it for us
-            if (_lobj.gameDef.match.getMatchType() != MsoyGameConfig.SEATED_GAME) {
-                ParlorSender.gameIsReady(player, table.gameOid);
-            }
-            return true;
+        // if this is a party game, start one up and stick them in it
+        if (_lobj.gameDef.match.getMatchType() == MsoyGameConfig.PARTY) {
+            // TODO: tell them we could not find any multiplayer games in progress so we started a
+            // single player game for them
+            return playNowSingle(player);
         }
 
         // TODO: look for an open table into which we can stuff the player
+
+        // TODO: create a table and stuff the player into that
 
         return false;
     }

@@ -38,7 +38,6 @@
 }
 
 .gameDetail .Details {
-  border-top: white solid 20px;
   border-bottom: white solid 10px;
 }
 
@@ -46,20 +45,14 @@
   font-size: 14px;
 }
 
-.gameDetail .OrFriends {
+.gameDetail .PlayTitle {
+  font-weight: bold;
   font-size: 12px;
 }
 
 .gameDetail .PlayButton {
-  background-image: url(/images/game/play_button.png);
   width: 124px;
-  height: 38px;
-  cursor: pointer;
-  border: none;
-}
-
-.gameDetail .MultiplayerButton {
-  width: 124px;
+  font-weight: bold;
 }
 
 .gameDetail .InfoLabel {

@@ -23,7 +23,7 @@ public interface LobbyService extends InvocationService
      * located, 0 will be returned, otherwise the oid of the lobby will be returned so that the
      * client can fall back to displaying the lobby.
      */
-    public void playNow (Client client, int gameId, ResultListener listener);
+    public void playNow (Client client, int gameId, boolean singlePlayer, ResultListener listener);
 
     /**
      * Return the Oid of the game that this player is in.  Returns -1 if they are currently not
