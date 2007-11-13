@@ -152,9 +152,13 @@ public class LobbyGameLiaison extends GameLiaison
 
     public function lobbyCleared (inGame :Boolean) :void
     {
-        // if we're not about tabout to go to a game, shutdown, otherwise stick around
+        // if we're not about to go into a game, shutdown, otherwise stick around
         if (!_shuttingDown && !inGame && _gameOid == 0) {
             shutdown();
+            // also if we're not in a scene, go to our home scene
+            if (_ctx.getSceneDirector().getScene() == null) {
+                _ctx.getMsoyController().handleGoScene(_ctx.getMemberObject().homeSceneId);
+            }
         }
     }
 
