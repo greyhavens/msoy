@@ -8,12 +8,18 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import java.security.CodeSource;
+import java.security.PermissionCollection;
+import java.security.ProtectionDomain;
+import java.security.cert.Certificate;
+
 import javax.swing.JApplet;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.samskivert.util.ListUtil;
 import com.samskivert.util.LoggingLogProvider;
 import com.samskivert.util.OneLineLogFormatter;
 
@@ -56,7 +62,13 @@ public class GameApplet extends JApplet
                 urls.add(url);
             }
         }
-        URLClassLoader loader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), null);
+        URL[] uarray = urls.toArray(new URL[urls.size()]);
+        URLClassLoader loader;
+        try {
+            loader = createSignedClassLoader(uarray);
+        } catch (SecurityException se) {
+            loader = URLClassLoader.newInstance(uarray, null);
+        }
         try {
             Class<?> dclass = loader.loadClass("com.threerings.msoy.game.client.GameWrapper");
             _delegate = dclass.newInstance();
@@ -104,6 +116,31 @@ public class GameApplet extends JApplet
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to invoke destroy().", e);
         }
+    }
+
+    /**
+     * Attempts to create a classloader that will grant full permissions to code signed with the
+     * same certificates as this class.
+     */
+    protected URLClassLoader createSignedClassLoader (URL[] urls)
+        throws SecurityException
+    {
+        ProtectionDomain domain = getClass().getProtectionDomain();
+        final Certificate[] certs = domain.getCodeSource().getCertificates();
+        final PermissionCollection perms = domain.getPermissions();
+        return new URLClassLoader(urls, null) {
+            protected PermissionCollection getPermissions (CodeSource source) {
+                // if the source contains all of GameApplet's certificates, give it that class's
+                // permissions; otherwise, fall back on the default permissions
+                Certificate[] ocerts = source.getCertificates();
+                for (Certificate cert : certs) {
+                    if (!ListUtil.contains(ocerts, cert)) {
+                        return super.getPermissions(source);
+                    }
+                }
+                return perms;
+            }
+        };
     }
 
     /** Helpy helper function. */
