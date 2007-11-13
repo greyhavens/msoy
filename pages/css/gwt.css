@@ -176,6 +176,7 @@ a:visited {
 .statusPanel .MailNotification {
   border: none;
   height: 10px;
+  padding-right: 3px;
 }
 
 .formDialog .Intro {

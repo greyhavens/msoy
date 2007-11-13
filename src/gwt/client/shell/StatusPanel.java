@@ -43,11 +43,6 @@ public class StatusPanel extends FlexTable
         setCellSpacing(0);
         _app = app;
 
-        // create our mail notifier for use later
-        String mailImg = "<img class='MailNotification' src='/images/mail/button_mail.png'/>";
-        _mailNotifier = new HTML(Application.createLinkHtml(mailImg, "mail", ""));
-        _mailNotifier.setWidth("20px");
-
         FlashEvents.addListener(new StatusChangeListener() {
             public void statusChanged (StatusChangeEvent event) {
                 switch(event.getType()) {
@@ -71,7 +66,7 @@ public class StatusPanel extends FlexTable
                     _levels.setVisible(true);
                     break;
                 case StatusChangeEvent.MAIL:
-                    _mailNotifier.setVisible(event.getValue() > 0);
+                    _mail.setCount(event.getValue());
                     break;
                 }
             }
@@ -106,7 +101,7 @@ public class StatusPanel extends FlexTable
 
         // hide our logged on bits
         _levels.setVisible(false);
-        _mailNotifier.setVisible(false);
+        _mail.setVisible(false);
 
         setText(0, 0, "New to Whirled?");
         setHTML(0, 1, "&nbsp;");
@@ -155,7 +150,7 @@ public class StatusPanel extends FlexTable
         FlashEvents.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level, 0));
 
         // configure our 'new mail' indicator
-        setWidget(0, idx++, _mailNotifier);
+        setWidget(0, idx++, _mail);
         FlashEvents.dispatchEvent(
             new StatusChangeEvent(StatusChangeEvent.MAIL, data.newMailCount, 0));
 
@@ -180,6 +175,34 @@ public class StatusPanel extends FlexTable
     protected void clearCookie (String name)
     {
         CookieUtil.clear("/", name);
+    }
+
+    protected static class MailDisplay extends FlexTable
+    {
+        public MailDisplay () {
+            setCellPadding(0);
+            setCellSpacing(0);
+
+            int idx = 0;
+
+            String mailImg = "<img class='MailNotification' src='/images/mail/button_mail.png'/>";
+            setWidget(0, idx++, new HTML(Application.createLinkHtml(mailImg, "mail", "")));
+
+            setText(0, _mailIx = idx++, "0");
+            setVisible(false);
+        }
+
+        public void setCount (int count)
+        {
+            if (count > 0) {
+                setText(0, _mailIx, String.valueOf(count));
+                setVisible(true);
+            } else {
+                setVisible(false);
+            }
+        }
+
+        protected int _mailIx;
     }
 
     protected static class LevelsDisplay extends FlexTable
@@ -237,7 +260,7 @@ public class StatusPanel extends FlexTable
     protected WebCreds _creds;
 
     protected LevelsDisplay _levels = new LevelsDisplay();
-    protected HTML _mailNotifier;
+    protected MailDisplay _mail = new MailDisplay();
 
     /** The height of the header UI in pixels. */
     protected static final int HEADER_HEIGHT = 50;
