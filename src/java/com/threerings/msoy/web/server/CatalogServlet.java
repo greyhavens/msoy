@@ -12,7 +12,6 @@ import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
@@ -283,8 +282,8 @@ public class CatalogServlet extends MsoyServiceServlet
                 logUserAction(mrec, UserAction.LISTED_ITEM, details);
             }
 
-            // publish to the member's feed if it's a basic item type
-            if (ArrayUtil.indexOf(Item.TYPES, repo.getItemType()) != -1) {
+            // publish to the member's feed if it's not hidden
+            if (pricing != CatalogListing.PRICING_HIDDEN) {
                 MsoyServer.feedRepo.publishMemberMessage(mrec.memberId,
                     FeedMessageType.FRIEND_LISTED_ITEM, listItem.name + "\t" +
                     String.valueOf(repo.getItemType()) + "\t" + String.valueOf(record.catalogId));
