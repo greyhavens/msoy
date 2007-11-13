@@ -155,9 +155,11 @@ public class LobbyGameLiaison extends GameLiaison
         // if we're not about to go into a game, shutdown, otherwise stick around
         if (!_shuttingDown && !inGame && _gameOid == 0) {
             shutdown();
-            // also if we're not in a scene, go to our home scene
+            // either restore our current scene URL or go home if we have no scene
             if (_ctx.getSceneDirector().getScene() == null) {
                 _ctx.getMsoyController().handleGoScene(_ctx.getMemberObject().homeSceneId);
+            } else {
+                _ctx.getMsoyController().restoreSceneURL();
             }
         }
     }
