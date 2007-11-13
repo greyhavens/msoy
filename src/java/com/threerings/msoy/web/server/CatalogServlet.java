@@ -289,7 +289,6 @@ public class CatalogServlet extends MsoyServiceServlet
                     String.valueOf(repo.getItemType()) + "\t" + String.valueOf(record.catalogId));
             }
 
-
             return record.toListing();
 
         } catch (PersistenceException pe) {
