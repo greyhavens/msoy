@@ -81,9 +81,9 @@ public class LobbyGameLiaison extends GameLiaison
         if (_lobby == null) {
             // this function will be called again, once we've got our lobby
             _playerIdTable = playerId;
-            return;
+        } else {
+            _lobby.joinPlayerTable(playerId);
         }
-        _lobby.joinPlayerTable(playerId);
     }
 
     /**
