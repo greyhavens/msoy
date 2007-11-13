@@ -55,10 +55,8 @@ public class index extends Page
         if (action.equals("d")) {
             GameDetailPanel panel;
             if (getContent() instanceof GameDetailPanel) {
-                CGame.log("Preserving GDP...");
                 panel = (GameDetailPanel)getContent();
             } else {
-                CGame.log("New GDP...");
                 setContent(panel = new GameDetailPanel(this));
             }
             panel.setGame(args.get(1, 0), args.get(2, ""));
