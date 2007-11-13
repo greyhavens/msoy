@@ -19,6 +19,7 @@ import com.threerings.presents.client.ResultWrapper;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;

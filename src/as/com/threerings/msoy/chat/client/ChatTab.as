@@ -16,6 +16,8 @@ import mx.controls.Label;
 import mx.core.IFlexDisplayObject;
 import mx.core.UIComponent;
 
+import com.threerings.util.Log;
+
 import com.threerings.msoy.chat.data.ChatChannel
 
 import com.threerings.msoy.client.HeaderBar;

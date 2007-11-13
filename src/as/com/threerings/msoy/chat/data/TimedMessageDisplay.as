@@ -5,6 +5,8 @@ package com.threerings.msoy.chat.data {
 
 import flash.utils.getTimer; // function import
 
+import com.threerings.util.Log;
+
 import com.threerings.crowd.chat.data.ChatMessage;
 
 /**

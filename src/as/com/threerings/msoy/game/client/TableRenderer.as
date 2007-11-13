@@ -15,6 +15,7 @@ import mx.core.UIComponent;
 import mx.controls.Label;
 import mx.controls.Text;
 
+import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.client {
 
+import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.BasicDirector;

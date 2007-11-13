@@ -32,6 +32,7 @@ import mx.resources.ResourceBundle;
 import com.threerings.flash.MathUtil;
 import com.threerings.flex.GridUtil;
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.util.Log;
 import com.threerings.util.MessageManager;
 import com.threerings.util.ParameterUtil;
 import com.threerings.msoy.client.Msgs;

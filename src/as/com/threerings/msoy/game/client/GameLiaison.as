@@ -18,6 +18,7 @@ import mx.core.Container;
 
 import com.threerings.flash.path.Path;
 import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.ClientEvent;

@@ -21,6 +21,7 @@ import mx.core.Container;
 
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
+import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;

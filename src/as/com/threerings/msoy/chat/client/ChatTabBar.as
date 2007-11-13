@@ -9,6 +9,7 @@ import flash.events.Event;
 import mx.containers.HBox;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
 
 import com.threerings.crowd.chat.data.ChatMessage;
 

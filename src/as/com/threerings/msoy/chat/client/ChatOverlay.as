@@ -33,6 +33,7 @@ import mx.controls.VScrollBar;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.Log;
 import com.threerings.util.MessageManager;
 import com.threerings.util.StringUtil;
 

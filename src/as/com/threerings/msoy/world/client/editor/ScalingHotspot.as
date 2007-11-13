@@ -7,6 +7,8 @@ import flash.display.DisplayObject;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
+import com.threerings.util.Log;
+
 import com.threerings.msoy.world.client.FurniSprite;
 
 /**

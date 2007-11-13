@@ -11,6 +11,7 @@ import mx.containers.VBox;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.util.CommandEvent;
+import com.threerings.util.Log;
 
 import com.threerings.parlor.client.DefaultFlexTableConfigurator;
 import com.threerings.parlor.client.TableConfigurator;

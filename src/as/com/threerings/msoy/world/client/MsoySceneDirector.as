@@ -6,6 +6,7 @@ package com.threerings.msoy.world.client {
 import com.threerings.io.TypedArray;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
+import com.threerings.util.Log;
 import com.threerings.util.ResultListener;
 
 import com.threerings.crowd.client.LocationDirector;

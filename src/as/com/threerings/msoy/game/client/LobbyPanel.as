@@ -17,6 +17,7 @@ import mx.core.ClassFactory;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
+import com.threerings.util.Log;
 
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;

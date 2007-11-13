@@ -9,6 +9,8 @@ import mx.controls.List;
 
 import mx.events.ListEvent;
 
+import com.threerings.util.Log;
+
 import com.threerings.msoy.client.WorldContext;
 
 public class MsoyList extends List

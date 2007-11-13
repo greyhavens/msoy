@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.client {
 
 import com.threerings.util.Iterator;
+import com.threerings.util.Log;
 
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.InvocationAdapter;

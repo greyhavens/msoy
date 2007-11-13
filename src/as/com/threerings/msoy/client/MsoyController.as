@@ -22,6 +22,7 @@ import flash.utils.getTimer; // function import
 import mx.controls.Button;
 
 import com.threerings.util.Controller;
+import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.NetUtil;

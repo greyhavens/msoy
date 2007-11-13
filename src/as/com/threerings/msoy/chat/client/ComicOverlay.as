@@ -15,6 +15,7 @@ import mx.core.Container;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 import com.threerings.util.Name;
 
 import com.threerings.flash.ColorUtil;
@@ -534,6 +535,8 @@ public class ComicOverlay extends ChatOverlay
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
+
+import com.threerings.util.Log;
 
 import com.threerings.flash.DisplayUtil;
 

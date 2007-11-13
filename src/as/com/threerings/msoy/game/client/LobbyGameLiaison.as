@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import com.threerings.util.Log;
+
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.client.ResultWrapper;

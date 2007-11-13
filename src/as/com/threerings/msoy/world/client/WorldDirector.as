@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.client {
 
+import com.threerings.util.Log;
+
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ConfirmAdapter;

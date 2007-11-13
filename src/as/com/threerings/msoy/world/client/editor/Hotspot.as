@@ -10,6 +10,8 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
+import com.threerings.util.Log;
+
 /**
  * A single hotspot that processes mouse clicks on its surface, mouse movement and release.
  */

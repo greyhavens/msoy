@@ -7,6 +7,7 @@ import flash.events.IEventDispatcher;
 import mx.controls.Button;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.util.Log;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 

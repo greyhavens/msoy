@@ -13,6 +13,7 @@ import mx.core.Application;
 import mx.managers.PopUpManager;
 
 import com.threerings.util.Controller;
+import com.threerings.util.Log;
 
 import com.threerings.presents.client.ResultWrapper;
 

@@ -13,6 +13,8 @@ import mx.controls.Text;
 import mx.core.Container;
 import mx.core.ScrollPolicy;
 
+import com.threerings.util.Log;
+
 import com.threerings.io.TypedArray;
 
 import com.threerings.presents.client.ResultWrapper;

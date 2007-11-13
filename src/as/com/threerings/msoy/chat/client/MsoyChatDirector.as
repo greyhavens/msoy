@@ -9,6 +9,7 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 

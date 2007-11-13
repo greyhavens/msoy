@@ -8,6 +8,8 @@ import flash.display.Loader;
 import flash.display.Sprite;
 import flash.display.LoaderInfo;
 
+import com.threerings.util.Log;
+
 import com.threerings.flash.MediaContainer;
 
 import com.threerings.msoy.client.ControlBackend;

@@ -7,6 +7,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import com.threerings.util.Iterator;
+import com.threerings.util.Log;
 
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.LocationObserver;

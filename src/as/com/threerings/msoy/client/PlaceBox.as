@@ -11,6 +11,8 @@ import flash.geom.Point;
 import mx.containers.Canvas;
 import mx.core.UIComponent;
 
+import com.threerings.util.Log;
+
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.msoy.client.MsoyPlaceView;
 

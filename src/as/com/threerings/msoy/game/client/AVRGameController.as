@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.client {
 
 import com.threerings.util.Controller;
+import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.dobj.DObject;

@@ -8,6 +8,8 @@ import flash.events.EventDispatcher;
 
 import flash.display.Loader;
 
+import com.threerings.util.Log;
+
 /**
  * The base class for communicating with MsoyControl instances
  * that live in usercode.

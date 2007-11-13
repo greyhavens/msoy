@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.client {
 
+import com.threerings.util.Log;
 import com.threerings.util.ObjectMarshaller;
 
 import com.threerings.presents.client.ConfirmAdapter;

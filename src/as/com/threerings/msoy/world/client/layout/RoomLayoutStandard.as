@@ -13,6 +13,8 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.util.Log;
+
 import com.threerings.flash.Vector3;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.world.client.AbstractRoomView;

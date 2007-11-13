@@ -17,6 +17,7 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
+import com.threerings.util.Log;
 import com.threerings.util.Util;
 import com.threerings.util.ValueEvent;
 

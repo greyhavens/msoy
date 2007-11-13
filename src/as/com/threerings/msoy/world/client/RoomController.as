@@ -24,6 +24,7 @@ import mx.managers.ISystemManager;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Integer;
+import com.threerings.util.Log;
 import com.threerings.util.NetUtil;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;

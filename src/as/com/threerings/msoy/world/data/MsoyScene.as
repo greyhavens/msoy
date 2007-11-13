@@ -7,6 +7,7 @@ import flash.errors.IllegalOperationError;
 
 import com.threerings.util.Iterator;
 import com.threerings.util.Cloneable;
+import com.threerings.util.Log;
 
 import com.threerings.crowd.data.PlaceConfig;
 

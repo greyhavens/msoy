@@ -5,6 +5,7 @@ package com.threerings.msoy.game.client {
 
 import flash.events.Event;
 
+import com.threerings.util.Log;
 import com.threerings.util.Name;
 
 import com.threerings.parlor.client.TableDirector;

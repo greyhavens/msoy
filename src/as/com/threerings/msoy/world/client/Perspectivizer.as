@@ -13,6 +13,8 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.util.Log;
+
 public class Perspectivizer extends Bitmap
 {
     public function Perspectivizer (

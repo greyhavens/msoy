@@ -16,6 +16,7 @@ import mx.core.Application;
 import mx.resources.ResourceBundle;
 
 import com.threerings.util.CommandEvent;
+import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
@@ -536,6 +537,8 @@ public class WorldClient extends BaseClient
 }
 
 import flash.external.ExternalInterface;
+
+import com.threerings.util.Log;
 
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;

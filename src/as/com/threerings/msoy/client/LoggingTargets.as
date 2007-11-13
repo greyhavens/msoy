@@ -5,6 +5,7 @@ package com.threerings.msoy.client {
 
 import flash.external.ExternalInterface;
 
+import com.threerings.util.Log;
 import com.threerings.util.LogTarget;
 
 import com.threerings.msoy.data.MemberObject;
