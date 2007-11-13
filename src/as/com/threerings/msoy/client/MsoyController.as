@@ -552,9 +552,6 @@ public class MsoyController extends Controller
 
         // now display the lobby interface
         _ctx.getGameDirector().displayLobby(gameId);
-
-        // replace the #game-XXX URL with a #world-sXXX URL for our current scene
-        displayPageGWT("world", "s" + sceneId);
     }
 
     /**
