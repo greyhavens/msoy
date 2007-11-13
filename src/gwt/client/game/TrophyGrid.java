@@ -38,8 +38,8 @@ public class TrophyGrid extends FlexTable
             final Trophy trophy = trophies[ii];
             ClickListener trophyClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.GAME, Args.compose(new String[] {
-                        "d", "" + trophy.gameId, GameDetailPanel.TROPHIES_TAB }));
+                    Application.go(Page.GAME, Args.compose("d", ""+trophy.gameId,
+                                                           GameDetailPanel.TROPHIES_TAB));
                 }
             };
 

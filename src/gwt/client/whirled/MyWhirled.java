@@ -60,7 +60,7 @@ public class MyWhirled extends FlexTable
     {
         buildUI();
 
-        CWhirled.membersvc.getMyWhirled(CWhirled.ident, new AsyncCallback() {
+        CWhirled.worldsvc.getMyWhirled(CWhirled.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 MyWhirledData data = (MyWhirledData) result;
                 popDisplay.displayPopulation(data.whirledPopulation);

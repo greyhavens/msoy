@@ -24,6 +24,7 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
+import client.shell.Page;
 import client.util.CreatorLabel;
 import client.util.FlashClients;
 import client.util.ItemUtil;
@@ -152,7 +153,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
 
         if (_item instanceof Game) {
             String args = Args.compose("d" , ((Game)_item).gameId);
-            details.add(Application.createLink("More info...", "game", args));
+            details.add(Application.createLink("More info...", Page.GAME, args));
         }
     }
 

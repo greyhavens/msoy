@@ -5,12 +5,15 @@ package client.whirled;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.web.client.WorldService;
+import com.threerings.msoy.web.client.WorldServiceAsync;
 
 import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
@@ -69,6 +72,10 @@ public class index extends MsgsEntryPoint
     protected void initContext ()
     {
         super.initContext();
+
+        // wire up our remote services
+        CWhirled.worldsvc = (WorldServiceAsync)GWT.create(WorldService.class);
+        ((ServiceDefTarget)CWhirled.worldsvc).setServiceEntryPoint("/worldsvc");
 
         // load up our translation dictionaries
         CWhirled.msgs = (WhirledMessages)GWT.create(WhirledMessages.class);

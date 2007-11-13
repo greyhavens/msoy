@@ -47,7 +47,7 @@ public class Whirledwide extends FlexTable
         setStyleName("WhirledwidePage");
         buildUI();
 
-        CWhirled.membersvc.getWhirledwide(new AsyncCallback() {
+        CWhirled.worldsvc.getWhirledwide(new AsyncCallback() {
             public void onSuccess (Object result) {
                 WhirledwideData data = (WhirledwideData) result;
                 popDisplay.displayPopulation(data.whirledPopulation);

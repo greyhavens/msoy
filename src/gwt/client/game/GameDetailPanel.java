@@ -115,7 +115,7 @@ public class GameDetailPanel extends VerticalPanel
         if (detail.minPlayers == 1 && !detail.isPartyGame()) {
             play = new Button(CGame.msgs.gdpQuickSingle(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.GAME, Args.compose("s", _gameId));
+                    Application.go(Page.WORLD, Args.compose("game", "s", ""+_gameId));
                 }
             });
             play.addStyleName("PlayButton");
@@ -128,7 +128,7 @@ public class GameDetailPanel extends VerticalPanel
         if (detail.maxPlayers > 1) {
             play = new Button(CGame.msgs.gdpQuickMulti(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.GAME, Args.compose("m", _gameId));
+                    Application.go(Page.WORLD, Args.compose("game", "m", ""+_gameId));
                 }
             });
             play.addStyleName("PlayButton");
@@ -138,7 +138,7 @@ public class GameDetailPanel extends VerticalPanel
 
             play = new Button(CGame.msgs.gdpCustomGame(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.GAME, "" + _gameId);
+                    Application.go(Page.WORLD, Args.compose("game", "l", ""+_gameId));
                 }
             });
             play.addStyleName("PlayButton");
@@ -241,7 +241,7 @@ public class GameDetailPanel extends VerticalPanel
         // route tab selection through the URL
         String tabCode = getTabCode(tabIndex);
         if (!tabCode.equals(_seltab)) {
-            Application.go(Page.GAME, Args.compose(new String[] { "d", ""+ _gameId, tabCode }));
+            Application.go(Page.GAME, Args.compose("d", ""+_gameId, tabCode));
             return false;
         } else {
             return true;

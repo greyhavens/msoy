@@ -65,6 +65,18 @@ public class CatalogServlet extends MsoyServiceServlet
         CatalogResult result = new CatalogResult();
         List<CatalogListing> list = new ArrayList<CatalogListing>();
 
+        // make sure the type in question is salable
+        try {
+            Item item = (Item)Item.getClassForType(query.itemType).newInstance();
+            if (item instanceof SubItem && !((SubItem)item).isSalable()) {
+                result.listings = list;
+                return result;
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to check salability [query=" + query + "].", e);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+
         try {
             boolean mature = false;
             if (mrec != null) {

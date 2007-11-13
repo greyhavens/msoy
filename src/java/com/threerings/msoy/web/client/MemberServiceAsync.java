@@ -36,21 +36,6 @@ public interface MemberServiceAsync
     public void loadInventory (WebIdent ident, byte type, int suiteId, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link MemberService#serializePopularPlaces}.
-     */
-    public void serializePopularPlaces (WebIdent ident, int n, AsyncCallback callback);
-
-    /**
-     * The asynchronous version of {@link MemberService#getMyWhirled}.
-     */
-    public void getMyWhirled (WebIdent ident, AsyncCallback callback);
-
-    /**
-     * The asynchronous version of {@link MemberService#getWhirledwide}.
-     */
-    public void getWhirledwide (AsyncCallback callback);
-
-    /**
      * The asynchronous version of {@link MemberService#getInvitationsStatus}.
      */
     public void getInvitationsStatus (WebIdent ident, AsyncCallback callback);
@@ -70,9 +55,4 @@ public interface MemberServiceAsync
      * The asynchronous version of {@link MemberService#optOut}.
      */
     public void optOut (Invitation invite, AsyncCallback callback);
-
-    /**
-     * The asynchronous version of {@link MemberService#loadFeed}.
-     */
-    public void loadFeed (WebIdent ident, int cutoffDays, AsyncCallback callback);
 }

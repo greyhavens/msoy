@@ -51,7 +51,7 @@ public class FeedPanel extends VerticalPanel
     protected void loadFeed (final boolean fullPage)
     {
         int feedDays = fullPage ? FULL_CUTOFF : SHORT_CUTOFF;
-        CWhirled.membersvc.loadFeed(CWhirled.ident, feedDays, new AsyncCallback() {
+        CWhirled.worldsvc.loadFeed(CWhirled.ident, feedDays, new AsyncCallback() {
             public void onSuccess (Object result) {
                 setFeed((List)result, fullPage);
             }
@@ -97,10 +97,8 @@ public class FeedPanel extends VerticalPanel
         case 103:
             return new MessageKey(message.type, ((FriendFeedMessage)message).friend.toString());
 
-        // FRIEND_UPDATED_ROOM
-        case 101:
-        // FRIEND_GAINED_LEVEL
-        case 104:
+        case 101: // FRIEND_UPDATED_ROOM
+        case 104: // FRIEND_GAINED_LEVEL
             return new MessageKey(message.type, null);
         }
         return null;
@@ -234,11 +232,10 @@ public class FeedPanel extends VerticalPanel
         protected String buildString (FeedMessage message)
         {
             switch (message.type) {
-            // FRIEND_ADDED_FRIEND
-            case 100:
+            case 100: // FRIEND_ADDED_FRIEND
                 return profileLink(message.data[0], message.data[1]);
-            // FRIEND_UPDATED_ROOM
-            case 101:
+
+            case 101: // FRIEND_UPDATED_ROOM
                 // TEMP: remove after servers are 2 weeks past 11/06/2007
                 if (message.data.length == 1) {
                     return Application.createLinkHtml(
@@ -248,20 +245,18 @@ public class FeedPanel extends VerticalPanel
                 // ENDTEMP
                 return Application.createLinkHtml(
                         message.data[1], Page.WORLD, "s" + message.data[0]);
-            // FRIEND_WON_TROPHY
-            case 102:
+
+            case 102: // FRIEND_WON_TROPHY
                 return Application.createLinkHtml(message.data[0], Page.GAME,
-                            Args.compose(new String[] {
-                                "d", message.data[1], GameDetailPanel.TROPHIES_TAB }));
-            // FRIEND_LISTED_ITEM
-            case 103:
+                    Args.compose("d", message.data[1], GameDetailPanel.TROPHIES_TAB));
+
+            case 103: // FRIEND_LISTED_ITEM
                 return CWhirled.msgs.descCombine(
                             CShell.dmsgs.getString("itemType" + message.data[1]),
                             Application.createLinkHtml(message.data[0], Page.CATALOG,
-                                Args.compose(new String[] {
-                                    message.data[1], "i", message.data[2] })));
-            // FRIEND_GAINED_LEVEL
-            case 104:
+                                Args.compose(message.data[1], "i", message.data[2])));
+
+            case 104: // FRIEND_GAINED_LEVEL
                 return message.data[0];
             }
 
@@ -273,32 +268,27 @@ public class FeedPanel extends VerticalPanel
             String friendLink = profileLink(
                     message.friend.toString(), String.valueOf(message.friend.getMemberId()));
             switch (message.type) {
-            // FRIEND_ADDED_FRIEND
-            case 100:
+            case 100: // FRIEND_ADDED_FRIEND
                 add(new BasicWidget(CWhirled.msgs.friendAddedFriend(
                                 friendLink, buildString(message))));
                 break;
 
-            // FRIEND_UPDATED_ROOM
-            case 101:
+            case 101: // FRIEND_UPDATED_ROOM
                 add(new BasicWidget(CWhirled.msgs.friendUpdatedRoom(
                                 friendLink, buildString(message))));
                 break;
 
-            // FRIEND_WON_TROPHY
-            case 102:
+            case 102: // FRIEND_WON_TROPHY
                 add(new BasicWidget(CWhirled.msgs.friendWonTrophy(
                                 friendLink, buildString(message))));
                 break;
 
-            // FRIEND_LISTED_ITEM
-            case 103:
+            case 103: // FRIEND_LISTED_ITEM
                 add(new BasicWidget(CWhirled.msgs.friendListedItem(
                                 friendLink, buildString(message))));
                 break;
 
-            // FRIEND_GAINED_LEVEL
-            case 104:
+            case 104: // FRIEND_GAINED_LEVEL
                 add(new BasicWidget(CWhirled.msgs.friendGainedLevel(
                                 friendLink, buildString(message))));
                 break;

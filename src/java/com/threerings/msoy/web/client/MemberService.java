@@ -10,10 +10,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.MemberInvites;
-import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.WhirledwideData;
 
 /**
  * Defines member-specific services available to the GWT/AJAX web client.
@@ -48,24 +46,6 @@ public interface MemberService extends RemoteService
         throws ServiceException;
 
     /**
-     * Fetch the n most Popular Places data in JSON-serialized form.
-     */
-    public String serializePopularPlaces (WebIdent ident, int n)
-        throws ServiceException;
-
-    /**
-     * Get data for the MyWhirled view for the current user.
-     */
-    public MyWhirledData getMyWhirled (WebIdent ident)
-        throws ServiceException;
-
-    /**
-     * Get the data for the Whirledwide view for the current user.
-     */
-    public WhirledwideData getWhirledwide ()
-        throws ServiceException;
-
-    /**
      * Return the invitation details for the given ident.
      */
     public MemberInvites getInvitationsStatus (WebIdent ident) 
@@ -96,14 +76,5 @@ public interface MemberService extends RemoteService
      * Adds the email address from the given invite to the opt-out list.
      */
     public void optOut (Invitation invite)
-        throws ServiceException;
-
-    /**
-     * Loads all items in a player's inventory of the specified type and optionally restricted to
-     * the specified suite.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.person.data.FeedMessage>
-     */
-    public List loadFeed (WebIdent ident, int cutoffDays)
         throws ServiceException;
 }

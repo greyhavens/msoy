@@ -55,8 +55,10 @@ public class index extends Page
         if (action.equals("d")) {
             GameDetailPanel panel;
             if (getContent() instanceof GameDetailPanel) {
+                CGame.log("Preserving GDP...");
                 panel = (GameDetailPanel)getContent();
             } else {
+                CGame.log("New GDP...");
                 setContent(panel = new GameDetailPanel(this));
             }
             panel.setGame(args.get(1, 0), args.get(2, ""));
@@ -65,22 +67,8 @@ public class index extends Page
             setContent(new TrophyCasePanel(this, args.get(1, 0)));
 
         } else {
-            loadLaunchConfig(args.get(1, 0), -1, action);
+            // TODO: display the arcade
         }
-    }
-
-    // @Override // from Page
-    public void onPageLoad ()
-    {
-        super.onPageLoad();
-        configureCallbacks(this);
-    }
-
-    // @Override // from Page
-    public void onPageUnload ()
-    {
-        super.onPageUnload();
-        clearCallbacks();
     }
 
     // @Override // from Page
@@ -101,130 +89,4 @@ public class index extends Page
         // load up our translation dictionaries
         CGame.msgs = (GameMessages)GWT.create(GameMessages.class);
     }
-
-    protected void loadLaunchConfig (int gameId, final int gameOid, final String action)
-    {
-        // load up the information needed to launch the game
-        CGame.gamesvc.loadLaunchConfig(CGame.ident, gameId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                launchGame((LaunchConfig)result, gameOid, action);
-            }
-            public void onFailure (Throwable cause) {
-                MsoyUI.error(CGame.serverError(cause));
-            }
-        });
-    }
-
-    protected void launchGame (final LaunchConfig config, final int gameOid, String action)
-    {
-        switch (config.type) {
-        case LaunchConfig.FLASH_IN_WORLD:
-            WorldClient.displayFlash("worldGame=" + config.gameId);
-            break;
-
-        case LaunchConfig.FLASH_LOBBIED:
-            if (gameOid <= 0) {
-                if (action.equals("m")) {
-                    WorldClient.displayFlash("playNow=" + config.gameId + "&single=false");
-                } else if (action.equals("s")) {
-                    WorldClient.displayFlash("playNow=" + config.gameId + "&single=true");
-                } else {
-                    WorldClient.displayFlash("gameLobby=" + config.gameId);
-                }
-            } else {
-                WorldClient.displayFlash("gameLocation=" + gameOid);
-            }
-            break;
-
-        case LaunchConfig.JAVA_FLASH_LOBBIED:
-        case LaunchConfig.JAVA_SELF_LOBBIED:
-            if (config.type == LaunchConfig.JAVA_FLASH_LOBBIED && gameOid <= 0) {
-                WorldClient.displayFlash("gameLobby=" + config.gameId);
-
-            } else {
-                // clear out the client as we're going into Java land
-                Frame.closeClient(false);
-
-                // prepare a command to be invoked once we know Java is loaded
-                _javaReadyCommand = new Command() {
-                    public void execute () {
-                        displayJava(config, gameOid);
-                    }
-                };
-
-                // stick up a loading message and the HowdyPardner Java applet
-                FlowPanel bits = new FlowPanel();
-                bits.setStyleName("javaLoading");
-                bits.add(new Label("Loading game..."));
-
-                String gameServer = "http://" + config.server + ":" + config.httpPort;
-                String howdyJar =
-                    gameServer + "/clients/" + DeploymentConfig.version + "/howdy.jar";
-                bits.add(WidgetUtil.createApplet("game", howdyJar,
-                                                 "com.threerings.msoy.client.HowdyPardner",
-                                                 "100", "10", true, new String[0]));
-                setContent(bits);
-            }
-            break;
-
-        case LaunchConfig.FLASH_SOLO:
-            setPageTitle(config.name);
-            setFlashContent(WidgetUtil.createFlashObjectDefinition(
-                                "game", config.gameMediaPath, 800, 600, null));
-            break;
-
-        case LaunchConfig.JAVA_SOLO:
-            setPageTitle(config.name);
-            setContent(new Label("Not yet supported"));
-            break;
-
-        default:
-            setPageTitle(config.name);
-            setContent(new Label(CGame.msgs.errUnknownGameType("" + config.type)));
-            break;
-        }
-    }
-
-    protected void displayJava (LaunchConfig config, int gameOid)
-    {
-        String[] args = new String[] {
-            "game_id", "" + config.gameId, "game_oid", "" + gameOid,
-            "server", config.server, "port", "" + config.port,
-            "authtoken", (CGame.ident == null) ? "" : CGame.ident.token };
-
-        // we have to serve game-client.jar from the server to which it will connect back due to
-        // security restrictions and proxy the game jar through there as well
-        String gameServer = "http://" + config.server + ":" + config.httpPort;
-        String gameJar = gameServer + "/clients/" +
-            DeploymentConfig.version + "/" + (config.lwjgl ? "lwjgl-" : "") +
-            "game-client.jar";
-
-        WorldClient.displayJava(
-            WidgetUtil.createApplet(
-                "game", gameJar + "," + gameServer + config.gameMediaPath,
-                // TODO: allow games to specify their dimensions in their config
-                "com.threerings.msoy.game.client." +
-                (config.lwjgl ? "LWJGL" : "") + "GameApplet",
-                "100%", "600", false, args));
-    }
-
-    protected void javaReady ()
-    {
-        if (_javaReadyCommand != null) {
-            DeferredCommand.addCommand(_javaReadyCommand);
-            _javaReadyCommand = null;
-        }
-    }
-
-    protected Command _javaReadyCommand;
-
-    protected static native void configureCallbacks (index page) /*-{
-       $wnd.howdyPardner = function () {
-            page.@client.game.index::javaReady()();
-       }
-    }-*/;
-
-    protected static native void clearCallbacks () /*-{
-       $wnd.howdyPardner = null;
-    }-*/;
 }
