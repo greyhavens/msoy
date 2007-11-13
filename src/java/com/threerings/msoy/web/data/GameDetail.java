@@ -53,4 +53,12 @@ public class GameDetail
     {
         return (listedItem == null) ? sourceItem : listedItem;
     }
+
+    /**
+     * Returns true if this is a party game, false otherwise.
+     */
+    public boolean isPartyGame ()
+    {
+        return maxPlayers == Integer.MAX_VALUE;
+    }
 }
