@@ -394,7 +394,7 @@ class StatusUpdater implements AttributeChangeListener, SetListener
     }
 
     public function newMail (mail :int, oldMail :int = -1) :void {
-        sendNotification([STATUS_CHANGE_MAIL, mail ? 1 : 0, oldMail ? 1 : 0]);
+        sendNotification([STATUS_CHANGE_MAIL, mail, oldMail]);
     }
 
     protected function sendNotification (args :Array) :void {
