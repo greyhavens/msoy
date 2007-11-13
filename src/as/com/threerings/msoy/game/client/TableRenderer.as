@@ -48,11 +48,7 @@ public class TableRenderer extends HBox
     public function TableRenderer (popup :Boolean = false)
     {
         super();
-        _popup = popup
-        if (!_popup) {
-            // when used in a List, we should not be included in the layout
-            includeInLayout = false;
-        }
+        _popup = popup;
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
         percentWidth = 100;
@@ -61,13 +57,11 @@ public class TableRenderer extends HBox
     override public function set data (newData :Object) :void
     {
         super.data = newData;
-
         recheckTable();
     }
 
     override public function set width (w:Number) :void
     {
-        Log.getLog(this).debug("set width = " + w);
         super.width = w;
         if (_popup && _seatsGrid != null) {
             _seatsGrid.width = w;
@@ -83,6 +77,74 @@ public class TableRenderer extends HBox
     }
 
     override protected function createChildren () :void
+    {
+        super.createChildren();
+        createSeats();
+    }
+
+    protected function removeChildren () :void
+    {
+        while (numChildren > 0) {
+            removeChild(getChildAt(0));
+        }
+    }
+
+    protected function recheckTable () :void
+    {
+        if (data == null) {
+            Log.getLog(this).warning("Checked table and have no data?");
+            return;
+
+        } else if (data is String) {
+            removeChildren();
+            var type :String = (data as String).substr(0, 1);
+            var message :String = (data as String).substr(1);
+            var label :Label = new Label();
+            label.text = message;
+            if (type == "H") {
+                styleName = "tableHeader";
+                label.setStyle("fontWeight", "bold");
+            } else {
+                styleName = "tableMessage";
+            }
+            addChild(label);
+            return;
+
+        } else if (getChildAt(0) is Label) {
+            removeChildren();
+            createSeats();
+        }
+
+        var table :MsoyTable = (data as MsoyTable);
+        if (!_popup) {
+            // TODO: table.playerCount is not getting set... I'm not sure why TableManager isn't
+            // doing this, but I don't want to mess with that, in case one of the other games is
+            // relying on the current behavior.
+            _watcherCount = table.watcherCount;
+            // _watcherCount = table.watcherCount - table.playerCount;
+        }
+
+        // update the seats
+        var length :int = table.occupants.length;
+        if (length != 0) {
+            updateSeats(table, length);
+        }
+        // remove any extra seats/buttons, should there be any
+        while (_seatsGrid.numChildren > length) {
+            _seatsGrid.removeChildAt(length);
+        }
+        updateButtons(table);
+        _seatsGrid.validateNow();
+        _maxUsableWidth = (_seatsGrid.measuredMinWidth + HORZ_GAP) * _seatsGrid.numChildren +
+            /* the mystery pixels strike again */ 15;
+
+        if (!_popup) {
+            updateConfig(table);
+            _seatsGrid.width = parent.width - CONFIG_WIDTH - PADDING_WIDTH - 10; 
+        }
+    }
+
+    protected function createSeats () :void
     {
         _game = panel.getGame();
         _gameDef = panel.getGameDefinition();
@@ -107,6 +169,7 @@ public class TableRenderer extends HBox
             padding.percentHeight = 100;
             addChild(padding);
         }
+
         var rightSide :VBox = new VBox();
         rightSide.percentWidth = 100;
         addChild(rightSide);
@@ -114,62 +177,6 @@ public class TableRenderer extends HBox
         _seatsGrid.verticalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.horizontalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.styleName = "seatsGrid";
-    }
-
-    protected function removeChildren () :void
-    {
-        while (numChildren > 0) {
-            removeChild(getChildAt(0));
-        }
-    }
-
-    protected function recheckTable () :void
-    {
-        var table :MsoyTable = (data as MsoyTable);
-        if (table == null) {
-            if (_creationPanel == null) {
-                _creationPanel = new TableCreationPanel(gctx, panel);
-            } 
-            removeChildren();
-            addChild(_creationPanel);
-            if (parent.width != 0) {
-                _creationPanel.width = parent.width;
-            }
-            panel.setCreateButton(_creationPanel.getCreateButton());
-            return;
-
-        } else if (getChildAt(0) is TableCreationPanel) {
-            _creationPanel = null;
-            removeChildren();
-            createChildren();
-        }
-
-        if (!_popup) {
-            //TODO: table.playerCount is not getting set... I'm not sure why TableManager isn't
-            // doing this, but I don't want to mess with that, in case one of the other games 
-            // is relying on the current behavior.  
-            //_watcherCount = table.watcherCount - table.playerCount;
-            _watcherCount = table.watcherCount;
-        }
-
-        // update the seats
-        var length :int = table.occupants.length;
-        if (length != 0) {
-            updateSeats(table, length);
-        }
-        // remove any extra seats/buttons, should there be any
-        while (_seatsGrid.numChildren > length) {
-            _seatsGrid.removeChildAt(length);
-        }
-        updateButtons(table);
-        _seatsGrid.validateNow();
-        _maxUsableWidth = (_seatsGrid.measuredMinWidth + HORZ_GAP) * _seatsGrid.numChildren +
-            /* the mystery pixels strike again :/ */ 15;
-
-        if (!_popup) {
-            updateConfig(table);
-            _seatsGrid.width = parent.width - CONFIG_WIDTH - PADDING_WIDTH - 10; 
-        }
     }
 
     protected function updateSeats (table :MsoyTable, length :int) :void
@@ -316,8 +323,6 @@ public class TableRenderer extends HBox
     protected var _popup :Boolean; 
 
     protected var _maxUsableWidth :int;
-
-    protected var _creationPanel :TableCreationPanel;
 }
 }
 

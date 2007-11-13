@@ -11,6 +11,7 @@ import mx.collections.ArrayCollection;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
+import mx.controls.List;
 import mx.controls.Text;
 
 import mx.core.ClassFactory;
@@ -40,7 +41,6 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.ui.MsoyList;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.game.data.LobbyObject;
@@ -49,7 +49,7 @@ import com.threerings.msoy.item.data.all.Game;
 /**
  * A panel that displays pending table games.
  */
-public class LobbyPanel extends VBox 
+public class LobbyPanel extends VBox
     implements TableObserver, SeatednessObserver, AttributeChangeListener
 {
     /** Our log. */
@@ -106,11 +106,24 @@ public class LobbyPanel extends VBox
         _logo.addChild(new MediaWrapper(new MediaContainer(getGame().getThumbnailPath())));
         _info.text = game.description;
 
+        // determine our informational messages
+        if (GameConfig.SEATED_GAME == _lobbyObj.gameDef.match.getMatchType()) {
+            _pendersHeader = Msgs.GAME.get("l.penders_header_seated");
+            _noPendersMsg = Msgs.GAME.get("m.no_penders_seated");
+        } else {
+            _pendersHeader = Msgs.GAME.get("l.penders_header_party");
+            _noPendersMsg = Msgs.GAME.get("m.no_penders_party");
+        }
+
         _tablesBox.removeAllChildren();
         createTablesDisplay();
-        // add all preexisting tables
-        for each (var table :Table in _lobbyObj.tables.toArray()) {
-            tableAdded(table);
+
+        if (_lobbyObj.tables.size() == 0) {
+            _tables.addItem("M" + _noPendersMsg);
+        } else {
+            for each (var table :Table in _lobbyObj.tables.toArray()) {
+                tableAdded(table);
+            }
         }
     }
 
@@ -123,27 +136,18 @@ public class LobbyPanel extends VBox
     }
 
     /**
-     * Returns the definition for the game we're currently matchmaking.
+     * Returns thae definition for the game we're currently matchmaking.
      */
     public function getGameDefinition () :GameDefinition
     {
         return _lobbyObj != null ? _lobbyObj.gameDef : null;
     }
 
-    /**
-     * Called to set the creation button.
-     */
-    public function setCreateButton (btn :CommandButton) :void
-    {
-        _createBtn = btn;
-        updateCreateButton();
-    }
-
     // from AttributeChangeListener
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
         if (event.getName() == MemberObject.GAME) {
-            updateCreateButton();
+            _creationPanel.setEnabled(!isSeated());
             if (_tables != null) {
                 _tables.refresh();
             }
@@ -153,6 +157,13 @@ public class LobbyPanel extends VBox
     // from TableObserver
     public function tableAdded (table :Table) :void
     {
+        if (_tables.length > 0 && _tables.getItemAt(ii) is String) {
+            _tables.removeItemAt(0);
+        }
+        if (_tables.length == 0) {
+            _tables.addItem("H" + _pendersHeader);
+        }
+
         var firstRunningIdx :int = -1;
         for (var ii :int = 0; _tables != null && ii < _tables.length; ii++) {
             var tt :Table = (_tables.getItemAt(ii) as Table);
@@ -194,6 +205,10 @@ public class LobbyPanel extends VBox
             table = (_tables.getItemAt(ii) as Table);
             if (table != null && table.tableId == tableId) {
                 _tables.removeItemAt(ii);
+                if (_tables.length == 1 && _tables.getItemAt(0) is String) {
+                    _tables.removeItemAt(0);
+                    _tables.addItem("M" + _noPendersMsg);
+                }
                 return;
             }
         }
@@ -204,7 +219,7 @@ public class LobbyPanel extends VBox
     public function seatednessDidChange (nowSeated :Boolean) :void
     {
         _isSeated = nowSeated;
-        updateCreateButton();
+        _creationPanel.setEnabled(!isSeated());
         if (_isSeated) {
             CommandEvent.dispatch(this, LobbyController.LEAVE_LOBBY);
         }
@@ -216,16 +231,6 @@ public class LobbyPanel extends VBox
     public function isSeated () :Boolean
     {
         return _isSeated || (_wctx.getMemberObject().game != null);
-    }
-
-    /**
-     * Update the state of the create button.
-     */
-    protected function updateCreateButton () :void
-    {
-        if (_createBtn != null) {
-            _createBtn.enabled = !isSeated();
-        }
     }
 
     /**
@@ -285,7 +290,7 @@ public class LobbyPanel extends VBox
         embedBtn.useHandCursor = true;
         embedBtn.mouseChildren = false;
         embedBtnBox.addChild(embedBtn);
-        
+
         var leaveBtnBox :VBox = new VBox();
         leaveBtnBox.styleName = "lobbyCloseBox";
         leaveBtnBox.percentHeight = 100;
@@ -294,21 +299,23 @@ public class LobbyPanel extends VBox
         leaveBtn.styleName = "closeButton";
         leaveBtnBox.addChild(leaveBtn);
 
-        var borderedBox :VBox = new VBox();
-        addChild(borderedBox);
-        borderedBox.styleName = "borderedBox";
-        borderedBox.percentWidth = 100;
-        borderedBox.percentHeight = 100;
+        _contents = new VBox();
+        addChild(_contents);
+        _contents.styleName = "borderedBox";
+        _contents.percentWidth = 100;
+        _contents.percentHeight = 100;
+
         var descriptionBox :HBox = new HBox();
         descriptionBox.percentWidth = 100;
         descriptionBox.height = 124; // make room for padding at top
         descriptionBox.styleName = "descriptionBox";
-        borderedBox.addChild(descriptionBox);
+        _contents.addChild(descriptionBox);
         _logo = new VBox();
         _logo.styleName = "lobbyLogoBox";
         _logo.width = 160;
         _logo.height = 120;
         descriptionBox.addChild(_logo);
+
         var infoBox :HBox = new HBox();
         infoBox.styleName = "infoBox";
         infoBox.percentWidth = 100;
@@ -324,7 +331,8 @@ public class LobbyPanel extends VBox
         _tablesBox.styleName = "tablesBox";
         _tablesBox.percentWidth = 100;
         _tablesBox.percentHeight = 100;
-        borderedBox.addChild(_tablesBox);
+        _contents.addChild(_tablesBox);
+
         var loadingLabel :Label = new Label();
         loadingLabel.text = Msgs.GAME.get("l.gameLoading");
         _tablesBox.addChild(loadingLabel);
@@ -333,7 +341,7 @@ public class LobbyPanel extends VBox
     protected function createTablesDisplay () :void
     {
         // our game table data
-        var list :MsoyList = new MsoyList(_wctx);
+        var list :List = new List();
         list.styleName = "lobbyTableList";
         list.variableRowHeight = true;
         list.percentHeight = 100;
@@ -345,17 +353,15 @@ public class LobbyPanel extends VBox
         list.dataProvider = (_tables = new ArrayCollection());
 
         var bar :HBox = new HBox();
-        bar.styleName = "tabsFillerBox"; 
+        bar.styleName = "tabsFillerBox";
         bar.percentWidth = 100;
         bar.height = 9;
         _tablesBox.addChild(bar);
         _tablesBox.addChild(list);
 
-        if (_tables.source.length > 0) {
-            _tables.setItemAt(null, 0);
-        } else {
-            _tables.addItem(null);
-        }
+        _creationPanel = new TableCreationPanel(_gctx, this);
+        _tablesBox.addChild(_creationPanel);
+        _creationPanel.setEnabled(!isSeated());
     }
 
     protected static const LOBBY_PANEL_WIDTH :int = 500; // in px
@@ -372,18 +378,22 @@ public class LobbyPanel extends VBox
     /** Are we seated? */
     protected var _isSeated :Boolean;
 
-    /** The create-a-table button. */
-    protected var _createBtn :CommandButton;
+    /** The create a table interface. */
+    protected var _creationPanel :TableCreationPanel;
 
     /** All forming and running tables (forming first). */
     protected var _tables :ArrayCollection;
 
     // various UI bits that need filling in with data arrives
+    protected var _contents :VBox;
     protected var _logo :VBox;
     protected var _info :Text;
     protected var _title :Label;
     protected var _about :Label;
     protected var _buy :Label;
     protected var _tablesBox :VBox;
+
+    protected var _pendersHeader :String;
+    protected var _noPendersMsg :String;
 }
 }

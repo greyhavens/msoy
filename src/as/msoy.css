@@ -807,10 +807,6 @@ Tree {
 }
 
 .lobbyTableList {
-  borderThickness: 2px;
-  borderStyle: "solid";
-  borderColor: #E0E7EE;
-  borderSides: "top";
   paddingTop: 0;
   paddingBottom: 0;
   paddingLeft: 0;
@@ -904,6 +900,21 @@ Tree {
   borderSides: "left right bottom";
 }
 
+.tableHeader {
+  fontWeight: bold;
+  borderThickness: 2px;
+  borderStyle: "solid";
+  borderColor: #E0E7EE;
+  borderSides: "bottom";
+}
+
+.tableMessage {
+  paddingLeft: 10px;
+  paddingTop: 10px;
+  paddingRight: 10px;
+  paddingBottom: 10px;
+}
+
 .seatRenderer {
   verticalAlign: middle;
   borderThickness: 0;
@@ -930,6 +941,7 @@ Tree {
 
 .tableCreationPanel {
   verticalAlign: middle;
+  backgroundColor: #E0E7EE;
   borderThickness: 0;
   borderStyle: "none";
   paddingTop: 5px;
@@ -937,4 +949,3 @@ Tree {
   paddingRight: 5px;
   paddingBottom: 5px;
 }
-
