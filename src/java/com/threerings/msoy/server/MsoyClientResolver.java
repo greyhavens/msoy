@@ -120,7 +120,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         MailRepository mailRepo = MsoyServer.mailMan.getRepository();
         Tuple<Integer, Integer> count = mailRepo.getMessageCount(
             member.memberId, MailFolder.INBOX_FOLDER_ID);
-        userObj.hasNewMail = (count.right > 0);
+        userObj.newMailCount = count.right;
 
         // load up their selected avatar, we'll configure it later
         if (member.avatarId != 0) {

@@ -116,8 +116,8 @@ public class NotificationDirector extends BasicDirector
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
         var name :String = event.getName();
-        if (name == MemberObject.HAS_NEW_MAIL) {
-            if (event.getValue() as Boolean) {
+        if (name == MemberObject.NEW_MAIL_COUNT) {
+            if ((event.getValue() as int) > (event.getOldValue() as int)) {
                 dispatchChatNotification("m.new_mail");
             }
         }
@@ -179,7 +179,7 @@ public class NotificationDirector extends BasicDirector
     protected function showStartupNotifications () :void
     {
         var us :MemberObject = _wctx.getMemberObject();
-        if (us.hasNewMail) {
+        if (us.newMailCount > 0) {
             dispatchChatNotification("m.new_mail");
         }
 

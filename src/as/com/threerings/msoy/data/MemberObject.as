@@ -76,8 +76,8 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>groups</code> field. */
     public static const GROUPS :String = "groups";
 
-    /** The field name of the <code>hasNewMail</code> field. */
-    public static const HAS_NEW_MAIL :String = "hasNewMail";
+    /** The field name of the <code>newMailCount</code> field. */
+    public static const NEW_MAIL_COUNT :String = "newMailCount";
 
     /** The field name of the <code>game</code> field. */
     public static const GAME :String = "game";
@@ -131,8 +131,8 @@ public class MemberObject extends MsoyBodyObject
     /** The groups of this player. */
     public var groups :DSet;
 
-    /** A flag that's true if this member has unread mail. */
-    public var hasNewMail :Boolean;
+    /** A field that contains the number of unread messages in our mail inbox. */
+    public var newMailCount :int;
 
     /* The game summary for the game that the player is lobbying for or currently playing. */
     public var game :GameSummary;
@@ -341,7 +341,7 @@ public class MemberObject extends MsoyBodyObject
         avatarCache = (ins.readObject() as DSet);
         friends = (ins.readObject() as DSet);
         groups = (ins.readObject() as DSet);
-        hasNewMail = ins.readBoolean();
+        newMailCount = ins.readInt();
         game = (ins.readObject() as GameSummary);
         lists = (ins.readObject() as DSet);
         notifications = (ins.readObject() as DSet);

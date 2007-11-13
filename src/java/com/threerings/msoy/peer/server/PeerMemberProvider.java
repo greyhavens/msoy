@@ -17,5 +17,5 @@ public interface PeerMemberProvider extends InvocationProvider
     /**
      * Handles a {@link PeerMemberService#reportUnreadMail} request.
      */
-    public void reportUnreadMail (ClientObject caller, int arg1, boolean arg2);
+    public void reportUnreadMail (ClientObject caller, int arg1, int arg2);
 }

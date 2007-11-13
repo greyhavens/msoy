@@ -12,7 +12,8 @@ import com.threerings.presents.client.InvocationService;
 public interface PeerMemberService extends InvocationService
 {
     /**
-     * Reports the number of unread mail messages the member has.
+     * Reports whether or not the member has unread mail, and whether or not any of them were
+     * just delivered.
      */
-    public void reportUnreadMail (Client client, int memberId, boolean hasNewMail);
+    public void reportUnreadMail (Client client, int memberId, int newMailCount);
 }

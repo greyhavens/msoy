@@ -96,14 +96,6 @@ public class StatusPanel extends FlexTable
     }
 
     /**
-     * Configures whether or not we have new mail.
-     */
-    public void setNewMailCount (int newMailCount)
-    {
-        _mailNotifier.setVisible(newMailCount > 0);
-    }
-
-    /**
      * Clears out our credentials and displays the logon interface.
      */
     public void logoff ()
@@ -231,7 +223,7 @@ public class StatusPanel extends FlexTable
 
         public void showLevelUpPopup () {
             PopupPanel bling = new PopupPanel(true);
-            bling.add(WidgetUtil.createTransparentFlashContainer("levelBling", 
+            bling.add(WidgetUtil.createTransparentFlashContainer("levelBling",
                 "/media/static/levelbling.swf", 60, 60, null));
             Element cell = getFlexCellFormatter().getElement(0, _levelIdx);
             bling.setPopupPosition(DOM.getAbsoluteLeft(cell) - 30, DOM.getAbsoluteTop(cell) - 23);

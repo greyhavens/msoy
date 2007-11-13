@@ -179,7 +179,7 @@ public /*abstract*/ class BaseClient extends Client
             updater.newLevel(_user.level);
             // updater.newGold(_user.gold);
             updater.newFlow(_user.flow);
-            updater.newMail(_user.hasNewMail);
+            updater.newMail(_user.newMailCount);
         }
     }
 
@@ -349,9 +349,8 @@ class StatusUpdater implements AttributeChangeListener, SetListener
             newGold(event.getValue() as int, event.getOldValue() as int); */
         } else if (event.getName() == MemberObject.FLOW) {
             newFlow(event.getValue() as int, event.getOldValue() as int);
-        } else if (event.getName() == MemberObject.HAS_NEW_MAIL) {
-            // TODO: support indicating how many new mails the user has?
-            newMail(event.getValue() as Boolean, event.getOldValue() as Boolean);
+        } else if (event.getName() == MemberObject.NEW_MAIL_COUNT) {
+            newMail(event.getValue() as int, event.getOldValue() as int);
         }
     }
 
@@ -394,8 +393,7 @@ class StatusUpdater implements AttributeChangeListener, SetListener
         sendNotification([STATUS_CHANGE_GOLD, gold, oldGold]);
     }
 
-    public function newMail (mail :Boolean, oldMail :Boolean = false) :void {
-        // TODO: support indication how many new mails the user has?
+    public function newMail (mail :int, oldMail :int = -1) :void {
         sendNotification([STATUS_CHANGE_MAIL, mail ? 1 : 0, oldMail ? 1 : 0]);
     }
 

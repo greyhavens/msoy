@@ -40,16 +40,16 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.BorderedWidget;
+import client.util.events.FlashEvents;
+import client.util.events.StatusChangeEvent;
+import client.util.events.StatusChangeListener;
 
 /**
  * A mail reading application, with a sidebar listing available folders, the upper
  * half of the main panel listing the message headers in the currently selected folder,
  * and the lower half displaying individual messages.
  *
- * TODO: The mail system needs a substantial efficiency overhaul:
- *  - Make a single initial request for all the data the application needs to start up.
- *  - Don't perpetually ask the database to tell us about changes we already know happened:
- *    reading a message will flag it as read, deleting a message will delete it.
+ * TODO: Make a single initial request for all the data the application needs to start up.
  */
 public class MailApplication extends DockPanel
     implements MailUpdateListener
@@ -65,6 +65,18 @@ public class MailApplication extends DockPanel
     public MailApplication ()
     {
         super();
+
+        FlashEvents.addListener(new StatusChangeListener() {
+            public void statusChanged (StatusChangeEvent event) {
+                switch(event.getType()) {
+                case StatusChangeEvent.MAIL:
+                    if (event.getValue() > event.getOldValue()) {
+                        refresh();
+                    }
+                }
+            }
+        });
+
         buildUI();
     }
 

@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.data;
 
-import com.threerings.io.Streamable;
-import com.threerings.parlor.game.data.GameObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 
@@ -82,8 +80,8 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>groups</code> field. */
     public static final String GROUPS = "groups";
 
-    /** The field name of the <code>hasNewMail</code> field. */
-    public static final String HAS_NEW_MAIL = "hasNewMail";
+    /** The field name of the <code>newMailCount</code> field. */
+    public static final String NEW_MAIL_COUNT = "newMailCount";
 
     /** The field name of the <code>game</code> field. */
     public static final String GAME = "game";
@@ -144,8 +142,8 @@ public class MemberObject extends MsoyBodyObject
     /** The groups of this player. */
     public DSet<GroupMembership> groups;
 
-    /** A flag that's true if this member has unread mail. */
-    public boolean hasNewMail;
+    /** A field that contains the number of unread messages in our mail inbox. */
+    public int newMailCount;
 
     /** The game summary for the game that the player is lobbying for or currently playing. */
     public GameSummary game;
@@ -713,19 +711,19 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
-     * Requests that the <code>hasNewMail</code> field be set to the
+     * Requests that the <code>newMailCount</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setHasNewMail (boolean value)
+    public void setNewMailCount (int value)
     {
-        boolean ovalue = this.hasNewMail;
+        int ovalue = this.newMailCount;
         requestAttributeChange(
-            HAS_NEW_MAIL, Boolean.valueOf(value), Boolean.valueOf(ovalue));
-        this.hasNewMail = value;
+            NEW_MAIL_COUNT, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.newMailCount = value;
     }
 
     /**

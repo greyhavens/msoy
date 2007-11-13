@@ -40,7 +40,7 @@ public class PeerMemberDispatcher extends InvocationDispatcher
         case PeerMemberMarshaller.REPORT_UNREAD_MAIL:
             ((PeerMemberProvider)provider).reportUnreadMail(
                 source,
-                ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue()
+                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue()
             );
             return;
 

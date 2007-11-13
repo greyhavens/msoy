@@ -93,8 +93,6 @@ public class MailManager
     public void getMessage (final int memberId, final int folderId, final int messageId,
                             final boolean flagAsRead, ResultListener<MailMessage> waiter)
     {
-        final MemberObject mObj = folderId == MailFolder.INBOX_FOLDER_ID ?
-            MsoyServer.lookupMember(memberId) : null;
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MailMessage>(waiter) {
             public MailMessage invokePersistResult () throws PersistenceException {
                 MailMessageRecord record = _mailRepo.getMessage(memberId, folderId, messageId);
@@ -103,21 +101,18 @@ public class MailManager
                 }
                 if (record.unread && flagAsRead) {
                     _mailRepo.setUnread(memberId, folderId, messageId, false);
-                    // are we logged in, and did we read an unread message in the inbox?
-                    if (mObj != null) {
-                        // if so, count how many more of those there are
-                        _count = _mailRepo.getMessageCount(memberId, folderId);
-                    }
+                    // if we read an unread inbox message, count how many more of those there are
+                    _count = _mailRepo.getMessageCount(memberId, folderId).right;
                 }
                 return record.toMailMessage(_memberRepo);
             }
             public void handleSuccess () {
                 if (_count != null) {
-                    MsoyServer.memberMan.reportUnreadMail(memberId, _count.right > 0);
+                    MsoyServer.memberMan.reportUnreadMail(memberId, _count);
                 }
                 super.handleSuccess();
             }
-            protected Tuple<Integer, Integer> _count;
+            protected Integer _count;
         });
     }
 
@@ -161,12 +156,16 @@ public class MailManager
 
                 // record the message to the repository
                 _mailRepo.deliverMessage(_record);
+
+                // and count how many messages the recipient has now
+                _count = _mailRepo.getMessageCount(recipientId, MailFolder.INBOX_FOLDER_ID).right;
+
                 return null;
             }
 
             public void handleSuccess () {
                 // if all went well, attempt to notify the recipient they have new mail
-                MsoyServer.memberMan.reportUnreadMail(recipientId, true);
+                MsoyServer.memberMan.reportUnreadMail(recipientId, _count);
 
                 super.handleSuccess();
 
@@ -186,6 +185,7 @@ public class MailManager
 
             protected MemberRecord _sendrec, _reciprec;
             protected MailMessageRecord _record;
+            protected int _count;
         });
     }
 
