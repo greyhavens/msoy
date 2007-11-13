@@ -518,7 +518,7 @@ public class MsoyController extends Controller
     public function handleGoGame (gameId :int, placeOid :int) :void
     {
         // route our entry to the game through GWT so that we can handle non-Flash games
-        if (!displayPage("game", gameId + "_" + placeOid)) {
+        if (!displayPage("world", "game_g_" + gameId + "_" + placeOid)) {
             // fall back to breaking the back button
             log.info("Going straight into game [oid=" + placeOid + "].");
             _ctx.getGameDirector().enterGame(placeOid);
@@ -536,7 +536,7 @@ public class MsoyController extends Controller
     public function handleJoinGameLobby (gameId :int) :void
     {
         // if we're not running in the GWT app, we need to display a page externally
-        if (!inGWTApp() && displayPage("game", "" + gameId)) {
+        if (!inGWTApp() && displayPage("world", "game_l_" + gameId)) {
             return;
         }
 
@@ -673,7 +673,6 @@ public class MsoyController extends Controller
 
         } else if (null != params["playNow"]) {
             var singlePlayer :Boolean = String(params["single"]) == "true";
-//            _ctx.getGameDirector().playNow(int(params["playNow"]), singlePlayer);
             _ctx.getGameDirector().playNow(int(params["playNow"]), params["single"] == "true");
 
         } else if (null != params["worldGame"]) {

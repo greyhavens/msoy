@@ -368,15 +368,17 @@ public class WorldClient extends BaseClient
      */
     protected function externalClientGo (where :String) :void
     {
-        var eidx :int = where.indexOf("=");
-        if (eidx == -1) {
-            log.warning("Dropping malformed go request [where=" + where + "].");
-        } else {
-            log.info("Changing scenes per external request [where=" + where + "].");
-            var params :Object = new Object();
-            params[where.substring(0, eidx)] = where.substring(eidx+1);
-            _wctx.getMsoyController().goToPlace(params);
+        log.info("Changing scenes per external request [where=" + where + "].");
+        var params :Object = new Object();
+        for each (var param :String in where.split("&")) {
+            var eidx: int = param.indexOf("=");
+            if (eidx == -1) {
+                log.warning("Malformed clientGo() parameter [param=" + param + "].");
+            } else {
+                params[param.substring(0, eidx)] = param.substring(eidx+1);
+            }
         }
+        _wctx.getMsoyController().goToPlace(params);
     }
 
     /**
