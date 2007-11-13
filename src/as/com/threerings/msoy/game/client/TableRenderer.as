@@ -91,11 +91,7 @@ public class TableRenderer extends HBox
 
     protected function recheckTable () :void
     {
-        if (data == null) {
-            Log.getLog(this).warning("Checked table and have no data?");
-            return;
-
-        } else if (data is String) {
+        if (data is String) {
             removeChildren();
             var type :String = (data as String).substr(0, 1);
             var message :String = (data as String).substr(1);

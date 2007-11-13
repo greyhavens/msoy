@@ -148,50 +148,43 @@ public class LobbyPanel extends VBox
     {
         if (event.getName() == MemberObject.GAME) {
             _creationPanel.setEnabled(!isSeated());
-            if (_tables != null) {
-                _tables.refresh();
-            }
+            _tables.refresh();
         }
     }
 
     // from TableObserver
     public function tableAdded (table :Table) :void
     {
-        if (_tables.length > 0 && _tables.getItemAt(ii) is String) {
+        // if this table is running and we're a seated game, ignore it
+        if (table.gameOid > 0 && GameConfig.SEATED_GAME == _lobbyObj.gameDef.match.getMatchType()) {
+            return;
+        }
+
+        // if we're adding the first table, remove the "no tables" message and add the header
+        if (_tables.length == 1 && _tables.getItemAt(0) is String) {
             _tables.removeItemAt(0);
         }
         if (_tables.length == 0) {
             _tables.addItem("H" + _pendersHeader);
         }
 
-        var firstRunningIdx :int = -1;
-        for (var ii :int = 0; _tables != null && ii < _tables.length; ii++) {
-            var tt :Table = (_tables.getItemAt(ii) as Table);
-            if (tt != null && tt.gameOid > 0) {
-                firstRunningIdx = ii;
-                break;
-            }
-        }
-        if (firstRunningIdx == -1 || table.gameOid > 0) {
-            _tables.addItem(table);
-        } else {
-            // add the table below all other forming tables but above running tables
-            _tables.addItemAt(table, firstRunningIdx);
-        }
+        // finally add the table at the bottom of the list
+        _tables.addItem(table);
     }
 
     // from TableObserver
     public function tableUpdated (table :Table) :void
     {
+        // if this table is running and we're a seated game, remove it
+        if (table.gameOid > 0 && GameConfig.SEATED_GAME == _lobbyObj.gameDef.match.getMatchType()) {
+            tableRemoved(table.tableId);
+            return;
+        }
+
+        // otherwise update it
         var idx :int = ArrayUtil.indexOf(_tables.source, table);
         if (idx >= 0) {
-            if (table.gameOid > 0 &&
-                GameConfig.SEATED_GAME == _lobbyObj.gameDef.match.getMatchType()) {
-                _tables.removeItemAt(idx);
-                tableAdded(table); // reinsert in correct position
-            } else {
-                _tables.setItemAt(table, idx);
-            }
+            _tables.setItemAt(table, idx);
         } else {
             log.warning("Unknown table updated: " + table);
         }
@@ -201,7 +194,7 @@ public class LobbyPanel extends VBox
     public function tableRemoved (tableId :int) :void
     {
         var table :Table;
-        for (var ii :int = 0; _tables != null && ii < _tables.length; ii++) {
+        for (var ii :int = 0; ii < _tables.length; ii++) {
             table = (_tables.getItemAt(ii) as Table);
             if (table != null && table.tableId == tableId) {
                 _tables.removeItemAt(ii);
@@ -212,7 +205,6 @@ public class LobbyPanel extends VBox
                 return;
             }
         }
-        log.warning("Unknown table removed: " + tableId);
     }
 
     // from SeatednessObserver
@@ -350,7 +342,7 @@ public class LobbyPanel extends VBox
         var factory :ClassFactory = new ClassFactory(TableRenderer);
         factory.properties = { gctx: _gctx, panel: this };
         list.itemRenderer = factory;
-        list.dataProvider = (_tables = new ArrayCollection());
+        list.dataProvider = _tables;
 
         var bar :HBox = new HBox();
         bar.styleName = "tabsFillerBox";
@@ -381,8 +373,8 @@ public class LobbyPanel extends VBox
     /** The create a table interface. */
     protected var _creationPanel :TableCreationPanel;
 
-    /** All forming and running tables (forming first). */
-    protected var _tables :ArrayCollection;
+    /** All joinable game tables. */
+    protected var _tables :ArrayCollection = new ArrayCollection();
 
     // various UI bits that need filling in with data arrives
     protected var _contents :VBox;
