@@ -186,7 +186,7 @@ public class GameGameRegistry
      * that this game server is hosting that game. Do what we can to refresh our notion of the
      * game's definition.
      *
-     * TODO: Handle _loadingLobbies and AVRG's.
+     * TODO: Handle _loadingLobbies.
      */
     public void gameRecordUpdated (final int gameId)
     {
@@ -220,8 +220,37 @@ public class GameGameRegistry
             return;
         }
 
+        // else is it an AVRG?
+        final AVRGameManager amgr = _avrgManagers.get(gameId);
+        if (amgr != null) {
+            MsoyGameServer.invoker.postUnit(new RepositoryUnit("reloadAVRGame") {
+                public void invokePersist () throws Exception {
+                    if (gameId == Game.TUTORIAL_GAME_ID) {
+                        log.warning("Asked to reload the tutorial. That makes no sense.");
+                        return;
+                    }
+                    GameRecord gRec = _gameRepo.loadGameRecord(gameId);
+                    if (gRec == null) {
+                        throw new PersistenceException(
+                            "Failed to find GameRecord [gameId=" + gameId + "]");
+                    }
+                    _game = (Game) gRec.toItem();
+                }
 
+                public void handleSuccess () {
+                    amgr.updateGame(_game);
+                }
 
+                public void handleFailure (Exception pe) {
+                    log.log(Level.WARNING, "Failed to resolve AVRGame [id=" + gameId + "].", pe);
+                }
+
+                protected Game _game;
+            });
+            return;
+        }
+
+        log.warning("Updated game record not, in the end, hosted by us [gameId=" + gameId + "]");
     }
 
     // from AVRProvider

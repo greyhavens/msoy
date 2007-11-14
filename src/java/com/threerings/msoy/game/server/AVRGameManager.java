@@ -93,6 +93,13 @@ public class AVRGameManager
         }
     }
 
+    // the Game has changed while we're hosting it -- just update the AVRGameObject
+    public void updateGame (Game game)
+    {
+        // we might have to do some fancy stuff client-side to deal with this
+        _gameObj.setGameMedia(game.gameMedia);
+    }
+
     public void shutdown ()
     {
         // flush any modified memory records to the database
