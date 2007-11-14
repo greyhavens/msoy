@@ -39,6 +39,7 @@
 
 .gameDetail .Details {
   border-bottom: white solid 10px;
+  border-right: white solid 15px;
 }
 
 .gameDetail .Details td {
@@ -48,11 +49,38 @@
 .gameDetail .PlayTitle {
   font-weight: bold;
   font-size: 12px;
+  text-align: center;
+}
+
+.gameDetail .PlayCell {
+  text-align: center;
+  padding-top: 10px;
 }
 
 .gameDetail .PlayButton {
-  width: 124px;
-  font-weight: bold;
+  width: 53px;
+  height: 38px;
+  cursor: pointer;
+  border: none;
+}
+.gameDetail .SinglePlay {
+  background-image: url(/images/game/play_alone.png);
+}
+.gameDetail .FriendPlay {
+  background-image: url(/images/game/play_friends.png);
+}
+.gameDetail .AnyonePlay {
+  background-image: url(/images/game/play_anyone.png);
+}
+.gameDetail .CustomPlay {
+  background-image: url(/images/game/play_custom.png);
+}
+
+.gameDetail .PlayLabel {
+  font-size: 10px;
+  text-align: center;
+  vertical-align: top;
+  white-space: nowrap;
 }
 
 .gameDetail .InfoLabel {

@@ -105,49 +105,44 @@ public class GameDetailPanel extends VerticalPanel
         top.getFlexCellFormatter().setVerticalAlignment(row, 1, HasAlignment.ALIGN_TOP);
         top.setWidget(row, 1, details);
 
-        VerticalPanel playButtons = new VerticalPanel();
-        playButtons.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        playButtons.add(MsoyUI.createLabel(CGame.msgs.gdpPlay(), "PlayTitle"));
-        playButtons.add(WidgetUtil.makeShim(5, 5));
+        FlexTable pbbox = new FlexTable();
+        pbbox.setText(0, 0, CGame.msgs.gdpPlay());
+        pbbox.getFlexCellFormatter().setStyleName(0, 0, "PlayTitle");
+        pbbox.getFlexCellFormatter().setColSpan(0, 0, 2);
         Button play;
 
         // if the game supports single-player play, it gets a "Quick Single" button
         if (detail.minPlayers == 1 && !detail.isPartyGame()) {
-            play = new Button(CGame.msgs.gdpQuickSingle(), new ClickListener() {
+            addPlayButton(pbbox, 1, 0, "SinglePlay", CGame.msgs.gdpJustMe(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, Args.compose("game", "s", ""+_gameId));
                 }
             });
-            play.addStyleName("PlayButton");
-            playButtons.add(play);
-            playButtons.add(MsoyUI.createLabel(CGame.msgs.gdpQuickSingleTip(), "tipLabel"));
-            playButtons.add(WidgetUtil.makeShim(10, 10));
         }
 
         // if the game supports multiplayer play, it gets "Quick Multi" and "Custom Game" buttons
         if (detail.maxPlayers > 1) {
-            play = new Button(CGame.msgs.gdpQuickMulti(), new ClickListener() {
+            addPlayButton(pbbox, 1, 1, "FriendPlay", CGame.msgs.gdpMyFriends(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.WORLD, Args.compose("game", "f", ""+_gameId));
+                }
+            });
+
+            addPlayButton(pbbox, 3, 0, "AnyonePlay", CGame.msgs.gdpAnyone(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, Args.compose("game", "m", ""+_gameId));
                 }
             });
-            play.addStyleName("PlayButton");
-            playButtons.add(play);
-            playButtons.add(MsoyUI.createLabel(CGame.msgs.gdpQuickMultiTip(), "tipLabel"));
-            playButtons.add(WidgetUtil.makeShim(10, 10));
 
-            play = new Button(CGame.msgs.gdpCustomGame(), new ClickListener() {
+            addPlayButton(pbbox, 3, 1, "CustomPlay", CGame.msgs.gdpCustom(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, Args.compose("game", "l", ""+_gameId));
                 }
             });
-            play.addStyleName("PlayButton");
-            playButtons.add(play);
-            playButtons.add(MsoyUI.createLabel(CGame.msgs.gdpCustomGameTip(), "tipLabel"));
         }
 
         top.getFlexCellFormatter().setVerticalAlignment(row, 2, HasAlignment.ALIGN_TOP);
-        top.setWidget(row++, 2, playButtons);
+        top.setWidget(row++, 2, pbbox);
         add(top);
 
         if (detail.creator != null) {
@@ -233,6 +228,18 @@ public class GameDetailPanel extends VerticalPanel
             CGame.isAdmin()) {
             addTab(METRICS_TAB, CGame.msgs.tabMetrics(), new GameMetricsPanel(detail));
         }
+    }
+
+    protected void addPlayButton (FlexTable table, int row, int column,
+                                  String styleName, String tip, ClickListener onClick)
+    {
+        Button play = new Button("", onClick);
+        play.setStyleName("PlayButton");
+        play.addStyleName(styleName);
+        table.setWidget(row, column, play);
+        table.getFlexCellFormatter().setStyleName(row, column, "PlayCell");
+        table.setText(row+1, column, tip);
+        table.getFlexCellFormatter().setStyleName(row+1, column, "PlayLabel");
     }
 
     // from interface TabListener
