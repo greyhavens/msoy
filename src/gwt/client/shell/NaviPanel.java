@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 
+import com.google.gwt.http.client.URL;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -214,8 +215,10 @@ public class NaviPanel extends FlexTable
 
         click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "About Whirled", Page.WRAP, "w");
-                addLink(menu, "Tutorials", Page.WRAP, Args.compose("w", "Category:Tutorials"));
+                addLink(menu, "Tutorials", Page.WRAP, Args.compose("w", "Tutorials"));
+                addLink(menu, "Online Support", Page.WRAP, Args.compose("w", "Support"));
+                addURLInNewFrame(menu, "Whirled Wiki", "http://wiki.whirled.com/");
+                addLink(menu, "About Whirled", Page.WRAP, Args.compose("w", "About"));
             }
         };
         setWidget(0, menuidx++, new NaviButton(
@@ -291,8 +294,10 @@ public class NaviPanel extends FlexTable
 
         click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "About Whirled", Page.WRAP, "w");
-                addLink(menu, "Tutorials", Page.WRAP, Args.compose("w", "Category:Tutorials"));
+                addLink(menu, "Tutorials", Page.WRAP, Args.compose("w", "Tutorials"));
+                addLink(menu, "Online Support", Page.WRAP, Args.compose("w", "Support"));
+                addURLInNewFrame(menu, "Whirled Wiki", "http://wiki.whirled.com/");
+                addLink(menu, "About Whirled", Page.WRAP, Args.compose("w", "About"));
             }
         };
         setWidget(0, menuidx++, new NaviButton(
@@ -308,6 +313,18 @@ public class NaviPanel extends FlexTable
         menu.addItem(text, false, new Command() {
             public void execute () {
                 Application.go(page, args);
+                clearPopup();
+            }
+        });
+    }
+
+    /** Creates a menu item that opens the specified URL in a separate tab or window. */
+    protected void addURLInNewFrame (MenuBar menu, String text, String url)
+    {
+        String html = "<a href=\"" + URL.encode(url) + "\" class=\"external\" " +
+            "target=\"_blank\">" + text + "</a>";
+        menu.addItem(html, true, new Command() {
+            public void execute () {
                 clearPopup();
             }
         });

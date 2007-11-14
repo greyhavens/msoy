@@ -21,6 +21,11 @@ a:visited {
   color: black;
 }
 
+a.external { 
+  background: url(/images/ui/external.png) center right no-repeat;
+  padding-right: 16px;
+}
+
 /** Make GWT display some sensible defaults. */
 .gwt-TabBar .gwt-TabBarItem {
   border: 1px solid;
