@@ -143,6 +143,14 @@ public class LobbyPanel extends VBox
         return _lobbyObj != null ? _lobbyObj.gameDef : null;
     }
 
+    /**
+     * Shows the create game interface.
+     */
+    public function showCreateGame () :void
+    {
+        _creationPanel.showCreateGame();
+    }
+
     // from AttributeChangeListener
     public function attributeChanged (event :AttributeChangedEvent) :void
     {

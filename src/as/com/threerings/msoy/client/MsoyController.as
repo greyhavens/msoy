@@ -670,8 +670,7 @@ public class MsoyController extends Controller
             handleJoinGameLobby(int(params["gameLobby"]));
 
         } else if (null != params["playNow"]) {
-            var singlePlayer :Boolean = String(params["single"]) == "true";
-            _ctx.getGameDirector().playNow(int(params["playNow"]), params["single"] == "true");
+            _ctx.getGameDirector().playNow(int(params["playNow"]), params["mode"] as String);
 
         } else if (null != params["worldGame"]) {
             handleJoinAVRGame(int(params["worldGame"]));

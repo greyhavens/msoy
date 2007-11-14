@@ -54,6 +54,7 @@ import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.GameContentOwnership;
+import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
@@ -396,7 +397,7 @@ public class GameGameRegistry
     }
 
     // from LobbyProvider
-    public void playNow (final ClientObject caller, final int gameId, final boolean single,
+    public void playNow (final ClientObject caller, final int gameId, final int mode,
                          final InvocationService.ResultListener listener)
         throws InvocationException
     {
@@ -415,7 +416,21 @@ public class GameGameRegistry
                 // if we're able to get them right into a game, return zero otherwise return the
                 // lobby manager oid which will allow the client to display the lobby
                 PlayerObject plobj = (PlayerObject)caller;
-                boolean gameCreated = single ? mgr.playNowSingle(plobj) : mgr.playNowMulti(plobj);
+                boolean gameCreated;
+                switch (mode) {
+                default:
+                case LobbyCodes.PLAY_NOW_SINGLE:
+                    gameCreated = mgr.playNowSingle(plobj);
+                    break;
+
+                case LobbyCodes.PLAY_NOW_FRIENDS:
+                    gameCreated = mgr.playNowMulti(plobj, true);
+                    break;
+
+                case LobbyCodes.PLAY_NOW_ANYONE:
+                    gameCreated = mgr.playNowMulti(plobj, false);
+                    break;
+                }
                 listener.requestProcessed(gameCreated ? 0 : result);
             }
             public void requestFailed (String cause) {

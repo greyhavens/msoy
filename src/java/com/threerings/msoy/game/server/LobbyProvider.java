@@ -30,6 +30,6 @@ public interface LobbyProvider extends InvocationProvider
     /**
      * Handles a {@link LobbyService#playNow} request.
      */
-    public void playNow (ClientObject caller, int arg1, boolean arg2, InvocationService.ResultListener arg3)
+    public void playNow (ClientObject caller, int arg1, int arg2, InvocationService.ResultListener arg3)
         throws InvocationException;
 }

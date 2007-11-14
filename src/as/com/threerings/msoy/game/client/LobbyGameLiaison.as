@@ -19,6 +19,7 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
 /**
@@ -29,10 +30,11 @@ public class LobbyGameLiaison extends GameLiaison
 {
     public static const log :Log = Log.getLog(LobbyGameLiaison);
 
-    public static const SHOW_LOBBY :int = 0;
-    public static const JOIN_PLAYER :int = 1;
-    public static const PLAY_NOW_SINGLE :int = 2;
-    public static const PLAY_NOW_MULTI :int = 3;
+    public static const PLAY_NOW_SINGLE :int = LobbyCodes.PLAY_NOW_SINGLE;
+    public static const PLAY_NOW_FRIENDS :int = LobbyCodes.PLAY_NOW_FRIENDS;
+    public static const PLAY_NOW_ANYONE :int = LobbyCodes.PLAY_NOW_ANYONE;
+    public static const SHOW_LOBBY :int = PLAY_NOW_ANYONE + 1;
+    public static const JOIN_PLAYER :int = SHOW_LOBBY + 1;
 
     public function LobbyGameLiaison (ctx :WorldContext, gameId :int, mode :int, playerId :int = 0)
     {
@@ -104,7 +106,7 @@ public class LobbyGameLiaison extends GameLiaison
         }
     }
 
-    public function playNow (singlePlayer :Boolean) :void
+    public function playNow (mode :int) :void
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
@@ -126,7 +128,7 @@ public class LobbyGameLiaison extends GameLiaison
         // the playNow() call will resolve the lobby on the game server, then attempt to start a
         // game for us; if it succeeds, it sends back a zero result and we need take no further
         // action; if it fails, it sends back the lobby OID so we can join the lobby
-        lsvc.playNow(_gctx.getClient(), _gameId, singlePlayer, cb);
+        lsvc.playNow(_gctx.getClient(), _gameId, mode, cb);
     }
 
     public function enterGame (gameOid :int) :void
@@ -176,11 +178,9 @@ public class LobbyGameLiaison extends GameLiaison
             break;
 
         case PLAY_NOW_SINGLE:
-            playNow(true);
-            break;
-
-        case PLAY_NOW_MULTI:
-            playNow(false);
+        case PLAY_NOW_FRIENDS:
+        case PLAY_NOW_ANYONE:
+            playNow(_mode);
             break;
 
         default:
@@ -228,9 +228,10 @@ public class LobbyGameLiaison extends GameLiaison
 
     protected function gotLobbyOid (result :Object) :void
     {
-        var lobbyOid :int = int(result);
         // this will create a panel and add it to the side panel on the top level
-        _lobby = new LobbyController(_gctx, this, lobbyOid);
+        _lobby = new LobbyController(_gctx, this, int(result), _mode);
+
+        // if we have a player table to enter do that now
         if (_playerIdTable != 0) {
             joinPlayerTable(_playerIdTable);
         }

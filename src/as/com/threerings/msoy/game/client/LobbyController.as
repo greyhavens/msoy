@@ -52,11 +52,13 @@ public class LobbyController extends Controller implements Subscriber
     /** A command to leave the lobby. */
     public static const LEAVE_LOBBY :String = "LeaveLobby";
 
-    public function LobbyController (ctx :GameContext, liaison :LobbyGameLiaison, oid :int) 
+    public function LobbyController (
+        ctx :GameContext, liaison :LobbyGameLiaison, oid :int, mode :int) 
     {
         _gctx = ctx;
         _mctx = ctx.getWorldContext();
         _liaison = liaison;
+        _mode = mode;
 
         _subscriber = new SafeSubscriber(oid, this)
         _subscriber.subscribe(_gctx.getDObjectManager());
@@ -245,8 +247,24 @@ public class LobbyController extends Controller implements Subscriber
 
         _mctx.getWorldClient().setWindowTitle(_lobj.game.name);
 
+        // if we have a player table to join, do that now, otherwise 
         if (_playerId != 0) {
             joinPlayerTable(_playerId);
+            return;
+        }
+
+        switch (_mode) {
+        case LobbyGameLiaison.SHOW_LOBBY:
+            _panel.showCreateGame();
+            break;
+
+        case LobbyGameLiaison.PLAY_NOW_FRIENDS:
+            // TODO: locate a friend's table and join it if one is available
+            break;
+
+        case LobbyGameLiaison.PLAY_NOW_ANYONE:
+            // TODO: join the first (best?) open table
+            break;
         }
     }
 
@@ -286,6 +304,9 @@ public class LobbyController extends Controller implements Subscriber
 
     /** Handles our connection to the game server. */
     protected var _liaison :LobbyGameLiaison;
+
+    /** The mode in which we were opened. */
+    protected var _mode :int;
 
     /** Our distributed LobbyObject */
     protected var _lobj :LobbyObject;

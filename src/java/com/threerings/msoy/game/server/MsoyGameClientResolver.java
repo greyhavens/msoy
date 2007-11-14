@@ -4,9 +4,11 @@
 package com.threerings.msoy.game.server;
 
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyObjectAccess;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -33,19 +35,19 @@ public class MsoyGameClientResolver extends CrowdClientResolver
     {
         super.resolveClientData(clobj);
 
-        PlayerObject userObj = (PlayerObject) clobj;
-        userObj.setAccessController(MsoyObjectAccess.USER);
+        PlayerObject playerObj = (PlayerObject) clobj;
+        playerObj.setAccessController(MsoyObjectAccess.USER);
         if (isResolvingGuest()) {
-            resolveGuest(userObj);
+            resolveGuest(playerObj);
         } else {
-            resolveMember(userObj);
+            resolveMember(playerObj);
         }
     }
 
     /**
      * Resolve a msoy member. This is called on the invoker thread.
      */
-    protected void resolveMember (PlayerObject userObj)
+    protected void resolveMember (PlayerObject playerObj)
         throws Exception
     {
         // load up their member information using on their authentication (account) name
@@ -56,17 +58,21 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         // initialization when we know that no one is listening
 
         // configure various bits directly from their member record
-        userObj.memberName = member.getName();
-//         userObj.flow = member.flow;
-//         userObj.accFlow = member.accFlow;
-//         userObj.level = member.level;
-        userObj.humanity = member.humanity;
+        playerObj.memberName = member.getName();
+//         playerObj.flow = member.flow;
+//         playerObj.accFlow = member.accFlow;
+//         playerObj.level = member.level;
+        playerObj.humanity = member.humanity;
+
+        // fill in this member's raw friends list
+        playerObj.friends = new DSet<FriendEntry>(
+            MsoyGameServer.memberRepo.loadFriends(member.memberId, -1));
 
         // load up their selected avatar, we'll configure it later
         if (member.avatarId != 0) {
             AvatarRecord avatar = MsoyGameServer.avatarRepo.loadItem(member.avatarId);
             if (avatar != null) {
-                userObj.avatar = (Avatar)avatar.toItem();
+                playerObj.avatar = (Avatar)avatar.toItem();
             }
         }
     }
@@ -74,10 +80,10 @@ public class MsoyGameClientResolver extends CrowdClientResolver
     /**
      * Resolve a lowly guest. This is called on the invoker thread.
      */
-    protected void resolveGuest (PlayerObject userObj)
+    protected void resolveGuest (PlayerObject playerObj)
         throws Exception
     {
-        userObj.memberName = (MemberName)_username;
+        playerObj.memberName = (MemberName)_username;
     }
 
     /**

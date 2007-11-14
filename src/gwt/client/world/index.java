@@ -193,12 +193,10 @@ public class index extends Page
 
         case LaunchConfig.FLASH_LOBBIED:
             if (gameOid <= 0) {
-                if (action.equals("m")) {
-                    WorldClient.displayFlash("playNow=" + config.gameId + "&single=false");
-                } else if (action.equals("s")) {
-                    WorldClient.displayFlash("playNow=" + config.gameId + "&single=true");
-                } else {
+                if (action.equals("l")) {
                     WorldClient.displayFlash("gameLobby=" + config.gameId);
+                } else {
+                    WorldClient.displayFlash("playNow=" + config.gameId + "&mode=" + action);
                 }
             } else {
                 WorldClient.displayFlash("gameLocation=" + gameOid);

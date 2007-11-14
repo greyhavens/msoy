@@ -16,6 +16,7 @@ import com.whirled.data.GameData;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -38,6 +39,9 @@ public class PlayerObject extends BodyObject
     /** The field name of the <code>avatar</code> field. */
     public static final String AVATAR = "avatar";
 
+    /** The field name of the <code>friends</code> field. */
+    public static final String FRIENDS = "friends";
+
     /** The field name of the <code>humanity</code> field. */
     public static final String HUMANITY = "humanity";
 
@@ -59,6 +63,11 @@ public class PlayerObject extends BodyObject
 
     /** The avatar that the user has chosen, or null for guests. */
     public Avatar avatar;
+
+    /** A snapshot of this players friends loaded when they logged onto the game server. Online
+     * status is not filled in and this set is *not* updated if friendship is made or broken during
+     * a game. */
+    public DSet<FriendEntry> friends;
 
     /** Our current assessment of how likely to be human this member is, in [0, {@link
      * MsoyCodes#MAX_HUMANITY}]. */
@@ -197,6 +206,54 @@ public class PlayerObject extends BodyObject
         requestAttributeChange(
             AVATAR, value, ovalue);
         this.avatar = value;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>friends</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToFriends (FriendEntry elem)
+    {
+        requestEntryAdd(FRIENDS, friends, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>friends</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromFriends (Comparable key)
+    {
+        requestEntryRemove(FRIENDS, friends, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>friends</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateFriends (FriendEntry elem)
+    {
+        requestEntryUpdate(FRIENDS, friends, elem);
+    }
+
+    /**
+     * Requests that the <code>friends</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setFriends (DSet<com.threerings.msoy.data.all.FriendEntry> value)
+    {
+        requestAttributeChange(FRIENDS, value, this.friends);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.FriendEntry> clone =
+            (value == null) ? null : value.typedClone();
+        this.friends = clone;
     }
 
     /**

@@ -55,7 +55,7 @@ public class LobbyDispatcher extends InvocationDispatcher
         case LobbyMarshaller.PLAY_NOW:
             ((LobbyProvider)provider).playNow(
                 source,
-                ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.ResultListener)args[2]
+                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (InvocationService.ResultListener)args[2]
             );
             return;
 

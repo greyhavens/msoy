@@ -76,14 +76,20 @@ public class GameDirector extends BasicDirector
     /**
      * Requests that we immediately start playing the specified game id.
      *
-     * @param singlePlayer if true we'll start a single player game, if false we'll create or join
-     * a multiplayer game.
+     * @param mode one of either 's' for single player, 'f' for friends-only quick game, or 'm' for
+     * anyone quick game.
      */
-    public function playNow (gameId :int, singlePlayer: Boolean) :void
+    public function playNow (gameId :int, modeStr: String) :void
     {
+        var mode :int = LobbyGameLiaison.PLAY_NOW_SINGLE;
+        if (modeStr == "f") {
+            mode = LobbyGameLiaison.PLAY_NOW_FRIENDS;
+        } else if (modeStr == "m") {
+            mode = LobbyGameLiaison.PLAY_NOW_ANYONE;
+        }
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
-                LobbyGameLiaison(_liaison).playNow(singlePlayer);
+                LobbyGameLiaison(_liaison).playNow(mode);
             } else {
                 _liaison.shutdown();
                 _liaison = null;
@@ -91,8 +97,7 @@ public class GameDirector extends BasicDirector
         }
         if (_liaison == null) {
             // create our new liaison, which will head on into the game once we're logged on
-            _liaison = new LobbyGameLiaison(_mctx, gameId, singlePlayer ?
-                LobbyGameLiaison.PLAY_NOW_SINGLE : LobbyGameLiaison.PLAY_NOW_MULTI);
+            _liaison = new LobbyGameLiaison(_mctx, gameId, mode);
         }
     }
 

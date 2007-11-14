@@ -27,8 +27,10 @@ import com.threerings.parlor.server.ParlorSender;
 
 import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.ezgame.data.Parameter;
+import com.threerings.ezgame.data.TableMatchConfig;
 import com.threerings.ezgame.server.EZGameManager;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.ItemManager;
 
@@ -144,6 +146,7 @@ public class LobbyManager
         }
         TableConfig tconfig = new TableConfig();
         tconfig.desiredPlayerCount = tconfig.minimumPlayerCount = 1;
+        tconfig.privateTable = true; // they asked to play by themselves
         Table table = null;
         try {
             table = _tableMgr.createTable(player, tconfig, config);
@@ -166,30 +169,52 @@ public class LobbyManager
      *
      * @return if the player was sent into a game, false if they should display the lobby.
      */
-    public boolean playNowMulti (PlayerObject player)
+    public boolean playNowMulti (PlayerObject player, boolean friendsOnly)
     {
         // if this is a party game (or seated continuous); send them into an existing game
         if (_lobj.gameDef.match.getMatchType() != MsoyGameConfig.SEATED_GAME) {
-            // TODO: be smarter about picking a game to which to add this player
+            // TODO: order the tables most occupants to least?
             for (Table table : _lobj.tables) {
-                if (table.gameOid > 0 && !table.tconfig.privateTable) {
+                if (table.gameOid > 0 && shouldJoinGame(player, table, friendsOnly)) {
                     ParlorSender.gameIsReady(player, table.gameOid);
                     return true;
                 }
             }
         }
 
-        // if this is a party game, start one up and stick them in it
-        if (_lobj.gameDef.match.getMatchType() == MsoyGameConfig.PARTY) {
-            // TODO: tell them we could not find any multiplayer games in progress so we started a
-            // single player game for them
-            return playNowSingle(player);
+        // TODO: if we can add them to a table and that table will become immediately ready to
+        // play, we could do that here and save the caller the trouble of subscribing to the lobby
+
+        // otherwise we'll just send the player to the lobby and the client will look for a table
+        // to join since it would have to download all that business anyway
+        return false;
+    }
+
+    protected boolean shouldJoinGame (PlayerObject player, Table table, boolean friendsOnly)
+    {
+        // if this table has been marked as private, we don't want to butt in
+        if (table.tconfig.privateTable) {
+            return false;
         }
 
-        // TODO: look for an open table into which we can stuff the player
+        // if the game is over its maximum capacity, don't join it
+        int maxSeats = ((TableMatchConfig)_lobj.gameDef.match).maxSeats;
+        if (table.watcherCount >= maxSeats) {
+            return false;
+        }
 
-        // TODO: create a table and stuff the player into that
+        // if we're not looking for friends, then this game is fine!
+        if (!friendsOnly) {
+            return true;
+        }
 
+        // see if any of our friends are in this game
+        for (Name occ : table.occupants) {
+            int memberId = ((MemberName)occ).getMemberId();
+            if (player != null && player.friends.containsKey(memberId)) {
+                return true;
+            }
+        }
         return false;
     }
 

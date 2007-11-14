@@ -6,6 +6,8 @@ package com.threerings.msoy.game.client;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
+import com.threerings.msoy.game.data.LobbyCodes;
+
 /**
  * A service for locating the lobby for a particular game.
  */
@@ -22,8 +24,10 @@ public interface LobbyService extends InvocationService
      * Requests to immediately get into the specified game. If a game could be started and/or
      * located, 0 will be returned, otherwise the oid of the lobby will be returned so that the
      * client can fall back to displaying the lobby.
+     *
+     * @param mode the type of game to enter: {@link LobbyCodes#PLAY_NOW_SINGLE}, etc.
      */
-    public void playNow (Client client, int gameId, boolean singlePlayer, ResultListener listener);
+    public void playNow (Client client, int gameId, int mode, ResultListener listener);
 
     /**
      * Return the Oid of the game that this player is in.  Returns -1 if they are currently not
