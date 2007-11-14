@@ -45,7 +45,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemList;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
-import com.threerings.msoy.item.data.all.Mob;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.data.all.Prop;
@@ -156,7 +155,6 @@ public class WorldClient extends BaseClient
         c = ItemMarshaller;
         c = ItemPack;
         c = LevelPack;
-        c = Mob;
         c = Prop;
         c = LevelUpNotification;
         c = MemberLocation;
