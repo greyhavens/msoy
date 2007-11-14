@@ -58,26 +58,8 @@ import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.Prize;
 
 import com.threerings.msoy.item.data.ItemCodes;
-
-import com.threerings.msoy.item.server.persist.AudioRepository;
-import com.threerings.msoy.item.server.persist.AvatarRepository;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
-import com.threerings.msoy.item.server.persist.DecorRepository;
-import com.threerings.msoy.item.server.persist.DocumentRepository;
-import com.threerings.msoy.item.server.persist.FurnitureRepository;
-import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.item.server.persist.ItemListInfoRecord;
-import com.threerings.msoy.item.server.persist.ItemListRepository;
-import com.threerings.msoy.item.server.persist.ItemPackRepository;
-import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.server.persist.ItemRepository;
-import com.threerings.msoy.item.server.persist.LevelPackRepository;
-import com.threerings.msoy.item.server.persist.PetRepository;
-import com.threerings.msoy.item.server.persist.PhotoRepository;
-import com.threerings.msoy.item.server.persist.PrizeRepository;
-import com.threerings.msoy.item.server.persist.ToyRepository;
-import com.threerings.msoy.item.server.persist.TrophySourceRepository;
-import com.threerings.msoy.item.server.persist.VideoRepository;
+// we'll avoid import verbosity in this rare case
+import com.threerings.msoy.item.server.persist.*;
 
 import static com.threerings.msoy.Log.log;
 
@@ -131,6 +113,8 @@ public class ItemManager
         registerRepository(Item.ITEM_PACK, new ItemPackRepository(ctx));
         registerRepository(Item.TROPHY_SOURCE, _tsourceRepo = new TrophySourceRepository(ctx));
         registerRepository(Item.PRIZE, new PrizeRepository(ctx));
+        registerRepository(Item.MOB, new MobRepository(ctx));
+        registerRepository(Item.PROP, new PropRepository(ctx));
         _listRepo = new ItemListRepository(ctx);
 
         // register our invocation service

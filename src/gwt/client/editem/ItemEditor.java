@@ -93,6 +93,10 @@ public abstract class ItemEditor extends BorderedDialog
             editor = new TrophySourceEditor();
         } else if (type == Item.PRIZE) {
             editor = new PrizeEditor();
+        } else if (type == Item.MOB) {
+            editor = new MobEditor();
+        } else if (type == Item.PROP) {
+            editor = new PropEditor();
         } else {
             return null; // woe be the caller
         }

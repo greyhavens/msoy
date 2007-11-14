@@ -4,21 +4,26 @@
 package com.threerings.msoy.item.data.all;
 
 /**
- * Represents an interactive piece of furniture. Something that lives permanently in a room but
- * which is interactive in some way.
+ * Contains the runtime data for a Mob (mobile-object, monster) item.
  */
-public class Toy extends Item
+public class Mob extends SubItem
 {
-    // @Override from Item
+    // @Override // from Item
     public byte getType ()
     {
-        return TOY;
+        return MOB;
+    }
+
+    // @Override // from Item
+    public byte getSuiteMasterType ()
+    {
+        return GAME;
     }
 
     // @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (furniMedia != null);
+        return super.isConsistent() && (furniMedia != null) && nonBlank(name, MAX_NAME_LENGTH);
     }
 
     // @Override // from Item

@@ -45,15 +45,6 @@ public class Pet extends Item
     }
 
     // @Override // from Item
-    protected MediaDesc getDefaultThumbnailMedia ()
-    {
-        if (furniMedia != null && furniMedia.isImage()) {
-            return furniMedia;
-        }
-        return super.getDefaultThumbnailMedia();
-    }
-
-    // @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
         return null; // there is no default

@@ -53,15 +53,15 @@ public class Game extends Item
     // @Override from Item
     public byte[] getSubTypes ()
     {
-        return new byte[] {
-            LEVEL_PACK, ITEM_PACK, TROPHY_SOURCE, PRIZE,
-        };
+        return (isInWorld() ?
+                new byte[] { LEVEL_PACK, ITEM_PACK, TROPHY_SOURCE, PRIZE, MOB, PROP } :
+                new byte[] { LEVEL_PACK, ITEM_PACK, TROPHY_SOURCE, PRIZE, });
     }
 
     // @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
-        return getThumbnailMedia(); // TODO: support logos?
+        return (furniMedia != null) ? furniMedia : getThumbnailMedia();
     }
 
     /**
@@ -69,14 +69,12 @@ public class Game extends Item
      */
     public boolean isInWorld ()
     {
-        // TODO: this will change
-        return 0 <= config.indexOf("<avrg/>");
+        return (config != null) && (config.indexOf("<avrg/>") >= 0);
     }
 
     // @Override
     public boolean isConsistent ()
     {
-        // TODO: Check over the values in the XML to make sure they are sane
         return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (gameMedia != null);
     }
 }

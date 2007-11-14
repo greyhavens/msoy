@@ -56,15 +56,6 @@ public class Photo extends Item
     }
 
     // from Item
-    override protected function getDefaultThumbnailMedia () :MediaDesc
-    {
-        if (photoMedia != null && photoMedia.isImage()) {
-            return photoMedia;
-        }
-        return super.getDefaultThumbnailMedia();
-    }
-
-    // from Item
     override protected function getDefaultFurniMedia () :MediaDesc
     {
         return photoMedia;

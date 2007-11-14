@@ -36,6 +36,8 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public static final byte ITEM_PACK = registerItemType(ItemPack.class, 12);
     public static final byte TROPHY_SOURCE = registerItemType(TrophySource.class, 13);
     public static final byte PRIZE = registerItemType(Prize.class, 14);
+    public static final byte MOB = registerItemType(Prize.class, 15);
+    public static final byte PROP = registerItemType(Prize.class, 16);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     //
     // Note: If the number of item types surpasses 31, we need to change the loadedInventory field
@@ -54,7 +56,8 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      * A canonical ordering of our item types for use in giving gifts.
      */
     public static final byte[] GIFT_TYPES = {
-        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO, LEVEL_PACK, ITEM_PACK
+        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO,
+        LEVEL_PACK, ITEM_PACK, MOB, PROP
     };
 
     /** A 'used' constant value to indicate that the item is unused. */
@@ -218,6 +221,10 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
             return "trophy_source";
         } else if (type == PRIZE) {
             return "prize";
+        } else if (type == MOB) {
+            return "mob";
+        } else if (type == PROP) {
+            return "prop";
         } else {
             return "unknown:" + type;
         }

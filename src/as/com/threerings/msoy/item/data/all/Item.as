@@ -42,6 +42,8 @@ public /*abstract*/ class Item
     public static const ITEM_PACK :int = 12; //registerItemType(ItemPack, 12);
     public static const TROPHY_SOURCE :int = 13; //registerItemType(TrophySource, 13);
     public static const PRIZE :int = 14; //registerItemType(Prize, 14);
+    public static const MOB :int = 15; //registerItemType(Mob, 15);
+    public static const PROP :int = 16; //registerItemType(Prop, 16);
     // Note: registery of Item types is done at the bottom of this class
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
 
@@ -183,6 +185,10 @@ public /*abstract*/ class Item
             return "trophy_source";
         } else if (type == PRIZE) {
             return "prize";
+        } else if (type == MOB) {
+            return "mob";
+        } else if (type == PROP) {
+            return "prop";
         } else {
             return "unknown:" + type;
         }
@@ -412,6 +418,8 @@ public /*abstract*/ class Item
         registerItemType(ItemPack, ITEM_PACK);
         registerItemType(TrophySource, TROPHY_SOURCE);
         registerItemType(Prize, PRIZE);
+        registerItemType(Mob, MOB);
+        registerItemType(Prop, PROP);
     }
 
     private static function staticInit () :void

@@ -36,13 +36,6 @@ public class FurnitureEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void populateInfoTab (FlexTable info)
-    {
-
-        super.populateInfoTab(info);
-    }
-
-    // @Override from ItemEditor
     protected void createFurniUploader (TabPanel tabs)
     {
         FlexTable furni = new FlexTable();

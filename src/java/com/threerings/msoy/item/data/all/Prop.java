@@ -4,15 +4,21 @@
 package com.threerings.msoy.item.data.all;
 
 /**
- * Represents an interactive piece of furniture. Something that lives permanently in a room but
- * which is interactive in some way.
+ * Contains the runtime data for a Prop item. A prop is smart furniture that is associated with an
+ * AVRG.
  */
-public class Toy extends Item
+public class Prop extends SubItem
 {
-    // @Override from Item
+    // @Override // from Item
     public byte getType ()
     {
-        return TOY;
+        return PROP;
+    }
+
+    // @Override // from Item
+    public byte getSuiteMasterType ()
+    {
+        return GAME;
     }
 
     // @Override

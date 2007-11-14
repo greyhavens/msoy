@@ -97,15 +97,6 @@ public class Decor extends Item
     }
 
     // from Item
-    override protected function getDefaultThumbnailMedia () :MediaDesc
-    {
-        if (furniMedia != null && furniMedia.isImage()) {
-            return furniMedia;
-        }
-        return super.getDefaultThumbnailMedia();
-    }
-
-    // from Item
     override protected function getDefaultFurniMedia () :MediaDesc
     {
         return null; // there is no default
