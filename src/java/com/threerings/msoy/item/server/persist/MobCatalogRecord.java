@@ -16,15 +16,15 @@ public class MobCatalogRecord extends CatalogRecord<MobRecord>
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #catalogId} field. */
     public static final ColumnExp CATALOG_ID_C =
-        new ColumnExp(GameCatalogRecord.class, CATALOG_ID);
+        new ColumnExp(MobCatalogRecord.class, CATALOG_ID);
 
     /** The qualified column identifier for the {@link #listedItemId} field. */
     public static final ColumnExp LISTED_ITEM_ID_C =
-        new ColumnExp(GameCatalogRecord.class, LISTED_ITEM_ID);
+        new ColumnExp(MobCatalogRecord.class, LISTED_ITEM_ID);
 
     /** The qualified column identifier for the {@link #originalItemId} field. */
     public static final ColumnExp ORIGINAL_ITEM_ID_C =
-        new ColumnExp(GameCatalogRecord.class, ORIGINAL_ITEM_ID);
+        new ColumnExp(MobCatalogRecord.class, ORIGINAL_ITEM_ID);
 
     /** The qualified column identifier for the {@link #listedDate} field. */
     public static final ColumnExp LISTED_DATE_C =
@@ -44,7 +44,7 @@ public class MobCatalogRecord extends CatalogRecord<MobRecord>
 
     /** The qualified column identifier for the {@link #salesTarget} field. */
     public static final ColumnExp SALES_TARGET_C =
-        new ColumnExp(TrophySourceCatalogRecord.class, SALES_TARGET);
+        new ColumnExp(MobCatalogRecord.class, SALES_TARGET);
 
     /** The qualified column identifier for the {@link #purchases} field. */
     public static final ColumnExp PURCHASES_C =

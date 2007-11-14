@@ -19,13 +19,28 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class PropRecord extends SubItemRecord
 {
     // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #gameId} field. */
+    public static final String GAME_ID = "gameId";
+
+    /** The qualified column identifier for the {@link #gameId} field. */
+    public static final ColumnExp GAME_ID_C =
+        new ColumnExp(PropRecord.class, GAME_ID);
+
+    /** The qualified column identifier for the {@link #suiteId} field. */
+    public static final ColumnExp SUITE_ID_C =
+        new ColumnExp(PropRecord.class, SUITE_ID);
+
+    /** The qualified column identifier for the {@link #ident} field. */
+    public static final ColumnExp IDENT_C =
+        new ColumnExp(PropRecord.class, IDENT);
+
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
         new ColumnExp(PropRecord.class, ITEM_ID);
 
     /** The qualified column identifier for the {@link #sourceId} field. */
     public static final ColumnExp SOURCE_ID_C =
-        new ColumnExp(ItemPackRecord.class, SOURCE_ID);
+        new ColumnExp(PropRecord.class, SOURCE_ID);
 
     /** The qualified column identifier for the {@link #flagged} field. */
     public static final ColumnExp FLAGGED_C =
