@@ -57,6 +57,9 @@ public class AVRGamePanel extends Sprite
 
         // set ourselves up properly once the media is loaded
         loader.contentLoaderInfo.addEventListener(Event.COMPLETE, mediaComplete);
+
+        // TODO: We should probably listen for _gameObj.gameMedia updates and
+        // TODO: perhaps just brutally reload ourselves when that happens?
     }
 
     // from PlaceLayer
