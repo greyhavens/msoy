@@ -58,19 +58,14 @@ public class TableCreationPanel extends VBox
         _headerBox = new HBox();
         _headerBox.percentWidth = 100;
         _headerBox.setStyle("horizontalAlign", "right");
-        var tip :Label = new Label();
-        tip.text = Msgs.GAME.get("l.start_tip");
-        _headerBox.addChild(tip);
-
         _configBtn = new CommandButton();
-        _configBtn.label = Msgs.GAME.get("b.configure");
+        _configBtn.label = Msgs.GAME.get("b.start_game");
         _configBtn.setCallback(function () :void {
             showCreateGame();
             _configBtn.enabled = false;
             _configBtn.visible = false;
             _configBtn.includeInLayout = false;
         });
-
         _headerBox.addChild(_configBtn);
         addChild(_headerBox);
 
