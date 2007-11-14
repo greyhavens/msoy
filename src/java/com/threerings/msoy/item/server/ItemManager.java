@@ -113,7 +113,6 @@ public class ItemManager
         registerRepository(Item.ITEM_PACK, new ItemPackRepository(ctx));
         registerRepository(Item.TROPHY_SOURCE, _tsourceRepo = new TrophySourceRepository(ctx));
         registerRepository(Item.PRIZE, new PrizeRepository(ctx));
-        registerRepository(Item.MOB, new MobRepository(ctx));
         registerRepository(Item.PROP, new PropRepository(ctx));
         _listRepo = new ItemListRepository(ctx);
 

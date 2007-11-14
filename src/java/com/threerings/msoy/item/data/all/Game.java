@@ -54,7 +54,7 @@ public class Game extends Item
     public byte[] getSubTypes ()
     {
         return (isInWorld() ?
-                new byte[] { LEVEL_PACK, ITEM_PACK, TROPHY_SOURCE, PRIZE, MOB, PROP } :
+                new byte[] { LEVEL_PACK, ITEM_PACK, TROPHY_SOURCE, PRIZE, PROP } :
                 new byte[] { LEVEL_PACK, ITEM_PACK, TROPHY_SOURCE, PRIZE, });
     }
 
