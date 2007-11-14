@@ -391,6 +391,7 @@
       <arg value="-load-config"/>
       <arg value="etc/aslib-config.xml"/>
       <arg value="-compiler.optimize"/>
+      <arg value="-compiler.strict"/>
       <arg value="-compiler.source-path=projects/narya/src/as/"/>
       <arg value="-compiler.source-path=projects/nenya/src/as/"/>
       <arg value="-compiler.source-path=projects/vilya/src/as/"/>
@@ -413,6 +414,7 @@
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
+      <arg value="-compiler.strict"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-incremental=true"/>
