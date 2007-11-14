@@ -8,6 +8,9 @@ package com.threerings.msoy.item.data.all;
  */
 public class Mob extends SubItem
 {
+    /** The id of the game with which we're associated. */
+    public int gameId;
+
     // @Override // from Item
     public byte getType ()
     {

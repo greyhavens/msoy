@@ -96,7 +96,10 @@ public class MobRecord extends SubItemRecord
         new ColumnExp(MobRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 2;
+
+    /** The id of the game with which we're associated. */
+    public int gameId;
 
     @Override // from ItemRecord
     public byte getType ()
@@ -104,12 +107,21 @@ public class MobRecord extends SubItemRecord
         return Item.MOB;
     }
 
-    @Override // from ItemRecord
-    public void initFromClone (CloneRecord clone)
+    @Override // from SubItemRecord
+    public void initFromParent (ItemRecord parent)
     {
-        super.initFromClone(clone);
+        super.initFromParent(parent);
+        // our game id comes from our parent
+        gameId = ((GameRecord)parent).gameId;
+    }
 
-        // TODO: initialize your clone fields here
+    @Override // from ItemRecord
+    public void prepareForListing (ItemRecord oldListing)
+    {
+        super.prepareForListing(oldListing);
+        // the original from which this game is being listed will have -gameId as its game
+        // identifier because it is an original; all non-originals will use the positive id
+        gameId = Math.abs(gameId);
     }
 
     @Override // from ItemRecord
@@ -118,14 +130,14 @@ public class MobRecord extends SubItemRecord
         super.fromItem(item);
 
         Mob temp = (Mob)item;
-        // TODO: extract your values here
+        // gameId is not extracted here, we get it from our parent
     }
 
     @Override // from ItemRecord
     protected Item createItem ()
     {
         Mob object = new Mob();
-        // TODO: initialize your runtime record fields here
+        object.gameId = gameId;
         return object;
     }
 

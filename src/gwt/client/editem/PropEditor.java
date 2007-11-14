@@ -13,7 +13,7 @@ import client.shell.CShell;
 /**
  * A class for creating and editing {@link Prop} digital items.
  */
-public class PropEditor extends ItemEditor
+public class PropEditor extends SubItemEditor
 {
     // @Override from ItemEditor
     public void setItem (Item item)

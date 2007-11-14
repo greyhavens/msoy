@@ -33,6 +33,7 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.SubItemRecord;
 
 import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.web.client.ItemService;
@@ -60,6 +61,14 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
+        // configure the item's creator and owner
+        item.creatorId = memrec.memberId;
+        item.ownerId = memrec.memberId;
+
+        // create the persistent item record
+        repo = MsoyServer.itemMan.getRepository(item.getType());
+        final ItemRecord record = repo.newItemRecord(item);
+
         // determine this item's suite id if it is a subitem
         if (item instanceof SubItem) {
             if (parent == null) {
@@ -67,10 +76,11 @@ public class ItemServlet extends MsoyServiceServlet
                             ", item=" + item + "].");
                 throw new ServiceException(ServiceException.INTERNAL_ERROR);
             }
-            repo = MsoyServer.itemMan.getRepository(parent.type);
+            ItemRepository<ItemRecord, ?, ?, ?> prepo =
+                MsoyServer.itemMan.getRepository(parent.type);
             ItemRecord prec = null;
             try {
-                prec = repo.loadItem(parent.itemId);
+                prec = prepo.loadItem(parent.itemId);
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "Failed to load parent in createItem [who=" + memrec.who() +
                         ", item=" + item.getIdent() + ", parent=" + parent + "].");
@@ -86,20 +96,14 @@ public class ItemServlet extends MsoyServiceServlet
                             ", parent=" + prec + ", item=" + item + "].");
                 throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
             }
-            // if we made it this far, we can finally assign the suite id; as this is a mutable
-            // item and a mutable parent, the suite id is the item id of the parent
-            ((SubItem)item).suiteId = prec.itemId;
+
+            // if everything is kosher, we can initialize the subitem with info from its parent
+            ((SubItemRecord)record).initFromParent(prec);
         }
 
         // TODO: validate anything else?
 
-        // configure the item's creator and owner
-        item.creatorId = memrec.memberId;
-        item.ownerId = memrec.memberId;
-
         // write the item to the database
-        repo = MsoyServer.itemMan.getRepository(item.getType());
-        final ItemRecord record = repo.newItemRecord(item);
         try {
             repo.insertOriginalItem(record, false);
         } catch (PersistenceException pe) {

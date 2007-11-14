@@ -13,7 +13,7 @@ import client.shell.CShell;
 /**
  * A class for creating and editing {@link Mob} digital items.
  */
-public class MobEditor extends ItemEditor
+public class MobEditor extends SubItemEditor
 {
     // @Override from ItemEditor
     public void setItem (Item item)
