@@ -101,6 +101,11 @@ public class LobbyManager
     public void setGameContent (GameContent content)
         throws Exception
     {
+        if (_content != null) {
+            // only update the game until we figure out precisely how to do the full thing
+            updateGame(content.game);
+            return;
+        }
         // parse the definition first so that if this is a reload and something goes wrong in
         // parsing, we can fall back on the working configuration we already had
         GameDefinition definition = new MsoyGameParser().parseGame(content.game);
