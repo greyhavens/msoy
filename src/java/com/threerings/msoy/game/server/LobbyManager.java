@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import com.samskivert.util.Interval;
 import com.threerings.util.Name;
 
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -28,7 +27,6 @@ import com.threerings.parlor.server.ParlorSender;
 import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.ezgame.data.Parameter;
 import com.threerings.ezgame.data.TableMatchConfig;
-import com.threerings.ezgame.server.EZGameManager;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
@@ -103,23 +101,14 @@ public class LobbyManager
     public void setGameContent (GameContent content)
         throws Exception
     {
+        // parse the definition first so that if this is a reload and something goes wrong in
+        // parsing, we can fall back on the working configuration we already had
+        GameDefinition definition = new MsoyGameParser().parseGame(content.game);
+
         _content = content;
 
         _lobj.setGame(_content.game);
-        _lobj.setGameDef(new MsoyGameParser().parseGame(content.game));
-
-//         // if our game object is mutable, listen for updates from the ItemManager
-//         if (_content.game.sourceId == 0) {
-//             _uplist = new ItemManager.ItemUpdateListener() {
-//                 public void itemUpdated (ItemRecord item) {
-//                     Game game = (Game)item.toItem();
-//                     if (game.gameId == getGameId()) {
-//                         updateGame(game);
-//                     }
-//                 }
-//             };
-//             MsoyServer.itemMan.registerItemUpdateListener(GameRecord.class, _uplist);
-//         }
+        _lobj.setGameDef(definition);
     }
 
     /**

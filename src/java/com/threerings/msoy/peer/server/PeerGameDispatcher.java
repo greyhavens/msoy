@@ -38,6 +38,13 @@ public class PeerGameDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case PeerGameMarshaller.GAME_RECORD_UPDATED:
+            ((PeerGameProvider)provider).gameRecordUpdated(
+                source,
+                ((Integer)args[0]).intValue()
+            );
+            return;
+
         case PeerGameMarshaller.PEER_LEAVE_AVRGAME:
             ((PeerGameProvider)provider).peerLeaveAVRGame(
                 source,

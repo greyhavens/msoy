@@ -181,6 +181,49 @@ public class GameGameRegistry
         });
     }
 
+    /**
+     * On some world server, somebody updated a game record, and eventually it was determined
+     * that this game server is hosting that game. Do what we can to refresh our notion of the
+     * game's definition.
+     *
+     * TODO: Handle _loadingLobbies and AVRG's.
+     */
+    public void gameRecordUpdated (final int gameId)
+    {
+        // is this a lobbied game?
+        final LobbyManager lmgr = _lobbies.get(gameId);
+        if (lmgr != null) {
+            MsoyGameServer.invoker.postUnit(new RepositoryUnit("reloadLobby") {
+                public void invokePersist () throws PersistenceException {
+                    // if so, recompile the game content from all its various sources
+                    _content = assembleGameContent(gameId);
+                }
+
+                public void handleSuccess () {
+                    try {
+                        // and then update the lobby with the content
+                        lmgr.setGameContent(_content);
+                        log.info("Reloaded lobbied game configuration [id=" + gameId + "]");
+                    } catch (Exception e) {
+                        handleFailure(e);
+                    }
+                }
+
+                public void handleFailure (Exception e) {
+                    // if anything goes wrong, we can just fall back on what was already there
+                    log.log(Level.WARNING, "Failed to resolve game [id=" + gameId + "].", e);
+                }
+
+                protected GameContent _content;
+            });
+
+            return;
+        }
+
+
+
+    }
+
     // from AVRProvider
     public void activateGame (ClientObject caller, final int gameId, final ResultListener listener)
         throws InvocationException
@@ -321,33 +364,10 @@ public class GameGameRegistry
 
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("loadLobby") {
             public void invokePersist () throws PersistenceException {
-                _content.detail = _gameRepo.loadGameDetail(gameId);
-                GameRecord rec = _gameRepo.loadGameRecord(gameId, _content.detail);
-                if (rec != null) {
-                    _content.game = (Game)rec.toItem();
-                    // load up the score distribution information for this game as well
-                    _single = _ratingRepo.loadPercentile(-Math.abs(gameId));
-                    _multi = _ratingRepo.loadPercentile(Math.abs(gameId));
-                    // load up our level and item packs
-                    for (LevelPackRecord record :
-                             _lpackRepo.loadOriginalItemsBySuite(_content.game.getSuiteId())) {
-                        _content.lpacks.add((LevelPack)record.toItem());
-                    }
-                    for (ItemPackRecord record :
-                             _ipackRepo.loadOriginalItemsBySuite(_content.game.getSuiteId())) {
-                        _content.ipacks.add((ItemPack)record.toItem());
-                    }
-                    // load up our trophy source items
-                    for (TrophySourceRecord record :
-                             _tsourceRepo.loadOriginalItemsBySuite(_content.game.getSuiteId())) {
-                        _content.tsources.add((TrophySource)record.toItem());
-                    }
-                    // load up our prize items
-                    for (PrizeRecord record :
-                             _prizeRepo.loadOriginalItemsBySuite(_content.game.getSuiteId())) {
-                        _content.prizes.add((Prize)record.toItem());
-                    }
-                }
+                _content = assembleGameContent(gameId);
+                // load up the score distribution information for this game as well
+                _single = _ratingRepo.loadPercentile(-Math.abs(gameId));
+                _multi = _ratingRepo.loadPercentile(Math.abs(gameId));
             }
 
             public void handleSuccess () {
@@ -391,7 +411,7 @@ public class GameGameRegistry
                 MsoyGameServer.worldClient.stoppedHostingGame(gameId);
             }
 
-            protected GameContent _content = new GameContent();
+            protected GameContent _content;
             protected Percentiler _single, _multi;
         });
     }
@@ -521,6 +541,37 @@ public class GameGameRegistry
         // flush any modified percentile distributions
         flushPercentiler(-Math.abs(game.gameId)); // single-player
         flushPercentiler(Math.abs(game.gameId)); // multiplayer
+    }
+
+    protected GameContent assembleGameContent (final int gameId)
+        throws PersistenceException
+    {
+        GameContent content = new GameContent();
+        content.detail = _gameRepo.loadGameDetail(gameId);
+        GameRecord rec = _gameRepo.loadGameRecord(gameId, content.detail);
+        if (rec != null) {
+            content.game = (Game)rec.toItem();
+            // load up our level and item packs
+            for (LevelPackRecord record :
+                     _lpackRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
+                content.lpacks.add((LevelPack)record.toItem());
+            }
+            for (ItemPackRecord record :
+                     _ipackRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
+                content.ipacks.add((ItemPack)record.toItem());
+            }
+            // load up our trophy source items
+            for (TrophySourceRecord record :
+                     _tsourceRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
+                content.tsources.add((TrophySource)record.toItem());
+            }
+            // load up our prize items
+            for (PrizeRecord record :
+                     _prizeRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
+                content.prizes.add((Prize)record.toItem());
+            }
+        }
+        return content;
     }
 
     protected void joinAVRGame (final int playerId, final AVRGameManager mgr,

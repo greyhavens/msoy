@@ -33,6 +33,9 @@ public class WorldServerClient
     /** A message sent by our world server to let us know to shut down. */
     public static final String SHUTDOWN_MESSAGE = "shutdown";
 
+    /** A message sent by our world server to let us know a game record has been updated. */
+    public static final String GAME_RECORD_UPDATED = "gameRecordUpdated";
+
     public void init (MsoyGameServer server, int listenPort, int connectPort)
     {
         _server = server;
@@ -116,6 +119,15 @@ public class WorldServerClient
             // once all the games on this server have finally ended; might be fiddly
             log.info("Got shutdown notification from world server.");
             _server.shutdown();
+
+        } else if (event.getName().equals(GAME_RECORD_UPDATED)) {
+            Object[] args = event.getArgs();
+            if (args == null || args.length != 1 || !(args[0] instanceof Integer)) {
+                log.warning("Creepy arguments from world server, ignoring [args=" + args + "]");
+                return;
+            }
+            int gameId = ((Integer) args[0]).intValue();
+            MsoyGameServer.gameReg.gameRecordUpdated(gameId);
         }
     }
 

@@ -8,7 +8,6 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
-import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
@@ -34,8 +33,10 @@ import com.threerings.msoy.person.data.TrophyAwardPayload;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Prize;
+import com.threerings.msoy.item.server.ItemManager.ItemUpdateListener;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.ItemRecord;
 
 import com.threerings.msoy.peer.client.PeerGameService;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -94,6 +95,9 @@ public class MsoyGameRegistry
                 }
             }
         });
+
+        // tell the item manager we want to know about game updates
+        MsoyServer.itemMan.registerItemUpdateListener(GameRecord.class, new GameUpdateListener());
     }
 
     // from interface MsoyGameProvider
@@ -295,6 +299,17 @@ public class MsoyGameRegistry
         mobj.setAccFlow(mobj.accFlow + deltaFlow);
     }
 
+    // from interface PeerGameProvider
+    public void gameRecordUpdated (ClientObject caller, final int gameId)
+    {
+        GameServerHandler handler = _handmap.get(gameId);
+        if (handler == null) {
+            log.info("Eek, handler vanished [gameId=" + gameId + "]");
+            return;
+        }
+        handler.gameRecordUpdated(gameId);
+    }
+
     // from interface GameServerProvider
     public void reportTrophyAward (
         ClientObject caller, int memberId, String gameName, Trophy trophy)
@@ -430,6 +445,36 @@ public class MsoyGameRegistry
         return true;
     }
 
+    protected class GameUpdateListener implements ItemUpdateListener
+    {
+        public void itemUpdated (ItemRecord item)
+        {
+            // we're only interested in mutable games
+            if (item.sourceId != 0) {
+                return;
+            }
+
+            // alright, let's find out where this updated game might be hosted...
+            final int gameId = ((GameRecord) item).gameId;
+
+            // maybe locally? that'd be great.
+            if (_handmap.containsKey(gameId)) {
+                gameRecordUpdated(null, gameId);
+                return;
+            }
+            // otherwise is it hosted on any world server's game peer(s)?
+            MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+                public void invoke (Client client, NodeObject nodeobj) {
+                    MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+                    if (msnobj.hostedGames.containsKey(gameId)) {
+                        // great, tell the world server what's up
+                        msnobj.peerGameService.gameRecordUpdated(client, gameId);
+                    }
+                }
+            });
+        }
+    }
+
     /** Used by {@link #applyToNodes}. */
     protected static interface GameServiceOperation
     {
@@ -488,9 +533,15 @@ public class MsoyGameRegistry
             }
         }
 
+        public void gameRecordUpdated (int gameId)
+        {
+            _clobj.postMessage(WorldServerClient.GAME_RECORD_UPDATED, gameId);
+        }
+
         protected ClientObject _clobj;
         protected ArrayIntSet _games = new ArrayIntSet();
     }
+
 
     /** Used to load metadata for games. */
     protected GameRepository _gameRepo;

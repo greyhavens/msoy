@@ -19,8 +19,19 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
 public class PeerGameMarshaller extends InvocationMarshaller
     implements PeerGameService
 {
+    /** The method id used to dispatch {@link #gameRecordUpdated} requests. */
+    public static final int GAME_RECORD_UPDATED = 1;
+
+    // from interface PeerGameService
+    public void gameRecordUpdated (Client arg1, int arg2)
+    {
+        sendRequest(arg1, GAME_RECORD_UPDATED, new Object[] {
+            Integer.valueOf(arg2)
+        });
+    }
+
     /** The method id used to dispatch {@link #peerLeaveAVRGame} requests. */
-    public static final int PEER_LEAVE_AVRGAME = 1;
+    public static final int PEER_LEAVE_AVRGAME = 2;
 
     // from interface PeerGameService
     public void peerLeaveAVRGame (Client arg1, int arg2)
@@ -31,7 +42,7 @@ public class PeerGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #peerReportFlowAward} requests. */
-    public static final int PEER_REPORT_FLOW_AWARD = 2;
+    public static final int PEER_REPORT_FLOW_AWARD = 3;
 
     // from interface PeerGameService
     public void peerReportFlowAward (Client arg1, int arg2, int arg3)
@@ -42,7 +53,7 @@ public class PeerGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #peerUpdatePlayer} requests. */
-    public static final int PEER_UPDATE_PLAYER = 3;
+    public static final int PEER_UPDATE_PLAYER = 4;
 
     // from interface PeerGameService
     public void peerUpdatePlayer (Client arg1, int arg2, GameSummary arg3)

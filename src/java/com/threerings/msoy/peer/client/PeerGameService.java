@@ -26,4 +26,9 @@ public interface PeerGameService extends InvocationService
      * Notifies us that a player has persistently left their AVRG.
      */
     public void peerLeaveAVRGame (Client caller, int playerId);
+
+    /**
+     * Notifies us that a GameRecord has been modified for a game hosted on one of our game servers
+     */
+    public void gameRecordUpdated (Client caller, int gameId);
 }
