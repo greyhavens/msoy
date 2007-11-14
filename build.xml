@@ -456,8 +456,7 @@
 
   <!-- builds our avatar viewer thingy -->
   <target name="avatarviewer" depends="asprepare,aslib">
-    <exec executable="${basedir}/bin/mxmlc" resultproperty="avatar.result"
-          outputproperty="avatar.out">
+    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
@@ -468,16 +467,12 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/AvatarViewer.mxml"/>
     </exec>
-    <fail message="The avatar viewer build failed. Output: &#xa; ${avatar.out}">
-      <condition><equals arg1="${avatar.result}" arg2="1"/></condition>
-    </fail>
     <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- builds our video viewer thingy -->
   <target name="videoviewer" depends="asprepare,aslib">
-    <exec executable="${basedir}/bin/mxmlc" resultproperty="video.result"
-          outputproperty="video.out">
+    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
@@ -487,16 +482,12 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/VideoViewer.as"/>
     </exec>
-    <fail message="The video viewer build failed. Output: &#xa; ${video.out}">
-      <condition><equals arg1="${video.result}" arg2="1"/></condition>
-    </fail>
     <copy file="${deploy.dir}/videoviewer.swf" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- builds our awesome decor viewer -->
   <target name="decorviewer" depends="asprepare,aslib">
-    <exec executable="${basedir}/bin/mxmlc" resultproperty="decor.result"
-          outputproperty="decor.out">
+    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
@@ -507,9 +498,6 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/DecorViewer.mxml"/>
     </exec>
-    <fail message="The decor viewer build failed. Output: &#xa; ${decor.out}">
-      <condition><equals arg1="${decor.result}" arg2="1"/></condition>
-    </fail>
     <copy file="${deploy.dir}/decorviewer.swf" todir="pages/clients/${build_version}"/>
   </target>
 
