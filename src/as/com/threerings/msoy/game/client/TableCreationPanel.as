@@ -48,15 +48,6 @@ public class TableCreationPanel extends VBox
         _configBtn.enabled = enabled;
     }
 
-    public function showCreateGame () :void
-    {
-        while (numChildren > 0) {
-            removeChildAt(0);
-        }
-        addChild(_configBox);
-        addChild(_buttonBox);
-    }
-
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -142,6 +133,15 @@ public class TableCreationPanel extends VBox
             clearCreateGame();
         });
         _buttonBox.addChild(cancel);
+    }
+
+    protected function showCreateGame () :void
+    {
+        while (numChildren > 0) {
+            removeChildAt(0);
+        }
+        addChild(_configBox);
+        addChild(_buttonBox);
     }
 
     protected function clearCreateGame () :void

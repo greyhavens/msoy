@@ -5,35 +5,31 @@ package com.threerings.msoy.game.client {
 
 import flash.events.Event;
 
+import com.threerings.util.CommandEvent;
+import com.threerings.util.Controller;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
-
-import com.threerings.parlor.client.TableDirector;
-
-import com.threerings.parlor.data.TableConfig;
-import com.threerings.parlor.data.Table;
-
-import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.util.SafeSubscriber;
 
-import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.parlor.client.TableDirector;
+import com.threerings.parlor.data.Table;
+import com.threerings.parlor.data.TableConfig;
+import com.threerings.parlor.game.data.GameConfig;
 
-import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.HeaderBarController;
+import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-
-import com.threerings.util.Controller;
-import com.threerings.util.CommandEvent;
+import com.threerings.msoy.game.data.MsoyTable;
 
 public class LobbyController extends Controller implements Subscriber
 {
@@ -69,76 +65,6 @@ public class LobbyController extends Controller implements Subscriber
         setControlledPanel(_panel);
         _panelIsVisible = true;
         _mctx.getTopPanel().setLeftPanel(_panel);
-    }
-
-    /**
-     * Returns the id of the game managed by this lobby controller. Not valid until we've
-     * subscribed to our lobby object.
-     */
-    public function get gameId () :int
-    {
-        return _lobj.game.itemId;
-    }
-
-    /**
-     * This is called if something external wants us to leave any table we're seated at and 
-     * shutdown.
-     */
-    public function forceShutdown () :void
-    {
-        if (_tableDir != null) {
-            var currentTable :Table = _tableDir.getSeatedTable();
-            if (currentTable != null) {
-                _tableDir.leaveTable(currentTable.tableId);
-                _panel.seatednessDidChange(false);
-            }
-        }
-
-        shutdown(false);
-    }
-
-    /**
-     * Join the player at their pending game table. 
-     */
-    public function joinPlayerTable (playerId :int) :void
-    {
-        if (_lobj == null) {
-            // this function will be called again when we have our lobby object
-            _playerId = playerId;
-            return;
-        }
-
-        for each (var table :Table in _lobj.tables.toArray()) {
-            for each (var occupant :Name in table.occupants) {
-                if (!(occupant is MemberName)) {
-                    Log.getLog(this).warning(
-                        "table occupant is not a MemberName? [" + occupant + "]");
-                    continue;
-                }
-
-                var member :MemberName = occupant as MemberName;
-                if (member.getMemberId() != playerId) {
-                    continue;
-                }
-
-                if (table.inPlay()) {
-                    _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_in_progress");
-                } else {
-                    var ii :int = 0;
-                    for (; ii < table.occupants.length; ii++) {
-                        if (table.occupants[ii] == null) {
-                            handleJoinTable(table.tableId, ii);
-                            break;
-                        }
-                    }
-                    if (ii == table.occupants.length) {
-                        _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_table_full");
-                    }
-                }
-
-                return;
-            }
-        }
     }
 
     /**
@@ -191,6 +117,68 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     /**
+     * Returns the id of the game managed by this lobby controller. Not valid until we've
+     * subscribed to our lobby object.
+     */
+    public function get gameId () :int
+    {
+        return _lobj.game.itemId;
+    }
+
+    /**
+     * This is called if something external wants us to leave any table we're seated at and 
+     * shutdown.
+     */
+    public function forceShutdown () :void
+    {
+        if (_tableDir != null) {
+            var currentTable :Table = _tableDir.getSeatedTable();
+            if (currentTable != null) {
+                _tableDir.leaveTable(currentTable.tableId);
+                _panel.seatednessDidChange(false);
+            }
+        }
+        shutdown(false);
+    }
+
+    /**
+     * Joins the specified player at their pending game table. 
+     */
+    public function joinPlayerTable (playerId :int) :void
+    {
+        if (_lobj == null) {
+            // this function will be called again when we have our lobby object
+            _playerId = playerId;
+            return;
+        }
+
+        for each (var table :Table in _lobj.tables.toArray()) {
+            for each (var occupant :Name in table.occupants) {
+                var member :MemberName = (occupant as MemberName);
+                if (member == null || member.getMemberId() != playerId) {
+                    continue;
+                }
+
+                if (table.inPlay()) {
+                    _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_in_progress");
+                } else {
+                    var ii :int = 0;
+                    for (; ii < table.occupants.length; ii++) {
+                        if (table.occupants[ii] == null) {
+                            handleJoinTable(table.tableId, ii);
+                            break;
+                        }
+                    }
+                    if (ii == table.occupants.length) {
+                        _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_table_full");
+                    }
+                }
+                return;
+            }
+        }
+    }
+
+    /**
      * Restores the lobby UI.
      */
     public function restoreLobbyUI () :void
@@ -238,7 +226,7 @@ public class LobbyController extends Controller implements Subscriber
     public function objectAvailable (obj :DObject) :void 
     {
         _lobj = obj as LobbyObject;
-        _panel.init(_lobj);
+        _panel.init(_lobj, _mode == LobbyGameLiaison.PLAY_NOW_FRIENDS);
 
         _tableDir = new TableDirector(_gctx, LobbyObject.TABLES);
         _tableDir.setTableObject(obj);
@@ -253,17 +241,13 @@ public class LobbyController extends Controller implements Subscriber
             return;
         }
 
+        // otherwise do something appropriate based on our mode
         switch (_mode) {
-        case LobbyGameLiaison.SHOW_LOBBY:
-            _panel.showCreateGame();
-            break;
-
         case LobbyGameLiaison.PLAY_NOW_FRIENDS:
-            // TODO: locate a friend's table and join it if one is available
+            joinSomeTable(true);
             break;
-
         case LobbyGameLiaison.PLAY_NOW_ANYONE:
-            // TODO: join the first (best?) open table
+            joinSomeTable(false);
             break;
         }
     }
@@ -275,24 +259,47 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     /**
+     * Looks for a table that we can join and joins it.
+     */
+    protected function joinSomeTable (friendsOnly :Boolean) :Boolean
+    {
+        for each (var table :Table in _lobj.tables.toArray()) {
+            if (table.inPlay() ||
+                (friendsOnly && (table as MsoyTable).countFriends(_mctx.getMemberObject()) == 0)) {
+                continue;
+            }
+            for (var ii :int; ii < table.occupants.length; ii++) {
+                if (table.occupants[ii] == null) {
+                    handleJoinTable(table.tableId, ii);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Clean up our references, and notify those that care that we're all done here.
      */
     protected function shutdown (inGame :Boolean) :void
     {
+        // first do our UI cleanup
         _panel.removeEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
-        _subscriber.unsubscribe(_mctx.getDObjectManager());
         var currentDisp :FloatingTableDisplay = _mctx.getTopPanel().getTableDisplay();
         if (_lobj != null && currentDisp != null && currentDisp.getGameId() == _lobj.game.itemId) {
             // only clear the display if its a display for this lobby
             _mctx.getTopPanel().clearTableDisplay();
         }
+
+        // then our distributed services cleanup
+        _subscriber.unsubscribe(_mctx.getDObjectManager());
         if (_tableDir != null) {
             _tableDir.clearTableObject();
             _tableDir.removeTableObserver(_panel);
             _tableDir.removeSeatednessObserver(_panel);
         }
 
-        // let the game liaison know that we're gone
+        // finally let the game liaison know that we're gone
         _liaison.lobbyCleared(inGame);
     }
 

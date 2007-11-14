@@ -44,6 +44,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.MsoyTable;
 import com.threerings.msoy.item.data.all.Game;
 
 /**
@@ -73,9 +74,10 @@ public class LobbyPanel extends VBox
         addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
     }
 
-    public function init (lobbyObj :LobbyObject) :void
+    public function init (lobbyObj :LobbyObject, friendsOnly :Boolean) :void
     {
         _lobbyObj = lobbyObj;
+        _friendsOnly = friendsOnly;
 
         // fill in the UI bits
         var game :Game = getGame();
@@ -109,21 +111,22 @@ public class LobbyPanel extends VBox
         // determine our informational messages
         if (GameConfig.SEATED_GAME == _lobbyObj.gameDef.match.getMatchType()) {
             _pendersHeader = Msgs.GAME.get("l.penders_header_seated");
-            _noPendersMsg = Msgs.GAME.get("m.no_penders_seated");
+            _noPendersMsg = Msgs.GAME.get(
+                _friendsOnly ? "m.no_friends_seated" : "m.no_penders_seated");
         } else {
             _pendersHeader = Msgs.GAME.get("l.penders_header_party");
-            _noPendersMsg = Msgs.GAME.get("m.no_penders_party");
+            _noPendersMsg = Msgs.GAME.get(
+                _friendsOnly ? "m.no_friends_party" : "m.no_penders_party");
         }
 
         _tablesBox.removeAllChildren();
         createTablesDisplay();
 
-        if (_lobbyObj.tables.size() == 0) {
+        for each (var table :Table in _lobbyObj.tables.toArray()) {
+            tableAdded(table);
+        }
+        if (_tables.length == 0) {
             _tables.addItem("M" + _noPendersMsg);
-        } else {
-            for each (var table :Table in _lobbyObj.tables.toArray()) {
-                tableAdded(table);
-            }
         }
     }
 
@@ -143,14 +146,6 @@ public class LobbyPanel extends VBox
         return _lobbyObj != null ? _lobbyObj.gameDef : null;
     }
 
-    /**
-     * Shows the create game interface.
-     */
-    public function showCreateGame () :void
-    {
-        _creationPanel.showCreateGame();
-    }
-
     // from AttributeChangeListener
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
@@ -165,6 +160,11 @@ public class LobbyPanel extends VBox
     {
         // if this table is running and we're a seated game, ignore it
         if (table.gameOid > 0 && GameConfig.SEATED_GAME == _lobbyObj.gameDef.match.getMatchType()) {
+            return;
+        }
+
+        // if we're in friends only mode and this table does not contain a friend, skip it
+        if (_friendsOnly && (table as MsoyTable).countFriends(_wctx.getMemberObject()) == 0) {
             return;
         }
 
@@ -189,12 +189,23 @@ public class LobbyPanel extends VBox
             return;
         }
 
-        // otherwise update it
+        // if we're in friends only mode, this table may now be visible or not
         var idx :int = ArrayUtil.indexOf(_tables.source, table);
+        if (_friendsOnly) {
+            var count :int = (table as MsoyTable).countFriends(_wctx.getMemberObject());
+            if (count > 0 && idx == -1) {
+                tableAdded(table);
+                return;
+            }
+            if (count == 0 && idx != -1) {
+                tableRemoved(table.tableId);
+                return;
+            }
+        }
+
+        // otherwise update it
         if (idx >= 0) {
             _tables.setItemAt(table, idx);
-        } else {
-            log.warning("Unknown table updated: " + table);
         }
     }
 
@@ -374,6 +385,9 @@ public class LobbyPanel extends VBox
 
     /** Our lobby object. */
     protected var _lobbyObj :LobbyObject;
+
+    /** Are we showing only our friends' tables? */
+    protected var _friendsOnly :Boolean;
 
     /** Are we seated? */
     protected var _isSeated :Boolean;

@@ -39,11 +39,11 @@ public class PlayerObject extends BodyObject
     /** The field name of the <code>avatar</code> field. */
     public static final String AVATAR = "avatar";
 
-    /** The field name of the <code>friends</code> field. */
-    public static final String FRIENDS = "friends";
-
     /** The field name of the <code>humanity</code> field. */
     public static final String HUMANITY = "humanity";
+
+    /** The field name of the <code>friends</code> field. */
+    public static final String FRIENDS = "friends";
 
     /** The field name of the <code>gameState</code> field. */
     public static final String GAME_STATE = "gameState";
@@ -64,14 +64,14 @@ public class PlayerObject extends BodyObject
     /** The avatar that the user has chosen, or null for guests. */
     public Avatar avatar;
 
+    /** Our current assessment of how likely to be human this member is, in [0, {@link
+     * MsoyCodes#MAX_HUMANITY}]. */
+    public int humanity;
+
     /** A snapshot of this players friends loaded when they logged onto the game server. Online
      * status is not filled in and this set is *not* updated if friendship is made or broken during
      * a game. */
     public DSet<FriendEntry> friends;
-
-    /** Our current assessment of how likely to be human this member is, in [0, {@link
-     * MsoyCodes#MAX_HUMANITY}]. */
-    public int humanity;
 
     /** Game state entries for the world game we're currently on. */
     public DSet<GameState> gameState = new DSet<GameState>();
@@ -209,6 +209,22 @@ public class PlayerObject extends BodyObject
     }
 
     /**
+     * Requests that the <code>humanity</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setHumanity (int value)
+    {
+        int ovalue = this.humanity;
+        requestAttributeChange(
+            HUMANITY, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.humanity = value;
+    }
+
+    /**
      * Requests that the specified entry be added to the
      * <code>friends</code> set. The set will not change until the event is
      * actually propagated through the system.
@@ -254,22 +270,6 @@ public class PlayerObject extends BodyObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.FriendEntry> clone =
             (value == null) ? null : value.typedClone();
         this.friends = clone;
-    }
-
-    /**
-     * Requests that the <code>humanity</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setHumanity (int value)
-    {
-        int ovalue = this.humanity;
-        requestAttributeChange(
-            HUMANITY, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.humanity = value;
     }
 
     /**

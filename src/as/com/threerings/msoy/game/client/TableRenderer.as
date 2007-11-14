@@ -112,6 +112,11 @@ public class TableRenderer extends HBox
         }
 
         var table :MsoyTable = (data as MsoyTable);
+        if (table == null) {
+            Log.getLog(this).warning("Got null table in renderer? [data=" + data + "].");
+            return;
+        }
+
         if (!_popup) {
             // TODO: table.playerCount is not getting set... I'm not sure why TableManager isn't
             // doing this, but I don't want to mess with that, in case one of the other games is

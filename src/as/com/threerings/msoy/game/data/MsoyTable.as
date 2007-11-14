@@ -14,6 +14,7 @@ import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
@@ -28,6 +29,24 @@ public class MsoyTable extends Table
     /** Suitable for unserialization. */
     public function MsoyTable ()
     {
+    }
+
+    /**
+     * Returns the count of friends of the specified member that are seated at this table.
+     */
+    public function countFriends (memObj :MemberObject) :int
+    {
+        var friends :int = 0;
+        for (var ii :int; ii < occupants.length; ii++) {
+            var name :MemberName = (occupants[ii] as MemberName);
+            if (name == null) {
+                continue;
+            }
+            if (memObj.friends.containsKey(name.getMemberId())) {
+                friends++;
+            }
+        }
+        return friends;
     }
 
     // from interface Streamable

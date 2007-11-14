@@ -57,6 +57,11 @@ public class PlayerObject extends BodyObject
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public var humanity :int;
 
+    /** A snapshot of this players friends loaded when they logged onto the game server. Online
+     * status is not filled in and this set is *not* updated if friendship is made or broken during
+     * a game. */
+    public var friends :DSet /* FriendEntry */;
+
     /** Game state entries for the world game we're currently on. */
     public var gameState :DSet;
 
@@ -144,6 +149,7 @@ public class PlayerObject extends BodyObject
         tokens = (ins.readObject() as MsoyTokenRing);
         avatar = (ins.readObject() as Avatar);
         humanity = ins.readInt();
+        friends = (ins.readObject() as DSet);
         gameState = (ins.readObject() as DSet);
         questState = (ins.readObject() as DSet);
         gameContent = (ins.readObject() as DSet);
