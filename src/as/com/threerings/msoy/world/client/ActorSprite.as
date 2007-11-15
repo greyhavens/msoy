@@ -5,684 +5,104 @@ package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 
-import flash.events.Event;
-import flash.events.MouseEvent;
-
-import flash.geom.Point;
-import flash.geom.Rectangle;
-
-import flash.filters.GlowFilter;
-
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.text.TextFormat;
-
 import com.threerings.util.Log;
 import com.threerings.util.Util;
-import com.threerings.util.ValueEvent;
-
-import com.threerings.flash.FilterUtil;
-import com.threerings.flash.MediaContainer;
-import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.threerings.msoy.chat.client.ComicOverlay;
-
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.MediaDesc;
-
-import com.threerings.msoy.client.WorldContext;
-
 import com.threerings.msoy.world.data.ActorInfo;
-import com.threerings.msoy.world.data.EffectData;
-import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
-import com.threerings.msoy.world.data.MsoyScene;
-import com.threerings.msoy.world.data.PetInfo;
-
-import com.threerings.msoy.game.data.GameSummary;
 
 /**
- * Handles sprites for actors (things in a scene that move around).
+ * Handles sprites for actors (members and pets).
  */
-public class ActorSprite extends MsoySprite
+public class ActorSprite extends OccupantSprite
 {
-    /** The maximum width of an avatar sprite. */
-    public static const MAX_WIDTH :int = 600;
-
-    /** The maximum height of an avatar sprite. */
-    public static const MAX_HEIGHT :int = 450;
-
-    /** The default move speed, in pixels per second. */
-    public static const DEFAULT_MOVE_SPEED :Number = 500;
-
-    /** The minimum move speed, in pixels per second. */
-    public static const MIN_MOVE_SPEED :Number = 50;
-
     /**
-     * Creates an actor sprite for the supplied occupant.
+     * Creates an actor sprite for the supplied actor.
      */
     public function ActorSprite (occInfo :ActorInfo)
     {
-        super(null, null);
+        super(occInfo);
+    }
 
-        var labelFormat :TextFormat = new TextFormat();
-        labelFormat.font = "Arial"; // there be magic here. Arial isn't
-        // even available on Linux, but it works it out. The documentation
-        // for TextFormat does not indicate this. Bastards.
-        labelFormat.size = 12;
-        labelFormat.bold = true;
-        _label = new TextField();
-        // The label often jumps visibly when the actor is hovered over, a pixel
-        // up or down, and/or left or right. As far as I (Ray) can figure, when the glow
-        // filter is applied it's doing pixel snapping. The strange thing is that we apply
-        // our own outlining glow filter (below) so it should already be snapping.
-        // It seems that setting cacheAsBitmap makes the vertical jumpiness go away, but
-        // not the horizontal jumpiness. So, I've disabled it for now...
-        //_label.cacheAsBitmap = true;
-        _label.selectable = false;
-        _label.autoSize = TextFieldAutoSize.CENTER;
-        _label.defaultTextFormat = labelFormat;
-        _label.filters = [ new GlowFilter(0, 1, 2, 2, 255) ];
-        addChild(_label);
-
-        if (occInfo != null) {
-            setActorInfo(occInfo);
+    /**
+     * Update the actor's state. Called by user code when it wants to change the actor's state.
+     */
+    public function setState (state :String) :void
+    {
+        if (_ident != null && (parent is RoomView) && validateUserData(state, null)) {
+            (parent as RoomView).getRoomController().setActorState(
+                _ident, _occInfo.bodyOid, state);
         }
     }
 
     /**
-     * Add a special effect to this actor.
+     * Get the actor's current state.  Called by user code.
      */
-    public function addTransientEffect (effect :EffectData) :void
+    public function getState () :String
     {
-        var sprite :EffectSprite = new EffectSprite(effect);
-        sprite.addEventListener(MsoySprite.LOCATION_UPDATED, handleEffectUpdated);
-        sprite.addEventListener(EffectSprite.EFFECT_FINISHED, handleEffectFinished);
-        sprite.x = getActualWidth()/2;
-        addChild(sprite);
+        return getActorInfo().getState();
     }
 
     /**
-     * Add some sort of nonstandard decoration to the sprite.  The decoration should already be
-     * painting its full size.
-     *
-     * @param constraints an object containing properties that will control layout and other bits.
-     * Supported properties:
-     *   toolTip <String> any tool tip text.
-     *   weight <Number> a sort order, higher numbers will be closer to the name. (0 if missing)
-     *   bounds <Rectangle> hand-specify the bounds (useful for SWFs)
+     * Returns the actor info for this actor.
      */
-    public function addDecoration (dec :DisplayObject, constraints :Object = null) :void
+    public function getActorInfo () :ActorInfo
     {
-        if (_decorations == null) {
-            _decorations = [];
-        }
-        // provide a default constraints if none
-        if (constraints == null) {
-            constraints = {};
-        }
-        // store the decoration inside the constraints object
-        constraints["dec"] = dec;
-        _decorations.push(constraints);
-
-        // TODO: is there no stable sort available to us?
-        // For now, I'll just sort, but I don't like it!
-        _decorations.sort(decorationSort);
-
-        addChild(dec);
-        arrangeDecorations();
+        return (_occInfo as ActorInfo);
     }
 
-    /**
-     * Remove a piece of nonstandard decoration.
-     */
-    public function removeDecoration (dec :DisplayObject) :void
-    {
-        if (_decorations != null) {
-            for (var ii :int = 0; ii < _decorations.length; ii++) {
-                if (_decorations[ii].dec == dec) {
-                    _decorations.splice(ii, 1);
-                    removeChild(dec);
-                    if (_decorations.length == 0) {
-                        _decorations = null;
-                    }
-                    arrangeDecorations();
-
-                    return; // no need to continue
-                }
-            }
-        }
-    }
-
-    /**
-     * Remove all decorations.
-     */
-    public function removeAllDecorations () :void
-    {
-        if (_decorations == null) {
-            return;
-        }
-        for (var ii :int = 0; ii < _decorations.length; ii++) {
-            removeChild(_decorations[ii].dec as DisplayObject);
-        }
-        _decorations = null;
-        // this function sets _bubblePosition, even if there are no decorations
-        arrangeDecorations();
-    }
-
-    /**
-     * Return the walk speed of this actor, in pixels / second.
-     */
-    public function getMoveSpeed () :Number
-    {
-        return Math.max(MIN_MOVE_SPEED, _moveSpeed * _scale);
-    }
-
-    override public function setScreenLocation (x :Number, y :Number, scale :Number) :void
-    {
-        super.setScreenLocation(x, y, scale);
-
-        if (_chatOverlay != null) {
-            // let our the chat overlay thats carrying our chat bubbles know we moved
-            _chatOverlay.speakerMoved(_occInfo.username, getBubblePosition());
-        }
-    }
-
+    // from OccupantSprite
     override public function getDesc () :String
     {
-        return (_occInfo is PetInfo) ? "m.pet" : "m.actor";
+        return "m.actor";
     }
 
-    /**
-     * Retuns the position, in stage coordinates, where bubbles should draw up from (vertically),
-     * and center on (horizontally).
-     */
-    public function getBubblePosition () :Point
+    // from OccupantSprite
+    override public function setOccupantInfo (newInfo :OccupantInfo) :void
     {
-        return localToGlobal(_bubblePosition);
-    }
-
-    // from MsoySprite
-    override public function getStageRect (includeExtras :Boolean = true) :Rectangle
-    {
-        // Note: Ideally we could just return getRect(stage), but that seems to pay too
-        // much attention to our mask.
-        var r :Rectangle = super.getStageRect();
-
-        if (includeExtras) {
-            r = r.union(_label.getRect(this.stage));
-
-            if (_decorations != null) {
-                for each (var obj :Object in _decorations) {
-                    r = r.union(DisplayObject(obj.dec).getRect(this.stage));
-                }
-            }
-        }
-
-        return r;
-    }
-
-    /**
-     * Called to set up the actor's initial location upon entering a room.
-     */
-    public function setEntering (loc :MsoyLocation) :void
-    {
-        setLocation(loc);
-        setOrientation(loc.orient);
-    }
-
-    /**
-     * Updates this actor's occupant info.
-     */
-    public function setActorInfo (newInfo :ActorInfo) :void
-    {
-        var triggerAppearanceChanged :Boolean = false;
-        var oldScale :Number = _scale;
-        _scale = (newInfo is MemberInfo) ? (newInfo as MemberInfo).getScale() : 1;
-        var newMedia :MediaDesc = newInfo.getMedia();
-        if (!newMedia.equals(_desc)) {
-            setup(newMedia, newInfo.getItemIdent());
-        } else if (oldScale != _scale) {
-            scaleUpdated();
-        }
-
-        // take care of setting up or changing our TableIcon
-        if (newInfo is MemberInfo) {
-            var minfo :MemberInfo = (newInfo as MemberInfo);
-
-            if (_tableIcon != null && !_tableIcon.getGameSummary().equals(minfo.getGameSummary())) {
-                _tableIcon.shutdown();
-                _tableIcon = null;
-            }
-            if (_tableIcon == null && minfo.getGameSummary() != null &&
-                minfo.getGameSummary().gameId != Game.TUTORIAL_GAME_ID) {
-                _tableIcon = new TableIcon(this, minfo.getGameSummary());
-            }
-        }
-
-        // See if we need to update the name label or the status. Note that we need to compare the
-        // String versions of the names, because that's the difference we care about
-        // here. MemberNames compare as the same if the memberId is the same...
-        var newName :String = newInfo.username.toString();
-        if (_occInfo == null || (_occInfo.status != newInfo.status) ||
-                (_occInfo.username.toString() !== newName)) {
-            _label.textColor = getStatusColor(newInfo.status);
-            _label.text = newName;
-            _label.width = _label.textWidth + TextFieldUtil.WIDTH_PAD;
-            _label.height = _label.textHeight + TextFieldUtil.HEIGHT_PAD;
-            recheckLabel();
-
-            // if our idle status has changed...
-            if ((newInfo.status == OccupantInfo.IDLE) == (_idleIcon == null)) {
-                triggerAppearanceChanged = true;
-                if (_idleIcon == null) {
-                    _idleIcon = (new IDLE_ICON() as DisplayObject);
-                    addDecoration(_idleIcon, {
-                        weight: Number.MAX_VALUE / 2,
-                        bounds: new Rectangle(0, 0, 50, 80)
-                    });
-
-                } else {
-                    removeDecoration(_idleIcon);
-                    _idleIcon = null;
-                }
-
-            } else {
-                // the bounds of the label may have changed, re-arrange
-                // (if we added or removed the idle icon, it was already done...)
-                arrangeDecorations();
-            }
-        }
-
         // note whether our state changed (we don't consider it a change if the old info was null,
         // as getting our initial state isn't a "change"); this is reason to have a special
         // state-changed dobj event
         var stateChanged :Boolean =
-            (_occInfo != null && !Util.equals(_occInfo.getState(), newInfo.getState()));
+            (_occInfo != null && !Util.equals((_occInfo as ActorInfo).getState(),
+                                              (newInfo as ActorInfo).getState()));
 
-        // assign the new one
-        _occInfo = newInfo;
+        super.setOccupantInfo(newInfo);
 
         // if the state has changed, dispatch an event 
         if (stateChanged) {
-            callUserCode("stateSet_v1", newInfo.getState());
-        }
-
-        if (triggerAppearanceChanged) {
-            appearanceChanged();
+            callUserCode("stateSet_v1", getActorInfo().getState());
         }
     }
 
-    /**
-     * Returns the occupant info for this actor.
-     */
-    public function getActorInfo () :ActorInfo
-    {
-        return _occInfo;
-    }
-
-    /**
-     * Returns the oid of the body that this actor represents.
-     */
-    public function getOid () :int
-    {
-        return _occInfo.bodyOid;
-    }
-
-    /**
-     * Updates the orientation of this actor.
-     */
-    public function setOrientation (orient :int, report :Boolean = true) :void
-    {
-        _loc.orient = orient;
-
-        // unless instructed otherwise, report that our appearance changed
-        if (report) {
-            appearanceChanged();
-        }
-    }
-
-    /**
-     * Effects the movement of this actor to a new location in the scene. This just animates the
-     * movement, and should be called as a result of the server informing us that we've moved.
-     */
-    public function moveTo (destLoc :MsoyLocation, scene :MsoyScene) :void
-    {
-        // if there's already a move, kill it
-        if (_walk != null) {
-            _walk.stopAnimation();
-        }
-
-        // set the orientation towards the new location
-        setOrientation(destLoc.orient, false);
-
-        _walk = new WalkAnimation(this, scene, _loc, destLoc);
-        _walk.startAnimation();
-        appearanceChanged();
-    }
-
-//    public function whirlOut (scene :MsoyScene) :void
-//    {
-//        _walk = new WhirlwindAnimation(this, scene, loc);
-//        _walk.start();
-//    }
-//
-//    public function whirlDone () :void
-//    {
-//        _walk = null;
-////        if (parent is RoomView) {
-////            (parent as RoomView).whirlDone(this);
-////        }
-//    }
-
-    /**
-     * @return true if we're moving.
-     */
-    public function isMoving () :Boolean
-    {
-        return (_walk != null);
-    }
-
-    /**
-     * @return true if we're idle.
-     */
-    public function isIdle () :Boolean
-    {
-        return (_occInfo.status == OccupantInfo.IDLE);
-    }
-
-    /**
-     * Stops the current motion of this actor.
-     */
-    public function stopMove () :void
-    {
-        if (_walk != null) {
-            _walk.stopAnimation();
-            _walk = null;
-        }
-    }
-
-    override public function getMaxContentWidth () :int
-    {
-        return MAX_WIDTH;
-    }
-
-    override public function getMaxContentHeight () :int
-    {
-        return MAX_HEIGHT;
-    }
-
-    override public function mouseClick (event :MouseEvent) :void
-    {
-        // see if it actually landed on a decoration
-        var decCons :Object = getDecorationAt(event.stageX, event.stageY);
-        if (decCons != null) {
-            // deliver it there
-            DisplayObject(decCons.dec).dispatchEvent(event);
-
-        } else {
-            // otherwise, do the standard thing
-            super.mouseClick(event);
-        }
-    }
-
-    override public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :String
-    {
-        // see if we're hovering over a new decoration..
-        var decorTip :String = null;
-        var hoverCons :Object = hovered ? getDecorationAt(stageX, stageY) : null;
-        var hoverDec :DisplayObject = (hoverCons == null) ? null : DisplayObject(hoverCons.dec);
-        if (hoverDec != _hoverDecoration) {
-            if (_hoverDecoration != null) {
-                _hoverDecoration.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OUT));
-            }
-            _hoverDecoration = hoverDec;
-            if (_hoverDecoration != null) {
-                _hoverDecoration.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER));
-            }
-        }
-        if (hoverDec != null) {
-            decorTip = hoverCons["toolTip"];
-        }
-
-        // always call super, but hover is only true if we hit no decorations
-        var superTip :String = super.setHovered((_hoverDecoration == null) && hovered);
-        return (_hoverDecoration == null) ? superTip : decorTip;
-    }
-
-    public function setChatOverlay (chatOverlay :ComicOverlay) :void
-    {
-        _chatOverlay = chatOverlay;
-    }
-
-    override protected function setGlow (glow :Boolean) :void
-    {
-        if (!glow) {
-            FilterUtil.removeFilter(_label, _glow);
-        }
-
-        super.setGlow(glow);
-
-        if (glow) {
-            FilterUtil.addFilter(_label, _glow);
-        }
-    }
-
-    override protected function scaleUpdated () :void
-    {
-        super.scaleUpdated();
-        recheckLabel();
-        arrangeDecorations();
-    }
-
-    override protected function contentDimensionsUpdated () :void
-    {
-        super.contentDimensionsUpdated();
-
-        // recheck our scale (TODO: this should perhaps be done differently, but we need to trace
-        // through the twisty loading process to find out for sure.
-        // scaleUpdated is specifically needed to be called to make the avatarviewer happy.
-        scaleUpdated();
-    }
-
-    override public function shutdown (completely :Boolean = true) :void
-    {
-        if (completely) {
-            stopMove();
-        }
-
-        super.shutdown(completely);
-    }
-
-    /**
-     * A callback from our walk animations.
-     */
-    public function walkCompleted (orient :Number) :void
-    {
-        _walk = null;
-        if (parent is RoomView) {
-            (parent as RoomView).moveFinished(this);
-        }
-        appearanceChanged();
-    }
-
+    // from OccupantSprite
     override public function toString () :String
     {
         return "ActorSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
     }
 
-    override public function setHotSpot (x :Number, y :Number, height :Number) :void
+    // from OccupantSprite
+    override protected function appearanceChanged () :void
     {
-        super.setHotSpot(x, y, height);
-        recheckLabel();
-        arrangeDecorations();
-    }
-
-    override protected function updateLoadingProgress (soFar :Number, total :Number) :void
-    {
-        var prog :Number = (total == 0) ? 0 : (soFar / total);
-
-        // always clear the old graphics
-        graphics.clear();
-
-        // and if we're still loading, draw a line showing progress
-        if (prog < 1) {
-            graphics.lineStyle(1, 0x00FF00);
-            graphics.moveTo(0, -1);
-            graphics.lineTo(prog * 100, -1);
-            graphics.lineStyle(1, 0xFF0000);
-            graphics.lineTo(100, -1);
-        }
-    }
-
-    /**
-     * Called to make sure the label's horizontal position is correct.
-     */
-    protected function recheckLabel () :void
-    {
-        var hotSpot :Point = getMediaHotSpot();
-        // note: may overflow the media area..
-        _label.x = Math.abs(getMediaScaleX() * _locScale * _fxScaleX) * hotSpot.x -
-            (_label.width/2);
-        // if we have a configured _height use that in relation to the hot spot y position,
-        // otherwise assume our label goes above our bounding box
-        var baseY :Number = isNaN(_height) ? 0 :
-            Math.abs(getMediaScaleY() * _locScale * _fxScaleY) * (hotSpot.y - _height);
-        _label.y = baseY - _label.height;
-    }
-
-    /**
-     * Handles an update to an effect's size/hotspot/etc.
-     */
-    protected function handleEffectUpdated (event :ValueEvent) :void
-    {
-        var effectSprite :EffectSprite = (event.target as EffectSprite);
-        var p :Point = effectSprite.getLayoutHotSpot();
-        effectSprite.x = getActualWidth()/2 - p.x;
-        effectSprite.y = getActualHeight()/2 - p.y;
-    }
-
-    /**
-     * Handle an effect that has finished playing.
-     */
-    protected function handleEffectFinished (event :ValueEvent) :void
-    {
-        var effectSprite :EffectSprite = (event.target as EffectSprite);
-        removeChild(effectSprite);
-    }
-
-    /**
-     * Arrange any external decorations above our name label.  Will notify the chat overlay
-     * displaying this speaker's bubbles that the bubble location has moved.
-     */
-    protected function arrangeDecorations () :void
-    {
-        // note: may overflow the media area..
-        var hotSpot :Point = getMediaHotSpot();
-        var hotX :Number = Math.abs(getMediaScaleX() * _locScale * _fxScaleX) * hotSpot.x;
-        if (_decorations == null) {
-            checkAndSetBubblePosition(new Point(hotX, _label.y));
-            return;
-        }
-
-        var baseY :Number = _label.y; // we depend on recheckLabel()
-
-        // place the decorations over the name label, with our best guess as to their size
-        for (var ii :int = 0; ii < _decorations.length; ii++) {
-            var dec :DisplayObject = DisplayObject(_decorations[ii].dec);
-            var rect :Rectangle = _decorations[ii]["bounds"] as Rectangle;
-            if (rect == null) {
-                rect = dec.getRect(dec);
-            }
-            baseY -= (rect.height + DECORATION_PAD);
-            dec.x = hotX - (rect.width/2) - rect.x;
-            dec.y = baseY - rect.y;
-        }
-
-        checkAndSetBubblePosition(new Point(hotX, baseY));
-    }
-
-    protected function checkAndSetBubblePosition (pos :Point) :void
-    {
-        var oldBubblePos :Point = _bubblePosition;
-        _bubblePosition = pos;
-        if (_chatOverlay != null && !_bubblePosition.equals(oldBubblePos)) {
-            // notify the overlay that its bubble position for this speaker moved
-            _chatOverlay.speakerMoved(_occInfo.username, getBubblePosition());
-        }
-    }
-
-    /**
-     * Return the decoration's constraints for the decoration under the
-     * specified stage coordinates.
-     */
-    protected function getDecorationAt (stageX :int, stageY :int) :Object
-    {
-        if (_decorations != null) {
-            for (var ii :int = 0; ii < _decorations.length; ii++) {
-                var disp :DisplayObject = (_decorations[ii].dec as DisplayObject);
-                if (disp.hitTestPoint(stageX, stageY, true)) {
-                    return _decorations[ii];
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Sort function for decoration constraints...
-     */
-    protected function decorationSort (cons1 :Object, cons2 :Object) :int
-    {
-        var w1 :Number = ("weight" in cons1) ? (cons1["weight"] as Number) : 0;
-        var w2 :Number = ("weight" in cons2) ? (cons2["weight"] as Number) : 0;
-
-        // higher weights have a higher priority
-        if (w1 > w2) {
-            return -1;
-
-        } else if (w1 < w2) {
-            return 1;
-
+        var locArray :Array = [ _loc.x, _loc.y, _loc.z ];
+        if (hasUserCode("appearanceChanged_v2")) {
+            callUserCode("appearanceChanged_v2", locArray, _loc.orient, isMoving(), isIdle());
         } else {
-            return 0;
+            callUserCode("appearanceChanged_v1", locArray, _loc.orient, isMoving());
         }
     }
 
-    protected function getStatusColor (status :int) :uint
-    {
-        switch (status) {
-        case OccupantInfo.IDLE:
-            return 0x777777;
-
-        case OccupantInfo.DISCONNECTED:
-            return 0xFF0000;
-
-        default:
-            return 0x99BFFF;
-        }
-    }
-
-    override protected function willShowNewMedia () :void
-    {
-        super.willShowNewMedia();
-
-        // reset the move speed and the _height
-        _moveSpeed = DEFAULT_MOVE_SPEED;
-        _height = NaN;
-    }
-
+    // from MsoySprite
     override protected function createBackend () :EntityBackend
     {
         return new ActorBackend();
     }
 
     /**
-     * Update the actor's scene location.
-     * Called by our backend in response to a request from usercode.
+     * Update the actor's scene location. Called by our backend in response to a request from
+     * usercode.
      */
     internal function setLocationFromUser (x :Number, y :Number, z: Number, orient :Number) :void
     {
@@ -709,163 +129,5 @@ public class ActorSprite extends MsoySprite
             _moveSpeed = speed;
         }
     }
-
-    /**
-     * Update the actor's state. Called by user code when it wants to change the actor's state.
-     */
-    public function setState (state :String) :void
-    {
-        if (_ident != null && (parent is RoomView) && validateUserData(state, null)) {
-            (parent as RoomView).getRoomController().setActorState(
-                _ident, _occInfo.bodyOid, state);
-        }
-    }
-
-    /**
-     * Get the actor's current state.  Called by user code.
-     */
-    public function getState () :String
-    {
-        return _occInfo.getState();
-    }
-
-    override public function getMediaScaleX () :Number
-    {
-        return _scale;
-    }
-
-    override public function getMediaScaleY () :Number
-    {
-        return _scale;
-    }
-
-    /**
-     * Called when the actor changes orientation or transitions between poses.
-     */
-    protected function appearanceChanged () :void
-    {
-        var locArray :Array = [ _loc.x, _loc.y, _loc.z ];
-        if (hasUserCode("appearanceChanged_v2")) {
-            callUserCode("appearanceChanged_v2", locArray, _loc.orient, isMoving(), isIdle());
-        } else {
-            callUserCode("appearanceChanged_v1", locArray, _loc.orient, isMoving());
-        }
-    }
-
-    /** A label containing the actor's name.
-     * Note that this is not a decoration, as decorations do their own seperate hit-testing
-     * and glowing, and we want the name label to be 'part' of the sprite. Also, the label
-     * was not working correctly with the "general purpose" layout code for decorations,
-     * which I believe to be the fault of the label (it was returning a negative X coordinate
-     * for its bounding rectangle, when in fact it should have started at 0). */
-    protected var _label :TextField;
-
-    protected var _occInfo :ActorInfo;
-    protected var _walk :WalkAnimation;
-
-    /** The media scale we should use. */
-    protected var _scale :Number = 1;
-
-    /** The move speed, in pixels per second. */
-    protected var _moveSpeed :Number = DEFAULT_MOVE_SPEED;
-
-    /** A decoration used when we're in a table in a lobby. */
-    protected var _tableIcon :TableIcon;
-
-    /** A decoration added when we've idled out. */
-    protected var _idleIcon :DisplayObject;
-
-    /** The chat overlay that we notify when we change position. */
-    protected var _chatOverlay :ComicOverlay;
-
-    /** Display objects to be shown above the name for this actor,
-     * configured by external callers. */
-    protected var _decorations :Array;
-
-    /** The current decoration being hovered over, if any. */
-    protected var _hoverDecoration :DisplayObject;
-
-    /** The point to center this speaker's bubbles on, in local coords. */
-    protected var _bubblePosition :Point;
-
-    protected static const DECORATION_PAD :int = 5;
-
-    [Embed(source="../../../../../../../rsrc/media/idle.swf")]
-    protected static const IDLE_ICON :Class;
 }
-}
-
-import flash.events.MouseEvent;
-
-import flash.filters.GlowFilter;
-
-import com.threerings.msoy.client.MsoyController;
-
-import com.threerings.msoy.game.data.GameSummary;
-
-import com.threerings.msoy.world.client.ActorSprite;
-import com.threerings.msoy.world.client.MsoySprite;
-
-import com.threerings.msoy.ui.ScalingMediaContainer;
-
-import com.threerings.util.CommandEvent;
-
-/**
- * A decoration used when this actor is at a table in a lobby.
- */
-class TableIcon extends ScalingMediaContainer
-{
-    public function TableIcon (host :ActorSprite, gameSummary :GameSummary)
-    {
-        super(30, 30);
-        _host = host;
-        _gameSummary = gameSummary;
-        setMediaDesc(gameSummary.getThumbMedia());
-
-        addEventListener(MouseEvent.MOUSE_OVER, handleMouseIn);
-        addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
-        addEventListener(MouseEvent.CLICK, handleMouseClick);
-    }
-
-    public function getGameSummary () :GameSummary
-    {
-        return _gameSummary;
-    }
-
-    override public function shutdown (completely :Boolean = true) :void
-    {
-        if (parent != null) {
-            _host.removeDecoration(this);
-        }
-        super.shutdown(completely);
-    }
-
-    override protected function contentDimensionsUpdated () :void
-    {
-        super.contentDimensionsUpdated();
-
-        // we wait until our size is known prior to adding ourselves
-        if (parent == null) {
-            _host.addDecoration(this, { toolTip: _gameSummary.name });
-        }
-    }
-
-    protected function handleMouseIn (... ignored) :void
-    {
-        this.filters = [ new GlowFilter(MsoySprite.GAME_HOVER, 1, 32, 32, 2) ];
-    }
-
-    protected function handleMouseOut (... ignored) :void
-    {
-        this.filters = null;
-    }
-
-    protected function handleMouseClick (... ignored) :void
-    {
-        CommandEvent.dispatch(this, MsoyController.JOIN_GAME_LOBBY, _gameSummary.gameId);
-    }
-
-    protected var _gameSummary :GameSummary;
-
-    protected var _host :ActorSprite;
 }

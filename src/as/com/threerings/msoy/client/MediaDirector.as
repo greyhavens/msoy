@@ -13,16 +13,19 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-import com.threerings.msoy.world.client.ActorSprite;
-import com.threerings.msoy.world.client.AvatarSprite;
 import com.threerings.msoy.world.client.DecorSprite;
 import com.threerings.msoy.world.client.FurniSprite;
+import com.threerings.msoy.world.client.MemberSprite;
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.OccupantSprite;
 import com.threerings.msoy.world.client.PetSprite;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.PetInfo;
 
+/**
+ * Handles the loading of various media.
+ */
 public class MediaDirector extends BasicDirector
 {
     public static const log :Log = Log.getLog(MediaDirector);
@@ -34,30 +37,31 @@ public class MediaDirector extends BasicDirector
     }
 
     /**
-     * Get an actor sprite for the specified occupant info, caching as appropriate.
+     * Creates an occupant sprite for the specified occupant info.
      */
-    public function getActor (occInfo :OccupantInfo) :ActorSprite
+    public function getSprite (occInfo :OccupantInfo) :OccupantSprite
     {
         var isOurs :Boolean = (occInfo.bodyOid == _ctx.getClient().getClientOid());
         if (isOurs && _ourAvatar != null) {
-            _ourAvatar.setActorInfo(occInfo as MemberInfo);
+            _ourAvatar.setOccupantInfo(occInfo);
             return _ourAvatar;
         }
 
-        var sprite :ActorSprite;
+        var sprite :OccupantSprite;
         if (occInfo is PetInfo) {
             sprite = new PetSprite(occInfo as PetInfo);
 
         } else if (occInfo is MemberInfo) {
-            sprite = new AvatarSprite(occInfo as MemberInfo);
+            sprite = new MemberSprite(occInfo as MemberInfo);
             if (isOurs) {
-                _ourAvatar = (sprite as AvatarSprite);
+                _ourAvatar = (sprite as MemberSprite);
             }
 
         } else {
-            log.warning("Requested to create sprite for unknown occupant " + occInfo + ".");
-            sprite = null; // TODO: freakout?
+            // TODO: probably we don't want this
+            sprite = new OccupantSprite(occInfo);
         }
+
         return sprite;
     }
 
@@ -103,6 +107,6 @@ public class MediaDirector extends BasicDirector
     protected var _mctx :WorldContext;
 
     /** Our very own avatar: avoid loading and unloading it. */
-    protected var _ourAvatar :AvatarSprite;
+    protected var _ourAvatar :MemberSprite;
 }
 }

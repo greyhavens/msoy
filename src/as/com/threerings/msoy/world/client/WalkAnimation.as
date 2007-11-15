@@ -14,13 +14,12 @@ import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 
 /**
- * Handles moving an ActorSprite around in a scene.
+ * Handles moving an occupant sprite around in a scene.
  */
 public class WalkAnimation extends AnimationImpl
 {
     public function WalkAnimation (
-        spr :ActorSprite, scene :MsoyScene,
-        src :MsoyLocation, dest :MsoyLocation)
+        spr :OccupantSprite, scene :MsoyScene, src :MsoyLocation, dest :MsoyLocation)
     {
         _sprite = spr;
         _source = [ src.x, src.y, src.z, src.orient ];
@@ -66,7 +65,7 @@ public class WalkAnimation extends AnimationImpl
     }
 
     /** The sprite we'll be moving. */
-    protected var _sprite :ActorSprite;
+    protected var _sprite :OccupantSprite;
 
     /** The source location. */
     protected var _source :Array;

@@ -342,7 +342,7 @@ public class RoomController extends SceneController
      */
     public function doAvatarState (state :String) :void
     {
-        var avatar :AvatarSprite = _roomView.getMyAvatar();
+        var avatar :MemberSprite = _roomView.getMyAvatar();
         setActorState(avatar.getItemIdent(), avatar.getOid(), state);
     }
 
@@ -451,7 +451,7 @@ public class RoomController extends SceneController
     /**
      * Handles AVATAR_CLICKED.
      */
-    public function handleAvatarClicked (avatar :AvatarSprite) :void
+    public function handleAvatarClicked (avatar :MemberSprite) :void
     {
         var occInfo :MemberInfo = (avatar.getActorInfo() as MemberInfo);
         if (occInfo == null) {
@@ -1351,7 +1351,7 @@ public class RoomController extends SceneController
             return;
         }
 
-        var av :AvatarSprite = _roomView.getMyAvatar();
+        var av :MemberSprite = _roomView.getMyAvatar();
         if (av != null) {
             var prefY :Number = av.getPreferredY() / _roomView.layout.metrics.sceneHeight;
             // but clamp their preferred Y into the normal range
@@ -1422,7 +1422,7 @@ public class RoomController extends SceneController
      */
     protected function addTransientEffect (bodyOid :int, effect :EffectData) :void
     {
-        var actor :ActorSprite = _roomView.getActor(bodyOid);
+        var actor :OccupantSprite = _roomView.getOccupant(bodyOid);
         if (actor != null) {
             actor.addTransientEffect(adjustEffectData(effect));
 

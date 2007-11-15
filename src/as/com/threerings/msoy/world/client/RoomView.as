@@ -134,12 +134,12 @@ public class RoomView extends AbstractRoomView
      */
     public function updateAvatarScale (avatarId :int, newScale :Number) :void
     {
-        var avatar :AvatarSprite = getMyAvatar();
+        var avatar :MemberSprite = getMyAvatar();
         if (avatar != null) {
-            var occInfo :MemberInfo = avatar.getActorInfo() as MemberInfo;
+            var occInfo :MemberInfo = (avatar.getOccupantInfo() as MemberInfo);
             if (occInfo.getItemIdent().equals(new ItemIdent(Item.AVATAR, avatarId))) {
                 occInfo.setScale(newScale);
-                avatar.setActorInfo(occInfo);
+                avatar.setOccupantInfo(occInfo);
             }
         }
     }
@@ -172,16 +172,16 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
-     * A callback from actor sprites.
+     * A callback from occupant sprites.
      */
-    public function moveFinished (sprite :ActorSprite) :void
+    public function moveFinished (sprite :OccupantSprite) :void
     {
 //        if (_pendingRemovals.get(sprite.getOid()) != null) {
 //            sprite.whirlOut(_scene);
 //        }
 //    }
 //
-//    public function whirlDone (sprite :ActorSprite) :void
+//    public function whirlDone (sprite :OccupantSprite) :void
 //    {
         if (sprite.getOid() == _ctx.getMemberObject().getOid()) {
             _ctx.getGameDirector().tutorialEvent("playerMoved");
@@ -223,7 +223,7 @@ public class RoomView extends AbstractRoomView
 
     public function dimAvatars (setDim :Boolean) :void
     {
-        setActive(_actors, !setDim);
+        setActive(_occupants, !setDim);
         setActive(_pendingRemovals, !setDim);
     }
 
@@ -294,7 +294,7 @@ public class RoomView extends AbstractRoomView
      */
     public function getMyActions () :Array
     {
-        var avatar :AvatarSprite = getMyAvatar();
+        var avatar :MemberSprite = getMyAvatar();
         return (avatar != null) ? avatar.getAvatarActions() : [];
     }
 
@@ -303,39 +303,39 @@ public class RoomView extends AbstractRoomView
      */
     public function getMyStates () :Array
     {
-        var avatar :AvatarSprite = getMyAvatar();
+        var avatar :MemberSprite = getMyAvatar();
         return (avatar != null) ? avatar.getAvatarStates() : [];
     }
 
     /**
      * A convenience function to get our personal avatar.
      */
-    public function getMyAvatar () :AvatarSprite
+    public function getMyAvatar () :MemberSprite
     {
-        return (getActor(_ctx.getClient().getClientOid()) as AvatarSprite);
+        return (getOccupant(_ctx.getClient().getClientOid()) as MemberSprite);
     }
 
     /**
-     * A convenience function to get the specified actor sprite, even if
-     * it's on the way out the door.
+     * A convenience function to get the specified occupant sprite, even if it's on the way out the
+     * door.
      */
-    public function getActor (bodyOid :int) :ActorSprite
+    public function getOccupant (bodyOid :int) :OccupantSprite
     {
-        var actor :ActorSprite = (_actors.get(bodyOid) as ActorSprite);
-        if (actor == null) {
-            actor = (_pendingRemovals.get(bodyOid) as ActorSprite);
+        var sprite :OccupantSprite = (_occupants.get(bodyOid) as OccupantSprite);
+        if (sprite == null) {
+            sprite = (_pendingRemovals.get(bodyOid) as OccupantSprite);
         }
-        return actor;
+        return sprite;
     }
 
     /**
-     * A convenience function to get the specified actor sprite, even if
-     * it's on the way out the door.
+     * A convenience function to get the specified occupant sprite, even if it's on the way out the
+     * door.
      */
-    public function getActorByName (name :Name) :ActorSprite
+    public function getOccupantByName (name :Name) :OccupantSprite
     {
         var occInfo :OccupantInfo = _roomObj.getOccupantInfo(name);
-        return (occInfo == null) ? null : getActor(occInfo.bodyOid);
+        return (occInfo == null) ? null : getOccupant(occInfo.bodyOid);
     }
 
     /**
@@ -343,9 +343,9 @@ public class RoomView extends AbstractRoomView
      */
     public function getPets () :Array /* of PetSprite */
     {
-        return _actors.values().filter(function (o :*, i :int, a :Array) :Boolean {
-                return (o is PetSprite);
-            });
+        return _occupants.values().filter(function (o :*, i :int, a :Array) :Boolean {
+            return (o is PetSprite);
+        });
     }
     
     /**
@@ -353,7 +353,7 @@ public class RoomView extends AbstractRoomView
      */
     public function getMyCurrentLocation () :MsoyLocation
     {
-        var avatar :AvatarSprite = getMyAvatar();
+        var avatar :MemberSprite = getMyAvatar();
         if (avatar != null) {
             return avatar.getLocation();
         } else {
@@ -367,7 +367,7 @@ public class RoomView extends AbstractRoomView
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
-            addBody((event.getEntry() as ActorInfo).getBodyOid());
+            addBody(event.getEntry() as OccupantInfo);
 
         } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
             var sceneLoc :SceneLocation = (event.getEntry() as SceneLocation);
@@ -412,7 +412,7 @@ public class RoomView extends AbstractRoomView
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
-            removeBody((event.getOldEntry() as ActorInfo).getBodyOid());
+            removeBody((event.getOldEntry() as OccupantInfo).getBodyOid());
 
         } else if (RoomObject.EFFECTS == name) {
             removeEffect(event.getKey() as int);
@@ -434,8 +434,8 @@ public class RoomView extends AbstractRoomView
     // from ChatInfoProvider
     public function getBubblePosition (speaker :Name) :Point
     {
-        var actor :ActorSprite = getActorByName(speaker);
-        return (actor == null) ? null : actor.getBubblePosition();
+        var sprite :OccupantSprite = getOccupantByName(speaker);
+        return (sprite == null) ? null : sprite.getBubblePosition();
     }
 
     // from ChatInfoProvider
@@ -447,17 +447,17 @@ public class RoomView extends AbstractRoomView
         // iterate over occupants
         var myOid :int = _ctx.getClient().getClientOid();
         for (var ii :int = _roomObj.occupants.size() - 1; ii >= 0; ii--) {
-            var actor :ActorSprite = getActor(_roomObj.occupants.get(ii));
-            if (actor == null) {
+            var sprite :OccupantSprite = getOccupant(_roomObj.occupants.get(ii));
+            if (sprite == null) {
                 continue;
             }
-            var actorInfo :ActorInfo = actor.getActorInfo();
-            if ((actorInfo.bodyOid == myOid) ||
-                (speaker != null && speaker.equals(actorInfo.username))) {
-                high.push(actor.getStageRect());
+            var occInfo :OccupantInfo = sprite.getOccupantInfo();
+            if ((occInfo.bodyOid == myOid) ||
+                (speaker != null && speaker.equals(occInfo.username))) {
+                high.push(sprite.getStageRect());
 
             } else if (low != null) {
-                low.push(actor.getStageRect());
+                low.push(sprite.getStageRect());
             }
         }
     }
@@ -476,8 +476,8 @@ public class RoomView extends AbstractRoomView
             if (umsg.speaker.equals(_ctx.getMemberObject().memberName)) {
                 _ctx.getGameDirector().tutorialEvent("playerSpoke");
             }
-            var avatar :AvatarSprite =
-                (getActorByName(umsg.getSpeakerDisplayName()) as AvatarSprite);
+            var avatar :MemberSprite =
+                (getOccupantByName(umsg.getSpeakerDisplayName()) as MemberSprite);
             if (avatar != null) {
                 avatar.performAvatarSpoke();
             }
@@ -647,7 +647,7 @@ public class RoomView extends AbstractRoomView
         }
 
         var sprite :MsoySprite;
-        for each (sprite in _actors.values()) {
+        for each (sprite in _occupants.values()) {
             locationUpdated(sprite);
         }
         for each (sprite in _pendingRemovals.values()) {
@@ -727,99 +727,96 @@ public class RoomView extends AbstractRoomView
         _suppressAutoScroll = false;
     }
 
-    protected function addBody (bodyOid :int) :void
+    protected function addBody (occInfo :OccupantInfo) :void
     {
         if (!shouldLoadAll()) {
             return;
         }
 
-        var occInfo :OccupantInfo = (_roomObj.occupantInfo.get(bodyOid) as OccupantInfo);
-        if (!(occInfo is ActorInfo)) {
-            return; // don't add viewOnly occupants
-        }
+        // TODO: handle viewonly occupants
 
-        var actorInfo :ActorInfo = (occInfo as ActorInfo);
+        var bodyOid :int = occInfo.getBodyOid();
         var sloc :SceneLocation = (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
-        // see if the actor was already created, pending removal
-        var actor :ActorSprite = (_pendingRemovals.remove(bodyOid) as ActorSprite);
+        // see if the occupant was already created, pending removal
+        var occupant :OccupantSprite = (_pendingRemovals.remove(bodyOid) as OccupantSprite);
 
-        if (actor == null) {
-            actor = _ctx.getMediaDirector().getActor(actorInfo);
-            actor.setChatOverlay(chatOverlay);
-            _actors.put(bodyOid, actor);
-            addChildAt(actor, 1);
-            actor.setEntering(loc);
+        if (occupant == null) {
+            occupant = _ctx.getMediaDirector().getSprite(occInfo);
+            occupant.setChatOverlay(chatOverlay);
+            _occupants.put(bodyOid, occupant);
+            addChildAt(occupant, 1);
+            occupant.setEntering(loc);
 
             // if we ever add ourselves, we follow it
             if (bodyOid == _ctx.getClient().getClientOid()) {
                 setFastCentering(true);
-                setCenterSprite(actor);
+                setCenterSprite(occupant);
             }
 
         } else {
             // place the sprite back into the set of active sprites
-            _actors.put(bodyOid, actor);
-            actor.setChatOverlay(chatOverlay);
-            actor.moveTo(loc, _scene);
+            _occupants.put(bodyOid, occupant);
+            occupant.setChatOverlay(chatOverlay);
+            occupant.moveTo(loc, _scene);
         }
 
-        // map the actor sprite in the entities table
-        _entities.put(actorInfo.getItemIdent(), actor);
+        // map the occupant sprite in the entities table
+        if (occupant is ActorSprite) {
+            var ident :ItemIdent = (occInfo as ActorInfo).getItemIdent();
+            _entities.put(ident, occupant);
 
-        // if this actor is a pet, notify GWT that we've got a new pet in the room.
-        if (actor is PetSprite) {
-            (_ctx.getClient() as WorldClient).dispatchEventToGWT(PET_EVENT, 
-                [true, actor.getItemIdent().itemId]);
+            // if this occupant is a pet, notify GWT that we've got a new pet in the room.
+            if (occupant is PetSprite) {
+                (_ctx.getClient() as WorldClient).dispatchEventToGWT(
+                    PET_EVENT, [true, ident.itemId]);
+            }
         }
     }
 
     protected function removeBody (bodyOid :int) :void
     {
-        var actor :ActorSprite = (_actors.remove(bodyOid) as ActorSprite);
-        if (actor != null) {
-            if (actor.isMoving()) {
-                _pendingRemovals.put(bodyOid, actor);
+        var sprite :OccupantSprite = (_occupants.remove(bodyOid) as OccupantSprite);
+        if (sprite != null) {
+            if (sprite.isMoving()) {
+                _pendingRemovals.put(bodyOid, sprite);
             } else {
-                removeSprite(actor);
+                removeSprite(sprite);
             }
 
-            // if this actor is a pet, notify GWT that we've removed a pet from the room.
-            if (actor is PetSprite) {
-                (_ctx.getClient() as WorldClient).dispatchEventToGWT(PET_EVENT, 
-                    [false, actor.getItemIdent().itemId]);
+            // if this occupant is a pet, notify GWT that we've removed a pet from the room.
+            if (sprite is PetSprite) {
+                (_ctx.getClient() as WorldClient).dispatchEventToGWT(
+                    PET_EVENT, [false, sprite.getItemIdent().itemId]);
             }
         }
     }
 
     protected function moveBody (bodyOid :int) :void
     {
-        var actor :ActorSprite = (_actors.get(bodyOid) as ActorSprite);
+        var sprite :OccupantSprite = (_occupants.get(bodyOid) as OccupantSprite);
         var sloc :SceneLocation = (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
-        var loc :MsoyLocation = (sloc.loc as MsoyLocation);
-        actor.moveTo(loc, _scene);
+        sprite.moveTo(sloc.loc as MsoyLocation, _scene);
     }
 
     protected function updateBody (newInfo :OccupantInfo, oldInfo :OccupantInfo) :void
     {
-        var newAInfo :ActorInfo = (newInfo as ActorInfo);
-        if (newAInfo == null) {
-            return; // we have nothing to update if this is not an actor
-        }
-
-        var actor :ActorSprite = (_actors.get(newInfo.getBodyOid()) as ActorSprite);
-        if (actor == null) {
-            if (newInfo is ActorInfo) {
-                log.warning("No sprite for updated actor? [info=" + newInfo + "].");
-            }
+        var sprite :OccupantSprite = (_occupants.get(newInfo.getBodyOid()) as OccupantSprite);
+        if (sprite == null) {
+// TODO: ?
+//             if (newInfo is ActorInfo) {
+//                 log.warning("No sprite for updated occupant? [info=" + newInfo + "].");
+//             }
             return;
         }
-        actor.setActorInfo(newAInfo);
+        sprite.setOccupantInfo(newInfo);
 
         // update the entities table
-        _entities.remove((oldInfo as ActorInfo).getItemIdent());
-        _entities.put(newAInfo.getItemIdent(), actor);
+        if (newInfo is ActorInfo) {
+            _entities.remove((oldInfo as ActorInfo).getItemIdent());
+            _entities.put((newInfo as ActorInfo).getItemIdent(), sprite);
+        }
     }
 
     protected function addEffect (effect :EffectData) :FurniSprite
@@ -924,20 +921,22 @@ public class RoomView extends AbstractRoomView
 
     protected function addAllOccupants () :void
     {
-        if (shouldLoadAll()) {
-            // add all currently present occupants
-            for (var ii :int = _roomObj.occupants.size() - 1; ii >= 0; ii--) {
-                var bodyOid :int = _roomObj.occupants.get(ii);
-                if (! _actors.containsKey(bodyOid)) {
-                    addBody(bodyOid);
-                }
+        if (!shouldLoadAll()) {
+            return;
+        }
+
+        // add all currently present occupants
+        for (var ii :int = _roomObj.occupantInfo.size() - 1; ii >= 0; ii--) {
+            var occInfo :OccupantInfo = (_roomObj.occupantInfo.get(ii) as OccupantInfo);
+            if (!_occupants.containsKey(occInfo.getBodyOid())) {
+                addBody(occInfo);
             }
         }
     }
 
     protected function removeAllOccupants () :void
     {
-        removeAll(_actors);
+        removeAll(_occupants);
         removeAll(_pendingRemovals);
     }
 
@@ -970,8 +969,8 @@ public class RoomView extends AbstractRoomView
     /** The spinner to show when we're loading room data. */
     protected var _loadingSpinner :DisplayObject;
 
-    /** A map of bodyOid -> ActorSprite. */
-    protected var _actors :HashMap = new HashMap();
+    /** A map of bodyOid -> OccupantSprite. */
+    protected var _occupants :HashMap = new HashMap();
 
     /** Maps ItemIdent -> MsoySprite for entities (furni, avatars, pets). */
     protected var _entities :HashMap = new HashMap();
@@ -982,7 +981,7 @@ public class RoomView extends AbstractRoomView
     /** The sprite we should center on. */
     protected var _centerSprite :MsoySprite;
 
-    /** A map of bodyOid -> ActorSprite for those that we'll remove when they stop moving. */
+    /** A map of bodyOid -> OccupantSprite for those that we'll remove when they stop moving. */
     protected var _pendingRemovals :HashMap = new HashMap();
 
     /** Should we be using our chat overlay? */

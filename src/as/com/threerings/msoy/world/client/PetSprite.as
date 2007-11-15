@@ -18,42 +18,6 @@ public class PetSprite extends ActorSprite
         super(occInfo);
     }
 
-    override public function getDesc () :String
-    {
-        return "m.pet";
-    }
-
-    override public function getHoverColor () :uint
-    {
-        return PET_HOVER;
-    }
-
-    override public function hasAction () :Boolean
-    {
-        return true;
-    }
-
-    override public function toString () :String
-    {
-        return "PetSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
-    }
-
-    override protected function getStatusColor (status :int) :uint
-    {
-        // all pets are white-named
-        return 0xFFFFFF;
-    }
-
-    override protected function postClickAction () :void
-    {
-        CommandEvent.dispatch(this, RoomController.PET_CLICKED, this);
-    }
-
-    override protected function createBackend () :EntityBackend
-    {
-        return new PetBackend();
-    }
-
     /**
      * This function sends a chat message to the entire room. Called by our backend
      * in response to a request from usercode.
@@ -71,6 +35,49 @@ public class PetSprite extends ActorSprite
     public function processChatMessage (msg :UserMessage) :void
     {
         callUserCode("receivedChat_v1", msg.getSpeakerDisplayName().toString(), msg.message);
+    }
+
+    // from ActorSprite
+    override public function getDesc () :String
+    {
+        return "m.pet";
+    }
+
+    // from MsoySprite
+    override public function getHoverColor () :uint
+    {
+        return PET_HOVER;
+    }
+
+    // from MsoySprite
+    override public function hasAction () :Boolean
+    {
+        return true;
+    }
+
+    // from ActorSprite
+    override public function toString () :String
+    {
+        return "PetSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
+    }
+
+    // from OccupantSprite
+    override protected function getStatusColor (status :int) :uint
+    {
+        // all pets are white-named
+        return 0xFFFFFF;
+    }
+
+    // from MsoySprite
+    override protected function postClickAction () :void
+    {
+        CommandEvent.dispatch(this, RoomController.PET_CLICKED, this);
+    }
+
+    // from ActorSprite
+    override protected function createBackend () :EntityBackend
+    {
+        return new PetBackend();
     }
 }
 }
