@@ -7,7 +7,7 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.item.data.all.Pet;
-import com.threerings.msoy.world.data.WorldPetInfo;
+import com.threerings.msoy.world.data.PetInfo;
 
 /**
  * Contains the distributed state associated with a Pet.
@@ -31,7 +31,7 @@ public class PetObject extends MsoyBodyObject
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
-        return new WorldPetInfo(this, followId != 0);
+        return new PetInfo(this, followId != 0);
     }
 
     // AUTO-GENERATED: METHODS START

@@ -65,7 +65,6 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldClient;
 import com.threerings.msoy.client.WorldContext;
-import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.chat.client.ChatInfoProvider;
@@ -74,20 +73,22 @@ import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
+
+import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
-import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.EffectData;
+import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.data.PetInfo;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
-import com.threerings.msoy.world.data.WorldPetInfo;
-import com.threerings.msoy.world.data.WorldMemberInfo;
 
 /**
  * Displays a room or scene in the virtual world.
@@ -128,15 +129,14 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
-     * Update the 'my' user's specified avatar's scale, non-permanently.
-     * This is called via the avatarviewer, so that scale changes they make are instantly
-     * viewable in the world.
+     * Update the 'my' user's specified avatar's scale, non-permanently.  This is called via the
+     * avatar viewer, so that scale changes they make are instantly viewable in the world.
      */
     public function updateAvatarScale (avatarId :int, newScale :Number) :void
     {
         var avatar :AvatarSprite = getMyAvatar();
         if (avatar != null) {
-            var occInfo :WorldMemberInfo = avatar.getActorInfo() as WorldMemberInfo;
+            var occInfo :MemberInfo = avatar.getActorInfo() as MemberInfo;
             if (occInfo.getItemIdent().equals(new ItemIdent(Item.AVATAR, avatarId))) {
                 occInfo.setScale(newScale);
                 avatar.setActorInfo(occInfo);
@@ -393,7 +393,7 @@ public class RoomView extends AbstractRoomView
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
-            updateBody(event.getEntry() as ActorInfo, event.getOldEntry() as ActorInfo);
+            updateBody(event.getEntry() as OccupantInfo, event.getOldEntry() as OccupantInfo);
 
         } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
             moveBody((event.getEntry() as SceneLocation).bodyOid);
@@ -453,7 +453,7 @@ public class RoomView extends AbstractRoomView
             }
             var actorInfo :ActorInfo = actor.getActorInfo();
             if ((actorInfo.bodyOid == myOid) ||
-                    (speaker != null && speaker.equals(actorInfo.username))) {
+                (speaker != null && speaker.equals(actorInfo.username))) {
                 high.push(actor.getStageRect());
 
             } else if (low != null) {
@@ -733,11 +733,12 @@ public class RoomView extends AbstractRoomView
             return;
         }
 
-        var occInfo :ActorInfo = (_roomObj.occupantInfo.get(bodyOid) as ActorInfo);
-        if (occInfo is WorldMemberInfo && (occInfo as WorldMemberInfo).viewOnly) {
-            // don't add viewOnly actors.
-            return;
+        var occInfo :OccupantInfo = (_roomObj.occupantInfo.get(bodyOid) as OccupantInfo);
+        if (!(occInfo is ActorInfo)) {
+            return; // don't add viewOnly occupants
         }
+
+        var actorInfo :ActorInfo = (occInfo as ActorInfo);
         var sloc :SceneLocation = (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
@@ -745,7 +746,7 @@ public class RoomView extends AbstractRoomView
         var actor :ActorSprite = (_pendingRemovals.remove(bodyOid) as ActorSprite);
 
         if (actor == null) {
-            actor = _ctx.getMediaDirector().getActor(occInfo);
+            actor = _ctx.getMediaDirector().getActor(actorInfo);
             actor.setChatOverlay(chatOverlay);
             _actors.put(bodyOid, actor);
             addChildAt(actor, 1);
@@ -765,7 +766,7 @@ public class RoomView extends AbstractRoomView
         }
 
         // map the actor sprite in the entities table
-        _entities.put(occInfo.getItemIdent(), actor);
+        _entities.put(actorInfo.getItemIdent(), actor);
 
         // if this actor is a pet, notify GWT that we've got a new pet in the room.
         if (actor is PetSprite) {
@@ -800,20 +801,25 @@ public class RoomView extends AbstractRoomView
         actor.moveTo(loc, _scene);
     }
 
-    protected function updateBody (newInfo :ActorInfo, oldInfo :ActorInfo) :void
+    protected function updateBody (newInfo :OccupantInfo, oldInfo :OccupantInfo) :void
     {
+        var newAInfo :ActorInfo = (newInfo as ActorInfo);
+        if (newAInfo == null) {
+            return; // we have nothing to update if this is not an actor
+        }
+
         var actor :ActorSprite = (_actors.get(newInfo.getBodyOid()) as ActorSprite);
         if (actor == null) {
-            if (!(newInfo is WorldMemberInfo) || !(newInfo as WorldMemberInfo).viewOnly) {
-                log.warning("No actor for updated occupant? [info=" + newInfo + "].");
+            if (newInfo is ActorInfo) {
+                log.warning("No sprite for updated actor? [info=" + newInfo + "].");
             }
             return;
         }
-        actor.setActorInfo(newInfo);
+        actor.setActorInfo(newAInfo);
 
         // update the entities table
-        _entities.remove(oldInfo.getItemIdent());
-        _entities.put(newInfo.getItemIdent(), actor);
+        _entities.remove((oldInfo as ActorInfo).getItemIdent());
+        _entities.put(newAInfo.getItemIdent(), actor);
     }
 
     protected function addEffect (effect :EffectData) :FurniSprite

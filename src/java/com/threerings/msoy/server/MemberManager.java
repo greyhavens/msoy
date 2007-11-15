@@ -672,7 +672,7 @@ public class MemberManager
                     }
                 });
                 user.setAvatar(avatar);
-                user.avatarState = null; // clear out the state
+                user.actorState = null; // clear out their state
                 updateOccupantInfo(user);
                 listener.requestProcessed();
             }

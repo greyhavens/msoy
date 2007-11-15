@@ -6,14 +6,14 @@ package com.threerings.msoy.world.client {
 import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.util.CommandEvent;
 
-import com.threerings.msoy.data.ActorInfo;
+import com.threerings.msoy.world.data.PetInfo;
 
 /**
  * Extends {@link ActorSprite} with pet-specific stuff.
  */
 public class PetSprite extends ActorSprite
 {
-    public function PetSprite (occInfo :ActorInfo)
+    public function PetSprite (occInfo :PetInfo)
     {
         super(occInfo);
     }

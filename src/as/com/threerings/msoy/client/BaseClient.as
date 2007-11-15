@@ -44,7 +44,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
-import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
@@ -120,7 +119,6 @@ public /*abstract*/ class BaseClient extends Client
         var c :Class;
         c = MsoyBootstrapData;
         c = MemberObject;
-        c = MemberInfo;
         c = MsoyAuthResponseData;
         c = MemberMarshaller;
         c = SceneBookmarkEntry;

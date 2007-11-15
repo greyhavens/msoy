@@ -8,10 +8,10 @@ import com.threerings.util.Log;
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.ClientEvent;
 
+import com.threerings.crowd.data.OccupantInfo;
+
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
-import com.threerings.msoy.data.ActorInfo;
 
 import com.threerings.msoy.world.client.ActorSprite;
 import com.threerings.msoy.world.client.AvatarSprite;
@@ -20,9 +20,8 @@ import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.PetSprite;
 import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.data.WorldActorInfo;
-import com.threerings.msoy.world.data.WorldMemberInfo;
-import com.threerings.msoy.world.data.WorldPetInfo;
+import com.threerings.msoy.world.data.MemberInfo;
+import com.threerings.msoy.world.data.PetInfo;
 
 public class MediaDirector extends BasicDirector
 {
@@ -37,27 +36,27 @@ public class MediaDirector extends BasicDirector
     /**
      * Get an actor sprite for the specified occupant info, caching as appropriate.
      */
-    public function getActor (occInfo :ActorInfo) :ActorSprite
+    public function getActor (occInfo :OccupantInfo) :ActorSprite
     {
         var isOurs :Boolean = (occInfo.bodyOid == _ctx.getClient().getClientOid());
         if (isOurs && _ourAvatar != null) {
-            _ourAvatar.setActorInfo(occInfo);
+            _ourAvatar.setActorInfo(occInfo as MemberInfo);
             return _ourAvatar;
         }
 
         var sprite :ActorSprite;
-        if (occInfo is WorldPetInfo) {
-            sprite = new PetSprite(occInfo);
+        if (occInfo is PetInfo) {
+            sprite = new PetSprite(occInfo as PetInfo);
 
-        } else if (occInfo is WorldMemberInfo || occInfo is WorldActorInfo) {
-            sprite = new AvatarSprite(occInfo);
+        } else if (occInfo is MemberInfo) {
+            sprite = new AvatarSprite(occInfo as MemberInfo);
             if (isOurs) {
                 _ourAvatar = (sprite as AvatarSprite);
             }
 
         } else {
             log.warning("Requested to create sprite for unknown occupant " + occInfo + ".");
-            // TODO: freakout?
+            sprite = null; // TODO: freakout?
         }
         return sprite;
     }

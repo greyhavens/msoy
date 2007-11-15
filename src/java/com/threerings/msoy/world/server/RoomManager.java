@@ -36,7 +36,6 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.server.SpotSceneManager;
 
-import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
@@ -49,10 +48,12 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.world.client.RoomService;
+import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -63,9 +64,6 @@ import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomMarshaller;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
-import com.threerings.msoy.world.data.WorldActorInfo;
-import com.threerings.msoy.world.data.WorldMemberInfo;
-import com.threerings.msoy.world.data.WorldOccupantInfo;
 
 import com.threerings.msoy.world.server.persist.MemoryRecord;
 
@@ -148,30 +146,28 @@ public class RoomManager extends SpotSceneManager
      */
     public void setState (MsoyBodyObject actor, String state)
     {
-        // update the state in the body object
-        actor.avatarState = state;
+        // update the state in their body object
+        actor.actorState = state;
 
         // update the occupant info
         OccupantInfo occInfo = getOccupantInfo(actor.getOid());
-        WorldOccupantInfo winfo = (WorldOccupantInfo) occInfo;
-        // if they're no longer here, or there was no change, we're done.
-        if (winfo == null || ObjectUtil.equals(winfo.getState(), state)) {
+        if (occInfo == null) {
+            return; // if they're gone, no problem
+        }
+        if (!(occInfo instanceof ActorInfo)) {
+            log.warning("Cannot update state for non-actor: " + occInfo);
             return;
         }
 
-        // TODO: consider, instead of updating the whole dang occInfo,
-        // of dispatching a custom event that will update the state
-        // and serve as the trigger event to usercode...
-        if (occInfo instanceof WorldMemberInfo) {
-            ((WorldMemberInfo) occInfo).state = state;
-
-        } else if (occInfo instanceof WorldActorInfo) {
-            ((WorldActorInfo) occInfo).state = state;
-
-        } else {
-            log.warning("Wtf kind of occupant info is this: " + occInfo);
+        ActorInfo winfo = (ActorInfo) occInfo;
+        if (ObjectUtil.equals(winfo.getState(), state)) {
+            return; // if there was no change, we're done.
         }
-        updateOccupantInfo(occInfo);
+
+        // TODO: consider, instead of updating the whole dang occInfo, dispatching a custom event
+        // that will update just the state and serve as the trigger event to usercode...
+        winfo.setState(state);
+        updateOccupantInfo(winfo);
     }
 
     @Override // from SpotSceneManager
@@ -759,7 +755,7 @@ public class RoomManager extends SpotSceneManager
         // determine the available controllers
         HashIntMap<Controller> controllers = new HashIntMap<Controller>();
         for (OccupantInfo info : _roomObj.occupantInfo) {
-            if (info instanceof WorldMemberInfo && info.status == OccupantInfo.ACTIVE) {
+            if (info instanceof MemberInfo && info.status == OccupantInfo.ACTIVE) {
                 controllers.put(info.bodyOid, new Controller(info.bodyOid));
             }
         }
@@ -885,7 +881,7 @@ public class RoomManager extends SpotSceneManager
         {
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
-                updateAvatarIdent(null, event.getEntry());
+                updateAvatarIdent(null, (OccupantInfo)event.getEntry());
             }
         }
 
@@ -894,7 +890,7 @@ public class RoomManager extends SpotSceneManager
         {
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
-                updateAvatarIdent(event.getOldEntry(), event.getEntry());
+                updateAvatarIdent((OccupantInfo)event.getOldEntry(), (OccupantInfo)event.getEntry());
             }
         }
 
@@ -903,27 +899,21 @@ public class RoomManager extends SpotSceneManager
         {
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
-                updateAvatarIdent(event.getOldEntry(), null);
+                updateAvatarIdent((OccupantInfo)event.getOldEntry(), null);
             }
         }
 
         /**
-         * Maintain a mapping of ItemIdent -> oid for all WorldMemberInfos.
+         * Maintain a mapping of ItemIdent -> oid for all MemberInfos.
          */
-        protected void updateAvatarIdent (Object oldInfo, Object newInfo)
+        protected void updateAvatarIdent (OccupantInfo oldInfo, OccupantInfo newInfo)
         {
-            // we only track WorldMemberInfo, as those are the only things
-            // that represent MemberObjects
-
-            WorldMemberInfo info;
-            if (oldInfo instanceof WorldMemberInfo) {
-                info = (WorldMemberInfo) oldInfo;
-                _avatarIdents.remove(info.getItemIdent());
+            // we only track MemberInfo, as those are the only things that represent MemberObjects
+            if (oldInfo instanceof MemberInfo) {
+                _avatarIdents.remove(((MemberInfo)oldInfo).getItemIdent());
             }
-
-            if (newInfo instanceof WorldMemberInfo) {
-                info = (WorldMemberInfo) newInfo;
-                _avatarIdents.put(info.getItemIdent(), info.bodyOid);
+            if (newInfo instanceof MemberInfo) {
+                _avatarIdents.put(((MemberInfo)newInfo).getItemIdent(), newInfo.bodyOid);
             }
         }
     }
@@ -955,7 +945,7 @@ public class RoomManager extends SpotSceneManager
     /** Listens to the room object. */
     protected RoomListener _roomListener = new RoomListener();
 
-    /** For all WorldMemberInfo's, a mapping of ItemIdent to the member's oid. */
+    /** For all MemberInfo's, a mapping of ItemIdent to the member's oid. */
     protected Map<ItemIdent,Integer> _avatarIdents = Maps.newHashMap();
 
     /** The next id to use for an effect. */

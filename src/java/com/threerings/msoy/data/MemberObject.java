@@ -20,7 +20,7 @@ import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.world.data.RoomObject;
-import com.threerings.msoy.world.data.WorldMemberInfo;
+import com.threerings.msoy.world.data.MemberInfo;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupMembership;
@@ -306,11 +306,7 @@ public class MemberObject extends MsoyBodyObject
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
-        if (plobj instanceof RoomObject) {
-            return new WorldMemberInfo(this);
-        } else {
-            return new MemberInfo(this);
-        }
+        return new MemberInfo(this);
     }
 
     @Override // from BodyObject

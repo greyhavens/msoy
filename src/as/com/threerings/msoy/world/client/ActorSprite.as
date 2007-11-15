@@ -29,19 +29,18 @@ import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.chat.client.ComicOverlay;
 
-import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.client.WorldContext;
 
+import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.EffectData;
+import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
-import com.threerings.msoy.world.data.WorldOccupantInfo;
-import com.threerings.msoy.world.data.WorldMemberInfo;
-import com.threerings.msoy.world.data.WorldPetInfo;
+import com.threerings.msoy.world.data.PetInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
 
@@ -88,7 +87,7 @@ public class ActorSprite extends MsoySprite
         _label.defaultTextFormat = labelFormat;
         _label.filters = [ new GlowFilter(0, 1, 2, 2, 255) ];
         addChild(_label);
-        
+
         if (occInfo != null) {
             setActorInfo(occInfo);
         }
@@ -194,14 +193,11 @@ public class ActorSprite extends MsoySprite
 
     override public function getDesc () :String
     {
-        if (_occInfo is WorldPetInfo) {
-            return "m.pet";
-        }
-        return "m.actor";
+        return (_occInfo is PetInfo) ? "m.pet" : "m.actor";
     }
 
     /**
-     * Retuns the position, in stage coordinates, where bubbles should draw up from (vertically), 
+     * Retuns the position, in stage coordinates, where bubbles should draw up from (vertically),
      * and center on (horizontally).
      */
     public function getBubblePosition () :Point
@@ -213,7 +209,7 @@ public class ActorSprite extends MsoySprite
     override public function getStageRect (includeExtras :Boolean = true) :Rectangle
     {
         // Note: Ideally we could just return getRect(stage), but that seems to pay too
-        // much attention to our mask. 
+        // much attention to our mask.
         var r :Rectangle = super.getStageRect();
 
         if (includeExtras) {
@@ -243,36 +239,33 @@ public class ActorSprite extends MsoySprite
      */
     public function setActorInfo (newInfo :ActorInfo) :void
     {
-        var winfo :WorldOccupantInfo = (newInfo as WorldOccupantInfo);
         var triggerAppearanceChanged :Boolean = false;
         var oldScale :Number = _scale;
-        _scale = winfo.getScale();
-        var newMedia :MediaDesc = winfo.getMedia();
+        _scale = (newInfo is MemberInfo) ? (newInfo as MemberInfo).getScale() : 1;
+        var newMedia :MediaDesc = newInfo.getMedia();
         if (!newMedia.equals(_desc)) {
-            setup(newMedia, winfo.getItemIdent());
-
+            setup(newMedia, newInfo.getItemIdent());
         } else if (oldScale != _scale) {
             scaleUpdated();
         }
 
         // take care of setting up or changing our TableIcon
-        if (winfo is WorldMemberInfo) {
-            var minfo :WorldMemberInfo = winfo as WorldMemberInfo;
+        if (newInfo is MemberInfo) {
+            var minfo :MemberInfo = (newInfo as MemberInfo);
 
-            if (_tableIcon != null && !_tableIcon.getGameSummary().equals(minfo.game)) {
+            if (_tableIcon != null && !_tableIcon.getGameSummary().equals(minfo.getGameSummary())) {
                 _tableIcon.shutdown();
                 _tableIcon = null;
             }
-            if (_tableIcon == null && minfo.game != null &&
-                minfo.game.gameId != Game.TUTORIAL_GAME_ID) {
-                _tableIcon = new TableIcon(this, minfo.game);
+            if (_tableIcon == null && minfo.getGameSummary() != null &&
+                minfo.getGameSummary().gameId != Game.TUTORIAL_GAME_ID) {
+                _tableIcon = new TableIcon(this, minfo.getGameSummary());
             }
         }
 
-        // See if we need to update the name label or the status.
-        // Note that we need to compare the String versions of the names, because that's
-        // the difference we care about here. MemberNames compare as the same if the memberId
-        // is the same...
+        // See if we need to update the name label or the status. Note that we need to compare the
+        // String versions of the names, because that's the difference we care about
+        // here. MemberNames compare as the same if the memberId is the same...
         var newName :String = newInfo.username.toString();
         if (_occInfo == null || (_occInfo.status != newInfo.status) ||
                 (_occInfo.username.toString() !== newName)) {
@@ -304,17 +297,18 @@ public class ActorSprite extends MsoySprite
             }
         }
 
-        // note the old info...
-        var oldWinfo :WorldOccupantInfo = (_occInfo as WorldOccupantInfo);
+        // note whether our state changed (we don't consider it a change if the old info was null,
+        // as getting our initial state isn't a "change"); this is reason to have a special
+        // state-changed dobj event
+        var stateChanged :Boolean =
+            (_occInfo != null && !Util.equals(_occInfo.getState(), newInfo.getState()));
 
         // assign the new one
         _occInfo = newInfo;
 
-        // finally, if the state has changed, dispatch an event (we don't dispatch if the old info
-        // was null, as getting our initial state isn't a "change") This is another argument for a
-        // special state-changed dobj event.
-        if (oldWinfo != null && !Util.equals(oldWinfo.getState(), winfo.getState())) {
-            callUserCode("stateSet_v1", winfo.getState());
+        // if the state has changed, dispatch an event 
+        if (stateChanged) {
+            callUserCode("stateSet_v1", newInfo.getState());
         }
 
         if (triggerAppearanceChanged) {
@@ -581,7 +575,7 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
-     * Arrange any external decorations above our name label.  Will notify the chat overlay 
+     * Arrange any external decorations above our name label.  Will notify the chat overlay
      * displaying this speaker's bubbles that the bubble location has moved.
      */
     protected function arrangeDecorations () :void
@@ -717,8 +711,7 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
-     * Update the actor's state.
-     * Called by user code when it wants to change the actor's state.
+     * Update the actor's state. Called by user code when it wants to change the actor's state.
      */
     public function setState (state :String) :void
     {
@@ -729,12 +722,11 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
-     * Get the actor's current state.
-     * Called by user code.
+     * Get the actor's current state.  Called by user code.
      */
     public function getState () :String
     {
-        return (_occInfo as WorldOccupantInfo).getState();
+        return _occInfo.getState();
     }
 
     override public function getMediaScaleX () :Number

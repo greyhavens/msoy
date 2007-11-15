@@ -12,15 +12,14 @@ import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.data.ActorInfo;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
-import com.threerings.msoy.world.data.WorldMemberInfo;
 
 /**
  * Displays a member's avatar in the virtual world.
@@ -30,7 +29,7 @@ public class AvatarSprite extends ActorSprite
     /**
      * Creates an avatar sprite for the supplied occupant.
      */
-    public function AvatarSprite (occInfo :ActorInfo)
+    public function AvatarSprite (occInfo :MemberInfo)
     {
         super(occInfo);
     }
@@ -39,22 +38,6 @@ public class AvatarSprite extends ActorSprite
     {
         return "m.avatar";
     }
-
-//    /**
-//     * Returns the style of chat bubble to use for this occupant.
-//     */
-//    public function getChatStyle () :int
-//    {
-//        return (_occInfo as WorldMemberInfo).chatStyle;
-//    }
-//
-//    /**
-//     * Returns the style with which to pop up a chat bubble for this avatar.
-//     */
-//    public function getChatPopStyle () :int
-//    {
-//        return (_occInfo as WorldMemberInfo).chatPopStyle;
-//    }
 
     override public function getHoverColor () :uint
     {

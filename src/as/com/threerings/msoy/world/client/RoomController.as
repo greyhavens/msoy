@@ -61,8 +61,6 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldClient;
 import com.threerings.msoy.client.WorldContext;
-import com.threerings.msoy.data.ActorInfo;
-import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -92,20 +90,20 @@ import com.threerings.msoy.world.client.editor.RoomEditorController;
 import com.threerings.msoy.world.client.editor.ItemUsedDialog;
 import com.threerings.msoy.world.client.editor.SnapshotController;
 
+import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.data.PetInfo;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
-import com.threerings.msoy.world.data.WorldMemberInfo;
-import com.threerings.msoy.world.data.WorldOccupantInfo;
-import com.threerings.msoy.world.data.WorldPetInfo;
 
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.ScalingMediaContainer;
@@ -568,14 +566,14 @@ public class RoomController extends SceneController
      */
     public function handlePetClicked (pet :ActorSprite) :void
     {
-        var occInfo :WorldPetInfo = (pet.getActorInfo() as WorldPetInfo);
+        var occInfo :PetInfo = (pet.getActorInfo() as PetInfo);
         if (occInfo == null) {
             log.warning("Pet has unexpected ActorInfo [info=" + pet.getActorInfo() + "].");
             return;
         }
 
         // no menu for non-owners for now
-        if (occInfo.ownerId != _mctx.getMemberObject().getMemberId()) {
+        if (occInfo.getOwnerId() != _mctx.getMemberObject().getMemberId()) {
             return;
         }
 
@@ -1470,14 +1468,13 @@ public class RoomController extends SceneController
     {
         var ourOid :int = _mctx.getMemberObject().getOid();
 
-        // first, let's check all the WorldMemberInfos
+        // first, let's check all the MemberInfos
         for each (var occInfo :Object in _roomObj.occupantInfo.toArray()) {
-            if (occInfo is WorldMemberInfo) {
-                var winfo :WorldMemberInfo = (occInfo as WorldMemberInfo);
+            if (occInfo is MemberInfo) {
+                var winfo :MemberInfo = (occInfo as MemberInfo);
                 if (ident.equals(winfo.getItemIdent())) {
                     if (winfo.bodyOid == ourOid) {
-                        // dispatch got-control to the avatar, it should
-                        // supress repeats
+                        // dispatch got-control to the avatar, it should supress repeats
                         _roomView.dispatchGotControl(ident);
                         return true;
 
