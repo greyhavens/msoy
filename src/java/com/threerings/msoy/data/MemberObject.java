@@ -12,24 +12,23 @@ import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.stats.data.StatSet;
 
-import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.MemberInfo;
+import com.threerings.msoy.world.data.ObserverInfo;
+import com.threerings.msoy.world.data.RoomObject;
+
+import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.notify.data.Notification;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
-
-import com.threerings.msoy.game.data.GameSummary;
-
-import com.threerings.msoy.notify.data.Notification;
 
 /**
  * Represents a connected msoy user.
@@ -306,7 +305,7 @@ public class MemberObject extends MsoyBodyObject
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
-        return new MemberInfo(this);
+        return viewOnly ? new ObserverInfo(this) : new MemberInfo(this);
     }
 
     @Override // from BodyObject

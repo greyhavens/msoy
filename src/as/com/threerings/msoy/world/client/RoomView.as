@@ -744,6 +744,10 @@ public class RoomView extends AbstractRoomView
 
         if (occupant == null) {
             occupant = _ctx.getMediaDirector().getSprite(occInfo);
+            if (occupant == null) {
+                return; // we have no visualization for this kind of occupant, no problem
+            }
+
             occupant.setChatOverlay(chatOverlay);
             _occupants.put(bodyOid, occupant);
             addChildAt(occupant, 1);
@@ -778,18 +782,20 @@ public class RoomView extends AbstractRoomView
     protected function removeBody (bodyOid :int) :void
     {
         var sprite :OccupantSprite = (_occupants.remove(bodyOid) as OccupantSprite);
-        if (sprite != null) {
-            if (sprite.isMoving()) {
-                _pendingRemovals.put(bodyOid, sprite);
-            } else {
-                removeSprite(sprite);
-            }
+        if (sprite == null) {
+            return;
+        }
 
-            // if this occupant is a pet, notify GWT that we've removed a pet from the room.
-            if (sprite is PetSprite) {
-                (_ctx.getClient() as WorldClient).dispatchEventToGWT(
-                    PET_EVENT, [false, sprite.getItemIdent().itemId]);
-            }
+        if (sprite.isMoving()) {
+            _pendingRemovals.put(bodyOid, sprite);
+        } else {
+            removeSprite(sprite);
+        }
+
+        // if this occupant is a pet, notify GWT that we've removed a pet from the room.
+        if (sprite is PetSprite) {
+            (_ctx.getClient() as WorldClient).dispatchEventToGWT(
+                PET_EVENT, [false, sprite.getItemIdent().itemId]);
         }
     }
 

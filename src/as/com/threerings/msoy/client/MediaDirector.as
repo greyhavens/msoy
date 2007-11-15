@@ -21,6 +21,7 @@ import com.threerings.msoy.world.client.OccupantSprite;
 import com.threerings.msoy.world.client.PetSprite;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemberInfo;
+import com.threerings.msoy.world.data.ObserverInfo;
 import com.threerings.msoy.world.data.PetInfo;
 
 /**
@@ -56,6 +57,10 @@ public class MediaDirector extends BasicDirector
             if (isOurs) {
                 _ourAvatar = (sprite as MemberSprite);
             }
+
+        } else if (occInfo is ObserverInfo) {
+            // view-only members have no sprite visualization
+            return null;
 
         } else {
             // TODO: probably we don't want this
