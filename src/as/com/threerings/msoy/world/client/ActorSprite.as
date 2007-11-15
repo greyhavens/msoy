@@ -10,6 +10,7 @@ import com.threerings.util.Util;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 
@@ -81,6 +82,18 @@ public class ActorSprite extends OccupantSprite
     override public function toString () :String
     {
         return "ActorSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
+    }
+
+    // from OccupantSprite
+    override protected function configureDisplay (newInfo :OccupantInfo) :Boolean
+    {
+        var newMedia :MediaDesc = (newInfo as ActorInfo).getMedia();
+        if (!newMedia.equals(_desc)) {
+            setItemIdent((newInfo as ActorInfo).getItemIdent());
+            setMediaDesc(newMedia);
+            return true;
+        }
+        return false;
     }
 
     // from OccupantSprite

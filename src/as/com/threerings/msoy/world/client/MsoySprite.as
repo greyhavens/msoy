@@ -77,13 +77,9 @@ public class MsoySprite extends MsoyMediaContainer
     public static const GAME_HOVER :uint = 0xFFFFFF;  // white
     public static const OTHER_HOVER :uint = 0x000000; // black
 
-    /**
-     * Constructor.
-     */
-    public function MsoySprite (desc :MediaDesc, ident :ItemIdent)
+    public function MsoySprite ()
     {
         super(null);
-        setup(desc, ident);
     }
 
     // from ContextMenuProvider, via MsoyMediaContainer
@@ -145,7 +141,8 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
-     * Return the item ident used to identify this sprite.
+     * Return the item ident from which this sprite was based or null if it is not an item-based
+     * sprite.
      */
     public function getItemIdent () :ItemIdent
     {
@@ -276,14 +273,6 @@ public class MsoySprite extends MsoyMediaContainer
         throw new Error("Cannot set scale of abstract MsoySprite");
     }
 
-//    /**
-//     * Get the media descriptor.
-//     */
-//    public function getMediaDesc () :MediaDesc
-//    {
-//        return _desc;
-//    }
-
     /**
      * Turn on or off the glow surrounding this sprite.
      */
@@ -378,13 +367,11 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
-     * This method should be used by MsoySprite and subclasses to set the media being shown,
-     * instead of the various public superclass methods like setMediaDesc() and setMedia().
+     * Configures this sprite with the item it represents.
      */
-    protected function setup (desc :MediaDesc, ident :ItemIdent) :void
+    protected function setItemIdent (ident :ItemIdent) :void
     {
         _ident = ident;
-        setMediaDesc(desc);
     }
 
     override protected function didShowNewMedia () :void

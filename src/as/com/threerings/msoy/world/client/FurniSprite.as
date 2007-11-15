@@ -46,11 +46,16 @@ public class FurniSprite extends MsoySprite
     public function FurniSprite (furni :FurniData)
     {
         _furni = furni;
-        super(furni.media, furni.getItemIdent());
+
+        // configure our media and item
+        setMediaDesc(furni.media);
+        setItemIdent(furni.getItemIdent());
+
         // set up our hotspot if one is configured in the furni data record
         if (_furni.hotSpotX > 0 || _furni.hotSpotY > 0) {
             _hotSpot = new Point(_furni.hotSpotX, _furni.hotSpotY);
         }
+
         checkPerspective();
     }
 
@@ -102,7 +107,8 @@ public class FurniSprite extends MsoySprite
     public function update (furni :FurniData) :void
     {
         _furni = furni;
-        setup(furni.media, furni.getItemIdent());
+        setItemIdent(furni.getItemIdent());
+        setMediaDesc(furni.media);
         checkPerspective();
         scaleUpdated();
         setLocation(furni.loc);

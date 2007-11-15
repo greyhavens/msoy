@@ -4,8 +4,8 @@
 package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
-import flash.filters.GlowFilter;
 import flash.events.MouseEvent;
+import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
@@ -19,9 +19,7 @@ import com.threerings.util.ValueEvent;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.chat.client.ComicOverlay;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -49,8 +47,6 @@ public class OccupantSprite extends MsoySprite
      */
     public function OccupantSprite (occInfo :OccupantInfo)
     {
-        super(null, null);
-
         // The label often jumps visibly when the actor is hovered over, a pixel up or down, and/or
         // left or right. As far as I (Ray) can figure, when the glow filter is applied it's doing
         // pixel snapping. The strange thing is that we apply our own outlining glow filter (below)
@@ -243,16 +239,6 @@ public class OccupantSprite extends MsoySprite
     public function setOccupantInfo (newInfo :OccupantInfo) :void
     {
         var triggerAppearanceChanged :Boolean = false;
-        var oldScale :Number = _scale;
-        _scale = getScale(newInfo);
-
-        // TODO:!
-        var newMedia :MediaDesc = (newInfo as ActorInfo).getMedia();
-        if (!newMedia.equals(_desc)) {
-            setup(newMedia, (newInfo as ActorInfo).getItemIdent());
-        } else if (oldScale != _scale) {
-            scaleUpdated();
-        }
 
         // See if we need to update the name label or the status. Note that we need to compare the
         // String versions of the names, because that's the difference we care about
@@ -294,6 +280,15 @@ public class OccupantSprite extends MsoySprite
         if (triggerAppearanceChanged) {
             appearanceChanged();
         }
+    }
+
+    /**
+     * Derived classes should update their visualization based on this call and return true if it
+     * changed, false if not.
+     */
+    protected function configureDisplay (newInfo :OccupantInfo) :Boolean
+    {
+        return false;
     }
 
     /**
@@ -663,14 +658,6 @@ public class OccupantSprite extends MsoySprite
         default:
             return 0x99BFFF;
         }
-    }
-
-    /**
-     * Returns the scale at which to draw our sprite.
-     */
-    protected function getScale (info :OccupantInfo) :Number
-    {
-        return 1;
     }
 
     /**

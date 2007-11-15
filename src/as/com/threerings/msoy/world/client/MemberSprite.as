@@ -109,6 +109,24 @@ public class MemberSprite extends ActorSprite
         return "MemberSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
     }
 
+    // from OccupantSprite
+    override protected function configureDisplay (newInfo :OccupantInfo) :Boolean
+    {
+        // update our scale
+        var oldScale :Number = _scale;
+        _scale = (newInfo as MemberInfo).getScale();
+
+        // see if our media has been updated
+        var changed :Boolean = super.configureDisplay(newInfo);
+
+        // if scale is the only thing that changed, make sure we report changedness
+        if (!changed && oldScale != _scale) {
+            scaleUpdated();
+        }
+
+        return changed || (oldScale != _scale);
+    }
+
     // from ActorSprite
     override protected function postClickAction () :void
     {
@@ -155,12 +173,6 @@ public class MemberSprite extends ActorSprite
     internal function setPreferredYFromUser (prefY :int) :void
     {
         _preferredY = prefY;
-    }
-
-    // from OccupantSprite
-    override protected function getScale (info :OccupantInfo) :Number
-    {
-        return (info as MemberInfo).getScale();
     }
 
     /** The preferred y value, in pixels, when a user selects a location. */
