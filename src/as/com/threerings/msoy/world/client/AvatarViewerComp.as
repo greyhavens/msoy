@@ -190,8 +190,8 @@ public class AvatarViewerComp extends Canvas
         // the minimum scale makes things 10 pixels in a dimension
         var minScale :Number = Math.max(10 / width, 10 / height);
         // the maximum bumps us up against the overall maximums
-        var maxScale :Number = Math.min(ActorSprite.MAX_WIDTH / width,
-            ActorSprite.MAX_HEIGHT / height);
+        var maxScale :Number = Math.min(MemberSprite.MAX_WIDTH / width,
+            MemberSprite.MAX_HEIGHT / height);
 
         // but we always ensure that scale 1.0 is selectable, even if it seems it shouldn't be.
         _scaleSlider.minimum = Math.min(1, minScale);
@@ -331,7 +331,7 @@ class ViewerAvatarSprite extends MemberSprite
     public function ViewerAvatarSprite (scale :Number)
     {
         super(null);
-        _scale = scale; // defined in ActorSprite
+        _scale = scale; // defined in MemberSprite
         configureMouseProperties();
     }
 
