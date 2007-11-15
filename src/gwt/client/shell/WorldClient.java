@@ -60,7 +60,7 @@ public class WorldClient extends Widget
         displayFlash(flashArgs, History.getToken());
     }
 
-    public static void displayFlash (String flashArgs, String pageToken)
+    public static void displayFlash (String flashArgs, final String pageToken)
     {
         // if we have not yet determined our default server, find that out now
         if (_defaultServer == null) {
@@ -68,7 +68,7 @@ public class WorldClient extends Widget
             CShell.usersvc.getConnectConfig(new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _defaultServer = (ConnectConfig)result;
-                    displayFlash(savedArgs);
+                    displayFlash(savedArgs, pageToken);
                 }
                 public void onFailure (Throwable cause) {
                     new InfoPopup(CShell.serverError(cause)).show();
@@ -78,7 +78,7 @@ public class WorldClient extends Widget
         }
 
         // let the page know that we're displaying a client
-        boolean newPage = Frame.setShowingClient(true, false, pageToken);
+        Frame.setShowingClient(true, false, pageToken);
 
         // create our client if necessary
         if (!_isFlashClientPresent) {
@@ -98,10 +98,7 @@ public class WorldClient extends Widget
             _isFlashClientPresent = true;
 
         } else {
-            // don't tell the client anything if we're just restoring our URL
-            if (newPage) {
-                clientGo(flashArgs);
-            }
+            clientGo(flashArgs);
             clientMinimized(false);
         }
     }
@@ -109,14 +106,12 @@ public class WorldClient extends Widget
     public static void displayJava (Widget client)
     {
         // let the page know that we're displaying a client
-        boolean newPage = Frame.setShowingClient(false, true, History.getToken());
+        Frame.setShowingClient(false, true, History.getToken());
 
         if (_jclient != client) {
-            if (newPage) {
-                closeClient(false); // clear out our flash client if we have one
-                RootPanel.get(Frame.CLIENT).clear();
-                RootPanel.get(Frame.CLIENT).add(_jclient = client);
-            }
+            closeClient(false); // clear out our flash client if we have one
+            RootPanel.get(Frame.CLIENT).clear();
+            RootPanel.get(Frame.CLIENT).add(_jclient = client);
         } else {
             clientMinimized(false);
         }

@@ -133,6 +133,12 @@ public class Args
         } while (token != null && token.length() > 0);
     }
 
+    // @Override // from Object
+    public String toString ()
+    {
+        return _args.toString();
+    }
+
     protected List _args = new ArrayList();
 
     protected static final String ARG_SEP = "_";

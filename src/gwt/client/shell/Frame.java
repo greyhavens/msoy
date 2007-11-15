@@ -135,16 +135,10 @@ public class Frame
     /**
      * Notes the history token for the current page so that it can be restored in the event that we
      * open a normal page and then later close it.
-     *
-     * @return true if we're displaying a different page (or the same page with different
-     * arguments) than the last time we entered "showing client" mode.
      */
-    public static boolean setShowingClient (
+    public static void setShowingClient (
         boolean clientIsFlash, boolean clientIsJava, String closeToken)
     {
-        // determine whether or not we're showing a new page
-        boolean newPage = !closeToken.equals(_closeToken);
-
         // note the current history token so that we can restore it if needed
         _closeToken = closeToken;
 
@@ -162,8 +156,6 @@ public class Frame
 
         // have the client take up all the space
         RootPanel.get(CLIENT).setWidth("100%");
-
-        return newPage;
     }
 
     /**

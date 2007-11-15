@@ -215,6 +215,8 @@ public class Application
 
     protected void displayPage (String ident, final Args args)
     {
+        CShell.log("Displaying page [ident=" + ident + ", args=" + args + "].");
+
         // replace the page if necessary
         if (_page == null || !_page.getPageId().equals(ident)) {
             // tell any existing page that it's being unloaded
