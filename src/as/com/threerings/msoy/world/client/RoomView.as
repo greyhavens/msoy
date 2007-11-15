@@ -926,8 +926,7 @@ public class RoomView extends AbstractRoomView
         }
 
         // add all currently present occupants
-        for (var ii :int = _roomObj.occupantInfo.size() - 1; ii >= 0; ii--) {
-            var occInfo :OccupantInfo = (_roomObj.occupantInfo.get(ii) as OccupantInfo);
+        for each (var occInfo :OccupantInfo in _roomObj.occupantInfo.toArray()) {
             if (!_occupants.containsKey(occInfo.getBodyOid())) {
                 addBody(occInfo);
             }

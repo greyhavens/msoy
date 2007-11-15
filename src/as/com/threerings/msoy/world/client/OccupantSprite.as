@@ -4,10 +4,13 @@
 package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
+import flash.filters.GlowFilter;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
 
 import com.threerings.flash.FilterUtil;
 import com.threerings.flash.TextFieldUtil;
@@ -47,6 +50,28 @@ public class OccupantSprite extends MsoySprite
     public function OccupantSprite (occInfo :OccupantInfo)
     {
         super(null, null);
+
+        // The label often jumps visibly when the actor is hovered over, a pixel up or down, and/or
+        // left or right. As far as I (Ray) can figure, when the glow filter is applied it's doing
+        // pixel snapping. The strange thing is that we apply our own outlining glow filter (below)
+        // so it should already be snapping.  It seems that setting cacheAsBitmap makes the
+        // vertical jumpiness go away, but not the horizontal jumpiness. So, it's disabled for
+        // now...
+
+        // _label.cacheAsBitmap = true;
+
+        _label.selectable = false;
+        _label.autoSize = TextFieldAutoSize.CENTER;
+        _label.filters = [ new GlowFilter(0, 1, 2, 2, 255) ];
+
+        var labelFormat :TextFormat = new TextFormat();
+        // there be magic here. Arial isn't even available on Linux, but it works it out. The
+        // documentation for TextFormat does not indicate this. Bastards.
+        labelFormat.font = "Arial";
+        labelFormat.size = 12;
+        labelFormat.bold = true;
+        _label.defaultTextFormat = labelFormat;
+        addChild(_label);
 
         if (occInfo != null) {
             setOccupantInfo(occInfo);
@@ -661,7 +686,7 @@ public class OccupantSprite extends MsoySprite
      * sprite. Also, the label was not working correctly with the "general purpose" layout code for
      * decorations, which I believe to be the fault of the label (it was returning a negative X
      * coordinate for its bounding rectangle, when in fact it should have started at 0). */
-    protected var _label :TextField;
+    protected var _label :TextField = new TextField();
 
     /** Our most recent occupant information. */
     protected var _occInfo :OccupantInfo;
