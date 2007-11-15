@@ -154,16 +154,20 @@ public class LobbyGameLiaison extends GameLiaison
         super.shutdown();
     }
 
-    public function lobbyCleared (inGame :Boolean) :void
+    public function lobbyCleared (inGame :Boolean, closedByUser :Boolean) :void
     {
         // if we're not about to go into a game, shutdown, otherwise stick around
         if (!_shuttingDown && !inGame && _gameOid == 0) {
             shutdown();
-            // either restore our current scene URL or go home if we have no scene
-            if (_ctx.getSceneDirector().getScene() == null) {
-                _ctx.getMsoyController().handleGoScene(_ctx.getMemberObject().homeSceneId);
-            } else {
-                _ctx.getMsoyController().restoreSceneURL();
+            // we may be being closed due to navigation away from the lobby URL, so we don't want
+            // to mess with the URL in that circumstance; only if the player pressed the close box
+            if (closedByUser) {
+                // either restore our current scene URL or go home if we have no scene
+                if (_ctx.getSceneDirector().getScene() == null) {
+                    _ctx.getMsoyController().handleGoScene(_ctx.getMemberObject().homeSceneId);
+                } else {
+                    _ctx.getMsoyController().restoreSceneURL();
+                }
             }
         }
     }

@@ -232,7 +232,7 @@ public class LobbyPanel extends VBox
         _isSeated = nowSeated;
         _creationPanel.setEnabled(!isSeated());
         if (_isSeated) {
-            CommandEvent.dispatch(this, LobbyController.LEAVE_LOBBY);
+            CommandEvent.dispatch(this, LobbyController.SAT_AT_TABLE);
         }
     }
 
@@ -306,7 +306,7 @@ public class LobbyPanel extends VBox
         leaveBtnBox.styleName = "lobbyCloseBox";
         leaveBtnBox.percentHeight = 100;
         titleBox.addChild(leaveBtnBox);
-        var leaveBtn :CommandButton = new CommandButton(LobbyController.LEAVE_LOBBY);
+        var leaveBtn :CommandButton = new CommandButton(LobbyController.CLOSE_LOBBY);
         leaveBtn.styleName = "closeButton";
         leaveBtnBox.addChild(leaveBtn);
 

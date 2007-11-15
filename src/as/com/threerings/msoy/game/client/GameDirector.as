@@ -59,6 +59,8 @@ public class GameDirector extends BasicDirector
      */
     public function displayLobby (gameId :int) :void
     {
+        log.info("Displaying lobby [gameId=" + gameId + "].");
+
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
                 LobbyGameLiaison(_liaison).showLobbyUI();

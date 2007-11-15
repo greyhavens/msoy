@@ -45,8 +45,11 @@ public class LobbyController extends Controller implements Subscriber
     /** A command to leave a table. */
     public static const LEAVE_TABLE :String = "LeaveTable";
 
-    /** A command to leave the lobby. */
-    public static const LEAVE_LOBBY :String = "LeaveLobby";
+    /** Notifies the lobby controller that we sat at a table. */
+    public static const SAT_AT_TABLE :String = "SatAtTable";
+
+    /** A command to close the lobby. */
+    public static const CLOSE_LOBBY :String = "CloseLobby";
 
     public function LobbyController (
         ctx :GameContext, liaison :LobbyGameLiaison, oid :int, mode :int) 
@@ -109,10 +112,19 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     /**
-     * Handles LEAVE_LOBBY.
+     * Handles SAT_AT_TABLE.
      */
-    public function handleLeaveLobby () :void
+    public function handleSatAtTable () :void
     {
+        _mctx.getTopPanel().clearLeftPanel(_panel);
+    }
+
+    /**
+     * Handles CLOSE_LOBBY.
+     */
+    public function handleCloseLobby () :void
+    {
+        _closedByUser = true;
         _mctx.getTopPanel().clearLeftPanel(_panel);
     }
 
@@ -300,7 +312,7 @@ public class LobbyController extends Controller implements Subscriber
         }
 
         // finally let the game liaison know that we're gone
-        _liaison.lobbyCleared(inGame);
+        _liaison.lobbyCleared(inGame, _closedByUser);
     }
 
     /** The provider of free cheese. */
@@ -327,7 +339,11 @@ public class LobbyController extends Controller implements Subscriber
     /** Used to subscribe to our lobby object. */
     protected var _subscriber :SafeSubscriber;
 
+    /** Tracks whether or not our lobby panel is visible. */
     protected var _panelIsVisible :Boolean;
+
+    /** Whether or not the user clicked the close box to close this lobby. */
+    protected var _closedByUser :Boolean;
 
     /** The player whose pending table we'd like to join. */
     protected var _playerId :int = 0;

@@ -542,13 +542,10 @@ public class MsoyController extends Controller
         }
 
         // if we're not in a scene, go to our home scene while we're displaying the lobby
-        var sceneId :int;
         if (_ctx.getSceneDirector().getScene() == null) {
-            sceneId = _ctx.getMemberObject().homeSceneId;
+            var sceneId :int = _ctx.getMemberObject().homeSceneId;
             // default to scene 1 for guests.
             _ctx.getSceneDirector().moveTo(sceneId != 0 ? sceneId : 1);
-        } else {
-            sceneId = _ctx.getSceneDirector().getScene().getId();
         }
 
         // now display the lobby interface
