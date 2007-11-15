@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -46,18 +45,25 @@ public class MailComposition extends BorderedDialog
      * Initializes a new composer.
      */
     public MailComposition (MemberName recipient, String subject,
-                            MailPayloadComposer bodyObjectComposer, String bodyText)
+                            MailPayloadComposer payloadComposer, String bodyText)
     {
         super(false);
         _recipient = recipient;
-        addListener(bodyObjectComposer);
-        buildUI(subject, bodyText, bodyObjectComposer);
+        setPayloadComposer(payloadComposer);
+        buildUI(subject, bodyText, payloadComposer);
     }
 
-    public void addListener(MailSentListener listener)
+    public void addMailSentListener (MailSentListener listener)
     {
         if (listener != null) {
             _listeners.add(listener);
+        }
+    }
+
+    public void removeMailSentListener (MailSentListener listener)
+    {
+        if (listener != null) {
+            _listeners.remove(listener);
         }
     }
 
@@ -171,8 +177,19 @@ public class MailComposition extends BorderedDialog
 
     protected void setPayloadComposer (MailPayloadComposer composer)
     {
+        // if there's no change, change nothing
+        if (composer == _payloadComposer) {
+            return;
+        }
+        // if there was a composer in place, remove it as a MailSentListener
+        if (_payloadComposer != null) {
+            removeMailSentListener(_payloadComposer);
+        }
         _payloadComposer = composer;
         if (composer != null) {
+            // the new composer is also a MailSentListener
+            addMailSentListener(composer);
+
             Widget widget = _payloadComposer.widgetForComposition();
             if (widget != null) {
                 widget.addStyleName("Payload");

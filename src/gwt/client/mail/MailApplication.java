@@ -320,7 +320,7 @@ public class MailApplication extends DockPanel
                 }
                 MailComposition composition =
                     new MailComposition(_message.headers.sender, subject, null, "");
-                composition.addListener(new MailSentListener() {
+                composition.addMailSentListener(new MailSentListener() {
                     public void messageSent (MemberName recipient) {
                         if (recipient.getMemberId() == CMsgs.getMemberId()) {
                             // if we're sending mail to ourselves, refresh the whole thing
