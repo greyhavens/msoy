@@ -324,9 +324,9 @@ import flash.events.MouseEvent;
 
 import flash.geom.Point;
 
-import com.threerings.msoy.world.client.AvatarSprite;
+import com.threerings.msoy.world.client.MemberSprite;
 
-class ViewerAvatarSprite extends AvatarSprite
+class ViewerAvatarSprite extends MemberSprite
 {
     public function ViewerAvatarSprite (scale :Number)
     {
