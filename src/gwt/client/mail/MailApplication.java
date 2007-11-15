@@ -38,8 +38,10 @@ import client.msgs.MailUpdateListener;
 import client.msgs.MailComposition.MailSentListener;
 import client.shell.Application;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Page;
 import client.util.BorderedWidget;
+import client.util.FlashClients;
 import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
 import client.util.events.StatusChangeListener;
@@ -401,6 +403,9 @@ public class MailApplication extends DockPanel
             MailFolder folder = (MailFolder) i.next();
 
             if (folder.folderId == MailFolder.INBOX_FOLDER_ID) {
+                if (!FlashClients.clientExists()) {
+                    CShell.app.getStatusPanel().notifyUnreadMailCount(folder.unreadCount);
+                }
                 inbox = folder;
             } else if (folder.folderId == MailFolder.SENT_FOLDER_ID) {
                 sent = folder;

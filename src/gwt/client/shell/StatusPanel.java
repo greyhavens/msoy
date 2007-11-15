@@ -5,7 +5,6 @@ package client.shell;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.google.gwt.user.client.ui.ClickListener;
@@ -110,6 +109,14 @@ public class StatusPanel extends FlexTable
                 new CreateAccountDialog(StatusPanel.this, null).show();
             }
         }));
+    }
+
+    /**
+     * Called to forcibly set our unread mail count when FlashEvents aren't available.
+     */
+    public void notifyUnreadMailCount (int unread)
+    {
+        _mail.setCount(unread);
     }
 
     protected void validateSession (String token)

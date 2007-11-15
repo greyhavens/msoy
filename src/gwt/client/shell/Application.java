@@ -9,15 +9,11 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MemberName;
 
@@ -183,6 +179,14 @@ public class Application
         if (!displayPopup(page, args)) {
             displayPage(page, args);
         }
+    }
+
+    /**
+     * Returns a reference to the status panel.
+     */
+    public StatusPanel getStatusPanel ()
+    {
+        return _status;
     }
 
     protected void initContext ()
