@@ -27,13 +27,12 @@ import com.threerings.util.Log;
 
 public class TextBox extends Sprite
 {
-    public function TextBox (view :View, swirlBytes :ByteArray, done :Function)
+    public function TextBox (swirlBytes :ByteArray, done :Function)
     {
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, handleTextboxLoaded);
         loader.load(swirlBytes);
 
-        _view = view;
         _done = done;
 
         var styleSheet :StyleSheet = new StyleSheet();
@@ -261,7 +260,6 @@ public class TextBox extends Sprite
         return text.replace(/\[\[/g, "<b><i>").replace(/\]\]/g, "</i></b>");
     }
 
-    protected var _view :View;
     protected var _done :Function;
     protected var _boxClip :MovieClip;
     protected var _boxWidth :Number;

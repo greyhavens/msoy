@@ -21,7 +21,7 @@ public class View extends Sprite
 
         var swirlBytes :ByteArray = ByteArray(new Content.SWIRL());
 
-        _textBox = new TextBox(this, swirlBytes, maybeFinishUI);
+        _textBox = new TextBox(swirlBytes, maybeFinishUI);
         _swirl = new Swirl(this, swirlBytes, maybeFinishUI);
     }
 
