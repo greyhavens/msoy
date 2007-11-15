@@ -104,8 +104,8 @@ public class CatalogPanel extends VerticalPanel
 
     public void display (Args args)
     {
-        _query = parseArgs(args);
-        _typeTabs.selectTab(_query.itemType);
+        CatalogQuery argQuery = parseArgs(args);
+        _typeTabs.selectTab(argQuery.itemType);
 
         String mode = args.get(1, LISTING_PAGE);
         if (mode.equals(ONE_LISTING)) {
@@ -115,7 +115,7 @@ public class CatalogPanel extends VerticalPanel
             CatalogListing listing = null;
             for (Iterator iter = _models.keySet().iterator(); iter.hasNext(); ) {
                 CatalogQuery query = (CatalogQuery)iter.next();
-                if (query.itemType != _query.itemType) {
+                if (query.itemType != argQuery.itemType) {
                     continue;
                 }
                 CatalogDataModel model = (CatalogDataModel)_models.get(query);
@@ -134,12 +134,14 @@ public class CatalogPanel extends VerticalPanel
                 }
             };
             if (listing == null) {
-                CCatalog.catalogsvc.loadListing(_query.itemType, catalogId, true, gotListing);
+                CCatalog.catalogsvc.loadListing(argQuery.itemType, catalogId, true, gotListing);
             } else {
                 gotListing.onSuccess(listing);
             }
 
         } else /* mode.equals(LISTING_PAGE) */ {
+            _query = parseArgs(args);
+
             // configure our filter interface
             _searchSortPanel.setSearch(_query.search == null ? "" : _query.search);
             _searchSortPanel.setSelectedSort(_query.sortBy);
@@ -179,7 +181,7 @@ public class CatalogPanel extends VerticalPanel
      * Called by the {@link ListingDetailPanel} if the there is a request to browse this creator's
      * items.
      */
-    public void browseByCreator (int creatorId, String creatorName) 
+    public void browseByCreator (int creatorId, String creatorName)
     {
         Application.go(Page.CATALOG, composeArgs(_query, null, null, creatorId));
     }
