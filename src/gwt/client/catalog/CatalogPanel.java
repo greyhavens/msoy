@@ -140,7 +140,7 @@ public class CatalogPanel extends VerticalPanel
             }
 
         } else /* mode.equals(LISTING_PAGE) */ {
-            _query = parseArgs(args);
+            _query = argQuery;
 
             // configure our filter interface
             _searchSortPanel.setSearch(_query.search == null ? "" : _query.search);
