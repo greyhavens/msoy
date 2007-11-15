@@ -454,8 +454,14 @@ public class ItemServlet extends MsoyServiceServlet
 
             } else {
                 if (item.ownerId != 0) {
+                    if (item.ownerId == memrec.memberId) {
+                        // if the owner is already correct, let it pass
+                        log.warning("Unwrapped item already belongs to me [ident=" + ident +
+                            ", item=" + iident + "]");
+                        return;
+                    }
                     log.warning("Trying to unwrap owned item [ident=" + ident +
-                                ", item=" + iident + "]");
+                        ", item=" + iident + "]");
                     throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
                 }
                 repo.updateOwnerId(item, memrec.memberId);
