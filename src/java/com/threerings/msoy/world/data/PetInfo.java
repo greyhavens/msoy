@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.world.data;
 
-import com.threerings.msoy.data.PetObject;
-
 /**
  * Contains published information on a pet in a scene.
  */

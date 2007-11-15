@@ -13,13 +13,13 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.PetObject;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.PetCodes;
+import com.threerings.msoy.world.data.PetObject;
 import com.threerings.msoy.world.data.RoomObject;
 
 import static com.threerings.msoy.Log.log;

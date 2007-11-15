@@ -1,13 +1,13 @@
 //
 // $Id$
 
-package com.threerings.msoy.data;
+package com.threerings.msoy.world.data;
 
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.item.data.all.Pet;
-import com.threerings.msoy.world.data.PetInfo;
 
 /**
  * Contains the distributed state associated with a Pet.
