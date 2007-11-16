@@ -127,6 +127,7 @@ public class LobbyPanel extends VBox
         }
         if (_tables.length == 0) {
             _tables.addItem("M" + _noPendersMsg);
+            _creationPanel.showCreateGame();
         }
     }
 

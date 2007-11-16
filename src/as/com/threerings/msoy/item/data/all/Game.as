@@ -8,6 +8,9 @@ import com.threerings.util.StringUtil;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
+/**
+ * Extends Item with game info.
+ */
 public class Game extends Item
 {
     /** Identifies our lobby table background media. */
@@ -25,6 +28,9 @@ public class Game extends Item
     /** A unique identifier assigned to this game and preserved across new versions of the game
      * item so that ratings and lobbies and content packs all reference the same "game". */
     public var gameId :int;
+
+    /** The game screenshot media. */
+    public var shotMedia :MediaDesc;
 
     override public function getType () :int
     {
@@ -47,6 +53,7 @@ public class Game extends Item
         config = (ins.readField(String) as String);
         gameMedia = (ins.readObject() as MediaDesc);
         gameId = ins.readInt();
+        shotMedia = (ins.readObject() as MediaDesc);
     }
 
     // from interface Streamable
@@ -56,6 +63,7 @@ public class Game extends Item
         out.writeField(config);
         out.writeObject(gameMedia);
         out.writeInt(gameId);
+        out.writeObject(shotMedia);
     }
 }
 }
