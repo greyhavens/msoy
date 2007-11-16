@@ -191,12 +191,16 @@ public class StatusPanel extends FlexTable
             setCellSpacing(0);
 
             int idx = 0;
-
-            String mailImg = "<img class='MailNotification' src='/images/mail/button_mail.png'/>";
-            setWidget(0, idx++, new HTML(Application.createLinkHtml(mailImg, "mail", "")));
-
-            setText(0, _mailIx = idx++, "0");
-            setVisible(false);
+            getFlexCellFormatter().setStyleName(0, idx, "Icon");
+            Image image = new Image("/images/header/symbol_mail.png");
+            image.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.MAIL, "");
+                }
+            });
+            setWidget(0, idx++, image);
+            _mailIx = idx; // the next cell will hold our count
+            setCount(0);
         }
 
         public void setCount (int count)
