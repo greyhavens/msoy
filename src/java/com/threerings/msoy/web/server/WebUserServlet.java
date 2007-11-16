@@ -55,8 +55,8 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public SessionData register (long clientVersion, String username, String password, 
-                                 final String displayName, int[] bdayvec, AccountInfo info, 
+    public SessionData register (long clientVersion, String username, String password,
+                                 final String displayName, int[] bdayvec, AccountInfo info,
                                  int expireDays, final Invitation invite)
         throws ServiceException
     {
@@ -112,7 +112,7 @@ public class WebUserServlet extends MsoyServiceServlet
             try {
                 MsoyServer.memberRepo.linkInvite(invite, newAccount);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "linking invites failed [inviteId=" + invite.inviteId + 
+                log.log(Level.WARNING, "linking invites failed [inviteId=" + invite.inviteId +
                         ", memberId=" + newAccount.memberId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
@@ -129,6 +129,18 @@ public class WebUserServlet extends MsoyServiceServlet
                         MsoyServer.mailMan.deliverMessage(
                             newAccount.memberId, invite.inviter.getMemberId(), subject, body, null,
                             false, new ResultListener.NOOP<Void>());
+
+                        // note the establishment of this friendship in the appropriate manager
+                        // TODO: This is really spammy; in fact, when somebody accepts your invite
+                        // TODO: you may get, in practice, four separate notifications:
+                        // TODO:  - Foo is now your friend.
+                        // TODO:  - Foo accepted your invitation.
+                        // TODO:  - You have new mail.
+                        // TODO:  - Foo is now online.
+                        // TODO: We'd like to bring this down to one or possibly two lines, and
+                        // TODO: will tackle this problem when notification has been peerified.
+                        MsoyServer.friendMan.friendshipEstablished(
+                            new MemberName(displayName, newAccount.memberId), invite.inviter);
 
                         // and possibly send a runtime notification as well
                         MsoyServer.notifyMan.notifyInvitationAccepted(
@@ -322,7 +334,7 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public AccountInfo getAccountInfo (WebIdent ident) 
+    public AccountInfo getAccountInfo (WebIdent ident)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
@@ -338,14 +350,14 @@ public class WebUserServlet extends MsoyServiceServlet
             return ainfo;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to fetch account info [who=" + mrec.memberId + 
+            log.log(Level.WARNING, "Failed to fetch account info [who=" + mrec.memberId +
                 "].", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }
 
     // from interface WebUserService
-    public void updateAccountInfo (WebIdent ident, AccountInfo info) 
+    public void updateAccountInfo (WebIdent ident, AccountInfo info)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
