@@ -36,13 +36,14 @@ public class MsoyTable extends Table
      */
     public function countFriends (memObj :MemberObject) :int
     {
-        var friends :int = 0;
+        var friends :int = 0, ourId :int = memObj.memberName.getMemberId();
         for (var ii :int; ii < occupants.length; ii++) {
             var name :MemberName = (occupants[ii] as MemberName);
             if (name == null) {
                 continue;
             }
-            if (memObj.friends.containsKey(name.getMemberId())) {
+            var friendId :int = name.getMemberId();
+            if (memObj.friends.containsKey(friendId) || friendId == ourId) {
                 friends++;
             }
         }
