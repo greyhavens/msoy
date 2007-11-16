@@ -52,22 +52,11 @@ public class GameRepository extends ItemRepository<
     public GameRepository (PersistenceContext ctx)
     {
         super(ctx);
-        _ctx.registerMigration(getItemClass(), new EntityMigration.Drop(16009, "suiteId"));
-        _ctx.registerMigration(
-            GameDetailRecord.class, new EntityMigration.Retype(3, GameDetailRecord.GAME_ID) {
-                @Override
-                public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                    // don't super.invoke(), do our own selective retype, because gameId is a
-                    // primary key field and postgres flips out of if you try to modify its
-                    // nullability
-                    liaison.changeColumn(conn, _tableName, _columnName, _newColumnDef.getType(),
-                        null, _newColumnDef.isUnique(), _newColumnDef.getDefaultValue());
-                    // now delete the sequence, which is hopefully no longer referenced
-                    liaison.deleteGenerator(conn, _tableName, GameDetailRecord.GAME_ID);
-                    return 1;
-                }
 
-            });
+        // TEMP
+        _ctx.registerMigration(
+            GameRecord.class, new EntityMigration.Retype(16011, "shotMediaHash"));
+        // END TEMP
     }
 
     /**
