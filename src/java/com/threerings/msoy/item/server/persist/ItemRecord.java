@@ -145,6 +145,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public String name;
 
     /** A user supplied description for this item. */
+    @Column(length=Item.MAX_DESCRIPTION_LENGTH)
     public String description;
 
     /** Whether or not this item represents mature content. */
