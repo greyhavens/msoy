@@ -133,7 +133,6 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
-        
         // TODO: validate anything else?
 
         // write the item to the database
