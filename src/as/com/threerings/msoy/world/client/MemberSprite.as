@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.display.DisplayObject;
+import flash.geom.Rectangle;
+
 import com.threerings.util.CommandEvent;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -110,14 +113,15 @@ public class MemberSprite extends ActorSprite
     }
 
     // from OccupantSprite
-    override protected function configureDisplay (newInfo :OccupantInfo) :Boolean
+    override protected function configureDisplay (
+        oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
     {
         // update our scale
         var oldScale :Number = _scale;
         _scale = (newInfo as MemberInfo).getScale();
 
         // see if our media has been updated
-        var changed :Boolean = super.configureDisplay(newInfo);
+        var changed :Boolean = super.configureDisplay(oldInfo, newInfo);
 
         // if scale is the only thing that changed, make sure we report changedness
         if (!changed && oldScale != _scale) {
@@ -125,6 +129,31 @@ public class MemberSprite extends ActorSprite
         }
 
         return changed || (oldScale != _scale);
+    }
+
+    // from OccupantSprite
+    override protected function configureDecorations (
+        oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
+    {
+        var reconfig :Boolean = super.configureDecorations(oldInfo, newInfo);
+
+        // check whether our idle status has changed
+        if ((newInfo.status == OccupantInfo.IDLE) == (_idleIcon == null)) {
+            if (_idleIcon == null) {
+                _idleIcon = (new IDLE_ICON() as DisplayObject);
+                addDecoration(_idleIcon, {
+                    weight: Number.MAX_VALUE / 2,
+                    bounds: new Rectangle(0, 0, 50, 80)
+                });
+            } else {
+                removeDecoration(_idleIcon);
+                _idleIcon = null;
+            }
+            appearanceChanged();
+            reconfig = false; // we took care of rearranging our decorations
+        }
+
+        return reconfig;
     }
 
     // from ActorSprite
@@ -180,6 +209,9 @@ public class MemberSprite extends ActorSprite
 
     /** A decoration used when we're in a table in a lobby. */
     protected var _tableIcon :TableIcon;
+
+    /** A decoration added when we've idled out. */
+    protected var _idleIcon :DisplayObject;
 }
 }
 

@@ -15,7 +15,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.msoy.world.data.WorldActorInfo;
+import com.threerings.msoy.world.data.ActorInfo;
 
 /**
  * The BodyObject that backs a Chiyogami boss.
@@ -40,15 +40,15 @@ public class BossObject extends MsoyBodyObject
         setUsername(new Name(name));
     }
 
-    @Override
-    public OccupantInfo createOccupantInfo (PlaceObject plobj)
-    {
-        if (_avatar != null) {
-            return new WorldActorInfo(this, _avatar.getIdent(), _avatar.avatarMedia);
-        } else {
-            return new WorldActorInfo(this, _ident, _desc);
-        }
-    }
+//     @Override
+//     public OccupantInfo createOccupantInfo (PlaceObject plobj)
+//     {
+//         if (_avatar != null) {
+//             return new ActorInfo(this, _avatar.avatarMedia, _avatar.getIdent());
+//         } else {
+//             return new ActorInfo(this, _desc, _ident);
+//         }
+//     }
 
     /** The avatar item being used for this boss. */
     protected transient Avatar _avatar;

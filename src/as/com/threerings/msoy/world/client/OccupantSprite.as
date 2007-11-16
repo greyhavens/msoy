@@ -238,47 +238,15 @@ public class OccupantSprite extends MsoySprite
      */
     public function setOccupantInfo (newInfo :OccupantInfo) :void
     {
-        var triggerAppearanceChanged :Boolean = false;
-
-        // See if we need to update the name label or the status. Note that we need to compare the
-        // String versions of the names, because that's the difference we care about
-        // here. MemberNames compare as the same if the memberId is the same...
-        var newName :String = newInfo.username.toString();
-        if (_occInfo == null || (_occInfo.status != newInfo.status) ||
-                (_occInfo.username.toString() !== newName)) {
-            _label.textColor = getStatusColor(newInfo.status);
-            _label.text = newName;
-            _label.width = _label.textWidth + TextFieldUtil.WIDTH_PAD;
-            _label.height = _label.textHeight + TextFieldUtil.HEIGHT_PAD;
-            recheckLabel();
-
-            // if our idle status has changed...
-            if ((newInfo.status == OccupantInfo.IDLE) == (_idleIcon == null)) {
-                triggerAppearanceChanged = true;
-                if (_idleIcon == null) {
-                    _idleIcon = (new IDLE_ICON() as DisplayObject);
-                    addDecoration(_idleIcon, {
-                        weight: Number.MAX_VALUE / 2,
-                        bounds: new Rectangle(0, 0, 50, 80)
-                    });
-
-                } else {
-                    removeDecoration(_idleIcon);
-                    _idleIcon = null;
-                }
-
-            } else {
-                // the bounds of the label may have changed, re-arrange
-                // (if we added or removed the idle icon, it was already done...)
-                arrangeDecorations();
-            }
-        }
-
-        // assign the new one
+        var oldInfo :OccupantInfo = _occInfo;
         _occInfo = newInfo;
 
-        if (triggerAppearanceChanged) {
-            appearanceChanged();
+        // potentially update our visualization
+        configureDisplay(oldInfo, newInfo);
+
+        // potentially update our name and decorations
+        if (configureDecorations(oldInfo, newInfo)) {
+            arrangeDecorations();
         }
     }
 
@@ -286,8 +254,32 @@ public class OccupantSprite extends MsoySprite
      * Derived classes should update their visualization based on this call and return true if it
      * changed, false if not.
      */
-    protected function configureDisplay (newInfo :OccupantInfo) :Boolean
+    protected function configureDisplay (oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
     {
+        return false;
+    }
+
+    /**
+     * Configures our occupant-related decorations.
+     *
+     * @return true if decorations should be arranged as a result of this call, false otherwise.
+     */
+    protected function configureDecorations (oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
+    {
+        // see if we need to update the name label or the status
+        var newName :String = newInfo.username.toString();
+        // note that we need to compare the String versions of the names, as that's the difference
+        // we care about here; MemberName compares as the same if the memberId is the same...
+        if (oldInfo == null || (oldInfo.status != newInfo.status) ||
+            (oldInfo.username.toString() !== newName)) {
+            _label.textColor = getStatusColor(newInfo.status);
+            _label.text = newName;
+            _label.width = _label.textWidth + TextFieldUtil.WIDTH_PAD;
+            _label.height = _label.textHeight + TextFieldUtil.HEIGHT_PAD;
+            recheckLabel();
+            // the bounds of the label may have changed, re-arrange
+            return true;
+        }
         return false;
     }
 
@@ -686,9 +678,6 @@ public class OccupantSprite extends MsoySprite
 
     /** The move speed, in pixels per second. */
     protected var _moveSpeed :Number = DEFAULT_MOVE_SPEED;
-
-    /** A decoration added when we've idled out. */
-    protected var _idleIcon :DisplayObject;
 
     /** The chat overlay that we notify when we change position. */
     protected var _chatOverlay :ComicOverlay;

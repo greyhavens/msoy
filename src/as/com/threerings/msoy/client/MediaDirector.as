@@ -16,11 +16,14 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.DecorSprite;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MemberSprite;
+import com.threerings.msoy.world.client.MobSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.OccupantSprite;
 import com.threerings.msoy.world.client.PetSprite;
+
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemberInfo;
+import com.threerings.msoy.world.data.MobInfo;
 import com.threerings.msoy.world.data.ObserverInfo;
 import com.threerings.msoy.world.data.PetInfo;
 
@@ -48,26 +51,27 @@ public class MediaDirector extends BasicDirector
             return _ourAvatar;
         }
 
-        var sprite :OccupantSprite;
         if (occInfo is PetInfo) {
-            sprite = new PetSprite(occInfo as PetInfo);
+            return new PetSprite(occInfo as PetInfo);
 
         } else if (occInfo is MemberInfo) {
-            sprite = new MemberSprite(occInfo as MemberInfo);
+            var sprite :MemberSprite = new MemberSprite(occInfo as MemberInfo);
             if (isOurs) {
-                _ourAvatar = (sprite as MemberSprite);
+                _ourAvatar = sprite;
             }
+            return sprite;
+
+        } else if (occInfo is MobInfo) {
+            return new MobSprite(occInfo as MobInfo);
 
         } else if (occInfo is ObserverInfo) {
             // view-only members have no sprite visualization
             return null;
 
         } else {
-            // TODO: probably we don't want this
-            sprite = new OccupantSprite(occInfo);
+            log.warning("Don't know how to create sprite for occupant " + occInfo + ".");
+            return null;
         }
-
-        return sprite;
     }
 
     /**

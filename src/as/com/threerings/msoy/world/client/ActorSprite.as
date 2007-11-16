@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.world.client {
 
-import flash.display.DisplayObject;
-
 import com.threerings.util.Log;
 import com.threerings.util.Util;
 
@@ -85,7 +83,8 @@ public class ActorSprite extends OccupantSprite
     }
 
     // from OccupantSprite
-    override protected function configureDisplay (newInfo :OccupantInfo) :Boolean
+    override protected function configureDisplay (
+        oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
     {
         var newMedia :MediaDesc = (newInfo as ActorInfo).getMedia();
         if (!newMedia.equals(_desc)) {
