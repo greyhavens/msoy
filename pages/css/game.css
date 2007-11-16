@@ -23,6 +23,7 @@
 }
 
 .gameDetail .Box .Name { 
+  height: 25px;
   font-size: 18px;
   font-weight: bold;
   color: #FFFFFF;
@@ -30,10 +31,10 @@
   padding: 2px;
 }
 
-.gameDetail .Box .Logo { 
+.gameDetail .Box .Screenshot { 
   background-image: url(/images/item/detail_preview_bg.png);
-  width: 160px;
-  height: 120px;
+  width: 175px;
+  height: 125px;
   padding: 10px;
 }
 
@@ -46,41 +47,57 @@
   font-size: 14px;
 }
 
+.gameDetail .Details .Creator {
+  padding-top: 3px;
+  height: 22px;
+}
+
 .gameDetail .PlayTitle {
   font-weight: bold;
-  font-size: 12px;
+  font-size: 18px;
   text-align: center;
+  vertical-align: top;
+  height: 25px;
 }
 
 .gameDetail .PlayCell {
   text-align: center;
-  padding-top: 10px;
 }
 
 .gameDetail .PlayButton {
-  width: 48px;
+  width: 103px;
   height: 48px;
   cursor: pointer;
   border: none;
 }
 .gameDetail .SinglePlay {
   background-image: url(/images/game/play_alone.png);
+  margin-right: 15px;
 }
 .gameDetail .FriendPlay {
   background-image: url(/images/game/play_friends.png);
 }
 .gameDetail .AnyonePlay {
   background-image: url(/images/game/play_anyone.png);
+  margin-right: 15px;
 }
 .gameDetail .CustomPlay {
   background-image: url(/images/game/play_custom.png);
 }
 
 .gameDetail .PlayLabel {
-  font-size: 10px;
+  font-size: 12px;
   text-align: center;
   vertical-align: top;
   white-space: nowrap;
+  padding-bottom: 10px;
+}
+
+.gameDetail .InfoTitle {
+  padding-top: 10px;
+  font-weight: bold;
+  font-size: 12px;
+  color: #5F96AC;
 }
 
 .gameDetail .InfoLabel {

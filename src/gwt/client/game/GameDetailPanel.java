@@ -12,8 +12,10 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -31,7 +33,6 @@ import client.shell.CommentsPanel;
 import client.shell.Page;
 import client.util.CreatorLabel;
 import client.util.ItemUtil;
-import client.util.MediaUtil;
 import client.util.MsoyUI;
 import client.util.StyledTabPanel;
 
@@ -94,9 +95,23 @@ public class GameDetailPanel extends VerticalPanel
         box.setCellSpacing(0);
         box.getFlexCellFormatter().setStyleName(0, 0, "Name");
         box.setText(0, 0, detail.getGame().name);
-        box.getFlexCellFormatter().setStyleName(1, 0, "Logo");
-        box.setWidget(1, 0, MediaUtil.createMediaView(
-                          detail.getGame().getThumbnailMedia(), MediaDesc.PREVIEW_SIZE));
+        box.getFlexCellFormatter().setStyleName(1, 0, "Screenshot");
+        MediaDesc shot = detail.getGame().shotMedia;
+        if (shot == null) {
+            shot = detail.getGame().getThumbnailMedia();
+            CGame.log("No shot media, using " + shot + ".");
+        } else {
+            CGame.log("Using " + shot + ".");
+        }
+        box.setWidget(1, 0, new Image(shot.getMediaPath()));
+
+        if (detail.listedItem != null) {
+            box.setWidget(2, 0, WidgetUtil.makeShim(1, 5));
+            box.getFlexCellFormatter().setHorizontalAlignment(3, 0, HasAlignment.ALIGN_CENTER);
+            box.setWidget(3, 0, new ItemRating(
+                              detail.listedItem, CGame.getMemberId(), detail.memberRating));
+        }
+
         top.getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);
         top.setWidget(row, 0, box);
 
@@ -106,6 +121,8 @@ public class GameDetailPanel extends VerticalPanel
         top.setWidget(row, 1, details);
 
         FlexTable pbbox = new FlexTable();
+        pbbox.setCellPadding(0);
+        pbbox.setCellSpacing(0);
         pbbox.setText(0, 0, CGame.msgs.gdpPlay());
         pbbox.getFlexCellFormatter().setStyleName(0, 0, "PlayTitle");
         pbbox.getFlexCellFormatter().setColSpan(0, 0, 2);
@@ -145,31 +162,32 @@ public class GameDetailPanel extends VerticalPanel
         top.setWidget(row++, 2, pbbox);
         add(top);
 
+        SimplePanel cbox = new SimplePanel();
+        cbox.setStyleName("Creator");
         if (detail.creator != null) {
             CreatorLabel creator = new CreatorLabel();
             creator.setMember(detail.creator);
-            details.add(creator);
+            cbox.add(creator);
         }
+        details.add(cbox);
 
         details.add(new Label(ItemUtil.getDescription(detail.getGame())));
         details.add(WidgetUtil.makeShim(1, 5));
 
-        if (detail.listedItem != null) {
-            details.add(new ItemRating(detail.listedItem, CGame.getMemberId(),
-                                       detail.memberRating));
-            details.add(WidgetUtil.makeShim(1, 5));
-        }
-
         // set up the game info table
         float avg = detail.playerMinutes / (float)detail.playerGames;
-        int avgMins = (int)Math.floor(avg);
-        int avgSecs = (int)Math.floor(avg * 60) % 60;
+        int avgMins = Math.max(1, Math.round(avg));
 
         FlexTable info = new FlexTable();
         info.setCellPadding(0);
         info.setCellSpacing(0);
+
+        int irow = 0;
+        info.setText(irow, 0, CGame.msgs.gdpInfoTitle());
+        info.getFlexCellFormatter().setStyleName(irow++, 0, "InfoTitle");
+
         String[] ilabels = {
-            CGame.msgs.gdpPlayers(), CGame.msgs.gdpGamesPlayed(), CGame.msgs.gdpAvgDuration()
+            CGame.msgs.gdpPlayers(), CGame.msgs.gdpAvgDuration(), CGame.msgs.gdpGamesPlayed()
         };
         String playersStr;
         if (detail.isPartyGame()) {
@@ -181,13 +199,13 @@ public class GameDetailPanel extends VerticalPanel
         }
         String[] ivalues = {
             playersStr,
+            (avgMins > 1) ? CGame.msgs.gdpMinutes(""+avgMins) : CGame.msgs.gdpMinute(),
             Integer.toString(detail.playerGames),
-            avgMins + ":" + (avgSecs < 10 ? "0" : "") + avgSecs,
         };
         for (int ii = 0; ii < ilabels.length; ii++) {
-            info.setText(ii, 0, ilabels[ii]);
-            info.getFlexCellFormatter().setStyleName(ii, 0, "InfoLabel");
-            info.setText(ii, 1, ivalues[ii]);
+            info.setText(irow, 0, ilabels[ii]);
+            info.getFlexCellFormatter().setStyleName(irow, 0, "InfoLabel");
+            info.setText(irow++, 1, ivalues[ii]);
         }
         details.add(info);
 

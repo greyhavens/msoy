@@ -96,7 +96,7 @@
   background-image: url(/images/item/detail_preview_bg.png);
   text-align: center;
   width: 320px;
-  height: 240px;
+/*  height: 240px; */
   padding: 10px;
 }
 
@@ -114,7 +114,6 @@
 }
 
 .itemDetailPanel .Details {
-  border-top: white solid 20px;
   width: 250px;
 }
 
