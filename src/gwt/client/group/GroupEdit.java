@@ -11,25 +11,20 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.ComplexPanel;
-import com.google.gwt.user.client.ui.RadioButton;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.Group;
@@ -41,6 +36,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import client.shell.Application;
 import client.shell.Page;
 import client.util.BorderedDialog;
+import client.util.ImageChooserPopup;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
 import client.util.StyledTabPanel;
@@ -89,7 +85,7 @@ public class GroupEdit extends BorderedDialog
         groupNameEdit.setSpacing(5);
         contents.add(groupNameEdit);
 
-        TabPanel groupTabs = new StyledTabPanel();
+        StyledTabPanel groupTabs = new StyledTabPanel();
         groupTabs.add(createInfoPanel(), CGroup.msgs.editInfoTab());
         groupTabs.add(createDescriptionPanel(), CGroup.msgs.editDescripTab());
         groupTabs.add(createBackgroundsPanel(), CGroup.msgs.editImagesTab());
@@ -401,41 +397,11 @@ public class GroupEdit extends BorderedDialog
         box.add(changeButton);
     }
 
-    // pop up a scrollable horizontal list of photo items from which to choose a logo
     protected void popupImageChooser (final CellPanel box, final int type, final String buttonLabel)
     {
-        // the list of images is cached for this object
-        if (_images == null) {
-            CGroup.membersvc.loadInventory(CGroup.ident, Item.PHOTO, 0, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    _images = (List) result;
-                    // will use the cached results this time.
-                    popupImageChooser(box, type, buttonLabel);
-                }
-                public void onFailure (Throwable caught) {
-                    CGroup.log("loadInventory failed", caught);
-                    addError(CGroup.msgs.errPhotoLoadFailed(CGroup.serverError(caught)));
-                }
-            });
-            return;
-        }
-
-        if (_images.size() == 0) {
-            addError(CGroup.msgs.errNoPhotos());
-            return;
-        }
-
-        // create the popup and its nested panels
-        HorizontalPanel itemPanel = new HorizontalPanel();
-        ScrollPanel chooser = new ScrollPanel(itemPanel);
-        final PopupPanel popup = new PopupPanel(true);
-        popup.setStyleName("groupLogoPopup");
-        popup.setWidget(chooser);
-
-        // set up a listener to pick an image for the logo, hide the popup, and update
-        final ClickListener logoChanger = new ClickListener() {
-            public void onClick (Widget sender) {
-                Photo photo = ((PhotoThumbnailImage) sender).photo;
+        ImageChooserPopup.displayImageChooser(new AsyncCallback() {
+            public void onSuccess (Object result) {
+                Photo photo = (Photo)result;
                 switch(type) {
                 case IMAGE_LOGO:
                     _group.logo = photo.getThumbnailMedia();
@@ -467,21 +433,12 @@ public class GroupEdit extends BorderedDialog
                 default:
                     addError("Internal Error! Unkown image type: " + type);
                 }
-                popup.hide();
                 updateImageBox(box, type, buttonLabel);
             }
-        };
-
-        // iterate over all our photos and fill the popup panel
-        Iterator i = _images.iterator();
-        while (i.hasNext()) {
-            Image image = new PhotoThumbnailImage(((Photo) i.next()));
-            image.addClickListener(logoChanger);
-            itemPanel.add(image);
-        }
-
-        // finally show the popup
-        popup.show();
+            public void onFailure (Throwable caught) {
+                // not used
+            }
+        });
     }
 
     protected void updateSubmitButton ()
@@ -499,18 +456,6 @@ public class GroupEdit extends BorderedDialog
     protected void clearErrors ()
     {
         _errorContainer.clear();
-    }
-
-    /**
-     * A tiny helper class that carries a Photo in a Widget.
-     */
-    protected static class PhotoThumbnailImage extends Image {
-        public Photo photo;
-        protected PhotoThumbnailImage (Photo photo)
-        {
-            super(photo.getThumbnailPath());
-            this.photo = photo;
-        }
     }
 
     protected Group _group;
