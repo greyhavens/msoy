@@ -124,7 +124,7 @@ public class GameRecord extends ItemRecord
         new ColumnExp(GameRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 9;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 10;
 
     /** The XML game configuration. */
     @Column(type="TEXT")
@@ -139,6 +139,12 @@ public class GameRecord extends ItemRecord
     /** A unique identifier assigned to this game and preserved across new versions of the game
      * item so that ratings and lobbies and content packs all reference the same "game". */
     public int gameId;
+
+    /** A hash code identifying the screenshot media. */
+    public byte[] shotMediaHash;
+
+    /** The MIME type of the {@link #shotMediaHash} media. */
+    public byte shotMimeType;
 
     @Override // from ItemRecord
     public void prepareForListing (ItemRecord oldListing)
@@ -177,6 +183,10 @@ public class GameRecord extends ItemRecord
             gameMimeType = game.gameMedia.mimeType;
         }
         gameId = game.gameId;
+        if (game.shotMedia != null) {
+            shotMediaHash = game.shotMedia.hash;
+            shotMimeType = game.shotMedia.mimeType;
+        }
     }
 
     @Override // from ItemRecord
@@ -187,6 +197,8 @@ public class GameRecord extends ItemRecord
         object.gameMedia = (gameMediaHash == null) ? null :
             new MediaDesc(gameMediaHash, gameMimeType);
         object.gameId = gameId;
+        object.shotMedia = (shotMediaHash == null) ? null :
+            new MediaDesc(shotMediaHash, shotMimeType);
         return object;
     }
 

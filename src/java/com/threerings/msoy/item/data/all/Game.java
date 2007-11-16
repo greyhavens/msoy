@@ -17,6 +17,12 @@ public class Game extends Item
     /** We reserve a very unlikely gameId for the tutorial. */
     public static final int TUTORIAL_GAME_ID = Integer.MAX_VALUE;
 
+    /** The width of a game screenshot. */
+    public static final int SHOT_WIDTH = 175;
+
+    /** The height of a game screenshot. */
+    public static final int SHOT_HEIGHT = 125;
+
     /** The XML game configuration. */
     public String config;
 
@@ -26,6 +32,9 @@ public class Game extends Item
     /** A unique identifier assigned to this game and preserved across new versions of the game
      * item so that ratings and lobbies and content packs all reference the same "game". */
     public int gameId;
+
+    /** The game screenshot media. */
+    public MediaDesc shotMedia;
 
     /**
      * Returns true if this is a developer's in-progress original game rather than one listed in
@@ -61,7 +70,13 @@ public class Game extends Item
     // @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
-        return (furniMedia != null) ? furniMedia : getThumbnailMedia();
+        if (shotMedia != null) {
+            return shotMedia;
+        }
+        if (furniMedia != null) {
+            return furniMedia;
+        }
+        return getThumbnailMedia();
     }
 
     /**

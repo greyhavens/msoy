@@ -26,15 +26,13 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.web.server.UploadUtil.FullMediaInfo;
-import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
 import static com.threerings.msoy.Log.log;
 
 /**
  * Handles uploads of scene snapshot images.
  */
-public class SnapshotServlet extends UploadServlet 
+public class SnapshotServlet extends UploadServlet
 {
     @Override // from UploadServlet
     protected void handleFileItems (FileItem file, FileItem[] allItems, int uploadLength,
@@ -57,7 +55,7 @@ public class SnapshotServlet extends UploadServlet
                      + file.getSize() + ", id=" + file.getFieldName() + "].");
         }
         validateFileLength(uploadFile.getMimeType(), uploadLength);
-        
+
         // publish the file
         UploadUtil.publishSnapshot((SnapshotUploadFile) uploadFile);
 
@@ -124,7 +122,7 @@ public class SnapshotServlet extends UploadServlet
         throw new AccessDeniedException("User has no rights to upload a screenshot [sceneId=" +
                                         sceneId + ", memberId=" + memberId + "].");
     }
-    
+
     /**
      * Converts all uploaded form fields into a map of field names to field values.
      */

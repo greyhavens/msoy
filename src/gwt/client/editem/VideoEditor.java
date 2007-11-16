@@ -77,9 +77,9 @@ public class VideoEditor extends ItemEditor
         _youtubeIdBox = new TextBox();
         _youtubeIdBox.setMaxLength(YOUTUBE_ID_LENGTH);
 
-        // TODO: ideally, the Button is disabled until a valid-lengthed string is entered
-        // into the ID box. However, the ChangeEvent on a TextBox only gets fired when it loses
-        // focus, and the KeyboardListener is cumbersome and I'm not sure it reacts to pastes.
+        // TODO: ideally, the Button is disabled until a valid-lengthed string is entered into the
+        // ID box. However, the ChangeEvent on a TextBox only gets fired when it loses focus, and
+        // the KeyboardListener is cumbersome and I'm not sure it reacts to pastes.
         Button submit = new Button(CShell.cmsgs.update());
         submit.setStyleName("mediaUploader");
         submit.addClickListener(new ClickListener() {
@@ -87,13 +87,12 @@ public class VideoEditor extends ItemEditor
                 String text = _youtubeIdBox.getText();
                 if (text.length() == YOUTUBE_ID_LENGTH) {
                     setHash(Item.MAIN_MEDIA, text, MediaDesc.VIDEO_YOUTUBE,
-                        MediaDesc.NOT_CONSTRAINED, 425, 350, "", 0, 0);
-                    // NOTE: it appears that youtube videos have a thumbnail of sorts hosted in
-                    // a predictable and accessible way.
+                            MediaDesc.NOT_CONSTRAINED, 425, 350);
+                    // NOTE: it appears that youtube videos have a thumbnail of sorts hosted in a
+                    // predictable and accessible way.
                     //    http://img.youtube.com/vi/VIDEO_ID/0.jpg
-                    // Perhaps we should have an 'external image' mime type and ... murrgh
-                    // it'd actually have to be a 'youtube thumbnail' mime type.
-                    // Something to consider.
+                    // Perhaps we should have an 'external image' mime type and ... murrgh it'd
+                    // actually have to be a 'youtube thumbnail' mime type.  Something to consider.
                 }
             }
         });
@@ -126,7 +125,7 @@ public class VideoEditor extends ItemEditor
 //                String text = _googleIdBox.getText();
 //                if (text.length() == GOOGLE_ID_LENGTH) {
 //                    setHash(Item.MAIN_MEDIA, text, MediaDesc.VIDEO_GOOGLE,
-//                        MediaDesc.NOT_CONSTRAINED, 400, 326, "", 0, 0);
+//                        MediaDesc.NOT_CONSTRAINED, 400, 326);
 //                }
 //            }
 //        });

@@ -67,7 +67,7 @@ public class TrophySourceEditor extends SubItemEditor
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (width != TrophySource.TROPHY_WIDTH || height != TrophySource.TROPHY_HEIGHT ||
                     !desc.isImage()) {
-                    return CShell.emsgs.invalidTrophy();
+                    return CShell.emsgs.errInvalidTrophy();
                 }
                 _item.thumbMedia = desc;
                 return null;

@@ -39,23 +39,6 @@ import com.threerings.s3.client.acl.AccessControlList;
 public class UploadUtil
 {
     /**
-     * A class to hold an item and its generated thumbnail, if needed.
-     */
-    public static class FullMediaInfo
-    {
-        public final MediaInfo item;
-        public final MediaInfo thumb;
-        public final String mediaId;
-
-        public FullMediaInfo (MediaInfo item, MediaInfo thumb, String mediaId)
-        {
-            this.item = item;
-            this.thumb = thumb;
-            this.mediaId = mediaId;
-        }
-    }
-
-    /**
      * A data class used when generating the item javascript.
      */
     public static class MediaInfo
@@ -194,12 +177,12 @@ public class UploadUtil
     }
 
     /**
-     * Computes and fills in the constraints on the supplied image, generates a thumbnail
-     * representation, and publishes the image data to the media store.
+     * Computes and fills in the constraints on the supplied image, scaling thumbnails as
+     * necessary, and publishes the image data to the media store.
      *
-     * @return a FullMediaInfo object filled in with the item and thumbnail.
+     * @return a MediaInfo object filled in with the published image info.
      */
-    public static FullMediaInfo publishImage (UploadFile uploadFile, String mediaId)
+    public static MediaInfo publishImage (String mediaId, UploadFile uploadFile)
         throws IOException
     {
         // convert the uploaded file data into an image object
@@ -208,72 +191,67 @@ public class UploadUtil
             throw new IOException("Invalid image data. Unable to complete upload.");
         }
 
-        // create the media info object for this image
-        byte constraint = MediaDesc.computeConstraint(
-            MediaDesc.PREVIEW_SIZE, image.getWidth(), image.getHeight());
-        MediaInfo info = new MediaInfo(uploadFile.getHash(), uploadFile.getMimeType(),
-                                       constraint, image.getWidth(), image.getHeight());
+        String hash = uploadFile.getHash();
+        byte mimeType = uploadFile.getMimeType();
+        int width = image.getWidth(), height = image.getHeight();
+        int size = MediaDesc.PREVIEW_SIZE;
 
-        // generate a thumbnail for this image
-        byte tconstraint = MediaDesc.computeConstraint(
-            MediaDesc.THUMBNAIL_SIZE, image.getWidth(), image.getHeight());
-        MediaInfo tinfo = null;
+        // if we're uploading a thumbnail image...
+        boolean published = false;
+        if (mediaId.equals(Item.THUMB_MEDIA)) {
+            // ...we want to compute our constraint against the thumbnail size...
+            size = MediaDesc.THUMBNAIL_SIZE;
+            // ...and we may need to scale our image
+            if (width > MediaDesc.THUMBNAIL_WIDTH || height > MediaDesc.THUMBNAIL_HEIGHT) {
+                // determine the size of our to be scaled image
+                float tratio = MediaDesc.THUMBNAIL_WIDTH / (float)MediaDesc.THUMBNAIL_HEIGHT;
+                float iratio = image.getWidth() / (float)image.getHeight();
+                float scale = (iratio > tratio) ?
+                    MediaDesc.THUMBNAIL_WIDTH / (float)image.getWidth() :
+                    MediaDesc.THUMBNAIL_HEIGHT / (float)image.getHeight();
+                width = Math.round(scale * image.getWidth());
+                height = Math.round(scale * image.getHeight());
 
-        if (tconstraint == MediaDesc.NOT_CONSTRAINED ||
-            tconstraint == MediaDesc.HALF_HORIZONTALLY_CONSTRAINED ||
-            tconstraint == MediaDesc.HALF_VERTICALLY_CONSTRAINED) {
-            // if it's really small, we can use the original as the thumbnail, but preserve
-            // tconstraint because that might be different because we compute thumbnail image
-            // constraints using half-thumbnail sizes; whee!
-            tinfo = new MediaInfo(info, tconstraint);
+                // generate the scaled image
+                BufferedImage timage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D gfx = timage.createGraphics();
+                try {
+                    gfx.drawImage(image, 0, 0, width, height, null);
+                } finally {
+                    gfx.dispose();
+                }
 
-        } else {
-            // scale the image to thumbnail size
-            float scale = (tconstraint == MediaDesc.HORIZONTALLY_CONSTRAINED) ?
-                (float)MediaDesc.THUMBNAIL_WIDTH / image.getWidth() :
-                (float)MediaDesc.THUMBNAIL_HEIGHT / image.getHeight();
-            int twidth = Math.round(scale * image.getWidth());
-            int theight = Math.round(scale * image.getHeight());
-            BufferedImage timage = new BufferedImage(twidth, theight, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D gfx = timage.createGraphics();
-            try {
-                // gfx.drawImage(image.getScaledInstance(twidth, theight, BufferedImage.SCALE_FAST),
-                //     0, 0, null);
-                gfx.drawImage(image, 0, 0, twidth, theight, null);
-            } finally {
-                gfx.dispose();
+                // encode it into the target image format and compute its hash along the way
+                MessageDigest digest = null;
+                try {
+                    digest = MessageDigest.getInstance("SHA");
+                } catch (NoSuchAlgorithmException nsa) {
+                    throw new RuntimeException(nsa.getMessage());
+                }
+                ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                DigestOutputStream digout = new DigestOutputStream(bout, digest);
+                ImageIO.write(timage, THUMBNAIL_IMAGE_FORMAT,
+                              new MemoryCacheImageOutputStream(digout));
+
+                // update our hash and thumbnail
+                hash = StringUtil.hexlate(digest.digest());
+                mimeType = THUMBNAIL_MIME_TYPE;
+
+                // publish the thumbnail
+                publishStream(new ByteArrayInputStream(bout.toByteArray()), hash, mimeType);
+                bout.close();
+                published = true;
             }
-
-            // now encode it into the target image format and compute its hash along the way
-            MessageDigest digest = null;
-            try {
-                digest = MessageDigest.getInstance("SHA");
-            } catch (NoSuchAlgorithmException nsa) {
-                throw new RuntimeException(nsa.getMessage());
-            }
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            DigestOutputStream digout = new DigestOutputStream(bout, digest);
-            ImageIO.write(timage, THUMBNAIL_IMAGE_FORMAT,
-                new MemoryCacheImageOutputStream(digout));
-            String thash = StringUtil.hexlate(digest.digest());
-            tinfo = new MediaInfo(thash, THUMBNAIL_MIME_TYPE, tconstraint, twidth, theight);
-
-            // publish the thumbnail
-            publishStream(new ByteArrayInputStream(bout.toByteArray()), tinfo.hash, tinfo.mimeType);
-            bout.close();
         }
 
-        // if the user is uploading a thumbnail image, we want to use the scaled version and
-        // abandon their original uploaded file data
-        if (!tinfo.hash.equals(info.hash) && mediaId.equals(Item.THUMB_MEDIA)) {
-            // the generated thumbnail is the item, leave the thumbnail element blank
-            return new FullMediaInfo(tinfo, new MediaInfo(), mediaId);
-
-        } else {
-            // publish the image
+        // if we haven't yet published our image, do so
+        if (!published) {
             publishUploadFile(uploadFile);
-            return new FullMediaInfo(info, tinfo, mediaId);
         }
+
+        // finally compute our constraint and return a media info
+        byte constraint = MediaDesc.computeConstraint(size, width, height);
+        return new MediaInfo(hash, mimeType, constraint, width, height);
     }
 
     protected static final byte THUMBNAIL_MIME_TYPE = MediaDesc.IMAGE_PNG;

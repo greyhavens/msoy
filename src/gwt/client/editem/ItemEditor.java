@@ -446,9 +446,8 @@ public abstract class ItemEditor extends BorderedDialog
     /**
      * Configures this item editor with the hash value for media that it is about to upload.
      */
-    protected void setHash (
-        String id, String mediaHash, int mimeType, int constraint, int width, int height,
-        String thumbMediaHash, int thumbMimeType, int thumbConstraint)
+    protected void setHash (String id, String mediaHash, int mimeType, int constraint,
+                            int width, int height)
     {
         MediaUploader mu = getUploader(id);
         if (mu == null) {
@@ -460,20 +459,10 @@ public abstract class ItemEditor extends BorderedDialog
         mu.setUploadedMedia(
             new MediaDesc(mediaHash, (byte)mimeType, (byte)constraint), width, height);
 
-        // if we got thumbnail media back from this upload, use that as well
-        // TODO: avoid overwriting custom thumbnail, sigh
-        if (thumbMediaHash.length() > 0) {
-            _item.thumbMedia = new MediaDesc(
-                thumbMediaHash, (byte)thumbMimeType, (byte)thumbConstraint);
-        }
-
         // have the item re-validate that no media ids are duplicated unnecessarily
         _item.checkConsolidateMedia();
 
-        // re-check the other two, as they may have changed
-        if (!Item.THUMB_MEDIA.equals(id)) {
-            recheckThumbMedia();
-        }
+        // re-check the furni image as it may have changed
         if (!Item.FURNI_MEDIA.equals(id)) {
             recheckFurniMedia();
         }
@@ -504,11 +493,9 @@ public abstract class ItemEditor extends BorderedDialog
      * server as a response to our file upload POST request.
      */
     protected static void callBridge (
-        String id, String mediaHash, int mimeType, int constraint, int width, int height,
-        String thumbMediaHash, int thumbMimeType, int thumbConstraint)
+        String id, String mediaHash, int mimeType, int constraint, int width, int height)
     {
-        _singleton.setHash(id, mediaHash, mimeType, constraint, width, height,
-                           thumbMediaHash, thumbMimeType, thumbConstraint);
+        _singleton.setHash(id, mediaHash, mimeType, constraint, width, height);
     }
 
     /**
@@ -627,8 +614,8 @@ public abstract class ItemEditor extends BorderedDialog
      * This wires up a sensibly named function that our POST response JavaScript code can call.
      */
     protected static native void configureBridge () /*-{
-        $wnd.setHash = function (id, hash, type, constraint, width, height, thash, ttype, tconstraint) {
-           @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IIIILjava/lang/String;II)(id, hash, type, constraint, width, height, thash, ttype, tconstraint);
+        $wnd.setHash = function (id, hash, type, constraint, width, height) {
+           @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IIII)(id, hash, type, constraint, width, height);
         };
         $wnd.uploadError = function () {
            @client.editem.ItemEditor::uploadError()();

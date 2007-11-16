@@ -17,7 +17,6 @@ import com.samskivert.io.StreamUtil;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.msoy.web.server.UploadUtil.FullMediaInfo;
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
 import static com.threerings.msoy.Log.log;
@@ -28,19 +27,17 @@ import static com.threerings.msoy.Log.log;
 public class UploadServlet extends AbstractUploadServlet
 {
     /**
-     * Generates the FullMediaInfo object for this FileItem and publishes the data into the media
-     * store and returns the results via Javascript to the GWT client.
+     * Generates the MediaInfo object for this FileItem and publishes the data into the media store
+     * and returns the results via Javascript to the GWT client.
      */
     @Override // from AbstractUploadServlet
     protected void handleFileItems (FileItem item, FileItem[] allItems, int uploadLength,
                                     HttpServletRequest req, HttpServletResponse rsp)
         throws IOException, FileUploadException, AccessDeniedException
     {
-        FullMediaInfo fullInfo = null;
-        
         // wrap the FileItem in an UploadFile for publishing
         UploadFile uploadFile = new FileItemUploadFile(item);
-        
+
         // attempt to extract the mediaId
         String mediaId = item.getFieldName();
         if (mediaId == null) {
@@ -65,57 +62,40 @@ public class UploadServlet extends AbstractUploadServlet
                 item.getContentType() + ", name=" + item.getName() + "].");
         }
 
-        // if this is an image, determine its constraints, generate a thumbnail, and publish
-        // the data into the media store
+        // if this is an image...
+        MediaInfo info;
         if (MediaDesc.isImage(uploadFile.getMimeType())) {
-            fullInfo = UploadUtil.publishImage(uploadFile, mediaId);
-
-            // treat all other file types in the same manner
+            // ...determine its constraints, generate a thumbnail, and publish the data into the
+            // media store
+            info = UploadUtil.publishImage(mediaId, uploadFile);
         } else {
-            MediaInfo info = new MediaInfo(uploadFile.getHash(), uploadFile.getMimeType());
-
-            // publish the file
+            // treat all other file types in the same manner, just publish them
+            info = new MediaInfo(uploadFile.getHash(), uploadFile.getMimeType());
             UploadUtil.publishUploadFile(uploadFile);
-
-            // the full media info is just the item and a blank thumbnail
-            fullInfo = new FullMediaInfo(info, new MediaInfo(), mediaId);
         }
 
-        // display the full media info in GWT Javascript land
-        displayResults(fullInfo, rsp);
-    }
-
-    @Override // from AbstractUploadServlet
-    protected int getMaxUploadSize ()
-    {
-        return LARGE_MEDIA_MAX_SIZE;
-    }
-
-    /**
-     * Display the FullMediaInfo in the GWT Javascript client.
-     */
-    protected void displayResults (FullMediaInfo fullInfo, HttpServletResponse rsp)
-        throws IOException
-    {
-        // write out the magical incantations that are needed to cause our magical little frame to
-        // communicate the newly assigned mediaHash to the ItemEditor widget
+        // finally write out the magical incantations that are needed to cause our magical little
+        // frame to communicate the newly assigned mediaHash to the ItemEditor widget
         PrintStream out = null;
         try {
             out = new PrintStream(rsp.getOutputStream());
             out.println("<html>");
             out.println("<head></head>");
-            String script = "parent.setHash('" + fullInfo.mediaId + "', " + "'"
-                + fullInfo.item.hash + "', " + fullInfo.item.mimeType + ", "
-                + fullInfo.item.constraint + ", " + fullInfo.item.width
-                + ", " + fullInfo.item.height + ", " + "'"
-                + fullInfo.thumb.hash + "', " + fullInfo.thumb.mimeType
-                + ", " + fullInfo.thumb.constraint + ")";
+            String script = "parent.setHash('" + mediaId + "', '" + info.hash + "', " +
+                info.mimeType + ", " + info.constraint + ", " +
+                info.width + ", " + info.height + ")";
             out.println("<body onLoad=\"" + script + "\"></body>");
             out.println("</html>");
 
         } finally {
             StreamUtil.close(out);
         }
+    }
+
+    @Override // from AbstractUploadServlet
+    protected int getMaxUploadSize ()
+    {
+        return LARGE_MEDIA_MAX_SIZE;
     }
 
     /**

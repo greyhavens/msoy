@@ -40,6 +40,7 @@ public class GameEditor extends ItemEditor
         super.setItem(item);
         _game = (Game)item;
         _mainUploader.setMedia(_game.gameMedia);
+        _auxUploader.setMedia(_game.shotMedia);
 
         // if we have no game configuration, leave everything as default
         if (_game.config == null || _game.config.length() == 0) {
@@ -183,6 +184,19 @@ public class GameEditor extends ItemEditor
                 return null;
             }
         }), CShell.emsgs.gameMainTab());
+
+        // add a tab for uploading the game screenshot
+        MediaUploader shotter = createAuxUploader(CShell.emsgs.gameShotTitle(), new MediaUpdater() {
+            public String updateMedia (String name, MediaDesc desc, int width, int height) {
+                if (width != Game.SHOT_WIDTH || height != Game.SHOT_HEIGHT || !desc.isImage()) {
+                    return CShell.emsgs.errInvalidShot(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT);
+                }
+                _game.shotMedia = desc;
+                return null;
+            }
+        });
+        shotter.setHint(CShell.emsgs.gameShotHint(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT));
+        tabs.add(shotter, CShell.emsgs.gameShotTab());
 
         super.createInterface(contents, tabs);
     }
