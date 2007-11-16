@@ -98,7 +98,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public static final int MAX_NAME_LENGTH = 64;
 
     /** The maximum length for item descriptions. */
-    public static final int MAX_DESCRIPTION_LENGTH = 255;
+    public static final int MAX_DESCRIPTION_LENGTH = 200;
 
     // == Instance variables follow =========================================
 
