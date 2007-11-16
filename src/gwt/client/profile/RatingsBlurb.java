@@ -59,7 +59,7 @@ public class RatingsBlurb extends Blurb
                 }
             };
             Image image = (Image)MediaUtil.createMediaView(
-                entry.gameThumb, MediaDesc.THUMBNAIL_SIZE);
+                entry.gameThumb, MediaDesc.HALF_THUMBNAIL_SIZE);
             image.addClickListener(gameClick);
             image.setStyleName("actionLabel");
             _content.setWidget(row, 0, image);
