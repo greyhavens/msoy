@@ -141,6 +141,7 @@ public class GameRecord extends ItemRecord
     public int gameId;
 
     /** A hash code identifying the screenshot media. */
+    @Column(nullable=true)
     public byte[] shotMediaHash;
 
     /** The MIME type of the {@link #shotMediaHash} media. */
