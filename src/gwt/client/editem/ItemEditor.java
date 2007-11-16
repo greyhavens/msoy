@@ -10,8 +10,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -29,6 +27,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.shell.CShell;
 import client.util.BorderedDialog;
+import client.util.LimitedTextArea;
 import client.util.MsoyUI;
 import client.util.StyledTabPanel;
 
@@ -185,7 +184,9 @@ public abstract class ItemEditor extends BorderedDialog
         _esubmit.setText(CShell.emsgs.editorSave());
 
         safeSetText(_name, _item.name);
-        safeSetText(_description, _item.description);
+        if (_description != null && _item.description != null) {
+            _description.setText(_item.description);
+        }
 
         recheckFurniMedia();
         recheckThumbMedia();
@@ -291,25 +292,16 @@ public abstract class ItemEditor extends BorderedDialog
     {
         addSpacer(info);
 
-        HorizontalPanel descLabel = new HorizontalPanel();
-        descLabel.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
-        descLabel.setSpacing(10);
-        descLabel.add(new Label(CShell.emsgs.editorDescrip()));
-
-        _description = new TextArea();
-        Label limit = new CharacterLimiter(_description, 255);
-        descLabel.add(limit);
-
-        bind(_description, new Binder() {
+        addInfoRow(info, new Label(CShell.emsgs.editorDescrip()));
+        _description = new LimitedTextArea(255);
+        _description.getTextArea().setCharacterWidth(40);
+        _description.getTextArea().setVisibleLines(3);
+        bind(_description.getTextArea(), new Binder() {
             public void textUpdated (String text) {
                 _item.description = text;
             }
         });
-
-        addInfoRow(info, descLabel);
         addInfoRow(info, _description);
-        _description.setCharacterWidth(40);
-        _description.setVisibleLines(3);
         addInfoTip(info, CShell.emsgs.editorDescripTip());
     }
 
@@ -374,6 +366,15 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
+     * This should be called by item editors that are used for editing media that has an additional
+     * piece of media in addition to main, furni and thumbnail.
+     */
+    protected MediaUploader createAuxUploader (String title, MediaUpdater updater)
+    {
+        return (_auxUploader = createUploader(Item.AUX_MEDIA, title, false, updater));
+    }
+
+    /**
      * Creates and configures a media uploader.
      */
     protected MediaUploader createUploader (
@@ -395,6 +396,9 @@ public abstract class ItemEditor extends BorderedDialog
 
         } else if (Item.MAIN_MEDIA.equals(id)) {
             return _mainUploader; // could be null...
+
+        } else if (Item.AUX_MEDIA.equals(id)) {
+            return _auxUploader; // could be null...
 
         } else {
             return null;
@@ -448,7 +452,8 @@ public abstract class ItemEditor extends BorderedDialog
     {
         MediaUploader mu = getUploader(id);
         if (mu == null) {
-            return; // TODO: log something? in gwt land?
+            CShell.log("Got setHash() request for unknown uploader [id=" + id + "].");
+            return;
         }
 
         // set the new media in preview and in the item
@@ -643,7 +648,7 @@ public abstract class ItemEditor extends BorderedDialog
 
     protected Label _etitle;
     protected TextBox _name;
-    protected TextArea _description;
+    protected LimitedTextArea _description;
     protected Button _esubmit;
 
     protected static ItemEditor _singleton;
@@ -651,4 +656,5 @@ public abstract class ItemEditor extends BorderedDialog
     protected MediaUploader _thumbUploader;
     protected MediaUploader _furniUploader;
     protected MediaUploader _mainUploader;
+    protected MediaUploader _auxUploader;
 }
