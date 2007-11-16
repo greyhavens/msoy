@@ -56,7 +56,7 @@ public class LimitedTextArea extends VerticalPanel
         if (text.length() > _maxChars) {
             _area.setText(text = text.substring(0, _maxChars));
         }
-        _remaining.setText(CShell.emsgs.charRemaining(String.valueOf(_maxChars - text.length())));
+        _remaining.setText(CShell.msgs.charRemaining(String.valueOf(_maxChars - text.length())));
     }
 
     protected KeyboardListenerAdapter _limiter = new KeyboardListenerAdapter() {
