@@ -570,7 +570,7 @@ public class ChatOverlay
                 var prefix :String = _msgMan.getBundle(MsoyCodes.CHAT_MSGS).get(
                     format, umsg.getSpeakerDisplayName()) + " ";
 
-                if (useQuotes(type)) {
+                if (useQuotes(msg, type)) {
                     prefix += "\"";
                     texts.push("\"");
                 }
@@ -717,9 +717,9 @@ public class ChatOverlay
     /**
      * Should we be using quotes with the specified format?
      */
-    protected function useQuotes (type :int) :Boolean
+    protected function useQuotes (msg: ChatMessage, type :int) :Boolean
     {
-        return (modeOf(type) != EMOTE);
+        return (modeOf(type) != EMOTE) && !(msg is ChannelMessage);
     }
 
     /**

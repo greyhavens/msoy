@@ -24,6 +24,11 @@ public class ChannelMessage extends UserMessage
         super(speaker, null, message, mode);
     }
 
+    override public function getFormat () :String
+    {
+        return "m.channel_format";
+    }
+
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
