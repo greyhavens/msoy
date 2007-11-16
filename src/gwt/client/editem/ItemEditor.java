@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -288,12 +290,24 @@ public abstract class ItemEditor extends BorderedDialog
     protected void addDescription (FlexTable info)
     {
         addSpacer(info);
-        addInfoRow(info, new Label(CShell.emsgs.editorDescrip()));
-        addInfoRow(info, bind(_description = new TextArea(), new Binder() {
+
+        HorizontalPanel descLabel = new HorizontalPanel();
+        descLabel.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+        descLabel.setSpacing(10);
+        descLabel.add(new Label(CShell.emsgs.editorDescrip()));
+
+        _description = new TextArea();
+        Label limit = new CharacterLimiter(_description, 255);
+        descLabel.add(limit);
+
+        bind(_description, new Binder() {
             public void textUpdated (String text) {
                 _item.description = text;
             }
-        }));
+        });
+
+        addInfoRow(info, descLabel);
+        addInfoRow(info, _description);
         _description.setCharacterWidth(40);
         _description.setVisibleLines(3);
         addInfoTip(info, CShell.emsgs.editorDescripTip());
@@ -500,7 +514,7 @@ public abstract class ItemEditor extends BorderedDialog
     {
         MsoyUI.error(CShell.emsgs.errUploadError());
     }
-    
+
     /**
      * This is called from our magical JavaScript method by JavaScript code received from the
      * server to display a friendly message to the user that the upload was too large.

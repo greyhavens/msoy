@@ -21,7 +21,7 @@ a:visited {
   color: black;
 }
 
-a.external { 
+a.external {
   background: url(/images/ui/external.png) center right no-repeat;
   padding-right: 16px;
 }
@@ -862,4 +862,9 @@ a.external {
 .commentPanel .Posted {
   font-size: 12px;
   color: #CCCCCC;
+}
+
+.characterLimiter {
+  font-size: 10px;
+  color: #666666;
 }
