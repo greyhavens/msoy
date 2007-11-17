@@ -37,6 +37,12 @@ public interface WorldService extends RemoteService
         throws ServiceException;
 
     /**
+     * Updates the Whirledwide news HTML. Caller must be an admin.
+     */
+    public void updateWhirledNews (WebIdent ident, String newsHtml)
+        throws ServiceException;
+
+    /**
      * Loads all items in a player's inventory of the specified type and optionally restricted to
      * the specified suite.
      *

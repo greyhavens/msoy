@@ -14,10 +14,12 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -37,8 +39,10 @@ import client.shell.Args;
 import client.shell.Page;
 import client.shell.WorldClient;
 
+import client.util.ClickCallback;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
+import client.util.RichTextToolbar;
 
 public class Whirledwide extends FlexTable
 {
@@ -51,7 +55,7 @@ public class Whirledwide extends FlexTable
             public void onSuccess (Object result) {
                 WhirledwideData data = (WhirledwideData) result;
                 popDisplay.displayPopulation(data.whirledPopulation);
-                fillUI(data);
+                setWhirledData(data);
             }
             public void onFailure (Throwable caught) {
                 MsoyUI.error(CWhirled.serverError(caught));
@@ -61,29 +65,17 @@ public class Whirledwide extends FlexTable
 
     protected void buildUI ()
     {
-        int row = 0;
-
         setCellPadding(0);
         setCellSpacing(5);
 
-        getFlexCellFormatter().setRowSpan(row, 0, TOTAL_ROWS);
+        int row = 0;
         VerticalPanel topGamesContainer = new VerticalPanel();
+        getFlexCellFormatter().setRowSpan(row, 0, TOTAL_ROWS);
+        getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);
         setWidget(row, 0, topGamesContainer);
         topGamesContainer.setStyleName("TopGamesContainer");
-        HorizontalPanel header = new HorizontalPanel();
-        header.setStyleName("Header");
-        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        Label star = new Label();
-        star.setStyleName("HeaderLeft");
-        header.add(star);
-        Label title = new Label(CWhirled.msgs.headerTopGames());
-        title.setStyleName("HeaderCenter");
-        header.add(title);
-        header.setCellWidth(title, "100%");
-        star = new Label();
-        star.setStyleName("HeaderRight");
-        header.add(star);
-        topGamesContainer.add(header);
+        topGamesContainer.add(makeHeader(CWhirled.msgs.headerTopGames()));
+
         VerticalPanel topGamesList = new VerticalPanel();
         topGamesList.addStyleName("TopGamesList");
         topGamesList.setVerticalAlignment(VerticalPanel.ALIGN_TOP);
@@ -102,36 +94,24 @@ public class Whirledwide extends FlexTable
         allGames.add(allGamesImage);
         topGamesContainer.add(allGames);
 
-
-        getFlexCellFormatter().setRowSpan(row, 2, TOTAL_ROWS);
         VerticalPanel playersContainer = new VerticalPanel();
+        getFlexCellFormatter().setRowSpan(row, 2, TOTAL_ROWS);
+        getFlexCellFormatter().setVerticalAlignment(row, 2, HasAlignment.ALIGN_TOP);
         setWidget(row, 2, playersContainer);
         playersContainer.setStyleName("PlayersContainer");
-        header = new HorizontalPanel();
-        header.setStyleName("Header");
-        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        star = new Label();
-        star.setStyleName("HeaderLeft");
-        header.add(star);
-        title = new Label(CWhirled.msgs.headerPlayers());
-        title.setStyleName("HeaderCenter");
-        header.add(title);
-        header.setCellWidth(title, "100%");
-        star = new Label();
-        star.setStyleName("HeaderRight");
-        header.add(star);
-        playersContainer.add(header);
+        playersContainer.add(makeHeader(CWhirled.msgs.headerPlayers()));
+
         VerticalPanel playersList = new VerticalPanel();
         playersList.addStyleName("PlayersList");
         playersList.setVerticalAlignment(VerticalPanel.ALIGN_TOP);
         playersList.add(_players = new VerticalPanel());
         playersContainer.add(playersList);
-        
+
         HorizontalPanel featuredPlaceContainer = new HorizontalPanel();
         featuredPlaceContainer.setSpacing(0);
         featuredPlaceContainer.setStyleName("FeaturedPlaceContainer");
         featuredPlaceContainer.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
-        getFlexCellFormatter().setAlignment(row, 1, HorizontalPanel.ALIGN_CENTER, 
+        getFlexCellFormatter().setAlignment(row, 1, HorizontalPanel.ALIGN_CENTER,
                                                     HorizontalPanel.ALIGN_TOP);
         setWidget(row++, 1, featuredPlaceContainer);
         VerticalPanel featuredPlace = new VerticalPanel();
@@ -141,51 +121,118 @@ public class Whirledwide extends FlexTable
         featuredPlace.add(new Image("/images/whirled/featured_places.jpg"));
         featuredPlace.add(_featuredPlace = new FeaturedPlaceView());
 
-        VerticalPanel newsBox = new VerticalPanel();
-        getFlexCellFormatter().setAlignment(row, 0, HorizontalPanel.ALIGN_CENTER,
-                                                    HorizontalPanel.ALIGN_TOP);
-        setWidget(row++, 0, newsBox);
-        newsBox.setStyleName("NewsBox");
-        header = new HorizontalPanel();
+        _newsRow = row;
+        getFlexCellFormatter().setAlignment(
+            _newsRow, 0, HorizontalPanel.ALIGN_CENTER, HorizontalPanel.ALIGN_TOP);
+    }
+
+    protected HorizontalPanel makeHeader (String title)
+    {
+        HorizontalPanel header = new HorizontalPanel();
         header.setStyleName("Header");
         header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        star = new Label();
-        star.setStyleName("HeaderLeft");
-        header.add(star);
-        title = new Label(CWhirled.msgs.headerNews());
-        title.setStyleName("HeaderCenter");
-        header.add(title);
-        header.setCellWidth(title, "100%");
-        star = new Label();
-        star.setStyleName("HeaderRight");
-        header.add(star);
-        newsBox.add(header);
+        header.add(MsoyUI.createLabel("", "HeaderLeft"));
+        Label tlabel = MsoyUI.createLabel(title, "HeaderCenter");
+        header.add(tlabel);
+        header.setCellWidth(tlabel, "100%");
+        header.add(MsoyUI.createLabel("", "HeaderRight"));
+        return header;
+    }
+
+    protected void showNews (String newsHtml)
+    {
+        VerticalPanel newsBox = new VerticalPanel();
+        newsBox.setStyleName("NewsBox");
+        newsBox.add(makeHeader(CWhirled.msgs.headerNews()));
+
         newsBox.add(_news = new ScrollPanel());
         _news.setStyleName("NewsContainer");
         _news.setAlwaysShowScrollBars(true);
         DOM.setStyleAttribute(_news.getElement(), "overflowX", "hidden");
+        if (newsHtml != null) {
+            _news.setWidget(new HTML(newsHtml));
+        }
+
+        if (CWhirled.isAdmin()) {
+            newsBox.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
+            newsBox.add(MsoyUI.createActionLabel("[edit news]", "tipLabel", new ClickListener() {
+                public void onClick (Widget sender) {
+                    editNews();
+                }
+            }));
+        }
+
+        setWidget(_newsRow, 0, newsBox);
     }
 
-    protected void fillUI (WhirledwideData whirledwide) 
+    protected void editNews ()
     {
+        if (_wwdata == null) {
+            return; // no editing until we have our data
+        }
+
+        VerticalPanel newsBox = new VerticalPanel();
+        newsBox.setStyleName("NewsBox");
+        newsBox.add(makeHeader(CWhirled.msgs.headerNews()));
+
+        final RichTextArea editor = new RichTextArea();
+        editor.setWidth("100%");
+        editor.setHeight("300px");
+        editor.setHTML(_wwdata.newsHtml);
+
+        newsBox.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+        newsBox.add(new RichTextToolbar(editor));
+        newsBox.add(editor);
+
+        newsBox.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
+        HorizontalPanel buttons = new HorizontalPanel();
+        buttons.setSpacing(5);
+        buttons.add(new Button(CWhirled.cmsgs.cancel(), new ClickListener() {
+            public void onClick (Widget source) {
+                showNews(_wwdata.newsHtml);
+            }
+        }));
+        Button update = new Button(CWhirled.cmsgs.update());
+        buttons.add(update);
+        new ClickCallback(update) {
+            public boolean callService () {
+                _newsHtml = editor.getHTML();
+                CWhirled.worldsvc.updateWhirledNews(CWhirled.ident, _newsHtml, this);
+                return true;
+            }
+            public boolean gotResult (Object result) {
+                showNews(_newsHtml);
+                return false;
+            }
+            protected String _newsHtml;
+        };
+        newsBox.add(buttons);
+
+        setWidget(_newsRow, 0, newsBox);
+    }
+
+    protected void setWhirledData (WhirledwideData whirledwide)
+    {
+        _wwdata = whirledwide;
+
+        // display the featured scenes
         _featuredPlace.setSceneList(whirledwide.places);
-        _news.setWidget(new HTML(whirledwide.newsHtml));
 
         // games
         Iterator gamesIter = whirledwide.games.iterator();
         if (gamesIter.hasNext()) {
             VerticalPanel topGame = new VerticalPanel();
             topGame.setStyleName("TopGame");
-            topGame.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
-            topGame.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
+            topGame.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+            topGame.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
             addGameDataTo(topGame, (SceneCard) gamesIter.next());
             _topGames.add(topGame);
         }
         while(gamesIter.hasNext()) {
             HorizontalPanel game = new HorizontalPanel();
             game.setStyleName("GameWidget");
-            game.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            game.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+            game.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+            game.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
             addGameDataTo(game, (SceneCard) gamesIter.next());
             _topGames.add(game);
         }
@@ -196,9 +243,9 @@ public class Whirledwide extends FlexTable
             final MemberCard person = (MemberCard) peopleIter.next();
             VerticalPanel personPanel = new VerticalPanel();
             personPanel.setStyleName("PlayerWidget");
-            personPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
-            personPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
-            
+            personPanel.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+            personPanel.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+
             ClickListener goToProfile = new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.PROFILE, "" + person.name.getMemberId());
@@ -217,9 +264,12 @@ public class Whirledwide extends FlexTable
             personPanel.add(nameLabel);
             _players.add(personPanel);
         }
+
+        // update the news
+        showNews(whirledwide.newsHtml);
     }
 
-    protected void addGameDataTo (CellPanel panel, final SceneCard game) 
+    protected void addGameDataTo (CellPanel panel, final SceneCard game)
     {
         ClickListener goToGame = new ClickListener() {
             public void onClick (Widget sender) {
@@ -236,8 +286,8 @@ public class Whirledwide extends FlexTable
         } else {
             HorizontalPanel logoContainer = new HorizontalPanel();
             logoContainer.setStyleName("LogoContainer");
-            logoContainer.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            logoContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+            logoContainer.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+            logoContainer.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
             logo = MediaUtil.createMediaView(logoMedia, MediaDesc.HALF_THUMBNAIL_SIZE);
             logoContainer.add(logo);
             panel.add(logoContainer);
@@ -257,7 +307,7 @@ public class Whirledwide extends FlexTable
     {
         public FeaturedPlaceView ()
         {
-            setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
+            setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
             add(_featuredPlaceContainer = new HorizontalPanel());
             HorizontalPanel nav = new HorizontalPanel();
             nav.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
@@ -271,7 +321,7 @@ public class Whirledwide extends FlexTable
             add(nav);
         }
 
-        public void onClick (Widget sender) 
+        public void onClick (Widget sender)
         {
             if (_scenes == null) {
                 return;
@@ -298,7 +348,7 @@ public class Whirledwide extends FlexTable
             onClick(_nextButton);
         }
 
-        protected void displayScene (final SceneCard card) 
+        protected void displayScene (final SceneCard card)
         {
             WorldClient.displayFeaturedPlace(card.sceneId, _featuredPlaceContainer);
             _sceneNameContainer.clear();
@@ -325,10 +375,13 @@ public class Whirledwide extends FlexTable
         int _sceneIdx;
     }
 
-    protected static final int TOTAL_ROWS = 2;
+    protected WhirledwideData _wwdata;
+    protected int _newsRow;
 
     protected VerticalPanel _topGames;
     protected VerticalPanel _players;
     protected FeaturedPlaceView _featuredPlace;
     protected ScrollPanel _news;
+
+    protected static final int TOTAL_ROWS = 2;
 }

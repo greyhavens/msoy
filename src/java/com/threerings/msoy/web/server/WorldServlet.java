@@ -38,40 +38,43 @@ import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
-import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.person.data.FriendFeedMessage;
-import com.threerings.msoy.person.data.GroupFeedMessage;
-import com.threerings.msoy.person.server.persist.FeedMessageRecord;
-import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
-import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
-import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.world.server.persist.SceneRecord;
-
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 
+import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.gwt.CatalogListing;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.world.server.persist.SceneRecord;
+
+import com.threerings.msoy.person.data.FeedMessage;
+import com.threerings.msoy.person.data.FriendFeedMessage;
+import com.threerings.msoy.person.data.GroupFeedMessage;
+import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.server.persist.FeedMessageRecord;
+import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
+import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+
+import com.threerings.msoy.data.MemberLocation;
+import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
-import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.data.MemberLocation;
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.gwt.CatalogListing;
-import com.threerings.msoy.person.data.FeedMessage;
-import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.server.persist.MemberRecord;
+
 import com.threerings.msoy.web.client.WorldService;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.LaunchConfig;
@@ -392,6 +395,22 @@ public class WorldServlet extends MsoyServiceServlet
 
         whirledwide.newsHtml = RuntimeConfig.server.whirledwideNewsHtml;
         return whirledwide;
+    }
+
+    // from interface WorldService
+    public void updateWhirledNews (WebIdent ident, final String newsHtml)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+        if (!mrec.isAdmin()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                RuntimeConfig.server.setWhirledwideNewsHtml(newsHtml);
+            }
+        });
     }
 
     // from interface WorldService
