@@ -52,11 +52,6 @@ public class GameRepository extends ItemRepository<
     public GameRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        // TEMP
-        _ctx.registerMigration(
-            GameRecord.class, new EntityMigration.Retype(16011, "shotMediaHash"));
-        // END TEMP
     }
 
     /**
