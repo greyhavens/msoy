@@ -154,7 +154,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#checkDictionaryWord()">checkDictionaryWord</a>(locale:String, word:String, callback:Function):void</div>
+<a class="signatureLink" href="#checkDictionaryWord()">checkDictionaryWord</a>(locale:String, dictionary:String, word:String, callback:Function):void</div>
 <div class="summaryTableDescription">
      Checks to see if the dictionary for the given locale contains the given word.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
@@ -227,7 +227,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getDictionaryLetterSet()">getDictionaryLetterSet</a>(locale:String, count:int, callback:Function):void</div>
+<a class="signatureLink" href="#getDictionaryLetterSet()">getDictionaryLetterSet</a>(locale:String, dictionary:String, count:int, callback:Function):void</div>
 <div class="summaryTableDescription">
      Requests a set of random letters from the dictionary service.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
@@ -856,12 +856,20 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function checkDictionaryWord(locale:String, word:String, callback:Function):void</code><p>
+<code>public function checkDictionaryWord(locale:String, dictionary:String, word:String, callback:Function):void</code><p>
      Checks to see if the dictionary for the given locale contains the given word.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">locale</span>:String</code> &mdash; 3066 string that represents language settings
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">dictionary</span>:String</code> &mdash; the dictionary to use, or null for the default.
+                       TODO: document possible parameters.
      </td>
 </tr>
 <tr>
@@ -1048,13 +1056,21 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getDictionaryLetterSet(locale:String, count:int, callback:Function):void</code><p>
+<code>public function getDictionaryLetterSet(locale:String, dictionary:String, count:int, callback:Function):void</code><p>
      Requests a set of random letters from the dictionary service.  The letters will arrive in a
      separate message with the specified key, as an array of strings.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">locale</span>:String</code> &mdash; RFC 3066 string that represents language settings
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">dictionary</span>:String</code> &mdash; the dictionary to use, or null for the default.
+                       TODO: document possible parameters.
      </td>
 </tr>
 <tr>
