@@ -9,6 +9,7 @@ import com.threerings.util.Long;
 import com.threerings.util.Name;
 
 import com.threerings.crowd.chat.data.UserMessage;
+import com.threerings.crowd.chat.data.ChatCodes;
 
 /**
  * A custom chat message used on chat channels.
@@ -26,7 +27,14 @@ public class ChannelMessage extends UserMessage
 
     override public function getFormat () :String
     {
-        return "m.channel_format";
+        switch (mode) {
+        case ChatCodes.THINK_MODE: return "m.channel_think_format";
+        case ChatCodes.EMOTE_MODE: return "m.channel_emote_format";
+        case ChatCodes.SHOUT_MODE: return "m.channel_shout_format";
+        case ChatCodes.BROADCAST_MODE: return "m.channel_broadcast_format";
+        }
+
+        return "m.channel_speak_format";
     }
 
     // from interface Streamable
