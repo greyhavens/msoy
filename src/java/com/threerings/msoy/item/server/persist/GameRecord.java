@@ -47,6 +47,20 @@ public class GameRecord extends ItemRecord
     public static final ColumnExp GAME_ID_C =
         new ColumnExp(GameRecord.class, GAME_ID);
 
+    /** The column identifier for the {@link #shotMediaHash} field. */
+    public static final String SHOT_MEDIA_HASH = "shotMediaHash";
+
+    /** The qualified column identifier for the {@link #shotMediaHash} field. */
+    public static final ColumnExp SHOT_MEDIA_HASH_C =
+        new ColumnExp(GameRecord.class, SHOT_MEDIA_HASH);
+
+    /** The column identifier for the {@link #shotMimeType} field. */
+    public static final String SHOT_MIME_TYPE = "shotMimeType";
+
+    /** The qualified column identifier for the {@link #shotMimeType} field. */
+    public static final ColumnExp SHOT_MIME_TYPE_C =
+        new ColumnExp(GameRecord.class, SHOT_MIME_TYPE);
+
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
         new ColumnExp(GameRecord.class, ITEM_ID);

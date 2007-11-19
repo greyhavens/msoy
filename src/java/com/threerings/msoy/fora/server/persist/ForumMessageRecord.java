@@ -59,6 +59,13 @@ public class ForumMessageRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #lastEdited} field. */
     public static final ColumnExp LAST_EDITED_C =
         new ColumnExp(ForumMessageRecord.class, LAST_EDITED);
+
+    /** The column identifier for the {@link #message} field. */
+    public static final String MESSAGE = "message";
+
+    /** The qualified column identifier for the {@link #message} field. */
+    public static final ColumnExp MESSAGE_C =
+        new ColumnExp(ForumMessageRecord.class, MESSAGE);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
