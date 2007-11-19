@@ -665,8 +665,8 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
-     * Determine the actor oid that corresponds to the specified ItemIdent,
-     * or return 0 if none found.
+     * Determine the actor oid that corresponds to the specified ItemIdent, or return 0 if none
+     * found.
      */
     protected int findActorOid (ItemIdent item)
     {
@@ -676,12 +676,14 @@ public class RoomManager extends SpotSceneManager
             return oid.intValue();
         }
 
-        // otherwise, scan all occupant infos. Perhaps we should keep a mapping
-        // for non-avatar actors as well?
+        // otherwise, scan all occupant infos. Perhaps we should keep a mapping for non-avatar
+        // actors as well?
         for (OccupantInfo info : _roomObj.occupantInfo) {
-            ActorInfo ainfo = (ActorInfo)info;
-            if (ainfo.getItemIdent().equals(item)) {
-                return ainfo.getBodyOid();
+            if (info instanceof ActorInfo) {
+                ActorInfo ainfo = (ActorInfo)info;
+                if (ainfo.getItemIdent().equals(item)) {
+                    return ainfo.getBodyOid();
+                }
             }
         }
 
