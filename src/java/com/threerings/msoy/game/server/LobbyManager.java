@@ -124,7 +124,7 @@ public class LobbyManager
     public boolean playNowSingle (PlayerObject player)
     {
         MsoyMatchConfig match = (MsoyMatchConfig)_lobj.gameDef.match;
-        if (match.minSeats != 1 && !match.isPartyGame) {
+        if (match == null || (match.minSeats != 1 && !match.isPartyGame)) {
             log.warning("Requested single player for non-single player game " +
                         "[who=" + player.who() + ", match=" + match + "].");
             return false;
