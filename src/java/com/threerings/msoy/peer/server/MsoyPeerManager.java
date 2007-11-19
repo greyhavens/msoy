@@ -90,10 +90,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         MsoyClientInfo info = (MsoyClientInfo)_nodeobj.clients.get(memobj.memberName);
         if (info == null) {
-            log.warning("Requested to update member location for non-local member " +
-                        "[who=" + memobj.memberName + "].");
-            Thread.dumpStack();
-            return;
+            return; // they're leaving or left, so no need to worry
         }
 
         MemberLocation newloc = new MemberLocation();
