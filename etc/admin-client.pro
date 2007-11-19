@@ -44,6 +44,10 @@
 # we need to cope with an MSOY auth respose
 -keep public class com.threerings.msoy.data.MsoyAuthResponseData
 
+-keep public class com.threerings.msoy.admin.client.AdminWrapper {
+    *;
+}
+
 -keep public class com.threerings.msoy.admin.client.AdminApplet {
     *;
 }

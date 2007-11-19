@@ -3,25 +3,16 @@
 
 package com.threerings.msoy.admin.client;
 
-import java.awt.EventQueue;
+import java.lang.reflect.Method;
+
+import java.net.URL;
+import java.net.URLClassLoader;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+
 import javax.swing.JApplet;
-
-import com.samskivert.util.Config;
-import com.samskivert.util.Interval;
-import com.samskivert.util.LoggingLogProvider;
-import com.samskivert.util.OneLineLogFormatter;
-import com.samskivert.util.RunQueue;
-
-import com.threerings.util.MessageManager;
-
-import com.threerings.presents.client.Client;
-import com.threerings.presents.dobj.DObjectManager;
-
-import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.web.client.DeploymentConfig;
-
-import com.threerings.msoy.admin.data.MsoyAdminCodes;
-import com.threerings.msoy.admin.util.AdminContext;
 
 import static com.threerings.msoy.Log.log;
 
@@ -29,42 +20,14 @@ import static com.threerings.msoy.Log.log;
  * Provides an admin dashboard client that is connected to a server.
  */
 public class AdminApplet extends JApplet
-    implements RunQueue
 {
-    // documentation inherited from interface RunQueue
-    public void postRunnable (Runnable run)
-    {
-        // queue it on up on the awt thread
-        EventQueue.invokeLater(run);
-    }
-
-    // documentation inherited from interface RunQueue
-    public boolean isDispatchThread ()
-    {
-        return EventQueue.isDispatchThread();
-    }
-
     @Override // from Applet
     public void init ()
     {
         super.init();
 
-        // set up better logging if possible
-        try {
-            com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
-            OneLineLogFormatter.configureDefaultHandler();
-        } catch (SecurityException se) {
-            log.info("Running in sandbox. Unable to configure logging.");
-        }
-
         log.info("Java: " + System.getProperty("java.version") +
                  ", " + System.getProperty("java.vendor") + ")");
-
-        // create our various context bits
-        _msgmgr = new MessageManager("rsrc.i18n");
-
-        // create our presents client instance
-        _client = new Client(null, this);
 
         // configure our server and port
         String server = null;
@@ -80,34 +43,48 @@ public class AdminApplet extends JApplet
                         "[server=" + server + ", port=" + port + "].");
             return;
         }
-        log.info("Using [server=" + server + ", port=" + port + "].");
-        _client.setServer(server, new int[] { port });
 
-        // create and display our main panel
-        add(new AdminPanel(_ctx));
+        // don't ask
+        List<URL> urls = new ArrayList<URL>();
+        for (URL url : ((URLClassLoader)getClass().getClassLoader()).getURLs()) {
+            if (url.getPath().endsWith(".jar")) {
+                urls.add(url);
+            }
+        }
+        URL[] uarray = urls.toArray(new URL[urls.size()]);
+        URLClassLoader loader = URLClassLoader.newInstance(uarray, null);
+        try {
+            Class<?> dclass = loader.loadClass("com.threerings.msoy.admin.client.AdminWrapper");
+            _delegate = dclass.newInstance();
+            _init = dclass.getMethod("init", JApplet.class, String.class, Integer.TYPE);
+            _start = dclass.getMethod("start", String.class);
+            _stop = dclass.getMethod("stop");
+            _destroy = dclass.getMethod("destroy");
+            _init.invoke(_delegate, this, server, port);
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to load wrapper class.", e);
+        }
     }
 
     @Override // from Applet
     public void start ()
     {
         super.start();
-
-        // create our credentials and logon
-        MsoyCredentials creds = new MsoyCredentials();
-        creds.sessionToken = getParameter("authtoken");
-        _client.setCredentials(creds);
-        _client.setVersion(String.valueOf(DeploymentConfig.version));
-        _client.logon();
+        try {
+            _start.invoke(_delegate, getParameter("authtoken"));
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to invoke start().", e);
+        }
     }
 
     @Override // from Applet
     public void stop ()
     {
         super.stop();
-
-        // if we're logged on, log off
-        if (_client != null && _client.isLoggedOn()) {
-            _client.logoff(true);
+        try {
+            _stop.invoke(_delegate);
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to invoke stop().", e);
         }
     }
 
@@ -115,33 +92,14 @@ public class AdminApplet extends JApplet
     public void destroy ()
     {
         super.destroy();
-        log.info("AdminApplet destroyed.");
-
-        // we need to cope with our threads being destroyed but our classes not being unloaded
-        Interval.resetTimer();
-    }
-
-    protected class AdminContextImpl implements AdminContext
-    {
-        public Config getConfig () {
-            return _config;
-        }
-        public Client getClient () {
-            return _client;
-        }
-        public DObjectManager getDObjectManager () {
-            return _client.getDObjectManager();
-        }
-        public MessageManager getMessageManager () {
-            return _msgmgr;
-        }
-        public String xlate (String message) {
-            return _msgmgr.getBundle(MsoyAdminCodes.ADMIN_MSGS).xlate(message);
+        super.destroy();
+        try {
+            _destroy.invoke(_delegate);
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to invoke destroy().", e);
         }
     }
 
-    protected AdminContext _ctx = new AdminContextImpl();
-    protected Config _config = new Config("msoy.admin");
-    protected MessageManager _msgmgr;
-    protected Client _client;
+    protected Object _delegate;
+    protected Method _init, _start, _stop, _destroy;
 }
