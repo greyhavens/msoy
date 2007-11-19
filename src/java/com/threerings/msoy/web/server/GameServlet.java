@@ -110,9 +110,14 @@ public class GameServlet extends MsoyServiceServlet
                 log.log(Level.WARNING, "Failed to parse XML game definition [id=" + gameId +
                         ", config=" + game.config + "]", e);
             }
-            detail.minPlayers = match.minSeats;
-            detail.maxPlayers = (match.getMatchType() == GameConfig.PARTY) ?
-                Integer.MAX_VALUE : match.maxSeats;
+            if (match == null) {
+                log.warning("Game missing match configuration [id=" + gameId +
+                            ", config=" + game.config + "].");
+            } else {
+                detail.minPlayers = match.minSeats;
+                detail.maxPlayers = (match.getMatchType() == GameConfig.PARTY) ?
+                    Integer.MAX_VALUE : match.maxSeats;
+            }
 
             if (creatorId != 0) {
                 MemberRecord crrec = MsoyServer.memberRepo.loadMember(creatorId);
