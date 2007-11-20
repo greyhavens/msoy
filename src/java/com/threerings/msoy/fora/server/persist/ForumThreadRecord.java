@@ -5,8 +5,7 @@ package com.threerings.msoy.fora.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Date;
-
-import com.samskivert.util.IntMap;
+import java.util.Map;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -111,7 +110,7 @@ public class ForumThreadRecord extends PersistentRecord
      * @param members a mapping from memberId to {@link MemberName} that should contain a mapping
      * for {@link #mostRecentPosterId}.
      */
-    public ForumThread toForumThread (IntMap<MemberName> members)
+    public ForumThread toForumThread (Map<Integer,MemberName> members)
     {
         ForumThread record = new ForumThread();
         record.threadId = threadId;

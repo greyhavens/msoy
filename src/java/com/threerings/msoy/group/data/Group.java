@@ -9,6 +9,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.fora.data.ForumThread;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
@@ -96,15 +98,16 @@ public class Group
             }
 
         case ACCESS_POST:
-            switch (rank) {
-            default:
-            case GroupMembership.RANK_NON_MEMBER:
-                return (policy == POLICY_PUBLIC); // non-members can only post to public groups
-
-            case GroupMembership.RANK_MEMBER:
-            case GroupMembership.RANK_MANAGER:
-                return true; // members and managers can always post
+            // non-managers cannot post to locked threads
+            if (rank != GroupMembership.RANK_MANAGER && (flags & ForumThread.FLAG_LOCKED) == 0) {
+                return false;
             }
+            // non-members can only post to public groups
+            if (rank == GroupMembership.RANK_NON_MEMBER && policy != POLICY_PUBLIC) {
+                return false;
+            }
+            // otherwise we're good to go
+            return true;
 
         default:
             throw new IllegalArgumentException(

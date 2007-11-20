@@ -24,6 +24,9 @@ public class ForumThread
     /** A flag indicating this is a sticky thread. */
     public static final int FLAG_STICKY = 0x1 << 1;
 
+    /** A flag indicating this is a locked thread. */
+    public static final int FLAG_LOCKED = 0x2 << 1;
+
     /** A unique identifier for this forum thread. */
     public int threadId;
 

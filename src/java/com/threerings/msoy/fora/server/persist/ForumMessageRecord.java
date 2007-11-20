@@ -5,8 +5,7 @@ package com.threerings.msoy.fora.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Date;
-
-import com.samskivert.util.IntMap;
+import java.util.Map;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -106,7 +105,7 @@ public class ForumMessageRecord extends PersistentRecord
      * @param members a mapping from memberId to {@link MemberCard} that should contain a mapping
      * for {@link #posterId}.
      */
-    public ForumMessage toForumMessage (IntMap<MemberCard> members)
+    public ForumMessage toForumMessage (Map<Integer,MemberCard> members)
     {
         ForumMessage msg = new ForumMessage();
         msg.threadId = threadId;

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -136,7 +137,10 @@ public class ForumServlet extends MsoyServiceServlet
             // make sure they're allowed to create a thread in this group
             checkAccess(mrec, groupId, Group.ACCESS_THREAD, flags);
 
-            return null;
+            // create the thread (and first post) in the database and return its runtime form
+            return MsoyServer.forumRepo.createThread(
+                groupId, mrec.memberId, flags, subject, message).toForumThread(
+                    Collections.singletonMap(mrec.memberId, mrec.getName()));
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to create thread [for=" + who(mrec) +
@@ -151,7 +155,33 @@ public class ForumServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser(ident);
 
-        return null;
+        try {
+            // make sure they're allowed to post a message to this thread's group
+            ForumThreadRecord ftr = MsoyServer.forumRepo.loadThread(threadId);
+            if (ftr == null) {
+                throw new ServiceException(ForumCodes.E_INVALID_THREAD);
+            }
+            checkAccess(mrec, ftr.groupId, Group.ACCESS_POST, ftr.flags);
+
+            // create the message in the database and return its runtime form
+            ForumMessageRecord fmr = MsoyServer.forumRepo.postMessage(
+                threadId, mrec.memberId, inReplyTo, message);
+
+            // load up the member card for the poster
+            IntMap<MemberCard> cards = IntMaps.newHashIntMap();
+            for (MemberCardRecord mcrec : MsoyServer.memberRepo.loadMemberCards(
+                     Collections.singleton(mrec.memberId))) {
+                cards.put(mcrec.memberId, mcrec.toMemberCard());
+            }
+
+            // and create and return the runtime record for the post
+            return fmr.toForumMessage(cards);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to post message [for=" + who(mrec) +
+                    ", tid=" + threadId + ", irTo=" + inReplyTo + "].");
+            throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface ForumService
@@ -194,6 +224,9 @@ public class ForumServlet extends MsoyServiceServlet
     {
         byte rank = GroupMembership.RANK_NON_MEMBER;
         if (mrec != null) {
+            if (mrec.isAdmin()) { // admins are always treated as managers
+                return GroupMembership.RANK_MANAGER;
+            }
             GroupMembershipRecord grm = MsoyServer.groupRepo.getMembership(groupId, mrec.memberId);
             if (grm != null) {
                 rank = grm.rank;

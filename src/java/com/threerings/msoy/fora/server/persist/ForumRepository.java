@@ -66,7 +66,7 @@ public class ForumRepository extends DepotRepository
      *
      * @return the newly created thread's record.
      */
-    public ForumThreadRecord createThread (int creatorId, int groupId, int flags,
+    public ForumThreadRecord createThread (int groupId, int creatorId, int flags,
                                            String subject, String message)
         throws PersistenceException
     {
@@ -78,7 +78,7 @@ public class ForumRepository extends DepotRepository
         insert(ftr);
 
         // post the first message to the thread (this will update the thread's last posted info)
-        ForumMessageRecord fmr = postMessage(ftr.threadId, creatorId, message);
+        ForumMessageRecord fmr = postMessage(ftr.threadId, creatorId, 0, message);
 
         // fill the last post values into the thread record by hand so that we can return it
         ftr.mostRecentPostId = fmr.messageId;
@@ -91,13 +91,14 @@ public class ForumRepository extends DepotRepository
     /**
      * Posts a message to the specified thread.
      */
-    public ForumMessageRecord postMessage (int threadId, int posterId, String message)
+    public ForumMessageRecord postMessage (int threadId, int posterId, int inReplyTo, String message)
         throws PersistenceException
     {
         // insert a record in the database for the message
         ForumMessageRecord fmr = new ForumMessageRecord();
         fmr.threadId = threadId;
         fmr.posterId = posterId;
+        fmr.inReplyTo = inReplyTo;
         fmr.created = fmr.lastEdited = new Timestamp(System.currentTimeMillis());
         fmr.message = message;
         insert(fmr);
