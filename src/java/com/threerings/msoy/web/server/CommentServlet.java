@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -19,6 +20,7 @@ import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.fora.server.persist.CommentRecord;
 
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.CommentService;
@@ -45,18 +47,15 @@ public class CommentServlet extends MsoyServiceServlet
                 MsoyServer.commentRepo.loadComments(etype, eid, offset, count);
 
             // resolve the member cards for all commentors
-            HashIntMap<MemberCard> cards = new HashIntMap<MemberCard>();
+            IntMap<MemberCard> cards = new HashIntMap<MemberCard>();
             ArrayIntSet memIds = new ArrayIntSet();
             for (CommentRecord record : records) {
                 memIds.add(record.memberId);
             }
             if (memIds.size() > 0) {
-                for (MemberRecord mrec : MsoyServer.memberRepo.loadMembers(memIds)) {
-                    MemberCard card = new MemberCard();
-                    card.name = mrec.getName();
-                    cards.put(mrec.memberId, card);
+                for (MemberCardRecord mcrec : MsoyServer.memberRepo.loadMemberCards(memIds)) {
+                    cards.put(mcrec.memberId, mcrec.toMemberCard());
                 }
-                ProfileServlet.resolveCardData(cards);
             }
 
             // convert the comment records to runtime records

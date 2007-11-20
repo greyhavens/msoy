@@ -32,6 +32,7 @@ import com.samskivert.jdbc.depot.SimpleCacheKey;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FieldDefinition;
+import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
@@ -45,12 +46,13 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.web.data.Invitation;
+
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.web.data.Invitation;
 
 import static com.threerings.msoy.Log.log;
 
@@ -175,11 +177,27 @@ public class MemberRepository extends DepotRepository
     {
         if (memberIds.size() == 0) {
             return Collections.emptyList();
-        } else {
-            return findAll(MemberNameRecord.class,
-                           new FromOverride(MemberRecord.class),
-                           new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)));
         }
+        return findAll(MemberNameRecord.class,
+                       new FromOverride(MemberRecord.class),
+                       new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)));
+    }
+
+    /**
+     * Loads up member's names and profile photos by id.
+     */
+    public List<MemberCardRecord> loadMemberCards (Set<Integer> memberIds)
+        throws PersistenceException
+    {
+        if (memberIds.size() == 0) {
+            return Collections.emptyList();
+        }
+        // TODO: should we just move Profile.photo into member record? we frequently want a
+        // member's name and photo and have only their id
+        return findAll(MemberCardRecord.class,
+                       new FromOverride(MemberRecord.class),
+                       new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C),
+                       new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)));
     }
 
     /**

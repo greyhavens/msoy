@@ -32,7 +32,7 @@ public class MemberNameRecord extends PersistentRecord
     public static final ColumnExp NAME_C =
         new ColumnExp(MemberNameRecord.class, NAME);
     // AUTO-GENERATED: FIELDS END
-    
+
     /** This member's unique id. */
     @Id
     public int memberId;
