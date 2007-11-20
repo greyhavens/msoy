@@ -410,17 +410,17 @@ public class GroupEdit extends BorderedDialog
                     _extras.infoBackground = photo.photoMedia;
                     // the background images store the thumbnail's constraint so that they can
                     // be scaled properly in the edit dialog
-                    _extras.infoBackground.constraint = photo.thumbMedia.constraint;
+                    _extras.infoBackground.constraint = photo.getThumbnailMedia().constraint;
                     break;
                 case IMAGE_DETAIL_BACKGROUND:
                     _extras.detailBackground = photo.photoMedia;
-                    _extras.detailBackground.constraint = photo.thumbMedia.constraint;
+                    _extras.detailBackground.constraint = photo.getThumbnailMedia().constraint;
                     _extras.detailBackgroundWidth = photo.photoWidth;
                     _extras.detailAreaHeight = photo.photoHeight;
                     break;
                 case IMAGE_PEOPLE_BACKGROUND:
                     _extras.peopleBackground = photo.photoMedia;
-                    _extras.peopleBackground.constraint = photo.thumbMedia.constraint;
+                    _extras.peopleBackground.constraint = photo.getThumbnailMedia().constraint;
                     break;
                 case IMAGE_PEOPLE_UPPER_CAP:
                     _extras.peopleUpperCap = photo.photoMedia;
