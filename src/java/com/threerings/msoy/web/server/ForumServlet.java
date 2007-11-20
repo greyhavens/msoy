@@ -52,7 +52,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         try {
             // make sure they have read access to this thread
-            checkCanRead(mrec, groupId);
+            checkAccess(mrec, groupId, Group.ACCESS_READ, 0);
 
             // load up the requested set of threads
             List<ForumThreadRecord> thrrecs =
@@ -94,7 +94,7 @@ public class ForumServlet extends MsoyServiceServlet
             if (ftr == null) {
                 throw new ServiceException(ForumCodes.E_INVALID_THREAD);
             }
-            checkCanRead(mrec, ftr.groupId);
+            checkAccess(mrec, ftr.groupId, Group.ACCESS_READ, 0);
 
             // load up the requested set of messages
             List<ForumMessageRecord> msgrecs =
@@ -134,7 +134,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         try {
             // make sure they're allowed to create a thread in this group
-            checkCanCreateThread(mrec, groupId, flags);
+            checkAccess(mrec, groupId, Group.ACCESS_THREAD, flags);
 
             return null;
 
@@ -171,61 +171,16 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     /**
-     * Checks that this member has read access to the specified group's messages.
+     * Checks that the supplied member has the specified access in the specified group.
      */
-    protected void checkCanRead (MemberRecord mrec, int groupId)
-        throws PersistenceException, ServiceException
-    {
-        byte groupRank = getGroupRank(mrec, groupId);
-
-        // if they're not a member, make sure the group is not private
-        if (groupRank == GroupMembership.RANK_NON_MEMBER) {
-            GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
-            if (grec == null) {
-                throw new ServiceException(ForumCodes.E_INVALID_GROUP);
-            }
-            if (grec.policy == Group.POLICY_EXCLUSIVE) {
-                throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
-            }
-        }
-    }
-
-    /**
-     * Checks that this member can create a thread of the specified type in the specified group.
-     */
-    protected void checkCanCreateThread (MemberRecord mrec, int groupId, int flags)
-        throws PersistenceException, ServiceException
-    {
-        // only managers can create announcement or sticky threads
-        byte groupRank = getGroupRank(mrec, groupId);
-        if (flags != 0 && groupRank != GroupMembership.RANK_MANAGER) {
-            throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
-        }
-
-        // otherwise membership is required to create a normal thread
-        if (groupRank == GroupMembership.RANK_NON_MEMBER) {
-            throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
-        }
-    }
-
-    /**
-     * Checks that this member can post a message to a thread in the specified group.
-     */
-    protected void checkCanPost (MemberRecord mrec, int groupId)
+    protected void checkAccess (MemberRecord mrec, int groupId, int access, int flags)
         throws PersistenceException, ServiceException
     {
         GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
         if (grec == null) {
             throw new ServiceException(ForumCodes.E_INVALID_GROUP);
         }
-
-        // anyone can post in a public group
-        if (grec.policy == Group.POLICY_PUBLIC) {
-            return;
-        }
-
-        // only members can post in non-public groups
-        if (getGroupRank(mrec, groupId) == GroupMembership.RANK_NON_MEMBER) {
+        if (!grec.toGroupObject().checkAccess(getGroupRank(mrec, groupId), access, flags)) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
     }
