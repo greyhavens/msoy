@@ -89,7 +89,6 @@ public class MemberCardRecord extends PersistentRecord
         card.name = new MemberName(name, memberId);
         card.photo = (photoHash != null) ?
             new MediaDesc(photoHash, photoMimeType, photoConstraint) : Profile.DEFAULT_PHOTO;
-        System.err.println("To card " + card.name + " " + photoHash + "...");
         return card;
     }
 
