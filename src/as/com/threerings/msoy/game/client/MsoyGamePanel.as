@@ -11,7 +11,6 @@ import com.threerings.flash.MediaContainer;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.data.PlaceObject;
-import com.threerings.ezgame.client.EZGamePanel;
 import com.threerings.ezgame.client.GameControlBackend;
 
 import com.whirled.client.PlayerList;
@@ -19,18 +18,18 @@ import com.whirled.client.WhirledGamePanel;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.HistoryList;
+import com.threerings.msoy.client.ControlBar;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.game.data.MsoyGameObject;
 
-public class MsoyGamePanel extends EZGamePanel
-    implements WhirledGamePanel, MsoyPlaceView
+public class MsoyGamePanel extends WhirledGamePanel
+    implements MsoyPlaceView
 {
     public function MsoyGamePanel (ctx :GameContext, ctrl :MsoyGameController)
     {
         super(ctx, ctrl);
         _gctx = ctx;
-
-        _playerList = new PlayerList();
     }
 
     // from MsoyPlaceView
@@ -48,32 +47,28 @@ public class MsoyGamePanel extends EZGamePanel
     // from EZGamePanel
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
-        // Important: we need to start the playerList prior to calling super, so that it
-        // is added as a listener to the gameObject prior to the backend being created
-        // and added as a listener. That way, when the ezgame hears about an occupantAdded
-        // event, the playerList already knows about that player!
-        _playerList.startup(plobj);
-
         super.willEnterPlace(plobj);
 
         _gctx.getMsoyChatDirector().displayGameChat(_gctx.getChatDirector(), _playerList);
+
+        var bar :ControlBar = _gctx.getTopPanel().getControlBar();
+        bar.addCustomComponent(_backToLobby);
+        bar.addCustomComponent(_backToWhirled);
+        bar.addCustomComponent(_rematch);
     }
 
     // from EZGamePanel
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
-        _playerList.shutdown();
-
         super.didLeavePlace(plobj);
 
         _gctx.getMsoyChatDirector().clearGameChat();
-        _gctx.getTopPanel().getControlBar().setChatEnabled(true);
-    }
+        var bar :ControlBar = _gctx.getTopPanel().getControlBar();
+        bar.setChatEnabled(true);
 
-    // from WhirledGamePanel
-    public function getPlayerList () :PlayerList
-    {
-        return _playerList;
+        _backToLobby.parent.removeChild(_backToLobby);
+        _backToWhirled.parent.removeChild(_backToWhirled);
+        _rematch.parent.removeChild(_rematch);
     }
 
     // from EZGamePanel
@@ -83,8 +78,12 @@ public class MsoyGamePanel extends EZGamePanel
                                           _ctrl as MsoyGameController);
     }
 
-    /** The standard list of players. */
-    protected var _playerList :PlayerList;
+    // from WhirledGamePanel
+    override protected function getButtonLabels () :Array
+    {
+        return [ Msgs.GAME.get("b.backToLobby"), Msgs.GAME.get("b.backToWhirled"),
+            Msgs.GAME.get("b.rematch") ];
+    }
 
     /** convenience reference to our game context */
     protected var _gctx :GameContext;

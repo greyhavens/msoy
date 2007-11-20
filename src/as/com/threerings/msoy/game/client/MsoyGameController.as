@@ -11,9 +11,13 @@ import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.ezgame.client.EZGameController;
 
+import com.whirled.client.WhirledGameController;
+
 import com.threerings.msoy.client.OccupantReporter;
 
-public class MsoyGameController extends EZGameController
+import com.threerings.msoy.game.data.MsoyGameConfig;
+
+public class MsoyGameController extends WhirledGameController
 {
     // from PlaceController
     override public function willEnterPlace (plobj :PlaceObject) :void
@@ -31,6 +35,16 @@ public class MsoyGameController extends EZGameController
 
         // shut down our occupant reporter
         _occReporter.didLeavePlace(plobj);
+    }
+
+    // from WhirledGameController
+    override public function backToWhirled (showLobby :Boolean = false) :void
+    {
+        (_pctx as GameContext).getTopPanel().getControlBar().moveBack();
+        if (showLobby) {
+            var cfg :MsoyGameConfig = getPlaceConfig() as MsoyGameConfig;
+            (_pctx as GameContext).displayLobby(cfg.getGameId());
+        }
     }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView

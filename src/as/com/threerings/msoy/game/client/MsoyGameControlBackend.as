@@ -33,7 +33,6 @@ public class MsoyGameControlBackend extends WhirledGameControlBackend
 
         var ctrl :MsoyGameController = (_ctrl as MsoyGameController);
         o["getHeadShot_v1"] = getHeadShot_v1;
-        o["backToWhirled_v1"] = backToWhirled_v1;
 
         // backwards compatibility
         o["getAvailableFlow_v1"] = getAvailableFlow_v1;
@@ -54,15 +53,6 @@ public class MsoyGameControlBackend extends WhirledGameControlBackend
             return;
         }
         throw new Error("Failed to find occupant: " + occupant);
-    }
-
-    protected function backToWhirled_v1 (showLobby :Boolean = false) :void
-    {
-        (_ctx as GameContext).getTopPanel().getControlBar().moveBack();
-        if (showLobby) {
-            var cfg :MsoyGameConfig = _ctrl.getPlaceConfig() as MsoyGameConfig;
-            (_ctx as GameContext).displayLobby(cfg.getGameId());
-        }
     }
 
     override protected function getSize_v1 () :Point

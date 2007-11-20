@@ -17,6 +17,7 @@ import mx.containers.Canvas;
 import mx.containers.HBox;
 import mx.controls.Button;
 import mx.controls.Spacer;
+import mx.core.UIComponent;
 
 import mx.events.FlexEvent;
 
@@ -141,6 +142,19 @@ public class ControlBar extends HBox
     }
 
     /**
+     * Add a custom component to the control bar.
+     * Note that there is no remove: just do component.parent.removeChild(component);
+     */
+    public function addCustomComponent (comp :UIComponent) :void
+    {
+        if (_spacer.width != 0) {
+            _spacer.addChild(comp);
+        } else {
+            addChild(comp);
+        }
+    }
+
+    /**
      * Moves back to the previous scene we occupied, if possible.
      */
     public function moveBack () :void
@@ -208,7 +222,7 @@ public class ControlBar extends HBox
         removeAllChildren();
         clearAllGroups();
 
-        _spacer = new Canvas();
+        _spacer = new HBox();
         _spacer.styleName = "controlBarSpacer";
         _spacer.height = this.height;
         _spacer.percentWidth = 100;
@@ -485,7 +499,7 @@ public class ControlBar extends HBox
     protected var _bookend :SkinnableImage;
 
     /** A spacer to bump the UI bits over to the right if needed */
-    protected var _spacer :Canvas;
+    protected var _spacer :HBox;
 }
 }
 
