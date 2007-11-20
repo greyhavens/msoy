@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.server.persist;
+package com.threerings.msoy.group.server.persist;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;

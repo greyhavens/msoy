@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.group.data;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class GroupDetail
     /**
      * The members of this group, expressed as a Set of GroupMembership(s).
      *
-     * @gwt.typeArgs <com.threerings.msoy.data.all.GroupMembership>
+     * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMembership>
      */
     public List members;
 }

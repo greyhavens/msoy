@@ -1,22 +1,23 @@
 //
 // $Id$
 
-package com.threerings.msoy.server;
+package com.threerings.msoy.group.server;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.web.data.Group;
-import com.threerings.msoy.web.data.GroupExtras;
-import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.GroupName;
-
-import com.threerings.msoy.server.persist.GroupMembershipRecord;
-import com.threerings.msoy.server.persist.GroupRecord;
-import com.threerings.msoy.server.persist.GroupRepository;
+import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRepository;
+
+import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.group.data.GroupExtras;
+import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 
 /**
  * Manage msoy groups.

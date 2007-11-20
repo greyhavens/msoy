@@ -22,10 +22,10 @@ import com.threerings.msoy.world.data.ObserverInfo;
 import com.threerings.msoy.world.data.RoomObject;
 
 import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.notify.data.Notification;
 
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
@@ -697,10 +697,10 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setGroups (DSet<com.threerings.msoy.data.all.GroupMembership> value)
+    public void setGroups (DSet<com.threerings.msoy.group.data.GroupMembership> value)
     {
         requestAttributeChange(GROUPS, value, this.groups);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.GroupMembership> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.group.data.GroupMembership> clone =
             (value == null) ? null : value.typedClone();
         this.groups = clone;
     }

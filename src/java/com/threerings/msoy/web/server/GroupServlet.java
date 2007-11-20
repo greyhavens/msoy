@@ -15,25 +15,27 @@ import com.samskivert.io.PersistenceException;
 
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.persist.GroupMembershipRecord;
-import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
+import com.threerings.msoy.world.data.MsoySceneModel;
+
+import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.group.data.GroupDetail;
+import com.threerings.msoy.group.data.GroupExtras;
+import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+
 import com.threerings.msoy.web.client.GroupService;
-import com.threerings.msoy.web.data.Group;
-import com.threerings.msoy.web.data.GroupDetail;
-import com.threerings.msoy.web.data.GroupExtras;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.world.data.MsoySceneModel;
 
 import static com.threerings.msoy.Log.log;
 

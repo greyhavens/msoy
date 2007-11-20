@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.server.persist;
+package com.threerings.msoy.group.server.persist;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -23,10 +23,12 @@ import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.util.StringUtil;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.web.data.Group;
-import com.threerings.msoy.web.data.GroupExtras;
+
+import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.group.data.GroupExtras;
 
 /**
  * Contains the details of a group.

@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Collection;
 
 import com.google.gwt.user.client.rpc.RemoteService;
-import com.threerings.msoy.web.data.Group;
-import com.threerings.msoy.web.data.GroupExtras;
-import com.threerings.msoy.web.data.GroupDetail;
+
+import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.group.data.GroupDetail;
+import com.threerings.msoy.group.data.GroupExtras;
+
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.TagHistory;
+import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Defines group services available to the GWT/AJAX web client.
@@ -22,14 +24,14 @@ public interface GroupService extends RemoteService
     /** 
      * Get the list of all groups.
      *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.Group>
+     * @gwt.typeArgs <com.threerings.msoy.group.data.Group>
      */
     public List getGroupsList (WebIdent ident) throws ServiceException;
 
     /**
      * Performs a search against the name, blurb and charter fields.
      *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.Group>
+     * @gwt.typeArgs <com.threerings.msoy.group.data.Group>
      */
     public List searchGroups (WebIdent ident, String searchString)
         throws ServiceException;
@@ -37,7 +39,7 @@ public interface GroupService extends RemoteService
     /**
      * Return all groups that are tagged with the given tag.
      *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.Group>
+     * @gwt.typeArgs <com.threerings.msoy.group.data.Group>
      */
     public List searchForTag (WebIdent ident, String tag)
         throws ServiceException;
@@ -52,7 +54,7 @@ public interface GroupService extends RemoteService
      * Fetch a list of {@link GroupMembership} records, one for each group of which memberId is a
      * member. If canInvite is true, only include groups to which the member can invite.
      *
-     * @gwt.typeArgs <com.threerings.msoy.data.all.GroupMembership>
+     * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMembership>
      */
     public List getMembershipGroups (WebIdent ident, int memberId, boolean canInvite)
         throws ServiceException;

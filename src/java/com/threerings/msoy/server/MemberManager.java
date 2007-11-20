@@ -28,27 +28,27 @@ import com.threerings.presents.util.ConfirmAdapter;
 
 import com.threerings.crowd.server.PlaceManager;
 
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.MemberLocation;
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.data.PeerMemberMarshaller;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.peer.server.PeerMemberDispatcher;
 import com.threerings.msoy.peer.server.PeerMemberProvider;
+
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.person.data.FriendInvitePayload;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
-import com.threerings.msoy.server.persist.GroupRecord;
-import com.threerings.msoy.server.persist.GroupRepository;
+import com.threerings.msoy.data.MemberLocation;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;

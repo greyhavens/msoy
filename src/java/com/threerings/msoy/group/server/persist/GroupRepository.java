@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.server.persist;
+package com.threerings.msoy.group.server.persist;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,8 +32,12 @@ import com.samskivert.jdbc.depot.operator.Logic.*;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagRecord;
+import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.msoy.web.data.Group;
+
+import com.threerings.msoy.group.data.Group;
 
 /**
  * Manages the persistent store of group data.

@@ -1,7 +1,7 @@
 //
-// $Id$
+// $Id: GroupMembership.as 5409 2007-08-10 20:49:34Z robert $
 
-package com.threerings.msoy.data.all {
+package com.threerings.msoy.group.data {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
@@ -9,6 +9,9 @@ import com.threerings.io.Streamable;
 import com.threerings.util.Long;
 
 import com.threerings.presents.dobj.DSet_Entry;
+
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Summarizes a person's membership in a group.

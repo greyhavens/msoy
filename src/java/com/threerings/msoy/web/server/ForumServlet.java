@@ -14,14 +14,16 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 
-import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.persist.GroupMembershipRecord;
-import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+
+import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.group.server.persist.GroupRecord;
 
 import com.threerings.msoy.fora.data.ForumCodes;
 import com.threerings.msoy.fora.data.ForumMessage;
@@ -30,7 +32,6 @@ import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 
 import com.threerings.msoy.web.client.ForumService;
-import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
@@ -125,12 +126,23 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
-    public ForumThread createThread (WebIdent ident, int groupId, String subject, String message)
+    public ForumThread createThread (WebIdent ident, int groupId, int flags,
+                                     String subject, String message)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
 
-        return null;
+        try {
+            // make sure they're allowed to create a thread in this group
+            checkCanCreateThread(mrec, groupId, flags);
+
+            return null;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to create thread [for=" + who(mrec) +
+                    ", gid=" + groupId + ", subject=" + subject + "].");
+            throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface ForumService
@@ -159,7 +171,7 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     /**
-     * Checks that the supplied caller has read access to the specified group's messages.
+     * Checks that this member has read access to the specified group's messages.
      */
     protected void checkCanRead (MemberRecord mrec, int groupId)
         throws PersistenceException, ServiceException
@@ -169,9 +181,52 @@ public class ForumServlet extends MsoyServiceServlet
         // if they're not a member, make sure the group is not private
         if (groupRank == GroupMembership.RANK_NON_MEMBER) {
             GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
+            if (grec == null) {
+                throw new ServiceException(ForumCodes.E_INVALID_GROUP);
+            }
             if (grec.policy == Group.POLICY_EXCLUSIVE) {
                 throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
             }
+        }
+    }
+
+    /**
+     * Checks that this member can create a thread of the specified type in the specified group.
+     */
+    protected void checkCanCreateThread (MemberRecord mrec, int groupId, int flags)
+        throws PersistenceException, ServiceException
+    {
+        // only managers can create announcement or sticky threads
+        byte groupRank = getGroupRank(mrec, groupId);
+        if (flags != 0 && groupRank != GroupMembership.RANK_MANAGER) {
+            throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
+        }
+
+        // otherwise membership is required to create a normal thread
+        if (groupRank == GroupMembership.RANK_NON_MEMBER) {
+            throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
+        }
+    }
+
+    /**
+     * Checks that this member can post a message to a thread in the specified group.
+     */
+    protected void checkCanPost (MemberRecord mrec, int groupId)
+        throws PersistenceException, ServiceException
+    {
+        GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
+        if (grec == null) {
+            throw new ServiceException(ForumCodes.E_INVALID_GROUP);
+        }
+
+        // anyone can post in a public group
+        if (grec.policy == Group.POLICY_PUBLIC) {
+            return;
+        }
+
+        // only members can post in non-public groups
+        if (getGroupRank(mrec, groupId) == GroupMembership.RANK_NON_MEMBER) {
+            throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
     }
 

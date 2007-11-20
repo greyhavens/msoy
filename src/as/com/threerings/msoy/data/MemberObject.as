@@ -19,14 +19,13 @@ import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
-
-import com.threerings.msoy.game.data.GameSummary;
 
 /**
  * Represents a connected msoy user.

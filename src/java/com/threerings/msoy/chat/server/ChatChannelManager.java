@@ -8,27 +8,8 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.threerings.msoy.chat.client.ChatChannelService;
-import com.threerings.msoy.chat.data.ChannelMessage;
-import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatChannelCodes;
-import com.threerings.msoy.chat.data.ChatChannelObject;
-import com.threerings.msoy.chat.data.ChatterInfo;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.ChannelName;
-import com.threerings.msoy.data.all.GroupMembership;
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.peer.client.PeerChatService;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.data.PeerChatMarshaller;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.peer.server.PeerChatDispatcher;
-import com.threerings.msoy.peer.server.PeerChatProvider;
-import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.persist.GroupRecord;
-import com.threerings.msoy.web.data.Group;
+import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryUnit;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -40,8 +21,30 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 
-import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.RepositoryUnit;
+import com.threerings.msoy.peer.client.PeerChatService;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.data.PeerChatMarshaller;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.peer.server.PeerChatDispatcher;
+import com.threerings.msoy.peer.server.PeerChatProvider;
+
+import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.ChannelName;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MsoyServer;
+
+import com.threerings.msoy.chat.client.ChatChannelService;
+import com.threerings.msoy.chat.data.ChannelMessage;
+import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.data.ChatChannelCodes;
+import com.threerings.msoy.chat.data.ChatChannelObject;
+import com.threerings.msoy.chat.data.ChatterInfo;
 
 import static com.threerings.msoy.Log.log;
 

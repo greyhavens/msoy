@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.data.all;
+package com.threerings.msoy.group.data;
 
 import java.util.Date;
 
@@ -9,6 +9,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 import com.threerings.presents.dobj.DSet;
+
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Summarizes a person's membership in a group.

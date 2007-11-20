@@ -20,11 +20,8 @@ import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.msoy.data.UserAction;
 
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.persist.GroupMembershipRecord;
-import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -38,6 +35,10 @@ import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.data.ProfileCard;
 import com.threerings.msoy.person.data.ProfileLayout;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
+
+import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.group.server.persist.GroupRecord;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.GameRating;

@@ -51,7 +51,7 @@ public interface ProfileService extends RemoteService
         /**
          * This user's groups.
          *
-         * @gwt.typeArgs <com.threerings.msoy.data.all.GroupMembership>
+         * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMembership>
          */
         public List groups;
 

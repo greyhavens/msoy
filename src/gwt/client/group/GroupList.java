@@ -25,8 +25,8 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
+import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.web.data.Group;
 
 import client.shell.Application;
 import client.shell.Page;

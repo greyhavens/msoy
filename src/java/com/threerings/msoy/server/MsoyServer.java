@@ -56,9 +56,10 @@ import com.threerings.msoy.web.server.MsoyHttpServer;
 
 import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
+import com.threerings.msoy.group.server.GroupManager;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.server.persist.GroupRepository;
 
 import com.threerings.msoy.world.server.MsoySceneRegistry;
 import com.threerings.msoy.world.server.PetManager;

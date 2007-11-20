@@ -25,13 +25,13 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.data.all.Photo;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.web.data.Group;
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.web.data.GroupExtras;
-
 import com.threerings.gwt.ui.InlineLabel;
+
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.group.data.GroupExtras;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Photo;
 
 import client.shell.Application;
 import client.shell.Page;

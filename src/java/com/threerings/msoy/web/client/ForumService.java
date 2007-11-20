@@ -37,7 +37,8 @@ public interface ForumService extends RemoteService
     /**
      * Creates a new thread for the specified group.
      */
-    public ForumThread createThread (WebIdent ident, int groupId, String subject, String message)
+    public ForumThread createThread (WebIdent ident, int groupId, int flags,
+                                     String subject, String message)
         throws ServiceException;
 
     /**

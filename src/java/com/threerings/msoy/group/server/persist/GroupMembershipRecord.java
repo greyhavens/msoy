@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.server.persist;
+package com.threerings.msoy.group.server.persist;
 
 import java.sql.Timestamp;
 
@@ -14,9 +14,10 @@ import com.samskivert.jdbc.depot.annotation.Index;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.GroupMembership;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.group.data.GroupMembership;
 
 /**
  * Contains the details of person's membership in a group.

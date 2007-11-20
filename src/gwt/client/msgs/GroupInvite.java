@@ -20,13 +20,13 @@ import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.group.data.GroupDetail;
+import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.person.data.GroupInvitePayload;
 import com.threerings.msoy.person.data.MailMessage;
 import com.threerings.msoy.person.data.MailPayload;
-import com.threerings.msoy.web.data.GroupDetail;
 
 public abstract class GroupInvite
 {

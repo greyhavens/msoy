@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.web.client.ProfileService;
 
 import client.msgs.GroupInvite;

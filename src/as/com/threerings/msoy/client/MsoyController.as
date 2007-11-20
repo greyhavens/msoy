@@ -53,13 +53,13 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.client.ReportingListener;
+import com.threerings.msoy.group.data.GroupMembership;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;

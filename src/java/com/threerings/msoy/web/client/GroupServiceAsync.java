@@ -4,8 +4,10 @@
 package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.threerings.msoy.web.data.Group;
-import com.threerings.msoy.web.data.GroupExtras;
+
+import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.group.data.GroupExtras;
+
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
