@@ -185,6 +185,18 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Handles a request by an item in our room to send a "signal" to all the instances of
+     * all the entities in the room. This does not require control.
+     */
+    public function sendSpriteSignal (name :String, arg :Object) :void
+    {
+        // send the request off to the server
+        log.info("Sending sprite signal [name=" + name + "].");
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(arg);
+        _roomObj.roomService.sendSpriteSignal(_mctx.getClient(), name, data);
+    }
+
+    /**
      * Handles a request by an actor item to change its persistent state.  Requires control.
      */
     public function setActorState (ident :ItemIdent, actorOid :int, state :String) :void

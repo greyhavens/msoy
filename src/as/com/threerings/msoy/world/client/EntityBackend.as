@@ -38,6 +38,7 @@ public class EntityBackend extends ControlBackend
         o["getInstanceId_v1"] = getInstanceId_v1;
         o["setHotSpot_v1"] = setHotSpot_v1;
         o["sendMessage_v1"] = sendMessage_v1;
+        o["sendSignal_v1"] = sendSignal_v1;
         o["getRoomBounds_v1"] = getRoomBounds_v1;
         o["canEditRoom_v1"] = canEditRoom_v1;
         o["showPopup_v1"] = showPopup_v1;
@@ -94,6 +95,13 @@ public class EntityBackend extends ControlBackend
     {
         if (_sprite != null) {
             _sprite.sendMessage(name, arg, isAction);
+        }
+    }
+
+    protected function sendSignal_v1 (name :String, arg :Object) :void
+    {
+        if (_sprite != null) {
+            _sprite.sendSignal(name, arg);
         }
     }
 

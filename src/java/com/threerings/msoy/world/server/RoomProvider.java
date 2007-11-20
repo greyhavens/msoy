@@ -47,6 +47,11 @@ public interface RoomProvider extends InvocationProvider
     public void sendSpriteMessage (ClientObject caller, ItemIdent arg1, String arg2, byte[] arg3, boolean arg4);
 
     /**
+     * Handles a {@link RoomService#sendSpriteSignal} request.
+     */
+    public void sendSpriteSignal (ClientObject caller, String arg1, byte[] arg2);
+
+    /**
      * Handles a {@link RoomService#setActorState} request.
      */
     public void setActorState (ClientObject caller, ItemIdent arg1, int arg2, String arg3);

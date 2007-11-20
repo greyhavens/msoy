@@ -11,6 +11,9 @@ public class RoomCodes
     /** A message event type dispatched on the room object. */
     public static const SPRITE_MESSAGE :String = "sprMsg";
 
+    /** A message event type dispatched on the room object. */
+    public static const SPRITE_SIGNAL :String = "sprSig";
+
     /** An error (sort of) reported when an entity requests control but is already being controlled
      * by another client. */
     public static const E_ALREADY_CONTROLLED :String = "e.already_controlled";

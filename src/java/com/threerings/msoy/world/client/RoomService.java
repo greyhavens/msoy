@@ -38,6 +38,14 @@ public interface RoomService extends InvocationService
                                    boolean isAction);
 
     /**
+     * Requests to send a sprite signal.
+     *
+     * @param name the message name.
+     * @param arg the data
+     */
+    public void sendSpriteSignal (Client client, String name, byte[] arg);
+
+    /**
      * Requests to update an actor's state.
      */
     public void setActorState (Client client, ItemIdent item, int actorOid, String state);

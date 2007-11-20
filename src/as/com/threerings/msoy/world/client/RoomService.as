@@ -37,6 +37,9 @@ public interface RoomService extends InvocationService
     function sendSpriteMessage (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray, arg5 :Boolean) :void;
 
     // from Java interface RoomService
+    function sendSpriteSignal (arg1 :Client, arg2 :String, arg3 :ByteArray) :void;
+
+    // from Java interface RoomService
     function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void;
 
     // from Java interface RoomService

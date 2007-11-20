@@ -330,6 +330,14 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
+     * Called when an action or message to received for this sprite.
+     */
+    public function signalReceived (name :String, arg :Object) :void
+    {
+        callUserCode("signalReceived_v1", name, arg);
+    }
+
+    /**
      * Called when a datum in the this sprite's item's memory changes.
      */
     public function memoryChanged (key :String, value: Object) :void
@@ -523,6 +531,17 @@ public class MsoySprite extends MsoyMediaContainer
     {
         if (_ident != null && (parent is RoomView) && validateUserData(name, arg)) {
             (parent as RoomView).getRoomController().sendSpriteMessage(_ident, name, arg, isAction);
+        }
+    }
+
+    /**
+     * This sprite is sending a signal to all entities on all clients. Called by our backend
+     * in response to a request from usercode.
+     */
+    public function sendSignal (name :String, arg :Object) :void
+    {
+        if ((parent is RoomView) && validateUserData(name, arg)) {
+            (parent as RoomView).getRoomController().sendSpriteSignal(name, arg);
         }
     }
 

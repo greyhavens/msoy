@@ -77,6 +77,13 @@ public class RoomDispatcher extends InvocationDispatcher
             );
             return;
 
+        case RoomMarshaller.SEND_SPRITE_SIGNAL:
+            ((RoomProvider)provider).sendSpriteSignal(
+                source,
+                (String)args[0], (byte[])args[1]
+            );
+            return;
+
         case RoomMarshaller.SET_ACTOR_STATE:
             ((RoomProvider)provider).setActorState(
                 source,

@@ -428,6 +428,9 @@ public class RoomView extends AbstractRoomView
             dispatchSpriteMessage((args[0] as ItemIdent), (args[1] as String),
                                   (args[2] as ByteArray), (args[3] as Boolean));
             break;
+        case RoomCodes.SPRITE_SIGNAL:
+            dispatchSpriteSignal((args[0] as String), (args[1] as ByteArray));
+            break;
         }
     }
 
@@ -865,6 +868,22 @@ public class RoomView extends AbstractRoomView
             log.info("Received sprite message for unknown sprite [item=" + item +
                      ", name=" + name + "].");
         }
+    }
+
+    /**
+     * Called when a sprite signal arrives on the room object; iterates over the
+     * entities present and notify them.
+     */
+    protected function dispatchSpriteSignal (name :String, arg :ByteArray) :void
+    {
+        var value :Object = ObjectMarshaller.decode(arg);
+        _entities.forEach(function (key :Object, sprite :Object) :void {
+            if (sprite is MsoySprite) {
+                MsoySprite(sprite).signalReceived(name, value);
+            } else {
+                log.warning("Erk, non-sprite entity [key=" + key + ", entity=" + sprite + "]");
+            }
+        });
     }
 
     /**

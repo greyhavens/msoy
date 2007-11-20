@@ -88,8 +88,19 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #sendSpriteSignal} requests. */
+    public static const SEND_SPRITE_SIGNAL :int = 6;
+
+    // from interface RoomService
+    public function sendSpriteSignal (arg1 :Client, arg2 :String, arg3 :ByteArray) :void
+    {
+        sendRequest(arg1, SEND_SPRITE_SIGNAL, [
+            arg2, arg3
+        ]);
+    }
+
     /** The method id used to dispatch {@link #setActorState} requests. */
-    public static const SET_ACTOR_STATE :int = 6;
+    public static const SET_ACTOR_STATE :int = 7;
 
     // from interface RoomService
     public function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void
@@ -100,7 +111,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static const UPDATE_MEMORY :int = 7;
+    public static const UPDATE_MEMORY :int = 8;
 
     // from interface RoomService
     public function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void
@@ -111,7 +122,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static const UPDATE_ROOM :int = 8;
+    public static const UPDATE_ROOM :int = 9;
 
     // from interface RoomService
     public function updateRoom (arg1 :Client, arg2 :TypedArray /* of class com.threerings.whirled.data.SceneUpdate */, arg3 :InvocationService_InvocationListener) :void
