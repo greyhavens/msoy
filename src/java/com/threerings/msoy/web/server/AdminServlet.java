@@ -24,6 +24,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.client.AdminService;
 import com.threerings.msoy.web.data.MemberInviteResult;
 import com.threerings.msoy.web.data.MemberInviteStatus;
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -53,7 +54,7 @@ public class AdminServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations +
                     ", activeSince=" + activeSince + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -73,7 +74,7 @@ public class AdminServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations +
                 ", memberId=" + memberId + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -106,7 +107,7 @@ public class AdminServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getPlayerList failed [inviterId=" + inviterId + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         return res;
@@ -175,7 +176,7 @@ public class AdminServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "spamPlayers failed [subject=" + subject +
                     ", startId=" + startId + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 

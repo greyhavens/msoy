@@ -31,7 +31,7 @@ import org.apache.velocity.app.VelocityEngine;
 
 import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.ServiceCodes;
 
 import static com.threerings.msoy.Log.log;
 
@@ -113,7 +113,7 @@ public class MailSender
             ve = VelocityUtil.createEngine();
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to create the velocity engine.", e);
-            return ServiceException.INTERNAL_ERROR;
+            return ServiceCodes.E_INTERNAL_ERROR;
         }
 
         // create a mime message which will contain text and possibly HTML parts

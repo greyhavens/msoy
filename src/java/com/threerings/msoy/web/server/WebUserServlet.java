@@ -31,6 +31,7 @@ import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
@@ -237,7 +238,7 @@ public class WebUserServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to set email [who=" + mrec.memberId +
                     ", email=" + newEmail + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         // let the authenticator know that we updated our account name
@@ -261,7 +262,7 @@ public class WebUserServlet extends MsoyServiceServlet
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "Failed to update flags [who=" + mrec.memberId +
                         ", flags=" + mrec.flags + "].", pe);
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
         }
     }
@@ -298,7 +299,7 @@ public class WebUserServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to reset password [who=" + memberId +
                     ", code=" + code + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -310,7 +311,7 @@ public class WebUserServlet extends MsoyServiceServlet
         if (mrec.permaName != null) {
             log.warning("Rejecting attempt to reassing permaname [who=" + mrec.accountName +
                         ", oname=" + mrec.permaName + ", nname=" + permaName + "].");
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         if (permaName.length() < MemberName.MINIMUM_PERMANAME_LENGTH ||
@@ -326,7 +327,7 @@ public class WebUserServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to set permaname [who=" + mrec.memberId +
                     ", pname=" + permaName + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         // let the authenticator know that we updated our permaname
@@ -352,7 +353,7 @@ public class WebUserServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to fetch account info [who=" + mrec.memberId +
                 "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -369,7 +370,7 @@ public class WebUserServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update user account info [who=" + mrec.memberId +
                 "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 

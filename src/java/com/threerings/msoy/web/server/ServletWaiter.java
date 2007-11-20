@@ -9,6 +9,7 @@ import com.samskivert.servlet.util.ServiceWaiter;
 
 import com.threerings.presents.server.InvocationException;
 
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 
 import static com.threerings.msoy.Log.log;
@@ -53,7 +54,7 @@ public class ServletWaiter<T> extends ServiceWaiter<T>
 
         } catch (Exception e) {
             log.log(Level.WARNING, _ident + " failed.", e);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 

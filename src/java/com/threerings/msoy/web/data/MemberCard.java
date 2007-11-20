@@ -10,8 +10,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Profile;
 
 /**
- * Contains for a particular member the id, display name, profile photo and anything else that we
- * want to display when displaying a bunch of members.
+ * Contains a member's name and profile picture.
  */
 public class MemberCard
     implements IsSerializable
@@ -21,7 +20,4 @@ public class MemberCard
 
     /** The member's profile photo (or the default). */
     public MediaDesc photo = Profile.DEFAULT_PHOTO;
-
-    /** The member's blurb */
-    public String headline;
 }

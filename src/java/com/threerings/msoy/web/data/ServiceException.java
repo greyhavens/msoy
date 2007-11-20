@@ -12,10 +12,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class ServiceException extends Exception
     implements IsSerializable
 {
-    /** The standard failure message thrown when the shit hit the fan and we have nothing useful to
-     * report to the user. */
-    public static final String INTERNAL_ERROR = "m.internal_error";
-
     /**
      * Creates a service exception with the supplied translation message.
      */

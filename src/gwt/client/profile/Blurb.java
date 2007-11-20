@@ -11,7 +11,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.data.BlurbData;
 import com.threerings.msoy.web.client.ProfileService;
 
-import client.profile.HoodBlurb;
 import client.util.HeaderBox;
 
 /**
@@ -31,8 +30,6 @@ public abstract class Blurb extends HeaderBox
             return new FriendsBlurb();
         case BlurbData.GROUPS:
             return new GroupsBlurb();
-        case BlurbData.HOOD:
-            return new HoodBlurb();
         case BlurbData.RATINGS:
             return new RatingsBlurb();
         case BlurbData.TROPHIES:

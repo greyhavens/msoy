@@ -19,6 +19,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
@@ -55,7 +56,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
                 return mrec;
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "Failed to load session [tok=" + ident.token + "].", pe);
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
         }
 
@@ -65,7 +66,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
                 return MsoyServer.memberRepo.loadMember(memberId);
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "Failed to load member [id=" + memberId + "].", pe);
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
         }
 
@@ -109,6 +110,14 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     protected static void mapUser (String ident, MemberRecord record)
     {
         _members.put(ident, record.memberId);
+    }
+
+    /**
+     * Returns null if mrec is null {@link MemberRecord#who} otherwise.
+     */
+    protected static String who (MemberRecord mrec)
+    {
+        return (mrec == null) ? null : mrec.who();
     }
 
     /** Contains a mapping of authenticated members. */

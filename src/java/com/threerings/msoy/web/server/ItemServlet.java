@@ -37,6 +37,7 @@ import com.threerings.msoy.item.server.persist.SubItemRecord;
 
 import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.WebIdent;
@@ -58,7 +59,7 @@ public class ItemServlet extends MsoyServiceServlet
         if (!item.isConsistent()) {
             log.warning("Got inconsistent item for upload? [from=" + memrec.who() +
                         ", item=" + item + "].");
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         // configure the item's creator and owner
@@ -74,7 +75,7 @@ public class ItemServlet extends MsoyServiceServlet
             if (parent == null) {
                 log.warning("Requested to create sub-item with no parent [who=" + memrec.who() +
                             ", item=" + item + "].");
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
             ItemRepository<ItemRecord, ?, ?, ?> prepo =
                 MsoyServer.itemMan.getRepository(parent.type);
@@ -84,12 +85,12 @@ public class ItemServlet extends MsoyServiceServlet
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "Failed to load parent in createItem [who=" + memrec.who() +
                         ", item=" + item.getIdent() + ", parent=" + parent + "].");
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
             if (prec == null) {
                 log.warning("Requested to make item with missing parent [who=" + memrec.who() +
                             ", parent=" + parent + ", item=" + item + "].");
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
             if (prec.ownerId != memrec.memberId) {
                 log.warning("Requested to make item with invalid parent [who=" + memrec.who() +
@@ -108,7 +109,7 @@ public class ItemServlet extends MsoyServiceServlet
             repo.insertOriginalItem(record, false);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to create item " + item + ".", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         // let the item manager know that we've created this item
@@ -130,7 +131,7 @@ public class ItemServlet extends MsoyServiceServlet
         // validate the item
         if (!item.isConsistent()) {
             // TODO?
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         // TODO: validate anything else?
@@ -142,7 +143,7 @@ public class ItemServlet extends MsoyServiceServlet
             repo.updateOriginalItem(record);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update item " + item + ".", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         // let the item manager know that we've updated this item
@@ -164,7 +165,7 @@ public class ItemServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load item [id=" + item + "].", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -213,7 +214,7 @@ public class ItemServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load item detail [id=" + iident + "].", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -246,7 +247,7 @@ public class ItemServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to scale avatar [for=" + memrec.memberId +
                     ", aid=" + avatarId + ", scale=" + newScale + "].", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -292,7 +293,7 @@ public class ItemServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to remix item [item=" + iident +
                     ", for=" + memrec.memberId + "]", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -329,7 +330,7 @@ public class ItemServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to delete item [item=" + iident +
                     ", for=" + memrec.memberId + "]", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -355,7 +356,7 @@ public class ItemServlet extends MsoyServiceServlet
                 if (item.ownerId != 0) {
                     log.warning("Can't rate mutable item [id=" + iident + ", rating=" + rating +
                                 ", for=" + memrec.memberId + "].");
-                    throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+                    throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
                 }
                 // and use our real ID
                 originalId = iident.itemId;
@@ -367,7 +368,7 @@ public class ItemServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to rate item [item=" + iident +
                     ", rating=" + rating + ", for=" + memrec.memberId + "]", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -470,7 +471,7 @@ public class ItemServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to wrap item [item=" + iident +
                     ", wrap=" + wrap + "]", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -489,7 +490,7 @@ public class ItemServlet extends MsoyServiceServlet
             ItemRecord item = repo.loadItem(iident.itemId);
             if (item == null) {
                 log.warning("Missing item for setFlags [id=" + iident + ", value=" + value + "].");
-                throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
             item.mature = value;
             repo.updateOriginalItem(item);
@@ -497,7 +498,7 @@ public class ItemServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING,
                 "Failed to set flags [item=" + iident + ", value=" + value + "]", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -513,7 +514,7 @@ public class ItemServlet extends MsoyServiceServlet
             if (item == null) {
                 log.warning("Missing item for setFlags() [item=" + iident + ", mask=" + mask +
                             ", value=" + value + "].");
-                throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
             item.flagged = (byte) ((item.flagged & ~mask) | value);
             repo.updateOriginalItem(item);
@@ -521,7 +522,7 @@ public class ItemServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to set flags [item=" + iident + ", mask=" + mask +
                     ", value=" + value + "]", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -562,7 +563,7 @@ public class ItemServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Getting flagged items failed.", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -621,7 +622,7 @@ public class ItemServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Admin item delete failed [item=" + iident + "].", pe);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 }

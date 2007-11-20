@@ -50,6 +50,7 @@ import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.PlayerRating;
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TrophyCase;
 import com.threerings.msoy.web.data.WebIdent;
@@ -274,7 +275,7 @@ public class GameServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure loading game trophies [id=" + gameId + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -330,7 +331,7 @@ public class GameServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure loading trophies [tgtid=" + memberId + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -341,7 +342,7 @@ public class GameServlet extends MsoyServiceServlet
         MemberRecord mrec = getAuthedUser(ident);
         if (mrec == null && onlyMyFriends) {
             log.warning("Requested friend rankings for non-authed member [gameId=" + gameId + "].");
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         try {
@@ -387,7 +388,7 @@ public class GameServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure loading rankings [for=" + ident + ", gameId=" + gameId +
                     ", friends=" + onlyMyFriends + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 

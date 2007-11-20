@@ -23,6 +23,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.CommentService;
 import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -81,7 +82,7 @@ public class CommentServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load comments [entity=" + etype + ":" + eid +
                     ", offset=" + offset + ", count=" + count + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -97,7 +98,7 @@ public class CommentServlet extends MsoyServiceServlet
             log.warning("Refusing to post comment on illegal entity [entity=" + etype + ":" + eid +
                         ", who=" + mrec.who() +
                         ", text=" + StringUtil.truncate(text, 40, "...") + "].");
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         try {
@@ -115,7 +116,7 @@ public class CommentServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Failed to post comment [entity=" + etype + ":" + eid +
                     ", who=" + mrec.who() +
                     ", text=" + StringUtil.truncate(text, 40, "...") + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -139,7 +140,7 @@ public class CommentServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to delete comment [entity=" + etype + ":" + eid +
                     ", who=" + mrec.who() + ", posted=" + posted + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 }

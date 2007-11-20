@@ -13,26 +13,27 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
 import org.apache.velocity.VelocityContext;
 
-import com.threerings.presents.data.InvocationCodes;
-import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.InvitationRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
+
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.MemberInvites;
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.data.MsoyAuthCodes;
 
 import static com.threerings.msoy.Log.log;
 
@@ -51,7 +52,7 @@ public class MemberServlet extends MsoyServiceServlet
             return MsoyServer.memberRepo.getFriendStatus(memrec.memberId, memberId);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getFriendStatus failed [for=" + memberId + "].", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -78,7 +79,7 @@ public class MemberServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "addFriend failed [for=" + memrec.memberId +
                     ", friendId=" + friendId + "].", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -98,7 +99,7 @@ public class MemberServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "removeFriend failed [for=" + memrec.memberId +
                     ", friendId=" + friendId + "].", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -112,7 +113,7 @@ public class MemberServlet extends MsoyServiceServlet
         if (Item.getClassForType(type) == null) {
             log.warning("Requested to load inventory for invalid item type " +
                         "[who=" + ident + ", type=" + type + "].");
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
@@ -135,7 +136,7 @@ public class MemberServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "loadInventory failed [for=" + memrec.memberId + "].", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -159,7 +160,7 @@ public class MemberServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitationsStatus failed [id=" + mrec.memberId +"]", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -174,17 +175,17 @@ public class MemberServlet extends MsoyServiceServlet
             // make sure this user still has available invites; we already check this value in GWT
             // land, and deal with it sensibly there
             if (MsoyServer.memberRepo.getInvitesGranted(mrec.memberId) < addresses.size()) {
-                throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
 
             // if they're requesting anonymous invites and are not an admin, rejecto!
             if (anonymous && !mrec.isAdmin()) {
-                throw new ServiceException(InvocationCodes.E_ACCESS_DENIED);
+                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitesGranted failed [id=" + mrec.memberId +"]", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         InvitationResults ir = new InvitationResults();
@@ -214,7 +215,7 @@ public class MemberServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitation failed [inviteId=" + inviteId + "]", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -224,12 +225,12 @@ public class MemberServlet extends MsoyServiceServlet
     {
         try {
             if (!MsoyServer.memberRepo.inviteAvailable(invite.inviteId)) {
-                throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
             MsoyServer.memberRepo.optOutInvite(invite);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "optOut failed [inviteId=" + invite.inviteId + "]", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -287,7 +288,7 @@ public class MemberServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "sendInvite failed [inviter=" + inviter.who() +
                     ", email=" + email + "].", pe);
-            return ServiceException.INTERNAL_ERROR;
+            return ServiceCodes.E_INTERNAL_ERROR;
         }
     }
 }

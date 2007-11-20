@@ -24,6 +24,7 @@ import com.threerings.msoy.person.server.persist.MailMessageRecord;
 import com.threerings.msoy.person.server.persist.MailRepository;
 
 import com.threerings.msoy.web.client.MailService;
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -45,7 +46,7 @@ public class MailServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to delete messages [mid=" + memrec.memberId +
                     ", fid=" + folderId + ", mids=" + StringUtil.toString(msgIdArr) + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -78,7 +79,7 @@ public class MailServlet extends MsoyServiceServlet
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed update payload [mid=" + memrec.memberId +
                     ", fid=" + folderId + ", mid=" + messageId + ", pay=" + payload + "].", e);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -92,7 +93,7 @@ public class MailServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getFolder failed [mid=" + memrec.memberId +
                     ", fid=" + folderId + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -109,7 +110,7 @@ public class MailServlet extends MsoyServiceServlet
             return result;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getFolders failed [mid=" + memrec.memberId + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -127,7 +128,7 @@ public class MailServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getHeaders failed [mid=" + memrec.memberId +
                     ", fid=" + folderId + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 

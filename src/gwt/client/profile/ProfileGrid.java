@@ -11,10 +11,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.PagedGrid;
+
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.person.data.ProfileCard;
 import com.threerings.msoy.web.data.MemberCard;
 
-import com.threerings.gwt.ui.PagedGrid;
 import client.shell.Application;
 import client.shell.Page;
 import client.util.MediaUtil;
@@ -105,10 +107,11 @@ public class ProfileGrid extends PagedGrid
 
                 setWidget(0, 1, nameLabel);
                 getFlexCellFormatter().setStyleName(1, 0, "MemberCardHeadline");
-                if (card.headline == null || card.headline.length() == 0) {
+                String headline = (card instanceof ProfileCard) ? ((ProfileCard)card).headline : "";
+                if (headline == null || headline.length() == 0) {
                     setHTML(1, 0, "&nbsp;");
                 } else {
-                    setText(1, 0, card.headline);
+                    setText(1, 0, headline);
                 }
             }
         }

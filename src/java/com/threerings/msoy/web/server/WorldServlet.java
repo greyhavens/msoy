@@ -271,7 +271,6 @@ public class WorldServlet extends MsoyServiceServlet
                      onlineFriends.keySet())) {
                 MemberCard card = onlineFriends.get(friendProfile.memberId);
                 card.photo = friendProfile.getPhoto();
-                card.headline = friendProfile.headline;
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to fill member cards", pe);

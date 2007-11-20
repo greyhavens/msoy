@@ -45,17 +45,20 @@ import com.threerings.whirled.spot.server.SpotProvider;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.chat.server.ChatChannelManager;
-import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.person.server.MailManager;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.web.server.MsoyHttpServer;
+
+import com.threerings.msoy.fora.server.persist.CommentRepository;
+import com.threerings.msoy.fora.server.persist.ForumRepository;
+import com.threerings.msoy.person.server.MailManager;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.server.persist.GroupRepository;
 
 import com.threerings.msoy.world.server.MsoySceneRegistry;
 import com.threerings.msoy.world.server.PetManager;
@@ -63,7 +66,7 @@ import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.persist.GroupRepository;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -109,6 +112,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Contains information on our groups. */
     public static GroupRepository groupRepo;
+
+    /** Contains information on our forums. */
+    public static ForumRepository forumRepo;
 
     /** Contains member comments on various things. */
     public static CommentRepository commentRepo;
@@ -278,6 +284,7 @@ public class MsoyServer extends MsoyBaseServer
         // create our various repositories
         profileRepo = new ProfileRepository(perCtx);
         groupRepo = new GroupRepository(perCtx, eventLog);
+        forumRepo = new ForumRepository(perCtx);
         commentRepo = new CommentRepository(perCtx);
         trophyRepo = new TrophyRepository(perCtx);
         swiftlyRepo = new SwiftlyRepository(perCtx);

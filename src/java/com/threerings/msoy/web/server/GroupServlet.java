@@ -15,23 +15,25 @@ import com.samskivert.io.PersistenceException;
 
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.web.client.GroupService;
-import com.threerings.msoy.web.data.Group;
-import com.threerings.msoy.web.data.GroupExtras;
-import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.data.all.GroupMembership;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.GroupMembershipRecord;
-import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
-import com.threerings.msoy.server.persist.TagRepository;
+import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
+import com.threerings.msoy.server.persist.TagRepository;
+
+import com.threerings.msoy.web.client.GroupService;
+import com.threerings.msoy.web.data.Group;
+import com.threerings.msoy.web.data.GroupDetail;
+import com.threerings.msoy.web.data.GroupExtras;
+import com.threerings.msoy.web.data.ServiceCodes;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.TagHistory;
+import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.world.data.MsoySceneModel;
 
 import static com.threerings.msoy.Log.log;
 
@@ -53,7 +55,7 @@ public class GroupServlet extends MsoyServiceServlet
             return groups;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getGroupsList failed", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -77,7 +79,7 @@ public class GroupServlet extends MsoyServiceServlet
             if (mRec == null) {
                 log.warning("Couldn't load group creator [groupId=" + groupId +
                     ", creatorId=" + gRec.creatorId + "]");
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
 
             // set up the detail
@@ -105,7 +107,7 @@ public class GroupServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getGroupDetail failed [groupId=" + groupId + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -136,7 +138,7 @@ public class GroupServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "searchGroups failed [searchString=" + searchString + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -152,7 +154,7 @@ public class GroupServlet extends MsoyServiceServlet
             return groups;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "searchForTag failed [tag=" + tag + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -198,7 +200,7 @@ public class GroupServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getMembershipGroups failed [id=" + memberId + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -211,7 +213,7 @@ public class GroupServlet extends MsoyServiceServlet
 
         if(!isValidName(group.name)) {
             log.log(Level.WARNING, "invalid group name: " + group.name);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         final ServletWaiter<Group> waiter = new ServletWaiter<Group>("createGroup[" + group + "]");
@@ -232,7 +234,7 @@ public class GroupServlet extends MsoyServiceServlet
         
         if(!isValidName(group.name)) {
             log.log(Level.WARNING, "in updateGroup, invalid group name: " + group.name);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         try {
@@ -255,7 +257,7 @@ public class GroupServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "updateGroup failed [group=" + group + ", extras=" + 
                 extras + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -303,14 +305,14 @@ public class GroupServlet extends MsoyServiceServlet
                 memrec.memberId);
             if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
                 log.log(Level.WARNING, "in updateMemberRank, invalid permissions");
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
 
             MsoyServer.groupRepo.setRank(groupId, memberId, newRank);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "updateMemberRank failed [groupId=" + groupId + ", memberId=" +
                 memberId + ", newRank=" + newRank + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -321,7 +323,7 @@ public class GroupServlet extends MsoyServiceServlet
         String tagName = tag.trim().toLowerCase();
         if (!TagNameRecord.VALID_TAG.matcher(tagName).matches()) {
             log.log(Level.WARNING, "in tagGroup, invalid tag: " + tagName);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         MemberRecord memrec = requireAuthedUser(ident);
@@ -331,7 +333,7 @@ public class GroupServlet extends MsoyServiceServlet
                 memrec.memberId);
             if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
                 log.log(Level.WARNING, "in tagGroup, invalid permissions");
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
 
             long now = System.currentTimeMillis();
@@ -354,7 +356,7 @@ public class GroupServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "tagGroup failed [groupId=" + groupId + ", tag=" + tag +
                 ", set=" + set + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -381,7 +383,7 @@ public class GroupServlet extends MsoyServiceServlet
             return list;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getRecentTags failed", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -397,7 +399,7 @@ public class GroupServlet extends MsoyServiceServlet
             return result;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getTags failed [groupId=" + groupId + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -413,7 +415,7 @@ public class GroupServlet extends MsoyServiceServlet
             return result;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getPopularTags failed [rows=" + rows + "]", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 

@@ -19,6 +19,9 @@ import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import com.threerings.msoy.data.UserAction;
 
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
@@ -29,17 +32,17 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.person.server.persist.ProfileRecord;
 
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.GroupMembership;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.data.BlurbData;
 import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.data.ProfileCard;
 import com.threerings.msoy.person.data.ProfileLayout;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.GameRating;
 import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -123,7 +126,6 @@ public class ProfileServlet extends MsoyServiceServlet
 
                 case BlurbData.FRIENDS:
                     result.friends = resolveFriendsData(memrec, tgtrec);
-
                     IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(tgtrec.memberId);
                     result.isOurFriend = (memrec != null) && friendIds.contains(memrec.memberId);
                     result.totalFriendCount = friendIds.size();
@@ -132,10 +134,6 @@ public class ProfileServlet extends MsoyServiceServlet
                 case BlurbData.GROUPS:
                     result.groups = resolveGroupsData(memrec, tgtrec);
                     break;
-
-//                 case BlurbData.HOOD:
-//                     result.hood = resolveHoodData(memrec, tgtrec);
-//                     break;
 
                 case BlurbData.RATINGS:
                     result.ratings = resolveRatingsData(memrec, tgtrec);
@@ -154,21 +152,21 @@ public class ProfileServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure resolving blurbs [who=" + memberId + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from interface ProfileService
-    public List<MemberCard> findProfiles (String type, String search)
+    public List<ProfileCard> findProfiles (String type, String search)
         throws ServiceException
     {
         try {
             // locate the members that match the supplied search
-            HashIntMap<MemberCard> cards = new HashIntMap<MemberCard>();
+            IntMap<ProfileCard> cards = new HashIntMap<ProfileCard>();
             if ("email".equals(type)) {
                 MemberRecord memrec = MsoyServer.memberRepo.loadMember(search);
                 if (memrec != null) {
-                    MemberCard card = new MemberCard();
+                    ProfileCard card = new ProfileCard();
                     card.name = new MemberName(memrec.name, memrec.memberId);
                     cards.put(memrec.memberId, card);
                 }
@@ -182,7 +180,7 @@ public class ProfileServlet extends MsoyServiceServlet
                 }
                 if (names != null) {
                     for (MemberNameRecord mname : names) {
-                        MemberCard card = new MemberCard();
+                        ProfileCard card = new ProfileCard();
                         card.name = mname.toMemberName();
                         cards.put(mname.memberId, card);
                     }
@@ -192,13 +190,13 @@ public class ProfileServlet extends MsoyServiceServlet
             // load up their profile data
             resolveCardData(cards);
 
-            ArrayList<MemberCard> results = new ArrayList<MemberCard>();
+            ArrayList<ProfileCard> results = new ArrayList<ProfileCard>();
             results.addAll(cards.values());
             return results;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure finding profiles [search=" + search + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -217,7 +215,7 @@ public class ProfileServlet extends MsoyServiceServlet
             FriendsResult result = new FriendsResult();
             result.name = tgtrec.getName();
 
-            HashIntMap<MemberCard> cards = new HashIntMap<MemberCard>();
+            IntMap<MemberCard> cards = new HashIntMap<MemberCard>();
             for (FriendEntry entry : MsoyServer.memberRepo.loadFriends(memberId, -1)) {
                 MemberCard card = new MemberCard();
                 card.name = entry.name;
@@ -237,7 +235,7 @@ public class ProfileServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure loading friends [memId=" + memberId + "].", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -293,7 +291,7 @@ public class ProfileServlet extends MsoyServiceServlet
     protected List<MemberCard> resolveFriendsData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
-        HashIntMap<MemberCard> cards = new HashIntMap<MemberCard>();
+        IntMap<MemberCard> cards = new HashIntMap<MemberCard>();
         for (FriendEntry entry :
                  MsoyServer.memberRepo.loadFriends(tgtrec.memberId, MAX_PROFILE_FRIENDS)) {
             MemberCard card = new MemberCard();
@@ -324,21 +322,6 @@ public class ProfileServlet extends MsoyServiceServlet
         return result;
     }
 
-// TODO: do we really want the hood on the profile page?
-//     protected String resolveHoodData (MemberRecord reqrec, MemberRecord tgtrec)
-//         throws PersistenceException
-//     {
-//         MsoyServer.memberMan.serializeNeighborhood(_memberId, false, new ResultListener<String>() {
-//             public void requestCompleted (String hood) {
-//                 resolutionCompleted(hood);
-//             }
-//             public void requestFailed (Exception cause) {
-//                 resolutionFailed(cause);
-//             }
-//         });
-//         return null;
-//     }
-
     protected List<GameRating> resolveRatingsData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
@@ -355,7 +338,7 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // create GameRating records for all the games we know about
         List<GameRating> result = new ArrayList<GameRating>();
-        HashIntMap<GameRating> map = new HashIntMap<GameRating>();
+        IntMap<GameRating> map = new HashIntMap<GameRating>();
         for (RatingRecord record : ratings) {
             GameRating rrec = map.get(Math.abs(record.gameId));
             if (rrec == null) {
@@ -405,13 +388,15 @@ public class ProfileServlet extends MsoyServiceServlet
         return list;
     }
 
-    protected static void resolveCardData (HashIntMap<MemberCard> cards)
+    protected static void resolveCardData (IntMap<? extends MemberCard> cards)
         throws PersistenceException
     {
         for (ProfileRecord profile : MsoyServer.profileRepo.loadProfiles(cards.intKeySet())) {
             MemberCard card = cards.get(profile.memberId);
             card.photo = profile.getPhoto();
-            card.headline = profile.headline;
+            if (card instanceof ProfileCard) {
+                ((ProfileCard)card).headline = profile.headline;
+            }
         }
     }
 
