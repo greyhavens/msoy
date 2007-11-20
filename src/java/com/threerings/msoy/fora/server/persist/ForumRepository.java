@@ -52,6 +52,15 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
+     * Loads the specified forum thread record. Returns null if no record exists for that id.
+     */
+    public ForumThreadRecord loadThread (int threadId)
+        throws PersistenceException
+    {
+        return load(ForumThreadRecord.class, threadId);
+    }
+
+    /**
      * Creates a thread for the specified group by the specified author with the specified subject
      * and first message content.
      *

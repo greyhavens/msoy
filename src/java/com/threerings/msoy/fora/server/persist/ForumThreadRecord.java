@@ -4,6 +4,9 @@
 package com.threerings.msoy.fora.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Date;
+
+import com.samskivert.util.IntMap;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -12,6 +15,8 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.fora.data.ForumThread;
 
@@ -99,6 +104,25 @@ public class ForumThreadRecord extends PersistentRecord
 
     /** The member id of the author of the message most recently posted to this thread. */
     public int mostRecentPosterId;
+
+    /**
+     * Converts this persistent record to a runtime record.
+     *
+     * @param members a mapping from memberId to {@link MemberName} that should contain a mapping
+     * for {@link #mostRecentPosterId}.
+     */
+    public ForumThread toForumThread (IntMap<MemberName> members)
+    {
+        ForumThread record = new ForumThread();
+        record.threadId = threadId;
+        record.groupId = groupId;
+        record.flags = flags;
+        record.subject = subject;
+        record.mostRecentPostId = mostRecentPostId;
+        record.mostRecentPostTime = new Date(mostRecentPostTime.getTime());
+        record.mostRecentPoster = members.get(mostRecentPosterId);
+        return record;
+    }
 
     // AUTO-GENERATED: METHODS START
     /**

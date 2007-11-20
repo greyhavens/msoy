@@ -3,14 +3,20 @@
 
 package com.threerings.msoy.fora.server.persist;
 
-import java.lang.String;
 import java.sql.Timestamp;
+import java.util.Date;
+
+import com.samskivert.util.IntMap;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+
+import com.threerings.msoy.web.data.MemberCard;
+
+import com.threerings.msoy.fora.data.ForumMessage;
 
 /**
  * Contains information on a single post to a thread.
@@ -93,6 +99,24 @@ public class ForumMessageRecord extends PersistentRecord
     /** The text of this message. */
     @Column(length=4096)
     public String message;
+
+    /**
+     * Converts this persistent record into a runtime record.
+     *
+     * @param members a mapping from memberId to {@link MemberCard} that should contain a mapping
+     * for {@link #posterId}.
+     */
+    public ForumMessage toForumMessage (IntMap<MemberCard> members)
+    {
+        ForumMessage msg = new ForumMessage();
+        msg.threadId = threadId;
+        msg.inReplyTo = inReplyTo;
+        msg.poster = members.get(posterId);
+        msg.created = new Date(created.getTime());
+        msg.lastEdited = new Date(lastEdited.getTime());
+        msg.message = message;
+        return msg;
+    }
 
     // AUTO-GENERATED: METHODS START
     /**
