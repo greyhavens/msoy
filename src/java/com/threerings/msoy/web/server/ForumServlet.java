@@ -10,12 +10,17 @@ import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
+import com.threerings.msoy.server.persist.MemberCardRecord;
+import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.fora.data.ForumCodes;
@@ -26,6 +31,7 @@ import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 
 import com.threerings.msoy.web.client.ForumService;
 import com.threerings.msoy.web.data.Group;
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -47,7 +53,25 @@ public class ForumServlet extends MsoyServiceServlet
             // make sure they have read access to this thread
             checkCanRead(mrec, groupId);
 
+            // load up the requested set of threads
+            List<ForumThreadRecord> thrrecs =
+                MsoyServer.forumRepo.loadThreads(groupId, offset, count);
+
+            // enumerate the last-posters and create member names for them
+            IntMap<MemberName> names = IntMaps.newHashIntMap();
+            IntSet posters = new ArrayIntSet();
+            for (ForumThreadRecord thrrec : thrrecs) {
+                posters.add(thrrec.mostRecentPosterId);
+            }
+            for (MemberNameRecord mnrec : MsoyServer.memberRepo.loadMemberNames(posters)) {
+                names.put(mnrec.memberId, mnrec.toMemberName());
+            }
+
+            // finally convert the threads to runtime format and return them
             List<ForumThread> threads = Lists.newArrayList();
+            for (ForumThreadRecord thrrec : thrrecs) {
+                threads.add(thrrec.toForumThread(names));
+            }
             return threads;
 
         } catch (PersistenceException pe) {
@@ -76,13 +100,19 @@ public class ForumServlet extends MsoyServiceServlet
                 MsoyServer.forumRepo.loadMessages(threadId, offset, count);
 
             // enumerate the posters and create member cards for them
+            IntMap<MemberCard> cards = IntMaps.newHashIntMap();
             IntSet posters = new ArrayIntSet();
             for (ForumMessageRecord msgrec : msgrecs) {
                 posters.add(msgrec.posterId);
             }
+            for (MemberCardRecord mcrec : MsoyServer.memberRepo.loadMemberCards(posters)) {
+                cards.put(mcrec.memberId, mcrec.toMemberCard());
+            }
 
+            // finally convert the messages to runtime format and return them
             List<ForumMessage> messages = Lists.newArrayList();
-            for (ForumMessageRecord fmr : msgrecs) {
+            for (ForumMessageRecord msgrec : msgrecs) {
+                messages.add(msgrec.toForumMessage(cards));
             }
 
             return messages;

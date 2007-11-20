@@ -52,10 +52,8 @@ public class CommentServlet extends MsoyServiceServlet
             for (CommentRecord record : records) {
                 memIds.add(record.memberId);
             }
-            if (memIds.size() > 0) {
-                for (MemberCardRecord mcrec : MsoyServer.memberRepo.loadMemberCards(memIds)) {
-                    cards.put(mcrec.memberId, mcrec.toMemberCard());
-                }
+            for (MemberCardRecord mcrec : MsoyServer.memberRepo.loadMemberCards(memIds)) {
+                cards.put(mcrec.memberId, mcrec.toMemberCard());
             }
 
             // convert the comment records to runtime records
