@@ -173,6 +173,7 @@ public class WorldClient extends BaseClient
         [ResourceBundle("general")]
         [ResourceBundle("chat")]
         [ResourceBundle("game")]
+        [ResourceBundle("ezgame")]
         [ResourceBundle("editing")]
         [ResourceBundle("item")]
         [ResourceBundle("notify")]
