@@ -65,10 +65,10 @@
 }
 
 .gameDetail .PlayButton {
+  border: 1px none #000000;
   width: 103px;
   height: 48px;
   cursor: pointer;
-  border: none;
 }
 .gameDetail .SinglePlay {
   background-image: url(/images/game/play_alone.png);
