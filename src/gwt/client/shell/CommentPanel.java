@@ -6,77 +6,48 @@ package client.shell;
 import java.util.Date;
 
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
-
-import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.fora.data.Comment;
-import com.threerings.msoy.item.data.all.MediaDesc;
-
-import client.util.MediaUtil;
+import com.threerings.msoy.web.data.MemberCard;
 
 /**
  * Displays a single comment.
  */
-public class CommentPanel extends FlexTable
+public class CommentPanel extends MessagePanel
 {
-    public CommentPanel (final CommentsPanel parent, final Comment comment)
+    public CommentPanel (CommentsPanel parent, Comment comment)
     {
-        setStyleName("commentPanel");
-        setCellPadding(0);
-        setCellSpacing(0);
+        _parent = parent;
+        _comment = comment;
 
-        ClickListener onClick = new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(Page.PROFILE, "" + comment.commentor.getMemberId());
-            }
-        };
-        Widget photo = MediaUtil.createMediaView(comment.photo, MediaDesc.THUMBNAIL_SIZE);
-        if (photo instanceof Image) {
-            ((Image) photo).addClickListener(onClick);
-            photo.setStyleName("actionLabel");
-        }
-        setWidget(0, 0, photo);
-        getFlexCellFormatter().setRowSpan(0, 0, 2);
-        getFlexCellFormatter().setStyleName(0, 0, "Photo");
-        getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-        getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_MIDDLE);
+        MemberCard card = new MemberCard();
+        card.name = comment.commentor;
+        card.photo = comment.photo;
+        setMessage(card, new Date(comment.posted), comment.text);
+    }
 
-        FlowPanel info = new FlowPanel();
-        InlineLabel author = new InlineLabel(comment.commentor.toString());
-        author.addClickListener(onClick);
-        author.addStyleName("Author");
-        author.addStyleName("actionLabel");
-        info.add(author);
+    // @Override // from MessagePanel
+    protected void addInfo (FlowPanel info)
+    {
+        super.addInfo(info);
 
-        // TODO: switch to "XX days/minutes ago"
-        String when = CShell.cmsgs.postedOn(_pfmt.format(new Date(comment.posted)));
-        InlineLabel posted = new InlineLabel(when, false, true, false);
-        posted.addStyleName("Posted");
-        info.add(posted);
-
-        if (CShell.getMemberId() == comment.commentor.getMemberId() || CShell.isSupport()) {
+        if (CShell.getMemberId() == _comment.commentor.getMemberId() || CShell.isSupport()) {
             InlineLabel delete = new InlineLabel(CShell.cmsgs.deletePost(), false, true, false);
             delete.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    parent.deleteComment(comment, false);
+                    _parent.deleteComment(_comment, false);
                 }
             });
             delete.addStyleName("Posted");
             delete.addStyleName("actionLabel");
             info.add(delete);
         }
-        setWidget(0, 1, info);
-
-        setText(1, 0, comment.text);
-        getFlexCellFormatter().setStyleName(1, 0, "Text");
     }
 
-    protected static SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy h:mm:ss aa");
+    protected CommentsPanel _parent;
+    protected Comment _comment;
 }

@@ -47,4 +47,28 @@ public class ForumThread
 
     /** The author of the message most recently posted to this thread. */
     public MemberName mostRecentPoster;
+
+    /**
+     * Returns true if this is an announcement thread.
+     */
+    public boolean isAnnouncement ()
+    {
+        return (flags & FLAG_ANNOUNCEMENT) != 0;
+    }
+
+    /**
+     * Returns true if this is a sticky thread.
+     */
+    public boolean isSticky ()
+    {
+        return (flags & FLAG_STICKY) != 0;
+    }
+
+    /**
+     * Returns true if this thread is locked.
+     */
+    public boolean isLocked ()
+    {
+        return (flags & FLAG_LOCKED) != 0;
+    }
 }

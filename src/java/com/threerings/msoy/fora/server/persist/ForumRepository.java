@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
@@ -42,6 +43,11 @@ public class ForumRepository extends DepotRepository
     public ForumRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        // TEMP
+        _ctx.registerMigration(ForumThreadRecord.class, new EntityMigration.Retype(2, "threadId"));
+        _ctx.registerMigration(ForumMessageRecord.class, new EntityMigration.Retype(2, "messageId"));
+        // END TEMP
     }
 
     /**
@@ -116,6 +122,7 @@ public class ForumRepository extends DepotRepository
         ftr.groupId = groupId;
         ftr.flags = flags;
         ftr.subject = subject;
+        ftr.mostRecentPostTime = new Timestamp(System.currentTimeMillis()); // must be non-null
         insert(ftr);
 
         // post the first message to the thread (this will update the thread's last posted info)

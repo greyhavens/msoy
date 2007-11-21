@@ -40,6 +40,7 @@ import com.threerings.msoy.group.data.GroupExtras;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.msgs.ForumPanel;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
@@ -58,10 +59,11 @@ import client.group.GroupEdit.GroupSubmissionListener;
 public class GroupView extends VerticalPanel
     implements GroupSubmissionListener
 {
-    public GroupView (int groupId)
+    public GroupView (Page parent, int groupId)
     {
         super();
         setWidth("100%");
+        _parent = parent;
 
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("groupDetailErrors");
@@ -69,8 +71,10 @@ public class GroupView extends VerticalPanel
 
         _table = new MyFlexTable();
         add(_table);
-
         loadGroup(groupId);
+
+        add(_forums = new ForumPanel());
+        _forums.displayGroupThreads(groupId);
     }
 
     /**
@@ -79,6 +83,7 @@ public class GroupView extends VerticalPanel
     public void groupSubmitted (Group group)
     {
         loadGroup(group.groupId);
+        _forums.displayGroupThreads(group.groupId);
     }
 
     /**
@@ -91,8 +96,7 @@ public class GroupView extends VerticalPanel
                 _detail = (GroupDetail) result;
                 _group = _detail.group;
                 _extras = _detail.extras;
-                // in case this object is used more than once, make sure that _me is at least 
-                // not stale
+                // in case this object is used more than once, make sure that _me is not stale
                 _me = null;
                 if (CGroup.ident != null) {
                     _me = GroupView.findMember(_detail.members, CGroup.getMemberId());
@@ -111,6 +115,8 @@ public class GroupView extends VerticalPanel
      */
     protected void buildUI ()
     {
+        _parent.setPageTitle("Groups", _group.name);
+
         _table.clear();
         _table.setStyleName("groupView");
         _table.setCellSpacing(0);
@@ -622,6 +628,7 @@ public class GroupView extends VerticalPanel
         }
     }
 
+    protected Page _parent;
     protected Group _group;
     protected GroupExtras _extras;
     protected GroupDetail _detail;
@@ -629,4 +636,5 @@ public class GroupView extends VerticalPanel
 
     protected MyFlexTable _table;
     protected VerticalPanel _errorContainer;
+    protected ForumPanel _forums;
 }

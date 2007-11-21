@@ -10,30 +10,37 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
 import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.msoy.fora.data.ForumThread;
+
+import client.util.MsoyUI;
 
 /**
  * Displays a list of threads.
  */
 public class ThreadListPanel extends PagedGrid
 {
-    public ThreadListPanel ()
+    public ThreadListPanel (ForumPanel parent)
     {
         super(THREADS_PER_PAGE, 1, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");
+        setWidth("100%");
+        _parent = parent;
     }
 
     public void displayGroupThreads (int groupId)
     {
+        _groupId = groupId;
         setModel(new ForumModels.GroupThreads(groupId), 0);
     }
 
     // @Override // from PagedGrid
     protected Widget createWidget (Object item)
     {
-        return new ThreadSummaryPanel(this, (ForumThread)item);
+        return new ThreadSummaryPanel((ForumThread)item);
     }
 
     // @Override // from PagedGrid
@@ -53,16 +60,14 @@ public class ThreadListPanel extends PagedGrid
     {
         super.addCustomControls(controls);
 
-        // if we're displaying a single group's threads...
-        if (_model instanceof ForumModels.GroupThreads) {
-            // ...add a button for starting a new thread that will optionally be enabled later
-            _startThread = new Button(CMsgs.mmsgs.startNewThread(), new ClickListener() {
-                public void onClick (Widget sender) {
-                }
-            });
-            _startThread.setEnabled(false);
-            controls.setWidget(0, 0, _startThread);
-        }
+        // add a button for starting a new thread that will optionally be enabled later
+        _startThread = new Button(CMsgs.mmsgs.startNewThread(), new ClickListener() {
+            public void onClick (Widget sender) {
+                _parent.startNewThread(_groupId);
+            }
+        });
+        _startThread.setEnabled(false);
+        controls.setWidget(0, 0, _startThread);
     }
 
     // @Override // from PagedGrid
@@ -70,27 +75,48 @@ public class ThreadListPanel extends PagedGrid
     {
         super.displayResults(start, count, list);
 
-        if (_model instanceof ForumModels.GroupThreads) {
+        if (_model instanceof ForumModels.GroupThreads) { 
+            _startThread.setVisible(true);
             _startThread.setEnabled(((ForumModels.GroupThreads)_model).canStartThread());
+        } else {
+            _startThread.setVisible(false);
+            _startThread.setEnabled(false);
         }
     }
 
-    protected static class ThreadSummaryPanel extends FlexTable
+    protected class ThreadSummaryPanel extends FlexTable
     {
-        public ThreadSummaryPanel (ThreadListPanel parent, ForumThread thread)
+        public ThreadSummaryPanel (final ForumThread thread)
         {
-            setText(0, 0, "" + thread.threadId);
-            setText(0, 1, "" + thread.groupId);
-            setText(0, 2, "" + thread.flags);
-            setText(0, 3, thread.subject);
-            setText(0, 4, "" + thread.mostRecentPostId);
-            setText(0, 5, thread.mostRecentPostTime.toString());
-            setText(0, 6, "" + thread.mostRecentPoster.toString());
+            setStyleName("threadSummaryPanel");
+
+            setText(0, 0, "" + thread.flags);
+            getFlexCellFormatter().setStyleName(0, 0, "Flags");
+
+            setWidget(0, 1, MsoyUI.createActionLabel(thread.subject, new ClickListener() {
+                public void onClick (Widget sender) {
+                    // TODO: route through URL?
+                    _parent.displayThreadMessages(thread);
+                }
+            }));
+            getFlexCellFormatter().setStyleName(0, 1, "Subject");
+
+            setHTML(0, 2, _pdate.format(thread.mostRecentPostTime) + "<br/>By: " +
+                    thread.mostRecentPoster);
+            getFlexCellFormatter().setStyleName(0, 2, "LastPost");
         }
     }
 
-    /** A button for starting a new thread. May be null. */
+    /** The forum panel in which we're hosted. */
+    protected ForumPanel _parent;
+
+    /** Contains the id of the group whose threads we are displaying or zero. */
+    protected int _groupId;
+
+    /** A button for starting a new thread. */
     protected Button _startThread;
+
+    protected static SimpleDateFormat _pdate = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
 
     protected static final int THREADS_PER_PAGE = 20;
 }

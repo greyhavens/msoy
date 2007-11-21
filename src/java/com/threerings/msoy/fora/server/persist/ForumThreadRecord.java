@@ -11,6 +11,8 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.GeneratedValue;
+import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -80,10 +82,11 @@ public class ForumThreadRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** A unique identifier for this forum thread. */
-    @Id public int threadId;
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    public int threadId;
 
     /** The id of the group to which this forum thread belongs. */
     public int groupId;

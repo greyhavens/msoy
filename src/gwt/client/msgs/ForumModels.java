@@ -26,8 +26,8 @@ public class ForumModels
         }
 
         public void onSuccess (Object result) {
-            super.onSuccess(result);
             _canStartThread = ((ForumService.ThreadResult)result).canStartThread;
+            super.onSuccess(result);
         }
 
         protected void callFetchService (int start, int count, boolean needCount) {
@@ -42,5 +42,35 @@ public class ForumModels
 
         protected int _groupId;
         protected boolean _canStartThread;
+    }
+
+    /** A data model that provides a particular thread's messages. */
+    public static class ThreadMessages extends ServiceBackedDataModel
+    {
+        public ThreadMessages (int threadId) {
+            _threadId = threadId;
+        }
+
+        public boolean canPostReply () {
+            return _canPostReply;
+        }
+
+        public void onSuccess (Object result) {
+            _canPostReply = ((ForumService.MessageResult)result).canPostReply;
+            super.onSuccess(result);
+        }
+
+        protected void callFetchService (int start, int count, boolean needCount) {
+            CMsgs.forumsvc.loadMessages(CMsgs.ident, _threadId, start, count, needCount, this); 
+        }
+        protected int getCount (Object result) {
+            return ((ForumService.MessageResult)result).messageCount;
+        }
+        protected List getRows (Object result) {
+            return ((ForumService.MessageResult)result).messages;
+        }
+
+        protected int _threadId;
+        protected boolean _canPostReply;
     }
 }

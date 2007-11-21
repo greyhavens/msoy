@@ -832,30 +832,30 @@ a.external {
   border: 0px;
 }
 
-.commentsPanel .Status {
-  font-size: 12px;
-}
-
-.commentPanel .Photo {
+.messagePanel .Photo {
   width: 80px;
   height: 60px;
   background: #EDEDED;
   padding: 5px;
 }
 
-.commentPanel .Author {
+.messagePanel .Author {
   padding-left: 10px;
   font-weight: bold;
   font-size: 12px;
 }
 
-.commentPanel .Text {
+.messagePanel .Text {
   padding-left: 10px;
 }
 
-.commentPanel .Posted {
+.messagePanel .Posted {
   font-size: 12px;
   color: #CCCCCC;
+}
+
+.commentsPanel .Status {
+  font-size: 12px;
 }
 
 .characterLimiter {

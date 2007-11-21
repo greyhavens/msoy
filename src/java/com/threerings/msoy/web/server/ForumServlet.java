@@ -99,7 +99,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load threads [for=" + who(mrec) +
-                    ", gid=" + groupId + ", offset=" + offset + ", count=" + count + "].");
+                    ", gid=" + groupId + ", offset=" + offset + ", count=" + count + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
     }
@@ -150,7 +150,7 @@ public class ForumServlet extends MsoyServiceServlet
             result.messages = messages;
 
             // fill in this caller's posting privileges
-            result.canPostMessage = group.checkAccess(groupRank, Group.ACCESS_POST, 0);
+            result.canPostReply = group.checkAccess(groupRank, Group.ACCESS_POST, 0);
 
             // fill in our total message count if needed
             if (needTotalCount) {
@@ -162,7 +162,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load messages [for=" + who(mrec) +
-                    ", tid=" + threadId + ", offset=" + offset + ", count=" + count + "].");
+                    ", tid=" + threadId + ", offset=" + offset + ", count=" + count + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
     }
@@ -185,7 +185,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to create thread [for=" + who(mrec) +
-                    ", gid=" + groupId + ", subject=" + subject + "].");
+                    ", gid=" + groupId + ", subject=" + subject + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
     }
@@ -220,7 +220,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to post message [for=" + who(mrec) +
-                    ", tid=" + threadId + ", irTo=" + inReplyTo + "].");
+                    ", tid=" + threadId + ", irTo=" + inReplyTo + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
     }

@@ -81,3 +81,35 @@
     margin-top: 4px;
     float: right;
 }
+
+.forumPanel {
+    width: 100%;
+}
+
+.forumPanel .Header {
+    border: 1px solid #000000;
+    background: #4F4F4F;
+    color: #FFFFFF;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.threadSummaryPanel {
+    width: 100%;
+}
+
+.threadSummaryPanel .Flags {
+    width: 30px;
+}
+
+.threadSummaryPanel .Subject {
+}
+
+.threadSummaryPanel .LastPost {
+    width: 150px;
+    font-size: 12px;
+}
+
+.messageSummaryPanel {
+    width: 100%;
+}

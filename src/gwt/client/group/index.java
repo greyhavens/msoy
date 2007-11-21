@@ -37,7 +37,7 @@ public class index extends MsgsEntryPoint
         if (args.get(0, "").equals("tag")) {
             setContent(new GroupList(args.get(1, "")));
         } else if (args.get(0, 0) != 0) {
-            setContent(new GroupView(args.get(0, 0)));
+            setContent(new GroupView(this, args.get(0, 0)));
         } else {
             setContent(new GroupList());
         }

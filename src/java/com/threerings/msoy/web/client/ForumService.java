@@ -39,8 +39,8 @@ public interface ForumService extends RemoteService
         /** The total count of messages in the specified thread. */
         public int messageCount;
 
-        /** Whether or not the caller can post a message to this thread. */
-        public boolean canPostMessage;
+        /** Whether or not the caller can post a reply message to this thread. */
+        public boolean canPostReply;
 
         /** The range of messages that were requested.
          * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumMessage> */

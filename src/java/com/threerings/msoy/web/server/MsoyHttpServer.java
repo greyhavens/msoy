@@ -102,6 +102,7 @@ public class MsoyHttpServer extends Server
         "snapshotsvc",
         "commentsvc",
         "worldsvc",
+        "forumsvc",
     };
 
     protected static final HttpServlet[] SERVLETS = {
@@ -121,5 +122,6 @@ public class MsoyHttpServer extends Server
         new SnapshotServlet(),
         new CommentServlet(),
         new WorldServlet(),
+        new ForumServlet(),
     };
 }
