@@ -61,6 +61,14 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser(ident);
 
+        if (displayName != null) {
+            displayName = displayName.trim();
+        }
+        if ((displayName == null) || (displayName.length() < Profile.MIN_DISPLAY_NAME_LENGTH) ||
+                (displayName.length() > Profile.MAX_DISPLAY_NAME_LENGTH)) {
+            // no error message: you'll only see this with a hacked client
+            throw new ServiceException();
+        }
         // TODO: whatever filtering and profanity checking that we want
 
         try {
