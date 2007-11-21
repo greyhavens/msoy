@@ -68,6 +68,9 @@ public class MediaDesc
     /** The MIME type for Java JAR files. */
     public static const APPLICATION_JAVA_ARCHIVE :int = 41;
 
+    /** The MIME type for ZIP files. */
+    public static const APPLICATION_ZIP :int = 42;
+
     /** Identifies that a "half thumbnail" sized image is desired. */
     public static const HALF_THUMBNAIL_SIZE :int = 0;
 
@@ -183,6 +186,8 @@ public class MediaDesc
             return APPLICATION_SHOCKWAVE_FLASH;
         } else if (mimeType == "application/java-archive") {
             return APPLICATION_JAVA_ARCHIVE;
+        } else if (mimeType == "application/zip") {
+            return APPLICATION_ZIP;
         } else {
             return -1;
         }
@@ -221,6 +226,8 @@ public class MediaDesc
             return APPLICATION_SHOCKWAVE_FLASH;
         } else if (StringUtil.endsWith(filename, ".jar")) {
             return APPLICATION_JAVA_ARCHIVE;
+        } else if (StringUtil.endsWith(filename, ".zip")) {
+            return APPLICATION_ZIP;
         } else {
             return -1;
         }
@@ -246,6 +253,7 @@ public class MediaDesc
         case VIDEO_MSVIDEO: return ".avi";
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
         case APPLICATION_JAVA_ARCHIVE: return ".jar";
+        case APPLICATION_ZIP: return ".zip";
         default: return ".dat";
         }
     }

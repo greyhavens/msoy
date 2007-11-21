@@ -62,6 +62,9 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The MIME type for Java JAR files. */
     public static final byte APPLICATION_JAVA_ARCHIVE = 41;
 
+    /** The MIME type for ZIP files. */
+    public static final byte APPLICATION_ZIP = 42;
+
     /** Identifies that a "quarter thumbnail" sized image is desired. */
     public static final int QUARTER_THUMBNAIL_SIZE = 0;
 
@@ -257,6 +260,8 @@ public class MediaDesc implements Streamable, IsSerializable
             return APPLICATION_SHOCKWAVE_FLASH;
         } else if (mimeType.equals("application/java-archive")) {
             return APPLICATION_JAVA_ARCHIVE;
+        } else if (mimeType.equals("application/zip")) {
+            return APPLICATION_ZIP;
         } else {
             return INVALID_MIME_TYPE;
         }
@@ -295,6 +300,8 @@ public class MediaDesc implements Streamable, IsSerializable
             return APPLICATION_SHOCKWAVE_FLASH;
         } else if (filename.endsWith(".jar")) {
             return APPLICATION_JAVA_ARCHIVE;
+        } else if (filename.endsWith(".zip")) {
+            return APPLICATION_ZIP;
         } else {
             return INVALID_MIME_TYPE;
         }
@@ -320,6 +327,7 @@ public class MediaDesc implements Streamable, IsSerializable
         case VIDEO_MSVIDEO: return ".avi";
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
         case APPLICATION_JAVA_ARCHIVE: return ".jar";
+        case APPLICATION_ZIP: return ".zip";
         default: return ".dat";
         }
     }
@@ -344,6 +352,7 @@ public class MediaDesc implements Streamable, IsSerializable
         case VIDEO_MSVIDEO: return "video/msvideo";
         case APPLICATION_SHOCKWAVE_FLASH: return "application/x-shockwave-flash";
         case APPLICATION_JAVA_ARCHIVE: return "application/java-archive";
+        case APPLICATION_ZIP: return "application/zip";
         default: return "application/octet-stream";
         }
     }
