@@ -567,7 +567,8 @@ public class MsoySprite extends MsoyMediaContainer
         if (_ident != null && parent is RoomView) {
             var roomObj :RoomObject = (parent as RoomView).getRoomObject();
             for each (var entry :MemoryEntry in roomObj.memories.toArray()) {
-                if (entry.item.equals(_ident)) {
+                // filter out memories with null as the value, those will not be persisted
+                if (entry.value != null && entry.item.equals(_ident)) {
                     mems[entry.key] = ObjectMarshaller.decode(entry.value);
                 }
             }
