@@ -49,8 +49,12 @@ public class GroupEdit extends BorderedDialog
     /**
      * A callback interface for classes that want to know when a group successfully committed.
      */
-    public static interface GroupSubmissionListener {
-        public void groupSubmitted(Group group);
+    public static interface GroupSubmissionListener
+    {
+        /**
+         * Called by {@link GroupEdit}; reloads the group.
+         */
+        public void groupSubmitted (Group group);
     }
 
     /**

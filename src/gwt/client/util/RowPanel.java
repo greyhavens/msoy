@@ -4,6 +4,7 @@
 package client.util;
 
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -23,8 +24,25 @@ public class RowPanel extends FlexTable
     // @Override // from Panel
     public void add (Widget child)
     {
-        int col = (getRowCount() > 0) ? getCellCount(0) : 0;
+        add(child, HasVerticalAlignment.ALIGN_TOP);
+    }
+
+    /**
+     * Adds the supplied child with the specified vertical alignment.
+     */
+    public void add (Widget child, HasVerticalAlignment.VerticalAlignmentConstant valign)
+    {
+        int col = getWidgetCount();
         setWidget(0, col, child);
         getFlexCellFormatter().setStyleName(0, col, "rowPanelCell");
+        getFlexCellFormatter().setVerticalAlignment(0, col, valign);
+    }
+
+    /**
+     * Returns the number of widgets added to this row panel.
+     */
+    public int getWidgetCount ()
+    {
+        return (getRowCount() > 0 ? getCellCount(0) : 0);
     }
 }

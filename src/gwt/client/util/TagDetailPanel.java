@@ -3,8 +3,6 @@
 
 package client.util;
 
-import client.shell.CShell;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -14,23 +12,29 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.TagCodes;
 import com.threerings.msoy.item.data.all.Item;
 
+import client.shell.CShell;
+import client.util.MsoyUI;
+import client.util.RowPanel;
+
 /**
  * Displays tagging information for a particular item.
  */
-public class TagDetailPanel extends FlexTable
+public class TagDetailPanel extends VerticalPanel
 {
     /**
      * Interface to the interaction between this panel and the service handling tagging/flagging in
@@ -49,9 +53,8 @@ public class TagDetailPanel extends FlexTable
          * that is being flagged, and is therefore responsible for providing the callback.
          * 
          * @param flag the flag to send to the server and set on the local object on success
-         * @param statusLabel A label to set with an error message on failure
          */
-        public void setFlags (byte flag, Label statusLabel);
+        public void setFlags (byte flag);
 
         /**
          * If additional entries are required on the Menu that pops up when a tag is clicked, this
@@ -60,26 +63,24 @@ public class TagDetailPanel extends FlexTable
         public void addMenuItems (String tag, PopupMenu menu);
     }
 
-    public TagDetailPanel (TagService service)
+    public TagDetailPanel (TagService service, boolean showAddUI)
     {
         setStyleName("tagDetailPanel");
         _service = service;
 
-        int col = 0;
         _tags = new FlowPanel();
+        _tags.setStyleName("Tags");
         _tags.add(new Label(CShell.cmsgs.tagLoading()));
-        setWidget(0, col, _tags);
-        getFlexCellFormatter().setStyleName(0, col++, "Tags");
+        add(_tags);
 
-        if (CShell.getMemberId() > 0) {
-            setWidget(0, col++, new Label(CShell.cmsgs.tagAddTag()));
-            getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_MIDDLE);
-            setWidget(0, col++, new NewTagBox());
+        if (CShell.getMemberId() > 0 && showAddUI) {
+            RowPanel addRow = new RowPanel();
+            addRow.add(new InlineLabel(CShell.cmsgs.tagAddTag(), false, false, false),
+                       HasAlignment.ALIGN_MIDDLE);
+            addRow.add(new NewTagBox());
 
-//             _quickTagLabel = new Label(CShell.cmsgs.tagQuickAdd());
-//             setWidget(0, col++, _quickTagLabel);
-//             getFlexCellFormatter().setVerticalAlignment(1, 2, HasVerticalAlignment.ALIGN_MIDDLE);
-//             _quickTags = new ListBox();
+//             addRow.add(_quickTagLabel = new Label(CShell.cmsgs.tagQuickAdd()));
+//             addRow.add(_quickTags = new ListBox());
 //             _quickTags.addChangeListener(new ChangeListener() {
 //                 public void onChange (Widget sender) {
 //                     ListBox box = (ListBox) sender;
@@ -90,12 +91,11 @@ public class TagDetailPanel extends FlexTable
 //                         }
 //                         public void onFailure (Throwable caught) {
 //                             GWT.log("tagItem failed", caught);
-//                             _status.setText(CShell.serverError(caught));
+//                             MsoyUI.error(CShell.serverError(caught));
 //                         }
 //                     });
 //                 }
 //             });
-//             setWidget(0, col++, _quickTags);
 
             if (_service.supportFlags()) {
                 InlineLabel flagLabel = new InlineLabel(CShell.cmsgs.tagFlag());
@@ -115,12 +115,12 @@ public class TagDetailPanel extends FlexTable
                         });
                     }
                 };
-                setWidget(0, col++, flagLabel);
+                addRow.add(flagLabel, HasAlignment.ALIGN_MIDDLE);
             }
-        }
 
-        setWidget(1, 0, _status = new Label(""));
-        getFlexCellFormatter().setColSpan(1, 0, getCellCount(0));
+            add(WidgetUtil.makeShim(5, 5));
+            add(addRow);
+        }
 
         refreshTags();
     }
@@ -130,7 +130,7 @@ public class TagDetailPanel extends FlexTable
         new PromptPopup(CShell.cmsgs.tagFlagPrompt(menuLabel), CShell.cmsgs.tagFlagFlagButton(),
                         CShell.cmsgs.tagFlagCancelButton()) {
             public void onAffirmative () {
-                _service.setFlags(flag, _status);
+                _service.setFlags(flag);
             }
             public void onNegative () {
             }
@@ -191,7 +191,7 @@ public class TagDetailPanel extends FlexTable
 
 //             public void onFailure (Throwable caught) {
 //                 GWT.log("getTagHistory failed", caught);
-//                 _status.setText("Internal error fetching item tag history: " + caught.getMessage());
+//                 MsoyUI.error("Internal error fetching item tag history: " + caught.getMessage());
 //             }
 //         });
     }
@@ -212,6 +212,8 @@ public class TagDetailPanel extends FlexTable
     protected void gotTags (Collection tags)
     {
         _tags.clear();
+        _tags.add(new InlineLabel("Tags:", false, false, true));
+
         final ArrayList addedTags = new ArrayList();
         for (Iterator iter = tags.iterator(); iter.hasNext() ; ) {
             final String tag = (String) iter.next();
@@ -227,7 +229,7 @@ public class TagDetailPanel extends FlexTable
                                     }
                                     public void onFailure (Throwable caught) {
                                         GWT.log("tagItem failed", caught);
-                                        _status.setText(CShell.serverError(caught));
+                                        MsoyUI.error(CShell.serverError(caught));
                                     }
                                 });
                             }
@@ -248,6 +250,10 @@ public class TagDetailPanel extends FlexTable
             if (iter.hasNext()) {
                 _tags.add(new InlineLabel(", "));
             }
+        }
+
+        if (addedTags.size() == 0) {
+            _tags.add(new InlineLabel("none"));
         }
 
 //         if (CShell.ident != null) {
@@ -271,7 +277,7 @@ public class TagDetailPanel extends FlexTable
 //                 }
 //                 public void onFailure (Throwable caught) {
 //                     GWT.log("getTagHistory failed", caught);
-//                     _status.setText(CShell.serverError(caught));
+//                     MsoyUI.error(CShell.serverError(caught));
 //                 }
 //             });
 //         }
@@ -292,11 +298,11 @@ public class TagDetailPanel extends FlexTable
                 return;
             }
             if (tagName.length() < TagCodes.MIN_TAG_LENGTH) {
-                _status.setText(CShell.cmsgs.errTagTooShort("" + TagCodes.MIN_TAG_LENGTH));
+                MsoyUI.error(CShell.cmsgs.errTagTooShort("" + TagCodes.MIN_TAG_LENGTH));
                 return;
             }
             if (tagName.length() > TagCodes.MAX_TAG_LENGTH) {
-                _status.setText(CShell.cmsgs.errTagTooLong("" + TagCodes.MAX_TAG_LENGTH));
+                MsoyUI.error(CShell.cmsgs.errTagTooLong("" + TagCodes.MAX_TAG_LENGTH));
                 return;
             }
             for (int ii = 0; ii < tagName.length(); ii ++) {
@@ -304,7 +310,7 @@ public class TagDetailPanel extends FlexTable
                 if (c == '_' || Character.isLetterOrDigit(c)) {
                     continue;
                 }
-                _status.setText(CShell.cmsgs.errTagInvalidCharacters());
+                MsoyUI.error(CShell.cmsgs.errTagInvalidCharacters());
                 return;
             }
             _service.tag(tagName, new AsyncCallback() {
@@ -313,7 +319,7 @@ public class TagDetailPanel extends FlexTable
                 }
                 public void onFailure (Throwable caught) {
                     GWT.log("tagItem failed", caught);
-                    _status.setText(CShell.serverError(caught));
+                    MsoyUI.error(CShell.serverError(caught));
                 }
             });
             setText(null);
@@ -322,7 +328,6 @@ public class TagDetailPanel extends FlexTable
 
     protected TagService _service;
 
-    protected Label _status;
     protected FlowPanel _tags;
     protected ListBox _quickTags;
     protected Label _quickTagLabel;

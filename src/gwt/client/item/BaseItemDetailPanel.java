@@ -29,6 +29,7 @@ import client.util.CreatorLabel;
 import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MediaUtil;
+import client.util.MsoyUI;
 import client.util.PopupMenu;
 import client.util.StyledTabPanel;
 import client.util.TagDetailPanel;
@@ -103,7 +104,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
             public boolean supportFlags () {
                 return true;
             }
-            public void setFlags (final byte flag, final Label statusLabel) {
+            public void setFlags (final byte flag) {
                 CShell.itemsvc.setFlags(CShell.ident, _item.getIdent(), flag, flag,
                                        new AsyncCallback () {
                     public void onSuccess (Object result) {
@@ -112,14 +113,12 @@ public abstract class BaseItemDetailPanel extends FlexTable
                     public void onFailure (Throwable caught) {
                         CShell.log("Failed to update item flags [item=" + _item.getIdent() +
                                   ", flag=" + flag + "]", caught);
-                        if (statusLabel != null) {
-                            statusLabel.setText(CShell.serverError(caught));
-                        }
+                        MsoyUI.error(CShell.serverError(caught));
                     }
                 });
             }
             public void addMenuItems (String tag, PopupMenu menu) { }
-        }));
+        }, true));
 
         configureCallbacks(this);
     }

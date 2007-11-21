@@ -15,7 +15,7 @@
 }
 
 .groupView .Blurb, .groupView .Charter, .groupView .PeoplePanel {
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .groupView .Blurb {
@@ -29,10 +29,8 @@
 }
 
 .groupView .LogoPanel {
-    margin: 0px;
-    width: 160px;
-    font-size: 11px;
-    cursor: pointer;
+    margin: 5px;
+    font-size: 12px;
 }
 
 .groupView .LogoPanel .Links {
@@ -57,21 +55,13 @@
     color: black;
 }
 
-.groupView .LogoPanel .gwt-Button {
-    margin-bottom: 9px;
-}
-
-.groupView .PeoplePanel hr {
-    margin: 3px 0px 0px 0px;
-}
-
 .groupView .gwt-Hyperlink {
     display: inline;
 }
 
 /* GroupList specific formattting */
 .groupList {
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .groupList .GroupWidget tr {

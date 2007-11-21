@@ -48,16 +48,15 @@ import client.util.MediaUtil;
 import client.util.PopupMenu;
 import client.util.PrettyTextPanel;
 import client.util.PromptPopup;
+import client.util.RowPanel;
 import client.util.TagDetailPanel;
-
-import client.group.GroupEdit.GroupSubmissionListener;
 
 /**
  * Display the details of a group, including all its members, and let managers remove other members
  * (unless the group's policy is PUBLIC) and pop up the group editor.
  */
 public class GroupView extends VerticalPanel
-    implements GroupSubmissionListener
+    implements GroupEdit.GroupSubmissionListener
 {
     public GroupView (Page parent, int groupId)
     {
@@ -77,13 +76,10 @@ public class GroupView extends VerticalPanel
         _forums.displayGroupThreads(groupId);
     }
 
-    /**
-     * Called by {@link GroupEdit}; reloads the group.
-     */
+    // from interface GroupEdit.GroupSubmissionListener
     public void groupSubmitted (Group group)
     {
         loadGroup(group.groupId);
-        _forums.displayGroupThreads(group.groupId);
     }
 
     /**
@@ -93,15 +89,7 @@ public class GroupView extends VerticalPanel
     {
         CGroup.groupsvc.getGroupDetail(CGroup.ident, groupId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _detail = (GroupDetail) result;
-                _group = _detail.group;
-                _extras = _detail.extras;
-                // in case this object is used more than once, make sure that _me is not stale
-                _me = null;
-                if (CGroup.ident != null) {
-                    _me = GroupView.findMember(_detail.members, CGroup.getMemberId());
-                }
-                buildUI();
+                setGroupDetail((GroupDetail) result);
             }
             public void onFailure (Throwable caught) {
                 CGroup.log("loadGroup failed", caught);
@@ -111,10 +99,19 @@ public class GroupView extends VerticalPanel
     }
 
     /**
-     * Rebuilds the UI from scratch.
+     * Configures this view with its group detail and sets up the UI from scratch.
      */
-    protected void buildUI ()
+    protected void setGroupDetail (GroupDetail detail)
     {
+        _detail = detail;
+        _group = _detail.group;
+        _extras = _detail.extras;
+
+        _me = null; // make sure that _me is not stale
+        if (CGroup.ident != null) {
+            _me = GroupView.findMember(_detail.members, CGroup.getMemberId());
+        }
+
         _parent.setPageTitle("Groups", _group.name);
 
         _table.clear();
@@ -134,27 +131,29 @@ public class GroupView extends VerticalPanel
         Widget logo = MediaUtil.createMediaView(_group.logo, MediaDesc.THUMBNAIL_SIZE);
         infoPanel.add(logo);
         if (logo instanceof Image) {
+            logo.addStyleName("actionLabel");
             ((Image) logo).addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, "g" + _group.groupId);
                 }
             });
         }
+
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("Links");
         links.setSpacing(8);
         links.add(Application.createLink(CGroup.msgs.viewHall(), "world", "g" +  _group.groupId));
-        // this should be added back in later... probably as "Wiki", instead of "Forum"
-        //links.add(new Anchor("", CGroup.msgs.viewForum()));
         if (_extras.homepageUrl != null) {
             links.add(new Anchor(_extras.homepageUrl, CGroup.msgs.viewHomepage()));
         }
         infoPanel.add(links);
+
         VerticalPanel established = new VerticalPanel();
         established.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         established.setStyleName("Established");
         established.add(new InlineLabel(CGroup.msgs.viewEstablishedAbbreviated() + 
             (new SimpleDateFormat("MMM dd, yyyy")).format(_group.creationDate)));
+
         HorizontalPanel creatorPanel = new HorizontalPanel();
         // this inline div is not letting space display to the right of it, and we need a space.
         InlineLabel byLabel = new InlineLabel(CGroup.msgs.viewBy());
@@ -164,11 +163,14 @@ public class GroupView extends VerticalPanel
                                                     _detail.creator.getMemberId()));
         established.add(creatorPanel);
         infoPanel.add(established);
+
         InlineLabel policy = new InlineLabel(getPolicyName(_group.policy));
         policy.setStyleName("Policy");
         infoPanel.add(policy);
+
+        RowPanel buttons = new RowPanel();
         if (amManager) {
-            infoPanel.add(new Button(CGroup.msgs.viewEdit(), new ClickListener() {
+            buttons.add(new Button(CGroup.msgs.viewEdit(), new ClickListener() {
                 public void onClick (Widget sender) {
                     new GroupEdit(_group, _extras, GroupView.this).show();
                 }
@@ -176,7 +178,7 @@ public class GroupView extends VerticalPanel
         }
         if (_me == null) {
             if (_group.policy == Group.POLICY_PUBLIC && CGroup.getMemberId() > 0) {
-                infoPanel.add(new Button(CGroup.msgs.viewJoin(), new ClickListener() {
+                buttons.add(new Button(CGroup.msgs.viewJoin(), new ClickListener() {
                     public void onClick (Widget sender) {
                         (new PromptPopup(CGroup.msgs.viewJoinPrompt(_group.name)) {
                             public void onAffirmative () {
@@ -188,7 +190,7 @@ public class GroupView extends VerticalPanel
                 }));
             }
         } else {
-            infoPanel.add(new Button(CGroup.msgs.viewLeave(), new ClickListener() {
+            buttons.add(new Button(CGroup.msgs.viewLeave(), new ClickListener() {
                 public void onClick (Widget sender) {
                     (new PromptPopup(CGroup.msgs.viewLeavePrompt(_group.name)) {
                         public void onAffirmative () {
@@ -199,7 +201,11 @@ public class GroupView extends VerticalPanel
                 }
             }));
         } 
+        if (buttons.getWidgetCount() > 0) {
+            infoPanel.add(buttons);
+        }
         _table.setWidget(0, 0, infoPanel);
+
         if (_extras.infoBackground != null) {
             _table.getMyFlexCellFormatter().setBackgroundImage(
                 0, 0, _extras.infoBackground.getMediaPath());
@@ -257,16 +263,10 @@ public class GroupView extends VerticalPanel
 
         FlexTable people = new FlexTable();
         people.setStyleName("PeoplePanel");
-        int pad = _extras.peopleLowerCapHeight == 0 ? 10 : _extras.peopleLowerCapHeight;
-        DOM.setStyleAttribute(people.getElement(), "paddingLeft", pad + "px");
-        DOM.setStyleAttribute(people.getElement(), "paddingRight", pad + "px");
-        people.setWidth("100%");
+        people.setCellPadding(0);
+        people.setCellSpacing(5);
         people.setText(0, 0, CGroup.msgs.viewManagers());
         people.setText(1, 0, CGroup.msgs.viewMembers());
-        if (_group.policy != Group.POLICY_EXCLUSIVE) {
-            people.setText(3, 0, CGroup.msgs.viewTags());
-            people.getFlexCellFormatter().setVerticalAlignment(3, 0, VerticalPanel.ALIGN_MIDDLE);
-        }
         FlowPanel managers = new FlowPanel();
         FlowPanel members = new FlowPanel();
         Iterator i = _detail.members.iterator();
@@ -311,126 +311,123 @@ public class GroupView extends VerticalPanel
         }
         people.setWidget(0, 1, managers);
         people.setWidget(1, 1, members);
-        if (_extras.backgroundControl == GroupExtras.BACKGROUND_FIT_TO_IMAGE) {
-            VerticalPanel peoplePlusCaps = new VerticalPanel();
-            peoplePlusCaps.setSpacing(0);
-            peoplePlusCaps.setWidth("100%");
-            final Element upperCap = DOM.createElement("div");
-            if (_extras.peopleUpperCap != null) {
-                DOM.setStyleAttribute(upperCap, "backgroundImage",
-                                      "url(" + _extras.peopleUpperCap.getMediaPath() + ")");
-                DOM.setStyleAttribute(upperCap, "height", _extras.peopleUpperCapHeight + "px");
-            }
-            peoplePlusCaps.add(new Widget () {
-                {
-                    setElement(upperCap);
-                }
-            });
-            peoplePlusCaps.add(people);
-            people.setWidth("100%");
-            if (_extras.peopleBackground != null) {
-                DOM.setStyleAttribute(people.getElement(), "backgroundImage", 
-                                      "url(" + _extras.peopleBackground.getMediaPath() + ")");
-            }
-            final Element lowerCap = DOM.createElement("div");
-            if (_extras.peopleLowerCap != null) {
-                DOM.setStyleAttribute(lowerCap, "backgroundImage",
-                                      "url(" + _extras.peopleLowerCap.getMediaPath() + ")");
-                DOM.setStyleAttribute(lowerCap, "height", _extras.peopleLowerCapHeight + "px");
-            }
-            peoplePlusCaps.add(new Widget () {
-                {
-                    setElement(lowerCap);
-                }
-            });
-            _table.setWidget(1, 0, peoplePlusCaps);
-        } else if (_extras.backgroundControl == GroupExtras.BACKGROUND_TILED ||
-            _extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
-            _table.setWidget(1, 0, people);
-            if (_extras.peopleBackground != null) {
-                _table.getMyFlexCellFormatter().setBackgroundImage(
-                    1, 0, _extras.peopleBackground.getMediaPath());
-                if (_extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
-                    _table.getMyFlexCellFormatter().setBackgroundNoRepeat(1, 0);
-                }
-            }
-        }
+
+        _table.setWidget(0, 2, people);
+
+//         if (_extras.backgroundControl == GroupExtras.BACKGROUND_FIT_TO_IMAGE) {
+//             VerticalPanel peoplePlusCaps = new VerticalPanel();
+//             peoplePlusCaps.setSpacing(0);
+//             peoplePlusCaps.setWidth("100%");
+//             final Element upperCap = DOM.createElement("div");
+//             if (_extras.peopleUpperCap != null) {
+//                 DOM.setStyleAttribute(upperCap, "backgroundImage",
+//                                       "url(" + _extras.peopleUpperCap.getMediaPath() + ")");
+//                 DOM.setStyleAttribute(upperCap, "height", _extras.peopleUpperCapHeight + "px");
+//             }
+//             peoplePlusCaps.add(new Widget () {
+//                 {
+//                     setElement(upperCap);
+//                 }
+//             });
+//             peoplePlusCaps.add(people);
+//             people.setWidth("100%");
+//             if (_extras.peopleBackground != null) {
+//                 DOM.setStyleAttribute(people.getElement(), "backgroundImage", 
+//                                       "url(" + _extras.peopleBackground.getMediaPath() + ")");
+//             }
+//             final Element lowerCap = DOM.createElement("div");
+//             if (_extras.peopleLowerCap != null) {
+//                 DOM.setStyleAttribute(lowerCap, "backgroundImage",
+//                                       "url(" + _extras.peopleLowerCap.getMediaPath() + ")");
+//                 DOM.setStyleAttribute(lowerCap, "height", _extras.peopleLowerCapHeight + "px");
+//             }
+//             peoplePlusCaps.add(new Widget () {
+//                 {
+//                     setElement(lowerCap);
+//                 }
+//             });
+//             _table.setWidget(1, 0, peoplePlusCaps);
+
+//         } else if (_extras.backgroundControl == GroupExtras.BACKGROUND_TILED ||
+//                    _extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
+//             _table.setWidget(1, 0, people);
+//             if (_extras.peopleBackground != null) {
+//                 _table.getMyFlexCellFormatter().setBackgroundImage(
+//                     1, 0, _extras.peopleBackground.getMediaPath());
+//                 if (_extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
+//                     _table.getMyFlexCellFormatter().setBackgroundNoRepeat(1, 0);
+//                 }
+//             }
+//         }
+
         if (_group.policy != Group.POLICY_EXCLUSIVE) {
-            final Panel tags = !amManager ? (Panel)new FlowPanel() : (Panel)new TagDetailPanel(
-                new TagDetailPanel.TagService() {
-                    public void tag (String tag, AsyncCallback callback) {
-                        CGroup.groupsvc.tagGroup(CGroup.ident, _group.groupId, tag, true, callback);
-                    }
-                    public void untag (String tag, AsyncCallback callback) {
-                        CGroup.groupsvc.tagGroup(
-                            CGroup.ident, _group.groupId, tag, false, callback);
-                    }
-                    public void getRecentTags (AsyncCallback callback) {
-                        CGroup.groupsvc.getRecentTags(CGroup.ident, callback);
-                    }
-                    public void getTags (AsyncCallback callback) {
-                        CGroup.groupsvc.getTags(CGroup.ident, _group.groupId, callback);
-                    }
-                    public boolean supportFlags () {
-                        return false;
-                    }
-                    public void setFlags (final byte flag, final Label statusLabel) { }
-                    public void addMenuItems (final String tag, PopupMenu menu) {
-                        menu.addMenuItem(CGroup.msgs.viewTagLink(), new Command() {
-                            public void execute () {
-                                Application.go(Page.GROUP, Args.compose("tag", tag));
-                            }
-                        });
-                    }
-                });
-            if (!amManager) {
-                CGroup.groupsvc.getTags(CGroup.ident, _group.groupId, new AsyncCallback () {
-                    public void onSuccess (Object result) {
-                        Iterator i = ((Collection) result).iterator();
-                        while (i.hasNext()) {
-                            String tag = (String)i.next();
-                            Hyperlink tagLink = Application.createLink(tag, "group", "tag=" + tag);
-                            DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
-                            tags.add(tagLink);
-                            if (i.hasNext()) {
-                                tags.add(new InlineLabel(", "));
-                            }
-                        }
-                    } 
-                    public void onFailure (Throwable caught) {
-                        CGroup.log("Failed to fetch tags");
-                        addError(CGroup.serverError(caught));
-                    }
-                });
-            }
-            people.setWidget(3, 1, tags);
-            people.setWidget(2, 0, new Widget() {
-                {
-                    Element hr = DOM.createElement("hr");
-                    DOM.setStyleAttribute(hr, "color", "black");
-                    DOM.setStyleAttribute(hr, "backgroundColor", "black");
-                    setElement(hr);
+            people.setWidget(3, 0, new TagDetailPanel(new TagDetailPanel.TagService() {
+                public void tag (String tag, AsyncCallback callback) {
+                    CGroup.groupsvc.tagGroup(CGroup.ident, _group.groupId, tag, true, callback);
                 }
-            });
+                public void untag (String tag, AsyncCallback callback) {
+                    CGroup.groupsvc.tagGroup(CGroup.ident, _group.groupId, tag, false, callback);
+                }
+                public void getRecentTags (AsyncCallback callback) {
+                    CGroup.groupsvc.getRecentTags(CGroup.ident, callback);
+                }
+                public void getTags (AsyncCallback callback) {
+                    CGroup.groupsvc.getTags(CGroup.ident, _group.groupId, callback);
+                }
+                public boolean supportFlags () {
+                    return false;
+                }
+                public void setFlags (byte flag) {
+                    // nada
+                }
+                public void addMenuItems (final String tag, PopupMenu menu) {
+                    menu.addMenuItem(CGroup.msgs.viewTagLink(), new Command() {
+                        public void execute () {
+                            Application.go(Page.GROUP, Args.compose("tag", tag));
+                        }
+                    });
+                }
+            }, amManager));
+            people.getFlexCellFormatter().setColSpan(3, 0, 2);
+
+//             final Panel tags = ! ? (Panel)new FlowPanel() : (Panel);
+//             if (!amManager) {
+//                 CGroup.groupsvc.getTags(CGroup.ident, _group.groupId, new AsyncCallback () {
+//                     public void onSuccess (Object result) {
+//                         Iterator i = ((Collection) result).iterator();
+//                         while (i.hasNext()) {
+//                             String tag = (String)i.next();
+//                             Hyperlink tagLink = Application.createLink(tag, "group", "tag=" + tag);
+//                             DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
+//                             tags.add(tagLink);
+//                             if (i.hasNext()) {
+//                                 tags.add(new InlineLabel(", "));
+//                             }
+//                         }
+//                     } 
+//                     public void onFailure (Throwable caught) {
+//                         CGroup.log("Failed to fetch tags");
+//                         addError(CGroup.serverError(caught));
+//                     }
+//                 });
+//             }
+//             people.setText(3, 0, CGroup.msgs.viewTags());
+//             people.getFlexCellFormatter().setVerticalAlignment(3, 0, VerticalPanel.ALIGN_MIDDLE);
+//             people.setWidget(3, 1, tags);
+
+//             people.setWidget(2, 0, new Widget() {
+//                 {
+//                     Element hr = DOM.createElement("hr");
+//                     DOM.setStyleAttribute(hr, "color", "black");
+//                     DOM.setStyleAttribute(hr, "backgroundColor", "black");
+//                     setElement(hr);
+//                 }
+//             });
         }
-        people.getFlexCellFormatter().setColSpan(2, 0, 2);
-        DOM.setAttribute(people.getFlexCellFormatter().getElement(0, 1), "width", "100%");
+
+//         DOM.setAttribute(people.getFlexCellFormatter().getElement(0, 1), "width", "100%");
         _table.getFlexCellFormatter().setColSpan(1, 0, 2);
         _table.getMyFlexCellFormatter().fillWidth(2, 0);
-    }
-
-    /**
-     * performs a simple scan of the list of GroupMembership objects to find and return the 
-     * first GroupMembership that refers to the requested memberId.
-     */
-    static protected GroupMembership findMember (List members, int memberId) 
-    {
-        Iterator i = members.iterator();
-        GroupMembership member = null;
-        while ((member == null || member.member.getMemberId() != memberId) && i.hasNext()) {
-            member = (GroupMembership)i.next();
-        }
-        return (member != null && member.member.getMemberId() == memberId) ? member : null;
     }
 
     protected String getPolicyName (int policy)
@@ -455,17 +452,17 @@ public class GroupView extends VerticalPanel
         menu.addItem(Application.createLinkHtml(CGroup.msgs.viewViewProfile(), "profile",
                                                 "" + membership.member.getMemberId()),
                      true, new Command() {
-                                public void execute () {
-                                    parent.hide();
-                                }
-                           });
+            public void execute () {
+                parent.hide();
+            }
+        });
         MenuItem promote = new MenuItem(CGroup.msgs.viewPromote(), new Command() {
             public void execute() {
                 (new PromptPopup(CGroup.msgs.viewPromotePrompt(membership.member.toString())) {
                     public void onAffirmative () {
                         parent.hide();
-                        updateMemberRank(membership.member.getMemberId(),
-                            GroupMembership.RANK_MANAGER);
+                        updateMemberRank(
+                            membership.member.getMemberId(), GroupMembership.RANK_MANAGER);
                     }
                     public void onNegative () { }
                 }).prompt();
@@ -594,6 +591,20 @@ public class GroupView extends VerticalPanel
     protected void clearErrors ()
     {
         _errorContainer.clear();
+    }
+
+    /**
+     * performs a simple scan of the list of GroupMembership objects to find and return the 
+     * first GroupMembership that refers to the requested memberId.
+     */
+    protected static GroupMembership findMember (List members, int memberId) 
+    {
+        Iterator i = members.iterator();
+        GroupMembership member = null;
+        while ((member == null || member.member.getMemberId() != memberId) && i.hasNext()) {
+            member = (GroupMembership)i.next();
+        }
+        return (member != null && member.member.getMemberId() == memberId) ? member : null;
     }
 
     protected class MyFlexTable extends FlexTable {
