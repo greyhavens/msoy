@@ -370,9 +370,9 @@ public class NaviPanel extends FlexTable
             // because popups are closed on MOUSEDOWN and opened on MOUSEUP, it's possible for the
             // MOUSEDOWN event to come through and clear out the current popup and any number of
             // events to get through before the MOUSEUP that triggers the reopening of this same
-            // popup; so instead we treat any onClick() within 500ms of our last close as being a
-            // second click on the same menu which we want to close the menu rather than reopen it
-            if (_popped == this && new Date().getTime() < _nextOpenStamp) {
+            // popup; thus we treat any onClick() within 500ms of our last close (on the same menu)
+            // as wanting to close the menu rather than reopen it
+            if (_noRepop == this && new Date().getTime() < _nextOpenStamp) {
                 clearPopup();
             } else {
                 showMenu(sender);
@@ -383,7 +383,9 @@ public class NaviPanel extends FlexTable
         public void onPopupClosed (PopupPanel sender, boolean autoClosed)
         {
             if (autoClosed) {
+                _noRepop = this;
                 _nextOpenStamp = new Date().getTime() + REOPEN_HYSTERESIS;
+                clearPopup();
             }
         }
 
@@ -456,6 +458,9 @@ public class NaviPanel extends FlexTable
 
     /** The currently popped up menu, for easy closing and fiddling. */
     protected MenuPopper _popped;
+
+    /** The most recently opened menu for "click again on same menu to close" functionality. */
+    protected MenuPopper _noRepop;
 
     /** Our friends. */
     protected ArrayList _friends = new ArrayList();
