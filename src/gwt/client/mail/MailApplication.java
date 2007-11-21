@@ -174,7 +174,6 @@ public class MailApplication extends DockPanel
     }
 
     // the folderpanel side bar is just a pretty top bar and a list of folders
-    // TODO: display folders in sane human order
     protected BorderedWidget buildFolderPanel ()
     {
         // construct the side bar
