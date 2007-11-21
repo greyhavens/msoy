@@ -64,11 +64,11 @@ public class ProfileServlet extends MsoyServiceServlet
         if (displayName != null) {
             displayName = displayName.trim();
         }
-        if ((displayName == null) || (displayName.length() < Profile.MIN_DISPLAY_NAME_LENGTH) ||
-                (displayName.length() > Profile.MAX_DISPLAY_NAME_LENGTH)) {
-            // no error message: you'll only see this with a hacked client
-            throw new ServiceException();
+        if (!Profile.isValidDisplayName(displayName)) {
+            // you'll only see this with a hacked client
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+
         // TODO: whatever filtering and profanity checking that we want
 
         try {

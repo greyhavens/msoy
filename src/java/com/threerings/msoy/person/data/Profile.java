@@ -74,4 +74,14 @@ public class Profile implements IsSerializable
 
     /** The user's permaName */
     public String permaName;
+
+    /**
+     * Returns true if the supplied display name meets our length requirements. If we add other
+     * requirements in the future, we can enforce those here as well.
+     */
+    public static boolean isValidDisplayName (String name)
+    {
+        return (name != null && name.length() >= MIN_DISPLAY_NAME_LENGTH &&
+                name.length() <= MAX_DISPLAY_NAME_LENGTH);
+    }
 }
