@@ -115,14 +115,6 @@ public abstract class Page
     protected abstract String getPageId ();
 
     /**
-     * Clears out any existing content and sets the specified widget as the main page content.
-     */
-    protected void setContent (Widget content)
-    {
-        setContent(content, false, false);
-    }
-
-    /**
      * Returns the content widget last configured with {@link #setContent}.
      */
     protected Widget getContent ()
@@ -131,35 +123,34 @@ public abstract class Page
     }
 
     /**
-     * Clears out any existing content, creates a new Flash object from the definition, and
-     * sets it as the new main page content. Returns the newly-created content as a widget.
+     * Clears out any existing content, creates a new Flash object from the definition, and sets it
+     * as the new main page content. Returns the newly-created content as a widget.
      */
     protected HTML setFlashContent (String definition)
     {
         // Please note: the following is a work-around for an IE7 bug. If we create a Flash object
-        // node *before* attaching it to the DOM tree, IE will silently fail to register
-        // the Flash object's callback functions for access from JavaScript. To make this work,
-        // create an empty node first, add it to the DOM tree, and then initialize it with
-        // the Flash object definition.
-        // Also see: WidgetUtil.embedFlashObject()
+        // node *before* attaching it to the DOM tree, IE will silently fail to register the Flash
+        // object's callback functions for access from JavaScript. To make this work, create an
+        // empty node first, add it to the DOM tree, and then initialize it with the Flash object
+        // definition.  Also see: WidgetUtil.embedFlashObject()
         HTML control = new HTML();
-        setContent(control, true, false);
+        setContent(control, false);
         control.setHTML(definition);
         return control;
     }
 
     /**
-     * Clears out any existing content and sets the specified Java applet as the main page content.
+     * Clears out any existing content and sets the specified widget as the main page content.
      */
-    protected void setJavaContent (Widget content)
+    protected void setContent (Widget content)
     {
-        setContent(content, false, true);
+        setContent(content, false);
     }
 
     /**
      * Clears out any existing content and sets the specified widget as the main page content.
      */
-    protected void setContent (Widget content, boolean contentIsFlash, boolean contentIsJava)
+    protected void setContent (Widget content, boolean contentIsJava)
     {
         // create our content container if need be
         if (_content == null) {
@@ -167,7 +158,7 @@ public abstract class Page
         }
 
         // display our content in the frame
-        Frame.setContent(_content, contentIsFlash, contentIsJava);
+        Frame.setContent(_content, contentIsJava);
         _content.setWidget(1, 0, content);
 
         // if there isn't anything in the tabs/subtitle area, we need something there to cause IE

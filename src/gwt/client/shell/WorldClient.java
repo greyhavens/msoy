@@ -78,7 +78,7 @@ public class WorldClient extends Widget
         }
 
         // let the page know that we're displaying a client
-        Frame.setShowingClient(true, false, pageToken);
+        Frame.setShowingClient(pageToken);
 
         // create our client if necessary
         if (!_isFlashClientPresent) {
@@ -106,12 +106,13 @@ public class WorldClient extends Widget
     public static void displayJava (Widget client)
     {
         // let the page know that we're displaying a client
-        Frame.setShowingClient(false, true, History.getToken());
+        Frame.setShowingClient(History.getToken());
 
         if (_jclient != client) {
             closeClient(false); // clear out our flash client if we have one
             RootPanel.get(Frame.CLIENT).clear();
             RootPanel.get(Frame.CLIENT).add(_jclient = client);
+            Frame.displayingJava = true;
         } else {
             clientMinimized(false);
         }
@@ -131,6 +132,7 @@ public class WorldClient extends Widget
             RootPanel.get(Frame.CLIENT).clear();
             _isFlashClientPresent = false;
             _jclient = null;
+            Frame.displayingJava = false;
         }
         if (restoreContent) {
             RootPanel.get(Frame.CLIENT).setWidth("0px");

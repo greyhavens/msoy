@@ -34,10 +34,6 @@ public class Frame
     /** The offset of the content close button, from the left edge of the separator bar. */
     public static final int CLOSE_BUTTON_OFFSET = -16;
 
-    /** Indicates whether we are currently displaying a Flash applet over the parts of the page
-     * where popups might show up. */
-    public static boolean displayingFlash = false;
-
     /** Indicates whether we are currently displaying a Java applet over the parts of the page
      * where popups might show up. */
     public static boolean displayingJava = false;
@@ -102,8 +98,8 @@ public class Frame
     public static boolean needPopupHack ()
     {
         // if we're displaying a Java applet, we always need the popup hack, but for Flash we only
-        // need it on Linux
-        return displayingJava || (displayingFlash && isLinux());
+        // need it on Linux (we always assume there's some goddamned Flash on the page)
+        return displayingJava || isLinux();
     }
 
     /**
@@ -133,18 +129,14 @@ public class Frame
     }
 
     /**
-     * Notes the history token for the current page so that it can be restored in the event that we
-     * open a normal page and then later close it.
+     * Switches the frame into client display mode (clearing out any content) and notes the history
+     * token for the current page so that it can be restored in the event that we open a normal
+     * page and then later close it.
      */
-    public static void setShowingClient (
-        boolean clientIsFlash, boolean clientIsJava, String closeToken)
+    public static void setShowingClient (String closeToken)
     {
         // note the current history token so that we can restore it if needed
         _closeToken = closeToken;
-
-        // note whether we need to hack our popups
-        displayingFlash = clientIsFlash;
-        displayingJava = clientIsJava;
 
         // clear out our content and the expand/close controls
         RootPanel.get(CONTENT).clear();
@@ -213,19 +205,16 @@ public class Frame
      * Configures the widget to be displayed in the content portion of the frame. Will animate the
      * content sliding on if appropriate.
      */
-    public static void setContent (Widget content, boolean contentIsFlash, boolean contentIsJava)
+    public static void setContent (Widget content, boolean contentIsJava)
     {
         RootPanel.get(CONTENT).clear();
 
         // clear out any content height overrides
-        Frame.setContentStretchHeight(false);
-
-        // note whether our content is flash or java for popup hackery purposes
-        displayingFlash = contentIsFlash;
-        displayingJava = contentIsJava;
+        setContentStretchHeight(false);
 
         // note that this is our current content
         _content = content;
+        displayingJava = contentIsJava;
 
         // if we're displaying the client or we have a minimized page, unminimize things first
         if (_maximizeContent.isAttached() ||
@@ -291,7 +280,8 @@ public class Frame
     {
         public void start (Command onComplete) {
             _onComplete = onComplete;
-            scheduleRepeating(25);
+//             scheduleRepeating(25);
+            run();
         }
 
         protected void done () {
@@ -310,20 +300,20 @@ public class Frame
         public SlideContentOff () {
             RootPanel.get(CONTENT).clear();
             WorldClient.setMinimized(false);
+            _closeContent.setVisible(false);
         }
 
         public void run () {
-            if (_startWidth >= _endWidth) {
+//             if (_startWidth >= _endWidth) {
                 RootPanel.get(CONTENT).setWidth("0px");
                 RootPanel.get(CLIENT).setWidth(_endWidth + "px");
                 done();
 
-            } else {
-                _closeContent.setVisible(false);
-                RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
-                RootPanel.get(CLIENT).setWidth(_startWidth + "px");
-                _startWidth += _deltaWidth;
-            }
+//             } else {
+//                 RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
+//                 RootPanel.get(CLIENT).setWidth(_startWidth + "px");
+//                 _startWidth += _deltaWidth;
+//             }
         }
 
         protected int _availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
@@ -335,7 +325,7 @@ public class Frame
     protected static class SlideContentOn extends Slider
     {
         public void run () {
-            if (_startWidth <= _endWidth) {
+//             if (_startWidth <= _endWidth) {
                 _closeContent.setVisible(true);
                 DOM.setStyleAttribute(_closeContent.getElement(), "left",
                                       (CONTENT_WIDTH + CLOSE_BUTTON_OFFSET) + "px");
@@ -345,11 +335,11 @@ public class Frame
                 WorldClient.setMinimized(true);
                 done();
 
-            } else {
-                RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
-                RootPanel.get(CLIENT).setWidth(_startWidth + "px");
-                _startWidth += _deltaWidth;
-            }
+//             } else {
+//                 RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
+//                 RootPanel.get(CLIENT).setWidth(_startWidth + "px");
+//                 _startWidth += _deltaWidth;
+//             }
         }
 
         protected int _availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;

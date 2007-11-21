@@ -54,7 +54,7 @@ public class index extends MsgsEntryPoint
         };
         if ("whirledwide".equals(action)) {
             setPageTitle(CWhirled.msgs.titleWhirledwide());
-            setContent(new Whirledwide(popDisplay), true, false);
+            setContent(new Whirledwide(popDisplay));
         } else if ("mywhirled".equals(action)) {
             setPageTitle(CWhirled.msgs.titleMyWhirled());
             setContent(new MyWhirled(popDisplay));

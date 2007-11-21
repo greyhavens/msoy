@@ -228,7 +228,7 @@ public class Application
             // locate the creator for this page
             Page.Creator creator = (Page.Creator)_creators.get(ident);
             if (creator == null) {
-                Frame.setContent(new Label("Unknown page requested '" + ident + "'."), false, false);
+                Frame.setContent(new Label("Unknown page requested '" + ident + "'."), false);
                 return;
             }
 
