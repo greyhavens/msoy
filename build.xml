@@ -824,7 +824,7 @@
   </target>
 
   <!-- rebuilds everything and extra bits for packaging -->
-  <target name="distpkg" depends="assignversion,distall,javadoc"/>
+  <target name="distpkg" depends="assignversion,distall"/>
 
   <!-- cleans out the compiled code -->
   <target name="clean" description="Cleans out compiled code.">
