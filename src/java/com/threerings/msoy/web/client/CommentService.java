@@ -18,17 +18,14 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface CommentService extends RemoteService
 {
-    /** Provides results for {@link #loadComment}. */
+    /** Provides results for {@link #loadComments}. */
     public static class CommentResult implements IsSerializable
     {
         /** The total count of comments. */
         public int commentCount;
 
-        /**
-         * The range of comments that were requested.
-         *
-         * @gwt.typeArgs <com.threerings.msoy.fora.data.Comment>
-         */
+        /** The range of comments that were requested.
+         * @gwt.typeArgs <com.threerings.msoy.fora.data.Comment> */
         public List comments;
     }
 

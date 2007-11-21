@@ -16,13 +16,13 @@ public interface ForumServiceAsync
      * The asynchronous version of {@link ForumService#loadThreads}.
      */
     public void loadThreads (WebIdent ident, int groupId, int offset, int count,
-                             AsyncCallback callback);
+                             boolean needTotalCount, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link ForumService#loadMessages}.
      */
     public void loadMessages (WebIdent ident, int threadId, int offset, int count,
-                              AsyncCallback callback);
+                              boolean needTotalCount, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link ForumService#createThread}.

@@ -5,6 +5,7 @@ package com.threerings.msoy.web.client;
 
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.fora.data.ForumMessage;
@@ -18,20 +19,46 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface ForumService extends RemoteService
 {
+    /** Provides results for {@link #loadThreads}. */
+    public static class ThreadResult implements IsSerializable
+    {
+        /** The total count of threads. */
+        public int threadCount;
+
+        /** Whether or not the caller can start a thread in this group. */
+        public boolean canStartThread;
+
+        /** The range of threads that were requested.
+         * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumThread> */
+        public List threads;
+    }
+
+    /** Provides results for {@link #loadMessages}. */
+    public static class MessageResult implements IsSerializable
+    {
+        /** The total count of messages in the specified thread. */
+        public int messageCount;
+
+        /** Whether or not the caller can post a message to this thread. */
+        public boolean canPostMessage;
+
+        /** The range of messages that were requested.
+         * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumMessage> */
+        public List messages;
+    }
+
     /**
      * Loads the specified range of threads for the specified group.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumThread>
      */
-    public List loadThreads (WebIdent ident, int groupId, int offset, int count)
+    public ThreadResult loadThreads (WebIdent ident, int groupId, int offset, int count,
+                                     boolean needTotalCount)
         throws ServiceException;
 
     /**
      * Loads the specified range of messages for the specified thread.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumMessage>
      */
-    public List loadMessages (WebIdent ident, int threadId, int offset, int count)
+    public MessageResult loadMessages (WebIdent ident, int threadId, int offset, int count,
+                                       boolean needTotalCount)
         throws ServiceException;
 
     /**

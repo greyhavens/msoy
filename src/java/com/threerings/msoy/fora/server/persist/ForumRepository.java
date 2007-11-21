@@ -11,6 +11,9 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.annotation.Computed;
+import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
@@ -20,6 +23,22 @@ import com.samskivert.jdbc.depot.clause.Where;
  */
 public class ForumRepository extends DepotRepository
 {
+    /** Used by {@link #loadThreadCount}. */
+    @Entity @Computed
+    public static class ThreadCountRecord extends PersistentRecord
+    {
+        @Computed(fieldDefinition="count(*)")
+        public int count;
+    }
+
+    /** Used by {@link #loadMessageCount}. */
+    @Entity @Computed
+    public static class MessageCountRecord extends PersistentRecord
+    {
+        @Computed(fieldDefinition="count(*)")
+        public int count;
+    }
+
     public ForumRepository (PersistenceContext ctx)
     {
         super(ctx);
@@ -39,6 +58,17 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
+     * Loads the total number of threads in the specified group.
+     */
+    public int loadThreadCount (int groupId)
+        throws PersistenceException
+    {
+        return load(ThreadCountRecord.class,
+                    new FromOverride(ForumThreadRecord.class),
+                    new Where(ForumThreadRecord.GROUP_ID_C, groupId)).count;
+    }
+
+    /**
      * Loads the specified range of forum messages for the specified thread. Ordered by posting
      * date.
      */
@@ -49,6 +79,17 @@ public class ForumRepository extends DepotRepository
                        new Where(ForumMessageRecord.THREAD_ID_C, threadId),
                        new Limit(offset, count),
                        OrderBy.ascending(ForumMessageRecord.CREATED_C));
+    }
+
+    /**
+     * Loads the total number of messages in the specified thread.
+     */
+    public int loadMessageCount (int threadId)
+        throws PersistenceException
+    {
+        return load(MessageCountRecord.class,
+                    new FromOverride(ForumMessageRecord.class),
+                    new Where(ForumMessageRecord.THREAD_ID_C, threadId)).count;
     }
 
     /**

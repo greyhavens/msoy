@@ -46,14 +46,23 @@ public class ForumServlet extends MsoyServiceServlet
     implements ForumService
 {
     // from interface ForumService
-    public List loadThreads (WebIdent ident, int groupId, int offset, int count)
+    public ThreadResult loadThreads (WebIdent ident, int groupId, int offset, int count,
+                                     boolean needTotalCount)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser(ident);
 
         try {
             // make sure they have read access to this thread
-            checkAccess(mrec, groupId, Group.ACCESS_READ, 0);
+            GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
+            if (grec == null) {
+                throw new ServiceException(ForumCodes.E_INVALID_GROUP);
+            }
+            byte groupRank = getGroupRank(mrec, groupId);
+            Group group = grec.toGroupObject();
+            if (!group.checkAccess(groupRank, Group.ACCESS_READ, 0)) {
+                throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
+            }
 
             // load up the requested set of threads
             List<ForumThreadRecord> thrrecs =
@@ -70,11 +79,23 @@ public class ForumServlet extends MsoyServiceServlet
             }
 
             // finally convert the threads to runtime format and return them
+            ThreadResult result = new ThreadResult();
             List<ForumThread> threads = Lists.newArrayList();
             for (ForumThreadRecord thrrec : thrrecs) {
                 threads.add(thrrec.toForumThread(names));
             }
-            return threads;
+            result.threads = threads;
+
+            // fill in this caller's new thread starting privileges
+            result.canStartThread = group.checkAccess(groupRank, Group.ACCESS_THREAD, 0);
+
+            // fill in our total thread count if needed
+            if (needTotalCount) {
+                result.threadCount = (threads.size() < count && offset == 0) ?
+                    threads.size() : MsoyServer.forumRepo.loadThreadCount(groupId);
+            }
+
+            return result;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load threads [for=" + who(mrec) +
@@ -84,7 +105,8 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
-    public List loadMessages (WebIdent ident, int threadId, int offset, int count)
+    public MessageResult loadMessages (WebIdent ident, int threadId, int offset, int count,
+                                       boolean needTotalCount)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser(ident);
@@ -95,7 +117,15 @@ public class ForumServlet extends MsoyServiceServlet
             if (ftr == null) {
                 throw new ServiceException(ForumCodes.E_INVALID_THREAD);
             }
-            checkAccess(mrec, ftr.groupId, Group.ACCESS_READ, 0);
+            GroupRecord grec = MsoyServer.groupRepo.loadGroup(ftr.groupId);
+            if (grec == null) {
+                throw new ServiceException(ForumCodes.E_INVALID_GROUP);
+            }
+            byte groupRank = getGroupRank(mrec, ftr.groupId);
+            Group group = grec.toGroupObject();
+            if (!group.checkAccess(groupRank, Group.ACCESS_READ, 0)) {
+                throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
+            }
 
             // load up the requested set of messages
             List<ForumMessageRecord> msgrecs =
@@ -112,12 +142,23 @@ public class ForumServlet extends MsoyServiceServlet
             }
 
             // finally convert the messages to runtime format and return them
+            MessageResult result = new MessageResult();
             List<ForumMessage> messages = Lists.newArrayList();
             for (ForumMessageRecord msgrec : msgrecs) {
                 messages.add(msgrec.toForumMessage(cards));
             }
+            result.messages = messages;
 
-            return messages;
+            // fill in this caller's posting privileges
+            result.canPostMessage = group.checkAccess(groupRank, Group.ACCESS_POST, 0);
+
+            // fill in our total message count if needed
+            if (needTotalCount) {
+                result.messageCount = (messages.size() < count && offset == 0) ?
+                    messages.size() : MsoyServer.forumRepo.loadMessageCount(threadId);
+            }
+
+            return result;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load messages [for=" + who(mrec) +

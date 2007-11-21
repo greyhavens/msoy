@@ -15,13 +15,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
-import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.web.client.CommentService;
 
 import client.util.MsoyUI;
 import client.util.PromptPopup;
 import client.util.RowPanel;
+import client.util.ServiceBackedDataModel;
 
 /**
  * Displays comments on a particular entity and allows posting.
@@ -130,31 +130,16 @@ public class CommentsPanel extends PagedGrid
         });
     }
 
-    protected class CommentModel implements DataModel
+    protected class CommentModel extends ServiceBackedDataModel
     {
-        public int getItemCount () {
-            return _commentCount;
+        protected void callFetchService (int start, int count, boolean needCount) {
+            CShell.commentsvc.loadComments(_entityType, _entityId, start, count, needCount, this); 
         }
-
-        public void doFetchRows (int start, int count, final AsyncCallback callback) {
-            CShell.commentsvc.loadComments(
-                _entityType, _entityId, start, count, _commentCount == -1, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    CommentService.CommentResult cr = (CommentService.CommentResult)result;
-                    if (_commentCount == -1) {
-                        _commentCount = cr.commentCount;
-                    }
-                    callback.onSuccess(cr.comments);
-                }
-                public void onFailure (Throwable caught) {
-                    CShell.log("loadCatalog failed", caught);
-                    MsoyUI.error(CShell.serverError(caught));
-                }
-            });
+        protected int getCount (Object result) {
+            return ((CommentService.CommentResult)result).commentCount;
         }
-
-        public void removeItem (Object item) {
-            // TOOD
+        protected List getRows (Object result) {
+            return ((CommentService.CommentResult)result).comments;
         }
     }
 
