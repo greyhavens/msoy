@@ -88,35 +88,6 @@ public class MailManager
     }
 
     /**
-     * Fetch and return a single message from the database.
-     */
-    public void getMessage (final int memberId, final int folderId, final int messageId,
-                            final boolean flagAsRead, ResultListener<MailMessage> waiter)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MailMessage>(waiter) {
-            public MailMessage invokePersistResult () throws PersistenceException {
-                MailMessageRecord record = _mailRepo.getMessage(memberId, folderId, messageId);
-                if (record == null) {
-                    return null;
-                }
-                if (record.unread && flagAsRead) {
-                    _mailRepo.setUnread(memberId, folderId, messageId, false);
-                    // if we read an unread inbox message, count how many more of those there are
-                    _count = _mailRepo.getMessageCount(memberId, folderId).right;
-                }
-                return record.toMailMessage(_memberRepo);
-            }
-            public void handleSuccess () {
-                if (_count != null) {
-                    MsoyServer.memberMan.reportUnreadMail(memberId, _count);
-                }
-                super.handleSuccess();
-            }
-            protected Integer _count;
-        });
-    }
-
-    /**
      * Deliver a message, i.e. file one copy of it in the sender's 'Sent' folder, and one copy in
      * the recipient's 'Inbox' folder. <em>Note:</em> because this method immediately posts an
      * invoker unit, it may be called from any thread.
@@ -186,20 +157,6 @@ public class MailManager
             protected MemberRecord _sendrec, _reciprec;
             protected MailMessageRecord _record;
             protected int _count;
-        });
-    }
-
-    /**
-     * Move some messages from one folder to another.
-     */
-    public void moveMessages (final int memberId, final int folderId, final int[] msgIdArr,
-                              final int newFolderId, ResultListener<Void> waiter)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
-            public Void invokePersistResult () throws PersistenceException {
-                _mailRepo.moveMessage(memberId, folderId, newFolderId, msgIdArr);
-                return null;
-            }
         });
     }
 

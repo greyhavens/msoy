@@ -40,13 +40,28 @@ public class MailServlet extends MsoyServiceServlet
     public void deleteMessages (final WebIdent ident, final int folderId, final int[] msgIdArr)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        final MemberRecord memrec = requireAuthedUser(ident);
+        Integer count = null;
         try {
             getMailRepo().deleteMessage(memrec.memberId, folderId, msgIdArr);
+
+            if (folderId == MailFolder.INBOX_FOLDER_ID) {
+                count = getMailRepo().getMessageCount(memrec.memberId, folderId).right;
+            }
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to delete messages [mid=" + memrec.memberId +
                     ", fid=" + folderId + ", mids=" + StringUtil.toString(msgIdArr) + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        if (count != null) {
+            final int fCount = count;
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.memberMan.reportUnreadMail(memrec.memberId, fCount);
+                }
+            });
         }
     }
 
@@ -137,15 +152,41 @@ public class MailServlet extends MsoyServiceServlet
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser(ident);
-        final ServletWaiter<MailMessage> waiter = new ServletWaiter<MailMessage>(
-            "getMessage[" + folderId + ", " + messageId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.mailMan.getMessage(
-                    memrec.memberId, folderId, messageId, true, waiter);
+
+        MailMessageRecord record;
+        MailMessage message;
+        Integer count = null;
+
+        try {
+            record = getMailRepo().getMessage(memrec.memberId, folderId, messageId);
+            if (record == null) {
+                return null;
             }
-        });
-        return waiter.waitForResult();
+            if (record.unread) {
+                getMailRepo().setUnread(memrec.memberId, folderId, messageId, false);
+                // if we read an unread inbox message, count how many more of those there are
+                if (folderId == MailFolder.INBOX_FOLDER_ID) {
+                    count = getMailRepo().getMessageCount(memrec.memberId, folderId).right;
+                }
+            }
+            message = record.toMailMessage(MsoyServer.memberRepo);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getMessage failed [mid=" + memrec.memberId +
+                    ", fid=" + folderId + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        if (count != null) {
+            final int fCount = count;
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.memberMan.reportUnreadMail(memrec.memberId, fCount);
+                }
+            });
+        }
+
+        return message;
     }
 
     // build a MailFolder object, including the message counts which require a separate query
