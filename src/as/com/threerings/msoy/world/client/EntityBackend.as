@@ -5,6 +5,9 @@ package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 
+import flash.media.Camera;
+import flash.media.Microphone;
+
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.world.data.MsoyLocation;
 
@@ -36,6 +39,7 @@ public class EntityBackend extends ControlBackend
         o["lookupMemory_v1"] = lookupMemory_v1;
         o["updateMemory_v1"] = updateMemory_v1;
         o["getInstanceId_v1"] = getInstanceId_v1;
+        o["getViewerName_v1"] = getViewerName_v1;
         o["setHotSpot_v1"] = setHotSpot_v1;
         o["sendMessage_v1"] = sendMessage_v1;
         o["sendSignal_v1"] = sendSignal_v1;
@@ -44,6 +48,8 @@ public class EntityBackend extends ControlBackend
         o["showPopup_v1"] = showPopup_v1;
         o["clearPopup_v1"] = clearPopup_v1;
         o["getMemories_v1"] = getMemories_v1;
+        o["getCamera_v1"] = getCamera_v1;
+        o["getMicrophone_v1"] = getMicrophone_v1;
 
         // deprecated methods
         o["triggerEvent_v1"] = triggerEvent_v1;
@@ -57,6 +63,16 @@ public class EntityBackend extends ControlBackend
         o["location"] = [ loc.x, loc.y, loc.z ];
     }
 
+    protected function getCamera_v1 () :Camera
+    {
+        return Camera.getCamera();
+    }
+
+    protected function getMicrophone_v1 () :Microphone
+    {
+        return Microphone.getMicrophone();
+    }
+
     protected function requestControl_v1 () :void
     {
         if (_sprite != null) {
@@ -67,6 +83,11 @@ public class EntityBackend extends ControlBackend
     protected function getInstanceId_v1 () :int
     {
         return (_sprite == null) ? -1 : _sprite.getInstanceId();
+    }
+
+    protected function getViewerName_v1 (instanceId :int = 0) :String
+    {
+        return (_sprite == null) ? null : _sprite.getViewerName(instanceId);
     }
 
     protected function getMemories_v1 () :Object

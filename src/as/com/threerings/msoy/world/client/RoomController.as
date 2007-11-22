@@ -45,6 +45,7 @@ import com.threerings.presents.dobj.MessageAdapter;
 import com.threerings.presents.dobj.MessageEvent;
 
 import com.threerings.crowd.client.PlaceView;
+import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
@@ -134,6 +135,21 @@ public class RoomController extends SceneController
     {
         // every sprite uses our own OID as the instanceid.
         return _mctx.getMemberObject().getOid();
+    }
+
+    /**
+     * Get the display name of the user viewing a particular instance.
+     */
+    public function getViewerName (instanceId :int = 0) :String
+    {
+        if (instanceId == 0) {
+            // get our name
+            return _mctx.getMemberObject().getVisibleName().toString();
+        }
+
+        // otherwise, locate the name in the OccupantInfos
+        var occInfo :OccupantInfo = _roomObj.occupantInfo.get(instanceId) as OccupantInfo;
+        return (occInfo == null) ? null : occInfo.username.toString();
     }
 
     /**

@@ -558,6 +558,18 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
+     * Retrieve the display name for an instanceId/bodyOid.
+     * Called by our backend in response to a request from usercode.
+     */
+    internal function getViewerName (instanceId :int) :String
+    {
+        if (parent is RoomView) {
+            return (parent as RoomView).getRoomController().getViewerName(instanceId);
+        }
+        return null;
+    }
+
+    /**
      * Return all memories in an associative hash.
      * Called by our backend in response to a request from usercode.
      */
