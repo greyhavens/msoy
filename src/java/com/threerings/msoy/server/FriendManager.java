@@ -72,8 +72,8 @@ public class FriendManager
     }
 
     /**
-     * Called to notify the friend manager that a friendship request was accepted. TODO: make this
-     * work via peer services.
+     * Called to notify the friend manager that a friendship request was accepted.
+     * PEER TODO: make this work via peer services.
      */
     public void friendshipEstablished (MemberName acceptor, MemberName friend)
     {
@@ -91,8 +91,8 @@ public class FriendManager
     }
 
     /**
-     * Called to notify the friend manager that a friendship was removed. TODO: make this work via
-     * peer services.
+     * Called to notify the friend manager that a friendship was removed.
+     * PEER TODO: make this work via peer services.
      */
     public void friendshipCleared (int removerId, int friendId)
     {

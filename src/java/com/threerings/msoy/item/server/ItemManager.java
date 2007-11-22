@@ -1070,6 +1070,7 @@ public class ItemManager
         }
 
         // currently, the only thing to update would be if the user is wearing this avatar
+        // PEER TODO: user may be resolved on another world server
         MemberObject memObj = MsoyServer.lookupMember(ownerId);
         if (memObj != null) {
             memObj.startTransaction();
@@ -1123,6 +1124,7 @@ public class ItemManager
             return;
         }
 
+        // PEER TODO: user may be resolved on another world server
         MemberObject memObj = MsoyServer.lookupMember(memberId);
         if (memObj != null) {
             memObj.startTransaction();
@@ -1154,6 +1156,7 @@ public class ItemManager
             return;
         }
 
+        // PEER TODO: user may be resolved on another world server
         MemberObject memObj = MsoyServer.lookupMember(ownerId);
         if (memObj != null) {
             memObj.startTransaction();

@@ -31,6 +31,7 @@ public class NotificationManager
      */
     public void notify (MemberName name, Notification note)
     {
+        // PEER TODO: user may be resolved on another world server (but this method seems unused)
         MemberObject target = getUser(name);
         if (target != null) {
             if (note.isPersistent()) {
@@ -49,9 +50,10 @@ public class NotificationManager
         MemberName inviter, String inviteeDisplayName, String inviteeEmail)
     {
         // avoid creating any objects unless the target is around to receive it
+        // PEER TODO: user may be resolved on another world server
         MemberObject target = getUser(inviter);
         if (target != null) {
-            dispatchChatOnlyNotification(target, 
+            dispatchChatOnlyNotification(target,
                 MessageBundle.tcompose("m.invite_accepted", inviteeEmail, inviteeDisplayName));
         }
     }
@@ -71,7 +73,7 @@ public class NotificationManager
     /**
      * Notify the specified guest that they've received an invitation to Whirled.
      */
-    public void notifyIssuedInvitation (MemberName guest, String inviteId) 
+    public void notifyIssuedInvitation (MemberName guest, String inviteId)
     {
         MemberObject target = MsoyServer.lookupMember(guest);
         if (guest != null) {

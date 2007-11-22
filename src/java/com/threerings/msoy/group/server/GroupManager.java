@@ -107,6 +107,7 @@ public class GroupManager
                 super.handleSuccess();
 
                 // data made it to the db, update their member object if they're online
+                // PEER TODO: user may be resolved on another world server
                 MemberObject member = MsoyServer.lookupMember(memberId);
                 if (member != null) {
                     member.removeFromGroups(GroupName.makeKey(groupId));
@@ -158,6 +159,7 @@ public class GroupManager
      */
     protected void updateMemberGroup (int memberId, int groupId, String groupName, byte groupRank)
     {
+        // PEER TODO: user may be resolved on another world server
         assert(groupId != 0 && memberId != 0 && groupName != null &&
                GroupMembership.isValidRank(groupRank));
         MemberObject mobj = MsoyServer.lookupMember(memberId);

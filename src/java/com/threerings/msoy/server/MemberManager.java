@@ -138,6 +138,7 @@ public class MemberManager
      */
     public void displayNameChanged (MemberName name)
     {
+        // PEER TODO: user may be resolved on another world server
         MemberObject user = MsoyServer.lookupMember(name);
         if (user != null) {
             user.setMemberName(name);
