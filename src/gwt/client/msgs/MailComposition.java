@@ -49,7 +49,6 @@ public class MailComposition extends BorderedDialog
     {
         super(false);
         _recipient = recipient;
-        setPayloadComposer(payloadComposer);
         buildUI(subject, bodyText, payloadComposer);
     }
 
