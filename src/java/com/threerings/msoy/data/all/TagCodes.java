@@ -9,7 +9,7 @@ package com.threerings.msoy.data.all;
 public interface TagCodes
 {
     /** Our minimum tag length. */
-    public static final int MIN_TAG_LENGTH = 3;
+    public static final int MIN_TAG_LENGTH = 2;
 
     /** Our maximum tag length. */
     public static final int MAX_TAG_LENGTH = 24;
