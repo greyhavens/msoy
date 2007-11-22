@@ -16,4 +16,9 @@ public interface PeerMemberService extends InvocationService
      * just delivered.
      */
     public void reportUnreadMail (Client client, int memberId, int newMailCount);
+
+    /**
+     * Reports a flow update on the given member hosted on this peer.
+     */
+    public void flowUpdated (Client client, int memberId, int flow, int accFlow);
 }

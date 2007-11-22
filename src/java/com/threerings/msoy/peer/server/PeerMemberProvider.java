@@ -15,6 +15,11 @@ import com.threerings.presents.server.InvocationProvider;
 public interface PeerMemberProvider extends InvocationProvider
 {
     /**
+     * Handles a {@link PeerMemberService#flowUpdated} request.
+     */
+    public void flowUpdated (ClientObject caller, int arg1, int arg2, int arg3);
+
+    /**
      * Handles a {@link PeerMemberService#reportUnreadMail} request.
      */
     public void reportUnreadMail (ClientObject caller, int arg1, int arg2);

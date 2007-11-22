@@ -37,6 +37,13 @@ public class PeerMemberDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case PeerMemberMarshaller.FLOW_UPDATED:
+            ((PeerMemberProvider)provider).flowUpdated(
+                source,
+                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), ((Integer)args[2]).intValue()
+            );
+            return;
+
         case PeerMemberMarshaller.REPORT_UNREAD_MAIL:
             ((PeerMemberProvider)provider).reportUnreadMail(
                 source,

@@ -18,8 +18,19 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
 public class PeerMemberMarshaller extends InvocationMarshaller
     implements PeerMemberService
 {
+    /** The method id used to dispatch {@link #flowUpdated} requests. */
+    public static final int FLOW_UPDATED = 1;
+
+    // from interface PeerMemberService
+    public void flowUpdated (Client arg1, int arg2, int arg3, int arg4)
+    {
+        sendRequest(arg1, FLOW_UPDATED, new Object[] {
+            Integer.valueOf(arg2), Integer.valueOf(arg3), Integer.valueOf(arg4)
+        });
+    }
+
     /** The method id used to dispatch {@link #reportUnreadMail} requests. */
-    public static final int REPORT_UNREAD_MAIL = 1;
+    public static final int REPORT_UNREAD_MAIL = 2;
 
     // from interface PeerMemberService
     public void reportUnreadMail (Client arg1, int arg2, int arg3)

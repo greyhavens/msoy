@@ -146,24 +146,53 @@ public class MemberManager
     }
 
     /**
-     * Called when a member's flow is updated. If they are online we update {@link
-     * MemberObject#flow}.
+     * Called when a member's flow is updated. If the member is resolved locally, update it
+     * here, otherwise search through the peers.
      */
-    public void flowUpdated (MemberFlowRecord record)
+    public void flowUpdated (final MemberFlowRecord record)
     {
-        MemberObject user = MsoyServer.lookupMember(record.memberId);
-        if (user == null) {
+        // if they're on this server, update them directly
+        MemberObject mobj = MsoyServer.lookupMember(record.memberId);
+        if (mobj != null) {
+            flowUpdated(null, record.memberId, record.flow, record.accFlow);
             return;
         }
 
-        user.startTransaction();
+        // otherwise locate the peer that is hosting this member and forward the request there
+        final MemberName memkey = new MemberName(null, record.memberId);
+        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+            public void invoke (Client client, NodeObject nodeobj) {
+                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+                if (msnobj.clients.containsKey(memkey)) {
+                    msnobj.peerMemberService.flowUpdated(
+                        client, record.memberId, record.flow, record.accFlow);
+                }
+            }
+        });
+    }
+
+    // from PeerMemberProvider
+    public void flowUpdated (ClientObject caller, int memberId, int flow, int accFlow)
+    {
+        if (caller instanceof MemberObject) {
+            log.warning("Peer version of reportUnreadMail called by non-peer client.");
+            return;
+        }
+
+        MemberObject mobj = MsoyServer.lookupMember(memberId);
+        if (mobj == null) {
+            // they managed to log out
+            log.warning("Member vanished while reporting unread mail [memberId=" + memberId + "]");
+            return;
+        }
+        mobj.startTransaction();
         try {
-            user.setFlow(record.flow);
-            if (record.accFlow != user.accFlow) {
-                user.setAccFlow(record.accFlow);
+            mobj.setFlow(flow);
+            if (accFlow != mobj.accFlow) {
+                mobj.setAccFlow(accFlow);
             }
         } finally {
-            user.commitTransaction();
+            mobj.commitTransaction();
         }
     }
 
