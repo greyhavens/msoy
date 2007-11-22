@@ -4,10 +4,13 @@
 package com.threerings.msoy.client {
 
 import flash.events.IEventDispatcher;
+import flash.events.FocusEvent;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.events.TextEvent;
 import flash.events.TimerEvent;
+
+import flash.display.Stage;
 
 import flash.external.ExternalInterface;
 import flash.system.Capabilities;
@@ -171,7 +174,10 @@ public class MsoyController extends Controller
         _ctx.getClient().addServiceGroup(CrowdCodes.CROWD_GROUP);
         _ctx.getClient().addClientObserver(this);
         _topPanel = topPanel;
-        setControlledPanel(ctx.getStage());
+
+        var stage :Stage = ctx.getStage();
+        setControlledPanel(stage);
+        stage.addEventListener(FocusEvent.FOCUS_OUT, handleUnfocus);
 
         _tipTimer = new Timer(15000, 1);
         _tipTimer.addEventListener(TimerEvent.TIMER, displayChatTip);
@@ -1012,15 +1018,7 @@ public class MsoyController extends Controller
         if (c != 0 && !event.ctrlKey && !event.altKey &&
                 // these are the ascii values for '/', a -> z,  A -> Z
                 (c == 47 || (c >= 97 && c <= 122) || (c >= 65 && c <= 90))) {
-            try {
-                var focus :Object = _ctx.getStage().focus;
-                if (!(focus is TextField) && !(focus is ChatCantStealFocus)) {
-                    ChatControl.grabFocus();
-                }
-            } catch (err :Error) {
-                // TODO: leave this in for now
-                trace(err.getStackTrace());
-            }
+            checkChatFocus();
         }
     }
 
@@ -1065,6 +1063,41 @@ public class MsoyController extends Controller
             _idle = nowIdle;
             var bsvc :BodyService = _ctx.getClient().requireService(BodyService) as BodyService;
             bsvc.setIdle(_ctx.getClient(), nowIdle);
+        }
+    }
+
+    /**
+     * Detect the kind of unfocus that happens when the user switches tabs.
+     */
+    protected function handleUnfocus (event :FocusEvent) :void
+    {
+        if (event.target is TextField && event.relatedObject == null) {
+            _ctx.getStage().addEventListener(MouseEvent.MOUSE_MOVE, handleRefocus);
+        }
+    }
+
+    /**
+     * Attempt to refocus the chatbox after the browser caused focus to lose.
+     */
+    protected function handleRefocus (event :MouseEvent) :void
+    {
+        _ctx.getStage().removeEventListener(MouseEvent.MOUSE_MOVE, handleRefocus);
+        checkChatFocus();
+    }
+
+    /**
+     * Try to assign focus to the chat entry field if it seems like we should.
+     */
+    protected function checkChatFocus (... ignored) :void
+    {
+        try {
+            var focus :Object = _ctx.getStage().focus;
+            if (!(focus is TextField) && !(focus is ChatCantStealFocus)) {
+                ChatControl.grabFocus();
+            }
+        } catch (err :Error) {
+            // TODO: leave this in for now
+            trace(err.getStackTrace());
         }
     }
 
