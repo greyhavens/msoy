@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.peer.client;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
@@ -21,4 +22,9 @@ public interface PeerMemberService extends InvocationService
      * Reports a flow update on the given member hosted on this peer.
      */
     public void flowUpdated (Client client, int memberId, int flow, int accFlow);
+
+    /**
+     * Reports a display name change on a given member hosted on this peer.
+     */
+    public void displayNameChanged (Client client, MemberName name);
 }

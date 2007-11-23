@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.peer.data;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.client.PeerMemberService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -18,8 +19,19 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
 public class PeerMemberMarshaller extends InvocationMarshaller
     implements PeerMemberService
 {
+    /** The method id used to dispatch {@link #displayNameChanged} requests. */
+    public static final int DISPLAY_NAME_CHANGED = 1;
+
+    // from interface PeerMemberService
+    public void displayNameChanged (Client arg1, MemberName arg2)
+    {
+        sendRequest(arg1, DISPLAY_NAME_CHANGED, new Object[] {
+            arg2
+        });
+    }
+
     /** The method id used to dispatch {@link #flowUpdated} requests. */
-    public static final int FLOW_UPDATED = 1;
+    public static final int FLOW_UPDATED = 2;
 
     // from interface PeerMemberService
     public void flowUpdated (Client arg1, int arg2, int arg3, int arg4)
@@ -30,7 +42,7 @@ public class PeerMemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #reportUnreadMail} requests. */
-    public static final int REPORT_UNREAD_MAIL = 2;
+    public static final int REPORT_UNREAD_MAIL = 3;
 
     // from interface PeerMemberService
     public void reportUnreadMail (Client arg1, int arg2, int arg3)

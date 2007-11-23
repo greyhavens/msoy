@@ -133,17 +133,46 @@ public class MemberManager
     }
 
     /**
-     * Called when a member updates their display name. If they are online, we update their {@link
-     * MemberObject} and all related occupant info records.
+     * Called when a member updates their display name.  If the member is resolved locally, update
+     * it here, otherwise search through the peers.If they are online anywhere, we update their
+     * {@link MemberObject} and all related occupant info records.
      */
-    public void displayNameChanged (MemberName name)
+    public void displayNameChanged (final MemberName name)
     {
-        // PEER TODO: user may be resolved on another world server
-        MemberObject user = MsoyServer.lookupMember(name);
-        if (user != null) {
-            user.setMemberName(name);
-            updateOccupantInfo(user);
+        // if they're on this server, update them directly
+        MemberObject mobj = MsoyServer.lookupMember(name);
+        if (mobj != null) {
+            displayNameChanged(null, name);
+            return;
         }
+
+        // otherwise locate the peer that is hosting this member and forward the request there
+        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+            public void invoke (Client client, NodeObject nodeobj) {
+                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+                if (msnobj.clients.containsKey(name)) {
+                    msnobj.peerMemberService.displayNameChanged(client, name);
+                }
+            }
+        });
+    }
+
+    // from PeerMemberProvider
+    public void displayNameChanged (ClientObject caller, MemberName name)
+    {
+        if (caller instanceof MemberObject) {
+            log.warning("Peer version of reportUnreadMail called by non-peer client.");
+            return;
+        }
+
+        MemberObject mobj = MsoyServer.lookupMember(name);
+        if (mobj == null) {
+            // they managed to log out
+            log.warning("Member vanished while changing display name [member=" + name + "]");
+            return;
+        }
+        mobj.setMemberName(name);
+        updateOccupantInfo(mobj);
     }
 
     /**
@@ -172,18 +201,20 @@ public class MemberManager
         });
     }
 
+
+
     // from PeerMemberProvider
     public void flowUpdated (ClientObject caller, int memberId, int flow, int accFlow)
     {
         if (caller instanceof MemberObject) {
-            log.warning("Peer version of reportUnreadMail called by non-peer client.");
+            log.warning("Peer version of flowUpdated called by non-peer client.");
             return;
         }
 
         MemberObject mobj = MsoyServer.lookupMember(memberId);
         if (mobj == null) {
             // they managed to log out
-            log.warning("Member vanished while reporting unread mail [memberId=" + memberId + "]");
+            log.warning("Member vanished while reporting flow update [memberId=" + memberId + "]");
             return;
         }
         mobj.startTransaction();

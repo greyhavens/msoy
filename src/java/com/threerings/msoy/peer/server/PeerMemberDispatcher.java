@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.peer.server;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.client.PeerMemberService;
 import com.threerings.msoy.peer.data.PeerMemberMarshaller;
 import com.threerings.presents.client.Client;
@@ -37,6 +38,13 @@ public class PeerMemberDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case PeerMemberMarshaller.DISPLAY_NAME_CHANGED:
+            ((PeerMemberProvider)provider).displayNameChanged(
+                source,
+                (MemberName)args[0]
+            );
+            return;
+
         case PeerMemberMarshaller.FLOW_UPDATED:
             ((PeerMemberProvider)provider).flowUpdated(
                 source,
