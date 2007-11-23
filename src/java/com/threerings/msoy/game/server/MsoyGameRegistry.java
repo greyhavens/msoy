@@ -166,14 +166,13 @@ public class MsoyGameRegistry
         MemberObject memobj = MsoyServer.lookupMember(playerId);
         if (memobj != null) {
             peerLeaveAVRGame(null, playerId);
-
-        } else {
-            applyToNodes(playerId, new GameServiceOperation() {
-                public void execute (Client client, PeerGameService service) {
-                    service.peerLeaveAVRGame(client, playerId);
-                }
-            });
         }
+
+        applyToNodes(playerId, new GameServiceOperation() {
+            public void execute (Client client, PeerGameService service) {
+                service.peerLeaveAVRGame(client, playerId);
+            }
+        });
     }
 
     // from interface GameServerProvider
@@ -186,14 +185,13 @@ public class MsoyGameRegistry
         MemberObject memobj = MsoyServer.lookupMember(playerId);
         if (memobj != null) {
             peerUpdatePlayer(null, playerId, game);
-
-        } else {
-            applyToNodes(playerId, new GameServiceOperation() {
-                public void execute (Client client, PeerGameService service) {
-                    service.peerUpdatePlayer(client, playerId, game);
-                }
-            });
         }
+
+        applyToNodes(playerId, new GameServiceOperation() {
+            public void execute (Client client, PeerGameService service) {
+                service.peerUpdatePlayer(client, playerId, game);
+            }
+        });
     }
 
     // from interface GameServerProvider
@@ -206,14 +204,13 @@ public class MsoyGameRegistry
         MemberObject mobj = MsoyServer.lookupMember(memberId);
         if (mobj != null) {
             peerReportFlowAward(null, memberId, deltaFlow);
-
-        } else {
-            applyToNodes(memberId, new GameServiceOperation() {
-                public void execute (Client client, PeerGameService service) {
-                    service.peerReportFlowAward(client, memberId, deltaFlow);
-                }
-            });
         }
+
+        applyToNodes(memberId, new GameServiceOperation() {
+            public void execute (Client client, PeerGameService service) {
+                service.peerReportFlowAward(client, memberId, deltaFlow);
+            }
+        });
     }
 
     // from interface GameServerProvider

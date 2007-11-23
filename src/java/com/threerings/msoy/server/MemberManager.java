@@ -143,10 +143,9 @@ public class MemberManager
         MemberObject mobj = MsoyServer.lookupMember(name);
         if (mobj != null) {
             displayNameChanged(null, name);
-            return;
         }
 
-        // otherwise locate the peer that is hosting this member and forward the request there
+        // locate any peer that is hosting this member and forward the request there
         MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
             public void invoke (Client client, NodeObject nodeobj) {
                 MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
@@ -185,10 +184,9 @@ public class MemberManager
         MemberObject mobj = MsoyServer.lookupMember(record.memberId);
         if (mobj != null) {
             flowUpdated(null, record.memberId, record.flow, record.accFlow);
-            return;
         }
 
-        // otherwise locate the peer that is hosting this member and forward the request there
+        // locate any peer that is hosting this member and forward the request there
         final MemberName memkey = new MemberName(null, record.memberId);
         MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
             public void invoke (Client client, NodeObject nodeobj) {
@@ -659,10 +657,9 @@ public class MemberManager
         MemberObject mobj = MsoyServer.lookupMember(memberId);
         if (mobj != null) {
             reportUnreadMail(null, memberId, newMailCount);
-            return;
         }
 
-        // otherwise locate the peer that is hosting this member and forward the request there
+        // locate any peer that is hosting this member and forward the request there
         final MemberName memkey = new MemberName(null, memberId);
         MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
             public void invoke (Client client, NodeObject nodeobj) {
