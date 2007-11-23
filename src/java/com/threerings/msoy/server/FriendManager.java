@@ -68,7 +68,7 @@ public class FriendManager
         }
 
         // let local friends know this member is offline
-        updateOnlineStatus(memobj.getMemberId(), true);
+        updateOnlineStatus(memobj.getMemberId(), false);
     }
 
     /**
