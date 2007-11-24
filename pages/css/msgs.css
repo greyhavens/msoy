@@ -151,3 +151,7 @@
     border-right: 1px dotted;
     border-bottom: 1px dotted;
 }
+
+.replyPanel .Title {
+    font-weight: bold;
+}

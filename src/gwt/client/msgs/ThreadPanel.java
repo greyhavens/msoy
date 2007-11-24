@@ -5,6 +5,7 @@ package client.msgs;
 
 import java.util.List;
 
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -23,7 +24,6 @@ import com.threerings.msoy.fora.data.ForumMessage;
 import client.shell.MessagePanel;
 import client.util.ClickCallback;
 import client.util.MsoyUI;
-import client.util.PromptPopup;
 
 /**
  * Displays the messages in a particular thread.
@@ -77,21 +77,15 @@ public class ThreadPanel extends PagedGrid
     // @Override // from PagedGrid
     protected void displayResults (int start, int count, List list)
     {
-        _postReply.setEnabled(((ForumModels.ThreadMessages)_model).canPostReply());
+        _postReply.setEnabled(((ForumModels.ThreadMessages)_model).canPostReply() && _reply == null);
         super.displayResults(start, count, list);
     }
 
     protected void postReplyMessage (final ForumMessage message)
     {
-        if (_reply != null) {
-            new PromptPopup(CMsgs.mmsgs.replaceInProgressReply()) {
-                public void onAffirmative () {
-                    clearReplyPanel();
-                    postReplyMessage(message);
-                }
-            }.prompt();
-        } else {
+        if (_reply == null) {
             _parent.add(_reply = new ReplyPanel(message));
+            _postReply.setEnabled(false);
         }
     }
 
@@ -100,6 +94,7 @@ public class ThreadPanel extends PagedGrid
         if (_reply != null) {
             _parent.remove(_reply);
             _reply = null;
+            _postReply.setEnabled(true);
         }
     }
 
@@ -144,7 +139,8 @@ public class ThreadPanel extends PagedGrid
         public ReplyPanel (ForumMessage inReplyTo)
         {
             setStyleName("replyPanel");
-            setText(0, 0, "Post a message to this thread:");
+            setText(0, 0, CMsgs.mmsgs.postReplyTitle());
+            getFlexCellFormatter().setStyleName(0, 0, "Title");
 
             setWidget(1, 0, _message = new TextArea());
             _message.setCharacterWidth(80);
@@ -181,6 +177,14 @@ public class ThreadPanel extends PagedGrid
             buttons.add(submit);
             setWidget(2, 0, buttons);
             getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_RIGHT);
+        }
+
+        // @Override // from Widget
+        protected void onAttach ()
+        {
+            super.onAttach();
+            _message.setFocus(true);
+            DOM.scrollIntoView(getElement());
         }
 
         protected TextArea _message;
