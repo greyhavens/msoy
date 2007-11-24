@@ -118,5 +118,5 @@ public class ThreadListPanel extends PagedGrid
 
     protected static SimpleDateFormat _pdate = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
 
-    protected static final int THREADS_PER_PAGE = 20;
+    protected static final int THREADS_PER_PAGE = 10;
 }

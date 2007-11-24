@@ -202,5 +202,5 @@ public class ThreadPanel extends PagedGrid
     /** Our active reply panel if any. */
     protected ReplyPanel _reply;
 
-    protected static final int MESSAGES_PER_PAGE = 20;
+    protected static final int MESSAGES_PER_PAGE = 10;
 }
