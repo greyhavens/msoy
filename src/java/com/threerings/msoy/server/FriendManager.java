@@ -77,7 +77,7 @@ public class FriendManager
      */
     public void friendshipEstablished (MemberName acceptor, MemberName friend)
     {
-        // remove them from the friends list of both parties of they are online
+        // add them to the friends list of both parties of they are online
         MemberObject accobj = MsoyServer.lookupMember(acceptor.getMemberId());
         MemberObject frobj = MsoyServer.lookupMember(friend.getMemberId());
         if (accobj != null) {
