@@ -295,7 +295,7 @@ public class GroupView extends VerticalPanel
                 final PopupPanel personMenuPanel = new PopupPanel(true);
                 MenuBar menu = getManagerMenuBar(membership, personMenuPanel);
                 personMenuPanel.add(menu);
-                final InlineLabel person = new InlineLabel(name.toString());
+                final InlineLabel person = new InlineLabel(name.toString(), false, false, false);
                 person.addStyleName("LabelLink");
                 person.addMouseListener(new MouseListenerAdapter() {
                     public void onMouseDown (Widget sender, int x, int y) { 

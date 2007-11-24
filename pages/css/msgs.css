@@ -145,3 +145,9 @@
     border-bottom: 1px solid #000000;
     width: 100%;
 }
+
+.replyPanel {
+    border-left: 1px dotted;
+    border-right: 1px dotted;
+    border-bottom: 1px dotted;
+}

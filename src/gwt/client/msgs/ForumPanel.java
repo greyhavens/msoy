@@ -73,11 +73,6 @@ public class ForumPanel extends VerticalPanel
         add(new ThreadPanel(this, thread.threadId));
     }
 
-    public void postReplyMessage (int threadId)
-    {
-        // TODO
-    }
-
     protected void newThreadPosted (ForumThread thread)
     {
         MsoyUI.info(CMsgs.mmsgs.msgNewThreadPosted());

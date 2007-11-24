@@ -18,6 +18,10 @@
     font-size: 12px;
 }
 
+.groupView .PeoplePanel a {
+    white-space: nowrap;
+}
+
 .groupView .Blurb {
     margin-bottom: 15px;
 }

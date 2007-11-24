@@ -99,7 +99,7 @@ public class Group
 
         case ACCESS_POST:
             // non-managers cannot post to locked threads
-            if (rank != GroupMembership.RANK_MANAGER && (flags & ForumThread.FLAG_LOCKED) == 0) {
+            if (rank != GroupMembership.RANK_MANAGER && (flags & ForumThread.FLAG_LOCKED) != 0) {
                 return false;
             }
             // non-members can only post to public groups
