@@ -6,11 +6,14 @@ package client.msgs;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.util.ClickCallback;
@@ -31,7 +34,10 @@ public class ForumPanel extends VerticalPanel
     {
         clear();
 
-        add(MsoyUI.createLabel(CMsgs.mmsgs.groupThreadListHeader(), "Header"));
+        FlowPanel header = new FlowPanel();
+        header.setStyleName("Header");
+        header.add(MsoyUI.createLabel(CMsgs.mmsgs.groupThreadListHeader(), "Title"));
+        add(header);
 
         // TODO: cache group thread models...
         ThreadListPanel threads = new ThreadListPanel(this);
@@ -45,14 +51,25 @@ public class ForumPanel extends VerticalPanel
         add(new NewThreadPanel(groupId));
     }
 
-    public void displayThreadMessages (ForumThread thread)
+    public void displayThreadMessages (final ForumThread thread)
     {
         clear();
-        if (thread.isAnnouncement()) {
-            add(MsoyUI.createLabel(CMsgs.mmsgs.groupAnnouncementHeader(thread.subject), "Header"));
-        } else {
-            add(MsoyUI.createLabel(CMsgs.mmsgs.groupThreadHeader(thread.subject), "Header"));
-        }
+        FlexTable header = new FlexTable();
+        header.setCellSpacing(0);
+        header.setCellPadding(0);
+        header.setWidth("100%");
+        header.setStyleName("Header");
+        header.setWidget(0, 0, MsoyUI.createActionLabel("", "Back", new ClickListener() {
+            public void onClick (Widget sender) {
+                displayGroupThreads(thread.groupId);
+            }
+        }));
+        header.setText(0, 1, thread.isAnnouncement() ?
+                       CMsgs.mmsgs.groupAnnouncementHeader(thread.subject) :
+                       CMsgs.mmsgs.groupThreadHeader(thread.subject));
+        header.getFlexCellFormatter().setStyleName(0, 1, "Title");
+        header.getFlexCellFormatter().setWidth(0, 1, "100%");
+        add(header);
         add(new ThreadPanel(this, thread.threadId));
     }
 
@@ -63,42 +80,48 @@ public class ForumPanel extends VerticalPanel
 
     protected void newThreadPosted (ForumThread thread)
     {
-        MsoyUI.info("New thread posted.");
+        MsoyUI.info(CMsgs.mmsgs.msgNewThreadPosted());
         // TODO: add it to our local model and reuse our cached model
         displayGroupThreads(thread.groupId);
     }
 
-    protected class NewThreadPanel extends FlexTable
+    protected class NewThreadPanel extends VerticalPanel
     {
         public NewThreadPanel (int groupId)
         {
             _groupId = groupId;
 
             setStyleName("newThreadPanel");
-            setCellPadding(0);
-            setCellSpacing(5);
 
-            addRow("Start New Thread");
+            add(MsoyUI.createLabel(CMsgs.mmsgs.startNewThread(), "Header"));
 
-            addRow("Subject:", _subject = new TextBox());
+            FlexTable content = new FlexTable();
+            content.setStyleName("Content");
+            content.setCellPadding(0);
+            content.setCellSpacing(5);
+            add(content);
+
+            addRow(content, CMsgs.mmsgs.ntpSubject(), _subject = new TextBox());
             _subject.setMaxLength(ForumThread.MAX_SUBJECT_LENGTH);
-            _subject.setVisibleLength(80);
+            _subject.setVisibleLength(40);
 
-            addRow("First message:");
+            addRow(content, CMsgs.mmsgs.ntpFirstMessage());
 
-            addRow(_message = new TextArea());
+            addRow(content, _message = new TextArea());
             _message.setCharacterWidth(80);
             _message.setVisibleLines(8);
-            getFlexCellFormatter().setColSpan(3, 0, 2);
 
-            RowPanel buttons = new RowPanel();
-            buttons.add(new Button("Cancel", new ClickListener() {
+            FlexTable buttons = new FlexTable();
+            buttons.setCellPadding(0);
+            buttons.setCellSpacing(0);
+            buttons.getFlexCellFormatter().setStyleName(0, 0, "FooterLeft");
+            buttons.setWidget(0, 1, new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
                     ((ForumPanel)getParent()).displayGroupThreads(_groupId);
                 }
             }));
-            Button submit = new Button("Submit");
-            buttons.add(submit);
+            Button submit = new Button(CMsgs.cmsgs.submit());
+            buttons.setWidget(0, 2, submit);
             new ClickCallback(submit) {
                 public boolean callService () {
                     return submitNewThread(this);
@@ -108,21 +131,20 @@ public class ForumPanel extends VerticalPanel
                     return false;
                 }
             };
-            int brow = addRow(buttons);
-            getFlexCellFormatter().setHorizontalAlignment(brow, 0, HasAlignment.ALIGN_RIGHT);
+            add(buttons);
         }
 
         protected boolean submitNewThread (ClickCallback callback)
         {
             String subject = _subject.getText().trim();
             if (subject.length() == 0) {
-                MsoyUI.error("Please enter a subject for your new thread.");
+                MsoyUI.error(CMsgs.mmsgs.errNoSubject());
                 return false;
             }
 
             String message = _message.getText().trim();
             if (message.length() == 0) {
-                MsoyUI.error("Please enter the starting message for your new thread.");
+                MsoyUI.error(CMsgs.mmsgs.errNoMessage());
                 return false;
             }
 
@@ -130,27 +152,27 @@ public class ForumPanel extends VerticalPanel
             return true;
         }
 
-        protected int addRow (String label, Widget widget)
+        protected int addRow (FlexTable table, String label, Widget widget)
         {
-            int row = getRowCount();
-            setText(row, 0, label);
-            setWidget(row, 1, widget);
+            int row = table.getRowCount();
+            table.setText(row, 0, label);
+            table.setWidget(row, 1, widget);
             return row;
         }
 
-        protected int addRow (String text)
+        protected int addRow (FlexTable table, String text)
         {
-            int row = getRowCount();
-            setText(row, 0, text);
-            getFlexCellFormatter().setColSpan(row, 0, 2);
+            int row = table.getRowCount();
+            table.setText(row, 0, text);
+            table.getFlexCellFormatter().setColSpan(row, 0, 2);
             return row;
         }
 
-        protected int addRow (Widget widget)
+        protected int addRow (FlexTable table, Widget widget)
         {
-            int row = getRowCount();
-            setWidget(row, 0, widget);
-            getFlexCellFormatter().setColSpan(row, 0, 2);
+            int row = table.getRowCount();
+            table.setWidget(row, 0, widget);
+            table.getFlexCellFormatter().setColSpan(row, 0, 2);
             return row;
         }
 
