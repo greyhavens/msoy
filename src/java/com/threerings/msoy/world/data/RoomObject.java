@@ -56,7 +56,7 @@ public class RoomObject extends SpotSceneObject
     public RoomMarshaller roomService;
 
     /** Contains the memories for all entities in this room. */
-    public DSet<MemoryEntry> memories = new DSet<MemoryEntry>();
+    public DSet<EntityMemoryEntry> memories = new DSet<EntityMemoryEntry>();
 
     /** Contains mappings for all controlled entities in this room. */
     public DSet<EntityControl> controllers = new DSet<EntityControl>();
@@ -86,7 +86,7 @@ public class RoomObject extends SpotSceneObject
      * <code>memories</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToMemories (MemoryEntry elem)
+    public void addToMemories (EntityMemoryEntry elem)
     {
         requestEntryAdd(MEMORIES, memories, elem);
     }
@@ -106,7 +106,7 @@ public class RoomObject extends SpotSceneObject
      * <code>memories</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateMemories (MemoryEntry elem)
+    public void updateMemories (EntityMemoryEntry elem)
     {
         requestEntryUpdate(MEMORIES, memories, elem);
     }
@@ -121,10 +121,10 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setMemories (DSet<com.threerings.msoy.world.data.MemoryEntry> value)
+    public void setMemories (DSet<com.threerings.msoy.world.data.EntityMemoryEntry> value)
     {
         requestAttributeChange(MEMORIES, value, this.memories);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.world.data.MemoryEntry> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.world.data.EntityMemoryEntry> clone =
             (value == null) ? null : value.typedClone();
         this.memories = clone;
     }

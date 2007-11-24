@@ -80,7 +80,7 @@ import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemberInfo;
-import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -374,7 +374,7 @@ public class RoomView extends AbstractRoomView
             portalTraversed(sceneLoc.loc, true);
 
         } else if (RoomObject.MEMORIES == name) {
-            dispatchMemoryChanged(event.getEntry() as MemoryEntry);
+            dispatchMemoryChanged(event.getEntry() as EntityMemoryEntry);
 
         } else if (RoomObject.CONTROLLERS == name) {
             var ctrl :EntityControl = (event.getEntry() as EntityControl);
@@ -399,7 +399,7 @@ public class RoomView extends AbstractRoomView
             moveBody((event.getEntry() as SceneLocation).bodyOid);
 
         } else if (RoomObject.MEMORIES == name) {
-            dispatchMemoryChanged(event.getEntry() as MemoryEntry);
+            dispatchMemoryChanged(event.getEntry() as EntityMemoryEntry);
 
         } else if (RoomObject.EFFECTS == name) {
             updateEffect(event.getEntry() as EffectData);
@@ -889,7 +889,7 @@ public class RoomView extends AbstractRoomView
     /**
      * Called when a memory entry is added or updated in the room object.
      */
-    protected function dispatchMemoryChanged (entry :MemoryEntry) :void
+    protected function dispatchMemoryChanged (entry :EntityMemoryEntry) :void
     {
         var sprite :MsoySprite = (_entities.get(entry.item) as MsoySprite);
         if (sprite != null) {

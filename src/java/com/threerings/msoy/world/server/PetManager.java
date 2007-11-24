@@ -26,7 +26,7 @@ import com.threerings.msoy.item.server.persist.PetRecord;
 import com.threerings.msoy.item.data.all.Pet;
 
 import com.threerings.msoy.world.client.PetService;
-import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.PetCodes;
 import com.threerings.msoy.world.data.PetInfo;
 import com.threerings.msoy.world.data.RoomObject;
@@ -69,9 +69,9 @@ public class PetManager
                 // next load up their memories
                 if (mids.size() > 0) {
                     for (MemoryRecord memrec : MsoyServer.memoryRepo.loadMemories(Pet.PET, mids)) {
-                        ArrayList<MemoryEntry> mems = _memories.get(memrec.itemId);
+                        ArrayList<EntityMemoryEntry> mems = _memories.get(memrec.itemId);
                         if (mems == null) {
-                            _memories.put(memrec.itemId, mems = new ArrayList<MemoryEntry>());
+                            _memories.put(memrec.itemId, mems = new ArrayList<EntityMemoryEntry>());
                         }
                         mems.add(memrec.toEntry());
                     }
@@ -86,8 +86,8 @@ public class PetManager
             }
 
             protected ArrayList<Pet> _pets = new ArrayList<Pet>();
-            protected HashIntMap<ArrayList<MemoryEntry>> _memories =
-                new HashIntMap<ArrayList<MemoryEntry>>();
+            protected HashIntMap<ArrayList<EntityMemoryEntry>> _memories =
+                new HashIntMap<ArrayList<EntityMemoryEntry>>();
         });
     }
 
@@ -154,7 +154,7 @@ public class PetManager
             }
 
             protected Pet _pet;
-            protected ArrayList<MemoryEntry> _memory = new ArrayList<MemoryEntry>();
+            protected ArrayList<EntityMemoryEntry> _memory = new ArrayList<EntityMemoryEntry>();
         });
     }
 
@@ -227,7 +227,7 @@ public class PetManager
      * pet resolution.
      */
     protected void resolveRoomPets (int sceneId, RoomObject roomObj, ArrayList<Pet> pets,
-                                    HashIntMap<ArrayList<MemoryEntry>> memories)
+                                    HashIntMap<ArrayList<EntityMemoryEntry>> memories)
     {
         for (Pet pet : pets) {
             // if this pet is already resolved (is wandering around with its owner), skip it (TODO:
@@ -245,7 +245,7 @@ public class PetManager
     /**
      * Finishes the resolution of a pet initiated by {@link #callPet}.
      */
-    protected void resolvePet (MemberObject owner, Pet pet, ArrayList<MemoryEntry> memory)
+    protected void resolvePet (MemberObject owner, Pet pet, ArrayList<EntityMemoryEntry> memory)
     {
         // instead of doing a bunch of complicated prevention to avoid multiply resolving pets,
         // we'll just get this far and abandon ship; it's not going to happen that often

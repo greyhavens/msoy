@@ -97,7 +97,7 @@ import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemberInfo;
-import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -255,7 +255,7 @@ public class RoomController extends SceneController
         // TODO: total up item's used memory, ensure it doesn't exceed the allowed limit
 
         // ship the update request off to the server
-        _roomObj.roomService.updateMemory(_mctx.getClient(), new MemoryEntry(ident, key, data));
+        _roomObj.roomService.updateMemory(_mctx.getClient(), new EntityMemoryEntry(ident, key, data));
         return true;
     }
 

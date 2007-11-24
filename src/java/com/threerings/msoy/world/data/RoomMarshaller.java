@@ -5,7 +5,7 @@ package com.threerings.msoy.world.data;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
-import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -108,7 +108,7 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int UPDATE_MEMORY = 8;
 
     // from interface RoomService
-    public void updateMemory (Client arg1, MemoryEntry arg2)
+    public void updateMemory (Client arg1, EntityMemoryEntry arg2)
     {
         sendRequest(arg1, UPDATE_MEMORY, new Object[] {
             arg2

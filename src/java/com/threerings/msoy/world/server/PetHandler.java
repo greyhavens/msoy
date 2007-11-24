@@ -17,7 +17,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.PetCodes;
 import com.threerings.msoy.world.data.PetObject;
 import com.threerings.msoy.world.data.RoomObject;
@@ -49,7 +49,7 @@ public class PetHandler
         // if we're not shutting down because our room shutdown...
         if (!roomDidShutdown && _roomObj != null) {
             // we need to leave the room (and extract our memory from it)
-            ArrayList<MemoryEntry> memories = leaveRoom();
+            ArrayList<EntityMemoryEntry> memories = leaveRoom();
             // TODO: save any modified memory entries
         }
 
@@ -61,7 +61,7 @@ public class PetHandler
      * Enters the pet into the supplied room. The supplied memory should come from having loaded
      * the pet for the first time or from extracting it from the room the pet just left.
      */
-    public void enterRoom (final int sceneId, RoomObject roomObj, ArrayList<MemoryEntry> memories)
+    public void enterRoom (final int sceneId, RoomObject roomObj, ArrayList<EntityMemoryEntry> memories)
     {
         log.info("Entering room [pet=" + _petobj.pet.getIdent() +
                  ", room=" + roomObj.getOid() + "].");
@@ -71,7 +71,7 @@ public class PetHandler
         try {
             _roomObj.startTransaction();
             if (memories != null) {
-                for (MemoryEntry entry : memories) {
+                for (EntityMemoryEntry entry : memories) {
                     _roomObj.addToMemories(entry);
                 }
             }
@@ -92,7 +92,7 @@ public class PetHandler
     /**
      * Removes the pet from its current room, extracting and returning its active memory.
      */
-    public ArrayList<MemoryEntry> leaveRoom ()
+    public ArrayList<EntityMemoryEntry> leaveRoom ()
     {
         if (_roomObj == null) {
             return null; // NOOP!
@@ -103,8 +103,8 @@ public class PetHandler
 
         // collect up our memory entries from our previous room
         ItemIdent petid = _petobj.pet.getIdent();
-        ArrayList<MemoryEntry> memories = new ArrayList<MemoryEntry>();
-        for (MemoryEntry entry : _roomObj.memories) {
+        ArrayList<EntityMemoryEntry> memories = new ArrayList<EntityMemoryEntry>();
+        for (EntityMemoryEntry entry : _roomObj.memories) {
             if (entry.item.equals(petid)) {
                 memories.add(entry);
             }
@@ -113,7 +113,7 @@ public class PetHandler
         // now remove those from the room
         try {
             _roomObj.startTransaction();
-            for (MemoryEntry entry : memories) {
+            for (EntityMemoryEntry entry : memories) {
                 _roomObj.removeFromMemories(entry.getKey());
             }
         } finally {
@@ -133,7 +133,7 @@ public class PetHandler
      * pet will assume it is in a room already and will extract its memory from its current room
      * before moving.
      */
-    public void moveToOwner (MemberObject owner, ArrayList<MemoryEntry> memory)
+    public void moveToOwner (MemberObject owner, ArrayList<EntityMemoryEntry> memory)
         throws InvocationException
     {
         validateOwnership(owner);

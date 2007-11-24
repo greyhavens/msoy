@@ -54,7 +54,7 @@ import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemberInfo;
-import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
@@ -401,7 +401,7 @@ public class RoomManager extends SpotSceneManager
     }
 
     // documentation inherited from RoomProvider
-    public void updateMemory (ClientObject caller, final MemoryEntry entry)
+    public void updateMemory (ClientObject caller, final EntityMemoryEntry entry)
     {
 // NOTE: I've disabled the need to be in control to update memory (Ray July 6, 2007)
 //        // if this client does not currently control this entity; ignore the request; if no one
@@ -416,7 +416,7 @@ public class RoomManager extends SpotSceneManager
 
         // verify that the memory does not exdeed legal size
         int totalSize = 0;
-        for (MemoryEntry rent : _roomObj.memories) {
+        for (EntityMemoryEntry rent : _roomObj.memories) {
             if (rent.item.equals(entry.item) && !rent.key.equals(entry.key)) {
                 totalSize += rent.getSize();
             }
@@ -640,14 +640,14 @@ public class RoomManager extends SpotSceneManager
         }
 
         // now fix up the lists: any ItemIdent that appears in both lists should be in neither.
-        ArrayList<MemoryEntry> oldMemories = new ArrayList<MemoryEntry>();
+        ArrayList<EntityMemoryEntry> oldMemories = new ArrayList<EntityMemoryEntry>();
         for (Iterator<ItemIdent> itr = oldIdents.iterator(); itr.hasNext(); ) {
             ItemIdent ident = itr.next();
             if (newIdents.remove(ident)) {
                 itr.remove();
             } else {
                 // ah, this is an item that's actually being removed. Locate any memories.
-                for (MemoryEntry entry : _roomObj.memories) {
+                for (EntityMemoryEntry entry : _roomObj.memories) {
                     if (ident.equals(entry.item)) {
                         oldMemories.add(entry);
                     }
@@ -659,7 +659,7 @@ public class RoomManager extends SpotSceneManager
         if (!oldMemories.isEmpty()) {
             _roomObj.startTransaction();
             try {
-                for (MemoryEntry entry : oldMemories) {
+                for (EntityMemoryEntry entry : oldMemories) {
                     _roomObj.removeFromMemories(entry.getRemoveKey());
                 }
             } finally {
@@ -846,10 +846,10 @@ public class RoomManager extends SpotSceneManager
     /**
      * Flush any modified memories contained within the specified Iterable.
      */
-    protected void flushMemories (Iterable<MemoryEntry> entries)
+    protected void flushMemories (Iterable<EntityMemoryEntry> entries)
     {
         final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();
-        for (MemoryEntry entry : entries) {
+        for (EntityMemoryEntry entry : entries) {
             if (entry.modified) {
                 memrecs.add(new MemoryRecord(entry));
             }

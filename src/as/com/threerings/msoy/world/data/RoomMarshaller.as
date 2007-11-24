@@ -9,7 +9,7 @@ import com.threerings.io.TypedArray;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
-import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
@@ -114,7 +114,7 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const UPDATE_MEMORY :int = 8;
 
     // from interface RoomService
-    public function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void
+    public function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry) :void
     {
         sendRequest(arg1, UPDATE_MEMORY, [
             arg2

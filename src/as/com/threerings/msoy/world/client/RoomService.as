@@ -7,7 +7,7 @@ import flash.utils.ByteArray;
 import com.threerings.io.TypedArray;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
-import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_InvocationListener;
@@ -43,7 +43,7 @@ public interface RoomService extends InvocationService
     function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void;
 
     // from Java interface RoomService
-    function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void;
+    function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry) :void;
 
     // from Java interface RoomService
     function updateRoom (arg1 :Client, arg2 :TypedArray /* of class com.threerings.whirled.data.SceneUpdate */, arg3 :InvocationService_InvocationListener) :void;

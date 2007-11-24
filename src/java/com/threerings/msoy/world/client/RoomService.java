@@ -10,7 +10,7 @@ import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.data.EntityMemoryEntry;
 
 /**
  * Service requests for rooms.
@@ -71,7 +71,7 @@ public interface RoomService extends InvocationService
      * Issues a request to update the memory of the specified entity (which is associated with a
      * particular item).
      */
-    public void updateMemory (Client client, MemoryEntry entry);
+    public void updateMemory (Client client, EntityMemoryEntry entry);
 
     /**
      * Issues a request to update the current scene location of the specified item. This is called

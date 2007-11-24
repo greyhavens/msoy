@@ -9,6 +9,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.util.Equalable;
 import com.threerings.util.Hashable;
+import com.threerings.util.StringUtil;
 import com.threerings.util.Util;
 
 import com.threerings.presents.dobj.DSet_Entry;
@@ -18,7 +19,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 /**
  * Contains a single memory datum for a "smart" item in a scene.
  */
-public class MemoryEntry
+public class EntityMemoryEntry
     implements DSet_Entry, Hashable
 {
     /** The item with which this memory datum is associated. */
@@ -34,8 +35,8 @@ public class MemoryEntry
      * unloaded. */
     public var modified :Boolean;
 
-    public function MemoryEntry (item :ItemIdent = null, key: String = null,
-                                 value :ByteArray = null)
+    public function EntityMemoryEntry (item :ItemIdent = null, key: String = null,
+                                       value :ByteArray = null)
     {
         this.item = item;
         this.key = key;
@@ -45,14 +46,14 @@ public class MemoryEntry
     // from Hashable
     public function hashCode () :int
     {
-        return item.hashCode() /* ^ key.hashCode() */; // TODO: add Util.hashCode(String)?
+        return item.hashCode() ^ StringUtil.hashCode(key);
     }
 
     // from Equalable
     public function equals (other :Object) :Boolean
     {
         // equality is based on key only
-        var oentry :MemoryEntry = (other as MemoryEntry);
+        var oentry :EntityMemoryEntry = (other as EntityMemoryEntry);
         return item.equals(oentry.item) && Util.equals(key, oentry.key);
     }
 

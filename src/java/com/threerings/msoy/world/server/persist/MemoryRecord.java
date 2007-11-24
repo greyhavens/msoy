@@ -11,7 +11,7 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.data.EntityMemoryEntry;
 
 /**
  * Maintains memory information for "smart" digital items (furniture, pets, etc).
@@ -74,7 +74,7 @@ public class MemoryRecord extends PersistentRecord
     /**
      * Creates a memory record from the supplied memory information.
      */
-    public MemoryRecord (MemoryEntry entry)
+    public MemoryRecord (EntityMemoryEntry entry)
     {
         this.itemType = entry.item.type;
         this.itemId = entry.item.itemId;
@@ -85,9 +85,9 @@ public class MemoryRecord extends PersistentRecord
     /**
      * Converts this persistent record to a runtime record.
      */
-    public MemoryEntry toEntry ()
+    public EntityMemoryEntry toEntry ()
     {
-        MemoryEntry entry = new MemoryEntry();
+        EntityMemoryEntry entry = new EntityMemoryEntry();
         entry.item = new ItemIdent(itemType, itemId);
         entry.key = datumKey;
         entry.value = datumValue;

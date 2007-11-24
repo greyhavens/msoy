@@ -54,7 +54,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
-import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
@@ -578,7 +578,7 @@ public class MsoySprite extends MsoyMediaContainer
         var mems :Object = {};
         if (_ident != null && parent is RoomView) {
             var roomObj :RoomObject = (parent as RoomView).getRoomObject();
-            for each (var entry :MemoryEntry in roomObj.memories.toArray()) {
+            for each (var entry :EntityMemoryEntry in roomObj.memories.toArray()) {
                 // filter out memories with null as the value, those will not be persisted
                 if (entry.value != null && entry.item.equals(_ident)) {
                     mems[entry.key] = ObjectMarshaller.decode(entry.value);
@@ -595,9 +595,9 @@ public class MsoySprite extends MsoyMediaContainer
     internal function lookupMemory (key :String) :Object
     {
         if (_ident != null && parent is RoomView) {
-            var mkey :MemoryEntry = new MemoryEntry(_ident, key, null),
+            var mkey :EntityMemoryEntry = new EntityMemoryEntry(_ident, key, null),
                 roomObj :RoomObject = (parent as RoomView).getRoomObject(),
-                entry :MemoryEntry = roomObj.memories.get(mkey) as MemoryEntry;
+                entry :EntityMemoryEntry = roomObj.memories.get(mkey) as EntityMemoryEntry;
             if (entry != null) {
                 return ObjectMarshaller.decode(entry.value);
             }

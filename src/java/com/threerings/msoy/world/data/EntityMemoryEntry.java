@@ -10,8 +10,8 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 /**
  * Contains a single memory datum for a scene entity.
  */
-public class MemoryEntry
-    implements DSet.Entry, Comparable<MemoryEntry>
+public class EntityMemoryEntry
+    implements DSet.Entry, Comparable<EntityMemoryEntry>
 {
     /** The item with which this memory datum is associated. */
     public ItemIdent item;
@@ -43,7 +43,7 @@ public class MemoryEntry
      */
     public Comparable getRemoveKey ()
     {
-        MemoryEntry other = new MemoryEntry();
+        EntityMemoryEntry other = new EntityMemoryEntry();
         other.item = this.item;
         other.key = this.key;
         // other.value == null
@@ -57,7 +57,7 @@ public class MemoryEntry
     }
 
     // from interface Comparable<MemoryEntry>
-    public int compareTo (MemoryEntry other)
+    public int compareTo (EntityMemoryEntry other)
     {
         int rv = item.compareTo(other.item);
         return (rv != 0) ? rv : key.compareTo(other.key);
@@ -67,7 +67,7 @@ public class MemoryEntry
     public boolean equals (Object other)
     {
         // equality is determined by key only
-        MemoryEntry oentry = (MemoryEntry)other;
+        EntityMemoryEntry oentry = (EntityMemoryEntry)other;
         return item.equals(oentry.item) && key.equals(oentry.key);
     }
 
