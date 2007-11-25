@@ -178,6 +178,8 @@ public class ForumServlet extends MsoyServiceServlet
             // make sure they're allowed to create a thread in this group
             checkAccess(mrec, groupId, Group.ACCESS_THREAD, flags);
 
+            // TODO: check first message contents
+
             // create the thread (and first post) in the database and return its runtime form
             return MsoyServer.forumRepo.createThread(
                 groupId, mrec.memberId, flags, subject, message).toForumThread(
@@ -203,6 +205,8 @@ public class ForumServlet extends MsoyServiceServlet
                 throw new ServiceException(ForumCodes.E_INVALID_THREAD);
             }
             checkAccess(mrec, ftr.groupId, Group.ACCESS_POST, ftr.flags);
+
+            // TODO: check message contents
 
             // create the message in the database and return its runtime form
             ForumMessageRecord fmr = MsoyServer.forumRepo.postMessage(
@@ -231,6 +235,27 @@ public class ForumServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser(ident);
 
+        try {
+            // make sure they are the message author
+            ForumMessageRecord fmr = MsoyServer.forumRepo.loadMessage(messageId);
+            if (fmr == null) {
+                throw new ServiceException(ForumCodes.E_INVALID_MESSAGE);
+            }
+            if (fmr.posterId != mrec.memberId) {
+                throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
+            }
+
+            // TODO: check message contents
+
+            // if all is well then do the deed
+            MsoyServer.forumRepo.updateMessage(messageId, message);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to edit message [for=" + who(mrec) +
+                    ", mid=" + messageId + "].", pe);
+            throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
+        }
+
     }
 
     // from interface ForumService
@@ -239,6 +264,30 @@ public class ForumServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser(ident);
 
+        try {
+            // make sure they are the message author or a group admin or whirled support+
+            ForumMessageRecord fmr = MsoyServer.forumRepo.loadMessage(messageId);
+            if (fmr == null) {
+                throw new ServiceException(ForumCodes.E_INVALID_MESSAGE);
+            }
+            if (!mrec.isSupport() && fmr.posterId != mrec.memberId) {
+                ForumThreadRecord ftr = MsoyServer.forumRepo.loadThread(fmr.threadId);
+                if (ftr == null) {
+                    throw new ServiceException(ForumCodes.E_INVALID_THREAD);
+                }
+                if (getGroupRank(mrec, ftr.groupId) != GroupMembership.RANK_MANAGER) {
+                    throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
+                }
+            }
+
+            // if all is well then do the deed
+            MsoyServer.forumRepo.deleteMessage(messageId);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to delete message [for=" + who(mrec) +
+                    ", mid=" + messageId + "].", pe);
+            throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
+        }
     }
 
     /**

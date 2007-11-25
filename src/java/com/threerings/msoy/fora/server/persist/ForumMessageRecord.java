@@ -111,6 +111,7 @@ public class ForumMessageRecord extends PersistentRecord
     public ForumMessage toForumMessage (Map<Integer,MemberCard> members)
     {
         ForumMessage msg = new ForumMessage();
+        msg.messageId = messageId;
         msg.threadId = threadId;
         msg.inReplyTo = inReplyTo;
         msg.poster = members.get(posterId);

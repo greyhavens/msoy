@@ -49,7 +49,7 @@ public class MessagePanel extends FlexTable
         getFlexCellFormatter().setRowSpan(0, 0, 2);
         getFlexCellFormatter().setStyleName(0, 0, "Photo");
         getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-        getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_MIDDLE);
+        getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
         FlowPanel info = new FlowPanel();
         InlineLabel author = new InlineLabel(poster.name.toString());
@@ -65,14 +65,25 @@ public class MessagePanel extends FlexTable
         info.add(posted);
         addInfo(info);
         setWidget(0, 1, info);
+        getFlexCellFormatter().setStyleName(0, 1, "LeftPad");
 
-        setText(1, 0, text);
+        if (textIsHTML()) {
+            setHTML(1, 0, text);
+        } else {
+            setText(1, 0, text);
+        }
         getFlexCellFormatter().setStyleName(1, 0, "Text");
+        getFlexCellFormatter().addStyleName(1, 0, "LeftPad");
+    }
+
+    protected boolean textIsHTML ()
+    {
+        return false;
     }
 
     protected void addInfo (FlowPanel info)
     {
     }
 
-    protected static SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy h:mm:ss aa");
+    protected static SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
 }

@@ -160,6 +160,35 @@ public class ForumRepository extends DepotRepository
         return fmr;
     }
 
+    /**
+     * Loads the specified message record. Returns null if no record exists for that id.
+     */
+    public ForumMessageRecord loadMessage (int messageId)
+        throws PersistenceException
+    {
+        return load(ForumMessageRecord.class, messageId);
+    }
+
+    /**
+     * Updates the text of the supplied message.
+     */
+    public void updateMessage (int messageId, String message)
+        throws PersistenceException
+    {
+        updatePartial(ForumMessageRecord.class, messageId,
+                      ForumMessageRecord.LAST_EDITED, new Timestamp(System.currentTimeMillis()),
+                      ForumMessageRecord.MESSAGE, message);
+    }
+
+    /**
+     * Deletes the specified message.
+     */
+    public void deleteMessage (int messageId)
+        throws PersistenceException
+    {
+        delete(ForumMessageRecord.class, messageId);
+    }
+
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {

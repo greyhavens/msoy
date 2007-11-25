@@ -40,4 +40,8 @@ public interface ServerMessages extends ConstantsWithLookup
     public String opted_out ();
     public String already_registered ();
     public String already_invited ();
+
+    public String invalid_group ();
+    public String invalid_thread ();
+    public String invalid_message ();
 }
