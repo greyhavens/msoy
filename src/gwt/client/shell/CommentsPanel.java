@@ -5,7 +5,6 @@ package client.shell;
 
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -18,6 +17,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.web.client.CommentService;
 
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PromptPopup;
 import client.util.RowPanel;
@@ -86,12 +86,9 @@ public class CommentsPanel extends PagedGrid
     protected void postComment (String text)
     {
         CShell.commentsvc.postComment(
-            CShell.ident, _entityType, _entityId, text, new AsyncCallback() {
+            CShell.ident, _entityType, _entityId, text, new MsoyCallback() {
             public void onSuccess (Object result) {
                 postedComment((Comment)result);
-            }
-            public void onFailure (Throwable cause) {
-                MsoyUI.error(CShell.serverError(cause));
             }
         });
     }
@@ -118,14 +115,11 @@ public class CommentsPanel extends PagedGrid
         }
 
         CShell.commentsvc.deleteComment(
-            CShell.ident, _entityType, _entityId, comment.posted, new AsyncCallback() {
+            CShell.ident, _entityType, _entityId, comment.posted, new MsoyCallback() {
             public void onSuccess (Object result) {
                 MsoyUI.info(CShell.cmsgs.commentDeleted());
                 _commentCount = -1;
                 removeItem(comment);
-            }
-            public void onFailure (Throwable cause) {
-                MsoyUI.error(CShell.serverError(cause));
             }
         });
     }

@@ -14,8 +14,6 @@ import java.util.Map;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -52,6 +50,7 @@ import client.shell.Page;
 import client.shell.WorldClient;
 import client.util.FlashClients;
 import client.util.MediaUtil;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
 public class MyWhirled extends FlexTable
@@ -60,14 +59,11 @@ public class MyWhirled extends FlexTable
     {
         buildUI();
 
-        CWhirled.worldsvc.getMyWhirled(CWhirled.ident, new AsyncCallback() {
+        CWhirled.worldsvc.getMyWhirled(CWhirled.ident, new MsoyCallback() {
             public void onSuccess (Object result) {
                 MyWhirledData data = (MyWhirledData) result;
                 popDisplay.displayPopulation(data.whirledPopulation);
                 fillUI(data);
-            }
-            public void onFailure (Throwable caught) {
-                MsoyUI.error(CWhirled.serverError(caught));
             }
         });
     }

@@ -31,6 +31,7 @@ import com.threerings.msoy.person.data.MailPayload;
 import client.shell.CShell;
 import client.util.BorderedWidget;
 import client.util.ItemThumbnail;
+import client.util.MsoyCallback;
 
 public abstract class ItemGift
 {
@@ -66,15 +67,9 @@ public abstract class ItemGift
         // from MailPayloadComposer
         public void messageSent (MemberName recipient)
         {
-            CMsgs.itemsvc.wrapItem(CMsgs.ident, _item.getIdent(), true, new AsyncCallback() {
+            CMsgs.itemsvc.wrapItem(CMsgs.ident, _item.getIdent(), true, new MsoyCallback() {
                 public void onSuccess (Object result) {
                     // good
-                }
-                public void onFailure (Throwable caught) {
-                    // this would be bad. we must write the server-side code defensively,
-                    // with good logging, and also TODO: there should be a last-minute check
-                    // that the item is still owned by the user in getComposedPayload().
-                    CMsgs.log("Failed to wrap item [item=" + _item + "]", caught);
                 }
             });
         }
@@ -127,7 +122,7 @@ public abstract class ItemGift
                 panel.setWidget(2, 0, southBits);
                 panel.getFlexCellFormatter().setColSpan(2, 0, 2);
 
-                _imageChooser = new AsyncCallback() {
+                _imageChooser = new MsoyCallback() {
                     public void onSuccess (Object result) {
                         _item = (Item) result;
                         _title.setText(CMsgs.mmsgs.giftChosen());
@@ -144,9 +139,6 @@ public abstract class ItemGift
                         southBits.add(backButton);
                         _left.setWidget(selectedBits);
                         _right.setVisible(false);
-                    }
-                    public void onFailure (Throwable caught) {
-                        // not used
                     }
                 };
 

@@ -5,7 +5,6 @@ package client.admin;
 
 import java.util.Date;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -14,6 +13,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.util.BorderedDialog;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.NumberTextBox;
 
@@ -60,16 +60,13 @@ public class IssueInvitesDialog extends BorderedDialog
                     activeSince = new Date((new Date()).getTime() - 7 * 24 * 60 * 60 * 1000);
                 }
                 CAdmin.adminsvc.grantInvitations(CAdmin.ident, _numberInvites.getValue().intValue(),
-                    activeSince, new AsyncCallback() {
+                    activeSince, new MsoyCallback() {
                         public void onSuccess (Object result) {
                             IssueInvitesDialog.this.hide();
                             String msg = _issueToSelection.getSelectedIndex() == 0 ?
                                 CAdmin.msgs.invitesToAll() : CAdmin.msgs.invitesToActive();
                             String count = _numberInvites.getValue().toString();
                             MsoyUI.info(CAdmin.msgs.invitesSuccess(msg, count));
-                        }
-                        public void onFailure (Throwable cause) {
-                            MsoyUI.error(CAdmin.serverError(cause));
                         }
                     });
             }

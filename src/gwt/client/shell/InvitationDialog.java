@@ -3,7 +3,6 @@
 
 package client.shell;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
@@ -13,18 +12,16 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.data.Invitation;
 
 import client.util.BorderedDialog;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
 public class InvitationDialog extends BorderedDialog 
 {
     public static void display (final StatusPanel status, String inviteId)
     {
-        CShell.membersvc.getInvitation(inviteId, true, new AsyncCallback () {
+        CShell.membersvc.getInvitation(inviteId, true, new MsoyCallback () {
             public void onSuccess (Object result) {
                 (new InvitationDialog(status, (Invitation)result)).show();
-            }
-            public void onFailure (Throwable cause) {
-                MsoyUI.error(CShell.serverError(cause));
             }
         });
     }

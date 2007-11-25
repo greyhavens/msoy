@@ -32,6 +32,7 @@ import client.item.TagCloud;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -125,12 +126,9 @@ public class CatalogPanel extends VerticalPanel
             }
 
             // if we found the listing, display it, otherwise load it from the server
-            AsyncCallback gotListing = new AsyncCallback() {
+            MsoyCallback gotListing = new MsoyCallback() {
                 public void onSuccess (Object result) {
                     showListing((CatalogListing)result);
-                }
-                public void onFailure (Throwable caught) {
-                    MsoyUI.error(CCatalog.serverError(caught));
                 }
             };
             if (listing == null) {
@@ -226,14 +224,10 @@ public class CatalogPanel extends VerticalPanel
     protected void showListing (final CatalogListing listing)
     {
         // load up the item details
-        CCatalog.itemsvc.loadItemDetail(
-            CCatalog.ident, listing.item.getIdent(), new AsyncCallback() {
+        CCatalog.itemsvc.loadItemDetail(CCatalog.ident, listing.item.getIdent(), new MsoyCallback() {
             public void onSuccess (Object result) {
                 clear();
                 add(new ListingDetailPanel((ItemDetail)result, listing, CatalogPanel.this));
-            }
-            public void onFailure (Throwable caught) {
-                MsoyUI.error(CCatalog.serverError(caught));
             }
         });
     }
@@ -327,7 +321,8 @@ public class CatalogPanel extends VerticalPanel
         }
 
         public void doFetchRows (int start, int count, final AsyncCallback callback) {
-            AsyncCallback cwrapper = new AsyncCallback() {
+            CCatalog.catalogsvc.loadCatalog(
+                CCatalog.ident, _query, start, count, _listingCount == -1, new MsoyCallback() {
                 public void onSuccess (Object result) {
                     _result = (CatalogService.CatalogResult)result;
                     if (_listingCount == -1) {
@@ -335,13 +330,7 @@ public class CatalogPanel extends VerticalPanel
                     }
                     callback.onSuccess(_result.listings);
                 }
-                public void onFailure (Throwable caught) {
-                    CCatalog.log("loadCatalog failed", caught);
-                    MsoyUI.error(CCatalog.serverError(caught));
-                }
-            };
-            CCatalog.catalogsvc.loadCatalog(
-                CCatalog.ident, _query, start, count, _listingCount == -1, cwrapper);
+            });
         }
 
         public void removeItem (Object item) {

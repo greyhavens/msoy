@@ -29,6 +29,8 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.InfoPopup;
+import client.util.MsoyCallback;
+import client.util.MsoyUI;
 import client.util.NumberTextBox;
 
 /**
@@ -207,19 +209,16 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 buttons.add(numInvites);
                 buttons.add(new Button("Grant Invites", new ClickListener() {
                     public void onClick (Widget sender) {
-                        CAdmin.adminsvc.grantInvitations(CAdmin.ident, 
-                            numInvites.getValue().intValue(), _result.memberId, 
-                            new AsyncCallback () {
-                                public void onSuccess (Object result) {
-                                    (new InfoPopup(CAdmin.msgs.browserAddInvites(
-                                        "" + numInvites.getValue(), _result.name))).show();
-                                    PlayerBrowserPanel.this.addToAvailable(_result.memberId, 
-                                        numInvites.getValue().intValue());
-                                }
-                                public void onFailure (Throwable cause) {
-                                    (new InfoPopup(CAdmin.serverError(cause))).show();
-                                }
-                            });
+                        CAdmin.adminsvc.grantInvitations(
+                            CAdmin.ident, numInvites.getValue().intValue(), _result.memberId,
+                            new MsoyCallback() {
+                            public void onSuccess (Object result) {
+                                MsoyUI.info(CAdmin.msgs.browserAddInvites(
+                                                "" + numInvites.getValue(), _result.name));
+                                PlayerBrowserPanel.this.addToAvailable(
+                                    _result.memberId, numInvites.getValue().intValue());
+                            }
+                        });
                     }
                 }));
                 setWidget(row++, 0, buttons);

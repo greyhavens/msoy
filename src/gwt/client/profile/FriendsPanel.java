@@ -18,6 +18,7 @@ import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Page;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PromptPopup;
 
@@ -72,13 +73,10 @@ public class FriendsPanel extends VerticalPanel
         }
 
         CProfile.membersvc.removeFriend(
-            CProfile.ident, friend.name.getMemberId(), new AsyncCallback() {
+            CProfile.ident, friend.name.getMemberId(), new MsoyCallback() {
             public void onSuccess (Object result) {
                 MsoyUI.error(CProfile.msgs.friendsRemoved(friend.name.toString()));
                 _grid.removeItem(friend);
-            }
-            public void onFailure (Throwable cause) {
-                MsoyUI.error(CProfile.serverError(cause));
             }
         });
     }

@@ -3,7 +3,6 @@
 
 package client.swiftly;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -23,6 +22,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.Application;
 import client.shell.Frame;
+import client.util.MsoyCallback;
 
 /**
  * Displays the client interface for a particular Swiftly project.
@@ -130,15 +130,11 @@ public class SwiftlyPanel extends FlexTable
 
     protected void loadOwner ()
     {
-        CSwiftly.swiftlysvc.getProjectOwner(CSwiftly.ident, _project.projectId,
-            new AsyncCallback() {
+        CSwiftly.swiftlysvc.getProjectOwner(CSwiftly.ident, _project.projectId, new MsoyCallback() {
             public void onSuccess (Object result) {
                 MemberName owner = (MemberName)result;
                 _ownerLinkPanel.clear();
                 _ownerLinkPanel.add(Application.memberViewLink((MemberName)result));
-            }
-            public void onFailure (Throwable cause) {
-                CSwiftly.serverError(cause);
             }
         });
     }

@@ -4,7 +4,6 @@
 package client.inventory;
 
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
@@ -27,6 +26,7 @@ import client.shell.CShell;
 import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.ItemUtil;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -158,19 +158,15 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             boolean salable = (!(_item instanceof SubItem) || ((SubItem)_item).isSalable());
             if (_item.catalogId != 0 && salable) {
                 // add a button for repricing the listing
-                final AsyncCallback cb = new AsyncCallback() {
-                    public void onSuccess (Object result) {
-                        new DoListItemPopup(
-                            _item, (CatalogListing)result, ItemDetailPanel.this).show();
-                    }
-                    public void onFailure (Throwable caught) {
-                        MsoyUI.error(CInventory.serverError(caught));
-                    }
-                };
                 buttons.add(new Button(CInventory.msgs.detailUpprice(), new ClickListener() {
                     public void onClick (Widget sender) {
                         CInventory.catalogsvc.loadListing(
-                            _item.getType(), _item.catalogId, false, cb);
+                            _item.getType(), _item.catalogId, false, new MsoyCallback() {
+                            public void onSuccess (Object result) {
+                                new DoListItemPopup(
+                                    _item, (CatalogListing)result, ItemDetailPanel.this).show();
+                            }
+                        });
                     }
                 }));
             }

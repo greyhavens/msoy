@@ -5,7 +5,6 @@ package client.profile;
 
 import java.util.Date;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -38,6 +37,7 @@ import client.util.DateFields;
 import client.util.FlashClients;
 import client.util.ImageChooserPopup;
 import client.util.MediaUtil;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -214,23 +214,18 @@ public class ProfileBlurb extends Blurb
         panel.add(_ephoto = new SimplePanel());
         _ephoto.setWidget(MediaUtil.createMediaView(_profile.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
 
-        final AsyncCallback callback = new AsyncCallback() {
-            public void onSuccess (Object result) {
-                Photo photo = (Photo)result;
-                if (photo != null) {
-                    _profile.photo = photo.getThumbnailMedia();
-                    _ephoto.setWidget(MediaUtil.createMediaView(
-                        _profile.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
-                }
-            }
-            public void onFailure (Throwable cause) {
-                CProfile.log("Failed to load images for profile photo pick.", cause);
-                MsoyUI.error(CProfile.serverError(cause));
-            }
-        };
         panel.add(new Button("Select New...", new ClickListener() {
             public void onClick (Widget source) {
-                ImageChooserPopup.displayImageChooser(callback);
+                ImageChooserPopup.displayImageChooser(new MsoyCallback() {
+                    public void onSuccess (Object result) {
+                        Photo photo = (Photo)result;
+                        if (photo != null) {
+                            _profile.photo = photo.getThumbnailMedia();
+                            _ephoto.setWidget(MediaUtil.createMediaView(
+                                                  _profile.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
+                        }
+                    }
+                });
             }
         }));
         econtent.setWidget(row++, 1, panel);
@@ -307,14 +302,10 @@ public class ProfileBlurb extends Blurb
             _profile.age = 0;
         }
 
-        CProfile.profilesvc.updateProfile(CProfile.ident, name, _profile, new AsyncCallback() {
+        CProfile.profilesvc.updateProfile(CProfile.ident, name, _profile, new MsoyCallback() {
             public void onSuccess (Object result) {
                 displayProfile();
                 FlashClients.tutorialEvent("profileEdited");
-            }
-            public void onFailure (Throwable cause) {
-                CProfile.log("Failed to update profile.", cause);
-                MsoyUI.error(CProfile.serverError(cause));
             }
         });
     }

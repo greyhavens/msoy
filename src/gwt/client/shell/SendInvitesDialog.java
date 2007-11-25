@@ -6,7 +6,6 @@ package client.shell;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -26,6 +25,7 @@ import com.threerings.msoy.web.data.Invitation;
 import client.util.BorderedDialog;
 import client.util.BorderedPopup;
 import client.util.FlashClients;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
 /**
@@ -159,14 +159,11 @@ public class SendInvitesDialog extends BorderedDialog
 
             } else {
                 CShell.membersvc.sendInvites(CShell.ident, validAddresses, _customMessage.getText(),
-                                             _anonymous.isChecked(), new AsyncCallback() {
+                                             _anonymous.isChecked(), new MsoyCallback() {
                     public void onSuccess (Object result) {
                         FlashClients.tutorialEvent("friendInvited");
                         new ResultsPopup(validAddresses, (InvitationResults)result).show();
                         SendInvitesDialog.this.hide();
-                    }
-                    public void onFailure (Throwable cause) {
-                        MsoyUI.error(CShell.serverError(cause));
                     }
                 });
             }

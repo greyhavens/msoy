@@ -7,12 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import client.shell.Application;
-import client.shell.Page;
-import client.util.ClickCallback;
-import client.util.MsoyUI;
-import client.util.PromptPopup;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -26,7 +20,15 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.msoy.web.data.SwiftlyProject;
+
+import client.shell.Application;
+import client.shell.Page;
+import client.util.ClickCallback;
+import client.util.MsoyCallback;
+import client.util.MsoyUI;
+import client.util.PromptPopup;
 
 /**
  * Displays the client interface for selecting or creating a swiftly project.
@@ -224,31 +226,33 @@ public class ProjectSelectionPanel extends FlexTable
     }
 
     protected static class DeleteButton extends Button
+        implements ClickListener
     {
-        public DeleteButton (final SwiftlyProject project, final ProjectSelectionPanel panel)
+        public DeleteButton (SwiftlyProject project, ProjectSelectionPanel panel)
         {
-            super(CSwiftly.msgs.deleteButton(), new ClickListener() {
-                public void onClick (Widget target)
-                {
-                    new PromptPopup(CSwiftly.msgs.projectDeletePrompt(project.projectName)) {
-                        public void onAffirmative () {
-                            CSwiftly.swiftlysvc.deleteProject(CSwiftly.ident, project.projectId,
-                                new AsyncCallback() {
-                                public void onSuccess (Object result)
-                                {
-                                    panel.projectWasRemoved(project);
-                                }
-                                public void onFailure (Throwable caught)
-                                {
-                                    MsoyUI.error(CSwiftly.serverError(caught));
-                                }
-
-                            });
-                        }
-                        public void onNegative () { }
-                    }.prompt();
-                }});
+            super(CSwiftly.msgs.deleteButton());
+            _project = project;
+            _panel = panel;
+            addClickListener(this);
         }
+
+        public void onClick (Widget target)
+        {
+            new PromptPopup(CSwiftly.msgs.projectDeletePrompt(_project.projectName)) {
+                public void onAffirmative () {
+                    CSwiftly.swiftlysvc.deleteProject(
+                        CSwiftly.ident, _project.projectId, new MsoyCallback() {
+                        public void onSuccess (Object result) {
+                            _panel.projectWasRemoved(_project);
+                        }
+                    });
+                }
+                public void onNegative () { }
+            }.prompt();
+        }
+
+        protected SwiftlyProject _project;
+        protected ProjectSelectionPanel _panel;
     }
 
     protected VerticalPanel _membersProjectsPanel;

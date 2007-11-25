@@ -28,6 +28,7 @@ import com.threerings.msoy.data.all.TagCodes;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.CShell;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -223,13 +224,9 @@ public class TagDetailPanel extends VerticalPanel
                     public void execute () {
                         new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag)) {
                             public void onAffirmative () {
-                                _service.untag(tag, new AsyncCallback() {
+                                _service.untag(tag, new MsoyCallback() {
                                     public void onSuccess (Object result) {
                                         refreshTags();
-                                    }
-                                    public void onFailure (Throwable caught) {
-                                        GWT.log("tagItem failed", caught);
-                                        MsoyUI.error(CShell.serverError(caught));
                                     }
                                 });
                             }
@@ -257,7 +254,7 @@ public class TagDetailPanel extends VerticalPanel
         }
 
 //         if (CShell.ident != null) {
-//             _service.getRecentTags(new AsyncCallback() {
+//             _service.getRecentTags(new MsoyCallback() {
 //                 public void onSuccess (Object result) {
 //                     _quickTags.clear();
 //                     _quickTags.addItem(CShell.cmsgs.tagSelectOne());
@@ -274,10 +271,6 @@ public class TagDetailPanel extends VerticalPanel
 //                     boolean visible = _quickTags.getItemCount() > 1;
 //                     _quickTags.setVisible(visible);
 //                     _quickTagLabel.setVisible(visible);
-//                 }
-//                 public void onFailure (Throwable caught) {
-//                     GWT.log("getTagHistory failed", caught);
-//                     MsoyUI.error(CShell.serverError(caught));
 //                 }
 //             });
 //         }
@@ -313,13 +306,9 @@ public class TagDetailPanel extends VerticalPanel
                 MsoyUI.error(CShell.cmsgs.errTagInvalidCharacters());
                 return;
             }
-            _service.tag(tagName, new AsyncCallback() {
+            _service.tag(tagName, new MsoyCallback() {
                 public void onSuccess (Object result) {
                     refreshTags();
-                }
-                public void onFailure (Throwable caught) {
-                    GWT.log("tagItem failed", caught);
-                    MsoyUI.error(CShell.serverError(caught));
                 }
             });
             setText(null);

@@ -3,7 +3,6 @@
 
 package client.admin;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -14,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
+import client.util.MsoyCallback;
 import client.util.NumberTextBox;
 import client.util.PromptPopup;
 import client.util.RowPanel;
@@ -84,16 +84,13 @@ public class SpamPlayersDialog extends BorderedDialog
         }
 
         int sid = _startId.getValue().intValue(), eid = _endId.getValue().intValue();
-        CAdmin.adminsvc.spamPlayers(CAdmin.ident, subject, body, sid, eid, new AsyncCallback() {
+        CAdmin.adminsvc.spamPlayers(CAdmin.ident, subject, body, sid, eid, new MsoyCallback() {
             public void onSuccess (Object result) {
                 int[] counts = (int[])result;
                 MsoyUI.info(CAdmin.msgs.spamSent(Integer.toString(counts[0]),
                                                  Integer.toString(counts[1]),
                                                  Integer.toString(counts[2])));
                 hide();
-            }
-            public void onFailure (Throwable cause) {
-                MsoyUI.error(CAdmin.serverError(cause));
             }
         });
     }

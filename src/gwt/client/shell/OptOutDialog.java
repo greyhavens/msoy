@@ -3,7 +3,6 @@
 
 package client.shell;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -14,17 +13,15 @@ import com.threerings.msoy.web.data.Invitation;
 
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
+import client.util.MsoyCallback;
 
 public class OptOutDialog extends BorderedDialog
 {
     public static void display (String inviteId)
     {
-        CShell.membersvc.getInvitation(inviteId, false, new AsyncCallback () {
+        CShell.membersvc.getInvitation(inviteId, false, new MsoyCallback () {
             public void onSuccess (Object result) {
                 (new OptOutDialog((Invitation)result)).show();
-            }
-            public void onFailure (Throwable cause) {
-                MsoyUI.error(CShell.serverError(cause));
             }
         });
     }
@@ -56,12 +53,9 @@ public class OptOutDialog extends BorderedDialog
         _footer.add(new Button(CShell.cmsgs.optOutAccept(), new ClickListener() {
             public void onClick (Widget widget) {
                 OptOutDialog.this.hide();
-                CShell.membersvc.optOut(invite, new AsyncCallback() {
+                CShell.membersvc.optOut(invite, new MsoyCallback() {
                     public void onSuccess (Object result) {
                         MsoyUI.info(CShell.cmsgs.optOutSuccessful(invite.inviteeEmail));
-                    }
-                    public void onFailure (Throwable cause) {
-                        MsoyUI.error(CShell.serverError(cause));
                     }
                 });
             }

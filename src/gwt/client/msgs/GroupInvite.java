@@ -5,6 +5,7 @@ package client.msgs;
 
 import java.util.Iterator;
 import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -12,11 +13,11 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 
 import com.threerings.gwt.ui.InlineLabel;
 
@@ -27,6 +28,8 @@ import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.person.data.GroupInvitePayload;
 import com.threerings.msoy.person.data.MailMessage;
 import com.threerings.msoy.person.data.MailPayload;
+
+import client.util.MsoyCallback;
 
 public abstract class GroupInvite
 {
@@ -201,11 +204,11 @@ public abstract class GroupInvite
             protected void joinGroup ()
             {
                 CMsgs.groupsvc.joinGroup(CMsgs.ident, _invitePayload.groupId,
-                                         CMsgs.getMemberId(), new AsyncCallback() {
+                                         CMsgs.getMemberId(), new MsoyCallback() {
                     // if joining the group succeeds, mark this invitation as accepted
                     public void onSuccess (Object result) {
                         _invitePayload.responded = true;
-                        updateState(_invitePayload, new AsyncCallback() {
+                        updateState(_invitePayload, new MsoyCallback() {
                             // and if that succeded to, let the mail app know to refresh
                             public void onSuccess (Object result) {
                                 if (_listener != null) {
@@ -214,13 +217,7 @@ public abstract class GroupInvite
                                                              _message.headers.messageId);
                                 }
                             }
-                            public void onFailure (Throwable caught) {
-                                // TODO: General support for errors in the MailApplication API?
-                            }
                         });
-                    }
-                    public void onFailure (Throwable caught) {
-                        // TODO: General support for errors in the MailApplication API?
                     }
                 });
             }

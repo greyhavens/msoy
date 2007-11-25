@@ -29,6 +29,7 @@ import client.util.CreatorLabel;
 import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MediaUtil;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PopupMenu;
 import client.util.StyledTabPanel;
@@ -212,16 +213,12 @@ public abstract class BaseItemDetailPanel extends FlexTable
 
         // persist our new scale to the server
         if (_scaleUpdated) {
-            CShell.itemsvc.scaleAvatar(CShell.ident, _item.itemId, ((Avatar) _item).scale,
-                new AsyncCallback () {
-                    public void onSuccess (Object result) {
-                        // nada
-                    }
-                    public void onFailure (Throwable caught) {
-                        CShell.log(
-                            "Failed to update scale [item=" + _item.getIdent() + "]", caught);
-                    }
-                });
+            CShell.itemsvc.scaleAvatar(
+                CShell.ident, _item.itemId, ((Avatar) _item).scale, new MsoyCallback() {
+                public void onSuccess (Object result) {
+                    // nada
+                }
+            });
         }
     }
 

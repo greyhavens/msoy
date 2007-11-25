@@ -3,7 +3,6 @@
 
 package client.item;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -11,6 +10,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import client.shell.CShell;
+import client.util.MsoyCallback;
 import client.util.Stars;
 
 public class ItemRating extends SimplePanel
@@ -94,17 +94,13 @@ public class ItemRating extends SimplePanel
         protected void rateItem (byte newRating)
         {
             _memberRating = newRating;
-            CShell.itemsvc.rateItem(CShell.ident, _itemId, newRating, new AsyncCallback() {
+            CShell.itemsvc.rateItem(CShell.ident, _itemId, newRating, new MsoyCallback() {
                 public void onSuccess (Object result) {
                     _item.rating = ((Float)result).floatValue();
                     _averageStars.update();
                     if (_playerStars != null) {
                         _playerStars.update();
                     }
-                }
-                public void onFailure (Throwable caught) {
-                    CShell.log("rateItem failed", caught);
-                    // TODO: Error image?
                 }
             });
         }

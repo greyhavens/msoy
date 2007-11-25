@@ -7,10 +7,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
@@ -20,11 +20,11 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 
 import com.threerings.msoy.data.all.MemberName;
 
 import client.util.BorderedDialog;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
 /**
@@ -35,8 +35,8 @@ public class MailComposition extends BorderedDialog
     public static interface MailSentListener
     {
         /**
-         * Notifies this object that the message being composed was successfully sent, and that it may
-         * perform any side-effects that should be associated with the event.
+         * Notifies this object that the message being composed was successfully sent, and that it
+         * may perform any side-effects that should be associated with the event.
          */
         public void messageSent (MemberName recipient);
     }
@@ -204,7 +204,10 @@ public class MailComposition extends BorderedDialog
     // send the message off to the backend for delivery
     protected void deliverMail ()
     {
-        AsyncCallback callback = new AsyncCallback() {
+        CMsgs.mailsvc.deliverMessage(
+            CMsgs.ident, _recipient.getMemberId(), _subjectBox.getText(), _messageBox.getText(),
+            (_payloadComposer == null) ? null : _payloadComposer.getComposedPayload(),
+            new MsoyCallback() {
             public void onSuccess (Object result) {
                 Iterator i = _listeners.iterator();
                 while (i.hasNext()) {
@@ -213,14 +216,7 @@ public class MailComposition extends BorderedDialog
                 hide();
                 MsoyUI.info(CMsgs.mmsgs.messageSent());
             }
-            public void onFailure (Throwable caught) {
-                // for now, just show that something went wrong and return to the composer
-                MsoyUI.error("Ai! The message could not be sent.");
-            }
-        };
-        CMsgs.mailsvc.deliverMessage(CMsgs.ident, _recipient.getMemberId(), _subjectBox.getText(),
-                                     _messageBox.getText(), (_payloadComposer == null) ?
-                                     null : _payloadComposer.getComposedPayload(), callback);
+        });
     }
 
     protected void updateButtons ()

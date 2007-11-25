@@ -16,5 +16,6 @@ public abstract class MsoyCallback implements AsyncCallback
     public void onFailure (Throwable cause)
     {
         MsoyUI.error(CShell.serverError(cause));
+        CShell.log("Service request failed", cause);
     }
 }

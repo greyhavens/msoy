@@ -3,7 +3,6 @@
 
 package client.game;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
@@ -15,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.GameDetail;
 
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RichTextToolbar;
 
@@ -88,14 +88,11 @@ public class InstructionsPanel extends VerticalPanel
             MsoyUI.error(CGame.msgs.ipInstructionsTooLong());
             return;
         }
-        CGame.gamesvc.updateGameInstructions(CGame.ident, _detail.gameId, instructions,
-                                             new AsyncCallback() {
+        CGame.gamesvc.updateGameInstructions(
+            CGame.ident, _detail.gameId, instructions, new MsoyCallback() {
             public void onSuccess (Object result) {
                 _detail.instructions = instructions;
                 showInstructions();
-            }
-            public void onFailure (Throwable caught) {
-                MsoyUI.error(CGame.serverError(caught));
             }
         });
     }

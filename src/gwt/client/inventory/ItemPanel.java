@@ -30,6 +30,7 @@ import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.FlashClients;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
 /**
@@ -113,12 +114,9 @@ public class ItemPanel extends VerticalPanel
         }
 
         // load up the item details
-        CInventory.itemsvc.loadItemDetail(CInventory.ident, ident, new AsyncCallback() {
+        CInventory.itemsvc.loadItemDetail(CInventory.ident, ident, new MsoyCallback() {
             public void onSuccess (Object result) {
                 showDetail((ItemDetail)result);
-            }
-            public void onFailure (Throwable caught) {
-                MsoyUI.error(CInventory.serverError(caught));
             }
         });
     }

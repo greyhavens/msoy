@@ -28,6 +28,7 @@ import client.shell.Frame;
 import client.shell.Page;
 import client.shell.WorldClient;
 import client.util.FlashClients;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
 /**
@@ -174,12 +175,9 @@ public class index extends Page
     protected void displayGame (final String action, int gameId, final int gameOid)
     {
         // load up the information needed to launch the game
-        CWorld.worldsvc.loadLaunchConfig(CWorld.ident, gameId, new AsyncCallback() {
+        CWorld.worldsvc.loadLaunchConfig(CWorld.ident, gameId, new MsoyCallback() {
             public void onSuccess (Object result) {
                 launchGame((LaunchConfig)result, gameOid, action);
-            }
-            public void onFailure (Throwable cause) {
-                MsoyUI.error(CWorld.serverError(cause));
             }
         });
     }

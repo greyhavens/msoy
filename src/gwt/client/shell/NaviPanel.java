@@ -14,7 +14,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -34,6 +33,7 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.images.NaviImages;
 
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.events.FlashEvents;
 import client.util.events.FriendEvent;
@@ -98,13 +98,10 @@ public class NaviPanel extends FlexTable
                 addLink(menu, "My Mail", Page.MAIL, "");
                 menu.addItem("My Account", true, new Command() {
                     public void execute () {
-                        CShell.usersvc.getAccountInfo(CShell.ident, new AsyncCallback() {
+                        CShell.usersvc.getAccountInfo(CShell.ident, new MsoyCallback() {
                             public void onSuccess (Object result) {
                                 new EditAccountDialog((AccountInfo) result).show();
                                 clearPopup();
-                            }
-                            public void onFailure (Throwable cause) {
-                                MsoyUI.error(CShell.serverError(cause));
                             }
                         });
                     }
@@ -173,13 +170,10 @@ public class NaviPanel extends FlexTable
                 addLink(menu, "Forums", Page.WRAP, "f");
                 menu.addItem("Invitations", true, new Command() {
                     public void execute () {
-                        CShell.membersvc.getInvitationsStatus(CShell.ident, new AsyncCallback() {
+                        CShell.membersvc.getInvitationsStatus(CShell.ident, new MsoyCallback() {
                             public void onSuccess (Object result) {
                                 new SendInvitesDialog((MemberInvites)result).show();
                                 clearPopup();
-                            }
-                            public void onFailure (Throwable cause) {
-                                MsoyUI.error(CShell.serverError(cause));
                             }
                         });
                     }

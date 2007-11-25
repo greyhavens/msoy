@@ -5,7 +5,6 @@ package client.editem;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -29,6 +28,7 @@ import client.shell.CShell;
 import client.util.BorderedDialog;
 import client.util.LimitedTextArea;
 import client.util.MsoyUI;
+import client.util.MsoyCallback;
 import client.util.StyledTabPanel;
 
 /**
@@ -534,7 +534,7 @@ public abstract class ItemEditor extends BorderedDialog
             return;
         }
 
-        AsyncCallback cb = new AsyncCallback() {
+        MsoyCallback cb = new MsoyCallback() {
             public void onSuccess (Object result) {
                 if (_item.itemId == 0) {
                     MsoyUI.info(CShell.emsgs.msgItemCreated());
@@ -544,9 +544,6 @@ public abstract class ItemEditor extends BorderedDialog
                 }
                 _updatedItem = _item; // this will be passed to our parent in onClosed()
                 hide();
-            }
-            public void onFailure (Throwable caught) {
-                MsoyUI.error(CShell.serverError(caught));
             }
         };
         if (_item.itemId == 0) {

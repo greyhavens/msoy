@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -41,6 +40,7 @@ import client.shell.WorldClient;
 
 import client.util.ClickCallback;
 import client.util.MediaUtil;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RichTextToolbar;
 
@@ -51,14 +51,11 @@ public class Whirledwide extends FlexTable
         setStyleName("WhirledwidePage");
         buildUI();
 
-        CWhirled.worldsvc.getWhirledwide(new AsyncCallback() {
+        CWhirled.worldsvc.getWhirledwide(new MsoyCallback() {
             public void onSuccess (Object result) {
                 WhirledwideData data = (WhirledwideData) result;
                 popDisplay.displayPopulation(data.whirledPopulation);
                 setWhirledData(data);
-            }
-            public void onFailure (Throwable caught) {
-                MsoyUI.error(CWhirled.serverError(caught));
             }
         });
     }

@@ -3,9 +3,6 @@
 
 package client.msgs;
 
-import client.util.ClickCallback;
-import client.util.FlashClients;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockPanel;
@@ -20,6 +17,10 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.data.FriendInvitePayload;
 import com.threerings.msoy.person.data.MailMessage;
 import com.threerings.msoy.person.data.MailPayload;
+
+import client.util.ClickCallback;
+import client.util.FlashClients;
+import client.util.MsoyCallback;
 
 public abstract class FriendInvite
 {
@@ -163,12 +164,9 @@ public abstract class FriendInvite
                     CMsgs.mmsgs.friendReplySubject(),
                     CMsgs.mmsgs.friendReplyBody(invitee.toString()),
                     null,
-                    new AsyncCallback() {
+                    new MsoyCallback() {
                         public void onSuccess (Object result) {
                             // Well that's nice.
-                        }
-                        public void onFailure (Throwable caught) {
-                            // I am not sure anything useful can be done here.
                         }
                     });
             }
