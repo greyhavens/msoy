@@ -106,124 +106,26 @@ public class GroupRecord extends PersistentRecord
     public static final ColumnExp BACKGROUND_CONTROL_C =
         new ColumnExp(GroupRecord.class, BACKGROUND_CONTROL);
 
-    /** The column identifier for the {@link #infoBackgroundMimeType} field. */
-    public static final String INFO_BACKGROUND_MIME_TYPE = "infoBackgroundMimeType";
+    /** The column identifier for the {@link #backgroundMimeType} field. */
+    public static final String BACKGROUND_MIME_TYPE = "backgroundMimeType";
 
-    /** The qualified column identifier for the {@link #infoBackgroundMimeType} field. */
-    public static final ColumnExp INFO_BACKGROUND_MIME_TYPE_C =
-        new ColumnExp(GroupRecord.class, INFO_BACKGROUND_MIME_TYPE);
+    /** The qualified column identifier for the {@link #backgroundMimeType} field. */
+    public static final ColumnExp BACKGROUND_MIME_TYPE_C =
+        new ColumnExp(GroupRecord.class, BACKGROUND_MIME_TYPE);
 
-    /** The column identifier for the {@link #infoBackgroundHash} field. */
-    public static final String INFO_BACKGROUND_HASH = "infoBackgroundHash";
+    /** The column identifier for the {@link #backgroundHash} field. */
+    public static final String BACKGROUND_HASH = "backgroundHash";
 
-    /** The qualified column identifier for the {@link #infoBackgroundHash} field. */
-    public static final ColumnExp INFO_BACKGROUND_HASH_C =
-        new ColumnExp(GroupRecord.class, INFO_BACKGROUND_HASH);
+    /** The qualified column identifier for the {@link #backgroundHash} field. */
+    public static final ColumnExp BACKGROUND_HASH_C =
+        new ColumnExp(GroupRecord.class, BACKGROUND_HASH);
 
-    /** The column identifier for the {@link #infoBackgroundThumbConstraint} field. */
-    public static final String INFO_BACKGROUND_THUMB_CONSTRAINT = "infoBackgroundThumbConstraint";
+    /** The column identifier for the {@link #backgroundThumbConstraint} field. */
+    public static final String BACKGROUND_THUMB_CONSTRAINT = "backgroundThumbConstraint";
 
-    /** The qualified column identifier for the {@link #infoBackgroundThumbConstraint} field. */
-    public static final ColumnExp INFO_BACKGROUND_THUMB_CONSTRAINT_C =
-        new ColumnExp(GroupRecord.class, INFO_BACKGROUND_THUMB_CONSTRAINT);
-
-    /** The column identifier for the {@link #detailBackgroundMimeType} field. */
-    public static final String DETAIL_BACKGROUND_MIME_TYPE = "detailBackgroundMimeType";
-
-    /** The qualified column identifier for the {@link #detailBackgroundMimeType} field. */
-    public static final ColumnExp DETAIL_BACKGROUND_MIME_TYPE_C =
-        new ColumnExp(GroupRecord.class, DETAIL_BACKGROUND_MIME_TYPE);
-
-    /** The column identifier for the {@link #detailBackgroundHash} field. */
-    public static final String DETAIL_BACKGROUND_HASH = "detailBackgroundHash";
-
-    /** The qualified column identifier for the {@link #detailBackgroundHash} field. */
-    public static final ColumnExp DETAIL_BACKGROUND_HASH_C =
-        new ColumnExp(GroupRecord.class, DETAIL_BACKGROUND_HASH);
-
-    /** The column identifier for the {@link #detailBackgroundThumbConstraint} field. */
-    public static final String DETAIL_BACKGROUND_THUMB_CONSTRAINT = "detailBackgroundThumbConstraint";
-
-    /** The qualified column identifier for the {@link #detailBackgroundThumbConstraint} field. */
-    public static final ColumnExp DETAIL_BACKGROUND_THUMB_CONSTRAINT_C =
-        new ColumnExp(GroupRecord.class, DETAIL_BACKGROUND_THUMB_CONSTRAINT);
-
-    /** The column identifier for the {@link #detailBackgroundWidth} field. */
-    public static final String DETAIL_BACKGROUND_WIDTH = "detailBackgroundWidth";
-
-    /** The qualified column identifier for the {@link #detailBackgroundWidth} field. */
-    public static final ColumnExp DETAIL_BACKGROUND_WIDTH_C =
-        new ColumnExp(GroupRecord.class, DETAIL_BACKGROUND_WIDTH);
-
-    /** The column identifier for the {@link #detailAreaHeight} field. */
-    public static final String DETAIL_AREA_HEIGHT = "detailAreaHeight";
-
-    /** The qualified column identifier for the {@link #detailAreaHeight} field. */
-    public static final ColumnExp DETAIL_AREA_HEIGHT_C =
-        new ColumnExp(GroupRecord.class, DETAIL_AREA_HEIGHT);
-
-    /** The column identifier for the {@link #peopleBackgroundMimeType} field. */
-    public static final String PEOPLE_BACKGROUND_MIME_TYPE = "peopleBackgroundMimeType";
-
-    /** The qualified column identifier for the {@link #peopleBackgroundMimeType} field. */
-    public static final ColumnExp PEOPLE_BACKGROUND_MIME_TYPE_C =
-        new ColumnExp(GroupRecord.class, PEOPLE_BACKGROUND_MIME_TYPE);
-
-    /** The column identifier for the {@link #peopleBackgroundHash} field. */
-    public static final String PEOPLE_BACKGROUND_HASH = "peopleBackgroundHash";
-
-    /** The qualified column identifier for the {@link #peopleBackgroundHash} field. */
-    public static final ColumnExp PEOPLE_BACKGROUND_HASH_C =
-        new ColumnExp(GroupRecord.class, PEOPLE_BACKGROUND_HASH);
-
-    /** The column identifier for the {@link #peopleBackgroundThumbConstraint} field. */
-    public static final String PEOPLE_BACKGROUND_THUMB_CONSTRAINT = "peopleBackgroundThumbConstraint";
-
-    /** The qualified column identifier for the {@link #peopleBackgroundThumbConstraint} field. */
-    public static final ColumnExp PEOPLE_BACKGROUND_THUMB_CONSTRAINT_C =
-        new ColumnExp(GroupRecord.class, PEOPLE_BACKGROUND_THUMB_CONSTRAINT);
-
-    /** The column identifier for the {@link #peopleUpperCapMimeType} field. */
-    public static final String PEOPLE_UPPER_CAP_MIME_TYPE = "peopleUpperCapMimeType";
-
-    /** The qualified column identifier for the {@link #peopleUpperCapMimeType} field. */
-    public static final ColumnExp PEOPLE_UPPER_CAP_MIME_TYPE_C =
-        new ColumnExp(GroupRecord.class, PEOPLE_UPPER_CAP_MIME_TYPE);
-
-    /** The column identifier for the {@link #peopleUpperCapHash} field. */
-    public static final String PEOPLE_UPPER_CAP_HASH = "peopleUpperCapHash";
-
-    /** The qualified column identifier for the {@link #peopleUpperCapHash} field. */
-    public static final ColumnExp PEOPLE_UPPER_CAP_HASH_C =
-        new ColumnExp(GroupRecord.class, PEOPLE_UPPER_CAP_HASH);
-
-    /** The column identifier for the {@link #peopleUpperCapHeight} field. */
-    public static final String PEOPLE_UPPER_CAP_HEIGHT = "peopleUpperCapHeight";
-
-    /** The qualified column identifier for the {@link #peopleUpperCapHeight} field. */
-    public static final ColumnExp PEOPLE_UPPER_CAP_HEIGHT_C =
-        new ColumnExp(GroupRecord.class, PEOPLE_UPPER_CAP_HEIGHT);
-
-    /** The column identifier for the {@link #peopleLowerCapMimeType} field. */
-    public static final String PEOPLE_LOWER_CAP_MIME_TYPE = "peopleLowerCapMimeType";
-
-    /** The qualified column identifier for the {@link #peopleLowerCapMimeType} field. */
-    public static final ColumnExp PEOPLE_LOWER_CAP_MIME_TYPE_C =
-        new ColumnExp(GroupRecord.class, PEOPLE_LOWER_CAP_MIME_TYPE);
-
-    /** The column identifier for the {@link #peopleLowerCapHash} field. */
-    public static final String PEOPLE_LOWER_CAP_HASH = "peopleLowerCapHash";
-
-    /** The qualified column identifier for the {@link #peopleLowerCapHash} field. */
-    public static final ColumnExp PEOPLE_LOWER_CAP_HASH_C =
-        new ColumnExp(GroupRecord.class, PEOPLE_LOWER_CAP_HASH);
-
-    /** The column identifier for the {@link #peopleLowerCapHeight} field. */
-    public static final String PEOPLE_LOWER_CAP_HEIGHT = "peopleLowerCapHeight";
-
-    /** The qualified column identifier for the {@link #peopleLowerCapHeight} field. */
-    public static final ColumnExp PEOPLE_LOWER_CAP_HEIGHT_C =
-        new ColumnExp(GroupRecord.class, PEOPLE_LOWER_CAP_HEIGHT);
+    /** The qualified column identifier for the {@link #backgroundThumbConstraint} field. */
+    public static final ColumnExp BACKGROUND_THUMB_CONSTRAINT_C =
+        new ColumnExp(GroupRecord.class, BACKGROUND_THUMB_CONSTRAINT);
 
     /** The column identifier for the {@link #creatorId} field. */
     public static final String CREATOR_ID = "creatorId";
@@ -264,7 +166,7 @@ public class GroupRecord extends PersistentRecord
     /** The identifier for the full text search index on Name, Blurb, Charter */
     public static final String FTS_NBC = "NBC";
 
-    public static final int SCHEMA_VERSION = 15;
+    public static final int SCHEMA_VERSION = 16;
 
     /** The unique id of this group. */
     @Id
@@ -280,11 +182,11 @@ public class GroupRecord extends PersistentRecord
     public String homepageUrl;
 
     /** The blurb for the group. */
-    @Column(length=80, nullable=true)
+    @Column(length=Group.MAX_BLURB_LENGTH, nullable=true)
     public String blurb;
 
     /** The group's charter, or null if one has yet to be set. */
-    @Column(length=2048, nullable=true)
+    @Column(length=Group.MAX_CHARTER_LENGTH, nullable=true)
     public String charter;
 
     /** A hash code identifying the media for this group's logo. */
@@ -301,60 +203,14 @@ public class GroupRecord extends PersistentRecord
     public int backgroundControl;
 
     /** The MIME type for the background of the info area. */
-    public byte infoBackgroundMimeType;
+    public byte backgroundMimeType;
 
     /** A hash code identifying the media for the background of the info area. */
     @Column(nullable=true)
-    public byte[] infoBackgroundHash;
+    public byte[] backgroundHash;
 
     /** The constraint for the thumbnail of this image. */
-    public byte infoBackgroundThumbConstraint;
-
-    /** The MIME type for the background of the detail area. */
-    public byte detailBackgroundMimeType;
-
-    /** A hash code identifying the media for the background of the detail area. */
-    @Column(nullable=true)
-    public byte[] detailBackgroundHash;
-
-    /** The constraint for the thumbnail of this image. */
-    public byte detailBackgroundThumbConstraint;
-
-    /** The width of the detail background image. */
-    public int detailBackgroundWidth;
-
-    /** The height that the detail area should be forced to in the constrained mode. */
-    public int detailAreaHeight;
-
-    /** The MIME type for the background of the people area. */
-    public byte peopleBackgroundMimeType;
-
-    /** A hash code identifying the media for the background of the people area. */
-    @Column(nullable=true)
-    public byte[] peopleBackgroundHash;
-
-    /** The constraint for the thumbnail of this image. */
-    public byte peopleBackgroundThumbConstraint;
-
-    /** The mime type for the upper cap image on the people area */
-    public byte peopleUpperCapMimeType;
-
-    /** The upper cap for the people area */
-    @Column(nullable=true)
-    public byte[] peopleUpperCapHash;
-
-    /** The height of the upper cap image */
-    public int peopleUpperCapHeight;
-
-    /** The mime type for the lower cap image on the people area */
-    public byte peopleLowerCapMimeType;
-
-    /** The lower cap for the people area */
-    @Column(nullable=true)
-    public byte[] peopleLowerCapHash;
-
-    /** the height of the lower cap image */
-    public int peopleLowerCapHeight;
+    public byte backgroundThumbConstraint;
 
     /** The member id of the person who created the group. */
     public int creatorId;
@@ -380,8 +236,9 @@ public class GroupRecord extends PersistentRecord
         group.groupId = groupId;
         group.name = name;
         group.blurb = blurb;
-        group.logo = logoMediaHash == null ? Group.getDefaultGroupLogoMedia() :
-            new MediaDesc(logoMediaHash.clone(), logoMimeType, logoMediaConstraint);
+        if (logoMediaHash != null) {
+            group.logo = new MediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
+        }
         group.creatorId = creatorId;
         group.creationDate = new java.util.Date(creationDate.getTime());
         group.policy = policy;
@@ -395,26 +252,13 @@ public class GroupRecord extends PersistentRecord
     public GroupExtras toExtrasObject ()
     {
         GroupExtras extras = new GroupExtras();
-        extras.backgroundControl = backgroundControl;
-        extras.infoBackground = infoBackgroundHash == null ? null :
-            new MediaDesc(infoBackgroundHash.clone(), infoBackgroundMimeType,
-            infoBackgroundThumbConstraint);
-        extras.detailBackground = detailBackgroundHash == null ? null :
-            new MediaDesc(detailBackgroundHash.clone(), detailBackgroundMimeType,
-            detailBackgroundThumbConstraint);
-        extras.detailBackgroundWidth = detailBackgroundWidth;
-        extras.detailAreaHeight = detailAreaHeight;
-        extras.peopleBackground = peopleBackgroundHash == null ? null :
-            new MediaDesc(peopleBackgroundHash.clone(), peopleBackgroundMimeType,
-            peopleBackgroundThumbConstraint);
-        extras.peopleUpperCap = peopleUpperCapHash == null ? null :
-            new MediaDesc(peopleUpperCapHash.clone(), peopleUpperCapMimeType);
-        extras.peopleUpperCapHeight = peopleUpperCapHeight;
-        extras.peopleLowerCap = peopleLowerCapHash == null ? null :
-            new MediaDesc(peopleLowerCapHash.clone(), peopleLowerCapMimeType);
-        extras.peopleLowerCapHeight = peopleLowerCapHeight;
         extras.charter = charter;
         extras.homepageUrl = homepageUrl;
+        extras.backgroundControl = backgroundControl;
+        if (backgroundHash != null) {
+            extras.background = new MediaDesc(
+                backgroundHash, backgroundMimeType, backgroundThumbConstraint);
+        }
         return extras;
     }
 
@@ -427,9 +271,9 @@ public class GroupRecord extends PersistentRecord
     }
 
     /**
-     * Checks over the object definitions and will return a map of field, value pairs that contains
-     * all of the entries that are not null, and are different from what's in this object
-     * currently.  Returns null if the group is not found.
+     * Checks over the object definitions and returns a map of field/value pairs that contains all
+     * of the entries that are non-null and different from what's in the object currently. Returns
+     * null if the group is not found.
      */
     public Map<String, Object> findUpdates (Group groupDef, GroupExtras extrasDef)
         throws PersistenceException
@@ -441,9 +285,8 @@ public class GroupRecord extends PersistentRecord
         if (groupDef.blurb != null && !groupDef.blurb.equals(blurb)) {
             updates.put(BLURB, groupDef.blurb);
         }
-        if (groupDef.logo != null && (logoMediaHash == null ||
-            !groupDef.logo.equals(new MediaDesc(logoMediaHash, logoMimeType,
-            logoMediaConstraint)))) {
+        if (groupDef.logo != null && (logoMediaHash == null || !groupDef.logo.equals(
+                new MediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint)))) {
             updates.put(LOGO_MEDIA_HASH, groupDef.logo.hash);
             updates.put(LOGO_MIME_TYPE, groupDef.logo.mimeType);
             updates.put(LOGO_MEDIA_CONSTRAINT, groupDef.logo.constraint);
@@ -451,53 +294,21 @@ public class GroupRecord extends PersistentRecord
         if (groupDef.policy != policy) {
             updates.put(POLICY, groupDef.policy);
         }
-        if (extrasDef.backgroundControl != backgroundControl) {
-            updates.put(BACKGROUND_CONTROL, extrasDef.backgroundControl);
-        }
-        if (extrasDef.infoBackground != null && (infoBackgroundHash == null ||
-            !extrasDef.infoBackground.equals(new MediaDesc(infoBackgroundHash,
-            infoBackgroundMimeType, infoBackgroundThumbConstraint)))) {
-            updates.put(INFO_BACKGROUND_HASH, extrasDef.infoBackground.hash);
-            updates.put(INFO_BACKGROUND_MIME_TYPE, extrasDef.infoBackground.mimeType);
-            // the thumbnail constraint (instead of the photo constraint) is stored in these
-            // MediaDescs - see GroupEdit
-            updates.put(INFO_BACKGROUND_THUMB_CONSTRAINT, extrasDef.infoBackground.constraint);
-        }
-        if (extrasDef.detailBackground != null && (detailBackgroundHash == null ||
-            !extrasDef.detailBackground.equals(new MediaDesc(detailBackgroundHash,
-            detailBackgroundMimeType, detailBackgroundThumbConstraint)))) {
-            updates.put(DETAIL_BACKGROUND_HASH, extrasDef.detailBackground.hash);
-            updates.put(DETAIL_BACKGROUND_MIME_TYPE, extrasDef.detailBackground.mimeType);
-            updates.put(DETAIL_BACKGROUND_THUMB_CONSTRAINT, extrasDef.detailBackground.constraint);
-            updates.put(DETAIL_BACKGROUND_WIDTH, extrasDef.detailBackgroundWidth);
-            updates.put(DETAIL_AREA_HEIGHT, extrasDef.detailAreaHeight);
-        }
-        if (extrasDef.peopleBackground != null && (peopleBackgroundHash == null ||
-            !extrasDef.peopleBackground.equals(new MediaDesc(peopleBackgroundHash,
-            peopleBackgroundMimeType, peopleBackgroundThumbConstraint)))) {
-            updates.put(PEOPLE_BACKGROUND_HASH, extrasDef.peopleBackground.hash);
-            updates.put(PEOPLE_BACKGROUND_MIME_TYPE, extrasDef.peopleBackground.mimeType);
-            updates.put(PEOPLE_BACKGROUND_THUMB_CONSTRAINT, extrasDef.peopleBackground.constraint);
-        }
-        if (extrasDef.peopleUpperCap != null && (peopleUpperCapHash == null ||
-            !extrasDef.peopleUpperCap.equals(new MediaDesc(peopleUpperCapHash,
-            peopleUpperCapMimeType)))) {
-            updates.put(PEOPLE_UPPER_CAP_HASH, extrasDef.peopleUpperCap.hash);
-            updates.put(PEOPLE_UPPER_CAP_MIME_TYPE, extrasDef.peopleUpperCap.mimeType);
-            updates.put(PEOPLE_UPPER_CAP_HEIGHT, extrasDef.peopleUpperCapHeight);
-        }
-        if (extrasDef.peopleLowerCap != null && (peopleLowerCapHash == null ||
-            !extrasDef.peopleLowerCap.equals(new MediaDesc(peopleLowerCapHash,
-            peopleLowerCapMimeType)))) {
-            updates.put(PEOPLE_LOWER_CAP_HASH, extrasDef.peopleLowerCap.hash);
-            updates.put(PEOPLE_LOWER_CAP_MIME_TYPE, extrasDef.peopleLowerCap.mimeType);
-            updates.put(PEOPLE_LOWER_CAP_HEIGHT, extrasDef.peopleLowerCapHeight);
-        }
         if (extrasDef.charter != null && !extrasDef.charter.equals(charter)) {
             updates.put(CHARTER, extrasDef.charter);
         }
         if (extrasDef.homepageUrl != null && !extrasDef.homepageUrl.equals(homepageUrl)) {
             updates.put(HOMEPAGE_URL, extrasDef.homepageUrl);
+        }
+        if (extrasDef.backgroundControl != backgroundControl) {
+            updates.put(BACKGROUND_CONTROL, extrasDef.backgroundControl);
+        }
+        if (extrasDef.background != null && (backgroundHash == null || !extrasDef.background.equals(
+                new MediaDesc(backgroundHash, backgroundMimeType, backgroundThumbConstraint)))) {
+            updates.put(BACKGROUND_HASH, extrasDef.background.hash);
+            updates.put(BACKGROUND_MIME_TYPE, extrasDef.background.mimeType);
+            // the thumbnail instead of photo constraint is stored here - see GroupEdit
+            updates.put(BACKGROUND_THUMB_CONSTRAINT, extrasDef.background.constraint);
         }
 
         return updates;

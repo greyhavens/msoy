@@ -31,58 +31,33 @@ public class GroupManager
     }
 
     /**
-     * Creates a new group record in the database and return a {@link Group} for
-     * it. This method assigns the group a new, unique id.
-     *
-     * TODO: Sanity checks on group name.
+     * Updates the specified member's distributed object with their new group status.
      */
-    public void createGroup (final Group groupDef, final GroupExtras extrasDef,
-        ResultListener<Group> listener)
+    public void updateMemberGroup (int memberId, int groupId, String groupName, byte groupRank)
     {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Group>(listener) {
-            public Group invokePersistResult () throws PersistenceException {
-                GroupRecord gRec = new GroupRecord();
-                gRec.name = groupDef.name;
-                gRec.blurb = groupDef.blurb;
-                gRec.creatorId = groupDef.creatorId;
-                gRec.policy = groupDef.policy;
-                if (groupDef.logo != null) {
-                    gRec.logoMimeType = groupDef.logo.mimeType;
-                    gRec.logoMediaHash = groupDef.logo.hash;
-                    gRec.logoMediaConstraint = groupDef.logo.constraint;
-                }
-                gRec.homepageUrl = extrasDef.homepageUrl;
-                gRec.charter = extrasDef.charter;
-                if (extrasDef.infoBackground != null) {
-                    gRec.infoBackgroundMimeType = extrasDef.infoBackground.mimeType;
-                    gRec.infoBackgroundHash = extrasDef.infoBackground.hash;
-                }
-                if (extrasDef.detailBackground != null) {
-                    gRec.detailBackgroundMimeType = extrasDef.detailBackground.mimeType;
-                    gRec.detailBackgroundHash = extrasDef.detailBackground.hash;
-                }
-                if (extrasDef.peopleBackground != null) {
-                    gRec.peopleBackgroundMimeType = extrasDef.peopleBackground.mimeType;
-                    gRec.peopleBackgroundHash = extrasDef.peopleBackground.hash;
-                }
+        // PEER TODO: user may be resolved on another world server
+        assert(groupId != 0 && memberId != 0 && groupName != null &&
+               GroupMembership.isValidRank(groupRank));
 
-                // create the group and then add the creator to it
-                _groupRepo.createGroup(gRec);
-                _groupId = gRec.groupId;
-                _groupRepo.joinGroup(_groupId, gRec.creatorId, GroupMembership.RANK_MANAGER);
+        MemberObject mobj = MsoyServer.lookupMember(memberId);
+        if (mobj == null) {
+            return; // no need to update anything
+        }
 
-                return gRec.toGroupObject();
-            }
+        // see if we're just updating their rank
+        GroupMembership gm = mobj.groups.get(GroupName.makeKey(groupId));
+        if (gm != null) {
+            gm.rank = groupRank;
+            mobj.updateGroups(gm);
+            return;
+        }
 
-            public void handleSuccess () {
-                super.handleSuccess();
-
-                updateMemberGroup(groupDef.creatorId, _groupId, groupDef.name,
-                    GroupMembership.RANK_MANAGER);
-            }
-
-            protected int _groupId;
-        });
+        // otherwise they are newly joined
+        gm = new GroupMembership();
+        // gm.member specifically left null
+        gm.group = new GroupName(groupName, groupId);
+        gm.rank = groupRank;
+        mobj.addToGroups(gm);
     }
 
     /**
@@ -138,49 +113,6 @@ public class GroupManager
 
             protected String _groupName;
         });
-    }
-
-    /**
-     * Returns the rank of a group member, or null.
-     */
-    public void getRank (final int groupId, final int memberId, ResultListener<Byte> listener)
-    {
-        assert(groupId != 0 && memberId != 0);
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Byte>(listener) {
-            public Byte invokePersistResult() throws PersistenceException {
-                GroupMembershipRecord gmr = _groupRepo.getMembership(groupId, memberId);
-                return gmr != null ? gmr.rank : null;
-            }
-        });
-    }
-
-    /**
-     * Updates or Adds to the groups set on the given member's object, as appropriate.
-     */
-    protected void updateMemberGroup (int memberId, int groupId, String groupName, byte groupRank)
-    {
-        // PEER TODO: user may be resolved on another world server
-        assert(groupId != 0 && memberId != 0 && groupName != null &&
-               GroupMembership.isValidRank(groupRank));
-        MemberObject mobj = MsoyServer.lookupMember(memberId);
-        if (mobj == null) {
-            return; // no need to update anything
-        }
-
-        // see if we're just updating their rank
-        GroupMembership gm = mobj.groups.get(GroupName.makeKey(groupId));
-        if (gm != null) {
-            gm.rank = groupRank;
-            mobj.updateGroups(gm);
-            return;
-        }
-
-        // otherwise they are newly joined
-        gm = new GroupMembership();
-        // gm.member specifically left null
-        gm.group = new GroupName(groupName, groupId);
-        gm.rank = groupRank;
-        mobj.addToGroups(gm);
     }
 
     /** Provides access to persistent group data. */

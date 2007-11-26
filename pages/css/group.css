@@ -141,22 +141,3 @@
     vertical-align: middle;
     cursor: pointer;
 }
-
-/* Group Editor */
-.groupEditor .GroupNameEdit {
-    text-align: right;
-    margin: 5px auto 5px auto;
-}
-
-.groupEditor {
-    font-size: 15px;
-}
-
-.groupEditor .CurrentPanel .gwt-Button {
-    position: relative;
-    top: -5px;
-}
-
-.groupEditor .CurrentPanel {
-    margin: 10px auto 5px auto;
-}

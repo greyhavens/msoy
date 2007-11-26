@@ -3,8 +3,11 @@
 
 package client.util;
 
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -54,6 +57,44 @@ public class MsoyUI
         }
         label.addClickListener(listener);
         return label;
+    }
+
+    /**
+     * Creates a text box with all of the configuration that you're bound to want to do.
+     */
+    public static TextBox createTextBox (String text, int maxLength, int visibleLength)
+    {
+        TextBox box = new TextBox();
+        if (text != null) {
+            box.setText(text);
+        }
+        box.setMaxLength(maxLength);
+        box.setVisibleLength(visibleLength);
+        return box;
+    }
+
+    /**
+     * Creates a text area with all of the configuration that you're bound to want to do.
+     */
+    public static TextArea createTextArea (String text, int width, int height)
+    {
+        TextArea area = new TextArea();
+        if (text != null) {
+            area.setText(text);
+        }
+        area.setCharacterWidth(width);
+        area.setVisibleLines(height);
+        return area;
+    }
+
+    /**
+     * Creates a button with tiny text.
+     */
+    public static Button createTinyButton (String label, ClickListener listener)
+    {
+        Button button = new Button(label, listener);
+        button.addStyleName("tinyButton");
+        return button;
     }
 
     /**

@@ -118,17 +118,14 @@ public class GroupView extends VerticalPanel
         _table.setStyleName("groupView");
         _table.setCellSpacing(0);
         _table.setCellPadding(0);
-        if (_extras.backgroundControl == GroupExtras.BACKGROUND_FIT_TO_IMAGE && 
-            _extras.detailBackgroundWidth > 0) {
-            _table.setWidth((160 + _extras.detailBackgroundWidth) + "px");
-        }
+
         boolean amManager = _me != null && _me.rank == GroupMembership.RANK_MANAGER;
 
         VerticalPanel infoPanel = new VerticalPanel();
         infoPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
         infoPanel.setStyleName("LogoPanel");
         infoPanel.setSpacing(0);
-        Widget logo = MediaUtil.createMediaView(_group.logo, MediaDesc.THUMBNAIL_SIZE);
+        Widget logo = MediaUtil.createMediaView(_group.getLogo(), MediaDesc.THUMBNAIL_SIZE);
         infoPanel.add(logo);
         if (logo instanceof Image) {
             logo.addStyleName("actionLabel");
@@ -206,13 +203,8 @@ public class GroupView extends VerticalPanel
         }
         _table.setWidget(0, 0, infoPanel);
 
-        if (_extras.infoBackground != null) {
-            _table.getMyFlexCellFormatter().setBackgroundImage(
-                0, 0, _extras.infoBackground.getMediaPath());
-            if (_extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
-                _table.getMyFlexCellFormatter().setBackgroundNoRepeat(0, 0);
-            }
-        }
+        _table.setBackgroundImage(
+            _extras.background, _extras.backgroundControl == GroupExtras.BACKGROUND_TILED);
 
         VerticalPanel description = new VerticalPanel();
         description.setStyleName("DescriptionPanel");
@@ -230,36 +222,8 @@ public class GroupView extends VerticalPanel
             charter.setStyleName("Charter");
             description.add(charter);
         }
-        if (_extras.backgroundControl == GroupExtras.BACKGROUND_FIT_TO_IMAGE) {
-            final Element div = DOM.createElement("div");
-            if (_extras.detailBackgroundWidth > 0) {
-                DOM.setStyleAttribute(div, "width", _extras.detailBackgroundWidth + "px");
-            }
-            DOM.setStyleAttribute(div, "height", (_extras.detailAreaHeight > 270 ? 
-                _extras.detailAreaHeight : 270) + "px");
-            // when not tiling, we need a sensible default for people that are in a foot-shooting 
-            // mood and create more text than fits on their background image.  Here we're creating
-            // a div to hold the table that will scroll when overflowing
-            DOM.setStyleAttribute(div, "overflow", "auto");
-            DOM.appendChild(div, description.getElement());
-            Widget descriptionWidget = new Widget() {
-                {
-                    setElement(div);
-                }
-            };
-            _table.setWidget(0, 1, descriptionWidget);
-        } else if (_extras.backgroundControl == GroupExtras.BACKGROUND_TILED ||
-            _extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
-            _table.setWidget(0, 1, description);
-            _table.getMyFlexCellFormatter().fillWidth(0, 1);
-        }
-        if (_extras.detailBackground != null) {
-            _table.getMyFlexCellFormatter().setBackgroundImage(
-                0, 1, _extras.detailBackground.getMediaPath());
-            if (_extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
-                _table.getMyFlexCellFormatter().setBackgroundNoRepeat(0, 1);
-            }
-        }
+        _table.setWidget(0, 1, description);
+        _table.getFlexCellFormatter().setWidth(0, 1, "100%");
 
         FlexTable people = new FlexTable();
         people.setStyleName("PeoplePanel");
@@ -314,52 +278,6 @@ public class GroupView extends VerticalPanel
 
         _table.setWidget(0, 2, people);
 
-//         if (_extras.backgroundControl == GroupExtras.BACKGROUND_FIT_TO_IMAGE) {
-//             VerticalPanel peoplePlusCaps = new VerticalPanel();
-//             peoplePlusCaps.setSpacing(0);
-//             peoplePlusCaps.setWidth("100%");
-//             final Element upperCap = DOM.createElement("div");
-//             if (_extras.peopleUpperCap != null) {
-//                 DOM.setStyleAttribute(upperCap, "backgroundImage",
-//                                       "url(" + _extras.peopleUpperCap.getMediaPath() + ")");
-//                 DOM.setStyleAttribute(upperCap, "height", _extras.peopleUpperCapHeight + "px");
-//             }
-//             peoplePlusCaps.add(new Widget () {
-//                 {
-//                     setElement(upperCap);
-//                 }
-//             });
-//             peoplePlusCaps.add(people);
-//             people.setWidth("100%");
-//             if (_extras.peopleBackground != null) {
-//                 DOM.setStyleAttribute(people.getElement(), "backgroundImage", 
-//                                       "url(" + _extras.peopleBackground.getMediaPath() + ")");
-//             }
-//             final Element lowerCap = DOM.createElement("div");
-//             if (_extras.peopleLowerCap != null) {
-//                 DOM.setStyleAttribute(lowerCap, "backgroundImage",
-//                                       "url(" + _extras.peopleLowerCap.getMediaPath() + ")");
-//                 DOM.setStyleAttribute(lowerCap, "height", _extras.peopleLowerCapHeight + "px");
-//             }
-//             peoplePlusCaps.add(new Widget () {
-//                 {
-//                     setElement(lowerCap);
-//                 }
-//             });
-//             _table.setWidget(1, 0, peoplePlusCaps);
-
-//         } else if (_extras.backgroundControl == GroupExtras.BACKGROUND_TILED ||
-//                    _extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
-//             _table.setWidget(1, 0, people);
-//             if (_extras.peopleBackground != null) {
-//                 _table.getMyFlexCellFormatter().setBackgroundImage(
-//                     1, 0, _extras.peopleBackground.getMediaPath());
-//                 if (_extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
-//                     _table.getMyFlexCellFormatter().setBackgroundNoRepeat(1, 0);
-//                 }
-//             }
-//         }
-
         if (_group.policy != Group.POLICY_EXCLUSIVE) {
             people.setWidget(3, 0, new TagDetailPanel(new TagDetailPanel.TagService() {
                 public void tag (String tag, AsyncCallback callback) {
@@ -389,41 +307,7 @@ public class GroupView extends VerticalPanel
                 }
             }, amManager));
             people.getFlexCellFormatter().setColSpan(3, 0, 2);
-
-//             final Panel tags = ! ? (Panel)new FlowPanel() : (Panel);
-//             if (!amManager) {
-//                 CGroup.groupsvc.getTags(CGroup.ident, _group.groupId, new MsoyCallback () {
-//                     public void onSuccess (Object result) {
-//                         Iterator i = ((Collection) result).iterator();
-//                         while (i.hasNext()) {
-//                             String tag = (String)i.next();
-//                             Hyperlink tagLink = Application.createLink(tag, "group", "tag=" + tag);
-//                             DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
-//                             tags.add(tagLink);
-//                             if (i.hasNext()) {
-//                                 tags.add(new InlineLabel(", "));
-//                             }
-//                         }
-//                     } 
-//                 });
-//             }
-//             people.setText(3, 0, CGroup.msgs.viewTags());
-//             people.getFlexCellFormatter().setVerticalAlignment(3, 0, VerticalPanel.ALIGN_MIDDLE);
-//             people.setWidget(3, 1, tags);
-
-//             people.setWidget(2, 0, new Widget() {
-//                 {
-//                     Element hr = DOM.createElement("hr");
-//                     DOM.setStyleAttribute(hr, "color", "black");
-//                     DOM.setStyleAttribute(hr, "backgroundColor", "black");
-//                     setElement(hr);
-//                 }
-//             });
         }
-
-//         DOM.setAttribute(people.getFlexCellFormatter().getElement(0, 1), "width", "100%");
-        _table.getFlexCellFormatter().setColSpan(1, 0, 2);
-        _table.getMyFlexCellFormatter().fillWidth(2, 0);
     }
 
     protected String getPolicyName (int policy)
@@ -579,34 +463,15 @@ public class GroupView extends VerticalPanel
     }
 
     protected class MyFlexTable extends FlexTable {
-        public class MyFlexCellFormatter extends FlexTable.FlexCellFormatter {
-            public void setBackgroundImage (int row, int column, String url) {
-                if (row <= getRowCount() && column <= getCellCount(row)) {
-                    DOM.setStyleAttribute(
-                        getElement(row, column), "backgroundImage", "url(" + url + ")");
-                }
+        public void setBackgroundImage (MediaDesc background, boolean repeat) {
+            if (background == null) {
+                DOM.setStyleAttribute(getElement(), "background", "none");
+            } else {
+                DOM.setStyleAttribute(
+                    getElement(), "backgroundImage", "url(" + background.getMediaPath() + ")");
+                DOM.setStyleAttribute(
+                    getElement(), "backgroundRepeat", repeat ? "repeat" : "no-repeat");
             }
-            public void setBackgroundRepeat (int row, int column, String repeat) {
-                if (row <= getRowCount() && column <= getCellCount(row)) {
-                    DOM.setStyleAttribute(getElement(row, column), "backgroundRepeat", repeat);
-                }
-            }
-            public void setBackgroundNoRepeat (int row, int column) {
-                setBackgroundRepeat(row, column, "no-repeat");
-            }
-            public void fillWidth (int row, int column) {
-                if (row < getRowCount() && column < getCellCount(row)) {
-                    DOM.setStyleAttribute(getElement(row, column), "width", "100%");
-                }
-            }
-        }
-
-        public MyFlexTable () {
-            setCellFormatter(new MyFlexCellFormatter());
-        }
-
-        public MyFlexCellFormatter getMyFlexCellFormatter() {
-            return (MyFlexCellFormatter)getCellFormatter();
         }
     }
 

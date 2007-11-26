@@ -207,41 +207,76 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public Group createGroup (WebIdent ident, final Group group, final GroupExtras extras) 
+    public Group createGroup (WebIdent ident, Group group, GroupExtras extras) 
         throws ServiceException
     {
-        // we'll need the MemberRec for charging for this in the future
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser(ident);
 
-        if(!isValidName(group.name)) {
-            log.log(Level.WARNING, "invalid group name: " + group.name);
+        // make sure the name is valid; this is checked on the client as well
+        if (!isValidName(group.name)) {
+            log.log(Level.WARNING, "Asked to create group with invalid name [for=" + mrec.who() +
+                    ", name=" + group.name + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        final ServletWaiter<Group> waiter = new ServletWaiter<Group>("createGroup[" + group + "]");
-        group.creatorId = memrec.memberId;
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.groupMan.createGroup(group, extras, waiter);
+        try {
+            final GroupRecord gRec = new GroupRecord();
+            gRec.name = group.name;
+            gRec.blurb = group.blurb;
+            gRec.policy = group.policy;
+            if (group.logo != null) {
+                gRec.logoMimeType = group.logo.mimeType;
+                gRec.logoMediaHash = group.logo.hash;
+                gRec.logoMediaConstraint = group.logo.constraint;
             }
-        });
-        return waiter.waitForResult();
+            gRec.homepageUrl = extras.homepageUrl;
+            gRec.charter = extras.charter;
+            if (extras.background != null) {
+                gRec.backgroundMimeType = extras.background.mimeType;
+                gRec.backgroundHash = extras.background.hash;
+            }
+
+            // we fill this in ourselves
+            gRec.creatorId = mrec.memberId;
+
+            // create the group and then add the creator to it
+            MsoyServer.groupRepo.createGroup(gRec);
+            MsoyServer.groupRepo.joinGroup(
+                gRec.groupId, gRec.creatorId, GroupMembership.RANK_MANAGER);
+
+            // if the creator is online, update their runtime data
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.groupMan.updateMemberGroup(
+                        gRec.creatorId, gRec.groupId, gRec.name, GroupMembership.RANK_MANAGER);
+                }
+            });
+
+            return gRec.toGroupObject();
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to create group [for=" + mrec.who() +
+                    ", group=" + group + ", extras=" + extras + "].");
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService
     public void updateGroup (WebIdent ident, Group group, GroupExtras extras) 
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
-        
-        if(!isValidName(group.name)) {
-            log.log(Level.WARNING, "in updateGroup, invalid group name: " + group.name);
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        // make sure the name is valid; this is checked on the client as well
+        if (!isValidName(group.name)) {
+            log.log(Level.WARNING, "Asked to update group with invalid name [for=" + mrec.who() +
+                    ", name=" + group.name + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         try {
-            GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(group.groupId, 
-                memrec.memberId);
+            GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(
+                group.groupId, mrec.memberId);
             if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
                 log.log(Level.WARNING, "in updateGroup, invalid permissions");
                 throw new ServiceException("m.invalid_permissions");
@@ -249,16 +284,16 @@ public class GroupServlet extends MsoyServiceServlet
 
             GroupRecord gRec = MsoyServer.groupRepo.loadGroup(group.groupId);
             if (gRec == null) {
-                throw new PersistenceException("Group not found! [id=" + group.groupId + 
-                    "]");
+                throw new PersistenceException("Group not found [id=" + group.groupId + "]");
             }
             Map<String, Object> updates = gRec.findUpdates(group, extras);
             if (updates.size() > 0) {
                 MsoyServer.groupRepo.updateGroup(group.groupId, updates);
             }
+
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "updateGroup failed [group=" + group + ", extras=" + 
-                extras + "]", pe);
+            log.log(Level.WARNING, "updateGroup failed [group=" + group +
+                    ", extras=" + extras + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -300,11 +335,11 @@ public class GroupServlet extends MsoyServiceServlet
     public void updateMemberRank (WebIdent ident, int groupId, int memberId, byte newRank) 
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser(ident);
 
         try {
             GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(groupId, 
-                memrec.memberId);
+                mrec.memberId);
             if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
                 log.log(Level.WARNING, "in updateMemberRank, invalid permissions");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -328,11 +363,11 @@ public class GroupServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser(ident);
 
         try {
             GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(groupId, 
-                memrec.memberId);
+                mrec.memberId);
             if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
                 log.log(Level.WARNING, "in tagGroup, invalid permissions");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -344,11 +379,11 @@ public class GroupServlet extends MsoyServiceServlet
             TagNameRecord tagRec = tagRepo.getOrCreateTag(tagName);
 
             TagHistoryRecord historyRecord = set ?
-                tagRepo.tag(groupId, tagRec.tagId, memrec.memberId, now) :
-                tagRepo.untag(groupId, tagRec.tagId, memrec.memberId, now);
+                tagRepo.tag(groupId, tagRec.tagId, mrec.memberId, now) :
+                tagRepo.untag(groupId, tagRec.tagId, mrec.memberId, now);
             if (historyRecord != null) {
                 TagHistory history = new TagHistory();
-                history.member = memrec.getName();
+                history.member = mrec.getName();
                 history.tag = tagRec.tag;
                 history.action = historyRecord.action;
                 history.time = new Date(historyRecord.time.getTime());
@@ -365,14 +400,13 @@ public class GroupServlet extends MsoyServiceServlet
     // from interface GroupService
     public Collection<TagHistory> getRecentTags (WebIdent ident) throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
-        int memberId = memrec.memberId;
+        MemberRecord mrec = requireAuthedUser(ident);
+
         try {
-            MemberRecord memRec = MsoyServer.memberRepo.loadMember(memberId);
-            MemberName memName = memRec.getName();
+            MemberName memName = mrec.getName();
             TagRepository tagRepo = MsoyServer.groupRepo.getTagRepository();
             ArrayList<TagHistory> list = new ArrayList<TagHistory>();
-            for (TagHistoryRecord record : tagRepo.getTagHistoryByMember(memberId)) {
+            for (TagHistoryRecord record : tagRepo.getTagHistoryByMember(mrec.memberId)) {
                 TagNameRecord tag = record.tagId == -1 ? null :
                     tagRepo.getTag(record.tagId);
                 TagHistory history = new TagHistory();
@@ -383,8 +417,9 @@ public class GroupServlet extends MsoyServiceServlet
                 list.add(history); 
             }
             return list;
+
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getRecentTags failed", pe);
+            log.log(Level.WARNING, "getRecentTags failed [for=" + mrec.who() + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }

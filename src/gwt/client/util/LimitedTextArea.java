@@ -16,12 +16,14 @@ import client.shell.CShell;
  */
 public class LimitedTextArea extends VerticalPanel
 {
-    public LimitedTextArea (int maxChars)
+    public LimitedTextArea (int maxChars, int width, int height)
     {
         _maxChars = maxChars;
 
         add(_area = new TextArea());
         _area.addKeyboardListener(_limiter);
+        _area.setCharacterWidth(width);
+        _area.setVisibleLines(height);
         setHorizontalAlignment(ALIGN_RIGHT);
         add(_remaining = new Label());
         _remaining.setStyleName("tipLabel");

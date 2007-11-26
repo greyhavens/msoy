@@ -293,9 +293,7 @@ public abstract class ItemEditor extends BorderedDialog
         addSpacer(info);
 
         addInfoRow(info, new Label(CShell.emsgs.editorDescrip()));
-        _description = new LimitedTextArea(Item.MAX_DESCRIPTION_LENGTH);
-        _description.getTextArea().setCharacterWidth(40);
-        _description.getTextArea().setVisibleLines(3);
+        _description = new LimitedTextArea(Item.MAX_DESCRIPTION_LENGTH, 40, 3);
         bind(_description.getTextArea(), new Binder() {
             public void textUpdated (String text) {
                 _item.description = text;

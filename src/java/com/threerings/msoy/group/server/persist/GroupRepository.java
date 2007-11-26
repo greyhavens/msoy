@@ -17,6 +17,7 @@ import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -68,6 +69,26 @@ public class GroupRepository extends DepotRepository
                 return new GroupTagHistoryRecord();
             }
         };
+
+        // TEMP
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Rename(16, "infoBackgroundMimeType", "backgroundMimeType"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Rename(16, "infoBackgroundHash", "backgroundHash"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Rename(16, "infoBackgroundThumbConstraint", "backgroundThumbConstraint"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "detailBackgroundMimeType"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "detailBackgroundHash"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "detailBackgroundThumbConstraint"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "detailBackgroundWidth"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "detailAreaHeight"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "peopleBackgroundMimeType"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "peopleBackgroundHash"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "peopleBackgroundThumbConstraint"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "peopleUpperCapMimeType"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "peopleUpperCapHash"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "peopleUpperCapHeight"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "peopleLowerCapMimeType"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "peopleLowerCapHash"));
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Drop(16, "peopleLowerCapHeight"));
+        // END TEMP
     }
 
     /**
