@@ -6,6 +6,8 @@ package client.msgs;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.threerings.gwt.ui.WidgetUtil;
+
 import client.util.RichTextToolbar;
 
 /**
@@ -19,6 +21,7 @@ public class MessageEditor extends VerticalPanel
         RichTextToolbar toolbar = new RichTextToolbar(_text);
         toolbar.setWidth("550px");
         add(toolbar);
+        add(WidgetUtil.makeShim(5, 5));
         add(_text);
         _text.setWidth("550px");
         _text.setHeight("200px");

@@ -241,6 +241,12 @@ a.external {
 }
 
 /** Standard paged grid configuration. */
+.pagedGrid .Header {
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  background: #4f4f4f;
+}
+
 .pagedGrid .Footer {
   border: 1px solid #000000;
   background: #4f4f4f;

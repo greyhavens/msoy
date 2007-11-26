@@ -11,10 +11,6 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -51,7 +47,8 @@ public class ThreadPanel extends TitledListPanel
 
     public void postReply (ForumMessage inReplyTo)
     {
-        setContents(CMsgs.mmsgs.threadReplyHeader(_thread.subject), new ReplyPanel(inReplyTo), true);
+        String title = CMsgs.mmsgs.threadReplyHeader(_thread.subject);
+        setContents(title, new ReplyPanel(inReplyTo), false);
     }
 
     public void clearReply ()
@@ -61,7 +58,7 @@ public class ThreadPanel extends TitledListPanel
 
     public void editPost (ForumMessage message, AsyncCallback callback)
     {
-        setContents(getThreadTitle(), new PostEditorPanel(message, callback), true);
+        setContents(getThreadTitle(), new PostEditorPanel(message, callback), false);
     }
 
     protected void replyPosted (ForumMessage message)
@@ -81,13 +78,11 @@ public class ThreadPanel extends TitledListPanel
         }
     }
 
-    protected class ReplyPanel extends FlexTable
+    protected class ReplyPanel extends ContentFooterPanel
     {
         public ReplyPanel (ForumMessage inReplyTo)
         {
-            setStyleName("replyPanel");
-
-            setWidget(0, 0, _editor = new MessageEditor());
+            _content.setWidget(0, 0, _editor = new MessageEditor());
 
             // set the quote text if available
             if (inReplyTo != null) {
@@ -100,13 +95,11 @@ public class ThreadPanel extends TitledListPanel
                 });
             }
 
-            HorizontalPanel buttons = new HorizontalPanel();
-            buttons.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
+            _footer.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
                     clearReply();
                 }
             }));
-            buttons.add(WidgetUtil.makeShim(5, 5));
             Button submit = new Button(CMsgs.cmsgs.submit());
             final int replyId = (inReplyTo == null) ? 0 : inReplyTo.messageId;
             new ClickCallback(submit) {
@@ -125,9 +118,7 @@ public class ThreadPanel extends TitledListPanel
                     return false;
                 }
             };
-            buttons.add(submit);
-            setWidget(2, 0, buttons);
-            getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_RIGHT);
+            _footer.add(submit);
         }
 
         // @Override // from Widget
@@ -141,18 +132,17 @@ public class ThreadPanel extends TitledListPanel
         protected MessageEditor _editor;
     }
 
-    protected class PostEditorPanel extends VerticalPanel
+    protected class PostEditorPanel extends ContentFooterPanel
     {
         public PostEditorPanel (ForumMessage message, AsyncCallback callback)
         {
             _message = message;
             _callback = callback;
 
-            add(_editor = new MessageEditor());
+            _content.setWidget(0, 0, _editor = new MessageEditor());
             _editor.setHTML(message.message);
-            setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
-            HorizontalPanel buttons = new HorizontalPanel();
-            buttons.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
+
+            _footer.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
                     showMessages();
                 }
@@ -178,8 +168,7 @@ public class ThreadPanel extends TitledListPanel
                 }
                 protected String _text;
             };
-            buttons.add(submit);
-            add(buttons);
+            _footer.add(submit);
         }
 
         // @Override // from Widget

@@ -124,20 +124,12 @@
     width: 100%;
 }
 
-.newThreadPanel .Header {
-    border: 1px solid #000000;
-    background: #4F4F4F;
-    color: #FFFFFF;
-    font-weight: bold;
-    padding: 5px;
-}
-
-.newThreadPanel .Content {
+.contentFooterPanel .Content {
     border-left: 1px dotted;
     border-right: 1px dotted;
 }
 
-.newThreadPanel .Footer {
+.contentFooterPanel .Footer {
     background: #4F4F4F;
     color: #FFFFFF;
     border: 1px solid #000000;
@@ -145,7 +137,7 @@
     text-align: right;
 }
 
-.newThreadPanel .Footer .gwt-Button {
+.contentFooterPanel .Footer .gwt-Button {
     border-top: none;
     border-bottom: none;
     border-right: none;
