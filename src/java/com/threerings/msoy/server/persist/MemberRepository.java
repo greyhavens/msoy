@@ -48,6 +48,7 @@ import com.samskivert.jdbc.depot.operator.SQLOperator;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.MemberCard;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -759,20 +760,21 @@ public class MemberRepository extends DepotRepository
     {
         ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
         clauses.add(new FromOverride(FriendRecord.class));
-        SQLExpression condition =
+        SQLExpression condition = new And(
             new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
                            new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITEE_ID_C)),
                    new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
-                           new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITER_ID_C)));
+                           new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITER_ID_C))));
         clauses.add(new Join(MemberRecord.class, condition));
+        clauses.add(new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C));
         if (limit > 0) {
             clauses.add(new Limit(0, limit));
         }
-        List<MemberNameRecord> records = findAll(
-            MemberNameRecord.class, clauses.toArray(new QueryClause[clauses.size()]));
+        List<MemberCardRecord> records = findAll(MemberCardRecord.class, clauses);
         List<FriendEntry> list = new ArrayList<FriendEntry>();
-        for (MemberNameRecord record : records) {
-            list.add(new FriendEntry(new MemberName(record.name, record.memberId), false));
+        for (MemberCardRecord record : records) {
+            MemberCard card = record.toMemberCard();
+            list.add(new FriendEntry(card.name, false, card.photo));
         }
         return list;
     }

@@ -10,6 +10,7 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
@@ -25,12 +26,16 @@ public class FriendEntry
     /** Is the friend online? */
     public var online :Boolean;
 
+    /** This friend's current profile photo. */
+    public var photo :MediaDesc;
+
     /** Mr. Constructor. */
     public function FriendEntry (
-            name :MemberName = null, online :Boolean = false)
+        name :MemberName = null, online :Boolean = false, photo: MediaDesc = null)
     {
         this.name = name;
         this.online = online;
+        this.photo = photo;
     }
 
     /**
@@ -83,6 +88,7 @@ public class FriendEntry
     {
         name = (ins.readObject() as MemberName);
         online = ins.readBoolean();
+        photo = (ins.readObject() as MediaDesc);
     }
 
     // from interface Streamable
@@ -90,6 +96,7 @@ public class FriendEntry
     {
         out.writeObject(name);
         out.writeBoolean(online);
+        out.writeObject(photo);
     }
 }
 }

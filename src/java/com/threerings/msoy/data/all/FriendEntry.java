@@ -4,7 +4,10 @@
 package com.threerings.msoy.data.all;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.presents.dobj.DSet;
+
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Represents a friend connection.
@@ -18,16 +21,20 @@ public class FriendEntry
     /** Is the friend online? */
     public boolean online;
 
+    /** This friend's current profile photo. */
+    public MediaDesc photo;
+
     /** Suitable for deserialization. */
     public FriendEntry ()
     {
     }
 
     /** Mr. Constructor. */
-    public FriendEntry (MemberName name, boolean online)
+    public FriendEntry (MemberName name, boolean online, MediaDesc photo)
     {
         this.name = name;
         this.online = online;
+        this.photo = photo;
     }
 
     /**

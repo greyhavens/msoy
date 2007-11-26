@@ -45,7 +45,7 @@ public class FriendManager
             FriendEntry[] snapshot = memobj.friends.toArray(new FriendEntry[memobj.friends.size()]);
             for (FriendEntry entry : snapshot) {
                 if (MsoyServer.peerMan.locateClient(entry.name) != null) {
-                    memobj.updateFriends(new FriendEntry(entry.name, true));
+                    memobj.updateFriends(new FriendEntry(entry.name, true, entry.photo));
                 }
                 registerFriendInterest(memobj, entry.name.getMemberId());
             }
@@ -81,11 +81,13 @@ public class FriendManager
         MemberObject accobj = MsoyServer.lookupMember(acceptor.getMemberId());
         MemberObject frobj = MsoyServer.lookupMember(friend.getMemberId());
         if (accobj != null) {
-            accobj.addToFriends(new FriendEntry(friend, frobj != null));
+            accobj.addToFriends(new FriendEntry(friend, frobj != null,
+                                                (frobj == null) ? null : frobj.getHeadShotMedia()));
             registerFriendInterest(accobj, friend.getMemberId());
         }
         if (frobj != null) {
-            frobj.addToFriends(new FriendEntry(acceptor, accobj != null));
+            frobj.addToFriends(new FriendEntry(acceptor, accobj != null,
+                                               accobj == null ? null : accobj.getHeadShotMedia()));
             registerFriendInterest(frobj, acceptor.getMemberId());
         }
     }
@@ -145,7 +147,7 @@ public class FriendManager
                             ", friend=" + memberId + "].");
                 continue;
             }
-            watcher.updateFriends(new FriendEntry(entry.name, online));
+            watcher.updateFriends(new FriendEntry(entry.name, online, entry.photo));
         }
     }
 
