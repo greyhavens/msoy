@@ -201,7 +201,9 @@ public class WorldServlet extends MsoyServiceServlet
                                     list.add(memberCard.name.getMemberId());
                                 }
 
-                                if (memLoc.gameId != 0 && memLoc.gameId != Game.TUTORIAL_GAME_ID) {
+                                // don't show developer versions of games in my whirled
+                                if (memLoc.gameId != 0 && !Game.isDeveloperVersion(memLoc.gameId) &&
+                                    memLoc.gameId != Game.TUTORIAL_GAME_ID) {
                                     List<Integer> list = games.get(memLoc.gameId);
                                     if (list == null) {
                                         list = Lists.newArrayList();
@@ -741,7 +743,8 @@ public class WorldServlet extends MsoyServiceServlet
                     if (memloc.sceneId != 0) {
                         noteFriend(scenes, entry, snap.getScene(memloc.sceneId));
                     }
-                    if (memloc.gameId != 0 && memloc.gameId != Game.TUTORIAL_GAME_ID) {
+                    if (memLoc.gameId != 0 && !Game.isDeveloperVersion(memLoc.gameId) &&
+                        memloc.gameId != Game.TUTORIAL_GAME_ID) {
                         noteFriend(games, entry, snap.getGame(memloc.gameId));
                     }
                 }

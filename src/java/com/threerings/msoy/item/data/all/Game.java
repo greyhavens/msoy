@@ -37,12 +37,21 @@ public class Game extends Item
     public MediaDesc shotMedia;
 
     /**
+     * Returns true if the specified game is a developer's in-progress original game rather than
+     * one listed in the catalog.
+     */
+    public static boolean isDeveloperVersion (int gameId)
+    {
+        return (gameId < 0);
+    }
+
+    /**
      * Returns true if this is a developer's in-progress original game rather than one listed in
      * the catalog.
      */
     public boolean isDeveloperVersion ()
     {
-        return (gameId < 0);
+        return isDeveloperVersion(gameId);
     }
 
     // @Override from Item
