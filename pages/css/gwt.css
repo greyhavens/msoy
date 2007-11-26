@@ -77,21 +77,14 @@ a.external {
     font-size: 12px;
     vertical-align: top;
     cursor: pointer;
-    height: 18px;
     margin: 0px;
     padding-bottom: 1px;
+    white-space: nowrap;
 }
 
 .tinyButton {
-    border: 1px solid #000000;
     background-image: url(/images/ui/tiny_button_middle.png);
-    background-repeat: repeat-x;
     font-size: 8px;
-    vertical-align: top;
-    cursor: pointer;
-    height: 12px;
-    margin: 0px;
-    padding-bottom: 1px;
 }
 
 .gwt-TextBox {
@@ -262,7 +255,7 @@ a.external {
   text-align: center;
 }
 
-.pagedGrid .gwt-Button {
+.pagedGrid .Footer .gwt-Button {
     border-top: none;
     border-bottom: none;
     border-left: none;

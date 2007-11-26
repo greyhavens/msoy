@@ -43,7 +43,7 @@ public class SubItemEntry extends ItemEntry
                 new DoListItemPopup(_item, null, SubItemEntry.this).show();
             }
         });
-        button.setStyleName("tinyButton");
+        button.addStyleName("tinyButton");
         buttons.add(button);
 
         button = new Button(CInventory.msgs.detailEdit(), new ClickListener() {
@@ -53,7 +53,7 @@ public class SubItemEntry extends ItemEntry
                 editor.show();
             }
         });
-        button.setStyleName("tinyButton");
+        button.addStyleName("tinyButton");
         buttons.add(button);
 
         setWidget(2, 0, buttons);
