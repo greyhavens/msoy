@@ -155,10 +155,6 @@ public class ForumServlet extends MsoyServiceServlet
                     names.put(ftr.mostRecentPosterId, mrpCard.name);
                     result.thread = ftr.toForumThread(names);
                 }
-
-                // fill in our total message count if needed
-                result.messageCount = (messages.size() < count && offset == 0) ?
-                    messages.size() : MsoyServer.forumRepo.loadMessageCount(threadId);
             }
 
             return result;

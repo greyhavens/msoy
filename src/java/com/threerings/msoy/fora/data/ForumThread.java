@@ -48,6 +48,9 @@ public class ForumThread
     /** The author of the message most recently posted to this thread. */
     public MemberName mostRecentPoster;
 
+    /** The number of posts in this thread. */
+    public int posts;
+
     /**
      * Returns true if this is an announcement thread.
      */

@@ -29,6 +29,7 @@ public class index extends MsgsEntryPoint
     public void onHistoryChanged (Args args)
     {
         setPageTitle(CGroup.msgs.groupTitle());
+
         // if we're not a dev deployment, disallow guests
         if (!DeploymentConfig.devDeployment && CGroup.ident == null) {
             setContent(MsoyUI.createLabel(CGroup.cmsgs.noGuests(), "infoLabel"));
@@ -38,7 +39,8 @@ public class index extends MsgsEntryPoint
         if (args.get(0, "").equals("tag")) {
             setContent(new GroupList(args.get(1, "")));
         } else if (args.get(0, 0) != 0) {
-            setContent(new GroupView(this, args.get(0, 0)));
+            setContent(_gview);
+            _gview.setGroup(args.get(0, 0));
         } else if (args.get(0, "").equals("t")) {
             setContent(new ThreadPanel(args.get(1, 0)));
         } else {
@@ -60,4 +62,6 @@ public class index extends MsgsEntryPoint
         // load up our translation dictionaries
         CGroup.msgs = (GroupMessages)GWT.create(GroupMessages.class);
     }
+
+    protected GroupView _gview = new GroupView(this);
 }

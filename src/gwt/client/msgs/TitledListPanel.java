@@ -24,7 +24,6 @@ public class TitledListPanel extends VerticalPanel
         _bheader = new FlexTable();
         _bheader.setCellSpacing(0);
         _bheader.setCellPadding(0);
-        _bheader.setWidth("100%");
         _bheader.setStyleName("Header");
         _bheader.setWidget(0, 0, MsoyUI.createActionLabel("", "Back", new ClickListener() {
             public void onClick (Widget sender) {
@@ -47,6 +46,13 @@ public class TitledListPanel extends VerticalPanel
             add(_theader);
         }
         updateTitle(title);
+        add(contents);
+    }
+
+    public void setContents (Widget header, Widget contents)
+    {
+        clear();
+        add(header);
         add(contents);
     }
 

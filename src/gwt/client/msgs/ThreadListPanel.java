@@ -92,17 +92,23 @@ public class ThreadListPanel extends PagedGrid
         public ThreadSummaryPanel (ForumThread thread)
         {
             setStyleName("threadSummaryPanel");
+            setCellPadding(0);
+            setCellSpacing(0);
 
-            setText(0, 0, "" + thread.flags);
-            getFlexCellFormatter().setStyleName(0, 0, "Flags");
+            int col = 0;
+            setText(0, col, "" + thread.flags);
+            getFlexCellFormatter().setStyleName(0, col++, "Flags");
 
-            setWidget(0, 1, Application.createLink(thread.subject, Page.GROUP,
+            setWidget(0, col, Application.createLink(thread.subject, Page.GROUP,
                                                    Args.compose("t", thread.threadId)));
-            getFlexCellFormatter().setStyleName(0, 1, "Subject");
+            getFlexCellFormatter().setStyleName(0, col++, "Subject");
 
-            setHTML(0, 2, _pdate.format(thread.mostRecentPostTime) + "<br/>By: " +
+            setText(0, col, "" + thread.posts);
+            getFlexCellFormatter().setStyleName(0, col++, "Posts");
+
+            setHTML(0, col, _pdate.format(thread.mostRecentPostTime) + "<br/>By: " +
                     thread.mostRecentPoster);
-            getFlexCellFormatter().setStyleName(0, 2, "LastPost");
+            getFlexCellFormatter().setStyleName(0, col++, "LastPost");
         }
     }
 

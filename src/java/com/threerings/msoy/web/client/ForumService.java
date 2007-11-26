@@ -39,9 +39,6 @@ public interface ForumService extends RemoteService
         /** The thread for which messages were loaded, only provided for first request. */
         public ForumThread thread;
 
-        /** The total count of messages in the specified thread, only provided for first request. */
-        public int messageCount;
-
         /** Whether or not the caller can post a reply message to this thread. */
         public boolean canPostReply;
 

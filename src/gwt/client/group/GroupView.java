@@ -45,6 +45,7 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MediaUtil;
+import client.util.MsoyCallback;
 import client.util.PopupMenu;
 import client.util.PrettyTextPanel;
 import client.util.PromptPopup;
@@ -58,22 +59,25 @@ import client.util.TagDetailPanel;
 public class GroupView extends VerticalPanel
     implements GroupEdit.GroupSubmissionListener
 {
-    public GroupView (Page parent, int groupId)
+    public GroupView (Page parent)
     {
         super();
         setWidth("100%");
         _parent = parent;
 
-        _errorContainer = new VerticalPanel();
-        _errorContainer.setStyleName("groupDetailErrors");
-        add(_errorContainer);
+        add(_table = new MyFlexTable());
+        add(_forums = new ForumPanel());
+    }
 
-        _table = new MyFlexTable();
-        add(_table);
-        loadGroup(groupId);
-
-        add(_forums = new ForumPanel("group-" + groupId));
-        _forums.displayGroupThreads(groupId);
+    /**
+     * Configures this view to display the specified group.
+     */
+    public void setGroup (int groupId)
+    {
+        if (_group == null || _group.groupId != groupId) {
+            loadGroup(groupId);
+            _forums.displayGroupThreads(groupId);
+        }
     }
 
     // from interface GroupEdit.GroupSubmissionListener
@@ -87,13 +91,9 @@ public class GroupView extends VerticalPanel
      */
     protected void loadGroup (int groupId)
     {
-        CGroup.groupsvc.getGroupDetail(CGroup.ident, groupId, new AsyncCallback() {
+        CGroup.groupsvc.getGroupDetail(CGroup.ident, groupId, new MsoyCallback() {
             public void onSuccess (Object result) {
                 setGroupDetail((GroupDetail) result);
-            }
-            public void onFailure (Throwable caught) {
-                CGroup.log("loadGroup failed", caught);
-                addError(CGroup.serverError(caught));
             }
         });
     }
@@ -392,7 +392,7 @@ public class GroupView extends VerticalPanel
 
 //             final Panel tags = ! ? (Panel)new FlowPanel() : (Panel);
 //             if (!amManager) {
-//                 CGroup.groupsvc.getTags(CGroup.ident, _group.groupId, new AsyncCallback () {
+//                 CGroup.groupsvc.getTags(CGroup.ident, _group.groupId, new MsoyCallback () {
 //                     public void onSuccess (Object result) {
 //                         Iterator i = ((Collection) result).iterator();
 //                         while (i.hasNext()) {
@@ -405,10 +405,6 @@ public class GroupView extends VerticalPanel
 //                             }
 //                         }
 //                     } 
-//                     public void onFailure (Throwable caught) {
-//                         CGroup.log("Failed to fetch tags");
-//                         addError(CGroup.serverError(caught));
-//                     }
 //                 });
 //             }
 //             people.setText(3, 0, CGroup.msgs.viewTags());
@@ -530,14 +526,9 @@ public class GroupView extends VerticalPanel
     protected void updateMemberRank (final int memberId, final byte rank) 
     {
         CGroup.groupsvc.updateMemberRank(CGroup.ident, _group.groupId, memberId, rank,
-            new AsyncCallback() {
+            new MsoyCallback() {
             public void onSuccess (Object result) {
                 loadGroup(_group.groupId);
-            }
-            public void onFailure (Throwable caught) {
-                CGroup.log("Failed to update member rank [groupId=" + _group.groupId +
-                           ", memberId=" + memberId + ", newRank=" + rank + "]", caught);
-                addError(CGroup.serverError(caught));
             }
         });
     }
@@ -551,7 +542,7 @@ public class GroupView extends VerticalPanel
      */
     protected void removeMember (final int memberId, final boolean reload)
     {
-        CGroup.groupsvc.leaveGroup(CGroup.ident, _group.groupId, memberId, new AsyncCallback() {
+        CGroup.groupsvc.leaveGroup(CGroup.ident, _group.groupId, memberId, new MsoyCallback() {
             public void onSuccess (Object result) {
                 if (reload) {
                     loadGroup(_group.groupId);
@@ -560,37 +551,17 @@ public class GroupView extends VerticalPanel
                     Application.go(Page.GROUP, "list");
                 }
             }
-            public void onFailure (Throwable caught) {
-                CGroup.log("Failed to remove member [groupId=" + _group.groupId +
-                           ", memberId=" + memberId + "]", caught);
-                addError(CGroup.serverError(caught));
-            }
         });
     }
 
     protected void joinGroup () 
     {
         CGroup.groupsvc.joinGroup(
-            CGroup.ident, _group.groupId, CGroup.getMemberId(), new AsyncCallback() {
+            CGroup.ident, _group.groupId, CGroup.getMemberId(), new MsoyCallback() {
             public void onSuccess (Object result) {
                 loadGroup(_group.groupId);
             }
-            public void onFailure (Throwable caught) {
-                CGroup.log("Failed to join group [groupId=" + _group.groupId +
-                           ", memberId=" + CGroup.getMemberId() + "]", caught);
-                addError(CGroup.serverError(caught));
-            }
         });
-    }
-
-    protected void addError (String error)
-    {
-        _errorContainer.add(new Label(error));
-    }
-
-    protected void clearErrors ()
-    {
-        _errorContainer.clear();
     }
 
     /**
@@ -646,6 +617,5 @@ public class GroupView extends VerticalPanel
     protected GroupMembership _me;
 
     protected MyFlexTable _table;
-    protected VerticalPanel _errorContainer;
     protected ForumPanel _forums;
 }

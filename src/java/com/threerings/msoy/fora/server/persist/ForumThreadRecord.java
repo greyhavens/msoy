@@ -78,11 +78,18 @@ public class ForumThreadRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #mostRecentPosterId} field. */
     public static final ColumnExp MOST_RECENT_POSTER_ID_C =
         new ColumnExp(ForumThreadRecord.class, MOST_RECENT_POSTER_ID);
+
+    /** The column identifier for the {@link #posts} field. */
+    public static final String POSTS = "posts";
+
+    /** The qualified column identifier for the {@link #posts} field. */
+    public static final ColumnExp POSTS_C =
+        new ColumnExp(ForumThreadRecord.class, POSTS);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** A unique identifier for this forum thread. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -107,6 +114,9 @@ public class ForumThreadRecord extends PersistentRecord
     /** The member id of the author of the message most recently posted to this thread. */
     public int mostRecentPosterId;
 
+    /** The number of posts in this thread. */
+    public int posts;
+
     /**
      * Converts this persistent record to a runtime record.
      *
@@ -123,6 +133,7 @@ public class ForumThreadRecord extends PersistentRecord
         record.mostRecentPostId = mostRecentPostId;
         record.mostRecentPostTime = new Date(mostRecentPostTime.getTime());
         record.mostRecentPoster = members.get(mostRecentPosterId);
+        record.posts = posts;
         return record;
     }
 

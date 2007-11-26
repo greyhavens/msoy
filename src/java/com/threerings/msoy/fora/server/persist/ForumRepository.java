@@ -5,19 +5,23 @@ package com.threerings.msoy.fora.server.persist;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.operator.Arithmetic;
 
 /**
  * Manages forum threads and messages.
@@ -32,22 +36,9 @@ public class ForumRepository extends DepotRepository
         public int count;
     }
 
-    /** Used by {@link #loadMessageCount}. */
-    @Entity @Computed
-    public static class MessageCountRecord extends PersistentRecord
-    {
-        @Computed(fieldDefinition="count(*)")
-        public int count;
-    }
-
     public ForumRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        // TEMP
-        _ctx.registerMigration(ForumThreadRecord.class, new EntityMigration.Retype(2, "threadId"));
-        _ctx.registerMigration(ForumMessageRecord.class, new EntityMigration.Retype(2, "messageId"));
-        // END TEMP
     }
 
     /**
@@ -85,17 +76,6 @@ public class ForumRepository extends DepotRepository
                        new Where(ForumMessageRecord.THREAD_ID_C, threadId),
                        new Limit(offset, count),
                        OrderBy.ascending(ForumMessageRecord.CREATED_C));
-    }
-
-    /**
-     * Loads the total number of messages in the specified thread.
-     */
-    public int loadMessageCount (int threadId)
-        throws PersistenceException
-    {
-        return load(MessageCountRecord.class,
-                    new FromOverride(ForumMessageRecord.class),
-                    new Where(ForumMessageRecord.THREAD_ID_C, threadId)).count;
     }
 
     /**
@@ -151,11 +131,15 @@ public class ForumRepository extends DepotRepository
         fmr.message = message;
         insert(fmr);
 
-        // update the last post information for the thread
+        // update the post count and last post information for the thread
         updatePartial(ForumThreadRecord.class, threadId,
                       ForumThreadRecord.MOST_RECENT_POST_ID, fmr.messageId,
                       ForumThreadRecord.MOST_RECENT_POST_TIME, fmr.created,
                       ForumThreadRecord.MOST_RECENT_POSTER_ID, posterId);
+
+        Map<String, SQLExpression> updates = Maps.newHashMap();
+        updates.put(ForumThreadRecord.POSTS, new Arithmetic.Add(ForumThreadRecord.POSTS_C, 1));
+        updateLiteral(ForumThreadRecord.class, threadId, updates);
 
         return fmr;
     }
@@ -186,7 +170,14 @@ public class ForumRepository extends DepotRepository
     public void deleteMessage (int messageId)
         throws PersistenceException
     {
-        delete(ForumMessageRecord.class, messageId);
+        ForumMessageRecord fmr = loadMessage(messageId);
+        if (fmr == null || delete(ForumMessageRecord.class, messageId) == 0) {
+            return;
+        }
+
+        Map<String, SQLExpression> updates = Maps.newHashMap();
+        updates.put(ForumThreadRecord.POSTS, new Arithmetic.Sub(ForumThreadRecord.POSTS_C, 1));
+        updateLiteral(ForumThreadRecord.class, fmr.threadId, updates);
     }
 
     @Override // from DepotRepository

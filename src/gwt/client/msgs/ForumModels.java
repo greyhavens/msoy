@@ -73,7 +73,7 @@ public class ForumModels
             CMsgs.forumsvc.loadMessages(CMsgs.ident, _threadId, start, count, needCount, this); 
         }
         protected int getCount (Object result) {
-            return ((ForumService.MessageResult)result).messageCount;
+            return ((ForumService.MessageResult)result).thread.posts;
         }
         protected List getRows (Object result) {
             return ((ForumService.MessageResult)result).messages;
