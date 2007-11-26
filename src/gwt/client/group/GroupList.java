@@ -207,7 +207,7 @@ public class GroupList extends VerticalPanel
             super();
             setStyleName("GroupWidget");
 
-            Widget logo = MediaUtil.createMediaView(group.logo, MediaDesc.THUMBNAIL_SIZE);
+            Widget logo = MediaUtil.createMediaView(group.getLogo(), MediaDesc.THUMBNAIL_SIZE);
             setWidget(0, 0, logo);
             getFlexCellFormatter().setStyleName(0, 0, "Logo");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
