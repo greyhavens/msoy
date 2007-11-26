@@ -71,25 +71,25 @@ a.external {
 
 /** Form element styles. */
 .gwt-Button {
-  border: 1px double #000000;
-  background-image: url(/images/ui/button_middle.png);
-  background-repeat: repeat-x;
-  font-size: 12px;
-  height: 20px;
-  vertical-align: top;
-  padding-bottom: 1px;
-  cursor: pointer;
+    border: 1px solid #000000;
+    background-image: url(/images/ui/button_middle.png);
+    background-repeat: repeat-x;
+    font-size: 12px;
+    vertical-align: top;
+    cursor: pointer;
+    margin: 0px;
+    padding-bottom: 1px;
 }
 
 .tinyButton {
-  border: 1px double #000000;
-  background-image: url(/images/ui/tiny_button_middle.png);
-  background-repeat: repeat-x;
-  font-size: 8px;
-  height: 14px;
-  vertical-align: top;
-  padding-bottom: 1px;
-  cursor: pointer;
+    border: 1px solid #000000;
+    background-image: url(/images/ui/tiny_button_middle.png);
+    background-repeat: repeat-x;
+    font-size: 8px;
+    vertical-align: top;
+    cursor: pointer;
+    margin: 0px;
+    padding-bottom: 1px;
 }
 
 .gwt-TextBox {
@@ -246,9 +246,13 @@ a.external {
 }
 
 /** Standard paged grid configuration. */
+.pagedGrid .Footer {
+  border: 1px solid #000000;
+  background: #4f4f4f;
+}
+
 .pagedGrid .Controls {
   width: 100%;
-  background: #333333;
   color: #FFFFFF;
   padding-left: 10px;
   padding-right: 10px;
@@ -256,25 +260,13 @@ a.external {
   text-align: center;
 }
 
-.pagedGrid .BottomLeft {
-  background: #4f4f4f;
-  border-top: 1px solid #000000;
-  border-bottom: 1px solid #000000;
-  border-left: 1px solid #000000;
-  text-align: left;
-}
-
-.pagedGrid .Bottom {
-  background: #4f4f4f;
-  border-top: 1px solid #000000;
-  border-bottom: 1px solid #000000;
+.pagedGrid .gwt-Button {
+    border-top: none;
+    border-bottom: none;
+    border-left: none;
 }
 
 .pagedGrid .BottomRight {
-  background: #4f4f4f;
-  border-top: 1px solid #000000;
-  border-bottom: 1px solid #000000;
-  border-right: 1px solid #000000;
   padding-right: 10px;
 }
 
@@ -845,7 +837,7 @@ a.external {
 }
 
 .messagePanel .Text {
-  padding-bottom: 5px;
+  padding-top: 5px;
 }
 
 .messagePanel .Posted {
@@ -855,6 +847,18 @@ a.external {
 
 .messagePanel .LeftPad {
   padding-left: 10px;
+}
+
+.messagePanel .BottomPad {
+  padding-bottom: 5px;
+}
+
+.messagePanel blockquote {
+  border: 1px solid #999999;
+  background: #EDEDED;
+  font-size: 12px;
+  padding: 5px;
+  margin-left: 15px;
 }
 
 .commentsPanel .Status {
