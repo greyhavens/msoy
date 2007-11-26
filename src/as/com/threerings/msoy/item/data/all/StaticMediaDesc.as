@@ -14,11 +14,13 @@ import com.threerings.msoy.client.DeploymentConfig;
  */
 public class StaticMediaDesc extends MediaDesc
 {
-    public function StaticMediaDesc (mimeType :int = 0, itemType :int = 0, mediaType :String = null)
+    public function StaticMediaDesc (mimeType :int = 0, itemType :int = 0, mediaType :String = null,
+                                     constraint :int = NOT_CONSTRAINED)
     {
         super(null, mimeType);
         _itemType = itemType;
         _mediaType = mediaType;
+        this.constraint = constraint;
     }
 
     // from MediaDesc
@@ -62,7 +64,6 @@ public class StaticMediaDesc extends MediaDesc
     }
 
     protected var _itemType :int;
-
     protected var _mediaType :String;
 }
 }

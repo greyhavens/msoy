@@ -59,7 +59,6 @@ import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.group.server.GroupManager;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.MailManager;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.world.server.MsoySceneRegistry;
 import com.threerings.msoy.world.server.PetManager;
@@ -107,9 +106,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Our runtime chat channel manager. */
     public static ChatChannelManager channelMan = new ChatChannelManager();
-
-    /** Contains information on our member profiles. */
-    public static ProfileRepository profileRepo;
 
     /** Contains information on our groups. */
     public static GroupRepository groupRepo;
@@ -283,7 +279,6 @@ public class MsoyServer extends MsoyBaseServer
         _transitRepo = new TransitionRepository(_conProv);
 
         // create our various repositories
-        profileRepo = new ProfileRepository(perCtx);
         groupRepo = new GroupRepository(perCtx, eventLog);
         forumRepo = new ForumRepository(perCtx);
         commentRepo = new CommentRepository(perCtx);

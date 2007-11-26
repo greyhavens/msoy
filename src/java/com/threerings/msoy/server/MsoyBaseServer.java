@@ -31,6 +31,7 @@ import com.threerings.whirled.server.WhirledServer;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.server.persist.MemoryRepository;
 
@@ -70,6 +71,9 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Sends event information to an external log database. */
     public static MsoyEventLogger eventLog;
+
+    /** Contains information on our member profiles. */
+    public static ProfileRepository profileRepo;
 
     /** The Msoy feed repository. */
     public static FeedRepository feedRepo;
@@ -149,6 +153,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         memoryRepo = new MemoryRepository(perCtx);
         statRepo = new StatRepository(perCtx);
         gameCookieRepo = new GameCookieRepository(perCtx);
+        profileRepo = new ProfileRepository(perCtx);
         feedRepo = new FeedRepository(perCtx);
 
         // create and set up our configuration registry and admin service

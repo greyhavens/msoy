@@ -13,8 +13,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyObjectAccess;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.server.persist.AvatarRecord;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.game.data.PlayerObject;
 
@@ -68,12 +67,10 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         playerObj.friends = new DSet<FriendEntry>(
             MsoyGameServer.memberRepo.loadFriends(member.memberId, -1));
 
-        // load up their selected avatar, we'll configure it later
-        if (member.avatarId != 0) {
-            AvatarRecord avatar = MsoyGameServer.avatarRepo.loadItem(member.avatarId);
-            if (avatar != null) {
-                playerObj.avatar = (Avatar)avatar.toItem();
-            }
+        // load up their configure profile photo
+        ProfileRecord precord = MsoyGameServer.profileRepo.loadProfile(member.memberId);
+        if (precord != null) {
+            playerObj.photo = precord.getPhoto();
         }
     }
 

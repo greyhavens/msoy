@@ -16,9 +16,9 @@ import com.whirled.data.GameData;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 /**
  * Contains information on a player logged on to an MSOY Game server.
@@ -32,8 +32,8 @@ public class PlayerObject extends BodyObject
     /** The field name of the <code>tokens</code> field. */
     public static const TOKENS :String = "tokens";
 
-    /** The field name of the <code>avatar</code> field. */
-    public static const AVATAR :String = "avatar";
+    /** The field name of the <code>photo</code> field. */
+    public static const PHOTO :String = "photo";
 
     /** The field name of the <code>humanity</code> field. */
     public static const HUMANITY :String = "humanity";
@@ -51,8 +51,8 @@ public class PlayerObject extends BodyObject
     /** The tokens defining the access controls for this user. */
     public var tokens :MsoyTokenRing;
 
-    /** The avatar that the user has chosen, or null for guests. */
-    public var avatar :Avatar;
+    /** The profile photo that the user has chosen, or null for guests. */
+    public var photo :MediaDesc;
 
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public var humanity :int;
@@ -104,10 +104,9 @@ public class PlayerObject extends BodyObject
      */
     public function getHeadShotMedia () :MediaDesc
     {
-        if (avatar != null) {
-            return avatar.getThumbnailMedia();
-        }
-        return Item.getDefaultThumbnailMediaFor(Item.AVATAR);
+        return (photo != null) ? photo :
+            new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo",
+                                MediaDesc.HALF_VERTICALLY_CONSTRAINED);
     }
 
     /**
@@ -147,7 +146,7 @@ public class PlayerObject extends BodyObject
 
         memberName = (ins.readObject() as MemberName);
         tokens = (ins.readObject() as MsoyTokenRing);
-        avatar = (ins.readObject() as Avatar);
+        photo = (ins.readObject() as MediaDesc);
         humanity = ins.readInt();
         friends = (ins.readObject() as DSet);
         gameState = (ins.readObject() as DSet);

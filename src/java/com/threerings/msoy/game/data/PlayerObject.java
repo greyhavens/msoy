@@ -16,10 +16,10 @@ import com.whirled.data.GameData;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
@@ -36,8 +36,8 @@ public class PlayerObject extends BodyObject
     /** The field name of the <code>tokens</code> field. */
     public static final String TOKENS = "tokens";
 
-    /** The field name of the <code>avatar</code> field. */
-    public static final String AVATAR = "avatar";
+    /** The field name of the <code>photo</code> field. */
+    public static final String PHOTO = "photo";
 
     /** The field name of the <code>humanity</code> field. */
     public static final String HUMANITY = "humanity";
@@ -61,8 +61,8 @@ public class PlayerObject extends BodyObject
     /** The tokens defining the access controls for this user. */
     public MsoyTokenRing tokens;
 
-    /** The avatar that the user has chosen, or null for guests. */
-    public Avatar avatar;
+    /** The profile photo that the user has chosen, or null for guests. */
+    public MediaDesc photo;
 
     /** Our current assessment of how likely to be human this member is, in [0, {@link
      * MsoyCodes#MAX_HUMANITY}]. */
@@ -95,10 +95,7 @@ public class PlayerObject extends BodyObject
      */
     public MediaDesc getHeadShotMedia ()
     {
-        if (avatar != null) {
-            return avatar.getThumbnailMedia();
-        }
-        return Avatar.getDefaultThumbnailMediaFor(Item.AVATAR);
+        return photo;
     }
 
     /**
@@ -193,19 +190,19 @@ public class PlayerObject extends BodyObject
     }
 
     /**
-     * Requests that the <code>avatar</code> field be set to the
+     * Requests that the <code>photo</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setAvatar (Avatar value)
+    public void setPhoto (MediaDesc value)
     {
-        Avatar ovalue = this.avatar;
+        MediaDesc ovalue = this.photo;
         requestAttributeChange(
-            AVATAR, value, ovalue);
-        this.avatar = value;
+            PHOTO, value, ovalue);
+        this.photo = value;
     }
 
     /**
