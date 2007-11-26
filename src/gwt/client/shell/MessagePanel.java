@@ -48,6 +48,7 @@ public class MessagePanel extends FlexTable
         setWidget(0, 0, photo);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
         getFlexCellFormatter().setStyleName(0, 0, "Photo");
+        getFlexCellFormatter().addStyleName(0, 0, "BottomPad");
         getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
@@ -74,6 +75,7 @@ public class MessagePanel extends FlexTable
         }
         getFlexCellFormatter().setStyleName(1, 0, "Text");
         getFlexCellFormatter().addStyleName(1, 0, "LeftPad");
+        getFlexCellFormatter().addStyleName(1, 0, "BottomPad");
     }
 
     protected boolean textIsHTML ()

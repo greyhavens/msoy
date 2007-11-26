@@ -82,22 +82,22 @@
     float: right;
 }
 
-.forumPanel {
+.titledListPanel {
     width: 100%;
 }
 
-.forumPanel .Header {
+.titledListPanel .Header {
     border: 1px solid #000000;
     background: #4F4F4F;
     color: #FFFFFF;
 }
 
-.forumPanel .Header .Title {
+.titledListPanel .Header .Title {
     padding: 5px;
     font-weight: bold;
 }
 
-.forumPanel .Header .Back {
+.titledListPanel .Header .Back {
     background-image: url(/images/item/inventory_up.png);
     height: 20px;
     width: 16px;
@@ -137,13 +137,18 @@
     border-right: 1px dotted;
 }
 
-.newThreadPanel .FooterLeft {
+.newThreadPanel .Footer {
     background: #4F4F4F;
     color: #FFFFFF;
-    border-left: 1px solid #000000;
-    border-top: 1px solid #000000;
-    border-bottom: 1px solid #000000;
+    border: 1px solid #000000;
     width: 100%;
+    text-align: right;
+}
+
+.newThreadPanel .Footer .gwt-Button {
+    border-top: none;
+    border-bottom: none;
+    border-right: none;
 }
 
 .replyPanel {

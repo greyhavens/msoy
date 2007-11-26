@@ -36,7 +36,10 @@ public interface ForumService extends RemoteService
     /** Provides results for {@link #loadMessages}. */
     public static class MessageResult implements IsSerializable
     {
-        /** The total count of messages in the specified thread. */
+        /** The thread for which messages were loaded, only provided for first request. */
+        public ForumThread thread;
+
+        /** The total count of messages in the specified thread, only provided for first request. */
         public int messageCount;
 
         /** Whether or not the caller can post a reply message to this thread. */

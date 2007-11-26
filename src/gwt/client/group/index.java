@@ -8,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.web.client.DeploymentConfig;
 
 import client.msgs.MsgsEntryPoint;
+import client.msgs.ThreadPanel;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
@@ -38,6 +39,8 @@ public class index extends MsgsEntryPoint
             setContent(new GroupList(args.get(1, "")));
         } else if (args.get(0, 0) != 0) {
             setContent(new GroupView(this, args.get(0, 0)));
+        } else if (args.get(0, "").equals("t")) {
+            setContent(new ThreadPanel(args.get(1, 0)));
         } else {
             setContent(new GroupList());
         }

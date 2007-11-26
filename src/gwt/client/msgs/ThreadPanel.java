@@ -4,202 +4,81 @@
 package client.msgs;
 
 import java.util.Date;
-import java.util.List;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.InlineLabel;
-import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.fora.data.ForumMessage;
+import com.threerings.msoy.fora.data.ForumThread;
 
-import client.shell.MessagePanel;
 import client.util.ClickCallback;
-import client.util.MsoyCallback;
 import client.util.MsoyUI;
-import client.util.PromptPopup;
 
 /**
- * Displays the messages in a particular thread.
+ * Displays a thread header and either its messages or a post creation or editing panel.
  */
-public class ThreadPanel extends PagedGrid
+public class ThreadPanel extends TitledListPanel
 {
-    public ThreadPanel (ForumPanel parent, int threadId)
+    public ThreadPanel (int threadId)
     {
-        super(MESSAGES_PER_PAGE, 1, NAV_ON_BOTTOM);
-        addStyleName("dottedGrid");
-        setWidth("100%");
-
-        _parent = parent;
         _threadId = threadId;
-        setModel(new ForumModels.ThreadMessages(threadId), 0);
+        _mpanel = new MessagesPanel(this);
+        _mpanel.setModel(new ForumModels.ThreadMessages(threadId), 0);
+        showMessages();
     }
 
-    // @Override // from PagedGrid
-    protected Widget createWidget (Object item)
+    public void showMessages ()
     {
-        return new ThreadMessagePanel((ForumMessage)item);
+        setContents(getThreadTitle(), _mpanel, true);
     }
 
-    // @Override // from PagedGrid
-    protected String getEmptyMessage ()
+    public void gotThread (ForumThread thread)
     {
-        return CMsgs.mmsgs.noMessages();
+        _thread = thread;
+        updateTitle(getThreadTitle());
     }
 
-    // @Override // from PagedGrid
-    protected boolean displayNavi (int items)
+    public void postReply (ForumMessage inReplyTo)
     {
-        return true; // we always show our navigation for consistency
+        setContents(CMsgs.mmsgs.threadReplyHeader(_thread.subject), new ReplyPanel(inReplyTo), true);
     }
 
-    // @Override // from PagedGrid
-    protected void addCustomControls (FlexTable controls)
+    public void clearReply ()
     {
-        super.addCustomControls(controls);
-
-        // add a button for starting a new message that will optionally be enabled later
-        _postReply = new Button(CMsgs.mmsgs.postReply(), new ClickListener() {
-            public void onClick (Widget sender) {
-                postReplyMessage(null);
-            }
-        });
-        _postReply.setEnabled(false);
-        controls.setWidget(0, 0, _postReply);
+        showMessages();
     }
 
-    // @Override // from PagedGrid
-    protected void displayResults (int start, int count, List list)
+    public void editPost (ForumMessage message, AsyncCallback callback)
     {
-        _postReply.setEnabled(((ForumModels.ThreadMessages)_model).canPostReply() && _reply == null);
-        super.displayResults(start, count, list);
-    }
-
-    protected void postReplyMessage (final ForumMessage message)
-    {
-        if (_reply == null) {
-            _parent.add(_reply = new ReplyPanel(message));
-            _postReply.setEnabled(false);
-        }
-    }
-
-    protected void clearReplyPanel ()
-    {
-        if (_reply != null) {
-            _parent.remove(_reply);
-            _reply = null;
-            _postReply.setEnabled(true);
-        }
+        setContents(getThreadTitle(), new PostEditorPanel(message, callback), true);
     }
 
     protected void replyPosted (ForumMessage message)
     {
-        MsoyUI.info(CMsgs.mmsgs.msgReplyPosted());
-        ((ForumModels.ThreadMessages)_model).appendItem(message);
-        displayPage(_page, true);
+        _mpanel.replyPosted(message);
+        showMessages();
     }
 
-    protected void deletePost (final ForumMessage message, boolean confirmed)
+    protected String getThreadTitle ()
     {
-        if (!confirmed) {
-            // TODO: if forum admin, make them send a mail to the poster explaining why their post
-            // was deleted?
-            new PromptPopup(CMsgs.mmsgs.confirmDelete()) {
-                public void onAffirmative () {
-                    deletePost(message, true);
-                }
-            }.prompt();
-            return;
+        if (_thread == null) {
+            return "...";
+        } else if (_thread.isAnnouncement()) {
+            return CMsgs.mmsgs.threadAnnouncementHeader(_thread.subject);
+        } else {
+            return CMsgs.mmsgs.threadNormalHeader(_thread.subject);
         }
-
-        CMsgs.forumsvc.deleteMessage(CMsgs.ident, message.messageId, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                removeItem(message);
-                MsoyUI.info(CMsgs.mmsgs.msgPostDeleted());
-            }
-        });
-    }
-
-    protected class ThreadMessagePanel extends MessagePanel
-    {
-        public ThreadMessagePanel (ForumMessage message)
-        {
-            setMessage(message);
-        }
-
-        public void setMessage (ForumMessage message)
-        {
-            _message = message;
-            setMessage(message.poster, message.created, message.message);
-
-            if (!message.lastEdited.equals(message.created)) {
-                int row = getRowCount();
-                getFlexCellFormatter().setRowSpan(0, 0, row+1); // extend the photo cell
-                setText(row, 0, "Edited on " + _pfmt.format(message.lastEdited));
-                getFlexCellFormatter().setStyleName(row, 0, "Posted");
-                getFlexCellFormatter().addStyleName(row, 0, "LeftPad");
-            }
-        }
-
-        // @Override // from MessagePanel
-        protected boolean textIsHTML ()
-        {
-            return true;
-        }
-
-        // @Override // from MessagePanel
-        protected void addInfo (FlowPanel info)
-        {
-            super.addInfo(info);
-
-            if (_postReply.isEnabled()) {
-                InlineLabel reply = new InlineLabel(CMsgs.mmsgs.inlineReply(), false, true, false);
-                reply.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        postReplyMessage(_message);
-                    }
-                });
-                reply.addStyleName("Posted");
-                reply.addStyleName("actionLabel");
-                info.add(reply);
-            }
-
-            if (CMsgs.getMemberId() == _message.poster.name.getMemberId()) {
-                InlineLabel edit = new InlineLabel(CMsgs.mmsgs.inlineEdit(), false, true, false);
-                edit.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        setWidget(1, 0, new PostEditorPanel(ThreadMessagePanel.this, _message));
-                    }
-                });
-                edit.addStyleName("Posted");
-                edit.addStyleName("actionLabel");
-                info.add(edit);
-            }
-
-            // TODO: also if forum admin
-            if (CMsgs.getMemberId() == _message.poster.name.getMemberId()) {
-                InlineLabel delete = new InlineLabel(CMsgs.mmsgs.inlineDelete(), false, true, false);
-                delete.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        deletePost(_message, false);
-                    }
-                });
-                delete.addStyleName("Posted");
-                delete.addStyleName("actionLabel");
-                info.add(delete);
-            }
-        }
-
-        protected ForumMessage _message;
     }
 
     protected class ReplyPanel extends FlexTable
@@ -207,17 +86,24 @@ public class ThreadPanel extends PagedGrid
         public ReplyPanel (ForumMessage inReplyTo)
         {
             setStyleName("replyPanel");
-            setText(0, 0, CMsgs.mmsgs.postReplyTitle());
-            getFlexCellFormatter().setStyleName(0, 0, "Title");
 
-            setWidget(1, 0, _editor = new MessageEditor());
+            setWidget(0, 0, _editor = new MessageEditor());
 
-            // TODO: set quote text
+            // set the quote text if available
+            if (inReplyTo != null) {
+                _editor.setHTML(
+                    CMsgs.mmsgs.replyQuote(inReplyTo.poster.name.toString(), inReplyTo.message));
+                DeferredCommand.addCommand(new Command() {
+                    public void execute () {
+                        _editor.getTextArea().getBasicFormatter().selectAll();
+                    }
+                });
+            }
 
             HorizontalPanel buttons = new HorizontalPanel();
             buttons.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    clearReplyPanel();
+                    clearReply();
                 }
             }));
             buttons.add(WidgetUtil.makeShim(5, 5));
@@ -236,7 +122,6 @@ public class ThreadPanel extends PagedGrid
                 }
                 public boolean gotResult (Object result) {
                     replyPosted((ForumMessage)result);
-                    clearReplyPanel();
                     return false;
                 }
             };
@@ -258,10 +143,10 @@ public class ThreadPanel extends PagedGrid
 
     protected class PostEditorPanel extends VerticalPanel
     {
-        public PostEditorPanel (final ThreadMessagePanel parent, final ForumMessage message)
+        public PostEditorPanel (ForumMessage message, AsyncCallback callback)
         {
-            _parent = parent;
             _message = message;
+            _callback = callback;
 
             add(_editor = new MessageEditor());
             _editor.setHTML(message.message);
@@ -269,7 +154,7 @@ public class ThreadPanel extends PagedGrid
             HorizontalPanel buttons = new HorizontalPanel();
             buttons.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    close();
+                    showMessages();
                 }
             }));
             Button submit = new Button(CMsgs.cmsgs.submit());
@@ -287,7 +172,8 @@ public class ThreadPanel extends PagedGrid
                     MsoyUI.info(CMsgs.mmsgs.msgPostUpdated());
                     _message.message = _text;
                     _message.lastEdited = new Date();
-                    close();
+                    _callback.onSuccess(_message);
+                    showMessages();
                     return false;
                 }
                 protected String _text;
@@ -303,27 +189,13 @@ public class ThreadPanel extends PagedGrid
             _editor.setFocus(true);
         }
 
-        protected void close ()
-        {
-            _parent.setMessage(_message);
-        }
-
-        protected ThreadMessagePanel _parent;
         protected ForumMessage _message;
+        protected AsyncCallback _callback;
         protected MessageEditor _editor;
     }
 
-    /** The forum panel in which we're hosted. */
-    protected ForumPanel _parent;
+    protected MessagesPanel _mpanel;
 
-    /** Contains the id of the thread whose messages we are displaying. */
     protected int _threadId;
-
-    /** A button for posting a reply message. */
-    protected Button _postReply;
-
-    /** Our active reply panel if any. */
-    protected ReplyPanel _reply;
-
-    protected static final int MESSAGES_PER_PAGE = 10;
+    protected ForumThread _thread;
 }

@@ -16,10 +16,17 @@ public class MessageEditor extends VerticalPanel
     public MessageEditor ()
     {
         _text = new RichTextArea();
-        add(new RichTextToolbar(_text));
+        RichTextToolbar toolbar = new RichTextToolbar(_text);
+        toolbar.setWidth("550px");
+        add(toolbar);
         add(_text);
         _text.setWidth("550px");
         _text.setHeight("200px");
+    }
+
+    public RichTextArea getTextArea()
+    {
+        return _text;
     }
 
     public String getHTML ()

@@ -5,6 +5,7 @@ package client.msgs;
 
 import java.util.List;
 
+import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.web.client.ForumService;
 
 import client.util.ServiceBackedDataModel;
@@ -51,12 +52,20 @@ public class ForumModels
             _threadId = threadId;
         }
 
+        public ForumThread getThread () {
+            return _thread;
+        }
+
         public boolean canPostReply () {
             return _canPostReply;
         }
 
         public void onSuccess (Object result) {
-            _canPostReply = ((ForumService.MessageResult)result).canPostReply;
+            ForumService.MessageResult mresult = (ForumService.MessageResult)result;
+            if (mresult.thread != null) {
+                _thread = mresult.thread;
+            }
+            _canPostReply = mresult.canPostReply;
             super.onSuccess(result);
         }
 
@@ -71,6 +80,7 @@ public class ForumModels
         }
 
         protected int _threadId;
+        protected ForumThread _thread;
         protected boolean _canPostReply;
     }
 }

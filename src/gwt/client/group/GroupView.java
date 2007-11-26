@@ -72,7 +72,7 @@ public class GroupView extends VerticalPanel
         add(_table);
         loadGroup(groupId);
 
-        add(_forums = new ForumPanel());
+        add(_forums = new ForumPanel("group-" + groupId));
         _forums.displayGroupThreads(groupId);
     }
 

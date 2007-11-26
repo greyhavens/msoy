@@ -69,14 +69,7 @@ public class ForumServlet extends MsoyServiceServlet
                 MsoyServer.forumRepo.loadThreads(groupId, offset, count);
 
             // enumerate the last-posters and create member names for them
-            IntMap<MemberName> names = IntMaps.newHashIntMap();
-            IntSet posters = new ArrayIntSet();
-            for (ForumThreadRecord thrrec : thrrecs) {
-                posters.add(thrrec.mostRecentPosterId);
-            }
-            for (MemberNameRecord mnrec : MsoyServer.memberRepo.loadMemberNames(posters)) {
-                names.put(mnrec.memberId, mnrec.toMemberName());
-            }
+            IntMap<MemberName> names = resolveNames(thrrecs);
 
             // finally convert the threads to runtime format and return them
             ThreadResult result = new ThreadResult();
@@ -141,7 +134,7 @@ public class ForumServlet extends MsoyServiceServlet
                 cards.put(mcrec.memberId, mcrec.toMemberCard());
             }
 
-            // finally convert the messages to runtime format and return them
+            // convert the messages to runtime format
             MessageResult result = new MessageResult();
             List<ForumMessage> messages = Lists.newArrayList();
             for (ForumMessageRecord msgrec : msgrecs) {
@@ -152,8 +145,18 @@ public class ForumServlet extends MsoyServiceServlet
             // fill in this caller's posting privileges
             result.canPostReply = group.checkAccess(groupRank, Group.ACCESS_POST, 0);
 
-            // fill in our total message count if needed
             if (needTotalCount) {
+                // convert the thread record to a runtime record if needed
+                MemberCard mrpCard = cards.get(ftr.mostRecentPosterId);
+                if (mrpCard == null) {
+                    result.thread = ftr.toForumThread(resolveNames(Collections.singletonList(ftr)));
+                } else {
+                    IntMap<MemberName> names = IntMaps.newHashIntMap();
+                    names.put(ftr.mostRecentPosterId, mrpCard.name);
+                    result.thread = ftr.toForumThread(names);
+                }
+
+                // fill in our total message count if needed
                 result.messageCount = (messages.size() < count && offset == 0) ?
                     messages.size() : MsoyServer.forumRepo.loadMessageCount(threadId);
             }
@@ -323,5 +326,22 @@ public class ForumServlet extends MsoyServiceServlet
             }
         }
         return rank;
+    }
+
+    /**
+     * Resolves the names of the posters of the supplied threads.
+     */
+    protected IntMap<MemberName> resolveNames (List<ForumThreadRecord> thrrecs)
+        throws PersistenceException
+    {
+        IntMap<MemberName> names = IntMaps.newHashIntMap();
+        IntSet posters = new ArrayIntSet();
+        for (ForumThreadRecord thrrec : thrrecs) {
+            posters.add(thrrec.mostRecentPosterId);
+        }
+        for (MemberNameRecord mnrec : MsoyServer.memberRepo.loadMemberNames(posters)) {
+            names.put(mnrec.memberId, mnrec.toMemberName());
+        }
+        return names;
     }
 }
