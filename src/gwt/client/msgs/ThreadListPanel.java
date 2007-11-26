@@ -16,6 +16,9 @@ import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.msoy.fora.data.ForumThread;
 
+import client.shell.Application;
+import client.shell.Page;
+import client.shell.Args;
 import client.util.MsoyUI;
 
 /**
@@ -86,19 +89,15 @@ public class ThreadListPanel extends PagedGrid
 
     protected class ThreadSummaryPanel extends FlexTable
     {
-        public ThreadSummaryPanel (final ForumThread thread)
+        public ThreadSummaryPanel (ForumThread thread)
         {
             setStyleName("threadSummaryPanel");
 
             setText(0, 0, "" + thread.flags);
             getFlexCellFormatter().setStyleName(0, 0, "Flags");
 
-            setWidget(0, 1, MsoyUI.createActionLabel(thread.subject, new ClickListener() {
-                public void onClick (Widget sender) {
-                    // TODO: route through URL?
-                    _parent.displayThreadMessages(thread);
-                }
-            }));
+            setWidget(0, 1, Application.createLink(thread.subject, Page.GROUP,
+                                                   Args.compose("t", thread.threadId)));
             getFlexCellFormatter().setStyleName(0, 1, "Subject");
 
             setHTML(0, 2, _pdate.format(thread.mostRecentPostTime) + "<br/>By: " +

@@ -5,9 +5,6 @@ package client.msgs;
 
 import com.threerings.msoy.fora.data.ForumThread;
 
-import client.shell.Application;
-import client.shell.Args;
-import client.shell.Page;
 import client.util.MsoyUI;
 
 /**
@@ -30,11 +27,6 @@ public class ForumPanel extends TitledListPanel
     public void startNewThread (int groupId)
     {
         setContents(CMsgs.mmsgs.startNewThread(), new NewThreadPanel(groupId), false);
-    }
-
-    public void displayThreadMessages (ForumThread thread)
-    {
-        Application.go(Page.GROUP, Args.compose("t", thread.threadId));
     }
 
     protected void newThreadPosted (ForumThread thread)
