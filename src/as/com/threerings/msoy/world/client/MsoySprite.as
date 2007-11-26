@@ -57,6 +57,7 @@ import com.threerings.msoy.item.data.all.StaticMediaDesc;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomCodes;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.msoy.world.data.RoomObject;
 
 /**
@@ -346,6 +347,14 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
+     * Called when a property in this sprite's room's shared space changes.
+     */
+    public function roomPropertyChanged (key :String, value: Object) :void
+    {
+        callUserCode("roomPropertyChanged_v1", key, value);
+    }
+
+    /**
      * Called when this client is assigned control of this entity.
      */
     public function gotControl () :void
@@ -612,6 +621,52 @@ public class MsoySprite extends MsoyMediaContainer
     {
         if (_ident != null && parent is RoomView) {
             return (parent as RoomView).getRoomController().updateMemory(_ident, key, value);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Return all room properties in an associative hash.
+     */
+    internal function getRoomProperties () :Object
+    {
+        var props :Object = {};
+        if (_ident != null && parent is RoomView) {
+            var roomObj :RoomObject = (parent as RoomView).getRoomObject();
+            for each (var entry :RoomPropertyEntry in roomObj.roomProperties.toArray()) {
+                // filter out memories with null as the value, those will not be persisted
+                if (entry.value != null) {
+                    props[entry.key] = ObjectMarshaller.decode(entry.value);
+                }
+            }
+        }
+        return props;
+    }
+
+    /**
+     * Locate the value bound to a particular key in the room's properties.
+     */
+    internal function getRoomProperty (key :String) :Object
+    {
+        if (_ident != null && parent is RoomView) {
+            var mkey :RoomPropertyEntry = new RoomPropertyEntry(key, null),
+                roomObj :RoomObject = (parent as RoomView).getRoomObject(),
+                entry :RoomPropertyEntry = roomObj.roomProperties.get(mkey) as RoomPropertyEntry;
+            if (entry != null) {
+                return ObjectMarshaller.decode(entry.value);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Update a room property.
+     */
+    internal function setRoomProperty (key :String, value: Object) :Boolean
+    {
+        if (_ident != null && parent is RoomView) {
+            return (parent as RoomView).getRoomController().setRoomProperty(_ident, key, value);
         } else {
             return false;
         }

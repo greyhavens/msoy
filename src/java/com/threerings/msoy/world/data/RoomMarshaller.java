@@ -6,6 +6,7 @@ package com.threerings.msoy.world.data;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -104,8 +105,19 @@ public class RoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #setRoomProperty} requests. */
+    public static final int SET_ROOM_PROPERTY = 8;
+
+    // from interface RoomService
+    public void setRoomProperty (Client arg1, RoomPropertyEntry arg2)
+    {
+        sendRequest(arg1, SET_ROOM_PROPERTY, new Object[] {
+            arg2
+        });
+    }
+
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static final int UPDATE_MEMORY = 8;
+    public static final int UPDATE_MEMORY = 9;
 
     // from interface RoomService
     public void updateMemory (Client arg1, EntityMemoryEntry arg2)
@@ -116,7 +128,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static final int UPDATE_ROOM = 9;
+    public static final int UPDATE_ROOM = 10;
 
     // from interface RoomService
     public void updateRoom (Client arg1, SceneUpdate[] arg2, InvocationService.InvocationListener arg3)

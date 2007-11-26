@@ -62,6 +62,7 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomMarshaller;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
@@ -433,6 +434,25 @@ public class RoomManager extends SpotSceneManager
             _roomObj.updateMemories(entry);
         } else {
             _roomObj.addToMemories(entry);
+        }
+    }
+
+    // documentation inherited from RoomProvider
+    public void setRoomProperty (ClientObject caller, final RoomPropertyEntry entry)
+    {
+        if (entry.key.length() > RoomPropertyEntry.MAX_KEY_LENGTH ||
+           (entry.value != null && entry.value.length > RoomPropertyEntry.MAX_VALUE_LENGTH)) {
+            log.info("Rejecting memory update, key or value are too long [entry=" + entry + "]");
+
+        } else if (_roomObj.roomProperties.contains(entry)) {
+            if (_roomObj.roomProperties.size() >= RoomPropertyEntry.MAX_ENTRIES) {
+                log.info("Rejecting memory update, store is full [entry=" + entry + "]");
+            } else {
+                _roomObj.updateRoomProperties(entry);
+            }
+
+        } else {
+            _roomObj.addToRoomProperties(entry);
         }
     }
 

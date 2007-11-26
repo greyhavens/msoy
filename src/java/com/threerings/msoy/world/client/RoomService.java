@@ -11,6 +11,7 @@ import com.threerings.whirled.spot.data.Location;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 
 /**
  * Service requests for rooms.
@@ -72,6 +73,11 @@ public interface RoomService extends InvocationService
      * particular item).
      */
     public void updateMemory (Client client, EntityMemoryEntry entry);
+
+    /**
+     * Issues a request to update a property in the shared room state.
+     */
+    public void setRoomProperty (Client client, RoomPropertyEntry entry);
 
     /**
      * Issues a request to update the current scene location of the specified item. This is called

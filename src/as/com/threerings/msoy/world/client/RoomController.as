@@ -103,6 +103,7 @@ import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.PetInfo;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
@@ -256,6 +257,36 @@ public class RoomController extends SceneController
 
         // ship the update request off to the server
         _roomObj.roomService.updateMemory(_mctx.getClient(), new EntityMemoryEntry(ident, key, data));
+        return true;
+    }
+
+    /**
+     * Handles a request by an item in our room to update a property.
+     */
+    public function setRoomProperty (ident :ItemIdent, key :String, value: Object) :Boolean
+    {
+        // don't let mobiles set memories
+        if (ident.type == Item.AVATAR || ident.type == Item.PET) {
+            return false;
+        }
+
+        // serialize datum
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(value);
+
+        if (key.length > RoomPropertyEntry.MAX_KEY_LENGTH ||
+            (data != null && data.length > RoomPropertyEntry.MAX_VALUE_LENGTH)) {
+            return false;
+        }
+
+        var entry :RoomPropertyEntry = new RoomPropertyEntry(key, data);
+
+        if (_roomObj.roomProperties.contains(entry) &&
+            _roomObj.roomProperties.size() >= RoomPropertyEntry.MAX_ENTRIES) {
+            return false;
+        }
+
+        // ship the update request off to the server
+        _roomObj.roomService.setRoomProperty(_mctx.getClient(), entry);
         return true;
     }
 

@@ -7,6 +7,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.RoomMarshaller;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -89,6 +90,13 @@ public class RoomDispatcher extends InvocationDispatcher
             ((RoomProvider)provider).setActorState(
                 source,
                 (ItemIdent)args[0], ((Integer)args[1]).intValue(), (String)args[2]
+            );
+            return;
+
+        case RoomMarshaller.SET_ROOM_PROPERTY:
+            ((RoomProvider)provider).setRoomProperty(
+                source,
+                (RoomPropertyEntry)args[0]
             );
             return;
 

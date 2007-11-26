@@ -10,6 +10,7 @@ import com.threerings.io.TypedArray;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
@@ -110,8 +111,19 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #setRoomProperty} requests. */
+    public static const SET_ROOM_PROPERTY :int = 8;
+
+    // from interface RoomService
+    public function setRoomProperty (arg1 :Client, arg2 :RoomPropertyEntry) :void
+    {
+        sendRequest(arg1, SET_ROOM_PROPERTY, [
+            arg2
+        ]);
+    }
+
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static const UPDATE_MEMORY :int = 8;
+    public static const UPDATE_MEMORY :int = 9;
 
     // from interface RoomService
     public function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry) :void
@@ -122,7 +134,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static const UPDATE_ROOM :int = 9;
+    public static const UPDATE_ROOM :int = 10;
 
     // from interface RoomService
     public function updateRoom (arg1 :Client, arg2 :TypedArray /* of class com.threerings.whirled.data.SceneUpdate */, arg3 :InvocationService_InvocationListener) :void

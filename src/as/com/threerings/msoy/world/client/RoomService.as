@@ -8,6 +8,7 @@ import com.threerings.io.TypedArray;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_InvocationListener;
@@ -41,6 +42,9 @@ public interface RoomService extends InvocationService
 
     // from Java interface RoomService
     function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void;
+
+    // from Java interface RoomService
+    function setRoomProperty (arg1 :Client, arg2 :RoomPropertyEntry) :void;
 
     // from Java interface RoomService
     function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry) :void;

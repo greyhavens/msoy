@@ -38,6 +38,8 @@ public class EntityBackend extends ControlBackend
         o["requestControl_v1"] = requestControl_v1;
         o["lookupMemory_v1"] = lookupMemory_v1;
         o["updateMemory_v1"] = updateMemory_v1;
+        o["getRoomProperty_v1"] = getRoomProperty_v1;
+        o["setRoomProperty_v1"] = setRoomProperty_v1;
         o["getInstanceId_v1"] = getInstanceId_v1;
         o["getViewerName_v1"] = getViewerName_v1;
         o["setHotSpot_v1"] = setHotSpot_v1;
@@ -48,6 +50,7 @@ public class EntityBackend extends ControlBackend
         o["showPopup_v1"] = showPopup_v1;
         o["clearPopup_v1"] = clearPopup_v1;
         o["getMemories_v1"] = getMemories_v1;
+        o["getRoomProperties_v1"] = getRoomProperties_v1;
         o["getCamera_v1"] = getCamera_v1;
         o["getMicrophone_v1"] = getMicrophone_v1;
 
@@ -103,6 +106,21 @@ public class EntityBackend extends ControlBackend
     protected function updateMemory_v1 (key :String, value :Object) :Boolean
     {
         return (_sprite == null) ? false : _sprite.updateMemory(key, value);
+    }
+
+    protected function getRoomProperties_v1 () :Object
+    {
+        return (_sprite == null) ? {} : _sprite.getRoomProperties();
+    }
+
+    protected function getRoomProperty_v1 (key :String) :Object
+    {
+        return (_sprite == null) ? null : _sprite.getRoomProperty(key);
+    }
+
+    protected function setRoomProperty_v1 (key :String, value :Object) :Boolean
+    {
+        return (_sprite == null) ? false : _sprite.setRoomProperty(key, value);
     }
 
     protected function setHotSpot_v1 (x :Number, y :Number, height :Number = NaN) :void

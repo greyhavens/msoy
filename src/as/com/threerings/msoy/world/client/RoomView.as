@@ -87,6 +87,7 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.PetInfo;
 import com.threerings.msoy.world.data.RoomCodes;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
@@ -376,6 +377,9 @@ public class RoomView extends AbstractRoomView
         } else if (RoomObject.MEMORIES == name) {
             dispatchMemoryChanged(event.getEntry() as EntityMemoryEntry);
 
+        } else if (RoomObject.ROOM_PROPERTIES == name) {
+            dispatchRoomPropertyChanged(event.getEntry() as RoomPropertyEntry);
+
         } else if (RoomObject.CONTROLLERS == name) {
             var ctrl :EntityControl = (event.getEntry() as EntityControl);
             if (ctrl.controllerOid == _ctx.getMemberObject().getOid()) {
@@ -400,6 +404,9 @@ public class RoomView extends AbstractRoomView
 
         } else if (RoomObject.MEMORIES == name) {
             dispatchMemoryChanged(event.getEntry() as EntityMemoryEntry);
+
+        } else if (RoomObject.ROOM_PROPERTIES == name) {
+            dispatchRoomPropertyChanged(event.getEntry() as RoomPropertyEntry);
 
         } else if (RoomObject.EFFECTS == name) {
             updateEffect(event.getEntry() as EffectData);
@@ -898,6 +905,21 @@ public class RoomView extends AbstractRoomView
             log.info("Received memory update for unknown sprite [item=" + entry.item +
                      ", key=" + entry.key + "].");
         }
+    }
+
+    /**
+     * Called when a memory entry is added or updated in the room object.
+     */
+    protected function dispatchRoomPropertyChanged (entry :RoomPropertyEntry) :void
+    {
+        var value :Object = ObjectMarshaller.decode(entry.value);
+        _entities.forEach(function (key :Object, sprite :Object) :void {
+            if (sprite is MsoySprite) {
+                MsoySprite(sprite).roomPropertyChanged(entry.key, value);
+            } else {
+                log.warning("Erk, non-sprite entity [key=" + key + ", entity=" + sprite + "]");
+            }
+        });
     }
 
     /**
