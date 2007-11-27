@@ -95,7 +95,7 @@ public class PlayerObject extends BodyObject
      */
     public MediaDesc getHeadShotMedia ()
     {
-        return photo;
+        return (photo == null) ? Profile.DEFAULT_PHOTO : photo;
     }
 
     /**
