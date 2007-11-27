@@ -4,7 +4,6 @@
 package com.threerings.msoy.ui {
 
 import mx.containers.VBox;
-import mx.core.ScrollPolicy;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -14,13 +13,10 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 public class ThumbnailPanel extends VBox
 {
-    public function ThumbnailPanel ()
+    public function ThumbnailPanel (size :int = MediaDesc.THUMBNAIL_SIZE)
     {
         styleName = "thumbnailPanel";
-        horizontalScrollPolicy = ScrollPolicy.OFF;
-        verticalScrollPolicy = ScrollPolicy.OFF;
-        width = MediaDesc.THUMBNAIL_WIDTH;
-        height = MediaDesc.THUMBNAIL_HEIGHT;
+        _size = size;
     }
 
     public function setItem (item :Item) :void
@@ -33,7 +29,10 @@ public class ThumbnailPanel extends VBox
         while (numChildren > 0) {
             removeChildAt(0);
         }
-        addChild(MediaWrapper.createScaled(media, width, height))
+        addChild(MediaWrapper.createScaled(
+                     media, MediaDesc.DIMENSIONS[2*_size], MediaDesc.DIMENSIONS[2*_size+1]))
     }
+
+    protected var _size :int;
 }
 }

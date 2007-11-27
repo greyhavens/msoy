@@ -22,7 +22,7 @@ public class MediaWrapper extends Container
     {
         var smc :ScalingMediaContainer = new ScalingMediaContainer(width, height);
         smc.setMediaDesc(desc);
-        return new MediaWrapper(smc, width, height, true);
+        return new MediaWrapper(smc, width, height, false);
     }
 
     /**
@@ -30,9 +30,8 @@ public class MediaWrapper extends Container
      * @param altReportedWidth a width to report when the media width is 0.
      * @param altReportedHeight a height to report when the media height is 0.
      */
-    public function MediaWrapper (
-        cont :MediaContainer,
-        altReportedWidth :Number = 0, altReportedHeight :Number = 0, alwaysUseAlt :Boolean = false)
+    public function MediaWrapper (cont :MediaContainer, altReportedWidth :Number = 0,
+                                  altReportedHeight :Number = 0, alwaysUseAlt :Boolean = false)
     {
         _cont = cont;
         _altWidth = altReportedWidth;
@@ -40,8 +39,7 @@ public class MediaWrapper extends Container
         _alwaysUseAlt = alwaysUseAlt;
         rawChildren.addChild(cont);
         if (!alwaysUseAlt) {
-            cont.addEventListener(MediaContainer.SIZE_KNOWN, handleMediaSizeChanged,
-                false, 0, true);
+            cont.addEventListener(MediaContainer.SIZE_KNOWN, handleMediaSizeChanged, false, 0, true);
         }
     }
 

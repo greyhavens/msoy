@@ -32,17 +32,20 @@ public class SimpleGrid extends Grid
         return count;
     }
 
-    public function addCell (child :UIComponent, verticalAlign :String = "middle") :void
+    public function addCell (child :UIComponent, horizontalAlign :String = "center",
+                             verticalAlign :String = "middle") :GridItem
     {
         if (_curRow == null) {
             _curRow = new GridRow();
             addChild(_curRow);
         }
         var item :GridItem = GridUtil.addToRow(_curRow, child);
+        item.setStyle("horizontalAlign", horizontalAlign);
         item.setStyle("verticalAlign", verticalAlign);
         if (_curRow.numChildren == _columns) {
             _curRow = null;
         }
+        return item;
     }
 
     public function getCellAt (index :int) :UIComponent

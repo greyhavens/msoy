@@ -232,8 +232,6 @@ public class LobbyPanel extends VBox
     // from TableObserver
     public function tableUpdated (table :Table) :void
     {
-        trace("LobbyPanel.tableUpdated()");
-
         // if this table is running and we're a seated game, remove it
         if (table.gameOid > 0 && GameConfig.SEATED_GAME == _lobbyObj.gameDef.match.getMatchType()) {
             tableRemoved(table.tableId);

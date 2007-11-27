@@ -24,7 +24,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class MsoyTable extends Table
 {
     /** Head shots for each occupant. */
-    public var headShots :TypedArray;
+    public var headShots :TypedArray /* of MediaDesc */;
 
     /** Suitable for unserialization. */
     public function MsoyTable ()

@@ -24,8 +24,11 @@ import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.ezgame.data.RangeParameter;
 import com.threerings.ezgame.data.ToggleParameter;
 
-import com.threerings.msoy.ui.ThumbnailPanel;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.ui.MsoyUI;
+import com.threerings.msoy.ui.SimpleGrid;
+import com.threerings.msoy.ui.ThumbnailPanel;
 
 import com.threerings.msoy.item.data.all.Game;
 
@@ -112,16 +115,41 @@ public class TableCreationPanel extends HBox
         _configBox.styleName = "seatsGrid";
         contents.addChild(_configBox);
 
+        var bottomRow :HBox = new HBox();
+        bottomRow.percentWidth = 100;
+        bottomRow.setStyle("verticalAlign", "bottom");
+
+        // add an interface for inviting friends to play
+        var friendsBox :VBox = new VBox();
+        friendsBox.percentWidth = 100;
+        friendsBox.setStyle("verticalGap", 0);
+        var onlineFriends :Array = _ctx.getWorldContext().getMemberObject().friends.toArray().filter(
+            function (friend :FriendEntry, index :int, array :Array) :Boolean {
+                return friend.online;
+            });
+        if (onlineFriends.length ==  0) {
+            friendsBox.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.invite_no_friends")));
+        } else {
+            friendsBox.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.invite_friends"), "lobbyLabel"));
+            _friendsGrid = new SimpleGrid(FRIENDS_GRID_COLUMNS);
+            _friendsGrid.setStyle("horizontalGap", 15);
+            for each (var friend :FriendEntry in onlineFriends) {
+                _friendsGrid.addCell(new FriendCheckBox(friend));
+            }
+            friendsBox.addChild(_friendsGrid);
+        }
+        bottomRow.addChild(friendsBox);
+
+        // finally add buttons for create and cancel
         _buttonBox = new HBox();
-        _buttonBox.percentWidth = 100;
-        _buttonBox.setStyle("horizontalAlign", "right");
-        contents.addChild(_buttonBox);
+        bottomRow.addChild(_buttonBox);
+        contents.addChild(bottomRow);
 
         var create :CommandButton = new CommandButton();
         // we need to have the button go through this function so that the TableConfig and
         // GameConfig are created when the button is pressed
         create.setCallback(function () :void {
-            _panel.controller.handleSubmitTable(tconfigger.getTableConfig(), gconf.getGameConfig());
+            createGame(tconfigger, gconf);
         });
         create.label = Msgs.GAME.get("b.create");
         _buttonBox.addChild(create);
@@ -132,6 +160,20 @@ public class TableCreationPanel extends HBox
             _panel.hideCreateGame();
         });
         _buttonBox.addChild(cancel);
+    }
+
+    protected function createGame (tconf :TableConfigurator, gconf :GameConfigurator) :void
+    {
+        var friends :Array = [];
+        if (_friendsGrid != null) {
+            for (var ii :int = 0; ii < _friendsGrid.cellCount; ii++) {
+                var fcb :FriendCheckBox = (_friendsGrid.getCellAt(ii) as FriendCheckBox);
+                if (fcb.checked) {
+                    friends.push(fcb.friend.name);
+                }
+            }
+        }
+        _panel.controller.handleSubmitTable(tconf.getTableConfig(), gconf.getGameConfig(), friends);
     }
 
     protected var _ctx :GameContext;
@@ -147,6 +189,47 @@ public class TableCreationPanel extends HBox
 
     protected var _logo :ThumbnailPanel;
     protected var _configBox :Container;
+    protected var _friendsGrid :SimpleGrid;
     protected var _buttonBox :HBox;
+
+    protected static const FRIENDS_GRID_COLUMNS :int = 6;
 }
+}
+
+import mx.containers.HBox;
+import mx.containers.VBox;
+import mx.controls.CheckBox;
+
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.item.data.all.MediaDesc;
+
+import com.threerings.msoy.ui.MsoyUI;
+import com.threerings.msoy.ui.ThumbnailPanel;
+
+class FriendCheckBox extends VBox
+{
+    public var friend :FriendEntry;
+
+    public function FriendCheckBox (friend :FriendEntry)
+    {
+        styleName = "friendCheckBox";
+        this.friend = friend;
+
+        var row :HBox = new HBox();
+        row.setStyle("horizontalGap", 4);
+        var thumb :ThumbnailPanel = new ThumbnailPanel(MediaDesc.HALF_THUMBNAIL_SIZE);
+        thumb.setMediaDesc(friend.photo);
+        row.addChild(thumb);
+        row.addChild(_check = new CheckBox());
+        _check.width = 14; // don't ask; go punch someone at adobe instead
+        addChild(row);
+        addChild(MsoyUI.createLabel(friend.name.toString()));
+    }
+
+    public function get checked () :Boolean
+    {
+        return _check.selected;
+    }
+
+    protected var _check :CheckBox;
 }

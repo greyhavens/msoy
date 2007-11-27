@@ -738,8 +738,8 @@ Tree {
 }
 
 .thumbnailPanel {
-  verticalAlign: middle;
   horizontalAlign: center;
+  verticalAlign: middle;
 }
 
 .lobbyPanel, .contentsBox, .descriptionBox, .titleBox, .infoBox {
@@ -866,6 +866,13 @@ Tree {
 
 .lobbyLabel {
   fontWeight: bold;
+}
+
+.friendCheckBox {
+  horizontalAlign: center;
+  verticalGap: 0;
+  borderStyle: none;
+  borderThickness: 0;
 }
 
 .floatingTableDisplay {

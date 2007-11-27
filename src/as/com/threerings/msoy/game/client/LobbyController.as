@@ -73,8 +73,9 @@ public class LobbyController extends Controller implements Subscriber
     /**
      * Handles SUBMIT_TABLE.
      */
-    public function handleSubmitTable (tcfg :TableConfig, gcfg :GameConfig) :void
+    public function handleSubmitTable (tcfg :TableConfig, gcfg :GameConfig, friends :Array) :void
     {
+        trace("Creating table " + friends);
         _tableDir.createTable(tcfg, gcfg);
         _mctx.getGameDirector().setMatchingGame(_lobj.game);
     }

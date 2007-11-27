@@ -10,6 +10,10 @@ public class ScalingMediaContainer extends MsoyMediaContainer
 
     public function ScalingMediaContainer (maxWidth :int, maxHeight :int)
     {
+        if (maxWidth == 0 || maxHeight == 0) {
+            throw new Error("Requested scaling media container with invalid dimensions " +
+                            maxWidth + "x" + maxHeight);
+        }
         maxW = maxWidth;
         maxH = maxHeight;
     }
