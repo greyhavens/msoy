@@ -6,7 +6,6 @@ package com.threerings.msoy.world.client.editor {
 import flash.events.Event;
 
 import mx.binding.utils.BindingUtils;
-import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.controls.HSlider;
 import mx.controls.TextInput;
@@ -16,7 +15,6 @@ import mx.events.ItemClickEvent;
 import mx.events.SliderEvent;
 
 import com.threerings.flex.CommandButton;
-import com.threerings.flex.GridUtil;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyScene;
