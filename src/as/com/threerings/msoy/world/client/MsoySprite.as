@@ -650,9 +650,8 @@ public class MsoySprite extends MsoyMediaContainer
     internal function getRoomProperty (key :String) :Object
     {
         if (_ident != null && parent is RoomView) {
-            var mkey :RoomPropertyEntry = new RoomPropertyEntry(key, null),
-                roomObj :RoomObject = (parent as RoomView).getRoomObject(),
-                entry :RoomPropertyEntry = roomObj.roomProperties.get(mkey) as RoomPropertyEntry;
+            var roomObj :RoomObject = (parent as RoomView).getRoomObject(),
+                entry :RoomPropertyEntry = roomObj.roomProperties.get(key) as RoomPropertyEntry;
             if (entry != null) {
                 return ObjectMarshaller.decode(entry.value);
             }

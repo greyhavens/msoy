@@ -31,23 +31,10 @@ public class RoomPropertyEntry
         return (value == null) ? 0 : (key.length() + value.length);
     }
 
-    /**
-     * Get a special key for use when removing this entry from a DSet.  Maybe this is early
-     * optimization, but I hate that otherwise we're sending down the entire entry when we want to
-     * remove it!
-     */
-    public Comparable getRemoveKey ()
-    {
-        RoomPropertyEntry other = new RoomPropertyEntry();
-        other.key = this.key;
-        // other.value == null
-        return other;
-    }
-
     // from interface DSet.Entry
     public Comparable getKey ()
     {
-        return this;
+        return key;
     }
 
     // from interface Comparable<MemoryEntry>
