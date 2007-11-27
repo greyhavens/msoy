@@ -123,7 +123,7 @@ public class WorldDirector extends BasicDirector
             // if we're not in a scene and they're not in a scene, go home.  If they're in an
             // unwatchable game, we'll get an error in the lobby, and this way we'll at least be in
             // a scene as well
-            sceneId = _mctx.getMemberObject().homeSceneId;
+            sceneId = _mctx.getMemberObject().getHomeSceneId();
         }
 
         if (sceneId == 0) {

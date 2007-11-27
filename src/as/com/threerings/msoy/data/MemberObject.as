@@ -164,6 +164,14 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
+     * Returns our home scene id if we're a member, 1 if we're a guest.
+     */
+    public function getHomeSceneId () :int
+    {
+        return (homeSceneId == 0) ? 1 : homeSceneId;
+    }
+
+    /**
      * Get a sorted list of friends.
      */
     public function getSortedEstablishedFriends () :Array

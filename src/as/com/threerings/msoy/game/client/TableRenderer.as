@@ -7,7 +7,6 @@ import flash.events.Event;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
-import mx.containers.Tile;
 
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
@@ -59,22 +58,6 @@ public class TableRenderer extends VBox
     {
         super.data = newData;
         recheckTable();
-    }
-
-    override public function set width (w:Number) :void
-    {
-        super.width = w;
-        if (_popup && _seatsGrid != null) {
-            _seatsGrid.width = w;
-        }
-    }
-
-    /** 
-     * Get the amount of width we could use if we had the room.
-     */
-    public function get maxUsableWidth () :int
-    {
-        return _maxUsableWidth;
     }
 
     override protected function createChildren () :void
@@ -141,12 +124,9 @@ public class TableRenderer extends VBox
         }
         updateButtons(table);
         _seatsGrid.validateNow();
-        _maxUsableWidth = (_seatsGrid.measuredMinWidth + HORZ_GAP) * _seatsGrid.numChildren +
-            /* the mystery pixels strike again */ 15;
 
         if (!_popup) {
             updateConfig(table);
-            _seatsGrid.width = parent.width - CONFIG_WIDTH - PADDING_WIDTH - 10; 
         }
     }
 
@@ -161,7 +141,7 @@ public class TableRenderer extends VBox
             styleName = "listTableRenderer";
         }
 
-        addChild(_seatsGrid = new Tile());
+        addChild(_seatsGrid = new HBox());
         _seatsGrid.verticalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.horizontalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.styleName = "seatsGrid";
@@ -189,6 +169,7 @@ public class TableRenderer extends VBox
             }
             seat.update(gctx, table, ii, panel.isSeated());
         }
+        _seatsGrid.setStyle("horizontalGap", _popup ? 10 : (10 * (8-length)));
     }
 
     protected function updateButtons (table :MsoyTable) :void
@@ -242,11 +223,16 @@ public class TableRenderer extends VBox
         while (_labelsBox.numChildren > 0) {
             _labelsBox.removeChild(_labelsBox.getChildAt(0));
         }
-        if (table.config.getMatchType() == GameConfig.PARTY) {
-            _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.players"), String(_watcherCount)));
-        } else if (!(_gameDef.match as MsoyMatchConfig).unwatchable && 
-            !table.tconfig.privateTable) {
-            _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.watchers"), String(_watcherCount)));
+
+        // if the game is in progress, report its watcher count
+        if (table.gameOid != -1) {
+            var wc :String = String(_watcherCount);
+            if (table.config.getMatchType() == GameConfig.PARTY) {
+                _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.players"), wc));
+            } else if (!(_gameDef.match as MsoyMatchConfig).unwatchable &&
+                       !table.tconfig.privateTable) {
+                _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.watchers"), wc));
+            }
         }
 
         if (table.config is EZGameConfig) {
@@ -271,21 +257,14 @@ public class TableRenderer extends VBox
         return label;
     }
 
-    protected static const CONFIG_WIDTH :int = 105;
-    protected static const PADDING_WIDTH :int = 2;
-    protected static const HORZ_GAP :int = 4;
-
     protected var _watcherCount :int;
     protected var _labelsBox :HBox;
-
-    protected var _seatsGrid :Tile;
+    protected var _seatsGrid :HBox;
 
     protected var _game :Game;
     protected var _gameDef :GameDefinition;
 
     protected var _popup :Boolean; 
-
-    protected var _maxUsableWidth :int;
 }
 }
 
@@ -299,6 +278,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -307,7 +287,7 @@ import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.data.MsoyTable;
 
-class SeatRenderer extends HBox
+class SeatRenderer extends VBox
 {
     public function SeatRenderer () :void
     {
@@ -320,23 +300,25 @@ class SeatRenderer extends HBox
         _table = table;
         _index = index;
 
-        var occupant :MemberName = _table.occupants[_index] as MemberName;
-        if (occupant != null) {
-            prepareOccupant();
-            _headShot.setMediaDesc((_table.headShots[_index] as MediaDesc));
-            _name.text = occupant.toString();
-            if (occupant.equals(_ctx.getPlayerObject().memberName)) {
-                _leaveBtn.setCommand(LobbyController.LEAVE_TABLE, _table.tableId);
-                _leaveBtn.visible = (_leaveBtn.includeInLayout = true);
-            } else {
-                _leaveBtn.visible = (_leaveBtn.includeInLayout = false);
-            }
-            // TODO: add support for booting players from tables to the TableService, make it 
-            // optional on TableManager creation, and support it here in the form of the closebox
-        } else {
+        var occupant :MemberName = (_table.occupants[_index] as MemberName);
+        if (occupant == null) {
             prepareJoinButton();
             _joinBtn.enabled = (table.gameOid <= 0) && !areSeated;
+            return;
         }
+
+        prepareOccupant();
+        _headShot.setMediaDesc(_table.headShots[_index] as MediaDesc);
+        _name.text = occupant.toString();
+        if (occupant.equals(_ctx.getPlayerObject().memberName)) {
+            _leaveBtn.setCommand(LobbyController.LEAVE_TABLE, _table.tableId);
+            _leaveBtn.visible = (_leaveBtn.includeInLayout = true);
+        } else {
+            _leaveBtn.visible = (_leaveBtn.includeInLayout = false);
+        }
+
+        // TODO: add support for booting players from tables to the TableService, make it 
+        // optional on TableManager creation, and support it here in the form of the closebox
     }
 
     protected function prepareOccupant () :void
@@ -345,16 +327,15 @@ class SeatRenderer extends HBox
             while (numChildren > 0) {
                 removeChild(getChildAt(0));
             }
-            var vbox :VBox = new VBox();
-            vbox.setStyle("horizontalAlign", "center");
-            vbox.addChild(new MediaWrapper(_headShot = new ScalingMediaContainer(40, 40), 40, 40));
-            vbox.addChild(_name = new Label());
-            _name.styleName = "nameLabel";
-            addChild(vbox);
-            addChild(_leaveBtn = new CommandButton());
+
+            var hbox :HBox = new HBox();
+            hbox.setStyle("horizontalGap", 5);
+            hbox.addChild(new MediaWrapper(_headShot = new ScalingMediaContainer(40, 30), 40, 30));
+            hbox.addChild(_leaveBtn = new CommandButton());
             _leaveBtn.styleName = "closeButton";
+            addChild(hbox);
+            addChild(_name = MsoyUI.createLabel("", "nameLabel"));
         } 
-        setStyle("horizontalAlign", "left");
     }
 
     protected function prepareJoinButton () :void
@@ -364,13 +345,11 @@ class SeatRenderer extends HBox
                 removeChild(getChildAt(0));
             }
             if (_joinBtn == null) {
-                _joinBtn = new CommandButton(LobbyController.JOIN_TABLE, 
-                    [ _table.tableId, _index ]);
+                _joinBtn = new CommandButton(LobbyController.JOIN_TABLE, [ _table.tableId, _index ]);
                 _joinBtn.label = Msgs.GAME.get("b.join");
             }
             addChild(_joinBtn);
         }
-        setStyle("horizontalAlign", "center");
     }
 
     protected var _ctx :GameContext;

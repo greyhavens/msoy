@@ -300,9 +300,8 @@ public class MsoyController extends Controller
             menuData.push(
                 { type: "separator" },
                 { label: Msgs.GENERAL.get("l.go_home"),
-                  enabled: (memberObj.homeSceneId != currentSceneId),
-                  command :GO_SCENE,
-                  arg: memberObj.homeSceneId
+                  enabled: (memberObj.getHomeSceneId() != currentSceneId),
+                  command :GO_SCENE, arg: memberObj.getHomeSceneId()
                 });
         }
 
@@ -547,11 +546,12 @@ public class MsoyController extends Controller
             return;
         }
 
-        // if we're not in a scene, go to our home scene while we're displaying the lobby
-        if (_ctx.getSceneDirector().getScene() == null) {
-            var sceneId :int = _ctx.getMemberObject().homeSceneId;
-            // default to scene 1 for guests.
-            _ctx.getSceneDirector().moveTo(sceneId != 0 ? sceneId : 1);
+        // if we're not in a scene, go to our home scene while we're displaying the lobby (but not
+        // if we're in the standalone client because it's just pointless slowdown)
+        if (Capabilities.playerType != "StandAlone") {
+            if (_ctx.getSceneDirector().getScene() == null) {
+                _ctx.getSceneDirector().moveTo(_ctx.getMemberObject().getHomeSceneId());
+            }
         }
 
         // now display the lobby interface
@@ -699,10 +699,7 @@ public class MsoyController extends Controller
         } else if (null != params["sceneId"]) {
             var sceneId :int = int(params["sceneId"]);
             if (sceneId == 0) {
-                sceneId = _ctx.getMemberObject().homeSceneId;
-                if (sceneId == 0) {
-                    sceneId = 1; // for "backwards combatability"
-                }
+                sceneId = _ctx.getMemberObject().getHomeSceneId();
             }
             _ctx.getSceneDirector().moveTo(sceneId);
 

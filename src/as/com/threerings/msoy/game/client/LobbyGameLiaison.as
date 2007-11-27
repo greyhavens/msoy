@@ -164,7 +164,7 @@ public class LobbyGameLiaison extends GameLiaison
             if (closedByUser) {
                 // either restore our current scene URL or go home if we have no scene
                 if (_ctx.getSceneDirector().getScene() == null) {
-                    _ctx.getMsoyController().handleGoScene(_ctx.getMemberObject().homeSceneId);
+                    _ctx.getMsoyController().handleGoScene(_ctx.getMemberObject().getHomeSceneId());
                 } else {
                     _ctx.getMsoyController().restoreSceneURL();
                 }

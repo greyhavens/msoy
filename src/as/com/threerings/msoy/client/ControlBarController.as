@@ -114,7 +114,7 @@ public class ControlBarController extends Controller
         }
 
         // nothing on the stack, let's just go to our home scene
-        _ctx.getMsoyController().handleGoScene(_ctx.getMemberObject().homeSceneId);
+        _ctx.getMsoyController().handleGoScene(_ctx.getMemberObject().getHomeSceneId());
     }
 
     /**

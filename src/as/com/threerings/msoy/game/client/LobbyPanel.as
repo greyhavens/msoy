@@ -392,7 +392,10 @@ public class LobbyPanel extends VBox
         tablesHeader.addChild(new SkinnableImage("tablesStar"));
         _contents.addChild(tablesHeader);
 
-        // create our tables list now that we have our table information
+        var listWrapper :HBox = new HBox();
+        listWrapper.styleName = "borderedBox";
+        listWrapper.percentWidth = 100;
+        listWrapper.percentHeight = 100;
         var list :List = new List();
         list.styleName = "lobbyTableList";
         list.variableRowHeight = true;
@@ -403,7 +406,8 @@ public class LobbyPanel extends VBox
         factory.properties = { gctx: _gctx, panel: this };
         list.itemRenderer = factory;
         list.dataProvider = _tables;
-        _contents.addChild(list);
+        listWrapper.addChild(list);
+        _contents.addChild(listWrapper);
     }
 
     protected static const LOBBY_PANEL_WIDTH :int = 500; // in px

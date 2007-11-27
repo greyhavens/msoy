@@ -788,8 +788,7 @@ Tree {
   paddingRight: 7;
 }
 
-.lobbyTableList {
-  borderThickness: 0px;
+.borderedBox {
   backgroundImage: Embed(source="../../rsrc/media/skins/box/border.png",
           scaleGridTop="4", scaleGridBottom="16",
           scaleGridLeft="4", scaleGridRight="16");
@@ -798,6 +797,14 @@ Tree {
   paddingRight: 4px;
   paddingTop: 4px;
   paddingBottom: 4px;
+}
+
+.lobbyTableList {
+  borderThickness: 0px;
+  paddingLeft: 0px;
+  paddingRight: 0px;
+  paddingTop: 0px;
+  paddingBottom: 0px;
 }
 
 .tablesStar {
@@ -886,8 +893,9 @@ Tree {
 }
 
 .floatingTableRenderer, .listTableRenderer {
-  horizontalGap: 4;
+  /* horizontalGap: set programmatically */
   verticalGap: 0;
+  paddingTop: 5px;
 }
 
 .listTableRenderer {
@@ -899,12 +907,8 @@ Tree {
 }
 
 .seatsGrid {
-  horizontalGap: 4;
   verticalGap: 4;
   verticalAlign: middle;
-/*  borderThickness: 1;
-  borderStyle: "solid";
-  borderColor: #222222; */
 }
 
 .tableHeader {
@@ -923,7 +927,8 @@ Tree {
 }
 
 .seatRenderer {
-  verticalAlign: bottom;
+  horizontalAlign: "center";
+  verticalGap: 0;
   borderThickness: 0;
   borderStyle: "none";
 }
@@ -946,8 +951,8 @@ Tree {
   backgroundColor: #E0E7EE;
   borderThickness: 0;
   borderStyle: "none";
-  paddingTop: 4px;
-  paddingLeft: 4px;
-  paddingRight: 4px;
-  paddingBottom: 4px;
+  paddingTop: 5px;
+  paddingLeft: 5px;
+  paddingRight: 5px;
+  paddingBottom: 5px;
 }
