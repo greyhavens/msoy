@@ -215,8 +215,9 @@ public class WorldServlet extends MsoyServiceServlet
 
                             // for now, we're going to list all active games...
                             for (HostedGame game : mnobj.hostedGames) {
-                                if (game.placeId == Game.TUTORIAL_GAME_ID) {
-                                    continue; // except the tutorial!
+                                if (game.placeId == Game.TUTORIAL_GAME_ID ||
+                                    Game.isDeveloperVersion(game.placeId)) {
+                                    continue; // except the tutorial or in-development games!
                                 }
                                 if (games.get(game.placeId) == null) {
                                     List<Integer> list = Lists.newArrayList();
