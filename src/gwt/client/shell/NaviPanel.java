@@ -240,7 +240,7 @@ public class NaviPanel extends FlexTable
             for (int ii = start; ii < end; ii++) {
                 creator.createItem(smenu, items.get(ii));
             }
-            start = (end+1);
+            start = end;
         }
     }
 
