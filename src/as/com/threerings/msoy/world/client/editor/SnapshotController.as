@@ -12,6 +12,8 @@ import flash.net.URLRequest;
 import flash.net.URLRequestMethod;
 import flash.utils.ByteArray;
 
+import com.adobe.images.JPGEncoder;
+
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.flex.CommandButton;
 import com.threerings.msoy.client.WorldClient;
