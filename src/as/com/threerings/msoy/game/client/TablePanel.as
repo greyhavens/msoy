@@ -170,7 +170,7 @@ public class TablePanel extends VBox
 
     protected function makeConfigLabel (name :String, value :String, tip :String = "") :UIComponent
     {
-        var label :Label = MsoyUI.createLabel(name + ": " + value, "lobbyLabel");
+        var label :Label = MsoyUI.createLabel(name + ": " + value, "tableStatusLabel");
         if (tip != "") {
             label.toolTip = tip;
         }

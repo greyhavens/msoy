@@ -854,6 +854,10 @@ Tree {
   selectedUpSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
 }
 
+.lobbyLabel {
+  fontWeight: bold;
+}
+
 .floatingTableDisplay {
   paddingTop: 0px;
   paddingBottom: 0px;
@@ -926,7 +930,8 @@ Tree {
   borderStyle: "none";
 }
 
-.lobbyLabel {
+.tableStatusLabel {
+  fontWeight: bold;
   color: #859BAE;
 }
 
