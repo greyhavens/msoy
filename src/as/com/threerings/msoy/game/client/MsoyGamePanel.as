@@ -11,6 +11,7 @@ import com.threerings.flash.MediaContainer;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.data.PlaceObject;
+
 import com.threerings.ezgame.client.GameControlBackend;
 
 import com.whirled.client.PlayerList;
@@ -52,9 +53,9 @@ public class MsoyGamePanel extends WhirledGamePanel
         _gctx.getMsoyChatDirector().displayGameChat(_gctx.getChatDirector(), _playerList);
 
         var bar :ControlBar = _gctx.getTopPanel().getControlBar();
+        bar.addCustomComponent(_rematch);
         bar.addCustomComponent(_backToLobby);
         bar.addCustomComponent(_backToWhirled);
-        bar.addCustomComponent(_rematch);
     }
 
     // from EZGamePanel
@@ -66,9 +67,9 @@ public class MsoyGamePanel extends WhirledGamePanel
         var bar :ControlBar = _gctx.getTopPanel().getControlBar();
         bar.setChatEnabled(true);
 
+        _rematch.parent.removeChild(_rematch);
         _backToLobby.parent.removeChild(_backToLobby);
         _backToWhirled.parent.removeChild(_backToWhirled);
-        _rematch.parent.removeChild(_rematch);
     }
 
     // from EZGamePanel
@@ -79,10 +80,11 @@ public class MsoyGamePanel extends WhirledGamePanel
     }
 
     // from WhirledGamePanel
-    override protected function getButtonLabels () :Array
+    override protected function getButtonLabels (plobj :PlaceObject) :Array
     {
+        var gameObj :MsoyGameObject = plobj as MsoyGameObject;
         return [ Msgs.GAME.get("b.backToLobby"), Msgs.GAME.get("b.backToWhirled"),
-            Msgs.GAME.get("b.rematch") ];
+            Msgs.GAME.get((gameObj.players.length == 1) ? "b.replay" : "b.rematch") ];
     }
 
     /** convenience reference to our game context */
