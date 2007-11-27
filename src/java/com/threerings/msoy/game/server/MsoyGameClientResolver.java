@@ -13,6 +13,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyObjectAccess;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.game.data.PlayerObject;
@@ -69,9 +70,7 @@ public class MsoyGameClientResolver extends CrowdClientResolver
 
         // load up their configure profile photo
         ProfileRecord precord = MsoyGameServer.profileRepo.loadProfile(member.memberId);
-        if (precord != null) {
-            playerObj.photo = precord.getPhoto();
-        }
+        playerObj.photo = (precord == null) ? Profile.DEFAULT_PHOTO : precord.getPhoto();
     }
 
     /**
