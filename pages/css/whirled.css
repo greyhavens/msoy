@@ -230,8 +230,6 @@
 .SceneWidget .SceneName {
   font-size: 12px;
   font-weight: bold;
-  text-decoration: underline;
-  cursor: pointer;
   margin-bottom: 2px;
 }
 
