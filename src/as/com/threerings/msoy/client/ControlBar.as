@@ -33,6 +33,7 @@ import com.threerings.crowd.chat.client.ChatDirector;
 
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.ui.SkinnableImage;
 
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
@@ -503,54 +504,14 @@ public class ControlBar extends HBox
 }
 }
 
-
-import flash.display.DisplayObject;
 import flash.text.TextFieldAutoSize;
+
 import mx.containers.Canvas;
-import mx.controls.Image;
-import mx.core.IFlexDisplayObject;
 import mx.core.ScrollPolicy;
 import mx.core.UITextField;
 
-/** Internal: helper function that extends mx.control.Image functionality with automatic image
- * loading from the style sheet (e.g. via an external style sheet file). */
-[Style(name="backgroundSkin", type="Class", inherit="no")]
-internal class SkinnableImage extends Image
-{
-    public function SkinnableImage ()
-    {
-    }
-
-    override public function styleChanged (styleProp:String) :void
-    {
-        super.styleChanged(styleProp);
-
-        var cls : Class = Class(getStyle("backgroundSkin"));
-        if (cls != null) {
-            updateSkin(cls);
-        }
-    }
-
-    protected function updateSkin (skinclass : Class) : void
-    {
-        if (_skin != null) {
-            removeChild(_skin);
-        }
-
-        _skin = DisplayObject (IFlexDisplayObject (new skinclass()));
-        this.width = _skin.width;
-        this.height = _skin.height;
-        _skin.x = 0;
-        _skin.y = 0;
-        addChild(_skin);
-    }
-
-    protected var _skin : DisplayObject;
-}
-
-/** Internal: helper class that extends mx.containers.Canvas
-    with automatic background loading from the style sheet (e.g. via an
-    external style sheet file). */
+/** Internal: helper class that extends mx.containers.Canvas with automatic background loading from
+ * the style sheet (e.g. via an external style sheet file). */
 internal class CanvasWithText extends Canvas
 {
     public var textfield :UITextField;
