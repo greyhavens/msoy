@@ -169,7 +169,7 @@ public class TableRenderer extends VBox
             }
             seat.update(gctx, table, ii, panel.isSeated());
         }
-        _seatsGrid.setStyle("horizontalGap", _popup ? 10 : (10 * (8-length)));
+        _seatsGrid.setStyle("horizontalGap", _popup ? 10 : 10*(Math.max(1, 8-length)));
     }
 
     protected function updateButtons (table :MsoyTable) :void
