@@ -747,17 +747,24 @@ Tree {
   borderColor: #000000;
 }
 
+.startBox {
+  verticalAlign: bottom;
+  paddingRight: 4px;
+  paddingBottom: 4px;
+}
+
 .borderedBox {
   backgroundImage: Embed(source="../../rsrc/media/skins/box/border.png",
           scaleGridTop="4", scaleGridBottom="16",
           scaleGridLeft="4", scaleGridRight="16");
   backgroundSize: "100%";
-}
-
-.descriptionBox {
   paddingLeft: 4px;
   paddingRight: 4px;
   paddingTop: 4px;
+  paddingBottom: 4px;
+}
+
+.descriptionBox {
 }
 
 .buttonBox {
@@ -801,9 +808,6 @@ Tree {
 }
 
 .tablesBox {
-  paddingLeft: 4px;
-  paddingRight: 4px;
-  paddingBottom: 4px;
 }
 
 .lobbyTableList {
@@ -944,8 +948,8 @@ Tree {
   backgroundColor: #E0E7EE;
   borderThickness: 0;
   borderStyle: "none";
-  paddingTop: 5px;
-  paddingLeft: 5px;
-  paddingRight: 5px;
-  paddingBottom: 5px;
+  paddingTop: 4px;
+  paddingLeft: 4px;
+  paddingRight: 4px;
+  paddingBottom: 4px;
 }

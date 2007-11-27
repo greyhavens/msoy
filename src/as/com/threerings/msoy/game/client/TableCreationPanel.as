@@ -40,43 +40,12 @@ public class TableCreationPanel extends VBox
         _panel = panel;
     }
 
-    public function setEnabled (enabled :Boolean) :void
-    {
-        if (!enabled) {
-            clearCreateGame();
-        }
-        _configBtn.enabled = enabled;
-    }
-
-    public function showCreateGame () :void
-    {
-        while (numChildren > 0) {
-            removeChildAt(0);
-        }
-        addChild(_configBox);
-        addChild(_buttonBox);
-    }
-
     override protected function createChildren () :void
     {
         super.createChildren();
 
         styleName = "tableCreationPanel";
         percentWidth = 100;
-
-        _headerBox = new HBox();
-        _headerBox.percentWidth = 100;
-        _headerBox.setStyle("horizontalAlign", "right");
-        _configBtn = new CommandButton();
-        _configBtn.label = Msgs.GAME.get("b.start_game");
-        _configBtn.setCallback(function () :void {
-            showCreateGame();
-            _configBtn.enabled = false;
-            _configBtn.visible = false;
-            _configBtn.includeInLayout = false;
-        });
-        _headerBox.addChild(_configBtn);
-        addChild(_headerBox);
 
         // create our various game configuration bits but do not add them
         var gconf :EZGameConfigurator = new EZGameConfigurator();
@@ -116,10 +85,12 @@ public class TableCreationPanel extends VBox
 
         _configBox = gconf.getContainer();
         _configBox.styleName = "seatsGrid";
+        addChild(_configBox);
 
         _buttonBox = new HBox();
         _buttonBox.percentWidth = 100;
         _buttonBox.setStyle("horizontalAlign", "right");
+        addChild(_buttonBox);
 
         var create :CommandButton = new CommandButton();
         // we need to have the button go through this function so that the TableConfig and
@@ -134,20 +105,9 @@ public class TableCreationPanel extends VBox
         var cancel :CommandButton = new CommandButton();
         cancel.label = Msgs.GAME.get("b.cancel");
         cancel.setCallback(function () :void {
-            clearCreateGame();
+            _panel.hideCreateGame();
         });
         _buttonBox.addChild(cancel);
-    }
-
-    protected function clearCreateGame () :void
-    {
-        while (numChildren > 0) {
-            removeChildAt(0);
-        }
-        addChild(_headerBox);
-        _configBtn.enabled = true;
-        _configBtn.visible = true;
-        _configBtn.includeInLayout = true;
     }
 
     protected var _ctx :GameContext;
@@ -161,8 +121,6 @@ public class TableCreationPanel extends VBox
     /** The lobby panel we're in. */
     protected var _panel :LobbyPanel;
 
-    protected var _headerBox :HBox;
-    protected var _configBtn :CommandButton;
     protected var _configBox :Container;
     protected var _buttonBox :HBox;
 }

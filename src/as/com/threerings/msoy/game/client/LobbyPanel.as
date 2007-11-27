@@ -46,6 +46,7 @@ import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyTable;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * A panel that displays pending table games.
@@ -127,7 +128,7 @@ public class LobbyPanel extends VBox
         }
         if (_tables.length == 0) {
             _tables.addItem("M" + _noPendersMsg);
-            _creationPanel.showCreateGame();
+            showCreateGame();
         }
     }
 
@@ -147,11 +148,40 @@ public class LobbyPanel extends VBox
         return _lobbyObj != null ? _lobbyObj.gameDef : null;
     }
 
+    /**
+     * Returns true if we're seated at ANY table, even in another lobby.
+     */
+    public function isSeated () :Boolean
+    {
+        return _isSeated || (_wctx.getMemberObject().game != null);
+    }
+
+    /**
+     * Hides the header display and shows the create game interface.
+     */
+    public function showCreateGame () :void
+    {
+        _contents.removeChild(_headerBox);
+        _contents.addChildAt(_creationPanel, 0);
+    }
+
+    /**
+     * Hides the create game interface and shows the header display.
+     */
+    public function hideCreateGame () :void
+    {
+        _contents.removeChild(_creationPanel);
+        _contents.addChildAt(_headerBox, 0);
+    }
+
     // from AttributeChangeListener
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
         if (event.getName() == MemberObject.GAME) {
-            _creationPanel.setEnabled(!isSeated());
+            _createBtn.enabled = !isSeated();
+            if (isSeated()) {
+                hideCreateGame();
+            }
             _tables.refresh();
         }
     }
@@ -231,18 +261,13 @@ public class LobbyPanel extends VBox
     public function seatednessDidChange (nowSeated :Boolean) :void
     {
         _isSeated = nowSeated;
-        _creationPanel.setEnabled(!isSeated());
+        _createBtn.enabled = !isSeated();
+        if (isSeated()) {
+            hideCreateGame();
+        }
         if (_isSeated) {
             CommandEvent.dispatch(this, LobbyController.SAT_AT_TABLE);
         }
-    }
-
-    /**
-     * Returns true if we're seated at ANY table, even in another lobby.
-     */
-    public function isSeated () :Boolean
-    {
-        return _isSeated || (_wctx.getMemberObject().game != null);
     }
 
     /**
@@ -317,27 +342,38 @@ public class LobbyPanel extends VBox
         _contents.percentWidth = 100;
         _contents.percentHeight = 100;
 
-        var descriptionBox :HBox = new HBox();
-        descriptionBox.percentWidth = 100;
-        descriptionBox.height = 124; // make room for padding at top
-        descriptionBox.styleName = "descriptionBox";
-        _contents.addChild(descriptionBox);
+        _headerBox = new HBox();
+        _headerBox.percentWidth = 100;
+        _headerBox.styleName = "descriptionBox";
+        _contents.addChild(_headerBox);
+
         _logo = new VBox();
         _logo.styleName = "lobbyLogoBox";
-        _logo.width = 160;
-        _logo.height = 120;
-        descriptionBox.addChild(_logo);
+        _logo.width = MediaDesc.THUMBNAIL_WIDTH;
+        _logo.height = MediaDesc.THUMBNAIL_HEIGHT;
+        _headerBox.addChild(_logo);
 
         var infoBox :HBox = new HBox();
         infoBox.styleName = "infoBox";
         infoBox.percentWidth = 100;
         infoBox.percentHeight = 100;
-        descriptionBox.addChild(infoBox);
         _info = new Text();
         _info.styleName = "lobbyInfo";
         _info.percentWidth = 100;
         _info.percentHeight = 100;
         infoBox.addChild(_info);
+        _headerBox.addChild(infoBox);
+
+        var startBox :HBox = new HBox();
+        startBox.styleName = "startBox";
+        startBox.percentHeight = 100;
+        _createBtn = new CommandButton();
+        _createBtn.label = Msgs.GAME.get("b.start_game");
+        _createBtn.setCallback(function () :void {
+            showCreateGame();
+        });
+        startBox.addChild(_createBtn);
+        _headerBox.addChild(startBox);
 
         _tablesBox = new VBox();
         _tablesBox.styleName = "tablesBox";
@@ -372,8 +408,7 @@ public class LobbyPanel extends VBox
         _tablesBox.addChild(list);
 
         _creationPanel = new TableCreationPanel(_gctx, this);
-        _tablesBox.addChild(_creationPanel);
-        _creationPanel.setEnabled(!isSeated());
+        _creationPanel.enabled = !isSeated();
     }
 
     protected static const LOBBY_PANEL_WIDTH :int = 500; // in px
@@ -400,6 +435,7 @@ public class LobbyPanel extends VBox
     protected var _tables :ArrayCollection = new ArrayCollection();
 
     // various UI bits that need filling in with data arrives
+    protected var _headerBox :HBox;
     protected var _contents :VBox;
     protected var _logo :VBox;
     protected var _info :Text;
@@ -407,6 +443,7 @@ public class LobbyPanel extends VBox
     protected var _about :Label;
     protected var _buy :Label;
     protected var _tablesBox :VBox;
+    protected var _createBtn :CommandButton;
 
     protected var _pendersHeader :String;
     protected var _noPendersMsg :String;
