@@ -354,14 +354,12 @@ public class Whirledwide extends FlexTable
             if (name.length() > 30) {
                 name = name.substring(0, 32) + "...";
             }
-            Label sceneName = new Label("\"" + name + "\"");
-            sceneName.setStyleName("SceneName");
-            sceneName.addClickListener(new ClickListener() {
+            _sceneNameContainer.add(
+                MsoyUI.createActionLabel("\"" + name + "\"", "SceneName", new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, "s" + card.sceneId);
                 }
-            });
-            _sceneNameContainer.add(sceneName);
+            }));
         }
 
         HorizontalPanel _featuredPlaceContainer;

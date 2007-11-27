@@ -405,10 +405,7 @@ public class MyWhirled extends FlexTable
 
             VerticalPanel text = new VerticalPanel();
             text.setStyleName("Text");
-            Label nameLabel = new Label("" + scene.name);
-            nameLabel.setStyleName("SceneName");
-            nameLabel.addClickListener(goToScene);
-            text.add(nameLabel);
+            text.add(MsoyUI.createActionLabel(""+scene.name, "SceneName", goToScene));
             Iterator peopleIter = scene.friends.iterator();
             FlowPanel peopleList = new FlowPanel();
             if (peopleIter.hasNext()) {
