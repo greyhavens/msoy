@@ -45,13 +45,14 @@ public class RoomPropertyEntry
     // from Equalable
     public function equals (other :Object) :Boolean
     {
-        return Util.equals(key, (other as RoomPropertyEntry).key);
+        return (other is RoomPropertyEntry) &&
+            Util.equals(key, (other as RoomPropertyEntry).key);
     }
 
     // from interface DSet_Entry
     public function getKey () :Object
     {
-        return this;
+        return key;
     }
 
     // from interface Streamable
