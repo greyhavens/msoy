@@ -19,7 +19,7 @@ import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
 
-import com.threerings.msoy.game.client.AVRGameControlBackend;
+import com.threerings.msoy.game.client.AVRGameBackend;
 import com.threerings.msoy.game.client.AVRGameController;
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.AVRGameObject;
@@ -46,7 +46,7 @@ public class AVRGamePanel extends Sprite
         _gameObj = gameObj;
 
         // create the backend
-        _backend = new AVRGameControlBackend(_gctx, _ctrl, _gameObj);
+        _backend = new AVRGameBackend(_gctx, _ctrl, _gameObj);
 
         // create the container for the user media
         _mediaHolder = new MediaContainer(gameObj.gameMedia.getMediaPath());
@@ -109,6 +109,6 @@ public class AVRGamePanel extends Sprite
     protected var _ctrl :AVRGameController;
     protected var _mediaHolder :MediaContainer;
     protected var _gameObj :AVRGameObject;
-    protected var _backend :AVRGameControlBackend;
+    protected var _backend :AVRGameBackend;
 }
 }

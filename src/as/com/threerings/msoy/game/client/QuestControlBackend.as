@@ -1,5 +1,5 @@
 //
-// $Id: AVRGameControlBackend.as 6424 2007-10-28 23:20:25Z zell $
+// $Id: QuestControlBackend.as 6424 2007-10-28 23:20:25Z zell $
 
 package com.threerings.msoy.game.client {
 
@@ -23,10 +23,10 @@ import com.threerings.msoy.world.client.RoomView;
 
 public class QuestControlBackend
 {
-    public static const log :Log = Log.getLog(AVRGameControlBackend);
+    public static const log :Log = Log.getLog(QuestControlBackend);
 
     public function QuestControlBackend (
-        gctx :GameContext, backend :AVRGameControlBackend, gameObj :AVRGameObject)
+        gctx :GameContext, backend :AVRGameBackend, gameObj :AVRGameObject)
     {
         _gctx = gctx;
         _mctx = gctx.getWorldContext();
@@ -183,7 +183,7 @@ public class QuestControlBackend
 
     protected var _mctx :WorldContext;
     protected var _gctx :GameContext;
-    protected var _backend :AVRGameControlBackend;
+    protected var _backend :AVRGameBackend;
     protected var _gameObj :AVRGameObject;
     protected var _playerObj :PlayerObject;
 

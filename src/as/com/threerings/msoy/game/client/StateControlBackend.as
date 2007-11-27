@@ -1,5 +1,5 @@
 //
-// $Id: AVRGameControlBackend.as 6424 2007-10-28 23:20:25Z zell $
+// $Id: StateControlBackend.as 6424 2007-10-28 23:20:25Z zell $
 
 package com.threerings.msoy.game.client {
 
@@ -22,10 +22,10 @@ import com.threerings.msoy.game.data.PlayerObject;
 
 public class StateControlBackend
 {
-    public static const log :Log = Log.getLog(AVRGameControlBackend);
+    public static const log :Log = Log.getLog(StateControlBackend);
 
     public function StateControlBackend (
-        gctx :GameContext, backend :AVRGameControlBackend, gameObj :AVRGameObject)
+        gctx :GameContext, backend :AVRGameBackend, gameObj :AVRGameObject)
     {
         _gctx = gctx;
         _mctx = gctx.getWorldContext();
@@ -140,7 +140,7 @@ public class StateControlBackend
 
     protected var _mctx :WorldContext;
     protected var _gctx :GameContext;
-    protected var _backend :AVRGameControlBackend;
+    protected var _backend :AVRGameBackend;
     protected var _gameObj :AVRGameObject;
     protected var _playerObj :PlayerObject;
 

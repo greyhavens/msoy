@@ -36,11 +36,11 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.RoomObject;
 
-public class AVRGameControlBackend extends ControlBackend
+public class AVRGameBackend extends ControlBackend
 {
-    public static const log :Log = Log.getLog(AVRGameControlBackend);
+    public static const log :Log = Log.getLog(AVRGameBackend);
 
-    public function AVRGameControlBackend (
+    public function AVRGameBackend (
         gctx :GameContext, ctrl :AVRGameController, gameObj :AVRGameObject)
     {
         _gctx = gctx;
