@@ -737,7 +737,7 @@ Tree {
   backgroundColor: #000000;
 }
 
-.lobbyPanel, .borderedBox, .descriptionBox, .titleBox, .infoBox, .tablesBox, .tabsBox {
+.lobbyPanel, .contentsBox, .descriptionBox, .titleBox, .infoBox {
   horizontalGap: 0;
   verticalGap: 0;
 }
@@ -751,28 +751,13 @@ Tree {
 
 .startBox {
   verticalAlign: bottom;
-  paddingRight: 4px;
-  paddingBottom: 4px;
-}
-
-.borderedBox {
-  backgroundImage: Embed(source="../../rsrc/media/skins/box/border.png",
-          scaleGridTop="4", scaleGridBottom="16",
-          scaleGridLeft="4", scaleGridRight="16");
-  backgroundSize: "100%";
-  paddingLeft: 4px;
-  paddingRight: 4px;
-  paddingTop: 4px;
-  paddingBottom: 4px;
 }
 
 .descriptionBox {
-}
-
-.buttonBox {
-  horizontalAlign: right;
-  paddingRight: 4px;
-  paddingBottom: 4px;
+  paddingLeft: 5px;
+  paddingRight: 5px;
+  paddingTop: 5px;
+  paddingBottom: 5px;
 }
 
 .lobbyLink {
@@ -794,29 +779,40 @@ Tree {
 
 .lobbyLogoBox {
   verticalAlign: middle;
-  horizontalAlign: center;
+  horizontalAlign: left;
 }
 
 .lobbyInfo {
   fontSize: 12;
   paddingLeft: 7;
   paddingRight: 7;
-  paddingTop: 7;
-  paddingBottom: 7;
-}
-
-.tabsBox {
-  verticalAlign: bottom;
-}
-
-.tablesBox {
 }
 
 .lobbyTableList {
-  paddingTop: 0;
-  paddingBottom: 0;
-  paddingLeft: 0;
-  paddingRight: 0;
+  borderThickness: 0px;
+  backgroundImage: Embed(source="../../rsrc/media/skins/box/border.png",
+          scaleGridTop="4", scaleGridBottom="16",
+          scaleGridLeft="4", scaleGridRight="16");
+  backgroundSize: "100%";
+  paddingLeft: 4px;
+  paddingRight: 4px;
+  paddingTop: 4px;
+  paddingBottom: 4px;
+}
+
+.tablesStar {
+  backgroundSkin: Embed(source="../../rsrc/media/skins/lobby/games_star.png");
+}
+
+.tablesTitle {
+  backgroundImage: Embed(source="../../rsrc/media/skins/lobby/games_tile.png",
+                         scaleGridTop="4", scaleGridBottom="16", 
+                         scaleGridLeft="4", scaleGridRight="16");
+  backgroundSize: "100%";
+  color: #FFFFFF;
+  fontSize: 12;
+  fontWeight: bold;
+  horizontalAlign: center;
 }
 
 .lobbyCloseBox {

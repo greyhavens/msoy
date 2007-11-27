@@ -42,6 +42,8 @@ import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.MsoyUI;
+import com.threerings.msoy.ui.SkinnableImage;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyTable;
@@ -120,8 +122,9 @@ public class LobbyPanel extends VBox
                 _friendsOnly ? "m.no_friends_party" : "m.no_penders_party");
         }
 
-        _tablesBox.removeAllChildren();
-        createTablesDisplay();
+        // create our table creation panel now that we have our game config
+        _creationPanel = new TableCreationPanel(_gctx, this);
+        _creationPanel.enabled = !isSeated();
 
         for each (var table :Table in _lobbyObj.tables.toArray()) {
             tableAdded(table);
@@ -297,8 +300,7 @@ public class LobbyPanel extends VBox
         titleBox.percentWidth = 100;
         titleBox.height = 20;
         addChild(titleBox);
-        _title = new Label();
-        _title.styleName = "locationName";
+        _title = MsoyUI.createLabel("", "locationName");
         _title.width = 160;
         titleBox.addChild(_title);
         var padding :HBox = new HBox();
@@ -307,18 +309,12 @@ public class LobbyPanel extends VBox
         titleBox.addChild(padding);
 
         var embedBtnBox :HBox = new HBox();
-        _about = new Label();
-        _about.styleName = "embedButton";
-        embedBtnBox.addChild(_about);
-        _buy = new Label();
-        _buy.styleName = "embedButton";
-        embedBtnBox.addChild(_buy);
+        embedBtnBox.addChild(_about = MsoyUI.createLabel("", "embedButton"));
+        embedBtnBox.addChild(_buy = MsoyUI.createLabel("", "embedButton"));
         embedBtnBox.styleName = "headerEmbedBox";
         embedBtnBox.percentHeight = 100;
         titleBox.addChild(embedBtnBox);
-        var embedBtn :Label = new Label();
-        embedBtn.styleName = "embedButton";
-        embedBtn.text = Msgs.GENERAL.get("l.share");
+        var embedBtn :Label = MsoyUI.createLabel(Msgs.GENERAL.get("l.share"), "embedButton");
         var thisLobbyPanel :LobbyPanel = this;
         embedBtn.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             new EmbedDialog(_wctx);
@@ -338,7 +334,7 @@ public class LobbyPanel extends VBox
 
         _contents = new VBox();
         addChild(_contents);
-        _contents.styleName = "borderedBox";
+        _contents.styleName = "contentsBox";
         _contents.percentWidth = 100;
         _contents.percentHeight = 100;
 
@@ -375,20 +371,20 @@ public class LobbyPanel extends VBox
         startBox.addChild(_createBtn);
         _headerBox.addChild(startBox);
 
-        _tablesBox = new VBox();
-        _tablesBox.styleName = "tablesBox";
-        _tablesBox.percentWidth = 100;
-        _tablesBox.percentHeight = 100;
-        _contents.addChild(_tablesBox);
+        var tablesHeader :HBox = new HBox();
+        tablesHeader.setStyle("horizontalGap", 0);
+        tablesHeader.percentWidth = 100;
+        tablesHeader.addChild(new SkinnableImage("tablesStar"));
+        var thCenter :HBox = new HBox();
+        thCenter.styleName = "tablesTitle";
+        thCenter.percentWidth = 100;
+        thCenter.height = 20;
+        thCenter.addChild(MsoyUI.createLabel("Game Tables"));
+        tablesHeader.addChild(thCenter);
+        tablesHeader.addChild(new SkinnableImage("tablesStar"));
+        _contents.addChild(tablesHeader);
 
-        var loadingLabel :Label = new Label();
-        loadingLabel.text = Msgs.GAME.get("l.gameLoading");
-        _tablesBox.addChild(loadingLabel);
-    }
-
-    protected function createTablesDisplay () :void
-    {
-        // our game table data
+        // create our tables list now that we have our table information
         var list :List = new List();
         list.styleName = "lobbyTableList";
         list.variableRowHeight = true;
@@ -399,16 +395,7 @@ public class LobbyPanel extends VBox
         factory.properties = { gctx: _gctx, panel: this };
         list.itemRenderer = factory;
         list.dataProvider = _tables;
-
-        var bar :HBox = new HBox();
-        bar.styleName = "tabsFillerBox";
-        bar.percentWidth = 100;
-        bar.height = 9;
-        _tablesBox.addChild(bar);
-        _tablesBox.addChild(list);
-
-        _creationPanel = new TableCreationPanel(_gctx, this);
-        _creationPanel.enabled = !isSeated();
+        _contents.addChild(list);
     }
 
     protected static const LOBBY_PANEL_WIDTH :int = 500; // in px
@@ -442,7 +429,6 @@ public class LobbyPanel extends VBox
     protected var _title :Label;
     protected var _about :Label;
     protected var _buy :Label;
-    protected var _tablesBox :VBox;
     protected var _createBtn :CommandButton;
 
     protected var _pendersHeader :String;

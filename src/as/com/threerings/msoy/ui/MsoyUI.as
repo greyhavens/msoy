@@ -14,10 +14,13 @@ import mx.controls.TextInput;
  */
 public class MsoyUI
 {
-    public static function createLabel (txt :String) :Label
+    public static function createLabel (txt :String, style :String = null) :Label
     {
         var label :Label = new Label();
         label.text = txt;
+        if (style != null) {
+            label.styleName = style;
+        }
         return label;
     }
 
