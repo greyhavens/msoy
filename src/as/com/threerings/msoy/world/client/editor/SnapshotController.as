@@ -9,6 +9,7 @@ import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
+import flash.net.URLRequestMethod;
 import flash.utils.ByteArray;
 
 import com.threerings.msoy.data.MsoyCodes;
@@ -33,7 +34,7 @@ public class SnapshotController
 
         _request = new URLRequest();
         _request.url = baseUrl + SERVICE_ENTRY_POINT;
-        _request.method = "POST";
+        _request.method = URLRequestMethod.POST;
         _request.contentType = "multipart/form-data; boundary=" + BOUNDARY;
 
         _loader = new URLLoader();
