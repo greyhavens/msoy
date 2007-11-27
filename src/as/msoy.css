@@ -737,6 +737,11 @@ Tree {
   backgroundColor: #000000;
 }
 
+.thumbnailPanel {
+  verticalAlign: middle;
+  horizontalAlign: center;
+}
+
 .lobbyPanel, .contentsBox, .descriptionBox, .titleBox, .infoBox {
   horizontalGap: 0;
   verticalGap: 0;
@@ -775,11 +780,6 @@ Tree {
   verticalAlign: middle;
   paddingLeft: 4px;
   paddingRight: 4px;
-}
-
-.lobbyLogoBox {
-  verticalAlign: middle;
-  horizontalAlign: left;
 }
 
 .lobbyInfo {

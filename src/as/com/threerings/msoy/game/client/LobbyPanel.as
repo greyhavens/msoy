@@ -23,7 +23,6 @@ import com.threerings.util.Log;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
 
-import com.threerings.flash.MediaContainer;
 import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.flex.CommandButton;
@@ -41,14 +40,13 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.SkinnableImage;
+import com.threerings.msoy.ui.ThumbnailPanel;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyTable;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * A panel that displays pending table games.
@@ -108,7 +106,7 @@ public class LobbyPanel extends VBox
             _buy.parent.removeChild(_buy);
         }
 
-        _logo.addChild(new MediaWrapper(new MediaContainer(getGame().getThumbnailPath())));
+        _logo.setItem(getGame());
         _info.text = game.description;
 
         // determine our informational messages
@@ -123,7 +121,7 @@ public class LobbyPanel extends VBox
         }
 
         // create our table creation panel now that we have our game config
-        _creationPanel = new TableCreationPanel(_gctx, this, getGame().getThumbnailPath());
+        _creationPanel = new TableCreationPanel(_gctx, this);
         _creationPanel.enabled = !isSeated();
 
         for each (var table :Table in _lobbyObj.tables.toArray()) {
@@ -358,11 +356,7 @@ public class LobbyPanel extends VBox
         _headerBox.styleName = "descriptionBox";
         _contents.addChild(_headerBox);
 
-        _logo = new VBox();
-        _logo.styleName = "lobbyLogoBox";
-        _logo.width = MediaDesc.THUMBNAIL_WIDTH;
-        _logo.height = MediaDesc.THUMBNAIL_HEIGHT;
-        _headerBox.addChild(_logo);
+        _headerBox.addChild(_logo = new ThumbnailPanel());
 
         var infoBox :HBox = new HBox();
         infoBox.styleName = "infoBox";
@@ -438,7 +432,7 @@ public class LobbyPanel extends VBox
     // various UI bits that need filling in with data arrives
     protected var _headerBox :HBox;
     protected var _contents :VBox;
-    protected var _logo :VBox;
+    protected var _logo :ThumbnailPanel;
     protected var _info :Text;
     protected var _title :Label, _about :Label, _buy :Label;
     protected var _createBtn :CommandButton;

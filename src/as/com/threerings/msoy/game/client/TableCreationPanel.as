@@ -10,38 +10,34 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
 
-import com.threerings.flash.MediaContainer;
 import com.threerings.flex.CommandButton;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 
 import com.threerings.parlor.client.DefaultFlexTableConfigurator;
 import com.threerings.parlor.client.TableConfigurator;
-import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.client.GameConfigurator;
 import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.ezgame.client.EZGameConfigurator;
 import com.threerings.ezgame.data.GameDefinition;
 
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.ThumbnailPanel;
 import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 
 public class TableCreationPanel extends HBox
 {
-    public function TableCreationPanel (ctx :GameContext, panel :LobbyPanel, logoURL :String)
+    public function TableCreationPanel (ctx :GameContext, panel :LobbyPanel)
     {
         _ctx = ctx;
         _game = panel.getGame();
         _gameDef = panel.getGameDefinition();
         _panel = panel;
-        _logoURL = logoURL;
     }
 
     override protected function createChildren () :void
@@ -51,12 +47,8 @@ public class TableCreationPanel extends HBox
         styleName = "tableCreationPanel";
         percentWidth = 100;
 
-        _logo = new VBox();
-        _logo.styleName = "lobbyLogoBox";
-        _logo.width = MediaDesc.THUMBNAIL_WIDTH;
-        _logo.height = MediaDesc.THUMBNAIL_HEIGHT;
-        _logo.addChild(new MediaWrapper(new MediaContainer(_logoURL)));
-        addChild(_logo);
+        addChild(_logo = new ThumbnailPanel());
+        _logo.setItem(_game);
 
         var contents :VBox = new VBox();
         contents.percentWidth = 100;
@@ -65,8 +57,7 @@ public class TableCreationPanel extends HBox
         // create our various game configuration bits but do not add them
         var gconf :EZGameConfigurator = new EZGameConfigurator();
         gconf.setColumns(3);
-        var gconfigger :GameConfigurator = gconf;
-        gconfigger.init(_ctx);
+        gconf.init(_ctx);
 
         var playersStr :String = Msgs.GAME.get("l.players") + ": ";
         var watchableStr :String = Msgs.GAME.get("l.watchable") + ": ";
@@ -92,7 +83,7 @@ public class TableCreationPanel extends HBox
                 "<match type='" + match.getMatchType() + "'> is not a valid type");
             return;
         }
-        tconfigger.init(_ctx, gconfigger);
+        tconfigger.init(_ctx, gconf);
 
         var config :MsoyGameConfig = new MsoyGameConfig();
         config.init(_game, _gameDef);
@@ -111,8 +102,7 @@ public class TableCreationPanel extends HBox
         // we need to have the button go through this function so that the TableConfig and
         // GameConfig are created when the button is pressed
         create.setCallback(function () :void {
-            _panel.controller.handleSubmitTable(
-                tconfigger.getTableConfig(), gconfigger.getGameConfig());
+            _panel.controller.handleSubmitTable(tconfigger.getTableConfig(), gconf.getGameConfig());
         });
         create.label = Msgs.GAME.get("b.create");
         _buttonBox.addChild(create);
@@ -136,8 +126,7 @@ public class TableCreationPanel extends HBox
     /** The lobby panel we're in. */
     protected var _panel :LobbyPanel;
 
-    protected var _logoURL :String;
-    protected var _logo :VBox;
+    protected var _logo :ThumbnailPanel;
     protected var _configBox :Container;
     protected var _buttonBox :HBox;
 }

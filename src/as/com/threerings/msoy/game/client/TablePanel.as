@@ -45,12 +45,7 @@ public class TablePanel extends VBox
     public function TablePanel (gctx :GameContext, panel :LobbyPanel, table :MsoyTable,
                                    popup :Boolean = false)
     {
-        if (_popup = popup) {
-            styleName = "floatingTablePanel";
-        } else {
-            styleName = "listTablePanel";
-        }
-
+        styleName = popup ? "floatingTablePanel" : "listTablePanel";
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
         percentWidth = 100;
@@ -70,20 +65,14 @@ public class TablePanel extends VBox
             _seatsGrid.addCell(seat);
         }
         _seatsGrid.setStyle("horizontalGap",
-                            10 * (_popup ? 1 : Math.max(1, 8-table.occupants.length)));
+                            10 * (popup ? 1 : Math.max(1, 8-table.occupants.length)));
 
         // create a box to hold configuration options if we're not a popup
-        if (!_popup) {
+        if (!popup) {
             _labelsBox = new HBox();
             _labelsBox.verticalScrollPolicy = ScrollPolicy.OFF;
             _labelsBox.horizontalScrollPolicy = ScrollPolicy.OFF;
             addChild(_labelsBox);
-
-            // TODO: table.playerCount is not getting set... I'm not sure why TableManager isn't
-            // doing this, but I don't want to mess with that, in case one of the other games is
-            // relying on the current behavior.
-            _watcherCount = table.watcherCount;
-            // _watcherCount = table.watcherCount - table.playerCount;
         }
 
         // if we are the creator, add a button for starting the game now
@@ -121,37 +110,6 @@ public class TablePanel extends VBox
             }
         }
 
-        if (!_popup) {
-            // update our configuration display if we're not a popup
-            while (_labelsBox.numChildren > 0) {
-                _labelsBox.removeChild(_labelsBox.getChildAt(0));
-            }
-
-            // if the game is in progress, report its watcher count
-            if (table.gameOid != -1) {
-                var wc :String = String(_watcherCount);
-                if (table.config.getMatchType() == GameConfig.PARTY) {
-                    _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.players"), wc));
-                } else if (!(_gameDef.match as MsoyMatchConfig).unwatchable &&
-                           !table.tconfig.privateTable) {
-                    _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.watchers"), wc));
-                }
-            }
-
-            if (table.config is EZGameConfig) {
-                var params :Array = (table.config as EZGameConfig).getGameDefinition().params;
-                if (params != null) {
-                    var ezconfig :EZGameConfig = (table.config as EZGameConfig);
-                    for each (var param :Parameter in params) {
-                            var name :String =
-                                     StringUtil.isBlank(param.name) ? param.ident : param.name;
-                            var value :String = String(ezconfig.params.get(param.ident));
-                            _labelsBox.addChild(makeConfigLabel(name, value, param.tip));
-                        }
-                }
-            }
-        }
-
         // finally update our state
         update(table, panel.isSeated());
     }
@@ -165,6 +123,33 @@ public class TablePanel extends VBox
         }
         for (var ii :int = 0; ii < table.occupants.length; ii++) {
             (_seatsGrid.getCellAt(ii) as SeatPanel).update(_gctx, table, ii, isSeated);
+        }
+
+        // update our configuration labels if we have them
+        if (_labelsBox == null) {
+            return;
+        }
+        while (_labelsBox.numChildren > 0) {
+            _labelsBox.removeChild(_labelsBox.getChildAt(0));
+        }
+
+        // if the game is in progress, report the number of people in the room
+        if (table.gameOid != -1) {
+            var wc :String = String(table.watcherCount);
+            _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.people"), wc));
+        }
+
+        if (table.config is EZGameConfig) {
+            var params :Array = (table.config as EZGameConfig).getGameDefinition().params;
+            if (params != null) {
+                var ezconfig :EZGameConfig = (table.config as EZGameConfig);
+                for each (var param :Parameter in params) {
+                        var name :String = StringUtil.isBlank(param.name) ?
+                                 param.ident : param.name;
+                        var value :String = String(ezconfig.params.get(param.ident));
+                        _labelsBox.addChild(makeConfigLabel(name, value, param.tip));
+                    }
+            }
         }
     }
 
@@ -185,7 +170,6 @@ public class TablePanel extends VBox
 
     protected var _game :Game;
     protected var _gameDef :GameDefinition;
-    protected var _popup :Boolean; 
 }
 }
 
