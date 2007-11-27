@@ -69,6 +69,8 @@ public class TablePanel extends VBox
             var seat :SeatPanel = new SeatPanel();
             _seatsGrid.addCell(seat);
         }
+        _seatsGrid.setStyle("horizontalGap",
+                            10 * (_popup ? 1 : Math.max(1, 8-table.occupants.length)));
 
         // create a box to hold configuration options if we're not a popup
         if (!_popup) {

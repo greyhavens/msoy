@@ -220,7 +220,11 @@ public class LobbyPanel extends VBox
             _tableList.removeChildAt(0);
         }
         if (_tableList.numChildren == 0) {
-            _tableList.addChild(MsoyUI.createLabel(_pendersHeader, "tableHeader"));
+            var header :HBox = new HBox();
+            header.percentWidth = 100;
+            header.styleName = "tableHeader";
+            header.addChild(MsoyUI.createLabel(_pendersHeader));
+            _tableList.addChild(header);
         }
 
         // finally add the table at the bottom of the list

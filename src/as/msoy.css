@@ -797,6 +797,7 @@ Tree {
   paddingRight: 4px;
   paddingTop: 4px;
   paddingBottom: 4px;
+  verticalGap: 0px;
 }
 
 .tablesStar {
@@ -925,8 +926,8 @@ Tree {
   borderStyle: "none";
 }
 
-.nameLabel, .lobbyLabel {
-  fontWeight: bold;
+.lobbyLabel {
+  color: #859BAE;
 }
 
 .createBtnBox {
