@@ -42,9 +42,9 @@ public class FloatingTableDisplay extends FloatingPanel
         horizontalScrollPolicy = ScrollPolicy.OFF;
     }
 
-    public function getRenderer () :TableRenderer
+    public function getPanel () :TablePanel
     {
-        return _tableRender;
+        return _tablePanel;
     }
 
     public function getGameId () :int
@@ -81,7 +81,7 @@ public class FloatingTableDisplay extends FloatingPanel
                 shutdown();
             } else {
                 _table = (table as MsoyTable);
-                _tableRender.update(_table, true);
+                _tablePanel.update(_table, true);
             }
         }
     }
@@ -119,13 +119,13 @@ public class FloatingTableDisplay extends FloatingPanel
         padding.percentHeight = 100;
         row.addChild(padding);
 
-        row.addChild(_tableRender = new TableRenderer(_gctx, _panel, _table, true));
+        row.addChild(_tablePanel = new TablePanel(_gctx, _panel, _table, true));
     }
 
     protected var _gctx :GameContext;
     protected var _panel :LobbyPanel;
     protected var _table :MsoyTable;
-    protected var _tableRender :TableRenderer;
+    protected var _tablePanel :TablePanel;
     protected var _tableDir :TableDirector;
     protected var _hasBeenShutDown :Boolean = false;
 }

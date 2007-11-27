@@ -884,13 +884,13 @@ Tree {
   selectedUpSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
 }
 
-.floatingTableRenderer, .listTableRenderer {
+.floatingTablePanel, .listTablePanel {
   /* horizontalGap: set programmatically */
   verticalGap: 0;
   paddingTop: 5px;
 }
 
-.listTableRenderer {
+.listTablePanel {
   borderThickness: 2;
   borderStyle: "solid";
   borderColor: #E0E7EE;
@@ -918,7 +918,7 @@ Tree {
   paddingBottom: 10px;
 }
 
-.seatRenderer {
+.seatPanel {
   horizontalAlign: "center";
   verticalGap: 0;
   borderThickness: 0;

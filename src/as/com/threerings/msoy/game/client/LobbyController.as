@@ -225,7 +225,7 @@ public class LobbyController extends Controller implements Subscriber
             var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(
                 _gctx, _panel, _tableDir, _panel.getGame().name);
             tableDisplay.open();
-            setControlledPanel(tableDisplay.getRenderer());
+            setControlledPanel(tableDisplay.getPanel());
             _mctx.getTopPanel().setTableDisplay(tableDisplay);
 
         } else {

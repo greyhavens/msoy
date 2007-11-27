@@ -194,7 +194,7 @@ public class LobbyPanel extends VBox
                 hideCreateGame();
             }
             for each (var table :MsoyTable in _lobbyObj.tables.toArray()) {
-                var panel :TableRenderer = getTablePanel(table.tableId);
+                var panel :TablePanel = getTablePanel(table.tableId);
                 if (panel != null) {
                     panel.update(table, isSeated());
                 }
@@ -224,7 +224,7 @@ public class LobbyPanel extends VBox
         }
 
         // finally add the table at the bottom of the list
-        _tableList.addChild(new TableRenderer(_gctx, this, table as MsoyTable));
+        _tableList.addChild(new TablePanel(_gctx, this, table as MsoyTable));
     }
 
     // from TableObserver
@@ -239,7 +239,7 @@ public class LobbyPanel extends VBox
         }
 
         // if we're in friends only mode, this table may now be visible or not
-        var panel :TableRenderer = getTablePanel(table.tableId);
+        var panel :TablePanel = getTablePanel(table.tableId);
         if (_friendsOnly) {
             var count :int = (table as MsoyTable).countFriends(_wctx.getMemberObject());
             if (count > 0 && panel == null) {
@@ -261,7 +261,7 @@ public class LobbyPanel extends VBox
     // from TableObserver
     public function tableRemoved (tableId :int) :void
     {
-        var panel :TableRenderer = getTablePanel(tableId);
+        var panel :TablePanel = getTablePanel(tableId);
         if (panel != null) {
             _tableList.removeChild(panel);
             if (_tableList.numChildren == 1 && _tableList.getChildAt(0) is Label) {
@@ -402,10 +402,10 @@ public class LobbyPanel extends VBox
         _contents.addChild(_tableList);
     }
 
-    protected function getTablePanel (tableId :int) :TableRenderer
+    protected function getTablePanel (tableId :int) :TablePanel
     {
         for (var ii :int = 0; ii < _tableList.numChildren; ii++) {
-            var child :TableRenderer = (_tableList.getChildAt(ii) as TableRenderer);
+            var child :TablePanel = (_tableList.getChildAt(ii) as TablePanel);
             if (child != null && child.tableId == tableId) {
                 return child;
             }

@@ -38,17 +38,17 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.MsoyTable;
 
-public class TableRenderer extends VBox
+public class TablePanel extends VBox
 {
     public var tableId :int;
 
-    public function TableRenderer (gctx :GameContext, panel :LobbyPanel, table :MsoyTable,
+    public function TablePanel (gctx :GameContext, panel :LobbyPanel, table :MsoyTable,
                                    popup :Boolean = false)
     {
         if (_popup = popup) {
-            styleName = "floatingTableRenderer";
+            styleName = "floatingTablePanel";
         } else {
-            styleName = "listTableRenderer";
+            styleName = "listTablePanel";
         }
 
         verticalScrollPolicy = ScrollPolicy.OFF;
@@ -66,7 +66,7 @@ public class TableRenderer extends VBox
         _seatsGrid.horizontalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.styleName = "seatsGrid";
         for (var ii :int = 0; ii < table.occupants.length; ii++) {
-            var seat :SeatRenderer = new SeatRenderer();
+            var seat :SeatPanel = new SeatPanel();
             _seatsGrid.addCell(seat);
         }
 
@@ -162,7 +162,7 @@ public class TableRenderer extends VBox
             _startBtn.enabled = table.mayBeStarted();
         }
         for (var ii :int = 0; ii < table.occupants.length; ii++) {
-            (_seatsGrid.getCellAt(ii) as SeatRenderer).update(_gctx, table, ii, isSeated);
+            (_seatsGrid.getCellAt(ii) as SeatPanel).update(_gctx, table, ii, isSeated);
         }
     }
 
@@ -206,11 +206,11 @@ import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.data.MsoyTable;
 
-class SeatRenderer extends VBox
+class SeatPanel extends VBox
 {
-    public function SeatRenderer () :void
+    public function SeatPanel () :void
     {
-        styleName = "seatRenderer";
+        styleName = "seatPanel";
     }
 
     public function update (ctx :GameContext, table :MsoyTable, index :int, areSeated :Boolean) :void
