@@ -736,16 +736,16 @@ public class WorldServlet extends MsoyServiceServlet
 
                 // see which (if any) of our friends are on this server
                 for (FriendEntry entry : friends) {
-                    MemberLocation memloc = mnobj.memberLocs.get(entry.name.getMemberId());
-                    if (memloc == null) {
+                    MemberLocation memLoc = mnobj.memberLocs.get(entry.name.getMemberId());
+                    if (memLoc == null) {
                         continue;
                     }
-                    if (memloc.sceneId != 0) {
-                        noteFriend(scenes, entry, snap.getScene(memloc.sceneId));
+                    if (memLoc.sceneId != 0) {
+                        noteFriend(scenes, entry, snap.getScene(memLoc.sceneId));
                     }
                     if (memLoc.gameId != 0 && !Game.isDeveloperVersion(memLoc.gameId) &&
-                        memloc.gameId != Game.TUTORIAL_GAME_ID) {
-                        noteFriend(games, entry, snap.getGame(memloc.gameId));
+                        memLoc.gameId != Game.TUTORIAL_GAME_ID) {
+                        noteFriend(games, entry, snap.getGame(memLoc.gameId));
                     }
                 }
             }
