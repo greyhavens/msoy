@@ -136,8 +136,11 @@ public class TablePanel extends VBox
         // if the game is in progress, report the number of people in the room
         if (table.gameOid != -1) {
             var wc :String = String(table.watcherCount);
-            _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.people"), wc));
+            _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.people") + ": "+ wc, ""));
         }
+
+        var ratedKey :String = table.config.rated ? "l.is_rated" : "l.not_rated";
+        _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get(ratedKey), Msgs.GAME.get("t.rated")));
 
         if (table.config is EZGameConfig) {
             var params :Array = (table.config as EZGameConfig).getGameDefinition().params;
@@ -147,15 +150,15 @@ public class TablePanel extends VBox
                         var name :String = StringUtil.isBlank(param.name) ?
                                  param.ident : param.name;
                         var value :String = String(ezconfig.params.get(param.ident));
-                        _labelsBox.addChild(makeConfigLabel(name, value, param.tip));
+                        _labelsBox.addChild(makeConfigLabel(name + ": "+ value, param.tip));
                     }
             }
         }
     }
 
-    protected function makeConfigLabel (name :String, value :String, tip :String = "") :UIComponent
+    protected function makeConfigLabel (text :String, tip :String) :UIComponent
     {
-        var label :Label = MsoyUI.createLabel(name + ": " + value, "tableStatusLabel");
+        var label :Label = MsoyUI.createLabel(text, "tableStatusLabel");
         if (tip != "") {
             label.toolTip = tip;
         }

@@ -21,6 +21,8 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.ezgame.client.EZGameConfigurator;
 import com.threerings.ezgame.data.GameDefinition;
+import com.threerings.ezgame.data.RangeParameter;
+import com.threerings.ezgame.data.ToggleParameter;
 
 import com.threerings.msoy.ui.ThumbnailPanel;
 import com.threerings.msoy.client.Msgs;
@@ -55,27 +57,41 @@ public class TableCreationPanel extends HBox
         addChild(contents);
 
         // create our various game configuration bits but do not add them
-        var gconf :EZGameConfigurator = new EZGameConfigurator();
+        var rparam :ToggleParameter = new ToggleParameter();
+        rparam.name = Msgs.GAME.get("l.rated");
+        rparam.tip = Msgs.GAME.get("t.rated");
+        rparam.start = true;
+        var gconf :EZGameConfigurator = new EZGameConfigurator(rparam);
         gconf.setColumns(3);
         gconf.init(_ctx);
 
-        var playersStr :String = Msgs.GAME.get("l.players") + ": ";
-        var watchableStr :String = Msgs.GAME.get("l.watchable") + ": ";
-        var privateStr :String = Msgs.GAME.get("l.private");
-        var match :MsoyMatchConfig = (_gameDef.match as MsoyMatchConfig);
+        var plparam :RangeParameter = new RangeParameter();
+        plparam.name = Msgs.GAME.get("l.players");
+        plparam.tip = Msgs.GAME.get("t.players");
+        var wparam :ToggleParameter = null;
+        var pvparam :ToggleParameter = null;
 
-        var tconfigger :TableConfigurator;
+        var match :MsoyMatchConfig = (_gameDef.match as MsoyMatchConfig);
         switch (match.getMatchType()) {
         case GameConfig.PARTY:
-            tconfigger = new DefaultFlexTableConfigurator(
-                -1, -1, -1, true, playersStr, watchableStr, privateStr);
+            // plparam stays with zeros
+            // wparam stays null
+            pvparam = new ToggleParameter();
+            pvparam.name = Msgs.GAME.get("l.private");
+            pvparam.tip = Msgs.GAME.get("t.private");
             break;
 
         case GameConfig.SEATED_GAME:
-            // using min_seats for start_seats until we put start_seats in the configuration
-            tconfigger = new DefaultFlexTableConfigurator(
-                match.minSeats, match.minSeats, match.maxSeats, !match.unwatchable,
-                playersStr, Msgs.GAME.get("l.watchable") + ": ");
+            plparam.minimum = match.minSeats;
+            plparam.start = match.startSeats;
+            plparam.maximum = match.maxSeats;
+            if (!match.unwatchable) {
+                wparam = new ToggleParameter();
+                wparam.name = Msgs.GAME.get("l.watchable");
+                wparam.tip = Msgs.GAME.get("t.watchable");
+                wparam.start = true;
+            }
+            // pvparam stays null
             break;
 
         default:
@@ -83,6 +99,9 @@ public class TableCreationPanel extends HBox
                 "<match type='" + match.getMatchType() + "'> is not a valid type");
             return;
         }
+
+        var tconfigger :TableConfigurator =
+            new DefaultFlexTableConfigurator(plparam, wparam, pvparam);
         tconfigger.init(_ctx, gconf);
 
         var config :MsoyGameConfig = new MsoyGameConfig();

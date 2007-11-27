@@ -214,7 +214,7 @@ public class LobbyPanel extends VBox
         }
 
         // if we're adding the first table, remove the "no tables" message and add the header
-        if (_tableList.numChildren == 1 && _tableList.getChildAt(0) is Label) {
+        if (_tableList.numChildren == 1 && !(_tableList.getChildAt(0) is TablePanel)) {
             _tableList.removeChildAt(0);
         }
         if (_tableList.numChildren == 0) {
@@ -266,7 +266,7 @@ public class LobbyPanel extends VBox
         var panel :TablePanel = getTablePanel(tableId);
         if (panel != null) {
             _tableList.removeChild(panel);
-            if (_tableList.numChildren == 1 && _tableList.getChildAt(0) is Label) {
+            if (_tableList.numChildren == 1 && !(_tableList.getChildAt(0) is TablePanel)) {
                 _tableList.removeChildAt(0);
                 _tableList.addChild(MsoyUI.createLabel(_noPendersMsg, "tableMessage"));;
             }
