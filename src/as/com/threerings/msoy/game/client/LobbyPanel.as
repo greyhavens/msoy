@@ -54,8 +54,8 @@ import com.threerings.msoy.item.data.all.Game;
 public class LobbyPanel extends VBox
     implements TableObserver, SeatednessObserver, AttributeChangeListener
 {
-    /** Our log. */
-    private const log :Log = Log.getLog(LobbyPanel);
+    /** The width of the lobby panel. */
+    public static const LOBBY_PANEL_WIDTH :int = 500; // in px
 
     /** The lobby controller. */
     public var controller :LobbyController;
@@ -442,6 +442,7 @@ public class LobbyPanel extends VBox
     protected var _pendersHeader :String;
     protected var _noPendersMsg :String;
 
-    protected static const LOBBY_PANEL_WIDTH :int = 500; // in px
+    /** Our log. */
+    private const log :Log = Log.getLog(LobbyPanel);
 }
 }

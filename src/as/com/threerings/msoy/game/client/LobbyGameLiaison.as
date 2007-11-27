@@ -16,11 +16,15 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.parlor.client.GameReadyObserver;
 
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+
+import mx.containers.HBox;
 
 /**
  * Handles the lobby-specific aspects of the game server connection.
@@ -50,6 +54,14 @@ public class LobbyGameLiaison extends GameLiaison
 
         // listen for changes in world location so that we can shutdown if we move
         _ctx.getLocationDirector().addLocationObserver(_worldLocObs);
+
+        // display feedback indicating that we're locating their game
+        var loading :HBox = new HBox();
+        loading.styleName = "lobbyLoadingBox";
+        loading.width = LobbyPanel.LOBBY_PANEL_WIDTH;
+        loading.percentHeight = 100;
+        loading.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.locating_game")));
+        _ctx.getTopPanel().setLeftPanel(loading);
     }
 
     /**
