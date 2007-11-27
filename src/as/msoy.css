@@ -885,11 +885,6 @@ Tree {
   selectedUpSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
 }
 
-.seatsGrid {
-  horizontalGap: 4;
-  verticalGap: 4;
-}
-
 .floatingTableRenderer, .listTableRenderer {
   horizontalGap: 4;
   verticalGap: 0;
@@ -900,6 +895,16 @@ Tree {
   borderStyle: "solid";
   borderColor: #E0E7EE;
   borderSides: "left right bottom";
+  horizontalAlign: center;
+}
+
+.seatsGrid {
+  horizontalGap: 4;
+  verticalGap: 4;
+  verticalAlign: middle;
+/*  borderThickness: 1;
+  borderStyle: "solid";
+  borderColor: #222222; */
 }
 
 .tableHeader {
@@ -918,14 +923,9 @@ Tree {
 }
 
 .seatRenderer {
-  verticalAlign: middle;
+  verticalAlign: bottom;
   borderThickness: 0;
   borderStyle: "none";
-  horizontalGap: 2;
-  paddingTop: 5px;
-  paddingLeft: 2px;
-  paddingRight: 2px;
-  paddingBottom: 5px;
 }
 
 .nameLabel, .lobbyLabel {

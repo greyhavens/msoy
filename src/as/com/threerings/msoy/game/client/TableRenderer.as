@@ -27,9 +27,10 @@ import com.threerings.ezgame.data.EZGameConfig;
 import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.ezgame.data.Parameter;
 
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Game;
@@ -37,7 +38,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.MsoyTable;
 
-public class TableRenderer extends HBox
+public class TableRenderer extends VBox
 {
     /** The game context, initialized by our ClassFactory. */
     public var gctx :GameContext;
@@ -91,6 +92,10 @@ public class TableRenderer extends HBox
 
     protected function recheckTable () :void
     {
+        if (gctx.getPlayerObject() == null) { // if we're logged off, don't worry
+            return;
+        }
+
         if (data is String) {
             removeChildren();
             var type :String = (data as String).substr(0, 1);
@@ -156,28 +161,17 @@ public class TableRenderer extends HBox
             styleName = "listTableRenderer";
         }
 
-        if (!_popup) {
-            _labelsBox = new VBox();
-            _labelsBox.width = CONFIG_WIDTH;
-            _labelsBox.setStyle("verticalGap", 0);
-            _labelsBox.setStyle("paddingLeft", 4);
-            _labelsBox.verticalScrollPolicy = ScrollPolicy.OFF;
-            _labelsBox.horizontalScrollPolicy = ScrollPolicy.OFF;
-            addChild(_labelsBox);
-            var padding :VBox = new VBox();
-            padding.setStyle("backgroundColor", 0xE0E7EE);
-            padding.width = PADDING_WIDTH;
-            padding.percentHeight = 100;
-            addChild(padding);
-        }
-
-        var rightSide :VBox = new VBox();
-        rightSide.percentWidth = 100;
-        addChild(rightSide);
-        rightSide.addChild(_seatsGrid = new Tile());
+        addChild(_seatsGrid = new Tile());
         _seatsGrid.verticalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.horizontalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.styleName = "seatsGrid";
+
+        if (!_popup) {
+            _labelsBox = new HBox();
+            _labelsBox.verticalScrollPolicy = ScrollPolicy.OFF;
+            _labelsBox.horizontalScrollPolicy = ScrollPolicy.OFF;
+            addChild(_labelsBox);
+        }
     }
 
     protected function updateSeats (table :MsoyTable, length :int) :void
@@ -203,18 +197,12 @@ public class TableRenderer extends HBox
 
         // if we are the creator, add a button for starting the game now
         if (table.occupants.length > 0 &&
-                gctx.getPlayerObject().getVisibleName().equals(table.occupants[0]) &&
-                (table.tconfig.desiredPlayerCount > table.tconfig.minimumPlayerCount)) {
-            var box :HBox = new HBox();
-            box.styleName = "seatRenderer";
-            box.setStyle("horizontalAlign", "center");
-            box.percentWidth = 100;
-            box.percentHeight = 100;
+            gctx.getPlayerObject().getVisibleName().equals(table.occupants[0]) &&
+            (table.tconfig.desiredPlayerCount > table.tconfig.minimumPlayerCount)) {
             btn = new CommandButton(LobbyController.START_TABLE, table.tableId);
             btn.label = Msgs.GAME.get("b.start_now");
             btn.enabled = table.mayBeStarted();
-            box.addChild(btn);
-            _seatsGrid.addChild(box);
+            _seatsGrid.addChild(btn);
         }
 
         // update our background color based on whether or not we're running
@@ -239,15 +227,9 @@ public class TableRenderer extends HBox
             }
 
             if (key != null) {
-                box = new HBox();
-                box.styleName = "seatRenderer";
-                box.setStyle("horizontalAlign", "center");
-                box.percentWidth = 100;
-                box.percentHeight = 100;
                 btn = new CommandButton(MsoyController.GO_GAME, [ _game.gameId, table.gameOid ]);
                 btn.label = Msgs.GAME.get(key);
-                box.addChild(btn);
-                _seatsGrid.addChild(box);
+                _seatsGrid.addChild(btn);
             }
         }
     }
@@ -261,12 +243,10 @@ public class TableRenderer extends HBox
             _labelsBox.removeChild(_labelsBox.getChildAt(0));
         }
         if (table.config.getMatchType() == GameConfig.PARTY) {
-            _labelsBox.addChild(getConfigRow(Msgs.GAME.get("l.players"),
-                String(_watcherCount)));
+            _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.players"), String(_watcherCount)));
         } else if (!(_gameDef.match as MsoyMatchConfig).unwatchable && 
             !table.tconfig.privateTable) {
-            _labelsBox.addChild(getConfigRow(Msgs.GAME.get("l.watchers"), 
-                String(_watcherCount)));
+            _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.watchers"), String(_watcherCount)));
         }
 
         if (table.config is EZGameConfig) {
@@ -276,37 +256,19 @@ public class TableRenderer extends HBox
                 for each (var param :Parameter in params) {
                     var name :String = StringUtil.isBlank(param.name) ? param.ident : param.name;
                     var value :String = String(ezconfig.params.get(param.ident));
-                    _labelsBox.addChild(getConfigRow(name, value, param.tip, 
-                        value.length > 5 ? value : ""));
+                    _labelsBox.addChild(makeConfigLabel(name, value, param.tip));
                 }
             }
         }
     }
 
-    protected function getConfigRow (
-        name :String, value :String, nameTip :String = "", valueTip :String = "") :UIComponent
+    protected function makeConfigLabel (name :String, value :String, tip :String = "") :UIComponent
     {
-        var row :HBox = new HBox();
-        row.setStyle("horizontalGap", 2);
-        row.percentWidth = 100;
-        row.height = 14;
-        var lbl :Label = new Label();
-        lbl.text = name + ":";
-        lbl.styleName = "lobbyLabel";
-        if (nameTip != "") {
-            lbl.toolTip = nameTip;
+        var label :Label = MsoyUI.createLabel(name + ": " + value, "lobbyLabel");
+        if (tip != "") {
+            label.toolTip = tip;
         }
-        lbl.width = 70;
-        row.addChild(lbl);
-        lbl = new Label();
-        lbl.text = value;
-        lbl.styleName = "lobbyLabel";
-        if (valueTip != "") {
-            lbl.toolTip = valueTip;
-        }
-        lbl.percentWidth = 100;
-        row.addChild(lbl);
-        return row;
+        return label;
     }
 
     protected static const CONFIG_WIDTH :int = 105;
@@ -314,7 +276,7 @@ public class TableRenderer extends HBox
     protected static const HORZ_GAP :int = 4;
 
     protected var _watcherCount :int;
-    protected var _labelsBox :VBox;
+    protected var _labelsBox :HBox;
 
     protected var _seatsGrid :Tile;
 
@@ -328,6 +290,7 @@ public class TableRenderer extends HBox
 }
 
 import mx.containers.HBox;
+import mx.containers.VBox;
 import mx.controls.Label;
 
 import com.threerings.flex.CommandButton;
@@ -349,33 +312,30 @@ class SeatRenderer extends HBox
     public function SeatRenderer () :void
     {
         styleName = "seatRenderer";
-        percentWidth = 100;
-        percentHeight = 100;
     }
 
-    public function update (ctx :GameContext, table :MsoyTable, index :int, 
-        weAreSeated :Boolean) :void
+    public function update (ctx :GameContext, table :MsoyTable, index :int, areSeated :Boolean) :void
     {
         _ctx = ctx;
         _table = table;
         _index = index;
-        var occupant :MemberName = _table.occupants[_index] as MemberName;
 
+        var occupant :MemberName = _table.occupants[_index] as MemberName;
         if (occupant != null) {
             prepareOccupant();
             _headShot.setMediaDesc((_table.headShots[_index] as MediaDesc));
             _name.text = occupant.toString();
             if (occupant.equals(_ctx.getPlayerObject().memberName)) {
                 _leaveBtn.setCommand(LobbyController.LEAVE_TABLE, _table.tableId);
-                _leaveBtn.visible = _leaveBtn.includeInLayout = true;
+                _leaveBtn.visible = (_leaveBtn.includeInLayout = true);
             } else {
-                _leaveBtn.visible = _leaveBtn.includeInLayout = false;
+                _leaveBtn.visible = (_leaveBtn.includeInLayout = false);
             }
             // TODO: add support for booting players from tables to the TableService, make it 
             // optional on TableManager creation, and support it here in the form of the closebox
         } else {
             prepareJoinButton();
-            _joinBtn.enabled = (table.gameOid <= 0) && !weAreSeated;
+            _joinBtn.enabled = (table.gameOid <= 0) && !areSeated;
         }
     }
 
@@ -385,9 +345,12 @@ class SeatRenderer extends HBox
             while (numChildren > 0) {
                 removeChild(getChildAt(0));
             }
-            addChild(new MediaWrapper(_headShot = new ScalingMediaContainer(40, 40), 40, 40));
-            addChild(_name = new Label());
+            var vbox :VBox = new VBox();
+            vbox.setStyle("horizontalAlign", "center");
+            vbox.addChild(new MediaWrapper(_headShot = new ScalingMediaContainer(40, 40), 40, 40));
+            vbox.addChild(_name = new Label());
             _name.styleName = "nameLabel";
+            addChild(vbox);
             addChild(_leaveBtn = new CommandButton());
             _leaveBtn.styleName = "closeButton";
         } 

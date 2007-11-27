@@ -164,8 +164,12 @@ public class LobbyPanel extends VBox
      */
     public function showCreateGame () :void
     {
-        _contents.removeChild(_headerBox);
-        _contents.addChildAt(_creationPanel, 0);
+        if (_headerBox.parent != null) {
+            _contents.removeChild(_headerBox);
+        }
+        if (_creationPanel.parent == null) {
+            _contents.addChildAt(_creationPanel, 0);
+        }
     }
 
     /**
@@ -173,8 +177,12 @@ public class LobbyPanel extends VBox
      */
     public function hideCreateGame () :void
     {
-        _contents.removeChild(_creationPanel);
-        _contents.addChildAt(_headerBox, 0);
+        if (_creationPanel.parent != null) {
+            _contents.removeChild(_creationPanel);
+        }
+        if (_headerBox.parent == null) {
+            _contents.addChildAt(_headerBox, 0);
+        }
     }
 
     // from AttributeChangeListener
