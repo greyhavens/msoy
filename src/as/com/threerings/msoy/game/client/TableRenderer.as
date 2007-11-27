@@ -30,6 +30,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.ui.MsoyUI;
+import com.threerings.msoy.ui.SimpleGrid;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Game;
@@ -39,73 +40,43 @@ import com.threerings.msoy.game.data.MsoyTable;
 
 public class TableRenderer extends VBox
 {
-    /** The game context, initialized by our ClassFactory. */
-    public var gctx :GameContext;
+    public var tableId :int;
 
-    /** The panel we're rendering to. */
-    public var panel :LobbyPanel;
-
-    public function TableRenderer (popup :Boolean = false)
+    public function TableRenderer (gctx :GameContext, panel :LobbyPanel, table :MsoyTable,
+                                   popup :Boolean = false)
     {
-        super();
-        _popup = popup;
+        if (_popup = popup) {
+            styleName = "floatingTableRenderer";
+        } else {
+            styleName = "listTableRenderer";
+        }
+
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
         percentWidth = 100;
-    }
+        tableId = table.tableId;
 
-    override public function set data (newData :Object) :void
-    {
-        super.data = newData;
-        recheckTable();
-    }
+        _gctx = gctx;
+        _game = panel.getGame();
+        _gameDef = panel.getGameDefinition();
 
-    override protected function createChildren () :void
-    {
-        super.createChildren();
-        createSeats();
-    }
-
-    protected function removeChildren () :void
-    {
-        while (numChildren > 0) {
-            removeChild(getChildAt(0));
-        }
-    }
-
-    protected function recheckTable () :void
-    {
-        if (gctx.getPlayerObject() == null) { // if we're logged off, don't worry
-            return;
+        // create our seats grid
+        addChild(_seatsGrid = new SimpleGrid(9));
+        _seatsGrid.verticalScrollPolicy = ScrollPolicy.OFF;
+        _seatsGrid.horizontalScrollPolicy = ScrollPolicy.OFF;
+        _seatsGrid.styleName = "seatsGrid";
+        for (var ii :int = 0; ii < table.occupants.length; ii++) {
+            var seat :SeatRenderer = new SeatRenderer();
+            _seatsGrid.addCell(seat);
         }
 
-        if (data is String) {
-            removeChildren();
-            var type :String = (data as String).substr(0, 1);
-            var message :String = (data as String).substr(1);
-            var label :Label = new Label();
-            label.text = message;
-            if (type == "H") {
-                styleName = "tableHeader";
-                label.setStyle("fontWeight", "bold");
-            } else {
-                styleName = "tableMessage";
-            }
-            addChild(label);
-            return;
-
-        } else if (getChildAt(0) is Label) {
-            removeChildren();
-            createSeats();
-        }
-
-        var table :MsoyTable = (data as MsoyTable);
-        if (table == null) {
-            Log.getLog(this).warning("Got null table in renderer? [data=" + data + "].");
-            return;
-        }
-
+        // create a box to hold configuration options if we're not a popup
         if (!_popup) {
+            _labelsBox = new HBox();
+            _labelsBox.verticalScrollPolicy = ScrollPolicy.OFF;
+            _labelsBox.horizontalScrollPolicy = ScrollPolicy.OFF;
+            addChild(_labelsBox);
+
             // TODO: table.playerCount is not getting set... I'm not sure why TableManager isn't
             // doing this, but I don't want to mess with that, in case one of the other games is
             // relying on the current behavior.
@@ -113,81 +84,14 @@ public class TableRenderer extends VBox
             // _watcherCount = table.watcherCount - table.playerCount;
         }
 
-        // update the seats
-        var length :int = table.occupants.length;
-        if (length != 0) {
-            updateSeats(table, length);
-        }
-        // remove any extra seats/buttons, should there be any
-        while (_seatsGrid.numChildren > length) {
-            _seatsGrid.removeChildAt(length);
-        }
-        updateButtons(table);
-        _seatsGrid.validateNow();
-
-        if (!_popup) {
-            updateConfig(table);
-        }
-    }
-
-    protected function createSeats () :void
-    {
-        _game = panel.getGame();
-        _gameDef = panel.getGameDefinition();
-
-        if (_popup) {
-            styleName = "floatingTableRenderer";
-        } else {
-            styleName = "listTableRenderer";
-        }
-
-        addChild(_seatsGrid = new HBox());
-        _seatsGrid.verticalScrollPolicy = ScrollPolicy.OFF;
-        _seatsGrid.horizontalScrollPolicy = ScrollPolicy.OFF;
-        _seatsGrid.styleName = "seatsGrid";
-
-        if (!_popup) {
-            _labelsBox = new HBox();
-            _labelsBox.verticalScrollPolicy = ScrollPolicy.OFF;
-            _labelsBox.horizontalScrollPolicy = ScrollPolicy.OFF;
-            addChild(_labelsBox);
-        }
-    }
-
-    protected function updateSeats (table :MsoyTable, length :int) :void
-    {
-        for (var ii :int = 0; ii < length; ii++) {
-            var seat :SeatRenderer;
-            if (_seatsGrid.numChildren <= ii) {
-                seat = new SeatRenderer();
-                _seatsGrid.addChild(seat);
-            } else if (!(_seatsGrid.getChildAt(ii) is SeatRenderer)) {
-                seat = new SeatRenderer();
-                _seatsGrid.addChildAt(seat, ii);
-            } else {
-                seat = (_seatsGrid.getChildAt(ii) as SeatRenderer);
-            }
-            seat.update(gctx, table, ii, panel.isSeated());
-        }
-        _seatsGrid.setStyle("horizontalGap", _popup ? 10 : 10*(Math.max(1, 8-length)));
-    }
-
-    protected function updateButtons (table :MsoyTable) :void
-    {
-        var btn :CommandButton;
-
         // if we are the creator, add a button for starting the game now
         if (table.occupants.length > 0 &&
             gctx.getPlayerObject().getVisibleName().equals(table.occupants[0]) &&
             (table.tconfig.desiredPlayerCount > table.tconfig.minimumPlayerCount)) {
-            btn = new CommandButton(LobbyController.START_TABLE, table.tableId);
-            btn.label = Msgs.GAME.get("b.start_now");
-            btn.enabled = table.mayBeStarted();
-            _seatsGrid.addChild(btn);
+            _startBtn = new CommandButton(LobbyController.START_TABLE, table.tableId);
+            _startBtn.label = Msgs.GAME.get("b.start_now");
+            _seatsGrid.addCell(_startBtn);
         }
-
-        // update our background color based on whether or not we're running
-        setStyle("backgroundColor", (table.gameOid > 0) ? 0xEEEEEE : 0xFFFFFF);
 
         // maybe add a button for entering the game
         if (table.gameOid != -1) {
@@ -200,7 +104,7 @@ public class TableRenderer extends VBox
                 break;
 
             default:
-                if (!(_gameDef.match as MsoyMatchConfig).unwatchable && 
+                if (!(_gameDef.match as MsoyMatchConfig).unwatchable &&
                     !table.tconfig.privateTable) {
                     key = "b.watch";
                 }
@@ -208,43 +112,57 @@ public class TableRenderer extends VBox
             }
 
             if (key != null) {
-                btn = new CommandButton(MsoyController.GO_GAME, [ _game.gameId, table.gameOid ]);
+                var btn :CommandButton = new CommandButton(
+                    MsoyController.GO_GAME, [ _game.gameId, table.gameOid ]);
                 btn.label = Msgs.GAME.get(key);
-                _seatsGrid.addChild(btn);
-            }
-        }
-    }
-
-    /**
-     * Update the displayed custom configuration options.
-     */
-    protected function updateConfig (table :MsoyTable) :void
-    {
-        while (_labelsBox.numChildren > 0) {
-            _labelsBox.removeChild(_labelsBox.getChildAt(0));
-        }
-
-        // if the game is in progress, report its watcher count
-        if (table.gameOid != -1) {
-            var wc :String = String(_watcherCount);
-            if (table.config.getMatchType() == GameConfig.PARTY) {
-                _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.players"), wc));
-            } else if (!(_gameDef.match as MsoyMatchConfig).unwatchable &&
-                       !table.tconfig.privateTable) {
-                _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.watchers"), wc));
+                _seatsGrid.addCell(btn);
             }
         }
 
-        if (table.config is EZGameConfig) {
-            var params :Array = (table.config as EZGameConfig).getGameDefinition().params;
-            if (params != null) {
-                var ezconfig :EZGameConfig = (table.config as EZGameConfig);
-                for each (var param :Parameter in params) {
-                    var name :String = StringUtil.isBlank(param.name) ? param.ident : param.name;
-                    var value :String = String(ezconfig.params.get(param.ident));
-                    _labelsBox.addChild(makeConfigLabel(name, value, param.tip));
+        if (!_popup) {
+            // update our configuration display if we're not a popup
+            while (_labelsBox.numChildren > 0) {
+                _labelsBox.removeChild(_labelsBox.getChildAt(0));
+            }
+
+            // if the game is in progress, report its watcher count
+            if (table.gameOid != -1) {
+                var wc :String = String(_watcherCount);
+                if (table.config.getMatchType() == GameConfig.PARTY) {
+                    _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.players"), wc));
+                } else if (!(_gameDef.match as MsoyMatchConfig).unwatchable &&
+                           !table.tconfig.privateTable) {
+                    _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.watchers"), wc));
                 }
             }
+
+            if (table.config is EZGameConfig) {
+                var params :Array = (table.config as EZGameConfig).getGameDefinition().params;
+                if (params != null) {
+                    var ezconfig :EZGameConfig = (table.config as EZGameConfig);
+                    for each (var param :Parameter in params) {
+                            var name :String =
+                                     StringUtil.isBlank(param.name) ? param.ident : param.name;
+                            var value :String = String(ezconfig.params.get(param.ident));
+                            _labelsBox.addChild(makeConfigLabel(name, value, param.tip));
+                        }
+                }
+            }
+        }
+
+        // finally update our state
+        update(table, panel.isSeated());
+    }
+
+    public function update (table :MsoyTable, isSeated :Boolean) :void
+    {
+        // update our background color based on whether or not we're running
+        setStyle("backgroundColor", (table.gameOid > 0) ? 0xEEEEEE : 0xFFFFFF);
+        if (_startBtn != null) {
+            _startBtn.enabled = table.mayBeStarted();
+        }
+        for (var ii :int = 0; ii < table.occupants.length; ii++) {
+            (_seatsGrid.getCellAt(ii) as SeatRenderer).update(_gctx, table, ii, isSeated);
         }
     }
 
@@ -257,13 +175,14 @@ public class TableRenderer extends VBox
         return label;
     }
 
+    protected var _gctx :GameContext;
     protected var _watcherCount :int;
     protected var _labelsBox :HBox;
-    protected var _seatsGrid :HBox;
+    protected var _seatsGrid :SimpleGrid;
+    protected var _startBtn :CommandButton;
 
     protected var _game :Game;
     protected var _gameDef :GameDefinition;
-
     protected var _popup :Boolean; 
 }
 }

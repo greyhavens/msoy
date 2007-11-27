@@ -129,8 +129,8 @@ public class LobbyPanel extends VBox
         for each (var table :Table in _lobbyObj.tables.toArray()) {
             tableAdded(table);
         }
-        if (_tables.length == 0) {
-            _tables.addItem("M" + _noPendersMsg);
+        if (_tableList.numChildren == 0) {
+            _tableList.addChild(MsoyUI.createLabel(_noPendersMsg, "tableMessage"));
             showCreateGame();
         }
     }
@@ -193,7 +193,12 @@ public class LobbyPanel extends VBox
             if (isSeated()) {
                 hideCreateGame();
             }
-            _tables.refresh();
+            for each (var table :MsoyTable in _lobbyObj.tables.toArray()) {
+                var panel :TableRenderer = getTablePanel(table.tableId);
+                if (panel != null) {
+                    panel.update(table, isSeated());
+                }
+            }
         }
     }
 
@@ -211,20 +216,22 @@ public class LobbyPanel extends VBox
         }
 
         // if we're adding the first table, remove the "no tables" message and add the header
-        if (_tables.length == 1 && _tables.getItemAt(0) is String) {
-            _tables.removeItemAt(0);
+        if (_tableList.numChildren == 1 && _tableList.getChildAt(0) is Label) {
+            _tableList.removeChildAt(0);
         }
-        if (_tables.length == 0) {
-            _tables.addItem("H" + _pendersHeader);
+        if (_tableList.numChildren == 0) {
+            _tableList.addChild(MsoyUI.createLabel(_pendersHeader, "tableHeader"));
         }
 
         // finally add the table at the bottom of the list
-        _tables.addItem(table);
+        _tableList.addChild(new TableRenderer(_gctx, this, table as MsoyTable));
     }
 
     // from TableObserver
     public function tableUpdated (table :Table) :void
     {
+        trace("LobbyPanel.tableUpdated()");
+
         // if this table is running and we're a seated game, remove it
         if (table.gameOid > 0 && GameConfig.SEATED_GAME == _lobbyObj.gameDef.match.getMatchType()) {
             tableRemoved(table.tableId);
@@ -232,38 +239,34 @@ public class LobbyPanel extends VBox
         }
 
         // if we're in friends only mode, this table may now be visible or not
-        var idx :int = ArrayUtil.indexOf(_tables.source, table);
+        var panel :TableRenderer = getTablePanel(table.tableId);
         if (_friendsOnly) {
             var count :int = (table as MsoyTable).countFriends(_wctx.getMemberObject());
-            if (count > 0 && idx == -1) {
+            if (count > 0 && panel == null) {
                 tableAdded(table);
                 return;
             }
-            if (count == 0 && idx != -1) {
+            if (count == 0 && panel != null) {
                 tableRemoved(table.tableId);
                 return;
             }
         }
 
         // otherwise update it
-        if (idx >= 0) {
-            _tables.setItemAt(table, idx);
+        if (panel != null) {
+            panel.update(table as MsoyTable, isSeated());
         }
     }
 
     // from TableObserver
     public function tableRemoved (tableId :int) :void
     {
-        var table :Table;
-        for (var ii :int = 0; ii < _tables.length; ii++) {
-            table = (_tables.getItemAt(ii) as Table);
-            if (table != null && table.tableId == tableId) {
-                _tables.removeItemAt(ii);
-                if (_tables.length == 1 && _tables.getItemAt(0) is String) {
-                    _tables.removeItemAt(0);
-                    _tables.addItem("M" + _noPendersMsg);
-                }
-                return;
+        var panel :TableRenderer = getTablePanel(tableId);
+        if (panel != null) {
+            _tableList.removeChild(panel);
+            if (_tableList.numChildren == 1 && _tableList.getChildAt(0) is Label) {
+                _tableList.removeChildAt(0);
+                _tableList.addChild(MsoyUI.createLabel(_noPendersMsg, "tableMessage"));;
             }
         }
     }
@@ -392,25 +395,23 @@ public class LobbyPanel extends VBox
         tablesHeader.addChild(new SkinnableImage("tablesStar"));
         _contents.addChild(tablesHeader);
 
-        var listWrapper :HBox = new HBox();
-        listWrapper.styleName = "borderedBox";
-        listWrapper.percentWidth = 100;
-        listWrapper.percentHeight = 100;
-        var list :List = new List();
-        list.styleName = "lobbyTableList";
-        list.variableRowHeight = true;
-        list.percentHeight = 100;
-        list.percentWidth = 100;
-        list.selectable = false;
-        var factory :ClassFactory = new ClassFactory(TableRenderer);
-        factory.properties = { gctx: _gctx, panel: this };
-        list.itemRenderer = factory;
-        list.dataProvider = _tables;
-        listWrapper.addChild(list);
-        _contents.addChild(listWrapper);
+        _tableList = new VBox();
+        _tableList.styleName = "lobbyTableList";
+        _tableList.percentWidth = 100;
+        _tableList.percentHeight = 100;
+        _contents.addChild(_tableList);
     }
 
-    protected static const LOBBY_PANEL_WIDTH :int = 500; // in px
+    protected function getTablePanel (tableId :int) :TableRenderer
+    {
+        for (var ii :int = 0; ii < _tableList.numChildren; ii++) {
+            var child :TableRenderer = (_tableList.getChildAt(ii) as TableRenderer);
+            if (child != null && child.tableId == tableId) {
+                return child;
+            }
+        }
+        return null;
+    }
 
     /** Provides world client services. */
     protected var _wctx :WorldContext;
@@ -430,20 +431,19 @@ public class LobbyPanel extends VBox
     /** The create a table interface. */
     protected var _creationPanel :TableCreationPanel;
 
-    /** All joinable game tables. */
-    protected var _tables :ArrayCollection = new ArrayCollection();
-
     // various UI bits that need filling in with data arrives
     protected var _headerBox :HBox;
     protected var _contents :VBox;
     protected var _logo :VBox;
     protected var _info :Text;
-    protected var _title :Label;
-    protected var _about :Label;
-    protected var _buy :Label;
+    protected var _title :Label, _about :Label, _buy :Label;
     protected var _createBtn :CommandButton;
+
+    protected var _tableList :VBox;
 
     protected var _pendersHeader :String;
     protected var _noPendersMsg :String;
+
+    protected static const LOBBY_PANEL_WIDTH :int = 500; // in px
 }
 }
