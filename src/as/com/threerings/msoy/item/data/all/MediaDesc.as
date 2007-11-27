@@ -71,26 +71,30 @@ public class MediaDesc
     /** The MIME type for ZIP files. */
     public static const APPLICATION_ZIP :int = 42;
 
+    /** Identifies that a "quarter thumbnail" sized image is desired. */
+    public static const QUARTER_THUMBNAIL_SIZE :int = 0;
+
     /** Identifies that a "half thumbnail" sized image is desired. */
-    public static const HALF_THUMBNAIL_SIZE :int = 0;
+    public static const HALF_THUMBNAIL_SIZE :int = 1;
 
     /** Identifies that a thumbnail sized image is desired. */
-    public static const THUMBNAIL_SIZE :int = 1;
+    public static const THUMBNAIL_SIZE :int = 2;
 
     /** Identifies that a preview sized image is desired. */
-    public static const PREVIEW_SIZE :int = 2;
+    public static const PREVIEW_SIZE :int = 3;
 
     /** The thumbnail image width.  */
-    public static const THUMBNAIL_WIDTH :int = 160;
+    public static const THUMBNAIL_WIDTH :int = 80;
 
     /** The thumbnail image height.  */
-    public static const THUMBNAIL_HEIGHT :int = 120;
+    public static const THUMBNAIL_HEIGHT :int = 60;
 
     /** Defines the dimensions of our various image sizes. */
     public static const DIMENSIONS :Array = [
+        THUMBNAIL_WIDTH/4, THUMBNAIL_HEIGHT/4, // quarter thumbnail size
         THUMBNAIL_WIDTH/2, THUMBNAIL_HEIGHT/2, // half thumbnail size
-        THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, // thumbnail size
-        THUMBNAIL_WIDTH*2, THUMBNAIL_HEIGHT*2, // preview size
+        THUMBNAIL_WIDTH,   THUMBNAIL_HEIGHT,   // thumbnail size
+        THUMBNAIL_WIDTH*4, THUMBNAIL_HEIGHT*4, // preview size
     ];
 
     /** A constant used to indicate that an image does not exceed half thumbnail size in either
