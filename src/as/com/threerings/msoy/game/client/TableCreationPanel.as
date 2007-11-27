@@ -10,6 +10,7 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
 
+import com.threerings.flash.MediaContainer;
 import com.threerings.flex.CommandButton;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
@@ -23,21 +24,24 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.ezgame.client.EZGameConfigurator;
 import com.threerings.ezgame.data.GameDefinition;
 
+import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 
-public class TableCreationPanel extends VBox
+public class TableCreationPanel extends HBox
 {
-    public function TableCreationPanel (ctx :GameContext, panel :LobbyPanel)
+    public function TableCreationPanel (ctx :GameContext, panel :LobbyPanel, logoURL :String)
     {
         _ctx = ctx;
         _game = panel.getGame();
         _gameDef = panel.getGameDefinition();
         _panel = panel;
+        _logoURL = logoURL;
     }
 
     override protected function createChildren () :void
@@ -46,6 +50,17 @@ public class TableCreationPanel extends VBox
 
         styleName = "tableCreationPanel";
         percentWidth = 100;
+
+        _logo = new VBox();
+        _logo.styleName = "lobbyLogoBox";
+        _logo.width = MediaDesc.THUMBNAIL_WIDTH;
+        _logo.height = MediaDesc.THUMBNAIL_HEIGHT;
+        _logo.addChild(new MediaWrapper(new MediaContainer(_logoURL)));
+        addChild(_logo);
+
+        var contents :VBox = new VBox();
+        contents.percentWidth = 100;
+        addChild(contents);
 
         // create our various game configuration bits but do not add them
         var gconf :EZGameConfigurator = new EZGameConfigurator();
@@ -85,12 +100,12 @@ public class TableCreationPanel extends VBox
 
         _configBox = gconf.getContainer();
         _configBox.styleName = "seatsGrid";
-        addChild(_configBox);
+        contents.addChild(_configBox);
 
         _buttonBox = new HBox();
         _buttonBox.percentWidth = 100;
         _buttonBox.setStyle("horizontalAlign", "right");
-        addChild(_buttonBox);
+        contents.addChild(_buttonBox);
 
         var create :CommandButton = new CommandButton();
         // we need to have the button go through this function so that the TableConfig and
@@ -121,6 +136,8 @@ public class TableCreationPanel extends VBox
     /** The lobby panel we're in. */
     protected var _panel :LobbyPanel;
 
+    protected var _logoURL :String;
+    protected var _logo :VBox;
     protected var _configBox :Container;
     protected var _buttonBox :HBox;
 }

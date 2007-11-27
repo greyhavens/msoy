@@ -123,7 +123,7 @@ public class LobbyPanel extends VBox
         }
 
         // create our table creation panel now that we have our game config
-        _creationPanel = new TableCreationPanel(_gctx, this);
+        _creationPanel = new TableCreationPanel(_gctx, this, getGame().getThumbnailPath());
         _creationPanel.enabled = !isSeated();
 
         for each (var table :Table in _lobbyObj.tables.toArray()) {
