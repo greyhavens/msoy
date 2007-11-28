@@ -147,15 +147,7 @@ public class MsoyGameRegistry
         MemberObject memobj = (MemberObject)caller;
         for (int friendId : friendIds) {
             MsoyServer.peerMan.invokeNodeAction(
-                new InviteNodeAction().init(friendId, memobj.getMemberId(), gameId));
-        }
-    }
-
-    protected static class InviteNodeAction extends MemberNodeAction
-    {
-        protected void execute (MemberObject tgtobj, Object[] args) {
-            tgtobj.postMessage(MsoyGameCodes.GAME_INVITE,
-                               args[0] /*inviterId*/, args[1] /*gameId*/);
+                new InviteNodeAction(friendId, memobj.getMemberId(), gameId));
         }
     }
 
@@ -262,8 +254,8 @@ public class MsoyGameRegistry
             // TODO: of your logging out -- but I am turning off logging in the specific case
             // TODO: of game == null until I can investigate.
             if (game != null) {
-                log.warning("Player vanished, dropping playerUpdate [caller=" + caller + ", player=" +
-                            playerId + ", game=" + game + "]");
+                log.warning("Player vanished, dropping playerUpdate [caller=" + caller +
+                            ", player=" + playerId + ", game=" + game + "]");
             }
             return;
         }
@@ -559,6 +551,17 @@ public class MsoyGameRegistry
         protected ArrayIntSet _games = new ArrayIntSet();
     }
 
+    /** Handles dispatching invitations to users wherever they may be. */
+    protected static class InviteNodeAction extends MemberNodeAction
+    {
+        public InviteNodeAction (int memberId, int inviterId, int gameId) {
+            init(memberId, inviterId, gameId);
+        }
+        protected void execute (MemberObject tgtobj, Object[] args) {
+            tgtobj.postMessage(MsoyGameCodes.GAME_INVITE,
+                               args[0] /*inviterId*/, args[1] /*gameId*/);
+        }
+    }
 
     /** Used to load metadata for games. */
     protected GameRepository _gameRepo;
