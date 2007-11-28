@@ -46,6 +46,30 @@ public class TableCreationPanel extends HBox
         _panel = panel;
     }
 
+    // I could spend hours figuring out how Flex notifies us when we're added to and removed from
+    // the heirarchy and then discover bugs in that and spend more hours debugging it, or I can
+    // just call this manually...
+    public function updateOnlineFriends () :void
+    {
+        _friendsBox.removeAllChildren();
+        var onlineFriends :Array = _ctx.getWorldContext().getMemberObject().friends.toArray().filter(
+            function (friend :FriendEntry, index :int, array :Array) :Boolean {
+                return friend.online;
+            });
+        if (onlineFriends.length ==  0) {
+            _friendsBox.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.invite_no_friends")));
+        } else {
+            _friendsBox.addChild(
+                MsoyUI.createLabel(Msgs.GAME.get("l.invite_friends"), "lobbyLabel"));
+            _friendsGrid = new SimpleGrid(FRIENDS_GRID_COLUMNS);
+            _friendsGrid.setStyle("horizontalGap", 15);
+            for each (var friend :FriendEntry in onlineFriends) {
+                _friendsGrid.addCell(new FriendCheckBox(friend));
+            }
+            _friendsBox.addChild(_friendsGrid);
+        }
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -122,25 +146,10 @@ public class TableCreationPanel extends HBox
         bottomRow.setStyle("verticalAlign", "bottom");
 
         // add an interface for inviting friends to play
-        var friendsBox :VBox = new VBox();
-        friendsBox.percentWidth = 100;
-        friendsBox.setStyle("verticalGap", 0);
-        var onlineFriends :Array = _ctx.getWorldContext().getMemberObject().friends.toArray().filter(
-            function (friend :FriendEntry, index :int, array :Array) :Boolean {
-                return friend.online;
-            });
-        if (onlineFriends.length ==  0) {
-            friendsBox.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.invite_no_friends")));
-        } else {
-            friendsBox.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.invite_friends"), "lobbyLabel"));
-            _friendsGrid = new SimpleGrid(FRIENDS_GRID_COLUMNS);
-            _friendsGrid.setStyle("horizontalGap", 15);
-            for each (var friend :FriendEntry in onlineFriends) {
-                _friendsGrid.addCell(new FriendCheckBox(friend));
-            }
-            friendsBox.addChild(_friendsGrid);
-        }
-        bottomRow.addChild(friendsBox);
+        _friendsBox = new VBox();
+        _friendsBox.percentWidth = 100;
+        _friendsBox.setStyle("verticalGap", 0);
+        bottomRow.addChild(_friendsBox);
 
         // finally add buttons for create and cancel
         _buttonBox = new HBox();
@@ -191,6 +200,7 @@ public class TableCreationPanel extends HBox
 
     protected var _logo :ThumbnailPanel;
     protected var _configBox :Container;
+    protected var _friendsBox :VBox;
     protected var _friendsGrid :SimpleGrid;
     protected var _buttonBox :HBox;
 

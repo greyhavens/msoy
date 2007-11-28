@@ -167,6 +167,7 @@ public class LobbyPanel extends VBox
         }
         if (_creationPanel.parent == null) {
             _contents.addChildAt(_creationPanel, 0);
+            _creationPanel.updateOnlineFriends();
         }
     }
 
