@@ -289,28 +289,23 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         return item;
     }
 
-    @Override // from Object
-    public String toString ()
-    {
-        return StringUtil.fieldsToString(this);
-    }
-
     /**
-     * Initializes this persistent record from the supplied runtime record.
+     * Initializes this persistent record from the supplied runtime record. Only fields that are
+     * user editable should be filled in.
      */
-    protected void fromItem (Item item)
+    public void fromItem (Item item)
     {
-        itemId = item.itemId;
-        sourceId = item.sourceId;
-        ownerId = item.ownerId;
-        catalogId = item.catalogId;
-        rating = item.rating;
-        creatorId = item.creatorId;
-        flagged = item.flagged;
-        mature = item.mature;
-        used = item.used;
-        location = item.location;
-        lastTouched = new Timestamp(System.currentTimeMillis());
+        // itemId = not user editable
+        // sourceId = not user editable
+        // ownerId = not user editable
+        // catalogId = not user editable
+        // rating = not user editable
+        // creatorId = not user editable
+        // flagged = not user editable
+        // mature = not user editable
+        // used = not user editable
+        // location = not user editable
+        // lastTouched = not user editable
         name = (item.name == null) ? "" : item.name;
         description = (item.description == null) ? "" : item.description;
         if (item.thumbMedia != null) {
@@ -323,6 +318,12 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
             furniMimeType = item.furniMedia.mimeType;
             furniConstraint = item.furniMedia.constraint;
         }
+    }
+
+    @Override // from Object
+    public String toString ()
+    {
+        return StringUtil.fieldsToString(this);
     }
 
     /**

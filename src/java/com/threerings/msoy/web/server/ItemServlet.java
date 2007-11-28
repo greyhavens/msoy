@@ -52,7 +52,7 @@ public class ItemServlet extends MsoyServiceServlet
     public Item createItem (WebIdent ident, Item item, ItemIdent parent)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser(ident);
         ItemRepository<ItemRecord, ?, ?, ?> repo;
 
         // validate the item
@@ -126,32 +126,45 @@ public class ItemServlet extends MsoyServiceServlet
     public void updateItem (WebIdent ident, Item item)
         throws ServiceException
     {
-        // TODO: validate this user's ident
+        MemberRecord memrec = requireAuthedUser(ident);
 
-        // validate the item
+        // make sure the item in question is consistent as far as the item is concerned
         if (!item.isConsistent()) {
-            // TODO?
+            log.warning("Requested to update item with invalid version [who=" + memrec.who() +
+                        ", item=" + item + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        // TODO: validate anything else?
-
-        // write the item to the database
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.getType());
-        final ItemRecord record = repo.newItemRecord(item);
         try {
+            // load up the old version of the item
+            final ItemRecord record = repo.loadItem(item.itemId);
+            if (record == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            }
+
+            // make sure they own it
+            if (record.ownerId != memrec.memberId) {
+                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            }
+
+            // update it with data from the supplied runtime record
+            record.fromItem(item);
+
+            // write it back to the database
             repo.updateOriginalItem(record);
+
+            // let the item manager know that we've updated this item
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.itemMan.itemUpdated(record);
+                }
+            });
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update item " + item + ".", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-
-        // let the item manager know that we've updated this item
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.itemUpdated(record);
-            }
-        });
     }
 
     // from interface ItemService

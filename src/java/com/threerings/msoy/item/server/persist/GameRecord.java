@@ -187,7 +187,7 @@ public class GameRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
-    protected void fromItem (Item item)
+    public void fromItem (Item item)
     {
         super.fromItem(item);
 
@@ -197,7 +197,7 @@ public class GameRecord extends ItemRecord
             gameMediaHash = game.gameMedia.hash;
             gameMimeType = game.gameMedia.mimeType;
         }
-        gameId = game.gameId;
+        // gameId = not user editable
         if (game.shotMedia != null) {
             shotMediaHash = game.shotMedia.hash;
             shotMimeType = game.shotMedia.mimeType;

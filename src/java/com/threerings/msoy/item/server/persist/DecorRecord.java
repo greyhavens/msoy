@@ -185,7 +185,7 @@ public class DecorRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
-    protected void fromItem (Item item)
+    public void fromItem (Item item)
     {
         super.fromItem(item);
 
