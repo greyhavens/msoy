@@ -62,13 +62,13 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        // configure the item's creator and owner
-        item.creatorId = memrec.memberId;
-        item.ownerId = memrec.memberId;
-
         // create the persistent item record
         repo = MsoyServer.itemMan.getRepository(item.getType());
         final ItemRecord record = repo.newItemRecord(item);
+
+        // configure the item's creator and owner
+        record.creatorId = memrec.memberId;
+        record.ownerId = memrec.memberId;
 
         // determine this item's suite id if it is a subitem
         if (item instanceof SubItem) {
