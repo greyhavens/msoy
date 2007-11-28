@@ -21,6 +21,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
+import com.threerings.msoy.server.MsoyServer;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
@@ -29,6 +30,7 @@ import com.samskivert.util.IntMap;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DSet;
@@ -36,6 +38,7 @@ import com.threerings.presents.dobj.ObjectAddedEvent;
 import com.threerings.presents.dobj.ObjectRemovedEvent;
 import com.threerings.presents.dobj.OidListListener;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.data.ScenePlace;
 
 import static com.threerings.msoy.Log.log;

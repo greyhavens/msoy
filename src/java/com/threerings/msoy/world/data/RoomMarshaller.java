@@ -116,8 +116,21 @@ public class RoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #spawnMob} requests. */
+    public static final int SPAWN_MOB = 9;
+
+    // from interface RoomService
+    public void spawnMob (Client arg1, int arg2, String arg3, InvocationService.InvocationListener arg4)
+    {
+        ListenerMarshaller listener4 = new ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, SPAWN_MOB, new Object[] {
+            Integer.valueOf(arg2), arg3, listener4
+        });
+    }
+
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static final int UPDATE_MEMORY = 9;
+    public static final int UPDATE_MEMORY = 10;
 
     // from interface RoomService
     public void updateMemory (Client arg1, EntityMemoryEntry arg2)
@@ -128,7 +141,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static final int UPDATE_ROOM = 10;
+    public static final int UPDATE_ROOM = 11;
 
     // from interface RoomService
     public void updateRoom (Client arg1, SceneUpdate[] arg2, InvocationService.InvocationListener arg3)

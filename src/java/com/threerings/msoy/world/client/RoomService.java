@@ -5,12 +5,14 @@ package com.threerings.msoy.world.client;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService.InvocationListener;
 
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
+import com.threerings.msoy.world.data.MobInfo;
 import com.threerings.msoy.world.data.RoomPropertyEntry;
 
 /**
@@ -84,4 +86,11 @@ public interface RoomService extends InvocationService
      * by Pets and other MOBs that want to move around the room.
      */
     public void changeLocation (Client client, ItemIdent item, Location newloc);
+
+    /**
+     * Requests the placement of a MOB in the current scene location.
+     *
+     * @see MobInfo
+     */
+    public void spawnMob (Client caller, int gameId, String mobId, InvocationListener listener);
 }

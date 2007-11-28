@@ -122,8 +122,21 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #spawnMob} requests. */
+    public static const SPAWN_MOB :int = 9;
+
+    // from interface RoomService
+    public function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_InvocationListener) :void
+    {
+        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, SPAWN_MOB, [
+            Integer.valueOf(arg2), arg3, listener4
+        ]);
+    }
+
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static const UPDATE_MEMORY :int = 9;
+    public static const UPDATE_MEMORY :int = 10;
 
     // from interface RoomService
     public function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry) :void
@@ -134,7 +147,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static const UPDATE_ROOM :int = 10;
+    public static const UPDATE_ROOM :int = 11;
 
     // from interface RoomService
     public function updateRoom (arg1 :Client, arg2 :TypedArray /* of class com.threerings.whirled.data.SceneUpdate */, arg3 :InvocationService_InvocationListener) :void

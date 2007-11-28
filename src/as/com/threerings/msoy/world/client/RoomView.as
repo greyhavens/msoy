@@ -52,6 +52,8 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
+import com.threerings.msoy.game.client.AVRGameBackend;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -81,6 +83,7 @@ import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
+import com.threerings.msoy.world.data.MobInfo;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -585,6 +588,19 @@ public class RoomView extends AbstractRoomView
         chatOverlay.setScrollRect(r);
     }
 
+    /** Called when an AVRG is loaded or unloaded: inform relevant MOBs. */
+    public function avrGameAvailable (gameId :int, backend :AVRGameBackend) :void
+    {
+        for each (var occInfo :OccupantInfo in _roomObj.occupantInfo.toArray()) {
+            if (occInfo is MobInfo && MobInfo(occInfo).getGameId() == gameId) {
+                var sprite :MobSprite = (_occupants.get(occInfo.getBodyOid()) as MobSprite);
+                if (sprite) {
+                    sprite.avrGameAvailable(backend);
+                }
+            }
+        }
+    }
+
     /**
      * Once the background image is finished, we want to load all the rest of the sprites.
      */
@@ -960,6 +976,9 @@ public class RoomView extends AbstractRoomView
         if (sprite is ActorSprite) {
             // remove the sprite from the entities table
             _entities.remove((sprite as ActorSprite).getActorInfo().getItemIdent());
+
+        } else if (sprite is MobSprite) {
+            MobSprite(sprite).removed();
         }
         if (sprite == _centerSprite) {
             _centerSprite = null;

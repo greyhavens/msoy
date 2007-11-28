@@ -19,6 +19,8 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.WorldClient;
 
+import com.threerings.msoy.world.client.RoomView;
+
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.client.GameContext;
 
@@ -80,6 +82,11 @@ public class AVRGameController extends Controller
         if (_mctx.getGameDirector().popMostRecentLobbyGame() != 0) {
             tutorialEvent("gamePlayed");
         }
+
+        var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;
+        if (view) {
+            view.avrGameAvailable(_gameId, _panel.getAVRGameBackend());
+        }
     }
 
     public function tutorialEvent (eventName :String) :void
@@ -110,6 +117,12 @@ public class AVRGameController extends Controller
     {
         _mctx.getClient().removeEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
         _subscriber.unsubscribe(_mctx.getDObjectManager());
+
+        var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;
+        if (view) {
+            view.avrGameAvailable(_gameId, null);
+        }
+
         _panel.shutdown();
     }
 

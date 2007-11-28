@@ -5,6 +5,7 @@ package com.threerings.msoy.world.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
@@ -15,9 +16,12 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntTuple;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.Tuple;
+import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -29,6 +33,8 @@ import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.util.Name;
+import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.whirled.spot.data.Location;
@@ -55,11 +61,13 @@ import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
+import com.threerings.msoy.world.data.MobObject;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.data.PetObject;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomMarshaller;
 import com.threerings.msoy.world.data.RoomPropertyEntry;
@@ -471,6 +479,35 @@ public class RoomManager extends SpotSceneManager
             _roomObj.updateOccupantLocs(new SceneLocation(newLoc, oid));
         }
     }
+
+    // from RoomProvider
+    public void spawnMob (ClientObject caller, int gameId, String mobId,
+                          final InvocationListener listener)
+        throws InvocationException
+    {
+        Tuple<Integer, String> key = new Tuple<Integer, String>(gameId, mobId);
+        if (_mobs.containsKey(key)) {
+            log.warning("Tried to spawn mob that's already present [gameId=" +
+                        gameId + ", mobId=" + mobId + "]");
+            return;
+        }
+
+        final MobObject mobObj = MsoyServer.omgr.registerObject(new MobObject());
+        mobObj.setGameId(gameId);
+        mobObj.setIdent(mobId);
+        mobObj.setUsername(new Name("Mob #" + mobId)); // TODO: debug mode
+        _mobs.put(key, mobObj);
+
+        // then enter the scene like a proper scene entity
+        MsoyServer.screg.moveTo(mobObj, getScene().getId(), -1, new SceneMoveAdapter() {
+            public void requestFailed (String reason) {
+                log.warning("MOB failed to enter scene [mob=" + mobObj + ", scene=" +
+                           getScene().getId() + ", reason=" + reason + "].");
+                listener.requestFailed(reason);
+            }
+        });
+    }
+
 
     @Override // from PlaceManager
     public void messageReceived (MessageEvent event)
@@ -981,6 +1018,10 @@ public class RoomManager extends SpotSceneManager
 
     /** Listens to the room object. */
     protected RoomListener _roomListener = new RoomListener();
+
+    /** Mapping to keep track of spawned mobs. */
+    protected Map<Tuple<Integer, String>, MobObject> _mobs =
+        new HashMap<Tuple<Integer,String>, MobObject>();
 
     /** For all MemberInfo's, a mapping of ItemIdent to the member's oid. */
     protected Map<ItemIdent,Integer> _avatarIdents = Maps.newHashMap();

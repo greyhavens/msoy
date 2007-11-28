@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.display.DisplayObject;
+
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
@@ -99,6 +101,22 @@ public class AVRGameBackend extends ControlBackend
         callUserCode("messageReceived_v1", "tutorialEvent", eventName);
     }
 
+    public function requestMobSprite (id :String) :DisplayObject
+    {
+        return callUserCode("requestMobSprite_v1", id) as DisplayObject;
+    }
+
+    public function mobRemoved (id :String) :void
+    {
+        callUserCode("mobRemoved_v1", id);
+    }
+
+    public function mobAppearanceChanged (
+        id :String, locArray :Array, orient :Number, moving :Boolean, idle :Boolean) :void
+    {
+        callUserCode("mobAppearanceChanged_v1", id, locArray, orient, moving, idle);
+    }
+
     public function isPlaying () :Boolean
     {
         return _mctx.getGameDirector().getGameId() == _ctrl.getGameId();
@@ -114,6 +132,7 @@ public class AVRGameBackend extends ControlBackend
         o["getRoomBounds_v1"] = getRoomBounds_v1;
         o["deactivateGame_v1"] = deactivateGame_v1;
         o["getPlayerIds_v1"] = getPlayerIds_v1;
+        o["spawnMob_v1"] = spawnMob_v1;
 
         _stateBackend.populateSubProperties(o);
         _questBackend.populateSubProperties(o);
@@ -149,6 +168,20 @@ public class AVRGameBackend extends ControlBackend
             return null;
         }
         return intersect(_gameObj.players, _roomObj.occupantInfo);
+    }
+
+    protected function spawnMob_v1 (mobId :String) :Boolean
+    {
+        if (isPlaying()) {
+            var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;
+            if (view != null) {
+                view.getRoomObject().roomService.spawnMob(
+                    _mctx.getClient(), _ctrl.getGameId(), mobId,
+                    loggingInvocationListener("spawnMob"));
+                return true;
+            }
+        }
+        return false;
     }
 
     protected function playerEntered (info :OccupantInfo) :void

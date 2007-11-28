@@ -73,6 +73,11 @@ public class AVRGamePanel extends Sprite
         _backend.panelResized();
     }
 
+    public function getAVRGameBackend () :AVRGameBackend
+    {
+        return _backend;
+    }
+
     public function tutorialEvent (eventName :String) :void
     {
         if (_backend) {

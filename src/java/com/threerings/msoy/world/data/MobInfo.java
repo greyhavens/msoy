@@ -6,22 +6,33 @@ package com.threerings.msoy.world.data;
 import com.threerings.crowd.data.OccupantInfo;
 
 /**
- * Represents an AVRG MOB.
+ * Represents an AVRG MOB, a room occupant that is not backed up by an entity but rather acquires
+ * its visualization from an AVRG in the client.
  */
 public class MobInfo extends OccupantInfo
 {
     /**
      * Creates an info record for the supplied MOB.
      */
-    public MobInfo (MobObject mobj, String ident)
+    public MobInfo (MobObject mobj, int gameId, String ident)
     {
         super(mobj);
+        _gameId = gameId;
         _ident = ident;
     }
 
     /** Used for unserialization. */
     public MobInfo ()
     {
+    }
+
+    /**
+     * Returns the gameId of the AVRG that spawned this MOB and is responsible for it on the
+     * client side.
+     */
+    public int getGameId ()
+    {
+        return _gameId;
     }
 
     /**
@@ -32,6 +43,8 @@ public class MobInfo extends OccupantInfo
     {
         return _ident;
     }
+
+    protected int _gameId;
 
     protected String _ident;
 }

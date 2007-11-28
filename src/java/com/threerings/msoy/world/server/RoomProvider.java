@@ -63,6 +63,12 @@ public interface RoomProvider extends InvocationProvider
     public void setRoomProperty (ClientObject caller, RoomPropertyEntry arg1);
 
     /**
+     * Handles a {@link RoomService#spawnMob} request.
+     */
+    public void spawnMob (ClientObject caller, int arg1, String arg2, InvocationService.InvocationListener arg3)
+        throws InvocationException;
+
+    /**
      * Handles a {@link RoomService#updateMemory} request.
      */
     public void updateMemory (ClientObject caller, EntityMemoryEntry arg1);
