@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.peer.server;
 
-import java.io.Serializable;
-
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
@@ -19,15 +17,9 @@ import com.threerings.msoy.server.MsoyServer;
  */
 public abstract class MemberNodeAction extends PeerManager.NodeAction
 {
-    /**
-     * Provides this action with its configuration. We use this instead of the constructor because
-     * you will have to statically extend this class (anonymous extension is not allowed)
-     */
-    public MemberNodeAction init (int memberId, Serializable ... args)
+    public MemberNodeAction (int memberId)
     {
         _memberId = memberId;
-        init(args);
-        return this;
     }
 
     @Override // from PeerManager.NodeAction
@@ -37,15 +29,15 @@ public abstract class MemberNodeAction extends PeerManager.NodeAction
     }
 
     @Override // from PeerManager.NodeAction
-    protected void execute (Object[] args)
+    protected void execute ()
     {
         MemberObject memobj = MsoyServer.lookupMember(_memberId);
         if (memobj != null) {
-            execute(memobj, args);
+            execute(memobj);
         } // if not, oh well, they went away
     }
 
-    protected abstract void execute (MemberObject memobj, Object[] args);
+    protected abstract void execute (MemberObject memobj);
 
     protected int _memberId;
 }

@@ -555,12 +555,17 @@ public class MsoyGameRegistry
     protected static class InviteNodeAction extends MemberNodeAction
     {
         public InviteNodeAction (int memberId, int inviterId, int gameId) {
-            init(memberId, inviterId, gameId);
+            super(memberId);
+            _inviterId = inviterId;
+            _gameId = gameId;
         }
-        protected void execute (MemberObject tgtobj, Object[] args) {
-            tgtobj.postMessage(MsoyGameCodes.GAME_INVITE,
-                               args[0] /*inviterId*/, args[1] /*gameId*/);
+
+        protected void execute (MemberObject tgtobj) {
+            tgtobj.postMessage(MsoyGameCodes.GAME_INVITE, _inviterId, _gameId);
         }
+
+        protected int _inviterId;
+        protected int _gameId;
     }
 
     /** Used to load metadata for games. */
