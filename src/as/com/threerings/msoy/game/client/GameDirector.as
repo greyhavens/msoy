@@ -118,7 +118,7 @@ public class GameDirector extends BasicDirector
         }
 
         if (_liaison == null) {
-            _liaison = new LobbyGameLiaison(_mctx, gameId, memberId);
+            _liaison = new LobbyGameLiaison(_mctx, gameId, LobbyGameLiaison.JOIN_PLAYER, memberId);
         } else {
             LobbyGameLiaison(_liaison).joinPlayer(memberId);
         }
@@ -293,16 +293,6 @@ public class GameDirector extends BasicDirector
     }
 
     // from BasicDirector
-    override public function clientDidLogon (event :ClientEvent) :void
-    {
-        super.clientDidLogon(event);
-
-        // listen for messages on the player object (this is implicitly cleared when we logoff
-        // which is all we need or care about)
-        _mctx.getMemberObject().addListener(new MessageAdapter(gotMemberMessage));
-    }
-
-    // from BasicDirector
     override public function clientDidLogoff (event :ClientEvent) :void
     {
         super.clientDidLogoff(event);
@@ -310,16 +300,6 @@ public class GameDirector extends BasicDirector
         // shutdown any game connection we might have going
         if (_liaison != null) {
             _liaison.shutdown();
-        }
-    }
-
-    /**
-     * Called when a message comes in on our MemberObject.
-     */
-    protected function gotMemberMessage (event :MessageEvent) :void
-    {
-        if (event.getName() == MsoyGameCodes.GAME_INVITE) {
-            trace("TODO: " + event);
         }
     }
 

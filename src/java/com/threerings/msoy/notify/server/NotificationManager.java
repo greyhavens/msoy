@@ -17,56 +17,38 @@ import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.NotifyMessage;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Manages most notifications to users.
  */
 public class NotificationManager
 {
-    public NotificationManager ()
-    {
-    }
-
     /**
      * Notify the specified user of the specified notification.
      */
-    public void notify (MemberName name, Notification note)
+    public void notify (MemberObject target, Notification note)
     {
-        // PEER TODO: user may be resolved on another world server (but this method seems unused)
-        MemberObject target = getUser(name);
-        if (target != null) {
-            if (note.isPersistent()) {
-                target.notify(note);
-            } else {
-                dispatchChatOnlyNotification(target, note.getAnnouncement());
-            }
+        if (note.isPersistent()) {
+            target.notify(note);
+        } else {
+            dispatchChatOnlyNotification(target, note.getAnnouncement());
         }
     }
 
     /**
-     * Notify the specified member that an invitation they sent has been accepted
-     * by a new whirled member!
+     * Notify the specified member that an invitation they sent has been accepted by a new whirled
+     * member!
      */
     public void notifyInvitationAccepted (
         MemberName inviter, String inviteeDisplayName, String inviteeEmail)
     {
         // avoid creating any objects unless the target is around to receive it
         // PEER TODO: user may be resolved on another world server
-        MemberObject target = getUser(inviter);
+        MemberObject target = MsoyServer.lookupMember(inviter);
         if (target != null) {
-            dispatchChatOnlyNotification(target,
-                MessageBundle.tcompose("m.invite_accepted", inviteeEmail, inviteeDisplayName));
-        }
-    }
-
-    /**
-     * Notify the specified user that they've leveled up to the specified level.
-     */
-    public void notifyLeveledUp (MemberObject target, int newLevel)
-    {
-        if (target != null) {
-            // leveling up is pretty much chat-only, but it apparently happens prior
-            // to the user logging all the way in. Perhaps we need some new thinking here...
-            target.notify(new LevelUpNotification(newLevel));
+            dispatchChatOnlyNotification(target, MessageBundle.tcompose(
+                "m.invite_accepted", inviteeEmail, inviteeDisplayName));
         }
     }
 
@@ -82,11 +64,13 @@ public class NotificationManager
     }
 
     /**
-     * Convenience method to look up a user by username.
+     * Notifies the target player that they've been invited to play a game.
      */
-    protected MemberObject getUser (MemberName name)
+    public void notifyGameInvite (MemberObject target, String inviter, int inviterId,
+                                  String game, int gameId)
     {
-        return MsoyServer.lookupMember(name);
+        dispatchChatOnlyNotification(
+            target, MessageBundle.tcompose("m.game_invite", inviter, inviterId, game, gameId));
     }
 
     /**

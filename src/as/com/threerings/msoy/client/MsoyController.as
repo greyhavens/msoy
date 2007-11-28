@@ -108,6 +108,9 @@ public class MsoyController extends Controller
     /** Command to go to a member's current scene. */
     public static const GO_MEMBER_LOCATION :String = "GoMemberLocation";
 
+    /** Command to join a member's current game. */
+    public static const JOIN_PLAYER_GAME :String = "JoinPlayerGame";
+
     /** Command to join a member's currently pending game table. */
     public static const JOIN_PLAYER_TABLE :String = "JoinPlayerTable";
 
@@ -198,7 +201,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the POP_CHANNEL_MENU command.
+     * Handles the POP_CHANNEL_MENU command.
      */
     public function handlePopChannelMenu (trigger :Button) :void
     {
@@ -244,7 +247,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the POP_ROOMS_MENU command.
+     * Handles the POP_ROOMS_MENU command.
      */
     public function handlePopRoomsMenu (trigger :Button) :void
     {
@@ -309,7 +312,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the POPUP_NOTIFICATIONS command.
+     * Handles the POPUP_NOTIFICATIONS command.
      */
     public function handlePopupNotifications (... ignored) :void
     {
@@ -317,7 +320,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the ABOUT command.
+     * Handles the ABOUT command.
      */
     public function handleAbout () :void
     {
@@ -361,7 +364,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the TOGGLE_FULLSCREEN command.
+     * Handles the TOGGLE_FULLSCREEN command.
      */
     public function handleToggleFullscreen () :void
     {
@@ -372,7 +375,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the VIEW_ITEM command.
+     * Handles the VIEW_ITEM command.
      */
     public function handleViewItem (ident :ItemIdent) :void
     {
@@ -381,7 +384,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the VIEW_MEMBER command.
+     * Handles the VIEW_MEMBER command.
      */
     public function handleViewMember (memberId :int) :void
     {
@@ -389,7 +392,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the VIEW_GROUP command.
+     * Handles the VIEW_GROUP command.
      */
     public function handleViewGroup (groupId :int) :void
     {
@@ -397,7 +400,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the VIEW_GAME command.
+     * Handles the VIEW_GAME command.
      */
     public function handleViewGame (gameId :int) :void
     {
@@ -409,7 +412,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the VIEW_MY_AVATARS command.
+     * Handles the VIEW_MY_AVATARS command.
      */
     public function handleViewMyAvatars () :void
     {
@@ -417,7 +420,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the VIEW_MY_FURNITURE command.
+     * Handles the VIEW_MY_FURNITURE command.
      */
     public function handleViewMyFurniture () :void
     {
@@ -425,7 +428,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the VIEW_MAIL command.
+     * Handles the VIEW_MAIL command.
      */
     public function handleViewMail () :void
     {
@@ -433,7 +436,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the CLOSE_PLACE_VIEW command.
+     * Handles the CLOSE_PLACE_VIEW command.
      */
     public function handleClosePlaceView () : void
     {
@@ -447,7 +450,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the GO_SCENE command.
+     * Handles the GO_SCENE command.
      */
     public function handleGoScene (sceneId :int) :void
     {
@@ -458,7 +461,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the GO_MEMBER_HOME command.
+     * Handles the GO_MEMBER_HOME command.
      */
     public function handleGoMemberHome (memberId :int, direct :Boolean = false) :void
     {
@@ -466,7 +469,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the GO_MEMBER_LOCATION command.
+     * Handles the GO_MEMBER_LOCATION command.
      */
     public function handleGoMemberLocation (memberId :int) :void
     {
@@ -475,7 +478,15 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the JOIN_PLAYER_TABLE command.
+     * Handles the JOIN_PLAYER_GAME command.
+     */
+    public function handleJoinPlayerGame (gameId :int, playerId :int) :void
+    {
+        _ctx.getGameDirector().joinPlayer(gameId, playerId);
+    }
+
+    /**
+     * Handles the JOIN_PLAYER_TABLE command.
      */
     public function handleJoinPlayerTable (memberId :int) :void
     {
@@ -500,7 +511,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the GO_GROUP_HOME command.
+     * Handles the GO_GROUP_HOME command.
      */
     public function handleGoGroupHome (groupId :int, direct :Boolean = false) :void
     {
@@ -508,7 +519,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the GO_LOCATION command to go to a placeobject.
+     * Handles the GO_LOCATION command to go to a placeobject.
      */
     public function handleGoLocation (placeOid :int) :void
     {
@@ -519,7 +530,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the GO_GAME command to go to a non-Flash game.
+     * Handles the GO_GAME command to go to a non-Flash game.
      */
     public function handleGoGame (gameId :int, placeOid :int) :void
     {
@@ -537,7 +548,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle JOIN_GAME_LOBBY (and gameLobby=XX).
+     * Handles JOIN_GAME_LOBBY (and gameLobby=XX).
      */
     public function handleJoinGameLobby (gameId :int) :void
     {
@@ -559,7 +570,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle JOIN_AVR_GAME.
+     * Handles JOIN_AVR_GAME.
      */
     public function handleJoinAVRGame (gameId :int) :void
     {
@@ -567,7 +578,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle LEAVE_AVR_GAME.
+     * Handles LEAVE_AVR_GAME.
      */
     public function handleLeaveAVRGame () :void
     {
@@ -591,7 +602,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the LOGON command.
+     * Handles the LOGON command.
      */
     public function handleLogon (creds :MsoyCredentials) :void
     {
@@ -615,7 +626,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the INVITE_GUEST command.
+     * Handles the INVITE_GUEST command.
      */
     public function handleInviteGuest (guest :MemberName) :void
     {
@@ -632,7 +643,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the TOGGLE_CHAT command.
+     * Handles the TOGGLE_CHAT command.
      */
     public function handleToggleChat () :void
     {
@@ -965,7 +976,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle a TextEvent.LINK event.
+     * Handles a TextEvent.LINK event.
      */
     protected function handleLink (evt :TextEvent) :void
     {
@@ -978,7 +989,11 @@ public class MsoyController extends Controller
                 arg = cmd.substring(slash + 1);
                 cmd = cmd.substring(0, slash);
             }
-            CommandEvent.dispatch(evt.target as IEventDispatcher, cmd, arg);
+            if (arg != null && arg.indexOf("/") == -1) {
+                CommandEvent.dispatch(evt.target as IEventDispatcher, cmd, arg);
+            } else {
+                CommandEvent.dispatch(evt.target as IEventDispatcher, cmd, arg.split(/\//));
+            }
 
         } else {
             // A regular URL
@@ -987,7 +1002,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle global key events.
+     * Handles global key events.
      */
     protected function handleKeyDown (event :KeyboardEvent) :void
     {
@@ -1020,7 +1035,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle mouse movement on the stage.
+     * Handles mouse movement on the stage.
      */
     protected function handleMouseMove (event :MouseEvent) :void
     {

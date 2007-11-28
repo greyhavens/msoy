@@ -32,6 +32,7 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.person.data.FriendInvitePayload;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -494,7 +495,7 @@ public class MemberManager
                 }
                 public void handleSuccess () {
                     member.setLevel(levelToSet);
-                    MsoyServer.notifyMan.notifyLeveledUp(member, levelToSet);
+                    member.notify(new LevelUpNotification(levelToSet));
                 }
                 public void handleFailure (Exception pe) {
                     log.warning("Unable to set user level [memberId=" +

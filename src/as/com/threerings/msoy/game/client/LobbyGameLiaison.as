@@ -83,7 +83,6 @@ public class LobbyGameLiaison extends GameLiaison
             // lobby - if we really are hosed, joinLobby() will cause the liaison to shut down.
             _ctx.getMsoyController().restoreSceneURL();
             showLobbyUI();
-            joinPlayerTable(_playerIdGame);
         }, gotPlayerGameOid);
         lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);
     }
@@ -260,6 +259,8 @@ public class LobbyGameLiaison extends GameLiaison
         if (gameOid == -1) {
             // player isn't currently playing - show the lobby instead
             showLobbyUI();
+            // if they're at a table, join them there
+            joinPlayerTable(_playerIdGame);
         } else {
             _ctx.getMsoyController().handleGoGame(_gameId, gameOid);
         }

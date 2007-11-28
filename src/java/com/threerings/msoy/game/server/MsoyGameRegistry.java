@@ -6,9 +6,11 @@ package com.threerings.msoy.game.server;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.client.Client;
@@ -49,7 +51,6 @@ import com.threerings.msoy.peer.server.PeerGameProvider;
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.GameSummary;
-import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.all.Trophy;
 
 import static com.threerings.msoy.Log.log;
@@ -142,13 +143,38 @@ public class MsoyGameRegistry
     }
 
     // from interface MsoyGameProvider
-    public void inviteFriends (ClientObject caller, int gameId, int[] friendIds)
+    public void inviteFriends (ClientObject caller, final int gameId, final int[] friendIds)
     {
-        MemberObject memobj = (MemberObject)caller;
-        for (int friendId : friendIds) {
-            MsoyServer.peerMan.invokeNodeAction(
-                new InviteNodeAction(friendId, memobj.getMemberId(), gameId));
+        final MemberObject memobj = (MemberObject)caller;
+
+        // sanity check; if this breaks some day in real usage, I will be amused
+        if (friendIds.length > 255) {
+            log.warning("Received crazy invite friends request [from=" + memobj.who() +
+                        ", gameId=" + gameId + ", friendCount=" + friendIds.length + "].");
+            return;
         }
+
+        // check that friends are caller's friends? do we care? maybe we want to allow invites from
+        // anyone not just friends...
+
+        // load up the game's name; hello database!
+        String name = "inviteFriends(" + gameId + ", " + StringUtil.toString(friendIds) + ")";
+        MsoyServer.invoker.postUnit(new RepositoryUnit(name) {
+            public void invokePersist () throws Exception {
+                GameRecord grec = MsoyServer.itemMan.getGameRepository().loadGameRecord(gameId);
+                if (grec == null) {
+                    throw new Exception("No record for game."); // the standard logging is good
+                }
+                _game = grec.name;
+            }
+            public void handleSuccess () {
+                for (int friendId : friendIds) {
+                    MsoyServer.peerMan.invokeNodeAction(
+                        new InviteNodeAction(friendId, memobj.memberName, gameId, _game));
+                }
+            }
+            protected String _game;
+        });
     }
 
     // from interface GameServerProvider
@@ -554,18 +580,20 @@ public class MsoyGameRegistry
     /** Handles dispatching invitations to users wherever they may be. */
     protected static class InviteNodeAction extends MemberNodeAction
     {
-        public InviteNodeAction (int memberId, int inviterId, int gameId) {
+        public InviteNodeAction (int memberId, MemberName inviter, int gameId, String game) {
             super(memberId);
-            _inviterId = inviterId;
+            _inviterId = inviter.getMemberId();
+            _inviter = inviter.toString();
             _gameId = gameId;
+            _game = game;
         }
 
         protected void execute (MemberObject tgtobj) {
-            tgtobj.postMessage(MsoyGameCodes.GAME_INVITE, _inviterId, _gameId);
+            MsoyServer.notifyMan.notifyGameInvite(tgtobj, _inviter, _inviterId, _game, _gameId);
         }
 
-        protected int _inviterId;
-        protected int _gameId;
+        protected int _inviterId, _gameId;
+        protected String _inviter, _game;
     }
 
     /** Used to load metadata for games. */
