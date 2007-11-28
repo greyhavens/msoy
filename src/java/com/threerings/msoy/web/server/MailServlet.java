@@ -11,6 +11,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
@@ -40,28 +41,18 @@ public class MailServlet extends MsoyServiceServlet
     public void deleteMessages (final WebIdent ident, final int folderId, final int[] msgIdArr)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(ident);
-        Integer count = null;
+        MemberRecord memrec = requireAuthedUser(ident);
         try {
             getMailRepo().deleteMessage(memrec.memberId, folderId, msgIdArr);
-
             if (folderId == MailFolder.INBOX_FOLDER_ID) {
-                count = getMailRepo().getMessageCount(memrec.memberId, folderId).right;
+                int count = getMailRepo().getMessageCount(memrec.memberId, folderId).right;
+                MemberNodeActions.reportUnreadMail(memrec.memberId, count);
             }
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to delete messages [mid=" + memrec.memberId +
                     ", fid=" + folderId + ", mids=" + StringUtil.toString(msgIdArr) + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        if (count != null) {
-            final int fCount = count;
-            MsoyServer.omgr.postRunnable(new Runnable() {
-                public void run () {
-                    MsoyServer.memberMan.reportUnreadMail(memrec.memberId, fCount);
-                }
-            });
         }
     }
 
@@ -151,11 +142,9 @@ public class MailServlet extends MsoyServiceServlet
     public MailMessage getMessage (final WebIdent ident, final int folderId, final int messageId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(ident);
-
+        MemberRecord memrec = requireAuthedUser(ident);
         MailMessageRecord record;
         MailMessage message;
-        Integer count = null;
 
         try {
             record = getMailRepo().getMessage(memrec.memberId, folderId, messageId);
@@ -166,7 +155,8 @@ public class MailServlet extends MsoyServiceServlet
                 getMailRepo().setUnread(memrec.memberId, folderId, messageId, false);
                 // if we read an unread inbox message, count how many more of those there are
                 if (folderId == MailFolder.INBOX_FOLDER_ID) {
-                    count = getMailRepo().getMessageCount(memrec.memberId, folderId).right;
+                    int count = getMailRepo().getMessageCount(memrec.memberId, folderId).right;
+                    MemberNodeActions.reportUnreadMail(memrec.memberId, count);
                 }
             }
             message = record.toMailMessage(MsoyServer.memberRepo);
@@ -175,15 +165,6 @@ public class MailServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "getMessage failed [mid=" + memrec.memberId +
                     ", fid=" + folderId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        if (count != null) {
-            final int fCount = count;
-            MsoyServer.omgr.postRunnable(new Runnable() {
-                public void run () {
-                    MsoyServer.memberMan.reportUnreadMail(memrec.memberId, fCount);
-                }
-            });
         }
 
         return message;

@@ -36,9 +36,6 @@ public class MsoyNodeObject extends CrowdNodeObject
     /** The field name of the <code>peerGameService</code> field. */
     public static final String PEER_GAME_SERVICE = "peerGameService";
 
-    /** The field name of the <code>peerMemberService</code> field. */
-    public static final String PEER_MEMBER_SERVICE = "peerMemberService";
-
     /** The field name of the <code>peerProjectService</code> field. */
     public static final String PEER_PROJECT_SERVICE = "peerProjectService";
     // AUTO-GENERATED: FIELDS END
@@ -63,9 +60,6 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /** Dispatches game-related peer notifications. */
     public PeerGameMarshaller peerGameService;
-
-    /** Dispatches person-related peer notifications. */
-    public PeerMemberMarshaller peerMemberService;
 
     /** Dispatches Swiftly project room peer notifications. */
     public PeerProjectMarshaller peerProjectService;
@@ -341,22 +335,6 @@ public class MsoyNodeObject extends CrowdNodeObject
         requestAttributeChange(
             PEER_GAME_SERVICE, value, ovalue);
         this.peerGameService = value;
-    }
-
-    /**
-     * Requests that the <code>peerMemberService</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setPeerMemberService (PeerMemberMarshaller value)
-    {
-        PeerMemberMarshaller ovalue = this.peerMemberService;
-        requestAttributeChange(
-            PEER_MEMBER_SERVICE, value, ovalue);
-        this.peerMemberService = value;
     }
 
     /**

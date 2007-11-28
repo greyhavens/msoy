@@ -21,6 +21,7 @@ import com.threerings.msoy.data.UserAction;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -92,14 +93,8 @@ public class ProfileServlet extends MsoyServiceServlet
             // handle a display name change if necessary
             if (memrec.name == null || !memrec.name.equals(displayName)) {
                 MsoyServer.memberRepo.configureDisplayName(memrec.memberId, displayName);
-
-                // let the member manager know about the display name change
-                final MemberName name = new MemberName(displayName, memrec.memberId);
-                MsoyServer.omgr.postRunnable(new Runnable() {
-                    public void run () {
-                        MsoyServer.memberMan.displayNameChanged(name);
-                    }
-                });
+                // let the world servers know about the display name change
+                MemberNodeActions.displayNameChanged(new MemberName(displayName, memrec.memberId));
             }
 
         } catch (PersistenceException pe) {

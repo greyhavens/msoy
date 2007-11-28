@@ -18,7 +18,7 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.presents.data.InvocationCodes;
 
-import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
@@ -170,7 +170,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
                     mrec.memberId, flowCost, UserAction.BOUGHT_ITEM, details);
                 // update member's new flow
-                MemberManager.queueFlowUpdated(flowRec);
+                MemberNodeActions.flowUpdated(flowRec);
 
                 // give 30% of it to the creator
                 // TODO: hold this in escrow
@@ -179,7 +179,7 @@ public class CatalogServlet extends MsoyServiceServlet
                     flowRec = MsoyServer.memberRepo.getFlowRepository().grantFlow(
                         listing.item.creatorId, creatorPortion, UserAction.RECEIVED_PAYOUT,
                         details + " " + mrec.memberId);
-                    MemberManager.queueFlowUpdated(flowRec);
+                    MemberNodeActions.flowUpdated(flowRec);
                 }
             }
 
@@ -277,7 +277,7 @@ public class CatalogServlet extends MsoyServiceServlet
             if (price > 0) {
                 MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
                     mrec.memberId, price, UserAction.LISTED_ITEM, details);
-                MemberManager.queueFlowUpdated(flowRec);
+                MemberNodeActions.flowUpdated(flowRec);
             } else {
                 logUserAction(mrec, UserAction.LISTED_ITEM, details);
             }
@@ -372,7 +372,7 @@ public class CatalogServlet extends MsoyServiceServlet
             if (price > 0) {
                 MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
                     mrec.memberId, price, UserAction.UPDATED_LISTING, details);
-                MemberManager.queueFlowUpdated(flowRec);
+                MemberNodeActions.flowUpdated(flowRec);
             } else {
                 logUserAction(mrec, UserAction.UPDATED_LISTING, details);
             }
@@ -505,7 +505,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 flowRefund + " " + goldRefund;
             MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().refundFlow(
                 mrec.memberId, flowRefund, UserAction.RETURNED_ITEM, details);
-            MemberManager.queueFlowUpdated(flowRec);
+            MemberNodeActions.flowUpdated(flowRec);
 
             // now we have to take 30% of the refund away from the creator
             // TODO: when escrow works, this will blessedly go away
@@ -513,7 +513,7 @@ public class CatalogServlet extends MsoyServiceServlet
             flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
                 item.creatorId, creatorPortion, UserAction.RECEIVED_PAYOUT,
                 details + " " + mrec.memberId);
-            MemberManager.queueFlowUpdated(flowRec);
+            MemberNodeActions.flowUpdated(flowRec);
 
             return new int[] { flowRefund, goldRefund };
 

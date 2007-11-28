@@ -18,6 +18,7 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -136,7 +137,7 @@ public class MailManager
 
             public void handleSuccess () {
                 // if all went well, attempt to notify the recipient they have new mail
-                MsoyServer.memberMan.reportUnreadMail(recipientId, _count);
+                MemberNodeActions.reportUnreadMail(recipientId, _count);
 
                 super.handleSuccess();
 

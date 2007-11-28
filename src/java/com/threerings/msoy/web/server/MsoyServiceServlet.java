@@ -14,7 +14,7 @@ import com.samskivert.io.PersistenceException;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -99,7 +99,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().logUserAction(
             memrec.memberId, action, details);
         if (flowRec != null) {
-            MemberManager.queueFlowUpdated(flowRec);
+            MemberNodeActions.flowUpdated(flowRec);
         }
     }
 

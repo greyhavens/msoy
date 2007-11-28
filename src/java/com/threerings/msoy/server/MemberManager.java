@@ -22,17 +22,10 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
-import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ConfirmAdapter;
 
 import com.threerings.crowd.server.PlaceManager;
-
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.data.PeerMemberMarshaller;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.peer.server.PeerMemberDispatcher;
-import com.threerings.msoy.peer.server.PeerMemberProvider;
 
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -60,21 +53,8 @@ import static com.threerings.msoy.Log.log;
  * Manage msoy members.
  */
 public class MemberManager
-    implements MemberProvider, PeerMemberProvider
+    implements MemberProvider
 {
-    /**
-     * This can be called from any thread to queue an update of the member's current flow if they
-     * are online.
-     */
-    public static void queueFlowUpdated (final MemberFlowRecord record)
-    {
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.memberMan.flowUpdated(record);
-            }
-        });
-    }
-
     public MemberManager ()
     {
         // intialize our internal array of memoized flow values per level.  Start with 256
@@ -95,11 +75,6 @@ public class MemberManager
         _groupRepo = groupRepo;
 
         MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.BASE_GROUP);
-
-        // register and initialize our peer service
-        ((MsoyNodeObject)MsoyServer.peerMan.getNodeObject()).setPeerMemberService(
-            (PeerMemberMarshaller)MsoyServer.invmgr.registerDispatcher(
-                new PeerMemberDispatcher(this)));
 
         _ppSnapshot = new PopularPlacesSnapshot();
         _ppInvalidator = new Interval(MsoyServer.omgr) {
@@ -129,100 +104,6 @@ public class MemberManager
         PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.getPlaceOid());
         if (pmgr != null) {
             pmgr.updateOccupantInfo(user.createOccupantInfo(pmgr.getPlaceObject()));
-        }
-    }
-
-    /**
-     * Called when a member updates their display name.  If the member is resolved locally, update
-     * it here, otherwise search through the peers.If they are online anywhere, we update their
-     * {@link MemberObject} and all related occupant info records.
-     */
-    public void displayNameChanged (final MemberName name)
-    {
-        // if they're on this server, update them directly
-        MemberObject mobj = MsoyServer.lookupMember(name);
-        if (mobj != null) {
-            displayNameChanged(null, name);
-        }
-
-        // locate any peer that is hosting this member and forward the request there
-        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-            public void invoke (Client client, NodeObject nodeobj) {
-                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
-                if (msnobj.clients.containsKey(name)) {
-                    msnobj.peerMemberService.displayNameChanged(client, name);
-                }
-            }
-        });
-    }
-
-    // from PeerMemberProvider
-    public void displayNameChanged (ClientObject caller, MemberName name)
-    {
-        if (caller instanceof MemberObject) {
-            log.warning("Peer version of reportUnreadMail called by non-peer client.");
-            return;
-        }
-
-        MemberObject mobj = MsoyServer.lookupMember(name);
-        if (mobj == null) {
-            // they managed to log out
-            log.warning("Member vanished while changing display name [member=" + name + "]");
-            return;
-        }
-        mobj.setMemberName(name);
-        updateOccupantInfo(mobj);
-    }
-
-    /**
-     * Called when a member's flow is updated. If the member is resolved locally, update it
-     * here, otherwise search through the peers.
-     */
-    public void flowUpdated (final MemberFlowRecord record)
-    {
-        // if they're on this server, update them directly
-        MemberObject mobj = MsoyServer.lookupMember(record.memberId);
-        if (mobj != null) {
-            flowUpdated(null, record.memberId, record.flow, record.accFlow);
-        }
-
-        // locate any peer that is hosting this member and forward the request there
-        final MemberName memkey = new MemberName(null, record.memberId);
-        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-            public void invoke (Client client, NodeObject nodeobj) {
-                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
-                if (msnobj.clients.containsKey(memkey)) {
-                    msnobj.peerMemberService.flowUpdated(
-                        client, record.memberId, record.flow, record.accFlow);
-                }
-            }
-        });
-    }
-
-
-
-    // from PeerMemberProvider
-    public void flowUpdated (ClientObject caller, int memberId, int flow, int accFlow)
-    {
-        if (caller instanceof MemberObject) {
-            log.warning("Peer version of flowUpdated called by non-peer client.");
-            return;
-        }
-
-        MemberObject mobj = MsoyServer.lookupMember(memberId);
-        if (mobj == null) {
-            // they managed to log out
-            log.warning("Member vanished while reporting flow update [memberId=" + memberId + "]");
-            return;
-        }
-        mobj.startTransaction();
-        try {
-            mobj.setFlow(flow);
-            if (accFlow != mobj.accFlow) {
-                mobj.setAccFlow(accFlow);
-            }
-        } finally {
-            mobj.commitTransaction();
         }
     }
 
@@ -507,7 +388,7 @@ public class MemberManager
                     memberId, amount, grantAction, details);
             }
             public void handleSuccess () {
-                flowUpdated(_flowRec);
+                MemberNodeActions.flowUpdated(_flowRec);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to grant flow [memberId=" + memberId +
@@ -533,7 +414,7 @@ public class MemberManager
                     memberId, amount, spendAction, details);
             }
             public void handleSuccess () {
-                flowUpdated(_flowRec);
+                MemberNodeActions.flowUpdated(_flowRec);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to spend flow [memberId=" + memberId +
@@ -559,7 +440,7 @@ public class MemberManager
             }
             public void handleSuccess () {
                 if (_flowRec != null) {
-                    flowUpdated(_flowRec);
+                    MemberNodeActions.flowUpdated(_flowRec);
                 }
             }
             public void handleFailure (Exception pe) {
@@ -645,48 +526,6 @@ public class MemberManager
                 member.setAvrGameId(gameId);
             }
         });
-    }
-
-    /**
-     * Notify us that this member has the given number of unread pieces of mail. If we're not
-     * hosting the member and somebody else is, forward it there.
-     */
-    public void reportUnreadMail (final int memberId, final int newMailCount)
-    {
-        // if they're on this server, update them directly
-        MemberObject mobj = MsoyServer.lookupMember(memberId);
-        if (mobj != null) {
-            reportUnreadMail(null, memberId, newMailCount);
-        }
-
-        // locate any peer that is hosting this member and forward the request there
-        final MemberName memkey = new MemberName(null, memberId);
-        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-            public void invoke (Client client, NodeObject nodeobj) {
-                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
-                if (msnobj.clients.containsKey(memkey)) {
-                    msnobj.peerMemberService.reportUnreadMail(client, memberId, newMailCount);
-                }
-            }
-        });
-    }
-
-    // from PeerMemberProvider
-    public void reportUnreadMail (ClientObject caller, int memberId, int newMailCount)
-    {
-        if (caller instanceof MemberObject) {
-            log.warning("Peer version of reportUnreadMail called by non-peer client.");
-            return;
-        }
-        MemberObject mobj = MsoyServer.lookupMember(memberId);
-        if (mobj == null) {
-            // they managed to log out
-            log.warning("Member vanished while reporting unread mail [memberId=" + memberId + "]");
-            return;
-        }
-        if (mobj.newMailCount != newMailCount) {
-            mobj.setNewMailCount(newMailCount);
-        }
     }
 
     /**
