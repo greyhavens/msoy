@@ -26,7 +26,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
 
-import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.MsoyGameCodes;
@@ -211,17 +210,6 @@ public class GameDirector extends BasicDirector
     public function getGameId () :int
     {
         return (_liaison != null) ? _liaison.gameId : 0;
-    }
-
-    /**
-     * Returns the game object if we're currently in an AVRG, null otherwise.
-     */
-    public function getAVRGameObject () :AVRGameObject
-    {
-        if (_liaison != null && _liaison is AVRGameLiaison) {
-            return AVRGameLiaison(_liaison).getAVRGameObject();
-        }
-        return null;
     }
 
     /**
