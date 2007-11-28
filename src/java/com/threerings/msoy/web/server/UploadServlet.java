@@ -15,6 +15,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.samskivert.io.StreamUtil;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
@@ -62,12 +63,25 @@ public class UploadServlet extends AbstractUploadServlet
                 item.getContentType() + ", name=" + item.getName() + "].");
         }
 
+        // determine whether they also want a thumbnail media generated
+        boolean generateThumb = mediaId.endsWith(Item.PLUS_THUMB);
+        if (generateThumb) {
+            mediaId = mediaId.substring(0, mediaId.length()-Item.PLUS_THUMB.length());
+        }
+
         // if this is an image...
-        MediaInfo info;
+        MediaInfo info, tinfo = null;
         if (MediaDesc.isImage(uploadFile.getMimeType())) {
             // ...determine its constraints, generate a thumbnail, and publish the data into the
             // media store
             info = UploadUtil.publishImage(mediaId, uploadFile);
+
+            // if the client has requested a thumbnail image to be generated along with this image,
+            // then do that as well
+            if (generateThumb) {
+                tinfo = UploadUtil.publishImage(Item.THUMB_MEDIA, uploadFile);
+            }
+
         } else {
             // treat all other file types in the same manner, just publish them
             info = new MediaInfo(uploadFile.getHash(), uploadFile.getMimeType());
@@ -84,6 +98,11 @@ public class UploadServlet extends AbstractUploadServlet
             String script = "parent.setHash('" + mediaId + "', '" + info.hash + "', " +
                 info.mimeType + ", " + info.constraint + ", " +
                 info.width + ", " + info.height + ")";
+            if (tinfo != null) {
+                script += "; parent.setHash('" + Item.THUMB_MEDIA + "', '" + tinfo.hash + "', " +
+                    tinfo.mimeType + ", " + tinfo.constraint + ", " +
+                    tinfo.width + ", " + tinfo.height + ")";
+            }
             out.println("<body onLoad=\"" + script + "\"></body>");
             out.println("</html>");
 

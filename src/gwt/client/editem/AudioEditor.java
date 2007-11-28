@@ -34,7 +34,7 @@ public class AudioEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader(CShell.emsgs.audioMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(CShell.emsgs.audioMainTitle(), false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.isAudio()) {
                     return CShell.emsgs.errAudioNotAudio();

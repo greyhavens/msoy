@@ -4,21 +4,21 @@
 package client.editem;
 
 import com.google.gwt.core.client.GWT;
-
 import com.google.gwt.user.client.Event;
-
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormSubmitEvent;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.SmartFileUpload;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
+
+import com.threerings.gwt.ui.SmartFileUpload;
 
 import client.util.MediaUtil;
 import client.util.MsoyUI;
@@ -28,20 +28,23 @@ import client.util.MsoyUI;
  */
 public class MediaUploader extends VerticalPanel
 {
+    public static final int NORMAL = 0;
+    public static final int THUMBNAIL = 1;
+    public static final int NORMAL_PLUS_THUMBNAIL = 2;
+
     /**
-     * @param id the id of the uploader to create. This value is later passed to the bridge to
-     * identify the hash/mimeType returned by the server.
+     * @param id the type of the uploader to create, e.g. {@link Item#MAIN_MEDIA} . This value is
+     * later passed to the bridge to identify the hash/mimeType returned by the server.
      * @param title A title to be displayed to the user.
-     * @param thumbnail if true the preview will be thumbnail sized, false it will be preview
-     * sized.
+     * @param mode whether we're uploading normal media, thumbnail media or normal media that
+     * should also generate a thumbnail image when changed.
      * @param updater the updater that knows how to set the media hash on the item.
      */
-    public MediaUploader (String id, String title, boolean thumbnail,
-                          ItemEditor.MediaUpdater updater)
+    public MediaUploader (String mediaId, String title, int mode, ItemEditor.MediaUpdater updater)
     {
         setStyleName("mediaUploader");
 
-        _thumbnail = thumbnail;
+        _mode = mode;
         _updater = updater;
         _title = title;
 
@@ -53,7 +56,7 @@ public class MediaUploader extends VerticalPanel
         hpan.add(_target = new HorizontalPanel());
         _target.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
         _target.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        _target.setStyleName(_thumbnail ? "Thumbnail" : "Preview");
+        _target.setStyleName(_mode == THUMBNAIL ? "Thumbnail" : "Preview");
         hpan.add(_hint = MsoyUI.createLabel("", "Tip"));
         _hint.setWidth((2 * MediaDesc.THUMBNAIL_WIDTH) + "px");
         add(hpan);
@@ -77,7 +80,13 @@ public class MediaUploader extends VerticalPanel
                 uploadMedia();
             }
         });
-        _upload.setName(id);
+
+        // appending PLUS_THUMB to the media id will indicate to the upload servlet that we want it
+        // to also generate a thumbnail image and report that to us as well after uploading
+        if (mode == NORMAL_PLUS_THUMBNAIL) {
+            mediaId += Item.PLUS_THUMB;
+        }
+        _upload.setName(mediaId);
         _panel.add(_upload);
 
         _form.addFormHandler(new FormHandler() {
@@ -110,7 +119,7 @@ public class MediaUploader extends VerticalPanel
     {
         _target.clear();
         if (desc != null) {
-            int size = _thumbnail ? MediaDesc.THUMBNAIL_SIZE : MediaDesc.PREVIEW_SIZE;
+            int size = _mode == THUMBNAIL ? MediaDesc.THUMBNAIL_SIZE : MediaDesc.PREVIEW_SIZE;
             _target.add(MediaUtil.createMediaView(desc, size));
             _status.setText(_title);
         }
@@ -160,5 +169,5 @@ public class MediaUploader extends VerticalPanel
     protected SmartFileUpload _upload;
     protected String _submitted;
 
-    protected boolean _thumbnail;
+    protected int _mode;
 }

@@ -41,7 +41,7 @@ public class FurnitureEditor extends ItemEditor
         FlexTable furni = new FlexTable();
 
         String title = CShell.emsgs.editorFurniTitle();
-        _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
+        createFurniUploader(title, true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errFurniNotFlash();

@@ -253,7 +253,7 @@ public abstract class ItemEditor extends BorderedDialog
     protected void createFurniUploader (TabPanel tabs)
     {
         String title = CShell.emsgs.editorFurniTitle();
-        _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
+        createFurniUploader(title, true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errFurniNotFlash();
@@ -268,7 +268,7 @@ public abstract class ItemEditor extends BorderedDialog
     protected void createThumbUploader (TabPanel tabs)
     {
         String title = CShell.emsgs.editorThumbTitle();
-        _thumbUploader = createUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
+        createThumbUploader(title, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
                     return CShell.emsgs.errThumbNotImage();
@@ -358,9 +358,10 @@ public abstract class ItemEditor extends BorderedDialog
      * This should be called by item editors that are used for editing media that has a 'main'
      * piece of media.
      */
-    protected MediaUploader createMainUploader (String title, MediaUpdater updater)
+    protected MediaUploader createMainUploader (String title, boolean thumb, MediaUpdater updater)
     {
-        return (_mainUploader = createUploader(Item.MAIN_MEDIA, title, false, updater));
+        int mode = thumb ? MediaUploader.NORMAL_PLUS_THUMBNAIL : MediaUploader.NORMAL;
+        return (_mainUploader = createUploader(Item.MAIN_MEDIA, title, mode, updater));
     }
 
     /**
@@ -369,16 +370,34 @@ public abstract class ItemEditor extends BorderedDialog
      */
     protected MediaUploader createAuxUploader (String title, MediaUpdater updater)
     {
-        return (_auxUploader = createUploader(Item.AUX_MEDIA, title, false, updater));
+        return (_auxUploader = createUploader(Item.AUX_MEDIA, title, MediaUploader.NORMAL, updater));
+    }
+
+    /**
+     * This should be called if item editors want to create a custom furni uploader.
+     */
+    protected MediaUploader createFurniUploader (String title, boolean thumb, MediaUpdater updater)
+    {
+        int mode = thumb ? MediaUploader.NORMAL_PLUS_THUMBNAIL : MediaUploader.NORMAL;
+        return (_furniUploader = createUploader(Item.FURNI_MEDIA, title, mode, updater));
+    }
+
+    /**
+     * This should be called if item editors want to create a custom thumbnail uploader.
+     */
+    protected MediaUploader createThumbUploader (String title, MediaUpdater updater)
+    {
+        return (_thumbUploader =
+                createUploader(Item.THUMB_MEDIA, title, MediaUploader.THUMBNAIL, updater));
     }
 
     /**
      * Creates and configures a media uploader.
      */
     protected MediaUploader createUploader (
-        String id, String title, boolean thumbnail, MediaUpdater updater)
+        String id, String title, int mode, MediaUpdater updater)
     {
-        return new MediaUploader(id, title, thumbnail, updater);
+        return new MediaUploader(id, title, mode, updater);
     }
 
     /**

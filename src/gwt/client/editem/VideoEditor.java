@@ -42,18 +42,18 @@ public class VideoEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        Widget mainUploader = createMainUploader(CShell.emsgs.videoMainTitle(), 
-            new MediaUpdater() {
-                public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                    // TODO: remove this hack?
-                    if (!desc.isVideo()) {
-                        return CShell.emsgs.errVideoNotVideo();
-                    }
-                    _video.videoMedia = desc;
-                    updateAlternateSources(desc);
-                    return null;
+        Widget mainUploader = createMainUploader(
+            CShell.emsgs.videoMainTitle(), false, new MediaUpdater() {
+            public String updateMedia (String name, MediaDesc desc, int width, int height) {
+                // TODO: remove this hack?
+                if (!desc.isVideo()) {
+                    return CShell.emsgs.errVideoNotVideo();
                 }
-            });
+                _video.videoMedia = desc;
+                updateAlternateSources(desc);
+                return null;
+            }
+        });
 
         VerticalPanel pan = new VerticalPanel();
         pan.add(mainUploader);

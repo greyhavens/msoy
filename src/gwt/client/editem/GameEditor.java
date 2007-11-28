@@ -177,7 +177,7 @@ public class GameEditor extends ItemEditor
         }
 
         // add a tab for uploading the game media
-        tabs.add(createMainUploader(CShell.emsgs.gameMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(CShell.emsgs.gameMainTitle(), false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _game.gameMedia = desc;

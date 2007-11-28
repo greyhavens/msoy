@@ -88,6 +88,9 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     /** An identifier used to coordinate with the server when uploading media. */
     public static final String AUX_MEDIA = "aux";
 
+    /** An identifier used to coordinate with the server when uploading media. */
+    public static final String PLUS_THUMB = "_plus_thumb";
+
     /** Indicates that somebody has flagged this item as mature content. */
     public static final byte FLAG_FLAGGED_MATURE = 0x1 << 0;
 

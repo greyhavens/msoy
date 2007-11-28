@@ -34,7 +34,7 @@ public class PhotoEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader(CShell.emsgs.photoMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(CShell.emsgs.photoMainTitle(), true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errPhotoNotFlash();
