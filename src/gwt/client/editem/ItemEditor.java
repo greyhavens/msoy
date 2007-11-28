@@ -534,9 +534,9 @@ public abstract class ItemEditor extends BorderedDialog
 
         MsoyCallback cb = new MsoyCallback() {
             public void onSuccess (Object result) {
-                if (_item.itemId == 0) {
+                if (result instanceof Item) {
                     MsoyUI.info(CShell.emsgs.msgItemCreated());
-                    _item.itemId = ((Integer)result).intValue();
+                    _item = (Item)result;
                 } else {
                     MsoyUI.info(CShell.emsgs.msgItemUpdated());
                 }

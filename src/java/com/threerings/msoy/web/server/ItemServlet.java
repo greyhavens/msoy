@@ -49,7 +49,7 @@ public class ItemServlet extends MsoyServiceServlet
     implements ItemService
 {
     // from interface ItemService
-    public int createItem (WebIdent ident, Item item, ItemIdent parent)
+    public Item createItem (WebIdent ident, Item item, ItemIdent parent)
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser(ident);
@@ -119,7 +119,7 @@ public class ItemServlet extends MsoyServiceServlet
             }
         });
 
-        return record.itemId;
+        return record.toItem();
     }
 
     // from interface ItemService

@@ -22,23 +22,19 @@ import com.threerings.msoy.web.data.TagHistory;
 public interface ItemService extends RemoteService
 {
     /**
-     * Requests that the supplied item be created and inserted into the
-     * creating user's inventory.
+     * Requests that the supplied item be created and inserted into the creating user's inventory.
      *
-     * @return the newly created item's id.
+     * @return the newly created item.
      *
-     * @exception ServiceException thrown if there is any problem creating the
-     * item.
+     * @exception ServiceException thrown if there is any problem creating the item.
      */
-    public int createItem (WebIdent ident, Item item, ItemIdent parent)
+    public Item createItem (WebIdent ident, Item item, ItemIdent parent)
         throws ServiceException;
 
     /**
-     * Requests that the supplied item be updated based on user provided
-     * changes.
+     * Requests that the supplied item be updated based on user provided changes.
      *
-     * @exception ServiceException thrown if there is a problem updating the
-     * item.
+     * @exception ServiceException thrown if there is a problem updating the item.
      */
     public void updateItem (WebIdent ident, Item item)
         throws ServiceException;
@@ -112,8 +108,8 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Wraps an item up as a gift, i.e. clears its ownership. If 'wrap' is false, we
-     * unwrap the item instead (settings its owner to the unwrapper).
+     * Wraps an item up as a gift, i.e. clears its ownership. If 'wrap' is false, we unwrap the
+     * item instead (settings its owner to the unwrapper).
      */
     public void wrapItem (WebIdent ident, ItemIdent item, boolean wrap)
         throws ServiceException;
@@ -139,9 +135,8 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Deletes an item and notifies people who care with the given message.
-     * If the item is listed in the catalog, also delists it and deletes any clones.
-     * @throws ServiceException
+     * Deletes an item and notifies people who care with the given message.  If the item is listed
+     * in the catalog, also delists it and deletes any clones.
      */
     public Integer deleteItemAdmin (WebIdent ident, ItemIdent item, String subject, String body)
         throws ServiceException;
