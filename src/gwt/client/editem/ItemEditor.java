@@ -435,11 +435,11 @@ public abstract class ItemEditor extends BorderedDialog
         }
 
         // if the name has a path, strip it
-        int idx = name.lastIndexOf("\\"); // window
+        int idx = name.lastIndexOf("\\"); // windows
         if (idx != -1) {
             name = name.substring(idx+1);
         }
-        idx = name.lastIndexOf("//"); // joonix (and Mac OS X by association)
+        idx = name.lastIndexOf("/"); // joonix (and Mac OS X by association)
         if (idx != -1) {
             name = name.substring(idx+1);
         }
