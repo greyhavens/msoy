@@ -15,6 +15,11 @@ import com.threerings.presents.server.InvocationProvider;
 public interface MsoyGameProvider extends InvocationProvider
 {
     /**
+     * Handles a {@link MsoyGameService#inviteFriends} request.
+     */
+    public void inviteFriends (ClientObject caller, int arg1, int[] arg2);
+
+    /**
      * Handles a {@link MsoyGameService#locateGame} request.
      */
     public void locateGame (ClientObject caller, int arg1, MsoyGameService.LocationListener arg2)

@@ -41,6 +41,7 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.peer.client.PeerGameService;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.data.PeerGameMarshaller;
+import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.peer.server.PeerGameDispatcher;
 import com.threerings.msoy.peer.server.PeerGameProvider;
@@ -48,6 +49,7 @@ import com.threerings.msoy.peer.server.PeerGameProvider;
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.all.Trophy;
 
 import static com.threerings.msoy.Log.log;
@@ -137,6 +139,24 @@ public class MsoyGameRegistry
             }
             protected Game _game;
         });
+    }
+
+    // from interface MsoyGameProvider
+    public void inviteFriends (ClientObject caller, int gameId, int[] friendIds)
+    {
+        MemberObject memobj = (MemberObject)caller;
+        for (int friendId : friendIds) {
+            MsoyServer.peerMan.invokeNodeAction(
+                new InviteNodeAction().init(friendId, memobj.getMemberId(), gameId));
+        }
+    }
+
+    protected static class InviteNodeAction extends MemberNodeAction
+    {
+        protected void execute (MemberObject tgtobj, Object[] args) {
+            tgtobj.postMessage(MsoyGameCodes.GAME_INVITE,
+                               args[0] /*inviterId*/, args[1] /*gameId*/);
+        }
     }
 
     // from interface GameServerProvider

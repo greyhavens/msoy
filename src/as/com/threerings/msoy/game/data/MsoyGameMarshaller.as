@@ -24,8 +24,19 @@ import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 public class MsoyGameMarshaller extends InvocationMarshaller
     implements MsoyGameService
 {
+    /** The method id used to dispatch {@link #inviteFriends} requests. */
+    public static const INVITE_FRIENDS :int = 1;
+
+    // from interface MsoyGameService
+    public function inviteFriends (arg1 :Client, arg2 :int, arg3 :TypedArray /* of int */) :void
+    {
+        sendRequest(arg1, INVITE_FRIENDS, [
+            Integer.valueOf(arg2), arg3
+        ]);
+    }
+
     /** The method id used to dispatch {@link #locateGame} requests. */
-    public static const LOCATE_GAME :int = 1;
+    public static const LOCATE_GAME :int = 2;
 
     // from interface MsoyGameService
     public function locateGame (arg1 :Client, arg2 :int, arg3 :MsoyGameService_LocationListener) :void

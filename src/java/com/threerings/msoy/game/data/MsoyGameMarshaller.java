@@ -53,8 +53,19 @@ public class MsoyGameMarshaller extends InvocationMarshaller
         }
     }
 
+    /** The method id used to dispatch {@link #inviteFriends} requests. */
+    public static final int INVITE_FRIENDS = 1;
+
+    // from interface MsoyGameService
+    public void inviteFriends (Client arg1, int arg2, int[] arg3)
+    {
+        sendRequest(arg1, INVITE_FRIENDS, new Object[] {
+            Integer.valueOf(arg2), arg3
+        });
+    }
+
     /** The method id used to dispatch {@link #locateGame} requests. */
-    public static final int LOCATE_GAME = 1;
+    public static final int LOCATE_GAME = 2;
 
     // from interface MsoyGameService
     public void locateGame (Client arg1, int arg2, MsoyGameService.LocationListener arg3)

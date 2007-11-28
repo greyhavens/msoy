@@ -11,6 +11,7 @@ import mx.containers.VBox;
 import mx.controls.Label;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.io.TypedArray;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 
@@ -86,8 +87,9 @@ public class TableCreationPanel extends HBox
 
         case GameConfig.SEATED_GAME:
             plparam.minimum = match.minSeats;
-            plparam.start = match.startSeats;
             plparam.maximum = match.maxSeats;
+            plparam.start = match.maxSeats; // game creators don't configure start seats, so use
+                                            // the max; they can always start the game early
             if (!match.unwatchable) {
                 wparam = new ToggleParameter();
                 wparam.name = Msgs.GAME.get("l.watchable");
@@ -164,16 +166,16 @@ public class TableCreationPanel extends HBox
 
     protected function createGame (tconf :TableConfigurator, gconf :GameConfigurator) :void
     {
-        var friends :Array = [];
+        var invIds :TypedArray = TypedArray.create(int);
         if (_friendsGrid != null) {
             for (var ii :int = 0; ii < _friendsGrid.cellCount; ii++) {
                 var fcb :FriendCheckBox = (_friendsGrid.getCellAt(ii) as FriendCheckBox);
                 if (fcb.checked) {
-                    friends.push(fcb.friend.name);
+                    invIds.push(fcb.friend.name.getMemberId());
                 }
             }
         }
-        _panel.controller.handleSubmitTable(tconf.getTableConfig(), gconf.getGameConfig(), friends);
+        _panel.controller.handleSubmitTable(tconf.getTableConfig(), gconf.getGameConfig(), invIds);
     }
 
     protected var _ctx :GameContext;

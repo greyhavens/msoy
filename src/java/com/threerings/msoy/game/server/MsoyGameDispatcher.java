@@ -38,6 +38,13 @@ public class MsoyGameDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case MsoyGameMarshaller.INVITE_FRIENDS:
+            ((MsoyGameProvider)provider).inviteFriends(
+                source,
+                ((Integer)args[0]).intValue(), (int[])args[1]
+            );
+            return;
+
         case MsoyGameMarshaller.LOCATE_GAME:
             ((MsoyGameProvider)provider).locateGame(
                 source,

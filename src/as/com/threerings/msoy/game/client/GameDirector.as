@@ -12,6 +12,8 @@ import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.MessageAdapter;
+import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
 
 import com.threerings.parlor.game.client.GameController;
@@ -270,17 +272,6 @@ public class GameDirector extends BasicDirector
         }
     }
 
-    // from BasicDirector
-    override public function clientDidLogoff (event :ClientEvent) :void
-    {
-        super.clientDidLogoff(event);
-
-        // shutdown any game connection we might have going
-        if (_liaison != null) {
-            _liaison.shutdown();
-        }
-    }
-
     /**
      * Remember the most recent lobbied game we play. Currently this only used to transmit
      * a tutorial event whenever the AVRG reconnects, but we may use it in a more general
@@ -299,6 +290,37 @@ public class GameDirector extends BasicDirector
         var game :int = _mostRecentLobbyGame;
         _mostRecentLobbyGame = 0;
         return game;
+    }
+
+    // from BasicDirector
+    override public function clientDidLogon (event :ClientEvent) :void
+    {
+        super.clientDidLogon(event);
+
+        // listen for messages on the player object (this is implicitly cleared when we logoff
+        // which is all we need or care about)
+        _mctx.getMemberObject().addListener(new MessageAdapter(gotMemberMessage));
+    }
+
+    // from BasicDirector
+    override public function clientDidLogoff (event :ClientEvent) :void
+    {
+        super.clientDidLogoff(event);
+
+        // shutdown any game connection we might have going
+        if (_liaison != null) {
+            _liaison.shutdown();
+        }
+    }
+
+    /**
+     * Called when a message comes in on our MemberObject.
+     */
+    protected function gotMemberMessage (event :MessageEvent) :void
+    {
+        if (event.getName() == MsoyGameCodes.GAME_INVITE) {
+            trace("TODO: " + event);
+        }
     }
 
     /**

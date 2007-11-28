@@ -21,4 +21,11 @@ public interface MsoyGameService extends InvocationService
      * Locates (potentially resolving in the process) the server on which a game is hosted.
      */
     public void locateGame (Client client, int gameId, LocationListener listener);
+
+    /**
+     * Issues a request to the specified friends to invite them to join the requesting player's
+     * game. If the game is still being match-made, they'll join the table in question, if it's in
+     * play, they'll join the game if possible and watch otherwise.
+     */
+    public void inviteFriends (Client client, int gameId, int[] friendIds);
 }

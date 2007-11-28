@@ -10,9 +10,14 @@ import com.threerings.parlor.game.data.GameCodes;
  */
 public interface MsoyGameCodes extends GameCodes
 {
-    /** A message sent when the player earns a trophy. The payload will be a Trophy object. */
+    /** A message sent (on the PlayerObject) when the player earns a trophy. The payload will be a
+     * Trophy object. */
     public static final String TROPHY_AWARDED = "TrophyAwarded";
 
-    /** A message sent when the player earns a prize. The payload will be an Item object. */
+    /** A message sent (on the PlayerObject) when the player earns a prize. The payload will be an
+     * Item object. */
     public static final String PRIZE_AWARDED = "PrizeAwarded";
+
+    /** A message sent (on the MemberObject) when the player is being invited to a game. */
+    public static final String GAME_INVITE = "GameInvite";
 }

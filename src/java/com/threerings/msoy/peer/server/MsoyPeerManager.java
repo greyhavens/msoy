@@ -8,21 +8,9 @@ import static com.threerings.msoy.Log.log;
 import com.samskivert.util.ObserverList;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
+
 import com.threerings.crowd.peer.server.CrowdPeerManager;
-import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.data.MemberLocation;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.peer.data.HostedChannel;
-import com.threerings.msoy.peer.data.HostedGame;
-import com.threerings.msoy.peer.data.HostedProject;
-import com.threerings.msoy.peer.data.HostedRoom;
-import com.threerings.msoy.peer.data.MsoyClientInfo;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.web.data.ConnectConfig;
-import com.threerings.msoy.web.data.SwiftlyProject;
+
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.peer.data.ClientInfo;
@@ -30,7 +18,25 @@ import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 import com.threerings.presents.server.PresentsClient;
+
 import com.threerings.whirled.data.ScenePlace;
+
+import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.SwiftlyProject;
+
+import com.threerings.msoy.data.MemberLocation;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
+
+import com.threerings.msoy.peer.data.HostedChannel;
+import com.threerings.msoy.peer.data.HostedGame;
+import com.threerings.msoy.peer.data.HostedProject;
+import com.threerings.msoy.peer.data.HostedRoom;
+import com.threerings.msoy.peer.data.MsoyClientInfo;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 /**
  * Manages communication with our peer servers, coordinates services that must work across peers.

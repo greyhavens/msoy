@@ -5,6 +5,7 @@ package com.threerings.msoy.game.client {
 
 import flash.events.Event;
 
+import com.threerings.io.TypedArray;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
@@ -27,6 +28,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
 
+import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.MsoyTable;
@@ -73,11 +75,18 @@ public class LobbyController extends Controller implements Subscriber
     /**
      * Handles SUBMIT_TABLE.
      */
-    public function handleSubmitTable (tcfg :TableConfig, gcfg :GameConfig, friends :Array) :void
+    public function handleSubmitTable (
+        tcfg :TableConfig, gcfg :GameConfig, friendIds :TypedArray) :void
     {
-        trace("Creating table " + friends);
         _tableDir.createTable(tcfg, gcfg);
         _mctx.getGameDirector().setMatchingGame(_lobj.game);
+
+        // if requested, send an invitation to our friends, inviting them to this game
+        if (friendIds.length > 0) {
+            var gsvc :MsoyGameService =
+                (_mctx.getClient().requireService(MsoyGameService) as MsoyGameService);
+            gsvc.inviteFriends(_mctx.getClient(), gcfg.getGameId(), friendIds);
+        }
     }
 
     /**
