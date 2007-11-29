@@ -26,6 +26,7 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandLinkButton;
 
 import com.threerings.parlor.client.SeatednessObserver;
 import com.threerings.parlor.client.TableObserver;
@@ -85,23 +86,12 @@ public class LobbyPanel extends VBox
         _title.text = game.name;
         _title.validateNow();
         _title.width = _title.textWidth + TextFieldUtil.WIDTH_PAD;
-        _about.text = Msgs.GAME.get("b.about");
-        var thisLobbyPanel :LobbyPanel = this;
-        _about.addEventListener(MouseEvent.CLICK, function () :void {
-            CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_GAME, game.gameId);
-        });
-        _about.buttonMode = true;
-        _about.useHandCursor = true;
-        _about.mouseChildren = false;
+        _about.label = Msgs.GAME.get("b.about");
+        _about.setCommand(MsoyController.VIEW_GAME, game.gameId);
         // if ownerId = 0, we were pushed to the catalog's copy, so this is buyable
         if (game.ownerId == 0) {
-            _buy.text = Msgs.GAME.get("b.buy");
-            _buy.addEventListener(MouseEvent.CLICK, function () :void {
-                CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, game.getIdent());
-            });
-            _buy.buttonMode = true;
-            _buy.useHandCursor = true;
-            _buy.mouseChildren = false;
+            _buy.label = Msgs.GAME.get("b.buy");
+            _buy.setCommand(MsoyController.VIEW_ITEM, game.getIdent());
         } else {
             _buy.parent.removeChild(_buy);
         }
@@ -321,19 +311,21 @@ public class LobbyPanel extends VBox
         titleBox.addChild(padding);
 
         var embedBtnBox :HBox = new HBox();
-        embedBtnBox.addChild(_about = MsoyUI.createLabel("", "embedButton"));
-        embedBtnBox.addChild(_buy = MsoyUI.createLabel("", "embedButton"));
+        _about = new CommandLinkButton();
+        _about.styleName = "headerLink";
+        _buy = new CommandLinkButton();
+        _buy.styleName = "headerLink";
+        embedBtnBox.addChild(_about);
+        embedBtnBox.addChild(_buy);
         embedBtnBox.styleName = "headerEmbedBox";
         embedBtnBox.percentHeight = 100;
         titleBox.addChild(embedBtnBox);
-        var embedBtn :Label = MsoyUI.createLabel(Msgs.GENERAL.get("l.share"), "embedButton");
-        var thisLobbyPanel :LobbyPanel = this;
-        embedBtn.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+        var embedBtn :CommandLinkButton = new CommandLinkButton();
+        embedBtn.styleName = "headerLink";
+        embedBtn.label = Msgs.GENERAL.get("b.share")
+        embedBtn.setCallback(function () :void {
             new EmbedDialog(_wctx);
         });
-        embedBtn.buttonMode = true;
-        embedBtn.useHandCursor = true;
-        embedBtn.mouseChildren = false;
         embedBtnBox.addChild(embedBtn);
 
         var leaveBtnBox :VBox = new VBox();
@@ -433,7 +425,9 @@ public class LobbyPanel extends VBox
     protected var _contents :VBox;
     protected var _logo :ThumbnailPanel;
     protected var _info :Text;
-    protected var _title :Label, _about :Label, _buy :Label;
+    protected var _title :Label;
+    protected var _about :CommandLinkButton;
+    protected var _buy :CommandLinkButton;
     protected var _createBtn :CommandButton;
 
     protected var _tableList :VBox;

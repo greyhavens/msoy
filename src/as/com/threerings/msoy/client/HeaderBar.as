@@ -18,6 +18,7 @@ import flexlib.containers.ButtonScrollingCanvas;
 
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandLinkButton;
 
 import com.threerings.util.CommandEvent;
 
@@ -74,19 +75,12 @@ public class HeaderBar extends HBox
             _owner.removeChildAt(0);
         }
         if (owner != "") {
-            var nameLabel :Label = new Label();
-            nameLabel.styleName = "ownerName";
-            nameLabel.text = Msgs.GENERAL.get("m.room_owner", owner);
-            nameLabel.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-                if (onClick != null) {
-                    onClick();
-                }
-            });
-            var embedded :Boolean = _ctx.getWorldClient().isEmbedded();
-            nameLabel.buttonMode = !embedded;
-            nameLabel.useHandCursor = !embedded;
-            nameLabel.mouseChildren = embedded;
-            _owner.addChild(nameLabel);
+            var nameLink :CommandLinkButton = new CommandLinkButton();
+            nameLink.styleName = "headerLink";
+            nameLink.label = Msgs.GENERAL.get("m.room_owner", owner);
+            nameLink.setCallback(onClick);
+            nameLink.enabled = !_ctx.getWorldClient().isEmbedded();
+            _owner.addChild(nameLink);
         }
     }
 
@@ -179,15 +173,12 @@ public class HeaderBar extends HBox
         controlBox.percentHeight = 100;
         addChild(controlBox);
 
-        _embedLinkButton = new Label();
-        _embedLinkButton.styleName = "embedButton";
-        _embedLinkButton.text = Msgs.GENERAL.get("l.share");
-        _embedLinkButton.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+        _embedLinkButton = new CommandLinkButton();
+        _embedLinkButton.styleName = "headerLink";
+        _embedLinkButton.label = Msgs.GENERAL.get("b.share");
+        _embedLinkButton.setCallback(function () :void {
             new EmbedDialog(_ctx);
         });
-        _embedLinkButton.buttonMode = true;
-        _embedLinkButton.useHandCursor = true;
-        _embedLinkButton.mouseChildren = false;
         controlBox.addChild(_embedLinkButton);
         setEmbedLinkButtonVisible(false);
         _extras.push(_embedLinkButton);
@@ -209,7 +200,7 @@ public class HeaderBar extends HBox
 
     protected var _loc :Label;
     protected var _owner :HBox;
-    protected var _embedLinkButton :Label;
+    protected var _embedLinkButton :CommandLinkButton;
     protected var _spacer :HBox;
 
     protected var _tabs :ChatTabBar;

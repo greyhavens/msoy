@@ -637,9 +637,8 @@ Window {
   horizontalGap: 0px;
 }
 
-.ownerName, .embedButton {
+.headerLink {
   fontSize: 10px;
-  color: #AAB5B9;
 }
 
 .editButton {
@@ -712,8 +711,16 @@ HRule {
 }
 
 LinkButton {
-  rollOverColor: #d2d8dc;
-  selectionColor: #54a9da;
+  fontWeight: "normal";
+  color: #AAB5B9;
+  textRollOverColor: #AAB5B9;
+  textSelectedColor: #AAB5B9;
+  overSkin: Embed(source="../../rsrc/media/skins/blank.png");
+  downSkin: Embed(source="../../rsrc/media/skins/blank.png");
+  paddingLeft: 0;
+  paddingTop: 0;
+  paddingBottom: 0;
+  paddingRight: 0;
 }
 
 ProgressBar {
