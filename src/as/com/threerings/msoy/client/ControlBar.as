@@ -239,7 +239,7 @@ public class ControlBar extends HBox
         chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
         chatBtn.setCommand(MsoyController.CHAT_PREFS);
         chatBtn.styleName = "controlBarButtonChat";
-        addGroupChild(chatBtn, [ UI_STD, UI_GUEST ]);
+        addGroupChild(chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
 
         var volBtn :CommandButton = new CommandButton();
         volBtn.toolTip = Msgs.GENERAL.get("i.volume");
