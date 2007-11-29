@@ -7,11 +7,12 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 
+import client.msgs.ForumModels;
+import client.msgs.ForumPanel;
 import client.msgs.MsgsEntryPoint;
 import client.msgs.ThreadPanel;
 import client.shell.Args;
 import client.shell.Page;
-import client.util.HashIntMap;
 import client.util.MsoyUI;
 
 public class index extends MsgsEntryPoint
@@ -42,8 +43,12 @@ public class index extends MsgsEntryPoint
         } else if (args.get(0, 0) != 0) {
             setContent(_gview);
             _gview.setGroup(args.get(0, 0));
+        } else if (args.get(0, "").equals("unread")) {
+            ForumPanel fpanel = new ForumPanel(_fmodels);
+            fpanel.displayUnreadThreads();
+            setContent(fpanel);
         } else if (args.get(0, "").equals("t")) {
-            setContent(new ThreadPanel(args.get(1, 0), _gmodels));
+            setContent(new ThreadPanel(args.get(1, 0), _fmodels));
         } else {
             setContent(new GroupList());
         }
@@ -64,6 +69,6 @@ public class index extends MsgsEntryPoint
         CGroup.msgs = (GroupMessages)GWT.create(GroupMessages.class);
     }
 
-    protected HashIntMap _gmodels = new HashIntMap();
-    protected GroupView _gview = new GroupView(this, _gmodels);
+    protected ForumModels _fmodels = new ForumModels();
+    protected GroupView _gview = new GroupView(this, _fmodels);
 }

@@ -40,11 +40,11 @@ import com.threerings.msoy.group.data.GroupExtras;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.msgs.ForumModels;
 import client.msgs.ForumPanel;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
-import client.util.HashIntMap;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.PopupMenu;
@@ -60,14 +60,14 @@ import client.util.TagDetailPanel;
 public class GroupView extends VerticalPanel
     implements GroupEdit.GroupSubmissionListener
 {
-    public GroupView (Page parent, HashIntMap gmodels)
+    public GroupView (Page parent, ForumModels fmodels)
     {
         super();
         setWidth("100%");
         _parent = parent;
 
         add(_table = new MyFlexTable());
-        add(_forums = new ForumPanel(gmodels));
+        add(_forums = new ForumPanel(fmodels));
     }
 
     /**
@@ -77,8 +77,8 @@ public class GroupView extends VerticalPanel
     {
         if (_group == null || _group.groupId != groupId) {
             loadGroup(groupId);
-            _forums.displayGroupThreads(groupId);
         }
+        _forums.displayGroupThreads(groupId);
     }
 
     // from interface GroupEdit.GroupSubmissionListener

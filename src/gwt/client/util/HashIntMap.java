@@ -24,4 +24,9 @@ public class HashIntMap extends HashMap
     {
         return put(new Integer(key), value);
     }
+
+    public Object remove (int key)
+    {
+        return remove(new Integer(key));
+    }
 }

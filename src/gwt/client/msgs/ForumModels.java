@@ -3,8 +3,11 @@
 
 package client.msgs;
 
+import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.web.client.ForumService;
@@ -75,12 +78,62 @@ public class ForumModels
         }
 
         protected void mapThread (ForumThread thread) {
-            CMsgs.log("Mapping " + thread.threadId + "...");
             _threads.put(thread.threadId, thread);
         }
 
         protected int _groupId;
         protected boolean _canStartThread;
+        protected HashIntMap _threads = new HashIntMap();
+    }
+
+    /** A data model that provides all threads unread by the authenticated user. */
+    public static class UnreadThreads extends SimpleDataModel
+    {
+        public UnreadThreads ()
+        {
+            super(null);
+        }
+
+        /**
+         * Looks up the specified thread in the set of all threads ever fetched by this model.
+         */
+        public ForumThread getThread (int threadId)
+        {
+            return (ForumThread)_threads.get(threadId);
+        }
+
+        // from interface DataModel
+        public void removeItem (Object item)
+        {
+            ForumThread thread = (ForumThread)item;
+            _threads.remove(thread.threadId);
+            super.removeItem(item);
+        }
+
+        // from interface DataModel
+        public void doFetchRows (final int start, final int count, final AsyncCallback callback)
+        {
+            if (_items != null) {
+                super.doFetchRows(start, count, callback);
+                return;
+            }
+
+            CMsgs.forumsvc.loadUnreadThreads(CMsgs.ident, MAX_UNREAD_THREADS, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    ForumService.ThreadResult tresult = (ForumService.ThreadResult)result;
+                    _items = tresult.threads;
+                    for (int ii = 0; ii < _items.size(); ii++) {
+                        ForumThread thread = (ForumThread)_items.get(ii);
+                        _threads.put(thread.threadId, thread);
+                    }
+                    doFetchRows(start, count, callback);
+                }
+                public void onFailure (Throwable failure) {
+                    callback.onFailure(failure);
+                }
+            }); 
+        }
+
         protected HashIntMap _threads = new HashIntMap();
     }
 
@@ -135,7 +188,6 @@ public class ForumModels
                 int lastReadIndex = mresult.messages.size()-1;
                 int highestPostId = ((ForumMessage)mresult.messages.get(lastReadIndex)).messageId;
                 if (highestPostId > _thread.lastReadPostId) {
-                    CMsgs.log("Updating last read " + _thread.threadId + " to " + highestPostId);
                     _thread.lastReadPostId = highestPostId;
                     _thread.lastReadPostIndex = _pageOffset + lastReadIndex;
                 }
@@ -162,4 +214,75 @@ public class ForumModels
         protected ForumThread _thread = new ForumThread(); // dummy to make logic easier
         protected boolean _canPostReply;
     }
+
+    /**
+     * Notifies the cache that a new thread was posted.
+     */
+    public void newThreadPosted (ForumThread thread)
+    {
+        // if we already have this model loaded, let it know about the new thread
+        GroupThreads gmodel = (GroupThreads)_gmodels.get(thread.groupId);
+        if (gmodel != null) {
+            gmodel.prependItem(thread);
+        }
+    }
+
+    /**
+     * Returns, creating if necessary, a data model that provides all of the threads for the
+     * specified group.
+     */
+    public GroupThreads getGroupThreads (int groupId)
+    {
+        GroupThreads gmodel = (GroupThreads)_gmodels.get(groupId);
+        if (gmodel == null) {
+            _gmodels.put(groupId, gmodel = new GroupThreads(groupId));
+        }
+        return gmodel;
+    }
+
+    /**
+     * Returns, creating if necessary, the data model that provides all unread threads for the
+     * authenticated user.
+     */
+    public UnreadThreads getUnreadThreads ()
+    {
+        if (_unreadModel == null) {
+            _unreadModel = new UnreadThreads();
+        }
+        return _unreadModel;
+    }
+
+    /**
+     * Locates the thread in question in the cache. Returns null if the thread could not be found.
+     */
+    public ForumThread findThread (int threadId)
+    {
+        // check for the thread in our unread threads model if we have one
+        if (_unreadModel != null) {
+            ForumThread thread = _unreadModel.getThread(threadId);
+            if (thread != null) {
+                return thread;
+            }
+        }
+
+        // next, check for the thread in the group models
+        for (Iterator iter = _gmodels.values().iterator(); iter.hasNext(); ) {
+            GroupThreads model = (GroupThreads)iter.next();
+            ForumThread thread = model.getThread(threadId);
+            if (thread != null) {
+                return thread;
+            }
+        }
+
+        return null;
+    }
+
+    /** A cache of GroupThreads data models. */
+    protected HashIntMap _gmodels = new HashIntMap();
+
+    /** A cached UnreadThreads data model. */
+    protected UnreadThreads _unreadModel;
+
+    /** The maximum number of unread threads we'll download at once. */
+    protected static final int MAX_UNREAD_THREADS = 100;
 }

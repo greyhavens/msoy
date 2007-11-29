@@ -14,13 +14,13 @@ import com.google.gwt.user.client.ui.Widget;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
-import client.util.HashIntMap;
 import client.util.MsoyUI;
 
 /**
@@ -36,15 +36,16 @@ public class ThreadListPanel extends PagedGrid
         _parent = parent;
     }
 
-    public void displayGroupThreads (int groupId, HashIntMap gmodels)
+    public void displayGroupThreads (int groupId, ForumModels fmodels)
     {
         _groupId = groupId;
+        setModel(fmodels.getGroupThreads(groupId), 0);
+    }
 
-        ForumModels.GroupThreads gmodel = (ForumModels.GroupThreads)gmodels.get(groupId);
-        if (gmodel == null) {
-            gmodels.put(groupId, gmodel = new ForumModels.GroupThreads(groupId));
-        }
-        setModel(gmodel, 0);
+    public void displayUnreadThreads (ForumModels fmodels)
+    {
+        _groupId = 0;
+        setModel(fmodels.getUnreadThreads(), 0);
     }
 
     // @Override // from PagedGrid
@@ -104,6 +105,7 @@ public class ThreadListPanel extends PagedGrid
 
             int col = 0;
             // TODO: show thread.flags somehow
+            CMsgs.log("Checking " + thread.threadId + ": " + thread.hasUnreadMessages());
             String itype = (thread.hasUnreadMessages() ? "unread" : "read");
             setWidget(0, col, new Image("/images/msgs/" + itype + ".png"));
             getFlexCellFormatter().setStyleName(0, col++, "Status");
@@ -126,6 +128,9 @@ public class ThreadListPanel extends PagedGrid
 
     /** Contains the id of the group whose threads we are displaying or zero. */
     protected int _groupId;
+
+    /** Our unread threads data model. */
+    protected DataModel _unreadModel;
 
     /** A button for starting a new thread. */
     protected Button _startThread;
