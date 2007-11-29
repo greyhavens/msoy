@@ -47,6 +47,7 @@ import client.shell.Args;
 import client.shell.Page;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
+import client.util.MsoyUI;
 import client.util.PopupMenu;
 import client.util.PrettyTextPanel;
 import client.util.PromptPopup;
@@ -120,8 +121,6 @@ public class GroupView extends VerticalPanel
         _table.setCellSpacing(0);
         _table.setCellPadding(0);
 
-        boolean amManager = _me != null && _me.rank == GroupMembership.RANK_MANAGER;
-
         VerticalPanel infoPanel = new VerticalPanel();
         infoPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
         infoPanel.setStyleName("LogoPanel");
@@ -167,7 +166,7 @@ public class GroupView extends VerticalPanel
         infoPanel.add(policy);
 
         RowPanel buttons = new RowPanel();
-        if (amManager) {
+        if (amManager()) {
             buttons.add(new Button(CGroup.msgs.viewEdit(), new ClickListener() {
                 public void onClick (Widget sender) {
                     new GroupEdit(_group, _extras, GroupView.this).show();
@@ -226,58 +225,22 @@ public class GroupView extends VerticalPanel
         _table.setWidget(0, 1, description);
         _table.getFlexCellFormatter().setWidth(0, 1, "100%");
 
-        FlexTable people = new FlexTable();
+        final FlexTable people = new FlexTable();
         people.setStyleName("PeoplePanel");
         people.setCellPadding(0);
         people.setCellSpacing(5);
         people.setText(0, 0, CGroup.msgs.viewManagers());
-        people.setText(1, 0, CGroup.msgs.viewMembers());
-        FlowPanel managers = new FlowPanel();
-        FlowPanel members = new FlowPanel();
-        Iterator i = _detail.members.iterator();
-        boolean firstManager = true;
-        boolean firstMember = true;
-        while (i.hasNext()) {
-            final GroupMembership membership = (GroupMembership) i.next();
-            final MemberName name = membership.member;
-            FlowPanel peoplePanel;
-            if (membership.rank == GroupMembership.RANK_MANAGER) {
-                if (firstManager) {
-                    firstManager = false;
-                } else {
-                    managers.add(new InlineLabel(", "));
-                }
-                peoplePanel = managers;
-            } else {
-                if (firstMember) {
-                    firstMember = false;
-                } else {
-                    members.add(new InlineLabel(", "));
-                }
-                peoplePanel = members;
-            }
-            if (amManager) {
-                final PopupPanel personMenuPanel = new PopupPanel(true);
-                MenuBar menu = getManagerMenuBar(membership, personMenuPanel);
-                personMenuPanel.add(menu);
-                final InlineLabel person = new InlineLabel(name.toString(), false, false, false);
-                person.addStyleName("LabelLink");
-                person.addMouseListener(new MouseListenerAdapter() {
-                    public void onMouseDown (Widget sender, int x, int y) { 
-                        personMenuPanel.setPopupPosition(person.getAbsoluteLeft() + x, 
-                            person.getAbsoluteTop() + y);
-                        personMenuPanel.show();
-                    }
-                });
-                peoplePanel.add(person);
-            } else {
-                peoplePanel.add(Application.memberViewLink(name.toString(), name.getMemberId()));
-            }
-        }
-        people.setWidget(0, 1, managers);
-        people.setWidget(1, 1, members);
+        people.setWidget(0, 1, createMembersPanel(GroupMembership.RANK_MANAGER));
 
-        _table.setWidget(0, 2, people);
+        people.setText(1, 0, CGroup.msgs.viewMembers());
+        RowPanel meminfo = new RowPanel();
+        meminfo.add(new Label("" + detail.members.size()));
+        meminfo.add(MsoyUI.createActionLabel(CGroup.msgs.viewShowMembers(), new ClickListener() {
+            public void onClick (Widget sender) {
+                people.setWidget(1, 1, createMembersPanel(GroupMembership.RANK_MEMBER));
+            }
+        }));
+        people.setWidget(1, 1, meminfo);
 
         if (_group.policy != Group.POLICY_EXCLUSIVE) {
             people.setWidget(3, 0, new TagDetailPanel(new TagDetailPanel.TagService() {
@@ -306,9 +269,49 @@ public class GroupView extends VerticalPanel
                         }
                     });
                 }
-            }, amManager));
+            }, amManager()));
             people.getFlexCellFormatter().setColSpan(3, 0, 2);
         }
+        _table.setWidget(0, 2, people);
+    }
+
+    protected FlowPanel createMembersPanel (byte rank)
+    {
+        FlowPanel panel = new FlowPanel();
+        for (Iterator i = _detail.members.iterator(); i.hasNext(); ) {
+            GroupMembership membership = (GroupMembership) i.next();
+            if (membership.rank != rank) {
+                continue;
+            }
+            if (panel.getWidgetCount() > 0) {
+                panel.add(new InlineLabel(", "));
+            }
+
+            MemberName name = membership.member;
+            if (amManager()) {
+                final PopupPanel menuPanel = new PopupPanel(true);
+                MenuBar menu = getManagerMenuBar(membership, menuPanel);
+                menuPanel.add(menu);
+                final InlineLabel person = new InlineLabel(name.toString(), false, false, false);
+                person.addStyleName("LabelLink");
+                person.addMouseListener(new MouseListenerAdapter() {
+                    public void onMouseDown (Widget sender, int x, int y) { 
+                        menuPanel.setPopupPosition(
+                            person.getAbsoluteLeft() + x, person.getAbsoluteTop() + y);
+                        menuPanel.show();
+                    }
+                });
+                panel.add(person);
+            } else {
+                panel.add(Application.memberViewLink(name.toString(), name.getMemberId()));
+            }
+        }
+        return panel;
+    }
+
+    protected boolean amManager ()
+    {
+        return (_me != null) && (_me.rank == GroupMembership.RANK_MANAGER);
     }
 
     protected String getPolicyName (int policy)
