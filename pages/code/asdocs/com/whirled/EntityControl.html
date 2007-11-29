@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="EntityControl,com.whirled.EntityControl,_location,_tickInterval,_ticker,_hasControl,getLogicalLocation,getPixelLocation,getRoomBounds,canEditRoom,triggerAction,sendMessage,getMemories,lookupMemory,hasControl,requestControl,setTickInterval,getInstanceId,updateMemory,setHotSpot,showPopup,clearPopup,populateProperties,gotInitProperties,messageReceived_v1,memoryChanged_v1,gotControl_v1,recheckTicker,stopTicker,handleUnload" name="keywords">
+<meta content="EntityControl,com.whirled.EntityControl,_location,_tickInterval,_ticker,_hasControl,getLogicalLocation,getPixelLocation,getRoomBounds,canEditRoom,triggerAction,sendMessage,sendSignal,getMemories,lookupMemory,getRoomProperties,getRoomProperty,hasControl,requestControl,setTickInterval,getInstanceId,getViewerName,updateMemory,setRoomProperty,setHotSpot,showPopup,clearPopup,getCamera,getMicrophone,populateProperties,gotInitProperties,messageReceived_v1,signalReceived_v1,memoryChanged_v1,roomPropertyChanged_v1,gotControl_v1,recheckTicker,stopTicker,handleUnload" name="keywords">
 <title>com.whirled.EntityControl</title>
 </head>
 <body>
@@ -147,6 +147,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getCamera()">getCamera</a>():Camera</div>
+<div class="summaryTableDescription">
+     Access the local user's camera.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#getInstanceId()">getInstanceId</a>():int</div>
 <div class="summaryTableDescription">
      Get the instance id of this instance.</div>
@@ -171,6 +179,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getMicrophone()">getMicrophone</a>():Microphone</div>
+<div class="summaryTableDescription">
+     Access the local user's camera.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#getPixelLocation()">getPixelLocation</a>():Array</div>
 <div class="summaryTableDescription">
      Returns our current location in the scene, in pixel coordinates.</div>
@@ -182,6 +198,30 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#getRoomBounds()">getRoomBounds</a>():Array</div>
 <div class="summaryTableDescription">
      Get the room's bounds in pixels.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getRoomProperties()">getRoomProperties</a>():Object</div>
+<div class="summaryTableDescription">
+     Return an associative hash of all the room properties.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getRoomProperty()">getRoomProperty</a>(key:String, defval:Object = null):Object</div>
+<div class="summaryTableDescription">
+     Returns the value associated with the supplied key in thie room's shared property space.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getViewerName()">getViewerName</a>(instanceId:int = 0):String</div>
+<div class="summaryTableDescription">
+     Get the non-unique display name of the user viewing a particular instanceId.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -230,10 +270,28 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#sendSignal()">sendSignal</a>(name:String, arg:Object = null):void</div>
+<div class="summaryTableDescription">
+     Send a message to all instances of all entities in this instance's current room,
+     resulting in a SIGNAL_RECEIVED event.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#setHotSpot()">setHotSpot</a>(x:Number, y:Number, height:Number):void</div>
 <div class="summaryTableDescription">
      Set the layout "hotspot" for your item, specified as pixels relative to (0, 0) the top-left
      coordinate.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setRoomProperty()">setRoomProperty</a>(key:String, value:Object):Boolean</div>
+<div class="summaryTableDescription">
+     Requests that the room's shared property space be updated with the supplied key/value
+     pair.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -359,6 +417,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#roomPropertyChanged_v1()">roomPropertyChanged_v1</a>(key:String, value:Object):void</div>
+<div class="summaryTableDescription">
+     Called when one of this item's memory entries has changed.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#signalReceived_v1()">signalReceived_v1</a>(name:String, arg:Object):void</div>
+<div class="summaryTableDescription">
+     Called when an action or message is triggered on this scene object.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#stopTicker()">stopTicker</a>():void</div>
 <div class="summaryTableDescription">
      Stops our AI ticker.</div>
@@ -412,6 +486,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when any instance sends a message to all instances.</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:roomPropertyChanged">roomPropertyChanged</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when the instance in control updates a room property.</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:signalReceived">signalReceived</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when any instance sends a message to all instances of all entities.</td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -519,6 +609,25 @@ showHideInherited();
 <code>public function clearPopup():void</code><p>
      Clear any showing popup. May be called at any time.
      </p></div>
+<a name="getCamera()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getCamera</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getCamera():Camera</code><p>
+     Access the local user's camera.
+     Calling Camera.getCamera() does not work inside whirled due to security restrictions.
+     For convenience, this method works even when you're not connected.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Camera</code></td>
+</tr>
+</table>
+</div>
 <a name="getInstanceId()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -574,6 +683,25 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="getMicrophone()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getMicrophone</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getMicrophone():Microphone</code><p>
+     Access the local user's camera.
+     Calling Microphone.getMicrophone() does not work inside whirled due to security restrictions.
+     For convenience, this method works even when you're not connected.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Microphone</code></td>
+</tr>
+</table>
+</div>
 <a name="getPixelLocation()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -605,6 +733,81 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Array</code> &mdash; an array containing [ width, height, depth ].
+     </td>
+</tr>
+</table>
+</div>
+<a name="getRoomProperties()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getRoomProperties</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getRoomProperties():Object</code><p>
+     Return an associative hash of all the room properties. This is not a cheap operation.
+     Use getRoomProperty if you know what you want.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<a name="getRoomProperty()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getRoomProperty</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getRoomProperty(key:String, defval:Object = null):Object</code><p>
+     Returns the value associated with the supplied key in thie room's shared property space.
+     If no value is mapped in the room, the supplied default value will be returned.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">defval</span>:Object</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code> &mdash; the value for the specified key from this room's property space or the
+     supplied default.
+     </td>
+</tr>
+</table>
+</div>
+<a name="getViewerName()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getViewerName</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getViewerName(instanceId:int = 0):String</code><p>
+     Get the non-unique display name of the user viewing a particular instanceId.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">instanceId</span>:int</code> (default = <code>0</code>)<code></code> &mdash; an instanceId or 0 to get this instance's viewer's display name.
+          </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code> &mdash; a String or null if the viewer is unknown.
      </td>
 </tr>
 </table>
@@ -661,7 +864,7 @@ showHideInherited();
           <p>Note: control is <em>not</em> automatically assigned. If an entity wishes to obtain
      control, it should first call <code>requestControl</code> and it will then receive a
      <code>GOT_CONTROL</code> event if and when control has been assigned to this client.
-     There are no guarantees which of the requesting clients will receive it, or when. 
+     There are no guarantees which of the requesting clients will receive it, or when.
      <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -789,6 +992,28 @@ showHideInherited();
      Request to have this client control all the instances of this entity. The other instances
      are the same code, but running in other browsers. See the <code>hasControl</code> method.
      </p></div>
+<a name="roomPropertyChanged_v1()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">roomPropertyChanged_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function roomPropertyChanged_v1(key:String, value:Object):void</code><p>
+     Called when one of this item's memory entries has changed.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+</table>
+</div>
 <a name="sendMessage()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -801,6 +1026,32 @@ showHideInherited();
           Note: the name must be a String and may be up to 64 characters.
      TODO: restriction on size of the argument. It will probably be 1k or something.
           Note: Any instance can send messages. Compare with triggerAction.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">arg</span>:Object</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="sendSignal()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">sendSignal</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function sendSignal(name:String, arg:Object = null):void</code><p>
+     Send a message to all instances of all entities in this instance's current room,
+     resulting in a SIGNAL_RECEIVED event. All instances of the entity can initiate a
+     signal, so the user must take care to check for control when appropriate.
+          Note: the name must be a String and may be up to 64 characters.
+     TODO: restriction on size of the argument. It will probably be 1k or something.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -842,6 +1093,45 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">height</span>:Number</code></td>
+</tr>
+</table>
+</div>
+<a name="setRoomProperty()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setRoomProperty</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setRoomProperty(key:String, value:Object):Boolean</code><p>
+     Requests that the room's shared property space be updated with the supplied key/value
+     pair. The supplied value must be a simple object (Integer, Number, String) or an Array
+     of simple objects. The key must be no more than 64 bytes long and the value no more
+     than 256 when encoded. There can be no more than 16 entries in a room's property space
+     so be frugal.
+          Please note that these properties are not persisted through server reboots. They are
+     meant for state coordination, not long-term storage. Use item memory for persistence.
+          Setting the value for a key to null clears that property; subsequent lookups will return
+     the default value.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the memory was updated, false if the memory update could not be completed
+     due to size restrictions.
+     </td>
 </tr>
 </table>
 </div>
@@ -930,6 +1220,28 @@ showHideInherited();
 <tr>
 <td width="20"></td><td><code>Boolean</code> &mdash; true if the popup was shown, false if it could not be shown for various reasons.
      </td>
+</tr>
+</table>
+</div>
+<a name="signalReceived_v1()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">signalReceived_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function signalReceived_v1(name:String, arg:Object):void</code><p>
+     Called when an action or message is triggered on this scene object.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">arg</span>:Object</code></td>
 </tr>
 </table>
 </div>
@@ -1074,6 +1386,39 @@ showHideInherited();
  </p><p> An event type dispatched when a message is received.
      name: message name
      value: message value
+          </p></div>
+<a name="event:roomPropertyChanged"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">roomPropertyChanged</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../whirled/ControlEvent.html"><code>com.whirled.ControlEvent</code></a>
+<br>
+<span class="label">ControlEvent.type property = </span><a href="../whirled/ControlEvent.html#ROOM_PROPERTY_CHANGED"><code>com.whirled.ControlEvent.ROOM_PROPERTY_CHANGED</code></a>
+<br><p>
+ Dispatched when the instance in control updates a room property.
+  </p><p> An event type dispatched when a room property has changed.
+     name: property key
+     value: property value
+          </p></div>
+<a name="event:signalReceived"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">signalReceived</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../whirled/ControlEvent.html"><code>com.whirled.ControlEvent</code></a>
+<br>
+<span class="label">ControlEvent.type property = </span><a href="../whirled/ControlEvent.html#SIGNAL_RECEIVED"><code>com.whirled.ControlEvent.SIGNAL_RECEIVED</code></a>
+<br><p>
+ Dispatched when any instance sends a message to all instances of all entities.
+ 
+ </p><p> An event type dispatched when a signal is received.
+     name: signal name
+     value: signal value
           </p></div>
 <a name="event:timer"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

@@ -1,0 +1,688 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
+<meta content="UserCookie,com.whirled.contrib.UserCookie,SEND_TIME,_control,_cookieDef,_parameters,_dirty,_timer,_readOnly,getCookie,getIntParameter,getStringParameter,getArrayParameter,getVersionParameter,set,get,read,flush,write,setInArray,getFromArray" name="keywords">
+<title>com.whirled.contrib.UserCookie</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'UserCookie - API Documentation';
+				var baseRef = '../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/whirled/contrib/UserCookie.html&amp;com/whirled/contrib/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;UserCookie</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class UserCookie"); titleBar_setSubNav(true,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled.contrib</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class UserCookie</td>
+</tr>
+</table>
+<p></p>
+ <p>A class to manage complicated user cookies on a WhirledGameControl.  Using this class, user 
+ cookies can contain a list of various different data types, which are read from the server and
+ saved back to the server automatically.  The data structure is compressed into a ByteArray to 
+ save space (user cookies are only allowed to go up to 4k).  Data is saved to the server as it is
+ updated on this object, but no faster than once per every 2 seconds so that this class doesn't 
+ add too much to the game's networking activity, as games are limited to 100 messages per every 
+ 10 seconds.</p>
+ 
+ <p>This class enables versioning, up to a point.  It currently supports adding parameters to the 
+ cookie definition, but does not support removing them or changing their data type.  The only
+ overhead added by this class to the cookie itself is a single int that holds the version number
+ of the cookie.</p>
+  <p>example usage:  This could be used for a game that has 5 levels.  At first the developer only
+ needed to know which was the last level the player played on, so it was stored in the cookie.  
+ Later he wanted to know how many times each level had been played by the player, so he added it
+ to the cookie definition in a new version.</p>
+  <pre>
+ protected var LAST_LEVEL_PLAYED :String = "lastLevelPlayed";
+ protected var TIMES_LEVELS_PLAYED :String = "timesLevelsPlayed";
+ 
+ public function getCookie () :void 
+ {
+     var timesPlayed :Array = [];
+     for (level = 0; level < 5; level++) {
+         // parameter names are not used if the parameter is nested in an array.  Arrays can also 
+         // hold array parameters as children.
+         timesPlayed.push(UserCookie.getIntParameter("", 0));
+     }
+ 
+     var cookieDef :Array = [
+         // start at version 1
+         UserCookie.getVersionParameter(),
+         UserCookie.getIntParameter(LAST_LEVEL_PLAYED, 0),
+     
+         // version 2 added the number of times each level was played
+         UserCookie.getVersionParameter(),
+         UserCookie.getArrayParameter(TIMES_LEVELS_PLAYED, timesPlayed)
+     ];
+     
+     UserCookie.getCookie(wgc, function (cookie :UserCookie) :void {
+         // notify those that need to know that the UserCookie is valid and available.
+         _cookie = cookie;
+     }, cookieDef);
+ }
+ 
+ public function setLastLevelPlayed (level :int) :void
+ {
+     if (_cookie != null) {
+         _cookie.set(LAST_LEVEL_PLAYED, level);
+     }
+ }
+ 
+ public function playedLevel (level :int) :void
+ {
+     if (_cookie != null) {
+         // increment the array value for this level.
+         var previousValue :int = _cookie.get(TIMES_LEVELS_PLAYED, level);     
+         _cookie.set(TIMES_LEVELS_PLAYED, previousValue + 1, level);
+     }
+ }
+ </pre>
+ <p></p>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a><a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_control">_control</a> : <a href="../../whirled/WhirledGameControl.html">WhirledGameControl</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_cookieDef">_cookieDef</a> : Array<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_dirty">_dirty</a> : Boolean = false<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_parameters">_parameters</a> : <a href="../../threerings/util/HashMap.html">HashMap</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_readOnly">_readOnly</a> : Boolean = false<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_timer">_timer</a> : Timer<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#UserCookie()">UserCookie</a>()</div>
+<div class="summaryTableDescription">
+     This function should not be called directly.</div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#get()">get</a>(name:String, ... indices):*</div>
+<div class="summaryTableDescription">
+     Get the value of the cookie parameter identified by name.</div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getArrayParameter()">getArrayParameter</a>(name:String, children:Array):CookieParameter</div>
+<div class="summaryTableDescription">[static]
+     Returns an Array typped parameter for use in the cookieDef argument to getCookie().</div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getCookie()">getCookie</a>(wgc:<a href="../WhirledGameControl.html">WhirledGameControl</a>, validCallback:Function, cookieDef:Array, occId:int = -1):void</div>
+<div class="summaryTableDescription">[static]
+     Get a player's user cookie via WhirledGameControl.getUserCookie, wrapped in a UserCookie
+     object.</div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getIntParameter()">getIntParameter</a>(name:String, defaultValue:int):CookieParameter</div>
+<div class="summaryTableDescription">[static]
+     Returns an int typped parameter for use in the cookieDef argument to getCookie().</div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getStringParameter()">getStringParameter</a>(name:String, defaultValue:String):CookieParameter</div>
+<div class="summaryTableDescription">[static]
+     Returns a String typped parameter for use in the cookieDef argument to getCookie().</div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getVersionParameter()">getVersionParameter</a>():CookieParameter</div>
+<div class="summaryTableDescription">[static]
+     Returns a version flag for use in the cookieDef argument to getCookie().</div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#set()">set</a>(name:String, value:*, ... indices):void</div>
+<div class="summaryTableDescription">
+     Set the value of the cookie parameter identified by name.</div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#flush()">flush</a>(... ignored):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getFromArray()">getFromArray</a>(array:ArrayParameter, indices:Array):*</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#read()">read</a>(bytes:ByteArray):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setInArray()">setInArray</a>(array:ArrayParameter, value:*, indices:Array):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#write()">write</a>():ByteArray</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a><a name="protectedConstantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Constants</div>
+<table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SEND_TIME">SEND_TIME</a> : int = 2000.0<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="_control"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_control</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _control:<a href="../../whirled/WhirledGameControl.html">WhirledGameControl</a></code>
+</div>
+<a name="_cookieDef"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_cookieDef</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _cookieDef:Array</code>
+</div>
+<a name="_dirty"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_dirty</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _dirty:Boolean = false</code>
+</div>
+<a name="_parameters"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_parameters</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _parameters:<a href="../../threerings/util/HashMap.html">HashMap</a></code>
+</div>
+<a name="_readOnly"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_readOnly</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _readOnly:Boolean = false</code>
+</div>
+<a name="_timer"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_timer</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _timer:Timer</code>
+</div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="UserCookie()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">UserCookie</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function UserCookie()</code><p>
+     This function should not be called directly.  Instead, call UserCookie.getCookie().
+     </p></div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="flush()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">flush</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function flush(... ignored):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
+</tr>
+</table>
+</div>
+<a name="get()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">get</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function get(name:String, ... indices):*</code><p>
+     Get the value of the cookie parameter identified by name.  
+     
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code> &mdash; The first arg should be the parameter identified as a String.  Any further 
+     arguments are the array indices to use.  There can be multiple array indices, if a value
+     in a nested array is being retrieved.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">indices</span></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>*</code></td>
+</tr>
+</table>
+</div>
+<a name="getArrayParameter()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getArrayParameter</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getArrayParameter(name:String, children:Array):CookieParameter</code><p>
+     Returns an Array typped parameter for use in the cookieDef argument to getCookie().  All of
+     the children must be CookieParameters returned from a getarameter() function, or an 
+     ArgumentError will be thrown.  Also, you cannot embed a version in an array.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">children</span>:Array</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>CookieParameter</code></td>
+</tr>
+</table>
+</div>
+<a name="getCookie()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getCookie</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getCookie(wgc:<a href="../WhirledGameControl.html">WhirledGameControl</a>, validCallback:Function, cookieDef:Array, occId:int = -1):void</code><p>
+     Get a player's user cookie via WhirledGameControl.getUserCookie, wrapped in a UserCookie
+     object.
+     
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">wgc</span>:<a href="../WhirledGameControl.html">WhirledGameControl</a></code> &mdash; The WhirledGameControl of the current instance
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">validCallback</span>:Function</code> &mdash; This function is called with a single UserCookie parameter when the
+                          cookie has been retrieved and validated.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">cookieDef</span>:Array</code> &mdash; An array of cookie parameters that define the format of the user cookie.  
+                      See the various getarameter() functions for more detail.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">occId</span>:int</code> (default = <code>-1</code>)<code></code> &mdash; The player's id to fetch the cookie for.  Defaults to the current player.  If
+                  a different player is specified, this UserCookie will be read-only - attempting
+                  to set a value will generate an IllegalOperationError.
+     </td>
+</tr>
+</table>
+</div>
+<a name="getFromArray()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getFromArray</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function getFromArray(array:ArrayParameter, indices:Array):*</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">array</span>:ArrayParameter</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">indices</span>:Array</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>*</code></td>
+</tr>
+</table>
+</div>
+<a name="getIntParameter()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getIntParameter</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getIntParameter(name:String, defaultValue:int):CookieParameter</code><p>
+     Returns an int typped parameter for use in the cookieDef argument to getCookie().
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">defaultValue</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>CookieParameter</code></td>
+</tr>
+</table>
+</div>
+<a name="getStringParameter()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getStringParameter</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getStringParameter(name:String, defaultValue:String):CookieParameter</code><p>
+     Returns a String typped parameter for use in the cookieDef argument to getCookie().
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">defaultValue</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>CookieParameter</code></td>
+</tr>
+</table>
+</div>
+<a name="getVersionParameter()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getVersionParameter</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getVersionParameter():CookieParameter</code><p>
+     Returns a version flag for use in the cookieDef argument to getCookie().  If the cookie 
+     definition for a game is extended after some players may have the old cookie already set,
+     there should be a version flag added before adding in the new parameters.  This will allow
+     the old players to gracefully add in the new values when they play the game again.
+     
+     If a player with an old cookie or no cookie plays the game, each parameter will return
+     its default type.  The default type will also get set for this player on the server until
+     a new value is defined.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>CookieParameter</code></td>
+</tr>
+</table>
+</div>
+<a name="read()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">read</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function read(bytes:ByteArray):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">bytes</span>:ByteArray</code></td>
+</tr>
+</table>
+</div>
+<a name="set()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">set</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function set(name:String, value:*, ... indices):void</code><p>
+     Set the value of the cookie parameter identified by name.  If the type of value does not
+     match the type from the cookieDef parameter to getCookie, an ArgumentError is thrown.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code> &mdash;  The first arg should be the parameter identifier as a String.  The next 
+     argument should be the value to set.  Any further arguments are the array indices to use.  
+     There can be multiple array indices, if a value in a nested array is being set.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:*</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">indices</span></code></td>
+</tr>
+</table>
+</div>
+<a name="setInArray()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setInArray</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function setInArray(array:ArrayParameter, value:*, indices:Array):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">array</span>:ArrayParameter</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:*</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">indices</span>:Array</code></td>
+</tr>
+</table>
+</div>
+<a name="write()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">write</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function write():ByteArray</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>ByteArray</code></td>
+</tr>
+</table>
+</div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="SEND_TIME"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SEND_TIME</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const SEND_TIME:int = 2000.0</code>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright"> 
+</center>
+</div>
+</body>
+</html>
+<!-- -->

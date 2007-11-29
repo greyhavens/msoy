@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="DataPack,com.whirled.DataPack,_zip,_metadata,close,isComplete,getNamespace,getString,getNumber,getBoolean,getArray,getPoint,getRectangle,getData,getFile,getFileAsString,getSounds,getDisplayObjects,doLoadDisplayObject,getFileInternal,validateAccess,validateComplete,handleLoadError,handleParseError,handleLoadingComplete,dispatchError" name="keywords">
+<meta content="DataPack,com.whirled.DataPack,_zip,_metadata,close,isComplete,getNamespace,getString,getNumber,getBoolean,getArray,getPoint,getRectangle,getData,getFile,getFileAsString,getFileAsXML,getSounds,getDisplayObjects,getSwfLoaders,doGetObjects,doLoadObject,getFileInternal,validateAccess,validateComplete,handleLoadError,handleParseError,handleLoadingComplete,dispatchError" name="keywords">
 <title>com.whirled.DataPack</title>
 </head>
 <body>
@@ -138,6 +138,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getFileAsXML()">getFileAsXML</a>(name:String):XML</div>
+<div class="summaryTableDescription">
+     Get a File, as an XML object.</div>
+</td><td class="summaryTableOwnerCol">DataPack</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#getNamespace()">getNamespace</a>():String</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">DataPack</td>
@@ -185,6 +193,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getSwfLoaders()">getSwfLoaders</a>(names:Array, callback:Function, useSubDomain:Boolean = false):void</div>
+<div class="summaryTableDescription">
+     Get SWF loaders for each SWF in the datapack.</div>
+</td><td class="summaryTableOwnerCol">DataPack</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#isComplete()">isComplete</a>():Boolean</div>
 <div class="summaryTableDescription">
      Has the loading of the datapack completed?
@@ -210,7 +226,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#doLoadDisplayObject()">doLoadDisplayObject</a>(name:String, bytes:ByteArray, loadHandler:Function, useSubDomain:Boolean):void</div>
+<a class="signatureLink" href="#doGetObjects()">doGetObjects</a>(names:Array, callback:Function, useSubDomain:Boolean, returnRawLoaders:Boolean):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">DataPack</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#doLoadObject()">doLoadObject</a>(name:String, bytes:ByteArray, loadHandler:Function, useSubDomain:Boolean, returnRawLoaders:Boolean):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">DataPack</td>
 </tr>
@@ -331,14 +354,46 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="doLoadDisplayObject()"></a>
+<a name="doGetObjects()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">doLoadDisplayObject</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">doGetObjects</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function doLoadDisplayObject(name:String, bytes:ByteArray, loadHandler:Function, useSubDomain:Boolean):void</code><span class="label">Parameters</span>
+<code>protected function doGetObjects(names:Array, callback:Function, useSubDomain:Boolean, returnRawLoaders:Boolean):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">names</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">callback</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">useSubDomain</span>:Boolean</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">returnRawLoaders</span>:Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="doLoadObject()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">doLoadObject</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function doLoadObject(name:String, bytes:ByteArray, loadHandler:Function, useSubDomain:Boolean, returnRawLoaders:Boolean):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
@@ -360,6 +415,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">useSubDomain</span>:Boolean</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">returnRawLoaders</span>:Boolean</code></td>
 </tr>
 </table>
 </div>
@@ -453,7 +514,7 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">callback</span>:Function</code> &mdash; a Function that will be called when all the display objects
                      are loaded (or were unable to load).
-                     Signature: function (results :Object) :void
+                     Signature: <code>function (results :Object) :void</code>
                      results will contain a mapping from name -> DisplayObject, or null if none.
      </td>
 </tr>
@@ -510,6 +571,29 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="getFileAsXML()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getFileAsXML</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getFileAsXML(name:String):XML</code><p>
+     Get a File, as an XML object.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>XML</code></td>
 </tr>
 </table>
 </div>
@@ -667,6 +751,41 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="getSwfLoaders()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getSwfLoaders</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getSwfLoaders(names:Array, callback:Function, useSubDomain:Boolean = false):void</code><p>
+     Get SWF loaders for each SWF in the datapack.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">names</span>:Array</code> &mdash; an Array of the names of the display objects to load.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">callback</span>:Function</code> &mdash; a Function that will be called when all the display objects
+                     are loaded (or were unable to load).
+                     Signature: <code>function (results :Object) :void</code>.
+                     results will contain a mapping from name -> EmbeddedSwfLoader, or null.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">useSubDomain</span>:Boolean</code> (default = <code>false</code>)<code></code> &mdash; if true, classes in a loaded SWF will be added to an
+                         ApplicationDomain that is a child of the current ApplicationDomain.
+     </td>
 </tr>
 </table>
 </div>
