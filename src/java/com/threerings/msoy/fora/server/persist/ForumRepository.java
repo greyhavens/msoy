@@ -17,6 +17,7 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
@@ -69,13 +70,20 @@ public class ForumRepository extends DepotRepository
 
     /**
      * Loads up to the specified maximum number of threads from the supplied set of groups that
-     * have messages that are unread by the specified member.
+     * have messages that are unread by the specified member. The results are ordered from newest
+     * to oldest.
      */
     public List<ForumThreadRecord> loadUnreadThreads (
         int memberId, Set<Integer> groupIds, int maximum)
         throws PersistenceException
     {
-        throw new PersistenceException("Unimplemented");
+        return findAll(ForumThreadRecord.class,
+                       new Join(ReadTrackingRecord.THREAD_ID_C, ForumThreadRecord.THREAD_ID_C),
+                       new Where(new And(new Equals(ReadTrackingRecord.MEMBER_ID_C, memberId),
+                                         new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID_C,
+                                                         ReadTrackingRecord.LAST_READ_POST_ID_C))),
+                       new Limit(0, maximum),
+                       OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID_C));
     }
 
     /**
