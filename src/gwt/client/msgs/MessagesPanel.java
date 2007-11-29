@@ -75,7 +75,7 @@ public class MessagesPanel extends PagedGrid
     protected void displayResults (int start, int count, List list)
     {
         ForumModels.ThreadMessages tmodel = (ForumModels.ThreadMessages)_model;
-        _parent.gotThread(tmodel.getThread());
+        _parent.gotThread(tmodel.getThread(), tmodel.getGroup());
         _postReply.setEnabled(tmodel.canPostReply());
         super.displayResults(start, count, list);
     }

@@ -35,7 +35,7 @@ public class ForumPanel extends TitledListPanel
 
     public void startNewThread (int groupId)
     {
-        setContents(CMsgs.mmsgs.startNewThread(), new NewThreadPanel(groupId), false);
+        setContents(CMsgs.mmsgs.startNewThread(), new NewThreadPanel(groupId));
     }
 
     protected FlexTable createHeader (String title)

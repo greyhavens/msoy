@@ -98,6 +98,15 @@
     font-weight: bold;
 }
 
+.titledListPanel .Header .RightBits {
+    padding-right: 10px;
+}
+
+.titledListPanel .Header .RightBits a {
+    white-space: nowrap;
+    color: #FFFFFF;
+}
+
 .titledListPanel .Header .Posts {
     width: 50px;
     font-size: 12px;

@@ -176,6 +176,7 @@ public class ForumServlet extends MsoyServiceServlet
                 highestPostId = Math.max(highestPostId, msg.messageId);
             }
             result.messages = messages;
+            result.group = grec.toGroupName();
 
             // fill in this caller's posting privileges
             result.canPostReply = group.checkAccess(groupRank, Group.ACCESS_POST, 0);

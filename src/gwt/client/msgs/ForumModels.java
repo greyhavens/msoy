@@ -7,10 +7,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.threerings.gwt.util.SimpleDataModel;
+
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.web.client.ForumService;
+
+import com.threerings.gwt.util.SimpleDataModel;
 
 import client.util.HashIntMap;
 import client.util.ServiceBackedDataModel;
@@ -154,6 +157,10 @@ public class ForumModels
             return _thread;
         }
 
+        public GroupName getGroup () {
+            return _group;
+        }
+
         public boolean canPostReply () {
             return _canPostReply;
         }
@@ -178,6 +185,7 @@ public class ForumModels
                 _thread = mresult.thread;
             }
             _canPostReply = mresult.canPostReply;
+            _group = mresult.group;
 
             // let the PagedGrid know that we're good and to render the items
             super.onSuccess(result);
@@ -212,6 +220,7 @@ public class ForumModels
 
         protected int _threadId;
         protected ForumThread _thread = new ForumThread(); // dummy to make logic easier
+        protected GroupName _group;
         protected boolean _canPostReply;
     }
 

@@ -37,11 +37,19 @@ public class TitledListPanel extends VerticalPanel
         _theader.setStyleName("Header");
     }
 
+    public void setContents (String title, Widget contents)
+    {
+        setContents(title, contents, false);
+    }
+
     public void setContents (String title, Widget contents, boolean backButton)
     {
         clear();
         if (backButton) {
             add(_bheader);
+            if (_bheader.getCellCount(0) > 1) {
+                _bheader.setText(0, 2, "");
+            }
         } else {
             add(_theader);
         }
@@ -54,6 +62,12 @@ public class TitledListPanel extends VerticalPanel
         clear();
         add(header);
         add(contents);
+    }
+
+    protected void setRightBits (Widget rightBox)
+    {
+        _bheader.setWidget(0, 2, rightBox);
+        _bheader.getFlexCellFormatter().setStyleName(0, 2, "RightBits");
     }
 
     protected void updateTitle (String title)

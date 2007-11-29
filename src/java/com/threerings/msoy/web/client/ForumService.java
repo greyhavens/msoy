@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
@@ -38,6 +39,9 @@ public interface ForumService extends RemoteService
     {
         /** The thread for which messages were loaded, only provided for first request. */
         public ForumThread thread;
+
+        /** The group from which this thread was loaded. */
+        public GroupName group;
 
         /** Whether or not the caller can post a reply message to this thread. */
         public boolean canPostReply;
