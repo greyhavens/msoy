@@ -26,7 +26,9 @@ public class GroupDetail
     public MemberName creator;
 
     /**
-     * The members of this group, expressed as a Set of GroupMembership(s).
+     * The members of this group, expressed as a Set of GroupMembership(s). TODO: only put the
+     * managers in here and have the client request the full members list only if it actually needs
+     * it.
      *
      * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMembership>
      */
