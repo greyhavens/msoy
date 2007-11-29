@@ -18,6 +18,10 @@
     font-size: 12px;
 }
 
+.groupView .PeoplePanel {
+    width: 200px;
+}
+
 .groupView .PeoplePanel a {
     white-space: nowrap;
 }
@@ -35,6 +39,7 @@
 .groupView .LogoPanel {
     margin: 5px;
     font-size: 12px;
+    width: 100px;
 }
 
 .groupView .LogoPanel .Links {
