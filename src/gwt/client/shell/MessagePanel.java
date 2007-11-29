@@ -53,6 +53,7 @@ public class MessagePanel extends FlexTable
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
         FlowPanel info = new FlowPanel();
+        info.setStyleName("Info");
         String iconPath = getIconPath();
         if (iconPath != null) {
             Image icon = new Image(iconPath);

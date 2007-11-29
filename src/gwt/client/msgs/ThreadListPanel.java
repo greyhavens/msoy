@@ -42,10 +42,10 @@ public class ThreadListPanel extends PagedGrid
         setModel(fmodels.getGroupThreads(groupId), 0);
     }
 
-    public void displayUnreadThreads (ForumModels fmodels)
+    public void displayUnreadThreads (ForumModels fmodels, boolean refresh)
     {
         _groupId = 0;
-        setModel(fmodels.getUnreadThreads(), 0);
+        setModel(fmodels.getUnreadThreads(refresh), 0);
     }
 
     // @Override // from PagedGrid
@@ -79,6 +79,14 @@ public class ThreadListPanel extends PagedGrid
         });
         _startThread.setEnabled(false);
         controls.setWidget(0, 0, _startThread);
+
+        // add a button for refreshing our unread thread list
+        _refresh = new Button(CMsgs.mmsgs.refresh(), new ClickListener() {
+            public void onClick (Widget sender) {
+                _parent.displayUnreadThreads(true);
+            }
+        });
+        controls.setWidget(0, 1, _refresh);
     }
 
     // @Override // from PagedGrid
@@ -89,9 +97,14 @@ public class ThreadListPanel extends PagedGrid
         if (_model instanceof ForumModels.GroupThreads) { 
             _startThread.setVisible(true);
             _startThread.setEnabled(((ForumModels.GroupThreads)_model).canStartThread());
+            _refresh.setVisible(false);
+            _refresh.setEnabled(false);
         } else {
+            // we're displaying unread threads
             _startThread.setVisible(false);
             _startThread.setEnabled(false);
+            _refresh.setVisible(true);
+            _refresh.setEnabled(true);
         }
     }
 
@@ -104,12 +117,11 @@ public class ThreadListPanel extends PagedGrid
             setCellSpacing(0);
 
             int col = 0;
-            // TODO: show thread.flags somehow
-            CMsgs.log("Checking " + thread.threadId + ": " + thread.hasUnreadMessages());
             String itype = (thread.hasUnreadMessages() ? "unread" : "read");
             setWidget(0, col, new Image("/images/msgs/" + itype + ".png"));
             getFlexCellFormatter().setStyleName(0, col++, "Status");
 
+            // TODO: display flags icons next to subject
             setWidget(0, col, Application.createLink(thread.subject, Page.GROUP,
                                                    Args.compose("t", thread.threadId)));
             getFlexCellFormatter().setStyleName(0, col++, "Subject");
@@ -134,6 +146,9 @@ public class ThreadListPanel extends PagedGrid
 
     /** A button for starting a new thread. */
     protected Button _startThread;
+
+    /** A button for refreshing the current model. */
+    protected Button _refresh;
 
     protected static SimpleDateFormat _pdate = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
 

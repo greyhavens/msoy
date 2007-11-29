@@ -244,9 +244,9 @@ public class ForumModels
      * Returns, creating if necessary, the data model that provides all unread threads for the
      * authenticated user.
      */
-    public UnreadThreads getUnreadThreads ()
+    public UnreadThreads getUnreadThreads (boolean refresh)
     {
-        if (_unreadModel == null) {
+        if (refresh || _unreadModel == null) {
             _unreadModel = new UnreadThreads();
         }
         return _unreadModel;

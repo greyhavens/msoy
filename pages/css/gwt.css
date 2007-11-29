@@ -82,6 +82,7 @@ a.external {
     font-size: 12px;
     vertical-align: top;
     cursor: pointer;
+    height: 18px;
     margin: 0px;
     padding-bottom: 1px;
     white-space: nowrap;
@@ -90,6 +91,7 @@ a.external {
 .tinyButton {
     background-image: url(/images/ui/tiny_button_middle.png);
     font-size: 8px;
+    height: 12px;
 }
 
 .gwt-TextBox {
@@ -840,13 +842,13 @@ a.external {
   padding: 5px;
 }
 
+.messagePanel .Info {
+  padding-top: 5px;
+}
+
 .messagePanel .Author {
   font-weight: bold;
   font-size: 12px;
-}
-
-.messagePanel .Text {
-  padding-top: 5px;
 }
 
 .messagePanel .Icon {
@@ -858,12 +860,8 @@ a.external {
   color: #999999;
 }
 
-.messagePanel .LeftPad {
-  padding-left: 10px;
-}
-
-.messagePanel .BottomPad {
-  padding-bottom: 5px;
+.messagePanel .Text {
+  padding-top: 5px;
 }
 
 .messagePanel blockquote {
@@ -872,6 +870,16 @@ a.external {
   font-size: 12px;
   padding: 5px;
   margin-left: 15px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.messagePanel .LeftPad {
+  padding-left: 10px;
+}
+
+.messagePanel .BottomPad {
+  padding-bottom: 5px;
 }
 
 .commentsPanel .Status {

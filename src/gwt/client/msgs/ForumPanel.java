@@ -26,10 +26,10 @@ public class ForumPanel extends TitledListPanel
         setContents(createHeader(CMsgs.mmsgs.groupThreadListHeader()), threads);
     }
 
-    public void displayUnreadThreads ()
+    public void displayUnreadThreads (boolean refresh)
     {
         ThreadListPanel threads = new ThreadListPanel(this);
-        threads.displayUnreadThreads(_fmodels);
+        threads.displayUnreadThreads(_fmodels, refresh);
         setContents(createHeader(CMsgs.mmsgs.groupUnreadThreadsHeader()), threads);
     }
 

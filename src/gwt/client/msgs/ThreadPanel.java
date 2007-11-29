@@ -26,14 +26,13 @@ import client.util.MsoyUI;
  */
 public class ThreadPanel extends TitledListPanel
 {
-    public ThreadPanel (int threadId, ForumModels fmodels)
+    public ThreadPanel (int threadId, int offset, ForumModels fmodels)
     {
         _threadId = threadId;
         _mpanel = new MessagesPanel(this);
 
         // look for our thread in the resolved group thread models
         ForumThread thread = fmodels.findThread(threadId);
-        CMsgs.log("Using cached thread? " + thread);
 
         // if we found our thread, use that to avoid making the server do extra work and so that we
         // keep this ThreadRecord properly up to date

@@ -45,10 +45,10 @@ public class index extends MsgsEntryPoint
             _gview.setGroup(args.get(0, 0));
         } else if (args.get(0, "").equals("unread")) {
             ForumPanel fpanel = new ForumPanel(_fmodels);
-            fpanel.displayUnreadThreads();
+            fpanel.displayUnreadThreads(false);
             setContent(fpanel);
         } else if (args.get(0, "").equals("t")) {
-            setContent(new ThreadPanel(args.get(1, 0), _fmodels));
+            setContent(new ThreadPanel(args.get(1, 0), args.get(2, 0), _fmodels));
         } else {
             setContent(new GroupList());
         }
