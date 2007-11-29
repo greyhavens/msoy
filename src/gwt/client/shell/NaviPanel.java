@@ -94,6 +94,7 @@ public class NaviPanel extends FlexTable
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
                 addLink(menu, "My Home", Page.WORLD, "m" + creds.getMemberId());
+                addLink(menu, "My Discussions", Page.GROUP, "unread");
                 addLink(menu, "My Profile", Page.PROFILE, "" + creds.getMemberId());
                 addLink(menu, "My Mail", Page.MAIL, "");
                 menu.addItem("My Account", true, new Command() {

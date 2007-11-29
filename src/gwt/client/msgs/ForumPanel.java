@@ -30,7 +30,7 @@ public class ForumPanel extends TitledListPanel
     {
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayUnreadThreads(_fmodels);
-        setContents(createHeader(CMsgs.mmsgs.groupThreadListHeader()), threads);
+        setContents(createHeader(CMsgs.mmsgs.groupUnreadThreadsHeader()), threads);
     }
 
     public void startNewThread (int groupId)
