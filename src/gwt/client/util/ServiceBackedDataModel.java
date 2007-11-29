@@ -20,6 +20,19 @@ import client.util.MsoyUI;
 public abstract class ServiceBackedDataModel implements DataModel, AsyncCallback
 {
     /**
+     * Prepends an item to an already loaded model. The model must have at least been asked to
+     * display its first page (and hence have it's total count).
+     */
+    public void prependItem (Object item)
+    {
+        // if we're on the first page, this new item will show up, so add it
+        if (_pageOffset == 0) {
+            _pageItems.add(0, item);
+        }
+        _count++;
+    }
+
+    /**
      * Appends an item to an already loaded model. The model must have at least been asked to
      * display its first page (and hence have it's total count).
      */

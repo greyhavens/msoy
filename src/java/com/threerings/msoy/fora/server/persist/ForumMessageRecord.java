@@ -10,9 +10,11 @@ import java.util.Map;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
+import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.web.data.MemberCard;
@@ -22,6 +24,9 @@ import com.threerings.msoy.fora.data.ForumMessage;
 /**
  * Contains information on a single post to a thread.
  */
+@Entity(indices={
+    @Index(name="ixCreated", fields={ ForumMessageRecord.CREATED })
+})
 public class ForumMessageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -77,7 +82,7 @@ public class ForumMessageRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** This message's unique identifier. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)

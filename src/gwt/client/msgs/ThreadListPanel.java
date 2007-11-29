@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
@@ -17,8 +18,9 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.shell.Application;
-import client.shell.Page;
 import client.shell.Args;
+import client.shell.Page;
+import client.util.HashIntMap;
 import client.util.MsoyUI;
 
 /**
@@ -34,10 +36,15 @@ public class ThreadListPanel extends PagedGrid
         _parent = parent;
     }
 
-    public void displayGroupThreads (int groupId)
+    public void displayGroupThreads (int groupId, HashIntMap gmodels)
     {
         _groupId = groupId;
-        setModel(new ForumModels.GroupThreads(groupId), 0);
+
+        ForumModels.GroupThreads gmodel = (ForumModels.GroupThreads)gmodels.get(groupId);
+        if (gmodel == null) {
+            gmodels.put(groupId, gmodel = new ForumModels.GroupThreads(groupId));
+        }
+        setModel(gmodel, 0);
     }
 
     // @Override // from PagedGrid
@@ -96,8 +103,10 @@ public class ThreadListPanel extends PagedGrid
             setCellSpacing(0);
 
             int col = 0;
-            setText(0, col, "" + thread.flags);
-            getFlexCellFormatter().setStyleName(0, col++, "Flags");
+            // TODO: show thread.flags somehow
+            String itype = (thread.hasUnreadMessages() ? "unread" : "read");
+            setWidget(0, col, new Image("/images/msgs/" + itype + ".png"));
+            getFlexCellFormatter().setStyleName(0, col++, "Status");
 
             setWidget(0, col, Application.createLink(thread.subject, Page.GROUP,
                                                    Args.compose("t", thread.threadId)));

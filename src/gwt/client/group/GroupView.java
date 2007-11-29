@@ -44,6 +44,7 @@ import client.msgs.ForumPanel;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.HashIntMap;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.PopupMenu;
@@ -59,14 +60,14 @@ import client.util.TagDetailPanel;
 public class GroupView extends VerticalPanel
     implements GroupEdit.GroupSubmissionListener
 {
-    public GroupView (Page parent)
+    public GroupView (Page parent, HashIntMap gmodels)
     {
         super();
         setWidth("100%");
         _parent = parent;
 
         add(_table = new MyFlexTable());
-        add(_forums = new ForumPanel());
+        add(_forums = new ForumPanel(gmodels));
     }
 
     /**

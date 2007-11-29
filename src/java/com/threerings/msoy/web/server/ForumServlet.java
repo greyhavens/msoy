@@ -14,6 +14,7 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
@@ -31,6 +32,7 @@ import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
+import com.threerings.msoy.fora.server.persist.ReadTrackingRecord;
 
 import com.threerings.msoy.web.client.ForumService;
 import com.threerings.msoy.web.data.MemberCard;
@@ -68,24 +70,16 @@ public class ForumServlet extends MsoyServiceServlet
             List<ForumThreadRecord> thrrecs =
                 MsoyServer.forumRepo.loadThreads(groupId, offset, count);
 
-            // enumerate the last-posters and create member names for them
-            IntMap<MemberName> names = resolveNames(thrrecs);
-
-            // finally convert the threads to runtime format and return them
-            ThreadResult result = new ThreadResult();
-            List<ForumThread> threads = Lists.newArrayList();
-            for (ForumThreadRecord thrrec : thrrecs) {
-                threads.add(thrrec.toForumThread(names));
-            }
-            result.threads = threads;
+            // load up additional fiddly bits and create a result record
+            ThreadResult result = toThreadResult(mrec, thrrecs);
 
             // fill in this caller's new thread starting privileges
             result.canStartThread = group.checkAccess(groupRank, Group.ACCESS_THREAD, 0);
 
             // fill in our total thread count if needed
             if (needTotalCount) {
-                result.threadCount = (threads.size() < count && offset == 0) ?
-                    threads.size() : MsoyServer.forumRepo.loadThreadCount(groupId);
+                result.threadCount = (result.threads.size() < count && offset == 0) ?
+                    result.threads.size() : MsoyServer.forumRepo.loadThreadCount(groupId);
             }
 
             return result;
@@ -98,8 +92,46 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
-    public MessageResult loadMessages (WebIdent ident, int threadId, int offset, int count,
-                                       boolean needTotalCount)
+    public ThreadResult loadUnreadThreads (WebIdent ident, int maximum)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        try {
+            // load up said member's group memberships
+            IntSet groupIds = new ArrayIntSet();
+            for (GroupMembershipRecord gmr : MsoyServer.groupRepo.getMemberships(mrec.memberId)) {
+                groupIds.add(gmr.groupId);
+            }
+
+            // load up the thread records
+            List<ForumThreadRecord> thrrecs;
+            if (groupIds.size() == 0) {
+                thrrecs = Collections.emptyList();
+            } else {
+                thrrecs = MsoyServer.forumRepo.loadUnreadThreads(mrec.memberId, groupIds, maximum);
+            }
+
+            // load up additional fiddly bits and create a result record
+            ThreadResult result = toThreadResult(mrec, thrrecs);
+
+            // we cheat on the total count here with the idea that the client basically just asks
+            // for "all" of the unread threads and we give them all as long as all is not
+            // ridiculously many
+            result.threadCount = result.threads.size();
+
+            return result;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load unread threads [for=" + who(mrec) +
+                    ", max=" + maximum + "].", pe);
+            throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface ForumService
+    public MessageResult loadMessages (WebIdent ident, int threadId, int lastReadPostId,
+                                       int offset, int count, boolean needTotalCount)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser(ident);
@@ -137,8 +169,11 @@ public class ForumServlet extends MsoyServiceServlet
             // convert the messages to runtime format
             MessageResult result = new MessageResult();
             List<ForumMessage> messages = Lists.newArrayList();
+            int highestPostId = 0;
             for (ForumMessageRecord msgrec : msgrecs) {
-                messages.add(msgrec.toForumMessage(cards));
+                ForumMessage msg = msgrec.toForumMessage(cards);
+                messages.add(msg);
+                highestPostId = Math.max(highestPostId, msg.messageId);
             }
             result.messages = messages;
 
@@ -155,6 +190,23 @@ public class ForumServlet extends MsoyServiceServlet
                     names.put(ftr.mostRecentPosterId, mrpCard.name);
                     result.thread = ftr.toForumThread(names);
                 }
+                // load up our last read post information
+                if (mrec != null) {
+                    for (ReadTrackingRecord rtr : MsoyServer.forumRepo.loadLastReadPostInfo(
+                             mrec.memberId, Collections.singleton(threadId))) {
+                        result.thread.lastReadPostId = rtr.lastReadPostId;
+                        result.thread.lastReadPostIndex = rtr.lastReadPostIndex;
+                        // since the client didn't have this info, we need to fill it in
+                        lastReadPostId = rtr.lastReadPostId;
+                    }
+                }
+            }
+
+            // if this caller is authenticated, note that they've potentially updated their last
+            // read message id
+            if (mrec != null && highestPostId > lastReadPostId) {
+                MsoyServer.forumRepo.noteLastReadPostId(    // highestPostIndex
+                    mrec.memberId, threadId, highestPostId, offset + result.messages.size() - 1);
             }
 
             return result;
@@ -325,18 +377,62 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     /**
+     * Converts a list of threads to a {@link ThreadResult}, looking up the last poster names and
+     * filling in other bits.
+     */
+    protected ThreadResult toThreadResult (MemberRecord mrec, List<ForumThreadRecord> thrrecs)
+        throws PersistenceException
+    {
+        // enumerate the last-posters and create member names for them
+        IntMap<MemberName> names = resolveNames(thrrecs);
+
+        // finally convert the threads to runtime format and return them
+        ThreadResult result = new ThreadResult();
+        IntMap<ForumThread> thrmap = IntMaps.newHashIntMap();
+        List<ForumThread> threads = Lists.newArrayList();
+        for (ForumThreadRecord thrrec : thrrecs) {
+            ForumThread ftr = thrrec.toForumThread(names);
+            thrmap.put(ftr.threadId, ftr);
+            threads.add(ftr);
+        }
+        result.threads = threads;
+
+        // fill in the last read post information if the member is logged in
+        if (mrec != null) {
+            IntSet threadIds = new ArrayIntSet();
+            for (ForumThreadRecord thrrec : thrrecs) {
+                threadIds.add(thrrec.threadId);
+            }
+            if (threadIds.size() > 0) {
+                for (ReadTrackingRecord rtr :
+                         MsoyServer.forumRepo.loadLastReadPostInfo(mrec.memberId, threadIds)) {
+                    ForumThread ftr = thrmap.get(rtr.threadId);
+                    if (ftr != null) { // shouldn't be null but let's not have a cow
+                        ftr.lastReadPostId = rtr.lastReadPostId;
+                        ftr.lastReadPostIndex = rtr.lastReadPostIndex;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Resolves the names of the posters of the supplied threads.
      */
     protected IntMap<MemberName> resolveNames (List<ForumThreadRecord> thrrecs)
         throws PersistenceException
     {
-        IntMap<MemberName> names = IntMaps.newHashIntMap();
         IntSet posters = new ArrayIntSet();
         for (ForumThreadRecord thrrec : thrrecs) {
             posters.add(thrrec.mostRecentPosterId);
         }
-        for (MemberNameRecord mnrec : MsoyServer.memberRepo.loadMemberNames(posters)) {
-            names.put(mnrec.memberId, mnrec.toMemberName());
+        IntMap<MemberName> names = IntMaps.newHashIntMap();
+        if (posters.size() > 0) {
+            for (MemberNameRecord mnrec : MsoyServer.memberRepo.loadMemberNames(posters)) {
+                names.put(mnrec.memberId, mnrec.toMemberName());
+            }
         }
         return names;
     }

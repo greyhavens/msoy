@@ -53,6 +53,13 @@ public class MessagePanel extends FlexTable
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
         FlowPanel info = new FlowPanel();
+        String iconPath = getIconPath();
+        if (iconPath != null) {
+            Image icon = new Image(iconPath);
+            icon.addStyleName("Icon");
+            info.add(icon);
+        }
+
         InlineLabel author = new InlineLabel(poster.name.toString());
         author.addClickListener(onClick);
         author.addStyleName("Author");
@@ -78,11 +85,27 @@ public class MessagePanel extends FlexTable
         getFlexCellFormatter().addStyleName(1, 0, "BottomPad");
     }
 
+    /**
+     * Returns true if our message text is HTML, false if it is plain text.
+     */
     protected boolean textIsHTML ()
     {
         return false;
     }
 
+    /**
+     * If a message wants to display an icon to the left of the poster's name it can return the
+     * path to said image here and the icon will automatically be inserted.
+     */
+    protected String getIconPath ()
+    {
+        return null;
+    }
+
+    /**
+     * If a message wants to add anything to the right of the author and post time (like links for
+     * editing or deleting), it should do so in this method.
+     */
     protected void addInfo (FlowPanel info)
     {
     }

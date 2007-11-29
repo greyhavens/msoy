@@ -381,6 +381,7 @@ public class MemberRepository extends DepotRepository
         // - friendships
         // - group memberships
         // - member action records, action summary record
+        // - thread read tracking info
     }
 
     /**

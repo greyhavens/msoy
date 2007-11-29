@@ -14,14 +14,16 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.operator.Arithmetic;
+import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.operator.Arithmetic.*;
+import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.jdbc.depot.operator.Logic.*;
 
 /**
  * Manages forum threads and messages.
@@ -51,7 +53,7 @@ public class ForumRepository extends DepotRepository
         return findAll(ForumThreadRecord.class,
                        new Where(ForumThreadRecord.GROUP_ID_C, groupId),
                        new Limit(offset, count),
-                       OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_TIME_C));
+                       OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID_C));
     }
 
     /**
@@ -63,6 +65,17 @@ public class ForumRepository extends DepotRepository
         return load(ThreadCountRecord.class,
                     new FromOverride(ForumThreadRecord.class),
                     new Where(ForumThreadRecord.GROUP_ID_C, groupId)).count;
+    }
+
+    /**
+     * Loads up to the specified maximum number of threads from the supplied set of groups that
+     * have messages that are unread by the specified member.
+     */
+    public List<ForumThreadRecord> loadUnreadThreads (
+        int memberId, Set<Integer> groupIds, int maximum)
+        throws PersistenceException
+    {
+        throw new PersistenceException("Unimplemented");
     }
 
     /**
@@ -112,6 +125,7 @@ public class ForumRepository extends DepotRepository
         ftr.mostRecentPostId = fmr.messageId;
         ftr.mostRecentPostTime = fmr.created;
         ftr.mostRecentPosterId = creatorId;
+        ftr.posts = 1;
 
         return ftr;
     }
@@ -138,7 +152,7 @@ public class ForumRepository extends DepotRepository
                       ForumThreadRecord.MOST_RECENT_POSTER_ID, posterId);
 
         Map<String, SQLExpression> updates = Maps.newHashMap();
-        updates.put(ForumThreadRecord.POSTS, new Arithmetic.Add(ForumThreadRecord.POSTS_C, 1));
+        updates.put(ForumThreadRecord.POSTS, new Add(ForumThreadRecord.POSTS_C, 1));
         updateLiteral(ForumThreadRecord.class, threadId, updates);
 
         return fmr;
@@ -176,8 +190,34 @@ public class ForumRepository extends DepotRepository
         }
 
         Map<String, SQLExpression> updates = Maps.newHashMap();
-        updates.put(ForumThreadRecord.POSTS, new Arithmetic.Sub(ForumThreadRecord.POSTS_C, 1));
+        updates.put(ForumThreadRecord.POSTS, new Sub(ForumThreadRecord.POSTS_C, 1));
         updateLiteral(ForumThreadRecord.class, fmr.threadId, updates);
+    }
+
+    /**
+     * Loads up the last read post information for the specified member and threads.
+     */
+    public List<ReadTrackingRecord> loadLastReadPostInfo (int memberId, Set<Integer> threadIds)
+        throws PersistenceException
+    {
+        return findAll(ReadTrackingRecord.class,
+                       new Where(new And(new Equals(ReadTrackingRecord.MEMBER_ID_C, memberId),
+                                         new In(ReadTrackingRecord.THREAD_ID_C, threadIds))));
+    }
+
+    /**
+     * Notes this member's most recently read post for the specified thread.
+     */
+    public void noteLastReadPostId (int memberId, int threadId,
+                                    int lastReadPostId, int lastReadPostIndex)
+        throws PersistenceException
+    {
+        ReadTrackingRecord record = new ReadTrackingRecord();
+        record.memberId = memberId;
+        record.threadId = threadId;
+        record.lastReadPostId = lastReadPostId;
+        record.lastReadPostIndex = lastReadPostIndex;
+        store(record);
     }
 
     @Override // from DepotRepository

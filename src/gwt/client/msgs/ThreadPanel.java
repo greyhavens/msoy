@@ -4,6 +4,7 @@
 package client.msgs;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -19,6 +20,7 @@ import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.util.ClickCallback;
+import client.util.HashIntMap;
 import client.util.MsoyUI;
 
 /**
@@ -26,11 +28,31 @@ import client.util.MsoyUI;
  */
 public class ThreadPanel extends TitledListPanel
 {
-    public ThreadPanel (int threadId)
+    public ThreadPanel (int threadId, HashIntMap gmodels)
     {
         _threadId = threadId;
         _mpanel = new MessagesPanel(this);
-        _mpanel.setModel(new ForumModels.ThreadMessages(threadId), 0);
+
+        // look for our thread in the resolved group thread models
+        ForumThread thread = null;
+        for (Iterator iter = gmodels.values().iterator(); iter.hasNext(); ) {
+            ForumModels.GroupThreads model = (ForumModels.GroupThreads)iter.next();
+            thread = model.getThread(threadId);
+            if (thread != null) {
+                CMsgs.log("Mother? " + model + " " + thread);
+                break;
+            }
+            CMsgs.log("Not mother: " + model);
+        }
+        CMsgs.log("Using cached thread? " + thread);
+
+        // if we found our thread, use that so that we avoid making the server do extra work and so
+        // that we keep this ThreadRecord properly up to date
+        if (thread == null) {
+            _mpanel.setModel(new ForumModels.ThreadMessages(threadId), 0);
+        } else {
+            _mpanel.setModel(new ForumModels.ThreadMessages(thread), 0);
+        }
         showMessages();
     }
 

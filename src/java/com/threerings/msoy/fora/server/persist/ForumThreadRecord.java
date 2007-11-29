@@ -25,7 +25,8 @@ import com.threerings.msoy.fora.data.ForumThread;
  * Contains information on a forum thread.
  */
 @Entity(indices={
-    @Index(name="ixGroupId", fields={ ForumThreadRecord.GROUP_ID })
+    @Index(name="ixGroupId", fields={ ForumThreadRecord.GROUP_ID }),
+    @Index(name="ixMostRecentPostId", fields={ ForumThreadRecord.MOST_RECENT_POST_ID })
 })
 public class ForumThreadRecord extends PersistentRecord
 {
@@ -89,7 +90,7 @@ public class ForumThreadRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /** A unique identifier for this forum thread. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)

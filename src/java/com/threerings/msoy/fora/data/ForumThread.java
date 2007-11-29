@@ -51,6 +51,12 @@ public class ForumThread
     /** The number of posts in this thread. */
     public int posts;
 
+    /** The requesting member's last read post id or 0. */
+    public int lastReadPostId;
+
+    /** The requesting member's last read post index or 0. */
+    public int lastReadPostIndex;
+
     /**
      * Returns true if this is an announcement thread.
      */
@@ -73,5 +79,14 @@ public class ForumThread
     public boolean isLocked ()
     {
         return (flags & FLAG_LOCKED) != 0;
+    }
+
+    /**
+     * Returns true if this thread has unread messages (from the standpoint of the user that loaded
+     * the thread).
+     */
+    public boolean hasUnreadMessages ()
+    {
+        return (lastReadPostId < mostRecentPostId);
     }
 }

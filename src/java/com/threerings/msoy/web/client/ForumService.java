@@ -55,10 +55,18 @@ public interface ForumService extends RemoteService
         throws ServiceException;
 
     /**
+     * Loads up to <code>maximum</code> threads from groups of which the caller is a member for
+     * which there are messages not yet read by same. The threads are sorted from most to least
+     * recently active.
+     */
+    public ThreadResult loadUnreadThreads (WebIdent ident, int maximum)
+        throws ServiceException;
+
+    /**
      * Loads the specified range of messages for the specified thread.
      */
-    public MessageResult loadMessages (WebIdent ident, int threadId, int offset, int count,
-                                       boolean needTotalCount)
+    public MessageResult loadMessages (WebIdent ident, int threadId, int lastReadPostId,
+                                       int offset, int count, boolean needTotalCount)
         throws ServiceException;
 
     /**

@@ -11,6 +11,7 @@ import client.msgs.MsgsEntryPoint;
 import client.msgs.ThreadPanel;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.HashIntMap;
 import client.util.MsoyUI;
 
 public class index extends MsgsEntryPoint
@@ -42,7 +43,7 @@ public class index extends MsgsEntryPoint
             setContent(_gview);
             _gview.setGroup(args.get(0, 0));
         } else if (args.get(0, "").equals("t")) {
-            setContent(new ThreadPanel(args.get(1, 0)));
+            setContent(new ThreadPanel(args.get(1, 0), _gmodels));
         } else {
             setContent(new GroupList());
         }
@@ -63,5 +64,6 @@ public class index extends MsgsEntryPoint
         CGroup.msgs = (GroupMessages)GWT.create(GroupMessages.class);
     }
 
-    protected GroupView _gview = new GroupView(this);
+    protected HashIntMap _gmodels = new HashIntMap();
+    protected GroupView _gview = new GroupView(this, _gmodels);
 }

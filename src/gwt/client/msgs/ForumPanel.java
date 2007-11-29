@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 
 import com.threerings.msoy.fora.data.ForumThread;
 
+import client.util.HashIntMap;
 import client.util.MsoyUI;
 
 /**
@@ -14,8 +15,9 @@ import client.util.MsoyUI;
  */
 public class ForumPanel extends TitledListPanel
 {
-    public ForumPanel ()
+    public ForumPanel (HashIntMap gmodels)
     {
+        _gmodels = gmodels;
     }
 
     public void displayGroupThreads (int groupId)
@@ -32,7 +34,7 @@ public class ForumPanel extends TitledListPanel
         header.getFlexCellFormatter().setStyleName(0, 2, "LastPost");
 
         ThreadListPanel threads = new ThreadListPanel(this);
-        threads.displayGroupThreads(groupId);
+        threads.displayGroupThreads(groupId, _gmodels);
         setContents(header, threads);
     }
 
@@ -44,7 +46,14 @@ public class ForumPanel extends TitledListPanel
     protected void newThreadPosted (ForumThread thread)
     {
         MsoyUI.info(CMsgs.mmsgs.msgNewThreadPosted());
-        // TODO: add it to our local model and reuse our cached model
+        // if we already have this model loaded (we should), let it know about the new thread
+        ForumModels.GroupThreads gmodel = (ForumModels.GroupThreads)_gmodels.get(thread.groupId);
+        if (gmodel != null) {
+            gmodel.prependItem(thread);
+        }
         displayGroupThreads(thread.groupId);
     }
+
+    /** A cache of group thread models. */
+    protected HashIntMap _gmodels;
 }

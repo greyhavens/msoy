@@ -16,6 +16,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.msoy.fora.data.ForumMessage;
+import com.threerings.msoy.fora.data.ForumThread;
 
 import client.shell.MessagePanel;
 import client.util.MsoyCallback;
@@ -39,7 +40,8 @@ public class MessagesPanel extends PagedGrid
     // @Override // from PagedGrid
     protected Widget createWidget (Object item)
     {
-        return new ThreadMessagePanel((ForumMessage)item);
+        return new ThreadMessagePanel(
+            ((ForumModels.ThreadMessages)_model).getThread(), (ForumMessage)item);
     }
 
     // @Override // from PagedGrid
@@ -117,8 +119,9 @@ public class MessagesPanel extends PagedGrid
 
     protected class ThreadMessagePanel extends MessagePanel
     {
-        public ThreadMessagePanel (ForumMessage message)
+        public ThreadMessagePanel (ForumThread thread, ForumMessage message)
         {
+            _thread = thread;
             setMessage(message);
         }
 
@@ -182,6 +185,14 @@ public class MessagesPanel extends PagedGrid
             }
         }
 
+        // @Override // from MessagePanel
+        protected String getIconPath ()
+        {
+            return "/images/msgs/" +
+                ((_message.messageId > _thread.lastReadPostId) ? "unread" : "read") + ".png";
+        }
+
+        protected ForumThread _thread;
         protected ForumMessage _message;
     }
 

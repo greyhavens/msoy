@@ -19,10 +19,15 @@ public interface ForumServiceAsync
                              boolean needTotalCount, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link ForumService#loadUnreadThreads}.
+     */
+    public void loadUnreadThreads (WebIdent ident, int maximum, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link ForumService#loadMessages}.
      */
-    public void loadMessages (WebIdent ident, int threadId, int offset, int count,
-                              boolean needTotalCount, AsyncCallback callback);
+    public void loadMessages (WebIdent ident, int threadId, int lastReadPostId, int offset,
+                              int count, boolean needTotalCount, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link ForumService#createThread}.
