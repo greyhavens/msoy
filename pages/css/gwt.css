@@ -862,6 +862,7 @@ a.external {
 
 .messagePanel .Text {
   padding-top: 5px;
+  vertical-align: top;
 }
 
 .messagePanel blockquote {
