@@ -195,7 +195,7 @@ public class GroupList extends FlexTable
             Widget logo = MediaUtil.createMediaView(group.getLogo(), MediaDesc.THUMBNAIL_SIZE);
             setWidget(0, 0, logo);
             getFlexCellFormatter().setStyleName(0, 0, "Logo");
-            getFlexCellFormatter().setRowSpan(0, 0, 2);
+            getFlexCellFormatter().setRowSpan(0, 0, 3);
             if (logo instanceof Image) {
                 ((Image) logo).addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
@@ -204,24 +204,18 @@ public class GroupList extends FlexTable
                 });
             }
 
-            FlowPanel titleLine = new FlowPanel();
-            Hyperlink title = Application.createLink(group.name, "group", "" + group.groupId);
-            title.addStyleName("Title");
-            titleLine.add(title);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
-            InlineLabel establishedDate = new InlineLabel("Est. " +
-                dateFormat.format(group.creationDate) + ",");
-            establishedDate.addStyleName("EstablishedDate");
-            titleLine.add(establishedDate);
-            InlineLabel memberCount = new InlineLabel(
-                CGroup.msgs.listMemberCount("" + group.memberCount));
-            memberCount.addStyleName("MemberCount");
-            titleLine.add(memberCount);
-            setWidget(0, 1, titleLine);
+            setWidget(0, 1, Application.createLink(group.name, "group", "" + group.groupId));
 
-            InlineLabel blurb = new InlineLabel(group.blurb);
-            blurb.setStyleName("Blurb");
-            setWidget(1, 0, blurb);
+            FlowPanel info = new FlowPanel();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+            InlineLabel estab = new InlineLabel(
+                CGroup.msgs.groupEst(dateFormat.format(group.creationDate) + ", "));
+            estab.addStyleName("EstablishedDate");
+            info.add(estab);
+            info.add(new InlineLabel(CGroup.msgs.listMemberCount("" + group.memberCount)));
+            setWidget(1, 0, info);
+
+            setText(2, 0, group.blurb);
         }
     }
 

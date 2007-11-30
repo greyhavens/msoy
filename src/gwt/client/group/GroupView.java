@@ -149,26 +149,6 @@ public class GroupView extends VerticalPanel
         }
         infoPanel.add(links);
 
-        VerticalPanel established = new VerticalPanel();
-        established.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-        established.setStyleName("Established");
-        established.add(new InlineLabel(CGroup.msgs.viewEstablishedAbbreviated() + 
-            (new SimpleDateFormat("MMM dd, yyyy")).format(_group.creationDate)));
-
-        HorizontalPanel creatorPanel = new HorizontalPanel();
-        // this inline div is not letting space display to the right of it, and we need a space.
-        InlineLabel byLabel = new InlineLabel(CGroup.msgs.viewBy());
-        DOM.setStyleAttribute(byLabel.getElement(), "marginRight", "3px");
-        creatorPanel.add(byLabel);
-        creatorPanel.add(Application.memberViewLink(_detail.creator.toString(),
-                                                    _detail.creator.getMemberId()));
-        established.add(creatorPanel);
-        infoPanel.add(established);
-
-        InlineLabel policy = new InlineLabel(getPolicyName(_group.policy));
-        policy.setStyleName("Policy");
-        infoPanel.add(policy);
-
         RowPanel buttons = new RowPanel();
         if (amManager()) {
             buttons.add(new Button(CGroup.msgs.viewEdit(), new ClickListener() {
@@ -216,6 +196,16 @@ public class GroupView extends VerticalPanel
         Label nameLabel = new Label(_group.name);
         nameLabel.setStyleName("Name");
         description.add(nameLabel);
+
+        FlowPanel established = new FlowPanel();
+        established.setStyleName("Established");
+        established.add(new InlineLabel(CGroup.msgs.groupEst(_efmt.format(_group.creationDate)),
+                                        false, false, true));
+        established.add(new InlineLabel(CGroup.msgs.viewBy(), false, false, true));
+        established.add(Application.memberViewLink
+                        (_detail.creator.toString(), _detail.creator.getMemberId()));
+        description.add(established);
+
         if (_group.blurb != null) {
             Label blurbLabel = new Label(_group.blurb);
             blurbLabel.setStyleName("Blurb");
@@ -491,4 +481,6 @@ public class GroupView extends VerticalPanel
 
     protected MyFlexTable _table;
     protected ForumPanel _forums;
+
+    protected static SimpleDateFormat _efmt = new SimpleDateFormat("MMM dd, yyyy");
 }

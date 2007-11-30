@@ -46,7 +46,8 @@
     font-weight: 600;
 }
 
-.groupView .LogoPanel .Established, .groupView .LogoPanel .Policy {
+.groupView .Established, .groupView .LogoPanel .Policy {
+    font-size: 12px;
     font-style: italic;
 }
 
@@ -54,7 +55,7 @@
     margin: 7px;
 }
 
-.groupView .LogoPanel .Established a {
+.groupView .Established a {
     font-style: normal;
 }
 
@@ -99,21 +100,8 @@
     color: #CD853F;
 }
 
-.groupList .GroupWidget .EstablishedDate {
-    margin: 5px;
-}
-
 .groupList .GroupWidget {
     font-size: 13px;
-}
-
-.groupList .GroupWidget a.Title {
-    color: black;
-    font-weight: 600;
-}
-
-.groupList .GroupWidget .EstablishedDate, .GroupList .GroupWidget .MemberCount {
-    font-style: italic;
 }
 
 .groupList .GroupWidget .Logo {
@@ -122,4 +110,8 @@
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
+}
+
+.groupList .GroupWidget .EstablishedDate {
+    font-style: italic;
 }
