@@ -853,6 +853,7 @@ a.external {
 
 .messagePanel .Icon {
   vertical-align: middle;
+  padding-right: 5px;
 }
 
 .messagePanel .Posted {
