@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ImageBundle;
 import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RichTextArea;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Photo;
 
+import client.util.RowPanel;
 import client.util.images.RichTextToolbarImages;
 
 /**
@@ -176,6 +178,7 @@ public class RichTextToolbar extends Composite
         }
 
         if (basic != null) {
+            bottomPanel.add(new Label("Text:"));
             bottomPanel.add(backColors = createColorList("Background"));
             bottomPanel.add(foreColors = createColorList("Foreground"));
             bottomPanel.add(fonts = createFontList());
@@ -376,7 +379,7 @@ public class RichTextToolbar extends Composite
 
     protected VerticalPanel outer = new VerticalPanel();
     protected HorizontalPanel topPanel = new HorizontalPanel();
-    protected HorizontalPanel bottomPanel = new HorizontalPanel();
+    protected RowPanel bottomPanel = new RowPanel();
     protected ToggleButton bold;
     protected ToggleButton italic;
     protected ToggleButton underline;

@@ -110,6 +110,10 @@ a.external {
   background: #E9F6FB;
 }
 
+.gwt-RichTextToolbar {
+  margin-bottom: 5px;
+}
+
 /** Header styles. */
 .msoyHeader {
   color: #EAEFF1;
@@ -608,7 +612,7 @@ a.external {
 }
 
 .rowPanelCell {
-  padding-right: 10px;
+  padding-right: 5px;
 }
 
 .tipLabel {

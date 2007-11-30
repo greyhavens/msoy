@@ -11,21 +11,22 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * Displays contents with a footer bar at the bottom containing buttons.
  */
-public class ContentFooterPanel extends VerticalPanel
+public class ContentFooterPanel extends FlexTable
 {
     public ContentFooterPanel ()
     {
         setStyleName("contentFooterPanel");
+        setCellSpacing(0);
+        setCellPadding(0);
 
         _content = new FlexTable();
-        _content.setStyleName("Content");
         _content.setCellPadding(0);
         _content.setCellSpacing(5);
-        add(_content);
+        setWidget(0, 0, _content);
+        getFlexCellFormatter().setStyleName(0, 0, "Content");
 
-        _footer = new FlowPanel();
-        _footer.setStyleName("Footer");
-        add(_footer);
+        setWidget(1, 0, _footer = new FlowPanel());
+        getFlexCellFormatter().setStyleName(1, 0, "Footer");
     }
 
     protected int addRow (String label, Widget widget)
