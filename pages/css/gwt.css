@@ -90,6 +90,36 @@ a.external {
     height: 12px;
 }
 
+.gwt-PushButton {
+    text-align: center;
+}
+
+.gwt-PushButton-up-hovering, .gwt-PushButton-down-hovering {
+    background: #CCCCCC;
+    cursor: pointer;
+}
+
+.gwt-ToggleButton {
+    text-align: center;
+}
+
+.gwt-ToggleButton-up {
+}
+
+.gwt-ToggleButton-up-hovering {
+    background: #CCCCCC;
+    cursor: pointer;
+}
+
+.gwt-ToggleButton-down {
+    background: #999999;
+}
+
+.gwt-ToggleButton-down-hovering {
+    background: #CCCCCC;
+    cursor: pointer;
+}
+
 .gwt-TextBox {
   background: #E9F6FB;
 }
