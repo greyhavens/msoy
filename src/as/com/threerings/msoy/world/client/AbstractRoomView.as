@@ -319,6 +319,7 @@ public class AbstractRoomView extends Sprite
     public function didLeavePlace (plobj :PlaceObject) :void
     {
         removeAll(_furni);
+        setBackground(null);
         _roomObj = null;
         _scene = null;
     }
