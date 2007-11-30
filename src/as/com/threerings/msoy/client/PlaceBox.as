@@ -6,6 +6,7 @@ package com.threerings.msoy.client {
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.Shape;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import mx.containers.Canvas;
@@ -80,8 +81,13 @@ public class PlaceBox extends LayeredContainer
             if (child == _placeView) {
                 continue;
             }
-            if ((!(child is InteractiveObject) || (child as InteractiveObject).mouseEnabled) && 
-                    child.hitTestPoint(stageX, stageY, true)) {
+            // note that we want hitTestPoint() to be able to modify the value of the
+            // child's mouseEnabled property, so do not reorder the following statements
+            // in a fit of over-optimization
+            if (!child.hitTestPoint(stageX, stageY, true)) {
+                continue;
+            }
+            if (!(child is InteractiveObject) || (child as InteractiveObject).mouseEnabled) {
                 return true;
             }
         }

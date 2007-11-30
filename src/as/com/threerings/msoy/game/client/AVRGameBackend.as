@@ -117,6 +117,11 @@ public class AVRGameBackend extends ControlBackend
         callUserCode("mobAppearanceChanged_v1", id, locArray, orient, moving, idle);
     }
 
+    public function hitTestPoint (x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
+    {
+        return callUserCode("hitTestPoint_v1", x, y, shapeFlag) as Boolean;
+    }
+
     public function isPlaying () :Boolean
     {
         return _mctx.getGameDirector().getGameId() == _ctrl.getGameId();

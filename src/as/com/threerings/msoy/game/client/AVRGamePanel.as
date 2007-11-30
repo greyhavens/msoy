@@ -4,9 +4,11 @@
 package com.threerings.msoy.game.client {
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 import flash.display.Loader;
-import flash.display.Sprite;
 import flash.display.LoaderInfo;
+
+import mx.core.UIComponent;
 
 import com.threerings.util.Log;
 
@@ -26,7 +28,7 @@ import com.threerings.msoy.game.data.AVRGameObject;
 
 import com.threerings.msoy.world.client.RoomView;
 
-public class AVRGamePanel extends Sprite
+public class AVRGamePanel extends UIComponent
     implements PlaceLayer
 {
     public static const log :Log = Log.getLog(AVRGamePanel);
@@ -90,6 +92,24 @@ public class AVRGamePanel extends Sprite
         _mctx.getMsoyController().setAVRGamePanel(null);
         // null gameObj for mediaComplete to find if it should run after us
         _gameObj = null;
+    }
+
+    // We want to give the AVRG control over what pixels it considers 'hits' and which
+    // it doesn't -- thus we forward the request to the backend, where it is in turn sent
+    // on to user code. This itself, however, is not enough to handle mouse clicks well;
+    // it seems once a click has been found to target a non-transparent pixel, the event
+    // dispatched will travel up to the root of the display hierarchy and then vanish;
+    // nothing will trigger on e.g. room entities, which are in a different subtree from
+    // the PlaceBox. Thus the second trick, which is, whenever we are hovering over a
+    // pixel which the AVRG says is not a hit pixel, we turn off mouse events for the
+    // *entire* AVRG sub-tree. This forces the click event to take place in the PlaceView
+    // domain, and everything works correctly. Huzzah.
+    override public function hitTestPoint (
+        x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
+    {
+        var hit :Boolean = _backend && _backend.hitTestPoint(x, y, shapeFlag);
+        this.mouseEnabled = this.mouseChildren = hit;
+        return hit;
     }
 
     protected function mediaComplete (event :Event) :void
