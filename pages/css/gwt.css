@@ -16,6 +16,7 @@ html, body {
 a {
   color: black;
   text-decoration: none;
+  font-weight: bold;
 }
 
 a:visited {
@@ -593,6 +594,7 @@ a.external {
 .actionLabel {
   cursor: pointer;
   cursor: hand;
+  font-weight: bold;
 }
 
 .actionLabel:hover {
