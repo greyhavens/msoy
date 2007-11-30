@@ -47,8 +47,6 @@ public class TitledListPanel extends FlexTable
             if (_bheader.getCellCount(0) > 1) {
                 _bheader.setText(0, 2, "");
             }
-        } else {
-            setText(0, 0, title);
         }
         updateTitle(title);
         setWidget(1, 0, contents);
@@ -68,7 +66,7 @@ public class TitledListPanel extends FlexTable
 
     protected void updateTitle (String title)
     {
-        if (_bheader.isAttached()) {
+        if (_bheader.getParent() != null) {
             _bheader.setText(0, 1, title);
         } else {
             setWidget(0, 0, MsoyUI.createLabel(title, "Title"));
