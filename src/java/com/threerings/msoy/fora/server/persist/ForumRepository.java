@@ -77,11 +77,16 @@ public class ForumRepository extends DepotRepository
         int memberId, Set<Integer> groupIds, int maximum)
         throws PersistenceException
     {
+        SQLExpression where = new And(
+            new In(ForumThreadRecord.GROUP_ID_C, groupIds),
+            new Or(new IsNull(ReadTrackingRecord.THREAD_ID_C),
+                   new And(new Equals(ReadTrackingRecord.MEMBER_ID_C, memberId),
+                           new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID_C,
+                                           ReadTrackingRecord.LAST_READ_POST_ID_C))));
         return findAll(ForumThreadRecord.class,
-                       new Join(ForumThreadRecord.THREAD_ID_C, ReadTrackingRecord.THREAD_ID_C),
-                       new Where(new And(new Equals(ReadTrackingRecord.MEMBER_ID_C, memberId),
-                                         new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID_C,
-                                                         ReadTrackingRecord.LAST_READ_POST_ID_C))),
+                       new Join(ForumThreadRecord.THREAD_ID_C,
+                                ReadTrackingRecord.THREAD_ID_C).setType(Join.Type.LEFT_OUTER),
+                       new Where(where),
                        new Limit(0, maximum),
                        OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID_C));
     }
