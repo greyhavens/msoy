@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -55,6 +56,18 @@ public class ThreadListPanel extends PagedGrid
     protected Widget createWidget (Object item)
     {
         return new ThreadSummaryPanel((ForumThread)item);
+    }
+
+    // @Override // from PagedGrid
+    protected Widget createEmptyContents ()
+    {
+        if (_groupId != 0) {
+            return super.createEmptyContents();
+        }
+
+        HTML empty = new HTML(CMsgs.mmsgs.noUnreadThreads());
+        empty.setStyleName("Empty");
+        return empty;
     }
 
     // @Override // from PagedGrid
