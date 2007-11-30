@@ -170,6 +170,24 @@ public class Quest
             500, true),
 
         makeQuest(
+            "findGroups",
+            "willUnminimize",
+            "Meeting People",
+            "Groups and Discussions",
+            "Groups are a great way to meet and talk to other people who share your interests.",
+            [ "Click on [[People -> Groups]].", 
+              "You can browse groups by popularity or click on the [[Popular Tags]] in the " +
+              "upper left to see groups tagged with particular keywords.",
+              "You can also [[Search]] at the top of the page." ],
+            "Click on a group's logo to read more about the group and click the [[Join]] button " +
+            "on the group page to sign up. You don't have to join to read the " +
+            "[[Group Discussions]] but if you do, you can easily see when new messages are " +
+            "posted by going to [[Me -> My Discussions]]<br><br>" + 
+            "When you're ready to continue, click back in this window.",
+            null,
+            0, false),
+
+        makeQuest(
             "visitMyWhirled",
             "willUnminimize",
             "Using My Whirled",
