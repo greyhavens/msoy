@@ -15,8 +15,7 @@ html, body {
 
 a {
   color: black;
-  text-decoration: none;
-  font-weight: bold;
+  text-decoration: underline;
 }
 
 a:visited {
@@ -24,7 +23,7 @@ a:visited {
 }
 
 a:hover {
-  text-decoration: underline;
+  font-weight: bold;
 }
 
 a.external {
@@ -594,7 +593,7 @@ a.external {
 .actionLabel {
   cursor: pointer;
   cursor: hand;
-  font-weight: bold;
+  text-decoration: underline;
 }
 
 .actionLabel:hover {
