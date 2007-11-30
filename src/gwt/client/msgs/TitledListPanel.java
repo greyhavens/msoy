@@ -19,6 +19,8 @@ public class TitledListPanel extends FlexTable
     public TitledListPanel ()
     {
         setStyleName("titledListPanel");
+        setCellPadding(0);
+        setCellSpacing(0);
         getFlexCellFormatter().setStyleName(0, 0, "Header");
 
         _bheader = new FlexTable();
