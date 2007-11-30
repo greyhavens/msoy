@@ -168,7 +168,6 @@ public class NaviPanel extends FlexTable
                 });
                 menu.addItem("Profiles", fmenu);
                 addLink(menu, "Groups", Page.GROUP, "");
-                addLink(menu, "Forums", Page.WRAP, "f");
                 menu.addItem("Invitations", true, new Command() {
                     public void execute () {
                         CShell.membersvc.getInvitationsStatus(CShell.ident, new MsoyCallback() {

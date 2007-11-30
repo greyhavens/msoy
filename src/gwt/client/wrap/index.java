@@ -29,12 +29,8 @@ public class index extends Page
         String action = args.get(0, "");
         if (action.equals("w") && args.getArgCount() == 0) {
             displayPage("Wiki", "http://wiki.whirled.com/");
-
         } else if (action.equals("w")) {
             displayPage("Wiki", "http://wiki.whirled.com/" + Args.compose(args.splice(1)));
-
-        } else if (action.equals("f")) {
-            displayPage("Forums", "http://forums.whirled.com/");
         }
     }
 
