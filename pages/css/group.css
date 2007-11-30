@@ -70,56 +70,33 @@
 
 /* GroupList specific formattting */
 .groupList {
+    padding: 0px 5px;
     font-size: 12px;
+    width: 100%;
 }
 
-.groupList .GroupWidget tr {
+.groupList .Intro {
+    padding-left: 10px;
+    padding-bottom: 10px;
+}
+
+.groupList .PopularTags {
     vertical-align: top;
 }
 
-.groupList .LeftColumn {
-    width: 200px;
-    padding-right: 10px;
-}
-
-.groupList .LeftColumn .PopularTags {
-    margin-bottom: 10px;
-}
-
-.groupList .LeftColumn .PopularTags a, .GroupList .LeftColumn .PopularTags {
+.groupList .PopularTags a {
     font-style: italic;
     color: #696969;
 }
 
-.groupList .LeftColumn .PopularTags .PopularTagsLabel {
+.groupList .PopularTags .PopularTagsLabel {
     font-style: normal;
     color: black;
     font-weight: 600;
 }
 
-.groupList .LeftColumn .PopularTags #moreLink {
+.groupList .PopularTags #moreLink {
     color: #CD853F;
-}
-
-.groupList .LeftColumn .FeaturedGroups {
-    border: 1px solid #696969;
-}
-
-.groupList .LeftColumn .FeaturedGroups .FeaturedGroupsTitle {
-    font-size: 15px;
-    color: white;
-    font-weight: 600;
-    background-color: #696969;
-    padding: 3px;
-}
-
-.groupList .CharacterList {
-    font-weight: 600;
-    padding-bottom: 15px;
-}
-
-.groupList .CharacterList .CharacterLabel {
-    cursor: pointer;
 }
 
 .groupList .GroupWidget .EstablishedDate {

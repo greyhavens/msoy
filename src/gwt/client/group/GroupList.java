@@ -13,11 +13,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
@@ -31,14 +31,17 @@ import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.shell.Application;
+import client.shell.Args;
 import client.shell.Page;
 import client.util.MediaUtil;
+import client.util.MsoyUI;
+import client.util.RowPanel;
 
 /**
  * Display the public groups in a sensical manner, including a sorted list of characters that
  * start the groups, allowing people to select a subset of the public groups to view.
  */
-public class GroupList extends VerticalPanel
+public class GroupList extends FlexTable
 {
     /** The number of columns to show in the PagedGrid */
     public static final int GRID_COLUMNS = 2;
@@ -52,48 +55,38 @@ public class GroupList extends VerticalPanel
     {
         super();
         setStyleName("groupList");
-        DOM.setStyleAttribute(getElement(), "width", "100%");
 
-        _errorContainer = new VerticalPanel();
-        _errorContainer.setStyleName("GroupListErrors");
-        add(_errorContainer);
+        int col = 0;
+        getFlexCellFormatter().setStyleName(0, col, "PopularTags");
+        setWidget(0, col++, _popularTags = new FlowPanel());
 
-        FlexTable table = new FlexTable();
-        DOM.setStyleAttribute(table.getElement(), "width", "100%");
-        add(table);
+        getFlexCellFormatter().setStyleName(0, col, "Intro");
+        setText(0, col++, CGroup.msgs.listIntro());
 
-        _popularTags = new FlowPanel();
-        _popularTags.setStyleName("PopularTags");
-        table.setWidget(0, 0, _popularTags);
-        table.getFlexCellFormatter().setStyleName(0, 0, "LeftColumn");
-
+        RowPanel search = new RowPanel();
         final TextBox searchInput = new TextBox();
         searchInput.setMaxLength(255);
         searchInput.setVisibleLength(20);
-        DOM.setAttribute(searchInput.getElement(), "id", "searchInput");
-        FlexTable search = new FlexTable();
         ClickListener doSearch = new ClickListener() {
             public void onClick (Widget sender) {
                 performSearch(searchInput.getText());
             }
         };
         searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
-        search.setWidget(0, 0, searchInput);
-        search.setWidget(0, 1, new Button(CGroup.msgs.listSearch(), doSearch));
+        search.add(searchInput);
+        search.add(new Button(CGroup.msgs.listSearch(), doSearch), HasAlignment.ALIGN_MIDDLE);
+        setWidget(0, col++, search);
+
         if (CGroup.getMemberId() > 0) {
-            search.setWidget(0, 3, new Button(CGroup.msgs.listNewGroup(), new ClickListener() {
+            getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
+            setWidget(0, col++, new Button(CGroup.msgs.listNewGroup(), new ClickListener() {
                 public void onClick (Widget sender) {
                     new GroupEdit().show();
                 }
             }));
         } else {
-            search.setWidget(0, 3, new Label(""));
+            setText(0, col++, "");
         }
-        DOM.setStyleAttribute(search.getFlexCellFormatter().getElement(0, 2), "width", "100%");
-        table.setWidget(0, 1, search);
-        // This is a nasty place to set a static height in pixels, but for some reason I cannot
-        // fathom, the height of this cell is defaulting to way too large.
-        DOM.setStyleAttribute(table.getFlexCellFormatter().getElement(0, 1), "height", "10px");
 
         int rows = (Window.getClientHeight() - Application.HEADER_HEIGHT -
                     HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT;
@@ -106,8 +99,8 @@ public class GroupList extends VerticalPanel
             }
         };
         _groupGrid.setWidth("100%");
-        table.setWidget(1, 0, _groupGrid);
-        table.getFlexCellFormatter().setColSpan(1, 0, 2);
+        setWidget(1, 0, _groupGrid);
+        getFlexCellFormatter().setColSpan(1, 0, getCellCount(0));
 
         _currentTag = new FlowPanel();
         loadPopularTags();
@@ -129,7 +122,8 @@ public class GroupList extends VerticalPanel
                 } else {
                     while (iter.hasNext()) {
                         final String tag = (String)iter.next();
-                        Hyperlink tagLink = Application.createLink(tag, "group", "tag=" + tag);
+                        Hyperlink tagLink = Application.createLink(
+                            tag, "group", Args.compose("tag", tag));
                         DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
                         _popularTags.add(tagLink);
                         if (iter.hasNext()) {
@@ -141,7 +135,7 @@ public class GroupList extends VerticalPanel
             }
             public void onFailure (Throwable caught) {
                 CGroup.log("getPopularTags failed", caught);
-                addError(CGroup.serverError(caught));
+                MsoyUI.error(CGroup.serverError(caught));
             }
         });
     }
@@ -167,7 +161,7 @@ public class GroupList extends VerticalPanel
             }
             public void onFailure (Throwable caught) {
                 CGroup.log("getGroupsList failed", caught);
-                addError(CGroup.serverError(caught));
+                MsoyUI.error(CGroup.serverError(caught));
             }
         };
         
@@ -186,19 +180,9 @@ public class GroupList extends VerticalPanel
             }
             public void onFailure (Throwable caught) {
                 CGroup.log("searchGroups(" + searchString + ") failed", caught);
-                addError(CGroup.serverError(caught));
+                MsoyUI.error(CGroup.serverError(caught));
             }
         });
-    }
-
-    protected void addError (String error)
-    {
-        _errorContainer.add(new Label(error));
-    }
-
-    protected void clearErrors ()
-    {
-        _errorContainer.clear();
     }
 
     protected class GroupWidget extends FlexTable
@@ -241,7 +225,6 @@ public class GroupList extends VerticalPanel
         }
     }
 
-    protected VerticalPanel _errorContainer;
     protected FlowPanel _popularTags;
     protected FlowPanel _currentTag;
     protected PagedGrid _groupGrid;

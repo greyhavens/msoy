@@ -22,10 +22,6 @@ a:visited {
   color: black;
 }
 
-a:hover {
-  font-weight: bold;
-}
-
 a.external {
   background: url(/images/ui/external.png) center right no-repeat;
   padding-right: 16px;
@@ -593,10 +589,6 @@ a.external {
 .actionLabel {
   cursor: pointer;
   cursor: hand;
-  text-decoration: underline;
-}
-
-.actionLabel:hover {
   text-decoration: underline;
 }
 
