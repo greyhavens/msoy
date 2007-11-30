@@ -5,7 +5,9 @@ package client.group;
 
 import java.util.Iterator;
 import java.util.List;
+
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -40,9 +42,6 @@ public class GroupList extends VerticalPanel
 {
     /** The number of columns to show in the PagedGrid */
     public static final int GRID_COLUMNS = 2;
-
-    /** The number of rows to show in the PagedGrid. */
-    public static final int GRID_ROWS = 4;
 
     public GroupList () 
     {
@@ -96,7 +95,9 @@ public class GroupList extends VerticalPanel
         // fathom, the height of this cell is defaulting to way too large.
         DOM.setStyleAttribute(table.getFlexCellFormatter().getElement(0, 1), "height", "10px");
 
-        _groupGrid = new PagedGrid(GRID_ROWS, GRID_COLUMNS) {
+        int rows = (Window.getClientHeight() - Application.HEADER_HEIGHT -
+                    HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT;
+        _groupGrid = new PagedGrid(rows, GRID_COLUMNS) {
             protected Widget createWidget (Object item) {
                 return new GroupWidget((Group)item);
             }
@@ -244,4 +245,8 @@ public class GroupList extends VerticalPanel
     protected FlowPanel _popularTags;
     protected FlowPanel _currentTag;
     protected PagedGrid _groupGrid;
+
+    protected static final int HEADER_HEIGHT = 15 /* gap */ + 45 /* top tags, etc. */;
+    protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ + 10 /* gap */;
+    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT + 15 /* gap */;
 }
