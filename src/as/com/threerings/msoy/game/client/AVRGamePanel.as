@@ -9,6 +9,7 @@ import flash.display.Loader;
 import flash.display.LoaderInfo;
 
 import mx.core.UIComponent;
+import mx.events.ResizeEvent;
 
 import com.threerings.util.Log;
 
@@ -17,7 +18,6 @@ import com.threerings.flash.MediaContainer;
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
 
@@ -29,7 +29,6 @@ import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.world.client.RoomView;
 
 public class AVRGamePanel extends UIComponent
-    implements PlaceLayer
 {
     public static const log :Log = Log.getLog(AVRGamePanel);
 
@@ -62,17 +61,6 @@ public class AVRGamePanel extends UIComponent
 
         // TODO: We should probably listen for _gameObj.gameMedia updates and
         // TODO: perhaps just brutally reload ourselves when that happens?
-    }
-
-    // from PlaceLayer
-    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
-    {
-        // an AVRG panel should be designed for 700 x 500
-        var scale :Number = Math.min(1, unscaledHeight / stage.stageHeight);
-        // so we'll brutally scale it accordingly
-        this.scaleX = this.scaleY = scale;
-
-        _backend.panelResized();
     }
 
     public function getAVRGameBackend () :AVRGameBackend
@@ -122,11 +110,23 @@ public class AVRGamePanel extends UIComponent
             return;
         }
 
+        this.addEventListener(ResizeEvent.RESIZE, handleResize);
+
         _ctrl.gameIsReady();
 
         this.addChild(_mediaHolder);
 
         _mctx.getMsoyController().setAVRGamePanel(this);
+    }
+
+    protected function handleResize (evt :ResizeEvent) :void
+    {
+        // an AVRG panel should be designed for 700 x 500
+        var scale :Number = Math.min(1, this.height / stage.stageHeight);
+        // so we'll brutally scale it accordingly
+        this.scaleX = this.scaleY = scale;
+
+        _backend.panelResized();
     }
 
     protected var _mctx :WorldContext;
