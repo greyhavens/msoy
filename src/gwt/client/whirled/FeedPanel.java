@@ -426,6 +426,13 @@ public class FeedPanel extends VerticalPanel
 
         protected void addGroupMessage (GroupFeedMessage message)
         {
+            switch (message.type) {
+            case 200: // GROUP_ANNOUNCEMENT
+                String threadLink = Application.createLinkHtml(
+                    message.data[1], Page.GROUP, Args.compose("t", message.data[2]));
+                add(new BasicWidget(CWhirled.msgs.groupAnnouncement(message.data[0], threadLink)));
+                break;
+            }
         }
 
         protected String profileLink (MemberName friend)

@@ -17,6 +17,7 @@ import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
@@ -228,14 +229,23 @@ public class ForumServlet extends MsoyServiceServlet
 
         try {
             // make sure they're allowed to create a thread in this group
-            checkAccess(mrec, groupId, Group.ACCESS_THREAD, flags);
+            GroupRecord grec = checkAccess(mrec, groupId, Group.ACCESS_THREAD, flags);
 
             // TODO: check first message contents
 
             // create the thread (and first post) in the database and return its runtime form
-            return MsoyServer.forumRepo.createThread(
+            ForumThread thread = MsoyServer.forumRepo.createThread(
                 groupId, mrec.memberId, flags, subject, message).toForumThread(
                     Collections.singletonMap(mrec.memberId, mrec.getName()));
+
+            // if the thread is an announcement thread, post a feed message about it
+            if (thread.isAnnouncement()) {
+                MsoyServer.feedRepo.publishGroupMessage(
+                    groupId, FeedMessageType.GROUP_ANNOUNCEMENT,
+                    grec.name + "\t" + subject + "\t" + thread.threadId);
+            }
+
+            return thread;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to create thread [for=" + who(mrec) +
@@ -345,7 +355,7 @@ public class ForumServlet extends MsoyServiceServlet
     /**
      * Checks that the supplied member has the specified access in the specified group.
      */
-    protected void checkAccess (MemberRecord mrec, int groupId, int access, int flags)
+    protected GroupRecord checkAccess (MemberRecord mrec, int groupId, int access, int flags)
         throws PersistenceException, ServiceException
     {
         GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
@@ -355,6 +365,7 @@ public class ForumServlet extends MsoyServiceServlet
         if (!grec.toGroupObject().checkAccess(getGroupRank(mrec, groupId), access, flags)) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
+        return grec;
     }
 
     /**
