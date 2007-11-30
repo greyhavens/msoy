@@ -176,6 +176,11 @@
     border-right: none;
 }
 
+.contentFooterPanel .Tip {
+    font-size: 12px;
+    width: 300px;
+}
+
 .replyPanel {
     border-left: 1px dotted;
     border-right: 1px dotted;

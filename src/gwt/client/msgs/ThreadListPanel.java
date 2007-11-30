@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -22,6 +23,7 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
+import client.util.RowPanel;
 
 /**
  * Displays a list of threads.
@@ -122,8 +124,20 @@ public class ThreadListPanel extends PagedGrid
             getFlexCellFormatter().setStyleName(0, col++, "Status");
 
             // TODO: display flags icons next to subject
-            setWidget(0, col, Application.createLink(thread.subject, Page.GROUP,
-                                                   Args.compose("t", thread.threadId)));
+            Hyperlink subject = Application.createLink(
+                thread.subject, Page.GROUP, Args.compose("t", thread.threadId));
+            if (thread.flags != 0) {
+                RowPanel bits = new RowPanel();
+                bits.add(subject);
+                for (int ii = 0; ii < FLAG_IMAGES.length; ii++) {
+                    if ((thread.flags & (1 << ii)) != 0) {
+                        bits.add(new Image("/images/msgs/" + FLAG_IMAGES[ii] + ".png"));
+                    }
+                }
+                setWidget(0, col, bits);
+            } else {
+                setWidget(0, col, subject);
+            }
             getFlexCellFormatter().setStyleName(0, col++, "Subject");
 
             setText(0, col, "" + thread.posts);
@@ -150,7 +164,12 @@ public class ThreadListPanel extends PagedGrid
     /** A button for refreshing the current model. */
     protected Button _refresh;
 
+    /** Used to format the most recent post date. */
     protected static SimpleDateFormat _pdate = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
 
+    /** The number of threads displayed per page (TODO: base this on browser height). */
     protected static final int THREADS_PER_PAGE = 10;
+
+    /** Images displayed next to threads that have special flags. */
+    protected static final String[] FLAG_IMAGES = { "announce", "sticky", "locked" };
 }

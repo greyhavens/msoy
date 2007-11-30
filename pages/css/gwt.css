@@ -603,6 +603,7 @@ a.external {
 
 .rightLabel {
   text-align: right;
+  vertical-align: top;
   white-space: nowrap;
 }
 

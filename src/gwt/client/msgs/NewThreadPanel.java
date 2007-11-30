@@ -4,21 +4,25 @@
 package client.msgs;
 
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.fora.data.ForumThread;
 
+import com.threerings.gwt.ui.WidgetUtil;
+
 import client.util.ClickCallback;
 import client.util.MsoyUI;
+import client.util.RowPanel;
 
 /**
  * Displays an interface for creating a new thread.
  */
 public class NewThreadPanel extends ContentFooterPanel
 {
-    public NewThreadPanel (int groupId)
+    public NewThreadPanel (int groupId, boolean isManager)
     {
         _groupId = groupId;
 
@@ -26,12 +30,20 @@ public class NewThreadPanel extends ContentFooterPanel
         _subject.setMaxLength(ForumThread.MAX_SUBJECT_LENGTH);
         _subject.setVisibleLength(40);
 
+        if (isManager) {
+            RowPanel bits = new RowPanel();
+            bits.add(_announce = new CheckBox());
+            bits.add(MsoyUI.createLabel(CMsgs.mmsgs.ntpAnnounceTip(), "Tip"));
+            addRow(CMsgs.mmsgs.ntpAnnounce(), bits);
+        }
+
+        addRow(WidgetUtil.makeShim(5, 5));
         addRow(CMsgs.mmsgs.ntpFirstMessage());
         addRow(_message = new MessageEditor());
 
         _footer.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
-                ((ForumPanel)getParent()).displayGroupThreads(_groupId);
+                ((ForumPanel)getParent()).newThreadCanceled(_groupId);
             }
         }));
         Button submit = new Button(CMsgs.cmsgs.submit());
@@ -61,11 +73,16 @@ public class NewThreadPanel extends ContentFooterPanel
             return false;
         }
 
-        CMsgs.forumsvc.createThread(CMsgs.ident, _groupId, 0, subject, message, callback);
+        int flags = 0;
+        if (_announce != null && _announce.isChecked()) {
+            flags |= ForumThread.FLAG_ANNOUNCEMENT;
+        }
+        CMsgs.forumsvc.createThread(CMsgs.ident, _groupId, flags, subject, message, callback);
         return true;
     }
 
     protected int _groupId;
     protected TextBox _subject;
+    protected CheckBox _announce;
     protected MessageEditor _message;
 }
