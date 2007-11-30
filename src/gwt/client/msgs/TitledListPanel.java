@@ -6,7 +6,6 @@ package client.msgs;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -15,16 +14,16 @@ import client.util.MsoyUI;
 /**
  * Displays a list of messages or threads things with a title and possibly a back button.
  */
-public class TitledListPanel extends VerticalPanel
+public class TitledListPanel extends FlexTable
 {
     public TitledListPanel ()
     {
         setStyleName("titledListPanel");
+        getFlexCellFormatter().setStyleName(0, 0, "Header");
 
         _bheader = new FlexTable();
         _bheader.setCellSpacing(0);
         _bheader.setCellPadding(0);
-        _bheader.setStyleName("Header");
         _bheader.setWidget(0, 0, MsoyUI.createActionLabel("", "Back", new ClickListener() {
             public void onClick (Widget sender) {
                 History.back();
@@ -32,9 +31,6 @@ public class TitledListPanel extends VerticalPanel
         }));
         _bheader.getFlexCellFormatter().setStyleName(0, 1, "Title");
         _bheader.getFlexCellFormatter().setWidth(0, 1, "100%");
-
-        _theader = new FlowPanel();
-        _theader.setStyleName("Header");
     }
 
     public void setContents (String title, Widget contents)
@@ -44,24 +40,22 @@ public class TitledListPanel extends VerticalPanel
 
     public void setContents (String title, Widget contents, boolean backButton)
     {
-        clear();
         if (backButton) {
-            add(_bheader);
+            setWidget(0, 0, _bheader);
             if (_bheader.getCellCount(0) > 1) {
                 _bheader.setText(0, 2, "");
             }
         } else {
-            add(_theader);
+            setText(0, 0, title);
         }
         updateTitle(title);
-        add(contents);
+        setWidget(1, 0, contents);
     }
 
     public void setContents (Widget header, Widget contents)
     {
-        clear();
-        add(header);
-        add(contents);
+        setWidget(0, 0, header);
+        setWidget(1, 0, contents);
     }
 
     protected void setRightBits (Widget rightBox)
@@ -75,11 +69,9 @@ public class TitledListPanel extends VerticalPanel
         if (_bheader.isAttached()) {
             _bheader.setText(0, 1, title);
         } else {
-            _theader.clear();
-            _theader.add(MsoyUI.createLabel(title, "Title"));
+            setWidget(0, 0, MsoyUI.createLabel(title, "Title"));
         }
     }
 
     protected FlexTable _bheader;
-    protected FlowPanel _theader;
 }

@@ -41,9 +41,9 @@ public class ForumPanel extends TitledListPanel
     protected FlexTable createHeader (String title)
     {
         FlexTable header = new FlexTable();
-        header.setStyleName("Header");
         header.setCellSpacing(0);
         header.setCellPadding(0);
+        header.setWidth("100%");
         header.setText(0, 0, title);
         header.getFlexCellFormatter().setStyleName(0, 0, "Title");
         header.setText(0, 1, CMsgs.mmsgs.groupThreadPosts());
