@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
@@ -74,7 +75,7 @@ public class ThreadListPanel extends PagedGrid
         super.addCustomControls(controls);
 
         // add a button for starting a new thread that will optionally be enabled later
-        _startThread = new Button(CMsgs.mmsgs.startNewThread(), new ClickListener() {
+        _startThread = new Button(CMsgs.mmsgs.tlpStartNewThread(), new ClickListener() {
             public void onClick (Widget sender) {
                 _parent.startNewThread(_groupId);
             }
@@ -83,7 +84,7 @@ public class ThreadListPanel extends PagedGrid
         controls.setWidget(0, 0, _startThread);
 
         // add a button for refreshing our unread thread list
-        _refresh = new Button(CMsgs.mmsgs.refresh(), new ClickListener() {
+        _refresh = new Button(CMsgs.mmsgs.tlpRefresh(), new ClickListener() {
             public void onClick (Widget sender) {
                 _parent.displayUnreadThreads(true);
             }
@@ -128,6 +129,9 @@ public class ThreadListPanel extends PagedGrid
                 thread.subject, Page.GROUP, Args.compose("t", thread.threadId));
             if (thread.flags != 0) {
                 RowPanel bits = new RowPanel();
+                if (thread.isAnnouncement()) {
+                    bits.add(new Label(CMsgs.mmsgs.tlpAnnounce()));
+                }
                 bits.add(subject);
                 for (int ii = 0; ii < FLAG_IMAGES.length; ii++) {
                     if ((thread.flags & (1 << ii)) != 0) {

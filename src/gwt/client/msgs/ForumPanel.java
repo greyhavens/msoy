@@ -36,7 +36,7 @@ public class ForumPanel extends TitledListPanel
 
     public void startNewThread (int groupId)
     {
-        setContents(CMsgs.mmsgs.startNewThread(), new NewThreadPanel(groupId, _isManager));
+        setContents(CMsgs.mmsgs.ntpTitle(), new NewThreadPanel(groupId, _isManager));
     }
 
     /**
