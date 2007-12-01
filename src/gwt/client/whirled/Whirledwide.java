@@ -178,7 +178,7 @@ public class Whirledwide extends FlexTable
         editor.setHTML(_wwdata.newsHtml);
 
         newsBox.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-        newsBox.add(new RichTextToolbar(editor));
+        newsBox.add(new RichTextToolbar(editor, false));
         newsBox.add(editor);
 
         newsBox.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);

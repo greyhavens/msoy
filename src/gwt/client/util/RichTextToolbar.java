@@ -17,12 +17,18 @@ package client.util;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ImageBundle;
 import com.google.gwt.user.client.ui.KeyboardListener;
@@ -30,13 +36,16 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RichTextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Photo;
 
-import client.util.RowPanel;
+import com.threerings.gwt.ui.WidgetUtil;
+
+import client.shell.CShell;
 import client.util.images.RichTextToolbarImages;
 
 /**
@@ -128,7 +137,7 @@ public class RichTextToolbar extends Composite
      * 
      * @param richText the rich text area to be controlled
      */
-    public RichTextToolbar (RichTextArea richText)
+    public RichTextToolbar (RichTextArea richText, boolean allowPanelEdit)
     {
         this.richText = richText;
         this.basic = richText.getBasicFormatter();
@@ -184,11 +193,44 @@ public class RichTextToolbar extends Composite
             bottomPanel.add(fonts = createFontList());
             bottomPanel.add(fontSizes = createFontSizes());
 
+            if (allowPanelEdit) {
+                bottomPanel.add(new Button("Panel Colors", new ClickListener() {
+                    public void onClick (Widget sender) {
+                        showPanelColorsPopup();
+                    }
+                }), HasAlignment.ALIGN_MIDDLE);
+            }
+
             // We only use these listeners for updating status, so don't hook them up
             // unless at least basic editing is supported.
             richText.addKeyboardListener(listener);
             richText.addClickListener(listener);
         }
+    }
+
+    public String getTextColor ()
+    {
+        return _tcolor;
+    }
+
+    public String getBackgroundColor ()
+    {
+        return _bgcolor;
+    }
+
+    public void setPanelColors (String tcolor, String bgcolor)
+    {
+        _tcolor = tcolor;
+        _bgcolor = bgcolor;
+
+        // this may be called before we're added to the DOM, so we need to wait until our inner
+        // iframe is created before trying to set its background color, etc.
+        DeferredCommand.add(new Command() {
+            public void execute () {
+                setPanelColorsImpl(richText.getElement(), (_tcolor == null) ? "" : _tcolor,
+                                   (_bgcolor == null) ? "none" : _bgcolor);
+            }
+        });
     }
 
     protected ListBox createColorList (String caption)
@@ -274,6 +316,51 @@ public class RichTextToolbar extends Composite
             strikethrough.setDown(extended.isStrikethrough());
         }
     }
+
+    protected void showPanelColorsPopup ()
+    {
+        final BorderedPopup popup = new BorderedPopup();
+        FlexTable contents = new FlexTable();
+        contents.setCellSpacing(5);
+        contents.setCellPadding(0);
+        contents.setText(0, 0, "Enter panel colors (in hex ASCII format, e.g. #FFCC99):");
+        contents.getFlexCellFormatter().setColSpan(0, 0, 2);
+
+        contents.setText(1, 0, "Text color:");
+        final TextBox tcolor = MsoyUI.createTextBox(_tcolor, 7, 7);
+        contents.setWidget(1, 1, tcolor);
+
+        contents.setText(2, 0, "Background color:");
+        final TextBox bgcolor = MsoyUI.createTextBox(_bgcolor, 7, 7);
+        contents.setWidget(2, 1, bgcolor);
+
+        HorizontalPanel buttons = new HorizontalPanel();
+        buttons.add(new Button(CShell.cmsgs.cancel(), new ClickListener() {
+            public void onClick (Widget sender) {
+                popup.hide();
+            }
+        }));
+        buttons.add(WidgetUtil.makeShim(5, 5));
+        buttons.add(new Button(CShell.cmsgs.update(), new ClickListener() {
+            public void onClick (Widget sender) {
+                setPanelColors(tcolor.getText().trim().toLowerCase(),
+                               bgcolor.getText().trim().toLowerCase());
+                popup.hide();
+            }
+        }));
+        contents.setWidget(3, 0, buttons);
+        contents.getFlexCellFormatter().setColSpan(3, 0, 2);
+        contents.getFlexCellFormatter().setHorizontalAlignment(3, 0, HasAlignment.ALIGN_RIGHT);
+
+        popup.setWidget(contents);
+        popup.show();
+    }
+
+    protected static native void setPanelColorsImpl (
+        Element element, String tcolor, String bgcolor) /*-{
+        element.contentWindow.document.body.style['color'] = tcolor;
+        element.contentWindow.document.body.style['background'] = bgcolor;
+    }-*/;
 
     /**
      * We use an inner EventListener class to avoid exposing event methods on the
@@ -403,6 +490,8 @@ public class RichTextToolbar extends Composite
     protected ListBox foreColors;
     protected ListBox fonts;
     protected ListBox fontSizes;
+
+    protected String _tcolor, _bgcolor;
 
     protected static final RichTextArea.FontSize[] fontSizesConstants = new RichTextArea.FontSize[] {
         RichTextArea.FontSize.XX_SMALL, RichTextArea.FontSize.X_SMALL,

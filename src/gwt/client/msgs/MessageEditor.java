@@ -16,7 +16,7 @@ public class MessageEditor extends VerticalPanel
     public MessageEditor ()
     {
         _text = new RichTextArea();
-        RichTextToolbar toolbar = new RichTextToolbar(_text);
+        RichTextToolbar toolbar = new RichTextToolbar(_text, false);
         add(toolbar);
         add(_text);
         _text.setWidth("550px");
