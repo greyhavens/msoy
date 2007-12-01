@@ -123,7 +123,6 @@ public class MailComposition extends BorderedDialog
         _messageBox.setVisibleLines(10);
         _messageBox.addStyleName("Body");
         _messageBox.setText(bodyText);
-        _messageBox.addKeyboardListener(keyListener);
         _panel.add(_messageBox);
 
         // then a button box
@@ -221,8 +220,7 @@ public class MailComposition extends BorderedDialog
 
     protected void updateButtons ()
     {
-        _sendButton.setEnabled(
-            _subjectBox.getText().length() > 0 && _messageBox.getText().length() > 0);
+        _sendButton.setEnabled(_subjectBox.getText().length() > 0);
         _attachButton.setEnabled(_payloadBox.getWidget() == null);
     }
 
