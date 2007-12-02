@@ -168,6 +168,9 @@ public class MsoyController extends Controller
     /** Command to issue to toggle the chat display. */
     public static const TOGGLE_CHAT :String = "ToggleChat";
 
+    /** Command to respond to a request to follow another player. */
+    public static const RESPOND_FOLLOW :String = "RespondFollow";
+
     /**
      * Create the msoy controller.
      */
@@ -648,6 +651,16 @@ public class MsoyController extends Controller
     public function handleToggleChat () :void
     {
         Prefs.setShowingChatHistory(!Prefs.getShowingChatHistory());
+    }
+
+    /**
+     * Handles RESPOND_FOLLOW.
+     */
+    public function handleRespondFollow (memberId :int) :void
+    {
+        var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
+        msvc.followMember(_ctx.getClient(), memberId,
+                          new ReportingListener(_ctx, MsoyCodes.GENERAL_MSGS, null, "m.following"));
     }
 
     /**

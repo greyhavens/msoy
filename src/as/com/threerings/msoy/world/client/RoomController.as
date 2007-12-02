@@ -18,21 +18,21 @@ import mx.core.Application;
 import mx.core.IChildList;
 import mx.core.IToolTip;
 import mx.core.UIComponent;
-import mx.managers.ToolTipManager;
 import mx.managers.ISystemManager;
+import mx.managers.ToolTipManager;
+
+import com.threerings.io.TypedArray;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Integer;
 import com.threerings.util.Log;
+import com.threerings.util.MessageBundle;
 import com.threerings.util.NetUtil;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.io.TypedArray;
-
 import com.threerings.flash.MenuUtil;
-
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
 
@@ -256,7 +256,8 @@ public class RoomController extends SceneController
         // TODO: total up item's used memory, ensure it doesn't exceed the allowed limit
 
         // ship the update request off to the server
-        _roomObj.roomService.updateMemory(_mctx.getClient(), new EntityMemoryEntry(ident, key, data));
+        _roomObj.roomService.updateMemory(
+            _mctx.getClient(), new EntityMemoryEntry(ident, key, data));
         return true;
     }
 
@@ -303,89 +304,31 @@ public class RoomController extends SceneController
         return true;
     }
 
-    // documentation inherited
-    override public function init (ctx :CrowdContext, config :PlaceConfig) :void
+    /**
+     * Sends an invitation to the specified member to follow us. If member is null, all our
+     * existing follows will be cleared.
+     */
+    public function inviteFollow (member :MemberName) :void
     {
-        super.init(ctx, config);
-
-        _mctx = (ctx as WorldContext);
-        _editor = new RoomEditorController(_mctx, _roomView);
-
-        if (_mctx.getWorldClient().isFeaturedPlaceView()) {
-            // show the pointer cursor 
-            _roomView.buttonMode = true;
-            _roomView.mouseChildren = false;
-            _roomView.useHandCursor = true;
+        var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
+        if (member == null) {
+            msvc.inviteToFollow(_ctx.getClient(), 0, new ReportingListener(
+                                    _mctx, MsoyCodes.GENERAL_MSGS, null, "m.follows_cleared"));
+        } else {
+            msvc.inviteToFollow(_ctx.getClient(), member.getMemberId(), new ReportingListener(
+                                    _mctx, MsoyCodes.GENERAL_MSGS, null,
+                                    MessageBundle.tcompose("m.invited_to_follow", member)));
         }
     }
 
-    // documentation inherited
-    override protected function createPlaceView (ctx :CrowdContext) :PlaceView
+    /**
+     * Tells the server we no longer want to be following anyone.
+     */
+    public function clearFollow () :void
     {
-        _roomView = new RoomView(ctx as WorldContext, this);
-        return _roomView;
-    }
-
-    // documentation inherited
-    override public function willEnterPlace (plobj :PlaceObject) :void
-    {
-        super.willEnterPlace(plobj);
-
-        _roomObj = (plobj as RoomObject);
-        _roomListener = new MessageAdapter(msgReceivedOnRoomObj);
-        _roomObj.addListener(_roomListener);
-
-        // get a copy of the scene
-        _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
-
-        _snap = new SnapshotController(_mctx, _scene.getId());
-        
-        _walkTarget.visible = false;
-        _flyTarget.visible = false;
-        _roomView.addChildAt(_flyTarget, _roomView.numChildren);
-        _roomView.addChildAt(_walkTarget, _roomView.numChildren);
-
-        _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(MouseEvent.CLICK, mouseWillClick, true);
-        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
-        _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
-        _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
-
-        // watch for when we're un-minimized and the display list is valid, so that we can open the
-        // editor, and place things correctly when necessary
-        _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
-    }
-
-    // documentation inherited
-    override public function didLeavePlace (plobj :PlaceObject) :void
-    {
-        _updates.reset();
-        if (isRoomEditing()) {
-            cancelRoomEditing();
-        }
-
-        _ctx.getClient().removeEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
-
-        _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.removeEventListener(MouseEvent.CLICK, mouseWillClick, true);
-        _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
-        _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
-        _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
-
-        _roomView.removeChild(_walkTarget);
-        _roomView.removeChild(_flyTarget);
-        hoverAllFurni(false);
-        setHoverSprite(null);
-
-        _roomObj.removeListener(_roomListener);
-
-        _snap = null;
-        _scene = null;
-        _roomObj = null;
-
-        closeAllMusic(false);
-
-        super.didLeavePlace(plobj);
+        var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
+        msvc.followMember(_ctx.getClient(), 0, new ReportingListener(
+                              _mctx, MsoyCodes.GENERAL_MSGS, null, "m.not_following"));
     }
 
     /**
@@ -414,6 +357,22 @@ public class RoomController extends SceneController
         msvc.updateAvailability(_ctx.getClient(), availability);
         _mctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.avail_tip_" + availability);
     }
+
+    /**
+     * Returns true if we are in edit mode, false if not.
+     */
+    public function isRoomEditing () :Boolean
+    {
+        return _editor.isEditing();
+    }
+
+    /**
+     * Takes a snapshot of the current room.
+     */
+    public function takeSnapshot () :void
+    {
+        _snap.takeScreenshot(_roomView);
+    };   
 
     /**
      * Handles EDIT_DOOR.
@@ -450,14 +409,6 @@ public class RoomController extends SceneController
                     beginRoomEditing(button);
                 }
             }));
-    }
-
-    /**
-     * Returns true if we are in edit mode, false if not.
-     */
-    public function isRoomEditing () :Boolean
-    {
-        return _editor.isEditing();
     }
 
     /**
@@ -534,6 +485,19 @@ public class RoomController extends SceneController
             // see if we can control our own avatar right now...
             var canControl :Boolean = _mctx.worldProps.userControlsAvatar;
 
+            // if we have followers, add a menu item for clearing them
+            if (us.followers.size() > 0) {
+                menuItems.push({ label: Msgs.GENERAL.get("l.clear_followers"),
+                                 callback: inviteFollow, arg: null });
+            }
+
+            // if we're following someone, add a menu item for stopping
+            if (us.following != null) {
+                menuItems.push({ label: Msgs.GENERAL.get("l.stop_following"),
+                                 callback: clearFollow });
+            }
+
+            // if we're not a guest add a menu for changing avatars
             if (!us.isGuest()) {
                 menuItems.push(createChangeAvatarMenu(us, canControl));
             }
@@ -545,7 +509,6 @@ public class RoomController extends SceneController
                 for each (var act :String in actions) {
                     worldActions.push({ label: act, callback: doAvatarAction, arg: act });
                 }
-
                 menuItems.push({ label: Msgs.GENERAL.get("l.avAction"),
                     children: worldActions, enabled: canControl });
             }
@@ -557,7 +520,6 @@ public class RoomController extends SceneController
                 for each (var state :String in states) {
                     worldStates.push({ label: state, callback: doAvatarState, arg :state });
                 }
-
                 menuItems.push({ label: Msgs.GENERAL.get("l.avStates"),
                     children: worldStates, enabled: canControl });
             }
@@ -597,26 +559,29 @@ public class RoomController extends SceneController
         } else {
             // create a menu for clicking on someone else
             var memId :int = occInfo.getMemberId();
-            var isGuest :Boolean = (memId == MemberName.GUEST_ID);
-            menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
+            menuItems.push({ label: Msgs.GENERAL.get("l.open_channel"),
                 command: MsoyController.OPEN_CHANNEL, arg: occInfo.username });
+            menuItems.push({ label: Msgs.GENERAL.get("l.invite_follow"),
+                callback: inviteFollow, arg: occInfo.username });
+
+            var isGuest :Boolean = (memId == MemberName.GUEST_ID);
             if (isGuest) {
                 menuItems.push(
-                    { label: Msgs.GENERAL.get("b.invite_to_whirled"),
+                    { label: Msgs.GENERAL.get("l.invite_to_whirled"),
                       command: MsoyController.INVITE_GUEST, arg: occInfo.username });
 
             } else {
                 menuItems.push(
-                    { label: Msgs.GENERAL.get("b.visit_home"),
+                    { label: Msgs.GENERAL.get("l.visit_home"),
                       command: MsoyController.GO_MEMBER_HOME, arg: memId });
                 if (!_mctx.getWorldClient().isEmbedded()) {
                     menuItems.push(
-                        { label: Msgs.GENERAL.get("b.view_member"),
+                        { label: Msgs.GENERAL.get("l.view_member"),
                           command: MsoyController.VIEW_MEMBER, arg: memId });
                 }
                 if (!us.isGuest() && !us.friends.containsKey(memId)) {
                     menuItems.push(
-                        { label: Msgs.GENERAL.get("b.addAsFriend"),
+                        { label: Msgs.GENERAL.get("l.add_as_friend"),
                           command: MsoyController.INVITE_FRIEND, arg: [memId] });
                 }
             }
@@ -631,14 +596,6 @@ public class RoomController extends SceneController
             menu.show();
         }
     }
-
-    /**
-     * Takes a snapshot of the current room.
-     */
-    public function takeSnapshot () :void
-    {
-        _snap.takeScreenshot(_roomView);
-    };   
 
     /**
      * Handles PET_CLICKED.
@@ -1016,6 +973,91 @@ public class RoomController extends SceneController
     public function completeQuest (gctx :GameContext, questOutro :String, finish :Function) :void
     {
         new QuestCompletionPanel(gctx, questOutro, finish).open(false);
+    }
+
+    // documentation inherited
+    override public function init (ctx :CrowdContext, config :PlaceConfig) :void
+    {
+        super.init(ctx, config);
+
+        _mctx = (ctx as WorldContext);
+        _editor = new RoomEditorController(_mctx, _roomView);
+
+        if (_mctx.getWorldClient().isFeaturedPlaceView()) {
+            // show the pointer cursor 
+            _roomView.buttonMode = true;
+            _roomView.mouseChildren = false;
+            _roomView.useHandCursor = true;
+        }
+    }
+
+    // documentation inherited
+    override protected function createPlaceView (ctx :CrowdContext) :PlaceView
+    {
+        _roomView = new RoomView(ctx as WorldContext, this);
+        return _roomView;
+    }
+
+    // documentation inherited
+    override public function willEnterPlace (plobj :PlaceObject) :void
+    {
+        super.willEnterPlace(plobj);
+
+        _roomObj = (plobj as RoomObject);
+        _roomListener = new MessageAdapter(msgReceivedOnRoomObj);
+        _roomObj.addListener(_roomListener);
+
+        // get a copy of the scene
+        _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
+
+        _snap = new SnapshotController(_mctx, _scene.getId());
+        
+        _walkTarget.visible = false;
+        _flyTarget.visible = false;
+        _roomView.addChildAt(_flyTarget, _roomView.numChildren);
+        _roomView.addChildAt(_walkTarget, _roomView.numChildren);
+
+        _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.addEventListener(MouseEvent.CLICK, mouseWillClick, true);
+        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
+        _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+        _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
+
+        // watch for when we're un-minimized and the display list is valid, so that we can open the
+        // editor, and place things correctly when necessary
+        _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
+    }
+
+    // documentation inherited
+    override public function didLeavePlace (plobj :PlaceObject) :void
+    {
+        _updates.reset();
+        if (isRoomEditing()) {
+            cancelRoomEditing();
+        }
+
+        _ctx.getClient().removeEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
+
+        _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.removeEventListener(MouseEvent.CLICK, mouseWillClick, true);
+        _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
+        _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+        _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
+
+        _roomView.removeChild(_walkTarget);
+        _roomView.removeChild(_flyTarget);
+        hoverAllFurni(false);
+        setHoverSprite(null);
+
+        _roomObj.removeListener(_roomListener);
+
+        _snap = null;
+        _scene = null;
+        _roomObj = null;
+
+        closeAllMusic(false);
+
+        super.didLeavePlace(plobj);
     }
 
     /**

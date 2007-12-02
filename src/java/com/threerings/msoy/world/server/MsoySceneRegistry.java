@@ -16,9 +16,12 @@ import com.threerings.whirled.data.SceneCodes;
 import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.spot.data.Portal;
+
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
+
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -64,6 +67,20 @@ public class MsoySceneRegistry extends SceneRegistry
 
         // now check to see if the destination scene is already hosted on a server
         String nodeName = MsoyServer.peerMan.getSceneHost(sceneId);
+
+        // if this member has followers, tell them all to make the same scene move
+        for (MemberName follower :
+                 memobj.followers.toArray(new MemberName[memobj.followers.size()])) {
+            MemberObject folobj = MsoyServer.lookupMember(follower.getMemberId());
+            // if they've logged off or are no longer following us, remove them from our set
+            if (folobj == null || folobj.following == null ||
+                !folobj.following.equals(memobj.memberName)) {
+                log.info("Clearing departed follower " + follower + ".");
+                memobj.removeFromFollowers(follower.getMemberId());
+                continue;
+            }
+            folobj.postMessage(RoomCodes.FOLLOWEE_MOVED, sceneId);
+        }
 
         // if it's hosted on this server, then send the client directly to the scene
         if (MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeName)) {

@@ -25,7 +25,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#followMember} request.
      */
-    public void followMember (ClientObject caller, int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
+    public void followMember (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 
     /**
@@ -56,6 +56,12 @@ public interface MemberProvider extends InvocationProvider
      * Handles a {@link MemberService#inviteToBeFriend} request.
      */
     public void inviteToBeFriend (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link MemberService#inviteToFollow} request.
+     */
+    public void inviteToFollow (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 
     /**

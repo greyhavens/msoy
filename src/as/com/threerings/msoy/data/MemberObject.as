@@ -45,6 +45,9 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>availability</code> field. */
     public static const AVAILABILITY :String = "availability";
 
+    /** The field name of the <code>following</code> field. */
+    public static const FOLLOWING :String = "following";
+
     /** The field name of the <code>followers</code> field. */
     public static const FOLLOWERS :String = "followers";
 
@@ -123,6 +126,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** This member's availability for receiving invitations, requests, etc. from other members. */
     public var availability :int = AVAILABLE;
+
+    /** The name of the member this member is following or null. */
+    public var following :MemberName;
 
     /** The names of members following this member. */
     public var followers :DSet;
@@ -275,6 +281,7 @@ public class MemberObject extends MsoyBodyObject
         level = ins.readInt();
         humanity = ins.readInt();
         availability = ins.readInt();
+        following = (ins.readObject() as MemberName);
         followers = (ins.readObject() as DSet);
         recentScenes = (ins.readObject() as DSet);
         ownedScenes = (ins.readObject() as DSet);

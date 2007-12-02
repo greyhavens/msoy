@@ -24,7 +24,7 @@ public interface MemberService extends InvocationService
     function acknowledgeNotifications (arg1 :Client, arg2 :TypedArray /* of int */, arg3 :InvocationService_InvocationListener) :void;
 
     // from Java interface MemberService
-    function followMember (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void;
+    function followMember (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
     function getCurrentMemberLocation (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
@@ -40,6 +40,9 @@ public interface MemberService extends InvocationService
 
     // from Java interface MemberService
     function inviteToBeFriend (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+
+    // from Java interface MemberService
+    function inviteToFollow (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
     function issueInvitation (arg1 :Client, arg2 :MemberName, arg3 :InvocationService_ResultListener) :void;

@@ -13,6 +13,7 @@ import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.threerings.util.MessageBundle;
 
@@ -22,9 +23,11 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ConfirmAdapter;
 
+import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -33,6 +36,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.notify.data.LevelUpNotification;
+import com.threerings.msoy.notify.data.NotifyMessage;
 import com.threerings.msoy.person.data.FriendInvitePayload;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -227,12 +231,79 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void followMember (ClientObject caller, int memberId, boolean ratify,
+    public void inviteToFollow (ClientObject caller, int memberId,
+                                InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        MemberObject user = (MemberObject) caller;
+
+        // if they want to clear their followers, do that
+        if (memberId == 0) {
+            for (MemberName follower : user.followers) {
+                MemberObject fmo = MsoyServer.lookupMember(follower.getMemberId());
+                if (fmo != null) {
+                    fmo.setFollowing(null);
+                }
+            }
+            user.setFollowers(new DSet<MemberName>());
+            listener.requestProcessed();
+            return;
+        }
+
+        // make sure the target member is online and in the same room as the requester
+        MemberObject target = MsoyServer.lookupMember(memberId);
+        if (target == null || !ObjectUtil.equals(user.location, target.location)) {
+            throw new InvocationException("m.follow_not_in_room");
+        }
+
+        // make sure the target is accepting invitations from the requester
+        if (!target.isAvailableTo(user.getMemberId())) {
+            throw new InvocationException("m.follow_not_available");
+        }
+
+        // issue the follow invitation to the target
+        String msg = MessageBundle.tcompose("m.follow_invite", user.memberName, user.getMemberId());
+        SpeakUtil.sendMessage(target, new NotifyMessage(msg));
+
+        // add this player to our followers set, if they ratify the follow request before we leave
+        // our current location, the wiring up will be complete; if we leave the room before they
+        // ratify the request (or if they never do), we'll remove them from our set
+        if (!user.followers.containsKey(target.getMemberId())) {
+            log.info("Adding follower " + target.memberName + " to " + user.memberName + ".");
+            user.addToFollowers(target.memberName);
+        } // else: what to do about repeat requests? ignore them? send again?
+        listener.requestProcessed();
+    }
+
+    // from interface MemberProvider
+    public void followMember (ClientObject caller, int memberId,
                               InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         MemberObject user = (MemberObject) caller;
-        throw new InvocationException("e.unimplimented");
+
+        // if the caller is requesting to clear their follow, do so
+        if (memberId == 0) {
+            if (user.following != null) {
+                MemberObject followee = MsoyServer.lookupMember(user.following.getMemberId());
+                if (followee != null) {
+                    followee.removeFromFollowers(user.getMemberId());
+                }
+                user.setFollowing(null);
+            }
+            listener.requestProcessed();
+            return;
+        }
+
+        // otherwise they're accepting a follow request, make sure it's still valid
+        MemberObject target = MsoyServer.lookupMember(memberId);
+        if (target == null || !target.followers.containsKey(user.getMemberId())) {
+            throw new InvocationException("m.follow_invite_expired");
+        }
+
+        // finish the loop by setting them as our followee
+        user.setFollowing(target.memberName);
+        listener.requestProcessed();
     }
 
     // from interface MemberProvider

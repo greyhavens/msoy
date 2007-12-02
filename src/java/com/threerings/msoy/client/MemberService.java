@@ -36,11 +36,16 @@ public interface MemberService extends InvocationService
     public void updateAvailability (Client client, int availability);
 
     /**
-     * Requests to follow the specified member who must be in the same room as the caller.
-     *
-     * @param ratify if true, this request is the followee ratifying a follow request.
+     * Invites the specified member to follow the caller. Passing 0 for the memberId will clear all
+     * of the caller's followers.
      */
-    public void followMember (Client client, int memberId, boolean ratify, ConfirmListener listener);
+    public void inviteToFollow (Client client, int memberId, ConfirmListener listener);
+
+    /**
+     * Requests to follow the specified member who must have previously issued an invitation to the
+     * caller to follow them. Passing 0 for memberId will clear the caller's following status.
+     */
+    public void followMember (Client client, int memberId, ConfirmListener listener);
 
     /**
      * Set the avatar in use by this user.

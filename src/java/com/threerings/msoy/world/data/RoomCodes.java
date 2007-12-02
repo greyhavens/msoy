@@ -16,6 +16,9 @@ public interface RoomCodes extends InvocationCodes
     /** A message event type dispatched on the room object. */
     public static final String SPRITE_SIGNAL = "sprSig";
 
+    /** A message even dispatched on the member object to followers. */
+    public static final String FOLLOWEE_MOVED = "folMov";
+
     /** An error (sort of) reported when an entity requests control but is already being controlled
      * by another client. */
     public static final String E_ALREADY_CONTROLLED = "e.already_controlled";

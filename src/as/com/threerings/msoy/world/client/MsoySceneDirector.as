@@ -6,6 +6,8 @@ package com.threerings.msoy.world.client {
 import com.threerings.io.TypedArray;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.dobj.MessageAdapter;
+import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.util.Log;
 import com.threerings.util.ResultListener;
 
@@ -141,7 +143,7 @@ public class MsoySceneDirector extends SceneDirector
     override protected function sendMoveRequest () :void
     {
         var data :MsoyPendingData = _pendingData as MsoyPendingData;
-        
+
         // check the version of our cached copy of the scene to which we're requesting to move; if
         // we were unable to load it, assume a cached version of zero
         var sceneVers :int = 0;
@@ -156,15 +158,26 @@ public class MsoySceneDirector extends SceneDirector
         // issue a moveTo request
         log.info("Issuing moveTo(" + data.previousSceneId + "->" + data.sceneId + ", " +
                  sceneVers + ", " + _departingPortalId + ", " + data.destLoc + ").");
-        _msservice.moveTo(
-            _wctx.getClient(), data.sceneId, sceneVers, _departingPortalId, data.destLoc, this);
+        _mssvc.moveTo(_wctx.getClient(), data.sceneId, sceneVers, _departingPortalId,
+                      data.destLoc, this);
+    }
+
+    // documentation inherited
+    override public function clientDidLogon (event :ClientEvent) :void
+    {
+        super.clientDidLogon(event);
+
+        // add a listener that will respond to follow notifications
+        _ctx.getClient().getClientObject().addListener(_followListener);
     }
 
     // documentation inherited
     override public function clientDidLogoff (event :ClientEvent) :void
     {
         super.clientDidLogoff(event);
+
         _departingPortalId = -1;
+        _ctx.getClient().getClientObject().removeListener(_followListener);
     }
 
     // from SceneDirector
@@ -172,7 +185,7 @@ public class MsoySceneDirector extends SceneDirector
     {
         super.fetchServices(client);
         // get a handle on our special scene service
-        _msservice = (client.requireService(MsoySceneService) as MsoySceneService);
+        _mssvc = (client.requireService(MsoySceneService) as MsoySceneService);
     }
 
     /**
@@ -182,7 +195,7 @@ public class MsoySceneDirector extends SceneDirector
     {
         var wctx :WorldContext = _ctx as WorldContext;
         var ctrl :MsoyController = wctx.getMsoyController();
-        
+
         // if we tried to move from one scene to another on the same peer, there's nothing to clean
         // up, just update the URL to make GWT happy
         if (localSceneId != -1) {
@@ -207,12 +220,22 @@ public class MsoySceneDirector extends SceneDirector
         }
 
         // we're a guest and don't have a home! just go to the generic public area.
-        var commonAreaId :int = 1; // = SceneRecord.PUBLIC_ROOM.getSceneId() 
+        var commonAreaId :int = 1; // = SceneRecord.PUBLIC_ROOM.getSceneId()
         ctrl.handleGoScene(commonAreaId);
     }
-    
+
+    protected function memberMessageReceived (event :MessageEvent) :void
+    {
+        if (event.getName() == RoomCodes.FOLLOWEE_MOVED) {
+            var sceneId :int = int(event.getArgs()[0]), wctx :WorldContext = (_ctx as WorldContext);
+            log.info("Following " + wctx.getMemberObject().following + " to " + sceneId + ".");
+            moveTo(sceneId);
+        }
+    }
+
+    protected var _mssvc :MsoySceneService;
     protected var _postMoveMessage :String;
-    protected var _msservice :MsoySceneService;
     protected var _departingPortalId :int = -1;
+    protected var _followListener :MessageAdapter = new MessageAdapter(memberMessageReceived);
 }
 }

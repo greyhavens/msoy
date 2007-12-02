@@ -50,7 +50,7 @@ public class MemberDispatcher extends InvocationDispatcher
         case MemberMarshaller.FOLLOW_MEMBER:
             ((MemberProvider)provider).followMember(
                 source,
-                ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.ConfirmListener)args[2]
+                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 
@@ -84,6 +84,13 @@ public class MemberDispatcher extends InvocationDispatcher
 
         case MemberMarshaller.INVITE_TO_BE_FRIEND:
             ((MemberProvider)provider).inviteToBeFriend(
+                source,
+                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+            );
+            return;
+
+        case MemberMarshaller.INVITE_TO_FOLLOW:
+            ((MemberProvider)provider).inviteToFollow(
                 source,
                 ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );

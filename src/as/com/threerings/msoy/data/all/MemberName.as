@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data.all {
 
+import com.threerings.presents.dobj.DSet_Entry;
+
 import com.threerings.util.Hashable;
 import com.threerings.util.Name;
 
@@ -13,7 +15,7 @@ import com.threerings.io.ObjectOutputStream;
  * Extends Name with persistent member information.
  */
 public class MemberName extends Name
-    implements Hashable
+    implements Hashable, DSet_Entry
 {
     /** A sort function for sorting Names by their display portion, case insensitively.  */
     public static const BY_DISPLAY_NAME :Function = function (n1 :Name, n2 :Name) :int {
@@ -46,6 +48,12 @@ public class MemberName extends Name
      * Return the memberId of this user, or 0 if they're a guest.
      */
     public function getMemberId () :int
+    {
+        return _memberId;
+    }
+
+    // from DSet_Entry
+    public function getKey () :Object
     {
         return _memberId;
     }
