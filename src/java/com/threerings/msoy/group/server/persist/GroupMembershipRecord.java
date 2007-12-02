@@ -12,6 +12,7 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 
+import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.GroupName;
@@ -76,11 +77,11 @@ public class GroupMembershipRecord extends PersistentRecord
     /**
      * Converts this persistent record to a runtime record.
      */
-    public GroupMembership toGroupMembership (GroupRecord group, MemberName member)
+    public GroupMembership toGroupMembership (MemberName member, IntMap<GroupName> groups)
     {
         GroupMembership gm = new GroupMembership();
         gm.member = member;
-        gm.group = new GroupName(group.name, groupId);
+        gm.group = groups.get(groupId);
         gm.rank = rank;
         gm.rankAssignedDate = rankAssigned.getTime();
         return gm;

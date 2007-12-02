@@ -5,9 +5,13 @@ package com.threerings.msoy.server;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
+
+import com.google.common.collect.Lists;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
@@ -29,6 +33,7 @@ import com.threerings.msoy.item.server.persist.AvatarRecord;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -111,16 +116,20 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.friends = new DSet<FriendEntry>(
             MsoyServer.memberRepo.loadFriends(member.memberId, -1));
 
-        // load up this member's group memberships (TODO: do this in one lookup)
+        // load up this member's group memberships
+        IntMap<GroupName> groupNames = IntMaps.newHashIntMap();
+        ArrayIntSet groupIds = new ArrayIntSet();
+        List<GroupMembershipRecord> records = MsoyServer.groupRepo.getMemberships(member.memberId);
+        for (GroupMembershipRecord record : records) {
+            groupIds.add(record.groupId);
+        }
+        for (GroupRecord group : MsoyServer.groupRepo.loadGroups(groupIds)) {
+            groupNames.put(group.groupId, group.toGroupName());
+        }
         List<GroupMembership> groups = Lists.newArrayList();
-        for (GroupMembershipRecord record : MsoyServer.groupRepo.getMemberships(member.memberId)) {
-            GroupRecord group = MsoyServer.groupRepo.loadGroup(record.groupId);
-            if (group == null) {
-                log.warning("User member of non-existent group?! [who=" + member.accountName +
-                            ", groupId=" + record.groupId + "].");
-                continue;
-            }
-            groups.add(record.toGroupMembership(group, null));
+        for (GroupMembershipRecord record : records) {
+            // we don't pass in member name here because we don't need it on the client
+            groups.add(record.toGroupMembership(null, groupNames));
         }
         userObj.groups = new DSet<GroupMembership>(groups.iterator());
 
