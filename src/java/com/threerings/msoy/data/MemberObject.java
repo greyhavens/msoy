@@ -55,6 +55,12 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>humanity</code> field. */
     public static final String HUMANITY = "humanity";
 
+    /** The field name of the <code>availability</code> field. */
+    public static final String AVAILABILITY = "availability";
+
+    /** The field name of the <code>followers</code> field. */
+    public static final String FOLLOWERS = "followers";
+
     /** The field name of the <code>recentScenes</code> field. */
     public static final String RECENT_SCENES = "recentScenes";
 
@@ -98,6 +104,15 @@ public class MemberObject extends MsoyBodyObject
     /** The ideal size of the avatar cache. */
     public static final int AVATAR_CACHE_SIZE = 5;
 
+    /** An {@link #availability} status. */
+    public static final int AVAILABLE = 0;
+
+    /** An {@link #availability} status. */
+    public static final int FRIENDS_ONLY = 1;
+
+    /** An {@link #availability} status. */
+    public static final int UNAVAILABLE = 2;
+
     /** The name and id information for this user. */
     public MemberName memberName;
 
@@ -116,6 +131,12 @@ public class MemberObject extends MsoyBodyObject
     /** Our current assessment of how likely to be human this member is, in [0, {@link
      * MsoyCodes#MAX_HUMANITY}]. */
     public int humanity;
+
+    /** This member's availability for receiving invitations, requests, etc. from other members. */
+    public int availability = AVAILABLE;
+
+    /** The names of members following this member. */
+    public DSet<MemberName> followers = new DSet<MemberName>();
 
     /** The recent scenes we've been through. */
     public DSet<SceneBookmarkEntry> recentScenes = new DSet<SceneBookmarkEntry>();
@@ -256,6 +277,23 @@ public class MemberObject extends MsoyBodyObject
             } finally {
                 commitTransaction();
             }
+        }
+    }
+
+    /**
+     * Returns true if this member is accepting communications from the specified member, false
+     * otherwise.
+     */
+    public boolean isAvailableTo (int communicatorId)
+    {
+        switch (availability) {
+        default:
+        case AVAILABLE:
+            return true;
+        case UNAVAILABLE:
+            return false;
+        case FRIENDS_ONLY:
+            return friends.containsKey(communicatorId);
         }
     }
 
@@ -415,6 +453,70 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             HUMANITY, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.humanity = value;
+    }
+
+    /**
+     * Requests that the <code>availability</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setAvailability (int value)
+    {
+        int ovalue = this.availability;
+        requestAttributeChange(
+            AVAILABILITY, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.availability = value;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>followers</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToFollowers (MemberName elem)
+    {
+        requestEntryAdd(FOLLOWERS, followers, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>followers</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromFollowers (Comparable key)
+    {
+        requestEntryRemove(FOLLOWERS, followers, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>followers</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateFollowers (MemberName elem)
+    {
+        requestEntryUpdate(FOLLOWERS, followers, elem);
+    }
+
+    /**
+     * Requests that the <code>followers</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setFollowers (DSet<com.threerings.msoy.data.all.MemberName> value)
+    {
+        requestAttributeChange(FOLLOWERS, value, this.followers);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.MemberName> clone =
+            (value == null) ? null : value.typedClone();
+        this.followers = clone;
     }
 
     /**

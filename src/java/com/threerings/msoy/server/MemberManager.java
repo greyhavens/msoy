@@ -90,6 +90,9 @@ public class MemberManager
         _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
     }
 
+    /**
+     * Returns the most recently generated popular places snapshot.
+     */
     public PopularPlacesSnapshot getPPSnapshot ()
     {
         synchronized(this) {
@@ -111,8 +114,7 @@ public class MemberManager
     /**
      * Fetch the home ID for a member and return it.
      */
-    public void getHomeId (final byte ownerType, final int ownerId,
-                           ResultListener<Integer> listener)
+    public void getHomeId (final byte ownerType, final int ownerId, ResultListener<Integer> listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Integer>(listener) {
             public Integer invokePersistResult () throws PersistenceException {
@@ -182,9 +184,8 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getHomeId (
-        ClientObject caller, byte ownerType, int ownerId,
-        final InvocationService.ResultListener listener)
+    public void getHomeId (ClientObject caller, byte ownerType, int ownerId,
+                           final InvocationService.ResultListener listener)
         throws InvocationException
     {
         ResultListener<Integer> rl = new ResultListener<Integer>() {
@@ -199,8 +200,8 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getCurrentMemberLocation (
-        ClientObject caller, int memberId, InvocationService.ResultListener listener)
+    public void getCurrentMemberLocation (ClientObject caller, int memberId,
+                                          InvocationService.ResultListener listener)
         throws InvocationException
     {
         MemberObject user = (MemberObject) caller;
@@ -219,9 +220,24 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void setAvatar (
-        ClientObject caller, int avatarItemId, final float newScale,
-        final InvocationService.ConfirmListener listener)
+    public void updateAvailability (ClientObject caller, int availability)
+    {
+        MemberObject user = (MemberObject) caller;
+        user.setAvailability(availability);
+    }
+
+    // from interface MemberProvider
+    public void followMember (ClientObject caller, int memberId, boolean ratify,
+                              InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        MemberObject user = (MemberObject) caller;
+        throw new InvocationException("e.unimplimented");
+    }
+
+    // from interface MemberProvider
+    public void setAvatar (ClientObject caller, int avatarItemId, final float newScale,
+                           final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -323,8 +339,8 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void acknowledgeNotifications (
-        ClientObject caller, int[] ids, InvocationService.InvocationListener listener)
+    public void acknowledgeNotifications (ClientObject caller, int[] ids,
+                                          InvocationService.InvocationListener listener)
         throws InvocationException
     {
         MemberObject user = (MemberObject) caller;
@@ -341,7 +357,7 @@ public class MemberManager
 
     // from interface MemberProvider
     public void issueInvitation (ClientObject caller, final MemberName guest,
-        final InvocationService.ResultListener listener)
+                                 final InvocationService.ResultListener listener)
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;

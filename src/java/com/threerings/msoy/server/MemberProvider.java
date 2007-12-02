@@ -23,6 +23,12 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#followMember} request.
+     */
+    public void followMember (ClientObject caller, int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MemberService#getCurrentMemberLocation} request.
      */
     public void getCurrentMemberLocation (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
@@ -69,4 +75,9 @@ public interface MemberProvider extends InvocationProvider
      */
     public void setDisplayName (ClientObject caller, String arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
+
+    /**
+     * Handles a {@link MemberService#updateAvailability} request.
+     */
+    public void updateAvailability (ClientObject caller, int arg1);
 }

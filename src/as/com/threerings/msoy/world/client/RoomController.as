@@ -406,6 +406,16 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Updates our availability state.
+     */
+    public function updateAvailability (availability :int) :void
+    {
+        var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
+        msvc.updateAvailability(_ctx.getClient(), availability);
+        _mctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.avail_tip_" + availability);
+    }
+
+    /**
      * Handles EDIT_DOOR.
      */
     public function handleEditDoor (furniData :FurniData) :void
@@ -551,6 +561,16 @@ public class RoomController extends SceneController
                 menuItems.push({ label: Msgs.GENERAL.get("l.avStates"),
                     children: worldStates, enabled: canControl });
             }
+
+            // create a menu for controlling our availability
+            var availActions :Array = [];
+            for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
+                availActions.push({
+                    label: Msgs.GENERAL.get("l.avail_" + ii), callback: updateAvailability, arg: ii,
+                    icon: (ii == _mctx.getMemberObject().availability) ? SEL_MENU_ICON : null });
+            }
+            menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"),
+                             children: availActions, enabled: canControl });
 
             if (_mctx.getWorldClient().isEmbedded()) {
                 if (us.isGuest()) {
@@ -1702,6 +1722,9 @@ public class RoomController extends SceneController
 
     /** A flag to indicate that the room editor should be opened when the view is un-minimized */
     protected var _openEditor :Boolean = false;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/selected_menu_icon.png")]
+    protected static const SEL_MENU_ICON :Class;
 }
 }
 

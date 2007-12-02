@@ -33,8 +33,21 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #followMember} requests. */
+    public static final int FOLLOW_MEMBER = 2;
+
+    // from interface MemberService
+    public void followMember (Client arg1, int arg2, boolean arg3, InvocationService.ConfirmListener arg4)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, FOLLOW_MEMBER, new Object[] {
+            Integer.valueOf(arg2), Boolean.valueOf(arg3), listener4
+        });
+    }
+
     /** The method id used to dispatch {@link #getCurrentMemberLocation} requests. */
-    public static final int GET_CURRENT_MEMBER_LOCATION = 2;
+    public static final int GET_CURRENT_MEMBER_LOCATION = 3;
 
     // from interface MemberService
     public void getCurrentMemberLocation (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -47,7 +60,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getDisplayName} requests. */
-    public static final int GET_DISPLAY_NAME = 3;
+    public static final int GET_DISPLAY_NAME = 4;
 
     // from interface MemberService
     public void getDisplayName (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -60,7 +73,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getGroupName} requests. */
-    public static final int GET_GROUP_NAME = 4;
+    public static final int GET_GROUP_NAME = 5;
 
     // from interface MemberService
     public void getGroupName (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -73,7 +86,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getHomeId} requests. */
-    public static final int GET_HOME_ID = 5;
+    public static final int GET_HOME_ID = 6;
 
     // from interface MemberService
     public void getHomeId (Client arg1, byte arg2, int arg3, InvocationService.ResultListener arg4)
@@ -86,7 +99,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #inviteToBeFriend} requests. */
-    public static final int INVITE_TO_BE_FRIEND = 6;
+    public static final int INVITE_TO_BE_FRIEND = 7;
 
     // from interface MemberService
     public void inviteToBeFriend (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
@@ -99,7 +112,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #issueInvitation} requests. */
-    public static final int ISSUE_INVITATION = 7;
+    public static final int ISSUE_INVITATION = 8;
 
     // from interface MemberService
     public void issueInvitation (Client arg1, MemberName arg2, InvocationService.ResultListener arg3)
@@ -112,7 +125,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static final int SET_AVATAR = 8;
+    public static final int SET_AVATAR = 9;
 
     // from interface MemberService
     public void setAvatar (Client arg1, int arg2, float arg3, InvocationService.ConfirmListener arg4)
@@ -125,7 +138,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static final int SET_DISPLAY_NAME = 9;
+    public static final int SET_DISPLAY_NAME = 10;
 
     // from interface MemberService
     public void setDisplayName (Client arg1, String arg2, InvocationService.InvocationListener arg3)
@@ -134,6 +147,17 @@ public class MemberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, SET_DISPLAY_NAME, new Object[] {
             arg2, listener3
+        });
+    }
+
+    /** The method id used to dispatch {@link #updateAvailability} requests. */
+    public static final int UPDATE_AVAILABILITY = 11;
+
+    // from interface MemberService
+    public void updateAvailability (Client arg1, int arg2)
+    {
+        sendRequest(arg1, UPDATE_AVAILABILITY, new Object[] {
+            Integer.valueOf(arg2)
         });
     }
 }

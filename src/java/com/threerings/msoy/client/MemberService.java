@@ -31,6 +31,18 @@ public interface MemberService extends InvocationService
     public void getCurrentMemberLocation (Client client, int memberId, ResultListener listener);
 
     /**
+     * Updates this member's availability status.
+     */
+    public void updateAvailability (Client client, int availability);
+
+    /**
+     * Requests to follow the specified member who must be in the same room as the caller.
+     *
+     * @param ratify if true, this request is the followee ratifying a follow request.
+     */
+    public void followMember (Client client, int memberId, boolean ratify, ConfirmListener listener);
+
+    /**
      * Set the avatar in use by this user.
      *
      * @param newScale a new scale for the avatar, or 0 to use the last scale.

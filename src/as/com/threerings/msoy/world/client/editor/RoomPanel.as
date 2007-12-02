@@ -57,7 +57,7 @@ public class RoomPanel extends BasePanel
         _name = new TextInput();
         _name.percentWidth = 100;
         box.addChild(_name);
-        
+
         _buttonbar = new ToggleButtonBar();
         _buttonbar.styleName = "roomEditAccessButtons";
         box.addChild(_buttonbar);
@@ -110,7 +110,7 @@ public class RoomPanel extends BasePanel
             _name.text.length > 0 &&
             _name.text.length < 255;
     }
-    
+
     protected function updateAccessButtons () :void
     {
         if (_controller.scene == null) {
@@ -130,10 +130,10 @@ public class RoomPanel extends BasePanel
         }
         _buttonbar.selectedIndex = model.accessControl;
     }
-    
+
     protected var _name :TextInput;
     protected var _buttonbar :ToggleButtonBar;
-    
+
     [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/button_access_everyone.png")]
     protected static const ICON_EVERYONE :Class;
     [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/button_access_owner_and_friends.png")]
@@ -141,7 +141,5 @@ public class RoomPanel extends BasePanel
     [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/button_access_owner_only.png")]
     protected static const ICON_OWNER :Class;
     protected static const ICONS :Array = [ ICON_EVERYONE, ICON_OWNER_FRIENDS, ICON_OWNER ];
-    
 }
-
 }

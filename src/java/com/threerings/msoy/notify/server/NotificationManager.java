@@ -69,8 +69,10 @@ public class NotificationManager
     public void notifyGameInvite (MemberObject target, String inviter, int inviterId,
                                   String game, int gameId)
     {
-        dispatchChatOnlyNotification(
-            target, MessageBundle.tcompose("m.game_invite", inviter, inviterId, game, gameId));
+        if (target.isAvailableTo(inviterId)) {
+            dispatchChatOnlyNotification(
+                target, MessageBundle.tcompose("m.game_invite", inviter, inviterId, game, gameId));
+        }
     }
 
     /**

@@ -42,6 +42,12 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>humanity</code> field. */
     public static const HUMANITY :String = "humanity";
 
+    /** The field name of the <code>availability</code> field. */
+    public static const AVAILABILITY :String = "availability";
+
+    /** The field name of the <code>followers</code> field. */
+    public static const FOLLOWERS :String = "followers";
+
     /** The field name of the <code>flow</code> field. */
     public static const FLOW :String = "flow";
 
@@ -88,6 +94,15 @@ public class MemberObject extends MsoyBodyObject
     public static const VIEW_ONLY :String = "viewOnly";
     // AUTO-GENERATED: FIELDS END
 
+    /** An <code>availability</code> status. */
+    public static const AVAILABLE :int = 0;
+
+    /** An <code>availability</code> status. */
+    public static const FRIENDS_ONLY :int = 1;
+
+    /** An <code>availability</code> status. */
+    public static const UNAVAILABLE :int = 2;
+
     /** The member name and id for this user. */
     public var memberName :MemberName;
 
@@ -105,6 +120,12 @@ public class MemberObject extends MsoyBodyObject
 
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public var humanity :int;
+
+    /** This member's availability for receiving invitations, requests, etc. from other members. */
+    public var availability :int = AVAILABLE;
+
+    /** The names of members following this member. */
+    public var followers :DSet;
 
     /** The recent scenes we've been through. */
     public var recentScenes :DSet;
@@ -243,93 +264,6 @@ public class MemberObject extends MsoyBodyObject
         return GroupMembership.RANK_NON_MEMBER;
     }
 
-//    // AUTO-GENERATED: METHODS START
-//    /**
-//     * Requests that the <code>sceneId</code> field be set to the
-//     * specified value. The local value will be updated immediately and an
-//     * event will be propagated through the system to notify all listeners
-//     * that the attribute did change. Proxied copies of this object (on
-//     * clients) will apply the value change when they received the
-//     * attribute changed notification.
-//     */
-//    public function setSceneId (value :int) :void
-//    {
-//        var ovalue :int = this.sceneId;
-//        requestAttributeChange(
-//            SCENE_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-//        this.sceneId = value;
-//    }
-//
-//    /**
-//     * Requests that the <code>clusterOid</code> field be set to the
-//     * specified value. The local value will be updated immediately and an
-//     * event will be propagated through the system to notify all listeners
-//     * that the attribute did change. Proxied copies of this object (on
-//     * clients) will apply the value change when they received the
-//     * attribute changed notification.
-//     */
-//    public function setClusterOid (value :int) :void
-//    {
-//        var ovalue :int = this.clusterOid;
-//        requestAttributeChange(
-//            CLUSTER_OID, Integer.valueOf(value), Integer.valueOf(ovalue));
-//        this.clusterOid = value;
-//    }
-//
-//    /**
-//     * Requests that the <code>tokens</code> field be set to the
-//     * specified value. The local value will be updated immediately and an
-//     * event will be propagated through the system to notify all listeners
-//     * that the attribute did change. Proxied copies of this object (on
-//     * clients) will apply the value change when they received the
-//     * attribute changed notification.
-//     */
-//    public function setTokens (value :MsoyTokenRing) :void
-//    {
-//        var ovalue :MsoyTokenRing = this.tokens;
-//        requestAttributeChange(
-//            TOKENS, value, ovalue);
-//        this.tokens = value;
-//    }
-//
-//    /**
-//     * Requests that the <code>homeSceneId</code> field be set to the
-//     * specified value. The local value will be updated immediately and an
-//     * event will be propagated through the system to notify all listeners
-//     * that the attribute did change. Proxied copies of this object (on
-//     * clients) will apply the value change when they received the
-//     * attribute changed notification.
-//     */
-//    public function setHomeSceneId (value :int) :void
-//    {
-//        var ovalue :int = this.homeSceneId;
-//        requestAttributeChange(
-//            HOME_SCENE_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-//        this.homeSceneId = value;
-//    }
-//
-//    /**
-//     * Requests that the <code>avatar</code> field be set to the
-//     * specified value. The local value will be updated immediately and an
-//     * event will be propagated through the system to notify all listeners
-//     * that the attribute did change. Proxied copies of this object (on
-//     * clients) will apply the value change when they received the
-//     * attribute changed notification.
-//     */
-//    public function setAvatar (value :MediaDesc) :void
-//    {
-//        var ovalue :MediaDesc = this.avatar;
-//        requestAttributeChange(
-//            AVATAR, value, ovalue);
-//        this.avatar = value;
-//    }
-//    // AUTO-GENERATED: METHODS END
-//
-//    override public function writeObject (out :ObjectOutputStream) :void
-//    {
-//        throw new Error();
-//    }
-
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
@@ -340,6 +274,8 @@ public class MemberObject extends MsoyBodyObject
         accFlow = ins.readInt();
         level = ins.readInt();
         humanity = ins.readInt();
+        availability = ins.readInt();
+        followers = (ins.readObject() as DSet);
         recentScenes = (ins.readObject() as DSet);
         ownedScenes = (ins.readObject() as DSet);
         tokens = (ins.readObject() as MsoyTokenRing);

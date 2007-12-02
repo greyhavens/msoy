@@ -47,6 +47,13 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
+        case MemberMarshaller.FOLLOW_MEMBER:
+            ((MemberProvider)provider).followMember(
+                source,
+                ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.ConfirmListener)args[2]
+            );
+            return;
+
         case MemberMarshaller.GET_CURRENT_MEMBER_LOCATION:
             ((MemberProvider)provider).getCurrentMemberLocation(
                 source,
@@ -100,6 +107,13 @@ public class MemberDispatcher extends InvocationDispatcher
             ((MemberProvider)provider).setDisplayName(
                 source,
                 (String)args[0], (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
+        case MemberMarshaller.UPDATE_AVAILABILITY:
+            ((MemberProvider)provider).updateAvailability(
+                source,
+                ((Integer)args[0]).intValue()
             );
             return;
 
