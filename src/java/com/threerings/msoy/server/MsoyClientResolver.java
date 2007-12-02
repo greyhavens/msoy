@@ -43,10 +43,12 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Override
     public ClientObject createClientObject ()
     {
-        return new MemberObject();
+        // see if we have a member object forwarded from our peer
+        MemberObject memobj = MsoyServer.peerMan.getForwardedMemberObject(_username);
+        return (memobj != null) ? memobj : new MemberObject();
     }
 
-    @Override // from PresentsClient
+    @Override // from ClientResolver
     protected void resolveClientData (ClientObject clobj)
         throws Exception
     {
@@ -67,6 +69,12 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void resolveMember (MemberObject userObj)
         throws Exception
     {
+        // if our member object was forwarded from another server, it will already be fully ready
+        // to go so we can avoid a whole bunch of expensive database lookups
+        if (userObj.memberName != null) {
+            return;
+        }
+
         // load up their member information using on their authentication (account) name
         MemberRecord member = MsoyServer.memberRepo.loadMember(_username.toString());
 
@@ -143,13 +151,13 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.setMemberName((MemberName) _username);
     }
 
-    @Override // from PresentsClient
+    @Override // from ClientResolver
     protected void finishResolution (ClientObject clobj)
     {
         super.finishResolution(clobj);
         final MemberObject user = (MemberObject)clobj;
 
-        if (!user.isGuest()) {
+        if (!user.isGuest() && user.avatarCache == null) {
             // load up their recently used avatars
             MsoyServer.itemMan.loadRecentlyTouched(
                 user.getMemberId(), Item.AVATAR, MemberObject.AVATAR_CACHE_SIZE,

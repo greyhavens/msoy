@@ -30,6 +30,9 @@ public class MsoyNodeObject extends CrowdNodeObject
     /** The field name of the <code>memberLocs</code> field. */
     public static final String MEMBER_LOCS = "memberLocs";
 
+    /** The field name of the <code>msoyPeerService</code> field. */
+    public static final String MSOY_PEER_SERVICE = "msoyPeerService";
+
     /** The field name of the <code>peerChatService</code> field. */
     public static final String PEER_CHAT_SERVICE = "peerChatService";
 
@@ -54,6 +57,9 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /** Contains the current location of all members on this server. */
     public DSet<MemberLocation> memberLocs = new DSet<MemberLocation>();
+
+    /** Handles special communication between MSOY peers. */
+    public MsoyPeerMarshaller msoyPeerService;
 
     /** Dispatches chat channel modifications between proxies and hosts. */
     public PeerChatMarshaller peerChatService;
@@ -303,6 +309,22 @@ public class MsoyNodeObject extends CrowdNodeObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.MemberLocation> clone =
             (value == null) ? null : value.typedClone();
         this.memberLocs = clone;
+    }
+
+    /**
+     * Requests that the <code>msoyPeerService</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setMsoyPeerService (MsoyPeerMarshaller value)
+    {
+        MsoyPeerMarshaller ovalue = this.msoyPeerService;
+        requestAttributeChange(
+            MSOY_PEER_SERVICE, value, ovalue);
+        this.msoyPeerService = value;
     }
 
     /**

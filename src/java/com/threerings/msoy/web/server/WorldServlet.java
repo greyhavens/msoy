@@ -436,7 +436,7 @@ public class WorldServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface GameService
+    // from interface WorldService
     public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
         throws ServiceException
     {

@@ -92,7 +92,7 @@ public class MsoySceneRegistry extends SceneRegistry
         // if it's hosted on another server; send the client to that server
         if (nodeName != null) {
             log.info("Going directly to remote node " + sceneId + "@" + nodeName + ".");
-            sendClientToNode(nodeName, listener);
+            sendClientToNode(nodeName, memobj, listener);
             return;
         }
 
@@ -109,7 +109,7 @@ public class MsoySceneRegistry extends SceneRegistry
                 } else if (nodeName != null) {
                     // some other peer got the lock before we could; send them there
                     log.info("Didn't get lock, going remote " + sceneId + "@" + nodeName + ".");
-                    sendClientToNode(nodeName, listener);
+                    sendClientToNode(nodeName, memobj, listener);
                 } else {
                     log.warning("Scene lock acquired by null? [for=" + memobj.who() +
                                 ", id=" + sceneId + "].");
@@ -124,7 +124,8 @@ public class MsoySceneRegistry extends SceneRegistry
         });
     }
 
-    protected void sendClientToNode (String nodeName, SceneService.SceneMoveListener listener)
+    protected void sendClientToNode (String nodeName, MemberObject memobj,
+                                     SceneService.SceneMoveListener listener)
     {
         String hostname = MsoyServer.peerMan.getPeerPublicHostName(nodeName);
         int port = MsoyServer.peerMan.getPeerPort(nodeName);
@@ -133,8 +134,13 @@ public class MsoySceneRegistry extends SceneRegistry
             // freak out and let the user try again at which point we will hopefully have cleaned
             // up after this failed peer and will resolve the scene ourselves
             listener.requestFailed(RoomCodes.INTERNAL_ERROR);
-        } else {
-            listener.moveRequiresServerSwitch(hostname, new int[] { port });
+            return;
         }
+
+        // tell the client about the node's hostname and port
+        listener.moveRequiresServerSwitch(hostname, new int[] { port });
+
+        // forward this client's member object to the node to which they will shortly connect
+        MsoyServer.peerMan.forwardMemberObject(nodeName, memobj);
     }
 }

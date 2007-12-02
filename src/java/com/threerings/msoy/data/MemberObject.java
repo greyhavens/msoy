@@ -328,6 +328,18 @@ public class MemberObject extends MsoyBodyObject
         }
     }
 
+    /**
+     * Clears out information that is not relevant on the receiving peer server for a member object
+     * that has just been forwarded. (It would be a smidgen more efficient to do this on the
+     * sending server but we'd have to clone the MemberObject first and we don't want to force
+     * MemberObject to be cloneable.)
+     */
+    public void clearForwardedObject ()
+    {
+        _oid = 0;
+        location = null;
+    }
+
     // from interface MsoyUserObject
     public MemberName getMemberName ()
     {

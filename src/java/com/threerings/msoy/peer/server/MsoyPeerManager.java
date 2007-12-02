@@ -3,22 +3,30 @@
 
 package com.threerings.msoy.peer.server;
 
-import static com.threerings.msoy.Log.log;
+import java.util.Iterator;
+import java.util.Map;
 
 import com.samskivert.util.ObserverList;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
-import com.threerings.crowd.peer.server.CrowdPeerManager;
+import com.google.common.collect.Maps;
 
+import com.threerings.util.Name;
+
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.server.PresentsClient;
+
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.peer.server.persist.NodeRecord;
-import com.threerings.presents.server.PresentsClient;
 
+import com.threerings.crowd.peer.server.CrowdPeerManager;
+
+import com.threerings.stats.data.StatSet;
 import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -37,11 +45,15 @@ import com.threerings.msoy.peer.data.HostedProject;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.data.MsoyPeerMarshaller;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages communication with our peer servers, coordinates services that must work across peers.
  */
 public class MsoyPeerManager extends CrowdPeerManager
+    implements MsoyPeerProvider
 {
     /** Used to notify interested parties when members log onto and off of remote servers. */
     public static interface RemoteMemberObserver
@@ -271,6 +283,66 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
+     * Returns a {@link MemberObject} forwarded from one of our peers if we have one. False if not.
+     */
+    public MemberObject getForwardedMemberObject (Name username)
+    {
+        long now = System.currentTimeMillis();
+        try {
+            // locate our forwarded member object if any
+            MemObjCacheEntry entry = _mobjCache.remove(username);
+            return (entry != null && now < entry.expireTime) ? entry.memobj : null;
+
+        } finally {
+            // clear other expired records from the cache
+            if (_mobjCache.size() > 0) {
+                for (Iterator<Map.Entry<Name,MemObjCacheEntry>> iter =
+                         _mobjCache.entrySet().iterator(); iter.hasNext(); ) {
+                    Map.Entry<Name,MemObjCacheEntry> entry = iter.next();
+                    if (now < entry.getValue().expireTime) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Requests that we forward the supplied member object to the specified peer.
+     */
+    public void forwardMemberObject (String nodeName, MemberObject memobj)
+    {
+        // we don't currently support forwarding guest member objects
+        if (memobj.isGuest()) {
+            return;
+        }
+
+        // locate the per in question
+        PeerNode node = _peers.get(nodeName);
+        if (node == null || node.nodeobj == null) {
+            log.warning("Unable to forward member object to unready peer [peer=" + nodeName +
+                        ", connected=" + (node != null) + ", member=" + memobj.memberName + "].");
+            return;
+        }
+
+        // do the forwarding deed
+        ((MsoyNodeObject)node.nodeobj).msoyPeerService.forwardMemberObject(
+            node.getClient(), memobj, memobj.stats);
+    }
+
+    // from interface MsoyPeerProvider
+    public void forwardMemberObject (ClientObject caller, MemberObject memobj, StatSet stats)
+    {
+        // clear out various bits in the received object
+        memobj.clearForwardedObject();
+        // fill their transient stats information back in
+        memobj.stats = stats;
+        // place this member object in a temporary cache; if the member in question logs on in the
+        // next 30 seconds, we'll use this object instead of re-resolving all of their data
+        _mobjCache.put(memobj.username, new MemObjCacheEntry(memobj));
+    }
+
+    /**
      * Called by the {@link MsoyPeerNode} when a member logs onto their server.
      */
     protected void remoteMemberLoggedOn (MsoyPeerNode node, final MsoyClientInfo info)
@@ -316,6 +388,10 @@ public class MsoyPeerManager extends CrowdPeerManager
         // this is called when the client starts their session, so we can add our location tracking
         // listener here; we need never remove it as it should live for the duration of the session
         client.getClientObject().addListener(new LocationTracker());
+
+        // register our custom invocation service
+        _mnobj.setMsoyPeerService(
+            (MsoyPeerMarshaller)MsoyServer.invmgr.registerDispatcher(new MsoyPeerDispatcher(this)));
     }
 
     @Override // from PeerManager
@@ -357,10 +433,25 @@ public class MsoyPeerManager extends CrowdPeerManager
         }
     }
 
+    /** Used to cache forwarded member objects. */
+    protected static class MemObjCacheEntry
+    {
+        public long expireTime;
+        public MemberObject memobj;
+
+        public MemObjCacheEntry (MemberObject memobj) {
+            expireTime = System.currentTimeMillis() + 60*1000L;
+            this.memobj = memobj;
+        }
+    }
+
     /** A casted reference to our node object. */
     protected MsoyNodeObject _mnobj;
 
     /** Our remote member observers. */
     protected ObserverList<RemoteMemberObserver> _remobs =
         new ObserverList<RemoteMemberObserver>(ObserverList.FAST_UNSAFE_NOTIFY);
+
+    /** A cache of forwarded member objects. */
+    protected Map<Name,MemObjCacheEntry> _mobjCache = Maps.newHashMap();
 }

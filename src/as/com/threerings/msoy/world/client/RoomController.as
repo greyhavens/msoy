@@ -497,6 +497,16 @@ public class RoomController extends SceneController
                                  callback: clearFollow });
             }
 
+            // create a menu for controlling our availability
+            var availActions :Array = [];
+            for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
+                availActions.push({
+                    label: Msgs.GENERAL.get("l.avail_" + ii), callback: updateAvailability, arg: ii,
+                    icon: (ii == _mctx.getMemberObject().availability) ? SEL_MENU_ICON : null });
+            }
+            menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"),
+                             children: availActions, enabled: canControl });
+
             // if we're not a guest add a menu for changing avatars
             if (!us.isGuest()) {
                 menuItems.push(createChangeAvatarMenu(us, canControl));
@@ -523,16 +533,6 @@ public class RoomController extends SceneController
                 menuItems.push({ label: Msgs.GENERAL.get("l.avStates"),
                     children: worldStates, enabled: canControl });
             }
-
-            // create a menu for controlling our availability
-            var availActions :Array = [];
-            for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
-                availActions.push({
-                    label: Msgs.GENERAL.get("l.avail_" + ii), callback: updateAvailability, arg: ii,
-                    icon: (ii == _mctx.getMemberObject().availability) ? SEL_MENU_ICON : null });
-            }
-            menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"),
-                             children: availActions, enabled: canControl });
 
             if (_mctx.getWorldClient().isEmbedded()) {
                 if (us.isGuest()) {
@@ -561,8 +561,6 @@ public class RoomController extends SceneController
             var memId :int = occInfo.getMemberId();
             menuItems.push({ label: Msgs.GENERAL.get("l.open_channel"),
                 command: MsoyController.OPEN_CHANNEL, arg: occInfo.username });
-            menuItems.push({ label: Msgs.GENERAL.get("l.invite_follow"),
-                callback: inviteFollow, arg: occInfo.username });
 
             var isGuest :Boolean = (memId == MemberName.GUEST_ID);
             if (isGuest) {
@@ -571,6 +569,9 @@ public class RoomController extends SceneController
                       command: MsoyController.INVITE_GUEST, arg: occInfo.username });
 
             } else {
+                // TODO: move up when we can forward MemberObjects between servers for guests
+                menuItems.push({ label: Msgs.GENERAL.get("l.invite_follow"),
+                                 callback: inviteFollow, arg: occInfo.username });
                 menuItems.push(
                     { label: Msgs.GENERAL.get("l.visit_home"),
                       command: MsoyController.GO_MEMBER_HOME, arg: memId });
