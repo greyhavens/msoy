@@ -602,6 +602,19 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
+     * Called when control of an entity is assigned to us.
+     */
+    public function dispatchGotControl (ident :ItemIdent) :void
+    {
+        var sprite :MsoySprite = (_entities.get(ident) as MsoySprite);
+        if (sprite != null) {
+            sprite.gotControl();
+        } else {
+            log.info("Received got control for unknown sprite [item=" + ident + "].");
+        }
+    }
+
+    /**
      * Once the background image is finished, we want to load all the rest of the sprites.
      */
     protected function backgroundFinishedLoading () :void
@@ -936,19 +949,6 @@ public class RoomView extends AbstractRoomView
                 log.warning("Erk, non-sprite entity [key=" + key + ", entity=" + sprite + "]");
             }
         });
-    }
-
-    /**
-     * Called when control of an entity is assigned to us.
-     */
-    public function dispatchGotControl (ident :ItemIdent) :void
-    {
-        var sprite :MsoySprite = (_entities.get(ident) as MsoySprite);
-        if (sprite != null) {
-            sprite.gotControl();
-        } else {
-            log.info("Received got control for unknown sprite [item=" + ident + "].");
-        }
     }
 
     /**
