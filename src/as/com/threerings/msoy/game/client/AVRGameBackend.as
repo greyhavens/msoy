@@ -35,6 +35,8 @@ import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.QuestState;
 import com.threerings.msoy.game.data.PlayerObject;
 
+import com.threerings.msoy.world.client.AbstractRoomView;
+import com.threerings.msoy.world.client.RoomMetrics;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.RoomObject;
 
@@ -148,13 +150,13 @@ public class AVRGameBackend extends ControlBackend
         return _mctx.getTopPanel().getPlaceViewBounds();
     }
 
-    protected function getRoomBounds_v1 () :Array
+    protected function getRoomBounds_v1 () :Rectangle
     {
         var view :AbstractRoomView = _mctx.getTopPanel().getPlaceView() as AbstractRoomView;
 
         if (view != null) {
-            var metrics :RoomMetrics = AbstractRoomView(parent).layout.metrics;
-            return [ metrics.sceneWidth, metrics.sceneHeight, metrics.sceneDepth];
+            var metrics :RoomMetrics = AbstractRoomView(view).layout.metrics;
+            return new Rectangle(0, 0, metrics.sceneWidth, metrics.sceneHeight);
         }
         return null;
     }
