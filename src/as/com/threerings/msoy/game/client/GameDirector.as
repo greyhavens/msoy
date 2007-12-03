@@ -152,6 +152,10 @@ public class GameDirector extends BasicDirector
         }
     }
 
+    /**
+     * Activates the specified AVR game, connecting to the appropriate game server and clearing any
+     * existing game server connection.
+     */
     public function activateAVRGame (gameId :int) :void
     {
         if (_liaison != null) {
@@ -299,8 +303,9 @@ public class GameDirector extends BasicDirector
     {
         super.clientDidLogoff(event);
 
-        // shutdown any game connection we might have going
-        if (_liaison != null) {
+        // if we're actually logging off, rather than just switching servers, then shutdown any
+        // active game connection
+        if (!_mctx.getClient().isSwitchingServers() && _liaison != null) {
             _liaison.shutdown();
         }
     }

@@ -80,6 +80,9 @@ public class GameLiaison
         return _gameId;
     }
 
+    /**
+     * Shuts down this liaison, disconnecting from the game server if we have not already.
+     */
     public function shutdown () :void
     {
         _gctx.getClient().logoff(false);
@@ -131,9 +134,9 @@ public class GameLiaison
     // from interface ClientObserver
     public function clientConnectionFailed (event :ClientEvent) :void
     {
+        // TODO: report an error message to the user?
         log.info("Lost connection to game server [cause=" + event.getCause() + "].");
-        shutdown();
-        // TODO: report an error message to the user
+        // we'll get a didLogoff in a second where the GameDirector will shut us down
     }
 
     // from interface ClientObserver
