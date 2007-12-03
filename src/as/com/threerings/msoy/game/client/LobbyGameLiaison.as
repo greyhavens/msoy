@@ -155,6 +155,17 @@ public class LobbyGameLiaison extends GameLiaison
         _ctx.getTopPanel().clearLeftPanel(null);
     }
 
+    /**
+     * Leaves the currently occupied game.
+     */
+    public function clearGame () :void
+    {
+        if (_gameOid != 0) {
+            _gctx.getLocationDirector().leavePlace();
+            _gameOid = 0;
+        }
+    }
+
     override public function shutdown () :void
     {
         _shuttingDown = true;
@@ -191,12 +202,14 @@ public class LobbyGameLiaison extends GameLiaison
         switch (_mode) {
         case JOIN_PLAYER:
             joinPlayer(_playerIdGame);
+            _mode = SHOW_LOBBY; // in case we end up back here after the game
             break;
 
         case PLAY_NOW_SINGLE:
         case PLAY_NOW_FRIENDS:
         case PLAY_NOW_ANYONE:
             playNow(_mode);
+            _mode = SHOW_LOBBY; // in case we end up back here after the game
             break;
 
         default:
@@ -250,6 +263,7 @@ public class LobbyGameLiaison extends GameLiaison
         // if we have a player table to enter do that now
         if (_playerIdTable != 0) {
             joinPlayerTable(_playerIdTable);
+            _playerIdTable = 0;
         }
     }
 

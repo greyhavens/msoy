@@ -193,6 +193,20 @@ public class GameDirector extends BasicDirector
     }
 
     /**
+     * Leaves our current parlor game and either returns to the Whirled or displays the lobby.
+     */
+    public function backToWhirled (showLobby :Boolean) :void
+    {
+        if (showLobby) {
+            LobbyGameLiaison(_liaison).clearGame();
+            LobbyGameLiaison(_liaison).showLobbyUI();
+        } else {
+            // go back to our previous location
+            _mctx.getTopPanel().getControlBar().moveBack();
+        }
+    }
+
+    /**
      * Returns the configuration of the (non-world) game we currently occupy if we're in a game.
      * Returns null otherwise.
      */

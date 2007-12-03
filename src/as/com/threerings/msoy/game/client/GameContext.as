@@ -123,14 +123,6 @@ public class GameContext
     }
 
     /**
-     * Displays the lobby for the specified game.
-     */
-    public function displayLobby (gameId :int) :void
-    {
-        _wctx.getMsoyController().handleJoinGameLobby(gameId);
-    }
-
-    /**
      * Returns the message manager which can be used to translate things.
      */
     public function getMessageManager () :MessageManager

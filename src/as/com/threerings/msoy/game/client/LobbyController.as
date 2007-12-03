@@ -54,14 +54,14 @@ public class LobbyController extends Controller implements Subscriber
     public static const CLOSE_LOBBY :String = "CloseLobby";
 
     public function LobbyController (
-        ctx :GameContext, liaison :LobbyGameLiaison, oid :int, mode :int) 
+        ctx :GameContext, liaison :LobbyGameLiaison, lobbyOid :int, mode :int) 
     {
         _gctx = ctx;
         _mctx = ctx.getWorldContext();
         _liaison = liaison;
         _mode = mode;
 
-        _subscriber = new SafeSubscriber(oid, this)
+        _subscriber = new SafeSubscriber(lobbyOid, this)
         _subscriber.subscribe(_gctx.getDObjectManager());
 
         _panel = new LobbyPanel(_gctx, this);

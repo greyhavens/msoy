@@ -182,10 +182,14 @@ public class LobbyPanel extends VBox
             if (isSeated()) {
                 hideCreateGame();
             }
-            for each (var table :MsoyTable in _lobbyObj.tables.toArray()) {
-                var panel :TablePanel = getTablePanel(table.tableId);
-                if (panel != null) {
-                    panel.update(table, isSeated());
+            // we might end up in here before we have our lobby object because this event came in
+            // on the member object
+            if (_lobbyObj != null) {
+                for each (var table :MsoyTable in _lobbyObj.tables.toArray()) {
+                    var panel :TablePanel = getTablePanel(table.tableId);
+                    if (panel != null) {
+                        panel.update(table, isSeated());
+                    }
                 }
             }
         }
