@@ -26,6 +26,7 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ConfirmAdapter;
+import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.server.PlaceManager;
@@ -464,36 +465,28 @@ public class MemberManager
 
     // from interface MemberProvider
     public void setHomeSceneId (ClientObject caller, final int sceneId,
-                                final InvocationService.ConfirmListener listener)
+                                InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;
         ensureNotGuest(member);
 
-        MsoyServer.invoker.postUnit(new RepositoryUnit("setHomeSceneId") {
-            public void invokePersist () throws PersistenceException {
+        String uname = "setHomeSceneId(" + member.getMemberId() + ")";
+        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
+            public void invokePersistent () throws Exception {
                 int memberId = member.getMemberId();
                 SceneRecord scene = MsoyServer.sceneRepo.loadScene(sceneId);
                 if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER &&
-                        scene.ownerId == memberId) {
+                    scene.ownerId == memberId) {
                     _memberRepo.setHomeSceneId(memberId, sceneId);
-                   _setId = true;
-                } // else listener.requestFailed() is called in handleSuccess();
-            }
-            public void handleSuccess () {
-                if (_setId) {
-                    listener.requestProcessed();
-                    member.setHomeSceneId(sceneId);
                 } else {
-                    listener.requestFailed("e.not_room_owner");
+                    throw new InvocationException("e.not_room_owner");
                 }
             }
-            public void handleFailure (Exception pe) {
-                log.log(Level.WARNING, "Unable to change home scene Id [member=" + 
-                    member.getMemberId() + "]", pe);
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            public void handleSuccess () {
+                member.setHomeSceneId(sceneId);
+                ((InvocationService.ConfirmListener)_listener).requestProcessed();
             }
-            protected boolean _setId = false;
         });
     }
 
