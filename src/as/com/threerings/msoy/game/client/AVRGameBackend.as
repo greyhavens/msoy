@@ -141,6 +141,7 @@ public class AVRGameBackend extends ControlBackend
         o["getRoomBounds_v1"] = getRoomBounds_v1;
         o["getViewBounds_v1"] = getViewBounds_v1;
         o["deactivateGame_v1"] = deactivateGame_v1;
+        o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getPlayerIds_v1"] = getPlayerIds_v1;
         o["spawnMob_v1"] = spawnMob_v1;
 
@@ -183,6 +184,12 @@ public class AVRGameBackend extends ControlBackend
         }
         _mctx.getGameDirector().leaveAVRGame();
         return true;
+    }
+
+    protected function isPlayerHere_v1 (id :int) :Boolean
+    {
+        return isPlaying() && _roomObj != null &&
+            _roomObj.getOccupantInfo(new MemberName(null, id)) != null;
     }
 
     protected function getPlayerIds_v1 () :Array
