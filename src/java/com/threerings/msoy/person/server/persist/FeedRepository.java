@@ -63,7 +63,7 @@ public class FeedRepository extends DepotRepository
         loadFeedMessages(messages, FriendFeedMessageRecord.class, actors, since);
         SQLOperator groups = null;
         if (!groupIds.isEmpty()) {
-            actors = new Conditionals.In(GroupFeedMessageRecord.GROUP_ID_C, groupIds);
+            groups = new Conditionals.In(GroupFeedMessageRecord.GROUP_ID_C, groupIds);
         }
         loadFeedMessages(messages, GroupFeedMessageRecord.class, groups, since);
         return messages;
