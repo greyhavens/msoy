@@ -13,6 +13,8 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.Predicate;
+import com.samskivert.util.Tuple;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRecord;
@@ -37,6 +39,7 @@ import com.threerings.msoy.person.data.ProfileCard;
 import com.threerings.msoy.person.data.ProfileLayout;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
+import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -312,18 +315,14 @@ public class ProfileServlet extends MsoyServiceServlet
     protected List<GroupMembership> resolveGroupsData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
-        MemberName name = tgtrec.getName();
-        List<GroupMembership> result = new ArrayList<GroupMembership>();
-        for (GroupMembershipRecord gmRec : MsoyServer.groupRepo.getMemberships(tgtrec.memberId)) {
-            GroupRecord gRec = MsoyServer.groupRepo.loadGroup(gmRec.groupId);
-            if (gRec == null) {
-                log.warning("Unknown group membership [memberId=" + tgtrec.memberId +
-                            ", groupId=" + gmRec.groupId + "]");
-                continue;
-            }
-            result.add(gmRec.toGroupMembership(gRec, name));
-        }
-        return result;
+        final boolean showExclusive = (reqrec.memberId == tgtrec.memberId);
+        return MsoyServer.groupRepo.resolveGroupMemberships(
+            tgtrec.memberId, tgtrec.getName(),
+            new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
+                public boolean isMatch (Tuple<GroupRecord,GroupMembershipRecord> info) {
+                    return showExclusive || info.left.policy != Group.POLICY_EXCLUSIVE;
+                }
+            });
     }
 
     protected List<GameRating> resolveRatingsData (MemberRecord reqrec, MemberRecord tgtrec)

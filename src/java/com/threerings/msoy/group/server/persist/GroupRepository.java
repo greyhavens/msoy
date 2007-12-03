@@ -12,9 +12,15 @@ import java.util.Set;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import com.samskivert.io.PersistenceException;
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
+import com.samskivert.util.Predicate;
+import com.samskivert.util.Tuple;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
@@ -30,6 +36,8 @@ import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -38,6 +46,7 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.group.data.GroupMembership;
 
 /**
  * Manages the persistent store of group data.
@@ -248,6 +257,41 @@ public class GroupRepository extends DepotRepository
         return load(GroupMembershipRecord.class,
                     GroupMembershipRecord.GROUP_ID, groupId,
                     GroupMembershipRecord.MEMBER_ID, memberId);
+    }
+
+    /**
+     * Resolves the group membership information for the supplied member.
+     *
+     * @param filter if non-null, only membership in groups that match the supplied filter will be
+     * returned.
+     */
+    public List<GroupMembership> resolveGroupMemberships (
+        int memberId, MemberName name, Predicate<Tuple<GroupRecord,GroupMembershipRecord>> filter)
+        throws PersistenceException
+    {
+        List<GroupMembershipRecord> records = MsoyServer.groupRepo.getMemberships(memberId);
+        IntMap<GroupMembershipRecord> rmap = IntMaps.newHashIntMap();
+        for (GroupMembershipRecord record : records) {
+            rmap.put(record.groupId, record);
+        }
+
+        // potentially filter exclusive groups and resolve the group names
+        IntMap<GroupName> groupNames = IntMaps.newHashIntMap();
+        for (GroupRecord group : MsoyServer.groupRepo.loadGroups(rmap.keySet())) {
+            if (filter == null || filter.isMatch(new Tuple<GroupRecord,GroupMembershipRecord>(
+                                                     group, rmap.get(group.groupId)))) {
+                groupNames.put(group.groupId, group.toGroupName());
+            }
+        }
+
+        // convert the persistent membership records into runtime records
+        List<GroupMembership> groups = Lists.newArrayList();
+        for (GroupMembershipRecord record : records) {
+            if (groupNames.containsKey(record.groupId)) {
+                groups.add(record.toGroupMembership(name, groupNames));
+            }
+        }
+        return groups;
     }
 
     /**

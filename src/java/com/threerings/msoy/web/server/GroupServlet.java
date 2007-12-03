@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.Predicate;
+import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.server.MsoyServer;
 
@@ -166,39 +168,31 @@ public class GroupServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord reqrec = getAuthedUser(ident);
-        int requesterId = (reqrec == null) ? 0 : reqrec.memberId;
+        final int requesterId = (reqrec == null) ? 0 : reqrec.memberId;
 
         try {
-            List<GroupMembership> result = new ArrayList<GroupMembership>();
             MemberRecord mRec = MsoyServer.memberRepo.loadMember(memberId);
             if (mRec == null) {
                 log.warning("Requested group membership for unknown member [id=" + memberId + "].");
-                return result;
+                return new ArrayList<GroupMembership>();
             }
 
-            for (GroupMembershipRecord gmRec : MsoyServer.groupRepo.getMemberships(memberId)) {
-                GroupRecord gRec = MsoyServer.groupRepo.loadGroup(gmRec.groupId);
-                if (gRec == null) {
-                    log.warning("Unknown group membership [memberId=" + memberId +
-                                ", groupId=" + gmRec.groupId + "]");
-                    continue;
-                }
-
-                // if we're not the person in question, don't show exclusive groups
-                if (memberId != requesterId && gRec.policy == Group.POLICY_EXCLUSIVE) {
-                    continue;
-                }
-
-                // if we're only including groups we can invite to, strip out non-public groups of
-                // which we're not managers
-                if (canInvite && gRec.policy != Group.POLICY_PUBLIC &&
-                    gmRec.rank != GroupMembership.RANK_MANAGER) {
-                    continue;
-                }
-
-                result.add(gmRec.toGroupMembership(gRec, mRec.getName()));
-            }
-            return result;
+            return MsoyServer.groupRepo.resolveGroupMemberships(
+                memberId, mRec.getName(), new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
+                    public boolean isMatch (Tuple<GroupRecord,GroupMembershipRecord> info) {
+                        // if we're not the person in question, don't show exclusive groups
+                        if (memberId != requesterId && info.left.policy == Group.POLICY_EXCLUSIVE) {
+                            return false;
+                        }
+                        // if we're only including groups we can invite to, strip out non-public
+                        // groups of which we're not managers
+                        if (canInvite && info.left.policy != Group.POLICY_PUBLIC &&
+                            info.right.rank != GroupMembership.RANK_MANAGER) {
+                            return false;
+                        }
+                        return true;
+                    }
+                });
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getMembershipGroups failed [id=" + memberId + "]", pe);

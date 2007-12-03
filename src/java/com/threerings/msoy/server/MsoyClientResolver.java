@@ -5,13 +5,8 @@ package com.threerings.msoy.server;
 
 import java.util.List;
 
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
-
-import com.google.common.collect.Lists;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
@@ -24,8 +19,6 @@ import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.person.server.persist.MailRepository;
 
 import com.threerings.msoy.group.data.GroupMembership;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
-import com.threerings.msoy.group.server.persist.GroupRecord;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -117,21 +110,9 @@ public class MsoyClientResolver extends CrowdClientResolver
             MsoyServer.memberRepo.loadFriends(member.memberId, -1));
 
         // load up this member's group memberships
-        IntMap<GroupName> groupNames = IntMaps.newHashIntMap();
-        ArrayIntSet groupIds = new ArrayIntSet();
-        List<GroupMembershipRecord> records = MsoyServer.groupRepo.getMemberships(member.memberId);
-        for (GroupMembershipRecord record : records) {
-            groupIds.add(record.groupId);
-        }
-        for (GroupRecord group : MsoyServer.groupRepo.loadGroups(groupIds)) {
-            groupNames.put(group.groupId, group.toGroupName());
-        }
-        List<GroupMembership> groups = Lists.newArrayList();
-        for (GroupMembershipRecord record : records) {
+        userObj.groups = new DSet<GroupMembership>(
             // we don't pass in member name here because we don't need it on the client
-            groups.add(record.toGroupMembership(null, groupNames));
-        }
-        userObj.groups = new DSet<GroupMembership>(groups.iterator());
+            MsoyServer.groupRepo.resolveGroupMemberships(member.memberId, null, null).iterator());
 
         // load up this member's current new mail message count
         MailRepository mailRepo = MsoyServer.mailMan.getRepository();
