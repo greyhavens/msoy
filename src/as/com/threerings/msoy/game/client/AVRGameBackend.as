@@ -188,8 +188,12 @@ public class AVRGameBackend extends ControlBackend
 
     protected function isPlayerHere_v1 (id :int) :Boolean
     {
-        return isPlaying() && _roomObj != null &&
-            _roomObj.getOccupantInfo(new MemberName(null, id)) != null;
+        if (isPlaying() && _roomObj != null) {
+            var fakeName :MemberName = new MemberName(null, id);
+            return (_gameObj.getOccupantInfo(fakeName) != null &&
+                    _roomObj.getOccupantInfo(fakeName) != null);
+        }
+        return false;
     }
 
     protected function getPlayerIds_v1 () :Array
