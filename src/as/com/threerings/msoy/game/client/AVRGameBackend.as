@@ -186,6 +186,11 @@ public class AVRGameBackend extends ControlBackend
         return true;
     }
 
+    protected function getPlayerId_v1 () :int
+    {
+        return _mctx.getMemberObject().getMemberId();
+    }
+
     protected function isPlayerHere_v1 (id :int) :Boolean
     {
         if (isPlaying() && _roomObj != null) {
