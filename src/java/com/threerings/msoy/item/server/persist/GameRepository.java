@@ -12,7 +12,6 @@ import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DatabaseLiaison;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.FieldMarshaller;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;

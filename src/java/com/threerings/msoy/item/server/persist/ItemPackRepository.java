@@ -4,7 +4,6 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -35,8 +34,6 @@ public class ItemPackRepository extends ItemRepository<
     public ItemPackRepository (PersistenceContext ctx)
     {
         super(ctx);
-        _ctx.registerMigration(getItemClass(), new EntityMigration.Drop(14002, "itemMediaHash"));
-        _ctx.registerMigration(getItemClass(), new EntityMigration.Drop(14002, "itemMimeType"));
     }
 
     @Override

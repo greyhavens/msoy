@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -32,7 +31,6 @@ public class FurnitureRepository extends ItemRepository<
     public FurnitureRepository (PersistenceContext ctx)
     {
         super(ctx);
-        _ctx.registerMigration(getItemClass(), new EntityMigration.Drop(16002, "suiteId"));
     }
 
     @Override

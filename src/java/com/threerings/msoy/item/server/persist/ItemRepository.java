@@ -31,7 +31,6 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -102,27 +101,6 @@ public abstract class ItemRepository<
                 return ItemRepository.this.createTagHistoryRecord();
             }
         };
-
-        // rarity -> pricing; all pricing to manual
-        _ctx.registerMigration(
-            getCatalogClass(), new EntityMigration.Rename(8, "rarity", "pricing"));
-        _ctx.registerMigration(getCatalogClass(), new EntityMigration(8) {
-            public boolean runBeforeDefault () {
-                return false;
-            }
-            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                String query = "update " + liaison.tableSQL(_tableName) +
-                    " set " + liaison.columnSQL("pricing") + " = " + CatalogListing.PRICING_MANUAL;
-                Statement stmt = conn.createStatement();
-                try {
-                    return stmt.executeUpdate(query);
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-            }
-        });
-        _ctx.registerMigration(
-            getCatalogClass(), new EntityMigration.Drop(8, "repriceCounter"));
     }
 
     /**
