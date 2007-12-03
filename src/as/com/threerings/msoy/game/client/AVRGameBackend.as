@@ -137,6 +137,7 @@ public class AVRGameBackend extends ControlBackend
         // AVRGameControl
         o["getStageBounds_v1"] = getStageBounds_v1;
         o["getRoomBounds_v1"] = getRoomBounds_v1;
+        o["getViewBounds_v1"] = getViewBounds_v1;
         o["deactivateGame_v1"] = deactivateGame_v1;
         o["getPlayerIds_v1"] = getPlayerIds_v1;
         o["spawnMob_v1"] = spawnMob_v1;
@@ -153,10 +154,22 @@ public class AVRGameBackend extends ControlBackend
     protected function getRoomBounds_v1 () :Rectangle
     {
         var view :AbstractRoomView = _mctx.getTopPanel().getPlaceView() as AbstractRoomView;
-
         if (view != null) {
-            var metrics :RoomMetrics = AbstractRoomView(view).layout.metrics;
+            var metrics :RoomMetrics = view.layout.metrics;
             return new Rectangle(0, 0, metrics.sceneWidth, metrics.sceneHeight);
+        }
+        return null;
+    }
+
+    protected function getViewBounds_v1 () :Rectangle
+    {
+        var view :AbstractRoomView = _mctx.getTopPanel().getPlaceView() as AbstractRoomView;
+        if (view != null) {
+            var rect :Rectangle = view.getScrollBounds();
+            var offset :int = view.getScrollOffset();
+            rect.left += offset;
+            rect.right += offset;
+            return rect;
         }
         return null;
     }
