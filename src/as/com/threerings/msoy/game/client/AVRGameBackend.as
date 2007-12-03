@@ -313,9 +313,16 @@ public class AVRGameBackend extends ControlBackend
     protected var _movementListener :SetAdapter = new SetAdapter(null,
         function (event :EntryUpdatedEvent) :void {
             if (event.getName() == SpotSceneObject.OCCUPANT_LOCS) {
-                var name :MemberName = OccupantInfo(event.getEntry()).username as MemberName;
-                if (_roomObj != null && name != null && _gameObj.getOccupantInfo(name)) {
-                    callUserCode("playerMoved_v1", name.getMemberId());
+                var oid :int = event.getEntry().getKey();
+                if (_roomObj != null) {
+                    // find the occupant info for this body
+                    var occInfo :OccupantInfo = _roomObj.occupantInfo.get(oid);
+                    // and its name
+                    var name :MemberName = occInfo.username as MemberName;
+                    // and make sure it's a player
+                    if (name != null && _gameObj.getOccupantInfo(name)) {
+                        callUserCode("playerMoved_v1", name.getMemberId());
+                    }
                 }
             }
         });
