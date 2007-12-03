@@ -17,7 +17,7 @@
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class)
 -injars ../dist/msoy-code.jar(
     !**/*UnitTest.class,rsrc/i18n/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
-    **/msoy/world/data/WorldMemberInfo.class,**/msoy/item/data/all/**,
+    **/msoy/world/data/WorldMemberInfo.class,**/msoy/item/data/all/**,**/msoy/group/data/**,
     **/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
     **/msoy/game/data/GameMemberInfo.class,**/msoy/game/data/GameSummary.class,
     **/msoy/notify/data/**,**/msoy/world/data/WorldOccupantInfo.class)
