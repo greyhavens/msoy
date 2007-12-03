@@ -4,7 +4,6 @@
 package com.threerings.msoy.world.client.editor {
 
 import flash.events.Event;
-import flash.events.MouseEvent;
 
 import mx.binding.utils.BindingUtils;
 import mx.containers.HBox;
