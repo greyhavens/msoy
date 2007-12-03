@@ -317,11 +317,13 @@ public class AVRGameBackend extends ControlBackend
                 if (_roomObj != null) {
                     // find the occupant info for this body
                     var occInfo :OccupantInfo = _roomObj.occupantInfo.get(oid);
-                    // and its name
-                    var name :MemberName = occInfo.username as MemberName;
-                    // and make sure it's a player
-                    if (name != null && _gameObj.getOccupantInfo(name)) {
-                        callUserCode("playerMoved_v1", name.getMemberId());
+                    if (occInfo) {
+                        // and its name
+                        var name :MemberName = occInfo.username as MemberName;
+                        // and make sure it's a player
+                        if (name != null && _gameObj.getOccupantInfo(name)) {
+                            callUserCode("playerMoved_v1", name.getMemberId());
+                        }
                     }
                 }
             }
