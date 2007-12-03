@@ -125,8 +125,8 @@ public abstract class UploadFile
         if (mimeString != null) {
             // XXX debugging; want to know the effectiveness, any false hits,
             // and what types of files are being uploaded -- landonf (March 5, 2007)
-            log.warning("Magically determined unknown mime type [type=" + mimeString +
-                ", name=" + getOriginalName() + "].");
+            log.info("Magically determined unknown mime type [type=" + mimeString +
+                     ", name=" + getOriginalName() + "].");
             return MediaDesc.stringToMimeType(mimeString);
         } else {
             return MediaDesc.INVALID_MIME_TYPE;

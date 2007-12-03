@@ -56,17 +56,17 @@ public abstract class AbstractUploadServlet extends HttpServlet
             return;
 
         } catch (FileUploadException fue) {
-            log.warning("File upload choked: " + fue + ".");
+            log.info("File upload failed [error=" + fue.getMessage() + "].");
             internalError(rsp);
             return;
 
         } catch (AccessDeniedException ade) {
-            log.info("Access denied during upload: " + ade + ".");
+            log.info("Access denied during upload [error=" + ade + "].");
             accessDenied(rsp);
             return;
 
         } catch (IOException ioe) {
-            log.warning("File upload choked during file i/o: " + ioe + ".");
+            log.warning("File upload choked during file i/o [error=" + ioe + "].");
             internalError(rsp);
             return;
 
