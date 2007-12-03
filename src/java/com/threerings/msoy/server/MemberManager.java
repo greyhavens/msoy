@@ -344,7 +344,7 @@ public class MemberManager
 
     // from interface MemberProvider
     public void setDisplayName (ClientObject caller, final String name,
-                                final InvocationService.InvocationListener listener)
+                                InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -352,39 +352,31 @@ public class MemberManager
 
         // TODO: verify entered string
 
-        MsoyServer.invoker.postUnit(new RepositoryUnit("setDisplayName") {
-            public void invokePersist () throws PersistenceException {
+        String uname = "setDisplayName(" + user.who() + ", " + name + ")";
+        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
+            public void invokePersistent () throws Exception {
                 _memberRepo.configureDisplayName(user.getMemberId(), name);
             }
             public void handleSuccess () {
                 user.setMemberName(new MemberName(name, user.getMemberId()));
                 updateOccupantInfo(user);
             }
-            public void handleFailure (Exception pe) {
-                log.warning("Unable to set display name [user=" + user.which() +
-                            ", name='" + name + "', error=" + pe + "].");
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
-            }
         });
     }
 
     // from interface MemberProvider
     public void getDisplayName (ClientObject caller, final int memberId,
-                                final InvocationService.ResultListener listener)
+                                InvocationService.ResultListener listener)
         throws InvocationException
     {
-        MsoyServer.invoker.postUnit(new RepositoryUnit("getDisplayName") {
-            public void invokePersist () throws PersistenceException {
+        String uname = "getDisplayName(" + memberId + ")";
+        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
+            public void invokePersistent () throws Exception {
                 MemberNameRecord rec = _memberRepo.loadMemberName(memberId);
-                _displayName = rec == null ? "" : rec.name;
+                _displayName = (rec == null) ? "" : rec.name;
             }
             public void handleSuccess () {
-                listener.requestProcessed(_displayName);
-            }
-            public void handleFailure (Exception pe) {
-                log.warning("Unable to get display name [memberId=" + memberId +", error=" + pe +
-                    "]");
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                reportRequestProcessed(_displayName);
             }
             protected String _displayName;
         });
@@ -392,20 +384,15 @@ public class MemberManager
 
     // from interface MemberProvider
     public void getGroupName (ClientObject caller, final int groupId,
-                              final InvocationService.ResultListener listener)
+                              InvocationService.ResultListener listener)
     {
-        MsoyServer.invoker.postUnit(new RepositoryUnit("getGroupName") {
-            public void invokePersist () throws PersistenceException {
+        MsoyServer.invoker.postUnit(new PersistingUnit("getGroupName(" + groupId + ")", listener) {
+            public void invokePersistent () throws Exception {
                 GroupRecord rec = _groupRepo.loadGroup(groupId);
-                _groupName = rec == null ? "" : rec.name;
+                _groupName = (rec == null) ? "" : rec.name;
             }
             public void handleSuccess () {
-                listener.requestProcessed(_groupName);
-            }
-            public void handleFailure (Exception pe) {
-                log.warning("Unable to get group name [groupId=" + groupId + ", error=" + pe +
-                    "]");
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                reportRequestProcessed(_groupName);
             }
             protected String _groupName;
         });
@@ -430,33 +417,25 @@ public class MemberManager
 
     // from interface MemberProvider
     public void issueInvitation (ClientObject caller, final MemberName guest,
-                                 final InvocationService.ResultListener listener)
+                                 InvocationService.ResultListener listener)
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;
         ensureNotGuest(member);
 
-        MsoyServer.invoker.postUnit(new RepositoryUnit("issueInvitation") {
-            public void invokePersist () throws PersistenceException {
+        String uname = "issueInvitation(" + member.getMemberId() + ")";
+        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
+            public void invokePersistent () throws Exception {
                 _invitesAvailable = _memberRepo.getInvitesGranted(member.getMemberId());
-                if (_invitesAvailable > 0) {
-                    _memberRepo.addInvite(guest.toString(), member.getMemberId(),
-                        _inviteId = _memberRepo.generateInviteId());
-                } // else - listener.requestFailed() called in handleSuccess()
+                if (_invitesAvailable <= 0) {
+                    throw new InvocationException("e.not_enough_invites");
+                }
+                _memberRepo.addInvite(guest.toString(), member.getMemberId(),
+                                      _inviteId = _memberRepo.generateInviteId());
             }
             public void handleSuccess () {
-                _invitesAvailable--;
-                if (_invitesAvailable >= 0) {
-                    MsoyServer.notifyMan.notifyIssuedInvitation(guest, _inviteId);
-                    listener.requestProcessed(_invitesAvailable);
-                } else {
-                    listener.requestFailed("e.not_enough_invites");
-                }
-            }
-            public void handleFailure (Exception pe) {
-                log.log(Level.WARNING, "Unable to issue an invite [member=" +
-                    member.getMemberId() + "]", pe);
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                MsoyServer.notifyMan.notifyIssuedInvitation(guest, _inviteId);
+                reportRequestProcessed(--_invitesAvailable);
             }
             protected int _invitesAvailable;
             protected String _inviteId;
@@ -485,7 +464,7 @@ public class MemberManager
             }
             public void handleSuccess () {
                 member.setHomeSceneId(sceneId);
-                ((InvocationService.ConfirmListener)_listener).requestProcessed();
+                reportRequestProcessed();
             }
         });
     }
