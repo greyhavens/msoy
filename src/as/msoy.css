@@ -537,6 +537,15 @@ Window {
   disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_undo_disabled.png");
 }
 
+.roomEditButtonMakeMyHome {
+  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_makehome.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_makehome_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_makehome_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_makehome_disabled.png");
+  paddingLeft: 0;
+  paddingRight: 0;
+}
+
 .roomEditPanelButton { 
   paddingBottom: 0;
   right: 0;

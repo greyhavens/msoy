@@ -163,8 +163,21 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #setHomeSceneId} requests. */
+    public static final int SET_HOME_SCENE_ID = 12;
+
+    // from interface MemberService
+    public void setHomeSceneId (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, SET_HOME_SCENE_ID, new Object[] {
+            Integer.valueOf(arg2), listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static final int UPDATE_AVAILABILITY = 12;
+    public static final int UPDATE_AVAILABILITY = 13;
 
     // from interface MemberService
     public void updateAvailability (Client arg1, int arg2)

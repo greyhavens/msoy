@@ -117,6 +117,13 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
+        case MemberMarshaller.SET_HOME_SCENE_ID:
+            ((MemberProvider)provider).setHomeSceneId(
+                source,
+                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+            );
+            return;
+
         case MemberMarshaller.UPDATE_AVAILABILITY:
             ((MemberProvider)provider).updateAvailability(
                 source,

@@ -11,25 +11,38 @@ import flash.geom.Rectangle;
 import flash.ui.Keyboard;
 
 import com.threerings.flex.CommandButton;
+
 import com.threerings.io.TypedArray;
+
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
+
+import com.threerings.msoy.data.MsoyCodes;
+
+import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultWrapper;
+
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+
+import com.threerings.msoy.client.MemberService;
+
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+
 import com.threerings.whirled.data.SceneUpdate;
+
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.client.updates.SceneUpdateAction;
+
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -82,7 +95,7 @@ public class RoomEditorController
     public function startEditing (wrapupFn :Function) :void
     {
         if (_view == null) {
-            Log.getLog(this).warning("Cannot edit a null room view!");
+            log.warning("Cannot edit a null room view!");
         }
 
         _panel = new RoomEditorPanel(_ctx, this);
@@ -284,7 +297,7 @@ public class RoomEditorController
     public function actionEditorClosed () :void
     {
         if (_panel != null && _panel.isOpen) {
-            Log.getLog(this).warning("Room editor failed to close!");
+            log.warning("Room editor failed to close!");
         }
 
         // stop listening for mouse down
@@ -325,13 +338,29 @@ public class RoomEditorController
         _panel.updateDisplay(_edit.target != null ? _edit.target.getFurniData() : null);
     }
 
+    public function makeMyHome () :void
+    {
+        _panel.setHomeButtonEnabled(false);
+        var svc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
+        svc.setHomeSceneId(_ctx.getClient(), scene.getId(), new ConfirmAdapter(
+            // failed function 
+            function (cause :String) :void {
+                _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, cause);
+            },
+            // processed function
+            function () :void {
+                _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, "m.home_room_changed");
+            }
+        ));
+    }
+
     /**
      * Handles mouse presses, starts editing furniture.
      */
     protected function mouseDown (event :MouseEvent) :void
     {
-        var hit :MsoySprite =
-            (_view.getRoomController().getHitSprite(event.stageX, event.stageY, true) as MsoySprite);
+        var hit :MsoySprite = (_view.getRoomController().getHitSprite(
+                               event.stageX, event.stageY, true) as MsoySprite);
         if (hit is FurniSprite) {
             if (_edit.isIdle()) {
                 _hover.target = null;
@@ -379,8 +408,7 @@ public class RoomEditorController
         svc.getItemNames(
             _ctx.getClient(), idents, new ResultWrapper(function (cause :String) :void {
                 // do nothing
-                Log.getLog(RoomEditorController).warning(
-                    "Unable to get item names [cause=" + cause + "].");
+                log.warning("Unable to get item names [cause=" + cause + "].");
             }, function (names :Array /* of String */) :void {
                 // we got an array of names! put them all in the cache and update the list.
                 for (var i :int = 0; i < idents.length; i++) {
@@ -424,7 +452,7 @@ public class RoomEditorController
             _panel.selectInNameList(_names.get(ident));
         } else {
             _panel.selectInNameList(null);
-            Log.getLog(RoomEditorController).debug("Furni name not found! [id=" + ident + "].");
+            log.debug("Furni name not found! [id=" + ident + "].");
         }
     }
 
@@ -479,6 +507,8 @@ public class RoomEditorController
             targetSpriteUpdated();
         }
     }
+
+    private static const log :Log = Log.getLog(RoomEditorController);
 
     /**
      * Mapping from ItemIdents to combo box entries that contain both names and ItemIdents.

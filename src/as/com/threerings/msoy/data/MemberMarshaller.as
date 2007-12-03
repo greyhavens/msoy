@@ -171,8 +171,21 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #setHomeSceneId} requests. */
+    public static const SET_HOME_SCENE_ID :int = 12;
+
+    // from interface MemberService
+    public function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    {
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, SET_HOME_SCENE_ID, [
+            Integer.valueOf(arg2), listener3
+        ]);
+    }
+
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static const UPDATE_AVAILABILITY :int = 12;
+    public static const UPDATE_AVAILABILITY :int = 13;
 
     // from interface MemberService
     public function updateAvailability (arg1 :Client, arg2 :int) :void

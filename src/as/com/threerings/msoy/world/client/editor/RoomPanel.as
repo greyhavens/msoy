@@ -4,6 +4,7 @@
 package com.threerings.msoy.world.client.editor {
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 
 import mx.binding.utils.BindingUtils;
 import mx.containers.HBox;
@@ -16,6 +17,7 @@ import mx.events.SliderEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -45,14 +47,39 @@ public class RoomPanel extends BasePanel
         }
     }
 
+    public function setHomeButtonEnabled (enabled :Boolean) :void
+    {
+        if (_homeButton != null) {
+            _homeButton.enabled = enabled;
+        }
+    }
+
     // @Override from superclass
     override protected function createChildren () :void
     {
         super.createChildren();
 
-        // container for name and lock buttons
+        // container for name and lock/home buttons
         var box :HBox = new HBox();
+        box.setStyle("horizontalGap", 4);
         addChild(box);
+
+        // make this room my home button
+        _homeButton = new CommandButton();
+        _homeButton.setCallback(function () :void {
+            // this is not the controlled panel for the RoomEditorController, so simply setting
+            // a command on RoomEditorController doesn't work - we must call the function directly.
+            _controller.makeMyHome();
+        });
+        _homeButton.styleName = "roomEditButtonMakeMyHome";
+        _homeButton.toolTip = Msgs.EDITING.get("i.make_home_button");
+        var sceneModel :MsoySceneModel = _controller.scene.getSceneModel() as MsoySceneModel;
+        var memberObject :MemberObject = _controller.ctx.getMemberObject();
+        _homeButton.enabled = 
+            sceneModel.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER && 
+            sceneModel.ownerId == memberObject.getMemberId() &&
+            _controller.scene.getId() != memberObject.homeSceneId;
+        box.addChild(_homeButton);
 
         _name = new TextInput();
         _name.percentWidth = 100;
@@ -61,8 +88,6 @@ public class RoomPanel extends BasePanel
         _buttonbar = new ToggleButtonBar();
         _buttonbar.styleName = "roomEditAccessButtons";
         box.addChild(_buttonbar);
-
-        // TODO: add "make this my home" button
 
         addChild(makePanelButtons());
     }
@@ -133,6 +158,7 @@ public class RoomPanel extends BasePanel
 
     protected var _name :TextInput;
     protected var _buttonbar :ToggleButtonBar;
+    protected var _homeButton :CommandButton;
 
     [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/button_access_everyone.png")]
     protected static const ICON_EVERYONE :Class;

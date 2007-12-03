@@ -103,6 +103,11 @@ public class RoomEditorPanel extends FloatingPanel
         }
     }
 
+    public function setHomeButtonEnabled (enabled :Boolean) :void
+    {
+        _room.setHomeButtonEnabled(enabled);
+    }
+
     /** Handler for dealing with changes in the name selection box. */
     protected function nameListChanged (event :ListEvent) :void
     {

@@ -83,6 +83,12 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#setHomeSceneId} request.
+     */
+    public void setHomeSceneId (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MemberService#updateAvailability} request.
      */
     public void updateAvailability (ClientObject caller, int arg1);

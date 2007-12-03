@@ -51,6 +51,7 @@ import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -436,7 +437,7 @@ public class MemberManager
 
         MsoyServer.invoker.postUnit(new RepositoryUnit("issueInvitation") {
             public void invokePersist () throws PersistenceException {
-                _invitesAvailable = _memberRepo.getInvitesGranted(member.memberName.getMemberId());
+                _invitesAvailable = _memberRepo.getInvitesGranted(member.getMemberId());
                 if (_invitesAvailable > 0) {
                     _memberRepo.addInvite(guest.toString(), member.getMemberId(),
                         _inviteId = _memberRepo.generateInviteId());
@@ -453,11 +454,46 @@ public class MemberManager
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to issue an invite [member=" +
-                    member.memberName.getMemberId() + "]", pe);
+                    member.getMemberId() + "]", pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
             protected int _invitesAvailable;
             protected String _inviteId;
+        });
+    }
+
+    // from interface MemberProvider
+    public void setHomeSceneId (ClientObject caller, final int sceneId,
+                                final InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        final MemberObject member = (MemberObject) caller;
+        ensureNotGuest(member);
+
+        MsoyServer.invoker.postUnit(new RepositoryUnit("setHomeSceneId") {
+            public void invokePersist () throws PersistenceException {
+                int memberId = member.getMemberId();
+                SceneRecord scene = MsoyServer.sceneRepo.loadScene(sceneId);
+                if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER &&
+                        scene.ownerId == memberId) {
+                    _memberRepo.setHomeSceneId(memberId, sceneId);
+                   _setId = true;
+                } // else listener.requestFailed() is called in handleSuccess();
+            }
+            public void handleSuccess () {
+                if (_setId) {
+                    listener.requestProcessed();
+                    member.setHomeSceneId(sceneId);
+                } else {
+                    listener.requestFailed("e.not_room_owner");
+                }
+            }
+            public void handleFailure (Exception pe) {
+                log.log(Level.WARNING, "Unable to change home scene Id [member=" + 
+                    member.getMemberId() + "]", pe);
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+            protected boolean _setId = false;
         });
     }
 
@@ -572,7 +608,7 @@ public class MemberManager
             final int levelToSet = level;
             MsoyServer.invoker.postUnit(new RepositoryUnit("updateLevel") {
                 public void invokePersist () throws PersistenceException {
-                    int memberId = member.memberName.getMemberId();
+                    int memberId = member.getMemberId();
                     // record the new level, and grant a new invite
                     _memberRepo.setUserLevel(memberId, levelToSet);
                     _memberRepo.grantInvites(memberId, 1);
@@ -586,7 +622,7 @@ public class MemberManager
                 }
                 public void handleFailure (Exception pe) {
                     log.warning("Unable to set user level [memberId=" +
-                        member.memberName.getMemberId() + ", level=" + levelToSet + "]");
+                        member.getMemberId() + ", level=" + levelToSet + "]");
                 }
             });
         }
