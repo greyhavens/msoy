@@ -205,14 +205,14 @@ public class AVRGameBackend extends ControlBackend
         return false;
     }
 
-    protected function playerEntered (info :OccupantInfo) :void
+    protected function playerEntered (gameInfo :OccupantInfo) :void
     {
-        callUserCode("playerEntered_v1", info.getBodyOid());
+        callUserCode("playerEntered_v1", gameInfo.getBodyOid());
     }
 
-    protected function playerLeft (info :OccupantInfo) :void
+    protected function playerLeft (gameInfo :OccupantInfo) :void
     {
-        callUserCode("playerLeft_v1", info.getBodyOid());
+        callUserCode("playerLeft_v1", gameInfo.getBodyOid());
     }
 
     protected function loggingConfirmListener (svc :String, processed :Function = null)
@@ -264,25 +264,25 @@ public class AVRGameBackend extends ControlBackend
 
     protected var _gameListener :SetAdapter = new SetAdapter(
         function (event :EntryAddedEvent) :void {
-            if (event.getName() == AVRGameObject.PLAYERS) {
-                if (_roomObj != null) {
-                    var occInfo :OccupantInfo = event.getEntry();
-                    if (_roomObj.occupantInfo.contains(occInfo)) {
-                        // an occupant of our current room began playing this AVRG
-                        playerEntered(occInfo);
-                    }
+            if (event.getName() == AVRGameObject.PLAYERS && _roomObj != null) {
+                var gameInfo :OccupantInfo = event.getEntry();
+
+                // we look this user up by display name in the room
+                if (_roomObj.getOccupantInfo(gameInfo.username) != null) {
+                    // an occupant of our current room began playing this AVRG
+                    playerEntered(gameInfo);
                 }
             }
         },
         null,
         function (event :EntryRemovedEvent) :void {
-            if (event.getName() == AVRGameObject.PLAYERS) {
-                if (_roomObj != null) {
-                    var occInfo :OccupantInfo = event.getOldEntry();
-                    if (_roomObj.occupantInfo.contains(occInfo)) {
-                        // an occupant of our current room stopped playing this AVRG
-                        playerLeft(occInfo);
-                    }
+            if (event.getName() == AVRGameObject.PLAYERS && _roomObj != null) {
+                var gameInfo :OccupantInfo = event.getOldEntry();
+
+                // we look this user up by display name in the room
+                if (_roomObj.getOccupantInfo(gameInfo.username)) {
+                    // an occupant of our current room stopped playing this AVRG
+                    playerLeft(gameInfo);
                 }
             }
         });
@@ -312,12 +312,12 @@ public class AVRGameBackend extends ControlBackend
 
     protected var _occupantObserver :OccupantObserver = new OccupantAdapter(
         function (info :OccupantInfo) :void {
-            if (_roomObj != null && _gameObj.players.contains(info)) {
+            if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
                 playerEntered(info);
             }
         },
         function (info :OccupantInfo) :void {
-            if (_roomObj != null && _gameObj.players.contains(info)) {
+            if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
                 playerLeft(info);
             }
         });

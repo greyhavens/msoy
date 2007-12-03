@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.data {
 
+import com.threerings.crowd.data.OccupantInfo;
+
 import com.threerings.io.ObjectInputStream;
 
 import com.threerings.presents.dobj.DObject;
@@ -10,6 +12,9 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.OidList;
 
 import com.threerings.ezgame.data.EZGameObject;
+
+import com.threerings.util.Iterator;
+import com.threerings.util.Name;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
@@ -54,6 +59,24 @@ public class AVRGameObject extends DObject
     /** Used to communicate with the AVRGameManager. */
     public var avrgService :AVRGameMarshaller;
     
+    /**
+     * Looks up a player's occupant info by name.
+     *
+     * @return the occupant info record for the named user or null if no
+     * user in the room has that username.
+     */
+    public function getOccupantInfo (username :Name) :OccupantInfo
+    {
+        var itr :Iterator = players.iterator();
+        while (itr.hasNext()) {
+            var info :OccupantInfo = (itr.next() as OccupantInfo);
+            if (info.username.equals(username)) {
+                return info;
+            }
+        }
+        return null;
+    }
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
