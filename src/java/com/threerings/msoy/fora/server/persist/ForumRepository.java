@@ -88,7 +88,7 @@ public class ForumRepository extends DepotRepository
                            new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID_C,
                                            ReadTrackingRecord.LAST_READ_POST_ID_C))));
         return findAll(ForumThreadRecord.class,
-                       new Join(ForumThreadRecord.class, join).setType(Join.Type.LEFT_OUTER),
+                       new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
                        new Where(where),
                        new Limit(0, maximum),
                        OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID_C));
