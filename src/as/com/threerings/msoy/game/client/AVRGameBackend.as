@@ -8,9 +8,6 @@ import flash.display.DisplayObject;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import com.threerings.util.Iterator;
-import com.threerings.util.Log;
-
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.LocationObserver;
 import com.threerings.crowd.client.OccupantAdapter;
@@ -25,10 +22,15 @@ import com.threerings.presents.client.InvocationService_InvocationListener;
 
 import com.threerings.presents.dobj.*;
 
+import com.threerings.util.Iterator;
+import com.threerings.util.Log;
+import com.threerings.util.Name;
+
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.ControlBackend;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.GameState;
@@ -192,8 +194,10 @@ public class AVRGameBackend extends ControlBackend
         var result :Array = new Array();
         var iterator :Iterator = _gameObj.players.iterator();
         while (iterator.hasNext()) {
-            var entry :DSet_Entry = iterator.next() as DSet_Entry;
-            result.push(OccupantInfo(iterator.next()).bodyOid);
+            var name :MemberName = OccupantInfo(iterator.next()).username as MemberName;
+            if (name != null) {
+                result.push(name.getMemberId());
+            }
         }
         return result;
     }
@@ -212,14 +216,18 @@ public class AVRGameBackend extends ControlBackend
         return false;
     }
 
-    protected function playerEntered (gameInfo :OccupantInfo) :void
+    protected function playerEntered (name :Name) :void
     {
-        callUserCode("playerEntered_v1", gameInfo.getBodyOid());
+        if (name is MemberName) {
+            callUserCode("playerEntered_v1", MemberName(name).getMemberId());
+        }
     }
 
-    protected function playerLeft (gameInfo :OccupantInfo) :void
+    protected function playerLeft (name :Name) :void
     {
-        callUserCode("playerLeft_v1", gameInfo.getBodyOid());
+        if (name is MemberName) {
+            callUserCode("playerLeft_v1", MemberName(name).getMemberId());
+        }
     }
 
     protected function loggingConfirmListener (svc :String, processed :Function = null)
@@ -256,7 +264,7 @@ public class AVRGameBackend extends ControlBackend
                 // we look this user up by display name in the room
                 if (_roomObj.getOccupantInfo(gameInfo.username) != null) {
                     // an occupant of our current room began playing this AVRG
-                    playerEntered(gameInfo);
+                    playerEntered(gameInfo.username);
                 }
             }
         },
@@ -268,7 +276,7 @@ public class AVRGameBackend extends ControlBackend
                 // we look this user up by display name in the room
                 if (_roomObj.getOccupantInfo(gameInfo.username)) {
                     // an occupant of our current room stopped playing this AVRG
-                    playerLeft(gameInfo);
+                    playerLeft(gameInfo.username);
                 }
             }
         });
@@ -289,9 +297,9 @@ public class AVRGameBackend extends ControlBackend
     protected var _movementListener :SetAdapter = new SetAdapter(null,
         function (event :EntryUpdatedEvent) :void {
             if (event.getName() == SpotSceneObject.OCCUPANT_LOCS) {
-                var bodyOid :int = int(event.getEntry().getKey());
-                if (_roomObj != null && _gameObj.players.containsKey(bodyOid)) {
-                    callUserCode("playerMoved_v1", bodyOid);
+                var name :MemberName = OccupantInfo(event.getEntry()).username as MemberName;
+                if (_roomObj != null && name != null && _gameObj.getOccupantInfo(name)) {
+                    callUserCode("playerMoved_v1", name.getMemberId());
                 }
             }
         });
@@ -299,12 +307,12 @@ public class AVRGameBackend extends ControlBackend
     protected var _occupantObserver :OccupantObserver = new OccupantAdapter(
         function (info :OccupantInfo) :void {
             if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
-                playerEntered(info);
+                playerEntered(info.username);
             }
         },
         function (info :OccupantInfo) :void {
             if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
-                playerLeft(info);
+                playerLeft(info.username);
             }
         });
 }
