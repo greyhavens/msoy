@@ -148,12 +148,13 @@ public class AVRGameBackend extends ControlBackend
         return _mctx.getTopPanel().getPlaceViewBounds();
     }
 
-    protected function getRoomBounds_v1 () :Rectangle
+    protected function getRoomBounds_v1 () :Array
     {
-        var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;
+        var view :AbstractRoomView = _mctx.getTopPanel().getPlaceView() as AbstractRoomView;
+
         if (view != null) {
-            var p :Point = view.localToGlobal(view.getScrollBounds().bottomRight);
-            return new Rectangle(0, 0, p.x, p.y);
+            var metrics :RoomMetrics = AbstractRoomView(parent).layout.metrics;
+            return [ metrics.sceneWidth, metrics.sceneHeight, metrics.sceneDepth];
         }
         return null;
     }
