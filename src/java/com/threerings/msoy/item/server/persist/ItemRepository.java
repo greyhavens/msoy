@@ -18,7 +18,6 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 
-import com.samskivert.Log;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.util.ArrayIntSet;
@@ -350,8 +349,9 @@ public abstract class ItemRepository<
             }
             // if the item didn't update, freak out.
             if (0 == result) {
-                Log.warning("Unable to find item to mark usage [itemId=" + itemId +
-                            ", usageType=" + usageType + ", location=" + location + "].");
+                log.warning("Attempt to mark item usage matched zero rows [type=" + _itemType +
+                            ", itemId=" + itemId + ", usageType=" + usageType +
+                            ", location=" + location + "].");
             }
         }
     }
