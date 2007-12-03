@@ -277,12 +277,12 @@ public class AVRGameBackend extends ControlBackend
         null, function (place :PlaceObject) :void {
             if (_roomObj != null) {
                 _roomObj.removeListener(_movementListener);
-                callUserCode("leftRoom_v1");
+                callUserCode("leftRoom_v1", _mctx.getSceneDirector().getScene().getId());
             }
             _roomObj = (place as RoomObject);
             if (_roomObj != null) {
                 _roomObj.addListener(_movementListener);
-                callUserCode("enteredRoom_v1");
+                callUserCode("enteredRoom_v1", _mctx.getSceneDirector().getScene().getId());
             }
     }, null);
 
