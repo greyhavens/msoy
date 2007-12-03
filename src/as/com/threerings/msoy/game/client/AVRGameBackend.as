@@ -188,7 +188,14 @@ public class AVRGameBackend extends ControlBackend
         if (!isPlaying() || _roomObj == null) {
             return null;
         }
-        return intersect(_gameObj.players, _roomObj.occupantInfo);
+
+        var result :Array = new Array();
+        var iterator :Iterator = _gameObj.players.iterator();
+        while (iterator.hasNext()) {
+            var entry :DSet_Entry = iterator.next() as DSet_Entry;
+            result.push(OccupantInfo(iterator.next()).bodyOid);
+        }
+        return result;
     }
 
     protected function spawnMob_v1 (mobId :String) :Boolean
@@ -228,27 +235,6 @@ public class AVRGameBackend extends ControlBackend
         return new InvocationAdapter(function (cause :String) :void {
             log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
         });
-    }
-
-    // TODO: figure out a version of this that could go in some Util package
-    protected static function intersect (big :DSet, small :DSet) :Array
-    {
-        // make sure we iterate over the small set rather than the large, because one
-        // day DSet lookup will hopefully be better than O(N)
-        if (big.size() < small.size()) {
-            return intersect(small, big);
-        }
-
-        var result :Array = new Array();
-
-        var iterator :Iterator = small.iterator();
-        while (iterator.hasNext()) {
-            var entry :DSet_Entry = iterator.next() as DSet_Entry;
-            if (big.contains(entry)) {
-                result.push(entry);
-            }
-        }
-        return result;
     }
 
     protected var _mctx :WorldContext;
