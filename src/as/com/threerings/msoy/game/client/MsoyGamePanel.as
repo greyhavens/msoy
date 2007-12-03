@@ -22,6 +22,7 @@ import com.threerings.msoy.chat.client.HistoryList;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyPlaceView;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
 
 public class MsoyGamePanel extends WhirledGamePanel
@@ -83,7 +84,9 @@ public class MsoyGamePanel extends WhirledGamePanel
     override protected function getButtonLabels (plobj :PlaceObject) :Array
     {
         var gameObj :MsoyGameObject = plobj as MsoyGameObject;
-        return [ Msgs.GAME.get("b.backToLobby"), Msgs.GAME.get("b.backToWhirled"),
+        return [
+            Msgs.GAME.get("b.backToWhirled"),
+            Msgs.GAME.get("b.backToLobby", (_ctrl.getPlaceConfig() as MsoyGameConfig).name),
             Msgs.GAME.get((gameObj.players.length == 1) ? "b.replay" : "b.rematch") ];
     }
 
