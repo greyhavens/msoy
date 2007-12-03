@@ -71,12 +71,19 @@ public class WorldClient extends Widget
             return;
         }
 
+        // if we're currently already displaying exactly what we've been asked to display; then
+        // stop here because we're just restoring our client after closing a GWT page
+        if (flashArgs.equals(_curFlashArgs)) {
+            return;
+        }
+
         // let the page know that we're displaying a client
         Frame.setShowingClient(pageToken);
 
         // create our client if necessary
-        if (!_isFlashClientPresent) {
+        if (_curFlashArgs == null) {
             closeClient(false); // clear our Java client if we have one
+            _curFlashArgs = flashArgs; // note our new flash args before we tack on server info
             flashArgs += "&host=" + _defaultServer.server +
                 "&port=" + _defaultServer.port +
                 "&httpPort=" + _defaultServer.httpPort;
@@ -89,10 +96,10 @@ public class WorldClient extends Widget
             }
             RootPanel.get(Frame.CLIENT).clear();
             FlashClients.embedWorldClient(RootPanel.get(Frame.CLIENT), flashArgs);
-            _isFlashClientPresent = true;
 
         } else {
-            clientGo(flashArgs);
+            // note our new current flash args
+            clientGo(_curFlashArgs = flashArgs);
             clientMinimized(false);
         }
     }
@@ -101,6 +108,9 @@ public class WorldClient extends Widget
     {
         // let the page know that we're displaying a client
         Frame.setShowingClient(History.getToken());
+
+        // clear out any flash page args
+        _curFlashArgs = null;
 
         if (_jclient != client) {
             closeClient(false); // clear out our flash client if we have one
@@ -119,12 +129,12 @@ public class WorldClient extends Widget
 
     public static void closeClient (boolean restoreContent)
     {
-        if (_isFlashClientPresent || _jclient != null) {
-            if (_isFlashClientPresent) {
+        if (_curFlashArgs != null || _jclient != null) {
+            if (_curFlashArgs != null) {
                 clientUnload(); // TODO: make this work for jclient
             }
             RootPanel.get(Frame.CLIENT).clear();
-            _isFlashClientPresent = false;
+            _curFlashArgs = null;
             _jclient = null;
             Frame.displayingJava = false;
         }
@@ -136,7 +146,7 @@ public class WorldClient extends Widget
 
     public static void didLogon (WebCreds creds)
     {
-        if (_isFlashClientPresent) {
+        if (_curFlashArgs != null) {
             clientLogon(creds.getMemberId(), creds.token);
         }
         // TODO: let jclient know about logon?
@@ -196,7 +206,7 @@ public class WorldClient extends Widget
         }
     }-*/;
 
-    protected static boolean _isFlashClientPresent;
+    protected static String _curFlashArgs;
     protected static Widget _jclient;
 
     /** Our default world server. Configured the first time Flash is used. */
