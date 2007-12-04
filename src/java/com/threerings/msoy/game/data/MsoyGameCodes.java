@@ -17,4 +17,7 @@ public interface MsoyGameCodes extends GameCodes
     /** A message sent (on the PlayerObject) when the player earns a prize. The payload will be an
      * Item object. */
     public static final String PRIZE_AWARDED = "PrizeAwarded";
+
+    /** An error code reported when a game tries to award an unknown trophy. */
+    public static final String E_UNKNOWN_TROPHY = "e.unknown_trophy";
 }

@@ -23,6 +23,7 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.media.util.MathUtil;
+import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
 import com.threerings.presents.client.InvocationService;
@@ -106,9 +107,8 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
             }
         }
         if (source == null) {
-            log.info("Game requested to award unknown trophy [game=" + where() +
-                     ", who=" + plobj.who() + ", ident=" + ident + "].");
-            throw new InvocationException(MsoyGameCodes.E_INTERNAL_ERROR);
+            throw new InvocationException(
+                MessageBundle.tcompose(MsoyGameCodes.E_UNKNOWN_TROPHY, ident));
         }
 
         // if the player already has this trophy, ignore the request
