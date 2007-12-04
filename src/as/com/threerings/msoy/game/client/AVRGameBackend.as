@@ -139,8 +139,10 @@ public class AVRGameBackend extends ControlBackend
         // AVRGameControl
         o["getStageBounds_v1"] = getStageBounds_v1;
         o["getRoomBounds_v1"] = getRoomBounds_v1;
-        o["getViewBounds_v1"] = getViewBounds_v1;
+        o["stageToRoom_v1"] = stageToRoom_v1;
+        o["roomToStage_v1"] = roomToStage_v1;
         o["deactivateGame_v1"] = deactivateGame_v1;
+        o["getPlayerId_v1"] = getPlayerId_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getPlayerIds_v1"] = getPlayerIds_v1;
         o["spawnMob_v1"] = spawnMob_v1;
@@ -164,15 +166,22 @@ public class AVRGameBackend extends ControlBackend
         return null;
     }
 
-    protected function getViewBounds_v1 () :Rectangle
+    protected function stageToRoom_v1 (p :Point) :Point
     {
         var view :AbstractRoomView = _mctx.getTopPanel().getPlaceView() as AbstractRoomView;
         if (view != null) {
-            var rect :Rectangle = view.getScrollBounds();
-            var offset :int = view.getScrollOffset();
-            rect.left += offset;
-            rect.right += offset;
-            return rect;
+            p = view.globalToLocal(p);
+            p.x -= view.getScrollOffset();
+            return p;
+        }
+        return null;
+    }
+
+    protected function roomToStage_v1 (p :Point) :Point
+    {
+        var view :AbstractRoomView = _mctx.getTopPanel().getPlaceView() as AbstractRoomView;
+        if (view != null) {
+            return view.localToGlobal(new Point(p.x + view.getScrollOffset(), p.y));
         }
         return null;
     }
