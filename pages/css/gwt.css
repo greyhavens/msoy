@@ -210,6 +210,10 @@ a.external {
   padding-right: 3px;
 }
 
+.formDialog td {
+  vertical-align: top;
+}
+
 .formDialog .Intro {
   width: 400px;
 }
