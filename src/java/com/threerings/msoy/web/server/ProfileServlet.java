@@ -315,7 +315,7 @@ public class ProfileServlet extends MsoyServiceServlet
     protected List<GroupMembership> resolveGroupsData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
-        final boolean showExclusive = (reqrec.memberId == tgtrec.memberId);
+        final boolean showExclusive = (reqrec != null && reqrec.memberId == tgtrec.memberId);
         return MsoyServer.groupRepo.resolveGroupMemberships(
             tgtrec.memberId, tgtrec.getName(),
             new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
