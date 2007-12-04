@@ -26,6 +26,7 @@ import com.threerings.util.Iterator;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 
+import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.client.WorldContext;
@@ -142,6 +143,7 @@ public class AVRGameBackend extends ControlBackend
         o["stageToRoom_v1"] = stageToRoom_v1;
         o["roomToStage_v1"] = roomToStage_v1;
         o["deactivateGame_v1"] = deactivateGame_v1;
+        o["getRoomId_v1"] = getRoomId_v1;
         o["getPlayerId_v1"] = getPlayerId_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getPlayerIds_v1"] = getPlayerIds_v1;
@@ -193,6 +195,12 @@ public class AVRGameBackend extends ControlBackend
         }
         _mctx.getGameDirector().leaveAVRGame();
         return true;
+    }
+
+    protected function getRoomId_v1 () :int
+    {
+        var scene :Scene = _mctx.getSceneDirector().getScene();
+        return scene != null ? scene.getId() : -1;
     }
 
     protected function getPlayerId_v1 () :int
