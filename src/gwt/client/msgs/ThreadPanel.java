@@ -50,11 +50,15 @@ public class ThreadPanel extends TitledListPanel
     public void showMessages ()
     {
         setContents(getThreadTitle(), _mpanel, true);
+        if (_group != null) { // if we already have our group, restore the group link
+            setRightBits(Application.groupViewLink(_group.toString(), _group.getGroupId()));
+        }
     }
 
     public void gotThread (ForumThread thread, GroupName group)
     {
         _thread = thread;
+        _group = group;
         updateTitle(getThreadTitle());
         setRightBits(Application.groupViewLink(group.toString(), group.getGroupId()));
     }
@@ -201,4 +205,5 @@ public class ThreadPanel extends TitledListPanel
 
     protected int _threadId;
     protected ForumThread _thread;
+    protected GroupName _group;
 }
