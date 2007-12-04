@@ -1002,7 +1002,7 @@ public class MsoyController extends Controller
                 arg = cmd.substring(slash + 1);
                 cmd = cmd.substring(0, slash);
             }
-            if (arg != null && arg.indexOf("/") == -1) {
+            if (arg == null || arg.indexOf("/") == -1) {
                 CommandEvent.dispatch(evt.target as IEventDispatcher, cmd, arg);
             } else {
                 CommandEvent.dispatch(evt.target as IEventDispatcher, cmd, arg.split(/\//));
