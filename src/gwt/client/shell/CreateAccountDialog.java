@@ -19,6 +19,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+
+import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.Invitation;
@@ -110,7 +112,8 @@ public class CreateAccountDialog extends BorderedDialog
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.createDisplayName());
-        contents.setWidget(row, 1, _name = new TextBox());
+        _name = MsoyUI.createTextBox("", Profile.MAX_DISPLAY_NAME_LENGTH, -1);
+        contents.setWidget(row, 1, _name);
         _name.addKeyboardListener(_validator);
         contents.getFlexCellFormatter().setStyleName(row, 2, "Tip");
         contents.setText(row++, 2, CShell.cmsgs.createDisplayNameTip());
@@ -163,8 +166,8 @@ public class CreateAccountDialog extends BorderedDialog
             status = CShell.cmsgs.createMissingConfirm();
         } else if (!password.equals(confirm)) {
             status = CShell.cmsgs.createPasswordMismatch();
-        } else if (name.length() == 0) {
-            status = CShell.cmsgs.createMissingName();
+        } else if (name.length() < Profile.MIN_DISPLAY_NAME_LENGTH) {
+            status = CShell.cmsgs.createNameTooShort(""+Profile.MIN_DISPLAY_NAME_LENGTH);
         } else if (_dateOfBirth.getDate() == null) {
             status = CShell.cmsgs.createMissingDoB();
         } else {

@@ -24,6 +24,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.person.data.MailFolder;
+import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
@@ -89,6 +90,12 @@ public class WebUserServlet extends MsoyServiceServlet
             if (invite.inviter != null) {
                 inviterId = invite.inviter.getMemberId();
             }
+        }
+
+        // validate display name length (this is enforced on the client)
+        if (displayName.length() < Profile.MIN_DISPLAY_NAME_LENGTH ||
+            displayName.length() > Profile.MAX_DISPLAY_NAME_LENGTH) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         // we are running on a servlet thread at this point and can thus talk to the authenticator

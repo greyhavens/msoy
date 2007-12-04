@@ -69,7 +69,9 @@ public class MsoyUI
             box.setText(text);
         }
         box.setMaxLength(maxLength);
-        box.setVisibleLength(visibleLength);
+        if (visibleLength > 0) {
+            box.setVisibleLength(visibleLength);
+        }
         return box;
     }
 
