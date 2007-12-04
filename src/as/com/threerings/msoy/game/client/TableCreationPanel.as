@@ -61,10 +61,12 @@ public class TableCreationPanel extends HBox
         } else {
             _friendsBox.addChild(
                 MsoyUI.createLabel(Msgs.GAME.get("l.invite_friends"), "lobbyLabel"));
-            _friendsGrid = new SimpleGrid(FRIENDS_GRID_COLUMNS);
-            _friendsGrid.setStyle("horizontalGap", 15);
+            var columns :int = Math.min(FRIENDS_GRID_COLUMNS, onlineFriends.length);
+            _friendsGrid = new SimpleGrid(columns);
+            _friendsGrid.setStyle("horizontalGap", TCP_GAP);
+            var maxWidth :int = (TCP_WIDTH - (columns-1)*TCP_GAP)/columns;
             for each (var friend :FriendEntry in onlineFriends) {
-                _friendsGrid.addCell(new FriendCheckBox(friend));
+                _friendsGrid.addCell(new FriendCheckBox(friend, maxWidth));
             }
             _friendsBox.addChild(_friendsGrid);
         }
@@ -205,12 +207,15 @@ public class TableCreationPanel extends HBox
     protected var _buttonBox :HBox;
 
     protected static const FRIENDS_GRID_COLUMNS :int = 6;
+    protected static const TCP_WIDTH :int = 420;
+    protected static const TCP_GAP :int = 15;
 }
 }
 
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.CheckBox;
+import mx.controls.Label;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -222,7 +227,7 @@ class FriendCheckBox extends VBox
 {
     public var friend :FriendEntry;
 
-    public function FriendCheckBox (friend :FriendEntry)
+    public function FriendCheckBox (friend :FriendEntry, maxWidth :int)
     {
         styleName = "friendCheckBox";
         this.friend = friend;
@@ -235,7 +240,9 @@ class FriendCheckBox extends VBox
         row.addChild(_check = new CheckBox());
         _check.width = 14; // don't ask; go punch someone at adobe instead
         addChild(row);
-        addChild(MsoyUI.createLabel(friend.name.toString()));
+        var name :Label = MsoyUI.createLabel(friend.name.toString());
+        name.maxWidth = maxWidth;
+        addChild(name);
     }
 
     public function get checked () :Boolean
