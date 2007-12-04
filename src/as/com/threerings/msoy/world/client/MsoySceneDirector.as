@@ -177,7 +177,7 @@ public class MsoySceneDirector extends SceneDirector
         super.clientDidLogoff(event);
 
         _departingPortalId = -1;
-        _ctx.getClient().getClientObject().removeListener(_followListener);
+        // _followListener implicitly goes away with our client object
     }
 
     // from SceneDirector
