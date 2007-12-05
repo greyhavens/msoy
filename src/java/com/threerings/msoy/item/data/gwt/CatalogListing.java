@@ -61,6 +61,9 @@ public class CatalogListing
     /** The item being listed. */
     public Item item;
 
+    /** The item id of the original from which this listing was created. */
+    public int originalItemId;
+
     /** The date on which the item was listed. */
     public Date listedDate;
 

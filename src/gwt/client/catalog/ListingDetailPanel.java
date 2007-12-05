@@ -20,6 +20,7 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.item.BaseItemDetailPanel;
 import client.shell.Application;
+import client.shell.Args;
 import client.shell.CommentsPanel;
 import client.shell.Page;
 import client.util.ClickCallback;
@@ -76,6 +77,13 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 }
             };
             _details.add(delist);
+
+            if (_listing.originalItemId != 0) {
+                // also add a link to view the original
+                _details.add(Application.createLink(
+                                 CCatalog.msgs.listingViewOrig(), Page.INVENTORY,
+                                 Args.compose(""+detail.item.getType(), "0", ""+_listing.originalItemId)));
+            }
         }
 
         // display a comment interface below the listing details

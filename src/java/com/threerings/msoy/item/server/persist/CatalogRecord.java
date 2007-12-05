@@ -113,6 +113,7 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
             // the name part of the MemberName is filled in by ItemManager
             listing.creator = new MemberName(null, item.creatorId);
         }
+        listing.originalItemId = originalItemId;
         listing.listedDate = new Date(listedDate.getTime());
         listing.flowCost = flowCost;
         listing.goldCost = goldCost;

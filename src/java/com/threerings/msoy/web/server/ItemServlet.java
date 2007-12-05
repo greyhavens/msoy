@@ -196,6 +196,12 @@ public class ItemServlet extends MsoyServiceServlet
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
 
+            // if you're not the owner or support+, you cannot view original items
+            if (record.ownerId != 0 && record.itemId > 0 &&
+                !mrec.isSupport() && mrec.memberId != record.ownerId) {
+                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            }
+
             // the detail contains the item...
             ItemDetail detail = new ItemDetail();
             detail.item = record.toItem();

@@ -76,9 +76,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
         ItemUtil.addItemSpecificButtons(_item, _buttons);
 
-        // TODO: this may not be necessary if this panel is only shown to the owner, but currently
-        // anyone can see it by viewing the item details.
-        if (_item.ownerId == CShell.getMemberId()) {
+        // only add owner buttons for owners and admins
+        if (_item.ownerId == CShell.getMemberId() || CShell.isAdmin()) {
             addOwnerButtons();
         }
 
@@ -108,20 +107,25 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
     protected void addOwnerButtons ()
     {
-        Button button = new Button(CInventory.msgs.detailDelete());
-        new ClickCallback(button) {
-            public boolean callService () {
-                CInventory.itemsvc.deleteItem(CInventory.ident, _item.getIdent(), this);
-                return true;
-            }
-            public boolean gotResult (Object result) {
-                _panel.itemDeleted(_item);
-                MsoyUI.info(CInventory.msgs.msgItemDeleted());
-                History.back(); // back up to the page that contained the item
-                return false;
-            }
-        };
-        _buttons.add(button);
+        Button button;
+
+        // don't show delete to anyone but the owner
+        if (_item.ownerId == CShell.getMemberId()) {
+            button = new Button(CInventory.msgs.detailDelete());
+            new ClickCallback(button, CInventory.msgs.detailConfirmDelete()) {
+                public boolean callService () {
+                    CInventory.itemsvc.deleteItem(CInventory.ident, _item.getIdent(), this);
+                    return true;
+                }
+                public boolean gotResult (Object result) {
+                    _panel.itemDeleted(_item);
+                    MsoyUI.info(CInventory.msgs.msgItemDeleted());
+                    History.back(); // back up to the page that contained the item
+                    return false;
+                }
+            };
+            _buttons.add(button);
+        }
 
         if (_item.sourceId == 0) {
             button = new Button(CInventory.msgs.detailEdit());
