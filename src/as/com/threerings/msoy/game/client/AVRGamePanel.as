@@ -11,6 +11,8 @@ import flash.display.LoaderInfo;
 import mx.core.UIComponent;
 import mx.events.ResizeEvent;
 
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.util.Log;
 
 import com.threerings.flash.MediaContainer;
@@ -29,6 +31,7 @@ import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.world.client.RoomView;
 
 public class AVRGamePanel extends UIComponent
+    implements AttributeChangeListener
 {
     public static const log :Log = Log.getLog(AVRGamePanel);
 
@@ -49,8 +52,31 @@ public class AVRGamePanel extends UIComponent
         // create the backend
         _backend = new AVRGameBackend(_gctx, _ctrl, _gameObj);
 
+        loadMedia();
+
+        _gameObj.addListener(this);
+
+        _mctx.getMsoyController().setAVRGamePanel(this);
+
+        addEventListener(ResizeEvent.RESIZE, handleResize);
+    }
+
+    public function attributeChanged (event :AttributeChangedEvent) :void
+    {
+        if (event.getName() == AVRGameObject.GAME_MEDIA) {
+            // if the media changes, brutally reload the AVRG
+            loadMedia();
+        }
+    }
+
+    protected function loadMedia () :void {
+        // if this is a reload, toss the old media
+        if (_mediaHolder != null && _mediaHolder.parent != null) {
+            removeChild(_mediaHolder);
+        }
+
         // create the container for the user media
-        _mediaHolder = new MediaContainer(gameObj.gameMedia.getMediaPath());
+        _mediaHolder = new MediaContainer(_gameObj.gameMedia.getMediaPath());
         var loader :Loader = Loader(_mediaHolder.getMedia());
 
         // hook the backend up with the media
@@ -58,9 +84,6 @@ public class AVRGamePanel extends UIComponent
 
         // set ourselves up properly once the media is loaded
         loader.contentLoaderInfo.addEventListener(Event.COMPLETE, mediaComplete);
-
-        // TODO: We should probably listen for _gameObj.gameMedia updates and
-        // TODO: perhaps just brutally reload ourselves when that happens?
     }
 
     public function getAVRGameBackend () :AVRGameBackend
@@ -110,13 +133,8 @@ public class AVRGamePanel extends UIComponent
             return;
         }
 
-        this.addEventListener(ResizeEvent.RESIZE, handleResize);
-
         _ctrl.gameIsReady();
-
-        this.addChild(_mediaHolder);
-
-        _mctx.getMsoyController().setAVRGamePanel(this);
+        addChild(_mediaHolder);
     }
 
     protected function handleResize (evt :ResizeEvent) :void
