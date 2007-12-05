@@ -211,7 +211,8 @@ public /*abstract*/ class BaseClient extends Client
     protected function clientWillLogon (event :ClientEvent) :void
     {
         log.info("Loading policy for host " + getHostname()  + ".");
-        Security.loadPolicyFile("http://" + getHostname() + "/crossdomain.xml");
+        Security.loadPolicyFile("http://" + getHostname() + ":" +
+                                DeploymentConfig.httpPort + "/crossdomain.xml");
     }
 
     /**
