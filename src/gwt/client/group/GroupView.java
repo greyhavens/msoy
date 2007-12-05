@@ -107,6 +107,11 @@ public class GroupView extends VerticalPanel
     protected void setGroupDetail (GroupDetail detail)
     {
         _detail = detail;
+        if (_detail == null) {
+            _group = null;
+            return; // the forum list will have already reported no such group, so just bail
+        }
+
         _group = _detail.group;
         _extras = _detail.extras;
 
