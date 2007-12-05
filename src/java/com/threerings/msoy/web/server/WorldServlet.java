@@ -291,6 +291,7 @@ public class WorldServlet extends MsoyServiceServlet
         if (profile != null) {
             myWhirled.photo = (profile.photoHash == null) ? null : profile.getPhoto();
         }
+        myWhirled.homeSceneId = memrec.homeSceneId;
         myWhirled.ownedRooms = ownedRooms;
         myWhirled.chats = chats;
         myWhirled.whirledPopulation = pps.getPopulationCount();

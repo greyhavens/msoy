@@ -50,6 +50,9 @@ public class MyWhirledData
      */
     public MediaDesc photo;
 
+    /** The scene id of our home scene. */
+    public int homeSceneId;
+
     /**
      * The list of rooms owned by this person.
      *

@@ -31,6 +31,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -262,13 +263,23 @@ public class MyWhirled extends FlexTable
         }
         _pictureBox.add(image);
 
-        // show the player's rooms in purchased order by doing an ascending sort on the sceneIds
+        // first add our home room
+        HorizontalPanel homeRow = new HorizontalPanel();
+        homeRow.add(new Image("/images/whirled/my_home.png"));
+        homeRow.add(WidgetUtil.makeShim(2, 2));
+        Integer homeId = new Integer(myWhirled.homeSceneId);
+        homeRow.add(Application.createLink((String)myWhirled.ownedRooms.get(homeId),
+                                           Page.WORLD, "s" + homeId));
+        _roomsBox.add(homeRow);
+
+        // next add the remainder of our rooms in purchased order (lowest scene id first)
         Object[] sceneIds = myWhirled.ownedRooms.keySet().toArray();
         Arrays.sort(sceneIds);
-        // TODO: if a user has too many rooms, we need to scroll the _roomsBox vertically, instead
-        // of letting it grow indefinitely
         for (int ii = 0; ii < sceneIds.length; ii++) {
-            _roomsBox.add(Application.createLink((String)(myWhirled.ownedRooms.get(sceneIds[ii])),
+            if (homeId.equals(sceneIds[ii])) {
+                continue;
+            }
+            _roomsBox.add(Application.createLink((String)myWhirled.ownedRooms.get(sceneIds[ii]),
                                                  Page.WORLD, "s" + sceneIds[ii]));
         }
 
