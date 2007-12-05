@@ -75,32 +75,39 @@ public class GameTrophyPanel extends PagedGrid
         return true;
     }
 
+    // @Override // from PagedGrid
+    protected boolean padToFullPage ()
+    {
+        return true;
+    }
+
     protected class TrophyDetail extends FlexTable
     {
         public TrophyDetail (Trophy trophy) {
             setCellSpacing(0);
             setCellPadding(0);
             setStyleName("trophyDetail");
-            setWidget(0, 0, MediaUtil.createMediaView(
-                          trophy.trophyMedia, MediaDesc.THUMBNAIL_SIZE));
+
+            if (trophy != null) {
+                setWidget(0, 0, MediaUtil.createMediaView(
+                              trophy.trophyMedia, MediaDesc.THUMBNAIL_SIZE));
+                setText(0, 1, trophy.name);
+                if (trophy.description == null) {
+                    setText(1, 0, CGame.msgs.gameTrophySecret());
+                    getFlexCellFormatter().setStyleName(1, 0, "Italic");
+                } else {
+                    setText(1, 0, trophy.description);
+                }
+                if (CGame.getMemberId() != 0 && trophy.whenEarned != null) {
+                    setText(2, 0, CGame.msgs.gameTrophyEarnedOn(
+                                _pfmt.format(new Date(trophy.whenEarned.longValue()))));
+                    getFlexCellFormatter().setStyleName(2, 0, "Earned");
+                }
+            }
+
             getFlexCellFormatter().setStyleName(0, 0, "Image");
-
-            setText(0, 1, trophy.name);
             getFlexCellFormatter().setStyleName(0, 1, "Name");
-
-            if (trophy.description == null) {
-                setText(1, 0, CGame.msgs.gameTrophySecret());
-                getFlexCellFormatter().setStyleName(1, 0, "Italic");
-            } else {
-                setText(1, 0, trophy.description);
-            }
             getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
-
-            if (CGame.getMemberId() != 0 && trophy.whenEarned != null) {
-                setText(2, 0, CGame.msgs.gameTrophyEarnedOn(
-                            _pfmt.format(new Date(trophy.whenEarned.longValue()))));
-                getFlexCellFormatter().setStyleName(2, 0, "Earned");
-            }
             getFlexCellFormatter().setRowSpan(0, 0, getRowCount());
         }
     }

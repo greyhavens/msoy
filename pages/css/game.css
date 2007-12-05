@@ -144,6 +144,7 @@
 .trophyDetail .Image {
   text-align: left;
   width: 65px;
+  height: 60px;
 }
 
 .trophyDetail .Name {
