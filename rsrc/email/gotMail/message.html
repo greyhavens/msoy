@@ -22,10 +22,12 @@ a {
 <table cellpadding=10 cellspacing=0 width=692>
 <tr><td><img src="cid:header.png"></td></tr>
 
-<tr><td>You received a Whirled mail from <b>${sender}</b>:</td></tr>
+<tr><td>You received a Whirled mail:</td></tr>
 
 #if (${body})
 <tr><td style="border: 1px solid; padding: 15px;">
+From: <a href="${server_url}/#profile-${senderId}">${sender}</a><br/>
+Subject: ${subject}<br/><br/>
 "${body}"
 </td></tr>
 #end

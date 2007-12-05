@@ -148,6 +148,7 @@ public class MailManager
                             protected void populateContext (VelocityContext ctx) {
                                 ctx.put("subject", _record.subject);
                                 ctx.put("sender", _sendrec.name);
+                                ctx.put("senderId", _sendrec.memberId);
                                 ctx.put("body", (_record.bodyText == null) ? "" : _record.bodyText);
                                 ctx.put("server_url", ServerConfig.getServerURL());
                             }
