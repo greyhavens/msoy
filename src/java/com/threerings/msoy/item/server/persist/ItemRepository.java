@@ -347,11 +347,11 @@ public abstract class ItemRepository<
                     cclass, itemId, ItemRecord.USED, usageType, ItemRecord.LOCATION, location,
                     ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
             }
-            // if the item didn't update, freak out.
+            // if the item didn't update, point that out to log readers
             if (0 == result) {
-                log.warning("Attempt to mark item usage matched zero rows [type=" + _itemType +
-                            ", itemId=" + itemId + ", usageType=" + usageType +
-                            ", location=" + location + "].");
+                log.info("Attempt to mark item usage matched zero rows [type=" + _itemType +
+                         ", itemId=" + itemId + ", usageType=" + usageType +
+                         ", location=" + location + "].");
             }
         }
     }
