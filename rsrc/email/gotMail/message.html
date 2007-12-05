@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>You received a Whirled mail from ${sender}:</title>
+
+<style type="text/css">
+<!--
+body {
+  color: #000000;
+  font-family: monospace;
+}
+a {
+  color: #3cb5f6;
+}
+-->
+</style>
+
+</head>
+<body bgcolor="#FFFFFF">
+
+<center>
+<table cellpadding=10 cellspacing=0 width=692>
+<tr><td><img src="header.png"></td></tr>
+
+<tr><td>You received a Whirled mail from <b>${sender}</b>:</td></tr>
+
+#if (${body})
+<tr><td style="border: 1px solid; padding: 15px;">
+"${body}"
+</td></tr>
+#end
+
+<tr><td>To read the message in its entirety and see any attachments, please go to:
+
+<p><a href="${server_url}/#mail">${server_url}/#mail</a></p>
+
+---<br>
+If you no longer wish to receive email when you receive a Whirled mail, simply
+log in and configure your email preferences from "Me -> My Account".
+</td></tr>
+
+<tr><td style="padding-top: 40px"><img src="footer.png"></td></tr>
+</table>
+
+</body>
+</html>
