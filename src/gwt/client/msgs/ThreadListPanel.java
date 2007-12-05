@@ -138,16 +138,16 @@ public class ThreadListPanel extends PagedGrid
             getFlexCellFormatter().setStyleName(0, col++, "Status");
 
             RowPanel bits = new RowPanel();
-            if (thread.isAnnouncement()) {
-                bits.add(new Label(CMsgs.mmsgs.tlpAnnounce()));
-            }
-            bits.add(Application.createLink(thread.subject, Page.GROUP,
-                                            Args.compose("t", thread.threadId)));
             for (int ii = 0; ii < FLAG_IMAGES.length; ii++) {
                 if ((thread.flags & (1 << ii)) != 0) {
                     bits.add(new Image("/images/msgs/" + FLAG_IMAGES[ii] + ".png"));
                 }
             }
+            if (thread.isAnnouncement()) {
+                bits.add(new Label(CMsgs.mmsgs.tlpAnnounce()));
+            }
+            bits.add(Application.createLink(thread.subject, Page.GROUP,
+                                            Args.compose("t", thread.threadId)));
 
             setWidget(0, col, bits);
             getFlexCellFormatter().setStyleName(0, col++, "Subject");
