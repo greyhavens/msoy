@@ -149,6 +149,8 @@ public class ThreadListPanel extends PagedGrid
             bits.add(Application.createLink(thread.subject, Page.GROUP,
                                             Args.compose("t", thread.threadId)));
 
+            // if we have a last read post, add a link to the first unread post
+
             setWidget(0, col, bits);
             getFlexCellFormatter().setStyleName(0, col++, "Subject");
 

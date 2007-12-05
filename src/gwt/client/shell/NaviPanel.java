@@ -9,11 +9,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 
-import com.google.gwt.http.client.URL;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -209,7 +210,15 @@ public class NaviPanel extends FlexTable
 
         click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "Tutorials", Page.WRAP, Args.compose("w", "Tutorials"));
+                menu.addItem("Tutorials", true, new Command() {
+                    public void execute () {
+                        Window.open("/tutorial/en_US/index.html", "Tutorials",
+                                    "menubar=no,location=no,resizable=yes,scrollbars=yes," +
+                                    "status=no,width=400,height=500");
+                        clearPopup();
+                    }
+                });
+                addLink(menu, "Tutorials", Page.WRAP, "tutorial");
                 addLink(menu, "Online Support", Page.WRAP, Args.compose("w", "Support"));
                 addLink(menu, "Bug Reports", Page.GROUP, "72"); // hardcoded First group id
                 addURLInNewFrame(menu, "Whirled Wiki", "http://wiki.whirled.com/");

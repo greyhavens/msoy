@@ -1,19 +1,36 @@
-.body { 
-  fontFamily: Arial;   
-  marginLeft: 10; 
-  marginRight: 10;
-  fontSize: 12;
-}
-
-.header { 
-  fontSize: 16;
-  fontWeight: bold;
+body { 
+  margin: 0px 20px;
+  font-size: 14px;
 }
 
 a:link {
-  textDecoration: underline;
+  text-decoration: underline;
 }
 
 a:hover {
   color: #444488;
+}
+
+ul {
+  list-style: none;
+  padding-left: 5px;
+}
+
+li {
+  background: transparent url(/tutorial/all/bullet.png) no-repeat scroll 0pt 3px;
+  padding: 4px 0px 4px 18px;
+}
+
+.header { 
+  margin-top: 20px;
+  margin-left: 40px;
+  font-size: 16;
+  font-weight: bold;
+}
+
+.footer {
+  margin-left: 40px;
+}
+.disabled {
+  color: #CCCCCC;
 }
