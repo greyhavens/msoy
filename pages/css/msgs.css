@@ -141,6 +141,12 @@
 .threadSummaryPanel .Subject {
 }
 
+.threadSummaryPanel .EditFlags {
+    background-image: url(/images/msgs/edit_flags.png);
+    width: 16px;
+    height: 16px;
+}
+
 .threadSummaryPanel .Posts {
     width: 50px;
     text-align: right;

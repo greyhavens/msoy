@@ -31,6 +31,8 @@ public class index extends Page
             displayPage("Wiki", "http://wiki.whirled.com/");
         } else if (action.equals("w")) {
             displayPage("Wiki", "http://wiki.whirled.com/" + Args.compose(args.splice(1)));
+        } else if (action.equals("about")) {
+            displayPage("About Whirled", "about.html");
         }
     }
 

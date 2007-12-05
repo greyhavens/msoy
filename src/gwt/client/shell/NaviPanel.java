@@ -211,8 +211,9 @@ public class NaviPanel extends FlexTable
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "Tutorials", Page.WRAP, Args.compose("w", "Tutorials"));
                 addLink(menu, "Online Support", Page.WRAP, Args.compose("w", "Support"));
+                addLink(menu, "Bug Reports", Page.GROUP, "72"); // hardcoded First group id
                 addURLInNewFrame(menu, "Whirled Wiki", "http://wiki.whirled.com/");
-                addLink(menu, "About Whirled", Page.WRAP, Args.compose("w", "About"));
+                addLink(menu, "About Whirled", Page.WRAP, "about");
             }
         };
         setWidget(0, menuidx++, new NaviButton(

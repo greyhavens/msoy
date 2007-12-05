@@ -1,31 +1,8 @@
 /** 
  * $Id$
  *
- * CSS styles shared globally.
+ * CSS styles shared by all GWT stuff.
  */
-
-/** The globalness! */
-html, body {
-  height: 100%;
-  margin: 0;
-  border: none;
-  padding: 0;
-  font-family: Arial, Verdana, Helvetica, sans-serif;
-}
-
-a {
-  color: black;
-  text-decoration: underline;
-}
-
-a:visited {
-  color: black;
-}
-
-a.external {
-  background: url(/images/ui/external.png) center right no-repeat;
-  padding-right: 16px;
-}
 
 /** Make GWT display some sensible defaults. */
 .gwt-TabBar .gwt-TabBarItem {
