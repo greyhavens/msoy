@@ -66,11 +66,11 @@ public class InstructionsPanel extends VerticalPanel
     protected String[] decodeInstructions (String instructions)
     {
         String[] results = new String[3];
-        if (instructions.matches("^{t#......}.*")) {
+        if (instructions.matches("^<t#......>.*")) {
             results[1] = instructions.substring(2, 9);
             instructions = instructions.substring(10);
         }
-        if (instructions.matches("^{bg#......}.*")) {
+        if (instructions.matches("^<bg#......>.*")) {
             results[2] = instructions.substring(3, 10);
             instructions = instructions.substring(11);
         }
@@ -112,11 +112,11 @@ public class InstructionsPanel extends VerticalPanel
                 String instructions = editor.getHTML();
                 String bgcolor = toolbar.getBackgroundColor();
                 if (bgcolor != null && bgcolor.matches("#......")) {
-                    instructions = "{bg" + bgcolor + "}" + instructions;
+                    instructions = "<bg" + bgcolor + ">" + instructions;
                 }
                 String tcolor = toolbar.getTextColor();
                 if (tcolor != null && tcolor.matches("#......")) {
-                    instructions = "{t" + tcolor + "}" + instructions;
+                    instructions = "<t" + tcolor + ">" + instructions;
                 }
                 saveInstructions(instructions);
             }
