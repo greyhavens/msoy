@@ -30,6 +30,10 @@
     margin-bottom: 5px;
 }
 
+.groupView .DescriptionPanel {
+    margin: 5px 0px 0px 0px;
+}
+
 .groupView .DescriptionPanel p {
     margin: 0px 0px 5px 0px;
 }

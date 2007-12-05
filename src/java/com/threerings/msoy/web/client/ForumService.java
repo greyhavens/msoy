@@ -29,6 +29,9 @@ public interface ForumService extends RemoteService
         /** Whether or not the caller can start a thread in this group. */
         public boolean canStartThread;
 
+        /** Returns true if we're manager of the group from which these threads came. */
+        public boolean isManager;
+
         /** The range of threads that were requested.
          * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumThread> */
         public List threads;
@@ -45,6 +48,9 @@ public interface ForumService extends RemoteService
 
         /** Whether or not the caller can post a reply message to this thread. */
         public boolean canPostReply;
+
+        /** Returns true if we're manager of the group from which this thread came. */
+        public boolean isManager;
 
         /** The range of messages that were requested.
          * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumMessage> */
@@ -78,6 +84,12 @@ public interface ForumService extends RemoteService
      */
     public ForumThread createThread (WebIdent ident, int groupId, int flags,
                                      String subject, String message)
+        throws ServiceException;
+
+    /**
+     * Updates the specified thread's flags.
+     */
+    public void updateThreadFlags (WebIdent ident, int threadId, int flags)
         throws ServiceException;
 
     /**

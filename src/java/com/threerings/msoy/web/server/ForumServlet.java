@@ -57,12 +57,8 @@ public class ForumServlet extends MsoyServiceServlet
 
         try {
             // make sure they have read access to this thread
-            GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
-            if (grec == null) {
-                throw new ServiceException(ForumCodes.E_INVALID_GROUP);
-            }
+            Group group = getGroup(groupId);
             byte groupRank = getGroupRank(mrec, groupId);
-            Group group = grec.toGroupObject();
             if (!group.checkAccess(groupRank, Group.ACCESS_READ, 0)) {
                 throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
             }
@@ -76,6 +72,9 @@ public class ForumServlet extends MsoyServiceServlet
 
             // fill in this caller's new thread starting privileges
             result.canStartThread = group.checkAccess(groupRank, Group.ACCESS_THREAD, 0);
+
+            // fill in our manager status
+            result.isManager = mrec.isSupport() || (groupRank == GroupMembership.RANK_MANAGER);
 
             // fill in our total thread count if needed
             if (needTotalCount) {
@@ -143,12 +142,8 @@ public class ForumServlet extends MsoyServiceServlet
             if (ftr == null) {
                 throw new ServiceException(ForumCodes.E_INVALID_THREAD);
             }
-            GroupRecord grec = MsoyServer.groupRepo.loadGroup(ftr.groupId);
-            if (grec == null) {
-                throw new ServiceException(ForumCodes.E_INVALID_GROUP);
-            }
+            Group group = getGroup(ftr.groupId);
             byte groupRank = getGroupRank(mrec, ftr.groupId);
-            Group group = grec.toGroupObject();
             if (!group.checkAccess(groupRank, Group.ACCESS_READ, 0)) {
                 throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
             }
@@ -177,10 +172,13 @@ public class ForumServlet extends MsoyServiceServlet
                 highestPostId = Math.max(highestPostId, msg.messageId);
             }
             result.messages = messages;
-            result.group = grec.toGroupName();
+            result.group = group.getName();
 
             // fill in this caller's posting privileges
             result.canPostReply = group.checkAccess(groupRank, Group.ACCESS_POST, 0);
+
+            // fill in our manager status
+            result.isManager = mrec.isSupport() || (groupRank == GroupMembership.RANK_MANAGER);
 
             if (needTotalCount) {
                 // convert the thread record to a runtime record if needed
@@ -229,7 +227,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         try {
             // make sure they're allowed to create a thread in this group
-            GroupRecord grec = checkAccess(mrec, groupId, Group.ACCESS_THREAD, flags);
+            Group group = checkAccess(mrec, groupId, Group.ACCESS_THREAD, flags);
 
             // TODO: check first message contents
 
@@ -242,7 +240,7 @@ public class ForumServlet extends MsoyServiceServlet
             if (thread.isAnnouncement()) {
                 MsoyServer.feedRepo.publishGroupMessage(
                     groupId, FeedMessageType.GROUP_ANNOUNCEMENT,
-                    grec.name + "\t" + subject + "\t" + thread.threadId);
+                    group.name + "\t" + subject + "\t" + thread.threadId);
             }
 
             return thread;
@@ -250,6 +248,36 @@ public class ForumServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to create thread [for=" + who(mrec) +
                     ", gid=" + groupId + ", subject=" + subject + "].", pe);
+            throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface ForumService
+    public void updateThreadFlags (WebIdent ident, int threadId, int flags)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        try {
+            ForumThreadRecord ftr = MsoyServer.forumRepo.loadThread(threadId);
+            if (ftr == null) {
+                throw new ServiceException(ForumCodes.E_INVALID_THREAD);
+            }
+
+            // make sure they have access to both the old and new flags
+            Group group = getGroup(ftr.groupId);
+            byte groupRank = getGroupRank(mrec, ftr.groupId);
+            if (!group.checkAccess(groupRank, Group.ACCESS_POST, ftr.flags) ||
+                !group.checkAccess(groupRank, Group.ACCESS_POST, flags)) {
+                throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
+            }
+
+            // if we made it this far, then update the flags
+            MsoyServer.forumRepo.updateThreadFlags(ftr.threadId, flags);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to update thread flags [for=" + who(mrec) +
+                    ", tid=" + threadId + ", flags=" + flags + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
     }
@@ -353,19 +381,29 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     /**
-     * Checks that the supplied member has the specified access in the specified group.
+     * Loads the specified group, throwing an invalid group exception if it does not exist.
      */
-    protected GroupRecord checkAccess (MemberRecord mrec, int groupId, int access, int flags)
+    protected Group getGroup (int groupId)
         throws PersistenceException, ServiceException
     {
         GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
         if (grec == null) {
             throw new ServiceException(ForumCodes.E_INVALID_GROUP);
         }
-        if (!grec.toGroupObject().checkAccess(getGroupRank(mrec, groupId), access, flags)) {
+        return grec.toGroupObject();
+    }
+
+    /**
+     * Checks that the supplied member has the specified access in the specified group.
+     */
+    protected Group checkAccess (MemberRecord mrec, int groupId, int access, int flags)
+        throws PersistenceException, ServiceException
+    {
+        Group group = getGroup(groupId);
+        if (!group.checkAccess(getGroupRank(mrec, groupId), access, flags)) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
-        return grec;
+        return group;
     }
 
     /**

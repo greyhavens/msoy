@@ -69,6 +69,15 @@ public class MessagesPanel extends PagedGrid
         });
         _postReply.setEnabled(false);
         controls.setWidget(0, 0, _postReply);
+
+        // add a button for editing this thread's flags
+        _editFlags = new Button(CMsgs.mmsgs.editFlags(), new ClickListener() {
+            public void onClick (Widget sender) {
+                _parent.editFlags();
+            }
+        });
+        _editFlags.setEnabled(false);
+        controls.setWidget(0, 1, _editFlags);
     }
 
     // @Override // from PagedGrid
@@ -76,7 +85,8 @@ public class MessagesPanel extends PagedGrid
     {
         ForumModels.ThreadMessages tmodel = (ForumModels.ThreadMessages)_model;
         _parent.gotThread(tmodel.getThread(), tmodel.getGroup());
-        _postReply.setEnabled(tmodel.canPostReply());
+        _postReply.setEnabled(tmodel.canPostReply() && !tmodel.getThread().isLocked());
+        _editFlags.setEnabled(tmodel.isManager());
         super.displayResults(start, count, list);
     }
 
@@ -201,6 +211,9 @@ public class MessagesPanel extends PagedGrid
 
     /** A button for posting a reply message. */
     protected Button _postReply;
+
+    /** A button for editing this thread's flags. */
+    protected Button _editFlags;
 
     protected static final int MESSAGES_PER_PAGE = 10;
 }

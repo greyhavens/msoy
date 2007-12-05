@@ -10,8 +10,10 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -21,6 +23,7 @@ import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.shell.Application;
+import client.util.BorderedDialog;
 import client.util.ClickCallback;
 import client.util.MsoyUI;
 
@@ -61,6 +64,11 @@ public class ThreadPanel extends TitledListPanel
         _group = group;
         updateTitle(getThreadTitle());
         setRightBits(Application.groupViewLink(group.toString(), group.getGroupId()));
+    }
+
+    public void editFlags ()
+    {
+        new ThreadFlagsEditorPanel().show();
     }
 
     public void postReply (ForumMessage inReplyTo)
@@ -201,9 +209,77 @@ public class ThreadPanel extends TitledListPanel
         protected MessageEditor _editor;
     }
 
-    protected MessagesPanel _mpanel;
+    protected class ThreadFlagsEditorPanel extends BorderedDialog
+    {
+        public ThreadFlagsEditorPanel ()
+        {
+            _header.add(createTitleLabel(CMsgs.mmsgs.tfepTitle(), null));
+
+            FlexTable contents = new FlexTable();
+            contents.setCellSpacing(10);
+
+            int row = 0;
+            contents.setText(row, 0, CMsgs.mmsgs.tfepIntro());
+            contents.getFlexCellFormatter().setColSpan(row++, 0, 2);
+
+            contents.setText(row, 0, CMsgs.mmsgs.tfepAnnouncement());
+            contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+            contents.setWidget(row++, 1, _announce = new CheckBox());
+            _announce.setChecked(_thread.isAnnouncement());
+
+            contents.setText(row, 0, CMsgs.mmsgs.tfepSticky());
+            contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+            contents.setWidget(row++, 1, _sticky = new CheckBox());
+            _sticky.setChecked(_thread.isSticky());
+
+            contents.setText(row, 0, CMsgs.mmsgs.tfepLocked());
+            contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+            contents.setWidget(row++, 1, _locked = new CheckBox());
+            _locked.setChecked(_thread.isLocked());
+
+            ((VerticalPanel)_contents).setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
+            ((VerticalPanel)_contents).add(contents);
+
+            _footer.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
+                public void onClick (Widget widget) {
+                    ThreadFlagsEditorPanel.this.hide();
+                }
+            }));
+
+            Button update = new Button(CMsgs.cmsgs.update());
+            new ClickCallback(update) {
+                public boolean callService () {
+                    _flags |= (_announce.isChecked() ? ForumThread.FLAG_ANNOUNCEMENT : 0);
+                    _flags |= (_sticky.isChecked() ? ForumThread.FLAG_STICKY : 0);
+                    _flags |= (_locked.isChecked() ? ForumThread.FLAG_LOCKED : 0);
+                    CMsgs.forumsvc.updateThreadFlags(CMsgs.ident, _thread.threadId, _flags, this);
+                    return true;
+                }
+                public boolean gotResult (Object result) {
+                    _thread.flags = _flags;
+                    // TODO: have ForumModels update all instances of this thread
+                    MsoyUI.info(CMsgs.mmsgs.tfepUpdated());
+                    ThreadFlagsEditorPanel.this.hide();
+                    // update the thread panel title
+                    gotThread(_thread, _group);
+                    return true;
+                }
+                protected int _flags;
+            };
+            _footer.add(update);
+        }
+
+        // @Override // from BorderedDialog
+        protected Widget createContents ()
+        {
+            return new VerticalPanel();
+        }
+
+        protected CheckBox _announce, _sticky, _locked;
+    }
 
     protected int _threadId;
     protected ForumThread _thread;
     protected GroupName _group;
+    protected MessagesPanel _mpanel;
 }

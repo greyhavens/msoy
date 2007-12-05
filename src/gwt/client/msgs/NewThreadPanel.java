@@ -35,6 +35,11 @@ public class NewThreadPanel extends ContentFooterPanel
             bits.add(_announce = new CheckBox());
             bits.add(MsoyUI.createLabel(CMsgs.mmsgs.ntpAnnounceTip(), "Tip"));
             addRow(CMsgs.mmsgs.ntpAnnounce(), bits);
+
+            bits = new RowPanel();
+            bits.add(_sticky = new CheckBox());
+            bits.add(MsoyUI.createLabel(CMsgs.mmsgs.ntpStickyTip(), "Tip"));
+            addRow(CMsgs.mmsgs.ntpSticky(), bits);
         }
 
         addRow(WidgetUtil.makeShim(5, 5));
@@ -77,12 +82,15 @@ public class NewThreadPanel extends ContentFooterPanel
         if (_announce != null && _announce.isChecked()) {
             flags |= ForumThread.FLAG_ANNOUNCEMENT;
         }
+        if (_sticky != null && _sticky.isChecked()) {
+            flags |= ForumThread.FLAG_STICKY;
+        }
         CMsgs.forumsvc.createThread(CMsgs.ident, _groupId, flags, subject, message, callback);
         return true;
     }
 
     protected int _groupId;
     protected TextBox _subject;
-    protected CheckBox _announce;
+    protected CheckBox _announce, _sticky;
     protected MessageEditor _message;
 }

@@ -26,6 +26,8 @@ import com.samskivert.jdbc.depot.operator.Arithmetic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 
+import com.threerings.msoy.fora.data.ForumThread;
+
 /**
  * Manages forum threads and messages.
  */
@@ -45,8 +47,8 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
-     * Loads the specified range of forum threads for the specified group. Ordered most recently
-     * updated first.
+     * Loads the specified range of forum threads for the specified group. Ordered first stickyness
+     * and then by most recently updated (newer first).
      */
     public List<ForumThreadRecord> loadThreads (int groupId, int offset, int count)
         throws PersistenceException
@@ -54,7 +56,10 @@ public class ForumRepository extends DepotRepository
         return findAll(ForumThreadRecord.class,
                        new Where(ForumThreadRecord.GROUP_ID_C, groupId),
                        new Limit(offset, count),
-                       OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID_C));
+                       new OrderBy(
+                           new SQLExpression[] { ForumThreadRecord.STICKY_C,
+                                                 ForumThreadRecord.MOST_RECENT_POST_ID_C },
+                           new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC }));
     }
 
     /**
@@ -131,6 +136,7 @@ public class ForumRepository extends DepotRepository
         ftr.groupId = groupId;
         ftr.flags = flags;
         ftr.subject = subject;
+        ftr.sticky = (flags & ForumThread.FLAG_STICKY) != 0;
         ftr.mostRecentPostTime = new Timestamp(System.currentTimeMillis()); // must be non-null
         insert(ftr);
 
@@ -144,6 +150,17 @@ public class ForumRepository extends DepotRepository
         ftr.posts = 1;
 
         return ftr;
+    }
+
+    /**
+     * Updates the flags of the specified thread.
+     */
+    public void updateThreadFlags (int threadId, int flags)
+        throws PersistenceException
+    {
+        updatePartial(ForumThreadRecord.class, threadId,
+                      ForumThreadRecord.FLAGS, flags,
+                      ForumThreadRecord.STICKY, (flags & ForumThread.FLAG_STICKY) != 0);
     }
 
     /**

@@ -80,7 +80,7 @@ public class GroupView extends VerticalPanel
             _me = null; // we'll recompute this when we get the group detail
             loadGroup(groupId);
         }
-        _forums.displayGroupThreads(groupId, amManager());
+        _forums.displayGroupThreads(groupId);
     }
 
     // from interface GroupEdit.GroupSubmissionListener
@@ -116,9 +116,6 @@ public class GroupView extends VerticalPanel
         }
 
         _parent.setPageTitle("Groups", _group.name);
-
-        // let the forum panel know if we're a group manager
-        _forums.setIsManager(amManager());
 
         _table.clear();
         _table.setStyleName("groupView");

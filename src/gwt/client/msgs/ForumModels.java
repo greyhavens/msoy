@@ -34,6 +34,10 @@ public class ForumModels
             return _canStartThread;
         }
 
+        public boolean isManager () {
+            return _isManager;
+        }
+
         /**
          * Looks up the specified thread in the set of all threads ever fetched by this model.
          */
@@ -58,6 +62,7 @@ public class ForumModels
         public void onSuccess (Object result) {
             ForumService.ThreadResult tresult = (ForumService.ThreadResult)result;
             _canStartThread = tresult.canStartThread;
+            _isManager = tresult.isManager;
             // note all of our threads so that we can provide them later to non-PagedGrid consumers
             for (int ii = 0; ii < tresult.threads.size(); ii++) {
                 mapThread((ForumThread)tresult.threads.get(ii));
@@ -85,7 +90,7 @@ public class ForumModels
         }
 
         protected int _groupId;
-        protected boolean _canStartThread;
+        protected boolean _canStartThread, _isManager;
         protected HashIntMap _threads = new HashIntMap();
     }
 
@@ -165,6 +170,10 @@ public class ForumModels
             return _canPostReply;
         }
 
+        public boolean isManager () {
+            return _isManager;
+        }
+
         // @Override // from ServiceBackedDataModel
         public void appendItem (Object item) {
             super.appendItem(item);
@@ -185,6 +194,7 @@ public class ForumModels
                 _thread = mresult.thread;
             }
             _canPostReply = mresult.canPostReply;
+            _isManager = mresult.isManager;
             _group = mresult.group;
 
             // let the PagedGrid know that we're good and to render the items
@@ -221,7 +231,7 @@ public class ForumModels
         protected int _threadId;
         protected ForumThread _thread = new ForumThread(); // dummy to make logic easier
         protected GroupName _group;
-        protected boolean _canPostReply;
+        protected boolean _canPostReply, _isManager;
     }
 
     /**

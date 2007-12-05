@@ -137,24 +137,19 @@ public class ThreadListPanel extends PagedGrid
             setWidget(0, col, new Image("/images/msgs/" + itype + ".png"));
             getFlexCellFormatter().setStyleName(0, col++, "Status");
 
-            // TODO: display flags icons next to subject
-            Hyperlink subject = Application.createLink(
-                thread.subject, Page.GROUP, Args.compose("t", thread.threadId));
-            if (thread.flags != 0) {
-                RowPanel bits = new RowPanel();
-                if (thread.isAnnouncement()) {
-                    bits.add(new Label(CMsgs.mmsgs.tlpAnnounce()));
-                }
-                bits.add(subject);
-                for (int ii = 0; ii < FLAG_IMAGES.length; ii++) {
-                    if ((thread.flags & (1 << ii)) != 0) {
-                        bits.add(new Image("/images/msgs/" + FLAG_IMAGES[ii] + ".png"));
-                    }
-                }
-                setWidget(0, col, bits);
-            } else {
-                setWidget(0, col, subject);
+            RowPanel bits = new RowPanel();
+            if (thread.isAnnouncement()) {
+                bits.add(new Label(CMsgs.mmsgs.tlpAnnounce()));
             }
+            bits.add(Application.createLink(thread.subject, Page.GROUP,
+                                            Args.compose("t", thread.threadId)));
+            for (int ii = 0; ii < FLAG_IMAGES.length; ii++) {
+                if ((thread.flags & (1 << ii)) != 0) {
+                    bits.add(new Image("/images/msgs/" + FLAG_IMAGES[ii] + ".png"));
+                }
+            }
+
+            setWidget(0, col, bits);
             getFlexCellFormatter().setStyleName(0, col++, "Subject");
 
             setText(0, col, "" + thread.posts);

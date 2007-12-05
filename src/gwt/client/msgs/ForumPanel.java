@@ -19,12 +19,11 @@ public class ForumPanel extends TitledListPanel
         _fmodels = fmodels;
     }
 
-    public void displayGroupThreads (int groupId, boolean isManager)
+    public void displayGroupThreads (int groupId)
     {
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayGroupThreads(groupId, _fmodels);
         setContents(createHeader(CMsgs.mmsgs.groupThreadListHeader()), threads);
-        _isManager = isManager;
     }
 
     public void displayUnreadThreads (boolean refresh)
@@ -36,16 +35,8 @@ public class ForumPanel extends TitledListPanel
 
     public void startNewThread (int groupId)
     {
-        setContents(CMsgs.mmsgs.ntpTitle(), new NewThreadPanel(groupId, _isManager));
-    }
-
-    /**
-     * Called by the GroupView that contains us to enable our manager state once it knows whether
-     * we're a manager in the group in question.
-     */
-    public void setIsManager (boolean isManager)
-    {
-        _isManager = isManager;
+        boolean isManager = _fmodels.getGroupThreads(groupId).isManager();
+        setContents(CMsgs.mmsgs.ntpTitle(), new NewThreadPanel(groupId, isManager));
     }
 
     protected FlexTable createHeader (String title)
@@ -67,17 +58,14 @@ public class ForumPanel extends TitledListPanel
     {
         MsoyUI.info(CMsgs.mmsgs.msgNewThreadPosted());
         _fmodels.newThreadPosted(thread);
-        displayGroupThreads(thread.groupId, _isManager);
+        displayGroupThreads(thread.groupId);
     }
 
     protected void newThreadCanceled (int groupId)
     {
-        displayGroupThreads(groupId, _isManager);
+        displayGroupThreads(groupId);
     }
 
     /** Our forum model cache. */
     protected ForumModels _fmodels;
-
-    /** Whether or not we're a manager in the group we're displaying. */
-    protected boolean _isManager;
 }

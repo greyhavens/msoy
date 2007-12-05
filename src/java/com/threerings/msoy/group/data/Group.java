@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -85,6 +86,14 @@ public class Group
     public MediaDesc getLogo ()
     {
         return (logo == null) ? getDefaultGroupLogoMedia() : logo;
+    }
+
+    /**
+     * Returns this group's name as a {@link GroupName} record.
+     */
+    public GroupName getName ()
+    {
+        return new GroupName(name, groupId);
     }
 
     /**
