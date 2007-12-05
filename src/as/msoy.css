@@ -822,7 +822,7 @@ Tree {
   paddingBottom: 4px;
 }
 
-.lobbyTableList {
+.lobbyTableList, .pendingTableList, .runningTableList {
   verticalGap: 0px;
 }
 

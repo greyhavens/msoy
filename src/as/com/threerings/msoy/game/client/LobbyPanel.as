@@ -46,6 +46,7 @@ import com.threerings.msoy.ui.SkinnableImage;
 import com.threerings.msoy.ui.ThumbnailPanel;
 
 import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.MsoyTable;
 import com.threerings.msoy.item.data.all.Game;
 
@@ -100,15 +101,44 @@ public class LobbyPanel extends VBox
         _info.text = game.description;
 
         // determine our informational messages
+        var noPendersMsg :String, pendersHeader :String, runningHeader :String;
         if (GameConfig.SEATED_GAME == _lobbyObj.gameDef.match.getMatchType()) {
-            _pendersHeader = Msgs.GAME.get("l.penders_header_seated");
-            _noPendersMsg = Msgs.GAME.get(
+            noPendersMsg = Msgs.GAME.get(
                 _friendsOnly ? "m.no_friends_seated" : "m.no_penders_seated");
+            pendersHeader = Msgs.GAME.get("l.penders_header_seated");
+            if ((_lobbyObj.gameDef.match as MsoyMatchConfig).unwatchable) {
+                runningHeader = Msgs.GAME.get("l.running_header_seated_nowatch");
+            } else {
+                runningHeader = Msgs.GAME.get("l.running_header_seated");
+            }
+
         } else {
-            _pendersHeader = Msgs.GAME.get("l.penders_header_party");
-            _noPendersMsg = Msgs.GAME.get(
+            noPendersMsg = Msgs.GAME.get(
                 _friendsOnly ? "m.no_friends_party" : "m.no_penders_party");
+            pendersHeader = ""; // this is never used party games start immediately
+            runningHeader = Msgs.GAME.get("l.running_header_party");
         }
+
+        _noTablesLabel = MsoyUI.createLabel(noPendersMsg, "tableMessage");
+        _tableList.addChild(_noTablesLabel);
+
+        _tableList.addChild(_pendingList = new VBox());
+        _pendingList.styleName = "pendingTableList";
+        _pendingList.percentWidth = 100;
+        var header :HBox = new HBox();
+        header.percentWidth = 100;
+        header.styleName = "tableHeader";
+        header.addChild(MsoyUI.createLabel(pendersHeader));
+        _pendingList.addChild(header);
+
+        _tableList.addChild(_runningList = new VBox());
+        _runningList.styleName = "runningTableList";
+        _runningList.percentWidth = 100;
+        header = new HBox();
+        header.percentWidth = 100;
+        header.styleName = "tableHeader";
+        header.addChild(MsoyUI.createLabel(runningHeader));
+        _runningList.addChild(header);
 
         // create our table creation panel now that we have our game config
         _creationPanel = new TableCreationPanel(_gctx, this);
@@ -117,8 +147,8 @@ public class LobbyPanel extends VBox
         for each (var table :Table in _lobbyObj.tables.toArray()) {
             tableAdded(table);
         }
-        if (_tableList.numChildren == 0) {
-            _tableList.addChild(MsoyUI.createLabel(_noPendersMsg, "tableMessage"));
+        updateTableList();
+        if (_pendingList.numChildren == 1 && _runningList.numChildren == 1) {
             showCreateGame();
         }
     }
@@ -198,43 +228,23 @@ public class LobbyPanel extends VBox
     // from TableObserver
     public function tableAdded (table :Table) :void
     {
-        // if this table is running and we're a seated game, ignore it
-        if (table.gameOid > 0 && GameConfig.SEATED_GAME == _lobbyObj.gameDef.match.getMatchType()) {
-            return;
-        }
-
         // if we're in friends only mode and this table does not contain a friend, skip it
         if (_friendsOnly && (table as MsoyTable).countFriends(_wctx.getMemberObject()) == 0) {
             return;
         }
 
-        // if we're adding the first table, remove the "no tables" message and add the header
-        if (_tableList.numChildren == 1 && !(_tableList.getChildAt(0) is TablePanel)) {
-            _tableList.removeChildAt(0);
-        }
-        if (_tableList.numChildren == 0) {
-            var header :HBox = new HBox();
-            header.percentWidth = 100;
-            header.styleName = "tableHeader";
-            header.addChild(MsoyUI.createLabel(_pendersHeader));
-            _tableList.addChild(header);
-        }
-
-        // finally add the table at the bottom of the list
-        _tableList.addChild(new TablePanel(_gctx, this, table as MsoyTable));
+        // add the table at the bottom of the list
+        var list :VBox = (table.gameOid > 0) ? _runningList : _pendingList;
+        list.addChild(new TablePanel(_gctx, this, table as MsoyTable));
+        updateTableList();
     }
 
     // from TableObserver
     public function tableUpdated (table :Table) :void
     {
-        // if this table is running and we're a seated game, remove it
-        if (table.gameOid > 0 && GameConfig.SEATED_GAME == _lobbyObj.gameDef.match.getMatchType()) {
-            tableRemoved(table.tableId);
-            return;
-        }
+        var panel :TablePanel = getTablePanel(table.tableId);
 
         // if we're in friends only mode, this table may now be visible or not
-        var panel :TablePanel = getTablePanel(table.tableId);
         if (_friendsOnly) {
             var count :int = (table as MsoyTable).countFriends(_wctx.getMemberObject());
             if (count > 0 && panel == null) {
@@ -247,10 +257,20 @@ public class LobbyPanel extends VBox
             }
         }
 
-        // otherwise update it
-        if (panel != null) {
-            panel.update(table as MsoyTable, isSeated());
+        // if we have no ui for it, no problem, stop here
+        if (panel == null) {
+            return;
         }
+
+        // if the table switched from pending to running, move it
+        if (table.gameOid > 0 && panel.parent == _pendingList) {
+            _pendingList.removeChild(panel);
+            _runningList.addChild(panel);
+            updateTableList();
+        }
+
+        // and update it
+        panel.update(table as MsoyTable, isSeated());
     }
 
     // from TableObserver
@@ -258,11 +278,8 @@ public class LobbyPanel extends VBox
     {
         var panel :TablePanel = getTablePanel(tableId);
         if (panel != null) {
-            _tableList.removeChild(panel);
-            if (_tableList.numChildren == 1 && !(_tableList.getChildAt(0) is TablePanel)) {
-                _tableList.removeChildAt(0);
-                _tableList.addChild(MsoyUI.createLabel(_noPendersMsg, "tableMessage"));;
-            }
+            panel.parent.removeChild(panel);
+            updateTableList();
         }
     }
 
@@ -395,10 +412,25 @@ public class LobbyPanel extends VBox
         _contents.addChild(_tableList);
     }
 
+    protected function updateTableList () :void
+    {
+        var havePending :Boolean = (_pendingList.numChildren > 1);
+        var haveRunning :Boolean = (_runningList.numChildren > 1);
+        _pendingList.visible = _pendingList.includeInLayout = havePending;
+        _runningList.visible = _runningList.includeInLayout = haveRunning;
+        _noTablesLabel.visible = _noTablesLabel.includeInLayout = !(havePending || haveRunning);
+    }
+
     protected function getTablePanel (tableId :int) :TablePanel
     {
-        for (var ii :int = 0; ii < _tableList.numChildren; ii++) {
-            var child :TablePanel = (_tableList.getChildAt(ii) as TablePanel);
+        for (var ii :int = 0; ii < _pendingList.numChildren; ii++) {
+            var child :TablePanel = (_pendingList.getChildAt(ii) as TablePanel);
+            if (child != null && child.tableId == tableId) {
+                return child;
+            }
+        }
+        for (ii = 0; ii < _runningList.numChildren; ii++) {
+            child = (_runningList.getChildAt(ii) as TablePanel);
             if (child != null && child.tableId == tableId) {
                 return child;
             }
@@ -434,10 +466,10 @@ public class LobbyPanel extends VBox
     protected var _buy :CommandLinkButton;
     protected var _createBtn :CommandButton;
 
+    protected var _noTablesLabel :Label;
     protected var _tableList :VBox;
-
-    protected var _pendersHeader :String;
-    protected var _noPendersMsg :String;
+    protected var _pendingList :VBox;
+    protected var _runningList :VBox;
 
     /** Our log. */
     private const log :Log = Log.getLog(LobbyPanel);
