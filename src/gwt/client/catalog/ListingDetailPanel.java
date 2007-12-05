@@ -82,7 +82,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 // also add a link to view the original
                 _details.add(Application.createLink(
                                  CCatalog.msgs.listingViewOrig(), Page.INVENTORY,
-                                 Args.compose(""+detail.item.getType(), "0", ""+_listing.originalItemId)));
+                                 Args.compose(""+detail.item.getType(), "0",
+                                              ""+_listing.originalItemId)));
             }
         }
 
