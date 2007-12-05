@@ -218,7 +218,6 @@ public class NaviPanel extends FlexTable
                         clearPopup();
                     }
                 });
-                addLink(menu, "Tutorials", Page.WRAP, "tutorial");
                 addLink(menu, "Online Support", Page.WRAP, Args.compose("w", "Support"));
                 addLink(menu, "Bug Reports", Page.GROUP, "72"); // hardcoded First group id
                 addURLInNewFrame(menu, "Whirled Wiki", "http://wiki.whirled.com/");
