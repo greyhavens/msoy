@@ -165,9 +165,7 @@ public class Frame
         }
 
         WorldClient.closeClient(true);
-
         _closeToken = null;
-
         RootPanel.get(SEPARATOR).clear();
     }
 
@@ -181,14 +179,21 @@ public class Frame
         }
 
         if (_maximizeContent.isAttached()) {
+            RootPanel.get(SEPARATOR).remove(_maximizeContent);
+            RootPanel.get(SEPARATOR).remove(_separatorLine);
             History.newItem(_closeToken);
+
         } else {
             new SlideContentOff().start(new Command() {
                 public void execute () {
+                    RootPanel.get(SEPARATOR).remove(_minimizeContent);
+                    RootPanel.get(SEPARATOR).remove(_separatorLine);
                     History.newItem(_closeToken);
                 }
             });
         }
+
+        _content = null;
     }
 
     /**
