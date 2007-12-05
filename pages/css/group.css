@@ -27,13 +27,11 @@
 }
 
 .groupView .Blurb {
-    margin-bottom: 15px;
+    margin-bottom: 5px;
 }
 
-.groupView .DescriptionPanel {
-    padding: 15px;
-    padding-top: 10px;
-    margin: 0px;
+.groupView .DescriptionPanel p {
+    margin: 0px 0px 5px 0px;
 }
 
 .groupView .LogoPanel {
