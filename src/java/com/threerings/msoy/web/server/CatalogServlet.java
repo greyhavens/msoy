@@ -65,16 +65,10 @@ public class CatalogServlet extends MsoyServiceServlet
         CatalogResult result = new CatalogResult();
         List<CatalogListing> list = new ArrayList<CatalogListing>();
 
-        // make sure the type in question is salable
-        try {
-            Item item = (Item)Item.getClassForType(query.itemType).newInstance();
-            if (item instanceof SubItem && !((SubItem)item).isSalable()) {
-                result.listings = list;
-                return result;
-            }
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to check salability [query=" + query + "].", e);
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        // if the type in question is not salable, return an empty list
+        if (!isSalable(query.itemType)) {
+            result.listings = list;
+            return result;
         }
 
         try {
@@ -301,6 +295,11 @@ public class CatalogServlet extends MsoyServiceServlet
     public CatalogListing loadListing (byte itemType, int catalogId, boolean loadListedItem)
         throws ServiceException
     {
+        // if the type in question is not salable, reject the request
+        if (!isSalable(itemType)) {
+            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+        }
+
         // locate the appropriate repository
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemType);
         try {
@@ -308,6 +307,10 @@ public class CatalogServlet extends MsoyServiceServlet
             CatalogRecord record = repo.loadListing(catalogId, loadListedItem);
             if (record == null) {
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            }
+            // if this listing is not meant for general sale, no lookey
+            if (record.pricing == CatalogListing.PRICING_HIDDEN) {
+                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
             }
             return record.toListing();
 
@@ -558,5 +561,20 @@ public class CatalogServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
         }
         return price;
+    }
+
+    /**
+     * Returns true if the specified item type is salable, false if not.
+     */
+    protected boolean isSalable (byte itemType)
+        throws ServiceException
+    {
+        try {
+            Item item = (Item)Item.getClassForType(itemType).newInstance();
+            return (!(item instanceof SubItem) || ((SubItem)item).isSalable());
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to check salability [type=" + itemType + "].", e);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
     }
 }
