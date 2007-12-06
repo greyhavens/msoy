@@ -158,13 +158,11 @@ public class GameLiaison
     public function clientDidClear (event :ClientEvent) :void
     {
         // remove any trophy panel we might have lying around
-        if (_awardPanel != null) {
-            if (_awardPanel.parent != null) {
-                var container :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
-                container.removeOverlay(_awardPanel);
-                // if the path completes after this, it will generate a warning, but in "theory" it
-                // should stop receiving onEnterFrame when it's removed from the hierarchy
-            }
+        if (_awardPanel != null && _awardPanel.parent != null) {
+            var container :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
+            container.removeOverlay(_awardPanel);
+            // if the path completes after this, it will generate a warning, but in "theory" it
+            // should stop receiving onEnterFrame when it's removed from the hierarchy
         }
         // tell the game director that we're audi
         _ctx.getGameDirector().liaisonCleared(this);
