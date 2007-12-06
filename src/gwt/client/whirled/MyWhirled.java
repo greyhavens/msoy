@@ -265,9 +265,16 @@ public class MyWhirled extends FlexTable
 
         // first add our home room
         HorizontalPanel homeRow = new HorizontalPanel();
-        homeRow.add(new Image("/images/whirled/my_home.png"));
+        final Integer homeId = new Integer(myWhirled.homeSceneId);
+        Image homeIcon = new Image("/images/whirled/my_home.png");
+        homeIcon.addStyleName("actionLabel");
+        homeIcon.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                Application.go(Page.WORLD, "s" + homeId);
+            }
+        });
+        homeRow.add(homeIcon);
         homeRow.add(WidgetUtil.makeShim(2, 2));
-        Integer homeId = new Integer(myWhirled.homeSceneId);
         homeRow.add(Application.createLink((String)myWhirled.ownedRooms.get(homeId),
                                            Page.WORLD, "s" + homeId));
         _roomsBox.add(homeRow);
