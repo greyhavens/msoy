@@ -159,8 +159,7 @@ public class GameLiaison
     {
         // remove any trophy panel we might have lying around
         if (_awardPanel != null && _awardPanel.parent != null) {
-            var container :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
-            container.removeOverlay(_awardPanel);
+            _ctx.getTopPanel().getPlaceContainer().removeOverlay(_awardPanel);
             // if the path completes after this, it will generate a warning, but in "theory" it
             // should stop receiving onEnterFrame when it's removed from the hierarchy
         }
