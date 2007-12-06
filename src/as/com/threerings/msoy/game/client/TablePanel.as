@@ -84,32 +84,6 @@ public class TablePanel extends VBox
             _seatsGrid.addCell(_startBtn);
         }
 
-        // maybe add a button for entering the game
-        if (table.gameOid != -1) {
-            var key :String = null;
-            switch (table.config.getMatchType()) {
-            case GameConfig.PARTY:
-                if (!table.tconfig.privateTable) {
-                    key = "b.join";
-                }
-                break;
-
-            default:
-                if (!(_gameDef.match as MsoyMatchConfig).unwatchable &&
-                    !table.tconfig.privateTable) {
-                    key = "b.watch";
-                }
-                break;
-            }
-
-            if (key != null) {
-                var btn :CommandButton = new CommandButton(
-                    MsoyController.GO_GAME, [ _game.gameId, table.gameOid ]);
-                btn.label = Msgs.GAME.get(key);
-                _seatsGrid.addCell(btn);
-            }
-        }
-
         // finally update our state
         update(table, panel.isSeated());
     }
@@ -133,10 +107,38 @@ public class TablePanel extends VBox
             _labelsBox.removeChild(_labelsBox.getChildAt(0));
         }
 
-        // if the game is in progress, report the number of people in the room
+        // if the game is in progress
         if (table.gameOid != -1) {
+            // display the number of people in the room
             var wc :String = String(table.watcherCount);
             _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.people") + ": "+ wc, ""));
+
+            // maybe add a button for entering the game if we haven't already
+            if (_seatsGrid.cellCount == 0 ||
+                (_seatsGrid.getCellAt(_seatsGrid.cellCount-1) is SeatPanel)) {
+                var key :String = null;
+                switch (table.config.getMatchType()) {
+                case GameConfig.PARTY:
+                    if (!table.tconfig.privateTable) {
+                        key = "b.join";
+                    }
+                    break;
+
+                default:
+                    if (!(_gameDef.match as MsoyMatchConfig).unwatchable &&
+                        !table.tconfig.privateTable) {
+                        key = "b.watch";
+                    }
+                    break;
+                }
+
+                if (key != null) {
+                    var btn :CommandButton = new CommandButton(
+                        MsoyController.GO_GAME, [ _game.gameId, table.gameOid ]);
+                    btn.label = Msgs.GAME.get(key);
+                    _seatsGrid.addCell(btn);
+                }
+            }
         }
 
         var ratedKey :String = table.config.rated ? "l.is_rated" : "l.not_rated";
