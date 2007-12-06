@@ -93,4 +93,11 @@ public interface RoomService extends InvocationService
      * @see MobInfo
      */
     public void spawnMob (Client caller, int gameId, String mobId, InvocationListener listener);
+
+    /**
+     * Requests the removal of a MOB from the current scene location.
+     *
+     * @see MobInfo
+     */
+    public void despawnMob (Client caller, int gameId, String mobId, InvocationListener listener);
 }

@@ -51,6 +51,13 @@ public class RoomDispatcher extends InvocationDispatcher
             );
             return;
 
+        case RoomMarshaller.DESPAWN_MOB:
+            ((RoomProvider)provider).despawnMob(
+                source,
+                ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.InvocationListener)args[2]
+            );
+            return;
+
         case RoomMarshaller.EDIT_ROOM:
             ((RoomProvider)provider).editRoom(
                 source,

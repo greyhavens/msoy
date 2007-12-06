@@ -489,6 +489,7 @@ public class RoomManager extends SpotSceneManager
         if (_mobs.containsKey(key)) {
             log.warning("Tried to spawn mob that's already present [gameId=" +
                         gameId + ", mobId=" + mobId + "]");
+            listener.requestFailed(RoomCodes.E_INTERNAL_ERROR);
             return;
         }
 
@@ -508,6 +509,25 @@ public class RoomManager extends SpotSceneManager
         });
     }
 
+    // from RoomProvider
+    public void despawnMob (ClientObject caller, int gameId, String mobId,
+                            final InvocationListener listener)
+        throws InvocationException
+    {
+        Tuple<Integer, String> key = new Tuple<Integer, String>(gameId, mobId);
+
+        final MobObject mobObj = _mobs.get(key);
+        if (mobObj == null) {
+            log.warning("Tried to despawn mob that's not present [gameId=" +
+                        gameId + ", mobId=" + mobId + "]");
+            listener.requestFailed(RoomCodes.E_INTERNAL_ERROR);
+            return;
+        }
+
+        MsoyServer.screg.leaveOccupiedScene(mobObj);
+        MsoyServer.omgr.destroyObject(mobObj.getOid());
+        _mobs.remove(key);
+    }
 
     @Override // from PlaceManager
     public void messageReceived (MessageEvent event)

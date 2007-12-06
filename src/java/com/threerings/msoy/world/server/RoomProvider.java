@@ -26,6 +26,12 @@ public interface RoomProvider extends InvocationProvider
     public void changeLocation (ClientObject caller, ItemIdent arg1, Location arg2);
 
     /**
+     * Handles a {@link RoomService#despawnMob} request.
+     */
+    public void despawnMob (ClientObject caller, int arg1, String arg2, InvocationService.InvocationListener arg3)
+        throws InvocationException;
+
+    /**
      * Handles a {@link RoomService#editRoom} request.
      */
     public void editRoom (ClientObject caller, InvocationService.ResultListener arg1)

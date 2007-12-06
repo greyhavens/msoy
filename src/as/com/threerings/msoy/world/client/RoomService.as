@@ -26,6 +26,9 @@ public interface RoomService extends InvocationService
     function changeLocation (arg1 :Client, arg2 :ItemIdent, arg3 :Location) :void;
 
     // from Java interface RoomService
+    function despawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_InvocationListener) :void;
+
+    // from Java interface RoomService
     function editRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface RoomService

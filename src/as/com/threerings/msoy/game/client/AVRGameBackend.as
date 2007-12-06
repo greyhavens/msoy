@@ -148,6 +148,7 @@ public class AVRGameBackend extends ControlBackend
         o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getPlayerIds_v1"] = getPlayerIds_v1;
         o["spawnMob_v1"] = spawnMob_v1;
+        o["despawnMob_v1"] = despawnMob_v1;
 
         _stateBackend.populateSubProperties(o);
         _questBackend.populateSubProperties(o);
@@ -243,6 +244,20 @@ public class AVRGameBackend extends ControlBackend
                 view.getRoomObject().roomService.spawnMob(
                     _mctx.getClient(), _ctrl.getGameId(), mobId,
                     loggingInvocationListener("spawnMob"));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected function despawnMob_v1 (mobId :String) :Boolean
+    {
+        if (isPlaying()) {
+            var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;
+            if (view != null) {
+                view.getRoomObject().roomService.despawnMob(
+                    _mctx.getClient(), _ctrl.getGameId(), mobId,
+                    loggingInvocationListener("despawnMob"));
                 return true;
             }
         }
