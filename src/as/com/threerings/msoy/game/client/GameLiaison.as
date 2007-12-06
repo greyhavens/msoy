@@ -31,8 +31,6 @@ import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.parlor.client.GameReadyObserver;
-
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.WorldContext;
