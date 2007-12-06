@@ -79,11 +79,11 @@ public class MsoyTableManager extends TableManager
     @Override
     protected void gameCreated (Table table, GameObject gameobj, GameManager gmgr)
     {
-        for (int ii = 0; table.occupants != null && ii < table.occupants.length; ii++) {
-            if (table.occupants[ii] == null) {
+        for (int ii = 0; table.players != null && ii < table.players.length; ii++) {
+            if (table.players[ii] == null) {
                 continue;
             }
-            MemberName member = (MemberName) table.occupants[ii];
+            MemberName member = (MemberName) table.players[ii];
             _membersPlaying.add(member.getMemberId());
         }
 
@@ -94,14 +94,14 @@ public class MsoyTableManager extends TableManager
     @Override
     protected void purgeTable (Table table)
     {
-        // check for occupants in local map - this is the last time we'll hear about this game, so
+        // check for players in local map - this is the last time we'll hear about this game, so
         // make sure the players really are cleared out.
-        for (int ii = 0; table.occupants != null && ii < table.occupants.length; ii++) {
-            if (table.occupants[ii] == null) {
+        for (int ii = 0; table.players != null && ii < table.players.length; ii++) {
+            if (table.players[ii] == null) {
                 continue;
             }
 
-            MemberName member = (MemberName) table.occupants[ii];
+            MemberName member = (MemberName) table.players[ii];
             if (_membersPlaying.remove(member.getMemberId())) {
                 MsoyGameServer.worldClient.updatePlayer(member.getMemberId(), null);
             }

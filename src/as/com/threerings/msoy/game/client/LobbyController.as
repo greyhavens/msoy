@@ -175,8 +175,8 @@ public class LobbyController extends Controller implements Subscriber
         }
 
         for each (var table :Table in _lobj.tables.toArray()) {
-            for each (var occupant :Name in table.occupants) {
-                var member :MemberName = (occupant as MemberName);
+            for each (var player :Name in table.players) {
+                var member :MemberName = (player as MemberName);
                 if (member == null || member.getMemberId() != playerId) {
                     continue;
                 }
@@ -185,13 +185,13 @@ public class LobbyController extends Controller implements Subscriber
                     _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_in_progress");
                 } else {
                     var ii :int = 0;
-                    for (; ii < table.occupants.length; ii++) {
-                        if (table.occupants[ii] == null) {
+                    for (; ii < table.players.length; ii++) {
+                        if (table.players[ii] == null) {
                             handleJoinTable(table.tableId, ii);
                             break;
                         }
                     }
-                    if (ii == table.occupants.length) {
+                    if (ii == table.players.length) {
                         _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_table_full");
                     }
                 }
@@ -290,8 +290,8 @@ public class LobbyController extends Controller implements Subscriber
                 (friendsOnly && (table as MsoyTable).countFriends(_mctx.getMemberObject()) == 0)) {
                 continue;
             }
-            for (var ii :int; ii < table.occupants.length; ii++) {
-                if (table.occupants[ii] == null) {
+            for (var ii :int; ii < table.players.length; ii++) {
+                if (table.players[ii] == null) {
                     handleJoinTable(table.tableId, ii);
                     return true;
                 }

@@ -23,7 +23,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 public class MsoyTable extends Table
 {
-    /** Head shots for each occupant. */
+    /** Head shots for each player. */
     public var headShots :TypedArray /* of MediaDesc */;
 
     /** Suitable for unserialization. */
@@ -37,8 +37,8 @@ public class MsoyTable extends Table
     public function countFriends (memObj :MemberObject) :int
     {
         var friends :int = 0, ourId :int = memObj.memberName.getMemberId();
-        for (var ii :int; ii < occupants.length; ii++) {
-            var name :MemberName = (occupants[ii] as MemberName);
+        for (var ii :int; ii < players.length; ii++) {
+            var name :MemberName = (players[ii] as MemberName);
             if (name == null) {
                 continue;
             }

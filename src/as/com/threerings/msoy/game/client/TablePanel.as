@@ -60,12 +60,12 @@ public class TablePanel extends VBox
         _seatsGrid.verticalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.horizontalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.styleName = "seatsGrid";
-        for (var ii :int = 0; ii < table.occupants.length; ii++) {
+        for (var ii :int = 0; ii < table.players.length; ii++) {
             var seat :SeatPanel = new SeatPanel();
             _seatsGrid.addCell(seat);
         }
         _seatsGrid.setStyle("horizontalGap",
-                            10 * (popup ? 1 : Math.max(1, 8-table.occupants.length)));
+                            10 * (popup ? 1 : Math.max(1, 8-table.players.length)));
 
         // create a box to hold configuration options if we're not a popup
         if (!popup) {
@@ -76,8 +76,8 @@ public class TablePanel extends VBox
         }
 
         // if we are the creator, add a button for starting the game now
-        if (table.occupants.length > 0 &&
-            gctx.getPlayerObject().getVisibleName().equals(table.occupants[0]) &&
+        if (table.players.length > 0 &&
+            gctx.getPlayerObject().getVisibleName().equals(table.players[0]) &&
             (table.tconfig.desiredPlayerCount > table.tconfig.minimumPlayerCount)) {
             _startBtn = new CommandButton(LobbyController.START_TABLE, table.tableId);
             _startBtn.label = Msgs.GAME.get("b.start_now");
@@ -95,7 +95,7 @@ public class TablePanel extends VBox
         if (_startBtn != null) {
             _startBtn.enabled = table.mayBeStarted();
         }
-        for (var ii :int = 0; ii < table.occupants.length; ii++) {
+        for (var ii :int = 0; ii < table.players.length; ii++) {
             (_seatsGrid.getCellAt(ii) as SeatPanel).update(_gctx, table, ii, isSeated);
         }
 
@@ -109,9 +109,11 @@ public class TablePanel extends VBox
 
         // if the game is in progress
         if (table.gameOid != -1) {
-            // display the number of people in the room
-            var wc :String = String(table.watcherCount);
-            _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get("l.people") + ": "+ wc, ""));
+            // display the non-players in the room (or everyone for party games)
+            if (table.watchers.length > 0) {
+                _labelsBox.addChild(
+                    makeConfigLabel(Msgs.GAME.get("l.people") + ": " + table.watchers.join(), ""));
+            }
 
             // maybe add a button for entering the game if we haven't already
             if (_seatsGrid.cellCount == 0 ||
@@ -209,17 +211,17 @@ class SeatPanel extends VBox
         _table = table;
         _index = index;
 
-        var occupant :MemberName = (_table.occupants[_index] as MemberName);
-        if (occupant == null) {
+        var player :MemberName = (_table.players[_index] as MemberName);
+        if (player == null) {
             prepareJoinButton();
             _joinBtn.enabled = (table.gameOid <= 0) && !areSeated;
             return;
         }
 
-        prepareOccupant();
+        preparePlayer();
         _headShot.setMediaDesc(_table.headShots[_index] as MediaDesc);
-        _name.text = occupant.toString();
-        if (occupant.equals(_ctx.getPlayerObject().memberName)) {
+        _name.text = player.toString();
+        if (player.equals(_ctx.getPlayerObject().memberName)) {
             _leaveBtn.setCommand(LobbyController.LEAVE_TABLE, _table.tableId);
             _leaveBtn.visible = (_leaveBtn.includeInLayout = true);
         } else {
@@ -230,7 +232,7 @@ class SeatPanel extends VBox
         // optional on TableManager creation, and support it here in the form of the closebox
     }
 
-    protected function prepareOccupant () :void
+    protected function preparePlayer () :void
     {
         if (_name == null || _name.parent != this) {
             while (numChildren > 0) {

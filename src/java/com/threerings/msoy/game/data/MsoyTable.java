@@ -18,7 +18,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 public class MsoyTable extends Table
 {
-    /** Head shots for each occupant. */
+    /** Head shots for each player. */
     public MediaDesc[] headShots;
 
     /** Suitable for unserialization. */
@@ -31,22 +31,22 @@ public class MsoyTable extends Table
     {
         super.init(lobbyOid, tconfig, config);
 
-        headShots = new MediaDesc[occupants.length];
+        headShots = new MediaDesc[players.length];
     }
 
     @Override @ActionScript(omit=true)
-    public void setOccupantPos (int position, BodyObject body)
+    public void setPlayerPos (int position, BodyObject body)
     {
-        super.setOccupantPos(position, body);
+        super.setPlayerPos(position, body);
 
         PlayerObject member = (PlayerObject) body;
         headShots[position] = member.getHeadShotMedia();
     }
 
     @Override @ActionScript(omit=true)
-    public void clearOccupantPos (int position)
+    public void clearPlayerPos (int position)
     {
-        super.clearOccupantPos(position);
+        super.clearPlayerPos(position);
 
         headShots[position] = null;
     }

@@ -193,7 +193,7 @@ public class LobbyManager
 
         // if the game is over its maximum capacity, don't join it
         int maxSeats = ((TableMatchConfig)_lobj.gameDef.match).maxSeats;
-        if (table.watcherCount >= maxSeats) {
+        if (table.watchers.length >= maxSeats) {
             return false;
         }
 
@@ -203,7 +203,7 @@ public class LobbyManager
         }
 
         // see if any of our friends are in this game
-        for (Name occ : table.occupants) {
+        for (Name occ : table.players) {
             int memberId = ((MemberName)occ).getMemberId();
             if (player != null && player.friends.containsKey(memberId)) {
                 return true;
