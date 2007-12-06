@@ -14,11 +14,11 @@ import com.threerings.crowd.data.TokenRing;
 import com.whirled.data.GameData;
 
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 /**
  * Contains information on a player logged on to an MSOY Game server.
@@ -46,13 +46,10 @@ public class PlayerObject extends BodyObject
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
-    public var memberName :MemberName;
+    public var memberName :VizMemberName;
 
     /** The tokens defining the access controls for this user. */
     public var tokens :MsoyTokenRing;
-
-    /** The profile photo that the user has chosen, or null for guests. */
-    public var photo :MediaDesc;
 
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public var humanity :int;
@@ -104,9 +101,7 @@ public class PlayerObject extends BodyObject
      */
     public function getHeadShotMedia () :MediaDesc
     {
-        return (photo != null) ? photo :
-            new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo",
-                                MediaDesc.HALF_VERTICALLY_CONSTRAINED);
+        return memberName.getPhoto();
     }
 
     /**
@@ -144,9 +139,8 @@ public class PlayerObject extends BodyObject
     {
         super.readObject(ins);
 
-        memberName = (ins.readObject() as MemberName);
+        memberName = (ins.readObject() as VizMemberName);
         tokens = (ins.readObject() as MsoyTokenRing);
-        photo = (ins.readObject() as MediaDesc);
         humanity = ins.readInt();
         friends = (ins.readObject() as DSet);
         gameState = (ins.readObject() as DSet);

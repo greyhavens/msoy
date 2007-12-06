@@ -20,6 +20,7 @@ import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
 
+import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.ezgame.data.EZGameConfig;
@@ -36,14 +37,13 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.data.MsoyTable;
 
 public class TablePanel extends VBox
 {
     public var tableId :int;
 
-    public function TablePanel (gctx :GameContext, panel :LobbyPanel, table :MsoyTable,
-                                   popup :Boolean = false)
+    public function TablePanel (
+        gctx :GameContext, panel :LobbyPanel, table :Table, popup :Boolean = false)
     {
         styleName = popup ? "floatingTablePanel" : "listTablePanel";
         verticalScrollPolicy = ScrollPolicy.OFF;
@@ -88,7 +88,7 @@ public class TablePanel extends VBox
         update(table, panel.isSeated());
     }
 
-    public function update (table :MsoyTable, isSeated :Boolean) :void
+    public function update (table :Table, isSeated :Boolean) :void
     {
         // update our background color based on whether or not we're running
         setStyle("backgroundColor", (table.gameOid > 0) ? 0xEEEEEE : 0xFFFFFF);
@@ -186,8 +186,10 @@ import mx.controls.Label;
 
 import com.threerings.flex.CommandButton;
 
+import com.threerings.parlor.data.Table;
+
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.VizMemberName;
 
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.ThumbnailPanel;
@@ -196,7 +198,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.client.LobbyController;
-import com.threerings.msoy.game.data.MsoyTable;
 
 class SeatPanel extends VBox
 {
@@ -205,13 +206,13 @@ class SeatPanel extends VBox
         styleName = "seatPanel";
     }
 
-    public function update (ctx :GameContext, table :MsoyTable, index :int, areSeated :Boolean) :void
+    public function update (ctx :GameContext, table :Table, index :int, areSeated :Boolean) :void
     {
         _ctx = ctx;
         _table = table;
         _index = index;
 
-        var player :MemberName = (_table.players[_index] as MemberName);
+        var player :VizMemberName = (_table.players[_index] as VizMemberName);
         if (player == null) {
             prepareJoinButton();
             _joinBtn.enabled = (table.gameOid <= 0) && !areSeated;
@@ -219,7 +220,7 @@ class SeatPanel extends VBox
         }
 
         preparePlayer();
-        _headShot.setMediaDesc(_table.headShots[_index] as MediaDesc);
+        _headShot.setMediaDesc(player.getPhoto());
         _name.text = player.toString();
         if (player.equals(_ctx.getPlayerObject().memberName)) {
             _leaveBtn.setCommand(LobbyController.LEAVE_TABLE, _table.tableId);
@@ -264,7 +265,7 @@ class SeatPanel extends VBox
     }
 
     protected var _ctx :GameContext;
-    protected var _table :MsoyTable;
+    protected var _table :Table;
     protected var _index :int;
 
     protected var _joinBtn :CommandButton;

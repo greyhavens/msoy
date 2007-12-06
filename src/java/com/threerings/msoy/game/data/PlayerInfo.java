@@ -8,7 +8,7 @@ import com.threerings.util.ActionScript;
 
 import com.whirled.data.WhirledOccupantInfo;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.VizMemberName;
 
 /**
  * Contains information on occupants in a game.
@@ -28,15 +28,11 @@ public class PlayerInfo extends OccupantInfo
     public PlayerInfo (PlayerObject body)
     {
         super(body);
-        _headShot = body.getHeadShotMedia();
     }
 
     // from interface WhirledOccupantInfo
     public String getHeadshotURL ()
     {
-        return _headShot.getMediaPath();
+        return ((VizMemberName)username).getPhoto().getMediaPath();
     }
-
-    /** The media of the user's headshot (part of their avatar). */
-    protected MediaDesc _headShot;
 }

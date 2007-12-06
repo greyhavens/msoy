@@ -31,7 +31,6 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.data.MsoyTable;
 
 public class LobbyController extends Controller implements Subscriber
 {
@@ -287,7 +286,7 @@ public class LobbyController extends Controller implements Subscriber
     {
         for each (var table :Table in _lobj.tables.toArray()) {
             if (table.inPlay() ||
-                (friendsOnly && (table as MsoyTable).countFriends(_mctx.getMemberObject()) == 0)) {
+                (friendsOnly && LobbyPanel.countFriends(table, _mctx.getMemberObject()) == 0)) {
                 continue;
             }
             for (var ii :int; ii < table.players.length; ii++) {

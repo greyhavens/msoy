@@ -19,7 +19,6 @@ import com.threerings.parlor.data.Table;
 
 import com.threerings.msoy.client.Msgs
 import com.threerings.msoy.client.WorldContext;
-import com.threerings.msoy.game.data.MsoyTable;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -35,7 +34,7 @@ public class FloatingTableDisplay extends FloatingPanel
         _panel = panel;
         _tableDir = tableDir;
         _tableDir.addTableObserver(this);
-        _table = (_tableDir.getSeatedTable() as MsoyTable);
+        _table = _tableDir.getSeatedTable();
 
         styleName = "floatingTableDisplay";
         verticalScrollPolicy = ScrollPolicy.OFF;
@@ -80,7 +79,7 @@ public class FloatingTableDisplay extends FloatingPanel
             if (table.gameOid > 0) {
                 shutdown();
             } else {
-                _table = (table as MsoyTable);
+                _table = table;
                 _tablePanel.update(_table, true);
             }
         }
@@ -124,7 +123,7 @@ public class FloatingTableDisplay extends FloatingPanel
 
     protected var _gctx :GameContext;
     protected var _panel :LobbyPanel;
-    protected var _table :MsoyTable;
+    protected var _table :Table;
     protected var _tablePanel :TablePanel;
     protected var _tableDir :TableDirector;
     protected var _hasBeenShutDown :Boolean = false;

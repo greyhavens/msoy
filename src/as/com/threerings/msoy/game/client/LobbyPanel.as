@@ -40,6 +40,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.SkinnableImage;
@@ -47,7 +48,6 @@ import com.threerings.msoy.ui.ThumbnailPanel;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.data.MsoyTable;
 import com.threerings.msoy.item.data.all.Game;
 
 /**
@@ -61,6 +61,25 @@ public class LobbyPanel extends VBox
 
     /** The lobby controller. */
     public var controller :LobbyController;
+
+    /**
+     * Returns the count of friends of the specified member that are seated at this table.
+     */
+    public static function countFriends (table :Table, memObj :MemberObject) :int
+    {
+        var friends :int = 0, ourId :int = memObj.memberName.getMemberId();
+        for (var ii :int; ii < table.players.length; ii++) {
+            var name :MemberName = (table.players[ii] as MemberName);
+            if (name == null) {
+                continue;
+            }
+            var friendId :int = name.getMemberId();
+            if (memObj.friends.containsKey(friendId) || friendId == ourId) {
+                friends++;
+            }
+        }
+        return friends;
+    }
 
     /**
      * Create a new LobbyPanel.
@@ -215,7 +234,7 @@ public class LobbyPanel extends VBox
             // we might end up in here before we have our lobby object because this event came in
             // on the member object
             if (_lobbyObj != null) {
-                for each (var table :MsoyTable in _lobbyObj.tables.toArray()) {
+                for each (var table :Table in _lobbyObj.tables.toArray()) {
                     var panel :TablePanel = getTablePanel(table.tableId);
                     if (panel != null) {
                         panel.update(table, isSeated());
@@ -229,13 +248,13 @@ public class LobbyPanel extends VBox
     public function tableAdded (table :Table) :void
     {
         // if we're in friends only mode and this table does not contain a friend, skip it
-        if (_friendsOnly && (table as MsoyTable).countFriends(_wctx.getMemberObject()) == 0) {
+        if (_friendsOnly && countFriends(table, _wctx.getMemberObject()) == 0) {
             return;
         }
 
         // add the table at the bottom of the list
         var list :VBox = (table.gameOid > 0) ? _runningList : _pendingList;
-        list.addChild(new TablePanel(_gctx, this, table as MsoyTable));
+        list.addChild(new TablePanel(_gctx, this, table));
         updateTableList();
     }
 
@@ -246,7 +265,7 @@ public class LobbyPanel extends VBox
 
         // if we're in friends only mode, this table may now be visible or not
         if (_friendsOnly) {
-            var count :int = (table as MsoyTable).countFriends(_wctx.getMemberObject());
+            var count :int = countFriends(table, _wctx.getMemberObject());
             if (count > 0 && panel == null) {
                 tableAdded(table);
                 return;
@@ -270,7 +289,7 @@ public class LobbyPanel extends VBox
         }
 
         // and update it
-        panel.update(table as MsoyTable, isSeated());
+        panel.update(table, isSeated());
     }
 
     // from TableObserver

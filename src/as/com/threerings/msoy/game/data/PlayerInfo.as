@@ -3,14 +3,11 @@
 
 package com.threerings.msoy.game.data {
 
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
-
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.whirled.data.WhirledOccupantInfo;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.VizMemberName;
 
 /**
  * Contains information on occupants in a game.
@@ -26,24 +23,7 @@ public class PlayerInfo extends OccupantInfo
     // from interface WhirledOccupantInfo
     public function getHeadshotURL () :String
     {
-        return _headShot.getMediaPath();
+        return (username as VizMemberName).getPhoto().getMediaPath();
     }
-
-    // from OccupantInfo
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-        _headShot = (ins.readObject() as MediaDesc);
-    }
-
-    // from OccupantInfo
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-        out.writeObject(_headShot);
-    }
-
-    /** The media of the user's headshot (part of their avatar). */
-    protected var _headShot :MediaDesc;
 }
 }

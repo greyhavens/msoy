@@ -8,11 +8,13 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyObjectAccess;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.game.data.PlayerObject;
@@ -56,22 +58,18 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         // the wild and there's no point in generating a crapload of events during user
         // initialization when we know that no one is listening
 
+        // we need their profile photo as well
+        ProfileRecord precord = MsoyGameServer.profileRepo.loadProfile(member.memberId);
+        playerObj.memberName = new VizMemberName(
+            member.name, member.memberId,
+            (precord == null) ? Profile.DEFAULT_PHOTO : precord.getPhoto());
+
         // configure various bits directly from their member record
-        playerObj.memberName = member.getName();
-//         playerObj.flow = member.flow;
-//         playerObj.accFlow = member.accFlow;
-//         playerObj.level = member.level;
         playerObj.humanity = member.humanity;
 
         // fill in this member's raw friends list
         playerObj.friends = new DSet<FriendEntry>(
             MsoyGameServer.memberRepo.loadFriends(member.memberId, -1));
-
-        // load up their configure profile photo
-        ProfileRecord precord = MsoyGameServer.profileRepo.loadProfile(member.memberId);
-        if (precord != null) {
-            playerObj.photo = precord.getPhoto();
-        }
     }
 
     /**
@@ -80,7 +78,9 @@ public class MsoyGameClientResolver extends CrowdClientResolver
     protected void resolveGuest (PlayerObject playerObj)
         throws Exception
     {
-        playerObj.memberName = (MemberName)_username;
+        MemberName authName = (MemberName)_username;
+        playerObj.memberName = new VizMemberName(
+            authName.toString(), authName.getMemberId(), Profile.DEFAULT_PHOTO);
     }
 
     /**

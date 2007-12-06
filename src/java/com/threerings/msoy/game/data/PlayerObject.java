@@ -16,7 +16,7 @@ import com.whirled.data.GameData;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserObject;
-import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -36,9 +36,6 @@ public class PlayerObject extends BodyObject
     /** The field name of the <code>tokens</code> field. */
     public static final String TOKENS = "tokens";
 
-    /** The field name of the <code>photo</code> field. */
-    public static final String PHOTO = "photo";
-
     /** The field name of the <code>humanity</code> field. */
     public static final String HUMANITY = "humanity";
 
@@ -56,13 +53,10 @@ public class PlayerObject extends BodyObject
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
-    public MemberName memberName;
+    public VizMemberName memberName;
 
     /** The tokens defining the access controls for this user. */
     public MsoyTokenRing tokens;
-
-    /** The profile photo that the user has chosen, or null for guests. */
-    public MediaDesc photo;
 
     /** Our current assessment of how likely to be human this member is, in [0, {@link
      * MsoyCodes#MAX_HUMANITY}]. */
@@ -95,7 +89,7 @@ public class PlayerObject extends BodyObject
      */
     public MediaDesc getHeadShotMedia ()
     {
-        return (photo == null) ? Profile.DEFAULT_PHOTO : photo;
+        return memberName.getPhoto();
     }
 
     /**
@@ -165,9 +159,9 @@ public class PlayerObject extends BodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setMemberName (MemberName value)
+    public void setMemberName (VizMemberName value)
     {
-        MemberName ovalue = this.memberName;
+        VizMemberName ovalue = this.memberName;
         requestAttributeChange(
             MEMBER_NAME, value, ovalue);
         this.memberName = value;
@@ -187,22 +181,6 @@ public class PlayerObject extends BodyObject
         requestAttributeChange(
             TOKENS, value, ovalue);
         this.tokens = value;
-    }
-
-    /**
-     * Requests that the <code>photo</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setPhoto (MediaDesc value)
-    {
-        MediaDesc ovalue = this.photo;
-        requestAttributeChange(
-            PHOTO, value, ovalue);
-        this.photo = value;
     }
 
     /**
