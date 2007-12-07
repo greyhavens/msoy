@@ -100,7 +100,7 @@ public class GameGameRegistry
 
         // register game-related bootstrap services
         invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
-        invmgr.registerDispatcher(new AVRDispatcher(this), MsoyCodes.GAME_GROUP);
+        invmgr.registerDispatcher(new AVRDispatcher(this), MsoyCodes.WORLD_GROUP);
 
         // register to hear when the server is shutdown
         MsoyGameServer.registerShutdowner(this);
