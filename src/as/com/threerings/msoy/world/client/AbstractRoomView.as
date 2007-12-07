@@ -31,10 +31,12 @@ import com.threerings.flash.DisplayUtil;
 
 import com.threerings.whirled.spot.data.Location;
 
+import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.MediaDesc;
+
 import com.threerings.msoy.world.client.layout.RoomLayout;
 import com.threerings.msoy.world.client.layout.RoomLayoutFactory;
 import com.threerings.msoy.world.data.FurniData;
@@ -73,6 +75,24 @@ public class AbstractRoomView extends Sprite
     public function setIsShowing (showing :Boolean) :void
     {
         _showing = showing;
+    }
+
+    // from MsoyPlaceView
+    public function padVertical () :Boolean
+    {
+        return true;
+    }
+
+    // from MsoyPlaceView
+    public function getChatOverlay () :ChatOverlay
+    {
+        return null;
+    }
+
+    // from MsoyPlaceView
+    public function setUseChatOverlay (useOverlay :Boolean) :void
+    {
+        // nada
     }
 
     /**
@@ -473,7 +493,6 @@ public class AbstractRoomView extends Sprite
     protected var _editing :Boolean = false;
 }
 }
-
 
 import flash.display.Shape;
 

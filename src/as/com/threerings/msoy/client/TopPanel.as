@@ -34,9 +34,6 @@ import com.threerings.msoy.chat.client.MsoyChatDirector;
 
 import com.threerings.msoy.game.client.FloatingTableDisplay;
 
-import com.threerings.msoy.world.client.AbstractRoomView;
-import com.threerings.msoy.world.client.RoomView;
-
 public class TopPanel extends Canvas 
     implements LocationObserver
 {
@@ -199,9 +196,9 @@ public class TopPanel extends Canvas
     public function getChatOverlay () :ChatOverlay
     {
         if (_activeOverlay == null) {
-            var view :RoomView = getPlaceView() as RoomView;
+            var view :MsoyPlaceView = getPlaceView() as MsoyPlaceView;
             if (view != null) {
-                _activeOverlay = view.chatOverlay;
+                _activeOverlay = view.getChatOverlay();
             }
         }
         return _activeOverlay;
@@ -238,8 +235,7 @@ public class TopPanel extends Canvas
         bounds.y = HeaderBar.HEIGHT;
         bounds.width = stage.stageWidth - getLeftPanelWidth() - getRightPanelWidth();
         bounds.height = stage.stageHeight - getBottomPanelHeight() - HeaderBar.HEIGHT;
-        // for room scenes, we put a small space above and below the view
-        if (_placeBox.getPlaceView() is AbstractRoomView) {
+        if (padVertical(_placeBox.getPlaceView())) {
             bounds.y += DECORATIVE_MARGIN_HEIGHT;
             bounds.height -= 2*DECORATIVE_MARGIN_HEIGHT;
         }
@@ -285,7 +281,7 @@ public class TopPanel extends Canvas
         addChild(_leftPanel); // add to end
         layoutPanels();
 
-        minimizeRoomView();
+        minimizePlaceView();
     }
 
     /**
@@ -305,7 +301,7 @@ public class TopPanel extends Canvas
             removeChild(_leftPanel);
             _leftPanel = null;
 
-            restoreRoomView();
+            restorePlaceView();
 
             layoutPanels();
         }
@@ -378,8 +374,7 @@ public class TopPanel extends Canvas
 
     /**
      * Set the panel that should be shown along the bottom. The panel should have an explicit
-     * height. If the height is 100 pixels or larger, a chat box will be placed to the left of it
-     * and removed from the room overlay.
+     * height.
      */
     public function setBottomPanel (bottom :UIComponent) :void
     {
@@ -441,16 +436,16 @@ public class TopPanel extends Canvas
         // clear out our left panel if we are about to be minimized
         if (event.value as Boolean) {
             clearLeftPanel(null);
-            minimizeRoomView();
+            minimizePlaceView();
         } else if (_leftPanel == null) {
-            restoreRoomView();
+            restorePlaceView();
         }
     }
 
     /**
-     * Take care of any bits that need to be changed when the room view is getting mini'd.
+     * Take care of any bits that need to be changed when the place view is getting mini'd.
      */
-    protected function minimizeRoomView () :void
+    protected function minimizePlaceView () :void
     {
         _minimized = true;
 
@@ -464,9 +459,9 @@ public class TopPanel extends Canvas
     }
 
     /**
-     * Undo any bits that were changed in minimizeRoomView()
+     * Undo any bits that were changed in minimizePlaceView()
      */
-    protected function restoreRoomView () :void
+    protected function restorePlaceView () :void
     {
         _minimized = false;
         
@@ -532,8 +527,8 @@ public class TopPanel extends Canvas
     protected function updatePlaceViewChatOverlay () :void
     {
         var pv :PlaceView = getPlaceView();
-        if (pv is RoomView) {
-            (pv as RoomView).setUseChatOverlay(!_ctx.getMsoyClient().isFeaturedPlaceView());
+        if (pv is MsoyPlaceView) {
+            (pv as MsoyPlaceView).setUseChatOverlay(!_ctx.getMsoyClient().isFeaturedPlaceView());
         }
     }
 
@@ -555,14 +550,14 @@ public class TopPanel extends Canvas
         var w :int = stage.stageWidth - getLeftPanelWidth() - getRightPanelWidth();
         var h :int = stage.stageHeight - getBottomPanelHeight() - HeaderBar.HEIGHT;
         var top :int = HeaderBar.HEIGHT;
-        if (_placeBox.getPlaceView() is AbstractRoomView) {
+        if (padVertical(_placeBox.getPlaceView())) {
             top += DECORATIVE_MARGIN_HEIGHT;
             h -= DECORATIVE_MARGIN_HEIGHT;
         }
 
         var bottom :int = getBottomPanelHeight();
         // for place views, we want to insert decorative margins above and below the view
-        if (_placeBox.getPlaceView() is AbstractRoomView) {
+        if (padVertical(_placeBox.getPlaceView())) {
             bottom += DECORATIVE_MARGIN_HEIGHT;
             h -= DECORATIVE_MARGIN_HEIGHT;
         }
@@ -574,6 +569,11 @@ public class TopPanel extends Canvas
         _placeBox.setStyle("left", getLeftPanelWidth());
         _placeBox.setStyle("right", getRightPanelWidth());
         _placeBox.wasResized(w, h);
+    }
+
+    protected function padVertical (view :PlaceView) :Boolean
+    {
+        return (view is MsoyPlaceView) && (view as MsoyPlaceView).padVertical();
     }
 
     /** The giver of life. */

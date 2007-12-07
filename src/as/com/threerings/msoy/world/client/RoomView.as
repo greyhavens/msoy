@@ -101,9 +101,6 @@ public class RoomView extends AbstractRoomView
     implements ContextMenuProvider, SetListener, MessageListener,
                ChatDisplay, ChatInfoProvider, LoadingWatcher
 {
-    /** The chat overlay. */
-    public var chatOverlay :ComicOverlay;
-
     /**
      * Create a roomview.
      */
@@ -111,7 +108,7 @@ public class RoomView extends AbstractRoomView
     {
         super(ctx);
         _ctrl = ctrl;
-        chatOverlay = new ComicOverlay(ctx);
+        _chatOverlay = new ComicOverlay(ctx);
 
         _loadingSpinner = DisplayObject(new LOADING_SPINNER());
         FurniSprite.setLoadingWatcher(this);
@@ -123,13 +120,6 @@ public class RoomView extends AbstractRoomView
     public function getRoomController () :RoomController
     {
         return _ctrl;
-    }
-
-    override public function setScene (scene :MsoyScene) :void
-    {
-        super.setScene(scene);
-
-        chatOverlay.setSubtitlePercentage(1);
     }
 
     /**
@@ -145,33 +135,6 @@ public class RoomView extends AbstractRoomView
                 occInfo.setScale(newScale);
                 avatar.setOccupantInfo(occInfo);
             }
-        }
-    }
-
-    // from LoadingWatcher
-    public function setLoading (loading :Boolean) :void
-    {
-        if (loading == (_loadingSpinner.parent != null)) {
-            return;
-        }
-
-        var box :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
-        if (loading) {
-            box.addOverlay(_loadingSpinner, PlaceBox.LAYER_ROOM_SPINNER);
-        } else {
-            box.removeOverlay(_loadingSpinner);
-        }
-    }
-
-    override public function setEditing (editing :Boolean) :void
-    {
-        super.setEditing(editing);
-
-        // if we haven't yet started loading sprites other than the background, start now
-        if (!_loadAllMedia) {
-            _loadAllMedia = true;
-            updateAllFurni();
-            updateAllEffects();
         }
     }
 
@@ -216,15 +179,6 @@ public class RoomView extends AbstractRoomView
         _jumpScroll = fastCentering;
     }
 
-    /**
-     * Sets whether or not to use the chat overlay.
-     */
-    public function setUseChatOverlay (useChatOverlay :Boolean) :void
-    {
-        _useChatOverlay = useChatOverlay;
-        recheckChatOverlay();
-    }
-
     public function dimAvatars (setDim :Boolean) :void
     {
         setActive(_occupants, !setDim);
@@ -234,40 +188,6 @@ public class RoomView extends AbstractRoomView
     public function dimFurni (setDim :Boolean) :void
     {
         setActive(_furni, !setDim);
-    }
-
-    // from ContextMenuProvider
-    public function populateContextMenu (ctx :MsoyContext, menuItems :Array) :void
-    {
-        var hit :* = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
-        if (hit === undefined) {
-            return;
-        }
-        var sprite :MsoySprite = (hit as MsoySprite);
-        if (sprite == null) {
-            if (_bg == null) {
-                return;
-            } else {
-                sprite = _bg;
-            }
-        }
-
-        var ident :ItemIdent = sprite.getItemIdent();
-        if (ident != null) {
-            var kind :String = Msgs.GENERAL.get(sprite.getDesc());
-            if (ident.type >= 0) { // -1 is used for the default avatar, etc.
-                menuItems.push(MenuUtil.createControllerMenuItem(
-                                   Msgs.GENERAL.get("b.view_item", kind),
-                                   MsoyController.VIEW_ITEM, ident));
-            }
-
-            if (sprite.isBlockable()) {
-                var isBlocked :Boolean = sprite.isBlocked();
-                menuItems.push(MenuUtil.createControllerMenuItem(
-                    Msgs.GENERAL.get((isBlocked ? "b.unbleep_item" : "b.bleep_item"), kind),
-                    sprite.toggleBlocked, ctx));
-            }
-        }
     }
 
     /**
@@ -362,6 +282,55 @@ public class RoomView extends AbstractRoomView
             return avatar.getLocation();
         } else {
             return new MsoyLocation(-1, -1, -1);
+        }
+    }
+
+    // from LoadingWatcher
+    public function setLoading (loading :Boolean) :void
+    {
+        if (loading == (_loadingSpinner.parent != null)) {
+            return;
+        }
+
+        var box :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
+        if (loading) {
+            box.addOverlay(_loadingSpinner, PlaceBox.LAYER_ROOM_SPINNER);
+        } else {
+            box.removeOverlay(_loadingSpinner);
+        }
+    }
+
+    // from ContextMenuProvider
+    public function populateContextMenu (ctx :MsoyContext, menuItems :Array) :void
+    {
+        var hit :* = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
+        if (hit === undefined) {
+            return;
+        }
+        var sprite :MsoySprite = (hit as MsoySprite);
+        if (sprite == null) {
+            if (_bg == null) {
+                return;
+            } else {
+                sprite = _bg;
+            }
+        }
+
+        var ident :ItemIdent = sprite.getItemIdent();
+        if (ident != null) {
+            var kind :String = Msgs.GENERAL.get(sprite.getDesc());
+            if (ident.type >= 0) { // -1 is used for the default avatar, etc.
+                menuItems.push(MenuUtil.createControllerMenuItem(
+                                   Msgs.GENERAL.get("b.view_item", kind),
+                                   MsoyController.VIEW_ITEM, ident));
+            }
+
+            if (sprite.isBlockable()) {
+                var isBlocked :Boolean = sprite.isBlocked();
+                menuItems.push(MenuUtil.createControllerMenuItem(
+                    Msgs.GENERAL.get((isBlocked ? "b.unbleep_item" : "b.bleep_item"), kind),
+                    sprite.toggleBlocked, ctx));
+            }
         }
     }
 
@@ -505,7 +474,41 @@ public class RoomView extends AbstractRoomView
         return false; // we never display the messages ourselves
     }
 
-    // from interface PlaceView
+    // from AbstractRoomView
+    override public function setScene (scene :MsoyScene) :void
+    {
+        super.setScene(scene);
+
+        _chatOverlay.setSubtitlePercentage(1);
+    }
+
+    // from AbstractRoomView
+    override public function getChatOverlay () :ChatOverlay
+    {
+        return _chatOverlay;
+    }
+
+    // from AbstractRoomView
+    override public function setUseChatOverlay (useOverlay :Boolean) :void
+    {
+        _useChatOverlay = useOverlay;
+        recheckChatOverlay();
+    }
+
+    // from AbstractRoomView
+    override public function setEditing (editing :Boolean) :void
+    {
+        super.setEditing(editing);
+
+        // if we haven't yet started loading sprites other than the background, start now
+        if (!_loadAllMedia) {
+            _loadAllMedia = true;
+            updateAllFurni();
+            updateAllEffects();
+        }
+    }
+
+    // from AbstractRoomView
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
         // set load-all to false, as we're going to just load the decor item first.
@@ -538,7 +541,7 @@ public class RoomView extends AbstractRoomView
         _ctrl.setBackgroundMusic(_scene.getAudioData());
     }
 
-    // from interface PlaceView
+    // from AbstractRoomView
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         _roomObj.removeListener(this);
@@ -559,6 +562,7 @@ public class RoomView extends AbstractRoomView
         setLoading(false);
     }
 
+    // from AbstractRoomView
     override public function locationUpdated (sprite :MsoySprite) :void
     {
         super.locationUpdated(sprite);
@@ -570,6 +574,7 @@ public class RoomView extends AbstractRoomView
         }
     }
 
+    // from AbstractRoomView
     override public function scrollViewBy (xpixels :int) :Boolean
     {
         var canScroll :Boolean = super.scrollViewBy(xpixels);
@@ -581,11 +586,12 @@ public class RoomView extends AbstractRoomView
         return canScroll;
     }
 
+    // from AbstractRoomView
     override public function set scrollRect (r :Rectangle) :void
     {
         super.scrollRect = r;
 
-        chatOverlay.setScrollRect(r);
+        _chatOverlay.setScrollRect(r);
     }
 
     /** Return an array of the MOB sprites associated with the identified game. */
@@ -671,13 +677,13 @@ public class RoomView extends AbstractRoomView
     protected function recheckChatOverlay () :void
     {
         if (_roomObj != null && _useChatOverlay) {
-            _ctx.getChatDirector().addChatDisplay(chatOverlay);
-            chatOverlay.newPlaceEntered(this);
-            chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
+            _ctx.getChatDirector().addChatDisplay(_chatOverlay);
+            _chatOverlay.newPlaceEntered(this);
+            _chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
 
         } else {
-            _ctx.getChatDirector().removeChatDisplay(chatOverlay);
-            chatOverlay.setTarget(null);
+            _ctx.getChatDirector().removeChatDisplay(_chatOverlay);
+            _chatOverlay.setTarget(null);
         }
     }
 
@@ -804,7 +810,7 @@ public class RoomView extends AbstractRoomView
                 return; // we have no visualization for this kind of occupant, no problem
             }
 
-            occupant.setChatOverlay(chatOverlay);
+            occupant.setChatOverlay(_chatOverlay);
             _occupants.put(bodyOid, occupant);
             addChildAt(occupant, 1);
             occupant.setEntering(loc);
@@ -818,7 +824,7 @@ public class RoomView extends AbstractRoomView
         } else {
             // place the sprite back into the set of active sprites
             _occupants.put(bodyOid, occupant);
-            occupant.setChatOverlay(chatOverlay);
+            occupant.setChatOverlay(_chatOverlay);
             occupant.moveTo(loc, _scene);
         }
 
@@ -1065,6 +1071,9 @@ public class RoomView extends AbstractRoomView
 
     /** A map of bodyOid -> OccupantSprite for those that we'll remove when they stop moving. */
     protected var _pendingRemovals :HashMap = new HashMap();
+
+    /** Our chat overlay. */
+    protected var _chatOverlay :ComicOverlay;
 
     /** Should we be using our chat overlay? */
     protected var _useChatOverlay :Boolean = true;

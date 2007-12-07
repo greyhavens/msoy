@@ -671,7 +671,7 @@ public class RoomController extends SceneController
         }
 
         // then avoid any chat glyphs that are clickable
-        if (_roomView.chatOverlay.hasClickableGlyphsAtPoint(stageX, stageY)) {
+        if (_roomView.getChatOverlay().hasClickableGlyphsAtPoint(stageX, stageY)) {
             return undefined;
         }
 
@@ -1410,7 +1410,7 @@ public class RoomController extends SceneController
                 return;
 
             case Keyboard.F6:
-                _roomView.chatOverlay.setClickableGlyphs(keyDown);
+                _roomView.getChatOverlay().setClickableGlyphs(keyDown);
                 return;
 
             case Keyboard.SHIFT:
