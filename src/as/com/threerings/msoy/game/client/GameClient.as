@@ -138,6 +138,12 @@ class GameContextImpl extends BaseContext
         throw new Error("TODO");
     }
 
+    // from GameContext
+    public function getOnlineFriends () :Array
+    {
+        return []; // TODO
+    }
+
     protected var _parDtr :ParlorDirector;
 }
 }

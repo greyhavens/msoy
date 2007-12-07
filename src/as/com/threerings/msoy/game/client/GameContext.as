@@ -28,5 +28,10 @@ public interface GameContext extends ParlorContext
      * Requests that we return to Whirled, optionally redisplaying the game lobby.
      */
     function backToWhirled (showLobby :Boolean) :void;
+
+    /**
+     * Returns an array of FriendEntry records for this player's online friends.
+     */
+    function getOnlineFriends () :Array;
 }
 }

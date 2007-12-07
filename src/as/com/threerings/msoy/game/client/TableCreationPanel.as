@@ -52,12 +52,7 @@ public class TableCreationPanel extends HBox
     public function updateOnlineFriends () :void
     {
         _friendsBox.removeAllChildren();
-// TODO
-//         var onlineFriends :Array = _ctx.getWorldContext().getMemberObject().friends.toArray().filter(
-//             function (friend :FriendEntry, index :int, array :Array) :Boolean {
-//                 return friend.online;
-//             });
-        var onlineFriends :Array = [];
+        var onlineFriends :Array = _ctx.getOnlineFriends();
         if (onlineFriends.length ==  0) {
             _friendsBox.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.invite_no_friends")));
         } else {
