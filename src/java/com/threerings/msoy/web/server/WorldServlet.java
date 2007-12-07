@@ -30,10 +30,12 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
+import com.threerings.presents.server.InvocationException;
 
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.xml.MsoyGameParser;
@@ -50,6 +52,8 @@ import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+
+import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import com.threerings.msoy.person.data.FeedMessage;
@@ -85,7 +89,7 @@ import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.WhirledwideData;
-import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.web.server.ServletWaiter;
 
 import static com.threerings.msoy.Log.log;
 
@@ -455,7 +459,7 @@ public class WorldServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Failed to load game record [gameId=" + gameId + "]", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
-        final Game game = (Game)grec.toItem();
+        Game game = (Game)grec.toItem();
 
         // create a launch config record for the game
         LaunchConfig config = new LaunchConfig();
@@ -501,12 +505,20 @@ public class WorldServlet extends MsoyServiceServlet
         config.name = game.name;
         config.httpPort = ServerConfig.httpPort;
 
-        // determine what server is hosting the game, if any
-        Tuple<String, Integer> rhost = MsoyServer.peerMan.getGameHost(gameId);
-        if (rhost != null) {
-            config.server = MsoyServer.peerMan.getPeerPublicHostName(rhost.left);
-            config.port = rhost.right;
-        }
+        // determine what server is hosting the game, start hosting it if necessary
+        final GameLocationWaiter waiter = new GameLocationWaiter(config.gameId);
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                try {
+                    MsoyServer.gameReg.locateGame(null, waiter.gameId, waiter);
+                } catch (InvocationException ie) {
+                    waiter.requestFailed(ie);
+                }
+            }
+        });
+        Tuple<String, Integer> rhost = waiter.waitForResult();
+        config.server = rhost.left;
+        config.port = rhost.right;
 
         return config;
     }
@@ -843,6 +855,22 @@ public class WorldServlet extends MsoyServiceServlet
     {
         public PopularPlacesSnapshot.Place place;
         public List<MemberName> friends = Lists.newArrayList();
+    }
+
+    protected static class GameLocationWaiter extends ServletWaiter<Tuple<String,Integer>>
+        implements MsoyGameService.LocationListener
+    {
+        public int gameId;
+        public GameLocationWaiter (int gameId) {
+            super("locateGame(" + gameId + ")");
+            this.gameId = gameId;
+        }
+        public void gameLocated (String host, int port) {
+            postSuccess(new Tuple<String,Integer>(host, port));
+        }
+        public void requestFailed (String cause) {
+            requestFailed(new InvocationException(cause));
+        }
     }
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
