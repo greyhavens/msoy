@@ -45,7 +45,7 @@ import com.threerings.util.ValueEvent;
 import com.threerings.flash.FilterUtil;
 import com.threerings.flash.VideoDisplayer;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -83,7 +83,7 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     // from ContextMenuProvider, via MsoyMediaContainer
-    override public function populateContextMenu (ctx :BaseContext, items :Array) :void
+    override public function populateContextMenu (ctx :MsoyContext, items :Array) :void
     {
         // put the kibosh on super's big ideas
     }

@@ -10,8 +10,8 @@ import com.threerings.presents.data.InvocationCodes;
  */
 public class MsoyCodes extends InvocationCodes
 {
-    /** Defines our base invocation services group. */
-    public static const BASE_GROUP :String = "msoy.base";
+    /** Defines our member invocation services group. */
+    public static const MEMBER_GROUP :String = "msoy.member";
 
     /** Defines our game invocation services group. */
     public static const GAME_GROUP :String = "msoy.game";

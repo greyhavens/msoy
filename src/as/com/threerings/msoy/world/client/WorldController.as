@@ -571,7 +571,7 @@ public class WorldController extends MsoyController
             handleMoveBack();
         } else {
             // if we're in the whirled, closing means closing the flash client totally
-            _wctx.getBaseClient().closeClient();
+            _wctx.getMsoyClient().closeClient();
         }
     }
 
@@ -821,9 +821,9 @@ public class WorldController extends MsoyController
         // if we moved to a scene, set things up thusly
         var scene :Scene = _wctx.getSceneDirector().getScene();
         if (scene != null) {
-            _wctx.getBaseClient().setWindowTitle(scene.getName());
+            _wctx.getMsoyClient().setWindowTitle(scene.getName());
             headerBar.setLocationName(scene.getName());
-            headerBar.setEmbedLinkButtonVisible(!_wctx.getBaseClient().isEmbedded());
+            headerBar.setEmbedLinkButtonVisible(!_wctx.getMsoyClient().isEmbedded());
 
             var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
             if (model != null) {
@@ -881,7 +881,7 @@ public class WorldController extends MsoyController
         var cfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
         if (cfg != null) {
             controlBar.updateNavigationWidgets(true, cfg.name, true);
-            _wctx.getBaseClient().setWindowTitle(cfg.name);
+            _wctx.getMsoyClient().setWindowTitle(cfg.name);
             headerBar.setLocationName(cfg.name);
             headerBar.setOwnerLink("");
         } else {

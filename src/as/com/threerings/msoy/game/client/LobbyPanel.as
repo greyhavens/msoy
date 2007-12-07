@@ -36,7 +36,7 @@ import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.SkinnableImage;
 import com.threerings.msoy.ui.ThumbnailPanel;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.EmbedDialog;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
@@ -342,7 +342,7 @@ public class LobbyPanel extends VBox
         embedBtn.styleName = "headerLink";
         embedBtn.label = Msgs.GENERAL.get("b.share")
         embedBtn.setCallback(function () :void {
-            new EmbedDialog(_gctx.getBaseContext());
+            new EmbedDialog(_gctx.getMsoyContext());
         });
         embedBtnBox.addChild(embedBtn);
 

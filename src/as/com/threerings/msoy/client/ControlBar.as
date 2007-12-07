@@ -70,7 +70,7 @@ public class ControlBar extends HBox
     public static const ALL_UI_GROUPS :Array = [ UI_ALL, UI_STD, UI_SIDEBAR, UI_MINI, UI_EDIT, 
         UI_GUEST ];
 
-    public function ControlBar (ctx :BaseContext, top :TopPanel)
+    public function ControlBar (ctx :MsoyContext, top :TopPanel)
     {
         _ctx = ctx;
         styleName = "controlBar";
@@ -392,7 +392,7 @@ public class ControlBar extends HBox
     }
 
     /** Our clientside context. */
-    protected var _ctx :BaseContext;
+    protected var _ctx :MsoyContext;
 
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;

@@ -59,8 +59,8 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 
-import com.threerings.msoy.client.BaseClient;
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyClient;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
@@ -237,7 +237,7 @@ public class RoomView extends AbstractRoomView
     }
 
     // from ContextMenuProvider
-    public function populateContextMenu (ctx :BaseContext, menuItems :Array) :void
+    public function populateContextMenu (ctx :MsoyContext, menuItems :Array) :void
     {
         var hit :* = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
         if (hit === undefined) {
@@ -514,7 +514,7 @@ public class RoomView extends AbstractRoomView
         super.willEnterPlace(plobj);
 
         // listen for client minimization events
-        _ctx.getClient().addEventListener(BaseClient.MINI_WILL_CHANGE, miniWillChange);
+        _ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
         _roomObj.addListener(this);
 
@@ -547,7 +547,7 @@ public class RoomView extends AbstractRoomView
         _ctx.getChatDirector().removeChatDisplay(this);
 
         // stop listening for client minimization events
-        _ctx.getClient().removeEventListener(BaseClient.MINI_WILL_CHANGE, miniWillChange);
+        _ctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
         removeAll(_effects);
         removeAllOccupants();

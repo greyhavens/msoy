@@ -5,7 +5,7 @@ package com.threerings.msoy.game.client {
 
 import com.threerings.parlor.util.ParlorContext;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.game.data.PlayerObject;
 
@@ -17,7 +17,7 @@ public interface GameContext extends ParlorContext
     /**
      * Returns the context we use to obtain basic client services.
      */
-    function getBaseContext () :BaseContext;
+    function getMsoyContext () :MsoyContext;
 
     /**
      * Returns our client object casted as a PlayerObject.

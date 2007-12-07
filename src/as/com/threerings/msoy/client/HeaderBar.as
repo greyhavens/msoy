@@ -30,7 +30,7 @@ public class HeaderBar extends HBox
 {
     public static const HEIGHT :int = 20;
 
-    public function HeaderBar (ctx :BaseContext, chatTabs :ChatTabBar) 
+    public function HeaderBar (ctx :MsoyContext, chatTabs :ChatTabBar) 
     {
         _ctx = ctx;
         _tabs = chatTabs;
@@ -44,7 +44,7 @@ public class HeaderBar extends HBox
 
         // TODO: should we be doing this?
         addEventListener(Event.ADDED_TO_STAGE, function (evt :Event) :void {
-            _ctx.getBaseClient().setWindowTitle(getChatTabs().locationName);
+            _ctx.getMsoyClient().setWindowTitle(getChatTabs().locationName);
         });
     }
 
@@ -77,7 +77,7 @@ public class HeaderBar extends HBox
             nameLink.styleName = "headerLink";
             nameLink.label = Msgs.GENERAL.get("m.room_owner", owner);
             nameLink.setCallback(onClick);
-            nameLink.enabled = !_ctx.getBaseClient().isEmbedded();
+            nameLink.enabled = !_ctx.getMsoyClient().isEmbedded();
             _owner.addChild(nameLink);
         }
     }
@@ -192,7 +192,7 @@ public class HeaderBar extends HBox
 
     protected static const WHIRLED_LOGO_WIDTH :int = 124;
 
-    protected var _ctx :BaseContext;
+    protected var _ctx :MsoyContext;
 
     protected var _loc :Label;
     protected var _owner :HBox;

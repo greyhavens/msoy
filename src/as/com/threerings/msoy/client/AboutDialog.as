@@ -14,7 +14,7 @@ import com.threerings.msoy.ui.FloatingPanel;
  */
 public class AboutDialog extends FloatingPanel
 {
-    public function AboutDialog (ctx :BaseContext)
+    public function AboutDialog (ctx :MsoyContext)
     {
         super(ctx, Msgs.GENERAL.get("t.about"));
         open(false);

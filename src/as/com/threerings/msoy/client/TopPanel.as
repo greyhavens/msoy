@@ -48,7 +48,7 @@ public class TopPanel extends Canvas
     /**
      * Construct the top panel.
      */
-    public function TopPanel (ctx :BaseContext)
+    public function TopPanel (ctx :MsoyContext)
     {
         _ctx = ctx;
         _ctx.getLocationDirector().addLocationObserver(this);
@@ -60,7 +60,7 @@ public class TopPanel extends Canvas
         var chatTabs :ChatTabBar = new ChatTabBar(_ctx);
         _ctx.getMsoyChatDirector().setChatTabs(chatTabs);
 
-        if (!_ctx.getBaseClient().isFeaturedPlaceView()) {
+        if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
             _headerBar = new HeaderBar(_ctx, chatTabs);
             _headerBar.includeInLayout = false;
             _headerBar.setStyle("top", 0);
@@ -74,7 +74,7 @@ public class TopPanel extends Canvas
         _placeBox.includeInLayout = false;
         addChild(_placeBox);
 
-        if (!_ctx.getBaseClient().isFeaturedPlaceView()) {
+        if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
             // set up the control bar
             _controlBar = new ControlBar(ctx, this);
             _controlBar.includeInLayout = false;
@@ -105,7 +105,7 @@ public class TopPanel extends Canvas
 
         app.stage.addEventListener(Event.RESIZE, stageResized);
 
-        _ctx.getClient().addEventListener(BaseClient.MINI_WILL_CHANGE, miniWillChange);
+        _ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
     }
 
     /**
@@ -268,8 +268,8 @@ public class TopPanel extends Canvas
     public function setLeftPanel (side :UIComponent) :void
     {
         // make sure we're not minimized
-        if (_ctx.getBaseClient().isMinimized()) {
-            _ctx.getBaseClient().restoreClient();
+        if (_ctx.getMsoyClient().isMinimized()) {
+            _ctx.getMsoyClient().restoreClient();
         }
 
         clearLeftPanel(null);
@@ -300,7 +300,7 @@ public class TopPanel extends Canvas
                 }
             }
 
-            _ctx.getBaseClient().clearSeparator();
+            _ctx.getMsoyClient().clearSeparator();
             removeChild(_leftPanel);
             _leftPanel = null;
 
@@ -480,12 +480,12 @@ public class TopPanel extends Canvas
 
     protected function placeBoxClicked (event :MouseEvent) :void
     {
-        _ctx.getBaseClient().restoreClient();
+        _ctx.getMsoyClient().restoreClient();
     }
 
     protected function layoutPanels () :void
     {
-        if (_ctx.getBaseClient().isFeaturedPlaceView()) {
+        if (_ctx.getMsoyClient().isFeaturedPlaceView()) {
             // in this case, we only have one panel...
             updatePlaceViewSize();
             return;
@@ -498,7 +498,7 @@ public class TopPanel extends Canvas
             _leftPanel.width = LEFT_PANEL_WIDTH;
             _controlBar.setStyle("left", _leftPanel.width);
             _headerBar.setStyle("left", _leftPanel.width);
-            _ctx.getBaseClient().setSeparator(_leftPanel.width - 1);
+            _ctx.getMsoyClient().setSeparator(_leftPanel.width - 1);
         } else {
             _controlBar.setStyle("left", 0);
             _headerBar.setStyle("left", 0);
@@ -532,7 +532,7 @@ public class TopPanel extends Canvas
     {
         var pv :PlaceView = getPlaceView();
         if (pv is RoomView) {
-            (pv as RoomView).setUseChatOverlay(!_ctx.getBaseClient().isFeaturedPlaceView());
+            (pv as RoomView).setUseChatOverlay(!_ctx.getMsoyClient().isFeaturedPlaceView());
         }
     }
 
@@ -542,7 +542,7 @@ public class TopPanel extends Canvas
             return; // nothing doing if we're not in control
         }
 
-        if (_ctx.getBaseClient().isFeaturedPlaceView()) {
+        if (_ctx.getMsoyClient().isFeaturedPlaceView()) {
             _placeBox.clearStyle("top");
             _placeBox.clearStyle("bottom");
             _placeBox.clearStyle("left");
@@ -576,7 +576,7 @@ public class TopPanel extends Canvas
     }
 
     /** The giver of life. */
-    protected var _ctx :BaseContext;
+    protected var _ctx :MsoyContext;
 
     /** The box that will hold the placeview. */
     protected var _placeBox :PlaceBox;

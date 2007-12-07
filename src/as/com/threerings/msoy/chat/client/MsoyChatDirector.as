@@ -23,7 +23,7 @@ import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.TellFeedbackMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
@@ -44,7 +44,7 @@ public class MsoyChatDirector extends ChatDirector
 {
     public static const log :Log = Log.getLog(MsoyChatDirector);
 
-    public function MsoyChatDirector (ctx :BaseContext)
+    public function MsoyChatDirector (ctx :MsoyContext)
     {
         super(ctx, ctx.getMessageManager(), MsoyCodes.CHAT_MSGS);
         _wctx = ctx;
@@ -170,7 +170,7 @@ public class MsoyChatDirector extends ChatDirector
     {
         if (display is ChatOverlay) {
             (display as ChatOverlay).setHistory(_roomHistory);
-            (_ctx as BaseContext).getTopPanel().setActiveOverlay(display as ChatOverlay);
+            (_ctx as MsoyContext).getTopPanel().setActiveOverlay(display as ChatOverlay);
         }
         super.pushChatDisplay(display);
     }
@@ -180,7 +180,7 @@ public class MsoyChatDirector extends ChatDirector
     {
         if (display is ChatOverlay) {
             (display as ChatOverlay).setHistory(_roomHistory);
-            (_ctx as BaseContext).getTopPanel().setActiveOverlay(display as ChatOverlay);
+            (_ctx as MsoyContext).getTopPanel().setActiveOverlay(display as ChatOverlay);
         }
         super.addChatDisplay(display);
     }
@@ -316,7 +316,7 @@ public class MsoyChatDirector extends ChatDirector
         return null;
     }
 
-    protected var _wctx :BaseContext;
+    protected var _wctx :MsoyContext;
     protected var _chatTabs :ChatTabBar;
 
     /** Contains a mapping from chat localtype to channel handler. */
@@ -335,7 +335,7 @@ import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.util.SafeSubscriber;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.chat.client.ChatChannelService;
@@ -352,7 +352,7 @@ class ChannelHandler implements Subscriber
     public var channel :ChatChannel;
     public var chanobj :ChatChannelObject;
 
-    public function ChannelHandler (ctx :BaseContext, channel :ChatChannel, showTabFn :Function)
+    public function ChannelHandler (ctx :MsoyContext, channel :ChatChannel, showTabFn :Function)
     {
         this.channel = channel;
         _ctx = ctx;
@@ -423,7 +423,7 @@ class ChannelHandler implements Subscriber
         _ctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
     }
 
-    protected var _ctx :BaseContext;
+    protected var _ctx :MsoyContext;
     protected var _showTabFn :Function;
     protected var _isShutdown :Boolean = false;
     protected var _isConnected :Boolean = false;

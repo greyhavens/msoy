@@ -8,13 +8,13 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 
 public class ReportingListener
     implements InvocationService_ConfirmListener
 {
     public function ReportingListener (
-        ctx :BaseContext, msgBundle :String = null, errWrap :String = null, success :String = null)
+        ctx :MsoyContext, msgBundle :String = null, errWrap :String = null, success :String = null)
     {
         _ctx = ctx;
         _bundle = msgBundle;
@@ -40,7 +40,7 @@ public class ReportingListener
         _ctx.displayFeedback(_bundle, cause);
     }
 
-    protected var _ctx :BaseContext;
+    protected var _ctx :MsoyContext;
     protected var _bundle :String;
     protected var _errWrap :String;
     protected var _success :String;

@@ -20,7 +20,7 @@ import com.threerings.util.Name;
 
 import com.threerings.flash.ColorUtil;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.LayeredContainer;
 
 import com.threerings.crowd.chat.data.ChatCodes;
@@ -35,7 +35,7 @@ public class ComicOverlay extends ChatOverlay
     /**
      * Construct a comic chat overlay.
      */
-    public function ComicOverlay (ctx :BaseContext)
+    public function ComicOverlay (ctx :MsoyContext)
     {
         super(ctx.getMessageManager());
         _ctx = ctx;
@@ -503,7 +503,7 @@ public class ComicOverlay extends ChatOverlay
     }
 
     /** Giver of life, context. */
-    protected var _ctx :BaseContext;
+    protected var _ctx :MsoyContext;
 
     /** The provider of info about laying out bubbles. */ 
     protected var _provider :ChatInfoProvider;

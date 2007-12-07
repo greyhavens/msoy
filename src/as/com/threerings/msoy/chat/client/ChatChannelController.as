@@ -18,7 +18,7 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.SystemMessage;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -33,7 +33,7 @@ import com.threerings.msoy.chat.data.ChatterInfo;
 public class ChatChannelController
     implements SetListener, MessageListener
 {
-    public function ChatChannelController (ctx :BaseContext, channel :ChatChannel, 
+    public function ChatChannelController (ctx :MsoyContext, channel :ChatChannel, 
         history :HistoryList)
     {
         _ctx = ctx;
@@ -203,7 +203,7 @@ public class ChatChannelController
         }
     }
 
-    protected var _ctx :BaseContext;
+    protected var _ctx :MsoyContext;
 
     /** A reference to our chat channel object if we're a non-friend channel. */
     protected var _ccobj :ChatChannelObject;

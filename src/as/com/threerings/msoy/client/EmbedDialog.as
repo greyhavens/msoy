@@ -8,11 +8,11 @@ import mx.controls.Text;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 
 public class EmbedDialog extends FloatingPanel
 {
-    public function EmbedDialog (ctx :BaseContext)
+    public function EmbedDialog (ctx :MsoyContext)
     {
         super(ctx, Msgs.GENERAL.get("t.embed_link_window"));
 

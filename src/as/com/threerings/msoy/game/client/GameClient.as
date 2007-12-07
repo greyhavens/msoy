@@ -12,8 +12,8 @@ import com.threerings.presents.net.Credentials;
 
 import com.threerings.parlor.data.ParlorMarshaller;
 
-import com.threerings.msoy.client.BaseClient;
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyClient;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -27,7 +27,7 @@ import mx.resources.ResourceBundle;
 /**
  * A simple client that displays a lobby and plays games.
  */
-public class GameClient extends BaseClient
+public class GameClient extends MsoyClient
 {
     public function GameClient (stage :Stage)
     {
@@ -44,7 +44,7 @@ public class GameClient extends BaseClient
         addServiceGroup(MsoyCodes.GAME_GROUP);
     }
 
-    // from BaseClient
+    // from MsoyClient
     override public function fuckingCompiler () :void
     {
         super.fuckingCompiler();
@@ -61,13 +61,13 @@ public class GameClient extends BaseClient
         var rb :ResourceBundle;
     }
 
-    // from BaseClient
-    override protected function createContext () :BaseContext
+    // from MsoyClient
+    override protected function createContext () :MsoyContext
     {
         return (_gctx = new GameContextImpl(this));
     }
 
-    // from BaseClient
+    // from MsoyClient
     override protected function configureExternalFunctions () :void
     {
         super.configureExternalFunctions();
@@ -75,7 +75,7 @@ public class GameClient extends BaseClient
         // TODO
     }
 
-    // from BaseClient
+    // from MsoyClient
     override protected function createStartupCreds (token :String) :Credentials
     {
         var params :Object = _stage.loaderInfo.parameters;
@@ -92,11 +92,11 @@ public class GameClient extends BaseClient
 
 import com.threerings.parlor.client.ParlorDirector;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.client.GameContext;
 
-class GameContextImpl extends BaseContext
+class GameContextImpl extends MsoyContext
     implements GameContext
 {
     public function GameContextImpl (client :GameClient)
@@ -121,7 +121,7 @@ class GameContextImpl extends BaseContext
     }
 
     // from GameContext
-    public function getBaseContext () :BaseContext
+    public function getMsoyContext () :MsoyContext
     {
         return this;
     }

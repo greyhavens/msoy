@@ -21,7 +21,7 @@ import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.data.GameConfig;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -55,7 +55,7 @@ public class LobbyController extends Controller implements Subscriber
         gctx :GameContext, liaison :LobbyGameLiaison, lobbyOid :int, mode :int) 
     {
         _gctx = gctx;
-        _mctx = gctx.getBaseContext();
+        _mctx = gctx.getMsoyContext();
         _liaison = liaison;
         _mode = mode;
 
@@ -215,7 +215,7 @@ public class LobbyController extends Controller implements Subscriber
     public function handleAddedToStage (evt :Event) :void
     {
         if (_lobj != null) {
-            _mctx.getBaseClient().setWindowTitle(_lobj.game.name);
+            _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
         }
     }
 
@@ -251,7 +251,7 @@ public class LobbyController extends Controller implements Subscriber
         _tableDir.addTableObserver(_panel);
         _tableDir.addSeatednessObserver(_panel);
 
-        _mctx.getBaseClient().setWindowTitle(_lobj.game.name);
+        _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
 
         // if we have a player table to join, do that now, otherwise 
         if (_playerId != 0) {
@@ -322,7 +322,7 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     /** The provider of free cheese. */
-    protected var _mctx :BaseContext;
+    protected var _mctx :MsoyContext;
 
     /** The provider of game related services. */
     protected var _gctx :GameContext;

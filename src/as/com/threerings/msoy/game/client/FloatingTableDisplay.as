@@ -19,13 +19,13 @@ import com.threerings.parlor.data.Table;
 
 import com.threerings.msoy.client.Msgs
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.ui.FloatingPanel;
 
 public class FloatingTableDisplay extends FloatingPanel
     implements TableObserver
 {
-    public function FloatingTableDisplay (mctx :BaseContext, gctx :GameContext, panel :LobbyPanel,
+    public function FloatingTableDisplay (mctx :MsoyContext, gctx :GameContext, panel :LobbyPanel,
                                           tableDir :TableDirector, gameName :String)
     {
         super(mctx, Msgs.GAME.get("t.table_display") + gameName);

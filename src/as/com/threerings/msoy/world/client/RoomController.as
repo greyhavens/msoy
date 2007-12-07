@@ -54,7 +54,7 @@ import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.msoy.client.BaseClient;
+import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LogonPanel;
 import com.threerings.msoy.client.MemberService;
@@ -1005,7 +1005,7 @@ public class RoomController extends SceneController
 
         // watch for when we're un-minimized and the display list is valid, so that we can open the
         // editor, and place things correctly when necessary
-        _ctx.getClient().addEventListener(BaseClient.MINI_WILL_CHANGE, miniWillChange);
+        _ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
     }
 
     // documentation inherited
@@ -1016,7 +1016,7 @@ public class RoomController extends SceneController
             cancelRoomEditing();
         }
 
-        _ctx.getClient().removeEventListener(BaseClient.MINI_WILL_CHANGE, miniWillChange);
+        _ctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(MouseEvent.CLICK, mouseWillClick, true);

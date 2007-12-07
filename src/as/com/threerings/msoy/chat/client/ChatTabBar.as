@@ -16,7 +16,7 @@ import com.threerings.crowd.chat.data.ChatMessage;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.HeaderBar;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
@@ -28,7 +28,7 @@ import com.threerings.msoy.game.client.GameChatDirector;
 
 public class ChatTabBar extends HBox
 {
-    public function ChatTabBar (ctx :BaseContext)
+    public function ChatTabBar (ctx :MsoyContext)
     {
         super();
         _ctx = ctx;
@@ -238,7 +238,7 @@ public class ChatTabBar extends HBox
 
     protected var _tabs :Array = [];
     protected var _selectedIndex :int = -1;
-    protected var _ctx :BaseContext;
+    protected var _ctx :MsoyContext;
     protected var _chatDirector :ChatDirector;
 }
 }

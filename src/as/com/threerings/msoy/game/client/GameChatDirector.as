@@ -8,7 +8,7 @@ import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.crowd.chat.data.ChatMessage;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
@@ -21,8 +21,8 @@ public class GameChatDirector extends ChatDirector
 {
     public function GameChatDirector (gctx :GameContext)
     {
-        super(gctx, gctx.getBaseContext().getMessageManager(), MsoyCodes.CHAT_MSGS);
-        _mctx = gctx.getBaseContext();
+        super(gctx, gctx.getMsoyContext().getMessageManager(), MsoyCodes.CHAT_MSGS);
+        _mctx = gctx.getMsoyContext();
     }
 
     public function getGameHistory () :HistoryList
@@ -106,7 +106,7 @@ public class GameChatDirector extends ChatDirector
         super.dispatchPreparedMessage(msg);
     }
 
-    protected var _mctx :BaseContext;
+    protected var _mctx :MsoyContext;
     protected var _gameHistory :HistoryList = new HistoryList();
 }
 }

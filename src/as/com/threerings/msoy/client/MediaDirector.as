@@ -34,7 +34,7 @@ public class MediaDirector extends BasicDirector
 {
     public static const log :Log = Log.getLog(MediaDirector);
 
-    public function MediaDirector (ctx :BaseContext)
+    public function MediaDirector (ctx :MsoyContext)
     {
         super(ctx);
         _mctx = ctx;
@@ -113,7 +113,7 @@ public class MediaDirector extends BasicDirector
     }
 
     /** A casted copy of the context. */
-    protected var _mctx :BaseContext;
+    protected var _mctx :MsoyContext;
 
     /** Our very own avatar: avoid loading and unloading it. */
     protected var _ourAvatar :MemberSprite;

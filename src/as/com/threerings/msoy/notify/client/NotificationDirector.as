@@ -102,7 +102,7 @@ public class NotificationDirector extends BasicDirector
     override protected function registerServices (client :Client) :void
     {
         super.registerServices(client);
-        client.addServiceGroup(MsoyCodes.BASE_GROUP);
+        client.addServiceGroup(MsoyCodes.MEMBER_GROUP);
     }
 
     // from BasicDirector

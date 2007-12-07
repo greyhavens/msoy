@@ -81,7 +81,7 @@ public class MemberManager
         _memberRepo = memberRepo;
         _groupRepo = groupRepo;
 
-        MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.BASE_GROUP);
+        MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.MEMBER_GROUP);
 
         _ppSnapshot = new PopularPlacesSnapshot();
         _ppInvalidator = new Interval(MsoyServer.omgr) {

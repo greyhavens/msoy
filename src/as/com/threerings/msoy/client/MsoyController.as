@@ -99,7 +99,7 @@ public class MsoyController extends Controller
     /**
      * Creates and initializes the controller.
      */
-    public function MsoyController (ctx :BaseContext, topPanel :TopPanel)
+    public function MsoyController (ctx :MsoyContext, topPanel :TopPanel)
     {
         _ctx = ctx;
         _ctx.getClient().addServiceGroup(CrowdCodes.CROWD_GROUP);
@@ -310,7 +310,7 @@ public class MsoyController extends Controller
         if (pt == "StandAlone" || pt == "External") {
             return false;
         }
-        if (_ctx.getBaseClient().isEmbedded()) {
+        if (_ctx.getMsoyClient().isEmbedded()) {
             return false;
         }
         if (_ctx.getPartner() == "facebook") {
@@ -486,7 +486,7 @@ public class MsoyController extends Controller
     }
 
     /** Provides access to client-side directors and services. */
-    protected var _ctx :BaseContext;
+    protected var _ctx :MsoyContext;
 
     /** The topmost panel in the msoy client. */
     protected var _topPanel :TopPanel;

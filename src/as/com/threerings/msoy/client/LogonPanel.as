@@ -33,7 +33,7 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 public class LogonPanel extends FloatingPanel
 {
-    public function LogonPanel (ctx :BaseContext)
+    public function LogonPanel (ctx :MsoyContext)
     {
         super(ctx, Msgs.GENERAL.get("t.logon"));
     }

@@ -27,7 +27,7 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 public class ChatPrefsDialog extends FloatingPanel
 {
-    public function ChatPrefsDialog (ctx :BaseContext)
+    public function ChatPrefsDialog (ctx :MsoyContext)
     {
         super(ctx, Msgs.GENERAL.get("t.chat_prefs"));
         open(true);

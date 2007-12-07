@@ -12,6 +12,6 @@ public interface ContextMenuProvider
     /**
      * Called to add to the array of custom menu items.
      */
-    function populateContextMenu (ctx :BaseContext, menuItems :Array) :void;
+    function populateContextMenu (ctx :MsoyContext, menuItems :Array) :void;
 }
 }

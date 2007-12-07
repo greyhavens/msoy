@@ -56,7 +56,7 @@ import com.threerings.msoy.data.MsoyBootstrapData;
 /**
  * Dispatched when the client is minimized or unminimized.
  * 
- * @eventType com.threerings.msoy.client.BaseClient.MINI_WILL_CHANGE
+ * @eventType com.threerings.msoy.client.MsoyClient.MINI_WILL_CHANGE
  */
 [Event(name="miniWillChange", type="com.threerings.util.ValueEvent")]
 
@@ -64,16 +64,16 @@ import com.threerings.msoy.data.MsoyBootstrapData;
  * Dispatched when the client is known to be either embedded or not. This happens shortly after the
  * client is initialized.
  * 
- * @eventType com.threerings.msoy.client.BaseClient.EMBEDDED_STATE_KNOWN
+ * @eventType com.threerings.msoy.client.MsoyClient.EMBEDDED_STATE_KNOWN
  */
 [Event(name="embeddedStateKnown", type="com.threerings.util.ValueEvent")]
 
 /**
  * A client shared by both our world and game incarnations.
  */
-public /*abstract*/ class BaseClient extends Client
+public /*abstract*/ class MsoyClient extends Client
 {
-    public static const log :Log = Log.getLog(BaseClient);
+    public static const log :Log = Log.getLog(MsoyClient);
 
     /**
      * An event dispatched when the client is minimized or unminimized.
@@ -89,7 +89,7 @@ public /*abstract*/ class BaseClient extends Client
      */
     public static const EMBEDDED_STATE_KNOWN :String = "clientEmbedded";
 
-    public function BaseClient (stage :Stage)
+    public function MsoyClient (stage :Stage)
     {
         super(null, stage);
         setVersion(DeploymentConfig.version);
@@ -318,9 +318,9 @@ public /*abstract*/ class BaseClient extends Client
     /**
      * Creates the context we'll use with this client.
      */
-    protected function createContext () :BaseContext
+    protected function createContext () :MsoyContext
     {
-        return new BaseContext(this);
+        return new MsoyContext(this);
     }
 
     /**
@@ -398,7 +398,7 @@ public /*abstract*/ class BaseClient extends Client
             int(parseInt(params["httpPort"])) : DeploymentConfig.httpPort;
     }
 
-    protected var _ctx :BaseContext;
+    protected var _ctx :MsoyContext;
 
     protected var _minimized :Boolean;
     protected var _embedded :Boolean;

@@ -13,7 +13,7 @@ import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.parlor.client.ParlorDirector;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -98,7 +98,7 @@ public class LiaisonGameContext
     }
 
     // from GameContext
-    public function getBaseContext () :BaseContext
+    public function getMsoyContext () :MsoyContext
     {
         return _wctx;
     }

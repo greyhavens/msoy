@@ -32,10 +32,10 @@ import com.threerings.msoy.chat.client.MsoyChatDirector;
 /**
  * Provides services shared by all clients.
  */
-public /*abstract*/ class BaseContext
+public /*abstract*/ class MsoyContext
     implements CrowdContext
 {
-    public function BaseContext (client :BaseClient)
+    public function MsoyContext (client :MsoyClient)
     {
         _client = client;
 
@@ -61,9 +61,9 @@ public /*abstract*/ class BaseContext
     }
 
     /**
-     * Returns our client as its BaseClient self.
+     * Returns our client as its MsoyClient self.
      */
-    public function getBaseClient () :BaseClient
+    public function getMsoyClient () :MsoyClient
     {
         return _client;
     }
@@ -198,7 +198,7 @@ public /*abstract*/ class BaseContext
         return mb.get.apply(mb, args);
     }
 
-    protected var _client :BaseClient;
+    protected var _client :MsoyClient;
     protected var _helper :ContextHelper;
     protected var _topPanel :TopPanel;
 
@@ -217,7 +217,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 /**
  * A helper class that implements common helper interfaces that we would not like to see exposed on
- * the BaseContext class.  In Java, this would be handled by having a number of anonymous inner
+ * the MsoyContext class.  In Java, this would be handled by having a number of anonymous inner
  * classes.
  */
 class ContextHelper

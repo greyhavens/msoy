@@ -67,8 +67,8 @@ import com.threerings.msoy.notify.data.GuestInviteNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 
-import com.threerings.msoy.client.BaseClient;
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyClient;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
@@ -89,7 +89,7 @@ import com.threerings.msoy.world.data.RoomConfig;
 /**
  * Handles the main services for the world and game clients.
  */
-public class WorldClient extends BaseClient
+public class WorldClient extends MsoyClient
 {
     /**
      * An event dispatched for tutorial-specific purposes.
@@ -115,7 +115,7 @@ public class WorldClient extends BaseClient
         }
     }
 
-    // from BaseClient
+    // from MsoyClient
     override public function fuckingCompiler () :void
     {
         super.fuckingCompiler();
@@ -407,13 +407,13 @@ public class WorldClient extends BaseClient
         _wctx.getMsoyChatDirector().openChannel(nameObj);
     }
 
-    // from BaseClient
-    override protected function createContext () :BaseContext
+    // from MsoyClient
+    override protected function createContext () :MsoyContext
     {
         return (_wctx = new WorldContext(this));
     }
 
-    // from BaseClient
+    // from MsoyClient
     override protected function configureExternalFunctions () :void
     {
         super.configureExternalFunctions();
@@ -436,7 +436,7 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("openChannel", externalOpenChannel);
     }
 
-    // from BaseClient
+    // from MsoyClient
     override protected function populateContextMenu (custom :Array) :void
     {
         try {
@@ -457,7 +457,7 @@ public class WorldClient extends BaseClient
         }
     }
 
-    // from BaseClient
+    // from MsoyClient
     override protected function createStartupCreds (token :String) :Credentials
     {
         var params :Object = _stage.loaderInfo.parameters;
@@ -496,7 +496,7 @@ import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.msoy.item.data.all.Avatar;
 
-import com.threerings.msoy.client.BaseClient;
+import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
@@ -530,7 +530,7 @@ class AvatarUpdateNotifier implements AttributeChangeListener
 
 class StatusUpdater implements AttributeChangeListener, SetListener
 {
-    public function StatusUpdater (client :BaseClient) {
+    public function StatusUpdater (client :MsoyClient) {
         _client = client;
     }
 
@@ -608,5 +608,5 @@ class StatusUpdater implements AttributeChangeListener, SetListener
     protected static const SCENEBOOKMARK_ADDED :int = 1;
     protected static const SCENEBOOKMARK_REMOVED :int = 2;
 
-    protected var _client :BaseClient;
+    protected var _client :MsoyClient;
 }

@@ -11,7 +11,7 @@ import com.threerings.util.LogTarget;
 // TODO: stop listening at the end?
 public class LoggingTargets
 {
-    public static function configureLogging (ctx :BaseContext) :void
+    public static function configureLogging (ctx :MsoyContext) :void
     {
         // for now, everything logs to the FireBug console
         try {
@@ -45,13 +45,13 @@ import flash.external.ExternalInterface;
 import com.threerings.util.LogTarget;
 import com.threerings.util.MessageBundle;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 
 // TODO: stop listening at the end?
 class ChatTarget
     implements LogTarget
 {
-    public function ChatTarget (ctx :BaseContext)
+    public function ChatTarget (ctx :MsoyContext)
     {
         _ctx = ctx;
     }
@@ -62,7 +62,7 @@ class ChatTarget
         _ctx.displayInfo(null, MessageBundle.taint(msg));
     }
 
-    protected var _ctx :BaseContext;
+    protected var _ctx :MsoyContext;
 }
 
 /**

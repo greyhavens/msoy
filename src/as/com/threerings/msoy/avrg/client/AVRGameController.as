@@ -16,7 +16,7 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.threerings.msoy.client.BaseClient;
+import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.game.client.GameContext;
 
 import com.threerings.msoy.world.client.MobSprite;
@@ -40,7 +40,7 @@ public class AVRGameController extends Controller
         _gameId = gameId;
 
         _wctx.getClient().addEventListener(
-            BaseClient.MINI_WILL_CHANGE, function (ev :ValueEvent) :void {
+            MsoyClient.MINI_WILL_CHANGE, function (ev :ValueEvent) :void {
                 miniWillChange(ev.value);
             });
 
@@ -114,7 +114,7 @@ public class AVRGameController extends Controller
 
     protected function shutdown () :void
     {
-        _wctx.getClient().removeEventListener(BaseClient.MINI_WILL_CHANGE, miniWillChange);
+        _wctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
         _subscriber.unsubscribe(_wctx.getDObjectManager());
 
         avrGameAvailable(null);

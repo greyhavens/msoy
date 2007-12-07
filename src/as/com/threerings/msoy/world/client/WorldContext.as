@@ -25,7 +25,7 @@ import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.notify.client.NotificationDirector;
 
-import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MediaDirector;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.persist.RuntimeSceneRepository;
@@ -35,7 +35,7 @@ import com.threerings.msoy.data.MsoyTokenRing;
 /**
  * Defines services for the World client.
  */
-public class WorldContext extends BaseContext
+public class WorldContext extends MsoyContext
     implements WhirledContext
 {
     /** Contains non-persistent properties that are set in various places and can be bound to to be
@@ -134,13 +134,13 @@ public class WorldContext extends BaseContext
         return _controller;
     }
 
-    // from BaseContext
+    // from MsoyContext
     override public function getTokens () :MsoyTokenRing
     {
         return getMemberObject().tokens;
     }
 
-    // from BaseContext
+    // from MsoyContext
     override public function getMsoyController () :MsoyController
     {
         return _controller;
