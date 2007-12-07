@@ -5,22 +5,26 @@ package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
 import flash.display.Stage;
+import flash.ui.ContextMenu;
 
+import flash.events.ContextMenuEvent;
 import flash.external.ExternalInterface;
+import flash.system.Capabilities;
 import flash.system.Security;
 
 import flash.media.SoundMixer;
 import flash.media.SoundTransform;
 
+import mx.core.Application;
 import mx.resources.ResourceBundle;
-
-import com.adobe.crypto.MD5;
 
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
+
+import com.threerings.flash.MenuUtil;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
@@ -30,6 +34,7 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.presents.dobj.DObjectManager;
 
+import com.threerings.presents.net.Credentials;
 import com.threerings.presents.net.BootstrapData;
 
 import com.threerings.presents.data.TimeBaseMarshaller;
@@ -47,7 +52,6 @@ import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
-import com.threerings.msoy.data.MsoyCredentials;
 
 /**
  * Dispatched when the client is minimized or unminimized.
@@ -87,8 +91,9 @@ public /*abstract*/ class BaseClient extends Client
 
     public function BaseClient (stage :Stage)
     {
-        super(createStartupCreds(stage), stage);
+        super(null, stage);
         setVersion(DeploymentConfig.version);
+        _creds = createStartupCreds(null);
 
         var params :Object = stage.loaderInfo.parameters;
         _featuredPlaceView = params["featuredPlace"] != null;
@@ -124,6 +129,12 @@ public /*abstract*/ class BaseClient extends Client
         // configure our server and port info and logon
         setServer(getServerHost(stage), getServerPorts(stage));
         _httpPort = getHttpServerPort(stage);
+
+        // set up a context menu that blocks funnybiz on the stage
+        var menu :ContextMenu = new ContextMenu();
+        menu.hideBuiltInItems();
+        Application.application.contextMenu = menu;
+        menu.addEventListener(ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
     }
 
     public function fuckingCompiler () :void
@@ -260,38 +271,6 @@ public /*abstract*/ class BaseClient extends Client
             log.warning("ExternalInterface.call('clearSeparator') failed: " + err);
         }
     }
-
-    // from Client
-    override public function gotBootstrap (data :BootstrapData, omgr :DObjectManager) :void
-    {
-        super.gotBootstrap(data, omgr);
-
-        // save any machineIdent or sessionToken from the server.
-        var rdata :MsoyAuthResponseData = (getAuthResponseData() as MsoyAuthResponseData);
-        if (rdata.ident != null) {
-            Prefs.setMachineIdent(rdata.ident);
-        }
-        if (rdata.sessionToken != null) {
-            Prefs.setSessionToken(rdata.sessionToken);
-            // fill our session token into our credentials so that we can log in more efficiently
-            // on a reconnect and so that we can log into game servers
-            (getCredentials() as MsoyCredentials).sessionToken = rdata.sessionToken;
-        }
-
-        if (rdata.sessionToken != null) {
-            try {
-                if (ExternalInterface.available && !_embedded) {
-                    ExternalInterface.call("flashDidLogon", "Foo", 1, rdata.sessionToken);
-                }
-            } catch (err :Error) {
-                log.warning("Unable to inform javascript about login: " + err);
-            }
-        }
-
-        log.info("Client logged on [built=" + DeploymentConfig.buildTime +
-                 ", mediaURL=" + DeploymentConfig.mediaURL +
-                 ", staticMediaURL=" + DeploymentConfig.staticMediaURL + "].");
-    }
      
     /**
      * Called just before we logon to a server.
@@ -345,25 +324,46 @@ public /*abstract*/ class BaseClient extends Client
     }
 
     /**
-     * Create the credentials that will be used to log us on
+     * Called to process ContextMenuEvent.MENU_SELECT.
      */
-    protected static function createStartupCreds (
-        stage :Stage, token :String = null) :MsoyCredentials
+    protected function contextMenuWillPopUp (event :ContextMenuEvent) :void
     {
-        var params :Object = stage.loaderInfo.parameters;
-        var creds :MsoyCredentials;
-        if ((params["pass"] != null) && (params["user"] != null)) {
-            creds = new MsoyCredentials(new Name(String(params["user"])),
-                                        MD5.hash(String(params["pass"])));
-        } else {
-            creds = new MsoyCredentials(null, null);
-        }
-        creds.ident = Prefs.getMachineIdent();
-        if (null == params["guest"]) {
-            creds.sessionToken = (token == null) ? params["token"] : token;
-        }
-        creds.featuredPlaceView = null != params["featuredPlace"];
-        return creds;
+        var menu :ContextMenu = (event.target as ContextMenu);
+        var custom :Array = menu.customItems;
+        custom.length = 0;
+
+//        custom.push(MenuUtil.createControllerMenuItem(
+//                        Msgs.GENERAL.get("b.toggle_fullscreen"),
+//                        MsoyController.TOGGLE_FULLSCREEN, null, false,
+//                        _wctx.getMsoyController().supportsFullScreen()));
+
+        populateContextMenu(custom);
+
+        // HACK: putting the separator in the menu causes the item to not
+        // work in linux, so we don't do it in linux.
+        var useSep :Boolean = (-1 == Capabilities.os.indexOf("Linux"));
+
+        // add the About menu item
+        custom.push(MenuUtil.createControllerMenuItem(
+                        Msgs.GENERAL.get("b.about"),
+                        MsoyController.ABOUT, null, useSep));
+
+        // then, the menu will pop up
+    }
+
+    /**
+     * Called before the context (right-click) menu is shown.
+     */
+    protected function populateContextMenu (custom :Array) :void
+    {
+    }
+
+    /**
+     * Creates the credentials that will be used to log us on.
+     */
+    protected function createStartupCreds (token :String) :Credentials
+    {
+        throw new Error("abstract");
     }
 
     /**

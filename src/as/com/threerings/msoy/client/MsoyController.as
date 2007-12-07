@@ -28,6 +28,8 @@ import com.threerings.util.MessageBundle;
 import com.threerings.util.NetUtil;
 import com.threerings.util.StringUtil;
 
+import com.threerings.presents.net.Credentials;
+
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.client.BodyService;
 import com.threerings.crowd.client.LocationAdapter;
@@ -42,7 +44,6 @@ import com.threerings.presents.client.ClientObserver;
 
 import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
-import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.game.client.MsoyGamePanel;
 
 import mx.controls.Button;
@@ -91,6 +92,9 @@ public class MsoyController extends Controller
 
     /** Command to view an item, arg is [ itemTypeId, itemId ] */
     public static const VIEW_ITEM :String = "ViewItem";
+
+    /** Command to go to a running game (gameId + placeOid). */
+    public static const GO_GAME :String = "GoGame";
 
     /**
      * Creates and initializes the controller.
@@ -206,15 +210,11 @@ public class MsoyController extends Controller
     /**
      * Handles the LOGON command.
      */
-    public function handleLogon (creds :MsoyCredentials) :void
+    public function handleLogon (creds :Credentials) :void
     {
         // give the client a chance to log off, then log back on
         _topPanel.callLater(function () :void {
             var client :Client = _ctx.getClient();
-            if (creds == null) {
-                creds = new MsoyCredentials(null, null);
-                creds.ident = "";
-            }
             log.info("Logging on [creds=" + creds + ", version=" + DeploymentConfig.version + "].");
             client.setCredentials(creds);
             client.logon();

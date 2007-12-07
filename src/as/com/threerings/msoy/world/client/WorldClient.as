@@ -6,14 +6,13 @@ package com.threerings.msoy.world.client {
 import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.display.StageQuality;
-import flash.events.ContextMenuEvent;
 import flash.external.ExternalInterface;
 import flash.geom.Point;
-import flash.system.Capabilities;
-import flash.ui.ContextMenu;
 
 import mx.core.Application;
 import mx.resources.ResourceBundle;
+
+import com.adobe.crypto.MD5;
 
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
@@ -25,6 +24,9 @@ import com.threerings.util.ValueEvent;
 import com.threerings.flash.MenuUtil;
 
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DObjectManager;
+import com.threerings.presents.net.BootstrapData;
+import com.threerings.presents.net.Credentials;
 
 import com.threerings.whirled.data.SceneMarshaller;
 import com.threerings.whirled.spot.data.SpotMarshaller;
@@ -35,7 +37,9 @@ import com.threerings.toybox.data.ToyBoxMarshaller;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
@@ -53,8 +57,8 @@ import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.data.all.Prop;
 
-import com.threerings.msoy.game.data.AVRGameMarshaller;
-import com.threerings.msoy.game.data.AVRMarshaller;
+import com.threerings.msoy.avrg.data.AVRGameMarshaller;
+import com.threerings.msoy.avrg.data.AVRMarshaller;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -66,8 +70,10 @@ import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 import com.threerings.msoy.client.BaseClient;
 import com.threerings.msoy.client.BaseContext;
 import com.threerings.msoy.client.ContextMenuProvider;
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.world.data.MsoySceneMarshaller;
 import com.threerings.msoy.world.data.PetMarshaller;
@@ -92,8 +98,6 @@ public class WorldClient extends BaseClient
      */
     public static const TUTORIAL_EVENT :String = "tutorial";
 
-    public static const log :Log = Log.getLog(WorldClient);
-
     public function WorldClient (stage :Stage)
     {
         super(stage);
@@ -104,12 +108,6 @@ public class WorldClient extends BaseClient
         // world to jiggle when someone starts walking, then jiggle again when they stop.
         // So: for now we just peg it to MEDIUM.
         stage.quality = StageQuality.MEDIUM;
-
-        // set up a context menu that blocks funnybiz on the stage
-        var menu :ContextMenu = new ContextMenu();
-        menu.hideBuiltInItems();
-        Application.application.contextMenu = menu;
-        menu.addEventListener(ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
 
         // make sure we're running a sufficiently new version of Flash
         if (_wctx.getTopPanel().verifyFlashVersion()) {
@@ -160,6 +158,38 @@ public class WorldClient extends BaseClient
     }
 
     // from Client
+    override public function gotBootstrap (data :BootstrapData, omgr :DObjectManager) :void
+    {
+        super.gotBootstrap(data, omgr);
+
+        // save any machineIdent or sessionToken from the server.
+        var rdata :MsoyAuthResponseData = (getAuthResponseData() as MsoyAuthResponseData);
+        if (rdata.ident != null) {
+            Prefs.setMachineIdent(rdata.ident);
+        }
+        if (rdata.sessionToken != null) {
+            Prefs.setSessionToken(rdata.sessionToken);
+            // fill our session token into our credentials so that we can log in more efficiently
+            // on a reconnect and so that we can log into game servers
+            (getCredentials() as MsoyCredentials).sessionToken = rdata.sessionToken;
+        }
+
+        if (rdata.sessionToken != null) {
+            try {
+                if (ExternalInterface.available && !_embedded) {
+                    ExternalInterface.call("flashDidLogon", "Foo", 1, rdata.sessionToken);
+                }
+            } catch (err :Error) {
+                log.warning("Unable to inform javascript about login: " + err);
+            }
+        }
+
+        log.info("Client logged on [built=" + DeploymentConfig.buildTime +
+                 ", mediaURL=" + DeploymentConfig.mediaURL +
+                 ", staticMediaURL=" + DeploymentConfig.staticMediaURL + "].");
+    }
+
+    // from Client
     override public function gotClientObject (clobj :ClientObject) :void
     {
         super.gotClientObject(clobj);
@@ -183,79 +213,6 @@ public class WorldClient extends BaseClient
         }
     }
 
-    // from BaseClient
-    override protected function createContext () :BaseContext
-    {
-        return (_wctx = new WorldContext(this));
-    }
-
-    // from BaseClient
-    override protected function configureExternalFunctions () :void
-    {
-        super.configureExternalFunctions();
-
-        ExternalInterface.addCallback("clientLogon", externalClientLogon);
-        ExternalInterface.addCallback("clientGo", externalClientGo);
-        ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
-        ExternalInterface.addCallback("inRoom", externalInRoom);
-        ExternalInterface.addCallback("useAvatar", externalUseAvatar);
-        ExternalInterface.addCallback("getAvatarId", externalGetAvatarId);
-        ExternalInterface.addCallback("updateAvatarScale", externalUpdateAvatarScale);
-        ExternalInterface.addCallback("useItem", externalUseItem);
-        ExternalInterface.addCallback("removeFurni", externalRemoveFurni);
-        ExternalInterface.addCallback("getSceneItemId", externalGetSceneItemId);
-        ExternalInterface.addCallback("getFurniList", externalGetFurniList);
-        ExternalInterface.addCallback("usePet", externalUsePet);
-        ExternalInterface.addCallback("removePet", externalRemovePet);
-        ExternalInterface.addCallback("getPets", externalGetPets);
-        ExternalInterface.addCallback("tutorialEvent", externalTutorialEvent);
-        ExternalInterface.addCallback("openChannel", externalOpenChannel);
-    }
-
-    /**
-     * Called to process ContextMenuEvent.MENU_SELECT.
-     */
-    protected function contextMenuWillPopUp (event :ContextMenuEvent) :void
-    {
-        var menu :ContextMenu = (event.target as ContextMenu);
-        var custom :Array = menu.customItems;
-        custom.length = 0;
-
-//        custom.push(MenuUtil.createControllerMenuItem(
-//                        Msgs.GENERAL.get("b.toggle_fullscreen"),
-//                        MsoyController.TOGGLE_FULLSCREEN, null, false,
-//                        _wctx.getMsoyController().supportsFullScreen()));
-
-        try {
-            var allObjects :Array =
-                _stage.getObjectsUnderPoint(new Point(_stage.mouseX, _stage.mouseY));
-            var seenObjects :Array = [];
-            for each (var disp :DisplayObject in allObjects) {
-                do {
-                    seenObjects.push(disp);
-                    if (disp is ContextMenuProvider) {
-                        (disp as ContextMenuProvider).populateContextMenu(_wctx, custom);
-                    }
-                    disp = disp.parent;
-
-                } while (disp != null && (seenObjects.indexOf(disp) == -1));
-            }
-        } catch (e :Error) {
-            Log.getLog(this).logStackTrace(e);
-        }
-
-        // HACK: putting the separator in the menu causes the item to not
-        // work in linux, so we don't do it in linux.
-        var useSep :Boolean = (-1 == Capabilities.os.indexOf("Linux"));
-
-        // add the About menu item
-        custom.push(MenuUtil.createControllerMenuItem(
-                        Msgs.GENERAL.get("b.about"),
-                        MsoyController.ABOUT, null, useSep));
-
-        // then, the menu will pop up
-    }
-
     /**
      * Exposed to javascript so that it may notify us to logon.
      */
@@ -268,7 +225,7 @@ public class WorldClient extends BaseClient
         log.info("Logging on via external request [id=" + memberId + ", token=" + token + "].");
         var co :MemberObject = _wctx.getMemberObject();
         if (co == null || co.getMemberId() != memberId) {
-            _wctx.getMsoyController().handleLogon(createStartupCreds(_wctx.getStage(), token));
+            _wctx.getMsoyController().handleLogon(createStartupCreds(token));
         }
     }
 
@@ -298,8 +255,9 @@ public class WorldClient extends BaseClient
         log.info("Logging off via external request [backAsGuest=" + backAsGuest + "].");
 
         if (backAsGuest) {
-            // have the controller handle it it will logoff, then back as a guest
-            _wctx.getMsoyController().handleLogon(null);
+            var creds :MsoyCredentials = new MsoyCredentials(null, null);
+            creds.ident = "";
+            _wctx.getMsoyController().handleLogon(creds);
         } else {
             logoff(false);
         }
@@ -449,8 +407,79 @@ public class WorldClient extends BaseClient
         _wctx.getMsoyChatDirector().openChannel(nameObj);
     }
 
+    // from BaseClient
+    override protected function createContext () :BaseContext
+    {
+        return (_wctx = new WorldContext(this));
+    }
+
+    // from BaseClient
+    override protected function configureExternalFunctions () :void
+    {
+        super.configureExternalFunctions();
+
+        ExternalInterface.addCallback("clientLogon", externalClientLogon);
+        ExternalInterface.addCallback("clientGo", externalClientGo);
+        ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
+        ExternalInterface.addCallback("inRoom", externalInRoom);
+        ExternalInterface.addCallback("useAvatar", externalUseAvatar);
+        ExternalInterface.addCallback("getAvatarId", externalGetAvatarId);
+        ExternalInterface.addCallback("updateAvatarScale", externalUpdateAvatarScale);
+        ExternalInterface.addCallback("useItem", externalUseItem);
+        ExternalInterface.addCallback("removeFurni", externalRemoveFurni);
+        ExternalInterface.addCallback("getSceneItemId", externalGetSceneItemId);
+        ExternalInterface.addCallback("getFurniList", externalGetFurniList);
+        ExternalInterface.addCallback("usePet", externalUsePet);
+        ExternalInterface.addCallback("removePet", externalRemovePet);
+        ExternalInterface.addCallback("getPets", externalGetPets);
+        ExternalInterface.addCallback("tutorialEvent", externalTutorialEvent);
+        ExternalInterface.addCallback("openChannel", externalOpenChannel);
+    }
+
+    // from BaseClient
+    override protected function populateContextMenu (custom :Array) :void
+    {
+        try {
+            var allObjects :Array = _stage.getObjectsUnderPoint(
+                new Point(_stage.mouseX, _stage.mouseY));
+            var seenObjects :Array = [];
+            for each (var disp :DisplayObject in allObjects) {
+                do {
+                    seenObjects.push(disp);
+                    if (disp is ContextMenuProvider) {
+                        (disp as ContextMenuProvider).populateContextMenu(_wctx, custom);
+                    }
+                    disp = disp.parent;
+                } while (disp != null && (seenObjects.indexOf(disp) == -1));
+            }
+        } catch (e :Error) {
+            log.logStackTrace(e);
+        }
+    }
+
+    // from BaseClient
+    override protected function createStartupCreds (token :String) :Credentials
+    {
+        var params :Object = _stage.loaderInfo.parameters;
+        var creds :MsoyCredentials;
+        if ((params["pass"] != null) && (params["user"] != null)) {
+            creds = new MsoyCredentials(new Name(String(params["user"])),
+                                        MD5.hash(String(params["pass"])));
+        } else {
+            creds = new MsoyCredentials(null, null);
+        }
+        creds.ident = Prefs.getMachineIdent();
+        if (null == params["guest"]) {
+            creds.sessionToken = (token == null) ? params["token"] : token;
+        }
+        creds.featuredPlaceView = null != params["featuredPlace"];
+        return creds;
+    }
+
     protected var _wctx :WorldContext;
     protected var _user :MemberObject;
+
+    private static const log :Log = Log.getLog(WorldClient);
 }
 }
 

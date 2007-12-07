@@ -124,7 +124,7 @@ public class MsoyGameRegistry
         MsoyServer.invoker.postUnit(new PersistingUnit("locateGame", listener) {
             public void invokePersistent () throws PersistenceException {
                 if (gameId == Game.TUTORIAL_GAME_ID) {
-                    _game = AVRGameManager.getTutorialGame();
+                    _game = Game.TUTORIAL_GAME;
                 } else {
                     GameRecord grec = _gameRepo.loadGameRecord(gameId);
                     _game = (grec == null) ? null : (Game)grec.toItem();

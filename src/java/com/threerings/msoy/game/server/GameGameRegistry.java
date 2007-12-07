@@ -35,6 +35,7 @@ import com.threerings.parlor.rating.util.Percentiler;
 import com.whirled.data.GameData;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.server.MsoyBaseServer;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
@@ -52,20 +53,22 @@ import com.threerings.msoy.item.server.persist.PrizeRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
-import com.threerings.msoy.game.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.server.AVRDispatcher;
+import com.threerings.msoy.avrg.server.AVRGameManager;
+import com.threerings.msoy.avrg.server.AVRProvider;
+import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
+import com.threerings.msoy.avrg.server.persist.GameStateRecord;
+import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
+import com.threerings.msoy.avrg.server.persist.QuestStateRecord;
+
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.server.persist.AVRGameRepository;
-import com.threerings.msoy.game.server.persist.GameStateRecord;
-import com.threerings.msoy.game.server.persist.PlayerGameStateRecord;
-import com.threerings.msoy.game.server.persist.QuestStateRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
-
-import com.threerings.msoy.server.MsoyBaseServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -282,7 +285,7 @@ public class GameGameRegistry
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("activateAVRGame") {
             public void invokePersist () throws Exception {
                 if (gameId == Game.TUTORIAL_GAME_ID) {
-                    _game = AVRGameManager.getTutorialGame();
+                    _game = Game.TUTORIAL_GAME;
                 } else {
                     GameRecord gRec = _gameRepo.loadGameRecord(gameId);
                     if (gRec != null) {

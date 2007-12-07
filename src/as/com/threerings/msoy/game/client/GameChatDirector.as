@@ -8,6 +8,7 @@ import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.crowd.chat.data.ChatMessage;
 
+import com.threerings.msoy.client.BaseContext;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
@@ -18,9 +19,10 @@ import com.threerings.msoy.chat.client.HistoryList;
  */
 public class GameChatDirector extends ChatDirector
 {
-    public function GameChatDirector (ctx :GameContext)
+    public function GameChatDirector (gctx :GameContext)
     {
-        super(ctx, ctx.getMessageManager(), MsoyCodes.CHAT_MSGS);
+        super(gctx, gctx.getBaseContext().getMessageManager(), MsoyCodes.CHAT_MSGS);
+        _mctx = gctx.getBaseContext();
     }
 
     public function getGameHistory () :HistoryList
@@ -33,7 +35,7 @@ public class GameChatDirector extends ChatDirector
     {
         if (display is ChatOverlay) {
             (display as ChatOverlay).setHistory(_gameHistory);
-            (_ctx as GameContext).getTopPanel().setActiveOverlay(display as ChatOverlay);
+            _mctx.getTopPanel().setActiveOverlay(display as ChatOverlay);
         }
         super.pushChatDisplay(display);
 
@@ -46,7 +48,7 @@ public class GameChatDirector extends ChatDirector
     {
         if (display is ChatOverlay) {
             (display as ChatOverlay).setHistory(_gameHistory);
-            (_ctx as GameContext).getTopPanel().setActiveOverlay(display as ChatOverlay);
+            _mctx.getTopPanel().setActiveOverlay(display as ChatOverlay);
         }
         super.addChatDisplay(display);
 
@@ -76,25 +78,25 @@ public class GameChatDirector extends ChatDirector
     override public function requestChat (speakSvc :SpeakService, text :String, 
         record :Boolean) :String
     {
-        if ((_ctx as GameContext).getTopPanel().getHeaderBar().getChatTabs().
+        if (_mctx.getTopPanel().getHeaderBar().getChatTabs().
                 getCurrentController() != null) {
             // if there is a tab other than game active, let the other chat director handle it.
-            return (_ctx as GameContext).getMsoyChatDirector().requestChat(speakSvc, text, record);
+            return _mctx.getMsoyChatDirector().requestChat(speakSvc, text, record);
         }
         return super.requestChat(speakSvc, text, record);
     }
 
     protected function grabChatControl () :void
     {
-        (_ctx as GameContext).getTopPanel().getControlBar().setChatDirector(this);
-        (_ctx as GameContext).getTopPanel().getHeaderBar().getChatTabs().setChatDirector(this);
+        _mctx.getTopPanel().getControlBar().setChatDirector(this);
+        _mctx.getTopPanel().getHeaderBar().getChatTabs().setChatDirector(this);
     }
 
     protected function releaseChatControl () :void
     {
-        (_ctx as GameContext).getTopPanel().getControlBar().setChatDirector(null);
-        (_ctx as GameContext).getTopPanel().getHeaderBar().getChatTabs().setChatDirector(null);
-        (_ctx as GameContext).getTopPanel().setActiveOverlay(null);
+        _mctx.getTopPanel().getControlBar().setChatDirector(null);
+        _mctx.getTopPanel().getHeaderBar().getChatTabs().setChatDirector(null);
+        _mctx.getTopPanel().setActiveOverlay(null);
     }
 
     // from ChatDirector
@@ -104,6 +106,7 @@ public class GameChatDirector extends ChatDirector
         super.dispatchPreparedMessage(msg);
     }
 
+    protected var _mctx :BaseContext;
     protected var _gameHistory :HistoryList = new HistoryList();
 }
 }

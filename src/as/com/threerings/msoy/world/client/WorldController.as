@@ -21,6 +21,7 @@ import com.threerings.util.StringUtil;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.net.Credentials;
 
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
@@ -30,7 +31,7 @@ import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-import com.threerings.msoy.game.client.AVRGamePanel;
+import com.threerings.msoy.avrg.client.AVRGamePanel;
 import com.threerings.msoy.game.client.MsoyGamePanel;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
@@ -46,7 +47,6 @@ import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
@@ -83,9 +83,6 @@ public class WorldController extends MsoyController
 
     /** Command to join a member's currently pending game table. */
     public static const JOIN_PLAYER_TABLE :String = "JoinPlayerTable";
-
-    /** Command to go to a running game (gameId + placeOid). */
-    public static const GO_GAME :String = "GoGame";
 
     /** Command to join a game lobby. */
     public static const JOIN_GAME_LOBBY :String = "JoinGameLobby";
@@ -603,7 +600,7 @@ public class WorldController extends MsoyController
     }
 
     // from MsoyController
-    override public function handleLogon (creds :MsoyCredentials) :void
+    override public function handleLogon (creds :Credentials) :void
     {
         // if we're currently logged on, save our current scene so that we can go back there once
         // we're relogged on as a non-guest; otherwise go to Brave New Whirled
@@ -707,8 +704,7 @@ public class WorldController extends MsoyController
         var memberObj :MemberObject = _wctx.getMemberObject();
         // if not a guest, save the username that we logged in with
         if (!memberObj.isGuest()) {
-            var creds :MsoyCredentials = (_wctx.getClient().getCredentials() as MsoyCredentials);
-            var name :Name = creds.getUsername();
+            var name :Name = _wctx.getClient().getCredentials().getUsername();
             if (name != null) {
                 Prefs.setUsername(name.toString());
             }

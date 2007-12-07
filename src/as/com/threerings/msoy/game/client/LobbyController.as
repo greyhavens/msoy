@@ -21,11 +21,11 @@ import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.data.GameConfig;
 
+import com.threerings.msoy.client.BaseContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.LobbyObject;
@@ -52,10 +52,10 @@ public class LobbyController extends Controller implements Subscriber
     public static const CLOSE_LOBBY :String = "CloseLobby";
 
     public function LobbyController (
-        ctx :GameContext, liaison :LobbyGameLiaison, lobbyOid :int, mode :int) 
+        gctx :GameContext, liaison :LobbyGameLiaison, lobbyOid :int, mode :int) 
     {
-        _gctx = ctx;
-        _mctx = ctx.getWorldContext();
+        _gctx = gctx;
+        _mctx = gctx.getBaseContext();
         _liaison = liaison;
         _mode = mode;
 
@@ -77,7 +77,6 @@ public class LobbyController extends Controller implements Subscriber
         tcfg :TableConfig, gcfg :GameConfig, friendIds :TypedArray) :void
     {
         _tableDir.createTable(tcfg, gcfg);
-        _mctx.getGameDirector().setMatchingGame(_lobj.game);
 
         // if requested, send an invitation to our friends, inviting them to this game
         if (friendIds.length > 0) {
@@ -93,7 +92,6 @@ public class LobbyController extends Controller implements Subscriber
     public function handleJoinTable (tableId :int, position :int) :void
     {
         _tableDir.joinTable(tableId, position);
-        _mctx.getGameDirector().setMatchingGame(_lobj.game);
     }
 
     /**
@@ -217,7 +215,7 @@ public class LobbyController extends Controller implements Subscriber
     public function handleAddedToStage (evt :Event) :void
     {
         if (_lobj != null) {
-            _mctx.getWorldClient().setWindowTitle(_lobj.game.name);
+            _mctx.getBaseClient().setWindowTitle(_lobj.game.name);
         }
     }
 
@@ -231,7 +229,7 @@ public class LobbyController extends Controller implements Subscriber
         var seatedTable :Table = _tableDir != null ? _tableDir.getSeatedTable() : null;
         if ((seatedTable != null) && !seatedTable.inPlay()) {
             var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(
-                _gctx, _panel, _tableDir, _panel.getGame().name);
+                _mctx, _gctx, _panel, _tableDir, _panel.getGame().name);
             tableDisplay.open();
             setControlledPanel(tableDisplay.getPanel());
             _mctx.getTopPanel().setTableDisplay(tableDisplay);
@@ -253,7 +251,7 @@ public class LobbyController extends Controller implements Subscriber
         _tableDir.addTableObserver(_panel);
         _tableDir.addSeatednessObserver(_panel);
 
-        _mctx.getWorldClient().setWindowTitle(_lobj.game.name);
+        _mctx.getBaseClient().setWindowTitle(_lobj.game.name);
 
         // if we have a player table to join, do that now, otherwise 
         if (_playerId != 0) {
@@ -285,7 +283,7 @@ public class LobbyController extends Controller implements Subscriber
     {
         for each (var table :Table in _lobj.tables.toArray()) {
             if (table.inPlay() ||
-                (friendsOnly && LobbyPanel.countFriends(table, _mctx.getMemberObject()) == 0)) {
+                (friendsOnly && LobbyPanel.countFriends(table, _gctx.getPlayerObject()) == 0)) {
                 continue;
             }
             for (var ii :int; ii < table.players.length; ii++) {
@@ -324,7 +322,7 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     /** The provider of free cheese. */
-    protected var _mctx :WorldContext;
+    protected var _mctx :BaseContext;
 
     /** The provider of game related services. */
     protected var _gctx :GameContext;

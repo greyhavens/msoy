@@ -40,7 +40,7 @@ public class MsoyGameController extends WhirledGameController
     // from WhirledGameController
     override public function backToWhirled (showLobby :Boolean = false) :void
     {
-        (_pctx as GameContext).getWorldContext().getGameDirector().backToWhirled(showLobby);
+        (_pctx as GameContext).backToWhirled(showLobby);
     }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView

@@ -19,6 +19,7 @@ import com.whirled.client.WhirledGamePanel;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.HistoryList;
+import com.threerings.msoy.client.BaseContext;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyPlaceView;
@@ -28,10 +29,10 @@ import com.threerings.msoy.game.data.MsoyGameObject;
 public class MsoyGamePanel extends WhirledGamePanel
     implements MsoyPlaceView
 {
-    public function MsoyGamePanel (ctx :GameContext, ctrl :MsoyGameController)
+    public function MsoyGamePanel (gctx :GameContext, ctrl :MsoyGameController)
     {
-        super(ctx, ctrl);
-        _gctx = ctx;
+        super(gctx, ctrl);
+        _gctx = gctx;
     }
 
     // from MsoyPlaceView
@@ -51,9 +52,10 @@ public class MsoyGamePanel extends WhirledGamePanel
     {
         super.willEnterPlace(plobj);
 
-        _gctx.getMsoyChatDirector().displayGameChat(_gctx.getChatDirector(), _playerList);
+        _gctx.getBaseContext().getMsoyChatDirector().displayGameChat(
+            _gctx.getChatDirector(), _playerList);
 
-        var bar :ControlBar = _gctx.getTopPanel().getControlBar();
+        var bar :ControlBar = _gctx.getBaseContext().getTopPanel().getControlBar();
         bar.addCustomComponent(_rematch);
         bar.addCustomComponent(_backToLobby);
         bar.addCustomComponent(_backToWhirled);
@@ -64,8 +66,8 @@ public class MsoyGamePanel extends WhirledGamePanel
     {
         super.didLeavePlace(plobj);
 
-        _gctx.getMsoyChatDirector().clearGameChat();
-        var bar :ControlBar = _gctx.getTopPanel().getControlBar();
+        _gctx.getBaseContext().getMsoyChatDirector().clearGameChat();
+        var bar :ControlBar = _gctx.getBaseContext().getTopPanel().getControlBar();
         bar.setChatEnabled(true);
 
         _rematch.parent.removeChild(_rematch);

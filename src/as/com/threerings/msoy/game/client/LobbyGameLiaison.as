@@ -54,7 +54,7 @@ public class LobbyGameLiaison extends GameLiaison
         _gctx.getParlorDirector().addGameReadyObserver(this);
 
         // listen for changes in world location so that we can shutdown if we move
-        _ctx.getLocationDirector().addLocationObserver(_worldLocObs);
+        _wctx.getLocationDirector().addLocationObserver(_worldLocObs);
 
         // display feedback indicating that we're locating their game
         var loading :HBox = new HBox();
@@ -62,7 +62,7 @@ public class LobbyGameLiaison extends GameLiaison
         loading.width = LobbyPanel.LOBBY_PANEL_WIDTH;
         loading.percentHeight = 100;
         loading.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.locating_game")));
-        _ctx.getTopPanel().setLeftPanel(loading);
+        _wctx.getTopPanel().setLeftPanel(loading);
     }
 
     /**
@@ -79,10 +79,10 @@ public class LobbyGameLiaison extends GameLiaison
 
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
-            _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+            _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
             // some failure cases are innocuous, and should be followed up by a display of the 
             // lobby - if we really are hosed, joinLobby() will cause the liaison to shut down.
-            _ctx.getWorldController().restoreSceneURL();
+            _wctx.getWorldController().restoreSceneURL();
             showLobbyUI();
         }, gotPlayerGameOid);
         lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);
@@ -124,7 +124,7 @@ public class LobbyGameLiaison extends GameLiaison
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
             _enterNextGameDirect = false;
-            _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+            _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
             shutdown();
         },
         function (result :Object) :void {
@@ -150,10 +150,10 @@ public class LobbyGameLiaison extends GameLiaison
         _gctx.getLocationDirector().moveTo(gameOid);
 
         // make a note what game we're playing, for posterity
-        _ctx.getGameDirector().setMostRecentLobbyGame(_gameId);
+        _wctx.getGameDirector().setMostRecentLobbyGame(_gameId);
 
         // clear out our lobby side panel in case it has not been cleared already
-        _ctx.getTopPanel().clearLeftPanel(null);
+        _wctx.getTopPanel().clearLeftPanel(null);
     }
 
     /**
@@ -174,7 +174,7 @@ public class LobbyGameLiaison extends GameLiaison
         if (_lobby != null) {
             _lobby.forceShutdown();
         }
-        _ctx.getLocationDirector().removeLocationObserver(_worldLocObs);
+        _wctx.getLocationDirector().removeLocationObserver(_worldLocObs);
         super.shutdown();
     }
 
@@ -187,10 +187,11 @@ public class LobbyGameLiaison extends GameLiaison
             // to mess with the URL in that circumstance; only if the player pressed the close box
             if (closedByUser) {
                 // either restore our current scene URL or go home if we have no scene
-                if (_ctx.getSceneDirector().getScene() == null) {
-                    _ctx.getWorldController().handleGoScene(_ctx.getMemberObject().getHomeSceneId());
+                if (_wctx.getSceneDirector().getScene() == null) {
+                    _wctx.getWorldController().handleGoScene(
+                        _wctx.getMemberObject().getHomeSceneId());
                 } else {
-                    _ctx.getWorldController().restoreSceneURL();
+                    _wctx.getWorldController().restoreSceneURL();
                 }
             }
         }
@@ -223,12 +224,12 @@ public class LobbyGameLiaison extends GameLiaison
     // from interface GameReadyObserver
     public function receivedGameReady (gameOid :int) :Boolean
     {
-        _ctx.getTopPanel().clearTableDisplay();
+        _wctx.getTopPanel().clearTableDisplay();
         if (_enterNextGameDirect) {
             _enterNextGameDirect = false;
-            _ctx.getGameDirector().enterGame(gameOid);
+            _wctx.getGameDirector().enterGame(gameOid);
         } else {
-            _ctx.getWorldController().handleGoGame(_gameId, gameOid);
+            _wctx.getWorldController().handleGoGame(_gameId, gameOid);
         }
         return true;
     }
@@ -237,7 +238,7 @@ public class LobbyGameLiaison extends GameLiaison
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
-            _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+            _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
             shutdown();
         }, gotLobbyOid);
         lsvc.identifyLobby(_gctx.getClient(), _gameId, cb);
@@ -277,7 +278,7 @@ public class LobbyGameLiaison extends GameLiaison
             // if they're at a table, join them there
             joinPlayerTable(_playerIdGame);
         } else {
-            _ctx.getWorldController().handleGoGame(_gameId, gameOid);
+            _wctx.getWorldController().handleGoGame(_gameId, gameOid);
         }
     }
 

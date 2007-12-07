@@ -57,19 +57,19 @@ public class GameLiaison
 {
     public static const log :Log = Log.getLog(GameLiaison);
 
-    public function GameLiaison (ctx :WorldContext, gameId :int)
+    public function GameLiaison (wctx :WorldContext, gameId :int)
     {
-        _ctx = ctx;
+        _wctx = wctx;
         _gameId = gameId;
 
         // create our custom context which we'll use to connect to lobby/game servers
-        _gctx = new GameContext(ctx);
+        _gctx = new LiaisonGameContext(wctx);
         _gctx.getClient().addClientObserver(this);
 
         // locate the game server to start everything off
         var mgsvc :MsoyGameService =
-            (_ctx.getClient().requireService(MsoyGameService) as MsoyGameService);
-        mgsvc.locateGame(_ctx.getClient(), gameId, this);
+            (_wctx.getClient().requireService(MsoyGameService) as MsoyGameService);
+        mgsvc.locateGame(_wctx.getClient(), gameId, this);
     }
 
     /**
@@ -102,7 +102,7 @@ public class GameLiaison
     // from interface MsoyGameService_LocationListener
     public function requestFailed (cause :String) :void
     {
-        _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+        _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
     }
 
     // from interface ClientObserver
@@ -122,7 +122,7 @@ public class GameLiaison
     public function clientFailedToLogon (event :ClientEvent) :void
     {
         // TODO: something fancier?
-        _ctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.internal_error");
+        _wctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.internal_error");
         clientDidClear(null); // abandon ship
     }
 
@@ -161,12 +161,12 @@ public class GameLiaison
     {
         // remove any trophy panel we might have lying around
         if (_awardPanel != null && _awardPanel.parent != null) {
-            _ctx.getTopPanel().getPlaceContainer().removeOverlay(_awardPanel);
+            _wctx.getTopPanel().getPlaceContainer().removeOverlay(_awardPanel);
             // if the path completes after this, it will generate a warning, but in "theory" it
             // should stop receiving onEnterFrame when it's removed from the hierarchy
         }
         // tell the game director that we're audi
-        _ctx.getGameDirector().liaisonCleared(this);
+        _wctx.getGameDirector().liaisonCleared(this);
     }
 
     // from interface MessageListener
@@ -230,7 +230,7 @@ public class GameLiaison
 
         // configure the award display panel with the award info
         (_awardPanel.getChildByName("statement") as TextField).text =
-            _ctx.xlate(MsoyCodes.GAME_MSGS, title);
+            _wctx.xlate(MsoyCodes.GAME_MSGS, title);
         (_awardPanel.getChildByName("trophy_name") as TextField).text = name;
         var clip :MovieClip = (_awardPanel.getChildByName("trophy") as MovieClip);
         while (clip.numChildren > 0) { // remove any old trophy image or the sample
@@ -246,7 +246,7 @@ public class GameLiaison
             image.x -= image.getContentWidth()/2;
             image.y -= image.getContentHeight()/2;
             // then slide the award panel onto the screen, pause for a sec, then back off
-            var container :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
+            var container :PlaceBox = _wctx.getTopPanel().getPlaceContainer();
             var path :Path = Path.connect(
                 Path.move(_awardPanel, 250, -_awardPanel.height, 250, 0, 500),
                 Path.delay(3000), // TODO: play a sound when this path starts
@@ -261,7 +261,7 @@ public class GameLiaison
     }
 
     /** Provides access to main client services. */
-    protected var _ctx :WorldContext;
+    protected var _wctx :WorldContext;
 
     /** A separate context that connects to the game server. */
     protected var _gctx :GameContext;

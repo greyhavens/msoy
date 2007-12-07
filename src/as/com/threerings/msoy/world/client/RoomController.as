@@ -76,10 +76,6 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
 
-import com.threerings.msoy.game.client.QuestOfferPanel;
-import com.threerings.msoy.game.client.QuestCompletionPanel;
-import com.threerings.msoy.game.client.GameContext;
-
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
@@ -957,23 +953,6 @@ public class RoomController extends SceneController
         // set the mode to MODE_NONE to indicate that we've adjusted
         effect.actionType = EffectData.MODE_NONE;
         return effect;
-    }
-
-    /**
-     * Pops up the UI whereby the user is presented with a quest and chooses to accept
-     * it or decline it.
-     */
-    public function offerQuest (gctx :GameContext, questIntro :String, accept :Function) :void
-    {
-        new QuestOfferPanel(gctx, questIntro, accept).open(false);
-    }
-
-    /**
-     * Pops up the UI informing the user they completed a quest.
-     */
-    public function completeQuest (gctx :GameContext, questOutro :String, finish :Function) :void
-    {
-        new QuestCompletionPanel(gctx, questOutro, finish).open(false);
     }
 
     // documentation inherited

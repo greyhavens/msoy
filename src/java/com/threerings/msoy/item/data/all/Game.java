@@ -17,6 +17,20 @@ public class Game extends Item
     /** We reserve a very unlikely gameId for the tutorial. */
     public static final int TUTORIAL_GAME_ID = Integer.MAX_VALUE;
 
+    /** A predefined game record for our tutorial game. */
+    public static final Game TUTORIAL_GAME = new Game() {
+        /* implicit constructor */ {
+            this.gameId = TUTORIAL_GAME_ID;
+            this.name = "Whirled Tutorial";
+            this.config = "<avrg/>";
+            this.gameMedia = new StaticMediaDesc(
+                MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.GAME, "tutorial");
+            // TODO: if we end up using these for AVRG's we'll want hand-crafted stuffs here
+            this.thumbMedia = getDefaultThumbnailMediaFor(GAME);
+            this.furniMedia = getDefaultFurniMediaFor(GAME);
+        }
+    };
+
     /** The width of a game screenshot. */
     public static final int SHOT_WIDTH = 175;
 

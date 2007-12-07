@@ -20,9 +20,6 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 
-import com.threerings.presents.dobj.AttributeChangedEvent;
-import com.threerings.presents.dobj.AttributeChangeListener;
-
 import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.flex.CommandButton;
@@ -39,23 +36,23 @@ import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.SkinnableImage;
 import com.threerings.msoy.ui.ThumbnailPanel;
 
+import com.threerings.msoy.client.BaseContext;
 import com.threerings.msoy.client.EmbedDialog;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.data.PlayerObject;
 
 /**
  * A panel that displays pending table games.
  */
 public class LobbyPanel extends VBox
-    implements TableObserver, SeatednessObserver, AttributeChangeListener
+    implements TableObserver, SeatednessObserver
 {
     /** The width of the lobby panel. */
     public static const LOBBY_PANEL_WIDTH :int = 500; // in px
@@ -66,16 +63,16 @@ public class LobbyPanel extends VBox
     /**
      * Returns the count of friends of the specified member that are seated at this table.
      */
-    public static function countFriends (table :Table, memObj :MemberObject) :int
+    public static function countFriends (table :Table, plobj :PlayerObject) :int
     {
-        var friends :int = 0, ourId :int = memObj.memberName.getMemberId();
+        var friends :int = 0, ourId :int = plobj.memberName.getMemberId();
         for (var ii :int; ii < table.players.length; ii++) {
             var name :MemberName = (table.players[ii] as MemberName);
             if (name == null) {
                 continue;
             }
             var friendId :int = name.getMemberId();
-            if (memObj.friends.containsKey(friendId) || friendId == ourId) {
+            if (plobj.friends.containsKey(friendId) || friendId == ourId) {
                 friends++;
             }
         }
@@ -85,16 +82,12 @@ public class LobbyPanel extends VBox
     /**
      * Create a new LobbyPanel.
      */
-    public function LobbyPanel (ctx :GameContext, ctrl :LobbyController)
+    public function LobbyPanel (gctx :GameContext, ctrl :LobbyController)
     {
-        _gctx = ctx;
-        _wctx = ctx.getWorldContext();
+        _gctx = gctx;
         controller = ctrl;
 
         width = LOBBY_PANEL_WIDTH;
-
-        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
-        addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
     }
 
     public function init (lobbyObj :LobbyObject, friendsOnly :Boolean) :void
@@ -167,7 +160,7 @@ public class LobbyPanel extends VBox
         for each (var table :Table in _lobbyObj.tables.toArray()) {
             tableAdded(table);
         }
-        updateTableList();
+        updateTableState();
         if (_pendingList.numChildren == 1 && _runningList.numChildren == 1) {
             showCreateGame();
         }
@@ -194,7 +187,20 @@ public class LobbyPanel extends VBox
      */
     public function isSeated () :Boolean
     {
-        return _isSeated || (_wctx.getMemberObject().game != null);
+        // if we know we're seated, just return that
+        if (_isSeated) {
+            return true;
+        }
+
+        // otherwise look at the data
+        var seated :Boolean = false;
+        for each (var table :Table in _lobbyObj.tables.toArray()) {
+            if (table.players != null &&
+                table.players.indexOf(_gctx.getPlayerObject().memberName) != -1) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -224,39 +230,18 @@ public class LobbyPanel extends VBox
         }
     }
 
-    // from AttributeChangeListener
-    public function attributeChanged (event :AttributeChangedEvent) :void
-    {
-        if (event.getName() == MemberObject.GAME) {
-            _createBtn.enabled = !isSeated();
-            if (isSeated()) {
-                hideCreateGame();
-            }
-            // we might end up in here before we have our lobby object because this event came in
-            // on the member object
-            if (_lobbyObj != null) {
-                for each (var table :Table in _lobbyObj.tables.toArray()) {
-                    var panel :TablePanel = getTablePanel(table.tableId);
-                    if (panel != null) {
-                        panel.update(table, isSeated());
-                    }
-                }
-            }
-        }
-    }
-
     // from TableObserver
     public function tableAdded (table :Table) :void
     {
         // if we're in friends only mode and this table does not contain a friend, skip it
-        if (_friendsOnly && countFriends(table, _wctx.getMemberObject()) == 0) {
+        if (_friendsOnly && countFriends(table, _gctx.getPlayerObject()) == 0) {
             return;
         }
 
         // add the table at the bottom of the list
         var list :VBox = (table.gameOid > 0) ? _runningList : _pendingList;
         list.addChild(new TablePanel(_gctx, this, table));
-        updateTableList();
+        updateTableState();
     }
 
     // from TableObserver
@@ -266,7 +251,7 @@ public class LobbyPanel extends VBox
 
         // if we're in friends only mode, this table may now be visible or not
         if (_friendsOnly) {
-            var count :int = countFriends(table, _wctx.getMemberObject());
+            var count :int = countFriends(table, _gctx.getPlayerObject());
             if (count > 0 && panel == null) {
                 tableAdded(table);
                 return;
@@ -286,7 +271,7 @@ public class LobbyPanel extends VBox
         if (table.gameOid > 0 && panel.parent == _pendingList) {
             _pendingList.removeChild(panel);
             _runningList.addChild(panel);
-            updateTableList();
+            updateTableState();
         }
 
         // and update it
@@ -299,7 +284,7 @@ public class LobbyPanel extends VBox
         var panel :TablePanel = getTablePanel(tableId);
         if (panel != null) {
             panel.parent.removeChild(panel);
-            updateTableList();
+            updateTableState();
         }
     }
 
@@ -307,29 +292,21 @@ public class LobbyPanel extends VBox
     public function seatednessDidChange (nowSeated :Boolean) :void
     {
         _isSeated = nowSeated;
-        _createBtn.enabled = !isSeated();
-        if (isSeated()) {
+        _createBtn.enabled = !_isSeated;
+        if (_isSeated) {
             hideCreateGame();
         }
         if (_isSeated) {
             CommandEvent.dispatch(this, LobbyController.SAT_AT_TABLE);
         }
-    }
 
-    /**
-     * Handle Event.ADDED_TO_STAGE.
-     */
-    protected function handleAdded (... ignored) :void
-    {
-        _wctx.getMemberObject().addListener(this);
-    }
-
-    /**
-     * Handle Event.REMOVED_FROM_STAGE.
-     */
-    protected function handleRemoved (... ignored) :void
-    {
-        _wctx.getMemberObject().removeListener(this);
+        // TODO: do we need to do this
+        for each (var table :Table in _lobbyObj.tables.toArray()) {
+            var panel :TablePanel = getTablePanel(table.tableId);
+            if (panel != null) {
+                panel.update(table, _isSeated);
+            }
+        }
     }
 
     override protected function createChildren () :void
@@ -365,7 +342,7 @@ public class LobbyPanel extends VBox
         embedBtn.styleName = "headerLink";
         embedBtn.label = Msgs.GENERAL.get("b.share")
         embedBtn.setCallback(function () :void {
-            new EmbedDialog(_wctx);
+            new EmbedDialog(_gctx.getBaseContext());
         });
         embedBtnBox.addChild(embedBtn);
 
@@ -432,7 +409,7 @@ public class LobbyPanel extends VBox
         _contents.addChild(_tableList);
     }
 
-    protected function updateTableList () :void
+    protected function updateTableState () :void
     {
         var havePending :Boolean = (_pendingList.numChildren > 1);
         var haveRunning :Boolean = (_runningList.numChildren > 1);
@@ -457,9 +434,6 @@ public class LobbyPanel extends VBox
         }
         return null;
     }
-
-    /** Provides world client services. */
-    protected var _wctx :WorldContext;
 
     /** Buy one get one free. */
     protected var _gctx :GameContext;

@@ -26,6 +26,9 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.avrg.client.AVRGameController;
+import com.threerings.msoy.avrg.client.AVRGameLiaison;
+
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.MsoyGameCodes;
@@ -254,15 +257,6 @@ public class GameDirector extends BasicDirector
     }
 
     /**
-     * Called by the LobbyController when we join or create a game table. We need to keep this
-     * around so that we can enter the game properly if/when we end up in an actual game.
-     */
-    public function setMatchingGame (game :Game) :void
-    {
-        _matchingGame = game;
-    }
-
-    /**
      * Called by the GameLiaison when it has shutdown and gone away.
      */
     public function liaisonCleared (liaison :GameLiaison) : void
@@ -329,10 +323,6 @@ public class GameDirector extends BasicDirector
 
     /** Handles our connection to the game server. */
     protected var _liaison :GameLiaison;
-
-    /** Tracks the game id of the last game of which we joined a table. We need to remember this
-     * because by the time we get around to entering that game, we no longer have this info. */
-    protected var _matchingGame :Game;
 
     /** Remember the ID of the most recent lobbied game we played, for the tutorial. */
     protected var _mostRecentLobbyGame :int;
