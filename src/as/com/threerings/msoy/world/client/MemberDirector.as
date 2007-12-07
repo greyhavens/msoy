@@ -25,7 +25,7 @@ public class MemberDirector extends BasicDirector
     public function MemberDirector (ctx :WorldContext)
     {
         super(ctx);
-        _bctx = ctx;
+        _wctx = ctx;
     }
 
     /**
@@ -33,17 +33,14 @@ public class MemberDirector extends BasicDirector
      */
     public function inviteToBeFriend (friendId :int) :void
     {
-        _msvc.inviteToBeFriend(_bctx.getClient(), friendId, new ConfirmAdapter(
+        _msvc.inviteToBeFriend(_wctx.getClient(), friendId, new ConfirmAdapter(
             function (cause :String) :void {
                 log.info("Reporting failure [reason=" + cause + "].");
-                _bctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
+                _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
              },
              function () :void {
-                 _bctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.friend_invited");
-                 if (_bctx is WorldContext) {
-                     // TODO: this is pretty iffy
-                     WorldContext(_bctx).getGameDirector().tutorialEvent("friendInvited");
-                 }
+                 _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.friend_invited");
+                 _wctx.getGameDirector().tutorialEvent("friendInvited");
              }));
     }
 
@@ -52,7 +49,7 @@ public class MemberDirector extends BasicDirector
      */
     public function setDisplayName (newName :String) :void
     {
-        _msvc.setDisplayName(_bctx.getClient(), newName, new ReportingListener(_bctx));
+        _msvc.setDisplayName(_wctx.getClient(), newName, new ReportingListener(_wctx));
     }
 
     // from BasicDirector
@@ -69,7 +66,7 @@ public class MemberDirector extends BasicDirector
         _msvc = (client.requireService(MemberService) as MemberService);
     }
 
-    protected var _bctx :WorldContext;
+    protected var _wctx :WorldContext;
     protected var _msvc :MemberService;
 }
 }
