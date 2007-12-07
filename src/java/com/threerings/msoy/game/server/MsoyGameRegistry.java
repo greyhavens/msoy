@@ -34,7 +34,9 @@ import com.threerings.msoy.person.data.TrophyAwardPayload;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Prize;
+import com.threerings.msoy.item.data.all.StaticMediaDesc;
 import com.threerings.msoy.item.server.ItemManager.ItemUpdateListener;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -64,6 +66,20 @@ public class MsoyGameRegistry
 {
     /** The invocation services group for game server services. */
     public static final String GAME_SERVER_GROUP = "game_server";
+
+    /** A predefined game record for our tutorial game. */
+    public static final Game TUTORIAL_GAME = new Game() {
+        /* implicit constructor */ {
+            this.gameId = TUTORIAL_GAME_ID;
+            this.name = "Whirled Tutorial";
+            this.config = "<avrg/>";
+            this.gameMedia = new StaticMediaDesc(
+                MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.GAME, "tutorial");
+            // TODO: if we end up using these for AVRG's we'll want hand-crafted stuffs here
+            this.thumbMedia = getDefaultThumbnailMediaFor(GAME);
+            this.furniMedia = getDefaultFurniMediaFor(GAME);
+        }
+    };
 
     /**
      * Initializes this registry.
@@ -124,7 +140,7 @@ public class MsoyGameRegistry
         MsoyServer.invoker.postUnit(new PersistingUnit("locateGame", listener) {
             public void invokePersistent () throws PersistenceException {
                 if (gameId == Game.TUTORIAL_GAME_ID) {
-                    _game = Game.TUTORIAL_GAME;
+                    _game = TUTORIAL_GAME;
                 } else {
                     GameRecord grec = _gameRepo.loadGameRecord(gameId);
                     _game = (grec == null) ? null : (Game)grec.toItem();

@@ -285,7 +285,7 @@ public class GameGameRegistry
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("activateAVRGame") {
             public void invokePersist () throws Exception {
                 if (gameId == Game.TUTORIAL_GAME_ID) {
-                    _game = Game.TUTORIAL_GAME;
+                    _game = MsoyGameRegistry.TUTORIAL_GAME;
                 } else {
                     GameRecord gRec = _gameRepo.loadGameRecord(gameId);
                     if (gRec != null) {
