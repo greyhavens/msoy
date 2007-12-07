@@ -577,24 +577,27 @@ public class MemberManager
         level++;
 
         if (member.level != level) {
-            final int levelToSet = level;
+            // update their level now so that we don't come along and do this again while the
+            // invoker is off writing things to the database
+            member.setLevel(levelToSet);
+
+            final int newLevel = level;
             MsoyServer.invoker.postUnit(new RepositoryUnit("updateLevel") {
                 public void invokePersist () throws PersistenceException {
                     int memberId = member.getMemberId();
                     // record the new level, and grant a new invite
-                    _memberRepo.setUserLevel(memberId, levelToSet);
+                    _memberRepo.setUserLevel(memberId, newLevel);
                     _memberRepo.grantInvites(memberId, 1);
                     // mark the level gain in their feed
-                    MsoyServer.feedRepo.publishMemberMessage(memberId,
-                        FeedMessageType.FRIEND_GAINED_LEVEL, String.valueOf(levelToSet));
+                    MsoyServer.feedRepo.publishMemberMessage(
+                        memberId, FeedMessageType.FRIEND_GAINED_LEVEL, String.valueOf(newLevel));
                 }
                 public void handleSuccess () {
-                    member.setLevel(levelToSet);
-                    member.notify(new LevelUpNotification(levelToSet));
+                    member.notify(new LevelUpNotification(newLevel));
                 }
                 public void handleFailure (Exception pe) {
                     log.warning("Unable to set user level [memberId=" +
-                        member.getMemberId() + ", level=" + levelToSet + "]");
+                        member.getMemberId() + ", level=" + newLevel + "]");
                 }
             });
         }
