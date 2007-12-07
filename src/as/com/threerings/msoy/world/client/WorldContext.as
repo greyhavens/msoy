@@ -25,6 +25,7 @@ import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.notify.client.NotificationDirector;
 
+import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.persist.RuntimeSceneRepository;
@@ -143,6 +144,18 @@ public class WorldContext extends MsoyContext
     override public function getMsoyController () :MsoyController
     {
         return _controller;
+    }
+
+    // from MsoyContext
+    override protected function createControlBar () :ControlBar
+    {
+        return new WorldControlBar();
+    }
+
+    // from MsoyContext
+    override protected function createChatDirector () :MsoyChatDirector
+    {
+        return new WorldChatDirector(this);
     }
 
     protected var _controller :WorldController;

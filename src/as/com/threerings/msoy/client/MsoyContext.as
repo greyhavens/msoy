@@ -48,7 +48,7 @@ public /*abstract*/ class MsoyContext
 
         _locDir = new LocationDirector(this);
         _occDir = new OccupantDirector(this);
-        _chatDir = new MsoyChatDirector(this);
+        _chatDir = createChatDirector();
         _chatDir.setChatterValidator(_helper);
         _chatDir.addChatFilter(new CurseFilter(this));
 
@@ -204,6 +204,14 @@ public /*abstract*/ class MsoyContext
     protected function createControlBar () :ControlBar
     {
         return new ControlBar();
+    }
+
+    /**
+     * Creates a potentially custom chat director.
+     */
+    protected function createChatDirector () :MsoyChatDirector
+    {
+        return new MsoyChatDirector(this);
     }
 
     protected var _client :MsoyClient;
