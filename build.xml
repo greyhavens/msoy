@@ -408,6 +408,7 @@
   </target>
 
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
+  <property name="astype" value="world"/>
   <target name="asquick">
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
@@ -417,28 +418,25 @@
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-incremental=true"/>
       <arg value="-output"/>
-      <arg value="${deploy.dir}/world-client.swf"/>
+      <arg value="${deploy.dir}/${astype}-client.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/world.mxml"/>
+      <arg value="${asrc.dir}/${astype}.mxml"/>
     </exec>
-    <copy file="${deploy.dir}/world-client.swf" todir="pages/clients/${build_version}"/>
+    <copy file="${deploy.dir}/${astype}-client.swf" todir="pages/clients/${build_version}"/>
   </target>
 
-  <!-- builds our Flash client -->
-  <target name="asclient" depends="asprepare,aslib,asquick"
-          description="Rebuilds the Flash client."/>
+  <!-- builds our Flash world client -->
+  <target name="asclient" depends="asprepare,aslib" description="Rebuilds the Flash world client.">
+    <antcall target="asquick"><param name="astype" value="world"/></antcall>
+  </target>
+
+  <!-- builds our Flash game client -->
+  <target name="asgclient" depends="asprepare,aslib" description="Rebuilds the Flash game client.">
+    <antcall target="asquick"><param name="astype" value="game"/></antcall>
+  </target>
 
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare,aslib">
-    <!-- sanity check to avoid confusion if someone tries to call this directly -->
-    <fail message="type property must be specified: ant -Dtype=world ...">
-      <condition><not><isset property="type"/></not></condition>
-    </fail>
-    <if><equals arg1="${type}" arg2="header"/><then>
-      <property name="extension" value="as"/>
-    </then><else>
-      <property name="extension" value="mxml"/>
-    </else></if>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
@@ -447,9 +445,9 @@
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
-      <arg value="${deploy.dir}/${type}-client.swf"/>
+      <arg value="${deploy.dir}/${astype}-client.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/${type}.${extension}"/>
+      <arg value="${asrc.dir}/${astype}.mxml"/>
     </exec>
     <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients/${build_version}"/>
   </target>
@@ -802,8 +800,10 @@
   </target>
 
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="avatarviewer,videoviewer,decorviewer,neighborhood,tutorial">
-    <antcall target="asclient"><param name="type" value="world"/></antcall>
+  <target name="flashapps"
+          depends="asprepare,aslib,avatarviewer,videoviewer,decorviewer,neighborhood,tutorial">
+    <antcall target="asquick"><param name="astype" value="world"/></antcall>
+    <antcall target="asquick"><param name="astype" value="game"/></antcall>
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->

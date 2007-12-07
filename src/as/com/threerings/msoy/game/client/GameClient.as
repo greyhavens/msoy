@@ -37,7 +37,7 @@ public class GameClient extends MsoyClient
         stage.quality = StageQuality.MEDIUM;
 
         // make sure we're running a sufficiently new version of Flash
-        if (_wctx.getTopPanel().verifyFlashVersion()) {
+        if (_ctx.getTopPanel().verifyFlashVersion()) {
             logon(); // now logon
         }
 
@@ -84,7 +84,7 @@ public class GameClient extends MsoyClient
         return creds;
     }
 
-    protected var _gctx :GameContext;
+    protected var _gctx :GameContextImpl;
 
     private static const log :Log = Log.getLog(GameClient);
 }
@@ -93,8 +93,12 @@ public class GameClient extends MsoyClient
 import com.threerings.parlor.client.ParlorDirector;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.client.MsoyController;
+
+import com.threerings.msoy.game.client.GameClient;
 import com.threerings.msoy.game.client.GameContext;
+import com.threerings.msoy.game.client.GameController;
+import com.threerings.msoy.game.data.PlayerObject;
 
 class GameContextImpl extends MsoyContext
     implements GameContext
@@ -106,6 +110,7 @@ class GameContextImpl extends MsoyContext
         // create our directors
 //         _chatDtr = new GameChatDirector(this);
         _parDtr = new ParlorDirector(this);
+        _controller = new GameController(this, _topPanel);
     }
 
 //     // from CrowdContext
@@ -144,6 +149,12 @@ class GameContextImpl extends MsoyContext
         return []; // TODO
     }
 
+    // from MsoyContext
+    override public function getMsoyController () :MsoyController
+    {
+        return _controller;
+    }
+
     protected var _parDtr :ParlorDirector;
-}
+    protected var _controller :GameController;
 }
