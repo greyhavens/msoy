@@ -52,7 +52,7 @@ public /*abstract*/ class MsoyContext
         _chatDir.setChatterValidator(_helper);
         _chatDir.addChatFilter(new CurseFilter(this));
 
-        _topPanel = new TopPanel(this);
+        _topPanel = new TopPanel(this, createControlBar());
     }
 
     public function getStage () :Stage
@@ -196,6 +196,14 @@ public /*abstract*/ class MsoyContext
         }
         var mb :MessageBundle = _msgMgr.getBundle(bundle);
         return mb.get.apply(mb, args);
+    }
+
+    /**
+     * Creates a potentially custom version of our control bar.
+     */
+    protected function createControlBar () :ControlBar
+    {
+        return new ControlBar();
     }
 
     protected var _client :MsoyClient;

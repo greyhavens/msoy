@@ -511,11 +511,10 @@ public class WorldController extends MsoyController
     /**
      * Handle the ROOM_EDIT command.
      */
-    public function handleRoomEdit (button :Button) :void
+    public function handleRoomEdit () :void
     {
         if (canEditScene()) {
-            var room :RoomView = _topPanel.getPlaceView() as RoomView;
-            room.getRoomController().handleRoomEdit(button);
+            (_topPanel.getPlaceView() as RoomView).getRoomController().handleRoomEdit();
         }
     }
 
@@ -867,7 +866,7 @@ public class WorldController extends MsoyController
 
             // display location name, modify buttons
             controlBar.updateNavigationWidgets(true, scene.getName(), backEnabled);
-            controlBar.sceneEditPossible = canEditScene();
+            (controlBar as WorldControlBar).sceneEditPossible = canEditScene();
             return;
         }
 
@@ -875,7 +874,7 @@ public class WorldController extends MsoyController
         // have a unique URL for game instance locations, then we can embed those locations as
         // well, and have the embedded page bring the game lobby attached to the default game room.
         headerBar.setEmbedLinkButtonVisible(false);
-        controlBar.sceneEditPossible = false;
+        (controlBar as WorldControlBar).sceneEditPossible = false;
 
         // if we're in a game, display the game name and activate the back button
         var cfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();

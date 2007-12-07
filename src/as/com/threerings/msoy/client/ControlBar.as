@@ -29,15 +29,13 @@ import com.threerings.presents.client.ClientAdapter;
 import com.threerings.crowd.chat.client.ChatDirector;
 
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.SkinnableImage;
 
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 
 /**
- * Dispatched when the client is unminimized, and this component's display list has
- * been validated.
+ * Dispatched when the client is unminimized, and this component's display list has been validated.
  *
  * @eventType com.threerings.msoy.client.ControlBar.DISPLAY_LIST_VALID
  */
@@ -67,10 +65,10 @@ public class ControlBar extends HBox
     public static const UI_GUEST :String = "Guest UI";
     public static const UI_SIDEBAR :String = "Member UI Sidebar";
 
-    public static const ALL_UI_GROUPS :Array = [ UI_ALL, UI_STD, UI_SIDEBAR, UI_MINI, UI_EDIT, 
-        UI_GUEST ];
+    public static const ALL_UI_GROUPS :Array = [
+        UI_ALL, UI_STD, UI_SIDEBAR, UI_MINI, UI_EDIT, UI_GUEST ];
 
-    public function ControlBar (ctx :MsoyContext, top :TopPanel)
+    public function init (ctx :MsoyContext, top :TopPanel) :void
     {
         _ctx = ctx;
         styleName = "controlBar";
@@ -86,11 +84,13 @@ public class ControlBar extends HBox
 
         var fn :Function = function (event :ClientEvent) :void {
             checkControls();
+            updateUI();
         };
         _ctx.getClient().addClientObserver(new ClientAdapter(fn, fn, null, null, null, null, fn));
 
         createControls();
         checkControls();
+        updateUI();
     }
 
     /**
@@ -110,236 +110,6 @@ public class ControlBar extends HBox
     {
         if (_chatControl != null) {
             _chatControl.setChatDirector(chatDtr);
-        }
-    }
-
-    /**
-     * Sets whether or not there are notifications available for review.
-     */
-    public function setNotificationsAvailable (avail :Boolean) :void
-    {
-        if (_notifyBtn != null) {
-            _notifyBtn.enabled = avail;
-            _notifyBtn.toolTip = Msgs.GENERAL.get("i.notifications" + (avail ? "_avail" : ""));
-        }
-    }
-
-    /**
-     * Sets whether the notification display is showing or not. Called by the NotificationDirector.
-     */
-    public function setNotificationsShowing (showing :Boolean) :void
-    {
-        _notifyBtn.selected = showing;
-    }
-
-    /**
-     * Add a custom component to the control bar.
-     * Note that there is no remove: just do component.parent.removeChild(component);
-     */
-    public function addCustomComponent (comp :UIComponent) :void
-    {
-        if (_spacer.width != 0) {
-            _spacer.addChild(comp);
-        } else {
-            addChild(comp);
-        }
-    }
-
-    public function miniChanged () :void
-    {
-        _isMinimized = _ctx.getTopPanel().isMinimized();
-        _isEditing = (_isEditing && !_isMinimized);
-        updateUI();
-    }
-
-    public function inSidebar (sidebaring :Boolean) :void
-    {
-        _inSidebar = sidebaring;
-        updateUI();
-    }
-
-    public function setSpacerWidth (width :Number) :void
-    {
-        _spacer.width = width;
-    }
-
-    public function setChatColor (color :int) :void
-    {
-        _chatControl.setChatColor(color);
-    }
-
-    override protected function updateDisplayList (w :Number, h :Number) :void
-    {
-        super.updateDisplayList(w, h);
-        if (!_isMinimized && width != 0) {
-            dispatchEvent(new ValueEvent(DISPLAY_LIST_VALID, true));
-        }
-    }
-
-    /**
-     * Create the controls we'll be using.
-     */
-    protected function createControls () :void
-    {
-        // create the notification button
-        _notifyBtn = new CommandButton(MsoyController.POPUP_NOTIFICATIONS);
-        _notifyBtn.toolTip = Msgs.GENERAL.get("i.notifications");
-        _notifyBtn.styleName = "controlBarButtonNotify";
-        _notifyBtn.enabled = false;
-        _notifyBtn.toggle = true;
-
-        // TODO: move more button creation here...
-    }
-
-    /**
-     * Check to see which controls the client should see.
-     */
-    protected function checkControls () :void
-    {
-        var isMember :Boolean = (_ctx.getMyName() != null &&
-                                 _ctx.getMyName().getMemberId() != MemberName.GUEST_ID);
-        if (numChildren > 0 && (isMember == _isMember)) {
-            return;
-        }
-
-        removeAllChildren();
-        clearAllGroups();
-
-        _spacer = new HBox();
-        _spacer.styleName = "controlBarSpacer";
-        _spacer.height = this.height;
-        _spacer.percentWidth = 100;
-        addGroupChild(_spacer, [ UI_SIDEBAR ]);
-
-        _chatControl = null;
-
-        _chatControl = new ChatControl(_ctx, Msgs.CHAT.get("b.send"), this.height - 4);
-        addGroupChild(_chatControl, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
-
-        var chatBtn :CommandButton = new CommandButton();
-        chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
-        chatBtn.setCommand(MsoyController.CHAT_PREFS);
-        chatBtn.styleName = "controlBarButtonChat";
-        addGroupChild(chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
-
-        var volBtn :CommandButton = new CommandButton();
-        volBtn.toolTip = Msgs.GENERAL.get("i.volume");
-        volBtn.setCommand(MsoyController.POP_VOLUME, volBtn);
-        volBtn.styleName = "controlBarButtonVolume";
-        addGroupChild(volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR ]);
-
-        _roomeditBtn = new CommandButton();
-        _roomeditBtn.toolTip = Msgs.GENERAL.get("i.editScene");
-        _roomeditBtn.setCommand(MsoyController.ROOM_EDIT, _roomeditBtn);
-        _roomeditBtn.styleName = "controlBarButtonEdit";
-        _roomeditBtn.enabled = false;
-        addGroupChild(_roomeditBtn, [ UI_STD ]);
-        
-        // hover hover hotzone
-        var hotZone :CommandButton = new CommandButton();
-        hotZone.toolTip = Msgs.GENERAL.get("i.hover");
-        hotZone.styleName = "controlBarHoverZone";
-        hotZone.enabled = false;
-        hotZone.focusEnabled = false;
-        var hotHandler :Function = function (event :MouseEvent) :void {
-            var roomView :RoomView = _ctx.getTopPanel().getPlaceView() as RoomView;
-            if (roomView != null) {
-                roomView.getRoomController().hoverAllFurni(event.type == MouseEvent.ROLL_OVER);
-            }
-        };
-        hotZone.addEventListener(MouseEvent.ROLL_OVER, hotHandler);
-        hotZone.addEventListener(MouseEvent.ROLL_OUT, hotHandler);
-        addGroupChild(hotZone, [ UI_STD, UI_GUEST ]);
-
-        // notifications button
-        addGroupChild(_notifyBtn, [ UI_STD, UI_GUEST ]);
-
-        // snapshots are not functional; todo: revisit
-        /*
-        _snapBtn = new CommandButton();
-        _snapBtn.toolTip = Msgs.GENERAL.get("i.snapshot");
-        _snapBtn.setCommand(MsoyController.SNAPSHOT);
-        _snapBtn.styleName = "controlBarButtonSnapshot";
-        _snapBtn.enabled = true;
-        addGroupChild(_snapBtn, [ UI_STD ]);
-        */
-        
-        // some elements that are common to guest and logged in users
-        var footerLeft :SkinnableImage = new SkinnableImage();
-        footerLeft.styleName = "controlBarFooterLeft";
-        addGroupChild(footerLeft, [ UI_STD, UI_MINI,  UI_GUEST ]);
-
-        var blank :Canvas = new Canvas();
-        blank.styleName = "controlBarSpacer";
-        blank.height = this.height;
-        blank.percentWidth = 100;
-        addGroupChild(blank, [ UI_STD, UI_MINI, UI_GUEST, UI_SIDEBAR ]);
-
-        var footerRight :SkinnableImage = new SkinnableImage();
-        footerRight.styleName = "controlBarFooterRight";
-        addGroupChild(footerRight, [ UI_STD, UI_GUEST ]);
-
-        _backBtn = new CommandButton();
-        _backBtn.toolTip = Msgs.GENERAL.get("i.goBack");
-        _backBtn.setCommand(MsoyController.MOVE_BACK);
-        _backBtn.styleName = "controlBarButtonBack";
-        _backBtn.enabled = false;
-        addGroupChild(_backBtn, [ UI_STD, UI_GUEST ]);
-
-        // and remember how things are set for now
-        _isMember = isMember;
-        _isMinimized = false;
-        _isEditing = false;
-
-        updateUI();
-    }
-
-    protected function clearAllGroups () :void
-    {
-        for each (var key :String in ALL_UI_GROUPS) {
-            if (_groups[key] == null) {
-                _groups[key] = new Array();
-            } else {
-                _groups[key].length = 0;
-            }
-        }
-    }
-
-    protected function addGroupChild (child :UIComponent, groupNames :Array) :void
-    {
-        addChild(child);
-        for each (var groupName :String in groupNames) {
-            if (groupName != UI_ALL) {
-                _groups[groupName].push(child);
-            }
-            _groups[UI_ALL].push(child);
-        }
-    }
-
-    protected function updateGroup (groupName :String, value :Boolean) :void
-    {
-        var elt :UIComponent = null;
-
-        for each (elt in _groups[groupName]) {
-            elt.visible = elt.includeInLayout = value;
-        }
-    }
-
-    protected function updateUI () :void
-    {
-        updateGroup(UI_ALL, false);
-        if (_isMinimized) {
-            updateGroup(UI_MINI, true);
-        } else if (_inSidebar) {
-            updateGroup(UI_SIDEBAR, true);
-        } else if (_isMember) {
-            if (_isEditing) {
-                updateGroup(UI_EDIT, true);
-            } else {
-                updateGroup(UI_STD, true);
-            }
-        } else {
-            updateGroup(UI_GUEST, true);
         }
     }
 
@@ -367,28 +137,189 @@ public class ControlBar extends HBox
 //         }
     }
 
-    /** Receives notification whether scene editing is possible for this scene. */
-    public function set sceneEditPossible (value :Boolean) :void
+    /**
+     * Add a custom component to the control bar.
+     * Note that there is no remove: just do component.parent.removeChild(component);
+     */
+    public function addCustomComponent (comp :UIComponent) :void
     {
-        var editButtons :Array = [ _roomeditBtn, _petBtn /*, _snapBtn */ ];
-        editButtons.forEach(function (button :CommandButton, i :*, a :*) :void {
-                if (button != null) {
-                    button.enabled = value;
-                }
-            });
-
-        // testing only (robert)
-        if (_ctx.getTokens().isSupport() && _snapBtn != null) {
-            _snapBtn.enabled = value;
+        if (_spacer.width != 0) {
+            _spacer.addChild(comp);
+        } else {
+            addChild(comp);
         }
     }
 
     /**
-     * This is needed by the room controller, so that it can enable/disable the edit button.
+     * Called when our minimization status has changed.
      */
-    public function get roomEditBtn () :CommandButton
+    public function miniChanged () :void
     {
-        return _roomeditBtn;
+        _isMinimized = _ctx.getTopPanel().isMinimized();
+        updateUI();
+    }
+
+    /**
+     * Called to tell us when we're in sidebar mode.
+     */
+    public function inSidebar (sidebaring :Boolean) :void
+    {
+        _inSidebar = sidebaring;
+        updateUI();
+    }
+
+    /**
+     * Configures our spacer width.
+     */
+    public function setSpacerWidth (width :Number) :void
+    {
+        _spacer.width = width;
+    }
+
+    /**
+     * Configures the chat input background color.
+     */
+    public function setChatColor (color :int) :void
+    {
+        _chatControl.setChatColor(color);
+    }
+
+    // from HBox
+    override protected function updateDisplayList (w :Number, h :Number) :void
+    {
+        super.updateDisplayList(w, h);
+        if (!_isMinimized && width != 0) {
+            dispatchEvent(new ValueEvent(DISPLAY_LIST_VALID, true));
+        }
+    }
+
+    /**
+     * Creates the controls we'll be using.
+     */
+    protected function createControls () :void
+    {
+        _spacer = new HBox();
+        _spacer.styleName = "controlBarSpacer";
+        _spacer.height = this.height;
+        _spacer.percentWidth = 100;
+
+        _chatBtn = new CommandButton();
+        _chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
+        _chatBtn.setCommand(MsoyController.CHAT_PREFS);
+        _chatBtn.styleName = "controlBarButtonChat";
+
+        _volBtn = new CommandButton();
+        _volBtn.toolTip = Msgs.GENERAL.get("i.volume");
+        _volBtn.setCommand(MsoyController.POP_VOLUME, _volBtn);
+        _volBtn.styleName = "controlBarButtonVolume";
+
+        _backBtn = new CommandButton();
+        _backBtn.toolTip = Msgs.GENERAL.get("i.goBack");
+        _backBtn.setCommand(MsoyController.MOVE_BACK);
+        _backBtn.styleName = "controlBarButtonBack";
+        _backBtn.enabled = false;
+    }
+
+    /**
+     * Checks to see which controls the client should see.
+     */
+    protected function checkControls () :void
+    {
+        var isMember :Boolean = (_ctx.getMyName() != null &&
+                                 _ctx.getMyName().getMemberId() != MemberName.GUEST_ID);
+        if (numChildren > 0 && (isMember == _isMember)) {
+            return;
+        }
+
+        removeAllChildren();
+        clearAllGroups();
+
+        addGroupChild(_spacer, [ UI_SIDEBAR ]);
+
+        // add our standard control bar features
+        _chatControl = null;
+        _chatControl = new ChatControl(_ctx, Msgs.CHAT.get("b.send"), this.height - 4);
+        addGroupChild(_chatControl, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
+        addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
+        addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR ]);
+
+        // add our various control buttons
+        addControlButtons();
+
+        // some elements that are common to guest and logged in users
+        var footerLeft :SkinnableImage = new SkinnableImage();
+        footerLeft.styleName = "controlBarFooterLeft";
+        addGroupChild(footerLeft, [ UI_STD, UI_MINI,  UI_GUEST ]);
+
+        var blank :Canvas = new Canvas();
+        blank.styleName = "controlBarSpacer";
+        blank.height = this.height;
+        blank.percentWidth = 100;
+        addGroupChild(blank, [ UI_STD, UI_MINI, UI_GUEST, UI_SIDEBAR ]);
+
+        var footerRight :SkinnableImage = new SkinnableImage();
+        footerRight.styleName = "controlBarFooterRight";
+        addGroupChild(footerRight, [ UI_STD, UI_GUEST ]);
+
+        addGroupChild(_backBtn, [ UI_STD, UI_GUEST ]);
+
+        // and remember how things are set for now
+        _isMember = isMember;
+        _isMinimized = false;
+    }
+
+    protected function addControlButtons () :void
+    {
+        // derived classes can add other buttons here
+    }
+
+    protected function clearAllGroups () :void
+    {
+        for each (var key :String in ALL_UI_GROUPS) {
+            if (_groups[key] == null) {
+                _groups[key] = new Array();
+            } else {
+                _groups[key].length = 0;
+            }
+        }
+    }
+
+    protected function addGroupChild (child :UIComponent, groupNames :Array) :void
+    {
+        addChild(child);
+        for each (var groupName :String in groupNames) {
+            if (groupName != UI_ALL) {
+                _groups[groupName].push(child);
+            }
+            _groups[UI_ALL].push(child);
+        }
+    }
+
+    protected function updateGroup (groupName :String, value :Boolean) :void
+    {
+        var elt :UIComponent = null;
+        for each (elt in _groups[groupName]) {
+            elt.visible = elt.includeInLayout = value;
+        }
+    }
+
+    protected function updateUI () :void
+    {
+        updateGroup(UI_ALL, false);
+        updateGroup(getMode(), true);
+    }
+
+    protected function getMode () :String
+    {
+        if (_isMinimized) {
+            return UI_MINI;
+        } else if (_inSidebar) {
+            return UI_SIDEBAR;
+        } else if (_isMember) {
+            return UI_STD;
+        } else {
+            return UI_GUEST;
+        }
     }
 
     /** Our clientside context. */
@@ -403,29 +334,20 @@ public class ControlBar extends HBox
     /** Are we in a sidebar? */
     protected var _inSidebar :Boolean;
 
-    /** Are we in room editing mode? */
-    protected var _isEditing :Boolean;
-
     /** Object that contains all the different groups of UI elements. */
     protected var _groups :Object = new Object();
 
     /** Our chat control. */
     protected var _chatControl :ChatControl;
 
+    /** The chat preferences button. */
+    protected var _chatBtn :CommandButton;
+
+    /** Handles volume adjustment. */
+    protected var _volBtn :CommandButton;
+
     /** The back-movement button. */
     protected var _backBtn :CommandButton;
-
-    /** Button for managing pets. */
-    protected var _petBtn :CommandButton;
-
-    /** Button for editing the current scene. */
-    protected var _roomeditBtn :CommandButton;
-
-    /** Button for room snapshots. */
-    protected var _snapBtn :CommandButton;
-
-    /** Displays notification status. */
-    protected var _notifyBtn :CommandButton;
 
     /** Current location label. */
     protected var _loc :CanvasWithText;

@@ -26,7 +26,6 @@ import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.notify.client.NotificationDirector;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.MediaDirector;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.persist.RuntimeSceneRepository;
 import com.threerings.msoy.data.MemberObject;

@@ -22,7 +22,6 @@ import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 
-import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MemberService;
 
 import com.threerings.msoy.data.all.FriendEntry;
@@ -31,6 +30,7 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
 
 import com.threerings.msoy.notify.data.NotifyMessage;
 import com.threerings.msoy.notify.data.Notification;
@@ -221,7 +221,7 @@ public class NotificationDirector extends BasicDirector
             acknowledgeNotifications(shouldAck);
         }
         // and update the button if there are any persistent notifications
-        var controlBar :ControlBar = _wctx.getTopPanel().getControlBar();
+        var controlBar :WorldControlBar = (_wctx.getTopPanel().getControlBar() as WorldControlBar);
         if (controlBar != null) {
             controlBar.setNotificationsAvailable(hasPersistent);
         }
@@ -242,7 +242,8 @@ public class NotificationDirector extends BasicDirector
      */
     protected function updateNotificationButton (notifsShowing :Boolean) :void
     {
-        _wctx.getTopPanel().getControlBar().setNotificationsShowing(notifsShowing);
+        (_wctx.getTopPanel().getControlBar() as WorldControlBar).
+            setNotificationsShowing(notifsShowing);
     }
 
     protected var _wctx :WorldContext;

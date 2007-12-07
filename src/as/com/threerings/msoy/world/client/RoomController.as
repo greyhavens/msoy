@@ -391,7 +391,7 @@ public class RoomController extends SceneController
     /**
      * Handle the ROOM_EDIT command.
      */
-    public function handleRoomEdit (button :Button) :void
+    public function handleRoomEdit () :void
     {
         _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultWrapper(
             function (cause :String) :void {
@@ -402,7 +402,7 @@ public class RoomController extends SceneController
                 if (isRoomEditing()) {
                     cancelRoomEditing();
                 } else {
-                    beginRoomEditing(button);
+                    beginRoomEditing();
                 }
             }));
     }
@@ -1047,7 +1047,7 @@ public class RoomController extends SceneController
     {
         if (!(event.value as Boolean)) {
             if (_openEditor && !isRoomEditing()) {
-                beginRoomEditing(_wdctx.getTopPanel().getControlBar().roomEditBtn);
+                beginRoomEditing();
             }
             _openEditor = false;
         }
@@ -1130,20 +1130,23 @@ public class RoomController extends SceneController
     /**
      * Begins editing the room.
      */
-    protected function beginRoomEditing (button :Button) :void
+    protected function beginRoomEditing () :void
     {
         _walkTarget.visible = false;
         _flyTarget.visible = false;
         setHoverSprite(null);
 
-        button.selected = true;
+        // put the room edit button in the selected state
+        var roomEditBtn :Button =
+            (_wdctx.getTopPanel().getControlBar() as WorldControlBar).roomEditBtn;
+        roomEditBtn.selected = true;
 
         // this function will be called when the edit panel is closing
         var wrapupFn :Function = function () :void {
             if (_music != null && ! _musicIsBackground) {
                 _music.play(); // restart non-background music
             }
-            button.selected = false;
+            roomEditBtn.selected = false;
         }
 
         if (_music != null && ! _musicIsBackground) {

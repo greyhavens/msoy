@@ -48,7 +48,7 @@ public class TopPanel extends Canvas
     /**
      * Construct the top panel.
      */
-    public function TopPanel (ctx :MsoyContext)
+    public function TopPanel (ctx :MsoyContext, controlBar :ControlBar)
     {
         _ctx = ctx;
         _ctx.getLocationDirector().addLocationObserver(this);
@@ -76,7 +76,8 @@ public class TopPanel extends Canvas
 
         if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
             // set up the control bar
-            _controlBar = new ControlBar(ctx, this);
+            _controlBar = controlBar;
+            _controlBar.init(ctx, this);
             _controlBar.includeInLayout = false;
             _controlBar.setStyle("bottom", 0);
             _controlBar.setStyle("left", 0);

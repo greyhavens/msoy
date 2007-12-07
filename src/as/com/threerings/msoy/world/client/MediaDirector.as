@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.client {
+package com.threerings.msoy.world.client {
 
 import com.threerings.util.Log;
 
@@ -12,14 +12,6 @@ import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
-import com.threerings.msoy.world.client.DecorSprite;
-import com.threerings.msoy.world.client.FurniSprite;
-import com.threerings.msoy.world.client.MemberSprite;
-import com.threerings.msoy.world.client.MobSprite;
-import com.threerings.msoy.world.client.MsoySprite;
-import com.threerings.msoy.world.client.OccupantSprite;
-import com.threerings.msoy.world.client.PetSprite;
 
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemberInfo;
@@ -34,10 +26,10 @@ public class MediaDirector extends BasicDirector
 {
     public static const log :Log = Log.getLog(MediaDirector);
 
-    public function MediaDirector (ctx :MsoyContext)
+    public function MediaDirector (ctx :WorldContext)
     {
         super(ctx);
-        _mctx = ctx;
+        _wctx = ctx;
     }
 
     /**
@@ -113,7 +105,7 @@ public class MediaDirector extends BasicDirector
     }
 
     /** A casted copy of the context. */
-    protected var _mctx :MsoyContext;
+    protected var _wctx :WorldContext;
 
     /** Our very own avatar: avoid loading and unloading it. */
     protected var _ourAvatar :MemberSprite;
