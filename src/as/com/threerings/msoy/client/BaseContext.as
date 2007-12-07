@@ -16,14 +16,18 @@ import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.client.CurseFilter;
+import com.threerings.msoy.chat.client.MsoyChatDirector;
 
 /**
  * Provides services shared by all clients.
@@ -31,7 +35,7 @@ import com.threerings.msoy.chat.client.CurseFilter;
 public /*abstract*/ class BaseContext
     implements CrowdContext
 {
-    public function BaseContext (client :Client)
+    public function BaseContext (client :BaseClient)
     {
         _client = client;
 
@@ -44,15 +48,49 @@ public /*abstract*/ class BaseContext
 
         _locDir = new LocationDirector(this);
         _occDir = new OccupantDirector(this);
-        _chatDir = createChatDirector();
+        _chatDir = new MsoyChatDirector(this);
         _chatDir.setChatterValidator(_helper);
         _chatDir.addChatFilter(new CurseFilter(this));
-        _memberDir = new MemberDirector(this);
+
+        _topPanel = new TopPanel(this);
     }
 
     public function getStage () :Stage
     {
         return _client.getStage();
+    }
+
+    /**
+     * Returns our client as its BaseClient self.
+     */
+    public function getBaseClient () :BaseClient
+    {
+        return _client;
+    }
+
+    /**
+     * Returns a reference to the top-level UI container.
+     */
+    public function getTopPanel () :TopPanel
+    {
+        return _topPanel;
+    }
+
+    /**
+     * Return's this client's member name.
+     */
+    public function getMyName () :MemberName
+    {
+        return (_client.getClientObject() == null) ? null :
+            ((_client.getClientObject() as BodyObject).getVisibleName() as MemberName);
+    }
+
+    /**
+     * Returns this client's access control tokens.
+     */
+    public function getTokens () :MsoyTokenRing
+    {
+        throw new Error("abstract");
     }
 
     /**
@@ -80,18 +118,18 @@ public /*abstract*/ class BaseContext
         _chatDir.displayInfo(bundle, message);
     }
 
+    /**
+     * Returns the chat director casted to an MsoyChatDirector.
+     */
+    public function getMsoyChatDirector () :MsoyChatDirector
+    {
+        return _chatDir;
+    }
+
     // from PresentsContext
     public function getClient () :Client
     {
         return _client;
-    }
-
-    /**
-     * Convenience method.
-     */
-    public function getMemberObject () :MemberObject
-    {
-        return (_client.getClientObject() as MemberObject);
     }
 
     // from PresentsContext
@@ -119,14 +157,6 @@ public /*abstract*/ class BaseContext
     }
 
     /**
-     * Get the MemberDirector.
-     */
-    public function getMemberDirector () :MemberDirector
-    {
-        return _memberDir;
-    }
-
-    /**
      * Get the message manager.
      */
     public function getMessageManager () :MessageManager
@@ -134,30 +164,25 @@ public /*abstract*/ class BaseContext
         return _msgMgr;
     }
 
-//     /**
-//      * Get the top-level msoy controller.
-//      */
-//     public function getMsoyController () :MsoyController
-//     {
-//         return _controller;
-//     }
+    /**
+     * Returns the top-level client controller.
+     */
+    public function getMsoyController () :MsoyController
+    {
+        throw new Error("abstract");
+    }
 
     // documentation inherited from superinterface CrowdContext
     public function setPlaceView (view :PlaceView) :void
     {
-        // TODO: unimplemented
+        _topPanel.setPlaceView(view);
     }
 
     // documentation inherited from superinterface CrowdContext
     public function clearPlaceView (view :PlaceView) :void
     {
-        // TODO: unimplemented
+        _topPanel.clearPlaceView(view);
     }
-
-//     public function getTopPanel () :TopPanel
-//     {
-//         return _topPanel;
-//     }
 
     /**
      * Convenience translation method. If the first arg imethod to translate a key using the
@@ -173,28 +198,14 @@ public /*abstract*/ class BaseContext
         return mb.get.apply(mb, args);
     }
 
-    protected function createChatDirector () :ChatDirector
-    {
-        return new ChatDirector(this, _msgMgr, MsoyCodes.CHAT_MSGS);
-    }
-
-    protected var _client :Client;
-
+    protected var _client :BaseClient;
     protected var _helper :ContextHelper;
-
-//     protected var _topPanel :TopPanel;
-
-//     protected var _controller :MsoyController;
+    protected var _topPanel :TopPanel;
 
     protected var _msgMgr :MessageManager;
-
     protected var _locDir :LocationDirector;
-
     protected var _occDir :OccupantDirector;
-
-    protected var _chatDir :ChatDirector;
-
-    protected var _memberDir :MemberDirector;
+    protected var _chatDir :MsoyChatDirector;
 }
 }
 

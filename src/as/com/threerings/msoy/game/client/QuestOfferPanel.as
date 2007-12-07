@@ -9,7 +9,6 @@ import mx.controls.Text;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.MessageBundle;
 
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.data.all.MemberName;

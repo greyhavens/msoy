@@ -11,9 +11,10 @@ import mx.controls.Image;
 import mx.controls.Text;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.WorldContext;
-import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.ui.FloatingPanel;
+
+import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class SnapshotPanel extends FloatingPanel
 {

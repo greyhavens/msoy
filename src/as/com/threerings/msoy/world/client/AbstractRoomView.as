@@ -31,11 +31,10 @@ import com.threerings.flash.DisplayUtil;
 
 import com.threerings.whirled.spot.data.Location;
 
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.world.client.layout.RoomLayout;
 import com.threerings.msoy.world.client.layout.RoomLayoutFactory;
 import com.threerings.msoy.world.data.FurniData;

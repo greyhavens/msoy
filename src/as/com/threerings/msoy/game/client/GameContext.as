@@ -17,9 +17,9 @@ import com.threerings.parlor.client.ParlorDirector;
 import com.threerings.parlor.util.ParlorContext;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.client.TopPanel;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 

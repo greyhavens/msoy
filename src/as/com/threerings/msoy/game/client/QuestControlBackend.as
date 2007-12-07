@@ -13,13 +13,12 @@ import com.threerings.presents.client.InvocationService_InvocationListener;
 
 import com.threerings.presents.dobj.*;
 
-import com.threerings.msoy.client.WorldContext;
-
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.QuestState;
 import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class QuestControlBackend
 {

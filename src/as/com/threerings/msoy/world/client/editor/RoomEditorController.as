@@ -15,8 +15,6 @@ import com.threerings.flex.CommandButton;
 import com.threerings.io.TypedArray;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -40,13 +38,15 @@ import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldController;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.client.updates.SceneUpdateAction;
 
+import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 
@@ -236,7 +236,7 @@ public class RoomEditorController
     {
         // if the player selected the special "new item" option, pop up the inventory panel
         if (ident == NEW_ITEM_SELECTION) {
-            CommandEvent.dispatch(_panel.parent, MsoyController.VIEW_MY_FURNITURE);
+            CommandEvent.dispatch(_panel.parent, WorldController.VIEW_MY_FURNITURE);
             setTarget(null, null);
             return;
         }

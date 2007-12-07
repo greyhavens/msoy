@@ -14,12 +14,14 @@ import flash.utils.ByteArray;
 
 import com.adobe.images.JPGEncoder;
 
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.flex.CommandButton;
-import com.threerings.msoy.client.WorldClient;
-import com.threerings.msoy.client.WorldContext;
-import com.threerings.msoy.world.client.RoomView;
 import com.threerings.util.StringUtil;
+
+import com.threerings.msoy.data.MsoyCodes;
+
+import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.WorldClient;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Captures RoomView snapshots and sends them over to the server.

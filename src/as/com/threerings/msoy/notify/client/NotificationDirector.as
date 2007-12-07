@@ -24,13 +24,13 @@ import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.chat.client.ReportingListener;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.notify.data.NotifyMessage;
 import com.threerings.msoy.notify.data.Notification;
@@ -246,9 +246,7 @@ public class NotificationDirector extends BasicDirector
     }
 
     protected var _wctx :WorldContext;
-
     protected var _msvc :MemberService;
-
     protected var _notifyPanel :NotificationDisplay;
 
     /** Tracks notifications we've announced. */

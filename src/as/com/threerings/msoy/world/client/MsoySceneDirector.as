@@ -18,8 +18,6 @@ import com.threerings.whirled.client.PendingData;
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.client.persist.SceneRepository;
 
-import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
@@ -99,7 +97,7 @@ public class MsoySceneDirector extends SceneDirector
         super.moveSucceeded(placeId, config);
 
         // tell our controller to update the URL of the browser to reflect our new location
-        wctx.getMsoyController().wentToScene(_sceneId);
+        wctx.getWorldController().wentToScene(_sceneId);
     }
 
     // from SceneDirector
@@ -194,7 +192,7 @@ public class MsoySceneDirector extends SceneDirector
     protected function bounceBack (localSceneId :int, remoteSceneId :int, reason :String) :void
     {
         var wctx :WorldContext = _ctx as WorldContext;
-        var ctrl :MsoyController = wctx.getMsoyController();
+        var ctrl :WorldController = wctx.getWorldController();
 
         // if we tried to move from one scene to another on the same peer, there's nothing to clean
         // up, just update the URL to make GWT happy

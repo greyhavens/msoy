@@ -4,18 +4,14 @@
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObjectContainer;
-
 import flash.events.Event;
 import flash.events.MouseEvent;
 
 import mx.containers.HBox;
-
 import mx.controls.Button;
 import mx.controls.Label;
 import mx.controls.TextInput;
-
 import mx.core.UITextField;
-
 import mx.events.FlexEvent;
 
 import com.adobe.crypto.MD5;
@@ -30,7 +26,6 @@ import com.threerings.flex.CommandButton;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MemberObject;
 
@@ -38,7 +33,7 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 public class LogonPanel extends FloatingPanel
 {
-    public function LogonPanel (ctx :WorldContext)
+    public function LogonPanel (ctx :BaseContext)
     {
         super(ctx, Msgs.GENERAL.get("t.logon"));
     }
@@ -121,14 +116,14 @@ public class LogonPanel extends FloatingPanel
             return;
         }
 
-        if (_sceneId == -1) {
-            _sceneId = _ctx.getSceneDirector().getScene().getId();
-        }
+//         if (_sceneId == -1) {
+//             _sceneId = _ctx.getSceneDirector().getScene().getId();
+//         }
         var observer :ClientAdapter;
         var didLogon :Function = function (...ignored) :void {
             close();
             _ctx.getClient().removeClientObserver(observer);
-            _ctx.getSceneDirector().moveTo(_sceneId);
+//             _ctx.getSceneDirector().moveTo(_sceneId);
         };
         var failed :Function = function (evt :ClientEvent) :void {
             _ctx.getClient().removeClientObserver(observer);
@@ -150,6 +145,6 @@ public class LogonPanel extends FloatingPanel
 
     protected var _logonBtn :Button;
 
-    protected var _sceneId :int = -1;
+//     protected var _sceneId :int = -1;
 }
 }

@@ -18,7 +18,6 @@ import com.threerings.parlor.client.TableObserver;
 import com.threerings.parlor.data.Table;
 
 import com.threerings.msoy.client.Msgs
-import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.ui.FloatingPanel;
 

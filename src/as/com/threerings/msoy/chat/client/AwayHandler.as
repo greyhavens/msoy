@@ -5,12 +5,11 @@ package com.threerings.msoy.chat.client {
 
 import com.threerings.crowd.util.CrowdContext;
 
-import com.threerings.crowd.chat.data.ChatCodes;
-
 import com.threerings.crowd.chat.client.CommandHandler;
 import com.threerings.crowd.chat.client.SpeakService;
+import com.threerings.crowd.chat.data.ChatCodes;
 
-import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.client.BaseContext;
 
 /**
  * Sets the user as being away, giving them 2 seconds of leeway to stop
@@ -22,7 +21,7 @@ public class AwayHandler extends CommandHandler
         ctx :CrowdContext, speakSvc :SpeakService, cmd :String, args :String,
         history :Array) :String
     {
-        (ctx as WorldContext).getMsoyController().forceIdle(2);
+        (ctx as BaseContext).getMsoyController().forceIdle(2);
         return ChatCodes.SUCCESS;
     }
 }

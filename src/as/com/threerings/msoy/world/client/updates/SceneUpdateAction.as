@@ -6,9 +6,11 @@ package com.threerings.msoy.world.client.updates {
 import com.threerings.util.Log;
 
 import com.threerings.io.TypedArray;
-import com.threerings.msoy.client.WorldContext;
+
 import com.threerings.whirled.data.SceneUpdate;
+
 import com.threerings.msoy.world.client.RoomController;
+import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 

@@ -21,12 +21,11 @@ import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.data.GameConfig;
 
-import com.threerings.msoy.client.HeaderBarController;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.LobbyObject;

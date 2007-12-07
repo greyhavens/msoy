@@ -45,28 +45,45 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.data.MemberMarshaller;
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
 
 /**
- * A client shared by both our virtual world and header incarnations.
+ * Dispatched when the client is minimized or unminimized.
+ * 
+ * @eventType com.threerings.msoy.client.BaseClient.MINI_WILL_CHANGE
+ */
+[Event(name="miniWillChange", type="com.threerings.util.ValueEvent")]
+
+/**
+ * Dispatched when the client is known to be either embedded or not. This happens shortly after the
+ * client is initialized.
+ * 
+ * @eventType com.threerings.msoy.client.BaseClient.EMBEDDED_STATE_KNOWN
+ */
+[Event(name="embeddedStateKnown", type="com.threerings.util.ValueEvent")]
+
+/**
+ * A client shared by both our world and game incarnations.
  */
 public /*abstract*/ class BaseClient extends Client
 {
     public static const log :Log = Log.getLog(BaseClient);
 
-    public function dispatchEventToGWT (eventName :String, eventArgs :Array) :void
-    {
-        try {
-            if (ExternalInterface.available && !_embedded) {
-                ExternalInterface.call("triggerFlashEvent", eventName, eventArgs);
-            }
-        } catch (err :Error) {
-            Log.getLog(this).warning("triggerFlashEvent failed: " + err);
-        }
-    }
+    /**
+     * An event dispatched when the client is minimized or unminimized.
+     *
+     * @eventType miniWillChange
+     */
+    public static const MINI_WILL_CHANGE :String = "miniWillChange";
+
+    /**
+     * An event dispatched when we learn whether or not the client is embedded.
+     *
+     * @eventType clientEmbedded
+     */
+    public static const EMBEDDED_STATE_KNOWN :String = "clientEmbedded";
 
     public function BaseClient (stage :Stage)
     {
@@ -118,13 +135,130 @@ public /*abstract*/ class BaseClient extends Client
 
         var c :Class;
         c = MsoyBootstrapData;
-        c = MemberObject;
         c = MsoyAuthResponseData;
         c = MemberMarshaller;
         c = SceneBookmarkEntry;
 
         [ResourceBundle("global")]
         var rb :ResourceBundle;
+    }
+
+    /**
+     * Find out whether this client is embedded in a non-whirled page.
+     */
+    public function isEmbedded () :Boolean
+    {
+        return _embedded;
+    }
+
+    /**
+     * Find out whether this client is being used as a featured place view.
+     */
+    public function isFeaturedPlaceView () :Boolean
+    {
+        return _featuredPlaceView;
+    }
+
+    /**
+     * Returns the port on which we can connect to the HTTP server.
+     */
+    public function getHttpPort () :int
+    {
+        return _httpPort;
+    }
+
+    /**
+     * Requests that GWT set the window title.
+     */
+    public function setWindowTitle (title :String) :void
+    {
+        try {
+            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
+                ExternalInterface.call("setWindowTitle", title);
+            }
+        } catch (err :Error) {
+            Log.getLog(this).warning("setWindowTitle failed: " + err);
+        }
+    }
+
+    /**
+     * Find out if we're currently working in mini-land or not.  Other components should be able to
+     * check this value after they detect that the flash player's size has changed, to discover our
+     * status in this regard.
+     */
+    public function isMinimized () :Boolean
+    {
+        return _minimized;
+    }
+
+    /**
+     * Notifies our JavaScript shell that the flash client should be made full size.
+     */
+    public function restoreClient () :void
+    {
+        try {
+            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
+                ExternalInterface.call("restoreClient");
+            }
+        } catch (err :Error) {
+            log.warning("ExternalInterface.call('restoreClient') failed: " + err);
+        }
+    }
+
+    /**
+     * Notifies our JavaScript shell that the flash client should be cleared out.
+     */
+    public function closeClient () :void
+    {
+        try {
+            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
+                ExternalInterface.call("clearClient");
+            }
+        } catch (err :Error) {
+            log.warning("ExternalInterface.call('clearClient') failed: " + err);
+        }
+    }
+
+    /**
+     * Notifies javascript that we need it to create a little black divider at the given position.
+     */
+    public function setSeparator (x :int) :void
+    {
+        try {
+            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
+                ExternalInterface.call("setSeparator", x);
+            }
+        } catch (err :Error) {
+            log.warning("ExternalInteface.call('setSeparator') failed: " + err);
+        }
+    }
+
+    /**
+     * Dispatches an event to GWT.
+     */
+    public function dispatchEventToGWT (eventName :String, eventArgs :Array) :void
+    {
+        try {
+            if (ExternalInterface.available && !_embedded) {
+                ExternalInterface.call("triggerFlashEvent", eventName, eventArgs);
+            }
+        } catch (err :Error) {
+            Log.getLog(this).warning("triggerFlashEvent failed: " + err);
+        }
+    }
+
+    /**
+     * Notifies javascript that we no longer need the little black divider.
+     */
+    public function clearSeparator () :void
+    {
+        try {
+            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
+                ExternalInterface.call("clearSeparator");
+            }
+        } catch (err :Error) {
+            log.warning("ExternalInterface.call('clearSeparator') failed: " + err);
+        }
     }
 
     // from Client
@@ -158,52 +292,6 @@ public /*abstract*/ class BaseClient extends Client
                  ", mediaURL=" + DeploymentConfig.mediaURL +
                  ", staticMediaURL=" + DeploymentConfig.staticMediaURL + "].");
     }
-
-    // from Client
-    override public function gotClientObject (clobj :ClientObject) :void
-    {
-        super.gotClientObject(clobj);
-
-        // set up our logging targets
-        LoggingTargets.configureLogging(_ctx);
-
-        if (!_featuredPlaceView) {
-            // listen for flow and gold updates
-            _user = (clobj as MemberObject);
-            var updater :StatusUpdater = new StatusUpdater(this);
-            _user.addListener(updater);
-
-            // configure our levels to start
-            updater.newLevel(_user.level);
-            // updater.newGold(_user.gold);
-            updater.newFlow(_user.flow);
-            updater.newMail(_user.newMailCount);
-        }
-    }
-
-    /**
-     * Find out whether this client is embedded in a non-whirled page.
-     */
-    public function isEmbedded () :Boolean
-    {
-        return _embedded;
-    }
-
-    /**
-     * Find out whether this client is being used as a featured place view.
-     */
-    public function isFeaturedPlaceView () :Boolean
-    {
-        return _featuredPlaceView;
-    }
-
-    /**
-     * Returns the port on which we can connect to the HTTP server.
-     */
-    public function getHttpPort () :int
-    {
-        return _httpPort;
-    }
      
     /**
      * Called just before we logon to a server.
@@ -221,7 +309,14 @@ public /*abstract*/ class BaseClient extends Client
     protected function configureExternalFunctions () :void
     {
         ExternalInterface.addCallback("onUnload", externalOnUnload);
-        ExternalInterface.addCallback("openChannel", externalOpenChannel);
+        ExternalInterface.addCallback("setMinimized", externalSetMinimized);
+
+        try {
+            _embedded = !(ExternalInterface.call("helloWhirled") as Boolean);
+        } catch (err :Error) {
+            _embedded = true;
+        }
+        dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
     }
 
     /**
@@ -234,21 +329,11 @@ public /*abstract*/ class BaseClient extends Client
     }
 
     /**
-     * Exposed to JavaScript so that it may order us to open chat channels.
+     * Exposed to javascript so that it may let us know when we've been pushed out of the way.
      */
-    protected function externalOpenChannel (type :int, name :String, id :int) :void
+    protected function externalSetMinimized (minimized :Boolean) :void   
     {
-        var nameObj :Name;
-        if (type == ChatChannel.MEMBER_CHANNEL) {
-            nameObj = new MemberName(name, id);
-        } else if (type == ChatChannel.GROUP_CHANNEL) {
-            nameObj = new GroupName(name, id);
-        } else if (type == ChatChannel.PRIVATE_CHANNEL) {
-            nameObj = new ChannelName(name, id);
-        } else {
-            throw new Error("Unknown channel type: " + type);
-        }
-        (_ctx as WorldContext).getMsoyChatDirector().openChannel(nameObj);
+        dispatchEvent(new ValueEvent(MINI_WILL_CHANGE, _minimized = minimized));
     }
 
     /**
@@ -262,8 +347,8 @@ public /*abstract*/ class BaseClient extends Client
     /**
      * Create the credentials that will be used to log us on
      */
-    protected static function createStartupCreds (stage :Stage, token :String = null)
-        :MsoyCredentials
+    protected static function createStartupCreds (
+        stage :Stage, token :String = null) :MsoyCredentials
     {
         var params :Object = stage.loaderInfo.parameters;
         var creds :MsoyCredentials;
@@ -314,106 +399,12 @@ public /*abstract*/ class BaseClient extends Client
     }
 
     protected var _ctx :BaseContext;
-    protected var _user :MemberObject;
-    protected var _embedded :Boolean = false;
-    protected var _featuredPlaceView :Boolean = false;
+
+    protected var _minimized :Boolean;
+    protected var _embedded :Boolean;
+    protected var _featuredPlaceView :Boolean;
 
     /** The port on which we connect to the HTTP server. */
     protected var _httpPort :int;
 }
-}
-
-import com.threerings.presents.dobj.AttributeChangeListener;
-import com.threerings.presents.dobj.AttributeChangedEvent;
-import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.EntryRemovedEvent;
-import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.SetListener;
-
-import com.threerings.msoy.client.BaseClient;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
-
-class StatusUpdater implements AttributeChangeListener, SetListener
-{
-    public function StatusUpdater (client :BaseClient) {
-        _client = client;
-    }
-
-    public function attributeChanged (event :AttributeChangedEvent) :void {
-        if (event.getName() == MemberObject.LEVEL) {
-            newLevel(event.getValue() as int, event.getOldValue() as int);
-        /*} else if (event.getName() == MemberObject.GOLD) {
-            newGold(event.getValue() as int, event.getOldValue() as int); */
-        } else if (event.getName() == MemberObject.FLOW) {
-            newFlow(event.getValue() as int, event.getOldValue() as int);
-        } else if (event.getName() == MemberObject.NEW_MAIL_COUNT) {
-            newMail(event.getValue() as int, event.getOldValue() as int);
-        }
-    }
-
-    public function entryAdded (event :EntryAddedEvent) :void {
-        if (event.getName() == MemberObject.FRIENDS) {
-            var entry :FriendEntry = (event.getEntry() as FriendEntry);
-            _client.dispatchEventToGWT(
-                FRIEND_EVENT, [FRIEND_ADDED, entry.name.toString(), entry.name.getMemberId()]);
-        } else if (event.getName() == MemberObject.OWNED_SCENES) {
-            var scene :SceneBookmarkEntry = (event.getEntry() as SceneBookmarkEntry);
-            _client.dispatchEventToGWT(
-                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_ADDED, scene.sceneName, scene.sceneId]);
-        }
-    }
-
-    public function entryUpdated (event :EntryUpdatedEvent) :void {
-        // nada
-    }
-
-    public function entryRemoved (event :EntryRemovedEvent) :void {
-        if (event.getName() == MemberObject.FRIENDS) {
-            var memberId :int = int(event.getKey());
-            _client.dispatchEventToGWT(FRIEND_EVENT, [FRIEND_REMOVED, "", memberId]);
-        } else if (event.getName() == MemberObject.OWNED_SCENES) {
-            var sceneId :int = int(event.getKey());
-            _client.dispatchEventToGWT(
-                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_REMOVED, "", sceneId]);
-        }
-    }
-
-    public function newLevel (level :int, oldLevel :int = 0) :void {
-        sendNotification([STATUS_CHANGE_LEVEL, level, oldLevel]);
-    }
-
-    public function newFlow (flow :int, oldFlow :int = 0) :void {
-        sendNotification([STATUS_CHANGE_FLOW, flow, oldFlow]);
-    }
-
-    public function newGold (gold :int, oldGold :int = 0) :void {
-        sendNotification([STATUS_CHANGE_GOLD, gold, oldGold]);
-    }
-
-    public function newMail (mail :int, oldMail :int = -1) :void {
-        sendNotification([STATUS_CHANGE_MAIL, mail, oldMail]);
-    }
-
-    protected function sendNotification (args :Array) :void {
-        _client.dispatchEventToGWT(STATUS_CHANGE_EVENT, args);
-    }
-
-    /** Event dispatched to GWT when we've leveled up */
-    protected static const STATUS_CHANGE_EVENT :String = "statusChange";
-    protected static const STATUS_CHANGE_LEVEL :int = 1;
-    protected static const STATUS_CHANGE_FLOW :int = 2;
-    protected static const STATUS_CHANGE_GOLD :int = 3;
-    protected static const STATUS_CHANGE_MAIL :int = 4;
-
-    protected static const FRIEND_EVENT :String = "friend";
-    protected static const FRIEND_ADDED :int = 1;
-    protected static const FRIEND_REMOVED :int = 2;
-
-    protected static const SCENEBOOKMARK_EVENT :String = "sceneBookmark";
-    protected static const SCENEBOOKMARK_ADDED :int = 1;
-    protected static const SCENEBOOKMARK_REMOVED :int = 2;
-
-    protected var _client :BaseClient;
 }

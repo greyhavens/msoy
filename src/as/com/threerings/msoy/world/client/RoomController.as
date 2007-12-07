@@ -14,6 +14,7 @@ import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 
+import mx.controls.Button;
 import mx.core.Application;
 import mx.core.IChildList;
 import mx.core.IToolTip;
@@ -33,7 +34,6 @@ import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MenuUtil;
-import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
 
 import com.threerings.presents.client.ClientAdapter;
@@ -54,14 +54,13 @@ import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
 
+import com.threerings.msoy.client.BaseClient;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LogonPanel;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.TopPanel;
-import com.threerings.msoy.client.WorldClient;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -82,14 +81,15 @@ import com.threerings.msoy.game.client.QuestCompletionPanel;
 import com.threerings.msoy.game.client.GameContext;
 
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.editor.DoorTargetEditController;
+import com.threerings.msoy.world.client.editor.ItemUsedDialog;
+import com.threerings.msoy.world.client.editor.RoomEditorController;
+import com.threerings.msoy.world.client.editor.SnapshotController;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.client.updates.SceneUpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateStack;
-import com.threerings.msoy.world.client.editor.DoorTargetEditController;
-import com.threerings.msoy.world.client.editor.RoomEditorController;
-import com.threerings.msoy.world.client.editor.ItemUsedDialog;
-import com.threerings.msoy.world.client.editor.SnapshotController;
 
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
@@ -395,7 +395,7 @@ public class RoomController extends SceneController
     /**
      * Handle the ROOM_EDIT command.
      */
-    public function handleRoomEdit (button :CommandButton) :void
+    public function handleRoomEdit (button :Button) :void
     {
         _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
             function (cause :String) :void {
@@ -443,7 +443,7 @@ public class RoomController extends SceneController
             return;
 
         case FurniData.ACTION_WORLD_GAME:
-            postAction(MsoyController.JOIN_AVR_GAME, int(furni.splitActionData()[0]));
+            postAction(WorldController.JOIN_AVR_GAME, int(furni.splitActionData()[0]));
             return;
 
         case FurniData.ACTION_LOBBY_GAME:
@@ -551,7 +551,7 @@ public class RoomController extends SceneController
                             }
                             observer = new ClientAdapter(null, logon);
                             _mctx.getClient().addClientObserver(observer);
-                            _mctx.getMsoyController().handleLogon(null);
+                            _mctx.getWorldController().handleLogon(null);
                         }});
                 }
             }
@@ -560,13 +560,13 @@ public class RoomController extends SceneController
             // create a menu for clicking on someone else
             var memId :int = occInfo.getMemberId();
             menuItems.push({ label: Msgs.GENERAL.get("l.open_channel"),
-                command: MsoyController.OPEN_CHANNEL, arg: occInfo.username });
+                command: WorldController.OPEN_CHANNEL, arg: occInfo.username });
 
             var isGuest :Boolean = (memId == MemberName.GUEST_ID);
             if (isGuest) {
                 menuItems.push(
                     { label: Msgs.GENERAL.get("l.invite_to_whirled"),
-                      command: MsoyController.INVITE_GUEST, arg: occInfo.username });
+                      command: WorldController.INVITE_GUEST, arg: occInfo.username });
 
             } else {
                 // TODO: move up when we can forward MemberObjects between servers for guests
@@ -574,16 +574,16 @@ public class RoomController extends SceneController
                                  callback: inviteFollow, arg: occInfo.username });
                 menuItems.push(
                     { label: Msgs.GENERAL.get("l.visit_home"),
-                      command: MsoyController.GO_MEMBER_HOME, arg: memId });
+                      command: WorldController.GO_MEMBER_HOME, arg: memId });
                 if (!_mctx.getWorldClient().isEmbedded()) {
                     menuItems.push(
                         { label: Msgs.GENERAL.get("l.view_member"),
-                          command: MsoyController.VIEW_MEMBER, arg: memId });
+                          command: WorldController.VIEW_MEMBER, arg: memId });
                 }
                 if (!us.isGuest() && !us.friends.containsKey(memId)) {
                     menuItems.push(
                         { label: Msgs.GENERAL.get("l.add_as_friend"),
-                          command: MsoyController.INVITE_FRIEND, arg: [memId] });
+                          command: WorldController.INVITE_FRIEND, arg: [memId] });
                 }
             }
         }
@@ -1026,7 +1026,7 @@ public class RoomController extends SceneController
 
         // watch for when we're un-minimized and the display list is valid, so that we can open the
         // editor, and place things correctly when necessary
-        _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
+        _ctx.getClient().addEventListener(BaseClient.MINI_WILL_CHANGE, miniWillChange);
     }
 
     // documentation inherited
@@ -1037,7 +1037,7 @@ public class RoomController extends SceneController
             cancelRoomEditing();
         }
 
-        _ctx.getClient().removeEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
+        _ctx.getClient().removeEventListener(BaseClient.MINI_WILL_CHANGE, miniWillChange);
 
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(MouseEvent.CLICK, mouseWillClick, true);
@@ -1123,7 +1123,7 @@ public class RoomController extends SceneController
 
         avItems.push({ type: "separator" });
         avItems.push({ label: Msgs.GENERAL.get("b.avatars_full"),
-            command: MsoyController.VIEW_MY_AVATARS,
+            command: WorldController.VIEW_MY_AVATARS,
             enabled: !_mctx.getWorldClient().isEmbedded() });
 
         // return a menu item for changing their avatar
@@ -1151,7 +1151,7 @@ public class RoomController extends SceneController
     /**
      * Begins editing the room.
      */
-    protected function beginRoomEditing (button :CommandButton) :void
+    protected function beginRoomEditing (button :Button) :void
     {
         _walkTarget.visible = false;
         _flyTarget.visible = false;
@@ -1369,7 +1369,7 @@ public class RoomController extends SceneController
     {
         // if we're in a featured place view, any click should take the member to this room.
         if (_mctx.getWorldClient().isFeaturedPlaceView()) {
-            _mctx.getMsoyController().handleGoScene(_scene.getId());
+            _mctx.getWorldController().handleGoScene(_scene.getId());
             return;
         }
 

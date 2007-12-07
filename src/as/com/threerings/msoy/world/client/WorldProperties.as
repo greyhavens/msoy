@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.client {
+package com.threerings.msoy.world.client {
 
 /**
  * A repository of bindable properties that define how the world is

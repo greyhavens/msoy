@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.client {
+package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 import flash.display.Stage;
@@ -24,6 +24,8 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MenuUtil;
 
+import com.threerings.presents.data.ClientObject;
+
 import com.threerings.whirled.data.SceneMarshaller;
 import com.threerings.whirled.spot.data.SpotMarshaller;
 import com.threerings.whirled.spot.data.SpotSceneObject;
@@ -31,10 +33,12 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.parlor.data.ParlorMarshaller;
 import com.threerings.toybox.data.ToyBoxMarshaller;
 
-import com.threerings.presents.data.ClientObject;
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MemberLocation;
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.ChannelName;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -49,38 +53,25 @@ import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.data.all.Prop;
 
-import com.threerings.msoy.world.client.RoomController;
-import com.threerings.msoy.world.client.RoomView;
-import com.threerings.msoy.world.client.PetService;
-import com.threerings.msoy.world.client.PetSprite;
-
-import com.threerings.msoy.world.data.MsoySceneMarshaller;
-import com.threerings.msoy.world.data.PetMarshaller;
-import com.threerings.msoy.world.data.RoomConfig;
-
 import com.threerings.msoy.game.data.AVRGameMarshaller;
 import com.threerings.msoy.game.data.AVRMarshaller;
 
 import com.threerings.msoy.chat.client.ReportingListener;
+import com.threerings.msoy.chat.data.ChatChannel;
 
 import com.threerings.msoy.notify.data.GuestInviteNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 
-/**
- * Dispatched when the client is minimized or unminimized.
- * 
- * @eventType com.threerings.msoy.client.WorldClient.MINI_WILL_CHANGE
- */
-[Event(name="miniWillChange", type="com.threerings.util.ValueEvent")]
+import com.threerings.msoy.client.BaseClient;
+import com.threerings.msoy.client.BaseContext;
+import com.threerings.msoy.client.ContextMenuProvider;
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
 
-/**
- * Dispatched when the client is known to be either embedded or not. This happens shortly after the
- * client is initialized.
- * 
- * @eventType com.threerings.msoy.client.WorldClient.EMBEDDED_STATE_KNOWN
- */
-[Event(name="embeddedStateKnown", type="com.threerings.util.ValueEvent")]
+import com.threerings.msoy.world.data.MsoySceneMarshaller;
+import com.threerings.msoy.world.data.PetMarshaller;
+import com.threerings.msoy.world.data.RoomConfig;
 
 /**
  * An event dispatched for tutorial-specific purposes.
@@ -94,20 +85,6 @@ import com.threerings.msoy.notify.data.ReleaseNotesNotification;
  */
 public class WorldClient extends BaseClient
 {
-    /**
-     * An event dispatched when the client is minimized or unminimized.
-     *
-     * @eventType miniWillChange
-     */
-    public static const MINI_WILL_CHANGE :String = "miniWillChange";
-
-    /**
-     * An event dispatched when we learn whether or not the client is embedded.
-     *
-     * @eventType clientEmbedded
-     */
-    public static const EMBEDDED_STATE_KNOWN :String = "clientEmbedded";
-
     /**
      * An event dispatched for tutorial-specific purposes.
      *
@@ -157,6 +134,7 @@ public class WorldClient extends BaseClient
         c = LevelPack;
         c = Prop;
         c = LevelUpNotification;
+        c = MemberObject;
         c = MemberLocation;
         c = MsoySceneMarshaller;
         c = ParlorMarshaller;
@@ -181,93 +159,27 @@ public class WorldClient extends BaseClient
         var rb :ResourceBundle;
     }
 
-    /**
-     * Find out if we're currently working in mini-land or not.  Other components should be able to
-     * check this value after they detect that the flash player's size has changed, to discover our
-     * status in this regard.
-     */
-    public function isMinimized () :Boolean
-    {
-        return _minimized;
-    }
-
-    /**
-     * Notifies our JavaScript shell that the flash client should be made full size.
-     */
-    public function restoreClient () :void
-    {
-        try {
-            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
-                ExternalInterface.call("restoreClient");
-            }
-        } catch (err :Error) {
-            log.warning("ExternalInterface.call('restoreClient') failed: " + err);
-        }
-    }
-
-    /**
-     * Notifies our JavaScript shell that the flash client should be cleared out.
-     */
-    public function closeClient () :void
-    {
-        try {
-            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
-                ExternalInterface.call("clearClient");
-            }
-        } catch (err :Error) {
-            log.warning("ExternalInterface.call('clearClient') failed: " + err);
-        }
-    }
-
-    /**
-     * Notifies javascript that we need it to create a little black divider at the given position.
-     */
-    public function setSeparator (x :int) :void
-    {
-        try {
-            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
-                ExternalInterface.call("setSeparator", x);
-            }
-        } catch (err :Error) {
-            log.warning("ExternalInteface.call('setSeparator') failed: " + err);
-        }
-    }
-
-    /**
-     * Notifies javascript that we no longer need the little black divider.
-     */
-    public function clearSeparator () :void
-    {
-        try {
-            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
-                ExternalInterface.call("clearSeparator");
-            }
-        } catch (err :Error) {
-            log.warning("ExternalInterface.call('clearSeparator') failed: " + err);
-        }
-    }
-
-    /**
-     * Requests that GWT set the window title.
-     */
-    public function setWindowTitle (title :String) :void
-    {
-        try {
-            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
-                ExternalInterface.call("setWindowTitle", title);
-            }
-        } catch (err :Error) {
-            Log.getLog(this).warning("setWindowTitle failed: " + err);
-        }
-    }
-
     // from Client
     override public function gotClientObject (clobj :ClientObject) :void
     {
         super.gotClientObject(clobj);
+
         if (clobj is MemberObject && !_embedded && !_featuredPlaceView) {
             var member :MemberObject = clobj as MemberObject;
             member.addListener(new AvatarUpdateNotifier());
+        }
+
+        if (!_featuredPlaceView) {
+            // listen for flow and gold updates
+            _user = (clobj as MemberObject);
+            var updater :StatusUpdater = new StatusUpdater(this);
+            _user.addListener(updater);
+
+            // configure our levels to start
+            updater.newLevel(_user.level);
+            // updater.newGold(_user.gold);
+            updater.newFlow(_user.flow);
+            updater.newMail(_user.newMailCount);
         }
     }
 
@@ -285,7 +197,6 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("clientLogon", externalClientLogon);
         ExternalInterface.addCallback("clientGo", externalClientGo);
         ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
-        ExternalInterface.addCallback("setMinimized", externalSetMinimized);
         ExternalInterface.addCallback("inRoom", externalInRoom);
         ExternalInterface.addCallback("useAvatar", externalUseAvatar);
         ExternalInterface.addCallback("getAvatarId", externalGetAvatarId);
@@ -298,13 +209,7 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("removePet", externalRemovePet);
         ExternalInterface.addCallback("getPets", externalGetPets);
         ExternalInterface.addCallback("tutorialEvent", externalTutorialEvent);
-
-        try {
-            _embedded = !(ExternalInterface.call("helloWhirled") as Boolean);
-        } catch (err :Error) {
-            _embedded = true;
-        }
-        dispatchEvent(new ValueEvent(WorldClient.EMBEDDED_STATE_KNOWN, _embedded));
+        ExternalInterface.addCallback("openChannel", externalOpenChannel);
     }
 
     /**
@@ -398,14 +303,6 @@ public class WorldClient extends BaseClient
         } else {
             logoff(false);
         }
-    }
-
-    /**
-     * Exposed to javascript so that it may let us know when we've been pushed out of the way.
-     */
-    protected function externalSetMinimized (minimized :Boolean) :void   
-    {
-        dispatchEvent(new ValueEvent(MINI_WILL_CHANGE, _minimized = minimized));
     }
 
     /**
@@ -534,8 +431,26 @@ public class WorldClient extends BaseClient
         _wctx.getGameDirector().tutorialEvent(eventName);
     }
 
+    /**
+     * Exposed to JavaScript so that it may order us to open chat channels.
+     */
+    protected function externalOpenChannel (type :int, name :String, id :int) :void
+    {
+        var nameObj :Name;
+        if (type == ChatChannel.MEMBER_CHANNEL) {
+            nameObj = new MemberName(name, id);
+        } else if (type == ChatChannel.GROUP_CHANNEL) {
+            nameObj = new GroupName(name, id);
+        } else if (type == ChatChannel.PRIVATE_CHANNEL) {
+            nameObj = new ChannelName(name, id);
+        } else {
+            throw new Error("Unknown channel type: " + type);
+        }
+        _wctx.getMsoyChatDirector().openChannel(nameObj);
+    }
+
     protected var _wctx :WorldContext;
-    protected var _minimized :Boolean;
+    protected var _user :MemberObject;
 }
 }
 
@@ -543,12 +458,19 @@ import flash.external.ExternalInterface;
 
 import com.threerings.util.Log;
 
-import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
-
-import com.threerings.msoy.data.MemberObject;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.msoy.item.data.all.Avatar;
+
+import com.threerings.msoy.client.BaseClient;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
 class AvatarUpdateNotifier implements AttributeChangeListener
 {
@@ -575,4 +497,87 @@ class AvatarUpdateNotifier implements AttributeChangeListener
             }
         }
     }
+}
+
+class StatusUpdater implements AttributeChangeListener, SetListener
+{
+    public function StatusUpdater (client :BaseClient) {
+        _client = client;
+    }
+
+    public function attributeChanged (event :AttributeChangedEvent) :void {
+        if (event.getName() == MemberObject.LEVEL) {
+            newLevel(event.getValue() as int, event.getOldValue() as int);
+        /*} else if (event.getName() == MemberObject.GOLD) {
+            newGold(event.getValue() as int, event.getOldValue() as int); */
+        } else if (event.getName() == MemberObject.FLOW) {
+            newFlow(event.getValue() as int, event.getOldValue() as int);
+        } else if (event.getName() == MemberObject.NEW_MAIL_COUNT) {
+            newMail(event.getValue() as int, event.getOldValue() as int);
+        }
+    }
+
+    public function entryAdded (event :EntryAddedEvent) :void {
+        if (event.getName() == MemberObject.FRIENDS) {
+            var entry :FriendEntry = (event.getEntry() as FriendEntry);
+            _client.dispatchEventToGWT(
+                FRIEND_EVENT, [FRIEND_ADDED, entry.name.toString(), entry.name.getMemberId()]);
+        } else if (event.getName() == MemberObject.OWNED_SCENES) {
+            var scene :SceneBookmarkEntry = (event.getEntry() as SceneBookmarkEntry);
+            _client.dispatchEventToGWT(
+                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_ADDED, scene.sceneName, scene.sceneId]);
+        }
+    }
+
+    public function entryUpdated (event :EntryUpdatedEvent) :void {
+        // nada
+    }
+
+    public function entryRemoved (event :EntryRemovedEvent) :void {
+        if (event.getName() == MemberObject.FRIENDS) {
+            var memberId :int = int(event.getKey());
+            _client.dispatchEventToGWT(FRIEND_EVENT, [FRIEND_REMOVED, "", memberId]);
+        } else if (event.getName() == MemberObject.OWNED_SCENES) {
+            var sceneId :int = int(event.getKey());
+            _client.dispatchEventToGWT(
+                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_REMOVED, "", sceneId]);
+        }
+    }
+
+    public function newLevel (level :int, oldLevel :int = 0) :void {
+        sendNotification([STATUS_CHANGE_LEVEL, level, oldLevel]);
+    }
+
+    public function newFlow (flow :int, oldFlow :int = 0) :void {
+        sendNotification([STATUS_CHANGE_FLOW, flow, oldFlow]);
+    }
+
+    public function newGold (gold :int, oldGold :int = 0) :void {
+        sendNotification([STATUS_CHANGE_GOLD, gold, oldGold]);
+    }
+
+    public function newMail (mail :int, oldMail :int = -1) :void {
+        sendNotification([STATUS_CHANGE_MAIL, mail, oldMail]);
+    }
+
+    protected function sendNotification (args :Array) :void {
+        _client.dispatchEventToGWT(STATUS_CHANGE_EVENT, args);
+    }
+
+    /** Event dispatched to GWT when we've leveled up */
+    protected static const STATUS_CHANGE_EVENT :String = "statusChange";
+    protected static const STATUS_CHANGE_LEVEL :int = 1;
+    protected static const STATUS_CHANGE_FLOW :int = 2;
+    protected static const STATUS_CHANGE_GOLD :int = 3;
+    protected static const STATUS_CHANGE_MAIL :int = 4;
+
+    protected static const FRIEND_EVENT :String = "friend";
+    protected static const FRIEND_ADDED :int = 1;
+    protected static const FRIEND_REMOVED :int = 2;
+
+    protected static const SCENEBOOKMARK_EVENT :String = "sceneBookmark";
+    protected static const SCENEBOOKMARK_ADDED :int = 1;
+    protected static const SCENEBOOKMARK_REMOVED :int = 2;
+
+    protected var _client :BaseClient;
 }

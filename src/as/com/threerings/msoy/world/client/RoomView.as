@@ -59,14 +59,14 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 
+import com.threerings.msoy.client.BaseClient;
+import com.threerings.msoy.client.BaseContext;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
-import com.threerings.msoy.client.WorldClient;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.chat.client.ChatInfoProvider;
@@ -80,9 +80,9 @@ import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
+import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemberInfo;
-import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.MobInfo;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -90,8 +90,8 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.PetInfo;
 import com.threerings.msoy.world.data.RoomCodes;
-import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 /**
@@ -237,7 +237,7 @@ public class RoomView extends AbstractRoomView
     }
 
     // from ContextMenuProvider
-    public function populateContextMenu (ctx :WorldContext, menuItems :Array) :void
+    public function populateContextMenu (ctx :BaseContext, menuItems :Array) :void
     {
         var hit :* = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
         if (hit === undefined) {
@@ -514,7 +514,7 @@ public class RoomView extends AbstractRoomView
         super.willEnterPlace(plobj);
 
         // listen for client minimization events
-        _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
+        _ctx.getClient().addEventListener(BaseClient.MINI_WILL_CHANGE, miniWillChange);
 
         _roomObj.addListener(this);
 
@@ -547,7 +547,7 @@ public class RoomView extends AbstractRoomView
         _ctx.getChatDirector().removeChatDisplay(this);
 
         // stop listening for client minimization events
-        _ctx.getClient().removeEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
+        _ctx.getClient().removeEventListener(BaseClient.MINI_WILL_CHANGE, miniWillChange);
 
         removeAll(_effects);
         removeAllOccupants();

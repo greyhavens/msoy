@@ -8,15 +8,11 @@ import flash.external.ExternalInterface;
 import com.threerings.util.Log;
 import com.threerings.util.LogTarget;
 
-import com.threerings.msoy.data.MemberObject;
-
 // TODO: stop listening at the end?
 public class LoggingTargets
 {
     public static function configureLogging (ctx :BaseContext) :void
     {
-        var userObj :MemberObject = ctx.getMemberObject();
-
         // for now, everything logs to the FireBug console
         try {
             if (_bugTarget == null && ExternalInterface.available) {

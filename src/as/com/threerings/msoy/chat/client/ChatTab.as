@@ -21,7 +21,7 @@ import com.threerings.util.Log;
 import com.threerings.msoy.chat.data.ChatChannel
 
 import com.threerings.msoy.client.HeaderBar;
-import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.client.BaseContext;
 
 [Style(name="buttonSkin", type="Class", inherit="no")]
 [Event(name="tabClick", type="flash.events.Event")]
@@ -39,7 +39,7 @@ public class ChatTab extends HBox
     public static const UNSELECTED :int = 2;
     public static const ATTENTION :int = 3;
     
-    public function ChatTab (ctx :WorldContext, bar :ChatTabBar, channel :ChatChannel, 
+    public function ChatTab (ctx :BaseContext, bar :ChatTabBar, channel :ChatChannel, 
         history :HistoryList, roomName :String = null)
     {
         _ctx = ctx;
@@ -258,7 +258,7 @@ public class ChatTab extends HBox
 
     protected var _label :Label;
     protected var _controller :ChatChannelController;
-    protected var _ctx :WorldContext;
+    protected var _ctx :BaseContext;
     protected var _bar :ChatTabBar;
     protected var _currentSkin :DisplayObject;
     protected var _buttonSkinClass :Class;

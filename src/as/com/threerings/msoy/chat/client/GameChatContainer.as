@@ -17,11 +17,11 @@ import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.TopPanel;
-import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.client.BaseContext;
 
 public class GameChatContainer extends LayeredContainer
 {
-    public function GameChatContainer (ctx :WorldContext, chatDtr :ChatDirector, 
+    public function GameChatContainer (ctx :BaseContext, chatDtr :ChatDirector, 
         playerList :UIComponent)
     {
         _ctx = ctx;
@@ -77,7 +77,7 @@ public class GameChatContainer extends LayeredContainer
         _overlay.setHistoryEnabled(true);
     }
 
-    protected var _ctx :WorldContext;
+    protected var _ctx :BaseContext;
     protected var _overlay :ChatOverlay;
     protected var _chatDtr :ChatDirector;
     protected var _playerList :UIComponent;

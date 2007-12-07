@@ -220,12 +220,12 @@ import flash.filters.GlowFilter;
 
 import com.threerings.util.CommandEvent;
 
-import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.world.client.MemberSprite;
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.WorldController;
 
 /**
  * A decoration used when this actor is at a table in a lobby.
@@ -279,7 +279,7 @@ class TableIcon extends ScalingMediaContainer
 
     protected function handleMouseClick (... ignored) :void
     {
-        CommandEvent.dispatch(this, MsoyController.JOIN_GAME_LOBBY, _gameSummary.gameId);
+        CommandEvent.dispatch(this, WorldController.JOIN_GAME_LOBBY, _gameSummary.gameId);
     }
 
     protected var _gameSummary :GameSummary;

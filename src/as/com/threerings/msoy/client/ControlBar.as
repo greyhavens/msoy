@@ -10,9 +10,6 @@ import mx.core.Container;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
-import mx.binding.utils.BindingUtils;
-import mx.binding.utils.ChangeWatcher;
-
 import mx.containers.Canvas;
 import mx.containers.HBox;
 import mx.controls.Button;
@@ -32,11 +29,9 @@ import com.threerings.presents.client.ClientAdapter;
 import com.threerings.crowd.chat.client.ChatDirector;
 
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.ui.SkinnableImage;
-
-import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.ui.SkinnableImage;
 
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 
@@ -75,7 +70,7 @@ public class ControlBar extends HBox
     public static const ALL_UI_GROUPS :Array = [ UI_ALL, UI_STD, UI_SIDEBAR, UI_MINI, UI_EDIT, 
         UI_GUEST ];
 
-    public function ControlBar (ctx :WorldContext, top :TopPanel)
+    public function ControlBar (ctx :BaseContext, top :TopPanel)
     {
         _ctx = ctx;
         styleName = "controlBar";
@@ -93,11 +88,6 @@ public class ControlBar extends HBox
             checkControls();
         };
         _ctx.getClient().addClientObserver(new ClientAdapter(fn, fn, null, null, null, null, fn));
-
-        _controller = new ControlBarController(ctx, top, this);
-
-        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
-        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
 
         createControls();
         checkControls();
@@ -155,14 +145,6 @@ public class ControlBar extends HBox
         }
     }
 
-    /**
-     * Moves back to the previous scene we occupied, if possible.
-     */
-    public function moveBack () :void
-    {
-        _controller.handleMoveBack(_backBtn);
-    }
-
     public function miniChanged () :void
     {
         _isMinimized = _ctx.getTopPanel().isMinimized();
@@ -214,8 +196,8 @@ public class ControlBar extends HBox
      */
     protected function checkControls () :void
     {
-        var user :MemberObject = _ctx.getMemberObject();
-        var isMember :Boolean = (user != null) && !user.isGuest();
+        var isMember :Boolean = (_ctx.getMyName() != null &&
+                                 _ctx.getMyName().getMemberId() != MemberName.GUEST_ID);
         if (numChildren > 0 && (isMember == _isMember)) {
             return;
         }
@@ -230,7 +212,6 @@ public class ControlBar extends HBox
         addGroupChild(_spacer, [ UI_SIDEBAR ]);
 
         _chatControl = null;
-        _avatarBtn = null;
 
         _chatControl = new ChatControl(_ctx, Msgs.CHAT.get("b.send"), this.height - 4);
         addGroupChild(_chatControl, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
@@ -243,28 +224,13 @@ public class ControlBar extends HBox
 
         var volBtn :CommandButton = new CommandButton();
         volBtn.toolTip = Msgs.GENERAL.get("i.volume");
-        volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
+        volBtn.setCommand(MsoyController.POP_VOLUME, volBtn);
         volBtn.styleName = "controlBarButtonVolume";
         addGroupChild(volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR ]);
 
-        // avatar selection is now handled from GWT - however, this may be useful in embedded mode
-        // in the future.
-        /*_avatarBtn = new CommandButton();
-        _avatarBtn.toolTip = Msgs.GENERAL.get("i.avatar");
-        _avatarBtn.setCommand(MsoyController.PICK_AVATAR);
-        _avatarBtn.styleName = "controlBarButtonAvatar";
-        addGroupChild(_avatarBtn, [ UI_STD ]);*/
-
-        /*_petBtn = new CommandButton();
-        _petBtn.toolTip = Msgs.GENERAL.get("i.pet");
-        _petBtn.setCommand(MsoyController.SHOW_PETS);
-        _petBtn.styleName = "controlBarButtonPet";
-        _petBtn.enabled = false;
-        addGroupChild(_petBtn, [ UI_STD ]);*/
-
         _roomeditBtn = new CommandButton();
         _roomeditBtn.toolTip = Msgs.GENERAL.get("i.editScene");
-        _roomeditBtn.setCommand(ControlBarController.ROOM_EDIT, _roomeditBtn);
+        _roomeditBtn.setCommand(MsoyController.ROOM_EDIT, _roomeditBtn);
         _roomeditBtn.styleName = "controlBarButtonEdit";
         _roomeditBtn.enabled = false;
         addGroupChild(_roomeditBtn, [ UI_STD ]);
@@ -292,7 +258,7 @@ public class ControlBar extends HBox
         /*
         _snapBtn = new CommandButton();
         _snapBtn.toolTip = Msgs.GENERAL.get("i.snapshot");
-        _snapBtn.setCommand(ControlBarController.SNAPSHOT);
+        _snapBtn.setCommand(MsoyController.SNAPSHOT);
         _snapBtn.styleName = "controlBarButtonSnapshot";
         _snapBtn.enabled = true;
         addGroupChild(_snapBtn, [ UI_STD ]);
@@ -315,7 +281,7 @@ public class ControlBar extends HBox
 
         _backBtn = new CommandButton();
         _backBtn.toolTip = Msgs.GENERAL.get("i.goBack");
-        _backBtn.setCommand(ControlBarController.MOVE_BACK, _backBtn);
+        _backBtn.setCommand(MsoyController.MOVE_BACK);
         _backBtn.styleName = "controlBarButtonBack";
         _backBtn.enabled = false;
         addGroupChild(_backBtn, [ UI_STD, UI_GUEST ]);
@@ -326,7 +292,6 @@ public class ControlBar extends HBox
         _isEditing = false;
 
         updateUI();
-        recheckAvatarControl();
     }
 
     protected function clearAllGroups () :void
@@ -378,28 +343,6 @@ public class ControlBar extends HBox
         }
     }
 
-    protected function handleAddRemove (event :Event) :void
-    {
-        var added :Boolean = (event.type == Event.ADDED_TO_STAGE);
-        _controller.registerForSessionObservations(added);
-
-        if (added) {
-            _avatarControlWatcher = BindingUtils.bindSetter(
-                recheckAvatarControl, _ctx.worldProps, "userControlsAvatar");
-
-        } else {
-            _avatarControlWatcher.unwatch();
-            _avatarControlWatcher = null;
-        }
-    }
-
-    protected function recheckAvatarControl (... ignored) :void
-    {
-        if (_avatarBtn != null) {
-            _avatarBtn.enabled = _ctx.worldProps.userControlsAvatar;
-        }
-    }
-
     /**
      * Changes the visibility and parameters of the navigation widgets.
      *
@@ -435,7 +378,7 @@ public class ControlBar extends HBox
             });
 
         // testing only (robert)
-        if (_ctx.getMemberObject().tokens.isSupport() && _snapBtn != null) {
+        if (_ctx.getTokens().isSupport() && _snapBtn != null) {
             _snapBtn.enabled = value;
         }
     }
@@ -449,10 +392,7 @@ public class ControlBar extends HBox
     }
 
     /** Our clientside context. */
-    protected var _ctx :WorldContext;
-
-    /** Controller for this object. */
-    protected var _controller :ControlBarController;
+    protected var _ctx :BaseContext;
 
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
@@ -475,9 +415,6 @@ public class ControlBar extends HBox
     /** The back-movement button. */
     protected var _backBtn :CommandButton;
 
-    /** Button for changing your avatar. */
-    protected var _avatarBtn :CommandButton;
-
     /** Button for managing pets. */
     protected var _petBtn :CommandButton;
 
@@ -489,9 +426,6 @@ public class ControlBar extends HBox
 
     /** Displays notification status. */
     protected var _notifyBtn :CommandButton;
-
-    /** Notifies us of changes to the userControlsAvatar property. */
-    protected var _avatarControlWatcher :ChangeWatcher;
 
     /** Current location label. */
     protected var _loc :CanvasWithText;

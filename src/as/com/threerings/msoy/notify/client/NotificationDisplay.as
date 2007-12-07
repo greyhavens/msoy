@@ -10,10 +10,9 @@ import mx.containers.VBox;
 
 import com.threerings.flex.CommandButton;
 
-import com.threerings.msoy.ui.FloatingPanel;
-
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.notify.data.Notification;
 
@@ -50,7 +49,7 @@ public class NotificationDisplay extends FloatingPanel
     override public function close () :void
     {
         super.close();
-        _ctx.getNotificationDirector().notificationPanelClosed();
+        (_ctx as WorldContext).getNotificationDirector().notificationPanelClosed();
     }
 
     override protected function createChildren () :void
@@ -63,7 +62,7 @@ public class NotificationDisplay extends FloatingPanel
     protected function closeNotification (subBox :VBox, id :int) :void
     {
         _box.removeChild(subBox);
-        _ctx.getNotificationDirector().acknowledgeNotification(id);
+        (_ctx as WorldContext).getNotificationDirector().acknowledgeNotification(id);
 
         // close the whole shootin' match
         if (_box.numChildren == 0) {

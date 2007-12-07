@@ -28,10 +28,10 @@ import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.ezgame.data.Parameter;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.SimpleGrid;
+
+import com.threerings.msoy.world.client.WorldController;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Game;
@@ -136,7 +136,7 @@ public class TablePanel extends VBox
 
                 if (key != null) {
                     var btn :CommandButton = new CommandButton(
-                        MsoyController.GO_GAME, [ _game.gameId, table.gameOid ]);
+                        WorldController.GO_GAME, [ _game.gameId, table.gameOid ]);
                     btn.label = Msgs.GAME.get(key);
                     _seatsGrid.addCell(btn);
                 }

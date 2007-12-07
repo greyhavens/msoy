@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import mx.containers.HBox;
+
 import com.threerings.util.Log;
 
 import com.threerings.presents.client.ClientEvent;
@@ -17,14 +19,13 @@ import com.threerings.parlor.client.GameReadyObserver;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.ui.MsoyUI;
 
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
-
-import mx.containers.HBox;
 
 /**
  * Handles the lobby-specific aspects of the game server connection.
@@ -81,7 +82,7 @@ public class LobbyGameLiaison extends GameLiaison
             _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
             // some failure cases are innocuous, and should be followed up by a display of the 
             // lobby - if we really are hosed, joinLobby() will cause the liaison to shut down.
-            _ctx.getMsoyController().restoreSceneURL();
+            _ctx.getWorldController().restoreSceneURL();
             showLobbyUI();
         }, gotPlayerGameOid);
         lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);
@@ -187,9 +188,9 @@ public class LobbyGameLiaison extends GameLiaison
             if (closedByUser) {
                 // either restore our current scene URL or go home if we have no scene
                 if (_ctx.getSceneDirector().getScene() == null) {
-                    _ctx.getMsoyController().handleGoScene(_ctx.getMemberObject().getHomeSceneId());
+                    _ctx.getWorldController().handleGoScene(_ctx.getMemberObject().getHomeSceneId());
                 } else {
-                    _ctx.getMsoyController().restoreSceneURL();
+                    _ctx.getWorldController().restoreSceneURL();
                 }
             }
         }
@@ -227,7 +228,7 @@ public class LobbyGameLiaison extends GameLiaison
             _enterNextGameDirect = false;
             _ctx.getGameDirector().enterGame(gameOid);
         } else {
-            _ctx.getMsoyController().handleGoGame(_gameId, gameOid);
+            _ctx.getWorldController().handleGoGame(_gameId, gameOid);
         }
         return true;
     }
@@ -276,7 +277,7 @@ public class LobbyGameLiaison extends GameLiaison
             // if they're at a table, join them there
             joinPlayerTable(_playerIdGame);
         } else {
-            _ctx.getMsoyController().handleGoGame(_gameId, gameOid);
+            _ctx.getWorldController().handleGoGame(_gameId, gameOid);
         }
     }
 

@@ -16,10 +16,10 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.threerings.msoy.client.WorldContext;
-import com.threerings.msoy.client.WorldClient;
+import com.threerings.msoy.client.BaseClient;
 
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.client.GameContext;
@@ -38,7 +38,7 @@ public class AVRGameController extends Controller
         _gameId = gameId;
 
         _mctx.getClient().addEventListener(
-            WorldClient.MINI_WILL_CHANGE, function (ev :ValueEvent) :void {
+            BaseClient.MINI_WILL_CHANGE, function (ev :ValueEvent) :void {
                 miniWillChange(ev.value);
             });
 
@@ -115,7 +115,7 @@ public class AVRGameController extends Controller
 
     protected function shutdown () :void
     {
-        _mctx.getClient().removeEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
+        _mctx.getClient().removeEventListener(BaseClient.MINI_WILL_CHANGE, miniWillChange);
         _subscriber.unsubscribe(_mctx.getDObjectManager());
 
         var view :RoomView = _mctx.getTopPanel().getPlaceView() as RoomView;

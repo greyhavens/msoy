@@ -15,7 +15,6 @@ import com.threerings.crowd.client.LocationAdapter;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -138,7 +137,7 @@ public class WorldDirector extends BasicDirector
             goToGame();
         }, null);
         _mctx.getLocationDirector().addLocationObserver(gameLauncher);
-        _mctx.getMsoyController().handleGoScene(location.sceneId);
+        _mctx.getWorldController().handleGoScene(location.sceneId);
     }
 
     // from BasicDirector

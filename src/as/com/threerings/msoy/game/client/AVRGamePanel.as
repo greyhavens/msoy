@@ -19,9 +19,7 @@ import com.threerings.flash.MediaContainer;
 
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.TopPanel;
-import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.game.client.AVRGameBackend;
 import com.threerings.msoy.game.client.AVRGameController;
@@ -29,6 +27,7 @@ import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.AVRGameObject;
 
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class AVRGamePanel extends UIComponent
     implements AttributeChangeListener
@@ -56,7 +55,7 @@ public class AVRGamePanel extends UIComponent
 
         _gameObj.addListener(this);
 
-        _mctx.getMsoyController().setAVRGamePanel(this);
+        _mctx.getWorldController().setAVRGamePanel(this);
 
         addEventListener(ResizeEvent.RESIZE, handleResize);
     }
@@ -100,7 +99,7 @@ public class AVRGamePanel extends UIComponent
 
     public function shutdown () :void
     {
-        _mctx.getMsoyController().setAVRGamePanel(null);
+        _mctx.getWorldController().setAVRGamePanel(null);
         // null gameObj for mediaComplete to find if it should run after us
         _gameObj = null;
     }

@@ -11,11 +11,11 @@ import mx.events.ListEvent;
 
 import com.threerings.util.Log;
 
-import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.client.BaseContext;
 
 public class MsoyList extends List
 {
-    public function MsoyList (ctx :WorldContext)
+    public function MsoyList (ctx :BaseContext)
     {
         super();
         _ctx = ctx;
@@ -65,6 +65,6 @@ public class MsoyList extends List
     }
 
     /** The giver of life. */
-    protected var _ctx :WorldContext;
+    protected var _ctx :BaseContext;
 }
 }

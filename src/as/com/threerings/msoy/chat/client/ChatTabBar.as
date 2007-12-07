@@ -1,4 +1,5 @@
-// // $Id$
+//
+// $Id$
 
 package com.threerings.msoy.chat.client {
 
@@ -15,8 +16,8 @@ import com.threerings.crowd.chat.data.ChatMessage;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 
+import com.threerings.msoy.client.BaseContext;
 import com.threerings.msoy.client.HeaderBar;
-import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 
@@ -27,7 +28,7 @@ import com.threerings.msoy.game.client.GameChatDirector;
 
 public class ChatTabBar extends HBox
 {
-    public function ChatTabBar (ctx :WorldContext)
+    public function ChatTabBar (ctx :BaseContext)
     {
         super();
         _ctx = ctx;
@@ -237,7 +238,7 @@ public class ChatTabBar extends HBox
 
     protected var _tabs :Array = [];
     protected var _selectedIndex :int = -1;
-    protected var _ctx :WorldContext;
+    protected var _ctx :BaseContext;
     protected var _chatDirector :ChatDirector;
 }
 }

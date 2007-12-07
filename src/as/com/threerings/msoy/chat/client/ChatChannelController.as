@@ -18,9 +18,7 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.SystemMessage;
 
-import com.threerings.msoy.client.WorldContext;
-
-import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.client.BaseContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -35,7 +33,7 @@ import com.threerings.msoy.chat.data.ChatterInfo;
 public class ChatChannelController
     implements SetListener, MessageListener
 {
-    public function ChatChannelController (ctx :WorldContext, channel :ChatChannel, 
+    public function ChatChannelController (ctx :BaseContext, channel :ChatChannel, 
         history :HistoryList)
     {
         _ctx = ctx;
@@ -108,8 +106,7 @@ public class ChatChannelController
             }
 
             // if I just saw myself entering the channel, ignore the event
-            var me :MemberObject = _ctx.getMemberObject();
-            if (Util.equals(ci.name, me.memberName)) {
+            if (Util.equals(ci.name, _ctx.getMyName())) {
                 return;
             }
 
@@ -206,7 +203,7 @@ public class ChatChannelController
         }
     }
 
-    protected var _ctx :WorldContext;
+    protected var _ctx :BaseContext;
 
     /** A reference to our chat channel object if we're a non-friend channel. */
     protected var _ccobj :ChatChannelObject;

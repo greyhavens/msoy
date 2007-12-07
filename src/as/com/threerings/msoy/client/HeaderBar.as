@@ -30,7 +30,7 @@ public class HeaderBar extends HBox
 {
     public static const HEIGHT :int = 20;
 
-    public function HeaderBar (ctx :WorldContext, chatTabs :ChatTabBar) 
+    public function HeaderBar (ctx :BaseContext, chatTabs :ChatTabBar) 
     {
         _ctx = ctx;
         _tabs = chatTabs;
@@ -42,12 +42,10 @@ public class HeaderBar extends HBox
         percentWidth = 100;
         height = HEIGHT;
 
-        _controller = new HeaderBarController(ctx, this);
-    }
-
-    public function getController () :HeaderBarController
-    {
-        return _controller;
+        // TODO: should we be doing this?
+        addEventListener(Event.ADDED_TO_STAGE, function (evt :Event) :void {
+            _ctx.getBaseClient().setWindowTitle(getChatTabs().locationName);
+        });
     }
 
     public function getChatTabs () :ChatTabBar
@@ -79,7 +77,7 @@ public class HeaderBar extends HBox
             nameLink.styleName = "headerLink";
             nameLink.label = Msgs.GENERAL.get("m.room_owner", owner);
             nameLink.setCallback(onClick);
-            nameLink.enabled = !_ctx.getWorldClient().isEmbedded();
+            nameLink.enabled = !_ctx.getBaseClient().isEmbedded();
             _owner.addChild(nameLink);
         }
     }
@@ -194,9 +192,7 @@ public class HeaderBar extends HBox
 
     protected static const WHIRLED_LOGO_WIDTH :int = 124;
 
-    protected var _ctx :WorldContext;
-
-    protected var _controller :HeaderBarController;
+    protected var _ctx :BaseContext;
 
     protected var _loc :Label;
     protected var _owner :HBox;

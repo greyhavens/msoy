@@ -29,7 +29,7 @@ import com.threerings.crowd.data.PlaceObject;
 public class DisconnectedPanel extends VBox
     implements PlaceView
 {
-    public function DisconnectedPanel (ctx :WorldContext, msg :String = null)
+    public function DisconnectedPanel (ctx :BaseContext, msg :String = null)
     {
         _ctx = ctx;
         _clientObs = new ClientAdapter(
@@ -117,7 +117,7 @@ public class DisconnectedPanel extends VBox
         return msg;
     }
 
-    protected var _ctx :WorldContext;
+    protected var _ctx :BaseContext;
     protected var _clientObs :ClientAdapter;
     protected var _message :Text;
 }

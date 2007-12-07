@@ -24,13 +24,15 @@ import mx.controls.Spacer;
 import mx.events.ListEvent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.msoy.ui.FloatingPanel;
+
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.TopPanel;
-import com.threerings.msoy.client.WorldContext;
+
+import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.ui.FloatingPanel;
 
 
 /**
@@ -62,7 +64,7 @@ public class RoomEditorPanel extends FloatingPanel
     {
         super.close();
         _controller.actionEditorClosed();
-        _ctx.getGameDirector().tutorialEvent("editorClosed");
+        (_ctx as WorldContext).getGameDirector().tutorialEvent("editorClosed");
     }
 
     /** Updates object data displayed on the editing panel. */

@@ -13,14 +13,14 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.client.CommandHandler;
 import com.threerings.crowd.chat.client.SpeakService;
 
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
- * Allows users to switch their avatar's state or trigger an action from
- * /slash commands entered in chat.
+ * Allows users to switch their avatar's state or trigger an action from /slash commands entered in
+ * chat.
  */
 public class AvatarActionHandler extends CommandHandler
 {
@@ -29,9 +29,8 @@ public class AvatarActionHandler extends CommandHandler
         _states = states;
     }
 
-    override public function handleCommand (
-            ctx :CrowdContext, speakSvc :SpeakService,
-            cmd :String, args :String, history :Array) :String
+    override public function handleCommand (ctx :CrowdContext, speakSvc :SpeakService,
+                                            cmd :String, args :String, history :Array) :String
     {
         if (StringUtil.isBlank(args)) {
             return "m.usage_" + cmd;

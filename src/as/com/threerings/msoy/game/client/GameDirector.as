@@ -19,12 +19,12 @@ import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.parlor.game.client.GameController;
 import com.threerings.parlor.game.data.GameObject;
 
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyMarshaller;
@@ -206,7 +206,7 @@ public class GameDirector extends BasicDirector
             LobbyGameLiaison(_liaison).showLobbyUI();
         } else {
             // go back to our previous location
-            _mctx.getTopPanel().getControlBar().moveBack();
+            _mctx.getMsoyController().handleMoveBack();
         }
     }
 

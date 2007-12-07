@@ -29,7 +29,6 @@ import com.threerings.util.Name;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -41,6 +40,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.world.client.AbstractRoomView;
 import com.threerings.msoy.world.client.RoomMetrics;
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.data.RoomObject;
 
 public class AVRGameBackend extends ControlBackend

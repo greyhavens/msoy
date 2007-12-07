@@ -11,7 +11,7 @@
 <mx:Style source="msoy.css"/>
 <mx:Script>
     <![CDATA[
-        import com.threerings.msoy.client.WorldClient;
+        import com.threerings.msoy.world.client.WorldClient;
     ]]>
 </mx:Script>
 </mx:Application>

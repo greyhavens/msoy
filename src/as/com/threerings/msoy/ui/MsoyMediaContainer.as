@@ -9,10 +9,10 @@ import com.threerings.util.ValueEvent;
 import com.threerings.flash.MediaContainer;
 import com.threerings.flash.MenuUtil;
 
+import com.threerings.msoy.client.BaseContext;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -68,7 +68,7 @@ public class MsoyMediaContainer extends MediaContainer
     }
 
     // TODO: doc
-    public function toggleBlocked (ctx :WorldContext = null) :void
+    public function toggleBlocked (ctx :BaseContext = null) :void
     {
         var nowBlocked :Boolean = !isBlocked();
         // and change the setting. We'll get an event about the change, and react to that.
@@ -82,7 +82,7 @@ public class MsoyMediaContainer extends MediaContainer
     }
 
     // from ContextMenuProvider
-    public function populateContextMenu (ctx :WorldContext, menuItems :Array) :void
+    public function populateContextMenu (ctx :BaseContext, menuItems :Array) :void
     {
         if (isBlockable()) {
             var isBlocked :Boolean = isBlocked();

@@ -14,7 +14,7 @@ import com.threerings.msoy.ui.FloatingPanel;
  */
 public class AboutDialog extends FloatingPanel
 {
-    public function AboutDialog (ctx :WorldContext)
+    public function AboutDialog (ctx :BaseContext)
     {
         super(ctx, Msgs.GENERAL.get("t.about"));
         open(false);
@@ -27,8 +27,8 @@ public class AboutDialog extends FloatingPanel
         var textArea :Text = new Text();
         textArea.width = 300;
         textArea.selectable = false;
-        textArea.htmlText = Msgs.GENERAL.get("m.about",
-            DeploymentConfig.buildTime, Capabilities.version);
+        textArea.htmlText = Msgs.GENERAL.get(
+            "m.about", DeploymentConfig.buildTime, Capabilities.version);
         addChild(textArea);
 
         addButtons(OK_BUTTON);

@@ -35,20 +35,21 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.ezgame.data.GameDefinition;
 
-import com.threerings.msoy.client.EmbedDialog;
-import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.WorldContext;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.SkinnableImage;
 import com.threerings.msoy.ui.ThumbnailPanel;
 
+import com.threerings.msoy.client.EmbedDialog;
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.item.data.all.Game;
 
 /**
  * A panel that displays pending table games.

@@ -27,7 +27,7 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 public class ChatPrefsDialog extends FloatingPanel
 {
-    public function ChatPrefsDialog (ctx :WorldContext)
+    public function ChatPrefsDialog (ctx :BaseContext)
     {
         super(ctx, Msgs.GENERAL.get("t.chat_prefs"));
         open(true);
@@ -146,7 +146,6 @@ import flash.text.TextFormat;
 import mx.controls.TextArea;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 

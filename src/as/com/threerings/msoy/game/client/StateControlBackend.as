@@ -13,8 +13,9 @@ import com.threerings.presents.client.InvocationService_InvocationListener;
 
 import com.threerings.presents.dobj.*;
 
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.ControlBackend;
+
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.GameState;

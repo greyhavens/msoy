@@ -26,11 +26,11 @@ import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;

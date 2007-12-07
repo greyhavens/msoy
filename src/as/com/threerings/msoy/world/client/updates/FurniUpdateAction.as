@@ -4,12 +4,14 @@
 package com.threerings.msoy.world.client.updates {
 
 import com.threerings.io.TypedArray;
-import com.threerings.msoy.client.WorldContext;
-import com.threerings.msoy.world.client.RoomController;
-import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.data.ModifyFurniUpdate;
+
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
+
+import com.threerings.msoy.world.client.RoomController;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.ModifyFurniUpdate;
 
 /**
  * Generates a command to update a single piece of furni.

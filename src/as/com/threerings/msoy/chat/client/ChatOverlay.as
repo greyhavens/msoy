@@ -55,7 +55,6 @@ import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.notify.data.NotifyMessage;
