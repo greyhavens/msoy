@@ -38,6 +38,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.QuestState;
 
 import com.threerings.msoy.world.client.AbstractRoomView;
+import com.threerings.msoy.world.client.MobSprite;
 import com.threerings.msoy.world.client.RoomMetrics;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.WorldContext;
@@ -151,6 +152,9 @@ public class AVRGameBackend extends ControlBackend
         o["spawnMob_v1"] = spawnMob_v1;
         o["despawnMob_v1"] = despawnMob_v1;
 
+        // MobControl helpers
+        o["setMobDecoration_v1"] = setMobDecoration_v1;
+
         _stateBackend.populateSubProperties(o);
         _questBackend.populateSubProperties(o);
     }
@@ -260,6 +264,26 @@ public class AVRGameBackend extends ControlBackend
                     _wctx.getClient(), _ctrl.getGameId(), mobId,
                     loggingInvocationListener("despawnMob"));
                 return true;
+            }
+        }
+        return false;
+    }
+
+    protected function setMobDecoration_v1 (
+        mobId :String, decoration :DisplayObject, add :Boolean) :Boolean
+    {
+        if (isPlaying()) {
+            var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+            if (view != null) {
+                var sprite :MobSprite = view.getMob(_ctrl.getGameId(), mobId);
+                if (sprite != null) {
+                    if (add) {
+                        sprite.addDecoration(decoration);
+                    } else {
+                        sprite.removeDecoration(decoration);
+                    }
+                    return true;
+                }
             }
         }
         return false;

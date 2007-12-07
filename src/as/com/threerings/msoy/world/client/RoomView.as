@@ -588,17 +588,34 @@ public class RoomView extends AbstractRoomView
         chatOverlay.setScrollRect(r);
     }
 
-    /** Called when an AVRG is loaded or unloaded: inform relevant MOBs. */
-    public function avrGameAvailable (gameId :int, backend :AVRGameBackend) :void
+    /** Return an array of the MOB sprites associated with the identified game. */
+    public function getMobs (gameId :int) :Array
     {
+        var result :Array = new Array();
         for each (var occInfo :OccupantInfo in _roomObj.occupantInfo.toArray()) {
             if (occInfo is MobInfo && MobInfo(occInfo).getGameId() == gameId) {
                 var sprite :MobSprite = (_occupants.get(occInfo.getBodyOid()) as MobSprite);
                 if (sprite) {
-                    sprite.avrGameAvailable(backend);
+                    result.push(sprite);
                 }
             }
         }
+        return result;
+    }
+
+    /** Return a uniquely identified MOB associated with the given game, or null. */
+    public function getMob (gameId :int, mobId :String) :MobSprite
+    {
+        for each (var occInfo :OccupantInfo in _roomObj.occupantInfo.toArray()) {
+            if (occInfo is MobInfo && MobInfo(occInfo).getGameId() == gameId &&
+                MobInfo(occInfo).getIdent() == mobId) {
+                var sprite :MobSprite = (_occupants.get(occInfo.getBodyOid()) as MobSprite);
+                if (sprite) {
+                    return sprite;
+                }
+            }
+        }
+        return null;
     }
 
     /**
