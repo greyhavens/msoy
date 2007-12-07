@@ -579,7 +579,7 @@ public class MemberManager
         if (member.level != level) {
             // update their level now so that we don't come along and do this again while the
             // invoker is off writing things to the database
-            member.setLevel(levelToSet);
+            member.setLevel(level);
 
             final int newLevel = level;
             MsoyServer.invoker.postUnit(new RepositoryUnit("updateLevel") {
