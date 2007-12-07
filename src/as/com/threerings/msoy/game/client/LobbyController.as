@@ -28,6 +28,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.client.MsoyGameService;
+import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 
@@ -51,13 +52,12 @@ public class LobbyController extends Controller implements Subscriber
     /** A command to close the lobby. */
     public static const CLOSE_LOBBY :String = "CloseLobby";
 
-    public function LobbyController (
-        gctx :GameContext, liaison :LobbyGameLiaison, lobbyOid :int, mode :int) 
+    public function LobbyController (gctx :GameContext, lobbyOid :int, mode :int, onClear :Function) 
     {
         _gctx = gctx;
         _mctx = gctx.getMsoyContext();
-        _liaison = liaison;
         _mode = mode;
+        _onClear = onClear;
 
         _subscriber = new SafeSubscriber(lobbyOid, this)
         _subscriber.subscribe(_gctx.getDObjectManager());
@@ -244,7 +244,7 @@ public class LobbyController extends Controller implements Subscriber
     public function objectAvailable (obj :DObject) :void 
     {
         _lobj = obj as LobbyObject;
-        _panel.init(_lobj, _mode == LobbyGameLiaison.PLAY_NOW_FRIENDS);
+        _panel.init(_lobj, _mode == LobbyCodes.PLAY_NOW_FRIENDS);
 
         _tableDir = new TableDirector(_gctx, LobbyObject.TABLES);
         _tableDir.setTableObject(obj);
@@ -261,10 +261,10 @@ public class LobbyController extends Controller implements Subscriber
 
         // otherwise do something appropriate based on our mode
         switch (_mode) {
-        case LobbyGameLiaison.PLAY_NOW_FRIENDS:
+        case LobbyCodes.PLAY_NOW_FRIENDS:
             joinSomeTable(true);
             break;
-        case LobbyGameLiaison.PLAY_NOW_ANYONE:
+        case LobbyCodes.PLAY_NOW_ANYONE:
             joinSomeTable(false);
             break;
         }
@@ -317,8 +317,8 @@ public class LobbyController extends Controller implements Subscriber
             _tableDir.removeSeatednessObserver(_panel);
         }
 
-        // finally let the game liaison know that we're gone
-        _liaison.lobbyCleared(inGame, _closedByUser);
+        // finally let whomever cares know that we're gone
+        _onClear(inGame, _closedByUser);
     }
 
     /** The provider of free cheese. */
@@ -327,11 +327,11 @@ public class LobbyController extends Controller implements Subscriber
     /** The provider of game related services. */
     protected var _gctx :GameContext;
 
-    /** Handles our connection to the game server. */
-    protected var _liaison :LobbyGameLiaison;
-
     /** The mode in which we were opened. */
     protected var _mode :int;
+
+    /** Called when we shut ourselves down. */
+    protected var _onClear :Function;
 
     /** Our distributed LobbyObject */
     protected var _lobj :LobbyObject;

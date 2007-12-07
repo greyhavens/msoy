@@ -35,12 +35,6 @@ public class LobbyGameLiaison extends GameLiaison
 {
     public static const log :Log = Log.getLog(LobbyGameLiaison);
 
-    public static const PLAY_NOW_SINGLE :int = LobbyCodes.PLAY_NOW_SINGLE;
-    public static const PLAY_NOW_FRIENDS :int = LobbyCodes.PLAY_NOW_FRIENDS;
-    public static const PLAY_NOW_ANYONE :int = LobbyCodes.PLAY_NOW_ANYONE;
-    public static const SHOW_LOBBY :int = PLAY_NOW_ANYONE + 1;
-    public static const JOIN_PLAYER :int = SHOW_LOBBY + 1;
-
     public function LobbyGameLiaison (ctx :WorldContext, gameId :int, mode :int, playerId :int = 0)
     {
         super(ctx, gameId);
@@ -202,20 +196,20 @@ public class LobbyGameLiaison extends GameLiaison
     {
         super.clientDidLogon(event);
         switch (_mode) {
-        case JOIN_PLAYER:
+        case LobbyCodes.JOIN_PLAYER:
             joinPlayer(_playerIdGame);
             _mode = SHOW_LOBBY; // in case we end up back here after the game
             break;
 
-        case PLAY_NOW_SINGLE:
-        case PLAY_NOW_FRIENDS:
-        case PLAY_NOW_ANYONE:
+        case LobbyCodes.PLAY_NOW_SINGLE:
+        case LobbyCodes.PLAY_NOW_FRIENDS:
+        case LobbyCodes.PLAY_NOW_ANYONE:
             playNow(_mode);
             _mode = SHOW_LOBBY; // in case we end up back here after the game
             break;
 
         default:
-        case SHOW_LOBBY:
+        case LobbyCodes.SHOW_LOBBY:
             joinLobby();
             break;
         }
@@ -260,7 +254,7 @@ public class LobbyGameLiaison extends GameLiaison
     protected function gotLobbyOid (result :Object) :void
     {
         // this will create a panel and add it to the side panel on the top level
-        _lobby = new LobbyController(_gctx, this, int(result), _mode);
+        _lobby = new LobbyController(_gctx, int(result), _mode, lobbyCleared);
 
         // if we have a player table to enter do that now
         if (_playerIdTable != 0) {
