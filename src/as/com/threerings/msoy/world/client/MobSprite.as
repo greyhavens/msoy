@@ -24,6 +24,18 @@ public class MobSprite extends OccupantSprite
         super(occInfo);
     }
 
+    /** Return this MOB's unique identifier. */
+    public function getMobIdent () :String
+    {
+        return MobInfo(_occInfo).getIdent();
+    }
+
+    /** Return the identifier of the game for this MOB. */
+    public function getMobGameId () :int
+    {
+        return MobInfo(_occInfo).getGameId();
+    }
+
     /** Called when the AVRG related to this MOB is loaded or unloaded. */
     public function avrGameAvailable (backend :AVRGameBackend) :void
     {
@@ -35,7 +47,7 @@ public class MobSprite extends OccupantSprite
     public function removed () :void
     {
         if (_hostBackend) {
-            _hostBackend.mobRemoved(_id);
+            _hostBackend.mobRemoved(getMobIdent())
         }
     }
 
@@ -49,8 +61,8 @@ public class MobSprite extends OccupantSprite
         setMediaObject(_holder);
 
         var ominfo :MobInfo = (oldInfo as MobInfo), nminfo :MobInfo = (newInfo as MobInfo);
-        if (ominfo == null || ominfo.getIdent() != nminfo.getIdent()) {
-            _id = nminfo.getIdent();
+        if (ominfo == null || ominfo.getGameId() != nminfo.getGameId() ||
+            ominfo.getIdent() != nminfo.getIdent()) {
             updateMobVisual();
             return true;
         }
@@ -60,22 +72,23 @@ public class MobSprite extends OccupantSprite
     // from OccupantSprite
     override protected function appearanceChanged () :void
     {
-        if (_id != null && _hostBackend) {
+        if (getMobIdent() != null && _hostBackend != null) {
             var locArray :Array = [ _loc.x, _loc.y, _loc.z ];
-            _hostBackend.mobAppearanceChanged(_id, locArray, _loc.orient, isMoving(), isIdle());
+            _hostBackend.mobAppearanceChanged(
+                getMobIdent(), locArray, _loc.orient, isMoving(), isIdle());
         }
     }
 
     // refresh the visualization of this MOB
     protected function updateMobVisual () :void
     {
-        // clear out the holder (should only ever be 1 child)
+        // clear out the holder (should only ever be 1 child, but better safe than sorry)
         while (_holder.numChildren > 0) {
             _holder.removeChildAt(0);
         }
         // if we're playing the AVRG, request an actual sprite
         if (_hostBackend) {
-            var sprite :DisplayObject = _hostBackend.requestMobSprite(_id);
+            var sprite :DisplayObject = _hostBackend.requestMobSprite(getMobIdent());
             Log.getLog(this).debug("updating [sprite=" + sprite + "]");
             if (sprite != null) {
                 // then display it
@@ -83,9 +96,6 @@ public class MobSprite extends OccupantSprite
             }
         }            
     }
-
-    /** The opaque ID of the MOB, interpreted by the AVRG. */
-    protected var _id :String;
 
     /** A container for the current visualization. */
     protected var _holder :Sprite;
