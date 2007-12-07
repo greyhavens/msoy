@@ -30,6 +30,7 @@ import com.threerings.msoy.avrg.client.AVRGameController;
 import com.threerings.msoy.avrg.client.AVRGameLiaison;
 
 import com.threerings.msoy.game.data.GameContentOwnership;
+import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -75,7 +76,7 @@ public class GameDirector extends BasicDirector
         }
         if (_liaison == null) {
             // create our new liaison, which will resolve the lobby and do all the business
-            _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyGameLiaison.SHOW_LOBBY);
+            _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyCodes.SHOW_LOBBY);
         }
     }
 
@@ -87,11 +88,11 @@ public class GameDirector extends BasicDirector
      */
     public function playNow (gameId :int, modeStr: String) :void
     {
-        var mode :int = LobbyGameLiaison.PLAY_NOW_SINGLE;
+        var mode :int = LobbyCodes.PLAY_NOW_SINGLE;
         if (modeStr == "f") {
-            mode = LobbyGameLiaison.PLAY_NOW_FRIENDS;
+            mode = LobbyCodes.PLAY_NOW_FRIENDS;
         } else if (modeStr == "m") {
-            mode = LobbyGameLiaison.PLAY_NOW_ANYONE;
+            mode = LobbyCodes.PLAY_NOW_ANYONE;
         }
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
@@ -120,7 +121,7 @@ public class GameDirector extends BasicDirector
         }
 
         if (_liaison == null) {
-            _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyGameLiaison.JOIN_PLAYER, memberId);
+            _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyCodes.JOIN_PLAYER, memberId);
         } else {
             LobbyGameLiaison(_liaison).joinPlayer(memberId);
         }

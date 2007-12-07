@@ -34,7 +34,10 @@ public class GameController extends MsoyController
     // from MsoyController
     override public function goToPlace (params :Object) :void
     {
-        // TODO
+        if (null != params["gameLocation"]) {
+            var gameOid :int = int(params["gameLocation"]);
+            _gctx.getLocationDirector().moveTo(gameOid);
+        } // else support showing lobby if desired
     }
 
     // from MsoyController

@@ -198,14 +198,14 @@ public class LobbyGameLiaison extends GameLiaison
         switch (_mode) {
         case LobbyCodes.JOIN_PLAYER:
             joinPlayer(_playerIdGame);
-            _mode = SHOW_LOBBY; // in case we end up back here after the game
+            _mode = LobbyCodes.SHOW_LOBBY; // in case we end up back here after the game
             break;
 
         case LobbyCodes.PLAY_NOW_SINGLE:
         case LobbyCodes.PLAY_NOW_FRIENDS:
         case LobbyCodes.PLAY_NOW_ANYONE:
             playNow(_mode);
-            _mode = SHOW_LOBBY; // in case we end up back here after the game
+            _mode = LobbyCodes.SHOW_LOBBY; // in case we end up back here after the game
             break;
 
         default:
