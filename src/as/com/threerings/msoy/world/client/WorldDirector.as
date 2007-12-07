@@ -30,7 +30,7 @@ public class WorldDirector extends BasicDirector
     public function WorldDirector (ctx :WorldContext)
     {
         super(ctx);
-        _mctx = ctx;
+        _wctx = ctx;
     }
 
     /**
@@ -61,9 +61,9 @@ public class WorldDirector extends BasicDirector
             return;
         } 
 
-        _msvc.getCurrentMemberLocation(_mctx.getClient(), memberId, new ResultWrapper(
+        _msvc.getCurrentMemberLocation(_wctx.getClient(), memberId, new ResultWrapper(
             function (cause :String) :void {
-                _mctx.displayFeedback(null, cause);
+                _wctx.displayFeedback(null, cause);
             },
             finishGoToMemberLocation));
     }
@@ -75,13 +75,13 @@ public class WorldDirector extends BasicDirector
      */
     public function setAvatar (avatarId :int, newScale :Number = 0) :void
     {
-        _msvc.setAvatar(_mctx.getClient(), avatarId, newScale, new ConfirmAdapter(
+        _msvc.setAvatar(_wctx.getClient(), avatarId, newScale, new ConfirmAdapter(
             function (cause :String) :void {
                 log.info("Reporting failure [reason=" + cause + "].");
-                _mctx.displayFeedback(null, cause);
+                _wctx.displayFeedback(null, cause);
             },
             function () :void {
-                _mctx.getGameDirector().tutorialEvent("avatarInstalled");
+                _wctx.getGameDirector().tutorialEvent("avatarInstalled");
             }));
     }
 
@@ -90,17 +90,17 @@ public class WorldDirector extends BasicDirector
      */
     protected function goToHome (ownerType :int, ownerId :int) :void
     {
-        if (!_mctx.getClient().isLoggedOn()) {
+        if (!_wctx.getClient().isLoggedOn()) {
             log.warning("Can't go, not online [type=" + ownerType + ", id=" + ownerId + "].");
             return;
         }
-        _msvc.getHomeId(_mctx.getClient(), ownerType, ownerId, new ResultWrapper(
+        _msvc.getHomeId(_wctx.getClient(), ownerType, ownerId, new ResultWrapper(
             function (cause :String) :void {
                 log.warning("Unable to go to home [type=" + ownerType + ", id=" + ownerId +
                             ", cause=" + cause);
             }, 
             function (sceneId :int) :void {
-                _mctx.getSceneDirector().moveTo(sceneId);
+                _wctx.getSceneDirector().moveTo(sceneId);
             }));
     }
 
@@ -113,16 +113,16 @@ public class WorldDirector extends BasicDirector
         // TODO: Do something more interesting for AVR Games.
         if (!location.avrGame && location.gameId != 0) {
             goToGame = function () :void {
-                _mctx.getGameDirector().joinPlayer(location.gameId, location.memberId);
+                _wctx.getGameDirector().joinPlayer(location.gameId, location.memberId);
             };
         }
 
         var sceneId :int = location.sceneId;
-        if (sceneId == 0 && _mctx.getSceneDirector().getScene() == null) {
+        if (sceneId == 0 && _wctx.getSceneDirector().getScene() == null) {
             // if we're not in a scene and they're not in a scene, go home.  If they're in an
             // unwatchable game, we'll get an error in the lobby, and this way we'll at least be in
             // a scene as well
-            sceneId = _mctx.getMemberObject().getHomeSceneId();
+            sceneId = _wctx.getMemberObject().getHomeSceneId();
         }
 
         if (sceneId == 0) {
@@ -133,11 +133,11 @@ public class WorldDirector extends BasicDirector
         // otherwise we have to do things the hard way
         var gameLauncher :LocationAdapter;
         gameLauncher = new LocationAdapter(null, function (...ignored) :void {
-            _mctx.getLocationDirector().removeLocationObserver(gameLauncher);
+            _wctx.getLocationDirector().removeLocationObserver(gameLauncher);
             goToGame();
         }, null);
-        _mctx.getLocationDirector().addLocationObserver(gameLauncher);
-        _mctx.getWorldController().handleGoScene(location.sceneId);
+        _wctx.getLocationDirector().addLocationObserver(gameLauncher);
+        _wctx.getWorldController().handleGoScene(location.sceneId);
     }
 
     // from BasicDirector
@@ -155,7 +155,7 @@ public class WorldDirector extends BasicDirector
         _msvc = (client.requireService(MemberService) as MemberService);
     }
 
-    protected var _mctx :WorldContext;
+    protected var _wctx :WorldContext;
     protected var _msvc :MemberService;
 }
 }

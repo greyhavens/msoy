@@ -131,7 +131,7 @@ public class RoomController extends SceneController
     public function getEntityInstanceId () :int
     {
         // every sprite uses our own OID as the instanceid.
-        return _mctx.getMemberObject().getOid();
+        return _wdctx.getMemberObject().getOid();
     }
 
     /**
@@ -141,7 +141,7 @@ public class RoomController extends SceneController
     {
         if (instanceId == 0) {
             // get our name
-            return _mctx.getMemberObject().getVisibleName().toString();
+            return _wdctx.getMemberObject().getVisibleName().toString();
         }
 
         // otherwise, locate the name in the OccupantInfos
@@ -174,7 +174,7 @@ public class RoomController extends SceneController
         // that it has control if it does
         if (result == null) {
             // only if nobody currently has control do we issue the request
-            _roomObj.roomService.requestControl(_mctx.getClient(), ident);
+            _roomObj.roomService.requestControl(_wdctx.getClient(), ident);
         }
     }
 
@@ -194,7 +194,7 @@ public class RoomController extends SceneController
         // send the request off to the server
         log.info("Sending sprite message [ident=" + ident + ", name=" + name + "].");
         var data :ByteArray = ObjectMarshaller.validateAndEncode(arg);
-        _roomObj.roomService.sendSpriteMessage(_mctx.getClient(), ident, name, data, isAction);
+        _roomObj.roomService.sendSpriteMessage(_wdctx.getClient(), ident, name, data, isAction);
     }
 
     /**
@@ -206,7 +206,7 @@ public class RoomController extends SceneController
         // send the request off to the server
         log.info("Sending sprite signal [name=" + name + "].");
         var data :ByteArray = ObjectMarshaller.validateAndEncode(arg);
-        _roomObj.roomService.sendSpriteSignal(_mctx.getClient(), name, data);
+        _roomObj.roomService.sendSpriteSignal(_wdctx.getClient(), name, data);
     }
 
     /**
@@ -221,7 +221,7 @@ public class RoomController extends SceneController
         }
 
         log.info("Changing actor state [ident=" + ident + ", state=" + state + "].");
-        _roomObj.roomService.setActorState(_mctx.getClient(), ident, actorOid, state);
+        _roomObj.roomService.setActorState(_wdctx.getClient(), ident, actorOid, state);
     }
 
     /**
@@ -229,10 +229,10 @@ public class RoomController extends SceneController
      */
     public function sendPetChatMessage (msg :String, info :ActorInfo) :void
     {
-        var svc :PetService = (_mctx.getClient().requireService(PetService) as PetService);
+        var svc :PetService = (_wdctx.getClient().requireService(PetService) as PetService);
         if (checkCanRequest(info.getItemIdent(), "PetService")) {
-            svc.sendChat(_mctx.getClient(), info.bodyOid, _scene.getId(), msg,
-                         new ReportingListener(_mctx));
+            svc.sendChat(_wdctx.getClient(), info.bodyOid, _scene.getId(), msg,
+                         new ReportingListener(_wdctx));
         }
     }
 
@@ -253,7 +253,7 @@ public class RoomController extends SceneController
 
         // ship the update request off to the server
         _roomObj.roomService.updateMemory(
-            _mctx.getClient(), new EntityMemoryEntry(ident, key, data));
+            _wdctx.getClient(), new EntityMemoryEntry(ident, key, data));
         return true;
     }
 
@@ -283,7 +283,7 @@ public class RoomController extends SceneController
         }
 
         // ship the update request off to the server
-        _roomObj.roomService.setRoomProperty(_mctx.getClient(), entry);
+        _roomObj.roomService.setRoomProperty(_wdctx.getClient(), entry);
         return true;
     }
 
@@ -296,7 +296,7 @@ public class RoomController extends SceneController
         if (!checkCanRequest(ident, "requestMove")) {
             return false;
         }
-        _roomObj.roomService.changeLocation(_mctx.getClient(), ident, newloc);
+        _roomObj.roomService.changeLocation(_wdctx.getClient(), ident, newloc);
         return true;
     }
 
@@ -309,10 +309,10 @@ public class RoomController extends SceneController
         var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
         if (member == null) {
             msvc.inviteToFollow(_ctx.getClient(), 0, new ReportingListener(
-                                    _mctx, MsoyCodes.GENERAL_MSGS, null, "m.follows_cleared"));
+                                    _wdctx, MsoyCodes.GENERAL_MSGS, null, "m.follows_cleared"));
         } else {
             msvc.inviteToFollow(_ctx.getClient(), member.getMemberId(), new ReportingListener(
-                                    _mctx, MsoyCodes.GENERAL_MSGS, null,
+                                    _wdctx, MsoyCodes.GENERAL_MSGS, null,
                                     MessageBundle.tcompose("m.invited_to_follow", member)));
         }
     }
@@ -324,7 +324,7 @@ public class RoomController extends SceneController
     {
         var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
         msvc.followMember(_ctx.getClient(), 0, new ReportingListener(
-                              _mctx, MsoyCodes.GENERAL_MSGS, null, "m.not_following"));
+                              _wdctx, MsoyCodes.GENERAL_MSGS, null, "m.not_following"));
     }
 
     /**
@@ -351,7 +351,7 @@ public class RoomController extends SceneController
     {
         var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
         msvc.updateAvailability(_ctx.getClient(), availability);
-        _mctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.avail_tip_" + availability);
+        _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.avail_tip_" + availability);
     }
 
     /**
@@ -379,12 +379,12 @@ public class RoomController extends SceneController
             cancelRoomEditing();
         }
 
-        _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
+        _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultWrapper(
             function (cause :String) :void {
-                _mctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
+                _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
             },
             function (result :Object) :void {
-                DoorTargetEditController.start(furniData, _mctx);
+                DoorTargetEditController.start(furniData, _wdctx);
             }));
     }
 
@@ -393,9 +393,9 @@ public class RoomController extends SceneController
      */
     public function handleRoomEdit (button :Button) :void
     {
-        _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
+        _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultWrapper(
             function (cause :String) :void {
-                _mctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
+                _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
             },
             function (result :Object) :void {
                 // if we're editing, let's finish, otherwise let's start!
@@ -447,7 +447,7 @@ public class RoomController extends SceneController
             return;
 
         case FurniData.ACTION_PORTAL:
-            (_mctx.getSceneDirector() as MsoySceneDirector).traversePortal(furni.id);
+            (_wdctx.getSceneDirector() as MsoySceneDirector).traversePortal(furni.id);
             return;
 
         case FurniData.ACTION_HELP_PAGE:
@@ -475,11 +475,11 @@ public class RoomController extends SceneController
             return;
         }
 
-        var us :MemberObject = _mctx.getMemberObject();
+        var us :MemberObject = _wdctx.getMemberObject();
         var menuItems :Array = [];
         if (occInfo.bodyOid == us.getOid()) {
             // see if we can control our own avatar right now...
-            var canControl :Boolean = _mctx.worldProps.userControlsAvatar;
+            var canControl :Boolean = _wdctx.worldProps.userControlsAvatar;
 
             // if we have followers, add a menu item for clearing them
             if (us.followers.size() > 0) {
@@ -498,7 +498,7 @@ public class RoomController extends SceneController
             for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
                 availActions.push({
                     label: Msgs.GENERAL.get("l.avail_" + ii), callback: updateAvailability, arg: ii,
-                    icon: (ii == _mctx.getMemberObject().availability) ? SEL_MENU_ICON : null });
+                    icon: (ii == _wdctx.getMemberObject().availability) ? SEL_MENU_ICON : null });
             }
             menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"),
                              children: availActions, enabled: canControl });
@@ -530,24 +530,24 @@ public class RoomController extends SceneController
                     children: worldStates, enabled: canControl });
             }
 
-            if (_mctx.getWorldClient().isEmbedded()) {
+            if (_wdctx.getWorldClient().isEmbedded()) {
                 if (us.isGuest()) {
                     menuItems.push({ label: Msgs.GENERAL.get("b.logon"),
                         callback: function () :void {
-                            (new LogonPanel(_mctx)).open();
+                            (new LogonPanel(_wdctx)).open();
                         }});
                 } else {
                     menuItems.push({ label: Msgs.GENERAL.get("b.logout"),
                         callback: function () :void {
-                            var sceneId :int = _mctx.getSceneDirector().getScene().getId();
+                            var sceneId :int = _wdctx.getSceneDirector().getScene().getId();
                             var observer :ClientAdapter;
                             var logon :Function = function (...ignored) :void {
-                                _mctx.getSceneDirector().moveTo(sceneId);
-                                _mctx.getClient().removeClientObserver(observer);
+                                _wdctx.getSceneDirector().moveTo(sceneId);
+                                _wdctx.getClient().removeClientObserver(observer);
                             }
                             observer = new ClientAdapter(null, logon);
-                            _mctx.getClient().addClientObserver(observer);
-                            _mctx.getWorldController().handleLogon(null);
+                            _wdctx.getClient().addClientObserver(observer);
+                            _wdctx.getWorldController().handleLogon(null);
                         }});
                 }
             }
@@ -571,7 +571,7 @@ public class RoomController extends SceneController
                 menuItems.push(
                     { label: Msgs.GENERAL.get("l.visit_home"),
                       command: WorldController.GO_MEMBER_HOME, arg: memId });
-                if (!_mctx.getWorldClient().isEmbedded()) {
+                if (!_wdctx.getWorldClient().isEmbedded()) {
                     menuItems.push(
                         { label: Msgs.GENERAL.get("l.view_member"),
                           command: WorldController.VIEW_MEMBER, arg: memId });
@@ -606,7 +606,7 @@ public class RoomController extends SceneController
         }
 
         // no menu for non-owners for now
-        if (occInfo.getOwnerId() != _mctx.getMemberObject().getMemberId()) {
+        if (occInfo.getOwnerId() != _wdctx.getMemberObject().getMemberId()) {
             return;
         }
 
@@ -638,9 +638,9 @@ public class RoomController extends SceneController
      */
     public function handleOrderPet (petId :int, command :int) :void
     {
-        var svc :PetService = (_mctx.getClient().requireService(PetService) as PetService);
-        svc.orderPet(_mctx.getClient(), petId, command,
-            new ReportingListener(_mctx, MsoyCodes.GENERAL_MSGS, null, "m.pet_ordered" + command));
+        var svc :PetService = (_wdctx.getClient().requireService(PetService) as PetService);
+        svc.orderPet(_wdctx.getClient(), petId, command,
+            new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS, null, "m.pet_ordered" + command));
     }
 
     /**
@@ -666,7 +666,7 @@ public class RoomController extends SceneController
         }
 
         // then check with the PlaceBox
-        if (_mctx.getTopPanel().getPlaceContainer().overlaysMousePoint(stageX, stageY)) {
+        if (_wdctx.getTopPanel().getPlaceContainer().overlaysMousePoint(stageX, stageY)) {
             return undefined;
         }
 
@@ -695,7 +695,7 @@ public class RoomController extends SceneController
      */
     public function getItemId (itemType :int) :int
     {
-        var scene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
+        var scene :MsoyScene = _wdctx.getSceneDirector().getScene() as MsoyScene;
         if (itemType == Item.DECOR) {
             return (scene.getSceneModel() as MsoySceneModel).decor.itemId;
         } else if (itemType == Item.AUDIO) {
@@ -710,8 +710,8 @@ public class RoomController extends SceneController
      */
     public function canEditRoom () : Boolean
     {
-        var scene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
-        return (scene != null && scene.canEdit(_mctx.getMemberObject()));
+        var scene :MsoyScene = _wdctx.getSceneDirector().getScene() as MsoyScene;
+        return (scene != null && scene.canEdit(_wdctx.getMemberObject()));
     }
 
     /**
@@ -720,7 +720,7 @@ public class RoomController extends SceneController
     public function useItem (itemId :int, itemType :int) :void
     {
         if (!canEditRoom()) {
-            _mctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.no_permission");
+            _wdctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.no_permission");
             return;
         }
 
@@ -730,26 +730,26 @@ public class RoomController extends SceneController
         }
 
         if (itemType != Item.DECOR && itemType != Item.AUDIO &&
-            !_mctx.getGameDirector().isPlayingTutorial()) {
+            !_wdctx.getGameDirector().isPlayingTutorial()) {
             _openEditor = true;
         }
 
-        var isvc :ItemService = _mctx.getClient().requireService(ItemService) as ItemService;
+        var isvc :ItemService = _wdctx.getClient().requireService(ItemService) as ItemService;
         var ident :ItemIdent = new ItemIdent(itemType, itemId);
 
         var gotItem :Function = function (item :Item) :void {
 
             // a function we'll invoke when we're ready to use the item
             var useNewItem :Function = function () :void {
-                var oldScene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
+                var oldScene :MsoyScene = _wdctx.getSceneDirector().getScene() as MsoyScene;
 
                 if (item.getType() == Item.DECOR) {
                     var newScene :MsoyScene = oldScene.clone() as MsoyScene;
                     var newSceneModel :MsoySceneModel =
                     (newScene.getSceneModel() as MsoySceneModel);
                     newSceneModel.decor = item as Decor;
-                    applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
-                    _mctx.getGameDirector().tutorialEvent("decorInstalled");
+                    applyUpdate(new SceneUpdateAction(_wdctx, oldScene, newScene));
+                    _wdctx.getGameDirector().tutorialEvent("decorInstalled");
 
                 } else if (item.getType() == Item.AUDIO) {
                     newScene = oldScene.clone() as MsoyScene;
@@ -758,7 +758,7 @@ public class RoomController extends SceneController
                     var audio :Audio = item as Audio;
                     ad.itemId = audio.itemId;
                     ad.media = audio.audioMedia;
-                    applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
+                    applyUpdate(new SceneUpdateAction(_wdctx, oldScene, newScene));
 
                 } else {
                     // create a generic furniture descriptor
@@ -779,8 +779,8 @@ public class RoomController extends SceneController
                             FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
                         furni.actionData = String(game.gameId) + ":" + game.name;
                     }
-                    applyUpdate(new FurniUpdateAction(_mctx, null, furni));
-                    _mctx.getGameDirector().tutorialEvent("furniInstalled");
+                    applyUpdate(new FurniUpdateAction(_wdctx, null, furni));
+                    _wdctx.getGameDirector().tutorialEvent("furniInstalled");
                 }
             };
 
@@ -789,7 +789,7 @@ public class RoomController extends SceneController
                 // (or translated), and we can use that here instead of this business
                 var msg :String = itemType == Item.DECOR ? "l.decor" :
                     (itemType == Item.AUDIO ? "l.audio" : "l.furni");
-                (new ItemUsedDialog(_mctx, Msgs.EDITING.get(msg), function () :void {
+                (new ItemUsedDialog(_wdctx, Msgs.EDITING.get(msg), function () :void {
                     var confWrap :ConfirmAdapter = new ConfirmAdapter(
                         // failure function
                         function (cause :String) :void {
@@ -797,18 +797,18 @@ public class RoomController extends SceneController
                                 "Failed to remove item from its current location " +
                                 "[id=" + item.itemId + ", type=" + item.getType() +
                                 ", cause=" + cause + "]");
-                            _mctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.failed_to_remove");
+                            _wdctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.failed_to_remove");
                         }, useNewItem);
-                    isvc.reclaimItem(_mctx.getClient(), ident, confWrap);
+                    isvc.reclaimItem(_wdctx.getClient(), ident, confWrap);
                 })).open(true);
             } else {
                 useNewItem();
             }
         };
 
-        isvc.peepItem(_mctx.getClient(), ident, new ResultWrapper(
+        isvc.peepItem(_wdctx.getClient(), ident, new ResultWrapper(
             function (cause :String) :void {
-                _mctx.displayFeedback(MsoyCodes.EDITING_MSGS, cause);
+                _wdctx.displayFeedback(MsoyCodes.EDITING_MSGS, cause);
             }, gotItem));
     }
 
@@ -816,7 +816,7 @@ public class RoomController extends SceneController
     {
         for each (var furni :FurniData in _scene.getFurni()) {
             if (furni.itemId == itemId && furni.itemType == itemType) {
-                applyUpdate(new FurniUpdateAction(_mctx, furni, null));
+                applyUpdate(new FurniUpdateAction(_wdctx, furni, null));
                 break;
             }
         }
@@ -890,7 +890,7 @@ public class RoomController extends SceneController
 
     public function setBackgroundMusic (data :AudioData) :void
     {
-        if (_mctx.getWorldClient().isFeaturedPlaceView()) {
+        if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
             return;
         }
 
@@ -960,10 +960,10 @@ public class RoomController extends SceneController
     {
         super.init(ctx, config);
 
-        _mctx = (ctx as WorldContext);
-        _editor = new RoomEditorController(_mctx, _roomView);
+        _wdctx = (ctx as WorldContext);
+        _editor = new RoomEditorController(_wdctx, _roomView);
 
-        if (_mctx.getWorldClient().isFeaturedPlaceView()) {
+        if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
             // show the pointer cursor 
             _roomView.buttonMode = true;
             _roomView.mouseChildren = false;
@@ -988,9 +988,9 @@ public class RoomController extends SceneController
         _roomObj.addListener(_roomListener);
 
         // get a copy of the scene
-        _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
+        _scene = (_wdctx.getSceneDirector().getScene() as MsoyScene);
 
-        _snap = new SnapshotController(_mctx, _scene.getId());
+        _snap = new SnapshotController(_wdctx, _scene.getId());
         
         _walkTarget.visible = false;
         _flyTarget.visible = false;
@@ -1047,7 +1047,7 @@ public class RoomController extends SceneController
     {
         if (!(event.value as Boolean)) {
             if (_openEditor && !isRoomEditing()) {
-                beginRoomEditing(_mctx.getTopPanel().getControlBar().roomEditBtn);
+                beginRoomEditing(_wdctx.getTopPanel().getControlBar().roomEditBtn);
             }
             _openEditor = false;
         }
@@ -1091,19 +1091,19 @@ public class RoomController extends SceneController
             avItems.push({ label: av.name, enabled: !av.equals(us.avatar),
                 // TODO
                 // iconObject: MediaWrapper.createScaled(av.getThumbnailMedia(), iconW, iconH),
-                callback: _mctx.getWorldDirector().setAvatar, arg: av.itemId });
+                callback: _wdctx.getWorldDirector().setAvatar, arg: av.itemId });
         }
         // add defaults
         avItems.push({ label: Msgs.ITEM.get("m.default"), enabled: (us.avatar != null),
             // TODO
             // iconObject: MediaWrapper.createScaled(
             //    Avatar.getDefaultMemberAvatarMedia(), iconW, iconH),
-            callback: _mctx.getWorldDirector().setAvatar, arg: 0 });
+            callback: _wdctx.getWorldDirector().setAvatar, arg: 0 });
 
         avItems.push({ type: "separator" });
         avItems.push({ label: Msgs.GENERAL.get("b.avatars_full"),
             command: WorldController.VIEW_MY_AVATARS,
-            enabled: !_mctx.getWorldClient().isEmbedded() });
+            enabled: !_wdctx.getWorldClient().isEmbedded() });
 
         // return a menu item for changing their avatar
         return { label: Msgs.GENERAL.get("b.change_avatar"), children: avItems,
@@ -1115,15 +1115,15 @@ public class RoomController extends SceneController
      */
     protected function clearItem (itemType :int) :void
     {
-        var oldScene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
+        var oldScene :MsoyScene = _wdctx.getSceneDirector().getScene() as MsoyScene;
         var newScene :MsoyScene = oldScene.clone() as MsoyScene;
         if (itemType == Item.DECOR) {
             var newSceneModel :MsoySceneModel = (newScene.getSceneModel() as MsoySceneModel);
             newSceneModel.decor = MsoySceneModel.defaultMsoySceneModelDecor();
-            applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
+            applyUpdate(new SceneUpdateAction(_wdctx, oldScene, newScene));
         } else if (itemType == Item.AUDIO) {
             (newScene.getSceneModel() as MsoySceneModel).audioData.itemId = 0;
-            applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
+            applyUpdate(new SceneUpdateAction(_wdctx, oldScene, newScene));
         }
     }
 
@@ -1163,7 +1163,7 @@ public class RoomController extends SceneController
      */
     protected function updateRoom (updates :TypedArray /* of SceneUpdate */) :void
     {
-        _roomObj.roomService.updateRoom(_mctx.getClient(), updates, new ReportingListener(_mctx));
+        _roomObj.roomService.updateRoom(_wdctx.getClient(), updates, new ReportingListener(_wdctx));
     }
 
     /**
@@ -1174,7 +1174,7 @@ public class RoomController extends SceneController
     protected function checkMouse (event :Event) :void
     {
         // no mouse fiddling while we're minimized
-        if (_mctx.getTopPanel().isMinimized() || _mctx.getWorldClient().isFeaturedPlaceView()) {
+        if (_wdctx.getTopPanel().isMinimized() || _wdctx.getWorldClient().isFeaturedPlaceView()) {
             setHoverSprite(null);
             return;
         }
@@ -1204,7 +1204,7 @@ public class RoomController extends SceneController
                 var cloc :ClickLocation = _roomView.layout.pointToAvatarLocation(
                     sx, sy, _shiftDownSpot, RoomMetrics.N_UP);
 
-                if (cloc != null && _mctx.worldProps.userControlsAvatar) {
+                if (cloc != null && _wdctx.worldProps.userControlsAvatar) {
                     addAvatarYOffset(cloc);
                     if (cloc.loc.y != 0) {
                         _flyTarget.setLocation(cloc.loc);
@@ -1347,8 +1347,8 @@ public class RoomController extends SceneController
     protected function mouseClicked (event :MouseEvent) :void
     {
         // if we're in a featured place view, any click should take the member to this room.
-        if (_mctx.getWorldClient().isFeaturedPlaceView()) {
-            _mctx.getWorldController().handleGoScene(_scene.getId());
+        if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
+            _wdctx.getWorldController().handleGoScene(_scene.getId());
             return;
         }
 
@@ -1370,7 +1370,7 @@ public class RoomController extends SceneController
             // let the sprite decide what to do with it
             hitter.mouseClick(event);
 
-        } else if (_mctx.worldProps.userControlsAvatar) {
+        } else if (_wdctx.worldProps.userControlsAvatar) {
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
             if (curLoc == null) {
                 return; // we've already left, ignore the click
@@ -1388,7 +1388,7 @@ public class RoomController extends SceneController
                     Math.atan2(newLoc.z - curLoc.z, newLoc.x - curLoc.x);
                 // we rotate so that 0 faces forward
                 newLoc.orient = (degrees + 90 + 360) % 360;
-                _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
+                _wdctx.getSpotSceneDirector().changeLocation(newLoc, null);
             }
         }
     }
@@ -1468,7 +1468,7 @@ public class RoomController extends SceneController
         var args :Array = event.getArgs();
         switch (event.getName()) {
         case RoomObject.LOAD_MUSIC:
-            if (_mctx.getWorldClient().isFeaturedPlaceView()) {
+            if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
                 break;
             }
             if (_loadingMusic != null) {
@@ -1567,7 +1567,7 @@ public class RoomController extends SceneController
      */
     protected function hasEntityControl (ident :ItemIdent) :Object
     {
-        var ourOid :int = _mctx.getMemberObject().getOid();
+        var ourOid :int = _wdctx.getMemberObject().getOid();
 
         // first, let's check all the MemberInfos
         for each (var occInfo :Object in _roomObj.occupantInfo.toArray()) {
@@ -1609,13 +1609,13 @@ public class RoomController extends SceneController
             var newId :int = attrsUpdate.decor.itemId;
             var oldId :int = _scene.getDecor().itemId;
             if (newId != oldId) {
-                _mctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT,
+                _wdctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT,
                     [ Item.DECOR, newId, oldId ]);
             }
             newId = attrsUpdate.audioData.itemId;
             oldId = _scene.getAudioData().itemId;
             if (newId != oldId) {
-                _mctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT,
+                _wdctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT,
                     [ Item.AUDIO, newId, oldId ]);
             }
         } else if (update is ModifyFurniUpdate) {
@@ -1627,7 +1627,7 @@ public class RoomController extends SceneController
                     args[ii].push([ furni.itemType, furni.itemId ]);
                 }
             }
-            _mctx.getWorldClient().dispatchEventToGWT(FURNI_CHANGED_EVENT, args);
+            _wdctx.getWorldClient().dispatchEventToGWT(FURNI_CHANGED_EVENT, args);
         }
 
         super.sceneUpdated(update);
@@ -1654,7 +1654,7 @@ public class RoomController extends SceneController
             _entityPopup.close();
         }
 
-        _entityPopup = new EntityPopup(_mctx, sprite, this, title, panel, w, h, color, alpha);
+        _entityPopup = new EntityPopup(_wdctx, sprite, this, title, panel, w, h, color, alpha);
         _entityPopup.open();
         return true;
     }
@@ -1687,7 +1687,7 @@ public class RoomController extends SceneController
     protected static const FURNI_CHANGED_EVENT :String = "furniChanged";
 
     /** The life-force of the client. */
-    protected var _mctx :WorldContext;
+    protected var _wdctx :WorldContext;
 
     /** The room view that we're controlling. */
     protected var _roomView :RoomView;

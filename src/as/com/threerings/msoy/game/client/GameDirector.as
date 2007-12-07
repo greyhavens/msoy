@@ -47,7 +47,7 @@ public class GameDirector extends BasicDirector
     public function GameDirector (ctx :WorldContext)
     {
         super(ctx);
-        _mctx = ctx;
+        _wctx = ctx;
 
         // let the compiler know that these must be compiled into the client
         var c :Class = MsoyGameDefinition;
@@ -75,7 +75,7 @@ public class GameDirector extends BasicDirector
         }
         if (_liaison == null) {
             // create our new liaison, which will resolve the lobby and do all the business
-            _liaison = new LobbyGameLiaison(_mctx, gameId, LobbyGameLiaison.SHOW_LOBBY);
+            _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyGameLiaison.SHOW_LOBBY);
         }
     }
 
@@ -103,7 +103,7 @@ public class GameDirector extends BasicDirector
         }
         if (_liaison == null) {
             // create our new liaison, which will head on into the game once we're logged on
-            _liaison = new LobbyGameLiaison(_mctx, gameId, mode);
+            _liaison = new LobbyGameLiaison(_wctx, gameId, mode);
         }
     }
 
@@ -120,7 +120,7 @@ public class GameDirector extends BasicDirector
         }
 
         if (_liaison == null) {
-            _liaison = new LobbyGameLiaison(_mctx, gameId, LobbyGameLiaison.JOIN_PLAYER, memberId);
+            _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyGameLiaison.JOIN_PLAYER, memberId);
         } else {
             LobbyGameLiaison(_liaison).joinPlayer(memberId);
         }
@@ -148,9 +148,9 @@ public class GameDirector extends BasicDirector
     public function checkMemberAVRGame () :void
     {
         if (_liaison == null) {
-            var memberObj :MemberObject = _mctx.getMemberObject();
+            var memberObj :MemberObject = _wctx.getMemberObject();
             if (memberObj.avrGameId > 0) {
-                _liaison = new AVRGameLiaison(_mctx, memberObj.avrGameId);
+                _liaison = new AVRGameLiaison(_wctx, memberObj.avrGameId);
             }
         }
     }
@@ -175,7 +175,7 @@ public class GameDirector extends BasicDirector
             _liaison.shutdown();
         }
 
-        _liaison = new AVRGameLiaison(_mctx, gameId);
+        _liaison = new AVRGameLiaison(_wctx, gameId);
     }
 
     public function leaveAVRGame () :void
@@ -209,7 +209,7 @@ public class GameDirector extends BasicDirector
             LobbyGameLiaison(_liaison).showLobbyUI();
         } else {
             // go back to our previous location
-            _mctx.getMsoyController().handleMoveBack();
+            _wctx.getMsoyController().handleMoveBack();
         }
     }
 
@@ -299,7 +299,7 @@ public class GameDirector extends BasicDirector
 
         // if we're actually logging off, rather than just switching servers, then shutdown any
         // active game connection
-        if (!_mctx.getClient().isSwitchingServers() && _liaison != null) {
+        if (!_wctx.getClient().isSwitchingServers() && _liaison != null) {
             _liaison.shutdown();
         }
     }
@@ -309,7 +309,7 @@ public class GameDirector extends BasicDirector
      */
     protected function displayFeedback (msg :String) :void
     {
-        _mctx.displayFeedback(MsoyGameCodes.GAME_BUNDLE, msg);
+        _wctx.displayFeedback(MsoyGameCodes.GAME_BUNDLE, msg);
     }
 
     // from BasicDirector
@@ -319,7 +319,7 @@ public class GameDirector extends BasicDirector
     }
 
     /** A casted ref to the msoy context. */
-    protected var _mctx :WorldContext;
+    protected var _wctx :WorldContext;
 
     /** Handles our connection to the game server. */
     protected var _liaison :GameLiaison;
