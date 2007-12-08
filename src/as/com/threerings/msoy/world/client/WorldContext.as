@@ -137,7 +137,7 @@ public class WorldContext extends MsoyContext
     // from MsoyContext
     override public function getTokens () :MsoyTokenRing
     {
-        return getMemberObject().tokens;
+        return (getMemberObject() == null) ? null : getMemberObject().tokens;
     }
 
     // from MsoyContext

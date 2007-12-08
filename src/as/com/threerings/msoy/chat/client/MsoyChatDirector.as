@@ -182,7 +182,7 @@ public class MsoyChatDirector extends ChatDirector
         }
         super.addChatDisplay(display);
     }
-    
+
     // from ChatDirector
     override public function clearDisplays () :void
     {
@@ -205,7 +205,7 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     // from ChatDirector
-    override public function requestChat (speakSvc :SpeakService, text :String, 
+    override public function requestChat (speakSvc :SpeakService, text :String,
         record :Boolean) :String
     {
         if (speakSvc != null) {
@@ -277,7 +277,7 @@ public class MsoyChatDirector extends ChatDirector
             }
         }
     }
-    
+
     /**
      * Create a ChatChannel object for the specified Name.
      */
@@ -343,7 +343,7 @@ import com.threerings.msoy.chat.data.ChatChannelObject;
 /**
  * The handler is a local object change dispatch for a channel. It can be active or shutdown:
  * while active, it can be connected or disconnected as the player moves between servers;
- * once shut down, it remains disconnected until destroyed. 
+ * once shut down, it remains disconnected until destroyed.
  */
 class ChannelHandler implements Subscriber
 {

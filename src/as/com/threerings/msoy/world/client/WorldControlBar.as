@@ -69,6 +69,8 @@ public class WorldControlBar extends ControlBar
     // from ControlBar
     override protected function createControls () :void
     {
+        super.createControls();
+
         _roomeditBtn = new CommandButton();
         _roomeditBtn.toolTip = Msgs.GENERAL.get("i.editScene");
         _roomeditBtn.setCommand(MsoyController.ROOM_EDIT);
@@ -116,7 +118,7 @@ public class WorldControlBar extends ControlBar
         addGroupChild(_hotZoneBtn, [ UI_STD, UI_GUEST ]);
         addGroupChild(_notifyBtn, [ UI_STD, UI_GUEST ]);
         // TODO: snapshots are not functional; revisit
-        if (_ctx.getTokens().isAdmin()) {
+        if (_ctx.getTokens() != null && _ctx.getTokens().isAdmin()) {
             addGroupChild(_snapBtn, [ UI_STD ]);
         }
     }

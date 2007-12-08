@@ -151,6 +151,12 @@ class GameContextImpl extends MsoyContext
     }
 
     // from MsoyContext
+    override public function getTokens () :MsoyTokenRing
+    {
+        return (getPlayerObject() == null) ? null : getPlayerObject().tokens;
+    }
+
+    // from MsoyContext
     override public function getMsoyController () :MsoyController
     {
         return _controller;
