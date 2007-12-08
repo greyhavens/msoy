@@ -323,20 +323,20 @@ public class MemberManager
         }
 
         // otherwise, make sure it exists and we own it
-        MsoyServer.itemMan.getItem(
-            new ItemIdent(Item.AVATAR, avatarItemId), new ResultListener<Item>() {
+        final ItemIdent ident = new ItemIdent(Item.AVATAR, avatarItemId);
+        MsoyServer.itemMan.getItem(ident, new ResultListener<Item>() {
             public void requestCompleted (Item item) {
                 Avatar avatar = (Avatar) item;
-                // ensure that they own it!
-                if (user.getMemberId() != avatar.ownerId) {
-                    requestFailed(new Exception("An avatar that the user " +
-                        "does not own was specified!"));
+                if (user.getMemberId() != avatar.ownerId) { // ensure that they own it
+                    String errmsg = "Not user's avatar [ownerId=" + avatar.ownerId + "]";
+                    requestFailed(new Exception(errmsg));
                 } else {
                     finishSetAvatar(user, avatar, newScale, listener);
                 }
             }
             public void requestFailed (Exception cause) {
-                log.log(Level.WARNING, "Unable to retrieve user's avatar.", cause);
+                log.log(Level.WARNING, "Unable to setAvatar [for=" + user.getMemberId() +
+                        ", avatar=" + ident + "].", cause);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
