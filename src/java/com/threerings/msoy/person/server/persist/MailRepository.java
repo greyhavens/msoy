@@ -17,11 +17,9 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.MultiKey;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.clause.FieldDefinition;
-import com.samskivert.jdbc.depot.clause.FromOverride;
-import com.samskivert.jdbc.depot.clause.GroupBy;
-import com.samskivert.jdbc.depot.clause.OrderBy;
-import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.clause.*;
+import com.samskivert.jdbc.depot.operator.Logic.*;
+import com.samskivert.jdbc.depot.operator.Conditionals.*;
 
 import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -233,18 +231,33 @@ public class MailRepository extends DepotRepository
     protected int claimMessageId (int memberId, int folderId, int idCount)
         throws PersistenceException
     {
-        // TODO: When we have just a little more time, do this with fancy lockless magic
-        // TODO: like UPDATE set NEXT=NEXT+1 where NEXT=122 and iterate until rows modified.
-        MailFolderRecord record = load(MailFolderRecord.class,
-                                       MailFolderRecord.OWNER_ID, memberId,
-                                       MailFolderRecord.FOLDER_ID, folderId);
-        if (record == null) {
-            return -1;
-        }
+        int firstId, rows;
+        int attempts = 10;
+        do {
+            // sanity check
+            if (--attempts < 0) {
+                throw new PersistenceException(
+                    "Failed to claim new ID for message delivery in 10 attempts [memberId=" +
+                    memberId + ", folderId=" + folderId + ", idCount=" + idCount + "]");
+            }
+            Key<MailFolderRecord> key = MailFolderRecord.getKey(folderId, memberId);
 
-        int firstId = record.nextMessageId;
-        record.nextMessageId += idCount;
-        update(record, MailFolderRecord.NEXT_MESSAGE_ID);
+            // find the next available message ID
+            MailFolderRecord record = load(MailFolderRecord.class, key);
+            if (record == null) {
+                return -1;
+            }
+            firstId = record.nextMessageId;
+
+            // attempt to claim our message id block with a lock-less database update
+            rows = updatePartial(
+                MailFolderRecord.class,
+                new Where(new And(key.condition,
+                                  new Equals(MailFolderRecord.NEXT_MESSAGE_ID_C, firstId))),
+                key,
+                MailFolderRecord.NEXT_MESSAGE_ID, firstId + idCount);
+        } while (rows == 0);
+
         return firstId;
     }
 
