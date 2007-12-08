@@ -53,10 +53,6 @@ public class GameDirector extends BasicDirector
         // let the compiler know that these must be compiled into the client
         var c :Class = MsoyGameDefinition;
         c = MsoyGameMarshaller;
-        c = LobbyMarshaller;
-        c = LobbyController;
-        c = PlayerObject;
-        c = GameContentOwnership;
     }
 
     /**

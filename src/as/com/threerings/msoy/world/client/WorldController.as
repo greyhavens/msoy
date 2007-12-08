@@ -556,62 +556,10 @@ public class WorldController extends MsoyController
         }
     }
 
-    // from MsoyController
-    override public function getSceneIdString () :String
-    {
-        return _sceneIdString;
-    }
-
-    // from MsoyController
-    override public function handleClosePlaceView () : void
-    {
-        if (_wctx.getTopPanel().getPlaceView() is MsoyGamePanel) {
-            // if we're in a game, closing means closing the game and going back to our place
-            handleMoveBack();
-        } else {
-            // if we're in the whirled, closing means closing the flash client totally
-            _wctx.getMsoyClient().closeClient();
-        }
-    }
-
-    // from MsoyController
-    override public function handleMoveBack () :void
-    {
-        // if we're not in a scene, just go to the previous scene on the stack
-        if (_wctx.getSceneDirector().getScene() == null) {
-            if (_backstack.length > 0) {
-                handleGoScene(int(_backstack.pop()));
-                return;
-            }
-
-        // otherwise the first item on the back stack is the current location
-        } else if (_backstack.length > 1) {
-            // Pop the current location...
-            _backstack.pop();
-            // ...and pop the previous location and move to it. When we arrive in the previous
-            // location, it will be pushed back onto the location stack.
-            handleGoScene(int(_backstack.pop()));
-            return;
-        }
-
-        // nothing on the stack, let's just go to our home scene
-        handleGoScene(_wctx.getMemberObject().getHomeSceneId());
-    }
-
-    // from MsoyController
-    override public function handleLogon (creds :Credentials) :void
-    {
-        // if we're currently logged on, save our current scene so that we can go back there once
-        // we're relogged on as a non-guest; otherwise go to Brave New Whirled
-        var scene :Scene = _wctx.getSceneDirector().getScene();
-        _postLogonScene = (scene == null) ? 1 : scene.getId();
-        _wctx.getClient().logoff(false);
-
-        super.handleLogon(creds);
-    }
-
-    // from MsoyController
-    override public function goToPlace (params :Object) :void
+    /**
+     * Figure out where we should be going, and go there.
+     */
+    public function goToPlace (params :Object) :void
     {
         // first, see if we should hit a specific scene
         if (null != params["memberHome"]) {
@@ -693,6 +641,60 @@ public class WorldController extends MsoyController
             // this only happens in the standalone client when we have no credentials
             _wctx.getSceneDirector().moveTo(1);
         }
+    }
+
+    // from MsoyController
+    override public function getSceneIdString () :String
+    {
+        return _sceneIdString;
+    }
+
+    // from MsoyController
+    override public function handleClosePlaceView () : void
+    {
+        if (_wctx.getTopPanel().getPlaceView() is MsoyGamePanel) {
+            // if we're in a game, closing means closing the game and going back to our place
+            handleMoveBack();
+        } else {
+            // if we're in the whirled, closing means closing the flash client totally
+            _wctx.getMsoyClient().closeClient();
+        }
+    }
+
+    // from MsoyController
+    override public function handleMoveBack () :void
+    {
+        // if we're not in a scene, just go to the previous scene on the stack
+        if (_wctx.getSceneDirector().getScene() == null) {
+            if (_backstack.length > 0) {
+                handleGoScene(int(_backstack.pop()));
+                return;
+            }
+
+        // otherwise the first item on the back stack is the current location
+        } else if (_backstack.length > 1) {
+            // Pop the current location...
+            _backstack.pop();
+            // ...and pop the previous location and move to it. When we arrive in the previous
+            // location, it will be pushed back onto the location stack.
+            handleGoScene(int(_backstack.pop()));
+            return;
+        }
+
+        // nothing on the stack, let's just go to our home scene
+        handleGoScene(_wctx.getMemberObject().getHomeSceneId());
+    }
+
+    // from MsoyController
+    override public function handleLogon (creds :Credentials) :void
+    {
+        // if we're currently logged on, save our current scene so that we can go back there once
+        // we're relogged on as a non-guest; otherwise go to Brave New Whirled
+        var scene :Scene = _wctx.getSceneDirector().getScene();
+        _postLogonScene = (scene == null) ? 1 : scene.getId();
+        _wctx.getClient().logoff(false);
+
+        super.handleLogon(creds);
     }
 
     // from ClientObserver

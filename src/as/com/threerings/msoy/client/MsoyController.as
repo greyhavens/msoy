@@ -99,14 +99,14 @@ public class MsoyController extends Controller
     /**
      * Creates and initializes the controller.
      */
-    public function MsoyController (ctx :MsoyContext, topPanel :TopPanel)
+    public function MsoyController (mctx :MsoyContext, topPanel :TopPanel)
     {
-        _ctx = ctx;
-        _ctx.getClient().addServiceGroup(CrowdCodes.CROWD_GROUP);
-        _ctx.getClient().addClientObserver(this);
+        _mctx = mctx;
+        _mctx.getClient().addServiceGroup(CrowdCodes.CROWD_GROUP);
+        _mctx.getClient().addClientObserver(this);
         _topPanel = topPanel;
 
-        var stage :Stage = ctx.getStage();
+        var stage :Stage = mctx.getStage();
         setControlledPanel(stage);
         stage.addEventListener(FocusEvent.FOCUS_OUT, handleUnfocus);
 
@@ -117,7 +117,7 @@ public class MsoyController extends Controller
         restartIdleTimer();
 
         // listen for location changes
-        _ctx.getLocationDirector().addLocationObserver(
+        _mctx.getLocationDirector().addLocationObserver(
             new LocationAdapter(null, this.locationChanged, null));
     }
 
@@ -127,7 +127,7 @@ public class MsoyController extends Controller
     public function supportsFullScreen () :Boolean
     {
         // TODO: this too could be cleaned up. See note in handleToggleFullscreen
-        var o :Object = _ctx.getStage();
+        var o :Object = _mctx.getStage();
         try {
             return (undefined !== o.displayState);
         } catch (e :Error) {
@@ -142,7 +142,7 @@ public class MsoyController extends Controller
     public function showExternalURL (url :String) :void
     {
         if (!NetUtil.navigateToURL(url, false)) {
-            _ctx.displayFeedback(null, MessageBundle.tcompose("e.no_navigate", url));
+            _mctx.displayFeedback(null, MessageBundle.tcompose("e.no_navigate", url));
         }
     }
 
@@ -169,7 +169,7 @@ public class MsoyController extends Controller
      */
     public function handleAbout () :void
     {
-        new AboutDialog(_ctx);
+        new AboutDialog(_mctx);
     }
 
     /**
@@ -195,7 +195,7 @@ public class MsoyController extends Controller
     {
         // TODO: once things are more up to date, we can use the real
         // class and StageDisplayState for the constants
-        var o :Object = _ctx.getStage();
+        var o :Object = _mctx.getStage();
         o.displayState = (o.displayState == "normal") ? "fullScreen" : "normal";
     }
 
@@ -214,7 +214,7 @@ public class MsoyController extends Controller
     {
         // give the client a chance to log off, then log back on
         _topPanel.callLater(function () :void {
-            var client :Client = _ctx.getClient();
+            var client :Client = _mctx.getClient();
             log.info("Logging on [creds=" + creds + ", version=" + DeploymentConfig.version + "].");
             client.setCredentials(creds);
             client.logon();
@@ -226,7 +226,7 @@ public class MsoyController extends Controller
      */
     public function handleChatPrefs () :void
     {
-        new ChatPrefsDialog(_ctx);
+        new ChatPrefsDialog(_mctx);
     }
     
     /**
@@ -240,14 +240,6 @@ public class MsoyController extends Controller
             var popup :VolumePopup = new VolumePopup(trigger);
             popup.show();
         }
-    }
-
-    /**
-     * Figure out where we should be going, and go there.
-     */
-    public function goToPlace (params :Object) :void
-    {
-        // handled by our derived classes
     }
 
     // from ClientObserver
@@ -273,7 +265,7 @@ public class MsoyController extends Controller
     {
         _topPanel.clearLeftPanel(null);
         _topPanel.clearBottomPanel(null);
-        _topPanel.setPlaceView(new DisconnectedPanel(_ctx, _logoffMessage));
+        _topPanel.setPlaceView(new DisconnectedPanel(_mctx, _logoffMessage));
         _logoffMessage = null;
     }
 
@@ -310,10 +302,10 @@ public class MsoyController extends Controller
         if (pt == "StandAlone" || pt == "External") {
             return false;
         }
-        if (_ctx.getMsoyClient().isEmbedded()) {
+        if (_mctx.getMsoyClient().isEmbedded()) {
             return false;
         }
-        if (_ctx.getPartner() == "facebook") {
+        if (_mctx.getPartner() == "facebook") {
             return false;
         }
         return true;
@@ -376,12 +368,12 @@ public class MsoyController extends Controller
             break;
         case Keyboard.LEFT:
             if (event.ctrlKey) {
-                _ctx.getTopPanel().getHeaderBar().getChatTabs().selectedIndex--;
+                _mctx.getTopPanel().getHeaderBar().getChatTabs().selectedIndex--;
             }
             break;
         case Keyboard.RIGHT:
             if (event.ctrlKey) {
-                _ctx.getTopPanel().getHeaderBar().getChatTabs().selectedIndex++;
+                _mctx.getTopPanel().getHeaderBar().getChatTabs().selectedIndex++;
             }
         }
 
@@ -408,7 +400,7 @@ public class MsoyController extends Controller
      */
     protected function locationChanged (place :PlaceObject) :void
     {
-        updateTopPanel(_ctx.getTopPanel().getHeaderBar(), _ctx.getTopPanel().getControlBar());
+        updateTopPanel(_mctx.getTopPanel().getHeaderBar(), _mctx.getTopPanel().getControlBar());
     }
 
     /**
@@ -445,8 +437,8 @@ public class MsoyController extends Controller
     {
         if (nowIdle != _idle) {
             _idle = nowIdle;
-            var bsvc :BodyService = _ctx.getClient().requireService(BodyService) as BodyService;
-            bsvc.setIdle(_ctx.getClient(), nowIdle);
+            var bsvc :BodyService = _mctx.getClient().requireService(BodyService) as BodyService;
+            bsvc.setIdle(_mctx.getClient(), nowIdle);
         }
     }
 
@@ -456,7 +448,7 @@ public class MsoyController extends Controller
     protected function handleUnfocus (event :FocusEvent) :void
     {
         if (event.target is TextField && event.relatedObject == null) {
-            _ctx.getStage().addEventListener(MouseEvent.MOUSE_MOVE, handleRefocus);
+            _mctx.getStage().addEventListener(MouseEvent.MOUSE_MOVE, handleRefocus);
         }
     }
 
@@ -465,7 +457,7 @@ public class MsoyController extends Controller
      */
     protected function handleRefocus (event :MouseEvent) :void
     {
-        _ctx.getStage().removeEventListener(MouseEvent.MOUSE_MOVE, handleRefocus);
+        _mctx.getStage().removeEventListener(MouseEvent.MOUSE_MOVE, handleRefocus);
         checkChatFocus();
     }
 
@@ -475,7 +467,7 @@ public class MsoyController extends Controller
     protected function checkChatFocus (... ignored) :void
     {
         try {
-            var focus :Object = _ctx.getStage().focus;
+            var focus :Object = _mctx.getStage().focus;
             if (!(focus is TextField) && !(focus is ChatCantStealFocus)) {
                 ChatControl.grabFocus();
             }
@@ -486,7 +478,7 @@ public class MsoyController extends Controller
     }
 
     /** Provides access to client-side directors and services. */
-    protected var _ctx :MsoyContext;
+    protected var _mctx :MsoyContext;
 
     /** The topmost panel in the msoy client. */
     protected var _topPanel :TopPanel;

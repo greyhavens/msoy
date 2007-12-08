@@ -172,25 +172,6 @@ public class LobbyGameLiaison extends GameLiaison
         super.shutdown();
     }
 
-    public function lobbyCleared (inGame :Boolean, closedByUser :Boolean) :void
-    {
-        // if we're not about to go into a game, shutdown, otherwise stick around
-        if (!_shuttingDown && !inGame && _gameOid == 0) {
-            shutdown();
-            // we may be being closed due to navigation away from the lobby URL, so we don't want
-            // to mess with the URL in that circumstance; only if the player pressed the close box
-            if (closedByUser) {
-                // either restore our current scene URL or go home if we have no scene
-                if (_wctx.getSceneDirector().getScene() == null) {
-                    _wctx.getWorldController().handleGoScene(
-                        _wctx.getMemberObject().getHomeSceneId());
-                } else {
-                    _wctx.getWorldController().restoreSceneURL();
-                }
-            }
-        }
-    }
-
     // from GameLiaison
     override public function clientDidLogon (event :ClientEvent) :void
     {
@@ -273,6 +254,25 @@ public class LobbyGameLiaison extends GameLiaison
             joinPlayerTable(_playerIdGame);
         } else {
             _wctx.getWorldController().handleGoGame(_gameId, gameOid);
+        }
+    }
+
+    protected function lobbyCleared (inGame :Boolean, closedByUser :Boolean) :void
+    {
+        // if we're not about to go into a game, shutdown, otherwise stick around
+        if (!_shuttingDown && !inGame && _gameOid == 0) {
+            shutdown();
+            // we may be being closed due to navigation away from the lobby URL, so we don't want
+            // to mess with the URL in that circumstance; only if the player pressed the close box
+            if (closedByUser) {
+                // either restore our current scene URL or go home if we have no scene
+                if (_wctx.getSceneDirector().getScene() == null) {
+                    _wctx.getWorldController().handleGoScene(
+                        _wctx.getMemberObject().getHomeSceneId());
+                } else {
+                    _wctx.getWorldController().restoreSceneURL();
+                }
+            }
         }
     }
 

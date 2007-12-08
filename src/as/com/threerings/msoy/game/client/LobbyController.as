@@ -29,7 +29,9 @@ import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.LobbyCodes;
+import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 
 public class LobbyController extends Controller implements Subscriber
@@ -68,6 +70,10 @@ public class LobbyController extends Controller implements Subscriber
         setControlledPanel(_panel);
         _panelIsVisible = true;
         _mctx.getTopPanel().setLeftPanel(_panel);
+
+        // let the compiler know that these must be compiled into the client
+        var c :Class = MsoyGameDefinition;
+        c = LobbyMarshaller;
     }
 
     /**

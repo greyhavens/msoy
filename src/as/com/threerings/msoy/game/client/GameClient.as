@@ -56,6 +56,7 @@ public class GameClient extends MsoyClient
 
         // these cause bundles to be compiled in.
         [ResourceBundle("general")]
+        [ResourceBundle("chat")]
         [ResourceBundle("game")]
         [ResourceBundle("ezgame")]
         var rb :ResourceBundle;

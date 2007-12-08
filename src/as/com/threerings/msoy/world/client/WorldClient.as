@@ -244,7 +244,7 @@ public class WorldClient extends MsoyClient
                 params[param.substring(0, eidx)] = param.substring(eidx+1);
             }
         }
-        _wctx.getMsoyController().goToPlace(params);
+        _wctx.getWorldController().goToPlace(params);
     }
 
     /**
