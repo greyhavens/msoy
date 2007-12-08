@@ -231,14 +231,12 @@ public class ProfileBlurb extends Blurb
         econtent.setWidget(row++, 1, panel);
 
         econtent.setText(row, 0, CProfile.msgs.headline());
-        econtent.setWidget(row++, 1, _eheadline = new TextBox());
-        _eheadline.setVisibleLength(30);
-        _eheadline.setText(unBlank(_profile.headline));
+        _eheadline = MsoyUI.createTextBox(_profile.headline, Profile.MAX_HEADLINE_LENGTH, 30);
+        econtent.setWidget(row++, 1, _eheadline);
 
         econtent.setText(row, 0, CProfile.msgs.homepage());
-        econtent.setWidget(row++, 1, _ehomepage = new TextBox());
-        _ehomepage.setVisibleLength(30);
-        _ehomepage.setText(unBlank(_profile.homePageURL));
+        _ehomepage = MsoyUI.createTextBox(_profile.homePageURL, Profile.MAX_HOMEPAGE_LENGTH, 30);
+        econtent.setWidget(row++, 1, _ehomepage);
 
         econtent.setText(row, 0, CProfile.msgs.esex());
         econtent.setWidget(row++, 1, _esex = new ListBox());

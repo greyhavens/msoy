@@ -138,10 +138,12 @@ public class ProfileRecord extends PersistentRecord
     /** The constraint for the photo image. */
     public byte photoConstraint;
 
-    /** The member's home page URL (maxlen: 255). */
+    /** The member's home page URL. */
+    @Column(length=Profile.MAX_HOMEPAGE_LENGTH)
     public String homePageURL = "";
 
-    /** A short bit of text provided by the member (maxlen: 255). */
+    /** A short bit of text provided by the member. */
+    @Column(length=Profile.MAX_HEADLINE_LENGTH)
     public String headline = "";
 
     /** Whether the member identifies as male or female. */

@@ -26,6 +26,12 @@ public class Profile implements IsSerializable
     /** The maximum length for a display name. */
     public static final int MAX_DISPLAY_NAME_LENGTH = 30;
 
+    /** The maximum length for a member's headline. */
+    public static final int MAX_HEADLINE_LENGTH = 100;
+
+    /** The maximum length for a member's homepage. */
+    public static final int MAX_HOMEPAGE_LENGTH = 100;
+
     /** A {@link #sex} constant. */
     public static final byte SEX_UNSPECIFIED = 0;
 
