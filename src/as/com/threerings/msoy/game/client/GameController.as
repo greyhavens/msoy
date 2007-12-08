@@ -16,6 +16,7 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.game.client.LobbyService;
 import com.threerings.msoy.game.data.LobbyCodes;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 
 /**
  * Customizes the MsoyController for operation in the standalone game client.
@@ -82,7 +83,21 @@ public class GameController extends MsoyController
     // from MsoyController
     override protected function updateTopPanel (headerBar :HeaderBar, controlBar :ControlBar) :void
     {
-        // TODO
+        super.updateTopPanel(headerBar, controlBar);
+
+        // TODO: what to do when we're in the lobby?
+
+        // if we're in a game, display the game name and activate the back button
+        var cfg :MsoyGameConfig =
+            (_gctx.getLocationDirector().getPlaceController().getPlaceConfig() as MsoyGameConfig);
+        if (cfg != null) {
+            controlBar.updateNavigationWidgets(true, cfg.name, true);
+            _mctx.getMsoyClient().setWindowTitle(cfg.name);
+            headerBar.setLocationName(cfg.name);
+            headerBar.setOwnerLink("");
+        } else {
+            controlBar.updateNavigationWidgets(false, "", false);
+        }
     }
 
     protected var _gctx :GameContext;

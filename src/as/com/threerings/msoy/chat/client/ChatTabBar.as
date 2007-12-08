@@ -47,7 +47,7 @@ public class ChatTabBar extends HBox
             activeTab = _tabs[_selectedIndex] as ChatTab;
             activeTab.setVisualState(ChatTab.UNSELECTED);
         }
-        
+
         _selectedIndex = (ii + _tabs.length) % _tabs.length;
         activeTab = _tabs[_selectedIndex] as ChatTab;
         activeTab.setVisualState(ChatTab.SELECTED);

@@ -95,6 +95,7 @@ import com.threerings.parlor.client.ParlorDirector;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.data.MsoyTokenRing;
 
 import com.threerings.msoy.game.client.GameClient;
 import com.threerings.msoy.game.client.GameContext;
