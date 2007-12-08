@@ -192,7 +192,7 @@ public class index extends Page
         case LaunchConfig.FLASH_LOBBIED:
             if (gameOid <= 0) {
                 // TEMP: mdb alternate business in progress
-                if (config.host != null && config.host.indexOf("bering") != -1) {
+                if (config.server != null && config.server.indexOf("bering") != -1) {
                     WorldClient.displayFlashLobby(config, action);
                 } else {
                     if (action.equals("m") || action.equals("f") || action.equals("s")) {
