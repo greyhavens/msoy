@@ -1,0 +1,37 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Command line launcher for the Msoy standalone game client
+#
+# Usage:
+#   msoyclient [-nodebug] [parameters for game client] [build version]
+
+BINDIR=`dirname $0`
+HOST=`egrep ^server_host $BINDIR/../server.properties | awk '{print $3}'`
+
+PLAYER="flashplayer-debug"
+if [ "$1" = "-nodebug" ]; then
+    PLAYER="flashplayer"
+    shift
+fi
+
+if [ -z "$1" ]; then
+    echo "Usage: $0 gameLobby=ID"
+    exit 255
+fi
+
+# try to figure out which port the game server is running on
+PROPS=$BINDIR/../server.properties
+PORT=`egrep "^msoy1.game_server_port" $PROPS | awk -F= '{ print $2 }' | sed 's: ::g'`
+if [ -z "$PORT" ]; then
+    PORT=`egrep "^game_server_port" $PROPS | awk -F= '{ print $2 }' | sed 's: ::g'`
+fi
+
+PARAMETERS="$1&port=$PORT"
+BUILD_VERSION=$2
+if [ "$BUILD_VERSION" = "" ]; then
+    BUILD_VERSION="0"
+fi
+
+$BINDIR/`uname`/$PLAYER http://$HOST:8080/clients/$BUILD_VERSION/game-client.swf?$PARAMETERS
