@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.FlashClients;
@@ -102,6 +103,27 @@ public class WorldClient extends Widget
             clientGo(_curFlashArgs = flashArgs);
             clientMinimized(false);
         }
+    }
+
+    public static void displayFlashLobby (LaunchConfig config, String action)
+    {
+        // let the page know that we're displaying a client
+        Frame.setShowingClient(History.getToken());
+
+        closeClient(false); // clear our Java or Flash client if we have one
+
+        String flashArgs = "gameLobby=" + config.gameId;
+        if (!action.equals("")) {
+            flashArgs += "&mode=" + action;
+        }
+        flashArgs += ("&host=" + config.server +
+                      "&port=" + config.port +
+                      "&httpPort=" + config.httpPort);
+        if (CShell.ident != null) {
+            flashArgs += "&token=" + CShell.ident.token;
+        }
+        RootPanel.get(Frame.CLIENT).clear();
+        FlashClients.embedGameClient(RootPanel.get(Frame.CLIENT), flashArgs);
     }
 
     public static void displayJava (Widget client)

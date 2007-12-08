@@ -38,6 +38,18 @@ public class FlashClients
     }
 
     /**
+     * Creates a game client, and embeds it in a container object, with which it can communicate
+     * via the Flash/Javascript interface.
+     */
+    public static void embedGameClient (Panel container, String flashVars)
+    {
+        WidgetUtil.embedFlashObject(
+            container, WidgetUtil.createFlashObjectDefinition(
+                "asclient", "/clients/" + DeploymentConfig.version + "/game-client.swf",
+                "100%", String.valueOf(CLIENT_HEIGHT), flashVars));
+    }
+
+    /**
      * Creates a featured places world client, and embeds it in the container object.
      */
     public static void embedFeaturedPlaceView (Panel container, String flashVars)
