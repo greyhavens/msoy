@@ -34,14 +34,8 @@ public class MsoyGameClient extends CrowdClient
     {
         super.sessionConnectionClosed();
 
-//         // if we're a guest, end our session now, there's no way to reconnect
-//         if (_plobj != null && _plobj.isGuest()) {
-//             safeEndSession();
-//         }
-
-        // TEMP: for now end everyone's game session if they disconnect; we don't currently support
-        // reentering a game automatically so we might as well give the player the boot
-        if (_plobj != null) {
+        // if we're a guest, end our session now, there's no way to reconnect
+        if (_plobj != null && _plobj.isGuest()) {
             safeEndSession();
         }
     }
