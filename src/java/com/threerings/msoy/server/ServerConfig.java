@@ -68,7 +68,10 @@ public class ServerConfig
 
     /** Event logging server RPC URL. */
     public static String eventLogURL;
-    
+
+    /** The port on which we listen to socket policy requests. */
+    public static int socketPolicyPort;
+
     /** Provides access to our config properties. <em>Do not</em> modify
      * these properties! */
     public static Config config = new Config("server");
@@ -138,6 +141,7 @@ public class ServerConfig
         serverPorts = config.getValue("server_ports", Client.DEFAULT_SERVER_PORTS);
         httpPort = config.getValue("http_port", 8080);
         gameServerPort = config.getValue("game_server_port", 47625);
+        socketPolicyPort = config.getValue("socket_policy_port", 47623);
 
         // if we're a server node (not the webapp or a tool) do some extra stuff
         if (Boolean.getBoolean("is_node")) {
@@ -159,6 +163,7 @@ public class ServerConfig
             serverPorts = config.getValue(nodeName + ".server_ports", serverPorts);
             httpPort = config.getValue(nodeName + ".http_port", httpPort);
             gameServerPort = config.getValue(nodeName + ".game_server_port", gameServerPort);
+            socketPolicyPort = config.getValue(nodeName + ".socket_policy_port", socketPolicyPort);
         }
 
         // fill in our standard properties

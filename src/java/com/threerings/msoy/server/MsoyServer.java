@@ -46,6 +46,7 @@ import com.threerings.whirled.spot.server.SpotProvider;
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
+import com.threerings.msoy.game.server.SocketPolicyServer;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.server.NotificationManager;
@@ -145,6 +146,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Handles notifications to clients. */
     public static NotificationManager notifyMan = new NotificationManager();
+
+    /** Hands out a socket policy file to all the connecting Flash clients. */
+    public static SocketPolicyServer socketPolicyServer;
 
     /**
      * Logs a message to the item audit log.
@@ -307,6 +311,13 @@ public class MsoyServer extends MsoyBaseServer
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to stop http server.", e);
         }
+
+        // shut down the socket policy server
+        try {
+            socketPolicyServer.shutdown();
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to stop socket policy server.", e);
+        }
     }
 
     @Override // from MsoyBaseServer
@@ -391,6 +402,9 @@ public class MsoyServer extends MsoyBaseServer
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer(_logdir);
         httpServer.start();
+
+        socketPolicyServer = new SocketPolicyServer(ServerConfig.socketPolicyPort);
+        socketPolicyServer.start();
 
         // start up an interval that checks to see if our code has changed and auto-restarts the
         // server as soon as possible when it has

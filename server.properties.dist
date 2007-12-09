@@ -19,6 +19,10 @@ dev_deployment = true
 server_host = game.metasoy.com
 
 #
+# The port on which the world server listens to Flash's socket policy requests.
+socket_policy_port = 47623
+
+#
 # The port on which the server listens for client and HTTP connections.
 
 # server_ports = 47624, 443
@@ -36,10 +40,12 @@ game_server_port = 47625
 # Presents and HTTP connections
 
 # msoy1.server_host = game1.metasoy.com
+# msoy1.socket_policy_port = 47623
 # msoy1.server_ports = 47624
 # msoy1.http_port = 80
 
 # msoy2.server_host = game2.metasoy.com
+# msoy1.socket_policy_port = 47623
 # msoy2.server_ports = 47624
 # msoy2.http_port = 80
 
