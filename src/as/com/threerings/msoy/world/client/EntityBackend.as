@@ -66,14 +66,14 @@ public class EntityBackend extends ControlBackend
         o["location"] = [ loc.x, loc.y, loc.z ];
     }
 
-    protected function getCamera_v1 () :Camera
+    protected function getCamera_v1 (index :String = null) :Camera
     {
-        return Camera.getCamera();
+        return Camera.getCamera(index);
     }
 
-    protected function getMicrophone_v1 () :Microphone
+    protected function getMicrophone_v1 (index :int = 0) :Microphone
     {
-        return Microphone.getMicrophone();
+        return Microphone.getMicrophone(index);
     }
 
     protected function requestControl_v1 () :void
