@@ -356,6 +356,7 @@
     </tstamp>
     <!-- set default properties -->
     <property name="dev_deployment" value="true"/>
+    <property name="socket_policy_port" value="47623"/>
     <!-- then overwrite with values read from server.properties -->
     <copy file="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as.tmpl"
           tofile="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as"
