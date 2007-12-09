@@ -409,7 +409,8 @@ public class MailApplication extends DockPanel
             } else if (folder.folderId == MailFolder.SENT_FOLDER_ID) {
                 sent = folder;
             } else if (folder.folderId == MailFolder.TRASH_FOLDER_ID) {
-                trash = folder;
+                // TODO: just don't show the trash folder until we've actually implemented it
+                // trash = folder;
             } else {
                 folders.add(folder);
             }
