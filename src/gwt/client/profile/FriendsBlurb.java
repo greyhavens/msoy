@@ -51,6 +51,7 @@ public class FriendsBlurb extends Blurb
         FlexTable footer = new FlexTable();
         footer.setCellPadding(0);
         footer.setCellSpacing(0);
+        footer.setWidth("100%");
 
         // always show the link if it's your own profile and you have at least one friend because
         // the all friends page is the only way to remove friends
