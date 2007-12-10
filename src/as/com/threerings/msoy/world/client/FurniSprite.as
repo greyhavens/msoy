@@ -124,7 +124,8 @@ public class FurniSprite extends MsoySprite
             return null;
 
         case FurniData.ACTION_URL:
-            return _furni.actionData;
+            // if there's no description, use the URL
+            return String(actionData[actionData.length - 1]);
 
         case FurniData.ACTION_LOBBY_GAME:
         case FurniData.ACTION_WORLD_GAME:

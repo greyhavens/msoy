@@ -435,7 +435,7 @@ public class RoomController extends SceneController
     {
         switch (furni.actionType) {
         case FurniData.ACTION_URL:
-            NetUtil.navigateToURL(furni.actionData);
+            NetUtil.navigateToURL(furni.splitActionData()[0] as String);
             return;
 
         case FurniData.ACTION_WORLD_GAME:

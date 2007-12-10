@@ -21,6 +21,8 @@ import mx.core.UIComponent;
 import mx.events.FlexEvent;
 import mx.events.ListEvent;
 
+import com.threerings.util.StringUtil;
+
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
 import com.threerings.msoy.client.Msgs;
@@ -200,9 +202,13 @@ public class ActionPanel extends BasePanel
         var grid :Grid = new Grid();
         GridUtil.addRow(grid, Msgs.EDITING.get("l.url"));
         GridUtil.addRow(grid, _url = new TextInput());
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.urlTip"));
+        GridUtil.addRow(grid, _urlTip = new TextInput());
 
         _url.addEventListener(Event.CHANGE, changedHandler);
         _url.addEventListener(FlexEvent.ENTER, applyHandler);
+        _urlTip.addEventListener(Event.CHANGE, changedHandler);
+        _urlTip.addEventListener(FlexEvent.ENTER, applyHandler);
 
         return grid;
     }
@@ -210,9 +216,10 @@ public class ActionPanel extends BasePanel
     protected function updateURLPanel () :void
     {
         if (_furniData != null) {
-            var url :String = _furniData.actionData;
+            var data :Array = _furniData.splitActionData();
             // maybe validation here?
-            _url.text = url;
+            _url.text = data[0] as String;
+            _urlTip.text = (data.length > 1) ? data[1] as String : "";
         }
     }
 
@@ -305,6 +312,10 @@ public class ActionPanel extends BasePanel
             break;
         case FurniData.ACTION_URL:
             newData.actionData = _url.text;
+            var tip :String = StringUtil.trim(_urlTip.text);
+            if (!StringUtil.isBlank(tip)) {
+                newData.actionData += "||" + tip;
+            }
             break;
         case FurniData.ACTION_PORTAL:
             if (_furniData.actionType == FurniData.ACTION_PORTAL) {
@@ -408,6 +419,7 @@ public class ActionPanel extends BasePanel
     protected var _actionPanels :ViewStack;
     protected var _captureMouse :CheckBox;
     protected var _url :TextInput;
+    protected var _urlTip :TextInput;
     protected var _helpTabAction :TextInput;
     protected var _door :TextInput;
     protected var _debug :TextInput;

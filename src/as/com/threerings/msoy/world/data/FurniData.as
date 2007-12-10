@@ -99,15 +99,16 @@ public class FurniData
         if (actionData == null) {
             return [ null ];
         }
-        var colonDex :int = actionData.indexOf(":");
-        if (colonDex == -1) {
+        var sep :String = (actionType == ACTION_URL) ? "||" : ":";
+        var sepDex :int = actionData.indexOf(sep);
+        if (sepDex == -1) {
             return [ actionData ];
         }
         if (actionType == ACTION_PORTAL) {
-            return actionData.split(":", 6);
+            return actionData.split(sep, 6);
         } else {
-            return [ actionData.substring(0, colonDex),
-                     actionData.substring(colonDex + 1) ];
+            return [ actionData.substring(0, sepDex),
+                     actionData.substring(sepDex + sep.length) ];
             // TODO: can we just do this? will the 2 mean "stick everything in the last argument"
             // or will it mean "ignore everything after the third colon"? the documentation of
             // course does not say...
