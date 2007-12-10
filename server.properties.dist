@@ -63,10 +63,14 @@ game_server_port = 47625
 server_root = /export/msoy
 
 #
-# Defines the directory into which any web applications will be installed. (And
-# where they will locate their site-data directory).
+# Whether or not to log HTTP requests to log/access_NODE.log.yyyy_mm_dd
 
-webapp_dir = /export/threerings/webapps
+# log_http_requests = false
+
+#
+# Auto-restart server if code changes (used on dev server)
+
+# auto_restart = false
 
 #
 # Defines the directory into which uploaded media will be stored (in addition
@@ -75,11 +79,6 @@ webapp_dir = /export/threerings/webapps
 media_dir = /export/msoy/pages/media
 media_url = http://localhost:8080/media/
 static_media_url = http://localhost:8080/media/static/
-
-#
-# Auto-restart server if code changes (used on dev server)
-
-# auto_restart = false
 
 #
 # S3-backed media storage configuration.
