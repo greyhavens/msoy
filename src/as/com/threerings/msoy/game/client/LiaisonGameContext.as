@@ -7,6 +7,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DObjectManager;
 
 import com.threerings.crowd.chat.client.ChatDirector;
+import com.threerings.crowd.chat.client.ChatFilter;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;
@@ -45,6 +46,10 @@ public class LiaisonGameContext
         _locDtr = new LocationDirector(this);
         _chatDtr = new GameChatDirector(this);
         _parDtr = new ParlorDirector(this);
+        // use all the same chat filters for games
+        for each (var filter :ChatFilter in wctx.getMsoyChatDirector().getChatFilters()) {
+            _chatDtr.addChatFilter(filter);
+        }
     }
 
     // from PresentsContext
