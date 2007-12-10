@@ -182,6 +182,19 @@ public class ForumModels
 
         // @Override // from ServiceBackedDataModel
         public void removeItem (Object item) {
+            // if we're deleting the last message in this thread...
+            ForumMessage msg = (ForumMessage)item;
+            if (_thread.mostRecentPostId == msg.messageId) {
+                // ...locate the new last message and update our thread with its info
+                int idx = _pageItems.indexOf(item);
+                if (idx > 0) { // it's in the list and not the first item
+                    ForumMessage prev = (ForumMessage)_pageItems.get(idx-1);
+                    _thread.mostRecentPostId = prev.messageId;
+                    _thread.mostRecentPoster = prev.poster.name;
+                    _thread.mostRecentPostTime = prev.created;
+                }
+            }
+
             super.removeItem(item);
             _thread.posts--;
         }
