@@ -16,18 +16,6 @@ import com.threerings.msoy.world.client.FurniSprite;
  */
 public class ScalingHotspot extends Hotspot
 {
-    /**
-     * Scaling operation will be snapped to original proportions if the difference between
-     * horizontal and vertical scale is less than this ratio of the greater of the two.
-     */
-    public static const SNAP_RATIO :Number = 0.2;
-
-    /**
-     * Proportional snap will not be applied until the mouse has moved at least
-     * this number of pixels away from where it was clicked.
-     */
-    public static const SNAP_DEAD_RADIUS :Number = 20;
-
     public function ScalingHotspot (editor :FurniEditor)
     {
         super(editor);
@@ -38,8 +26,8 @@ public class ScalingHotspot extends Hotspot
     {
         super.updateDisplay(targetWidth, targetHeight);
 
-        this.x = targetWidth;
-        this.y = 0;
+        this.x = (_editor.target.getMediaScaleX() > 0) ? targetWidth : 0;
+        this.y = (_editor.target.getMediaScaleY() > 0) ? 0 : targetHeight;
 
         // figure out if this hotspot is leaving the display area
         var roomPos :Point = _editor.roomView.globalToLocal(
@@ -65,7 +53,7 @@ public class ScalingHotspot extends Hotspot
     override protected function updateAction (event :MouseEvent) :void
     {
         super.updateAction(event);
-        updateTargetScale(event.stageX, event.stageY);
+        updateTargetScale(event);
     }
 
     // @Override from Hotspot
@@ -86,7 +74,7 @@ public class ScalingHotspot extends Hotspot
     /**
      * Computes target's furni scale based on a dragging action, and updates the editor.
      */
-    protected function updateTargetScale (sx :Number, sy :Number) :void
+    protected function updateTargetScale (event :MouseEvent) :void
     {
         if (_editor.target == null) {
             Log.getLog(this).warning("Scaling hotspot updated without an editing target!");
@@ -94,7 +82,7 @@ public class ScalingHotspot extends Hotspot
         }
 
         // find pixel distance from hotspot to the current and the original mouse pointer
-        var mouse :Point = new Point(sx, sy);
+        var mouse :Point = new Point(event.stageX, event.stageY);
         var newoffset :Point = mouse.subtract(_originalHotspot);
         var oldoffset :Point = _anchor.subtract(_originalHotspot);
 
@@ -106,18 +94,15 @@ public class ScalingHotspot extends Hotspot
         var y :Number = ratioY * _originalScale.y;
 
         // should we snap?
-        if (Point.distance(mouse, _anchor) > SNAP_DEAD_RADIUS) {
-            // remember sign along each dimension
-            var sign :Point = new Point(x / Math.abs(x), y / Math.abs(y));
-            var scale :Number = Math.sqrt((x * x + y * y) / 2);
-            var delta :Number = Math.abs(Math.abs(x) - Math.abs(y));
-            if (delta < scale * SNAP_RATIO) {
-                x = scale * sign.x;
-                y = scale * sign.y;
-                switchDisplay(_displayLocked);
-            } else {
-                switchDisplay(_displayMouseOver);
-            }
+        var noSnap :Boolean = event.shiftKey || event.altKey || event.ctrlKey;
+        if (noSnap) {
+            switchDisplay(_displayMouseOver);
+
+        } else {
+            switchDisplay(_displayLocked);
+            var scale :Number = Math.min(Math.abs(x), Math.abs(y));
+            x = scale * ((x < 0) ? -1 : 1);
+            y = scale * ((y < 0) ? -1 : 1);
         }
 
         _editor.updateTargetScale(x, y);
