@@ -45,14 +45,14 @@ public class MsoyHttpServer extends Server
         // jetty initialization is weird
         HandlerCollection handlers = new HandlerCollection();
         ContextHandlerCollection contexts = new ContextHandlerCollection();
-        RequestLogHandler logger = new RequestLogHandler();
-        handlers.setHandlers(new Handler[] { contexts, logger });
+//         RequestLogHandler logger = new RequestLogHandler();
+        handlers.setHandlers(new Handler[] { contexts /*, logger */ });
         setHandler(handlers);
 
-        // set up logging
-        String logname = (ServerConfig.nodeName != null) ?
-            "access_" + ServerConfig.nodeName + ".log.yyyy_mm_dd" : "access.log.yyyy_mm_dd";
-        logger.setRequestLog(new NCSARequestLog(new File(logdir, logname).getPath()));
+//         // set up logging
+//         String logname = (ServerConfig.nodeName != null) ?
+//             "access_" + ServerConfig.nodeName + ".log.yyyy_mm_dd" : "access.log.yyyy_mm_dd";
+//         logger.setRequestLog(new NCSARequestLog(new File(logdir, logname).getPath()));
 
         // wire up our various servlets
         Context context = new Context(contexts, "/", Context.NO_SESSIONS);

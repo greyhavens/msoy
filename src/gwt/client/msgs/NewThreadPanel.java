@@ -20,7 +20,7 @@ import client.util.RowPanel;
 /**
  * Displays an interface for creating a new thread.
  */
-public class NewThreadPanel extends ContentFooterPanel
+public class NewThreadPanel extends TableFooterPanel
 {
     public NewThreadPanel (int groupId, boolean isManager)
     {

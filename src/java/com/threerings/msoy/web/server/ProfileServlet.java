@@ -46,6 +46,7 @@ import com.threerings.msoy.group.server.persist.GroupRecord;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.GameRating;
+import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
@@ -312,17 +313,11 @@ public class ProfileServlet extends MsoyServiceServlet
         return results;
     }
 
-    protected List<GroupMembership> resolveGroupsData (MemberRecord reqrec, MemberRecord tgtrec)
+    protected List<GroupCard> resolveGroupsData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
-        final boolean showExclusive = (reqrec != null && reqrec.memberId == tgtrec.memberId);
-        return MsoyServer.groupRepo.resolveGroupMemberships(
-            tgtrec.memberId, tgtrec.getName(),
-            new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
-                public boolean isMatch (Tuple<GroupRecord,GroupMembershipRecord> info) {
-                    return showExclusive || info.left.policy != Group.POLICY_EXCLUSIVE;
-                }
-            });
+        boolean showExclusive = (reqrec != null && reqrec.memberId == tgtrec.memberId);
+        return MsoyServer.groupRepo.getMemberGroups(tgtrec.memberId, showExclusive);
     }
 
     protected List<GameRating> resolveRatingsData (MemberRecord reqrec, MemberRecord tgtrec)

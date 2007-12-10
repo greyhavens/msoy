@@ -26,6 +26,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.web.data.GroupCard;
 
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupExtras;
@@ -268,6 +269,20 @@ public class GroupRecord extends PersistentRecord
     public GroupName toGroupName ()
     {
         return new GroupName(name, groupId);
+    }
+
+    /**
+     * Creates a card record for this group.
+     */
+    public GroupCard toGroupCard ()
+    {
+        GroupCard card = new GroupCard();
+        card.name = toGroupName();
+        if (logoMediaHash != null) {
+            card.logo = new MediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
+        }
+        card.homeSceneId = homeSceneId;
+        return card;
     }
 
     /**

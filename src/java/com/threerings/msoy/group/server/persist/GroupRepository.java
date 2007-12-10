@@ -43,6 +43,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
+import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.group.data.Group;
@@ -289,6 +290,28 @@ public class GroupRepository extends DepotRepository
         for (GroupMembershipRecord record : records) {
             if (groupNames.containsKey(record.groupId)) {
                 groups.add(record.toGroupMembership(name, groupNames));
+            }
+        }
+        return groups;
+    }
+
+    /**
+     * Returns a list of cards for the groups of which the specified person is a member.
+     */
+    public List<GroupCard> getMemberGroups (int memberId, boolean includeExclusive)
+        throws PersistenceException
+    {
+        List<GroupMembershipRecord> records = MsoyServer.groupRepo.getMemberships(memberId);
+        IntMap<GroupMembershipRecord> rmap = IntMaps.newHashIntMap();
+        for (GroupMembershipRecord record : records) {
+            rmap.put(record.groupId, record);
+        }
+
+        // potentially filter exclusive groups and resolve the group names
+        List<GroupCard> groups = Lists.newArrayList();
+        for (GroupRecord group : MsoyServer.groupRepo.loadGroups(rmap.keySet())) {
+            if (group.policy != Group.POLICY_EXCLUSIVE || includeExclusive) {
+                groups.add(group.toGroupCard());
             }
         }
         return groups;

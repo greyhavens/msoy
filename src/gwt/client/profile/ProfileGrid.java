@@ -81,7 +81,7 @@ public class ProfileGrid extends PagedGrid
             }
 
             Label nameLabel =  new Label(card.name.toString());
-            nameLabel.setStyleName("MemberCardName");
+            nameLabel.setStyleName("Name");
             nameLabel.addStyleName("actionLabel");
             nameLabel.addClickListener(profileClick);
 
@@ -100,13 +100,14 @@ public class ProfileGrid extends PagedGrid
 
             } else {
                 setCellSpacing(5);
+                nameLabel.addStyleName("HorizName");
 
                 setWidget(0, 0, photo);
                 getFlexCellFormatter().setStyleName(0, 0, "Photo");
                 getFlexCellFormatter().setRowSpan(0, 0, 2);
 
                 setWidget(0, 1, nameLabel);
-                getFlexCellFormatter().setStyleName(1, 0, "MemberCardHeadline");
+                getFlexCellFormatter().setStyleName(1, 0, "Headline");
                 String headline = (card instanceof ProfileCard) ? ((ProfileCard)card).headline : "";
                 if (headline == null || headline.length() == 0) {
                     setHTML(1, 0, "&nbsp;");

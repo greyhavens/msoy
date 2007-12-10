@@ -88,7 +88,8 @@
 
 .titledListPanel .Header {
     border: 1px solid #000000;
-    background: #4F4F4F;
+    /* background: #4f4f4f; */
+    background: #222222;
     color: #FFFFFF;
     width: 100%;
 }
@@ -161,30 +162,6 @@
 
 .messageSummaryPanel {
     width: 100%;
-}
-
-.contentFooterPanel .Content {
-    border-left: 1px dotted;
-    border-right: 1px dotted;
-}
-
-.contentFooterPanel .Footer {
-    background: #4F4F4F;
-    color: #FFFFFF;
-    border: 1px solid #000000;
-    width: 100%;
-    text-align: right;
-}
-
-.contentFooterPanel .Footer .gwt-Button {
-    border-top: none;
-    border-bottom: none;
-    border-right: none;
-}
-
-.contentFooterPanel .Tip {
-    font-size: 12px;
-    width: 300px;
 }
 
 .replyPanel {

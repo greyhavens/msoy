@@ -104,7 +104,7 @@ public class ThreadPanel extends TitledListPanel
         }
     }
 
-    protected class ReplyPanel extends ContentFooterPanel
+    protected class ReplyPanel extends TableFooterPanel
     {
         public ReplyPanel (ForumMessage inReplyTo)
         {
@@ -158,7 +158,7 @@ public class ThreadPanel extends TitledListPanel
         protected MessageEditor _editor;
     }
 
-    protected class PostEditorPanel extends ContentFooterPanel
+    protected class PostEditorPanel extends TableFooterPanel
     {
         public PostEditorPanel (ForumMessage message, AsyncCallback callback)
         {

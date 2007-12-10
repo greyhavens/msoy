@@ -60,7 +60,6 @@ public abstract class Blurb extends HeaderBox
     protected Blurb ()
     {
         addStyleName("blurb");
-        setContent(createContent());
     }
 
     /**
@@ -70,12 +69,6 @@ public abstract class Blurb extends HeaderBox
     {
         setTitle(header);
     }
-
-    /**
-     * Creates the interface components for this blurb. This is called during construction and the
-     * blurb will not yet have been initialized.
-     */
-    protected abstract Panel createContent ();
 
     /**
      * Called once we have been configured with our context and member info.

@@ -47,12 +47,6 @@ import client.util.RowPanel;
 public class ProfileBlurb extends Blurb
 {
     // @Override // from Blurb
-    protected Panel createContent ()
-    {
-        return new FlexTable();
-    }
-
-    // @Override // from Blurb
     protected void didInit (ProfileService.ProfileResult pdata)
     {
         if (pdata.profile != null) {
@@ -336,8 +330,6 @@ public class ProfileBlurb extends Blurb
     }
 
     protected Profile _profile;
-
-    protected FlexTable _content;
 
     protected SimplePanel _ephoto;
     protected TextBox _ename, _eheadline, _ehomepage, _elocation;

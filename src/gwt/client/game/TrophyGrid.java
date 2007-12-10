@@ -58,12 +58,14 @@ public class TrophyGrid extends FlexTable
         // things are only as wide as appropriate
         for (int ii = trophies.length; ii < COLUMNS; ii++) {
             grid.setText(0, ii, "");
-            grid.getFlexCellFormatter().setStyleName(0, ii, "Image");
+            grid.getFlexCellFormatter().setStyleName(0, ii, "Trophy");
         }
     }
 
     public TrophyGrid (Trophy[] trophies)
     {
+        setCellSpacing(5);
+        setCellPadding(0);
         populateTrophyGrid(this, trophies);
     }
 }

@@ -5,28 +5,24 @@ package client.msgs;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
-/**
- * Displays contents with a footer bar at the bottom containing buttons.
- */
-public class ContentFooterPanel extends FlexTable
-{
-    public ContentFooterPanel ()
-    {
-        setStyleName("contentFooterPanel");
-        setCellSpacing(0);
-        setCellPadding(0);
+import client.util.ContentFooterPanel;
 
-        _content = new FlexTable();
+/**
+ * A content footer panel customized for use by our forum bits.
+ */
+public class TableFooterPanel extends ContentFooterPanel
+{
+    public TableFooterPanel ()
+    {
+        super(new FlexTable(), new FlowPanel());
+        _content = (FlexTable)getWidget(0, 0);
         _content.setCellPadding(0);
         _content.setCellSpacing(5);
-        setWidget(0, 0, _content);
-        getFlexCellFormatter().setStyleName(0, 0, "Content");
-
-        setWidget(1, 0, _footer = new FlowPanel());
-        getFlexCellFormatter().setStyleName(1, 0, "Footer");
+        _footer = (FlowPanel)getWidget(1, 0);
+        getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
     }
 
     protected int addRow (String label, Widget widget)

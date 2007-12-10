@@ -5,6 +5,7 @@ package client.util;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -30,6 +31,7 @@ public class HeaderBox extends FlexTable
         setWidget(0, 0, header);
         
         getCellFormatter().setStyleName(1, 0, "Content");
+        getCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
     }
 
     public void setTitle (String title)

@@ -14,7 +14,6 @@ import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.data.ProfileCard;
 import com.threerings.msoy.person.data.ProfileLayout;
 
-import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -51,7 +50,7 @@ public interface ProfileService extends RemoteService
         /**
          * This user's groups.
          *
-         * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMembership>
+         * @gwt.typeArgs <com.threerings.msoy.web.data.GroupCard>
          */
         public List groups;
 
