@@ -96,13 +96,14 @@ public class FurniData extends SimpleStreamableObject
         if (actionData == null) {
             return new String[] { null };
         }
-        int colonDex = actionData.indexOf(':');
-        if (colonDex == -1) {
+        String sep = (actionType == ACTION_URL) ? "||" : ":";
+        int sepDex = actionData.indexOf(sep);
+        if (sepDex == -1) {
             return new String[] { actionData };
 
         } else {
-            return new String[] { actionData.substring(0, colonDex),
-                actionData.substring(colonDex + 1) };
+            return new String[] { actionData.substring(0, sepDex),
+                actionData.substring(sepDex + sep.length()) };
         }
     }
 
