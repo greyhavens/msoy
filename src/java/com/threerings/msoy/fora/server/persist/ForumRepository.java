@@ -22,6 +22,7 @@ import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.expression.ValueExp;
 import com.samskivert.jdbc.depot.operator.Arithmetic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
@@ -222,8 +223,34 @@ public class ForumRepository extends DepotRepository
             return;
         }
 
+        ForumThreadRecord ftr = loadThread(fmr.threadId);
+        if (ftr == null) {
+            return; // oh well, nothing to worry about
+        }
+
+        // if this was the only post in the thread, delete the thread
+        if (ftr.posts == 1) {
+            delete(ForumThreadRecord.class, ftr.threadId);
+            return;
+        }
+
+        // otherwise decrement the post count
         Map<String, SQLExpression> updates = Maps.newHashMap();
         updates.put(ForumThreadRecord.POSTS, new Sub(ForumThreadRecord.POSTS_C, 1));
+        // and update the last post/poster/etc. if we just deleted the last post
+        if (ftr.mostRecentPostId == fmr.messageId) {
+            List<ForumMessageRecord> lastMsg = findAll(
+                ForumMessageRecord.class,
+                new Where(ForumMessageRecord.THREAD_ID_C, ftr.threadId),
+                new Limit(0, 1),
+                OrderBy.descending(ForumMessageRecord.CREATED_C));
+            if (lastMsg.size() > 0) {
+                ForumMessageRecord last = lastMsg.get(0);
+                updates.put(ForumThreadRecord.MOST_RECENT_POST_ID, new ValueExp(last.messageId));
+                updates.put(ForumThreadRecord.MOST_RECENT_POSTER_ID, new ValueExp(last.posterId));
+                updates.put(ForumThreadRecord.MOST_RECENT_POST_TIME, new ValueExp(last.created));
+            }
+        }
         updateLiteral(ForumThreadRecord.class, fmr.threadId, updates);
     }
 
