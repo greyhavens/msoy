@@ -10,10 +10,6 @@
 
 .profileBlurb {
   width: 100%;
-  height: 100%;
-  border-left: 1px dotted;
-  border-right: 1px dotted;
-  border-bottom: 1px dotted;
 }
 
 .profileBlurb .Photo {
@@ -66,7 +62,13 @@
 }
 
 .friendsBlurb .Empty {
-  padding-bottom: 10px;
+  vertical-align: top;
+  height: 170px;
+}
+
+.groupsBlurb .Empty {
+  vertical-align: top;
+  height: 170px;
 }
 
 .groupsBlurb {
@@ -78,7 +80,7 @@
 }
 
 .ratingWidget {
-  height: 45px;
+  height: 44px;
 }
 
 .ratingWidget .GameThumb {

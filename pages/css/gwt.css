@@ -262,13 +262,11 @@
 .pagedGrid .Header {
   border-top: 1px solid #000000;
   border-bottom: 1px solid #000000;
-  /* background: #4f4f4f; */
   background: #222222;
 }
 
 .pagedGrid .Footer {
   border: 1px solid #000000;
-  /* background: #4f4f4f; */
   background: #222222;
 }
 
@@ -315,7 +313,6 @@
 
 .pagedGrid .FooterNextButton {
   padding-right: 10px;
-  /* background: #4f4f4f; */
   background: #222222;
   background-image: url(/images/ui/footer_button_next.png);
   height: 18px;
@@ -323,7 +320,6 @@
 
 .pagedGrid .FooterPrevButton {
   padding-left: 10px;
-  /* background: #4f4f4f; */
   background: #222222;
   background-image: url(/images/ui/footer_button_prev.png);
   height: 18px;
@@ -925,7 +921,6 @@
 }
 
 .contentFooterPanel .Footer {
-    /* background: #4F4F4F; */
     background: #222222;
     color: #FFFFFF;
     border: 1px solid #000000;

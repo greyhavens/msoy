@@ -24,5 +24,6 @@ public class ContentFooterPanel extends FlexTable
 
         setWidget(1, 0, footer);
         getFlexCellFormatter().setStyleName(1, 0, "Footer");
+        getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
     }
 }

@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -33,6 +34,7 @@ import client.msgs.MailComposition;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.ContentFooterPanel;
 import client.util.DateFields;
 import client.util.FlashClients;
 import client.util.ImageChooserPopup;
@@ -108,19 +110,6 @@ public class ProfileBlurb extends Blurb
         content.getFlexCellFormatter().setStyleName(0, 1, "Name");
         content.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
 
-        // display the edit button if this is our profile
-        if (_name.getMemberId() == CProfile.getMemberId()) {
-            content.setWidget(0, 2, new Button("Edit", new ClickListener() {
-                public void onClick (Widget source) {
-                    startEdit();
-                }
-            }));
-            content.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
-            content.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
-        } else {
-            content.getFlexCellFormatter().setColSpan(0, 1, 2);
-        }
-
         // add our informational bits (headline, A/S/L)
         if (!isBlank(_profile.headline)) {
             addInfo(content, _profile.headline, "Headline");
@@ -164,14 +153,22 @@ public class ProfileBlurb extends Blurb
                       _lfmt.format(new Date(_profile.lastLogon)));
         }
 
-        setContent(content);
+        FlowPanel footer = new FlowPanel();
+        // display the edit button if this is our profile
+        if (_name.getMemberId() == CProfile.getMemberId()) {
+            footer.add(new Button("Edit", new ClickListener() {
+                public void onClick (Widget source) {
+                    startEdit();
+                }
+            }));
+        }
+        setContent(new ContentFooterPanel(content, footer));
     }
 
     protected void addInfo (FlexTable content, String text, String style)
     {
         int row = content.getRowCount();
         content.setText(row, 0, text);
-        content.getFlexCellFormatter().setColSpan(row, 0, 2);
         if (style != null) {
             content.getFlexCellFormatter().setStyleName(row, 0, style);
         }
@@ -185,7 +182,6 @@ public class ProfileBlurb extends Blurb
         content.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
         content.setText(row, 1, text);
         content.getFlexCellFormatter().setStyleName(row, 1, "Detail");
-        content.getFlexCellFormatter().setColSpan(row, 1, 2);
     }
 
     protected void startEdit ()
@@ -254,14 +250,13 @@ public class ProfileBlurb extends Blurb
         _elocation.setVisibleLength(30);
         _elocation.setText(unBlank(_profile.location));
 
-        econtent.setWidget(row, 1, new Button("Done", new ClickListener() {
+        FlowPanel footer = new FlowPanel();
+        footer.add(new Button("Done", new ClickListener() {
             public void onClick (Widget source) {
                 commitEdit();
             }
         }));
-        getFlexCellFormatter().setHorizontalAlignment(row, 1, HasAlignment.ALIGN_RIGHT);
-
-        setContent(econtent);
+        setContent(new ContentFooterPanel(econtent, footer));
     }
 
     protected void commitEdit ()

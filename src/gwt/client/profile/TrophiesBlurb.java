@@ -33,7 +33,7 @@ public class TrophiesBlurb extends Blurb
         setHeader(CProfile.msgs.trophiesTitle());
 
         FlexTable grid = new FlexTable();
-        grid.setCellSpacing(5);
+        grid.setCellSpacing(4);
         grid.setCellPadding(0);
         grid.setWidth("100%");
 

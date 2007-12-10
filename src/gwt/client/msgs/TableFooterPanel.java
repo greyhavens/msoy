@@ -22,7 +22,6 @@ public class TableFooterPanel extends ContentFooterPanel
         _content.setCellPadding(0);
         _content.setCellSpacing(5);
         _footer = (FlowPanel)getWidget(1, 0);
-        getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
     }
 
     protected int addRow (String label, Widget widget)
