@@ -44,6 +44,7 @@ public class FriendsBlurb extends Blurb
             CProfile.msgs.noFriendsSelf() : CProfile.msgs.noFriendsOther();
         ProfileGrid grid = new ProfileGrid(
             FRIEND_ROWS, FRIEND_COLUMNS, ProfileGrid.NAV_ON_BOTTOM, empty);
+        grid.addStyleName("dottedGrid");
         grid.setVerticalOrienation(true);
         grid.setWidth("100%");
         grid.setModel(new SimpleDataModel(pdata.friends), 0);
@@ -89,6 +90,7 @@ public class FriendsBlurb extends Blurb
 
         ContentFooterPanel content = new ContentFooterPanel(grid, footer);
         content.addStyleName("friendsBlurb");
+        content.getFlexCellFormatter().setStyleName(0, 0, ""); // avoid double dottage
         setContent(content);
     }
 
