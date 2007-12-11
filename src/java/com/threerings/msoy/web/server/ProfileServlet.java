@@ -222,19 +222,9 @@ public class ProfileServlet extends MsoyServiceServlet
 
             FriendsResult result = new FriendsResult();
             result.name = tgtrec.getName();
-
-            IntMap<MemberCard> cards = new HashIntMap<MemberCard>();
-            for (FriendEntry entry : MsoyServer.memberRepo.loadFriends(memberId, -1)) {
-                MemberCard card = new MemberCard();
-                card.name = entry.name;
-                cards.put(entry.name.getMemberId(), card);
-            }
-            resolveCardData(cards);
-
-            ArrayList<MemberCard> list = new ArrayList<MemberCard>();
-            list.addAll(cards.values());
-            Collections.sort(list, new Comparator<MemberCard>() {
-                public int compare (MemberCard c1, MemberCard c2) {
+            List<ProfileCard> list = MsoyServer.memberRepo.loadFriendCards(memberId);
+            Collections.sort(list, new Comparator<ProfileCard>() {
+                public int compare (ProfileCard c1, ProfileCard c2) {
                     return MemberName.compareNames(c1.name, c2.name);
                 }
             });

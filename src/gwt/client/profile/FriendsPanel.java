@@ -17,6 +17,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
+import client.msgs.MailComposition;
 import client.shell.Page;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -106,13 +107,20 @@ public class FriendsPanel extends VerticalPanel
                     return;
                 }
 
+                getFlexCellFormatter().setWidth(0, 1, "100%");
                 setWidget(0, 2, MsoyUI.createActionLabel("", "Remove", new ClickListener() {
                     public void onClick (Widget widget) {
                         removeFriend(card, false);
                     }
                 }));
-                getFlexCellFormatter().setColSpan(1, 0, 2);
-                getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
+                setWidget(0, 3, MsoyUI.createActionLabel("", "SendMail", new ClickListener() {
+                    public void onClick (Widget widget) {
+                        new MailComposition(card.name, null, null, null).show();
+                    }
+                }));
+
+                getFlexCellFormatter().setColSpan(1, 0, 3);
+                getFlexCellFormatter().setColSpan(2, 0, 3);
             }
         }
     }

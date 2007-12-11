@@ -3,6 +3,8 @@
 
 package client.profile;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -11,6 +13,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.ProfileCard;
@@ -93,19 +96,27 @@ public class ProfileGrid extends PagedGrid
 
             } else {
                 setCellSpacing(5);
-                nameLabel.addStyleName("HorizName");
 
                 setWidget(0, 0, photo);
                 getFlexCellFormatter().setStyleName(0, 0, "Photo");
-                getFlexCellFormatter().setRowSpan(0, 0, 2);
+                getFlexCellFormatter().setRowSpan(0, 0, 3);
 
                 setWidget(0, 1, nameLabel);
+
+                // we'll overwrite these below if we have anything to display
                 getFlexCellFormatter().setStyleName(1, 0, "Headline");
-                String headline = (card instanceof ProfileCard) ? ((ProfileCard)card).headline : "";
-                if (headline == null || headline.length() == 0) {
-                    setHTML(1, 0, "&nbsp;");
-                } else {
-                    setText(1, 0, headline);
+                setHTML(1, 0, "&nbsp;");
+                setHTML(2, 0, "&nbsp;");
+
+                if (card instanceof ProfileCard) {
+                    ProfileCard pcard = (ProfileCard)card;
+                    if (pcard.headline != null && pcard.headline.length() > 0) {
+                        setText(1, 0, pcard.headline);
+                    }
+                    if (pcard.lastLogon > 0) {
+                        Date last = new Date(((ProfileCard)card).lastLogon);
+                        setText(2, 0, CProfile.msgs.friendsLastOnline(_lfmt.format(last)));
+                    }
                 }
             }
         }
@@ -113,4 +124,6 @@ public class ProfileGrid extends PagedGrid
 
     protected String _emptyMessage;
     protected boolean _vertical;
+
+    protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd h:mmaa");
 }

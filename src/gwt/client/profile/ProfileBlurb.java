@@ -332,7 +332,7 @@ public class ProfileBlurb extends Blurb
     protected ListBox _esex;
     protected DateFields _ebirthday;
 
-    protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy h:mmaa");
 
     protected static final long YEAR_MILLIS = (365L * 24L * 60L * 60L * 1000L);
 }

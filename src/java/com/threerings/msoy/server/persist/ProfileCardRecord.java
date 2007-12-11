@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.sql.Timestamp;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
@@ -12,15 +14,15 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.person.data.ProfileCard;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.web.data.MemberCard;
 
 /**
- * A computed persistent entity that's used to fetch (and cache) member name and photo info.
+ * A computed persistent entity that's used to fetch (and cache) member name, photo and other info.
  */
 @Computed
 @Entity
-public class MemberCardRecord extends PersistentRecord
+public class ProfileCardRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The column identifier for the {@link #memberId} field. */
@@ -28,35 +30,49 @@ public class MemberCardRecord extends PersistentRecord
 
     /** The qualified column identifier for the {@link #memberId} field. */
     public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(MemberCardRecord.class, MEMBER_ID);
+        new ColumnExp(ProfileCardRecord.class, MEMBER_ID);
 
     /** The column identifier for the {@link #name} field. */
     public static final String NAME = "name";
 
     /** The qualified column identifier for the {@link #name} field. */
     public static final ColumnExp NAME_C =
-        new ColumnExp(MemberCardRecord.class, NAME);
+        new ColumnExp(ProfileCardRecord.class, NAME);
+
+    /** The column identifier for the {@link #lastSession} field. */
+    public static final String LAST_SESSION = "lastSession";
+
+    /** The qualified column identifier for the {@link #lastSession} field. */
+    public static final ColumnExp LAST_SESSION_C =
+        new ColumnExp(ProfileCardRecord.class, LAST_SESSION);
 
     /** The column identifier for the {@link #photoHash} field. */
     public static final String PHOTO_HASH = "photoHash";
 
     /** The qualified column identifier for the {@link #photoHash} field. */
     public static final ColumnExp PHOTO_HASH_C =
-        new ColumnExp(MemberCardRecord.class, PHOTO_HASH);
+        new ColumnExp(ProfileCardRecord.class, PHOTO_HASH);
 
     /** The column identifier for the {@link #photoMimeType} field. */
     public static final String PHOTO_MIME_TYPE = "photoMimeType";
 
     /** The qualified column identifier for the {@link #photoMimeType} field. */
     public static final ColumnExp PHOTO_MIME_TYPE_C =
-        new ColumnExp(MemberCardRecord.class, PHOTO_MIME_TYPE);
+        new ColumnExp(ProfileCardRecord.class, PHOTO_MIME_TYPE);
 
     /** The column identifier for the {@link #photoConstraint} field. */
     public static final String PHOTO_CONSTRAINT = "photoConstraint";
 
     /** The qualified column identifier for the {@link #photoConstraint} field. */
     public static final ColumnExp PHOTO_CONSTRAINT_C =
-        new ColumnExp(MemberCardRecord.class, PHOTO_CONSTRAINT);
+        new ColumnExp(ProfileCardRecord.class, PHOTO_CONSTRAINT);
+
+    /** The column identifier for the {@link #headline} field. */
+    public static final String HEADLINE = "headline";
+
+    /** The qualified column identifier for the {@link #headline} field. */
+    public static final ColumnExp HEADLINE_C =
+        new ColumnExp(ProfileCardRecord.class, HEADLINE);
     // AUTO-GENERATED: FIELDS END
 
     /** This member's unique id. */
@@ -66,6 +82,10 @@ public class MemberCardRecord extends PersistentRecord
     /** The name by which this member is known in MetaSOY. */
     @Computed(shadowOf=MemberRecord.class)
     public String name;
+
+    /** The time at which the player ended their last session. */
+    @Computed(shadowOf=MemberRecord.class)
+    public Timestamp lastSession;
 
     /** The hash code of the user's profile photo. */
     @Computed(shadowOf=ProfileRecord.class)
@@ -79,28 +99,34 @@ public class MemberCardRecord extends PersistentRecord
     @Computed(shadowOf=ProfileRecord.class)
     public byte photoConstraint;
 
+    /** A short bit of text provided by the member. */
+    @Computed(shadowOf=ProfileRecord.class)
+    public String headline;
+
     /**
      * Creates a runtime record from this persistent record.
      */
-    public MemberCard toMemberCard ()
+    public ProfileCard toProfileCard ()
     {
-        MemberCard card = new MemberCard();
+        ProfileCard card = new ProfileCard();
         card.name = new MemberName(name, memberId);
+        card.lastLogon = (lastSession == null) ? 0L : lastSession.getTime();
         if (photoHash != null) {
             card.photo = new MediaDesc(photoHash, photoMimeType, photoConstraint);
         }
+        card.headline = headline;
         return card;
     }
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #MemberCardRecord}
+     * Create and return a primary {@link Key} to identify a {@link #ProfileCardRecord}
      * with the supplied key values.
      */
-    public static Key<MemberCardRecord> getKey (int memberId)
+    public static Key<ProfileCardRecord> getKey (int memberId)
     {
-        return new Key<MemberCardRecord>(
-                MemberCardRecord.class,
+        return new Key<ProfileCardRecord>(
+                ProfileCardRecord.class,
                 new String[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }

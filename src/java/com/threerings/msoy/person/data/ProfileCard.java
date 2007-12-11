@@ -12,4 +12,7 @@ public class ProfileCard extends MemberCard
 {
     /** The member's headline, status, whatever you want to call it. */
     public String headline;
+
+    /** The date on which this member was last logged onto Whirled. */
+    public long lastLogon;
 }

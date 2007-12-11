@@ -46,6 +46,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
+import com.threerings.msoy.person.data.ProfileCard;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
@@ -749,14 +750,14 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads the FriendEntry record for all friends (pending, too) of the specified memberId. The
-     * online status of each friend will be false.
+     * Loads the FriendEntry record for all friends of the specified member. The online status of
+     * each friend will be false.
      *
      * TODO: Bring back full collection caching to this method.
      *
      * @param limit a limit on the number of friends to load or 0 for all of them.
      */
-    public List<FriendEntry> loadFriends (final int memberId, int limit)
+    public List<FriendEntry> loadFriends (int memberId, int limit)
         throws PersistenceException
     {
         ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
@@ -776,6 +777,28 @@ public class MemberRepository extends DepotRepository
         for (MemberCardRecord record : records) {
             MemberCard card = record.toMemberCard();
             list.add(new FriendEntry(card.name, false, card.photo));
+        }
+        return list;
+    }
+
+    /**
+     * Loads a {@link ProfileCard} record for all confirmed friends of the specified member.
+     */
+    public List<ProfileCard> loadFriendCards (int memberId)
+        throws PersistenceException
+    {
+        ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
+        clauses.add(new FromOverride(FriendRecord.class));
+        SQLExpression condition = new And(
+            new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
+                           new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITEE_ID_C)),
+                   new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
+                           new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITER_ID_C))));
+        clauses.add(new Join(MemberRecord.class, condition));
+        clauses.add(new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C));
+        List<ProfileCard> list = new ArrayList<ProfileCard>();
+        for (ProfileCardRecord record : findAll(ProfileCardRecord.class, clauses)) {
+            list.add(record.toProfileCard());
         }
         return list;
     }

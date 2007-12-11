@@ -78,7 +78,7 @@ public interface ProfileService extends RemoteService
         /**
          * This user's friends.
          *
-         * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
+         * @gwt.typeArgs <com.threerings.msoy.person.data.ProfileCard>
          */
         public List friends;
     }
