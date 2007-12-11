@@ -36,6 +36,14 @@ public class AVRGameLiaison extends GameLiaison
         super(ctx, gameId);
     }
     
+    override public function clientWillLogon (event :ClientEvent) :void
+    {
+        super.clientWillLogon(event);
+
+        // AVRG's need access to the world services, too.
+        _gctx.getClient().addServiceGroup(MsoyCodes.WORLD_GROUP);
+
+    }
     override public function clientDidLogon (event :ClientEvent) :void
     {
         super.clientDidLogon(event);
