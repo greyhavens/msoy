@@ -318,13 +318,13 @@ public class MsoyController extends Controller
         if (_controlledPanel != null) {
             _controlledPanel.removeEventListener(TextEvent.LINK, handleLink);
             _controlledPanel.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown, true);
-            _controlledPanel.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
+            _controlledPanel.removeEventListener(MouseEvent.CLICK, handleMouseClick);
         }
         super.setControlledPanel(panel);
         if (_controlledPanel != null) {
             _controlledPanel.addEventListener(TextEvent.LINK, handleLink);
             _controlledPanel.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown, true);
-            _controlledPanel.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
+            _controlledPanel.addEventListener(MouseEvent.CLICK, handleMouseClick);
         }
     }
 
@@ -388,9 +388,9 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handles mouse movement on the stage.
+     * Handles mouse clicks on the stage.
      */
-    protected function handleMouseMove (event :MouseEvent) :void
+    protected function handleMouseClick (event :MouseEvent) :void
     {
         restartIdleTimer();
     }
