@@ -372,7 +372,8 @@ public class MsoyGameRegistry
         // send them a mail message as well
         String subject = MsoyServer.msgMan.getBundle("server").get(
             "m.got_trophy_subject", trophy.name);
-        String body = MsoyServer.msgMan.getBundle("server").get("m.got_trophy_body");
+        String body = MsoyServer.msgMan.getBundle("server").get(
+            "m.got_trophy_body", trophy.description);
         MsoyServer.mailMan.deliverMessage(
             // TODO: sender should be special system id
             memberId, memberId, subject, body, new TrophyAwardPayload(
@@ -445,7 +446,7 @@ public class MsoyGameRegistry
                     // some other peer got the lock before we could; send them there
                     log.info("Didn't get lock, going remote " + game.gameId + "@" + nodeName + ".");
                     if (!checkAndSendToNode(game.gameId, listener)) {
-                        log.warning("Falied to acquire lock but no registered host for game!? " +
+                        log.warning("Failed to acquire lock but no registered host for game!? " +
                                     "[id=" + game.gameId + "].");
                         listener.requestFailed(GameCodes.INTERNAL_ERROR);
                     }

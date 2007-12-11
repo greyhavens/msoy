@@ -70,6 +70,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.MsoyGameServer;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.person.util.FeedMessageType;
@@ -146,6 +147,11 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
             return;
         }
 
+        // create the trophy record we'll use to notify them of their award
+        final Trophy trec = trophy.toTrophy();
+        // fill in the description so that we can report that in the award email
+        trec.description = source.description;
+
         // otherwise, award them the trophy, then add it to their runtime collection
         MsoyGameServer.invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
             public void invokePersistent () throws PersistenceException {
@@ -157,9 +163,9 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
                     trophy.name + "\t" + trophy.gameId);
             }
             public void handleSuccess () {
-                plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());
+                plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trec);
                 MsoyGameServer.worldClient.reportTrophyAward(
-                    trophy.memberId, _content.game.name, trophy.toTrophy());
+                    trophy.memberId, _content.game.name, trec);
             }
             protected String getFailureMessage () {
                 return "Failed to store trophy " + trophy + ".";
