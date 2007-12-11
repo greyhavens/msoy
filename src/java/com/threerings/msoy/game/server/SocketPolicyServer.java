@@ -72,7 +72,8 @@ public class SocketPolicyServer extends LoopingThread
         try {
             // finally open the socket
             _serverSocket = new ServerSocket(_socketPolicyPort);
-            log.info("Socket Policy Server listening on port: " + _socketPolicyPort);
+            log.info("Socket Policy server running [allowed=" + publicServerHost +
+                     ", port=" + _socketPolicyPort + "].");
         } catch (IOException e) {
             log.warning("Could not listen on port: " + _socketPolicyPort);
             shutdown();
