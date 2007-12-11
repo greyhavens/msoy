@@ -145,7 +145,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("RÂ
 </tr>
 <tr>
 <td width="20"></td><td>
-     Register the named states that this actor may be in.</td>
+     Register named states that can be selected by the wearer of this avatar.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/EventHandlers.html#registerUnload()">registerUnload</a>(dispatcher) &mdash; Static method in class com.whirled.contrib.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/EventHandlers.html">EventHandlers</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Registers the freeAllHandlers() method to be called upon Event.UNLOAD on the supplied
+     event dispatcher.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ArrayIterator.html#remove()">remove</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ArrayIterator.html">ArrayIterator</a></td>
@@ -162,6 +170,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("RÂ
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html#remove()">remove</a>(key) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html">HashMap</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html#remove()">remove</a>(o) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html">HashSet</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -188,6 +202,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("RÂ
      Remove an observer from this list.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Set.html#remove()">remove</a>(o) &mdash; Method in interface com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Set.html">Set</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Removes the specified element from this set if it is present.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StreamableArrayList.html#remove()">remove</a>(item) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StreamableArrayList.html">StreamableArrayList</a></td>
 </tr>
 <tr>
@@ -208,6 +229,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("RÂ
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StreamableArrayList.html#removeAt()">removeAt</a>(index) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StreamableArrayList.html">StreamableArrayList</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/MobControl.html#removeDecoration()">removeDecoration</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/MobControl.html">MobControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -271,6 +298,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("RÂ
 <tr>
 <td width="20"></td><td>
      Request to have this client control all the instances of this entity.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/Configurator.html#requestEntry()">requestEntry</a>(control:<a href="com/whirled/EntityControl.html" onclick="javascript:loadClassListFrame('com/whirled./class-list.html');">com.whirled:EntityControl</a>, sprite, key, configured) &mdash; Static method in class com.whirled.contrib.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/Configurator.html">Configurator</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Gets the requested configuration entry from entity memory or failing that, from
+     the user; whenever the value (which is a String) is safely in hand, the callback
+     is executed with it, and the entity may continue setting itself up.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ResultAdapter.html#requestFailed()">requestFailed</a>(cause) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ResultAdapter.html">ResultAdapter</a></td>
@@ -342,6 +378,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("RÂ
 <tr>
 <td width="20"></td><td>
      Called when one of this item's memory entries has changed.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html#roomToStage()">roomToStage</a>(p) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html">AVRGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#event:RoundEnded">RoundEnded</a> &mdash; Event in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>

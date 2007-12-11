@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="UserCookie,com.whirled.contrib.UserCookie,SEND_TIME,_control,_cookieDef,_parameters,_dirty,_timer,_readOnly,getCookie,getIntParameter,getStringParameter,getArrayParameter,getVersionParameter,set,get,read,flush,write,setInArray,getFromArray" name="keywords">
+<meta content="UserCookie,com.whirled.contrib.UserCookie,SEND_TIME,_control,_cookieDef,_parameters,_dirty,_timer,_readOnly,_logDebug,getCookie,getIntParameter,getStringParameter,getArrayParameter,getVersionParameter,set,get,read,flush,write,setInArray,getFromArray,debugLog,arrayChildrenAsString" name="keywords">
 <title>com.whirled.contrib.UserCookie</title>
 </head>
 <body>
@@ -125,6 +125,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">UserCookie</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_logDebug">_logDebug</a> : Boolean = false<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_parameters">_parameters</a> : <a href="../../threerings/util/HashMap.html">HashMap</a>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">UserCookie</td>
@@ -173,7 +177,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getCookie()">getCookie</a>(wgc:<a href="../WhirledGameControl.html">WhirledGameControl</a>, validCallback:Function, cookieDef:Array, occId:int = -1):void</div>
+<a class="signatureLink" href="#getCookie()">getCookie</a>(wgc:<a href="../WhirledGameControl.html">WhirledGameControl</a>, validCallback:Function, cookieDef:Array, enableDebugLogging:Boolean = false, occId:int = -1):void</div>
 <div class="summaryTableDescription">[static]
      Get a player's user cookie via WhirledGameControl.getUserCookie, wrapped in a UserCookie
      object.</div>
@@ -219,6 +223,20 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#arrayChildrenAsString()">arrayChildrenAsString</a>(param:ArrayParameter):String</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#debugLog()">debugLog</a>(logLine:String):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">UserCookie</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -304,6 +322,15 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _dirty:Boolean = false</code>
 </div>
+<a name="_logDebug"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_logDebug</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _logDebug:Boolean = false</code>
+</div>
 <a name="_parameters"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -345,10 +372,45 @@ showHideInherited();
      </p></div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
+<a name="arrayChildrenAsString()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">arrayChildrenAsString</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function arrayChildrenAsString(param:ArrayParameter):String</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">param</span>:ArrayParameter</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="debugLog()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">debugLog</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function debugLog(logLine:String):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">logLine</span>:String</code></td>
+</tr>
+</table>
+</div>
 <a name="flush()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">flush</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">flush</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -430,7 +492,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function getCookie(wgc:<a href="../WhirledGameControl.html">WhirledGameControl</a>, validCallback:Function, cookieDef:Array, occId:int = -1):void</code><p>
+<code>public static function getCookie(wgc:<a href="../WhirledGameControl.html">WhirledGameControl</a>, validCallback:Function, cookieDef:Array, enableDebugLogging:Boolean = false, occId:int = -1):void</code><p>
      Get a player's user cookie via WhirledGameControl.getUserCookie, wrapped in a UserCookie
      object.
      
@@ -454,6 +516,15 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">cookieDef</span>:Array</code> &mdash; An array of cookie parameters that define the format of the user cookie.  
                       See the various getarameter() functions for more detail.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">enableDebugLogging</span>:Boolean</code> (default = <code>false</code>)<code></code> &mdash; Enable logging of some debug messages, including the values read
+                               out of the user cookie in the initial read.  Logging is done via
+                               com.threerings.util.Log.
      </td>
 </tr>
 <tr>

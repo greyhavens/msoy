@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="EventHandlers,com.whirled.contrib.EventHandlers,_eventHandlers,registerEventListener,unregisterEventListener,freeAllHandlers" name="keywords">
+<meta content="EventHandlers,com.whirled.contrib.EventHandlers,_eventHandlers,registerEventListener,unregisterEventListener,registerUnload,freeAllHandlers" name="keywords">
 <title>com.whirled.contrib.EventHandlers</title>
 </head>
 <body>
@@ -69,7 +69,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#freeAllHandlers()">freeAllHandlers</a>():void</div>
+<a class="signatureLink" href="#freeAllHandlers()">freeAllHandlers</a>(... ignored):void</div>
 <div class="summaryTableDescription">[static]
      Free all handlers that have been added via this registerEventListener() and have not been
      freed already via unregisterEventListener()
@@ -82,6 +82,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#registerEventListener()">registerEventListener</a>(dispatcher:IEventDispatcher, event:String, listener:Function):void</div>
 <div class="summaryTableDescription">[static]
      Adds the specified listener to the specified dispatcher for the specified event.</div>
+</td><td class="summaryTableOwnerCol">EventHandlers</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#registerUnload()">registerUnload</a>(dispatcher:IEventDispatcher):void</div>
+<div class="summaryTableDescription">[static]
+     Registers the freeAllHandlers() method to be called upon Event.UNLOAD on the supplied
+     event dispatcher.</div>
 </td><td class="summaryTableOwnerCol">EventHandlers</td>
 </tr>
 <tr class="">
@@ -119,10 +128,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function freeAllHandlers():void</code><p>
+<code>public static function freeAllHandlers(... ignored):void</code><p>
      Free all handlers that have been added via this registerEventListener() and have not been
      freed already via unregisterEventListener()
-     </p></div>
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
+</tr>
+</table>
+</div>
 <a name="registerEventListener()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -148,6 +163,23 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">listener</span>:Function</code></td>
+</tr>
+</table>
+</div>
+<a name="registerUnload()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">registerUnload</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function registerUnload(dispatcher:IEventDispatcher):void</code><p>
+     Registers the freeAllHandlers() method to be called upon Event.UNLOAD on the supplied
+     event dispatcher.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">dispatcher</span>:IEventDispatcher</code></td>
 </tr>
 </table>
 </div>

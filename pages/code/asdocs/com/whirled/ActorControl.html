@@ -155,7 +155,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#getCamera()">getCamera</a>():Camera</div>
+<a class="signatureLink" href="EntityControl.html#getCamera()">getCamera</a>(index:String = null):Camera</div>
 <div class="summaryTableDescription">
      Access the local user's camera.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
@@ -187,7 +187,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#getMicrophone()">getMicrophone</a>():Microphone</div>
+<a class="signatureLink" href="EntityControl.html#getMicrophone()">getMicrophone</a>(index:int = 0):Microphone</div>
 <div class="summaryTableDescription">
      Access the local user's camera.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
@@ -715,7 +715,7 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Number</code> &mdash; a value between 0 (facing straight ahead) and 360.
+<td width="20"></td><td><code>Number</code> &mdash; a value between 0 (facing straight ahead) moving counter-clockwise to 359.
      </td>
 </tr>
 </table>
@@ -858,7 +858,8 @@ showHideInherited();
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">orient</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">orient</span>:Number</code> &mdash; an orientation between 0 (facing straight ahead) and going to 359, counter-clockwise.
+          </td>
 </tr>
 </table>
 <p>
@@ -916,7 +917,7 @@ showHideInherited();
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">state</span>:String</code> &mdash; A String identifier, may be null, indicating the state.  The maximum length is
+<td width="20px"></td><td><code><span class="label">state</span>:String</code> &mdash; A String identifier, which may be null, indicating the state.  The maximum length is
      64 characters.
           Note: only the instance "in control" may set states.
      </td>
@@ -956,7 +957,7 @@ showHideInherited();
   </p><p> An event type dispatched when an Actor has had its appearance
      changed. Your code should react to this event and possibly redraw
      the actor, taking into account the orientation and whether the
-     actor is moving.
+     actor is moving or sleeping.
      name: unused
      value: unused
           </p></div>

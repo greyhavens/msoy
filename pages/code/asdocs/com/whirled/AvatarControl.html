@@ -163,7 +163,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#getCamera()">getCamera</a>():Camera</div>
+<a class="signatureLink" href="EntityControl.html#getCamera()">getCamera</a>(index:String = null):Camera</div>
 <div class="summaryTableDescription">
      Access the local user's camera.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
@@ -195,7 +195,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#getMicrophone()">getMicrophone</a>():Microphone</div>
+<a class="signatureLink" href="EntityControl.html#getMicrophone()">getMicrophone</a>(index:int = 0):Microphone</div>
 <div class="summaryTableDescription">
      Access the local user's camera.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
@@ -312,7 +312,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#registerStates()">registerStates</a>(... states):void</div>
 <div class="summaryTableDescription">
-     Register the named states that this actor may be in.</div>
+     Register named states that can be selected by the wearer of this avatar.</div>
 </td><td class="summaryTableOwnerCol">AvatarControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -926,6 +926,8 @@ showHideInherited();
      events that cause the avatar to do something in the whirled, like laugh, play a sound, or do
      a quick animation.  Actions are different from states- states are persistent and do not go
      away if you walk, talk, or play actions.
+          These registered actions will show up in a menu from which the wearer of this avatar can
+     select an action. Note, however, that you can fire unregistered actions as well.
           Note: actions must be 64 characters or less.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -942,7 +944,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function registerStates(... states):void</code><p>
-     Register the named states that this actor may be in.
+     Register named states that can be selected by the wearer of this avatar.
           States are persistent. An actor may only be in one state at a time.  If the actor is in a
      state and then needs to walk, talk, or play an action, then it should still be in the state
      during and after those actions.

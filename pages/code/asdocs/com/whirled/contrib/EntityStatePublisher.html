@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="EntityStatePublisher,com.whirled.contrib.EntityStatePublisher,_key,_control,state,setState" name="keywords">
+<meta content="EntityStatePublisher,com.whirled.contrib.EntityStatePublisher,setState" name="keywords">
 <title>com.whirled.contrib.EntityStatePublisher</title>
 </head>
 <body>
@@ -37,6 +37,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr>
 <td class="classHeaderTableLabel">Class</td><td class="classSignature">public class EntityStatePublisher</td>
 </tr>
+<tr>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">EntityStatePublisher <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> <a href="EntityStateListener.html">EntityStateListener</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
+</tr>
 </table>
 <p></p>
  It is common for an item in a room to persist a memory that it wants to always be
@@ -53,8 +56,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
     _publisher.setState(newState);
   and the current state is always available as
    _published.state
-  NOTE: This class only propagates changes made through setState(). It does not
- listen to item memory changes.
  <p></p>
 <br>
 <hr>
@@ -62,31 +63,47 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a name="propertySummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Public Properties</div>
-<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<div class="showHideLinks">
+<div class="hideInheritedProperty" id="hideInheritedProperty">
+<a onclick="javascript:setInheritedVisible(false,'Property');" href="#propertySummary" class="showHideLink"><img src="../../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Public Properties</a>
+</div>
+<div class="showInheritedProperty" id="showInheritedProperty">
+<a onclick="javascript:setInheritedVisible(true,'Property');" href="#propertySummary" class="showHideLink"><img src="../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Public Properties</a>
+</div>
+</div>
+<table id="summaryTableProperty" class="summaryTable hideInheritedProperty" cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#state">state</a> : Object<div class="summaryTableDescription">[read-only]</div>
-</td><td class="summaryTableOwnerCol">EntityStatePublisher</td>
+<tr class="hideInheritedProperty">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityStateListener.html#state">state</a> : Object<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="EntityStateListener.html">EntityStateListener</a></td>
 </tr>
 </table>
 </div>
 <a name="protectedPropertySummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Protected Properties</div>
-<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<div class="showHideLinks">
+<div class="hideInheritedProtectedProperty" id="hideInheritedProtectedProperty">
+<a onclick="javascript:setInheritedVisible(false,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Protected Properties</a>
+</div>
+<div class="showInheritedProtectedProperty" id="showInheritedProtectedProperty">
+<a onclick="javascript:setInheritedVisible(true,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Properties</a>
+</div>
+</div>
+<table id="summaryTableProtectedProperty" class="summaryTable hideInheritedProtectedProperty" cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_control">_control</a> : <a href="../../whirled/EntityControl.html">EntityControl</a>
+<tr class="hideInheritedProtectedProperty">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityStateListener.html#_control">_control</a> : <a href="../../whirled/EntityControl.html">EntityControl</a>
 <div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">EntityStatePublisher</td>
+</td><td class="summaryTableOwnerCol"><a href="EntityStateListener.html">EntityStateListener</a></td>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_key">_key</a> : String<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">EntityStatePublisher</td>
+<tr class="hideInheritedProtectedProperty">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityStateListener.html#_key">_key</a> : String<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="EntityStateListener.html">EntityStateListener</a></td>
 </tr>
 </table>
 </div>
@@ -107,7 +124,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#setState()">setState</a>(state:Object):Boolean</div>
+<a class="signatureLink" href="#setState()">setState</a>(newState:Object):Boolean</div>
 <div class="summaryTableDescription">
      Publish a new value to this item's persistent storage and also broadcast it to
      the room at large as a room property.</div>
@@ -120,38 +137,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 showHideInherited();
 --></script>
 <div class="MainContent">
-<a name="propertyDetail"></a>
-<div class="detailSectionHeader">Property detail</div>
-<a name="_control"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_control</td><td class="detailHeaderType">property</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _control:<a href="../../whirled/EntityControl.html">EntityControl</a></code>
-</div>
-<a name="_key"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_key</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _key:String</code>
-</div>
-<a name="state"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">state</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>state:Object</code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
-<br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get state():Object</code>
-<br>
-</div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
 <a name="EntityStatePublisher()"></a>
@@ -195,14 +180,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function setState(state:Object):Boolean</code><p>
+<code>public function setState(newState:Object):Boolean</code><p>
      Publish a new value to this item's persistent storage and also broadcast it to
      the room at large as a room property. This method returns true if all went well
      and false if something failed due to e.g. size requirements on the entry.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">state</span>:Object</code></td>
+<td width="20px"></td><td><code><span class="label">newState</span>:Object</code></td>
 </tr>
 </table>
 <p></p>

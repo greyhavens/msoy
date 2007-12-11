@@ -84,7 +84,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#ValueEvent()">ValueEvent</a>(type:String, value:Object)</div>
+<a class="signatureLink" href="#ValueEvent()">ValueEvent</a>(type:String, value:Object, bubbles:Boolean = false, cancelable:Boolean = false)</div>
 <div class="summaryTableDescription">
      Construct the value event.</div>
 </td><td class="summaryTableOwnerCol">ValueEvent</td>
@@ -136,7 +136,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function ValueEvent(type:String, value:Object)</code><p>
+<code>public function ValueEvent(type:String, value:Object, bubbles:Boolean = false, cancelable:Boolean = false)</code><p>
      Construct the value event.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -148,6 +148,18 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">bubbles</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">cancelable</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
 </tr>
 </table>
 </div>

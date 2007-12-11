@@ -956,6 +956,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public function clearScores(clearValue:Object = null, sortValuesToo:Boolean = false):void</code><p>
      Clear all the scores displayed in the occupants list.
+          <b>Note:</b> this function changes local display only; other clients will not be affected.  
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1118,14 +1119,15 @@ showHideInherited();
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">occupant</span>:int</code> &mdash; signature: function (sprite :Sprite, success :Boolean) :void
+<td width="20px"></td><td><code><span class="label">occupant</span>:int</code> &mdash; the playerId to get the headshot for
      </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">callback</span>:Function</code></td>
+<td width="20px"></td><td><code><span class="label">callback</span>:Function</code> &mdash; signature: function (sprite :Sprite, success :Boolean) :void
+     </td>
 </tr>
 </table>
 </div>
@@ -1242,6 +1244,7 @@ showHideInherited();
 <code>public function setMappedScores(scores:Object):void</code><p>
      Set score or sortValue values for occupants. You may want to call clearScores prior
      to using this method to ensure that occupants that you don't specify are cleared out.
+          <b>Note:</b> this function changes local display only; other clients will not be affected.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1261,6 +1264,7 @@ showHideInherited();
 <code>public function setOccupantsLabel(label:String):void</code><p>
      Set a label to be shown above the occupants list in the game.
      Set to null to remove the label.
+          <b>Note:</b> this function changes local display only; other clients will not be affected.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1277,6 +1281,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public function setPlayerScores(scores:Array, sortValues:Array = null):void</code><p>
      Set scores for seated players.
+          <b>Note:</b> this function changes local display only; other clients will not be affected.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1303,7 +1308,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public function setShowButtons(rematch:Boolean = true, backButtons:Boolean = true):void</code><p>
      Set whether control bar buttons are shown.
-     </p><span class="label">Parameters</span>
+          <b>Note:</b> this function changes local display only; other clients will not be affected.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">rematch</span>:Boolean</code> (default = <code>true</code>)<code></code> &mdash; sets whether the rematch button should be displayed automatically when

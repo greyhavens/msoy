@@ -147,7 +147,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getCamera()">getCamera</a>():Camera</div>
+<a class="signatureLink" href="#getCamera()">getCamera</a>(index:String = null):Camera</div>
 <div class="summaryTableDescription">
      Access the local user's camera.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
@@ -179,7 +179,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getMicrophone()">getMicrophone</a>():Microphone</div>
+<a class="signatureLink" href="#getMicrophone()">getMicrophone</a>(index:int = 0):Microphone</div>
 <div class="summaryTableDescription">
      Access the local user's camera.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
@@ -616,11 +616,17 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getCamera():Camera</code><p>
+<code>public function getCamera(index:String = null):Camera</code><p>
      Access the local user's camera.
      Calling Camera.getCamera() does not work inside whirled due to security restrictions.
      For convenience, this method works even when you're not connected.
-     </p><p></p>
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">index</span>:String</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -690,11 +696,17 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getMicrophone():Microphone</code><p>
+<code>public function getMicrophone(index:int = 0):Microphone</code><p>
      Access the local user's camera.
      Calling Microphone.getMicrophone() does not work inside whirled due to security restrictions.
      For convenience, this method works even when you're not connected.
-     </p><p></p>
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">index</span>:int</code> (default = <code>0</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>

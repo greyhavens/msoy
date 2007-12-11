@@ -114,7 +114,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#shuffle()">shuffle</a>(arr:Array):void</div>
+<a class="signatureLink" href="#shuffle()">shuffle</a>(arr:Array, rando:<a href="Random.html">Random</a> = null):void</div>
 <div class="summaryTableDescription">[static]
      Randomly shuffle the elements in the specified array.</div>
 </td><td class="summaryTableOwnerCol">ArrayUtil</td>
@@ -348,12 +348,19 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function shuffle(arr:Array):void</code><p>
+<code>public static function shuffle(arr:Array, rando:<a href="Random.html">Random</a> = null):void</code><p>
      Randomly shuffle the elements in the specified array.
-     </p><span class="label">Parameters</span>
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code> &mdash; a random number generator to use, or null if you don't care.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">rando</span>:<a href="Random.html">Random</a></code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 </div>
