@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -127,12 +126,8 @@ public class GroupsBlurb extends Blurb
             SimplePanel photoPanel = new SimplePanel();
             photoPanel.setStyleName("Photo");
             if (card != null) {
-                Widget photo = MediaUtil.createMediaView(card.logo, MediaDesc.THUMBNAIL_SIZE);
-                if (photo instanceof Image) {
-                    ((Image) photo).addClickListener(profileClick);
-                    photo.setStyleName("actionLabel");
-                }
-                photoPanel.add(photo);
+                photoPanel.add(MediaUtil.createMediaView(
+                                   card.logo, MediaDesc.THUMBNAIL_SIZE, profileClick));
             }
             setWidget(0, 0, photoPanel);
             getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);

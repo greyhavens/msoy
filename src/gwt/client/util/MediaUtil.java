@@ -3,8 +3,9 @@
 
 package client.util;
 
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -25,7 +26,16 @@ public class MediaUtil
      */
     public static Widget createMediaView (MediaDesc desc, int size)
     {
-        return createMediaView(desc, MediaDesc.DIMENSIONS[2*size], MediaDesc.DIMENSIONS[2*size+1]);
+        return createMediaView(desc, size, null);
+    }
+
+    /**
+     * Create a widget to display the supplied media.
+     */
+    public static Widget createMediaView (MediaDesc desc, int size, ClickListener click)
+    {
+        return createMediaView(
+            desc, MediaDesc.DIMENSIONS[2*size], MediaDesc.DIMENSIONS[2*size+1], click);
     }
 
     /**
@@ -34,7 +44,7 @@ public class MediaUtil
      * must be in the same ratio as the ratio between {@link MediaDesc#THUMBNAIL_WIDTH} and {@link
      * MediaDesc#THUMBNAIL_HEIGHT}.
      */
-    public static Widget createMediaView (MediaDesc desc, int width, int height)
+    public static Widget createMediaView (MediaDesc desc, int width, int height, ClickListener click)
     {
         String path = desc.getMediaPath();
         Widget view;
@@ -76,7 +86,14 @@ public class MediaUtil
 
         default:
             // TODO: create a default image for media we don't know how to display
-            return new Image(Item.getDefaultThumbnailMediaFor(Item.DOCUMENT).getMediaPath());
+            view = new Image(Item.getDefaultThumbnailMediaFor(Item.DOCUMENT).getMediaPath());
+            break;
+        }
+
+        // add the click listener if one was provided
+        if (click != null && view instanceof Image) {
+            ((Image)view).addClickListener(click);
+            view.addStyleName("actionLabel");
         }
 
         return view;

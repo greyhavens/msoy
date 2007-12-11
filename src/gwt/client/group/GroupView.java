@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -126,21 +125,22 @@ public class GroupView extends VerticalPanel
         _table.setStyleName("groupView");
         _table.setCellSpacing(0);
         _table.setCellPadding(0);
+        int col = 0;
+
+        _table.getFlexCellFormatter().setVerticalAlignment(0, col, VerticalPanel.ALIGN_TOP);
+        _table.getFlexCellFormatter().setStyleName(0, col, "Back");
+        _table.setWidget(0, col++, MsoyUI.createBackArrow());
 
         VerticalPanel infoPanel = new VerticalPanel();
         infoPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
         infoPanel.setStyleName("LogoPanel");
         infoPanel.setSpacing(0);
-        Widget logo = MediaUtil.createMediaView(_group.getLogo(), MediaDesc.THUMBNAIL_SIZE);
-        infoPanel.add(logo);
-        if (logo instanceof Image) {
-            logo.addStyleName("actionLabel");
-            ((Image) logo).addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WORLD, "g" + _group.groupId);
-                }
-            });
-        }
+        ClickListener click = new ClickListener() {
+            public void onClick (Widget sender) {
+                Application.go(Page.WORLD, "g" + _group.groupId);
+            }
+        };
+        infoPanel.add(MediaUtil.createMediaView(_group.getLogo(), MediaDesc.THUMBNAIL_SIZE, click));
 
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("Links");
@@ -187,7 +187,7 @@ public class GroupView extends VerticalPanel
         if (buttons.getWidgetCount() > 0) {
             infoPanel.add(buttons);
         }
-        _table.setWidget(0, 0, infoPanel);
+        _table.setWidget(0, col++, infoPanel);
 
         _table.setBackgroundImage(
             _extras.background, _extras.backgroundControl == GroupExtras.BACKGROUND_TILED);
@@ -195,9 +195,7 @@ public class GroupView extends VerticalPanel
         VerticalPanel description = new VerticalPanel();
         description.setStyleName("DescriptionPanel");
         description.setSpacing(0);
-        Label nameLabel = new Label(_group.name);
-        nameLabel.setStyleName("Name");
-        description.add(nameLabel);
+        description.add(MsoyUI.createLabel(_group.name, "Name"));
 
         FlowPanel established = new FlowPanel();
         established.setStyleName("Established");
@@ -218,8 +216,8 @@ public class GroupView extends VerticalPanel
             charter.setStyleName("Charter");
             description.add(charter);
         }
-        _table.setWidget(0, 1, description);
-        _table.getFlexCellFormatter().setWidth(0, 1, "100%");
+        _table.getFlexCellFormatter().setWidth(0, col, "100%");
+        _table.setWidget(0, col++, description);
 
         final FlexTable people = new FlexTable();
         people.setStyleName("PeoplePanel");
@@ -268,7 +266,7 @@ public class GroupView extends VerticalPanel
             }, amManager()));
             people.getFlexCellFormatter().setColSpan(3, 0, 2);
         }
-        _table.setWidget(0, 2, people);
+        _table.setWidget(0, col++, people);
     }
 
     protected FlowPanel createMembersPanel (byte rank)

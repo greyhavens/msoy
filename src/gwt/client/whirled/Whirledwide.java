@@ -82,13 +82,11 @@ public class Whirledwide extends FlexTable
         allGames.setStyleName("AllGames");
         allGames.setHorizontalAlignment(HorizontalPanel.ALIGN_RIGHT);
         allGames.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        Image allGamesImage = new Image("/images/whirled/all_games.png");
-        allGamesImage.addClickListener(new ClickListener() {
+        allGames.add(MsoyUI.createActionImage("/images/whirled/all_games.png", new ClickListener() {
             public void onClick (Widget sender) {
                 Application.go(Page.CATALOG, "" + Item.GAME);
             }
-        });
-        allGames.add(allGamesImage);
+        }));
         topGamesContainer.add(allGames);
 
         VerticalPanel playersContainer = new VerticalPanel();
@@ -248,17 +246,9 @@ public class Whirledwide extends FlexTable
                     Application.go(Page.PROFILE, "" + person.name.getMemberId());
                 }
             };
-
-            Widget logo = MediaUtil.createMediaView(person.photo, 93, 70);
-            if (logo instanceof Image) {
-                ((Image) logo).addClickListener(goToProfile);
-            }
-            personPanel.add(logo);
-
-            Label nameLabel = new Label("" + person.name);
-            nameLabel.setStyleName("NameLabel");
-            nameLabel.addClickListener(goToProfile);
-            personPanel.add(nameLabel);
+            personPanel.add(
+                MediaUtil.createMediaView(person.photo, MediaDesc.THUMBNAIL_SIZE, goToProfile));
+            personPanel.add(MsoyUI.createActionLabel(""+person.name, "NameLabel", goToProfile));
             _players.add(personPanel);
         }
 
@@ -278,19 +268,16 @@ public class Whirledwide extends FlexTable
             Item.getDefaultThumbnailMediaFor(Item.GAME);
         Widget logo;
         if (panel instanceof VerticalPanel) {
-            logo = MediaUtil.createMediaView(logoMedia, MediaDesc.THUMBNAIL_SIZE);
+            logo = MediaUtil.createMediaView(logoMedia, MediaDesc.THUMBNAIL_SIZE, goToGame);
             panel.add(logo);
         } else {
             HorizontalPanel logoContainer = new HorizontalPanel();
             logoContainer.setStyleName("LogoContainer");
             logoContainer.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
             logoContainer.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-            logo = MediaUtil.createMediaView(logoMedia, MediaDesc.HALF_THUMBNAIL_SIZE);
+            logo = MediaUtil.createMediaView(logoMedia, MediaDesc.HALF_THUMBNAIL_SIZE, goToGame);
             logoContainer.add(logo);
             panel.add(logoContainer);
-        }
-        if (logo instanceof Image) {
-            ((Image) logo).addClickListener(goToGame);
         }
 
         Label nameLabel = new Label(game.name);

@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -192,17 +191,14 @@ public class GroupList extends FlexTable
             super();
             setStyleName("GroupWidget");
 
-            Widget logo = MediaUtil.createMediaView(group.getLogo(), MediaDesc.THUMBNAIL_SIZE);
-            setWidget(0, 0, logo);
+            setWidget(0, 0, MediaUtil.createMediaView(group.getLogo(), MediaDesc.THUMBNAIL_SIZE,
+                                                      new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.GROUP, "" + group.groupId);
+                }
+            }));
             getFlexCellFormatter().setStyleName(0, 0, "Logo");
             getFlexCellFormatter().setRowSpan(0, 0, 3);
-            if (logo instanceof Image) {
-                ((Image) logo).addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        Application.go(Page.GROUP, "" + group.groupId);
-                    }
-                });
-            }
 
             setWidget(0, 1, Application.createLink(group.name, "group", "" + group.groupId));
 

@@ -5,8 +5,6 @@ package client.util;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -23,18 +21,9 @@ public class ItemThumbnail extends FlexTable
         setStyleName("itemThumbnail");
         setCellPadding(0);
         setCellSpacing(0);
-
-        // the thumbnail is always an image, so we can cast safely here
-        Image image = (Image) MediaUtil.createMediaView(
-            item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
-        image.addStyleName("Image");
-        image.addClickListener(listener);
-        setWidget(0, 0, image);
-
-        Label label = new Label(ItemUtil.getName(item));
-        label.addStyleName("Text");
-        label.addClickListener(listener);
-        setWidget(1, 0, label);
+        setWidget(0, 0, MediaUtil.createMediaView(
+                      item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, listener));
+        setWidget(1, 0, MsoyUI.createActionLabel(ItemUtil.getName(item), "Text", listener));
     }
 
     public Item getItem ()

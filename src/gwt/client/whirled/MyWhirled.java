@@ -17,11 +17,10 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -253,27 +252,21 @@ public class MyWhirled extends FlexTable
 
         // add our own profile picture to the left column
         MediaDesc photo = (myWhirled.photo == null) ? Profile.DEFAULT_PHOTO : myWhirled.photo;
-        Widget image = MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE);
-        if (image instanceof Image) {
-            ((Image)image).addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.PROFILE, "" + CWhirled.getMemberId());
-                }
-            });
-        }
-        _pictureBox.add(image);
+        _pictureBox.add(
+            MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
+            public void onClick (Widget sender) {
+                Application.go(Page.PROFILE, "" + CWhirled.getMemberId());
+            }
+        }));
 
         // first add our home room
         HorizontalPanel homeRow = new HorizontalPanel();
         final Integer homeId = new Integer(myWhirled.homeSceneId);
-        Image homeIcon = new Image("/images/whirled/my_home.png");
-        homeIcon.addStyleName("actionLabel");
-        homeIcon.addClickListener(new ClickListener() {
+        homeRow.add(MsoyUI.createActionImage("/images/whirled/my_home.png", new ClickListener() {
             public void onClick (Widget sender) {
                 Application.go(Page.WORLD, "s" + homeId);
             }
-        });
-        homeRow.add(homeIcon);
+        }));
         homeRow.add(WidgetUtil.makeShim(2, 2));
         homeRow.add(Application.createLink((String)myWhirled.ownedRooms.get(homeId),
                                            Page.WORLD, "s" + homeId));
@@ -410,13 +403,10 @@ public class MyWhirled extends FlexTable
             logoContainer.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
             Widget logo = null;
             if (scene.logo != null) {
-                logo = MediaUtil.createMediaView(scene.logo, MediaDesc.THUMBNAIL_SIZE);
+                logo = MediaUtil.createMediaView(scene.logo, MediaDesc.THUMBNAIL_SIZE, goToScene);
             } else if (scene.sceneType == SceneCard.GAME) {
                 MediaDesc gameLogo = Item.getDefaultThumbnailMediaFor(Item.GAME);
-                logo = MediaUtil.createMediaView(gameLogo, MediaDesc.THUMBNAIL_SIZE);
-            }
-            if (logo instanceof Image) {
-                ((Image) logo).addClickListener(goToScene);
+                logo = MediaUtil.createMediaView(gameLogo, MediaDesc.THUMBNAIL_SIZE, goToScene);
             }
             logoContainer.add(logo);
             add(logoContainer);
@@ -515,11 +505,7 @@ public class MyWhirled extends FlexTable
                 }
             };
 
-            Widget pic = MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE);
-            if (pic instanceof Image && goToFriend != null) {
-                ((Image) pic).addClickListener(goToFriend);
-            }
-            add(pic);
+            add(MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE, goToFriend));
             Label nameLabel = new Label("" + card.name);
             if (goToFriend != null) {
                 nameLabel.addClickListener(goToFriend);

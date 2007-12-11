@@ -3,8 +3,10 @@
 
 package client.util;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -97,6 +99,30 @@ public class MsoyUI
         Button button = new Button(label, listener);
         button.addStyleName("tinyButton");
         return button;
+    }
+
+    /**
+     * Creates an arrow that does History.back().
+     */
+    public static Image createBackArrow ()
+    {
+        Image back = createActionImage("/images/ui/back_arrow.png", new ClickListener() {
+            public void onClick (Widget sender) {
+                History.back();
+            }
+        });
+        back.addStyleName("actionLabel");
+        return back;
+    }
+
+    /**
+     * Creates an image that responds to clicking.
+     */
+    public static Image createActionImage (String path, ClickListener onClick)
+    {
+        Image image = new Image(path);
+        image.addClickListener(onClick);
+        return image;
     }
 
     /**

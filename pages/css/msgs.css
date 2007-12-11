@@ -123,7 +123,7 @@
 }
 
 .titledListPanel .Header .Back {
-    background-image: url(/images/item/inventory_up.png);
+    background-image: url(/images/ui/back_arrow.png);
     height: 20px;
     width: 16px;
     margin-left: 5px;

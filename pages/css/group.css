@@ -9,6 +9,10 @@
     vertical-align: top;
 }
 
+.groupView .Back {
+    padding: 5px;
+}
+
 .groupView .Name {
     font-size: 22px;
     font-weight: bold;

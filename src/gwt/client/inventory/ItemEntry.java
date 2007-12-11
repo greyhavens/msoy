@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -62,13 +61,8 @@ public class ItemEntry extends FlexTable
                 _panel.requestShowDetail(_item.getIdent());
             }
         };
-        Widget mview = MediaUtil.createMediaView(
-            item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
-        if (mview instanceof Image) {
-            ((Image)mview).addClickListener(clicker);
-            mview.addStyleName("actionLabel");
-        }
-        setWidget(0, 0, mview);
+        setWidget(0, 0, MediaUtil.createMediaView(
+                      item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, clicker));
         getFlexCellFormatter().setStyleName(0, 0, "Preview");
 
         setWidget(0, 1, MsoyUI.createActionLabel(ItemUtil.getName(item, true), clicker));

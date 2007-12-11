@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -95,13 +94,12 @@ public class ImageChooserPopup extends BorderedPopup
         protected Widget createWidget (Object item) {
             final Photo photo = (Photo)item;
             Widget image = MediaUtil.createMediaView(
-                photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
-            ((Image)image).addClickListener(new ClickListener() {
+                photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
                 public void onClick (Widget sender) {
                     photoSelected(photo);
                 }
             });
-            image.setStyleName("Photo");
+            image.addStyleName("Photo");
             return image;
         }
 

@@ -5,7 +5,6 @@ package client.game;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.game.data.all.Trophy;
@@ -43,12 +42,8 @@ public class TrophyGrid extends FlexTable
                 }
             };
 
-            Widget image = MediaUtil.createMediaView(trophy.trophyMedia, MediaDesc.THUMBNAIL_SIZE);
-            if (image instanceof Image) {
-                ((Image)image).addClickListener(trophyClick);
-                image.setStyleName("actionLabel");
-            }
-            grid.setWidget(row, col, image);
+            grid.setWidget(row, col, MediaUtil.createMediaView(
+                               trophy.trophyMedia, MediaDesc.THUMBNAIL_SIZE, trophyClick));
             grid.getFlexCellFormatter().setStyleName(row, col, "Trophy");
             grid.setWidget(row+1, col, MsoyUI.createActionLabel(trophy.name, trophyClick));
             grid.getFlexCellFormatter().setStyleName(row+1, col, "Name");

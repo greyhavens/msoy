@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -97,11 +96,8 @@ public class RatingsBlurb extends Blurb
                                                            GameDetailPanel.MYRANKINGS_TAB));
                 }
             };
-            Image image = (Image)MediaUtil.createMediaView(
-                entry.gameThumb, MediaDesc.HALF_THUMBNAIL_SIZE);
-            image.addClickListener(gameClick);
-            image.setStyleName("actionLabel");
-            setWidget(0, 0, image);
+            setWidget(0, 0, MediaUtil.createMediaView(
+                          entry.gameThumb, MediaDesc.HALF_THUMBNAIL_SIZE, gameClick));
             getFlexCellFormatter().setStyleName(0, 0, "GameThumb");
             if (entry.singleRating > 0) {
                 getFlexCellFormatter().setRowSpan(0, 0, 2);

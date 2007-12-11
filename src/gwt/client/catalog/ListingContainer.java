@@ -39,14 +39,8 @@ public class ListingContainer extends FlexTable
                 }));
             }
         };
-
-        Widget preview = MediaUtil.createMediaView(
-            listing.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
-        if (preview instanceof Image) {
-            ((Image)preview).addClickListener(clicker);
-            preview.addStyleName("actionLabel");
-        }
-        setWidget(0, 0, preview);
+        setWidget(0, 0, MediaUtil.createMediaView(
+                      listing.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, clicker));
         getFlexCellFormatter().setStyleName(0, 0, "Preview");
         getFlexCellFormatter().setRowSpan(0, 0, 4);
 

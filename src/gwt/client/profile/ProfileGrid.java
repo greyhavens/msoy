@@ -6,7 +6,6 @@ package client.profile;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -20,6 +19,7 @@ import com.threerings.msoy.web.data.MemberCard;
 import client.shell.Application;
 import client.shell.Page;
 import client.util.MediaUtil;
+import client.util.MsoyUI;
 
 /**
  * A grid of profiles.  This is useful for profile searching, or displaying collections of profiles
@@ -74,16 +74,9 @@ public class ProfileGrid extends PagedGrid
                 }
             };
 
-            Widget photo = MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE);
-            if (photo instanceof Image) {
-                ((Image) photo).addClickListener(profileClick);
-                photo.setStyleName("actionLabel");
-            }
-
-            Label nameLabel =  new Label(card.name.toString());
-            nameLabel.setStyleName("Name");
-            nameLabel.addStyleName("actionLabel");
-            nameLabel.addClickListener(profileClick);
+            Widget photo = MediaUtil.createMediaView(
+                card.photo, MediaDesc.THUMBNAIL_SIZE, profileClick);
+            Label nameLabel =  MsoyUI.createActionLabel(card.name.toString(), "Name", profileClick);
 
             if (_vertical) {
                 setCellSpacing(0);

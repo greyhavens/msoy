@@ -7,7 +7,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -120,13 +119,8 @@ public class TopRankingPanel extends VerticalPanel
                     Application.go(Page.PROFILE, "" + rating.name.getMemberId());
                 }
             };
-            Widget photo = MediaUtil.createMediaView(
-                rating.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE);
-            if (photo instanceof Image) {
-                ((Image) photo).addClickListener(onClick);
-                photo.setStyleName("actionLabel");
-            }
-            _grid.setWidget(row, col+1, photo);
+            _grid.setWidget(row, col+1, MediaUtil.createMediaView(
+                                rating.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE, onClick));
             _grid.getFlexCellFormatter().setStyleName(row, col+1, "Cell");
             _grid.getFlexCellFormatter().addStyleName(row, col+1, "Photo");
             _grid.getFlexCellFormatter().setHorizontalAlignment(

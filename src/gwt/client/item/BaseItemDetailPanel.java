@@ -8,7 +8,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -49,15 +48,9 @@ public abstract class BaseItemDetailPanel extends FlexTable
         _detail = detail;
         _item = detail.item;
 
-        Image back = new Image("/images/item/inventory_up.png");
-        back.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                History.back();
-            }
-        });
         getFlexCellFormatter().setVerticalAlignment(0, 0, VerticalPanel.ALIGN_TOP);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
-        setWidget(0, 0, back);
+        setWidget(0, 0, MsoyUI.createBackArrow());
 
         FlexTable box = new FlexTable();
         box.setStyleName("Box");
