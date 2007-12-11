@@ -260,6 +260,10 @@ public class AVRGameBackend extends ControlBackend
         if (isPlaying()) {
             var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
             if (view != null) {
+                var sprite :MobSprite = view.getMob(_ctrl.getGameId(), mobId);
+                if (sprite == null) {
+                    return false;
+                }
                 view.getRoomObject().roomService.despawnMob(
                     _wctx.getClient(), _ctrl.getGameId(), mobId,
                     loggingInvocationListener("despawnMob"));
