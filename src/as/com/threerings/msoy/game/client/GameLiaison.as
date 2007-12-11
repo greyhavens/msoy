@@ -92,8 +92,6 @@ public class GameLiaison
     public function gameLocated (hostname :String, port :int) :void
     {
         log.info("Got server for " + _gameId + " [host=" + hostname + ", port=" + port + "].");
-        Security.loadPolicyFile("http://" + hostname + ":" +
-                                DeploymentConfig.httpPort + "/crossdomain.xml");
         _gctx.getClient().setServer(hostname, [ port ]);
         _gctx.getClient().setVersion(DeploymentConfig.version);
         _gctx.getClient().logon();
