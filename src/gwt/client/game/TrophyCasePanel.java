@@ -5,6 +5,7 @@ package client.game;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.msoy.web.data.TrophyCase;
 
@@ -46,7 +47,9 @@ public class TrophyCasePanel extends FlexTable
         for (int ii = 0; ii < tcase.shelves.length; ii++) {
             TrophyCase.Shelf shelf = tcase.shelves[ii];
             HeaderBox box = new HeaderBox();
-            setWidget(ii/2, ii%2, box);
+            int row = ii/2, col = ii%2;
+            setWidget(row, col, box);
+            getFlexCellFormatter().setVerticalAlignment(row, col, HasAlignment.ALIGN_TOP);
             box.setTitle(shelf.name);
             box.setContent(new TrophyGrid(shelf.trophies));
         }
