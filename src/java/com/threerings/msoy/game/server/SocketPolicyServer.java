@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 
 import com.samskivert.util.LoopingThread;
 
@@ -42,12 +43,21 @@ public class SocketPolicyServer extends LoopingThread
     @Override // from LoopingThread
     protected void willStart ()
     {
+        String publicServerHost;
+        try {
+            URL url = new URL(ServerConfig.getServerURL());
+            publicServerHost = url.getHost();
+        } catch (Exception e) {
+            log.warning("Failed to parse server_url " + e + ".");
+            publicServerHost = ServerConfig.serverHost;
+        }
+
         // build the XML once and for all
         StringBuilder policyFile = new StringBuilder().
-        append("<?xml version=\"1.0\"?>\n").
-        append("<cross-domain-policy>\n").
-        append("  <allow-access-from domain=\"").append(ServerConfig.serverHost).append("\"").
-        append(" to-ports=\"");
+            append("<?xml version=\"1.0\"?>\n").
+            append("<cross-domain-policy>\n").
+            append("  <allow-access-from domain=\"").append(publicServerHost).append("\"").
+            append(" to-ports=\"");
 
         // allow Flash connections on our server & game ports
         for (int port : ServerConfig.serverPorts) {
