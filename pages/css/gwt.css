@@ -637,6 +637,7 @@ img {
 
 .infoPopup {
   padding: 15px;
+  width: 500px;
 }
 
 .itemPopup {
@@ -868,6 +869,7 @@ img {
 .messagePanel .Icon {
   vertical-align: middle;
   padding-right: 5px;
+  display: inline;
 }
 
 .messagePanel .Posted {
