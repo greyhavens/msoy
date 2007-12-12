@@ -85,7 +85,11 @@
 
 .ratingWidget .GameThumb {
   width: 50px;
-  text-align: center;
+}
+
+.ratingWidget .GameThumb img {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .ratingWidget .GameName {
@@ -112,7 +116,7 @@
 .profileWidget {
   padding: 5px 0px;
   width: 100%;
-  height: 90px;
+  height: 89px;
   font-size: 12px;
 }
 

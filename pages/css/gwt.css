@@ -4,6 +4,10 @@
  * CSS styles shared by all GWT stuff.
  */
 
+img { 
+  display: block; /* no descender padding thanks */
+}
+
 /** Make GWT display some sensible defaults. */
 .gwt-TabBar .gwt-TabBarItem {
   border: 1px solid;
@@ -183,7 +187,6 @@
 }
 
 .statusPanel .Icon {
-  padding-top: 2px;
   padding-right: 3px;
 }
 
@@ -873,7 +876,7 @@
 }
 
 .messagePanel .Text {
-  padding-top: 5px;
+  padding: 5px 5px 0px 0px;
   vertical-align: top;
 }
 

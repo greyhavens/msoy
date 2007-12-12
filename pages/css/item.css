@@ -162,7 +162,8 @@
   width: 116px;
 }
 
-.itemRating {
+.itemRating img {
+  display: inline;
 }
 
 .creatorContents {
