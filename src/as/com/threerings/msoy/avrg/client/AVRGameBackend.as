@@ -154,6 +154,7 @@ public class AVRGameBackend extends ControlBackend
 
         // MobControl helpers
         o["setMobDecoration_v1"] = setMobDecoration_v1;
+        o["setMobHotSpot_v1"] = setMobHotSpot_v1;
 
         _stateBackend.populateSubProperties(o);
         _questBackend.populateSubProperties(o);
@@ -295,6 +296,21 @@ public class AVRGameBackend extends ControlBackend
             }
         }
         return false;
+    }
+
+    protected function setMobHotSpot_v1 (
+        mobId :String, x :Number, y :Number, height :Number = NaN) :void
+    {
+        if (isPlaying()) {
+            var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+            if (view != null) {
+                var sprite :MobSprite = view.getMob(_ctrl.getGameId(), mobId);
+                if (sprite != null) {
+                    log.debug("Setting hotspot [mobId=" + mobId + ",x=" + x + ", y=" + y + ", height=" + height + "]");
+                    sprite.setHotSpot(x, y, height);
+                }
+            }
+        }
     }
 
     protected function playerEntered (name :Name) :void
