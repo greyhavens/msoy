@@ -306,7 +306,6 @@ public class AVRGameBackend extends ControlBackend
             if (view != null) {
                 var sprite :MobSprite = view.getMob(_ctrl.getGameId(), mobId);
                 if (sprite != null) {
-                    log.debug("Setting hotspot [mobId=" + mobId + ",x=" + x + ", y=" + y + ", height=" + height + "]");
                     sprite.setHotSpot(x, y, height);
                 }
             }
