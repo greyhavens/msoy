@@ -71,7 +71,8 @@ public class ForumServlet extends MsoyServiceServlet
             ThreadResult result = toThreadResult(mrec, thrrecs);
 
             // fill in this caller's new thread starting privileges
-            result.canStartThread = group.checkAccess(groupRank, Group.ACCESS_THREAD, 0);
+            result.canStartThread = (mrec != null) &&
+                group.checkAccess(groupRank, Group.ACCESS_THREAD, 0);
 
             // fill in our manager status
             result.isManager = (mrec != null && mrec.isSupport()) ||
@@ -176,7 +177,8 @@ public class ForumServlet extends MsoyServiceServlet
             result.group = group.getName();
 
             // fill in this caller's posting privileges
-            result.canPostReply = group.checkAccess(groupRank, Group.ACCESS_POST, 0);
+            result.canPostReply = (mrec != null) &&
+                group.checkAccess(groupRank, Group.ACCESS_POST, 0);
 
             // fill in our manager status
             result.isManager = (mrec != null && mrec.isSupport()) ||
