@@ -61,19 +61,13 @@ public class Game extends Item
     }
 
     // @Override from Item
-    public byte[] getSalableSubTypes ()
-    {
-        return new byte[] {
-            LEVEL_PACK, ITEM_PACK,
-        };
-    }
-
-    // @Override from Item
-    public byte[] getSubTypes ()
+    public SubItem[] getSubTypes ()
     {
         return (isInWorld() ?
-                new byte[] { LEVEL_PACK, ITEM_PACK, TROPHY_SOURCE, PRIZE, PROP } :
-                new byte[] { LEVEL_PACK, ITEM_PACK, TROPHY_SOURCE, PRIZE, });
+                new SubItem[] {
+                    new LevelPack(), new ItemPack(), new TrophySource(), new Prize(), new Prop() } :
+                new SubItem[] {
+                    new LevelPack(), new ItemPack(), new TrophySource(), new Prize(), });
     }
 
     // @Override // from Item

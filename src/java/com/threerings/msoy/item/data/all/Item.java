@@ -250,19 +250,9 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public abstract byte getType ();
 
     /**
-     * Returns the set of subtypes of this item that can be sold in the catalog. For example, games
-     * might sell {@link LevelPack} or {@link ItemPack} sub-items; avatars might sell {@link
-     * Article} sub-items.
+     * Returns prototype item instances for all subtypes that can be created for this item.
      */
-    public byte[] getSalableSubTypes ()
-    {
-        return NO_SUBTYPES;
-    }
-
-    /**
-     * Returns the set of all subtypes that can be created for this item.
-     */
-    public byte[] getSubTypes ()
+    public SubItem[] getSubTypes ()
     {
         return NO_SUBTYPES;
     }
@@ -471,5 +461,5 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     private static HashMap _mapping;
     private static HashMap _reverseMapping;
 
-    protected static final byte[] NO_SUBTYPES = {};
+    protected static final SubItem[] NO_SUBTYPES = {};
 }
