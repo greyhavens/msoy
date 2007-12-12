@@ -22,6 +22,7 @@ import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.shell.Application;
+import client.shell.Frame;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
 import client.util.MsoyUI;
@@ -101,6 +102,14 @@ public class ThreadPanel extends TitledListPanel
         } else {
             return CMsgs.mmsgs.threadNormalHeader(_thread.subject);
         }
+    }
+
+    // @Override // from Widget
+    protected void onAttach ()
+    {
+        super.onAttach();
+        // turn off page scrolling and on stretching because we'll handle scrolling
+        Frame.setContentStretchHeight(true);
     }
 
     protected class ReplyPanel extends TableFooterPanel

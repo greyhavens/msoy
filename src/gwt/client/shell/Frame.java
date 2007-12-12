@@ -201,9 +201,10 @@ public class Frame
      */
     public static void setContentStretchHeight (boolean stretch)
     {
-        String height = stretch ? "99%" : ""; // fucking browsers
+        String height = stretch ? "100%" : ""; // fucking browsers
         RootPanel.get("ctable").setHeight(height);
         RootPanel.get(CONTENT).setHeight(height);
+        Window.enableScrolling(!stretch);
     }
 
     /**
