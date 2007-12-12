@@ -64,12 +64,21 @@ public class ProfileGrid extends PagedGrid
         return items > (_rows * _cols);
     }
 
+    // @Override // from PagedGrid
+    protected boolean padToFullPage ()
+    {
+        return true;
+    }
+
     protected class ProfileWidget extends FlexTable
     {
         public ProfileWidget (final MemberCard card) 
         {
             setStyleName("profileWidget");
             setCellPadding(0);
+            if (card == null) {
+                return; // we're just padding
+            }
 
             ClickListener profileClick = new ClickListener() {
                 public void onClick (Widget sender) {

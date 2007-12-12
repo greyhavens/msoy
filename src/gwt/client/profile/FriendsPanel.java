@@ -102,8 +102,7 @@ public class FriendsPanel extends VerticalPanel
         {
             public FriendWidget (final MemberCard card) {
                 super(card);
-
-                if (CProfile.getMemberId() != _memberId) {
+                if (card == null || CProfile.getMemberId() != _memberId) {
                     return;
                 }
 
