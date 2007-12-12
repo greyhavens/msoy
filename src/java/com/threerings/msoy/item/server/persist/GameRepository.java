@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DatabaseLiaison;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.FieldMarshaller;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -51,6 +52,13 @@ public class GameRepository extends ItemRepository<
     public GameRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        // TEMP
+        _ctx.registerMigration(GameDetailRecord.class, new EntityMigration.Rename(
+                                   6, "playerGames", "singlePlayerGames"));
+        _ctx.registerMigration(GameDetailRecord.class, new EntityMigration.Rename(
+                                   6, "playerMinutes", "singlePlayerMinutes"));
+        // END TEMP
     }
 
     /**
@@ -92,17 +100,29 @@ public class GameRepository extends ItemRepository<
      *
      * @return null or the recalculated abuse factor if one was recalculated.
      */
-    public Integer noteGamePlayed (int gameId, int playerGames, int playerMinutes, boolean recalc)
+    public Integer noteGamePlayed (int gameId, int playerGames, int playerMins, boolean recalc)
         throws PersistenceException
     {
         Integer newAbuse = null;
         gameId = Math.abs(gameId); // how to handle playing the original?
 
+        String gcname, mcname;
+        SQLExpression gcol, mcol;
+        if (playerGames > 1) {
+            gcname = GameDetailRecord.MULTI_PLAYER_GAMES;
+            gcol = GameDetailRecord.MULTI_PLAYER_GAMES_C;
+            mcname = GameDetailRecord.MULTI_PLAYER_MINUTES;
+            mcol = GameDetailRecord.MULTI_PLAYER_MINUTES_C;
+        } else {
+            gcname = GameDetailRecord.SINGLE_PLAYER_GAMES;
+            gcol = GameDetailRecord.SINGLE_PLAYER_GAMES_C;
+            mcname = GameDetailRecord.SINGLE_PLAYER_MINUTES;
+            mcol = GameDetailRecord.SINGLE_PLAYER_MINUTES_C;
+        }
+
         Map<String, SQLExpression> fieldMap = Maps.newHashMap();
-        fieldMap.put(GameDetailRecord.PLAYER_GAMES,
-                     new Arithmetic.Add(GameDetailRecord.PLAYER_GAMES_C, playerGames));
-        fieldMap.put(GameDetailRecord.PLAYER_MINUTES,
-                     new Arithmetic.Add(GameDetailRecord.PLAYER_MINUTES_C, playerMinutes));
+        fieldMap.put(gcname, new Arithmetic.Add(gcol, playerGames));
+        fieldMap.put(mcname, new Arithmetic.Add(mcol, playerMins));
 
         // if game abuse reassessment is enabled, potentially recalculate that
         if (recalc) {
@@ -127,10 +147,10 @@ public class GameRepository extends ItemRepository<
         }
 
         // if this addition would cause us to overflow the player minutes field, don't do it
-        int overflow = Integer.MAX_VALUE - playerMinutes;
+        int overflow = Integer.MAX_VALUE - playerMins;
         Where where = new Where(
             new Logic.And(new Conditionals.Equals(GameDetailRecord.GAME_ID_C, gameId),
-                          new Conditionals.LessThan(GameDetailRecord.PLAYER_MINUTES_C, overflow)));
+                          new Conditionals.LessThan(mcol, overflow)));
 
         updateLiteral(GameDetailRecord.class, where, GameDetailRecord.getKey(gameId), fieldMap);
         return newAbuse;

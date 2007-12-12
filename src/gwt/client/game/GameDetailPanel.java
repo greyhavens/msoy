@@ -175,9 +175,6 @@ public class GameDetailPanel extends VerticalPanel
         details.add(WidgetUtil.makeShim(1, 5));
 
         // set up the game info table
-        float avg = detail.playerMinutes / (float)detail.playerGames;
-        int avgMins = Math.max(1, Math.round(avg));
-
         FlexTable info = new FlexTable();
         info.setCellPadding(0);
         info.setCellSpacing(0);
@@ -189,23 +186,23 @@ public class GameDetailPanel extends VerticalPanel
         String[] ilabels = {
             CGame.msgs.gdpPlayers(), CGame.msgs.gdpAvgDuration(), CGame.msgs.gdpGamesPlayed()
         };
-        String playersStr;
+
+        String[] ivalues = { null, null, null, };
         if (detail.isPartyGame()) {
-            playersStr = CGame.msgs.gdpPlayersParty("" + detail.minPlayers);
+            ivalues[0] = CGame.msgs.gdpPlayersParty("" + detail.minPlayers);
         } else if (detail.minPlayers == detail.maxPlayers) {
-            playersStr = CGame.msgs.gdpPlayersSame("" + detail.minPlayers);
+            ivalues[0] = CGame.msgs.gdpPlayersSame("" + detail.minPlayers);
         } else {
-            playersStr = CGame.msgs.gdpPlayersFixed("" + detail.minPlayers, "" + detail.maxPlayers);
+            ivalues[0] = CGame.msgs.gdpPlayersFixed("" + detail.minPlayers, "" + detail.maxPlayers);
         }
-        String[] ivalues = {
-            playersStr,
-            (avgMins > 1) ? CGame.msgs.gdpMinutes(""+avgMins) : CGame.msgs.gdpMinute(),
-            Integer.toString(detail.playerGames),
-        };
+        ivalues[1] = avgMinsLabel(Math.max(detail.getAverageDuration(false),
+                                           detail.getAverageDuration(true)));
+        ivalues[2] = Integer.toString(detail.singlePlayerGames + detail.multiPlayerGames);
+
         for (int ii = 0; ii < ilabels.length; ii++) {
             info.setText(irow, 0, ilabels[ii]);
             info.getFlexCellFormatter().setStyleName(irow, 0, "InfoLabel");
-            info.setText(irow++, 1, ivalues[ii]);
+            info.setHTML(irow++, 1, ivalues[ii]);
         }
         details.add(info);
 
@@ -306,6 +303,11 @@ public class GameDetailPanel extends VerticalPanel
             }
         }
         return "";
+    }
+
+    protected static String avgMinsLabel (int avgMins)
+    {
+        return (avgMins > 1) ? CGame.msgs.gdpMinutes(""+avgMins) : CGame.msgs.gdpMinute();
     }
 
     protected Page _page;

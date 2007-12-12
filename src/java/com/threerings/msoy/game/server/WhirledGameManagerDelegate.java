@@ -236,7 +236,7 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
         boolean haveNonZeroScore = false;
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < playerOids.length; ii++) {
-            int availFlow = getAwardableFlow(now, playerOids[ii]);
+            int availFlow = getAwardableFlow(playerOids.length > 1, now, playerOids[ii]);
             players.put(playerOids[ii], new Player(playerOids[ii], scores[ii], availFlow));
             haveNonZeroScore = haveNonZeroScore || (scores[ii] > 0);
         }
@@ -308,18 +308,18 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
         // any funny business
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < winnerOids.length; ii++) {
-            Player player = new Player(winnerOids[ii], 1, getAwardableFlow(now, winnerOids[ii]));
+            Player pl = new Player(winnerOids[ii], 1, getAwardableFlow(true, now, winnerOids[ii]));
             // everyone gets ranked as a 50% performance in multiplayer and we award portions of
             // the losers' winnings to the winners
-            player.percentile = 49;
-            player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
-            players.put(winnerOids[ii], player);
+            pl.percentile = 49;
+            pl.availFlow = (int)Math.ceil(pl.availFlow * (pl.percentile / 99f));
+            players.put(winnerOids[ii], pl);
         }
         for (int ii = 0; ii < loserOids.length; ii++) {
-            Player player = new Player(loserOids[ii], 0, getAwardableFlow(now, loserOids[ii]));
-            player.percentile = 49;
-            player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
-            players.put(loserOids[ii], player);
+            Player pl = new Player(loserOids[ii], 0, getAwardableFlow(true, now, loserOids[ii]));
+            pl.percentile = 49;
+            pl.availFlow = (int)Math.ceil(pl.availFlow * (pl.percentile / 99f));
+            players.put(loserOids[ii], pl);
         }
 
         // award flow according to the rankings and the payout type
@@ -454,8 +454,13 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
         });
 
         // also update our in-memory game detail record
-        _content.detail.playerGames += playerGames;
-        _content.detail.playerMinutes += playerMins;
+        if (playerGames > 1) {
+            _content.detail.multiPlayerGames += playerGames;
+            _content.detail.multiPlayerMinutes += playerMins;
+        } else {
+            _content.detail.singlePlayerGames += playerGames;
+            _content.detail.singlePlayerMinutes += playerMins;
+        }
     }
 
     @Override // from PlaceManagerDelegate
@@ -687,11 +692,18 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
     /**
      * Returns the average duration for this game in fractional minutes.
      */
-    protected float getAverageGameDuration (int playerSeconds)
+    protected float getAverageGameDuration (boolean multiplayer, int playerSeconds)
     {
         // if we've got enough data to trust the average, simply return it
-        float minutes = _content.detail.playerMinutes;
-        int samples = _content.detail.playerGames;
+        float minutes;
+        int samples;
+        if (multiplayer) {
+            minutes =_content.detail.multiPlayerMinutes;
+            samples = _content.detail.multiPlayerGames;
+        } else {
+            minutes =_content.detail.singlePlayerMinutes;
+            samples = _content.detail.singlePlayerGames;
+        }
         if (samples > FRESH_GAME_CUTOFF) {
             return minutes / samples;
         }
@@ -781,13 +793,13 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
         return total;
     }
 
-    protected int getAwardableFlow (int now, int playerOid)
+    protected int getAwardableFlow (boolean multiplayer, int now, int playerOid)
     {
         FlowRecord record = _flowRecords.get(playerOid);
         if (record == null) {
             return 0;
         }
-        float minutes = getAverageGameDuration(record.getPlayTime(now));
+        float minutes = getAverageGameDuration(multiplayer, record.getPlayTime(now));
         return Math.round(record.humanity * _flowPerMinute * minutes);
     }
 

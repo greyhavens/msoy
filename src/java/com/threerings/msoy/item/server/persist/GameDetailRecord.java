@@ -54,19 +54,33 @@ public class GameDetailRecord extends PersistentRecord
     public static final ColumnExp INSTRUCTIONS_C =
         new ColumnExp(GameDetailRecord.class, INSTRUCTIONS);
 
-    /** The column identifier for the {@link #playerGames} field. */
-    public static final String PLAYER_GAMES = "playerGames";
+    /** The column identifier for the {@link #singlePlayerGames} field. */
+    public static final String SINGLE_PLAYER_GAMES = "singlePlayerGames";
 
-    /** The qualified column identifier for the {@link #playerGames} field. */
-    public static final ColumnExp PLAYER_GAMES_C =
-        new ColumnExp(GameDetailRecord.class, PLAYER_GAMES);
+    /** The qualified column identifier for the {@link #singlePlayerGames} field. */
+    public static final ColumnExp SINGLE_PLAYER_GAMES_C =
+        new ColumnExp(GameDetailRecord.class, SINGLE_PLAYER_GAMES);
 
-    /** The column identifier for the {@link #playerMinutes} field. */
-    public static final String PLAYER_MINUTES = "playerMinutes";
+    /** The column identifier for the {@link #singlePlayerMinutes} field. */
+    public static final String SINGLE_PLAYER_MINUTES = "singlePlayerMinutes";
 
-    /** The qualified column identifier for the {@link #playerMinutes} field. */
-    public static final ColumnExp PLAYER_MINUTES_C =
-        new ColumnExp(GameDetailRecord.class, PLAYER_MINUTES);
+    /** The qualified column identifier for the {@link #singlePlayerMinutes} field. */
+    public static final ColumnExp SINGLE_PLAYER_MINUTES_C =
+        new ColumnExp(GameDetailRecord.class, SINGLE_PLAYER_MINUTES);
+
+    /** The column identifier for the {@link #multiPlayerGames} field. */
+    public static final String MULTI_PLAYER_GAMES = "multiPlayerGames";
+
+    /** The qualified column identifier for the {@link #multiPlayerGames} field. */
+    public static final ColumnExp MULTI_PLAYER_GAMES_C =
+        new ColumnExp(GameDetailRecord.class, MULTI_PLAYER_GAMES);
+
+    /** The column identifier for the {@link #multiPlayerMinutes} field. */
+    public static final String MULTI_PLAYER_MINUTES = "multiPlayerMinutes";
+
+    /** The qualified column identifier for the {@link #multiPlayerMinutes} field. */
+    public static final ColumnExp MULTI_PLAYER_MINUTES_C =
+        new ColumnExp(GameDetailRecord.class, MULTI_PLAYER_MINUTES);
 
     /** The column identifier for the {@link #abuseFactor} field. */
     public static final String ABUSE_FACTOR = "abuseFactor";
@@ -85,7 +99,7 @@ public class GameDetailRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 5;
+    public static final int SCHEMA_VERSION = 6;
 
     /** The default abuse factor for newly added games. */
     public static final int DEFAULT_ABUSE_FACTOR = 100;
@@ -104,21 +118,28 @@ public class GameDetailRecord extends PersistentRecord
     @Column(length=4096, nullable=true)
     public String instructions;
 
-    /** Contains the total number of "player games" accumulated for this game. Each time a game is
-     * played to completion, this field is incremented by the number of players in the game. See
-     * {@link #playerMinutes} for a note on extremely popular games. */
-    public int playerGames;
+    /** Contains the total number of "player games" accumulated for this game in single player.
+     * Each time a game is played to completion, this field is incremented by the number of players
+     * in the game. See {@link #singlePlayerMinutes} for a note on extremely popular games. */
+    public int singlePlayerGames;
 
-    /** The total number of minutes spent playing this game. Note: if a game becomes close to
-     * overflowing this field (>2 billion player minutes), this field and {@link #playerGames} will
-     * no longer be updated. */
-    public int playerMinutes;
+    /** The total number of minutes spent playing this game in single player. Note: if a game
+     * becomes close to overflowing this field (>2 billion player minutes), this field and {@link
+     * #singlePlayerGames} will no longer be updated. */
+    public int singlePlayerMinutes;
+
+    /** Contains the total number of "player games" accumulated for this game in multiplayer. */
+    public int multiPlayerGames;
+
+    /** The total number of multiplayer minutes spent playing this game. */
+    public int multiPlayerMinutes;
 
     /** The current abuse factor, from 0 to 255. */
     @Column(defaultValue=(""+DEFAULT_ABUSE_FACTOR))
     public int abuseFactor;
 
-    /** The value of {@link #playerMinutes} when we last recalculated the abuse factor. */
+    /** The value of {@link #singlePlayerMinutes} + {@link #multiPlayerMinutes} when we last
+     * recalculated the abuse factor. */
     public int lastAbuseRecalc;
 
     /**
@@ -135,6 +156,7 @@ public class GameDetailRecord extends PersistentRecord
      */
     public boolean shouldRecalcAbuse (int playerMins, int recalcMinutes)
     {
+        int playerMinutes = multiPlayerMinutes + singlePlayerMinutes;
         return (playerMinutes - lastAbuseRecalc) + playerMins > recalcMinutes;
     }
 
@@ -146,8 +168,10 @@ public class GameDetailRecord extends PersistentRecord
         GameDetail detail = new GameDetail();
         detail.gameId = gameId;
         detail.instructions = instructions;
-        detail.playerGames = playerGames;
-        detail.playerMinutes = playerMinutes;
+        detail.singlePlayerGames = singlePlayerGames;
+        detail.singlePlayerMinutes = singlePlayerMinutes;
+        detail.multiPlayerGames = multiPlayerGames;
+        detail.multiPlayerMinutes = multiPlayerMinutes;
         return detail;
     }
 
