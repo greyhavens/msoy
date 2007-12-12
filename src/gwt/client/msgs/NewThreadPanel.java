@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.TextBox;
 
+import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -75,6 +76,11 @@ public class NewThreadPanel extends TableFooterPanel
         String message = _message.getHTML();
         if (message.length() == 0) {
             MsoyUI.error(CMsgs.mmsgs.errNoMessage());
+            return false;
+        }
+        int extra = message.length() - ForumMessage.MAX_MESSAGE_LENGTH;
+        if (extra > 0) {
+            MsoyUI.error(CMsgs.mmsgs.errMessageTooLong(""+extra));
             return false;
         }
 

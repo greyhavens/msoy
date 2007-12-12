@@ -134,6 +134,11 @@ public class ThreadPanel extends TitledListPanel
                         MsoyUI.error(CMsgs.mmsgs.errMissingReply());
                         return false;
                     }
+                    int extra = text.length() - ForumMessage.MAX_MESSAGE_LENGTH;
+                    if (extra > 0) {
+                        MsoyUI.error(CMsgs.mmsgs.errMessageTooLong(""+extra));
+                        return false;
+                    }
                     // TODO: when we support quoting, make sure there's more than the quoted text
                     CMsgs.forumsvc.postMessage(CMsgs.ident, _threadId, replyId, text, this);
                     return true;
