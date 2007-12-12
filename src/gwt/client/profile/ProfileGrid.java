@@ -76,6 +76,8 @@ public class ProfileGrid extends PagedGrid
         {
             setStyleName("profileWidget");
             setCellPadding(0);
+            getFlexCellFormatter().setStyleName(0, 0, "Photo");
+
             if (card == null) {
                 return; // we're just padding
             }
@@ -96,7 +98,6 @@ public class ProfileGrid extends PagedGrid
                 // avoid forcing this table column to 80 pixels which booches vertical layout mode
                 SimplePanel photoPanel = new SimplePanel();
                 photoPanel.add(photo);
-                photoPanel.setStyleName("Photo");
                 setWidget(0, 0, photoPanel);
 
                 setWidget(1, 0, nameLabel);
@@ -107,7 +108,6 @@ public class ProfileGrid extends PagedGrid
                 setCellSpacing(5);
 
                 setWidget(0, 0, photo);
-                getFlexCellFormatter().setStyleName(0, 0, "Photo");
                 getFlexCellFormatter().setRowSpan(0, 0, 3);
 
                 setWidget(0, 1, nameLabel);

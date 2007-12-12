@@ -85,6 +85,8 @@ public class RatingsBlurb extends Blurb
             setCellPadding(0);
             setCellSpacing(0);
             setStyleName("ratingWidget");
+            getFlexCellFormatter().setStyleName(0, 0, "GameThumb");
+            getFlexCellFormatter().setStyleName(0, 1, "GameName");
 
             if (entry == null) {
                 return; // we're a padding entry
@@ -98,13 +100,11 @@ public class RatingsBlurb extends Blurb
             };
             setWidget(0, 0, MediaUtil.createMediaView(
                           entry.gameThumb, MediaDesc.HALF_THUMBNAIL_SIZE, gameClick));
-            getFlexCellFormatter().setStyleName(0, 0, "GameThumb");
             if (entry.singleRating > 0) {
                 getFlexCellFormatter().setRowSpan(0, 0, 2);
             }
 
             setWidget(0, 1, MsoyUI.createActionLabel(entry.gameName, gameClick));
-            getFlexCellFormatter().setStyleName(0, 1, "GameName");
 
             if (entry.multiRating > 0) {
                 setText(0, 2, "" + entry.multiRating);
