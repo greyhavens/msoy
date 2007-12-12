@@ -104,7 +104,7 @@ public class ForumMessageRecord extends PersistentRecord
     public Timestamp lastEdited;
 
     /** The text of this message. */
-    @Column(length=4096)
+    @Column(length=ForumMessage.MAX_MESSAGE_LENGTH)
     public String message;
 
     /**
