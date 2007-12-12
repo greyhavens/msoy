@@ -6,7 +6,9 @@ package client.msgs;
 import java.util.List;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -76,7 +78,8 @@ public class MessagesPanel extends PagedGrid
     protected void addGrid (Grid grid)
     {
         add(_scrolly = new ScrollPanel(grid));
-        _scrolly.setHeight((Window.getClientHeight() - USED_HEIGHT) + "px");
+        int availHeight = (Window.getClientHeight() - USED_HEIGHT);
+        setMaxHeight(_scrolly.getElement(), availHeight + "px");
     }
 
     // @Override // from PagedGrid
@@ -149,6 +152,13 @@ public class MessagesPanel extends PagedGrid
         label.addStyleName("actionLabel");
         return label;
     }
+
+    // I should be able to do:
+    // DOM.setStyleAttribute(_scrolly.getElement(), "max-height", availHeight + "px");
+    // but it doesn't work on Firefox for some reason. Yay!
+    protected static native void setMaxHeight (Element elem, String maxHeight) /*-{
+        elem.style.maxHeight = maxHeight;
+    }-*/;
 
     protected class ThreadMessagePanel extends MessagePanel
     {
@@ -255,5 +265,6 @@ public class MessagesPanel extends PagedGrid
     protected Button _editFlags;
 
     protected static final int MESSAGES_PER_PAGE = 10;
-    protected static final int USED_HEIGHT = 120; // 50 + 20 + 30 + 20
+    protected static final int USED_HEIGHT =
+        50 /* navi */ + 20 /* title */ + 30 /* thread title */ + 20 /* footer */;
 }
