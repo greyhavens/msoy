@@ -106,13 +106,11 @@ public class MsoyUI
      */
     public static Image createBackArrow ()
     {
-        Image back = createActionImage("/images/ui/back_arrow.png", new ClickListener() {
+        return createActionImage("/images/ui/back_arrow.png", new ClickListener() {
             public void onClick (Widget sender) {
                 History.back();
             }
         });
-        back.addStyleName("actionLabel");
-        return back;
     }
 
     /**
@@ -121,6 +119,7 @@ public class MsoyUI
     public static Image createActionImage (String path, ClickListener onClick)
     {
         Image image = new Image(path);
+        image.addStyleName("actionLabel");
         image.addClickListener(onClick);
         return image;
     }

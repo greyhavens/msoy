@@ -12,11 +12,13 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.fora.data.ForumThread;
@@ -126,15 +128,27 @@ public class ThreadListPanel extends PagedGrid
 
     protected class ThreadSummaryPanel extends FlexTable
     {
-        public ThreadSummaryPanel (ForumThread thread)
+        public ThreadSummaryPanel (final ForumThread thread)
         {
             setStyleName("threadSummaryPanel");
             setCellPadding(0);
             setCellSpacing(0);
 
             int col = 0;
-            String itype = (thread.hasUnreadMessages() ? "unread" : "read");
-            setWidget(0, col, new Image("/images/msgs/" + itype + ".png"));
+            Image type;
+            if (thread.hasUnreadMessages()) {
+                type = MsoyUI.createActionImage("/images/msgs/unread.png", new ClickListener() {
+                    public void onClick (Widget sender) {
+                        Application.go(Page.GROUP, threadArgs(
+                                           thread.threadId, thread.lastReadPostIndex,
+                                           thread.lastReadPostId));
+                    }
+                });
+                type.setTitle(CMsgs.mmsgs.tlpFirstUnreadTip());
+            } else {
+                type = new Image("/images/msgs/read.png");
+            }
+            setWidget(0, col, type);
             getFlexCellFormatter().setStyleName(0, col++, "Status");
 
             RowPanel bits = new RowPanel();
@@ -146,10 +160,8 @@ public class ThreadListPanel extends PagedGrid
             if (thread.isAnnouncement()) {
                 bits.add(new Label(CMsgs.mmsgs.tlpAnnounce()));
             }
-            bits.add(Application.createLink(thread.subject, Page.GROUP,
-                                            Args.compose("t", thread.threadId)));
-
-            // if we have a last read post, add a link to the first unread post
+            bits.add(Application.createLink(
+                         thread.subject, Page.GROUP, threadArgs(thread.threadId, 0, 0)));
 
             setWidget(0, col, bits);
             getFlexCellFormatter().setStyleName(0, col++, "Subject");
@@ -157,10 +169,28 @@ public class ThreadListPanel extends PagedGrid
             setText(0, col, "" + thread.posts);
             getFlexCellFormatter().setStyleName(0, col++, "Posts");
 
-            setHTML(0, col, _pdate.format(thread.mostRecentPostTime) + "<br/>By: " +
-                    thread.mostRecentPoster);
+            VerticalPanel mrp = new VerticalPanel();
+            mrp.add(new Label(_pdate.format(thread.mostRecentPostTime)));
+            Hyperlink latest = Application.createLink(
+                CMsgs.mmsgs.tlpBy(thread.mostRecentPoster.toString()),
+                Page.GROUP, threadArgs(thread.threadId, thread.posts-1, thread.mostRecentPostId));
+            latest.setTitle(CMsgs.mmsgs.tlpLastTip());
+            mrp.add(latest);
+            setWidget(0, col, mrp);
             getFlexCellFormatter().setStyleName(0, col++, "LastPost");
         }
+    }
+
+    protected String threadArgs (int threadId, int msgIndex, int msgId)
+    {
+        String[] args = new String[msgIndex > 0 ? 4 : 2];
+        args[0] = "t";
+        args[1] = String.valueOf(threadId);
+        if (msgIndex > 0) {
+            args[2] = String.valueOf(msgIndex / MessagesPanel.MESSAGES_PER_PAGE);
+            args[3] = String.valueOf(msgId);
+        }
+        return Args.compose(args);
     }
 
     /** The forum panel in which we're hosted. */

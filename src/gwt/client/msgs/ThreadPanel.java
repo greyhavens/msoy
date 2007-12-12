@@ -6,13 +6,13 @@ package client.msgs;
 import java.util.Date;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -32,10 +32,10 @@ import client.util.MsoyUI;
  */
 public class ThreadPanel extends TitledListPanel
 {
-    public ThreadPanel (int threadId, int offset, ForumModels fmodels)
+    public ThreadPanel (int threadId, int page, int scrollToId, ForumModels fmodels)
     {
         _threadId = threadId;
-        _mpanel = new MessagesPanel(this);
+        _mpanel = new MessagesPanel(this, scrollToId);
 
         // look for our thread in the resolved group thread models
         ForumThread thread = fmodels.findThread(threadId);
@@ -43,9 +43,9 @@ public class ThreadPanel extends TitledListPanel
         // if we found our thread, use that to avoid making the server do extra work and so that we
         // keep this ThreadRecord properly up to date
         if (thread != null) {
-            _mpanel.setModel(new ForumModels.ThreadMessages(thread), 0);
+            _mpanel.setModel(new ForumModels.ThreadMessages(thread), page);
         } else {
-            _mpanel.setModel(new ForumModels.ThreadMessages(threadId), 0);
+            _mpanel.setModel(new ForumModels.ThreadMessages(threadId), page);
         }
         showMessages();
     }
@@ -152,7 +152,6 @@ public class ThreadPanel extends TitledListPanel
         {
             super.onAttach();
             _editor.setFocus(true);
-            DOM.scrollIntoView(getElement());
         }
 
         protected MessageEditor _editor;

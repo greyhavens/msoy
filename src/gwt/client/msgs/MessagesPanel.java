@@ -3,13 +3,17 @@
 
 package client.msgs;
 
-import java.util.Date;
 import java.util.List;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
@@ -28,20 +32,15 @@ import client.util.PromptPopup;
  */
 public class MessagesPanel extends PagedGrid
 {
-    public MessagesPanel (ThreadPanel parent)
+    public MessagesPanel (ThreadPanel parent, int scrollToId)
     {
         super(MESSAGES_PER_PAGE, 1, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");
         setWidth("100%");
+        setHeight("100%");
 
         _parent = parent;
-    }
-
-    // @Override // from PagedGrid
-    protected Widget createWidget (Object item)
-    {
-        return new ThreadMessagePanel(
-            ((ForumModels.ThreadMessages)_model).getThread(), (ForumMessage)item);
+        _scrollToId = scrollToId;
     }
 
     // @Override // from PagedGrid
@@ -54,6 +53,30 @@ public class MessagesPanel extends PagedGrid
     protected boolean displayNavi (int items)
     {
         return true; // we always show our navigation for consistency
+    }
+
+    // @Override // from PagedGrid
+    protected Widget createWidget (Object item)
+    {
+        ForumMessage msg = (ForumMessage)item;
+        final ThreadMessagePanel panel = new ThreadMessagePanel(
+            ((ForumModels.ThreadMessages)_model).getThread(), msg);
+        if (msg.messageId == _scrollToId) {
+            _scrollToId = 0;
+            DeferredCommand.addCommand(new Command() {
+                public void execute () {
+                    _scrolly.ensureVisible(panel);
+                }
+            });
+        }
+        return panel;
+    }
+
+    // @Override // from PagedGrid
+    protected void addGrid (Grid grid)
+    {
+        add(_scrolly = new ScrollPanel(grid));
+        _scrolly.setHeight((Window.getClientHeight() - USED_HEIGHT) + "px");
     }
 
     // @Override // from PagedGrid
@@ -219,6 +242,12 @@ public class MessagesPanel extends PagedGrid
     /** The thread panel in which we're hosted. */
     protected ThreadPanel _parent;
 
+    /** We scroll our messages in this panel. */
+    protected ScrollPanel _scrolly;
+
+    /** A message to scroll into view when we first receive our messages. */
+    protected int _scrollToId;
+
     /** A button for posting a reply message. */
     protected Button _postReply;
 
@@ -226,4 +255,5 @@ public class MessagesPanel extends PagedGrid
     protected Button _editFlags;
 
     protected static final int MESSAGES_PER_PAGE = 10;
+    protected static final int USED_HEIGHT = 120; // 50 + 20 + 30 + 20
 }
