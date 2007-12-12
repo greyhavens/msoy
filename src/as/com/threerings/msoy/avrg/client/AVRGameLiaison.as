@@ -83,6 +83,14 @@ public class AVRGameLiaison extends GameLiaison
     }
 
     /**
+     * Returns the backend if we're currently in an AVRG, null otherwise.
+     */
+    public function getAVRGameBackend () :AVRGameBackend
+    {
+        return (_ctrl == null) ? null : _ctrl.getAVRGameBackend();
+    }
+
+    /**
      * Returns the game object if we're currently in an AVRG, null otherwise.
      */
     public function getAVRGameObject () :AVRGameObject

@@ -10,6 +10,7 @@ import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.avrg.client.AVRGameBackend;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -54,7 +55,12 @@ public class MediaDirector extends BasicDirector
             return sprite;
 
         } else if (occInfo is MobInfo) {
-            return new MobSprite(occInfo as MobInfo);
+            var mobSprite :MobSprite = new MobSprite(occInfo as MobInfo);
+
+            if (MobInfo(occInfo).getGameId() == _wctx.getGameDirector().getGameId()) {
+                mobSprite.avrGameAvailable(_wctx.getGameDirector().getAVRGameBackend());
+            }
+            return mobSprite;
 
         } else if (occInfo is ObserverInfo) {
             // view-only members have no sprite visualization

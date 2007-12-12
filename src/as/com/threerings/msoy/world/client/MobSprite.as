@@ -22,6 +22,11 @@ public class MobSprite extends OccupantSprite
     public function MobSprite (occInfo :MobInfo)
     {
         super(occInfo);
+
+        _holder = new Sprite();
+        setMediaObject(_holder);
+
+        // now wait to be told what our AVRG backend is
     }
 
     /** Return this MOB's unique identifier. */
@@ -36,7 +41,7 @@ public class MobSprite extends OccupantSprite
         return MobInfo(_occInfo).getGameId();
     }
 
-    /** Called when the AVRG related to this MOB is loaded or unloaded. */
+    /** Called when the AVRG related to this MOB is available (or not) */
     public function avrGameAvailable (backend :AVRGameBackend) :void
     {
         _hostBackend = backend;
@@ -55,10 +60,13 @@ public class MobSprite extends OccupantSprite
     override protected function configureDisplay (
         oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
     {
-        Log.getLog(this).debug("configureDisplay(" + newInfo + ")");
+        Log.getLog(this).debug(
+            "configureDisplay [newInfo=" + newInfo + ", oldInfo=" + oldInfo + "]");
 
-        _holder = new Sprite();
-        setMediaObject(_holder);
+        if (_hostBackend == null) {
+            // if we're not playing, we don't care
+            return false;
+        }
 
         var ominfo :MobInfo = (oldInfo as MobInfo), nminfo :MobInfo = (newInfo as MobInfo);
         if (ominfo == null || ominfo.getGameId() != nminfo.getGameId() ||
@@ -94,7 +102,9 @@ public class MobSprite extends OccupantSprite
                 // then display it
                 _holder.addChild(sprite);
             }
-        }            
+            return;
+        }
+        Log.getLog(MobSprite).debug("Ignoring MOB update, we're not playing...");
     }
 
     /** A container for the current visualization. */

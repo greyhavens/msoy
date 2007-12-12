@@ -105,6 +105,11 @@ public class AVRGameController extends Controller
         return _gameObj;
     }
 
+    public function getAVRGameBackend () :AVRGameBackend
+    {
+        return _panel != null ? _panel.getAVRGameBackend() : null;
+    }
+
     protected function miniWillChange (mini :Boolean) :void
     {
         if (_wctx.getGameDirector().isPlayingTutorial()) {

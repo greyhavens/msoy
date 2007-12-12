@@ -26,6 +26,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.avrg.client.AVRGameBackend;
 import com.threerings.msoy.avrg.client.AVRGameController;
 import com.threerings.msoy.avrg.client.AVRGameLiaison;
 
@@ -137,6 +138,18 @@ public class GameDirector extends BasicDirector
         displayLobby(gameId);
         LobbyGameLiaison(_liaison).joinPlayerTable(memberId);
     }
+
+    /**
+     * Retrieve the backend of the AVRG currently in progress, or null.
+     */
+    public function getAVRGameBackend () :AVRGameBackend
+    {
+        if (_liaison != null && _liaison is AVRGameLiaison) {
+            return AVRGameLiaison(_liaison).getAVRGameBackend();
+        }
+        return null;
+    }
+
 
     /**
      * Called when we first login and then every time we leave a game or a lobby;
