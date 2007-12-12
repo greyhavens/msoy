@@ -56,6 +56,13 @@ public class MobSprite extends OccupantSprite
         }
     }
 
+    // from MsoySprite
+    override public function capturesMouse () :Boolean
+    {
+        // MOB clicks are exclusively the business of the AVRG/MOB code
+        return true;
+    }
+
     // from OccupantSprite
     override protected function configureDisplay (
         oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
