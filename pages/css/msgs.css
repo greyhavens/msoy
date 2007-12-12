@@ -135,7 +135,11 @@
 
 .threadSummaryPanel .Status {
     width: 30px;
-    text-align: center;
+}
+
+.threadSummaryPanel .Status img {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .threadSummaryPanel .Subject {
