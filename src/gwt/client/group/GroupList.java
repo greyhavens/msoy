@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -33,6 +32,7 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MediaUtil;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -45,12 +45,7 @@ public class GroupList extends FlexTable
     /** The number of columns to show in the PagedGrid */
     public static final int GRID_COLUMNS = 2;
 
-    public GroupList () 
-    {
-        this(null);
-    }
-
-    public GroupList (String tag)
+    public GroupList ()
     {
         super();
         setStyleName("groupList");
@@ -90,6 +85,11 @@ public class GroupList extends FlexTable
         int rows = (Window.getClientHeight() - Application.HEADER_HEIGHT -
                     HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT;
         _groupGrid = new PagedGrid(rows, GRID_COLUMNS) {
+            protected void displayPageFromClick (int page) {
+                String args = _tag.equals("") ? Args.compose("p", page) :
+                    Args.compose("tag", _tag, ""+page);
+                Application.go(Page.GROUP, args);
+            }
             protected Widget createWidget (Object item) {
                 return new GroupWidget((Group)item);
             }
@@ -103,7 +103,55 @@ public class GroupList extends FlexTable
 
         _currentTag = new FlowPanel();
         loadPopularTags();
-        loadGroupsList(tag);
+    }
+
+    public void setArgs (Args args)
+    {
+        // we either have group, group-p_NN or group-tag_TAG_NN
+        String tag = "";
+        int page = 0;
+        if (args.get(0, "").equals("tag")) {
+            tag = args.get(1, "");
+            page = args.get(2, 0);
+        } else if (args.get(0, "").equals("p")) {
+            page = args.get(1, 0);
+        }
+
+        if (!tag.equals(_tag)) {
+            _currentTag.clear();
+            _tag = tag;
+
+            final int fpage = page;
+            if (_tag.equals("")) {
+                // TODO: this eventually needs to be a ServiceBackedDataModel
+                CGroup.groupsvc.getGroupsList(CGroup.ident, new MsoyCallback() {
+                    public void onSuccess (Object result) {
+                        _groupGrid.setModel(new SimpleDataModel((List)result), fpage);
+                    }
+                });
+
+            } else {
+                InlineLabel tagLabel = new InlineLabel(
+                    CGroup.msgs.listCurrentTag() + " " + _tag + " ");
+                DOM.setStyleAttribute(tagLabel.getElement(), "fontWeight", "bold");
+                _currentTag.add(tagLabel);
+                _currentTag.add(new InlineLabel("("));
+                Hyperlink clearLink = Application.createLink(
+                    CGroup.msgs.listTagClear(), "group", "");
+                DOM.setStyleAttribute(clearLink.getElement(), "display", "inline");
+                _currentTag.add(clearLink);
+                _currentTag.add(new InlineLabel(")"));
+
+                CGroup.groupsvc.searchForTag(CGroup.ident, _tag, new MsoyCallback() {
+                    public void onSuccess (Object result) {
+                        _groupGrid.setModel(new SimpleDataModel((List)result), fpage);
+                    }
+                });
+            }
+
+        } else {
+            _groupGrid.displayPage(page, false);
+        }
     }
 
     protected void loadPopularTags ()
@@ -113,7 +161,7 @@ public class GroupList extends FlexTable
         popularTagsLabel.addStyleName("PopularTagsLabel");
         _popularTags.add(popularTagsLabel);
 
-        CGroup.groupsvc.getPopularTags(CGroup.ident, 10, new AsyncCallback() {
+        CGroup.groupsvc.getPopularTags(CGroup.ident, 10, new MsoyCallback() {
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
@@ -132,54 +180,18 @@ public class GroupList extends FlexTable
                     _popularTags.add(_currentTag);
                 }
             }
-            public void onFailure (Throwable caught) {
-                CGroup.log("getPopularTags failed", caught);
-                MsoyUI.error(CGroup.serverError(caught));
-            }
         });
     }
 
     protected void loadGroupsList (final String tag)
     {
-        AsyncCallback groupsListCallback = new AsyncCallback() {
-            public void onSuccess (Object result) {
-                _groupGrid.setModel(new SimpleDataModel((List)result), 0);
-                _currentTag.clear();
-                if (tag != null) {
-                    InlineLabel tagLabel = new InlineLabel(CGroup.msgs.listCurrentTag() + " " + 
-                        tag + " ");
-                    DOM.setStyleAttribute(tagLabel.getElement(), "fontWeight", "bold");
-                    _currentTag.add(tagLabel);
-                    _currentTag.add(new InlineLabel("("));
-                    Hyperlink clearLink = Application.createLink(
-                        CGroup.msgs.listTagClear(), "group", "");
-                    DOM.setStyleAttribute(clearLink.getElement(), "display", "inline");
-                    _currentTag.add(clearLink);
-                    _currentTag.add(new InlineLabel(")"));
-                }
-            }
-            public void onFailure (Throwable caught) {
-                CGroup.log("getGroupsList failed", caught);
-                MsoyUI.error(CGroup.serverError(caught));
-            }
-        };
-        
-        if (tag != null) {
-            CGroup.groupsvc.searchForTag(CGroup.ident, tag, groupsListCallback);
-        } else {
-            CGroup.groupsvc.getGroupsList(CGroup.ident, groupsListCallback);
-        }
     }
 
     protected void performSearch (final String searchString)
     {
-        CGroup.groupsvc.searchGroups(CGroup.ident, searchString, new AsyncCallback() {
+        CGroup.groupsvc.searchGroups(CGroup.ident, searchString, new MsoyCallback() {
             public void onSuccess (Object result) {
                 _groupGrid.setModel(new SimpleDataModel((List)result), 0);
-            }
-            public void onFailure (Throwable caught) {
-                CGroup.log("searchGroups(" + searchString + ") failed", caught);
-                MsoyUI.error(CGroup.serverError(caught));
             }
         });
     }
@@ -215,6 +227,7 @@ public class GroupList extends FlexTable
         }
     }
 
+    protected String _tag;
     protected FlowPanel _popularTags;
     protected FlowPanel _currentTag;
     protected PagedGrid _groupGrid;

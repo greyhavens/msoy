@@ -38,19 +38,24 @@ public class index extends MsgsEntryPoint
             return;
         }
 
-        if (args.get(0, "").equals("tag")) {
-            setContent(new GroupList(args.get(1, "")));
-        } else if (args.get(0, 0) != 0) {
+        if (args.get(0, 0) != 0) {
             setContent(_gview);
             _gview.setGroup(args.get(0, 0));
+
         } else if (args.get(0, "").equals("unread")) {
             ForumPanel fpanel = new ForumPanel(_fmodels);
             fpanel.displayUnreadThreads(false);
             setContent(fpanel);
+
         } else if (args.get(0, "").equals("t")) {
             setContent(new ThreadPanel(args.get(1, 0), args.get(2, 0), _fmodels));
+
         } else {
-            setContent(new GroupList());
+            if (_glist == null) {
+                _glist = new GroupList();
+            }
+            setContent(_glist);
+            _glist.setArgs(args);
         }
     }
 
@@ -71,4 +76,5 @@ public class index extends MsgsEntryPoint
 
     protected ForumModels _fmodels = new ForumModels();
     protected GroupView _gview = new GroupView(this, _fmodels);
+    protected GroupList _glist;
 }
