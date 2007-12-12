@@ -924,6 +924,13 @@
     </copy>
     <mkdir dir="${pkg.base}/pages/buildresults"/>
     <mkdir dir="${pkg.base}/pages/stats"/>
+    <!-- set up our policy server startup stuff -->
+    <startupscript name="policy_server" runas="root"
+                   pidfile="${prefix.app}/run/policy-server.pid"
+                   output="${pkg.base}/etc/rc.d/policy-server.sh">
+     <command cmd="/usr/sbin/daemon" args="-f -p ${pidfile} ${prefix.app}/bin/policyrespawn"
+              procname="*policyrespawn"/>
+    </startupscript>
   </target>
 
 </project>
