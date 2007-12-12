@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.server;
 
 import java.io.IOException;
@@ -16,7 +19,6 @@ import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 
-
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -27,17 +29,17 @@ import static com.threerings.msoy.Log.log;
 public class PolicyServer extends IoHandlerAdapter
 {
     /** Fire up a stand-alone server. */
-    public static void main (String[] args) throws IOException {
-        // The following two lines change the default buffer type to 'heap',
-        // which yields better performance according to the Apache MINA
-        // documentation.
+    public static void main (String[] args) throws IOException
+    {
+        // The following two lines change the default buffer type to 'heap', which yields better
+        // performance according to the Apache MINA documentation.
         ByteBuffer.setUseDirectBuffers(false);
         ByteBuffer.setAllocator(new SimpleByteBufferAllocator());
 
         IoAcceptor acceptor = new SocketAcceptor();
         final SocketAcceptorConfig cfg = new SocketAcceptorConfig();
-        cfg.getFilterChain().addLast("codec",
-            new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
+        cfg.getFilterChain().addLast(
+            "codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
 
         int port = ServerConfig.socketPolicyPort;
 
@@ -63,7 +65,8 @@ public class PolicyServer extends IoHandlerAdapter
             append("<cross-domain-policy>\n");
         // if we're running on 843, serve a master policy file
         if (socketPolicyPort == MASTER_PORT) {
-            policyBuilder.append(" <site-control permitted-cross-domain-policies=\"master-only\"/>\n");
+            policyBuilder.append(
+                " <site-control permitted-cross-domain-policies=\"master-only\"/>\n");
         }
         policyBuilder.append("  <allow-access-from domain=\"").append(publicServerHost).
             append("\"").append(" to-ports=\"");
