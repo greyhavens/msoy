@@ -82,11 +82,15 @@
     <file name="${extlibs.dir}/jetty6/jetty-util.jar"/>
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/junit4.jar"/>
+    <file name="${extlibs.dir}/log4j.jar"/>
+    <file name="${extlibs.dir}/mina-core.jar"/>
     <file name="${extlibs.dir}/mail.jar"/>
     <file name="${extlibs.dir}/mysql-connector-java.jar"/>
     <file name="${extlibs.dir}/postgresql-jdbc.jar"/>
     <file name="${extlibs.dir}/proguard.jar"/>
     <file name="${extlibs.dir}/servlet-api.jar"/>
+    <file name="${extlibs.dir}/slf4j-api.jar"/>
+    <file name="${extlibs.dir}/slf4j-log4j12.jar"/>
     <file name="${extlibs.dir}/svnClientAdapter.jar"/>
     <file name="${extlibs.dir}/svnjavahl.jar"/>
     <file name="${extlibs.dir}/svnkit-cli.jar"/>
