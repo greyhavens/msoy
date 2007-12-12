@@ -1,0 +1,54 @@
+#!/usr/bin/perl -w
+#
+# $Id$
+#
+# A script to respawn the policy server over and over again, assuming that it
+# exits cleanly each time.
+
+my $root = `cd \`dirname $0\`/..; pwd`; chomp($root);
+
+my $LOG;
+if (!open($LOG, ">$root/log/respawn-policy.log")) {
+    warn "Unable to log to $root/log/respawn-policy.log: $!\n";
+    $LOG = STDERR;
+}
+
+my $pidfile = shift;
+my $server_pidfile = shift;
+if (defined $pidfile) {
+    if (open(OUT, ">$pidfile")) {
+        print OUT "$$\n";
+        close(OUT);
+        print $LOG "Wrote pid ($$) to $pidfile.\n";
+    } else {
+        print $LOG "Unable to write PID to '$pidfile': $!\n";
+    }
+}
+
+while (1) {
+    # note the time
+    my $start = time();
+    my $now = localtime($start);
+
+    # actually run the server
+    print $LOG "$now Running policy server: $root/bin/runpolicy $server_pidfile\n";
+    my $rcode = system("$root/bin/runnpolicy $server_pidfile");
+
+    # note the time again
+    my $finish = time();
+    my $duration = $finish-$start;
+    my $fnow = localtime($finish);
+
+    # report and deal with the server's exit code
+    if ($rcode != 0) {
+        print $LOG "$fnow MetaSOY server failed (return code: $rcode) after $duration seconds.\n";
+    } else {
+	print $LOG "$fnow MetaSOY server exited healthily after $duration seconds.\n";
+    }
+
+    # don't spiral out of control; only restart once per minute
+    if ($duration < 60) {
+        print $LOG "$fnow MetaSOY server exited too quickly. Taking a breather.\n";
+        sleep(60-$duration);
+    }
+}
