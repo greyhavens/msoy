@@ -624,7 +624,7 @@ public class WorldServlet extends MsoyServiceServlet
 
             // fill in logos for group-owned scenes
             for (GroupRecord groupRec : MsoyServer.groupRepo.loadGroups(groupIds.keySet())) {
-                for (int sceneId : groupIds.get(groupRec.groupId)) {
+                for (int sceneId : groupIds.remove(groupRec.groupId)) {
                     SceneCard card = cards.remove(sceneId);
                     if (card != null) {
                         card.logo = groupRec.logoMediaHash == null ?
@@ -636,9 +636,20 @@ public class WorldServlet extends MsoyServiceServlet
                 }
             }
 
+            // fill in default logos for scenes whose group has been removed
+            for (int groupId : groupIds.keySet()) {
+                for (int sceneId : groupIds.remove(groupId)) {
+                    SceneCard card = cards.remove(sceneId);
+                    if (card != null) {
+                        card.logo = Group.getDefaultGroupLogoMedia();
+                        returnCards.add(card);
+                    }
+                }
+            }
+
             // fill in logos for member-owned scenes
             for (ProfileRecord profileRec : MsoyServer.profileRepo.loadProfiles(memIds.keySet())) {
-                for (int sceneId : memIds.get(profileRec.memberId)) {
+                for (int sceneId : memIds.remove(profileRec.memberId)) {
                     SceneCard card = cards.remove(sceneId);
                     if (card != null) {
                         card.logo = profileRec.photoHash == null ? Profile.DEFAULT_PHOTO :
@@ -649,10 +660,15 @@ public class WorldServlet extends MsoyServiceServlet
                 }
             }
 
-            // fill in default logos for scenes whose group has been removed
-            for (SceneCard card : cards.values()) {
-                card.logo = Group.getDefaultGroupLogoMedia();
-                returnCards.add(card);
+            // fill in default logo for scenes whose owner has no profile
+            for (int memberId : memIds.keySet()) {
+                for (int sceneId : memIds.remove(memberId)) {
+                    SceneCard card = cards.remove(sceneId);
+                    if (card != null) {
+                        card.logo = Profile.DEFAULT_PHOTO;
+                        returnCards.add(card);
+                    }
+                }
             }
 
         } catch (PersistenceException pe) {
