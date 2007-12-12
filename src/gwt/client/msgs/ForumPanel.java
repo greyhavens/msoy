@@ -58,7 +58,7 @@ public class ForumPanel extends TitledListPanel
     {
         MsoyUI.info(CMsgs.mmsgs.msgNewThreadPosted());
         _fmodels.newThreadPosted(thread);
-        displayGroupThreads(thread.groupId);
+        displayGroupThreads(thread.group.getGroupId());
     }
 
     protected void newThreadCanceled (int groupId)

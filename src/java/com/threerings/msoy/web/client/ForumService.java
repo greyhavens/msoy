@@ -43,9 +43,6 @@ public interface ForumService extends RemoteService
         /** The thread for which messages were loaded, only provided for first request. */
         public ForumThread thread;
 
-        /** The group from which this thread was loaded. */
-        public GroupName group;
-
         /** Whether or not the caller can post a reply message to this thread. */
         public boolean canPostReply;
 

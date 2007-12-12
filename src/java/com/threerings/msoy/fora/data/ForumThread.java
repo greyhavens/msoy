@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 
 /**
@@ -30,8 +31,8 @@ public class ForumThread
     /** A unique identifier for this forum thread. */
     public int threadId;
 
-    /** The id of the group to which this forum thread belongs. */
-    public int groupId;
+    /** The group to which this forum thread belongs. */
+    public GroupName group;
 
     /** Flags indicating attributes of this thread: {@link #FLAG_ANNOUNCEMENT}, etc. */
     public int flags;

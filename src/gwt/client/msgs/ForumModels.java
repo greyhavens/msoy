@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.web.client.ForumService;
@@ -162,10 +161,6 @@ public class ForumModels
             return _thread;
         }
 
-        public GroupName getGroup () {
-            return _group;
-        }
-
         public boolean canPostReply () {
             return _canPostReply;
         }
@@ -208,7 +203,6 @@ public class ForumModels
             }
             _canPostReply = mresult.canPostReply;
             _isManager = mresult.isManager;
-            _group = mresult.group;
 
             // let the PagedGrid know that we're good and to render the items
             super.onSuccess(result);
@@ -243,7 +237,6 @@ public class ForumModels
 
         protected int _threadId;
         protected ForumThread _thread = new ForumThread(); // dummy to make logic easier
-        protected GroupName _group;
         protected boolean _canPostReply, _isManager;
     }
 
@@ -253,7 +246,7 @@ public class ForumModels
     public void newThreadPosted (ForumThread thread)
     {
         // if we already have this model loaded, let it know about the new thread
-        GroupThreads gmodel = (GroupThreads)_gmodels.get(thread.groupId);
+        GroupThreads gmodel = (GroupThreads)_gmodels.get(thread.group.getGroupId());
         if (gmodel != null) {
             gmodel.prependItem(thread);
         }

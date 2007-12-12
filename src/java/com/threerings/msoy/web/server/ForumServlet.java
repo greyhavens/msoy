@@ -5,9 +5,11 @@ package com.threerings.msoy.web.server;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -16,6 +18,7 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MsoyServer;
@@ -36,6 +39,7 @@ import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 import com.threerings.msoy.fora.server.persist.ReadTrackingRecord;
 
 import com.threerings.msoy.web.client.ForumService;
+import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
@@ -68,7 +72,8 @@ public class ForumServlet extends MsoyServiceServlet
                 MsoyServer.forumRepo.loadThreads(groupId, offset, count);
 
             // load up additional fiddly bits and create a result record
-            ThreadResult result = toThreadResult(mrec, thrrecs);
+            ThreadResult result = toThreadResult(
+                mrec, thrrecs, Collections.singletonMap(group.groupId, group.getName()));
 
             // fill in this caller's new thread starting privileges
             result.canStartThread = (mrec != null) &&
@@ -101,21 +106,22 @@ public class ForumServlet extends MsoyServiceServlet
 
         try {
             // load up said member's group memberships
-            IntSet groupIds = new ArrayIntSet();
-            for (GroupMembershipRecord gmr : MsoyServer.groupRepo.getMemberships(mrec.memberId)) {
-                groupIds.add(gmr.groupId);
+            Map<Integer, GroupName> groups = Maps.newHashMap();
+            for (GroupCard card : MsoyServer.groupRepo.getMemberGroups(mrec.memberId, true)) {
+                groups.put(card.name.getGroupId(), card.name);
             }
 
             // load up the thread records
             List<ForumThreadRecord> thrrecs;
-            if (groupIds.size() == 0) {
+            if (groups.size() == 0) {
                 thrrecs = Collections.emptyList();
             } else {
-                thrrecs = MsoyServer.forumRepo.loadUnreadThreads(mrec.memberId, groupIds, maximum);
+                thrrecs = MsoyServer.forumRepo.loadUnreadThreads(
+                    mrec.memberId, groups.keySet(), maximum);
             }
 
             // load up additional fiddly bits and create a result record
-            ThreadResult result = toThreadResult(mrec, thrrecs);
+            ThreadResult result = toThreadResult(mrec, thrrecs, groups);
 
             // we cheat on the total count here with the idea that the client basically just asks
             // for "all" of the unread threads and we give them all as long as all is not
@@ -174,7 +180,6 @@ public class ForumServlet extends MsoyServiceServlet
                 highestPostId = Math.max(highestPostId, msg.messageId);
             }
             result.messages = messages;
-            result.group = group.getName();
 
             // fill in this caller's posting privileges
             result.canPostReply = (mrec != null) &&
@@ -184,15 +189,19 @@ public class ForumServlet extends MsoyServiceServlet
             result.isManager = (mrec != null && mrec.isSupport()) ||
                 (groupRank == GroupMembership.RANK_MANAGER);
 
+            Map<Integer, GroupName> groups =
+                Collections.singletonMap(group.groupId, group.getName());
+
             if (needTotalCount) {
                 // convert the thread record to a runtime record if needed
                 MemberCard mrpCard = cards.get(ftr.mostRecentPosterId);
                 if (mrpCard == null) {
-                    result.thread = ftr.toForumThread(resolveNames(Collections.singletonList(ftr)));
+                    result.thread = ftr.toForumThread(
+                        resolveNames(Collections.singletonList(ftr)), groups);
                 } else {
                     IntMap<MemberName> names = IntMaps.newHashIntMap();
                     names.put(ftr.mostRecentPosterId, mrpCard.name);
-                    result.thread = ftr.toForumThread(names);
+                    result.thread = ftr.toForumThread(names, groups);
                 }
                 // load up our last read post information
                 if (mrec != null) {
@@ -238,7 +247,8 @@ public class ForumServlet extends MsoyServiceServlet
             // create the thread (and first post) in the database and return its runtime form
             ForumThread thread = MsoyServer.forumRepo.createThread(
                 groupId, mrec.memberId, flags, subject, message).toForumThread(
-                    Collections.singletonMap(mrec.memberId, mrec.getName()));
+                    Collections.singletonMap(mrec.memberId, mrec.getName()),
+                    Collections.singletonMap(group.groupId, group.getName()));
 
             // if the thread is an announcement thread, post a feed message about it
             if (thread.isAnnouncement()) {
@@ -434,7 +444,8 @@ public class ForumServlet extends MsoyServiceServlet
      * Converts a list of threads to a {@link ThreadResult}, looking up the last poster names and
      * filling in other bits.
      */
-    protected ThreadResult toThreadResult (MemberRecord mrec, List<ForumThreadRecord> thrrecs)
+    protected ThreadResult toThreadResult (MemberRecord mrec, List<ForumThreadRecord> thrrecs,
+                                           Map<Integer, GroupName> groups)
         throws PersistenceException
     {
         // enumerate the last-posters and create member names for them
@@ -445,7 +456,7 @@ public class ForumServlet extends MsoyServiceServlet
         IntMap<ForumThread> thrmap = IntMaps.newHashIntMap();
         List<ForumThread> threads = Lists.newArrayList();
         for (ForumThreadRecord thrrec : thrrecs) {
-            ForumThread ftr = thrrec.toForumThread(names);
+            ForumThread ftr = thrrec.toForumThread(names, groups);
             thrmap.put(ftr.threadId, ftr);
             threads.add(ftr);
         }

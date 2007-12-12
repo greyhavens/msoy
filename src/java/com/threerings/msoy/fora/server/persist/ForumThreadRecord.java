@@ -17,6 +17,7 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.fora.data.ForumThread;
@@ -135,11 +136,11 @@ public class ForumThreadRecord extends PersistentRecord
      * @param members a mapping from memberId to {@link MemberName} that should contain a mapping
      * for {@link #mostRecentPosterId}.
      */
-    public ForumThread toForumThread (Map<Integer,MemberName> members)
+    public ForumThread toForumThread (Map<Integer,MemberName> members, Map<Integer,GroupName> groups)
     {
         ForumThread record = new ForumThread();
         record.threadId = threadId;
-        record.groupId = groupId;
+        record.group = groups.get(groupId);
         record.flags = flags;
         record.subject = subject;
         record.mostRecentPostId = mostRecentPostId;

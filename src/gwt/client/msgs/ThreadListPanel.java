@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -135,20 +136,8 @@ public class ThreadListPanel extends PagedGrid
             setCellSpacing(0);
 
             int col = 0;
-            Image type;
-            if (thread.hasUnreadMessages()) {
-                type = MsoyUI.createActionImage("/images/msgs/unread.png", new ClickListener() {
-                    public void onClick (Widget sender) {
-                        Application.go(Page.GROUP, threadArgs(
-                                           thread.threadId, thread.lastReadPostIndex,
-                                           thread.lastReadPostId));
-                    }
-                });
-                type.setTitle(CMsgs.mmsgs.tlpFirstUnreadTip());
-            } else {
-                type = new Image("/images/msgs/read.png");
-            }
-            setWidget(0, col, type);
+            String itype = thread.hasUnreadMessages() ? "unread" : "read";
+            setWidget(0, col, new Image("/images/msgs/" + itype + ".png"));
             getFlexCellFormatter().setStyleName(0, col++, "Status");
 
             RowPanel bits = new RowPanel();
@@ -160,8 +149,25 @@ public class ThreadListPanel extends PagedGrid
             if (thread.isAnnouncement()) {
                 bits.add(new Label(CMsgs.mmsgs.tlpAnnounce()));
             }
-            bits.add(Application.createLink(
-                         thread.subject, Page.GROUP, threadArgs(thread.threadId, 0, 0)));
+
+            Hyperlink toThread;
+            if (thread.hasUnreadMessages()) {
+                String args = threadArgs(
+                    thread.threadId, thread.lastReadPostIndex, thread.lastReadPostId);
+                toThread = Application.createLink(thread.subject, Page.GROUP, args);
+                toThread.setTitle(CMsgs.mmsgs.tlpFirstUnreadTip());
+            } else {
+                toThread = Application.createLink(
+                    thread.subject, Page.GROUP, threadArgs(thread.threadId, 0, 0));
+            }
+            bits.add(toThread);
+
+            // if we're displaying unread threads from many groups, display the group name after
+            // the subject
+            if (_groupId == 0) {
+                bits.add(MsoyUI.createLabel(CMsgs.mmsgs.tlpFromGroup(thread.group.toString()),
+                                            "tipLabel"), HasAlignment.ALIGN_BOTTOM);
+            }
 
             setWidget(0, col, bits);
             getFlexCellFormatter().setStyleName(0, col++, "Subject");

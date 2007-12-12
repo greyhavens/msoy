@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
@@ -53,17 +52,17 @@ public class ThreadPanel extends TitledListPanel
     public void showMessages ()
     {
         setContents(getThreadTitle(), _mpanel, true);
-        if (_group != null) { // if we already have our group, restore the group link
-            setRightBits(Application.groupViewLink(_group.toString(), _group.getGroupId()));
+        if (_thread != null) { // if we already have our group, restore the group link
+            setRightBits(Application.groupViewLink(_thread.group.toString(),
+                                                   _thread.group.getGroupId()));
         }
     }
 
-    public void gotThread (ForumThread thread, GroupName group)
+    public void gotThread (ForumThread thread)
     {
         _thread = thread;
-        _group = group;
         updateTitle(getThreadTitle());
-        setRightBits(Application.groupViewLink(group.toString(), group.getGroupId()));
+        setRightBits(Application.groupViewLink(thread.group.toString(), thread.group.getGroupId()));
     }
 
     public void editFlags ()
@@ -260,7 +259,7 @@ public class ThreadPanel extends TitledListPanel
                     MsoyUI.info(CMsgs.mmsgs.tfepUpdated());
                     ThreadFlagsEditorPanel.this.hide();
                     // update the thread panel title
-                    gotThread(_thread, _group);
+                    gotThread(_thread);
                     return true;
                 }
                 protected int _flags;
@@ -279,6 +278,5 @@ public class ThreadPanel extends TitledListPanel
 
     protected int _threadId;
     protected ForumThread _thread;
-    protected GroupName _group;
     protected MessagesPanel _mpanel;
 }
