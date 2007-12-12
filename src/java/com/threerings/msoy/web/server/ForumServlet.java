@@ -178,7 +178,8 @@ public class ForumServlet extends MsoyServiceServlet
             result.canPostReply = group.checkAccess(groupRank, Group.ACCESS_POST, 0);
 
             // fill in our manager status
-            result.isManager = mrec.isSupport() || (groupRank == GroupMembership.RANK_MANAGER);
+            result.isManager = (mrec != null && mrec.isSupport()) ||
+                (groupRank == GroupMembership.RANK_MANAGER);
 
             if (needTotalCount) {
                 // convert the thread record to a runtime record if needed
