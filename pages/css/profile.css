@@ -8,6 +8,10 @@
   height: 227px;
 }
 
+.blurb .contentFooterPanel {
+  width: 100%;
+}
+
 .profileBlurb {
   width: 100%;
 }

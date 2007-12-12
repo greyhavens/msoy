@@ -122,8 +122,12 @@
 }
 
 .trophyGrid .Trophy {
-  text-align: center;
   width: 115px;
+}
+
+.trophyGrid .Trophy img {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .trophyGrid .Name {
