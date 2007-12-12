@@ -323,7 +323,7 @@ public class LobbyController extends Controller implements Subscriber
             _tableDir.removeSeatednessObserver(_panel);
         }
 
-        // finally let whomever cares know that we're gone
+        // finally let whoever cares know that we're gone
         _onClear(inGame, _closedByUser);
     }
 
