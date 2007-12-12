@@ -49,19 +49,22 @@ public class SubItemPanel extends VerticalPanel
 
         add(WidgetUtil.makeShim(1, 10));
 
-        _create = new Button(CInventory.msgs.panelCreateNew());
-        _create.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                ItemEditor editor = ItemEditor.createItemEditor(_type, SubItemPanel.this);
-                if (editor != null) {
-                    _create.setEnabled(false);
-                    editor.setItem(editor.createBlankItem());
-                    editor.setParentItem(_parent.getIdent());
-                    editor.show();
+        // if our parent is an original item, allow creation of subitems
+        if (_parent.sourceId == 0) {
+            _create = new Button(CInventory.msgs.panelCreateNew());
+            _create.addClickListener(new ClickListener() {
+                public void onClick (Widget widget) {
+                    ItemEditor editor = ItemEditor.createItemEditor(_type, SubItemPanel.this);
+                    if (editor != null) {
+                        _create.setEnabled(false);
+                        editor.setItem(editor.createBlankItem());
+                        editor.setParentItem(_parent.getIdent());
+                        editor.show();
+                    }
                 }
-            }
-        });
-        add(_create);
+            });
+            add(_create);
+        }
     }
 
     // from EditorHost

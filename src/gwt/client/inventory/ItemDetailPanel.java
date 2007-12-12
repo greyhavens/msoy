@@ -42,12 +42,14 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         _panel = panel;
 
         // if this item supports sub-items, add a tab for those item types
-        byte[] types = _item.getSubTypes();
-        if (types.length > 0) {
-            for (int ii = 0; ii < types.length; ii++) {
-                addTabBelow(CInventory.dmsgs.getString("pItemType" + types[ii]),
-                            new SubItemPanel(types[ii], _item, panel), false);
+        SubItem[] types = _item.getSubTypes();
+        for (int ii = 0; ii < types.length; ii++) {
+            // if this is not an original item, only show salable subtypes
+            if (_item.sourceId != 0 && !types[ii].isSalable()) {
+                continue;
             }
+            addTabBelow(CInventory.dmsgs.getString("pItemType" + types[ii].getType()),
+                        new SubItemPanel(types[ii].getType(), _item, panel), false);
         }
     }
 
