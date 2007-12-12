@@ -588,6 +588,7 @@ public class WorldServlet extends MsoyServiceServlet
         throws ServiceException
     {
         HashIntMap<SceneCard> cards = new HashIntMap<SceneCard>();
+        List<SceneCard> returnCards = Lists.newArrayList();
 
         try {
             // maps group id to the scene(s) that are owned by it
@@ -624,12 +625,13 @@ public class WorldServlet extends MsoyServiceServlet
             // fill in logos for group-owned scenes
             for (GroupRecord groupRec : MsoyServer.groupRepo.loadGroups(groupIds.keySet())) {
                 for (int sceneId : groupIds.get(groupRec.groupId)) {
-                    SceneCard card = cards.get(sceneId);
+                    SceneCard card = cards.remove(sceneId);
                     if (card != null) {
                         card.logo = groupRec.logoMediaHash == null ?
                             Group.getDefaultGroupLogoMedia() :
                             new MediaDesc(groupRec.logoMediaHash, groupRec.logoMimeType,
                                           groupRec.logoMediaConstraint);
+                        returnCards.add(card);
                     }
                 }
             }
@@ -637,13 +639,20 @@ public class WorldServlet extends MsoyServiceServlet
             // fill in logos for member-owned scenes
             for (ProfileRecord profileRec : MsoyServer.profileRepo.loadProfiles(memIds.keySet())) {
                 for (int sceneId : memIds.get(profileRec.memberId)) {
-                    SceneCard card = cards.get(sceneId);
+                    SceneCard card = cards.remove(sceneId);
                     if (card != null) {
                         card.logo = profileRec.photoHash == null ? Profile.DEFAULT_PHOTO :
                             new MediaDesc(profileRec.photoHash, profileRec.photoMimeType,
                                         profileRec.photoConstraint);
+                        returnCards.add(card);
                     }
                 }
+            }
+
+            // fill in default logos for scenes whose group has been removed
+            for (SceneCard card : cards.values()) {
+                card.logo = Group.getDefaultGroupLogoMedia();
+                returnCards.add(card);
             }
 
         } catch (PersistenceException pe) {
@@ -651,7 +660,7 @@ public class WorldServlet extends MsoyServiceServlet
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
-        return Lists.newArrayList(cards.values());
+        return returnCards;
     }
 
     /**
