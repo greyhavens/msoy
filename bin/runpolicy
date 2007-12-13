@@ -12,6 +12,7 @@ MSOY_HOME=`dirname $0 | sed s:/bin$::`
 HOSTNAME=`hostname`
 
 LOGFILE=$MSOY_HOME/log/stdout-policy.log
+PIDFILE=$MSOY_HOME/run/policy-server.pid
 LOG_EMAIL=nightly-logs@threerings.net
 
 # Override settings with those from MSOY_HOME/server.conf
@@ -38,7 +39,10 @@ echo "         Java VM: $JAVA_VM" >>$LOGFILE
 echo "       Java args: $JAVA_ARGS" >>$LOGFILE
 echo "    Server class: $CLASS" >>$LOGFILE
 
-$JAVA_VM $JAVA_ARGS $CLASS >>$LOGFILE 2>&1
+$JAVA_VM $JAVA_ARGS $CLASS >>$LOGFILE 2>&1 &
+PROCESS_PID=$!
+echo $PROCESS_PID >$PIDFILE
+wait $PROCESS_PID
 EXIT_CODE=$?
 
 # Mail out warnings from the logs
