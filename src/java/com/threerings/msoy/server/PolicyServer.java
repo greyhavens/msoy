@@ -66,7 +66,7 @@ public class PolicyServer extends IoHandlerAdapter
         // if we're running on 843, serve a master policy file
         if (socketPolicyPort == MASTER_PORT) {
             policyBuilder.append(
-                " <site-control permitted-cross-domain-policies=\"master-only\"/>\n");
+                "  <site-control permitted-cross-domain-policies=\"master-only\"/>\n");
         }
         policyBuilder.append("  <allow-access-from domain=\"").append(publicServerHost).
             append("\"").append(" to-ports=\"");
