@@ -116,6 +116,8 @@ public class FeedPanel extends VerticalPanel
         switch (message.type) {
         case 100: // FRIEND_ADDED_FRIEND
             return new MessageKey(message.type, message.data[1]);
+        case 102: // FRIEND_WON_TROPHY
+            return new MessageKey(message.type, message.data[0]);
         }
         return null;
     }
@@ -418,6 +420,11 @@ public class FeedPanel extends VerticalPanel
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
                 add(new BasicWidget(CWhirled.msgs.friendAddedFriendsRight(
+                                friendLinks, buildString(message))));
+                break;
+
+            case 102: // FRIEND_WON_TROPHY
+                add(new BasicWidget(CWhirled.msgs.friendWonTrophy(
                                 friendLinks, buildString(message))));
                 break;
             }
