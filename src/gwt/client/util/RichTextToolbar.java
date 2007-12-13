@@ -188,10 +188,10 @@ public class RichTextToolbar extends Composite
 
         if (basic != null) {
             bottomPanel.add(new Label("Text:"));
-            bottomPanel.add(backColors = createColorList("Background"));
             bottomPanel.add(foreColors = createColorList("Foreground"));
             bottomPanel.add(fonts = createFontList());
             bottomPanel.add(fontSizes = createFontSizes());
+            bottomPanel.add(blockFormats = createBlockFormats());
 
             if (allowPanelEdit) {
                 bottomPanel.add(new Button("Panel Colors", new ClickListener() {
@@ -229,6 +229,23 @@ public class RichTextToolbar extends Composite
             public void execute () {
                 setPanelColorsImpl(richText.getElement(), (_tcolor == null) ? "" : _tcolor,
                                    (_bgcolor == null) ? "none" : _bgcolor);
+            }
+        });
+    }
+
+    public void setBlockFormat (String format)
+    {
+        setBlockFormatImpl(richText.getElement(), format);
+    }
+
+    // @Override // from Widget
+    protected void onAttach ()
+    {
+        super.onAttach();
+        DeferredCommand.add(new Command() {
+            public void execute () {
+                CShell.log("Configuring iframe...");
+                configureIFrame(richText.getElement());
             }
         });
     }
@@ -280,6 +297,24 @@ public class RichTextToolbar extends Composite
         lb.addItem(strings.large());
         lb.addItem(strings.xlarge());
         lb.addItem(strings.xxlarge());
+        return lb;
+    }
+
+    protected ListBox createBlockFormats ()
+    {
+        ListBox lb = new ListBox();
+        lb.addChangeListener(listener);
+        lb.setVisibleItemCount(1);
+
+        lb.addItem("Format");
+        lb.addItem("Normal");
+        lb.addItem("Code");
+        lb.addItem("Header 1");
+        lb.addItem("Header 2");
+        lb.addItem("Header 3");
+        lb.addItem("Header 4");
+        lb.addItem("Header 5");
+        lb.addItem("Header 6");
         return lb;
     }
 
@@ -356,10 +391,27 @@ public class RichTextToolbar extends Composite
         popup.show();
     }
 
+    protected static native void configureIFrame (Element elem) /*-{
+        var ss = elem.contentWindow.document.createElement("link");
+        ss.type = "text/css";
+        ss.href = "http://" + $wnd.location.hostname + ":" + $wnd.location.port + "/css/global.css";
+        ss.rel = "stylesheet";
+        elem.contentWindow.document.getElementsByTagName("head")[0].appendChild(ss);
+        ss = elem.contentWindow.document.createElement("link");
+        ss.type = "text/css";
+        ss.href = "http://" + $wnd.location.hostname + ":" + $wnd.location.port + "/css/editor.css";
+        ss.rel = "stylesheet";
+        elem.contentWindow.document.getElementsByTagName("head")[0].appendChild(ss);
+    }-*/;
+
     protected static native void setPanelColorsImpl (
-        Element element, String tcolor, String bgcolor) /*-{
-        element.contentWindow.document.body.style['color'] = tcolor;
-        element.contentWindow.document.body.style['background'] = bgcolor;
+        Element elem, String tcolor, String bgcolor) /*-{
+        elem.contentWindow.document.body.style['color'] = tcolor;
+        elem.contentWindow.document.body.style['background'] = bgcolor;
+    }-*/;
+
+    protected static native void setBlockFormatImpl (Element elem, String format) /*-{
+        elem.contentWindow.document.execCommand("FormatBlock", false, format);
     }-*/;
 
     /**
@@ -369,10 +421,7 @@ public class RichTextToolbar extends Composite
     protected class EventListener implements ClickListener, ChangeListener, KeyboardListener
     {
         public void onChange (Widget sender) {
-            if (sender == backColors) {
-                basic.setBackColor(backColors.getValue(backColors.getSelectedIndex()));
-                backColors.setSelectedIndex(0);
-            } else if (sender == foreColors) {
+            if (sender == foreColors) {
                 basic.setForeColor(foreColors.getValue(foreColors.getSelectedIndex()));
                 foreColors.setSelectedIndex(0);
             } else if (sender == fonts) {
@@ -381,6 +430,9 @@ public class RichTextToolbar extends Composite
             } else if (sender == fontSizes) {
                 basic.setFontSize(fontSizesConstants[fontSizes.getSelectedIndex() - 1]);
                 fontSizes.setSelectedIndex(0);
+            } else if (sender == blockFormats) {
+                setBlockFormat(blockFormatConstants[blockFormats.getSelectedIndex() - 1]);
+                blockFormats.setSelectedIndex(0);
             }
         }
 
@@ -486,10 +538,10 @@ public class RichTextToolbar extends Composite
     protected PushButton removeLink;
     protected PushButton removeFormat;
 
-    protected ListBox backColors;
     protected ListBox foreColors;
     protected ListBox fonts;
     protected ListBox fontSizes;
+    protected ListBox blockFormats;
 
     protected String _tcolor, _bgcolor;
 
@@ -498,4 +550,8 @@ public class RichTextToolbar extends Composite
         RichTextArea.FontSize.SMALL, RichTextArea.FontSize.MEDIUM,
         RichTextArea.FontSize.LARGE, RichTextArea.FontSize.X_LARGE,
         RichTextArea.FontSize.XX_LARGE};
+
+    protected static final String[] blockFormatConstants = new String[] {
+        "<p>", "<pre>", "<h1>", "<h2>", "<h3>", "<h4>", "<h5>", "<h6>"
+    };
 }

@@ -25,3 +25,25 @@ a.external {
   background: url(/images/ui/external.png) center right no-repeat;
   padding-right: 16px;
 }
+
+/** These are for iframe-based RichTextArea editing. */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0px;
+}
+
+pre {
+  background: #D8F2FE;
+  font-size: 12px;
+  padding: 1px 15px;
+  margin: 0px;
+}
+
+blockquote {
+  border: 1px solid #999999;
+  background: #EDEDED;
+  font-size: 12px;
+  padding: 5px;
+  margin-left: 15px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}

@@ -882,16 +882,6 @@ img {
   vertical-align: top;
 }
 
-.messagePanel blockquote {
-  border: 1px solid #999999;
-  background: #EDEDED;
-  font-size: 12px;
-  padding: 5px;
-  margin-left: 15px;
-  margin-top: 5px;
-  margin-bottom: 10px;
-}
-
 .messagePanel .LeftPad {
   padding-left: 10px;
 }
