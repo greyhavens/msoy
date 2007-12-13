@@ -208,8 +208,8 @@ public class AbstractRoomView extends Sprite
     }
 
     /**
-     * Get the full boundaries of our scrolling area.  The Rectangle returned may be destructively
-     * modified.
+     * Get the full boundaries of our scrolling area in scaled (decor pixel) dimensions.
+     * The Rectangle returned may be destructively modified.
      */
     public function getScrollBounds () :Rectangle
     {
@@ -218,10 +218,25 @@ public class AbstractRoomView extends Sprite
             r.width = Math.min(_scene.getWidth(), r.width);
             r.height = Math.min(_scene.getHeight(), r.height);
         }
-        if (_editing) {
-            // r.inflate(_actualWidth * 2 / 3, 0); // TODO: obsolete?
-        }
         return r;
+    }
+
+    /**
+     * Get the full boundaries of our scrolling area in unscaled (stage pixel) dimensions.
+     * The Rectangle returned may be destructively modified.
+     */
+    public function getScrollSize () :Rectangle
+    {
+        var x :int = _actualWidth;
+        var y :int = _actualHeight;
+        if (_scene != null) {
+            x = Math.min(_scene.getWidth() * scaleX, x);
+            y = Math.min(_scene.getHeight() * scaleY, y);
+        }
+        var bottomRight :Point = this.localToGlobal(new Point(x, y));
+        var topLeft :Point = this.localToGlobal(new Point(0, 0));
+        return new Rectangle(
+            topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
     }
 
     /**

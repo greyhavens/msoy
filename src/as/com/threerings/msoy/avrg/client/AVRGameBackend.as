@@ -140,7 +140,7 @@ public class AVRGameBackend extends ControlBackend
         super.populateControlProperties(o);
 
         // AVRGameControl
-        o["getStageBounds_v1"] = getStageBounds_v1;
+        o["getStageSize_v1"] = getStageSize_v1;
         o["getRoomBounds_v1"] = getRoomBounds_v1;
         o["stageToRoom_v1"] = stageToRoom_v1;
         o["roomToStage_v1"] = roomToStage_v1;
@@ -160,9 +160,16 @@ public class AVRGameBackend extends ControlBackend
         _questBackend.populateSubProperties(o);
     }
 
-    protected function getStageBounds_v1 () :Rectangle
+    protected function getStageSize_v1 (full :Boolean) :Rectangle
     {
-        return _wctx.getTopPanel().getPlaceViewBounds();
+        var view :AbstractRoomView = _wctx.getTopPanel().getPlaceView() as AbstractRoomView;
+        if (view != null) {
+            if (full) {
+                return _wctx.getTopPanel().getPlaceViewBounds();
+            }
+            return view.getScrollSize();
+        }
+        return null;
     }
 
     protected function getRoomBounds_v1 () :Rectangle
