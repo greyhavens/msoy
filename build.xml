@@ -103,6 +103,15 @@
     <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/s3lib.jar"/>
 
+    <!-- The following are used for HTML sanitization -->
+    <file name="${extlibs.dir}/antisamy/antisamy-bin.1.0.jar"/>
+    <file name="${extlibs.dir}/antisamy/batik-css.jar"/>
+    <file name="${extlibs.dir}/antisamy/batik-util.jar"/>
+    <file name="${extlibs.dir}/antisamy/dom4j.jar"/>
+    <file name="${extlibs.dir}/antisamy/nekohtml.jar"/>
+    <file name="${extlibs.dir}/antisamy/sac.jar"/>
+    <file name="${extlibs.dir}/xercesImpl.jar"/>
+
     <file name="lib/json.jar"/>
     <file name="lib/jswiff-8.0-beta-2-threerings.jar"/>
     <file name="lib/sdoc-0.5.0-beta-ooo.jar"/>
@@ -194,6 +203,9 @@
     </then><else>
       <copy todir="${deploy.dir}" file="${basedir}/etc/ehcache.xml"/>
     </else></if>
+
+    <!-- copy our HTML sanitizer configuration -->
+    <copy file="${basedir}/etc/antisamy-config.xml" todir="${deploy.dir}"/>
 
     <!-- create dev usable security.policy and swiftly.policy files -->
     <!-- real ones are created in prepare-server-extra -->

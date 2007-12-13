@@ -22,6 +22,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.util.HTMLSanitizer;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -242,7 +243,9 @@ public class ForumServlet extends MsoyServiceServlet
             // make sure they're allowed to create a thread in this group
             Group group = checkAccess(mrec, groupId, Group.ACCESS_THREAD, flags);
 
-            // TODO: check first message contents
+            // make sure the user is not doing anything nefarious in their HTML (note: we never
+            // display the subject as raw HTML so we don't need to sanitize it)
+            message = HTMLSanitizer.sanitize(message);
 
             // create the thread (and first post) in the database and return its runtime form
             ForumThread thread = MsoyServer.forumRepo.createThread(
@@ -310,7 +313,8 @@ public class ForumServlet extends MsoyServiceServlet
             }
             checkAccess(mrec, ftr.groupId, Group.ACCESS_POST, ftr.flags);
 
-            // TODO: check message contents
+            // make sure the user is not doing anything nefarious in their HTML
+            message = HTMLSanitizer.sanitize(message);
 
             // create the message in the database and return its runtime form
             ForumMessageRecord fmr = MsoyServer.forumRepo.postMessage(
@@ -349,7 +353,8 @@ public class ForumServlet extends MsoyServiceServlet
                 throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
             }
 
-            // TODO: check message contents
+            // make sure the user is not doing anything nefarious in their HTML
+            message = HTMLSanitizer.sanitize(message);
 
             // if all is well then do the deed
             MsoyServer.forumRepo.updateMessage(messageId, message);

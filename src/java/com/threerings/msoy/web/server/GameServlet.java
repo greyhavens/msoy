@@ -43,6 +43,7 @@ import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.util.HTMLSanitizer;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -182,7 +183,8 @@ public class GameServlet extends MsoyServiceServlet
 
         GameRepository repo = MsoyServer.itemMan.getGameRepository();
         try {
-            // TODO: sanitize the supplied instructions HTML
+            // trust not the user; they are prone to evil
+            instructions = HTMLSanitizer.sanitize(instructions);
 
             // now that we've confirmed that they're allowed, update the instructions
             repo.updateGameInstructions(gameId, instructions);
