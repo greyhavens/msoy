@@ -928,7 +928,7 @@
                    pidfile="${prefix.app}/run/policy-server.pid"
                    output="${pkg.base}/etc/rc.d/policy-server.sh">
      <command cmd="/usr/sbin/daemon" args="-f -p ${pidfile} ${prefix.app}/bin/runpolicy"
-              procname="*policyrespawn"/>
+              procname="*runpolicy"/>
     </startupscript>
   </target>
 
