@@ -49,9 +49,8 @@
 
   <!-- declare the files from bin needed in the package -->
   <property name="bin.list1" value="msoy,msoyrespawn,msoyserver,msoyjava,runmsoy,rungame,mysql"/>
-  <property name="bin.list2" value="process_stats,roll_logs,swiftlycompiler,runcommon"/>
-  <property name="bin.list3" value="policyrespawn,runpolicy"/>
-  <property name="bin.list"   value="${bin.list1},${bin.list2},${bin.list3}"/>
+  <property name="bin.list2" value="process_stats,roll_logs,swiftlycompiler,runcommon,runpolicy"/>
+  <property name="bin.list"   value="${bin.list1},${bin.list2}"/>
 
   <!-- declare the files that will be deployed to the maven repository -->
   <filelist dir="." id="deploy.filelist">
@@ -929,7 +928,7 @@
     <startupscript name="policy_server" runas="root"
                    pidfile="${prefix.app}/run/policy-server.pid"
                    output="${pkg.base}/etc/rc.d/policy-server.sh">
-     <command cmd="/usr/sbin/daemon" args="-f -p ${pidfile} ${prefix.app}/bin/policyrespawn"
+     <command cmd="/usr/sbin/daemon" args="-f -p ${pidfile} ${prefix.app}/bin/runpolicy"
               procname="*policyrespawn"/>
     </startupscript>
   </target>

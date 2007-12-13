@@ -11,13 +11,6 @@ DESC="Flash security policy server"
 MSOY_HOME=`dirname $0 | sed s:/bin$::`
 HOSTNAME=`hostname`
 
-# Make sure our server pid file was properly supplied
-if [ -z "$1" ]; then
-    echo "Usage: $0 pid_file"
-    exit 255
-fi
-PIDFILE=$1
-
 LOGFILE=$MSOY_HOME/log/stdout-policy.log
 LOG_EMAIL=nightly-logs@threerings.net
 
@@ -45,10 +38,7 @@ echo "         Java VM: $JAVA_VM" >>$LOGFILE
 echo "       Java args: $JAVA_ARGS" >>$LOGFILE
 echo "    Server class: $CLASS" >>$LOGFILE
 
-$JAVA_VM $JAVA_ARGS $CLASS >>$LOGFILE 2>&1 &
-PROCESS_PID=$!
-echo $PROCESS_PID >$PIDFILE
-wait $PROCESS_PID
+$JAVA_VM $JAVA_ARGS $CLASS >>$LOGFILE 2>&1
 EXIT_CODE=$?
 
 # Mail out warnings from the logs
@@ -59,7 +49,7 @@ if [ -s $FILTLOG ]; then
 fi
 rm -f $FILTLOG
 
-# Archive the server log
+# Archive the log
 NOW=`date "+%F-%H:%M"`
 mv $LOGFILE $LOGFILE.$NOW
 
