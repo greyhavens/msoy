@@ -244,7 +244,6 @@ public class RichTextToolbar extends Composite
         super.onAttach();
         DeferredCommand.add(new Command() {
             public void execute () {
-                CShell.log("Configuring iframe...");
                 configureIFrame(richText.getElement());
             }
         });
