@@ -69,6 +69,8 @@ public class InstructionsPanel extends VerticalPanel
         if (instructions.matches("^<t#......>.*")) {
             results[1] = instructions.substring(2, 9);
             instructions = instructions.substring(10);
+        } else if (instructions.length() > 10) {
+            CGame.log("No match for text color " + instructions.substring(0, 10) + ".");
         }
         if (instructions.matches("^<bg#......>.*")) {
             results[2] = instructions.substring(3, 10);
