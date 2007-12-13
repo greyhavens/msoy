@@ -82,7 +82,6 @@
     <file name="${extlibs.dir}/jetty6/jetty-util.jar"/>
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/junit4.jar"/>
-    <file name="${extlibs.dir}/log4j.jar"/>
     <file name="${extlibs.dir}/mina-core.jar"/>
     <file name="${extlibs.dir}/mail.jar"/>
     <file name="${extlibs.dir}/mysql-connector-java.jar"/>
