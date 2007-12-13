@@ -52,8 +52,8 @@ public class PolicyServer extends IoHandlerAdapter
             publicServerHost = ServerConfig.serverHost;
         }
 
-        acceptor.bind(new InetSocketAddress(port),
-                      new PolicyServer(port, publicServerHost), cfg);
+        log.info("Policy server listening on port " + port + ".");
+        acceptor.bind(new InetSocketAddress(port), new PolicyServer(port, publicServerHost), cfg);
     }
 
     /** Create a new server instance. */
