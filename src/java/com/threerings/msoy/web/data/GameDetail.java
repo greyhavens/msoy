@@ -16,6 +16,9 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class GameDetail
     implements IsSerializable
 {
+    /** The maximum allowed length for game instructions. */
+    public static final int MAX_INSTRUCTIONS_LENGTH = 4096;
+
     /** The id of the game in question. */
     public int gameId;
 

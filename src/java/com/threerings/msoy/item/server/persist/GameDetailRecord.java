@@ -115,7 +115,7 @@ public class GameDetailRecord extends PersistentRecord
     public int sourceItemId;
 
     /** The creator supplied instructions for this game. */
-    @Column(length=4096, nullable=true)
+    @Column(length=GameDetail.MAX_INSTRUCTIONS_LENGTH, nullable=true)
     public String instructions;
 
     /** Contains the total number of "player games" accumulated for this game in single player.
