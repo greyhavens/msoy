@@ -23,12 +23,12 @@
         <regexp name="htmlTitle" value="[a-zA-Z0-9\s-_',:\[\]!\./\\\(\)]+"/>
         <regexp name="onsiteURL" value="([\w\\/\.\?=&amp;;#-~]+|#(\w)+)"/>
         <regexp name="offsiteURL" value="(\s)*((ht|f)tp(s?)://|mailto:)[A-Za-z0-9]+[~a-zA-Z0-9-_\.@#$%&amp;;:,\?=/\+!]*(\s)*"/>
-		<regexp name="paragraph" value="([a-zA-Z0-9,'\.\s-_\(\)]|&amp;[0-9]{2};)*"/>
-		<regexp name="number" value="[0-9]+"/>
-		<regexp name="numberOrPercent" value="(\d)+(%{0,1})"/>
-		<regexp name="cssColor" value="(aqua|black|blue|fuchsia|gray|grey|green|lime|maroon|navy|olive|purple|red|silver|teal|white|yellow)|rgb\(([1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5]),([1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5]),([1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\)"/>		
-		<regexp name="length" value="((-|\+)?0|(-|\+)?([0-9]+(.[0-9]+)?)(em|ex|px|in|cm|mm|pt|pc))"/>
-		<regexp name="percentage" value="(-|\+)?([0-9]+(.[0-9]+)?)%"/>
+        <regexp name="paragraph" value="([a-zA-Z0-9,'\.\s-_\(\)]|&amp;[0-9]{2};)*"/>
+        <regexp name="number" value="[0-9]+"/>
+        <regexp name="numberOrPercent" value="(\d)+(%{0,1})"/>
+        <regexp name="cssColor" value="(aqua|black|blue|fuchsia|gray|grey|green|lime|maroon|navy|olive|purple|red|silver|teal|white|yellow)|rgb\(([1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5]),([1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5]),([1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\)"/>        
+        <regexp name="length" value="((-|\+)?0|(-|\+)?([0-9]+(.[0-9]+)?)(em|ex|px|in|cm|mm|pt|pc))"/>
+        <regexp name="percentage" value="(-|\+)?([0-9]+(.[0-9]+)?)%"/>
 
     </common-regexps>
 
@@ -82,17 +82,17 @@
             </regexp-list>
          </attribute>
 
-		<attribute name="width">
-			<regexp-list>
-				<regexp name="numberOrPercent"/>
-			</regexp-list>
-		</attribute>
+        <attribute name="width">
+            <regexp-list>
+                <regexp name="numberOrPercent"/>
+            </regexp-list>
+        </attribute>
 
-		<attribute name="height">
-			<regexp-list>
-				<regexp name="numberOrPercent"/>
-			</regexp-list>
-		</attribute>
+        <attribute name="height">
+            <regexp-list>
+                <regexp name="numberOrPercent"/>
+            </regexp-list>
+        </attribute>
 
          <attribute name="alt" description="The 'alt' attribute provides alternative text to users when its visual representation is not available">
             <regexp-list>
@@ -114,7 +114,7 @@
             <regexp-list>
                 <regexp name="number"/>
             </regexp-list>
-		</attribute>
+        </attribute>
     </common-attributes>
 
     <!--
@@ -334,45 +334,45 @@
             </literal-list>
         </property>
 
-		<property name="color" description="">
-			<category-list>
-				<category value="visual"/>
-			</category-list>
-			<literal-list>
-				<literal value="inherit"/>
-			</literal-list>
-			<regexp-list>
-				<regexp name="cssColor"/>
-			</regexp-list>
-		</property>
+        <property name="color" description="">
+            <category-list>
+                <category value="visual"/>
+            </category-list>
+            <literal-list>
+                <literal value="inherit"/>
+            </literal-list>
+            <regexp-list>
+                <regexp name="cssColor"/>
+            </regexp-list>
+        </property>
 
-		<property name="width" default="auto" description="">
-			<category-list>
-				<category value="visual"/>
-			</category-list>
-			<literal-list>
-				<literal value="auto"/>
-				<literal value="inherit"/>
-			</literal-list>
-			<regexp-list>
-				<regexp name="length"/>
-				<regexp name="percentage"/>
-			</regexp-list>
-		</property>
+        <property name="width" default="auto" description="">
+            <category-list>
+                <category value="visual"/>
+            </category-list>
+            <literal-list>
+                <literal value="auto"/>
+                <literal value="inherit"/>
+            </literal-list>
+            <regexp-list>
+                <regexp name="length"/>
+                <regexp name="percentage"/>
+            </regexp-list>
+        </property>
 
-		<property name="height" default="auto" description="">
-			<category-list>
-				<category value="visual"/>
-			</category-list>
-			<literal-list>
-				<literal value="auto"/>
-				<literal value="inherit"/>
-			</literal-list>
-			<regexp-list>
-				<regexp name="length"/>
-				<regexp name="percentage"/>
-			</regexp-list>
-		</property>
+        <property name="height" default="auto" description="">
+            <category-list>
+                <category value="visual"/>
+            </category-list>
+            <literal-list>
+                <literal value="auto"/>
+                <literal value="inherit"/>
+            </literal-list>
+            <regexp-list>
+                <regexp name="length"/>
+                <regexp name="percentage"/>
+            </regexp-list>
+        </property>
     </css-rules>
 
     <html-entities>
