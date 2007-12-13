@@ -106,10 +106,10 @@ public class GameLiaison
     // from interface ClientObserver
     public function clientWillLogon (event :ClientEvent) :void
     {
-        var hostName :String = _gctx.getClient().getHostname();
-        log.info("Loading policy for host " + hostName  + ".");
-        Security.loadPolicyFile("xmlsocket://" + hostName + ":" +
-                                DeploymentConfig.socketPolicyPort);
+        var url :String = "xmlsocket://" + _gctx.getClient().getHostname() + ":" +
+            DeploymentConfig.socketPolicyPort;
+        log.info("Loading security policy: " + url);
+        Security.loadPolicyFile(url);
     }
 
     // from interface ClientObserver

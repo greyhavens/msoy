@@ -277,9 +277,9 @@ public /*abstract*/ class MsoyClient extends Client
      */
     protected function clientWillLogon (event :ClientEvent) :void
     {
-        log.info("Loading policy for host " + getHostname()  + ".");
-        Security.loadPolicyFile("xmlsocket://" + getHostname() + ":" +
-                                DeploymentConfig.socketPolicyPort);
+        var url :String = "xmlsocket://" + getHostname() + ":" + DeploymentConfig.socketPolicyPort;
+        log.info("Loading security policy: " + url);
+        Security.loadPolicyFile(url);
     }
 
     /**
