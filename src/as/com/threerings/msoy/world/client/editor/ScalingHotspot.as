@@ -47,6 +47,7 @@ public class ScalingHotspot extends Hotspot
     {
         super.startAction(event);
         _originalScale = new Point(_editor.target.getMediaScaleX(), _editor.target.getMediaScaleY());
+        updateTargetScale(event);
     }
 
     // @Override from Hotspot
