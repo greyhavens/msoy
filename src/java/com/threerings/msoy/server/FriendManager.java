@@ -10,6 +10,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import static com.threerings.msoy.Log.log;
@@ -94,21 +95,12 @@ public class FriendManager
 
     /**
      * Called to notify the friend manager that a friendship was removed.
-     * PEER TODO: make this work via peer services.
      */
     public void friendshipCleared (int removerId, int friendId)
     {
-        // remove them from the friends list of both parties of they are online
-        MemberObject remover = MsoyServer.lookupMember(removerId);
-        if (remover != null) {
-            remover.removeFromFriends(friendId);
-            clearFriendInterest(remover, friendId);
-        }
-        MemberObject exfriend = MsoyServer.lookupMember(friendId);
-        if (exfriend != null) {
-            exfriend.removeFromFriends(removerId);
-            clearFriendInterest(exfriend, removerId);
-        }
+        // remove them from the friends list of both parties, wherever they are online
+        MsoyServer.peerMan.invokeNodeAction(new RemoveFriend(removerId, friendId));
+        MsoyServer.peerMan.invokeNodeAction(new RemoveFriend(friendId, removerId));
     }
 
     // from interface MsoyPeerManager.RemoteMemberObserver
@@ -149,6 +141,21 @@ public class FriendManager
             }
             watcher.updateFriends(new FriendEntry(entry.name, online, entry.photo));
         }
+    }
+
+    protected static class RemoveFriend extends MemberNodeAction
+    {
+        public RemoveFriend (int memberId, int friendId) {
+            super(memberId);
+            _friendId = friendId;
+        }
+
+        protected void execute (MemberObject memobj) {
+            memobj.removeFromFriends(_friendId);
+            MsoyServer.friendMan.clearFriendInterest(memobj, _friendId);
+        }
+
+        protected int _friendId;
     }
 
     /** A mapping from member id to the member objects of members on this server that are friends
