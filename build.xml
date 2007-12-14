@@ -903,8 +903,9 @@
     <chmod perm="755">
       <fileset dir="${pkg.base}/data/swiftly/flex_sdk/bin"/>
     </chmod>
-    <!-- need our ehcache.xml file -->
+    <!-- need some xml files -->
     <copy file="${deploy.dir}/ehcache.xml" todir="${pkg.base}/${deploy.dir}"/>
+    <copy file="${deploy.dir}/antisamy-config.xml" todir="${pkg.base}/${deploy.dir}"/>
     <!-- and logging.properties -->
     <copy file="${deploy.dir}/logging.properties" todir="${pkg.base}/${deploy.dir}"/>
     <!-- create some runtime directories -->
