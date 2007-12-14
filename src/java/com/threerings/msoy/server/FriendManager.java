@@ -74,23 +74,12 @@ public class FriendManager
 
     /**
      * Called to notify the friend manager that a friendship request was accepted.
-     * PEER TODO: make this work via peer services.
      */
     public void friendshipEstablished (MemberName acceptor, MemberName friend)
     {
-        // add them to the friends list of both parties of they are online
-        MemberObject accobj = MsoyServer.lookupMember(acceptor.getMemberId());
-        MemberObject frobj = MsoyServer.lookupMember(friend.getMemberId());
-        if (accobj != null) {
-            accobj.addToFriends(new FriendEntry(friend, frobj != null,
-                                                (frobj == null) ? null : frobj.getHeadShotMedia()));
-            registerFriendInterest(accobj, friend.getMemberId());
-        }
-        if (frobj != null) {
-            frobj.addToFriends(new FriendEntry(acceptor, accobj != null,
-                                               accobj == null ? null : accobj.getHeadShotMedia()));
-            registerFriendInterest(frobj, acceptor.getMemberId());
-        }
+        // add them to the friends list of both parties if/whereever they are online
+        MsoyServer.peerMan.invokeNodeAction(new AddFriend(acceptor.getMemberId(), friend));
+        MsoyServer.peerMan.invokeNodeAction(new AddFriend(friend.getMemberId(), acceptor));
     }
 
     /**
@@ -106,14 +95,12 @@ public class FriendManager
     // from interface MsoyPeerManager.RemoteMemberObserver
     public void remoteMemberLoggedOn (MemberName member)
     {
-        // TODO: handle server switches
         updateOnlineStatus(member.getMemberId(), true);
     }
 
     // from interface MsoyPeerManager.RemoteMemberObserver
     public void remoteMemberLoggedOff (MemberName member)
     {
-        // TODO: handle server switches
         updateOnlineStatus(member.getMemberId(), false);
     }
 
@@ -132,6 +119,8 @@ public class FriendManager
 
     protected void updateOnlineStatus (int memberId, boolean online)
     {
+        // TODO: add filter to avoid off/on when member switches servers
+
         for (MemberObject watcher : _friendMap.get(memberId)) {
             FriendEntry entry = watcher.friends.get(memberId);
             if (entry == null) {
@@ -141,6 +130,26 @@ public class FriendManager
             }
             watcher.updateFriends(new FriendEntry(entry.name, online, entry.photo));
         }
+    }
+
+    protected static class AddFriend extends MemberNodeAction
+    {
+        public AddFriend (int memberId, MemberName friend) {
+            super(memberId);
+            _friendId = friend.getMemberId();
+            _friendName = friend.toString();
+        }
+
+        protected void execute (MemberObject memobj) {
+            MemberName friend = new MemberName(_friendName, _friendId);
+            boolean online = (MsoyServer.peerMan.locateClient(friend) != null);
+            // TODO: get friend's headshot from the database
+            memobj.addToFriends(new FriendEntry(friend, online, null));
+            MsoyServer.friendMan.registerFriendInterest(memobj, _friendId);
+        }
+
+        protected int _friendId;
+        protected String _friendName;
     }
 
     protected static class RemoveFriend extends MemberNodeAction
