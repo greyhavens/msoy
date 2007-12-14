@@ -85,7 +85,10 @@ public class AVRGameController extends Controller
             tutorialEvent("gamePlayed");
         }
 
-        avrGameAvailable(_panel.getAVRGameBackend());
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            view.avrGameAvailable(_gameId);
+        }
     }
 
     public function tutorialEvent (eventName :String) :void
@@ -122,19 +125,12 @@ public class AVRGameController extends Controller
         _wctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
         _subscriber.unsubscribe(_wctx.getDObjectManager());
 
-        avrGameAvailable(null);
-        _panel.shutdown();
-    }
-
-    protected function avrGameAvailable (backend :AVRGameBackend) :void
-    {
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (view == null) {
-            return;
+        if (view != null) {
+            view.avrGameAvailable(0);
         }
-        for each (var sprite :MobSprite in view.getMobs(_gameId)) {
-            sprite.avrGameAvailable(backend);
-        }
+
+        _panel.shutdown();
     }
 
     protected var _wctx :WorldContext;

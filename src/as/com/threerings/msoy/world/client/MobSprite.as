@@ -19,14 +19,15 @@ import com.threerings.util.Log;
  */
 public class MobSprite extends OccupantSprite
 {
-    public function MobSprite (occInfo :MobInfo)
+    public function MobSprite (occInfo :MobInfo, backend :AVRGameBackend)
     {
         super(occInfo);
 
         _holder = new Sprite();
         setMediaObject(_holder);
 
-        // now wait to be told what our AVRG backend is
+        _hostBackend = backend;
+        updateMobVisual();
     }
 
     /** Return this MOB's unique identifier. */
@@ -39,13 +40,6 @@ public class MobSprite extends OccupantSprite
     public function getMobGameId () :int
     {
         return MobInfo(_occInfo).getGameId();
-    }
-
-    /** Called when the AVRG related to this MOB is available (or not) */
-    public function avrGameAvailable (backend :AVRGameBackend) :void
-    {
-        _hostBackend = backend;
-        updateMobVisual();
     }
 
     /** Called when this MOB is removed from the room. */

@@ -622,6 +622,21 @@ public class RoomView extends AbstractRoomView
         return null;
     }
 
+    /** Signals that an AVRG has started (gameId != 0) or ended (gameId == 0). */
+    public function avrGameAvailable (gameId :int) :void
+    {
+        for each (var occInfo :OccupantInfo in _roomObj.occupantInfo.toArray()) {
+            if (occInfo is MobInfo) {
+                if (gameId == 0) {
+                    removeBody(occInfo.getBodyOid());
+
+                } else if (MobInfo(occInfo).getGameId() == gameId) {
+                    addBody(occInfo);
+                }
+            }
+        }
+    }
+
     /**
      * Called when control of an entity is assigned to us.
      */

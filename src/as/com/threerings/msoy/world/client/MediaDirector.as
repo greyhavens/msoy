@@ -55,12 +55,11 @@ public class MediaDirector extends BasicDirector
             return sprite;
 
         } else if (occInfo is MobInfo) {
-            var mobSprite :MobSprite = new MobSprite(occInfo as MobInfo);
-
             if (MobInfo(occInfo).getGameId() == _wctx.getGameDirector().getGameId()) {
-                mobSprite.avrGameAvailable(_wctx.getGameDirector().getAVRGameBackend());
+                return new MobSprite(
+                    occInfo as MobInfo, _wctx.getGameDirector().getAVRGameBackend());
             }
-            return mobSprite;
+            return null;
 
         } else if (occInfo is ObserverInfo) {
             // view-only members have no sprite visualization
