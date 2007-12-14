@@ -496,7 +496,7 @@ public class RoomManager extends SpotSceneManager
         final MobObject mobObj = MsoyServer.omgr.registerObject(new MobObject());
         mobObj.setGameId(gameId);
         mobObj.setIdent(mobId);
-        mobObj.setUsername(new Name(""));
+        mobObj.setUsername(new Name("Mob #" + mobId)); // TODO: verify unique
         _mobs.put(key, mobObj);
 
         // then enter the scene like a proper scene entity

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.data;
 
+import com.threerings.util.Name;
+
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
@@ -31,6 +33,12 @@ public class MobObject extends MsoyBodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
         return new MobInfo(this, gameId, ident);
+    }
+
+    @Override // from BodyObject
+    public Name getVisibleName ()
+    {
+        return Name.BLANK;
     }
 
     // AUTO-GENERATED: METHODS START
