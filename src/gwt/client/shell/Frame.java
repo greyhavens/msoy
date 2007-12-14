@@ -204,7 +204,7 @@ public class Frame
         String height = stretch ? "100%" : "";
         RootPanel.get("ctable").setHeight(height);
         RootPanel.get(CONTENT).setHeight(height);
-        Window.enableScrolling(!stretch); // fucking browsers
+//         Window.enableScrolling(!stretch); // fucking browsers
     }
 
     /**

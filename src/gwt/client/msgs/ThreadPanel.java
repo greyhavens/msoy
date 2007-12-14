@@ -104,13 +104,13 @@ public class ThreadPanel extends TitledListPanel
         }
     }
 
-    // @Override // from Widget
-    protected void onAttach ()
-    {
-        super.onAttach();
-        // turn off page scrolling and on stretching because we'll handle scrolling
-        Frame.setContentStretchHeight(true);
-    }
+//     // @Override // from Widget
+//     protected void onAttach ()
+//     {
+//         super.onAttach();
+//         // turn off page scrolling and on stretching because we'll handle scrolling
+//         Frame.setContentStretchHeight(true);
+//     }
 
     protected class ReplyPanel extends TableFooterPanel
     {
