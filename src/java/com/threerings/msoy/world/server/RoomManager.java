@@ -16,7 +16,6 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 
 import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntTuple;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
@@ -67,7 +66,6 @@ import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.msoy.world.data.PetObject;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomMarshaller;
 import com.threerings.msoy.world.data.RoomPropertyEntry;
@@ -481,7 +479,7 @@ public class RoomManager extends SpotSceneManager
     }
 
     // from RoomProvider
-    public void spawnMob (ClientObject caller, int gameId, String mobId,
+    public void spawnMob (ClientObject caller, int gameId, String mobId, String mobName,
                           final InvocationListener listener)
         throws InvocationException
     {
@@ -493,10 +491,15 @@ public class RoomManager extends SpotSceneManager
             return;
         }
 
+        if (mobName == null || mobName.length() == 0) {
+            throw new IllegalArgumentException(
+                "Mob spawn request without name [gameId=" + gameId + ", mobId=" + mobId + "]");
+        }
+
         final MobObject mobObj = MsoyServer.omgr.registerObject(new MobObject());
         mobObj.setGameId(gameId);
         mobObj.setIdent(mobId);
-        mobObj.setUsername(new Name("Mob #" + mobId)); // TODO: verify unique
+        mobObj.setUsername(new Name(mobName));
         _mobs.put(key, mobObj);
 
         // then enter the scene like a proper scene entity

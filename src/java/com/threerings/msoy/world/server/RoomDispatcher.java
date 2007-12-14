@@ -110,7 +110,7 @@ public class RoomDispatcher extends InvocationDispatcher
         case RoomMarshaller.SPAWN_MOB:
             ((RoomProvider)provider).spawnMob(
                 source,
-                ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.InvocationListener)args[2]
+                ((Integer)args[0]).intValue(), (String)args[1], (String)args[2], (InvocationService.InvocationListener)args[3]
             );
             return;
 

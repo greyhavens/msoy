@@ -139,12 +139,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const SPAWN_MOB :int = 10;
 
     // from interface RoomService
-    public function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_InvocationListener) :void
+    public function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :String, arg5 :InvocationService_InvocationListener) :void
     {
-        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener4.listener = arg4;
+        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, SPAWN_MOB, [
-            Integer.valueOf(arg2), arg3, listener4
+            Integer.valueOf(arg2), arg3, arg4, listener5
         ]);
     }
 

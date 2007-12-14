@@ -133,12 +133,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int SPAWN_MOB = 10;
 
     // from interface RoomService
-    public void spawnMob (Client arg1, int arg2, String arg3, InvocationService.InvocationListener arg4)
+    public void spawnMob (Client arg1, int arg2, String arg3, String arg4, InvocationService.InvocationListener arg5)
     {
-        ListenerMarshaller listener4 = new ListenerMarshaller();
-        listener4.listener = arg4;
+        ListenerMarshaller listener5 = new ListenerMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, SPAWN_MOB, new Object[] {
-            Integer.valueOf(arg2), arg3, listener4
+            Integer.valueOf(arg2), arg3, arg4, listener5
         });
     }
 

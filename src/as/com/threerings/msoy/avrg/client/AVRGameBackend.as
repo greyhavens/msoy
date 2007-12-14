@@ -249,9 +249,9 @@ public class AVRGameBackend extends ControlBackend
         return result;
     }
 
-    protected function spawnMob_v1 (mobId :String) :Boolean
+    protected function spawnMob_v1 (mobId :String, mobName :String) :Boolean
     {
-        if (isPlaying()) {
+        if (mobId && mobName && isPlaying()) {
             var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
             if (view != null) {
                 var sprite :MobSprite = view.getMob(_ctrl.getGameId(), mobId);
@@ -259,7 +259,7 @@ public class AVRGameBackend extends ControlBackend
                     return false;
                 }
                 view.getRoomObject().roomService.spawnMob(
-                    _wctx.getClient(), _ctrl.getGameId(), mobId,
+                    _wctx.getClient(), _ctrl.getGameId(), mobId, mobName,
                     loggingInvocationListener("spawnMob"));
                 return true;
             }
@@ -269,7 +269,7 @@ public class AVRGameBackend extends ControlBackend
 
     protected function despawnMob_v1 (mobId :String) :Boolean
     {
-        if (isPlaying()) {
+        if (mobId && isPlaying()) {
             var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
             if (view != null) {
                 var sprite :MobSprite = view.getMob(_ctrl.getGameId(), mobId);

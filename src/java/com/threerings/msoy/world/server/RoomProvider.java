@@ -71,7 +71,7 @@ public interface RoomProvider extends InvocationProvider
     /**
      * Handles a {@link RoomService#spawnMob} request.
      */
-    public void spawnMob (ClientObject caller, int arg1, String arg2, InvocationService.InvocationListener arg3)
+    public void spawnMob (ClientObject caller, int arg1, String arg2, String arg3, InvocationService.InvocationListener arg4)
         throws InvocationException;
 
     /**

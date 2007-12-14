@@ -50,7 +50,7 @@ public interface RoomService extends InvocationService
     function setRoomProperty (arg1 :Client, arg2 :RoomPropertyEntry) :void;
 
     // from Java interface RoomService
-    function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_InvocationListener) :void;
+    function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :String, arg5 :InvocationService_InvocationListener) :void;
 
     // from Java interface RoomService
     function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry) :void;
