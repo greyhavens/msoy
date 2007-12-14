@@ -3,8 +3,9 @@
 
 package com.threerings.msoy.world.server;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.samskivert.util.StringUtil;
 import com.threerings.util.Name;
 
@@ -49,7 +50,7 @@ public class PetHandler
         // if we're not shutting down because our room shutdown...
         if (!roomDidShutdown && _roomObj != null) {
             // we need to leave the room (and extract our memory from it)
-            ArrayList<EntityMemoryEntry> memories = leaveRoom();
+            List<EntityMemoryEntry> memories = leaveRoom();
             // TODO: save any modified memory entries
         }
 
@@ -61,7 +62,7 @@ public class PetHandler
      * Enters the pet into the supplied room. The supplied memory should come from having loaded
      * the pet for the first time or from extracting it from the room the pet just left.
      */
-    public void enterRoom (final int sceneId, RoomObject roomObj, ArrayList<EntityMemoryEntry> memories)
+    public void enterRoom (final int sceneId, RoomObject roomObj, List<EntityMemoryEntry> memories)
     {
         log.info("Entering room [pet=" + _petobj.pet.getIdent() +
                  ", room=" + roomObj.getOid() + "].");
@@ -92,7 +93,7 @@ public class PetHandler
     /**
      * Removes the pet from its current room, extracting and returning its active memory.
      */
-    public ArrayList<EntityMemoryEntry> leaveRoom ()
+    public List<EntityMemoryEntry> leaveRoom ()
     {
         if (_roomObj == null) {
             return null; // NOOP!
@@ -103,7 +104,7 @@ public class PetHandler
 
         // collect up our memory entries from our previous room
         ItemIdent petid = _petobj.pet.getIdent();
-        ArrayList<EntityMemoryEntry> memories = new ArrayList<EntityMemoryEntry>();
+        List<EntityMemoryEntry> memories = Lists.newArrayList();
         for (EntityMemoryEntry entry : _roomObj.memories) {
             if (entry.item.equals(petid)) {
                 memories.add(entry);
@@ -133,7 +134,7 @@ public class PetHandler
      * pet will assume it is in a room already and will extract its memory from its current room
      * before moving.
      */
-    public void moveToOwner (MemberObject owner, ArrayList<EntityMemoryEntry> memory)
+    public void moveToOwner (MemberObject owner, List<EntityMemoryEntry> memory)
         throws InvocationException
     {
         validateOwnership(owner);
