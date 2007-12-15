@@ -88,6 +88,9 @@ public class Frame
         });
         _separatorLine = MsoyUI.createLabel("", "Separator");
 
+        // set up the window to not scroll, Page will scroll just our page content
+        Window.enableScrolling(false);
+
         // set up the callbackd that our flash clients can call
         configureCallbacks();
     }
@@ -197,26 +200,12 @@ public class Frame
     }
 
     /**
-     * Configures the content table to stretch to the height of the page or not.
-     */
-    public static void setContentStretchHeight (boolean stretch)
-    {
-        String height = stretch ? "100%" : "";
-        RootPanel.get("ctable").setHeight(height);
-        RootPanel.get(CONTENT).setHeight(height);
-//         Window.enableScrolling(!stretch); // fucking browsers
-    }
-
-    /**
      * Configures the widget to be displayed in the content portion of the frame. Will animate the
      * content sliding on if appropriate.
      */
     public static void setContent (Widget content, boolean contentIsJava)
     {
         RootPanel.get(CONTENT).clear();
-
-        // clear out any content height overrides
-        setContentStretchHeight(false);
 
         // note that this is our current content
         _content = content;

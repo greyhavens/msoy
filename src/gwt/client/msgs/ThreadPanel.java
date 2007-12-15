@@ -23,6 +23,7 @@ import com.threerings.msoy.fora.data.ForumThread;
 
 import client.shell.Application;
 import client.shell.Frame;
+import client.shell.Page;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
 import client.util.MsoyUI;
@@ -32,10 +33,10 @@ import client.util.MsoyUI;
  */
 public class ThreadPanel extends TitledListPanel
 {
-    public ThreadPanel (int threadId, int page, int scrollToId, ForumModels fmodels)
+    public ThreadPanel (Page parent, int threadId, int page, int scrollToId, ForumModels fmodels)
     {
         _threadId = threadId;
-        _mpanel = new MessagesPanel(this, scrollToId);
+        _mpanel = new MessagesPanel(parent, this, scrollToId);
 
         // look for our thread in the resolved group thread models
         ForumThread thread = fmodels.findThread(threadId);
@@ -103,14 +104,6 @@ public class ThreadPanel extends TitledListPanel
             return CMsgs.mmsgs.threadNormalHeader(_thread.subject);
         }
     }
-
-//     // @Override // from Widget
-//     protected void onAttach ()
-//     {
-//         super.onAttach();
-//         // turn off page scrolling and on stretching because we'll handle scrolling
-//         Frame.setContentStretchHeight(true);
-//     }
 
     protected class ReplyPanel extends TableFooterPanel
     {

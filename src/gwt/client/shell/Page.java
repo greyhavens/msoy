@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -102,6 +103,16 @@ public abstract class Page
     }
 
     /**
+     * Requests that the specified widget be scrolled into view.
+     */
+    public void ensureVisible (Widget widget)
+    {
+        if (_scroller != null) {
+            _scroller.ensureVisible(widget);
+        }
+    }
+
+    /**
      * Called during initialization to give our entry point and derived classes a chance to
      * initialize their respective context classes.
      */
@@ -157,9 +168,10 @@ public abstract class Page
             createContentContainer();
         }
 
-        // display our content in the frame
+        // display our content in the frame (inside a scroll panel)
         Frame.setContent(_content, contentIsJava);
-        _content.setWidget(1, 0, content);
+        _content.setWidget(1, 0, _scroller = new ScrollPanel(content));
+        _scroller.setHeight((Window.getClientHeight() - 70) + "px");
 
         // if there isn't anything in the tabs/subtitle area, we need something there to cause IE
         // to properly use up the space
@@ -216,5 +228,6 @@ public abstract class Page
         History.onHistoryChanged(History.getToken());
     }
 
+    protected ScrollPanel _scroller;
     protected FlexTable _content, _tabs;
 }

@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
@@ -25,6 +24,7 @@ import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.shell.MessagePanel;
+import client.shell.Page;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PromptPopup;
@@ -34,13 +34,14 @@ import client.util.PromptPopup;
  */
 public class MessagesPanel extends PagedGrid
 {
-    public MessagesPanel (ThreadPanel parent, int scrollToId)
+    public MessagesPanel (Page page, ThreadPanel parent, int scrollToId)
     {
         super(MESSAGES_PER_PAGE, 1, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");
         setWidth("100%");
         setHeight("100%");
 
+        _ppage = page;
         _parent = parent;
         _scrollToId = scrollToId;
     }
@@ -67,19 +68,11 @@ public class MessagesPanel extends PagedGrid
             _scrollToId = 0;
             DeferredCommand.addCommand(new Command() {
                 public void execute () {
-                    _scrolly.ensureVisible(panel);
+                    _ppage.ensureVisible(panel);
                 }
             });
         }
         return panel;
-    }
-
-    // @Override // from PagedGrid
-    protected void addGrid (Grid grid)
-    {
-        add(_scrolly = new ScrollPanel(grid));
-        int availHeight = (Window.getClientHeight() - USED_HEIGHT);
-        setMaxHeight(_scrolly.getElement(), availHeight + "px");
     }
 
     // @Override // from PagedGrid
@@ -152,13 +145,6 @@ public class MessagesPanel extends PagedGrid
         label.addStyleName("actionLabel");
         return label;
     }
-
-    // I should be able to do:
-    // DOM.setStyleAttribute(_scrolly.getElement(), "max-height", availHeight + "px");
-    // but it doesn't work on Firefox for some reason. Yay!
-    protected static native void setMaxHeight (Element elem, String maxHeight) /*-{
-        elem.style.maxHeight = maxHeight;
-    }-*/;
 
     protected class ThreadMessagePanel extends MessagePanel
     {
@@ -249,11 +235,11 @@ public class MessagesPanel extends PagedGrid
         protected ForumMessage _message;
     }
 
+    /** The page that contains us. Used for scroll fiddling. */
+    protected Page _ppage;
+
     /** The thread panel in which we're hosted. */
     protected ThreadPanel _parent;
-
-    /** We scroll our messages in this panel. */
-    protected ScrollPanel _scrolly;
 
     /** A message to scroll into view when we first receive our messages. */
     protected int _scrollToId;
@@ -265,6 +251,4 @@ public class MessagesPanel extends PagedGrid
     protected Button _editFlags;
 
     protected static final int MESSAGES_PER_PAGE = 10;
-    protected static final int USED_HEIGHT =
-        50 /* navi */ + 20 /* title */ + 30 /* thread title */ + 20 /* footer */;
 }

@@ -48,7 +48,8 @@ public class index extends MsgsEntryPoint
             setContent(fpanel);
 
         } else if (args.get(0, "").equals("t")) {
-            setContent(new ThreadPanel(args.get(1, 0), args.get(2, 0), args.get(3, 0), _fmodels));
+            int threadId = args.get(1, 0), page = args.get(2, 0), scrollToId = args.get(3, 0);
+            setContent(new ThreadPanel(this, threadId, page, scrollToId, _fmodels));
 
         } else {
             if (_glist == null) {

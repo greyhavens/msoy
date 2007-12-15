@@ -85,7 +85,6 @@ public class index extends Page
             CSwiftly.swiftlysvc.getConnectConfig(CSwiftly.ident, projectId, new MsoyCallback() {
                 public void onSuccess (Object result) {
                     setContent(new SwiftlyPanel((SwiftlyConnectConfig)result, projectId), true);
-                    Frame.setContentStretchHeight(true);
                 }
             });
         }
