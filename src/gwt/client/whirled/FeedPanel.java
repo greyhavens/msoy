@@ -117,7 +117,7 @@ public class FeedPanel extends VerticalPanel
         case 100: // FRIEND_ADDED_FRIEND
             return new MessageKey(message.type, message.data[1]);
         case 102: // FRIEND_WON_TROPHY
-            return new MessageKey(message.type, message.data[0]);
+            return new MessageKey(message.type, message.data[1].concat(message.data[0]).hashCode());
         }
         return null;
     }
