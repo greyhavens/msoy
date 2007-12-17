@@ -122,6 +122,7 @@ class FlexWrapper extends UIComponent
 {
     public function FlexWrapper (object :DisplayObject)
     {
+        mouseEnabled = false;
         addChild(object);
     }
 }
