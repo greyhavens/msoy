@@ -179,6 +179,16 @@ public class MessagesPanel extends PagedGrid
         {
             super.addInfo(info);
 
+            if (CMsgs.getMemberId() != 0 &&
+                CMsgs.getMemberId() != _message.poster.name.getMemberId()) {
+                info.add(makeInfoLabel(CMsgs.mmsgs.inlineMail(), new ClickListener() {
+                    public void onClick (Widget sender) {
+                        new MailComposition(_message.poster.name,
+                                            CMsgs.mmsgs.mailRe(_thread.subject), null, null).show();
+                    }
+                }));
+            }
+
             if (_postReply.isEnabled()) {
                 info.add(makeInfoLabel(CMsgs.mmsgs.inlineReply(), new ClickListener() {
                     public void onClick (Widget sender) {
@@ -188,16 +198,6 @@ public class MessagesPanel extends PagedGrid
                 info.add(makeInfoLabel(CMsgs.mmsgs.inlineQReply(), new ClickListener() {
                     public void onClick (Widget sender) {
                         _parent.postReply(_message);
-                    }
-                }));
-            }
-
-            if (CMsgs.getMemberId() != 0 &&
-                CMsgs.getMemberId() != _message.poster.name.getMemberId()) {
-                info.add(makeInfoLabel(CMsgs.mmsgs.inlineMail(), new ClickListener() {
-                    public void onClick (Widget sender) {
-                        new MailComposition(_message.poster.name,
-                                            CMsgs.mmsgs.mailRe(_thread.subject), null, null).show();
                     }
                 }));
             }
