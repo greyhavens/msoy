@@ -1,0 +1,3 @@
+Nenya is obtained via Maven. We only have the ActionScript source here because
+we do not build and export a nenya.swc. Some day we will do that and this will
+go away entirely.
