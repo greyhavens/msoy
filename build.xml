@@ -211,7 +211,7 @@
   <target name="mavendeps" depends="prepare">
     <artifact:dependencies filesetId="dependency.fileset">
       <remoteRepository refid="maven.depends.repo"/>
-      <dependency groupId="com.threerings.panopticon.${maven.dist}" artifactId="panopticon-client"
+      <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="narya-base" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="narya-distrib" version="0.0-SNAPSHOT"/>
