@@ -175,6 +175,6 @@ public class ServerConfig
         mediaS3Id = config.getValue("media_s3id", "id");
         mediaS3Key = config.getValue("media_s3key", "key");
         sharedSecret = config.getValue("server_secret", "");
-        eventLogURL = config.getValue("event_log_url", "http://localhost:8080");
+        eventLogURL = config.getValue("event_log_url", "");
     }
 }

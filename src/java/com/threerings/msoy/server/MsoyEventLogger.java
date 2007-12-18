@@ -3,201 +3,191 @@
 
 package com.threerings.msoy.server;
 
+import java.net.InetSocketAddress;
 import java.net.URL;
-import java.net.MalformedURLException;
+import java.util.logging.Level;
 
+import com.samskivert.util.AuditLogger;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
-/*
-import com.threerings.panopticon.data.Schema;
-import com.threerings.panopticon.client.logging.EventLogger;
-import com.threerings.panopticon.client.logging.EchoStorage;
-import com.threerings.panopticon.client.logging.LogStorage;
-import com.threerings.panopticon.client.logging.NullStorage;
-import com.threerings.panopticon.client.logging.ServerStorage;
-*/
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.panopticon.client.net.LoggingConnection;
+import com.threerings.panopticon.common.hessian.Event;
 
-import com.threerings.msoy.Log;
+import static com.threerings.msoy.Log.log;
 
 /**
- * Wrapper around EventLogger, providing Whirled-specific typesafe logging functions.
- *
- * Logging functions are safe for concurrent access from different threads. All logging requests
- * will be scheduled on the invoker thread, to serialize them, and to avoid tying up
- * the rest of the server.
- *
- * NB: most functionality is stubbed out due to panopticon client API revamp -- robert
+ * Provides a concise, type-safe logging interface to Whirled services.  Logging functions are
+ * thread-safe. All logging requests will be serialized and delivered to the logging server on a
+ * separate thread.
  */
 public class MsoyEventLogger
 {
     /** Initializes the logger; this must happen before any events can be logged. */
     public MsoyEventLogger (final URL serverURL)
     {
-        Log.log.info("Events will be logged to " + serverURL);
-        
-        // _storage = new EchoStorage();
-        // _storage = new NullStorage();
-        // _storage = new ServerStorage(serverURL);
-        //
-        // _logger = new EventLogger(_storage, MSOY_SCHEMAS);
+        if (serverURL != null) {
+            log.info("Events will be logged to '" + serverURL + "'.");
+            _nlogger = new LoggingConnection(
+                new InetSocketAddress(serverURL.getHost(), serverURL.getPort()));
+            _nlogger.start();
+
+        } else {
+            log.info("Events will be logged locally.");
+            _alogger = MsoyBaseServer.createAuditLog("events");
+        }
     }
 
     /** Event: periodic system snapshot of player counts. */
     public void currentPlayerStats (String serverName, int total, int active, int guests)
     {
-        post("CurrentPlayerStats_test", now(), serverName, total, active, guests);
+        MsoyEvents.CurrentPlayerStats message = new MsoyEvents.CurrentPlayerStats();
+        message.serverName = serverName;
+        message.total = total;
+        message.active = active;
+        message.guests = guests;
+        post(message);
     }
-    
+
     /** Event: generic flow transaction. */
-    public void flowTransaction (
-        int playerId, int actionType, int flowDelta, int newTotal, String details)
+    public void flowTransaction (int playerId, int actionType, int deltaFlow, int newTotal,
+                                 String details)
     {
-        post("FlowTransaction_test", now(), playerId, actionType, flowDelta, newTotal, details);
+        MsoyEvents.FlowTransaction message = new MsoyEvents.FlowTransaction();
+        message.playerId = playerId;
+        message.actionType = actionType;
+        message.deltaFlow = deltaFlow;
+        message.details = details;
+        post(message);
     }
 
     /** Event: item purchase. */
-    public void itemPurchased (
-        int playerId, byte itemType, int itemId, int flowCost, int goldCost)
+    public void itemPurchased (int playerId, byte itemType, int itemId, int flowCost, int goldCost)
     {
-        post("ItemPurchase_test", now(), playerId, itemType, itemId, flowCost, goldCost);
+        MsoyEvents.ItemPurchase message = new MsoyEvents.ItemPurchase();
+        message.playerId = playerId;
+        message.itemType = itemType;
+        message.itemId = itemId;
+        message.flowCost = flowCost;
+        message.goldCost = goldCost;
+        post(message);
     }
-    
+
     /** Event: item purchase. */
-    public void itemListedInCatalog (
-        int creatorId, byte itemType, int itemId, int flowCost, int goldCost,
-        int pricing, int salesTarget)
+    public void itemListedInCatalog (int creatorId, byte itemType, int itemId, int flowCost,
+                                     int goldCost, int pricing, int salesTarget)
     {
-        post("ItemCatalogListing_test", now(), creatorId, itemType, itemId,
-             flowCost, goldCost, pricing, salesTarget);
+        MsoyEvents.ItemCatalogListing message = new MsoyEvents.ItemCatalogListing();
+        message.creatorId = creatorId;
+        message.itemType = itemType;
+        message.itemId = itemId;
+        message.flowCost = flowCost;
+        message.goldCost = goldCost;
+        message.pricing = pricing;
+        message.salesTarget = salesTarget;
+        post(message);
     }
 
     /** Event: registered user authenticated with the specified cookie. */
     public void userAuthenticated (int playerId, boolean firstLogin, String sessionToken)
     {
-        post("Login_test", now(), false, playerId, firstLogin, sessionToken);
+        MsoyEvents.Login message = new MsoyEvents.Login();
+        message.playerId = playerId;
+        message.firstLogin = firstLogin;
+        message.sessionToken = sessionToken;
+        post(message);
     }
 
     /** Event: guest user logged in with the specified cookie. */
     public void userAuthenticated (String sessionToken)
     {
-        post("Login_test", now(), true, -1, false, sessionToken);
+        MsoyEvents.Login message = new MsoyEvents.Login();
+        message.playerId = MemberName.GUEST_ID;
+        message.firstLogin = false;
+        message.sessionToken = sessionToken;
+        post(message);
     }
 
     /** Event: sent mail from one user to another. */
-    public void mailSent (int fromId, int toId, int payloadType)
+    public void mailSent (int senderId, int recipientId, int payloadType)
     {
-        post("MailSent_test", now(), fromId, toId, payloadType);
+        MsoyEvents.MailSent message = new MsoyEvents.MailSent();
+        message.senderId = senderId;
+        message.recipientId = recipientId;
+        message.payloadType = payloadType;
+        post(message);
     }
 
     /** Event: added a friend. */
     public void friendAdded (int playerId, int friendId)
     {
-        post("FriendListAction_test", now(), playerId, friendId, true);
+        MsoyEvents.FriendshipAction message = new MsoyEvents.FriendshipAction();
+        message.playerId = playerId;
+        message.friendId = friendId;
+        message.isAdded = true;
+        post(message);
     }
 
     /** Event: removed a friend. */
     public void friendRemoved (int playerId, int friendId)
     {
-        post("FriendListAction_test", now(), playerId, friendId, false);
+        MsoyEvents.FriendshipAction message = new MsoyEvents.FriendshipAction();
+        message.playerId = playerId;
+        message.friendId = friendId;
+        message.isAdded = false;
+        post(message);
     }
 
     /** Event: joined a group. */
     public void groupJoined (int playerId, int groupId)
     {
-        post("GroupMembershipAction_test", now(), playerId, groupId, true);
+        MsoyEvents.GroupMembershipAction message = new MsoyEvents.GroupMembershipAction();
+        message.playerId = playerId;
+        message.groupId = groupId;
+        message.isJoined = true;
+        post(message);
     }
 
     /** Event: joined a group. */
     public void groupLeft (int playerId, int groupId)
     {
-        post("GroupMembershipAction_test", now(), playerId, groupId, false);
+        MsoyEvents.GroupMembershipAction message = new MsoyEvents.GroupMembershipAction();
+        message.playerId = playerId;
+        message.groupId = groupId;
+        message.isJoined = false;
+        post(message);
     }
 
     /** Event: promotion/demotion in a group. */
     public void groupRankChange (int playerId, int groupId, byte newRank)
     {
-        post("GroupRankModification_test", now(), playerId, groupId, newRank);
+        MsoyEvents.GroupRankModification message = new MsoyEvents.GroupRankModification();
+        message.playerId = playerId;
+        message.groupId = groupId;
+        message.newRank = newRank;
+        post(message);
     }
-    
-    /** Wraps a logging action in a work unit, and posts it on the queue. */
-    protected void post (final String event, final Object ... values)
+
+    /** Posts a log message to the appropriate place. */
+    protected void post (Event message)
     {
-        /*
-        if (_logger == null) {
-            throw new RuntimeException("MsoyEventLogger not initialized, cannot log events.");
-        } else {
-            MsoyServer.invoker.postUnit(new Invoker.Unit () {
-                public boolean invoke () {
-                    _logger.log(MSOY, event, values);
-                    return false;
-                }
-            });
+        if (_nlogger != null) {
+            try {
+                _nlogger.send(message);
+            } catch (Exception e) {
+                // TODO: throttle these errors
+                log.log(Level.WARNING, "Failed to send log event " + message + ".", e);
+            }
+
+        } else if (_alogger != null) {
+            _alogger.log(message.toString());
         }
-        */
     }
 
-    /** Convenience function to return a boxed value for current time
-     *  (in ms since beginning of epoch in GMT). */
-    protected Long now () {
-        return System.currentTimeMillis();
-    }
+    /** The connection via which we deliver our log messages. */
+    protected LoggingConnection _nlogger;
 
-    /*
-    protected static final String MSOY = "com.threerings.msoy";
-    protected static final Schema[] MSOY_SCHEMAS = new Schema[] {
-        new Schema(
-            MSOY, "CurrentPlayerStats_test",
-            new String[] { "timestamp", "serverName", "total",       "active",
-                           "guests" },
-            new Class[]  { Long.class,   String.class, Integer.class, Integer.class,
-                           Integer.class }),
-        new Schema(
-            MSOY, "Login_test",
-            new String[] { "timestamp", "guest",       "playerId",    "firstLogin",
-                           "sessionToken" },
-            new Class[]  { Long.class,   Boolean.class, Integer.class, Boolean.class,
-                           String.class }),
-        new Schema(
-            MSOY, "MailSent_test",
-            new String[] { "timestamp", "senderId",   "recipientId", "payloadId"     },
-            new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class  }),
-        new Schema(
-            MSOY, "FlowTransaction_test",
-            new String[] { "timestamp", "playerId",   "actionType",  "flowDelta",
-                              "newTotal",    "details"     },
-            new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class,
-                               Integer.class, String.class }),
-        new Schema(
-            MSOY, "ItemPurchase_test",
-            new String[] { "timestamp", "playerId",   "itemType", "itemId",
-                           "flowCost",    "goldCost"     },
-            new Class[]  { Long.class,  Integer.class, Integer.class, Integer.class,
-                            Integer.class, Integer.class }),
-        new Schema(
-            MSOY, "ItemCatalogListing_test",
-            new String[] { "timestamp", "creatorId",   "itemType",    "itemId",
-                           "flowCost",    "goldCost",    "pricing",     "salesTarget"  },
-            new Class[]  { Long.class,   Integer.class, Integer.class, Integer.class,
-                           Integer.class,  Integer.class, Integer.class, Integer.class }),
-        new Schema(
-            MSOY, "FriendListAction_test",
-            new String[] { "timestamp", "playerId",   "friendId",    "isAdded"       },
-            new Class[]  { Long.class,  Integer.class, Integer.class, Boolean.class  }),
-        new Schema(
-            MSOY, "GroupMembershipAction_test",
-            new String[] { "timestamp", "playerId",    "groupId",     "isJoined"     },
-            new Class[]  { Long.class,   Integer.class, Integer.class, Boolean.class }),
-        new Schema(
-            MSOY, "GroupRankModification_test",
-            new String[] { "timestamp", "playerId",    "groupId",     "newRank"      },
-            new Class[]  { Long.class,   Integer.class, Integer.class, Integer.class    })
-    };        
-    */
-    
-    /** Singleton reference to log storage. */
-    // protected LogStorage _storage;
-
-    /** Singleton reference to the event logger instance. */
-    // protected EventLogger _logger;
+    /** Used to log events if we have no network logger. */
+    protected AuditLogger _alogger;
 }

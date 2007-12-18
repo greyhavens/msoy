@@ -132,7 +132,8 @@ public abstract class MsoyBaseServer extends WhirledServer
         Security.setProperty("networkaddress.cache.ttl" , "30");
 
         // initialize event logger
-        eventLog = new MsoyEventLogger(new URL(ServerConfig.eventLogURL));
+        eventLog = new MsoyEventLogger(ServerConfig.eventLogURL.length() == 0 ?
+                                       null : new URL(ServerConfig.eventLogURL));
 
         // create our JDBC bits before calling super.init() because our superclass will attempt to
         // create our authenticator and we need that ready by then
