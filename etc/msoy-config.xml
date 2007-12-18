@@ -38,7 +38,6 @@
       -->
       <!-- List of SWC files or directories that contain SWC files. -->
       <library-path>
-         <path-element>../projects/nenya/lib</path-element>
          <path-element>../lib</path-element>
          <path-element>../dist</path-element>
          <path-element>../tools/extern/flex_sdk/frameworks/libs</path-element>

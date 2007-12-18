@@ -403,7 +403,6 @@
     <uptodate property="aslib_is_up_to_date" targetfile="${deploy.dir}/ooo.swc">
       <srcfiles dir="projects/narya/src/as" includes="**/*.as"/>
       <srcfiles dir="projects/nenya/src/as" includes="**/*.as"/>
-      <srcfiles dir="projects/nenya/lib" includes="**/*.swc"/>
       <srcfiles dir="projects/vilya/src/as" includes="**/*.as"/>
       <srcfiles dir="projects/toybox/src/as" includes="**/*.as"/>
       <srcfiles dir="projects/whirled/src/as" includes="**/*.as"/>
