@@ -31,6 +31,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.TopPanel;
 
+import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.data.FurniData;
 
@@ -68,11 +69,14 @@ public class RoomEditorPanel extends FloatingPanel
     }
 
     /** Updates object data displayed on the editing panel. */
-    public function updateDisplay (data :FurniData) :void
+    public function updateDisplay (target :FurniSprite) :void
     {
+        var data :FurniData = (target != null) ? target.getFurniData() : null;
         _details.updateDisplay(data);
         _action.updateDisplay(data);
         _room.updateDisplay(data);
+
+        _custom.updateDisplay(target);
     }
 
     /** Updates the enabled status of the undo button (based on the size of the undo stack). */
@@ -166,7 +170,7 @@ public class RoomEditorPanel extends FloatingPanel
         _undoButton.addEventListener(MouseEvent.CLICK, makeListener(_controller.actionUndo));
         box.addChild(_undoButton);
 
-        hr = new HRule();
+        var hr :HRule = new HRule();
         hr.percentWidth = 100;
         contents.addChild(hr);
 
@@ -175,12 +179,20 @@ public class RoomEditorPanel extends FloatingPanel
         c.setContents(_details = new DetailsPanel(_controller));
         contents.addChild(c);
 
-        var hr :HRule = new HRule();
+        hr = new HRule();
         hr.percentWidth = 100;
         contents.addChild(hr);
 
         c = new CollapsingContainer(Msgs.EDITING.get("t.item_action"));
         c.setContents(_action = new ActionPanel(_controller)); 
+        contents.addChild(c);
+
+        hr = new HRule();
+        hr.percentWidth = 100;
+        contents.addChild(hr);
+
+        c = new CollapsingContainer(Msgs.EDITING.get("t.item_custom"));
+        c.setContents(_custom = new CustomPanel(c, hr));
         contents.addChild(c);
     }
 
@@ -188,6 +200,7 @@ public class RoomEditorPanel extends FloatingPanel
     protected var _undoButton :Button;
     protected var _details :DetailsPanel;
     protected var _action :ActionPanel;
+    protected var _custom :CustomPanel;
     protected var _room :RoomPanel;
     protected var _namebox :ComboBox;
     protected var _controller :RoomEditorController;

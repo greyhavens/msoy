@@ -335,7 +335,7 @@ public class RoomEditorController
     public function targetSpriteUpdated () :void
     {
         _edit.updateDisplay();
-        _panel.updateDisplay(_edit.target != null ? _edit.target.getFurniData() : null);
+        _panel.updateDisplay(_edit.target);
     }
 
     public function makeMyHome () :void
@@ -432,7 +432,7 @@ public class RoomEditorController
         // pull out selected furni
         var targetData :FurniData = _edit.target.getFurniData();
         var ident :ItemIdent = targetData.getItemIdent();
-        _panel.updateDisplay(targetData);
+        _panel.updateDisplay(_edit.target);
 
         // if this is a special furni, deal with it in a special way
         if (EntranceFurniData.ITEM_IDENT.equals(ident)) {

@@ -8,6 +8,7 @@ import mx.containers.VBox;
 import mx.controls.Label;
 import mx.controls.Spacer;
 import mx.core.Container;
+import mx.core.UIComponent;
 
 import com.threerings.flex.CommandButton;
 
@@ -26,7 +27,7 @@ public class CollapsingContainer extends VBox
         this.percentWidth = 100;
     }
 
-    public function setContents (child :Container) :void
+    public function setContents (child :UIComponent) :void
     {
         if (_contents.numChildren != 0) {
             _contents.removeAllChildren();
