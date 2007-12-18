@@ -23,7 +23,8 @@ fi
 # set up our java arguments
 JAVA_ARGS="-Dno_unpack_resources=true \
     -Dresource_dir=$MSOY_HOME/rsrc \
-    -Drsrc_cache_dir=/tmp"
+    -Drsrc_cache_dir=/tmp \
+    -Djava.util.logging.config.file=$MSOY_HOME/etc/logging.properties"
 
 # set up a custom SMTP host
 if [ ! -z "$SMTP_HOST" ]; then

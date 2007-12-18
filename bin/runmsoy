@@ -47,7 +47,8 @@ JAVA_ARGS="-server -mx$SERVER_MEMORY \
     -Dnode=$NODE \
     -Dresource_dir=$MSOY_HOME/rsrc \
     -Drsrc_cache_dir=/tmp -Dlog_level=$LOGLEVEL \
-    -Djava.security.manager -Djava.security.policy=$MSOY_HOME/dist/security.policy"
+    -Djava.security.manager -Djava.security.policy=$MSOY_HOME/dist/security.policy \
+    -Djava.util.logging.config.file=$MSOY_HOME/dist/logging.properties"
 
 # make sure we have a JVM and set up our classpath and bits
 . $MSOY_HOME/bin/runcommon

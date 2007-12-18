@@ -19,7 +19,6 @@ import com.samskivert.util.AuditLogger;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.LoggingLogProvider;
-import com.samskivert.util.OneLineLogFormatter;
 
 import com.threerings.util.Name;
 
@@ -235,9 +234,8 @@ public class MsoyServer extends MsoyBaseServer
      */
     public static void main (String[] args)
     {
-        // set up the proper logging services
+        // route legacy logs through the Java log system
         com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
-        OneLineLogFormatter.configureDefaultHandler();
 
         // if we're on the dev server, up our long invoker warning to 3 seconds
         if (ServerConfig.config.getValue("auto_restart", false)) {
