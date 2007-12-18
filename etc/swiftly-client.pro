@@ -4,17 +4,18 @@
 # Proguard configuration file for the Swiftly editor client
 
 -injars ../dist/lib/commons-io.jar(!META-INF/*)
--injars ../dist/lib/samskivert.jar(
+-injars ../dist/lib/samskivert-0.0-SNAPSHOT.jar(
     com/samskivert/Log.class,**/io/**,**/net/**,**/swing/**,**/text/**,**/util/**,
     **/servlet/user/Password.class,**/servlet/user/User.class,**/servlet/user/UserUtil.class)
--injars ../dist/lib/narya-base.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../dist/lib/narya-distrib.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../dist/lib/nenya-rsrc.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../dist/lib/vilya-whirled.jar(**/ClusteredBodyObject.class,**/ScenedBodyObject.class)
--injars ../dist/lib/vilya-micasa.jar(**/util/**,**/client/**)
--injars ../dist/lib/vilya-parlor.jar(**/parlor/util/**)
--injars ../dist/lib/vilya-stats.jar(!META-INF/*,!**/tools/**,!**/persist/**)
--injars ../dist/lib/threerings.jar(!META-INF/*,**/threerings/util/**)
+-injars ../dist/lib/narya-base-0.0-SNAPSHOT.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/narya-distrib-0.0-SNAPSHOT.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/nenya-rsrc-0.0-SNAPSHOT.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/vilya-whirled-0.0-SNAPSHOT.jar(
+    **/ClusteredBodyObject.class,**/ScenedBodyObject.class)
+-injars ../dist/lib/vilya-micasa-0.0-SNAPSHOT.jar(**/util/**,**/client/**)
+-injars ../dist/lib/vilya-parlor-0.0-SNAPSHOT.jar(**/parlor/util/**)
+-injars ../dist/lib/vilya-stats-0.0-SNAPSHOT.jar(!META-INF/*,!**/tools/**,!**/persist/**)
+-injars ../dist/lib/threerings-0.0-SNAPSHOT.jar(!META-INF/*,**/threerings/util/**)
 -injars ../dist/lib/whirled-code.jar(**/WhirledOccupantInfo.class)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class,
     **/user/client/rpc/SerializableException.class)

@@ -22,7 +22,7 @@
   <property name="build_version" value="0"/>
 
   <!-- define our subprojects and include the standard build system -->
-  <property name="projects1" value="samskivert,narya,nenya,vilya,toybox,threerings,whirled"/>
+  <property name="projects1" value="toybox,whirled"/>
   <property name="projects2" value="facebook"/>
   <property name="projects" value="${projects1},${projects2}"/>
   <import file="build/etc/build-support.xml"/>
@@ -170,16 +170,24 @@
       </fileset>
     </copy>
 
-    <!-- Fetch Three Rings Dependencies -->
+    <!-- fetch our library dependencies -->
     <artifact:dependencies filesetId="dependency.fileset">
-        <remoteRepository refid="maven.depends.repo"/>
-        <dependency groupId="com.threerings.panopticon.${maven.dist}" artifactId="panopticon-client"
-            version="0.0-SNAPSHOT"/>
+      <remoteRepository refid="maven.depends.repo"/>
+      <dependency groupId="com.threerings.panopticon.${maven.dist}" artifactId="panopticon-client"
+                  version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.narya" artifactId="narya-base" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.narya" artifactId="narya-distrib" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.nenya" artifactId="nenya-rsrc" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.nenya" artifactId="nenya-media" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.vilya" artifactId="vilya-parlor" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.vilya" artifactId="vilya-whirled" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.vilya" artifactId="vilya-stats" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.vilya" artifactId="vilya-micasa" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="threerings" version="0.0-SNAPSHOT"/>
     </artifact:dependencies>
-
     <copy todir="${deploy.dir}/lib">
-        <fileset refid="dependency.fileset"/>
-        <mapper type="flatten"/>
+      <fileset refid="dependency.fileset"/>
+      <mapper type="flatten"/>
     </copy>
 
     <!-- create our toybox propertis from server.properties -->
