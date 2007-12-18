@@ -3,23 +3,13 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.geom.Rectangle;
-
-import mx.events.ResizeEvent;
-
-import com.threerings.flash.MediaContainer;
-import com.threerings.util.ValueEvent;
-
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.ezgame.client.GameControlBackend;
 
-import com.whirled.client.PlayerList;
 import com.whirled.client.WhirledGamePanel;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
-import com.threerings.msoy.chat.client.HistoryList;
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyPlaceView;
