@@ -75,7 +75,11 @@ public class ThreadPanel extends TitledListPanel
     public void postReply (ForumMessage inReplyTo)
     {
         String title = CMsgs.mmsgs.threadReplyHeader(_thread.subject);
-        setContents(title, new ReplyPanel(inReplyTo));
+        VerticalPanel both = new VerticalPanel();
+        both.setWidth("100%");
+        both.add(new ReplyPanel(inReplyTo));
+        both.add(_mpanel);
+        setContents(title, both);
     }
 
     public void clearReply ()

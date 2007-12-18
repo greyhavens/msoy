@@ -20,7 +20,7 @@ public class MessageEditor extends VerticalPanel
         add(toolbar);
         add(_text);
         _text.setWidth("680px");
-        _text.setHeight("400px");
+        _text.setHeight("300px");
     }
 
     public RichTextArea getTextArea()
