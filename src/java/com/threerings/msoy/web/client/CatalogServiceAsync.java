@@ -34,8 +34,7 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#loadListing}
      */
-    public void loadListing (byte itemType, int catalogId, boolean loadListedItem,
-                             AsyncCallback callback);
+    public void loadListing (WebIdent ident, byte itemType, int catalogId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link CatalogService#updateListing}

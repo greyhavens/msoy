@@ -167,7 +167,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 buttons.add(new Button(CInventory.msgs.detailUpprice(), new ClickListener() {
                     public void onClick (Widget sender) {
                         CInventory.catalogsvc.loadListing(
-                            _item.getType(), _item.catalogId, false, new MsoyCallback() {
+                            CInventory.ident, _item.getType(), _item.catalogId, new MsoyCallback() {
                             public void onSuccess (Object result) {
                                 new DoListItemPopup(
                                     _item, (CatalogListing)result, ItemDetailPanel.this).show();

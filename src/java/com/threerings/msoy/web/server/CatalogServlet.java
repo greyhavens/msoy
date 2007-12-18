@@ -292,25 +292,30 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogServlet
-    public CatalogListing loadListing (byte itemType, int catalogId, boolean loadListedItem)
+    public CatalogListing loadListing (WebIdent ident, byte itemType, int catalogId)
         throws ServiceException
     {
-        // if the type in question is not salable, reject the request
-        if (!isSalable(itemType)) {
-            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
-        }
+        MemberRecord mrec = getAuthedUser(ident);
 
         // locate the appropriate repository
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemType);
         try {
             // load up the old catalog record
-            CatalogRecord record = repo.loadListing(catalogId, loadListedItem);
+            CatalogRecord record = repo.loadListing(catalogId, true);
             if (record == null) {
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
-            // if this listing is not meant for general sale, no lookey
-            if (record.pricing == CatalogListing.PRICING_HIDDEN) {
-                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            // if we're not the creator of the listing (who has to download it to update it) do
+            // some access control checks
+            if (mrec == null || record.item.creatorId != mrec.memberId) {
+                // if the type in question is not salable, reject the request
+                if (!isSalable(itemType)) {
+                    throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+                }
+                // if this listing is not meant for general sale, no lookey
+                if (record.pricing == CatalogListing.PRICING_HIDDEN) {
+                    throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+                }
             }
             return record.toListing();
 

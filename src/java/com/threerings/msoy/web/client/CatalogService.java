@@ -62,7 +62,7 @@ public interface CatalogService extends RemoteService
     /**
      * Loads and returns the specified catalog listing.
      */
-    public CatalogListing loadListing (byte itemType, int catalogId, boolean loadListedItem)
+    public CatalogListing loadListing (WebIdent ident, byte itemType, int catalogId)
         throws ServiceException;
 
     /**

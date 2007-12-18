@@ -132,7 +132,8 @@ public class CatalogPanel extends VerticalPanel
                 }
             };
             if (listing == null) {
-                CCatalog.catalogsvc.loadListing(argQuery.itemType, catalogId, true, gotListing);
+                CCatalog.catalogsvc.loadListing(
+                    CCatalog.ident, argQuery.itemType, catalogId, gotListing);
             } else {
                 gotListing.onSuccess(listing);
             }
