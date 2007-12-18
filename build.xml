@@ -51,11 +51,6 @@
   <property name="bin.list2" value="process_stats,roll_logs,swiftlycompiler,runcommon,runpolicy"/>
   <property name="bin.list"   value="${bin.list1},${bin.list2}"/>
 
-  <!-- declare the files that will be deployed to the maven repository -->
-  <filelist dir="." id="deploy.filelist">
-    <file name="${deploy.dir}/msoy-code.jar"/>
-  </filelist>
-
   <!-- declare the libraries needed by the MSOY runtime -->
   <filelist dir="." id="dist.libs">
     <file name="${extlibs.dir}/activation.jar"/>
@@ -853,7 +848,16 @@
   </target>
 
   <!-- rebuilds everything and extra bits for packaging -->
-  <target name="distpkg" depends="assignversion,distall"/>
+  <target name="distpkg" depends="assignversion,distall">
+    <!-- deploy the msoy-code artifact to the maven repository to a namespace that
+         includes the current "distribution", e.g. "devel" -->
+    <filelist dir="." id="msoy.deploy">
+      <file name="${deploy.dir}/msoy-code.jar"/>
+    </filelist>
+    <antcall target="maven-deploy-to-dist">
+      <reference refid="msoy.deploy" torefid="deploy.dist.filelist"/>
+    </antcall>
+  </target>
 
   <!-- cleans out the compiled code -->
   <target name="clean" description="Cleans out compiled code.">
