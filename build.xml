@@ -140,6 +140,9 @@
     <file name="lib/aperture/rio-2.0-alpha-3.jar"/>
     <file name="lib/aperture/sesame-2.0-alpha-3.jar"/>
     <file name="lib/aperture/winlaf-0.5.1.jar"/>
+
+    <!-- The following are used for Panopticon -->
+    <file name="${extlibs.dir}/hessian.jar"/>
   </filelist>
 
   <!-- enumerate our translation files -->
@@ -167,27 +170,6 @@
       <fileset dir="rsrc">
        <include name="**/*"/>
       </fileset>
-    </copy>
-
-    <!-- fetch our library dependencies -->
-    <artifact:dependencies filesetId="dependency.fileset">
-      <remoteRepository refid="maven.depends.repo"/>
-      <dependency groupId="com.threerings.panopticon.${maven.dist}" artifactId="panopticon-client"
-                  version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.narya" artifactId="narya-base" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.narya" artifactId="narya-distrib" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.nenya" artifactId="nenya-rsrc" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.nenya" artifactId="nenya-media" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.vilya" artifactId="vilya-parlor" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.vilya" artifactId="vilya-whirled" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.vilya" artifactId="vilya-stats" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.vilya" artifactId="vilya-micasa" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="threerings" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="toybox" version="0.0-SNAPSHOT"/>
-    </artifact:dependencies>
-    <copy todir="${deploy.dir}/lib">
-      <fileset refid="dependency.fileset"/>
-      <mapper type="flatten"/>
     </copy>
 
     <!-- create our toybox propertis from server.properties -->
@@ -222,6 +204,29 @@
     </copy>
     <copy file="etc/swiftly.policy.in" tofile="${deploy.dir}/swiftly.policy" overwrite="true">
       <filterset><filter token="PREFIX" value="${basedir}"/></filterset>
+    </copy>
+  </target>
+
+  <!-- fetches our library dependencies -->
+  <target name="mavendeps" depends="prepare">
+    <artifact:dependencies filesetId="dependency.fileset">
+      <remoteRepository refid="maven.depends.repo"/>
+      <dependency groupId="com.threerings.panopticon.${maven.dist}" artifactId="panopticon-client"
+                  version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.narya" artifactId="narya-base" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.narya" artifactId="narya-distrib" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.nenya" artifactId="nenya-rsrc" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.nenya" artifactId="nenya-media" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.vilya" artifactId="vilya-parlor" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.vilya" artifactId="vilya-whirled" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.vilya" artifactId="vilya-stats" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.vilya" artifactId="vilya-micasa" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="threerings" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="toybox" version="0.0-SNAPSHOT"/>
+    </artifact:dependencies>
+    <copy todir="${deploy.dir}/lib">
+      <fileset refid="dependency.fileset"/>
+      <mapper type="flatten"/>
     </copy>
   </target>
 
@@ -831,7 +836,7 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients,tests"
+  <target name="distall" depends="prepare,mavendeps,distprojects,dist,flashapps,jclients,tests"
         description="Rebuilds all subprojects and whole top-level distribution.">
     <antcall target="gclient">
       <param name="full" value="true"/>
