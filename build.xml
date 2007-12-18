@@ -22,12 +22,11 @@
   <property name="build_version" value="0"/>
 
   <!-- define our subprojects and include the standard build system -->
-  <property name="projects1" value="toybox,whirled"/>
+  <property name="projects1" value="whirled"/>
   <property name="projects2" value="facebook"/>
   <property name="projects" value="${projects1},${projects2}"/>
   <import file="build/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
-    <include name="projects/toybox/src/java/**/*.java"/>
     <include name="${src.dir}/**/*.java"/>
     <include name="${gsrc.dir}/**/*.java"/>
   </fileset>
@@ -184,6 +183,7 @@
       <dependency groupId="com.threerings.vilya" artifactId="vilya-stats" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.vilya" artifactId="vilya-micasa" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="threerings" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="toybox" version="0.0-SNAPSHOT"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="dependency.fileset"/>
