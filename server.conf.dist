@@ -12,7 +12,6 @@ DBPASSWD=PASSWORD
 # General configurations
 MSOY_USER=msoy
 LOG_EMAIL=msoy-logs@DOMAIN
-LOGLEVEL=info
 
 # The node names for this server instance: "msoy1 msoy2" or just "msoy1" for example
 NODES=msoy1
