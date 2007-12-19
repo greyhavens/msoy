@@ -17,9 +17,13 @@
 .listingContainer .Preview {
   width: 80px;
   height: 60px;
-  text-align: center;
   vertical-align: middle;
   padding-right: 5px;
+}
+
+.listingContainer .Preview img {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .listingContainer .Name {
