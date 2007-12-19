@@ -150,8 +150,19 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #setAway} requests. */
+    public static final int SET_AWAY = 11;
+
+    // from interface MemberService
+    public void setAway (Client arg1, boolean arg2, String arg3)
+    {
+        sendRequest(arg1, SET_AWAY, new Object[] {
+            Boolean.valueOf(arg2), arg3
+        });
+    }
+
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static final int SET_DISPLAY_NAME = 11;
+    public static final int SET_DISPLAY_NAME = 12;
 
     // from interface MemberService
     public void setDisplayName (Client arg1, String arg2, InvocationService.InvocationListener arg3)
@@ -164,7 +175,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setHomeSceneId} requests. */
-    public static final int SET_HOME_SCENE_ID = 12;
+    public static final int SET_HOME_SCENE_ID = 13;
 
     // from interface MemberService
     public void setHomeSceneId (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
@@ -177,7 +188,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static final int UPDATE_AVAILABILITY = 13;
+    public static final int UPDATE_AVAILABILITY = 14;
 
     // from interface MemberService
     public void updateAvailability (Client arg1, int arg2)

@@ -10,5 +10,19 @@ import com.threerings.crowd.data.BodyObject;
  */
 public class MsoyBodyObject extends BodyObject
 {
+    /** Constant value for {@link #status}. */
+    public static const AWAY :int = 3;
+
+    // from BodyObject
+    override protected function getStatusTranslation () :String
+    {
+        switch (status) {
+        case AWAY:
+            return "away";
+
+        default:
+            return super.getStatusTranslation();
+        }
+    }
 }
 }

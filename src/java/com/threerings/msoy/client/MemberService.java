@@ -36,6 +36,11 @@ public interface MemberService extends InvocationService
     public void updateAvailability (Client client, int availability);
 
     /**
+     * Set this client as being "away".
+     */
+    public void setAway (Client client, boolean away, String message);
+
+    /**
      * Invites the specified member to follow the caller. Passing 0 for the memberId will clear all
      * of the caller's followers.
      */

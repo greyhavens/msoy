@@ -147,21 +147,32 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Force the user to be idle immediately, and give them the specified number of seconds to move
-     * the mouse and such before we automatically de-idle them.
-     */
-    public function forceIdle (secondsOfLeeway :int) :void
-    {
-        _idleOverrideStamp = (secondsOfLeeway * 1000) + getTimer();
-        setIdle(true);
-    }
-
-    /**
      * Returns a string that can be used to embed the current flash client.
      */
     public function getSceneIdString () :String
     {
         return "";
+    }
+
+    /**
+     * Update our away status.
+     */
+    public function setAway (nowAway :Boolean, message :String = null) :void
+    {
+        if (nowAway != _away) {
+            _away = nowAway;
+            var msvc :MemberService =
+                _mctx.getClient().requireService(MemberService) as MemberService;
+            msvc.setAway(_mctx.getClient(), nowAway, message);
+
+            // either way, we're not idle anymore
+            _idle = false;
+
+            if (nowAway) {
+                // throw up a modal dialog with a "back" button
+                new BackFromAwayDialog(_mctx, message);
+            }
+        }
     }
 
     /**
@@ -416,15 +427,6 @@ public class MsoyController extends Controller
      */
     protected function restartIdleTimer () :void
     {
-        // see if we want to honor this request..
-        if (_idleOverrideStamp != 0) {
-            if (getTimer() < _idleOverrideStamp) {
-                return;
-            } else {
-                _idleOverrideStamp = 0;
-            }
-        }
-
         setIdle(false);
         _idleTimer.reset();
         _idleTimer.start();
@@ -435,7 +437,8 @@ public class MsoyController extends Controller
      */
     protected function setIdle (nowIdle :Boolean) :void
     {
-        if (nowIdle != _idle) {
+        // we can only update our idle status if we're not away.
+        if (!_away && nowIdle != _idle) {
             _idle = nowIdle;
             var bsvc :BodyService = _mctx.getClient().requireService(BodyService) as BodyService;
             bsvc.setIdle(_mctx.getClient(), nowIdle);
@@ -489,11 +492,11 @@ public class MsoyController extends Controller
     /** Whether we think we're idle or not. */
     protected var _idle :Boolean = false;
 
+    /** Whether we think we're away from the keyboard or not. */
+    protected var _away :Boolean = false;
+
     /** A timer to watch our idleness. */
     protected var _idleTimer :Timer;
-
-    /** A timestamp (from flash.utils.getTimer()) before which we ignore non-idling behavior. */
-    protected var _idleOverrideStamp :Number = 0;
 
     /** The URL prefix for 'command' URLs, that post CommendEvents. */
     protected static const COMMAND_URL :String = "command://";

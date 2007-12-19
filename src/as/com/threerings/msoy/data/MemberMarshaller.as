@@ -158,8 +158,19 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #setAway} requests. */
+    public static const SET_AWAY :int = 11;
+
+    // from interface MemberService
+    public function setAway (arg1 :Client, arg2 :Boolean, arg3 :String) :void
+    {
+        sendRequest(arg1, SET_AWAY, [
+            langBoolean.valueOf(arg2), arg3
+        ]);
+    }
+
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static const SET_DISPLAY_NAME :int = 11;
+    public static const SET_DISPLAY_NAME :int = 12;
 
     // from interface MemberService
     public function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
@@ -172,7 +183,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setHomeSceneId} requests. */
-    public static const SET_HOME_SCENE_ID :int = 12;
+    public static const SET_HOME_SCENE_ID :int = 13;
 
     // from interface MemberService
     public function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
@@ -185,7 +196,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static const UPDATE_AVAILABILITY :int = 13;
+    public static const UPDATE_AVAILABILITY :int = 14;
 
     // from interface MemberService
     public function updateAvailability (arg1 :Client, arg2 :int) :void

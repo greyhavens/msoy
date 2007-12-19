@@ -77,6 +77,11 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#setAway} request.
+     */
+    public void setAway (ClientObject caller, boolean arg1, String arg2);
+
+    /**
      * Handles a {@link MemberService#setDisplayName} request.
      */
     public void setDisplayName (ClientObject caller, String arg1, InvocationService.InvocationListener arg2)

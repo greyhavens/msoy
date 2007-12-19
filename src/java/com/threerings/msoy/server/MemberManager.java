@@ -28,7 +28,9 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ConfirmAdapter;
 import com.threerings.presents.util.PersistingUnit;
 
+import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.chat.server.SpeakUtil;
+import com.threerings.crowd.server.BodyProvider;
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -44,6 +46,7 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -306,6 +309,23 @@ public class MemberManager
         // finish the loop by setting them as our followee
         user.setFollowing(target.memberName);
         listener.requestProcessed();
+    }
+
+    // from interface MemberProvider
+    public void setAway (ClientObject caller, boolean away, String message)
+        //throws InvocationException
+    {
+        final MemberObject user = (MemberObject) caller;
+        if (away) {
+            if (message == null) {
+                message = "I'm away."; // TODO: translate? Require client to provide?
+            }
+            user.setAwayMessage(message);
+        } else {
+            user.setAwayMessage(null);
+        }
+        BodyProvider.updateOccupantStatus(user, user.location,
+            away ? MsoyBodyObject.AWAY : OccupantInfo.ACTIVE);
     }
 
     // from interface MemberProvider

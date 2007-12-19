@@ -21,7 +21,7 @@ public class AwayHandler extends CommandHandler
         ctx :CrowdContext, speakSvc :SpeakService, cmd :String, args :String,
         history :Array) :String
     {
-        (ctx as MsoyContext).getMsoyController().forceIdle(2);
+        (ctx as MsoyContext).getMsoyController().setAway(true, args);
         return ChatCodes.SUCCESS;
     }
 }

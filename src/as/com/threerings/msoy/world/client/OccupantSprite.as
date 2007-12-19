@@ -18,6 +18,8 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.data.MsoyBodyObject;
+
 import com.threerings.msoy.chat.client.ComicOverlay;
 
 import com.threerings.msoy.world.data.EffectData;
@@ -647,6 +649,8 @@ public class OccupantSprite extends MsoySprite
             return 0x777777;
         case OccupantInfo.DISCONNECTED:
             return 0xFF0000;
+        case MsoyBodyObject.AWAY:
+            return 0xFFFF77;
         default:
             return 0x99BFFF;
         }

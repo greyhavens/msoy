@@ -12,6 +12,9 @@ import com.threerings.whirled.data.ScenePlace;
  */
 public class MsoyBodyObject extends BodyObject
 {
+    /** Constant value for {@link #status}. */
+    public static final byte AWAY = 3;
+
     /** The current state of the body's actor, or null if unset/unknown/default. */
     public transient String actorState;
 
@@ -23,5 +26,17 @@ public class MsoyBodyObject extends BodyObject
     public int getSceneId ()
     {
         return ScenePlace.getSceneId(this);
+    }
+
+    @Override // from BodyObject
+    protected String getStatusTranslation ()
+    {
+        switch (status) {
+        case AWAY:
+            return "away";
+
+        default:
+            return super.getStatusTranslation();
+        }
     }
 }

@@ -110,6 +110,13 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
+        case MemberMarshaller.SET_AWAY:
+            ((MemberProvider)provider).setAway(
+                source,
+                ((Boolean)args[0]).booleanValue(), (String)args[1]
+            );
+            return;
+
         case MemberMarshaller.SET_DISPLAY_NAME:
             ((MemberProvider)provider).setDisplayName(
                 source,
