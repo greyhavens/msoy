@@ -6,6 +6,8 @@ package com.threerings.msoy.world.client.editor {
 import flash.display.DisplayObject;
 import flash.display.Shape;
 
+import flash.events.Event;
+
 import mx.core.UIComponent;
 
 import mx.containers.Canvas;
@@ -43,11 +45,21 @@ public class CustomPanel extends UIComponent
             _userPanel = null;
         }
 
+        if (_target != null) {
+            // stop listening to the old target, if we were
+            _target.removeEventListener(Event.INIT, handleTargetInit);
+        }
+
         // assign the new target
         _target = target;
 
-        if (target != null) {
-            _userPanel = target.getCustomConfigPanel();
+        showTargetPanel();
+    }
+
+    protected function showTargetPanel () :void
+    {
+        if (_target != null) {
+            _userPanel = _target.getCustomConfigPanel();
             if (_userPanel != null) {
                 // NOTE: we do not do any masking, because that breaks certain popups
                 // (fl component ColorPicker, anyway)
@@ -55,10 +67,23 @@ public class CustomPanel extends UIComponent
                 // We may want to reconsider this in the future.
                 addChild(_userPanel);
                 setActualSize(_userPanel.width, _userPanel.height);
+
+            } else if (!_target.isContentInitialized()) {
+                // well no wonder it hasn't given us a custom panel. Let's
+                // listen for it to initialize, and then we'll try again.
+                _target.addEventListener(Event.INIT, handleTargetInit);
             }
         }
 
         recheckVisibility();
+    }
+
+    protected function handleTargetInit (event :Event) :void
+    {
+        _target.removeEventListener(Event.INIT, handleTargetInit);
+
+        // try again to show the custom panel.
+        showTargetPanel();
     }
 
     override public function get numChildren () :int
