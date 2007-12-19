@@ -144,7 +144,7 @@ public class ItemServlet extends MsoyServiceServlet
             }
 
             // make sure they own it
-            if (record.ownerId != memrec.memberId) {
+            if (!memrec.isAdmin() && record.ownerId != memrec.memberId) {
                 throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
             }
 
