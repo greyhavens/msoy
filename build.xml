@@ -22,9 +22,7 @@
   <property name="build_version" value="0"/>
 
   <!-- define our subprojects and include the standard build system -->
-  <property name="projects1" value="whirled"/>
-  <property name="projects2" value="facebook"/>
-  <property name="projects" value="${projects1},${projects2}"/>
+  <property name="projects" value="whirled,facebook"/>
   <import file="build/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
     <include name="${src.dir}/**/*.java"/>
