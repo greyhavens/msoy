@@ -4,7 +4,7 @@
   <!-- define some basic project parameters -->
   <property name="app.name" value="Tutorial"/>
   <property name="build.root" value="../../.."/>
-  <property name="flex.path" value="${build.root}/tools/extern/flex_sdk"/>
+  <property name="flex.path" value="${build.root}/lib/flex_sdk"/>
   <property name="app.source-dir" value="src"/>
   <property name="app.source-suffix" value="as"/>
   <property name="app.package-dir" value="tutorial"/>

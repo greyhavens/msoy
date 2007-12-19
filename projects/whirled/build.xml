@@ -11,7 +11,7 @@
   <!-- import some targets to enumerate library dependencies -->
   <property name="libs.dir"      value="../../${deploy.dir}/lib"/>
   <property name="projects.dir"  value="../../projects"/>
-  <property name="flex.path"     value="../../tools/extern/flex_sdk"/>
+  <property name="flex.path"     value="../../lib/flex_sdk"/>
   <import file="etc/libs-incl.xml"/>
 
   <!-- the path to the flex sdk for the Swiftly build location -->

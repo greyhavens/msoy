@@ -1,0 +1,11 @@
+<project name="restaurant" default="war" basedir=".">
+		
+	<target name="compile">
+		<javac srcdir="WEB-INF/src" destdir="WEB-INF/classes" includes="**/*.java"/>
+	</target>
+	
+	<target name="war" depends="compile" description="Creates a WAR for running the web services">
+		<jar destfile="restaurant.war" basedir="${basedir}" includes="WEB-INF/**, recentReviews.jsp"/>
+	</target>
+
+</project>

@@ -4,7 +4,7 @@
   <!-- define some basic project parameters -->
   <property name="app.name"  value="neighborhood"/>
   <property name="root.path" value="../.."/>
-  <property name="flex.path" value="${root.path}/tools/extern/flex_sdk"/>
+  <property name="flex.path" value="${root.path}/lib/flex_sdk"/>
 
   <target name="checklib">
     <uptodate property="lib_is_up_to_date" targetfile="neighborhood.swc">

@@ -1,0 +1,30 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Flex Store Readme</title>
+<link href="../readme.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h1>Flex Store Readme </h1>
+<p><a href="flexstore.html" target="_blank">Run Flex Store </a></p>
+<p>The Flex Store application shows some of the  user experiences  that the Adobe<sup>&reg;</sup> Flex<sup>&#8482;</sup> 2 framework provides. The Products page  shows how you can use states, transitions, and UI techniques, such as showing more information as space becomes available, to improve your application. For example, if you change the filter options in the  panel on the left, you can see the phones drop out and move around in the main Catalog panel. As you hover the mouse over a phone, more buttons appear that provide opportunities for adding the phone to the compare list, the shopping cart, or viewing its details. You can also drag the phone into the compare panel. If you add the phone to the shopping cart,  the panel shifts and exposes the cart, which was hidden underneath. This behavior shows how you can re-use the screen real estate (the drag-and-drop operation also works with the shopping cart when it's visible). There are also grips on the sides of the screen that can change from viewing the cart to the filter panel and back. The labels in the upper-right corner of the panel also show which page you are currently viewing, and you can click the label  to change the state. </p>
+
+<h2>Flex framework features</h2>
+
+<p>Effects are clearly the highlight of the Flex Store application because  they are used extensively for the animation between different states. The states are used to help hide and show different areas of information, and the ProductCatalogThumbnail has different states for the levels of detail visible. You can see how the drag-and-drop operation is implemented; it is initiated in the ProductCatalogPanel and handled in the ProductList. The application also employs extensive component customization; for example, the Panel container has buttons in its titleBar. This example  exposes the power of using style sheets. You can change the default beige and orange theme to blue (and back again) by  clicking on the FlexStore logo in the upper-left corner of the application.</p>
+
+<h2>Notes for Adobe<sup class="h2sup">&reg;</sup> Flex<sup class="h2sup">&#8482;</sup> Builder<sup class="h2sup">&#8482;</sup> 2</h2>
+<p>To support runtime loading the CSS files must be compiled. Right-click on the beige.css and blue.css files in the Navigator and choose &quot;Compile CSS to SWF.&quot; If you've imported this project from the Welcome page this option may already be selected. </p>
+<p>The &quot;run&quot; links in this Readme file point to an HTML wrapper that is located in the same directory as the Readme, which in turn must be in the same directory as the compiled SWF file. If you are running this application in Flex Builder,  the compiled SWF file and its matching HTML wrapper may be in the <a href="bin/flexstore.html">bin</a> directory. </p>
+<h2>Notes for Adobe<sup class="h2sup">&reg;</sup> Flex<sup class="h2sup">&#8482;</sup> SDK</h2>
+<p>The build script for the Flex Store application assumes that you  run the application  from the local 
+  file system (<code>file:///</code> in your browser).  If you plan to run the application from a web
+  server (<code>http://</code> in your browser), change the <code>-use-network</code> setting in
+  the build script to <code>true</code>.</p>
+<p><a href="flexstore.html" target="_blank">Run Flex Store </a></p>
+</body>
+</html>

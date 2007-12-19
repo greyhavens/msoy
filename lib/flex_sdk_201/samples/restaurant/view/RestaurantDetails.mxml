@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml"
+    paddingTop="8" paddingBottom="8" paddingLeft="4" paddingRight="4"
+    horizontalGap="12"
+    width="100%"
+    height="290"
+    verticalScrollPolicy="off"
+  	backgroundAlpha=".4"
+    creationComplete="initComp()"
+    showInAutomationHierarchy="true"
+    xmlns:view="view.*">
+    
+<!--
+	This is an example of a custom component that contains many subcomponents 
+	to display information.  Standard components such as Labels and Text Areas
+	do not implement IFocusManagerComponent and will not be reachable by a
+	screen reader.  Therefore we've made accessible versions of them and use
+	those components instead.  
+	
+	Another thing to be mindful of is how the data is represented for the screen
+	reader.  For example, a phone number showing up as (617) 426-8727 will be
+	perfect for a sighted reader but for a user with a screen reader, they will
+	hear "left paren six one seven right paren..." and probably not the ideal
+	behavior.  Therefore some care needs to be taken to adjust the data for
+	a screen reader.
+	
+	The last thing to be mindful of is labels that have no information.  In this
+	example, it is perfectly ok for a restaurant to not provide the address.  For
+	a sighted user, that is simply a blank space and there is no harm done.  However
+	for a user with a screen reader, they will have focus on a label that has no text,
+	a problem that can be easily fixed.
+-->
+	
+    <mx:Script>
+
+        <![CDATA[
+        import samples.restaurant.ServiceLocator;
+        import samples.restaurant.TokenResponder;
+
+        import mx.collections.ArrayCollection;
+        import mx.rpc.AbstractService;
+        import mx.rpc.AsyncToken;
+        import mx.rpc.events.ResultEvent;
+        import mx.rpc.events.FaultEvent;
+
+    	// Reference to the single WebService instance for the RestaurantWS web service.
+        private var service:AbstractService;
+
+    	private var cache:Object;
+    	
+		//The beginning tab index for this composite component
+    	[Bindable]
+    	public var beginTabIndex:int;
+
+        private function initComp():void
+        {
+            	service = ServiceLocator.getRestaurantService();
+            	cache = new Object();
+        }
+		
+    	// The restaurant we need to display.  Use a getter/setter
+    	// so we can muck with the currentState based on whether
+    	// it is null
+    	private var _restaurant:Object;
+
+    	[Bindable]
+    	public function get restaurant():Object
+    	{
+    		return _restaurant;
+   		}
+
+		/* 
+		 * There is some work to be done to make sure that the data fields 
+		 * exist (for the reader) and to format them to be better accesible
+		 */
+        public function set restaurant(r:Object):void
+        {
+            _restaurant = r;
+            currentState = r != null ? "hasRestaurant" : "";
+            
+            /* corrects the data to make it more accessible */
+			massageNumber();
+			massageDescription();
+			massageAddress();         
+        }
+        
+        
+        /* If the address ends in St. then the reader should read "Street" */
+        private function massageAddress():void
+		{
+        	var s: String;
+            var orig:String = _restaurant.address;
+            
+            if (orig == null || orig == "") 
+			{
+            	address.focusEnabled = false;
+            	address.tabEnabled = false;
+            	return;
+            }
+            
+     		if (orig.search("Street") == -1 && orig.search("street") == -1) 
+			{
+            	s = orig.replace(" St.", " Street");
+            	if (s == orig) {
+					s = orig.replace(" st.", " Street");
+					if (s == orig) {
+						s = orig.replace(" St", " Street");
+						if (s == orig)
+							s = orig.replace(" st", " Street");
+					}
+            	}
+       		}
+       		else 
+       			s = orig;
+			
+            _restaurant.accAddress = s;
+            address.focusEnabled = true;
+            address.tabEnabled = true;
+        }
+        
+        /* the phone number is stored in the data base as a String
+           We need to parse it to get rid of parenthesis and dashes */
+        private function massageNumber():void 
+		{
+        	var s:String = "";
+            var phone:String = _restaurant.phone;
+            
+            if (phone == null || phone == "") 
+			{
+            	phoneNumber.tabEnabled = false;
+            	phoneNumber.focusEnabled = false;
+            	return;
+            }
+            	
+            
+            for (var i:int = 0; i < phone.length; i++) 
+			{
+            	var num:int = phone.charCodeAt(i) - 48;
+            	if (num >=0 && num <= 9)
+            		s += num + " ";
+            }
+            _restaurant.stringPhone = s;
+            phoneNumber.tabEnabled = true;
+            phoneNumber.focusEnabled = true;
+        }
+        
+        /* if there is no description, the reader should not say anyting */
+        private function massageDescription():void 
+		{
+            if (_restaurant.description == null || _restaurant.description == "") 
+			{
+            	description.toolTip = "";
+            	description.tabEnabled = false;
+            	description.focusEnabled = false;
+            }
+            else 
+			{
+            	description.focusEnabled = true;
+            	description.tabEnabled = true;	
+            	description.accessibleText = "Restaurant description " + _restaurant.description; 
+            }
+        }
+
+
+	    public function set restaurantId(restaurantId:int):void
+	    {
+	    	if (restaurantId != 0) // 0 means no restaurant was selected
+	        {
+	        	// Use the restaurant from cache if available. Otherwise load it from service.
+	       		if (cache[restaurantId])
+	       		{
+	        	restaurant = cache[restaurantId];
+	        	}
+	       		else
+	        	{
+	       			var token: AsyncToken = AsyncToken(service.getRestaurant(restaurantId));
+	        	    token.addResponder(new TokenResponder(getRestaurantResult,
+	        	            "Error Getting Restaurant Details"));
+	       		}
+	       	}
+	      	else
+		   	{
+	    		restaurant = null;
+	    	}
+		}
+	
+	    private function getRestaurantResult(event:ResultEvent):void
+    	{
+    		if (event.result != null)
+    	  	{
+        		restaurant = event.result;
+
+        		// Cache the result
+        		cache[restaurant.restaurantId] = restaurant;
+      		}
+      		else
+      		{
+        		restaurant = null;
+      		}
+    	}
+
+    	private function formatCategories(restaurantCategories:ArrayCollection):String
+    	{
+        	var categories:String = "";
+
+      		// Create the categories string
+            if (restaurantCategories.length > 0)
+            {
+              	var l:int = restaurantCategories.length;
+                categories = restaurantCategories[0].name;
+                for (var i: int = 1; i < l; i++)
+                {
+                    categories += ", " + restaurantCategories[i].name;
+                }
+            }
+            return categories;
+    	}
+
+	]]>
+
+    </mx:Script>
+
+    <mx:states>
+      <mx:State name="hasRestaurant">
+        <mx:AddChild position="lastChild">
+          <mx:Image id="img" source="{restaurant.image != '' ? 'assets/pic/'+restaurant.image : 'assets/pic/noimage.png'}" 
+          	width="200"/>
+        </mx:AddChild>
+        <mx:AddChild position="lastChild">
+          <mx:VBox id="details" width="100%" verticalGap="0">
+
+              <view:AccessibleLabel text="{restaurant.name}" styleName="title"
+              		tabIndex="{beginTabIndex + 1}"
+              		accessibleText="Restaurant name {restaurant.name}"/>
+              <view:AccessibleLabel id="address" text="{restaurant.address}"
+              		tabIndex="{beginTabIndex + 2}"
+              		accessibleText="Restaurant address {restaurant.accAddress}"/>
+              <view:AccessibleLabel text="{restaurant.city}"
+              		tabIndex="{beginTabIndex + 3}"
+              		accessibleText="Restaurant city {restaurant.city}"/>
+              <view:AccessibleLabel id="phoneNumber" text="{restaurant.phone}"
+              		tabIndex="{beginTabIndex + 4}"
+              		accessibleText="Restaurant phone {restaurant.stringPhone}"/>
+              <mx:Spacer height="10"/>
+              <view:AccessibleImage source="assets/img/stars{restaurant.rating}.png"
+              		tabIndex="{beginTabIndex + 5}"
+              		accessibleText="Restaurant rating {restaurant.rating} out of 5."/>
+              <mx:Spacer height="10"/>
+              <view:AccessibleText id="description" text="{restaurant.description}" 
+              		width="100%"
+              		tabIndex="{beginTabIndex + 6}"/>
+              <mx:HBox paddingTop="16" width="100%">
+                  <view:AccessibleLabel text="Categories:" fontWeight="bold" 
+                  		accessibleText="Restaurant categories {formatCategories(restaurant.categories)}"
+                  		tabIndex="{beginTabIndex + 7}"/>
+                  <mx:Text text="{formatCategories(restaurant.categories)}" width="100%"/>
+              </mx:HBox>
+
+          </mx:VBox>
+        </mx:AddChild>
+      </mx:State>
+    </mx:states>
+
+</mx:HBox>

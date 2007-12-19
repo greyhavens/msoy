@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+Accessibility:
+	The best way to get focus right on all the components is to set tab indices.
+	Since keyboard events are not cancellable, tab events will eventually propagate
+	to the focusManager which will set focus accordingly and there is no way to
+	circumvent this.  The best way is to make sure it does the right thing by 
+	specifying tab order.  This is what is done in this app.
+	
+	The strategy is to assign a (safe) chunk of tab indices for parent components
+	and have the parent components assign indices to its children.  Some times
+	(look in restaurant details) tab indices will need to be reassigned based on the 
+	state.
+	
+-->
+
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="view.*"
+    paddingTop="0" verticalGap="20" horizontalAlign="left"
+    usePreloader="false"
+    backgroundColor="#5C5F45"
+    pageTitle="Restaurant Finder"
+    themeColor="#75B1CE"
+    creationComplete="initApp()">
+
+    <mx:Script>
+
+    <![CDATA[
+        import samples.restaurant.ServiceLocator;
+        import samples.restaurant.TokenResponder;
+
+		import mx.collections.ArrayCollection;
+        import mx.rpc.AsyncToken;
+        import mx.rpc.AbstractService;
+        import mx.rpc.events.ResultEvent;
+        import mx.utils.ArrayUtil;
+
+        // Reference to the single WebService instance for the RestaurantWS web service.
+        private var service:AbstractService;
+
+        // The restaurants matching the user's selection
+        [Bindable]
+        private var selectedRestaurants:ArrayCollection = new ArrayCollection();
+        
+        //used for making sure that we only get the latest and greatest
+        //result from the restaurant.
+        private var getRestaurantsByCategoryCount:int;
+
+        // The list of all the restaurants
+        public var restaurants:ArrayCollection;
+        
+        /* static helper methods to assign tab indices */
+        private static var tabOrder:int = 1;
+        public static function getNextTabIndex(increment:int = 1):int 
+        {
+        	var val:int = tabOrder;
+        	tabOrder += increment;
+        	return val;
+        }
+		
+		/* This is a helper function that will determine if the application
+		 * has been compiled with accessibility turned on.  If accessibility is
+		 * turned on, the compiler will compile additional accessibility files
+		 * and initialize the accessibilityProperties field for each component.
+		 * This method is used in a few places to control slight modifications
+		 * in the two versions. */
+        private function hasAccessibility():Boolean
+		{
+			return this.accessibilityProperties != null;
+		}
+		
+        private function initApp():void
+        {
+            // Obtain a reference to the single WebService instance for the RestaurantWS web service
+            service = ServiceLocator.getRestaurantService();
+            var token:AsyncToken = AsyncToken(service.getRestaurants());
+            token.addResponder(new TokenResponder(getRestaurantsResult));
+            
+            /* we walk through the components after they've all been created to assign tab indices 
+               The number in the parameter indicates the number of "reserved" tab indices for the 
+               component's children.  These numbers are hardcoded in since we don't necessarily know
+               the correct number since it depends on external services.  Therefore the numbers
+               are bigger than they need to be.  Tab indices need to be in order but not sequential
+               (it's ok to have tab indices 1, 10, 50, 100; you do not need 1,2,3,4). */
+            filter.beginTabIndex = getNextTabIndex(50);
+            dg.tabIndex = getNextTabIndex();
+            recentReviews.tabIndex = getNextTabIndex();
+            restaurantDetails.beginTabIndex = getNextTabIndex(10);
+            reviewList.beginTabIndex = getNextTabIndex();
+ 
+        }
+        
+		/* A data grid displays the number of elements it has in the top right corner.
+		 * This method is used to update that information for the screen reader */
+        private function updateDataGridAccessibilityName(value:int):void
+        {
+        	if (hasAccessibility())
+        	{
+        		dg.accessibilityProperties.name = value + " restaurants selected";
+        		Accessibility.updateProperties();
+        	}
+        }
+
+        private function getRestaurantsResult(event:ResultEvent):void
+        {
+            restaurants = event.result as ArrayCollection;
+            //copy the restaurants, if you don't the removeAll will
+            //eliminate everything
+            selectedRestaurants.source = restaurants.source.concat();
+            updateDataGridAccessibilityName(selectedRestaurants.length);
+            
+            //check to see if a restaurant had been specified that we want
+            //to view.  parameters is available on the application and will
+            //get anything that had been a flashvars parameter
+            if (parameters["restaurantId"] != null)
+            {
+                for (var i:int = 0; i < restaurants.length; i++)
+                {
+                    if (restaurants[i].restaurantId == parameters["restaurantId"])
+                    {
+                        dg.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                dg.selectedIndex = 0;
+            }
+        }
+
+        private function getRestaurantsByCategories(categories:ArrayCollection):void
+        {
+            dg.selectedIndex = -1;
+            ++getRestaurantsByCategoryCount;
+            if (categories.length == 0)
+            {
+                selectedRestaurants.removeAll();
+                updateDataGridAccessibilityName(selectedRestaurants.length);
+            }
+            else
+            {
+                var token:AsyncToken = AsyncToken(service.getRestaurantsByCategories(categories.toArray()));
+                token.getRestaurantsByCategoryCount = getRestaurantsByCategoryCount;
+                token.addResponder(new TokenResponder(getRestaurantsByCategoriesResult));
+            }
+        }
+
+        private function getRestaurantsByCategoriesResult(event:ResultEvent):void
+        {
+            //ignore if the counts don't match (the user was clicking quickly)
+            if (event.token.getRestaurantsByCategoryCount == getRestaurantsByCategoryCount)
+            {
+                selectedRestaurants.source = ArrayUtil.toArray(event.result.source);
+                updateDataGridAccessibilityName(selectedRestaurants.length);
+                if (selectedRestaurants.length > 0)
+                {
+                    dg.selectedIndex = 0;
+                }
+            }
+        }
+
+        private function selectAll():void
+        {
+            //copy the restaurants, if you don't the removeAll will
+            //eliminate everything
+            selectedRestaurants.source = restaurants.source.concat();
+            updateDataGridAccessibilityName(selectedRestaurants.length);
+            dg.selectedIndex = 0;
+        }
+
+        private function goToRecentReviews():void
+        {
+            var request:URLRequest = new URLRequest("recentReviews.html");
+            navigateToURL(request);
+        }
+
+		/* Some changes for accessibilty can be very minor.  Here (and throughout this appp)
+		 * if accessibilty is turned on, the focusThickness of every component has been increased.
+		 */
+		private function dataGridComplete(e:Event):void
+		{
+			if (hasAccessibility()) 
+			{
+				dg.setStyle("focusThickness", 4);
+				updateDataGridAccessibilityName(selectedRestaurants.length);
+				Accessibility.updateProperties();
+			}
+		}
+        ]]>
+    </mx:Script>
+
+    <mx:Style source="restaurant.css"/>
+
+    <mx:HBox width="100%" height="100%">
+
+        <mx:Panel id="mainPanel" title="Restaurant List" status="{selectedRestaurants.length} restaurants selected" width="40%" height="100%" backgroundAlpha=".4"
+            paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4" cornerRadius="6">
+
+            <mx:VDividedBox width="100%" height="100%">
+
+                <!-- A custom component that allows the end user to select categories of restaurants -->
+                <CategoryFilter
+                	id="filter"
+                    selectionChanged="getRestaurantsByCategories(CategoryFilter(event.target).selectedCategories)"
+                    selectAll="selectAll()"
+                    width="100%" height="100%"/>
+
+                <!-- Displays the list of selected restaurants -->
+                <mx:DataGrid id="dg" dataProvider="{selectedRestaurants}" width="100%" height="100%"
+                 	creationComplete="dataGridComplete(event)">
+                    <mx:columns>
+                        <mx:Array>
+                            <mx:DataGridColumn dataField="name" headerText="Name"/>
+                            <mx:DataGridColumn dataField="city" headerText="City"/>
+                        </mx:Array>
+                    </mx:columns>
+                </mx:DataGrid>
+
+            </mx:VDividedBox>
+
+            <mx:Button id="recentReviews" label="View the 10 most recent reviews" 
+            	click="goToRecentReviews()"
+            	creationComplete="if (hasAccessibility()) recentReviews.setStyle('focusThickness', 4)"/>
+
+        </mx:Panel>
+
+        <mx:VBox width="60%" height="100%"
+            backgroundColor="#FFFFFF"
+            backgroundAlpha=".4"
+            borderStyle="solid"
+            cornerRadius="6"
+            paddingLeft="4"
+            paddingRight="4"
+            paddingTop="4"
+            paddingBottom="4"
+            dropShadowEnabled="true"
+            showInAutomationHierarchy="true">
+
+            <!-- A custom component that shows details of the restaurant selected in the DataGrid -->
+            <RestaurantDetails id="restaurantDetails" restaurantId="{dg.selectedItem.restaurantId}"/>
+
+            <!-- A custom component that shows reviews for the restaurant selected in the DataGrid and that allows the end user to post a new review -->
+            <ReviewList id="reviewList" label="Reviews" restaurant="{dg.selectedItem}"/>
+
+        </mx:VBox>
+
+    </mx:HBox>
+
+</mx:Application>

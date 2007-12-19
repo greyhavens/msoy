@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" 	
+    xmlns:photoviewer="samples.photoviewer.*" initialize="loadResources()"
+	width="100%" height="100%" 
+	show="onShow(event)" resize="carousel.reset()">
+	
+	<mx:Metadata>
+		[Event("thumbnailView")]
+		[Event("slideshowView")]
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+		import samples.photoviewer.Gallery;
+		import mx.events.FlexEvent;
+		import mx.resources.*;
+		
+		[Embed(source="assets/icon_left.png")]
+		private const ICON_LEFT:Class;
+		
+		[Embed(source="assets/icon_right.png")]		
+		private const ICON_RIGHT:Class;
+		
+		[Embed(source="assets/icon_left_disabled.png")]
+		private const ICON_LEFT_DISABLED:Class;
+		
+		[Embed(source="assets/icon_right_disabled.png")]
+		private const ICON_RIGHT_DISABLED:Class;
+		
+		[ResourceBundle("strings")]
+		private static var stringResources:ResourceBundle;
+		[Bindable]
+		private var listViewtooltip:String;
+		[Bindable]
+		private var slideShowTooltip:String;
+		[Bindable]
+		private var nextWord:String;
+		[Bindable]
+		private var previousWord:String; 
+	
+		private function loadResources():void
+		{
+			listViewtooltip = stringResources.getString("listViewtooltipKey");
+			slideShowTooltip = stringResources.getString("slideShowTooltipKey");
+			nextWord = stringResources.getString("nextWordKey");
+			previousWord = stringResources.getString("previousWordKey");
+		}
+		
+		
+		private var _gallery:Gallery;
+		
+		[Bindable]
+		public function get gallery():Gallery
+		{
+			return _gallery;
+		}
+		
+		public function set gallery(value:Gallery):void
+		{
+			_gallery = value;
+		}
+		
+		private function showPrev():void
+		{
+			if (gallery.selected > 0)
+			{
+				nextPhoto.setStyle("icon", ICON_RIGHT); 
+				gallery.selected = gallery.selected - 1;
+				carousel.rotateRight();
+				
+				if (gallery.selected <= 0)
+					prevPhoto.setStyle("icon", ICON_LEFT_DISABLED);
+			} 
+		}
+		
+		private function showNext():void
+		{
+			if (gallery.selected < gallery.photos.length - 1)
+			{
+				prevPhoto.setStyle("icon", ICON_LEFT);
+				gallery.selected = gallery.selected + 1;
+				carousel.rotateLeft();
+				
+				if (gallery.selected >= gallery.photos.length - 1)
+					nextPhoto.setStyle("icon", ICON_RIGHT_DISABLED); 
+			} 
+		}
+		
+		private function onShow(event:FlexEvent):void
+		{
+			photoDescription.text = gallery.photos.getItemAt(gallery.selected).description;
+			
+			if (gallery.selected == 0)
+				prevPhoto.setStyle("icon", ICON_LEFT_DISABLED);
+			else
+				prevPhoto.setStyle("icon", ICON_LEFT);
+
+			if (gallery.selected >= gallery.photos.length - 1)
+				nextPhoto.setStyle("icon", ICON_RIGHT_DISABLED); 				
+			else 
+				nextPhoto.setStyle("icon", ICON_RIGHT); 			
+
+			carousel.reset();
+		}
+		]]>
+	</mx:Script>
+	<mx:VBox width="100%" height="100%" horizontalAlign="center" horizontalCenter="0" >
+	
+		<photoviewer:Carousel id="carousel" gallery="{gallery}" 
+		    width="100%" height="100%"
+		    verticalCenter="0" horizontalCenter="0"/>
+		
+		<mx:HBox y="10" width="50%" height="40" horizontalCenter="0">
+		
+			<NavButton icon="{ICON_LEFT}" 
+				id="prevPhoto"
+				toolTip="{previousWord}"
+			    click="showPrev()" />		
+			    		
+			<mx:Text id="photoDescription" 
+				text="{gallery.photos.getItemAt(gallery.selected).description}" 
+				width="100%" height="100%" 
+				styleName="photoDescription" 
+				textAlign="center"/>
+
+			    
+			<NavButton 
+				id="nextPhoto"
+				toolTip="{nextWord}"
+				icon="{ICON_RIGHT}" 
+				click="showNext()" />		
+		</mx:HBox>
+		
+		<mx:Label id="photoName" text="{gallery.photos.getItemAt(gallery.selected).name}" 
+			horizontalCenter="0"
+			width="200" height="20" bottom="0" 
+			styleName="photoName"  textAlign="center"/>
+			
+		<mx:Canvas width="100%" height="60">
+		
+			<NavButton icon="@Embed('assets/icon_list.png')" 
+				horizontalCenter="-15" verticalCenter="0"
+			    toolTip="{listViewtooltip}"
+			    click="dispatchEvent(new Event('thumbnailView'))" />
+			    			
+			<NavButton icon="@Embed('assets/icon_slideshow.png')" 
+				horizontalCenter="15" verticalCenter="0"
+			    toolTip="{slideShowTooltip}"
+			    click="dispatchEvent(new Event('slideshowView'))" />
+			    
+		</mx:Canvas>
+		
+	</mx:VBox>
+	
+</mx:Canvas>

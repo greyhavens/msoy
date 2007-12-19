@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+ <globalConfiguration>
+  <parameter name="adminPassword" value="admin"/>
+  <parameter name="sendMultiRefs" value="true"/>
+  <parameter name="sendXsiTypes" value="true"/>
+  <parameter name="sendXMLDeclaration" value="true"/>
+  <parameter name="axis.sendMinimizedElements" value="true"/>
+  <requestFlow>
+   <handler type="java:org.apache.axis.handlers.JWSHandler"/>
+  </requestFlow>
+ </globalConfiguration>
+ <handler name="URLMapper" type="java:org.apache.axis.handlers.http.URLMapper"/>
+ <service name="AdminService" provider="java:MSG">
+  <parameter name="methodName" value="AdminService"/>
+  <parameter name="enableRemoteAdmin" value="false"/>
+  <parameter name="className" value="org.apache.axis.utils.Admin"/>
+ </service>
+ <service name="CategoryWS" provider="java:RPC">
+  <parameter name="methodName" value="*"/>
+  <parameter name="className" value="samples.restaurant.CategoryService"/>
+  <beanMapping languageSpecificType="java:samples.restaurant.RestaurantCategory" qname="ns1:RestaurantCategory" xmlns:ns1="http://www.adobe.com/samples"/>
+ </service>
+ <service name="RestaurantWS" provider="java:RPC">
+  <parameter name="methodName" value="*"/>
+  <parameter name="className" value="samples.restaurant.RestaurantService"/>
+  <beanMapping languageSpecificType="java:samples.restaurant.RestaurantSummary" qname="ns2:RestaurantSummary" xmlns:ns2="http://www.adobe.com/samples"/>
+  <beanMapping languageSpecificType="java:samples.restaurant.Restaurant" qname="ns3:Restaurant" xmlns:ns3="http://www.adobe.com/samples"/>
+  <beanMapping languageSpecificType="java:samples.restaurant.RestaurantCategory" qname="ns4:RestaurantCategory" xmlns:ns4="http://www.adobe.com/samples"/>
+  <beanMapping languageSpecificType="java:samples.restaurant.Review" qname="ns5:Review" xmlns:ns5="http://www.adobe.com/samples"/>
+ </service>
+ <transport name="http">
+  <requestFlow>
+   <handler type="URLMapper"/>
+   <handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
+  </requestFlow>
+ </transport>
+ <transport name="local">
+  <responseFlow>
+   <handler type="java:org.apache.axis.transport.local.LocalResponder"/>
+  </responseFlow>
+ </transport>
+</deployment>

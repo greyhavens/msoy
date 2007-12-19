@@ -1,0 +1,34 @@
+#!/bin/sh
+
+#
+# mxmlc launch script for unix.  On windows, mxmlc.exe is used and
+# java settings are managed in jvm.config in this directory.
+#
+
+case `uname` in
+		CYGWIN*)
+			OS="Windows"
+		;;
+		*)
+			OS=Unix
+esac
+
+if [ $OS = "Windows" ]; then
+	# set FLEX_HOME relative to mxmlc if not set
+	test "$FLEX_HOME" = "" && {
+	FLEX_HOME=`dirname $0`/..
+    	FLEX_HOME=`cygpath -m $FLEX_HOME`
+	}
+
+elif [ $OS = "Unix" ]; then
+
+	# set FLEX_HOME relative to mxmlc if not set
+	test "$FLEX_HOME" = "" && {
+	FLEX_HOME=`dirname "$0"`/..
+	}
+
+fi
+
+VMARGS="-Xmx384m -Dsun.io.useCanonCaches=false"
+
+java $VMARGS -jar "$FLEX_HOME/lib/mxmlc.jar" +flexlib="$FLEX_HOME/frameworks" $*

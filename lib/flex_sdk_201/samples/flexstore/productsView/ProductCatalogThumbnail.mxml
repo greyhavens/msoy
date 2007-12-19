@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+    width="{COL_WIDTH_4}" height="{COL_HEIGHT_4}"
+    borderStyle="solid"
+    borderColor="#FFFFFF"
+    horizontalScrollPolicy="off" verticalScrollPolicy="off"
+    rollOver="rollOverHandler(event)"
+    rollOut="rollOutHandler(event)"
+    mouseDown="mouseDownHandler(event)"
+    mouseMove="mouseMoveHandler(event)"
+    mouseUp="mouseUpHandler(event)"
+    click="clickHandler(event)"
+    currentState="4cols"
+    automationName="{product.name}"
+    dropShadowColor="#000000"
+    shadowDistance="2"
+    >
+
+    <mx:Metadata>
+        [Event(name="purchase", type="samples.flexstore.ProductThumbEvent")]
+        [Event(name="compare", type="samples.flexstore.ProductThumbEvent")]
+        [Event(name="details", type="samples.flexstore.ProductThumbEvent")]
+    </mx:Metadata>
+
+    <mx:Script>
+        <![CDATA[
+
+		import mx.events.*;
+        import mx.core.*;
+        
+        import samples.flexstore.Product;
+        import samples.flexstore.ProductThumbEvent;
+        
+        public static const COL_WIDTH_4:int = 162;
+        public static const COL_HEIGHT_4:int = 122;
+        public static const COL_WIDTH_3:int = 217;
+        public static const COL_HEIGHT_3:int = 165;
+        public static const COL_WIDTH_2:int = 327;
+        public static const COL_HEIGHT_2:int = 250;
+        public static const COMPARE_WIDTH:int = 162;
+        public static const HORIZONTAL_GAP:int = 2;
+        public static const VERTICAL_GAP:int = 3;
+
+        [Bindable]
+        public var product:Product;
+
+        private function rollOverHandler(event:MouseEvent):void
+		{
+            setStyle("borderColor", "#CCCCCC");
+            setStyle("dropShadowEnabled", true);
+            buttons.visible = true;
+        }
+
+        private function rollOutHandler(event:MouseEvent):void
+		{
+            setStyle("borderColor", "#FFFFFF");
+            setStyle("dropShadowEnabled", false);
+			buttons.visible = false;
+        }
+
+        private var dragStartPoint:Point;
+
+        public function mouseDownHandler(event:MouseEvent):void
+        {
+            if (event.target != purchase &&
+                event.target != compare &&
+                event.target != details)
+            {
+                dragStartPoint = new Point(event.stageX, event.stageY);
+                dragStartPoint = globalToLocal(dragStartPoint);
+
+            }
+        }
+
+        public function mouseMoveHandler(event:MouseEvent):void
+        {
+            if (dragStartPoint != null)
+            {
+                var dragEvent:DragEvent = new DragEvent(DragEvent.DRAG_START, true);
+                dragEvent.localX = dragStartPoint.x;
+                dragEvent.localY = dragStartPoint.y;
+                dragEvent.buttonDown = true;
+                dispatchEvent(dragEvent);
+
+                rollOutHandler(event);
+
+                dragStartPoint = null;
+            }
+        }
+
+        public function mouseUpHandler(event:MouseEvent):void
+        {
+            if (dragStartPoint != null)
+            {
+                dragStartPoint = null;
+            }
+        }
+
+        public function clickHandler(event:MouseEvent):void
+        {
+            if (event.target != purchase &&
+                event.target != compare &&
+                event.target != details)
+            {
+                dispatchEvent(new ProductThumbEvent(ProductThumbEvent.DETAILS, product));
+            }
+        }
+
+	]]>
+    </mx:Script>
+
+    <mx:CurrencyFormatter currencySymbol="$" id="cf" precision="2"/>
+
+    <mx:VBox id="vb" width="100%" height="100%"
+        paddingLeft="6" paddingTop="4" paddingRight="8" paddingBottom="4"
+        verticalGap="0">
+
+        <mx:Label text="{product.name}" fontWeight="bold"/>
+
+        <mx:HBox width="100%" paddingTop="0" horizontalGap="4">
+
+            <mx:Image id="img" height="90" width="45" source="{product.image}" />
+
+            <mx:VBox id="descr" width="100%" height="100%" verticalGap="0" paddingTop="0">
+                <mx:Text text="{product.featureString}" selectable="false" width="80" height="48"/>
+                <mx:Label text="{cf.format(product.price)}" fontWeight="bold"/>
+				<mx:Spacer height="4"/>
+            </mx:VBox>
+
+        </mx:HBox>
+
+        <mx:Spacer height="8"/>
+
+    </mx:VBox>
+
+    <mx:VBox id="buttons" visible="false" verticalGap="4" paddingRight="8" right="8" top="12">
+        <mx:Button id="purchase" icon="@Embed('/assets/icon_cart_empty.png')" 
+            click="dispatchEvent(new ProductThumbEvent(ProductThumbEvent.PURCHASE, product))" 
+            width="30" toolTip="Add to cart"/>
+        <mx:Button id="compare" icon="@Embed('/assets/icon_compare.png')" 
+            click="dispatchEvent(new ProductThumbEvent(ProductThumbEvent.COMPARE, product))" 
+            width="30" toolTip="Add to compare list"/>
+        <mx:Button id="details" icon="@Embed('/assets/icon_details.png')" 
+            click="dispatchEvent(new ProductThumbEvent(ProductThumbEvent.DETAILS, product))" 
+            width="30" toolTip="Show details"/>
+    </mx:VBox>
+
+    <mx:states>
+
+        <mx:State name="compare">
+            <mx:SetProperty name="height" value="502"/>
+            <mx:AddChild relativeTo="{vb}">
+                <mx:Label text="Battery: 36 hours"/>
+            </mx:AddChild>
+            <mx:AddChild relativeTo="{vb}">
+                <mx:Label text="Warranty: 1 year"/>
+            </mx:AddChild>
+            <mx:AddChild relativeTo="{vb}">
+                <mx:Label text="Battery: 36 hours"/>
+            </mx:AddChild>
+            <mx:AddChild relativeTo="{vb}">
+                <mx:Label text="Headset: Included"/>
+            </mx:AddChild>
+            <mx:AddChild relativeTo="{vb}">
+                <mx:Label text="Email: Yes"/>
+            </mx:AddChild>
+            <mx:AddChild relativeTo="{vb}">
+                <mx:Label text="Width: 2'"/>
+            </mx:AddChild>
+            <mx:AddChild relativeTo="{vb}">
+                <mx:Label text="Height: 5'"/>
+            </mx:AddChild>
+            <mx:AddChild relativeTo="{vb}">
+                <mx:Label text="Weight: 4"/>
+            </mx:AddChild>
+            <mx:AddChild relativeTo="{vb}">
+                <mx:Label text="Mail-in Rebate: $20"/>
+            </mx:AddChild>
+        </mx:State>
+
+        <mx:State name="4cols">
+            <mx:SetProperty name="width" value="{COL_WIDTH_4}"/>
+            <mx:SetProperty name="height" value="{COL_HEIGHT_4}"/>
+        </mx:State>
+
+        <mx:State name="3cols">
+            <mx:SetProperty name="width" value="{COL_WIDTH_3}"/>
+            <mx:SetProperty name="height" value="{COL_HEIGHT_3}"/>
+            <mx:SetProperty target="{img}" name="width" value="60"/>
+            <mx:SetProperty target="{img}" name="height" value="120"/>
+            <mx:AddChild relativeTo="{descr}">
+        		<mx:Label text="{product.highlight1}" color="#EE8D0C"/>
+            </mx:AddChild>
+            <mx:AddChild relativeTo="{descr}">
+        		<mx:Label text="{product.highlight2}" color="#EE8D0C"/>
+            </mx:AddChild>
+        </mx:State>
+
+        <mx:State name="2cols" basedOn="3cols">
+            <mx:SetProperty name="width" value="{COL_WIDTH_2}"/>
+            <mx:SetProperty name="height" value="{COL_HEIGHT_2}"/>
+            <mx:SetProperty target="{img}" name="width" value="60"/>
+            <mx:SetProperty target="{img}" name="height" value="120"/>
+            <mx:AddChild relativeTo="{vb}">
+                <mx:Text width="100%" text="{product.description}"/>
+            </mx:AddChild>
+        </mx:State>
+
+    </mx:states>
+
+</mx:Canvas>

@@ -3,4 +3,4 @@
 ROOT=`dirname $0`
 ROOT=`cd $ROOT/.. ; pwd`
 
-java -jar $ROOT/tools/extern/flex_sdk_201/lib/fdb.jar
+java -jar $ROOT/lib/flex_sdk_201/lib/fdb.jar

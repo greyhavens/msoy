@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Hybrid Store Readme</title>
+<link href="../readme.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h1>Hybrid Store Readme </h1>
+<p><a href="hybridstore.html" target="_blank">Run Hybrid Store</a> </p>
+<p>The Hybrid Store application shows how easy it is to integrate an Adobe<sup>&reg;</sup> Flex<sup>&#8482;</sup> component into an existing HTML application, taking advantage of the expressiveness that the Flex framework and the Adobe<sup><span
+style='font-size:10.0pt'>&reg;</span></sup> Flash<sup><span
+style='font-size:10.0pt'>&reg;</span></sup> Player 9 provide. The sliders in the application are from the <a href="http://developer.yahoo.com/yui/">Yahoo User Interface Library</a> (<a href="http://developer.yahoo.com/yui/license.txt"><em>license</em></a>). As you move the slider, the Hybrid Store application calls functions on the Flex SWF file to adjust the specified properties. When you release the slider, the application calls another function that indicates that filtering is complete, so  the catalog can animate any changes necessary. Selecting or deselecting the check boxes causes similar actions. Those functions in the Flex application are exposed through the ExternalInterface API. The actual catalog display is a simplified version of the ProductCatalogPanel found in the Flex Store application.</p>
+<h2>Implementation notes</h2>
+<p>This example is  a simple demonstration of integrating HTML and Flex, and it is not meant as a best-practice use of HTML. For example, the CSS used for positioning all elements could  be improved; the thumbRight style is necessary to get everything working in Firefox and Microsoft Internet Explorer, but using that style may  be excessive. Also, the ExternalInterface approach may prove frustrating for more extensive applications. At the same time as the Flex 2 release, Adobe  released the <a href="http://labs.adobe.com/wiki/index.php/Flex_Framework:FABridge">Flex-Ajax Bridge</a> on <a href="http://labs.adobe.com">Adobe Labs</a>. This  provides the beginnings of a more robust framework for communicating between HTML and Flex. </p>
+<h2>Notes for Adobe<sup class="h2sup">&reg;</sup> Flex<sup class="h2sup">&#8482;</sup> Builder<sup class="h2sup">&#8482;</sup> 2</h2>
+<p>Creating a project in Flex Builder for the Hybrid Store application:</p>
+<ol>
+  <li>Name your default application catalog.mxml. </li>
+  <li>Prevent Flex Builder from generating an HTML wrapper:
+    select Project &gt; Properties. Select the Flex Compiler page, deselect the Generate HTML wrapper file option . </li>
+  <li>Create a Run configuration for your project but deselect the Use defaults option and instead assign the Run setting to the hybridstore.html in your project's bin directory. </li>
+  <li>To enable debugging of the Hybrid Store application you must create a copy of hybridstore.html. Open it in an editor (you can right-click on the file and select Open With &gt; Text Editor). Find the line that says <code>&quot;src&quot;, &quot;catalog&quot;</code> and change it to <code>&quot;src&quot;, &quot;catalog-debug&quot;</code>. Assign the Debug setting to this new HTML file.</li>
+</ol>
+<p>The &quot;run&quot; links in this Readme file point to an HTML wrapper that is located in the same directory as the Readme, which in turn must be in the same directory as the compiled SWF file. If you are running this application in Flex Builder,  the compiled SWF file and its matching HTML wrapper may be in the <a href="bin/hybridstore.html">bin</a> directory. </p>
+<h2>Notes for Adobe<sup class="h2sup">&reg;</sup> Flex<sup class="h2sup">&#8482;</sup> SDK</h2>
+<p>The build script for the Hybrid Store application  assumes that you  run the application  from the local 
+  file system (<code>file:///</code> in your browser).  If you plan to run the application from a web
+  server (<code>http://</code> in your browser), change the <code>-use-network</code> setting in
+the build script to <code>true</code>.</p>
+<p><a href="hybridstore.html" target="_blank">Run Hybrid Store</a></p>
+</body>
+</html>

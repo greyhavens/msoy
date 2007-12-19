@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+    creationComplete="initComp()"
+    click="mouseDownHandler(event)"
+    mouseOver="mouseOverHandler(event)"
+    mouseOut="mouseOutHandler(event)"
+    implements="mx.managers.IFocusManagerComponent, view.IAccessibleComponent">
+
+  <!--
+    A custom component that lets the user specify a rating (between 1 and 5)
+    for a restaurant by clicking on a specific star in a list of five
+    horizontally aligned stars.  We could have just as easily written
+    this component in pure ActionScript by writing a subclass of Canvas
+    or even UIComponent.
+  -->
+  
+  <!--
+  	This is an example of an image component that was made accessible.
+  	A tooltip has been added for the component to tell the user what
+  	he/she needs to do.  For this component, the only thing that had to be
+  	added for accessibility was to add a keyboard handler to receive a number
+  	to select a rating.  This component implements the IAcccessibleComponent
+  	interface to ensure it has proper communcation with the screen reader.
+  -->
+
+    <mx:Script>
+
+        <![CDATA[
+
+        import mx.controls.*;
+        import mx.managers.IFocusManagerComponent;
+
+    	[Bindable]
+    	/** The user's rating (between 1 and 5) */
+    	public var value:int;
+
+        [Embed(source='../assets/img/star_empty.png')]
+        private const STAR_EMPTY:Class;
+
+        [Embed(source='../assets/img/star_blue.png')]
+        private const STAR_BLUE:Class;
+
+        [Embed(source='../assets/img/star_orange.png')]
+        private const STAR_ORANGE:Class;
+
+        private const STAR_WIDTH:int = 14;
+        
+        /* this is a constant for JAWS that indicates the component has been selected */
+		private static const EVENT_OBJECT_SELECTION:uint = 0x8006; 
+
+
+    	// An array of 5 Image components aligned horizontally to provide the user interface of this component
+        private var stars:Array;
+
+        // A flag indicating if the user is currently mousing over the stars
+        private var selecting:Boolean = false;
+
+		private var _accessibleText:String = "";
+		
+		/* Methods for the interface to provide messages for JAWS */
+		public function get accessibleText():String
+		{
+			return _accessibleText;
+		}
+		public function set accessibleText(s:String):void
+		{
+			_accessibleText = s;
+		}
+		
+		/* helper method to determine if accessibility is turned on */
+		private function hasAccessibility():Boolean
+		{
+			return accessibilityProperties != null;
+		}
+		
+        private function initComp():void
+        {
+          // Instatiate 5 Image components, and add them to the Canvas, horizontally aligned.
+            stars = new Array();
+            for (var i:int=0; i<5; i++)
+            {
+                stars[i] = new Image();
+                addChild(stars[i]);
+                stars[i].source = STAR_EMPTY;
+                stars[i].x = i * STAR_WIDTH;
+            }
+			this.addEventListener(KeyboardEvent.KEY_DOWN, ratingHandler);
+
+			this.focusEnabled = true;
+			this.tabEnabled = true;
+			
+			/* This checks if accessibility needs to be turned on. */
+			if (hasAccessibility()) 
+			{
+				/* give this component an accessibility implementation to control what is 
+				   sent to JAWS */
+				this.accessibilityImplementation = new RestaurantAccImpl(this);
+			}
+
+        }
+        
+        /* handlers for accesibility. */
+        override protected function focusOutHandler(event:FocusEvent):void
+        {
+        	super.focusOutHandler(event);
+        	if (hasAccessibility())
+        		this.accessibilityProperties.description = "";
+        	event.stopPropagation();
+        }
+        override protected function focusInHandler(event:FocusEvent):void 
+		{
+        	toolTip="Select a rating 0 through  5.";
+        	super.focusInHandler(event);
+        	event.stopPropagation();
+        } 
+        private function ratingHandler(event:KeyboardEvent):void 
+		{
+        	var rating:int = event.keyCode - 48;
+        	if (rating >= 0 && rating <= 5) 
+			{
+        		setRating(rating);
+        	            
+            	/* inform the user the rating he/she selected */
+            	if (hasAccessibility())
+            	{
+            		this.accessibilityProperties.description = "You gave this restaurant a " + rating + " out of 5";
+            		Accessibility.sendEvent(this, 0, EVENT_OBJECT_SELECTION);
+					Accessibility.updateProperties();
+            	}
+        	}
+        	event.stopPropagation();
+        }
+        
+        private function setRating(value:int):void 
+		{
+        	this.value = value;
+        	var i:int=0;
+
+			// Fill the moused over star and all the stars to its left in orange
+			for (; i<value; i++)
+      			if (stars[i].source != STAR_ORANGE)
+                	stars[i].source = STAR_ORANGE;
+                  
+           	// "Empty" all the stars to the right of the moused over star
+           	for (; i<5; i++)
+            	if (stars[i].source != STAR_EMPTY)
+                  	stars[i].source = STAR_EMPTY;
+        }
+
+		private function mouseOverHandler(event:MouseEvent):void
+        {
+          	// Find out which star is currently moused over
+          	var index:int = Math.ceil(mouseX/STAR_WIDTH);
+      		if (index > 5 // Mouse is to the right of the 5 stars
+        			|| ( !selecting &&  index == value)) { // The user just selected that star
+        		return;
+        	}
+        	
+  			selecting = true;
+
+        	var i:int=0;
+
+        	// Fill the moused over star and all the stars to its left in blue
+        	for (; i<index; i++)
+        	{
+        	 	if (stars[i].source != STAR_BLUE)
+              	stars[i].source = STAR_BLUE;
+        	}
+
+        	// "Empty" all the stars to the right of the moused over star
+        	for (; i<5; i++)
+        	{
+          		if (stars[i].source != STAR_EMPTY)
+              	stars[i].source = STAR_EMPTY;
+        	}
+        }
+
+        private function mouseDownHandler(event:MouseEvent):void
+        {
+        	// Find out which star was clicked
+        	var index:int = Math.ceil(mouseX/STAR_WIDTH);
+
+      		if (index > 5) // User clicked to the right of the 5 stars
+    	    	return;
+	
+			setRating(index);
+
+            selecting = false;
+            
+        }
+
+        private function mouseOutHandler(event:MouseEvent):void
+        {
+      		// If the user mouses out without clicking, restore the previously selected value
+            var i:int=0;
+			
+            for (; i<value; i++)
+            {
+              if (stars[i].source != STAR_ORANGE)
+                  stars[i].source = STAR_ORANGE;
+            }
+            for (; i<5; i++)
+            {
+              if (stars[i].source != STAR_EMPTY)
+                  stars[i].source = STAR_EMPTY;
+            } 
+            selecting = false;
+        }
+
+        ]]>
+
+    </mx:Script>
+
+</mx:Canvas>

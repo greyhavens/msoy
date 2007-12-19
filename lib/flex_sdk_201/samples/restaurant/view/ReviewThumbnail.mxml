@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+Accesibility:
+	This is a very complicated component to make accessible.  It represents one item
+	in a list of many reviews.  The tricky part is that this item has 3 possible different
+	states, each of which needs to have focus/keyboard inputs handled differently. In order
+	to get precise keyboard control, there is a lot of explicit focus setting.
+	
+	See the comments for the methods.
+
+-->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="view.*"
+  	paddingTop="0" paddingBottom="0"
+    horizontalScrollPolicy="off"
+    verticalScrollPolicy="off"
+    verticalGap="0"
+    creationComplete="initComp()"
+    showInAutomationHierarchy="true">
+
+    <mx:Metadata>
+        [Event("focus")]
+    </mx:Metadata>
+
+    <mx:Script>
+
+        <![CDATA[
+        	import samples.restaurant.Review;
+        	import samples.restaurant.ServiceLocator;
+        	import samples.restaurant.TokenResponder;
+	
+	        import mx.events.ValidationResultEvent;
+	        import mx.rpc.AsyncToken;
+	        import mx.rpc.AbstractService;
+	        import mx.rpc.events.ResultEvent;
+
+	        public static const LIGHT_BACKGROUND:uint = 0xFFFFFF;
+	        public static const DARK_BACKGROUND:uint = 0xF7F7F7;
+			
+	        // The review we need to display
+	        [Bindable]
+	        public var review:Review;
+	        [Bindable]
+	        public var showRestaurantName:Boolean = false;
+	        
+	        //The text for the screen reader associated with this review
+	        public var accessibleText:String;
+	        
+	        [Bindable]
+	        public var beginIndex:int;
+
+	        /* Reference to the single WebService instance for the 
+	           RestaurantWS web service. */
+	        private var service:AbstractService;
+	        
+			/* is this the currently selected review */
+	        [Bindable]
+	        private var isSelected:Boolean;
+
+	        private function initComp():void 
+			{
+	          	// Obtain a reference to the single WebService instance for the 
+	          	// RestaurantWS web service
+	            service = ServiceLocator.getRestaurantService();     
+   	     	}
+			
+    	    private var _bgColor:uint;
+			
+	        public function set bgColor(c:uint):void 
+			{
+	            _bgColor = c;
+	            setStyle("backgroundColor", c);
+	        }
+    	    [Bindable]
+    	    public function get bgColor():uint
+			{
+    	    	return _bgColor;
+    	    }
+			
+			/* toggles between the summary and detail states */
+	        public function toggle():void 
+			{
+	            if (currentState == "summary")
+	               currentState = "details";
+	            else
+	                currentState = "summary";
+	        }
+	        
+	        /* This method is called when this item is the currently selected item.
+	           It will set its accessible text for the screen reader */
+	        public function selectedIn(caretIndex:int):void 
+			{	
+	        	if (currentState == "summary") 
+				{
+	        		isSelected = true;
+	        		var numReviews:int = ThumbnailRepeater(parent).dataProvider.length;
+	        		accessibleText = "Review " + (caretIndex + 1) + " out of " + numReviews + ". " + 
+	        			reviewer.text + " gave a review on " + reviewDate.text +
+	        			" a rating " + review.rating + " out of 5." + 
+	        			" Hit the space bar to view the details"; 
+	        	}
+	        	if (currentState == "details")
+	        		toggle();
+	        }
+	        
+	        /* This method is called when this item is no longer the active item */
+	        public function selectedOut():void 
+			{	
+	        	isSelected = false;
+	        	accessibleText = "";
+	        }
+			
+    	    /****************************************************** 
+			 * Event Handlers
+			 ******************************************************/			
+		
+			/* we don't draw the focus box since the item will be highlighted */
+			override protected function focusInHandler(event:FocusEvent):void {event.stopPropagation();}
+			
+			private function postReview(event:Event):void 
+			{
+	      		// Validate required fields
+	            var valid:Boolean = true;
+	            var result:ValidationResultEvent;
+	
+	            result = reviewerV.validate();
+	            if (result.type == ValidationResultEvent.INVALID)
+	                valid = false;
+	
+	            result = titleV.validate();
+	            if (result.type == ValidationResultEvent.INVALID)
+	                valid = false;
+	
+	            result = textV.validate();
+	            if (result.type == ValidationResultEvent.INVALID)
+	                valid = false;
+	
+	            if (valid) 
+				{
+	                // Post the new Review using the addReview method of the Web Service
+	                review.reviewer = newReviewer.text;
+	                review.rating = newRating.value;
+	                review.title = newTitle.text;
+	                review.reviewText = newReviewText.text;
+	                review.reviewDate = new Date();
+	                
+	                // Specify that we want the 'addReviewResult' function to be called 
+	                // when the call completes.
+	                // See control.RestaurantService.as for details on how the resultHandler 
+	                // token is used to invoke addReviewResult.
+	                var token: AsyncToken = AsyncToken(service.addReview(review));
+	                token.addResponder(new TokenResponder(addReviewResult, "Error Adding Review"));
+	            }
+	            
+	            event.stopPropagation();
+	        }
+	
+			/* review was added, change the state and fix the focus */
+    	    private function addReviewResult(event: ResultEvent):void 
+			{
+    	        currentState = "summary";
+    	        focusManager.setFocus(ThumbnailRepeater(parent));
+    	    }
+	
+	        private function getFinder(event:Event):void 
+			{
+	            var url:String = "finder.html?restaurantId=" + review.restaurantId;
+	            var request:URLRequest = new URLRequest(url);
+	            navigateToURL(request);
+	            event.stopPropagation();
+	        }
+	        	 
+			/* handler for the close button. The item closes, loses focus and gives it
+			   back to the add review button by dispatching an event*/
+			private function closeHandler(event:Event):void
+			{
+				dispatchEvent(new Event('focus', true));
+				ThumbnailRepeater(parent).cancelNewReview();
+			}			
+			
+			/*
+			 * These last two handlers are for the two sub components that show up
+			 * in the detail state.  They have very similar behavior.  This is a
+			 * example of how to use careful keyboard events to give a better
+			 * experience for the user with the screen reader.  
+			 */
+			private function reviewTextHandler(event:KeyboardEvent):void 
+			{
+				if (event.keyCode == Keyboard.UP || event.keyCode == Keyboard.DOWN ||
+						 event.keyCode == Keyboard.PAGE_DOWN || event.keyCode == Keyboard.PAGE_UP ||
+						 event.keyCode == Keyboard.HOME || event.keyCode == Keyboard.END)
+				{
+					toggle();
+					focusManager.setFocus(ThumbnailRepeater(parent));
+				}
+			}
+			
+			private function titleHandler(event:KeyboardEvent):void 
+			{
+				/* shift tab here will take us back to the add review button
+				   close the detail state and unhighlit */
+				if (event.shiftKey && event.keyCode == Keyboard.TAB) 
+				{
+					toggle();
+					selectedOut();
+				}	
+				/* let these propagate up so the repeater can handle it */
+				else if (event.keyCode == Keyboard.UP || event.keyCode == Keyboard.DOWN ||
+						 event.keyCode == Keyboard.PAGE_DOWN || event.keyCode == Keyboard.PAGE_UP ||
+						 event.keyCode == Keyboard.HOME || event.keyCode == Keyboard.END)
+				{
+					toggle();
+					focusManager.setFocus(ThumbnailRepeater(parent));
+				}
+			}
+			
+			/*
+			 * assigns tab indices for the new components added for the new state
+			 */
+			private function assignNewStateTabs():void
+			{
+				var baseTab:int = ThumbnailRepeater(parent).beginTabIndex;
+				newRating.tabIndex = baseTab++;
+				newReviewer.tabIndex = baseTab++;
+				newTitle.tabIndex = baseTab++;
+				newReviewText.tabIndex = baseTab++;
+				submitButton.tabIndex = baseTab++;
+				cancelButton.tabIndex = baseTab++;
+				focusManager.setFocus(newRating);
+			}
+			
+			/* 
+			 * assigns tab indices for the components added in the detail state 
+			 */
+			private function assignDetailStateTabs():void
+			{
+				try{
+					var baseTab:int = ThumbnailRepeater(parent).beginTabIndex;
+					title.tabIndex = baseTab++;
+					reviewText.tabIndex = baseTab++;
+					this.tabIndex = baseTab++;					
+				} catch (e:Error){}
+			}
+		]]>
+	
+    </mx:Script>
+	
+	<mx:DateFormatter id="df" formatString="MMMM DD, YYYY"/>
+	
+   	<mx:StringValidator id="reviewerV" required="true" minLength="1" maxLength="20" source="{newReviewer}" property="text"/>
+    <mx:StringValidator id="titleV" required="true" minLength="1" maxLength="100" source="{newTitle}" property="text"/>
+    <mx:StringValidator id="textV" required="true" source="{newReviewText}" property="text"/>
+	
+    <mx:states>
+
+        <mx:State name="summary">
+            <mx:AddChild>
+                <mx:HBox id="summary" click="toggle()" paddingTop="4" paddingBottom="4" 
+                  paddingLeft="4" width="100%" borderStyle="solid" borderSides="top"
+                  backgroundColor="{isSelected ? 0xDCEBF2 : bgColor}"
+                  mouseOver="isSelected=true"
+                  mouseOut="isSelected=false">
+                    <mx:LinkButton id="restaurantName" label="{review.restaurantName}" 
+                    	width="110" visible="{showRestaurantName}" 
+                    	includeInLayout="{showRestaurantName}" 
+                    	click="getFinder(event)"/>
+                    <mx:Image id="rating" source="assets/img/stars{review.rating}.png" width="110"/>
+                    <mx:Label id="reviewer" text="{review.reviewer}" width="130"/>
+                    <mx:Label id="reviewDate" text="{df.format(review.reviewDate)}" width="130"/>
+                </mx:HBox>
+            </mx:AddChild>
+        </mx:State>
+
+        <mx:State name="details" basedOn="summary" 
+        	enterState="content.setStyle('backgroundColor', _bgColor); assignDetailStateTabs()">
+            <mx:AddChild>
+                <mx:HBox id="detailBox" width="100%" horizontalGap="0">
+                    <mx:HRule width="13" x="0"/>
+                    <mx:VBox id="content" left="13" right="13" y="0" width="100%" paddingTop="10" 
+                    		paddingLeft="8" verticalGap="0"
+                    		borderStyle="solid" cornerRadius="6" 
+                    		borderSides="left right bottom">
+                        <AccessibleLabel id="title" text="{review.title}" 
+                        	accessibleText="Review title {review.title}" 
+                        	width="100%" fontWeight="bold"
+                        	keyDown="titleHandler(event)"/>
+                        <AccessibleText id="reviewText" text="{review.reviewText}"
+                        	accessibleText="Review {review.reviewText}" 
+                        	width="100%"
+                        	keyDown="reviewTextHandler(event)"/>
+                    </mx:VBox>
+                    <mx:HRule width="13" right="0"/>
+                </mx:HBox>
+            </mx:AddChild>
+            <mx:AddChild>
+                <mx:Box id="detailSpacer" height="4" width="100%" backgroundColor="#ffffff"/>
+            </mx:AddChild>
+        </mx:State>
+
+		
+        <mx:State name="new" enterState="assignNewStateTabs()">
+            <mx:AddChild>
+                <mx:VBox id="newBox" width="100%" backgroundColor="#FFFFFF" paddingTop="4" 
+                	paddingBottom="4" verticalScrollPolicy="off">
+                    <mx:HBox paddingLeft="4">
+                        <Rating id="newRating" width="110"/>
+                        <mx:TextInput id="newReviewer" width="130" 
+                        	toolTip="Reviewer." keyDown="super.keyDownHandler(event); event.stopPropagation();"
+                        	focusIn="super.focusInHandler(event); event.stopPropagation()"
+                        	focusOut="super.focusOutHandler(event); event.stopPropagation()"/>
+                        <mx:Label id="newReviewDate" text="{df.format(new Date())}"/>
+                    </mx:HBox>
+                    <mx:Canvas width="100%" backgroundColor="#FFFFFF" verticalScrollPolicy="off" 
+                    	horizontalScrollPolicy="off">
+                        <mx:HRule width="15"/>
+                        <mx:Form width="{width-24}" height="100%"  x="12" y="0" borderStyle="solid" 
+                        	cornerRadius="6" paddingBottom="8" verticalScrollPolicy="off" 
+                        	horizontalScrollPolicy="off">
+                            <mx:FormItem label="Title" width="100%">
+                                <mx:TextInput id="newTitle" width="100%"
+                                	keyDown="super.keyDownHandler(event); event.stopPropagation();"
+                                	focusIn="super.focusInHandler(event); event.stopPropagation()"
+                                	focusOut="super.focusOutHandler(event); event.stopPropagation()"/>
+                            </mx:FormItem>
+                            <mx:FormItem label="Text" width="100%">
+                                <mx:TextArea id="newReviewText" width="100%" height="80" 
+                                	keyDown="super.keyDownHandler(event); event.stopPropagation();"
+                                	focusIn="super.focusInHandler(event); event.stopPropagation()"
+                                	focusOut="super.focusOutHandler(event); event.stopPropagation()"/>
+                            </mx:FormItem>
+                            <mx:FormItem label=" " width="100%">
+                                <mx:HBox horizontalGap="4">
+                                    <mx:Button id="submitButton" label="Submit" width="60"  keyDown="event.stopPropagation()" 
+                                    	click="postReview(event)"
+                                    	focusIn="super.focusInHandler(event); event.stopPropagation()"
+                                    	focusOut="super.focusOutHandler(event); event.stopPropagation()"/>
+                                    <mx:Button id="cancelButton" label="Cancel" width="60" keyDown="event.stopPropagation()" 
+                                    	click="closeHandler(event)"
+                                    	focusIn="super.focusInHandler(event); event.stopPropagation()"
+                                    	focusOut="super.focusOutHandler(event); event.stopPropagation()"/>
+                                </mx:HBox>
+                            </mx:FormItem>
+                        </mx:Form>
+                        <mx:HRule width="15" x="{width-15}"/>
+                    </mx:Canvas>
+                </mx:VBox>
+            </mx:AddChild>
+        </mx:State>
+
+    </mx:states>
+
+    <mx:transitions>
+        <!--
+        when going from the details state to the summary state, first do the
+        resize, then remove the detailBox and detailSpacer at the same time
+        -->
+        <mx:Transition fromState="details" toState="summary">
+            <mx:Sequence>
+                <mx:Resize target="{this}"/>
+                <mx:RemoveChildAction target="{detailBox}"/>
+                <mx:RemoveChildAction target="{detailSpacer}"/>
+            </mx:Sequence>
+        </mx:Transition>
+
+        <!--
+        when going from the new state to the summary state, first do the
+        resize, then remove the newbox
+        -->
+        <mx:Transition fromState="new" toState="summary">
+            <mx:Sequence>
+                <mx:Resize target="{this}"/>
+                <mx:RemoveChildAction target="{newBox}"/>
+            </mx:Sequence>
+        </mx:Transition>
+
+        <!--
+        when going from the summary state, just do a resize
+        -->
+        <mx:Transition fromState="summary" toState="*">
+            <mx:Resize target="{this}"/>
+        </mx:Transition>
+    </mx:transitions>
+
+</mx:VBox>

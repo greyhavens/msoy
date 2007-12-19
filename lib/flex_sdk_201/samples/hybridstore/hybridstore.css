@@ -1,0 +1,50 @@
+/*
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+*/
+
+body {
+	font-family: Verdana, Arial;
+	font-size:10px;
+}
+
+td {
+	font-family: Verdana, Arial;
+	font-size:10px;
+}
+
+.thumb {
+    position:absolute;
+    left: 0px;
+    top: 14px;
+    cursor:default;
+    width:18px;
+    height:18px;
+}
+
+.thumbRight {
+    position:absolute;
+    left: 180px;
+    top: 14px;
+    cursor:default;
+    width:18px;
+    height:18px;
+}
+
+
+.sliderBG {
+    position:relative;
+    border-bottom: solid 1px #666666;
+    height:23px;
+    width:190px;
+    z-index:5
+}

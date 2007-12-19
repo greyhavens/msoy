@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+    borderStyle="solid"
+    horizontalScrollPolicy="off"
+    dragEnter="doDragEnter(event)"
+    dragDrop="doDragDrop(event)"
+    backgroundAlpha="0" backgroundColor="#FF0000"> <!-- need a background color for drag and drop but can set alpha to 0 -->
+    
+    <mx:Metadata>
+       [Event(name="addProduct", type="samples.flexstore.ProductListEvent")]
+       [Event(name="duplicateProduct", type="samples.flexstore.ProductListEvent")]
+       [Event(name="productQtyChange", type="samples.flexstore.ProductListEvent")]
+       [Event(name="removeProduct", type="samples.flexstore.ProductListEvent")]
+    </mx:Metadata>
+
+    <mx:Script>
+        <![CDATA[
+        import mx.core.*;
+        import mx.effects.*;
+        import mx.events.*;
+        import mx.managers.DragManager;
+        import mx.effects.EffectManager;
+        
+        import samples.flexstore.Product;
+        import samples.flexstore.ProductListEvent;
+        
+        public var items:Array = [];
+        
+        public var newItemStartX:int;
+        public var newItemStartY:int;
+        [Bindable]
+        public var maxItems:int;
+        public var showQuantity:Boolean;
+        
+        private var playingEffects:Dictionary = new Dictionary(true);
+        
+        public function addProduct(product:Product):void
+		{
+            var index:int = indexOf(product.productId);
+            var event:ProductListEvent;
+            var item:ProductListItem;
+            
+            if (index != -1)
+			{
+			    item = items[index] as ProductListItem;
+			    //if we don't keep track of what's playing a double-click can
+			    //cause the list item to keep rising
+			    if (playingEffects[item] == null)
+			    {
+                    var jump:Sequence = new Sequence();
+                    var m1:Move = new Move(item)
+                    m1.yBy = -5;
+                    var m2:Move = new Move(item)
+                    m2.yBy = 5;
+                    jump.addChild(m1);
+                    jump.addChild(m2);
+                    jump.duration = 150;
+                    playingEffects[item] = jump;
+                    jump.addEventListener(EffectEvent.EFFECT_END, function(event:Event):void
+                    {
+                       delete playingEffects[item];
+                    });
+                    jump.play();
+                }
+                event = new ProductListEvent(ProductListEvent.DUPLICATE_PRODUCT);
+                event.product = item.product;
+                dispatchEvent(event);
+            }
+			else
+			{
+                index = items.length;
+                if (maxItems <= 0 || index < maxItems)
+				{
+				    item = new ProductListItem();
+				    if (showQuantity)
+				    {
+				        item.currentState = 'showQuantity';
+				    }
+				    item.product = product;
+				    item.percentWidth = 100;
+				    item.addEventListener(ProductListEvent.REMOVE_PRODUCT, removeItemHandler);
+                    items[index] = item;
+                    addChild(item);
+                    layoutItems(index, true);
+                    event = new ProductListEvent(ProductListEvent.ADD_PRODUCT);
+                    event.product = product;
+                    dispatchEvent(event);
+                }
+            }
+        }
+        
+        public function getProducts():Array
+        {
+            var ret:Array = [];
+            for (var i:int = 0; i < items.length; i++)
+            {
+                ret[i] = items[i].product;
+            }
+            return ret;
+        }
+        
+        private function removeItemHandler(event:Event):void
+        {
+            var item:ProductListItem = event.target as ProductListItem;
+            var index:int = indexOf(item.product.productId);
+            items.splice(index, 1);
+            removeChild(item);
+            layoutItems(index);
+        }
+            
+        private function layoutItems(startIndex:int, scrollToBottom:Boolean=false):void
+		{
+            var n:int = items.length;
+            var e:Move;
+			for (var i:int = startIndex; i < n ; i++)
+			{
+			    var item:ProductListItem = items[i];
+                var yTo:Number = i * (item.height);
+                //still need to prevent items that are already in motion from getting
+                //jumpy
+			    if (playingEffects[item] == null)
+			    {
+                    e = new Move(item);
+                    if (item.x == 0 && item.y == 0)
+    				{
+    					e.xFrom = newItemStartX;
+    					e.yFrom = newItemStartY;
+                    }
+    
+                    e.xTo = 0;
+                    e.yTo = yTo;
+                    playingEffects[item] = e;
+                    e.addEventListener(EffectEvent.EFFECT_END, function(event:Event):void
+                    {
+                       delete playingEffects[item];
+                    });
+                    e.play();
+                }
+                else
+                {
+                    playingEffects[item].pause();
+                    playingEffects[item].yTo = yTo;
+                    playingEffects[item].play();
+                }
+            }
+            //get the last event and if we should scroll make sure we can validate
+            //and scroll to maxVPosition
+            if (scrollToBottom)
+            {
+                e.addEventListener(EffectEvent.EFFECT_END, function(event:Event):void
+                {
+                    validateNow();
+                    verticalScrollPosition = maxVerticalScrollPosition;    
+                });
+            }
+        }
+        
+        private function indexOf(productId:int):int
+		{
+            var index:int = -1;
+
+            var n:int = items.length;
+			for (var i:int = 0; i < items.length; i++)
+			{
+                if (items[i].product.productId == productId)
+				{
+                    index = i;
+                    break;
+                }
+            }
+
+            return index;
+        }     
+
+        private function doDragEnter(event:DragEvent):void
+        {
+            if (event.dragSource.hasFormat("product"))
+            {
+                DragManager.acceptDragDrop(IUIComponent(event.target));
+            }
+        }
+
+        private function doDragDrop(event:DragEvent):void
+        {
+            var product:Product = event.dragSource.dataForFormat("product") as Product;
+            addProduct(product);
+        }  
+ 
+        ]]>
+    </mx:Script>
+    
+</mx:Canvas>

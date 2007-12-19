@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+    width="165" height="125"
+    borderStyle="solid"
+    borderColor="#FFFFFF"
+    horizontalScrollPolicy="off" verticalScrollPolicy="off"
+    mouseOver="mouseOverHandler(event)"
+    mouseOut="mouseOutHandler(event)">
+
+    <mx:Script>
+        <![CDATA[
+
+		import mx.events.*;
+        import mx.core.*;
+
+        [Bindable]
+        public var item:Object;
+
+        private function mouseOverHandler(event:MouseEvent):void
+		{
+            setStyle("borderColor", "#CCCCCC");
+            setStyle("dropShadowEnabled", "true");
+            setStyle("dropShadowColor", "#000000");
+            setStyle("shadowDistance", 2);
+        }
+
+        private function mouseOutHandler(event:MouseEvent):void
+		{
+            setStyle("borderColor", "#FFFFFF");
+            setStyle("dropShadowEnabled", "false");
+        }
+
+        private function formatFeatures(item:Object):String
+        {
+        	var str:String = "";
+        	if (item.triband)
+        		str += "Tri-band ";
+
+    		if (item.camera)
+    			str += "Camera ";
+
+    		if (item.video)
+    			str += "Video";
+
+			return str;
+        }
+
+
+	]]>
+    </mx:Script>
+
+    <mx:CurrencyFormatter id="cf"/>
+
+    <mx:VBox id="vb" width="100%" height="100%"
+        paddingLeft="6" paddingTop="4" paddingRight="8" paddingBottom="4"
+        verticalGap="0">
+
+        <mx:Label text="{item.name}" fontWeight="bold"/>
+
+        <mx:HBox width="100%" paddingTop="0" horizontalGap="4">
+
+            <mx:Image id="img" height="90" width="45" source="{item.image}" />
+
+            <mx:VBox id="descr" width="100%" height="100%" verticalGap="0" paddingTop="0">
+                <mx:Text text="{formatFeatures(item)}" selectable="false" width="80" height="48"/>
+                <mx:Label text="{cf.format(item.price)}" fontWeight="bold"/>
+				<mx:Spacer height="4"/>
+            </mx:VBox>
+
+        </mx:HBox>
+
+    </mx:VBox>
+
+</mx:Canvas>

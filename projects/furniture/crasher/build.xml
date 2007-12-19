@@ -4,7 +4,7 @@
   <!-- define some basic project parameters -->
   <property name="app.name"         value="Crasher"/>
   <property name="root.path"        value="../../../.."/>
-  <property name="flex.path"        value="${root.path}/tools/extern/flex_sdk"/>
+  <property name="flex.path"        value="${root.path}/lib/flex_sdk"/>
 
   <!-- builds our Flash file -->
   <target name="compile">

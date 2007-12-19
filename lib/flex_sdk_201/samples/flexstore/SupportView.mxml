@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<!--
+This component is primarily static and is only meant to show what other
+pages of the store could look like.
+
+Note that this page was put together in the Design view so you'll see more
+hard coded locations and sizes.
+
+We did not have sizing issues here as much so you'll see more hardcoded 
+"y" values rather than "top."
+
+The width and height are hard-coded in the root tag to help the Design view.
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" alpha="1.0"
+    width="990" height="550">
+	
+	<mx:Script>
+	    <![CDATA[
+	       import mx.controls.Alert; 
+	    ]]>
+	</mx:Script>
+	
+    <mx:Model id="locationsModel">
+        <root>
+            <location image="assets/support_mapmarker_a.png" name="601 Townsend St" /> 
+    	    <location image="assets/support_mapmarker_b.png" name="Location B" />
+    	    <location image="assets/support_mapmarker_c.png" name="Location C" />	   	   
+        </root> 
+    </mx:Model>   
+		
+	<mx:ArrayCollection id="locations" source="{locationsModel.root.location}"/>
+	
+	<mx:HBox x="0" y="0" width="100%" height="100%" styleName="colorPanel">
+	
+		<mx:VBox width="32%" height="100%">
+			<mx:Canvas width="100%" height="60%">
+			
+				<mx:Label y="10" text="Check Coverage" styleName="sectionHeader" x="20"/>
+				
+				<mx:Form width="95%" height="125" y="64" verticalGap="8" paddingBottom="0" paddingRight="0" paddingTop="5" horizontalCenter="0">
+					
+					<mx:FormItem label="Address:" width="100%">
+						<mx:TextInput id="address" width="90%"/>
+					</mx:FormItem>
+					
+					<mx:FormItem label="City:" width="100%">
+						<mx:TextInput id="city" width="60%"/>						
+					</mx:FormItem>
+					
+					<mx:FormItem label="State:" width="100%">
+						<mx:ComboBox id="state" width="50%">
+							<mx:dataProvider>
+ 				               <mx:Array>
+				                    <mx:String>California</mx:String>
+				                    <mx:String>Nevada</mx:String>
+				                    <mx:String>Oregon</mx:String>
+				                    <mx:String>Washington</mx:String>
+				                </mx:Array>
+            				</mx:dataProvider>
+						</mx:ComboBox>
+					</mx:FormItem>
+					
+					<mx:FormItem label="ZIP Code:" width="100%">
+						<mx:TextInput id="zip" width="30%"/>
+					</mx:FormItem>
+					
+				</mx:Form>
+				
+				<mx:Label y="38" text="Option1: Enter Address" horizontalCenter="0" styleName="instructions"/>
+				
+				<mx:Button y="197" label="Locate" click="Alert.show('This feature is not implemented in this sample', 'Locate')" horizontalCenter="0"/>
+				
+				<mx:HBox y="227" width="80%" height="20" horizontalAlign="center" verticalAlign="middle" horizontalCenter="0">
+					<mx:HRule width="60" strokeColor="#000000"/>
+					<mx:Label text="OR"/>
+					<mx:HRule width="60" strokeColor="#000000"/>
+				</mx:HBox>
+				
+				<mx:Label y="255" text="Option 2: Drag this marker into the map" horizontalCenter="0" styleName="instructions"/>
+				
+				<mx:Image y="280" horizontalCenter="0" source="@Embed('/assets/support_mapmarker_plus.png')"/>
+				
+				<mx:HRule y="315" horizontalCenter="0" width="200" alpha="0.6"/>
+				
+			</mx:Canvas>
+			
+			<mx:Canvas width="100%" height="40%">
+				<mx:VBox width="80%" height="90%" horizontalCenter="0" top="0">
+					<mx:Label text="Location" styleName="instructions"/>
+					<mx:VBox width="100%" verticalGap="0">
+    					<mx:Repeater id="locationRepeater" dataProvider="{locations}">
+    					    <mx:HBox styleName="listItem" width="100%">
+                                <mx:Image width="21" height="25" source="{locationRepeater.currentItem.image}" />
+                                <mx:Label width="100%" text="{locationRepeater.currentItem.name}" />
+                            </mx:HBox>
+    					</mx:Repeater>
+					</mx:VBox>
+				</mx:VBox>
+			</mx:Canvas>
+			
+		</mx:VBox>
+		
+		<mx:Canvas width="68%" height="100%">
+			<mx:Image source="@Embed('/assets/support_map.png')" scaleContent="true" left="2" right="2" top="2" bottom="2"/>
+		</mx:Canvas>
+		
+	</mx:HBox>
+	
+</mx:Canvas>

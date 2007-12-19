@@ -1,0 +1,37 @@
+#!/bin/sh
+
+#
+# fdb launch script for unix.  On windows, fdb.exe is used and
+# java settings are managed in jvm.config in this directory.
+#
+
+case `uname` in
+		CYGWIN*)
+			OS="Windows"
+		;;
+		*)
+			OS=Unix
+esac
+
+if [ $OS = "Windows" ]; then
+	# set FLEX_HOME relative to fdb if not set
+	test "$FLEX_HOME" = "" && {
+		FLEX_HOME=`dirname $0`/..
+		FLEX_HOME=`cygpath -m $FLEX_HOME`
+	}
+
+elif [ $OS = "Unix" ]; then
+
+	# set FLEX_HOME relative to fdb if not set
+	test "$FLEX_HOME" = "" && {
+		FLEX_HOME=`dirname "$0"`/..
+	}
+
+fi
+
+VMARGS="-Xmx384m -Dsun.io.useCanonCaches=false"
+
+# $FLEX_HOME may contain spaces, so we can't just put
+# "-Dapplication.home=$FLEX_HOME" into VMARGS
+
+java $VMARGS "-Dapplication.home=$FLEX_HOME" -jar "$FLEX_HOME/lib/fdb.jar" $*

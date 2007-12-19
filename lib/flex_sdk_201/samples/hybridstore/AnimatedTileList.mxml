@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*">
+
+    <mx:Script>
+
+        <![CDATA[
+
+        import mx.collections.ArrayCollection;
+        import mx.core.IFactory;
+        import mx.effects.Fade;
+        import mx.effects.Move;
+        import mx.events.EffectEvent;
+        
+
+ 		// The list of items to display
+        private var items:ArrayCollection;
+        
+        public function set dataProvider(dataProvider:ArrayCollection):void
+        {
+        	items = dataProvider;
+        	createTiles();
+        	layoutTiles();
+        }
+
+		// Array of Booleans to keep track of the status of each item vis-a-vis the filter criteria 
+		// (satisfies filter criteria = true / doesn't satisfy filter criteria = false)
+        private var selectionFlags:Array;
+
+        // The Array of Thumbnail instances used to display the items
+        public var thumbs:Array;
+
+        // The total number of items that are in the current filter selection.
+        public var filteredCount:Number;
+        
+		// The class used to display each thumbnail
+        public var itemRenderer:IFactory;
+        
+        public var padding:int = 4;
+        
+        public function filter(filterCallback:Function, relayout:Boolean):void
+		{
+		    if (items == null || thumbs == null) return; //too early
+            filteredCount = 0;
+            var n:int = items.length;
+            var fadeOut:Fade;
+
+			for (var i:int = 0 ; i < n ; i++)
+			{
+                if (filterCallback.call(this, items[i]))
+				{
+                    filteredCount++;
+                    selectionFlags[i] = true;
+                    thumbs[i].alpha = 1;
+                }
+				else
+				{
+                    selectionFlags[i] = false;
+                    if (relayout)
+                    {
+                    	fadeOut = new Fade(thumbs[i]);
+	                    fadeOut.alphaTo = 0.1;
+	                    fadeOut.play();
+                    }
+                    else
+                    {
+                    	thumbs[i].alpha = 0.1;
+                    }
+                }
+            }
+
+            if (relayout)
+            {
+            	if (fadeOut)
+            	{
+            		fadeOut.addEventListener(EffectEvent.EFFECT_END,
+    					function(event:EffectEvent):void
+    					{
+    						layoutTiles();
+    					});
+                	}
+            	else
+            	{
+                	layoutTiles();
+             	}
+            }
+        }
+        
+        private function createTiles():void
+        {
+			removeAllChildren();
+            thumbs = new Array(items.length);
+            selectionFlags =  new Array(items.length);
+
+            var row:int = 0;
+            var col:int = -1;
+
+            var n:int = items.length;
+            
+            for (var i:int = 0; i < n; i++)
+            {
+                thumbs[i] = itemRenderer.newInstance();
+                addChild(thumbs[i]);
+                thumbs[i].item = items[i];
+                thumbs[i].visible = false;
+                selectionFlags[i] = true;
+            }
+        }
+
+        public function layoutTiles():void
+		{
+			if (thumbs.length == 0) 
+				return;
+		
+		    //should really use border metrics to take the scrollbar into 
+		    //account, but we're lazy
+			var numCols:int = (width-20) / (thumbs[0].width + padding);
+			
+            verticalScrollPosition = 0;
+
+            var row:int = 0;
+            var col:int = -1;
+
+			var move:Move = null;
+
+            var n:int = items.length;
+			for (var i:int = 0 ; i < n ; i++)
+			{
+                if (selectionFlags[i]) {
+                    col++;
+                    if (col > numCols - 1)
+					{
+                        row++;
+                        col = 0;
+                    }
+
+                    var xTo:Number = padding + col * (thumbs[i].width + padding);
+                    var yTo:Number = padding + row * (thumbs[i].height + padding);
+
+                    // If the thumbnail is already visible
+					// animate it to its new position.
+                    if (thumbs[i].visible)
+					{
+                        // Animate only if the position is different
+						// from its current position.
+                        if (thumbs[i].x != xTo || thumbs[i].y != yTo)
+						{
+                            move = new Move(thumbs[i]);
+                            move.xTo = xTo;
+                            move.yTo = yTo;
+                            move.play();
+                        }
+                    }
+                    // If the thumbnail was not previously visible, sets its
+					// x and y coordinates. We'll make it reappear after all
+                    // the visible thumbnails have reached their new position.
+					else
+					{
+                        thumbs[i].x = xTo;
+                        thumbs[i].y = yTo;
+                        thumbs[i].includeInLayout = true;
+                    }
+                }
+				else
+				{
+                    thumbs[i].visible = false;
+                    thumbs[i].includeInLayout = false;
+                }
+            }
+
+            if (!move)
+			{
+                // No visible thumbnails were animated to a new position;
+				// fade in newly selected thumbnails right away.
+                fadeInThumbnails();
+            }
+			else
+			{
+                // Fade in newly selected thumbnails after the last
+				// visible thumbnail has moved to its new position.
+                move.addEventListener(EffectEvent.EFFECT_END,
+					function(event:EffectEvent):void
+					{
+						fadeInThumbnails();
+					});
+            }
+        }
+
+        private function fadeInThumbnails():void
+		{
+			var n:int = items.length;
+			for (var i:int = 0; i < n ; i++)
+			{
+                if (selectionFlags[i] && !thumbs[i].visible)
+				{
+                    thumbs[i].alpha = 0;
+                    thumbs[i].visible = true;
+
+					var fadeIn:Fade = new Fade(thumbs[i]);
+                    fadeIn.alphaTo = 1;
+                    fadeIn.play();
+                }
+            }
+        }
+
+        ]]>
+
+    </mx:Script>
+
+</mx:Canvas>

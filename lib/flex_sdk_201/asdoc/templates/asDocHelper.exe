@@ -1,0 +1,2 @@
+#!/bin/sh
+wine `dirname $0`/win-asDocHelper.exe $@

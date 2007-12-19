@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<!--
+This component is primarily static and is only meant to show what other
+pages of the store could look like.
+
+Note that this page was put together in the Design view so you'll see more
+hard coded locations and sizes.
+
+Also note when working with a Canvas that using the constraint styles 
+(e.g., left, top, right, bottom) can provide better layout predictability than 
+using x and y, especially when percentage widths and heights are used.
+
+Width and height are hard-coded in the root tag to help the Design view.
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" width="990" height="550">
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+
+			public function updateMapImage():void
+			{
+				mapImage.source = mapCanvas.getStyle('dottedMap');
+			}
+		]]>
+	</mx:Script>
+	<mx:HBox width="100%" height="100%" y="0" x="0" styleName="colorPanel">
+	
+		<mx:VBox width="230" height="100%">
+			<mx:Canvas width="100%" height="100%">
+			
+				<mx:Canvas left="10" top="10" width="100%" height="60" backgroundColor="#ebebe9" styleName="homeSection">
+					<mx:Label left="10" top="10" text="Search Product" width="112" height="22" styleName="sectionHeader"/>
+					<mx:Button left="168" top="30" label="Go" width="47" height="20" styleName="glass" click="Alert.show('This feature is not implemented in this sample', 'Go')"/>
+					<mx:TextInput left="10" top="30" height="20" width="150"/>
+				</mx:Canvas>
+				
+				<mx:Canvas left="10" top="78" width="100%" height="280" backgroundColor="#ffffff" styleName="homeSection">
+					<mx:VBox left="10" top="10" width="100%" height="100%" verticalGap="0">
+						<mx:Label text="Programs for Your Lifestyles" styleName="sectionHeader"/>
+						<mx:HRule height="5" width="197"/>
+						<mx:Label text="Active" styleName="homeProgramHeader"/>
+						<mx:Label text="Product Warranty" fontSize="9"/>
+						<mx:Spacer height="8" width="100%"/>
+						<mx:Label text="Business" styleName="homeProgramHeader"/>
+						<mx:Label text="Upgrades, Data" fontSize="9"/>
+						<mx:Spacer height="8" width="100%"/>
+						<mx:Label text="Traveler" styleName="homeProgramHeader"/>
+						<mx:Label text="International Roaming" fontSize="9"/>
+						<mx:Spacer height="8" width="100%"/>
+						<mx:Label text="Students" styleName="homeProgramHeader"/>
+						<mx:Label text="Music Downloads" fontSize="9"/>
+						<mx:Spacer height="8" width="100%"/>
+						<mx:Label text="Kids" styleName="homeProgramHeader"/>
+						<mx:Label text="Games, Ringtones" fontSize="9"/>
+						<mx:Spacer height="8" width="100%"/>
+					</mx:VBox>
+				</mx:Canvas>
+				
+				<mx:Canvas left="10" top="366" width="100%" height="174" styleName="homeSection" backgroundColor="#ebebe9">
+					<mx:VBox left="10" top="10" width="100%" height="100%" verticalGap="0">
+					
+						<mx:Label text="Manage My Account" styleName="sectionHeader"/>
+						
+						<mx:Label text="Phone Number"/>
+						
+						<mx:HBox width="100%" height="25" horizontalAlign="left" verticalAlign="middle">
+							<mx:TextInput height="20" width="40"/>
+							<mx:HRule width="8" height="25"/>
+							<mx:TextInput height="20" width="40"/>
+							<mx:HRule width="8" height="25"/>
+							<mx:TextInput height="20" width="40"/>
+						</mx:HBox>
+						
+						<mx:Label text="Password"/>
+						<mx:TextInput height="20"/>
+						<mx:Spacer height="8" width="100%"/>
+						
+						<mx:CheckBox label="Remember my phone number" selected="true"/>
+						<mx:Spacer height="8" width="100%"/>
+						
+						<mx:Button label="Login" styleName="glass" height="20" width="55" click="Alert.show('This feature is not implemented in this sample', 'Login')"/>
+						
+					</mx:VBox>
+				</mx:Canvas>
+				
+			</mx:Canvas>
+			
+		</mx:VBox>
+		
+		<mx:VBox width="750" height="100%">
+			<mx:Canvas width="100%" height="100%">
+			
+			    <!-- can't use binding to set the mapImage source because the style isn't available early enough -->
+				<mx:Canvas id="mapCanvas" width="100%" height="35%" styleName="homeMap" right="10" top="10">
+					<mx:Image id="mapImage" width="487" scaleContent="false" height="100%" alpha="1.0" left="10" top="10"/>
+					<mx:Label y="110" text="Nationwide Network . Family &amp; Friends . Rollover . No Overages" width="95%" height="40" horizontalCenter="0" fontWeight="bold" fontSize="22" color="#ffffff" fontFamily="Arial" textAlign="center"/>
+					<mx:Label text="Learn More &gt;&gt;" width="95" bottom="10" right="10" fontSize="12" fontFamily="Arial"/>
+					<mx:Label text="$59.99" fontSize="20" right="10" top="10" color="#ffffff" fontWeight="bold" fontFamily="Arial"/>
+					<mx:Label text="minutes for just" x="551" top="16" fontSize="12"/>
+					<mx:Label left="494" text="1000" top="10" fontSize="20" color="#ffffff" fontFamily="Arial" fontWeight="bold"/>
+				</mx:Canvas>
+				
+				<mx:Canvas width="100%" height="330" backgroundColor="#ffffff" borderStyle="solid" cornerRadius="4" bottom="10" right="10">
+					
+					<mx:Label left="10" top="10" text="Featured Products" width="173" height="25" styleName="sectionHeader"/>
+					
+					<mx:HBox left="0" top="43" width="100%" height="100%">
+						
+						<mx:HBox width="33%" height="100%">
+							
+							<mx:Canvas width="50%" height="100%">
+								<mx:Image source="@Embed('/assets/phone_1.png')" horizontalCenter="0" verticalCenter="0"/>
+							</mx:Canvas>
+							
+							<mx:Canvas width="50%" height="100%">
+								<mx:Text text="Nokia 9300 Communicator" bottom="80" width="100%" left="0" height="70" id="feat_prod_1" fontWeight="bold" fontSize="12"/>
+							</mx:Canvas>
+							
+						</mx:HBox>
+						
+						<mx:HBox width="33%" height="100%">
+							
+							<mx:Canvas width="50%" height="100%">
+								<mx:Image horizontalCenter="0" verticalCenter="0" source="@Embed('/assets/phone_2.png')"/>
+							</mx:Canvas>
+							
+							<mx:Canvas width="50%" height="100%">
+								<mx:Text text="Nokia 9500 Communicator" left="0" bottom="80" height="70" width="100%" id="feat_prod_2" fontWeight="bold" fontSize="12"/>
+							</mx:Canvas>
+							
+						</mx:HBox>
+						
+						<mx:HBox width="33%" height="100%">
+							
+							<mx:Canvas width="50%" height="100%">
+								<mx:Image horizontalCenter="0" verticalCenter="0" source="@Embed('/assets/phone_3.png')"/>
+							</mx:Canvas>
+							
+							<mx:Canvas width="50%" height="100%">
+								<mx:Text text="Nokia 6800" height="70" width="100%" left="0" bottom="80" id="feat_prod_3" fontWeight="bold" fontSize="12"/>
+							</mx:Canvas>
+							
+						</mx:HBox>
+						
+					</mx:HBox>
+					
+				</mx:Canvas>
+				
+			</mx:Canvas>
+		
+		</mx:VBox>
+		
+	</mx:HBox>
+	
+</mx:Canvas>

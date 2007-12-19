@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+    paddingTop="8" paddingBottom="8" paddingLeft="8" paddingRight="8"
+    backgroundColor="#FFFFFF"
+    creationComplete="initComp()">
+
+    <mx:Metadata>
+        [Event("selectionChanged")]
+        [Event("selectAll")]
+    </mx:Metadata>
+
+    <mx:Script>
+
+        <![CDATA[
+        import mx.rpc.Fault;
+        import samples.restaurant.ServiceLocator;
+        import samples.restaurant.TokenResponder;
+
+        import mx.collections.ArrayCollection;
+        import mx.rpc.events.ResultEvent;
+        import mx.rpc.events.FaultEvent;
+        import mx.rpc.AbstractService;
+        import mx.rpc.AsyncToken;
+        import mx.rpc.Responder;
+        import mx.utils.ArrayUtil;
+
+    	// An array of category IDs selected by the end user.
+        public var selectedCategories:ArrayCollection = new ArrayCollection();
+
+    	// The list of all categories. This list is retrieved using the service.
+        [Bindable]
+        private var categories:ArrayCollection;
+        
+		//The beginning tab index for the parent and all of its children
+        [Bindable]
+        public var beginTabIndex:int;
+
+        private function initComp():void
+        {
+          	// Obtain a reference to the single WebService instance for the CategoryWS web service
+			var service:AbstractService = ServiceLocator.getCategoryService();
+            // Invoke the getCategories method
+            var token:AsyncToken = AsyncToken(service.getCategories());
+            // Since this function is only called once we'll go ahead and use
+            // a simple inline result handler
+            token.addResponder(new TokenResponder(
+                function (event:ResultEvent):void
+                {
+                    categories = event.result as ArrayCollection;
+                },
+                "Error Getting Categories"
+            ));
+        }
+
+        private function clickHandler(event:Event):void
+        {        		
+            var checkBox:CheckBox = CheckBox(event.target);
+            var categoryId:int = checkBox.getRepeaterItem().categoryId;
+
+            if (checkBox.selected)
+            {
+              // If a checkbox has been selected, we add the corresponding categoryId to the selectedCategories array.
+                selectedCategories.addItem(categoryId);
+            }
+            else
+            {
+              // If a checkbox has been unselected, we remove it from the selectedCategories array.
+                var l:int = selectedCategories.length;
+                for (var i:int; i < l; i++)
+                {
+                    if (selectedCategories.getItemAt(i) == categoryId)
+                    {
+                        selectedCategories.removeItemAt(i);
+                        break;
+                    }
+                }
+            }
+            //Dispatch the selectionChanged event to notify interested listeners
+            //that the categories selection has changed. In this case the main
+            //application (finder.mxml) listens to this event to retrieve the
+            //corresponding restaurants.
+            dispatchEvent(new Event("selectionChanged"));
+        }
+
+        private function allClickHandler(event:Event):void
+        {
+            // Dispatch the selectAll or selectionChanged event to notify
+            // interested listeners that the categories selection has changed.
+            if (all.selected)
+                dispatchEvent(new Event("selectAll"));
+            else
+                dispatchEvent(new Event("selectionChanged"));
+        }
+
+        ]]>
+
+    </mx:Script>
+
+    <mx:CheckBox id="all" label="All Categories" selected="true"
+        click="allClickHandler(event)" 
+        tabIndex="{beginTabIndex}"/>
+
+	<!--
+		This will create all the cuisine categories.  Data binding makes assigning tab indices easy
+	-->
+    <mx:Tile direction="vertical" verticalGap="4" width="100%" height="100%">
+        <mx:Repeater id="list" dataProvider="{categories}">
+            <mx:CheckBox label="{list.currentItem.name}"  click="clickHandler(event)" enabled="{!all.selected}"
+            	keyDown="if (event.keyCode == Keyboard.ENTER || event.keyCode == Keyboard.SPACE) clickHandler(event); event.stopPropagation()"
+            	tabIndex="{beginTabIndex + list.currentIndex + 1}"/>
+        </mx:Repeater>
+    </mx:Tile>
+
+</mx:VBox>

@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" 
+	width="100%" height="100%" initialize="loadResources()"
+	show="onShow(event)" 
+	hide="onHide(event)"
+	verticalScrollPolicy="off" 
+	horizontalScrollPolicy="off"
+	keyDown="keyDownStateChange(event)"
+	implements="mx.managers.IFocusManagerComponent"
+	creationComplete="focusManager.setFocus(this)">
+	
+	<mx:Metadata>
+		[Event("thumbnailView")]
+		[Event("carouselView")]
+	</mx:Metadata>	
+	
+	<mx:Script>
+		<![CDATA[
+		    import samples.photoviewer.Photo;
+			import samples.photoviewer.Gallery;
+			import mx.events.FlexEvent;
+			import flash.utils.Timer;
+			import mx.resources.*;
+			
+			[Embed(source="assets/icon_pause.png")]
+			private const ICON_PAUSE:Class;
+			
+			[Embed(source="assets/icon_play.png")]
+			private const ICON_PLAY:Class;
+		
+			[ResourceBundle("strings")]
+			[Bindable]
+			private var stringResources:ResourceBundle;
+			[Bindable]
+			private var listViewtooltip:String;
+			[Bindable]
+			private var visualListTooltip:String;
+		
+			private function loadResources():void
+			{
+				listViewtooltip = stringResources.getString("listViewtooltipKey");
+				visualListTooltip = stringResources.getString("visualListTooltipKey");
+			}
+
+			[Bindable]
+			public var gallery:Gallery;
+			
+			[Bindable]
+			private var currentPhoto:Photo;
+			
+			private var slideshowTimer:Timer;
+			private var controlsTimer:Timer;
+			
+			override protected function childrenCreated():void
+			{
+			    super.childrenCreated();
+			    slideshowTimer = new Timer(5000, 0);
+			    slideshowTimer.addEventListener(TimerEvent.TIMER, onShowNext);
+				controlsTimer = new Timer(3000, 0);
+				controlsTimer.addEventListener(TimerEvent.TIMER, onControlsTimeOut);
+		    }
+			
+			private function onComplete():void
+			{
+				// If Accessibility is set (Screen Reader is active) then, does not hide the controls when image changes
+				// Controls can be made hidden only by pressing up arrow key
+				if(!Accessibility.active)
+				{
+					currentState = '';
+				}
+			    controlTransition.effect.end();
+			}
+			
+			//when down arrow is pressed, controls are shown
+			//when up arrow is pressed, controls are hidden
+			private function keyDownStateChange(event:KeyboardEvent):void {
+				if (event.keyCode == 40) 
+				{
+					currentState = "showcontrols";
+				} 
+				else if (event.keyCode == 38) 
+				{
+					currentState = '';
+				}
+						
+			}
+			
+			private function onShow(event:FlexEvent):void
+			{
+				slideshowTimer.start();
+			}
+			
+			private function onHide(event:FlexEvent):void
+			{
+				slideshowTimer.stop();
+				playOrPause.setStyle("icon", ICON_PAUSE);
+			}
+			
+			private function onShowNext(event:TimerEvent):void
+			{
+				if (controlsTimer != null && controlsTimer.running == true)
+					controlsTimer.stop();
+					
+				gallery.selected = (gallery.selected + 1) % gallery.photos.length; //easy way to keep a cycle going
+			}
+			
+			private function onSlideshowPlayOrPause(event:MouseEvent):void
+			{
+				if (slideshowTimer.running == true)
+				{
+					slideshowTimer.stop();
+					playOrPause.setStyle("icon", ICON_PLAY);
+				} 
+				else
+				{
+					playOrPause.setStyle("icon", ICON_PAUSE);
+					slideshowTimer.start();
+				}
+			}
+			
+			private function onControlsTimeOut(event:TimerEvent):void
+			{
+				controlsTimer.stop();
+				currentState="";
+			}
+			
+			private function onRollOver(event:MouseEvent):void
+			{
+			    //we only want to adjust the state if we're coming in from the outside
+			    if (event.relatedObject == parentDocument)
+			    {
+    			    updateControlWidths();
+		            currentState = "showcontrols";
+    				controlsTimer.start();
+		        }
+                else if (event.target == bottomControl)
+                {
+                    //when mouse is in the bottom control bar leave everything up
+                    controlsTimer.stop();
+                }
+			}
+			
+			private function onRollOut(event:MouseEvent):void
+			{
+			    //we only want to adjust the state if we're leaving to the outside
+			    if (event.relatedObject == parentDocument)
+			    {
+			        controlsTimer.stop();
+                    currentState = "";			            
+			    }
+			    else if (event.target == bottomControl)
+			    {
+			        //if we rolled out of the bottom control but stayed in 
+			        //the image restart the timer to hide it
+			        controlsTimer.start();
+			    }
+			}
+			
+			private function onSliderChange():void
+			{
+			    gallery.selected = photoSlider.value - 1;
+			    if (slideshowTimer.running)
+			    {
+			        slideshowTimer.stop();
+			        slideshowTimer.start();
+			    }
+			}
+			
+			private function updateControlWidths():void
+			{
+				topControl.width = photoView.contentWidth;
+				bottomControl.width = photoView.contentWidth;
+				//must validate the canvas to have the centering algorithm execute immediately
+				//otherwise when the controls move in you'll see them offset incorrectly
+				invalidateDisplayList();
+				validateNow(); 
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Binding source="gallery.photos.getItemAt(gallery.selected) as Photo" 
+        destination="currentPhoto" />
+    <mx:Binding source="gallery.selected + 1" destination="photoSlider.value" />
+			
+	<mx:Image id="photoView" source="galleries/{currentPhoto.source}"
+		 width="100%" height="100%" 
+		 rollOver="onRollOver(event)"
+		 rollOut="onRollOut(event)"
+		 complete="onComplete()"
+		 completeEffect="Fade"
+		 effectEnd="updateControlWidths()"
+		 verticalAlign="center" horizontalAlign="middle"/>
+	
+	<!-- controls go below the image in MXML so that they're at a higher depth -->
+	<mx:VBox id="topControl" 
+		top="-55" height="55" width="300"
+		styleName="slideshowControlBar"
+		rollOut="onRollOut(event)"
+	  	horizontalCenter="0" 
+	  	verticalGap="0" 
+		horizontalAlign="center"
+	 	verticalScrollPolicy="off"
+	 	horizontalScrollPolicy="off"
+	 	includeInLayout="false">
+		
+		<mx:Text id="photodescription" 
+		    text="{currentPhoto.description}"
+			styleName="photoDescription"
+			textAlign="center" 
+			width="100%" height="100%"/>
+		
+		<mx:Label id="photoname" 
+		    text="{currentPhoto.name}"
+			styleName="photoName" 
+			textAlign="center" 
+			width="100%"/>
+	
+	</mx:VBox>
+
+		 
+   <mx:Canvas id="bottomControl" 
+		height="50" bottom="-50" horizontalCenter="0"
+		styleName="slideshowControlBar"
+		rollOver="onRollOver(event)"
+		rollOut="onRollOut(event)"
+		includeInLayout="false">
+		
+		<mx:HSlider id="photoSlider" dataTipPlacement="top"
+		    change="onSliderChange()" 
+			horizontalCenter="-10" verticalCenter="0" width="230" 
+			minimum="1" maximum="{gallery.photos.length}"
+			dataTipPrecision="0" 
+			snapInterval="1" thumbCount="1"/>
+			
+		<!-- 
+			This is a workaround. We're supposed to use data binding 
+			here for the image source of the NavButton:
+			
+			<NavButton source="{ICON_PAUSE}".../>
+			
+			there's however a bug associated with the negative constraint
+			of the bottom control that prevents this button imgae 
+			from being visible upon activation of the bottom control.
+		-->	
+		<NavButton icon="@Embed('assets/icon_pause.png')" 
+			id="playOrPause"
+			horizontalCenter="-150" verticalCenter="0"
+		    click="onSlideshowPlayOrPause(event)" />
+		    					
+		<NavButton icon="@Embed('assets/icon_list.png')" 
+			horizontalCenter="135" verticalCenter="0"
+		    toolTip="{listViewtooltip}"
+		    click="dispatchEvent(new Event('thumbnailView'))" />
+		    					
+		<NavButton icon="@Embed('assets/icon_carousel.png')" 
+			horizontalCenter="165" verticalCenter="0"
+		    toolTip="{visualListTooltip}"
+		    click="dispatchEvent(new Event('carouselView'))" />
+			
+	</mx:Canvas>
+	
+	<mx:states>
+		<mx:State name="showcontrols">
+			<mx:SetStyle target="{topControl}" name="top" value="0" />
+			<mx:SetStyle target="{bottomControl}" name="bottom" value="0" />
+		</mx:State>
+	</mx:states>	
+	
+	<mx:transitions>
+        <mx:Transition id="controlTransition" fromState="*" toState="*">
+            <mx:Parallel>
+                <mx:Move target="{topControl}"/>
+                <mx:Move target="{bottomControl}"/>
+            </mx:Parallel>
+        </mx:Transition>
+	</mx:transitions>
+	 
+</mx:Canvas>
