@@ -477,9 +477,11 @@
   <!-- builds our avatar viewer thingy -->
   <target name="avatarviewer" depends="asprepare,aslib">
     <if><isset property="fullsize"/><then>
-      <property name="optSize" value="FullSize"/>
+      <property name="width" value="600"/>
+      <property name="height" value="488"/>
     </then><else>
-      <property name="optSize" value=""/>
+      <property name="width" value="360"/>
+      <property name="height" value="450"/>
     </else></if>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
@@ -487,10 +489,13 @@
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
+      <arg value="-default-size"/>
+      <arg value="${width}"/>
+      <arg value="${height}"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/avatarviewer.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/AvatarViewer${optSize}.mxml"/>
+      <arg value="${asrc.dir}/AvatarViewer.mxml"/>
     </exec>
     <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients/${build_version}"/>
   </target>
