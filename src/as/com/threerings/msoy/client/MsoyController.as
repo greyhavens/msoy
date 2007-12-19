@@ -161,6 +161,10 @@ public class MsoyController extends Controller
     {
         if (nowAway != _away) {
             _away = nowAway;
+            if (nowAway && StringUtil.isBlank(message)) {
+                // use a default message
+                message = Msgs.GENERAL.get("m.awayDefault");
+            }
             var msvc :MemberService =
                 _mctx.getClient().requireService(MemberService) as MemberService;
             msvc.setAway(_mctx.getClient(), nowAway, message);

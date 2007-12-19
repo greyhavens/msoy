@@ -32,7 +32,7 @@ public class BackFromAwayDialog extends FloatingPanel
         super.createChildren();
 
         var label :Label = new Label();
-        label.text = _msg;
+        label.text = "\"" + _msg + "\"";
         addChild(label);
 
         addButtons(OK_BUTTON);

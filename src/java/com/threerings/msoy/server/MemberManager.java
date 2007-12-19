@@ -316,14 +316,7 @@ public class MemberManager
         //throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        if (away) {
-            if (message == null) {
-                message = "I'm away."; // TODO: translate? Require client to provide?
-            }
-            user.setAwayMessage(message);
-        } else {
-            user.setAwayMessage(null);
-        }
+        user.setAwayMessage(away ? message : null);
         BodyProvider.updateOccupantStatus(user, user.location,
             away ? MsoyBodyObject.AWAY : OccupantInfo.ACTIVE);
     }
