@@ -425,11 +425,17 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
             return;
         }
 
-        // sanity check (TODO: bound by percent of existing game duration)
-        if (totalMinutes/_allPlayers.size() > 15) {
-            log.info("Capping player minutes at 15 mins per game [games=" + _allPlayers.size() +
-                     ", mins=" + totalMinutes + "].");
-            totalMinutes = _allPlayers.size() * 15;
+        // to avoid a single anomalous game freakout out our distribution, cap game duration at
+        // 120% of the current average which will allow many long games to bring up the average
+        boolean isMP = (_allPlayers.size() > 1);
+        int perPlayerDuration = totalMinutes/_allPlayers.size();
+        int avgDuration = Math.round(60 * getAverageGameDuration(isMP, perPlayerDuration));
+        int capDuration = 5 * avgDuration / 4;
+        if (perPlayerDuration > capDuration) {
+            log.info("Capping player minutes at 120% of average [players=" + _allPlayers.size() +
+                     ", average=" + avgDuration + ", current=" + perPlayerDuration + 
+                     ", capped=" + capDuration + "].");
+            totalMinutes = capDuration * _allPlayers.size();
         }
 
         // record this game's playtime to the repository
