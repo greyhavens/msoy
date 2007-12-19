@@ -65,20 +65,23 @@
     <file name="${extlibs.dir}/commons-logging.jar"/>
     <file name="${extlibs.dir}/ehcache-1.2.jar"/>
     <file name="${extlibs.dir}/ganymed.jar"/>
-    <file name="${extlibs.dir}/google-collect.jar"/>
     <file name="${extlibs.dir}/getdown.jar"/>
+    <file name="${extlibs.dir}/google-collect.jar"/>
     <file name="${extlibs.dir}/gwt-user.jar"/>
     <file name="${extlibs.dir}/gwt-widgets.jar"/>
     <file name="${extlibs.dir}/javassist.jar"/>
-    <file name="${extlibs.dir}/jetty6/jetty.jar"/>
     <file name="${extlibs.dir}/jetty6/jetty-util.jar"/>
+    <file name="${extlibs.dir}/jetty6/jetty.jar"/>
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/junit4.jar"/>
-    <file name="${extlibs.dir}/mina-core.jar"/>
     <file name="${extlibs.dir}/mail.jar"/>
+    <file name="${extlibs.dir}/mina-core.jar"/>
     <file name="${extlibs.dir}/mysql-connector-java.jar"/>
     <file name="${extlibs.dir}/postgresql-jdbc.jar"/>
     <file name="${extlibs.dir}/proguard.jar"/>
+    <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
+    <file name="${extlibs.dir}/redstone-xmlrpc.jar"/>
+    <file name="${extlibs.dir}/s3lib.jar"/>
     <file name="${extlibs.dir}/servlet-api.jar"/>
     <file name="${extlibs.dir}/slf4j-api.jar"/>
     <file name="${extlibs.dir}/slf4j-jdk14.jar"/>
@@ -91,9 +94,6 @@
     <file name="${extlibs.dir}/ws-commons-util.jar"/>
     <file name="${extlibs.dir}/xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/xmlrpc-common.jar"/>
-    <file name="${extlibs.dir}/redstone-xmlrpc.jar"/>
-    <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
-    <file name="${extlibs.dir}/s3lib.jar"/>
 
     <!-- The following are used for HTML sanitization -->
     <file name="${extlibs.dir}/antisamy/antisamy-bin.1.0.jar"/>
@@ -135,6 +135,7 @@
     <file name="lib/aperture/winlaf-0.5.1.jar"/>
 
     <!-- The following are used for Panopticon -->
+    <file name="${extlibs.dir}/log4j.jar"/>
     <file name="${extlibs.dir}/hessian.jar"/>
   </filelist>
 
