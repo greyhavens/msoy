@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -97,7 +98,7 @@ public class MsoyEvents
         }
     }
 
-    protected static class BaseEvent implements Event
+    protected static class BaseEvent implements Event, Serializable
     {
         public String getName () {
             String name = getClass().getName();

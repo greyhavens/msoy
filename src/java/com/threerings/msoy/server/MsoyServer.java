@@ -472,9 +472,9 @@ public class MsoyServer extends MsoyBaseServer
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;
 
-    protected static AuditLogger _ilog = createAuditLog("item");
-    protected static AuditLogger _flog = createAuditLog("flow");
-    protected static AuditLogger _stlog = createAuditLog("state");
+    protected static AuditLogger _ilog = new AuditLogger(getLogLocation("item"));
+    protected static AuditLogger _flog = new AuditLogger(getLogLocation("flow"));
+    protected static AuditLogger _stlog = new AuditLogger(getLogLocation("state"));
 
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;

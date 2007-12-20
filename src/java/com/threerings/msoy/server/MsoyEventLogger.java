@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.logging.Level;
@@ -11,9 +12,11 @@ import com.samskivert.util.AuditLogger;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.panopticon.client.net.LoggingConnection;
 import com.threerings.panopticon.common.hessian.Event;
+
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MsoyBaseServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -23,10 +26,13 @@ import static com.threerings.msoy.Log.log;
  * separate thread.
  */
 public class MsoyEventLogger
+    implements MsoyBaseServer.Shutdowner
 {
     /** Initializes the logger; this must happen before any events can be logged. */
     public MsoyEventLogger (final URL serverURL)
     {
+        MsoyBaseServer.registerShutdowner(this);
+
         if (serverURL != null) {
             log.info("Events will be logged to '" + serverURL + "'.");
             _nlogger = new LoggingConnection(
@@ -35,7 +41,20 @@ public class MsoyEventLogger
 
         } else {
             log.info("Events will be logged locally.");
-            _alogger = MsoyBaseServer.createAuditLog("events");
+            File logdir = new File(ServerConfig.serverRoot, "log");
+            _llogger = new LocalEventLogger(MsoyBaseServer.getLogLocation("events"));
+            _llogger.start();
+        }
+    }
+
+    // from interface MsoyBaseServer.Shutdowner
+    public void shutdown ()
+    {
+        if (_nlogger != null) {
+            _nlogger.shutdown();
+        }
+        if (_llogger != null) {
+            _llogger.shutdown();
         }
     }
 
@@ -180,8 +199,11 @@ public class MsoyEventLogger
                 log.log(Level.WARNING, "Failed to send log event " + message + ".", e);
             }
 
-        } else if (_alogger != null) {
-            _alogger.log(message.toString());
+        } else if (_llogger != null) {
+            _llogger.log(message);
+
+        } else {
+            log.warning("No logger configured! Dropping " + message + ".");
         }
     }
 
@@ -189,5 +211,5 @@ public class MsoyEventLogger
     protected LoggingConnection _nlogger;
 
     /** Used to log events if we have no network logger. */
-    protected AuditLogger _alogger;
+    protected LocalEventLogger _llogger;
 }

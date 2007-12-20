@@ -77,18 +77,18 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** The Msoy feed repository. */
     public static FeedRepository feedRepo;
-    
+
     /**
      * Creates an audit log with the specified name (which should not include
      * the <code>.log</code> suffix) in our server log directory.
      */
-    public static AuditLogger createAuditLog (String logname)
+    public static File getLogLocation (String logname)
     {
         // qualify our log file with the nodename to avoid collisions
         if (ServerConfig.nodeName != null) {
             logname = logname + "_" + ServerConfig.nodeName;
         }
-        return new AuditLogger(_logdir, logname + ".log");
+        return new File(_logdir, logname + ".log");
     }
 
     /**
@@ -227,5 +227,5 @@ public abstract class MsoyBaseServer extends WhirledServer
     protected static File _logdir = new File(ServerConfig.serverRoot, "log");
 
     /** Our general audit log. */
-    protected static AuditLogger _glog = createAuditLog("server");
+    protected static AuditLogger _glog = new AuditLogger(getLogLocation("server"));
 }
