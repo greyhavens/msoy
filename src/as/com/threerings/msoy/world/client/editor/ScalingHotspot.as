@@ -9,6 +9,8 @@ import flash.geom.Point;
 
 import com.threerings.util.Log;
 
+import com.threerings.msoy.client.Msgs;
+
 import com.threerings.msoy.world.client.FurniSprite;
 
 /**
@@ -47,7 +49,6 @@ public class ScalingHotspot extends Hotspot
     {
         super.startAction(event);
         _originalScale = new Point(_editor.target.getMediaScaleX(), _editor.target.getMediaScaleY());
-        updateTargetScale(event);
     }
 
     // @Override from Hotspot
@@ -67,9 +68,9 @@ public class ScalingHotspot extends Hotspot
     // @Override from Hotspot
     override protected function initializeDisplay () :void
     {
-        _displayStandard = new HOTSPOT() as DisplayObject;
-        _displayMouseOver = new HOTSPOT_OVER() as DisplayObject;
-        _displayLocked = new HOTSPOT_LOCKED() as DisplayObject;
+        _displayStandard = new HOTSPOT_LOCKED() as DisplayObject;
+        _displayUnlocked = new HOTSPOT() as DisplayObject;
+        _displayMouseOver = _displayStandard; //new HOTSPOT_OVER() as DisplayObject;
     }
 
     /**
@@ -97,10 +98,10 @@ public class ScalingHotspot extends Hotspot
         // should we snap?
         var noSnap :Boolean = event.shiftKey || event.altKey || event.ctrlKey;
         if (noSnap) {
-            switchDisplay(_displayMouseOver);
+            switchDisplay(_displayUnlocked);
 
         } else {
-            switchDisplay(_displayLocked);
+            switchDisplay(_displayStandard);
             var scale :Number = Math.min(Math.abs(x), Math.abs(y));
             x = scale * ((x < 0) ? -1 : 1);
             y = scale * ((y < 0) ? -1 : 1);
@@ -109,19 +110,24 @@ public class ScalingHotspot extends Hotspot
         _editor.updateTargetScale(x, y);
     }
 
+    override protected function getToolTip () :String
+    {
+        return Msgs.EDITING.get("i.scaling");
+    }
+
     /** Sprite scale at the beginning of modifications. Only valid during action. */
     protected var _originalScale :Point;
 
-    /** Bitmap used for hotspot with mouseover. */
-    protected var _displayLocked :DisplayObject;
+    /** Bitmap used for hotspot with no scale locking. */
+    protected var _displayUnlocked :DisplayObject;
 
 
     // Bitmaps galore!
     [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale.png")]
     public static const HOTSPOT :Class;
     [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale_over.png")]
-    public static const HOTSPOT_OVER :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale_locked.png")]
+//    public static const HOTSPOT_OVER :Class;
+//    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale_locked.png")]
     public static const HOTSPOT_LOCKED :Class;
 }
 }

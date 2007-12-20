@@ -7,8 +7,14 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.TimerEvent;
 import flash.geom.Point;
+import flash.utils.Timer;
+
+import mx.core.IToolTip;
+import mx.managers.ToolTipManager;
 
 import com.threerings.util.Log;
 
@@ -20,6 +26,10 @@ public class Hotspot extends Sprite
     public function Hotspot (editor :FurniEditor)
     {
         _editor = editor;
+        _tipTimer = new Timer(ToolTipManager.showDelay, 1);
+        _tipTimer.addEventListener(TimerEvent.TIMER, handleTipTimer);
+
+        addEventListener(Event.REMOVED_FROM_STAGE, closeToolTip);
     }
 
     /** Called when the editing UI is created. */
@@ -44,6 +54,7 @@ public class Hotspot extends Sprite
         removeEventListener(MouseEvent.ROLL_OVER, rollOver);
         removeEventListener(MouseEvent.ROLL_OUT, rollOut);
         _currentDisplay = null;
+        closeToolTip();
     }
 
     /** Returns true if the hotspot is currently being dragged around to perform some action. */
@@ -95,6 +106,8 @@ public class Hotspot extends Sprite
         // mouse up regardless of where they happen.
         _editor.roomView.addEventListener(MouseEvent.MOUSE_MOVE, updateAction);
         _editor.roomView.addEventListener(MouseEvent.MOUSE_UP, endAction);
+
+        closeToolTip();
     }
 
     /**
@@ -126,6 +139,7 @@ public class Hotspot extends Sprite
         // maybe update the bitmap
         if (_delayedRollout) {
             switchDisplay(_displayStandard);
+            closeToolTip();
             _delayedRollout = false;
         }
 
@@ -162,6 +176,9 @@ public class Hotspot extends Sprite
         }
 
         switchDisplay(_displayMouseOver);
+
+        _tipTimer.reset();
+        _tipTimer.start();
     }
 
     /** Switches bitmaps on rollout. */
@@ -183,6 +200,7 @@ public class Hotspot extends Sprite
         }
 
         switchDisplay(_displayStandard);
+        closeToolTip();
     }
 
     /**
@@ -238,6 +256,29 @@ public class Hotspot extends Sprite
         _displayMouseOver = bitmap;
     }
 
+    protected function getToolTip () :String
+    {
+        return null;
+    }
+
+    protected function handleTipTimer (event :TimerEvent) :void
+    {
+        // show the tooltip
+        var tip :String = getToolTip();
+        if (tip != null) {
+            _tooltip = ToolTipManager.createToolTip(tip, this.stage.mouseX, this.stage.mouseY);
+        }
+    }
+
+    protected function closeToolTip (... ignored) :void
+    {
+        _tipTimer.reset();
+
+        if (_tooltip != null) {
+            ToolTipManager.destroyToolTip(_tooltip);
+            _tooltip = null;
+        }
+    }
 
     /** Reference to the editor. */
     protected var _editor :FurniEditor;
@@ -267,5 +308,10 @@ public class Hotspot extends Sprite
      * cause a bitmap update after dragging has finished.
      */
     protected var _delayedRollout :Boolean = false;
+
+    protected var _tipTimer :Timer;
+
+    /** Our currently displayed tooltip, if any. */
+    protected var _tooltip :IToolTip;
 }
 }
