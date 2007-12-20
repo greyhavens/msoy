@@ -297,7 +297,7 @@ public class AvatarViewerComp extends Canvas
                 children: stateItems });
         }
 
-        CommandMenu.createMenu(menuItems).show(event.stageX, event.stageY);
+        CommandMenu.createMenu(menuItems).popUpIn(getBounds(stage));
     }
 
     /** The container that holds our non-flex children. */

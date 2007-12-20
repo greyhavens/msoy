@@ -424,7 +424,7 @@ public class RoomController extends SceneController
         if (menuItems.length > 0) {
             var menu :CommandMenu = CommandMenu.createMenu(menuItems);
             menu.setDispatcher(_roomView);
-            menu.show();
+            menu.popUpIn(_roomView.getBounds(_roomView.stage));
         }
     }
 
@@ -629,7 +629,7 @@ public class RoomController extends SceneController
         if (menuItems.length > 0) {
             var menu :CommandMenu = CommandMenu.createMenu(menuItems);
             menu.setDispatcher(_roomView);
-            menu.show();
+            menu.popUpIn(_roomView.getBounds(_roomView.stage));
         }
     }
 
