@@ -93,8 +93,8 @@ public class RuntimeConfig
             }
 
             // admins are allowed to change things, but let's log it
-            MsoyBaseServer.generalLog("admin_config changed " + user.username + " " +
-                                      object.getClass().getName() + " " + event);
+            log.info("Admin configuration change [who=" + user.username +
+                     ", object=" + object.getClass().getName() + ", change=" + event + "].");
             return true;
         }
     };

@@ -14,7 +14,6 @@ import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
-import com.samskivert.util.AuditLogger;
 import com.threerings.util.MessageManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
@@ -77,27 +76,6 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** The Msoy feed repository. */
     public static FeedRepository feedRepo;
-
-    /**
-     * Creates an audit log with the specified name (which should not include
-     * the <code>.log</code> suffix) in our server log directory.
-     */
-    public static File getLogLocation (String logname)
-    {
-        // qualify our log file with the nodename to avoid collisions
-        if (ServerConfig.nodeName != null) {
-            logname = logname + "_" + ServerConfig.nodeName;
-        }
-        return new File(_logdir, logname + ".log");
-    }
-
-    /**
-     * Logs a message to the general audit log.
-     */
-    public static void generalLog (String message)
-    {
-        _glog.log(message);
-    }
 
     /**
      * Ensures that the calling thread is the distributed object event dispatch thread, throwing an
@@ -200,9 +178,6 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // shutdown our persistence context (cache, JDBC connections)
         perCtx.shutdown();
-
-        // close our audit logs
-        _glog.close();
     }
 
     /**
@@ -225,7 +200,4 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** The directory that contains our log files. */
     protected static File _logdir = new File(ServerConfig.serverRoot, "log");
-
-    /** Our general audit log. */
-    protected static AuditLogger _glog = new AuditLogger(getLogLocation("server"));
 }

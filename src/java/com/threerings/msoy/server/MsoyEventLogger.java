@@ -8,7 +8,6 @@ import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.logging.Level;
 
-import com.samskivert.util.AuditLogger;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
@@ -40,9 +39,9 @@ public class MsoyEventLogger
             _nlogger.start();
 
         } else {
-            log.info("Events will be logged locally.");
-            File logdir = new File(ServerConfig.serverRoot, "log");
-            _llogger = new LocalEventLogger(MsoyBaseServer.getLogLocation("events"));
+            File logloc = new File(new File(ServerConfig.serverRoot, "log"), "events.log");
+            log.info("Events will be logged locally to '" + logloc + "'.");
+            _llogger = new LocalEventLogger(logloc);
             _llogger.start();
         }
     }

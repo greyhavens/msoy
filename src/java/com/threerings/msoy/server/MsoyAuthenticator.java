@@ -230,42 +230,34 @@ public class MsoyAuthenticator extends Authenticator
             // TODO: if they provide no client identifier, determine whether one has been assigned
             // to the account in question and provide that to them if so, otherwise assign them a
             // new one
-/*
-            if (StringUtil.isBlank(creds.ident)) {
-                log.warning("Received blank ident [creds=" +
-                            req.getCredentials() + "].");
-                MsoyServer.generalLog(
-                    "refusing_spoofed_ident " + username +
-                    " ip:" + conn.getInetAddress());
-                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-            }
+//             if (StringUtil.isBlank(creds.ident)) {
+//                 log.warning("Received blank ident, refusing [creds=" + req.getCredentials() +
+//                             ", ip=" + conn.getInetAddress() + "].");
+//                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+//             }
 
-            // if they supplied a known non-unique machine identifier, create
-            // one for them
-            if (IdentUtil.isBogusIdent(creds.ident.substring(1))) {
-                String sident = StringUtil.md5hex(
-                    "" + Math.random() + System.currentTimeMillis());
-                creds.ident = "S" + IdentUtil.encodeIdent(sident);
-                MsoyServer.generalLog("creating_ident " + username +
-                                      " ip:" + conn.getInetAddress() +
-                                      " id:" + creds.ident);
-                rdata.ident = creds.ident;
-            }
+//             // if they supplied a known non-unique machine identifier, create
+//             // one for them
+//             if (IdentUtil.isBogusIdent(creds.ident.substring(1))) {
+//                 String sident = StringUtil.md5hex(
+//                     "" + Math.random() + System.currentTimeMillis());
+//                 creds.ident = "S" + IdentUtil.encodeIdent(sident);
+//                 Log.info("Creating ident [for=" + username + ", ip=" + conn.getInetAddress() +
+//                          " id=" + creds.ident + "].");
+//                 rdata.ident = creds.ident;
+//             }
 
-            // convert the encrypted ident to the original MD5 hash
-            try {
-                String prefix = creds.ident.substring(0, 1);
-                creds.ident = prefix +
-                    IdentUtil.decodeIdent(creds.ident.substring(1));
-            } catch (Exception e) {
-                log.warning("Received spoofed ident [who=" + username +
-                            ", err=" + e.getMessage() + "].");
-                MsoyServer.generalLog("refusing_spoofed_ident " + username +
-                                      " ip:" + conn.getInetAddress() +
-                                      " id:" + creds.ident);
-                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-            }
-*/
+//             // convert the encrypted ident to the original MD5 hash
+//             try {
+//                 String prefix = creds.ident.substring(0, 1);
+//                 creds.ident = prefix +
+//                     IdentUtil.decodeIdent(creds.ident.substring(1));
+//             } catch (Exception e) {
+//                 log.warning("Received spoofed ident, refusing [who=" + username +
+//                             ", ip=" + conn.getInetAddress() + ", id=" + cred.sident +
+//                             ", err=" + e.getMessage() + "].");
+//                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+//             }
 
             // TODO: sort out the above
             if (creds.ident == null) {

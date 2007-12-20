@@ -15,7 +15,6 @@ import com.samskivert.jdbc.TransitionRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.samskivert.servlet.user.UserRepository;
-import com.samskivert.util.AuditLogger;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.LoggingLogProvider;
@@ -144,22 +143,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Handles notifications to clients. */
     public static NotificationManager notifyMan = new NotificationManager();
-
-    /**
-     * Logs a message to the item audit log.
-     */
-    public static void itemLog (String message)
-    {
-        _ilog.log(message);
-    }
-
-    /**
-     * Logs a message to the flow audit log.
-     */
-    public static void flowLog (String message)
-    {
-        _flog.log(message);
-    }
 
     /**
      * Returns the member object for the user identified by the given ID if they are online
@@ -346,7 +329,7 @@ public class MsoyServer extends MsoyBaseServer
     @Override // from PresentsServer
     protected void logReport (String report)
     {
-        _stlog.log(report);
+        // TODO: export this information via JMX
     }
 
     /**
@@ -425,10 +408,6 @@ public class MsoyServer extends MsoyBaseServer
 
         // shutdown our persistence context (cache, JDBC connections)
         userCtx.shutdown();
-
-        // close our audit logs
-        _ilog.close();
-        _stlog.close();
     }
 
     /**
@@ -471,10 +450,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;
-
-    protected static AuditLogger _ilog = new AuditLogger(getLogLocation("item"));
-    protected static AuditLogger _flog = new AuditLogger(getLogLocation("flow"));
-    protected static AuditLogger _stlog = new AuditLogger(getLogLocation("state"));
 
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;

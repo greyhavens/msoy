@@ -313,13 +313,9 @@ public class FlowRepository extends DepotRepository
         // TODO: can we magically get the updated value from the database? stored procedure?
         MemberFlowRecord updatedFlow = loadMemberFlow(memberId);
 
-        // log this to the audit log as well
-        int signedAmount = (grant ? amount : -amount);
-        _eventLog.flowTransaction(
-            memberId, action.getNumber(), signedAmount, updatedFlow.flow, details);
-        // todo: remove old logging functions:
-        String loginfo = action + (details != null ? " " + details : "");
-        MsoyServer.flowLog(memberId + (grant ? " G " : " S ") + amount + " " + loginfo);
+        // record this flow transaction to our uber log
+        _eventLog.flowTransaction(memberId, action.getNumber(), grant ? amount : -amount,
+                                  updatedFlow.flow, details);
 
         return updatedFlow;
     }
