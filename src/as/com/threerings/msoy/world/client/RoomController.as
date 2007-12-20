@@ -590,7 +590,7 @@ public class RoomController extends SceneController
 // TODO: see note in createChangeAvatarMenu, regarding avatar thumbnails.
 //            menu.variableRowHeight = true;
             menu.setDispatcher(_roomView);
-            menu.show();
+            menu.popUpIn(_roomView.getBounds(_roomView.stage));
         }
     }
 
