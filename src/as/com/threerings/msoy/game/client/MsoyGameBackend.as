@@ -10,7 +10,7 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.utils.Dictionary;
 
-import com.whirled.client.WhirledGameControlBackend;
+import com.whirled.client.WhirledGameBackend;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
@@ -19,9 +19,9 @@ import com.threerings.msoy.game.data.PlayerInfo;
 /**
  * Implements the various Msoy specific parts of the Whirled Game backend.
  */
-public class MsoyGameControlBackend extends WhirledGameControlBackend
+public class MsoyGameBackend extends WhirledGameBackend
 {
-    public function MsoyGameControlBackend (
+    public function MsoyGameBackend (
         ctx :GameContext, gameObj :MsoyGameObject, ctrl :MsoyGameController)
     {
         super(ctx, gameObj, ctrl);
@@ -63,7 +63,7 @@ public class MsoyGameControlBackend extends WhirledGameControlBackend
         return p;
     }
 
-    // from WhirledGameControlBackend
+    // from WhirledGameBackend
     override protected function playerOwnsData (type :int, ident :String) :Boolean
     {
         var cfg :MsoyGameConfig = (_ctrl.getPlaceConfig() as MsoyGameConfig);

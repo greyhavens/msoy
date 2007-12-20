@@ -4,8 +4,7 @@
 package com.threerings.msoy.game.client {
 
 import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.ezgame.client.GameControlBackend;
+import com.threerings.ezgame.client.EZGameBackend;
 
 import com.whirled.client.WhirledGamePanel;
 
@@ -84,10 +83,9 @@ public class MsoyGamePanel extends WhirledGamePanel
     }
 
     // from EZGamePanel
-    override protected function createBackend () :GameControlBackend
+    override protected function createBackend () :EZGameBackend
     {
-        return new MsoyGameControlBackend(_gctx, _ezObj as MsoyGameObject, 
-                                          _ctrl as MsoyGameController);
+        return new MsoyGameBackend(_gctx, _ezObj as MsoyGameObject, _ctrl as MsoyGameController);
     }
 
     // from WhirledGamePanel
