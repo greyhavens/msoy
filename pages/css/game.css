@@ -20,6 +20,7 @@
   text-align: center;
   border-right: white solid 15px;
   border-bottom: white solid 10px;
+  width: 190px;
 }
 
 .gameDetail .Box .Name { 
@@ -33,7 +34,6 @@
 
 .gameDetail .Box .Screenshot { 
   background-image: url(/images/item/detail_preview_bg.png);
-  width: 175px;
   height: 125px;
   padding: 10px;
 }
