@@ -291,6 +291,12 @@ public class MsoyServer extends MsoyBaseServer
     }
 
     @Override // from MsoyBaseServer
+    protected String getIdent ()
+    {
+        return ServerConfig.nodeName;
+    }
+
+    @Override // from MsoyBaseServer
     protected ConfigRegistry createConfigRegistry ()
         throws Exception
     {

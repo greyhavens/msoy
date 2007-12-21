@@ -107,8 +107,8 @@ public abstract class MsoyBaseServer extends WhirledServer
         Security.setProperty("networkaddress.cache.ttl" , "30");
 
         // initialize event logger
-        _eventLog = new MsoyEventLogger(
-            ServerConfig.eventLogURL.length() == 0 ? null : new URL(ServerConfig.eventLogURL));
+        String logURL = ServerConfig.eventLogURL;
+        _eventLog = new MsoyEventLogger(getIdent(), logURL.length() == 0 ? null : new URL(logURL));
 
         // create our JDBC bits before calling super.init() because our superclass will attempt to
         // create our authenticator and we need that ready by then
@@ -184,6 +184,12 @@ public abstract class MsoyBaseServer extends WhirledServer
         throws Exception
     {
     }
+
+    /**
+     * Returns an identifier used to distinguish this server from others on this machine when
+     * generating log files.
+     */
+    protected abstract String getIdent ();
 
     /**
      * Creates the admin config registry for use by this server.

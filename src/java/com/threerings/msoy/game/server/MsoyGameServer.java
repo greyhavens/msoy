@@ -177,6 +177,12 @@ public class MsoyGameServer extends MsoyBaseServer
     }
 
     @Override // from MsoyBaseServer
+    protected String getIdent ()
+    {
+        return "p" + _listenPort;
+    }
+
+    @Override // from MsoyBaseServer
     protected ConfigRegistry createConfigRegistry ()
         throws Exception
     {

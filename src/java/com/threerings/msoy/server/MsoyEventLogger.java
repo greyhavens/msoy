@@ -28,7 +28,7 @@ public class MsoyEventLogger
     implements MsoyBaseServer.Shutdowner
 {
     /** Initializes the logger; this must happen before any events can be logged. */
-    public MsoyEventLogger (final URL serverURL)
+    public MsoyEventLogger (String ident, URL serverURL)
     {
         MsoyBaseServer.registerShutdowner(this);
 
@@ -39,7 +39,8 @@ public class MsoyEventLogger
             _nlogger.start();
 
         } else {
-            File logloc = new File(new File(ServerConfig.serverRoot, "log"), "events.log");
+            File logloc = new File(
+                new File(ServerConfig.serverRoot, "log"), "events_" + ident + ".log");
             log.info("Events will be logged locally to '" + logloc + "'.");
             _llogger = new LocalEventLogger(logloc);
             _llogger.start();
