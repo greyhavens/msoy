@@ -146,7 +146,7 @@ public class ProfileBlurb extends Blurb
         }
         if (_profile.memberSince > 0L) {
             addDetail(content, CProfile.msgs.memberSince(),
-                      _lfmt.format(new Date(_profile.memberSince)));
+                      _sfmt.format(new Date(_profile.memberSince)));
         }
         if (_profile.lastLogon > 0L) {
             addDetail(content, CProfile.msgs.lastOnline(),
@@ -332,6 +332,7 @@ public class ProfileBlurb extends Blurb
     protected ListBox _esex;
     protected DateFields _ebirthday;
 
+    protected static SimpleDateFormat _sfmt = new SimpleDateFormat("MMM dd, yyyy");
     protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy h:mmaa");
 
     protected static final long YEAR_MILLIS = (365L * 24L * 60L * 60L * 1000L);
