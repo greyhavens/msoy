@@ -30,7 +30,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
-import com.threerings.msoy.person.data.TrophyAwardPayload;
+import com.threerings.msoy.person.data.GameAwardPayload;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
@@ -376,9 +376,8 @@ public class MsoyGameRegistry
             "m.got_trophy_body", trophy.description);
         MsoyServer.mailMan.deliverMessage(
             // TODO: sender should be special system id
-            memberId, memberId, subject, body, new TrophyAwardPayload(
-                trophy.gameId, gameName, trophy.name, trophy.trophyMedia.hash,
-                trophy.trophyMedia.mimeType),
+            memberId, memberId, subject, body, new GameAwardPayload(
+                trophy.gameId, gameName, GameAwardPayload.TROPHY, trophy.name, trophy.trophyMedia),
             true, new ResultListener.NOOP<Void>());
     }
 

@@ -6,7 +6,6 @@ package com.threerings.msoy.server.util;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -49,6 +48,23 @@ public class JSONMarshaller<T>
     }
 
     /**
+     * Used to migrate old data to new. Currently only supports field renaming.
+     */
+    public static interface Migration
+    {
+        /** Converts an old field to its new name. */
+        public String migrateField (String original);
+    }
+
+    /**
+     * Registers a migration for a particular JSON encoded class.
+     */
+    public static void registerMigration (Class<?> pclass, Map<String,String> migration)
+    {
+        _migrations.put(pclass, migration);
+    }
+
+    /**
      * Returns a JSON marshaller for a given class, either through cache lookup or creation.
      */
     @SuppressWarnings("unchecked")
@@ -61,7 +77,7 @@ public class JSONMarshaller<T>
         }
         return marsh;
     }
-    
+
     /**
      * Creates a marshaller for the specified object class.
      */
@@ -76,6 +92,7 @@ public class JSONMarshaller<T>
             }
             _fields.put(field.getName(), field);
         }
+        _migmap = _migrations.get(pclass);
     }
 
     /**
@@ -91,7 +108,7 @@ public class JSONMarshaller<T>
             throw new JSONMarshallingException("Failed to deserialize [class=" + _pclass + "]", e);
         }
     }
-    
+
     /**
      * Returns the JSON representation of the state of the given object.
      */
@@ -121,7 +138,7 @@ public class JSONMarshaller<T>
             throw new JSONMarshallingException("Failed to serialize [class=" + _pclass + "]", e);
         }
     }
-    
+
     // TODO: it's idiotic that org.json does not have its objects implement a JSONValue interface
     protected Object deserialize (Object state, Class<?> dClass)
          throws JSONMarshallingException
@@ -181,10 +198,10 @@ public class JSONMarshaller<T>
     {
         try {
             T obj = _pclass.newInstance();
-            Iterator keys = jObj.keys();
+            @SuppressWarnings("unchecked") Iterator<String> keys = jObj.keys();
             while (keys.hasNext()) {
-                String key = (String) keys.next();
-                Field field = _fields.get(key);
+                String key = keys.next(), mkey = _migmap.get(key);
+                Field field = _fields.get(mkey == null ? key : mkey);
                 if (field == null) {
                     // log? throw exception?
                     continue;
@@ -229,7 +246,7 @@ public class JSONMarshaller<T>
         }
         return state;
     }
-    
+
     // convenience method for categorizing anything JSON treats as primitive
     protected boolean isJSONPrimitive(Class vClass) {
         return (vClass.equals(Boolean.TYPE) || vClass.equals(Boolean.class) ||
@@ -244,9 +261,16 @@ public class JSONMarshaller<T>
 
     /** The class for whom we're marshalling. */
     protected Class<T> _pclass;
+
+    /** The migration map for the class we're marshalling or null. */
+    protected Map<String, String> _migmap;
+
     /** Names of public, non-static, non-transient fields mapped to {@link Field} instances. */
     protected Map<String, Field> _fields = Maps.newHashMap();
 
     /** The static cache of instantiated marshallers. */
     protected static Map<Class, JSONMarshaller> _classMap = Maps.newHashMap();
+
+    /** The static registry of migrations. */
+    protected static Map<Class, Map<String, String>> _migrations = Maps.newHashMap();
 }

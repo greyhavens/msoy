@@ -33,8 +33,8 @@ public abstract class MailPayloadDisplay
             return new FriendInvite.Display(message);
         case MailPayload.TYPE_ITEM_GIFT:
             return new ItemGift.Display(message);
-        case MailPayload.TYPE_TROPHY_AWARD:
-            return new TrophyAward.Display(message);
+        case MailPayload.TYPE_GAME_AWARD:
+            return new GameAward.Display(message);
         }
         throw new IllegalArgumentException(
             "Unknown payload requested [type=" + message.payload.getType() + "]");

@@ -4,8 +4,10 @@
 package com.threerings.msoy.person.server;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.logging.Level;
 
+import com.google.common.collect.Maps;
 import org.apache.velocity.VelocityContext;
 
 import com.samskivert.io.PersistenceException;
@@ -27,6 +29,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.JSONMarshaller;
 import com.threerings.msoy.server.util.MailSender;
 
+import com.threerings.msoy.person.data.GameAwardPayload;
 import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.person.data.MailMessage;
 import com.threerings.msoy.person.data.MailPayload;
@@ -167,4 +170,13 @@ public class MailManager
 
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
+
+    static {
+        // register a migration for TrophyAwardPayload -> GameAwardPayload
+        Map<String, String> migmap = Maps.newHashMap();
+        migmap.put("trophyName", "awardName");
+        migmap.put("trophyMedia", "awardMediaHash");
+        migmap.put("trophyMimeType", "awardMimeType");
+        JSONMarshaller.registerMigration(GameAwardPayload.class, migmap);
+    }
 }

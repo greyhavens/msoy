@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.person.data;
 
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
 
@@ -32,9 +31,9 @@ public abstract class MailPayload
     public static final int TYPE_ITEM_GIFT = 3;
 
     /**
-     * The identifying integer of a {@link TrophyAwardPayload} payload.
+     * The identifying integer of a {@link GameAwardPayload} payload.
      */
-    public static final int TYPE_TROPHY_AWARD = 4;
+    public static final int TYPE_GAME_AWARD = 4;
 
     /**
      * Returns the class registered for the specified payload type.
@@ -50,8 +49,8 @@ public abstract class MailPayload
             return FriendInvitePayload.class;
         case TYPE_ITEM_GIFT:
             return ItemGiftPayload.class;
-        case TYPE_TROPHY_AWARD:
-            return TrophyAwardPayload.class;
+        case TYPE_GAME_AWARD:
+            return GameAwardPayload.class;
         }
         throw new IllegalArgumentException("Unknown payload [type= " + type + "]");
     }
