@@ -14,7 +14,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -32,34 +31,33 @@ import com.threerings.msoy.person.data.MailHeaders;
 import com.threerings.msoy.person.data.MailMessage;
 
 import client.msgs.CMsgs;
+import client.msgs.MailComposition.MailSentListener;
 import client.msgs.MailComposition;
 import client.msgs.MailPayloadDisplay;
 import client.msgs.MailUpdateListener;
-import client.msgs.MailComposition.MailSentListener;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
-import client.util.BorderedWidget;
+import client.util.BorderedHorizontalPanel;
 import client.util.FlashClients;
+import client.util.MsoyUI;
 import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
 import client.util.events.StatusChangeListener;
 
 /**
- * A mail reading application, with a sidebar listing available folders, the upper
- * half of the main panel listing the message headers in the currently selected folder,
- * and the lower half displaying individual messages.
+ * A mail reading application, with a sidebar listing available folders, the upper half of the main
+ * panel listing the message headers in the currently selected folder, and the lower half
+ * displaying individual messages.
  *
  * TODO: Make a single initial request for all the data the application needs to start up.
  */
-public class MailApplication extends DockPanel
+public class MailApplication extends VerticalPanel
     implements MailUpdateListener
 {
     /** The number of messages we display on-screen at a time. */
     public static final int HEADER_ROWS = 8;
-    /** The number of page numbers to display in the pager before we shortcut with ... */
-    private static final int PAGES_TO_SHOW = 3;
 
     /**
      * Initialize this application and build the UI framework.
@@ -67,6 +65,18 @@ public class MailApplication extends DockPanel
     public MailApplication ()
     {
         super();
+        setStyleName("App");
+
+        // we want our folders list and messages list in a nice set of bordered boxes
+        BorderedHorizontalPanel header = new BorderedHorizontalPanel();
+        header.setWidth("100%");
+        header.add(buildFoldersPanel(), "FoldersBox");
+        header.setVerticalAlignment(0, HasAlignment.ALIGN_TOP);
+        header.add(buildMessagesPanel(), "MessagesBox");
+        header.setVerticalAlignment(1, HasAlignment.ALIGN_TOP);
+        add(header);
+
+        add(buildMessagePanel());
 
         FlashEvents.addListener(new StatusChangeListener() {
             public void statusChanged (StatusChangeEvent event) {
@@ -79,7 +89,7 @@ public class MailApplication extends DockPanel
             }
         });
 
-        buildUI();
+        loadFolders();
     }
 
     /**
@@ -99,7 +109,6 @@ public class MailApplication extends DockPanel
      */
     public void show (int folderId, int headerOffset, int messageId)
     {
-        clearErrors();
         _messageContainer.setVisible(false);
 
         _currentOffset = headerOffset;
@@ -121,7 +130,6 @@ public class MailApplication extends DockPanel
      */
     public void refresh ()
     {
-        clearErrors();
         // always clear the current message display on a refresh
         _currentMessage = -1;
         _messageContainer.setVisible(false);
@@ -135,46 +143,8 @@ public class MailApplication extends DockPanel
         }
     }
 
-    // the UI is a horizontal top row and underneath it, the message display
-    protected void buildUI ()
-    {
-        setStyleName("App");
-        setSpacing(0);
-
-        add(buildTopContent(), DockPanel.NORTH);
-        Widget messagePanel = buildMessagePanel();
-        add(messagePanel, DockPanel.CENTER);
-        setCellWidth(messagePanel, "100%");
-
-        // and below it all, we display any errors
-        _errorContainer = new VerticalPanel();
-        _errorContainer.setStyleName("groupDetailErrors");
-        add(_errorContainer, DockPanel.SOUTH);
-
-        loadFolders();
-    }
-
-    // the top row has a folder sidebar to the left and message headers to the right
-    protected Widget buildTopContent ()
-    {
-        HorizontalPanel topContent = new HorizontalPanel();
-        topContent.setStyleName("Top");
-
-        Widget sidebarHolder = buildFolderPanel();
-        sidebarHolder.setWidth("100%");
-        topContent.add(sidebarHolder);
-        topContent.setCellWidth(sidebarHolder, "120px");
-        topContent.setCellHeight(sidebarHolder, "100%");
-
-        BorderedWidget headerHolder = buildHeaderPanel();
-        topContent.add(headerHolder);
-        topContent.setCellHeight(headerHolder, "100%");
-
-        return topContent;
-    }
-
     // the folderpanel side bar is just a pretty top bar and a list of folders
-    protected BorderedWidget buildFolderPanel ()
+    protected Widget buildFoldersPanel ()
     {
         // construct the side bar
         VerticalPanel sideBar = new VerticalPanel();
@@ -198,20 +168,12 @@ public class MailApplication extends DockPanel
         _folderContainer = new SimplePanel();
         _folderContainer.setStyleName("Folders");
         sideBar.add(_folderContainer);
-        sideBar.setCellHeight(_folderContainer, "100%");
 
-        BorderedWidget sidebarHolder =
-            new BorderedWidget(BorderedWidget.BORDER_CLOSED, BorderedWidget.BORDER_TILED,
-                               BorderedWidget.BORDER_CLOSED, BorderedWidget.BORDER_CLOSED);
-        sidebarHolder.setVerticalAlignment(HasAlignment.ALIGN_TOP);
-        sidebarHolder.getCellFormatter().setHeight(1, 1, "100%");
-        sidebarHolder.setHeight("100%");
-        sidebarHolder.setWidget(sideBar);
-        return sidebarHolder;
+        return sideBar;
     }
 
     // the top right side is a list of message headers
-    protected BorderedWidget buildHeaderPanel ()
+    protected Widget buildMessagesPanel ()
     {
         VerticalPanel headerPanel = new VerticalPanel();
         headerPanel.setStyleName("HeaderPanel");
@@ -283,15 +245,9 @@ public class MailApplication extends DockPanel
         // construct the header panel's actual header container
         _headerContainer = new SimplePanel();
         headerPanel.add(_headerContainer);
-        headerPanel.setCellHeight(_headerContainer, "100%");
         headerPanel.setCellWidth(_headerContainer, "100%");
-        BorderedWidget headerHolder =
-            new BorderedWidget(BorderedWidget.BORDER_TILED, BorderedWidget.BORDER_CLOSED,
-                               BorderedWidget.BORDER_CLOSED, BorderedWidget.BORDER_CLOSED);
-        headerHolder.setWidth("100%");
-        headerHolder.setHeight("100%");
-        headerHolder.setWidget(headerPanel);
-        return headerHolder;
+
+        return headerPanel;
     }
 
     // the main message is displayed at the bottom, with a pretty control bar at the top
@@ -369,7 +325,7 @@ public class MailApplication extends DockPanel
                 refreshFolderPanel();
             }
             public void onFailure (Throwable caught) {
-                addError("Failed to fetch mail folders from database: " + caught.getMessage());
+                MsoyUI.error("Failed to fetch mail folders from database: " + caught.getMessage());
             }
         });
     }
@@ -451,7 +407,7 @@ public class MailApplication extends DockPanel
     protected void loadHeaders ()
     {
         if (_currentFolder < 0) {
-            addError("Internal error: asked to load headers, but no folder selected.");
+            MsoyUI.error("Internal error: asked to load headers, but no folder selected.");
             return;
         }
         CMail.mailsvc.getHeaders(CMail.ident, _currentFolder, new AsyncCallback() {
@@ -460,7 +416,7 @@ public class MailApplication extends DockPanel
                 refreshHeaderPanel();
             }
             public void onFailure (Throwable caught) {
-                addError("Failed to fetch mail headers from database: " + caught.getMessage());
+                MsoyUI.error("Failed to fetch mail headers from database: " + caught.getMessage());
             }
 
         });
@@ -602,7 +558,7 @@ public class MailApplication extends DockPanel
     protected void loadMessage ()
     {
         if (_currentFolder < 0) {
-            addError("Internal error: asked to load a message, but no folder selected.");
+            MsoyUI.error("Internal error: asked to load a message, but no folder selected.");
             return;
         }
         if (_currentMessage < 0) {
@@ -621,7 +577,7 @@ public class MailApplication extends DockPanel
                 }
             }
             public void onFailure (Throwable caught) {
-                addError("Failed to fetch mail message from database: " + caught.getMessage());
+                MsoyUI.error("Failed to fetch mail message from database: " + caught.getMessage());
             }
 
         });
@@ -701,7 +657,7 @@ public class MailApplication extends DockPanel
                 if (deleteButton != null) {
                     deleteButton.setEnabled(true);
                 }
-                addError("Failed to delete messages: " + caught.getMessage());
+                MsoyUI.error("Failed to delete messages: " + caught.getMessage());
             }
         });
     }
@@ -801,16 +757,6 @@ public class MailApplication extends DockPanel
         return date.toString().substring(11, 16);
     }
 
-    protected void addError (String error)
-    {
-        _errorContainer.add(new Label(error));
-    }
-
-    protected void clearErrors ()
-    {
-        _errorContainer.clear();
-    }
-
     protected static class MailCheckBox extends CheckBox
     {
         public MailHeaders headers;
@@ -839,10 +785,12 @@ public class MailApplication extends DockPanel
     protected SimplePanel _headerContainer;
     protected VerticalPanel _messageContainer;
     protected SimplePanel _messageHolder;
-    protected VerticalPanel _errorContainer;
 
     protected HorizontalPanel _headerPager;
     protected FlowPanel _pagerPages;
     protected Button _pagerPrevious;
     protected Button _pagerNext;
+
+    /** The number of page numbers to display in the pager before we shortcut with ... */
+    protected static final int PAGES_TO_SHOW = 3;
 }
