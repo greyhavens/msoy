@@ -12,34 +12,33 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConst
 /**
  * Displays a widget with a nice, configurable border around it. Widgets that are tiled adjacent
  * to one another need to explicitly match their heights/widths for things to look good.
- * 
+ *
  */
 public class BorderedWidget extends FlexTable
 {
     /** A fully closed and cornered border. */
     public static final BorderState BORDER_CLOSED = new BorderState();
+
     /** A segmenting bar between two bordered widgets. */
     public static final BorderState BORDER_TILED = new BorderState();
+
     /** An entirely open border against another bordered widget. */
     public static final BorderState BORDER_OPEN = new BorderState();
-
 
     public BorderedWidget ()
     {
         this(BORDER_CLOSED, BORDER_CLOSED, BORDER_CLOSED, BORDER_CLOSED);
     }
-    
+
     public BorderedWidget (BorderState left, BorderState right,
                            BorderState up, BorderState down)
     {
         addStyleName("borderedWidget");
-
-        DOM.setAttribute(getElement(), "cellSpacing", "0");
-        DOM.setAttribute(getElement(), "cellPadding", "0");
-
+        setCellSpacing(0);
+        setCellPadding(0);
         setBorderStates(left, right, up, down);
     }
-    
+
     public void setBorderStates (BorderState left, BorderState right,
                                  BorderState up, BorderState down)
     {
@@ -50,7 +49,7 @@ public class BorderedWidget extends FlexTable
 
         layout();
     }
-    
+
     public void setLeftBorderState (BorderState state)
     {
         _left = state;
@@ -62,13 +61,13 @@ public class BorderedWidget extends FlexTable
         _right = state;
         layout();
     }
-    
+
     public void setUpperBorderState (BorderState state)
     {
         _up = state;
         layout();
     }
-    
+
     public void setLowerBorderState (BorderState state)
     {
         _down = state;
@@ -175,23 +174,21 @@ public class BorderedWidget extends FlexTable
     public void setVerticalAlignment (VerticalAlignmentConstant alignment)
     {
         getCellFormatter().setVerticalAlignment(_tileY, _tileX, alignment);
-        
     }
 
     public void setHorizontalAlignment (HorizontalAlignmentConstant alignment)
     {
         getCellFormatter().setHorizontalAlignment(_tileY, _tileX, alignment);
-        
     }
 
     protected static class BorderState
     {
     }
-    
+
     protected BorderState _left, _right, _up, _down;
-    
+
     protected int _tileX, _tileY;
-    
+
     protected static byte LEFT = 1;
     protected static byte RIGHT = 2;
     protected static byte UP = 4;
