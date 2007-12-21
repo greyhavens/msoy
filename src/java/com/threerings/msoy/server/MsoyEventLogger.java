@@ -57,10 +57,9 @@ public class MsoyEventLogger
         }
     }
 
-    /** Event: periodic system snapshot of player counts. */
-    public void currentPlayerStats (String serverName, int total, int active, int guests)
+    public void currentMemberStats (String serverName, int total, int active, int guests)
     {
-        MsoyEvents.CurrentPlayerStats message = new MsoyEvents.CurrentPlayerStats();
+        MsoyEvents.CurrentMemberStats message = new MsoyEvents.CurrentMemberStats();
         message.serverName = serverName;
         message.total = total;
         message.active = active;
@@ -68,23 +67,21 @@ public class MsoyEventLogger
         post(message);
     }
 
-    /** Event: generic flow transaction. */
-    public void flowTransaction (int playerId, int actionType, int deltaFlow, int newTotal,
+    public void flowTransaction (int memberId, int actionType, int deltaFlow, int newTotal,
                                  String details)
     {
         MsoyEvents.FlowTransaction message = new MsoyEvents.FlowTransaction();
-        message.playerId = playerId;
+        message.memberId = memberId;
         message.actionType = actionType;
         message.deltaFlow = deltaFlow;
         message.details = details;
         post(message);
     }
 
-    /** Event: item purchase. */
-    public void itemPurchased (int playerId, byte itemType, int itemId, int flowCost, int goldCost)
+    public void itemPurchased (int memberId, byte itemType, int itemId, int flowCost, int goldCost)
     {
         MsoyEvents.ItemPurchase message = new MsoyEvents.ItemPurchase();
-        message.playerId = playerId;
+        message.memberId = memberId;
         message.itemType = itemType;
         message.itemId = itemId;
         message.flowCost = flowCost;
@@ -92,7 +89,6 @@ public class MsoyEventLogger
         post(message);
     }
 
-    /** Event: item purchase. */
     public void itemListedInCatalog (int creatorId, byte itemType, int itemId, int flowCost,
                                      int goldCost, int pricing, int salesTarget)
     {
@@ -107,27 +103,25 @@ public class MsoyEventLogger
         post(message);
     }
 
-    /** Event: registered user authenticated with the specified cookie. */
-    public void userAuthenticated (int playerId, boolean firstLogin, String sessionToken)
+    public void userLoggedIn (int memberId, boolean firstLogin, String sessionToken)
     {
         MsoyEvents.Login message = new MsoyEvents.Login();
-        message.playerId = playerId;
+        message.memberId = memberId;
         message.firstLogin = firstLogin;
         message.sessionToken = sessionToken;
         post(message);
     }
 
-    /** Event: guest user logged in with the specified cookie. */
-    public void userAuthenticated (String sessionToken)
+    public void userLoggedOut (int memberId, String sessionToken, int activeSeconds, int idleSeconds)
     {
-        MsoyEvents.Login message = new MsoyEvents.Login();
-        message.playerId = MemberName.GUEST_ID;
-        message.firstLogin = false;
+        MsoyEvents.Logout message = new MsoyEvents.Logout();
+        message.memberId = memberId;
         message.sessionToken = sessionToken;
+        message.activeSeconds = activeSeconds;
+        message.idleSeconds = idleSeconds;
         post(message);
     }
 
-    /** Event: sent mail from one user to another. */
     public void mailSent (int senderId, int recipientId, int payloadType)
     {
         MsoyEvents.MailSent message = new MsoyEvents.MailSent();
@@ -137,51 +131,46 @@ public class MsoyEventLogger
         post(message);
     }
 
-    /** Event: added a friend. */
-    public void friendAdded (int playerId, int friendId)
+    public void friendAdded (int memberId, int friendId)
     {
         MsoyEvents.FriendshipAction message = new MsoyEvents.FriendshipAction();
-        message.playerId = playerId;
+        message.memberId = memberId;
         message.friendId = friendId;
         message.isAdded = true;
         post(message);
     }
 
-    /** Event: removed a friend. */
-    public void friendRemoved (int playerId, int friendId)
+    public void friendRemoved (int memberId, int friendId)
     {
         MsoyEvents.FriendshipAction message = new MsoyEvents.FriendshipAction();
-        message.playerId = playerId;
+        message.memberId = memberId;
         message.friendId = friendId;
         message.isAdded = false;
         post(message);
     }
 
-    /** Event: joined a group. */
-    public void groupJoined (int playerId, int groupId)
+    public void groupJoined (int memberId, int groupId)
     {
         MsoyEvents.GroupMembershipAction message = new MsoyEvents.GroupMembershipAction();
-        message.playerId = playerId;
+        message.memberId = memberId;
         message.groupId = groupId;
         message.isJoined = true;
         post(message);
     }
 
-    /** Event: joined a group. */
-    public void groupLeft (int playerId, int groupId)
+    public void groupLeft (int memberId, int groupId)
     {
         MsoyEvents.GroupMembershipAction message = new MsoyEvents.GroupMembershipAction();
-        message.playerId = playerId;
+        message.memberId = memberId;
         message.groupId = groupId;
         message.isJoined = false;
         post(message);
     }
 
-    /** Event: promotion/demotion in a group. */
-    public void groupRankChange (int playerId, int groupId, byte newRank)
+    public void groupRankChange (int memberId, int groupId, byte newRank)
     {
         MsoyEvents.GroupRankModification message = new MsoyEvents.GroupRankModification();
-        message.playerId = playerId;
+        message.memberId = memberId;
         message.groupId = groupId;
         message.newRank = newRank;
         post(message);

@@ -17,7 +17,7 @@ import com.threerings.panopticon.common.hessian.Event;
  */
 public class MsoyEvents
 {
-    public static class CurrentPlayerStats extends TimedEvent
+    public static class CurrentMemberStats extends TimedEvent
     {
         public String serverName;
         public int total;
@@ -27,9 +27,17 @@ public class MsoyEvents
 
     public static class Login extends TimedEvent
     {
-        public int playerId;
+        public int memberId;
         public boolean firstLogin;
         public String sessionToken;
+    }
+
+    public static class Logout extends TimedEvent
+    {
+        public int memberId;
+        public String sessionToken;
+        public int activeSeconds;
+        public int idleSeconds;
     }
 
     public static class MailSent extends TimedEvent
@@ -41,7 +49,7 @@ public class MsoyEvents
 
     public static class FlowTransaction extends TimedEvent
     {
-        public int playerId;
+        public int memberId;
         public int actionType;
         public int deltaFlow;
         public int newtotal;
@@ -50,7 +58,7 @@ public class MsoyEvents
 
     public static class ItemPurchase extends TimedEvent
     {
-        public int playerId;
+        public int memberId;
         public byte itemType;
         public int itemId;
         public int flowCost;
@@ -70,21 +78,21 @@ public class MsoyEvents
 
     public static class FriendshipAction extends TimedEvent
     {
-        public int playerId;
+        public int memberId;
         public int friendId;
         public boolean isAdded;
     }
 
     public static class GroupMembershipAction extends TimedEvent
     {
-        public int playerId;
+        public int memberId;
         public int groupId;
         public boolean isJoined;
     }
 
     public static class GroupRankModification extends TimedEvent
     {
-        public int playerId;
+        public int memberId;
         public int groupId;
         public byte newRank;
     }

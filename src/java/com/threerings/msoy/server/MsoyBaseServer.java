@@ -68,9 +68,6 @@ public abstract class MsoyBaseServer extends WhirledServer
     /** Stores user's game cookies. */
     public static GameCookieRepository gameCookieRepo;
 
-    /** Sends event information to an external log database. */
-    public static MsoyEventLogger eventLog;
-
     /** Contains information on our member profiles. */
     public static ProfileRepository profileRepo;
 
@@ -110,8 +107,8 @@ public abstract class MsoyBaseServer extends WhirledServer
         Security.setProperty("networkaddress.cache.ttl" , "30");
 
         // initialize event logger
-        eventLog = new MsoyEventLogger(ServerConfig.eventLogURL.length() == 0 ?
-                                       null : new URL(ServerConfig.eventLogURL));
+        _eventLog = new MsoyEventLogger(
+            ServerConfig.eventLogURL.length() == 0 ? null : new URL(ServerConfig.eventLogURL));
 
         // create our JDBC bits before calling super.init() because our superclass will attempt to
         // create our authenticator and we need that ready by then
@@ -120,7 +117,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         perCtx = new PersistenceContext("msoy", _conProv, cacher);
 
         // this one is needed by createAuthenticator() in our derived classes
-        memberRepo = new MemberRepository(perCtx, eventLog);
+        memberRepo = new MemberRepository(perCtx, _eventLog);
 
         super.init();
 
@@ -194,9 +191,12 @@ public abstract class MsoyBaseServer extends WhirledServer
     protected abstract ConfigRegistry createConfigRegistry ()
         throws Exception;
 
+    /** Sends event information to an external log database. */
+    protected MsoyEventLogger _eventLog;
+
     /** The connection provider used to access our JDBC databases. Don't use this; rather use
      * {@link #perCtx}. */
-    protected static ConnectionProvider _conProv;
+    protected ConnectionProvider _conProv;
 
     /** The directory that contains our log files. */
     protected static File _logdir = new File(ServerConfig.serverRoot, "log");

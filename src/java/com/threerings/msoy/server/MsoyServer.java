@@ -248,7 +248,7 @@ public class MsoyServer extends MsoyBaseServer
         // set up the right client factory
         clmgr.setClientFactory(new ClientFactory() {
             public PresentsClient createClient (AuthRequest areq) {
-                return new MsoyClient();
+                return new MsoyClient(_eventLog);
             }
             public ClientResolver createClientResolver (Name username) {
                 return new MsoyClientResolver();
@@ -260,7 +260,7 @@ public class MsoyServer extends MsoyBaseServer
         _transitRepo = new TransitionRepository(_conProv);
 
         // create our various repositories
-        groupRepo = new GroupRepository(perCtx, eventLog);
+        groupRepo = new GroupRepository(perCtx, _eventLog);
         forumRepo = new ForumRepository(perCtx);
         commentRepo = new CommentRepository(perCtx);
         trophyRepo = new TrophyRepository(perCtx);
@@ -339,7 +339,7 @@ public class MsoyServer extends MsoyBaseServer
         throws Exception
     {
         // initialize our authenticator
-        author.init(eventLog);
+        author.init(_eventLog);
 
         // start up our peer manager
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
@@ -349,13 +349,13 @@ public class MsoyServer extends MsoyBaseServer
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
-        adminMan.init(this);
+        adminMan.init(this, _eventLog);
         memberMan.init(memberRepo, groupRepo);
         friendMan.init();
         groupMan.init(groupRepo, memberRepo);
-        mailMan.init(perCtx, memberRepo, eventLog);
+        mailMan.init(perCtx, memberRepo, _eventLog);
         channelMan.init(invmgr);
-        itemMan.init(perCtx, eventLog);
+        itemMan.init(perCtx, _eventLog);
         swiftlyMan.init(invmgr);
         petMan.init(invmgr);
         gameReg.init(invmgr, itemMan.getGameRepository());

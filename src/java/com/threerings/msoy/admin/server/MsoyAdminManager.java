@@ -14,6 +14,7 @@ import com.threerings.presents.server.RebootManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
@@ -26,7 +27,6 @@ import static com.threerings.msoy.Log.log;
  * Handles administrative bits for the MetaSOY server.
  */
 public class MsoyAdminManager
-//    implements MsoyAdminProvider
 {
     /** Contains server status information published to admins. */
     public StatusObject statObj;
@@ -34,16 +34,15 @@ public class MsoyAdminManager
     /**
      * Prepares the admin manager for operation.
      */
-    public void init (MsoyServer server)
+    public void init (MsoyServer server, MsoyEventLogger eventLog)
     {
         _server = server;
+        _eventLog = eventLog;
         _rebmgr = new MsoyRebootManager(server);
 
         // create and configure our status object
         statObj = MsoyServer.omgr.registerObject(new StatusObject());
         statObj.serverStartTime = System.currentTimeMillis();
-//         statObj.setService((MsoyAdminMarshaller)
-//                            MsoyServer.invmgr.registerDispatcher(new MsoyAdminDispatcher(this)));
 
         // start up our connection manager stat monitor
         _conmgrStatsUpdater.schedule(5000L, true);
@@ -51,7 +50,7 @@ public class MsoyAdminManager
         // start up the system "snapshot" logger
         _systemStatsLogger = new StatsLogger();
         _systemStatsLogger.schedule(0, StatsLogger.DELAY);
-        
+
         // initialize our reboot manager
         _rebmgr.init();
     }
@@ -73,45 +72,32 @@ public class MsoyAdminManager
         _rebmgr.scheduleReboot(when, initiator);
     }
 
-//     // from interface MsoyAdminProvider
-//     public void scheduleReboot (ClientObject caller, int minutes)
-//     {
-//         MemberObject user = (MemberObject)caller;
-//         if (!user.tokens.isSupport()) {
-//             log.warning("Got reboot schedule request from non-admin/support " +
-//                         "[who=" + user.who() + "].");
-//             return;
-//         }
-//         scheduleReboot(minutes, user.who());
-//     }
-
     /** Logs current system "snapshot". */
     protected class StatsLogger extends Interval
     {
         /** 10 minute delay between logged snapshots, in milliseconds. */
         public static final long DELAY = 1000 * 60 * 10;
-        
+
         public void expired () {
-            // we have to do this on the dobj thread, because we're accessing the server's
-            // member object list. so we better be quick! :)
+            // we have to do this on the dobj thread, because we're accessing the server's member
+            // object list. so we better be quick! :)
             _server.omgr.postRunnable(new Runnable() {
                 public void run () {
-                    // iterate over the list of players, adding up a total, as well as
-                    // counting up subsets of active users and guest users
+                    // iterate over the list of members, adding up a total, as well as counting up
+                    // subsets of active users and guest users
                     int total = 0, active = 0, guest = 0;
                     for (MemberObject memobj : _server.getMembersOnline()) {
                         total++;
                         active += (memobj.status == OccupantInfo.ACTIVE) ? 1 : 0;
                         guest += memobj.isGuest() ? 1 : 0;
                     }
-                    // this will post a unit on another invoker, and exit
-                    _server.eventLog.currentPlayerStats(
-                        ServerConfig.nodeName, total, active, guest);
+                    // this simply posts a message to a queue and returns
+                    _eventLog.currentMemberStats(ServerConfig.nodeName, total, active, guest);
                 }
             });
         }
     };
-    
+
     /** Used to manage automatic reboots. */
     protected class MsoyRebootManager extends RebootManager
         implements AttributeChangeListener
@@ -189,5 +175,6 @@ public class MsoyAdminManager
     protected Interval _systemStatsLogger;
 
     protected MsoyServer _server;
+    protected MsoyEventLogger _eventLog;
     protected MsoyRebootManager _rebmgr;
 }

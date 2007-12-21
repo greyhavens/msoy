@@ -7,7 +7,11 @@ import java.util.logging.Level;
 
 import com.samskivert.util.Invoker;
 
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.net.BootstrapData;
+
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
 
@@ -20,6 +24,7 @@ import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MsoyEventLogger;
 
 import static com.threerings.msoy.Log.log;
 
@@ -28,6 +33,11 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyClient extends WhirledClient
 {
+    public MsoyClient (MsoyEventLogger eventLog)
+    {
+        _eventLog = eventLog;
+    }
+
     @Override // from PresentsClient
     protected BootstrapData createBootstrapData ()
     {
@@ -40,6 +50,7 @@ public class MsoyClient extends WhirledClient
         super.sessionWillStart();
 
         _memobj = (MemberObject) _clobj;
+        _memobj.addListener(_idleTracker);
 
         MsoyAuthenticator.Account acct = (MsoyAuthenticator.Account) _authdata;
         if (acct != null) {
@@ -78,17 +89,21 @@ public class MsoyClient extends WhirledClient
         // let our various server entities know that this member logged off
         MsoyServer.memberLoggedOff(_memobj);
 
+        // record the session to our event log
+        int idleSeconds = _idleTracker.getIdleTime(), activeSeconds = _connectTime - idleSeconds;
+        String sessTok = ((MsoyCredentials)getCredentials()).sessionToken;
+        _eventLog.userLoggedOut(_memobj.getMemberId(), sessTok, activeSeconds, idleSeconds);
+
         // nothing more needs doing for guests
         if (_memobj.isGuest()) {
             _memobj = null;
             return;
         }
 
+        // update session related stats in their MemberRecord
         final MemberName name = _memobj.memberName;
         final StatSet stats = _memobj.stats;
-        _memobj = null;
-
-        // update the member record in the database
+        final int activeMins = Math.round(activeSeconds / 60f);
         MsoyServer.invoker.postUnit(new Invoker.Unit("sessionDidEnd:" + name) {
             public boolean invoke () {
                 try {
@@ -96,12 +111,8 @@ public class MsoyClient extends WhirledClient
                     Stat[] statArr = new Stat[stats.size()];
                     stats.toArray(statArr);
                     MsoyServer.statRepo.writeModified(name.getMemberId(), statArr);
-
-                    // use a naive session length for now, ignoring web activity
                     MsoyServer.memberRepo.noteSessionEnded(
-                        name.getMemberId(), Math.round(_connectTime / 60f),
-                        RuntimeConfig.server.humanityReassessment);
-
+                        name.getMemberId(), activeMins, RuntimeConfig.server.humanityReassessment);
                 } catch (Exception e) {
                     log.log(Level.WARNING,
                             "Failed to note ended session [member=" + name + "].", e);
@@ -109,8 +120,55 @@ public class MsoyClient extends WhirledClient
                 return false;
             }
         });
+
+        // finally clear out our _memobj reference
+        _memobj = null;
+    }
+
+    protected class IdleTracker implements AttributeChangeListener
+    {
+        public int getIdleTime () {
+            int idleTime = _idleTime, idleCount = _idleCount;
+            if (isIdle(_memobj.status)) {
+                idleTime += (int)((System.currentTimeMillis() - _memobj.statusTime) / 1000L);
+                idleCount++;
+            }
+            // TODO: add (idleCount * IDLE_TIMEOUT) to account for the time that a player was
+            // *actually* idle before we discovered it?
+            return idleTime;
+        }
+
+        public void attributeChanged (AttributeChangedEvent event) {
+            if (event.getName().equals(MemberObject.STATUS)) {
+                byte status = (Byte)event.getValue();
+                if (isIdle(status)) {
+                    // log.info(_memobj.who() + " is idle.");
+                    _idleStamp = _memobj.statusTime;
+                } else if (_idleStamp > 0) {
+                    int idleSecs = (int)((_memobj.statusTime - _idleStamp) / 1000L);
+                    // log.info(_memobj.who() + " was idle for " + idleSecs + " seconds.");
+                    _idleTime += idleSecs;
+                    _idleCount++;
+                    _idleStamp = 0L;
+                }
+            }
+        }
+
+        protected boolean isIdle (byte status) {
+            return (status == OccupantInfo.IDLE || status == MemberObject.AWAY);
+        }
+
+        protected int _idleTime;
+        protected int _idleCount;
+        protected long _idleStamp;
     }
 
     /** A casted reference to the userobject. */
     protected MemberObject _memobj;
+
+    /** Tracks the time this client spends being idle. */
+    protected IdleTracker _idleTracker = new IdleTracker();
+
+    /** We generate events to this fellow. */
+    protected MsoyEventLogger _eventLog;
 }
