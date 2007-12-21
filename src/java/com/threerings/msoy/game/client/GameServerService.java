@@ -50,5 +50,6 @@ public interface GameServerService extends InvocationService
      * Awards the specified prize to the specified player. Returns the awarded {@link Item} to the
      * caller via the supplied result listener.
      */
-    public void awardPrize (Client client, int memberId, Prize prize, ResultListener listener);
+    public void awardPrize (Client client, int memberId, int gameId, String gameName, Prize prize,
+                            ResultListener listener);
 }

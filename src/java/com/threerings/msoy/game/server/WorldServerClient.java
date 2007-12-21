@@ -102,12 +102,13 @@ public class WorldServerClient
         }
     }
 
-    public void awardPrize (int memberId, Prize prize, InvocationService.ResultListener listener)
+    public void awardPrize (int memberId, int gameId, String gameName, Prize prize,
+                            InvocationService.ResultListener listener)
     {
         if (_gssvc == null) {
             log.warning("Dropping prize award [mid=" + memberId + ", prize=" + prize + "].");
         } else {
-            _gssvc.awardPrize(_client, memberId, prize, listener);
+            _gssvc.awardPrize(_client, memberId, gameId, gameName, prize, listener);
         }
     }
 

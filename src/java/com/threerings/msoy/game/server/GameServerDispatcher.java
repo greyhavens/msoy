@@ -45,7 +45,7 @@ public class GameServerDispatcher extends InvocationDispatcher
         case GameServerMarshaller.AWARD_PRIZE:
             ((GameServerProvider)provider).awardPrize(
                 source,
-                ((Integer)args[0]).intValue(), (Prize)args[1], (InvocationService.ResultListener)args[2]
+                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (String)args[2], (Prize)args[3], (InvocationService.ResultListener)args[4]
             );
             return;
 

@@ -382,15 +382,16 @@ public class MsoyGameRegistry
     }
 
     // from interface GameServerProvider
-    public void awardPrize (ClientObject caller, int memberId, Prize prize,
-                            GameServerService.ResultListener listener)
+    public void awardPrize (ClientObject caller, int memberId, int gameId, String gameName,
+                            Prize prize, GameServerService.ResultListener listener)
         throws InvocationException
     {
         if (!checkCallerAccess(caller, "awardPrize(" + memberId + ", " + prize.ident + ")")) {
             return;
         }
         // pass the buck to the item manager
-        MsoyServer.itemMan.awardPrize(memberId, prize, new ResultAdapter<Item>(listener));
+        MsoyServer.itemMan.awardPrize(
+            memberId, gameId, gameName, prize, new ResultAdapter<Item>(listener));
     }
 
     // from interface MsoyServer.Shutdowner

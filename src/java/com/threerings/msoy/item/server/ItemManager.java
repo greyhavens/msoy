@@ -39,15 +39,16 @@ import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
-import com.threerings.msoy.web.data.TagHistory;
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.person.data.GameAwardPayload;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.server.RoomManager;
 
@@ -389,7 +390,8 @@ public class ItemManager
     /**
      * Awards the specified prize to the specified member.
      */
-    public void awardPrize (final int memberId, final Prize prize, ResultListener<Item> listener)
+    public void awardPrize (final int memberId, final int gameId, final String gameName,
+                            final Prize prize, ResultListener<Item> listener)
     {
         final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(prize.targetType, listener);
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>("awardPrize", listener) {
@@ -403,9 +405,24 @@ public class ItemManager
                                 "[prize=" + prize + ", item=" + listing.item + "].");
                     throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
                 }
-                // TODO: log something
                 log.info("Awarding prize " + listing + " to " + memberId + ".");
-                return repo.insertClone(listing.item, memberId, 0, 0).toItem();
+                Item item = repo.insertClone(listing.item, memberId, 0, 0).toItem();
+                _eventLog.prizeEarned(memberId, gameId, prize.ident, prize.targetType);
+                return item;
+            }
+
+            public void handleSuccess () {
+                super.handleSuccess();
+                // send them a mail message as well
+                String subject = MsoyServer.msgMan.getBundle("server").get(
+                    "m.got_prize_subject", _result.name);
+                String body = MsoyServer.msgMan.getBundle("server").get("m.got_prize_body");
+                MsoyServer.mailMan.deliverMessage(
+                    // TODO: sender should be special system id
+                    memberId, memberId, subject, body, new GameAwardPayload(
+                        gameId, gameName, GameAwardPayload.PRIZE,
+                        _result.name, _result.getThumbnailMedia()),
+                    true, new ResultListener.NOOP<Void>());
             }
         });
     }

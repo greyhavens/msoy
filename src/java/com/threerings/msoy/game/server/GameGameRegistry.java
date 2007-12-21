@@ -18,13 +18,12 @@ import com.samskivert.util.Invoker;
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.client.InvocationService.ConfirmListener;
-import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultListenerList;
 
 import com.threerings.parlor.data.Table;
@@ -35,7 +34,9 @@ import com.threerings.parlor.rating.util.Percentiler;
 import com.whirled.data.GameData;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MsoyBaseServer;
+import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
@@ -68,6 +69,8 @@ import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -83,9 +86,10 @@ public class GameGameRegistry
      * Initializes this registry.
      */
     public void init (RootDObjectManager omgr, InvocationManager invmgr, PersistenceContext perCtx,
-                      RatingRepository ratingRepo)
+                      RatingRepository ratingRepo, MsoyEventLogger eventLog)
     {
         _omgr = omgr;
+        _eventLog = eventLog;
 
         // create our various game-related repositories
         _gameRepo = new GameRepository(perCtx);
@@ -112,14 +116,6 @@ public class GameGameRegistry
     public GameRepository getGameRepository ()
     {
         return _gameRepo;
-    }
-
-    /**
-     * Returns the repository used to maintain trophy to player mappings.
-     */
-    public TrophyRepository getTrophyRepository ()
-    {
-        return _trophyRepo;
     }
 
     /**
@@ -256,13 +252,47 @@ public class GameGameRegistry
         log.warning("Updated game record not, in the end, hosted by us [gameId=" + gameId + "]");
     }
 
+    /**
+     * Awards the supplied trophy and provides a {@link Trophy} instance on success to the supplied
+     * listener or failure.
+     */
+    public void awardTrophy (final String gameName, final TrophyRecord trophy, String description,
+                             InvocationService.ResultListener listener)
+    {
+        // create the trophy record we'll use to notify them of their award
+        final Trophy trec = trophy.toTrophy();
+        // fill in the description so that we can report that in the award email
+        trec.description = description;
+
+        MsoyGameServer.invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
+            public void invokePersistent () throws PersistenceException {
+                // store the trophy in the database
+                _trophyRepo.storeTrophy(trophy);
+                // publish the trophy earning event to the member's feed
+                MsoyGameServer.feedRepo.publishMemberMessage(
+                    trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
+                    trophy.name + "\t" + trophy.gameId);
+            }
+            public void handleSuccess () {
+                MsoyGameServer.worldClient.reportTrophyAward(trophy.memberId, gameName, trec);
+                _eventLog.trophyEarned(trophy.memberId, trophy.gameId, trophy.ident);
+                ((InvocationService.ResultListener)_listener).requestProcessed(trec);
+            }
+            protected String getFailureMessage () {
+                return "Failed to store trophy " + trophy + ".";
+            }
+        });
+    }
+
     // from AVRProvider
-    public void activateGame (ClientObject caller, final int gameId, final ResultListener listener)
+    public void activateGame (ClientObject caller, final int gameId,
+                              final InvocationService.ResultListener listener)
         throws InvocationException
     {
         final PlayerObject player = (PlayerObject) caller;
 
-        ResultListener joinListener = new AVRGameJoinListener(player.getMemberId(), listener);
+        InvocationService.ResultListener joinListener =
+            new AVRGameJoinListener(player.getMemberId(), listener);
 
         ResultListenerList list = _loadingAVRGames.get(gameId);
         if (list != null) {
@@ -338,7 +368,8 @@ public class GameGameRegistry
     }
 
     // from AVRProvider
-    public void deactivateGame (ClientObject caller, int gameId, final ConfirmListener listener)
+    public void deactivateGame (ClientObject caller, int gameId,
+                                final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         PlayerObject player = (PlayerObject) caller;
@@ -348,7 +379,7 @@ public class GameGameRegistry
         ResultListenerList list = _loadingAVRGames.get(gameId);
         if (list != null) {
             // yep, so just remove our associated listener, and we're done
-            for (ResultListener gameListener : list) {
+            for (InvocationService.ResultListener gameListener : list) {
                 if (((AVRGameJoinListener) gameListener).getPlayerId() == playerId) {
                     list.remove(gameListener);
                     listener.requestProcessed();
@@ -607,7 +638,7 @@ public class GameGameRegistry
     }
 
     protected void joinAVRGame (final int playerId, final AVRGameManager mgr,
-                                final ResultListener listener)
+                                final InvocationService.ResultListener listener)
     {
         final PlayerObject player = MsoyGameServer.lookupPlayer(playerId);
         if (player == null) {
@@ -654,9 +685,9 @@ public class GameGameRegistry
     }
 
     protected final class AVRGameJoinListener
-        implements ResultListener
+        implements InvocationService.ResultListener
     {
-        protected AVRGameJoinListener (int player, ResultListener listener)
+        protected AVRGameJoinListener (int player, InvocationService.ResultListener listener)
         {
             _listener = listener;
             _player = player;
@@ -676,11 +707,14 @@ public class GameGameRegistry
         }
 
         protected final int _player;
-        protected final ResultListener _listener;
+        protected final InvocationService.ResultListener _listener;
     }
 
     /** The distributed object manager that we work with. */
     protected RootDObjectManager _omgr;
+
+    /** We record metrics events to this fellow. */
+    protected MsoyEventLogger _eventLog;
 
     /** Maps game id -> lobby. */
     protected IntMap<LobbyManager> _lobbies = new HashIntMap<LobbyManager>();

@@ -97,6 +97,21 @@ public class MsoyEvents
         public byte newRank;
     }
 
+    public static class TrophyEarned extends TimedEvent
+    {
+        public int recipientId;
+        public int gameId;
+        public String trophyIdent;
+    }
+
+    public static class PrizeEarned extends TimedEvent
+    {
+        public int recipientId;
+        public int gameId;
+        public String prizeIdent;
+        public byte prizeItemType;
+    }
+
     protected static class TimedEvent extends BaseEvent
     {
         public long timestamp = System.currentTimeMillis();

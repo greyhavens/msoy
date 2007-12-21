@@ -176,6 +176,25 @@ public class MsoyEventLogger
         post(message);
     }
 
+    public void trophyEarned (int recipientId, int gameId, String trophyIdent)
+    {
+        MsoyEvents.TrophyEarned message = new MsoyEvents.TrophyEarned();
+        message.recipientId = recipientId;
+        message.gameId = gameId;
+        message.trophyIdent = trophyIdent;
+        post(message);
+    }
+
+    public void prizeEarned (int recipientId, int gameId, String prizeIdent, byte prizeItemType)
+    {
+        MsoyEvents.PrizeEarned message = new MsoyEvents.PrizeEarned();
+        message.recipientId = recipientId;
+        message.gameId = gameId;
+        message.prizeIdent = prizeIdent;
+        message.prizeItemType = prizeItemType;
+        post(message);
+    }
+
     /** Posts a log message to the appropriate place. */
     protected void post (Event message)
     {

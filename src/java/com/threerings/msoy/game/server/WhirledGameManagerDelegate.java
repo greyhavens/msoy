@@ -73,7 +73,6 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.MsoyGameServer;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
-import com.threerings.msoy.person.util.FeedMessageType;
 
 import static com.threerings.msoy.Log.log;
 
@@ -94,7 +93,7 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
 
     // from interface WhirledGameProvider
     public void awardTrophy (ClientObject caller, String ident,
-                             InvocationService.InvocationListener listener)
+                             final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final PlayerObject plobj = verifyIsPlayer(caller);
@@ -126,7 +125,7 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
         plobj.addToGameContent(
             new GameContentOwnership(gameId, GameData.TROPHY_DATA, source.ident));
 
-        final TrophyRecord trophy = new TrophyRecord();
+        TrophyRecord trophy = new TrophyRecord();
         trophy.gameId = gameId;
         trophy.memberId = plobj.getMemberId();
         trophy.ident = source.ident;
@@ -147,28 +146,14 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
             return;
         }
 
-        // create the trophy record we'll use to notify them of their award
-        final Trophy trec = trophy.toTrophy();
-        // fill in the description so that we can report that in the award email
-        trec.description = source.description;
-
         // otherwise, award them the trophy, then add it to their runtime collection
-        MsoyGameServer.invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
-            public void invokePersistent () throws PersistenceException {
-                // store the trophy in the database
-                MsoyGameServer.gameReg.getTrophyRepository().storeTrophy(trophy);
-                // publish the trophy earning event to the member's feed
-                MsoyGameServer.feedRepo.publishMemberMessage(
-                    trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
-                    trophy.name + "\t" + trophy.gameId);
+        MsoyGameServer.gameReg.awardTrophy(
+            _content.game.name, trophy, source.description, new InvocationService.ResultListener() {
+            public void requestProcessed (Object result) {
+                plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, (Trophy)result);
             }
-            public void handleSuccess () {
-                plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trec);
-                MsoyGameServer.worldClient.reportTrophyAward(
-                    trophy.memberId, _content.game.name, trec);
-            }
-            protected String getFailureMessage () {
-                return "Failed to store trophy " + trophy + ".";
+            public void requestFailed (String cause) {
+                listener.requestFailed(cause);
             }
         });
     }
@@ -210,7 +195,8 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
         // because we don't have a full item manager, we have to pass the buck to a world server to
         // do the actual prize awarding
         MsoyGameServer.worldClient.awardPrize(
-            plobj.getMemberId(), prize, new InvocationService.ResultListener() {
+            plobj.getMemberId(), gameId, _content.game.name, prize,
+            new InvocationService.ResultListener() {
             public void requestProcessed (Object result) {
                 plobj.postMessage(MsoyGameCodes.PRIZE_AWARDED, (Item)result);
             }
