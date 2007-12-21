@@ -34,11 +34,6 @@ while (<CONF>) {
 }
 my $stats_email = $sconf{"STATS_EMAIL"};
 
-my $nodestr = $sconf{"NODES"};
-die "Unable to determine node from server.conf\n" unless (defined $nodestr);
-$nodestr =~ s/\"//g;
-my @nodes = split(/ /, $nodestr);
-
 # if they specified a date, use it
 my $year = shift;
 my $month;
@@ -59,17 +54,20 @@ if ($dateWasSpecified) {
 }
 
 # iterate over all the nodes on this server
-NODELOOP: foreach $node (@nodes) {
+NODELOOP: foreach $conlog (glob "$root/log/stdout-*.log") {
+    my $node = $conlog;
+    $node =~ s/.*stdout-(\S+).log/$1/;
+
     # make sure we have log files to process
-    next unless (-e "$root/log/server_$node.log");
+    next unless (-e "$root/log/events_$node.log");
 
     while (1) {
         $datestr = sprintf("%04d%02d%02d", $year, $month, $day);
         $datedir = sprintf("%04d/%02d/%02d", $year, $month, $day);
 
         # if we find a moved or unmoved log file, call it good
-        last if (-e "$root/log/server_$node.log.$datestr" ||
-                 -e "$root/logs/$datedir/server_$node.log");
+        last if (-e "$root/log/events_$node.log.$datestr" ||
+                 -e "$root/logs/$datedir/events_$node.log");
 
         # if it doesn't exist and it was specified on the command line, complain
         if ($dateWasSpecified) {
