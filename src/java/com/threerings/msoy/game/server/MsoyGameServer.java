@@ -160,7 +160,7 @@ public class MsoyGameServer extends MsoyBaseServer
 
         // intialize various services
         parlorMan.init(invmgr, plreg);
-        gameReg.init(omgr, invmgr, perCtx, ratingRepo);
+        gameReg.init(omgr, invmgr, perCtx, ratingRepo, _eventLog);
         avatarRepo = new AvatarRepository(perCtx);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
