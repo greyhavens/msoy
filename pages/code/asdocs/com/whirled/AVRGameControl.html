@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="AVRGameControl,com.whirled.AVRGameControl,_quests,_state,_mobSpriteExporter,_hitPointTester,_mobs,quests,state,hitPointTester,mobSpriteExporter,getStageBounds,getRoomBounds,stageToRoom,roomToStage,setHitPointTester,setMobSpriteExporter,deactivateGame,getRoomId,getPlayerId,isPlayerHere,getPlayerIds,spawnMob,despawnMob,isAbstract,populateProperties,requestMobSprite_v1,mobRemoved_v1,mobAppearanceChanged_v1,hitTestPoint_v1,playerLeft_v1,playerEntered_v1,playerMoved_v1,leftRoom_v1,enteredRoom_v1,panelResized_v1" name="keywords">
+<meta content="AVRGameControl,com.whirled.AVRGameControl,_quests,_state,_mobSpriteExporter,_hitPointTester,_mobs,quests,state,hitPointTester,mobSpriteExporter,getStageSize,getRoomBounds,stageToRoom,roomToStage,setHitPointTester,setMobSpriteExporter,deactivateGame,getRoomId,getPlayerId,isPlayerHere,getPlayerIds,spawnMob,despawnMob,isAbstract,populateProperties,requestMobSprite_v1,mobRemoved_v1,mobAppearanceChanged_v1,hitTestPoint_v1,playerLeft_v1,playerEntered_v1,playerMoved_v1,leftRoom_v1,enteredRoom_v1,panelResized_v1" name="keywords">
 <title>com.whirled.AVRGameControl</title>
 </head>
 <body>
@@ -211,7 +211,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getStageBounds()">getStageBounds</a>():Rectangle</div>
+<a class="signatureLink" href="#getStageSize()">getStageSize</a>(full:Boolean = true):Rectangle</div>
 <div class="summaryTableDescription">
      Returns the bounds of the "stage" on which the AVRG will be drawn.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
@@ -259,7 +259,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#spawnMob()">spawnMob</a>(id:String):Boolean</div>
+<a class="signatureLink" href="#spawnMob()">spawnMob</a>(id:String, name:String):Boolean</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
@@ -717,18 +717,26 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="getStageBounds()"></a>
+<a name="getStageSize()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">getStageBounds</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">getStageSize</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getStageBounds():Rectangle</code><p>
-     Returns the bounds of the "stage" on which the AVRG will be drawn. This is the entire
-     area the AVRG can cover and includes potential empty space to the right of the room
-     view. See <code>getRoomBounds</code>.
-     </p><p></p>
+<code>public function getStageSize(full:Boolean = true):Rectangle</code><p>
+     Returns the bounds of the "stage" on which the AVRG will be drawn. By default, it
+     returns the entire available area; if the argument is false, it doesn't include the
+     part of the stage that's empty white when the player is in narrow rooms.
+          Note that this value changes when the browser is resized, and the latter form when
+     the player moves to another room.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">full</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1019,10 +1027,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function spawnMob(id:String):Boolean</code><span class="label">Parameters</span>
+<code>public function spawnMob(id:String, name:String):Boolean</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">id</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
 </tr>
 </table>
 <p></p>

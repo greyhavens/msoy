@@ -47,18 +47,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td> Function that will be called every time the stack changes.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#callEZCode()">callEZCode</a>(name, ... rest) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractControl.html#callHostCode()">callHostCode</a>(name, ... rest) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractControl.html">AbstractControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Call a method across the security boundary.</td>
+     Call a method exposed by the host code.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#callEZCodeFriend()">callEZCodeFriend</a>(name, ... rest) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html#callHostCode()">callHostCode</a>(name, ... rest) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html">AbstractGameControl</a></td>
 </tr>
 <tr>
-<td width="20"></td><td>
-     A "friend" version of callEZCode for subControls.</td>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractSubControl.html#callHostCode()">callHostCode</a>(name, ... rest) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractSubControl.html">AbstractSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledControl.html#callHostCode()">callHostCode</a>(name, ... rest) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledControl.html">WhirledControl</a></td>
@@ -66,6 +71,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <tr>
 <td width="20"></td><td>
      Call an exposed function back in our hosting Whirled.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractControl.html#callHostCodeFriend()">callHostCodeFriend</a>(name, args) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractControl.html">AbstractControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Exposed to sub controls.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledControl.html#callHostCodeFriend()">callHostCodeFriend</a>(name, ... rest) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledControl.html">WhirledControl</a></td>
@@ -95,6 +107,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      Returns true if the local client has editing privileges in the current room.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html#_capacity">_capacity</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html">RingBuffer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html#capacity">capacity</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html">RingBuffer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> Returns the capacity of the RingBuffer.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/CardDeck.html">CardDeck</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/package-detail.html">com.threerings.ezgame</a></td>
 </tr>
 <tr>
@@ -109,7 +133,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html#CASCADING_PAYOUT">CASCADING_PAYOUT</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html">WhirledGameControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/GameSubControl.html#CASCADING_PAYOUT">CASCADING_PAYOUT</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/GameSubControl.html">GameSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td> Cascading payout skews awards toward the winners by giving 50% of last place's payout to
@@ -117,18 +141,24 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      for example), and so on.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#checkDictionaryWord()">checkDictionaryWord</a>(locale, dictionary, word, callback) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/FilterUtil.html#checkArgs()">checkArgs</a>(disp, filter) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/FilterUtil.html">FilterUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZServicesSubControl.html#checkDictionaryWord()">checkDictionaryWord</a>(locale, dictionary, word, callback) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZServicesSubControl.html">EZServicesSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Checks to see if the dictionary for the given locale contains the given word.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#checkIsConnected()">checkIsConnected</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractControl.html#checkIsConnected()">checkIsConnected</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractControl.html">AbstractControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Throw an error if we're not connected.</td>
+     Helper method to throw an error if we're not connected.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/MethodQueue.html#checkListen()">checkListen</a>() &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/MethodQueue.html">MethodQueue</a></td>
@@ -143,6 +173,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <tr>
 <td width="20"></td><td>
      Validate that the load operation is complete.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MathUtil.html#clamp()">clamp</a>(n, min, max) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MathUtil.html">MathUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns the value of n clamped to be within the range [min, max].</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector3.html#clampToUnitBox()">clampToUnitBox</a>() &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector3.html">Vector3</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns a new vector that is a copy of this vector, with each coordinate clamped
+     to within [0, 1].</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/ClassLoader.html">ClassLoader</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/package-detail.html">com.whirled.contrib</a></td>
@@ -184,6 +229,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      Clear this map, removing all stored elements.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html#clear()">clear</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html">RingBuffer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> Removes all elements from the RingBuffer.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Set.html#clear()">clear</a>() &mdash; Method in interface com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Set.html">Set</a></td>
 </tr>
 <tr>
@@ -202,6 +253,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td> Pops all items off the stack.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/ClearingTextField.html">ClearingTextField</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/package-detail.html">com.threerings.flash</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ A simple TextField with a method for setting text that will auto-clear.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/ClearingTextField.html#ClearingTextField()">ClearingTextField</a>() &mdash; Constructor in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/ClearingTextField.html">ClearingTextField</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#clearPopup()">clearPopup</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
 </tr>
 <tr>
@@ -209,7 +273,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      Clear any showing popup.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html#clearScores()">clearScores</a>(clearValue, sortValuesToo) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html">WhirledGameControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/LocalSubControl.html#clearScores()">clearScores</a>(clearValue, sortValuesToo) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/LocalSubControl.html">LocalSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -250,6 +314,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 </tr>
 <tr>
 <td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector3.html#clone()">clone</a>() &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector3.html">Vector3</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> Duplicates a vector.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Cloneable.html#clone()">clone</a>() &mdash; Method in interface com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Cloneable.html">Cloneable</a></td>
@@ -314,31 +384,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td> Stops loading any pending data packs.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#_collections">_collections</a> &mdash; Property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> Sub-controls.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#collections">collections</a> &mdash; Property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/ColorUtil.html">ColorUtil</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/package-detail.html">com.threerings.flash</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Get the CollectionsControl, which contains methods for utilizing the server to dispatch
-     private information.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/CollectionsControl.html">CollectionsControl</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/package-detail.html">com.threerings.ezgame</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
- Contains EZ methods related to collections.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/CollectionsControl.html#CollectionsControl()">CollectionsControl</a>(ctrl:<a href="com/threerings/ezgame/EZGameControl.html" onclick="javascript:loadClassListFrame('com/threerings/ezgame./class-list.html');">com.threerings.ezgame:EZGameControl</a>) &mdash; Constructor in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/CollectionsControl.html">CollectionsControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
+ Color utility methods.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/CommandEvent.html#command">command</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/CommandEvent.html">CommandEvent</a></td>
@@ -362,6 +412,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparable.html"><i>Comparable</i></a> &mdash; Interface in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/SortedHashMap.html#COMPARABLE_KEYS">COMPARABLE_KEYS</a> &mdash; Constant static property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/SortedHashMap.html">SortedHashMap</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -405,7 +461,33 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      Composes a message key with an array of arguments.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/CompositePath.html">CompositePath</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/package-detail.html">com.threerings.flash.path</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ Executes a series of paths in order.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/CompositePath.html#CompositePath()">CompositePath</a>(... rest) &mdash; Constructor in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/CompositePath.html">CompositePath</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Creates a composite path with the supplied list of individual paths.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/package-detail.html">com.threerings.ezgame</a> &mdash; Package</td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/package-detail.html">com.threerings.flash</a> &mdash; Package</td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/package-detail.html">com.threerings.flash.path</a> &mdash; Package</td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -475,6 +557,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      Set up the player labels and configure the look of the entire UI.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MediaContainer.html#configureMask()">configureMask</a>(ww, hh) &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MediaContainer.html">MediaContainer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Configure the mask for this object.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ConfigValueSetEvent.html">ConfigValueSetEvent</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
 </tr>
 <tr>
@@ -487,6 +576,26 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <tr>
 <td width="20"></td><td>
      </td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html#connect()">connect</a>(... rest) &mdash; Static method in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html">Path</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Creates a path that executes the supplied sequence of paths one after the other.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html#_connected">_connected</a> &mdash; Property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html">AbstractGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> Are we connected? </td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MediaContainer.html#containerDimensionsUpdated()">containerDimensionsUpdated</a>(newWidth, newHeight) &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MediaContainer.html">MediaContainer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Called by MediaWrapper as notification that its size has changed.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ArrayUtil.html#contains()">contains</a>(arr, element) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ArrayUtil.html">ArrayUtil</a></td>
@@ -524,6 +633,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <tr>
 <td width="20"></td><td>
      Returns true if the specified key exists in the map.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MediaContainer.html#contentDimensionsUpdated()">contentDimensionsUpdated</a>() &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MediaContainer.html">MediaContainer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Called when we know the true size of the content.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/util/class-list.html');" href="com/whirled/util/ContentPack.html">ContentPack</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/util/class-list.html');" href="com/whirled/util/package-detail.html">com.whirled.util</a></td>
@@ -572,7 +688,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#event:ControlChanged">ControlChanged</a> &mdash; Event in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html#event:ControlChanged">ControlChanged</a> &mdash; Event in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -616,12 +732,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/CollectionsControl.html#create()">create</a>(collName, values) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/CollectionsControl.html">CollectionsControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZBagsSubControl.html#create()">create</a>(bagName, values) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZBagsSubControl.html">EZBagsSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Create a collection containing the specified values,
-     clearing any previous collection with the same name.</td>
+     Create a bag containing the specified values,
+     clearing any previous bag with the same name.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/CommandEvent.html#create()">create</a>(cmd, arg) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/CommandEvent.html">CommandEvent</a></td>
@@ -631,7 +747,104 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      A factory method for privately creating command events.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZServicesSubControl.html#createBagsControl()">createBagsControl</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZServicesSubControl.html">EZServicesSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> 
+     Create the 'bags' subcontrol.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MenuUtil.html#createControllerMenuItem()">createControllerMenuItem</a>(caption, cmdOrFn, arg, separatorBefore, enabled, visible) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MenuUtil.html">MenuUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create a menu item that will submit a controller command when selected.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/ImageUtil.html#createErrorBitmap()">createErrorBitmap</a>() &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/ImageUtil.html">ImageUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create a minimally-sized "error" BitmapData.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/ImageUtil.html#createErrorImage()">createErrorImage</a>(width, height) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/ImageUtil.html">ImageUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create a DisplayObject that will display an error message
+     of the specified dimensions.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/TextFieldUtil.html#createField()">createField</a>(text, initProps, clazz) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/TextFieldUtil.html">TextFieldUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create a TextField.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/TextFieldUtil.html#createFormat()">createFormat</a>(initProps) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/TextFieldUtil.html">TextFieldUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create a TextFormat using initProps.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html#createGameControl()">createGameControl</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html">AbstractGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create the 'game' subcontrol.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html#createGameControl()">createGameControl</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html">WhirledGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/PlayersDisplay.html#createHeader()">createHeader</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/PlayersDisplay.html">PlayersDisplay</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/FilterUtil.html#createHueShift()">createHueShift</a>(hue) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/FilterUtil.html">FilterUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create a filter that, if applied to a DisplayObject, will shift the hue of that object
+     by the given value.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html#createLocalControl()">createLocalControl</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html">AbstractGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create the 'local' subcontrol.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html#createLocalControl()">createLocalControl</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html">WhirledGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html#createNetControl()">createNetControl</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html">AbstractGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create the 'net' subcontrol.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html#createPlayerControl()">createPlayerControl</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html">AbstractGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create the 'player' subcontrol.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html#createPlayerControl()">createPlayerControl</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html">WhirledGameControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -650,10 +863,39 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      Create a TextArea that will be used to display player names.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SubControl.html#_ctrl">_ctrl</a> &mdash; Property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SubControl.html">SubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/DisplayUtil.html#createPointSorter()">createPointSorter</a>(origin) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/DisplayUtil.html">DisplayUtil</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+     Create a sort Function that can be used to compare Points in an
+     Array according to their distance from the specified Point.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html#createSeatingControl()">createSeatingControl</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create the 'seating' subcontrol.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html#createServicesControl()">createServicesControl</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html">AbstractGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create the 'services' subcontrol.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html#createSubControls()">createSubControls</a>() &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/AbstractGameControl.html">AbstractGameControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create any subcontrols used by this game.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector3.html#cross()">cross</a>(v:<a href="com/threerings/flash/Vector3.html" onclick="javascript:loadClassListFrame('com/threerings/flash./class-list.html');">com.threerings.flash:Vector3</a>) &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector3.html">Vector3</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> Returns a new vector that is the cross product of this vector with vector v.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledSubControl.html#_ctrl">_ctrl</a> &mdash; Property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledSubControl.html">WhirledSubControl</a></td>
@@ -672,6 +914,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 </tr>
 <tr>
 <td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/FurniControl.html#_customConfig">_customConfig</a> &mdash; Property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/FurniControl.html">FurniControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> A function registered to return a custom configuration panel.</td>
 </tr>
 <tr>
 <td style="padding-bottom:20px" colspan="2"></td>

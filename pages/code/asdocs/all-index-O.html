@@ -62,22 +62,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("OÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedEvent.html#OccupantChangedEvent()">OccupantChangedEvent</a>(type, ezgame:<a href="com/threerings/ezgame/EZGameControl.html" onclick="javascript:loadClassListFrame('com/threerings/ezgame./class-list.html');">com.threerings.ezgame:EZGameControl</a>, occupantId, player) &mdash; Constructor in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedEvent.html">OccupantChangedEvent</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedEvent.html#OccupantChangedEvent()">OccupantChangedEvent</a>(type, gameCtrl, occupantId, player) &mdash; Constructor in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedEvent.html">OccupantChangedEvent</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedListener.html"><i>OccupantChangedListener</i></a> &mdash; Interface in package <a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/package-detail.html">com.threerings.ezgame</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html#event:OccupantEntered">OccupantEntered</a> &mdash; Event in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedListener.html#occupantEntered()">occupantEntered</a>(event:<a href="com/threerings/ezgame/OccupantChangedEvent.html" onclick="javascript:loadClassListFrame('com/threerings/ezgame./class-list.html');">com.threerings.ezgame:OccupantChangedEvent</a>) &mdash; Method in interface com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedListener.html">OccupantChangedListener</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+ Dispatched when an occupant enters the game.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedEvent.html#OCCUPANT_ENTERED">OCCUPANT_ENTERED</a> &mdash; Constant static property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedEvent.html">OccupantChangedEvent</a></td>
@@ -98,10 +93,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("OÂ
 <td width="20"></td><td> The occupantId of the occupant that entered or left.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedListener.html#occupantLeft()">occupantLeft</a>(event:<a href="com/threerings/ezgame/OccupantChangedEvent.html" onclick="javascript:loadClassListFrame('com/threerings/ezgame./class-list.html');">com.threerings.ezgame:OccupantChangedEvent</a>) &mdash; Method in interface com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedListener.html">OccupantChangedListener</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html#event:OccupantLeft">OccupantLeft</a> &mdash; Event in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+ Dispatched when an occupant leaves the game.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedEvent.html#OCCUPANT_LEFT">OCCUPANT_LEFT</a> &mdash; Constant static property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/OccupantChangedEvent.html">OccupantChangedEvent</a></td>
@@ -127,6 +123,24 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("OÂ
 <tr>
 <td width="20"></td><td>
      Get the property's previous value (handy!).</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html#_onComplete">_onComplete</a> &mdash; Property in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html">Path</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html#onEnterFrame()">onEnterFrame</a>(event) &mdash; Method in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html">Path</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html#_onStart">_onStart</a> &mdash; Property in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html">Path</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html#_orient">_orient</a> &mdash; Property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html">ActorControl</a></td>

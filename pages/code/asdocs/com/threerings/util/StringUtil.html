@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="StringUtil,com.threerings.util.StringUtil,HEX,URL_REGEXP,hashCode,isBlank,endsWith,startsWith,isLowerCase,isUpperCase,parseInteger,pad,prepad,substitute,trim,toString,fieldsToString,simpleToString,truncate,parseURLs,fromBytes,toBytes,hexlate,unhexlate" name="keywords">
+<meta content="StringUtil,com.threerings.util.StringUtil,HEX,URL_REGEXP,hashCode,isBlank,endsWith,startsWith,isLowerCase,isUpperCase,parseInteger,parseUnsignedInteger,pad,prepad,substitute,trim,toString,fieldsToString,simpleToString,truncate,parseURLs,fromBytes,toBytes,hexlate,unhexlate,parseInt0" name="keywords">
 <title>com.threerings.util.StringUtil</title>
 </head>
 <body>
@@ -136,6 +136,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#parseUnsignedInteger()">parseUnsignedInteger</a>(str:String, radix:uint = 0):uint</div>
+<div class="summaryTableDescription">[static]
+     Parse an integer more anally than the built-in parseInt() function,
+     throwing an ArgumentError if there are any invalid characters.</div>
+</td><td class="summaryTableOwnerCol">StringUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#parseURLs()">parseURLs</a>(s:String):Array</div>
 <div class="summaryTableDescription">[static]
      Locate URLs in a string, return an array in which even elements
@@ -212,6 +221,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#unhexlate()">unhexlate</a>(hex:String):ByteArray</div>
 <div class="summaryTableDescription">[static]
      Turn a hexlated String back into a ByteArray.</div>
+</td><td class="summaryTableOwnerCol">StringUtil</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#parseInt0()">parseInt0</a>(str:String, radix:uint, allowNegative:Boolean):Number</div>
+<div class="summaryTableDescription">[static]
+     Internal helper function for parseInteger and parseUnsignedInteger.</div>
 </td><td class="summaryTableOwnerCol">StringUtil</td>
 </tr>
 </table>
@@ -465,6 +491,41 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="parseInt0()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">parseInt0</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function parseInt0(str:String, radix:uint, allowNegative:Boolean):Number</code><p>
+     Internal helper function for parseInteger and parseUnsignedInteger.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">str</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">radix</span>:uint</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">allowNegative</span>:Boolean</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Number</code></td>
+</tr>
+</table>
+</div>
 <a name="parseInteger()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -497,6 +558,41 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="parseUnsignedInteger()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">parseUnsignedInteger</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function parseUnsignedInteger(str:String, radix:uint = 0):uint</code><p>
+     Parse an integer more anally than the built-in parseInt() function,
+     throwing an ArgumentError if there are any invalid characters.
+          The built-in parseInt() will ignore trailing non-integer characters.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">str</span>:String</code> &mdash; The string to parse.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">radix</span>:uint</code> (default = <code>0</code>)<code></code> &mdash; The radix to use, from 2 to 16. If not specified the radix will be 10,
+            unless the String begins with "0x" in which case it will be 16,
+            or the String begins with "0" in which case it will be 8.
+     </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>uint</code></td>
 </tr>
 </table>
 </div>

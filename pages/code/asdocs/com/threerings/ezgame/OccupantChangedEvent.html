@@ -62,7 +62,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="hideInheritedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EZEvent.html#gameControl">gameControl</a> : <a href="../ezgame/EZGameControl.html">EZGameControl</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EZEvent.html#gameControl">gameControl</a> : <a href="../ezgame/AbstractGameControl.html">AbstractGameControl</a>
 <div class="summaryTableDescription">
      Access the game control to which this event applies.</div>
 </td><td class="summaryTableOwnerCol"><a href="EZEvent.html">EZEvent</a></td>
@@ -93,7 +93,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EZEvent.html#_ezgame">_ezgame</a> : <a href="../ezgame/EZGameControl.html">EZGameControl</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EZEvent.html#_gameCtrl">_gameCtrl</a> : <a href="../ezgame/AbstractGameControl.html">AbstractGameControl</a>
 <div class="summaryTableDescription"> The game control for this event.</div>
 </td><td class="summaryTableOwnerCol"><a href="EZEvent.html">EZEvent</a></td>
 </tr>
@@ -117,7 +117,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#OccupantChangedEvent()">OccupantChangedEvent</a>(type:String, ezgame:<a href="EZGameControl.html">EZGameControl</a>, occupantId:int, player:Boolean)</div>
+<a class="signatureLink" href="#OccupantChangedEvent()">OccupantChangedEvent</a>(type:String, gameCtrl:Object, occupantId:int, player:Boolean)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">OccupantChangedEvent</td>
 </tr>
@@ -212,7 +212,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function OccupantChangedEvent(type:String, ezgame:<a href="EZGameControl.html">EZGameControl</a>, occupantId:int, player:Boolean)</code><span class="label">Parameters</span>
+<code>public function OccupantChangedEvent(type:String, gameCtrl:Object, occupantId:int, player:Boolean)</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">type</span>:String</code></td>
@@ -221,7 +221,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">ezgame</span>:<a href="EZGameControl.html">EZGameControl</a></code></td>
+<td width="20px"></td><td><code><span class="label">gameCtrl</span>:Object</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
