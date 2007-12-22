@@ -67,13 +67,13 @@ public class InstructionsPanel extends VerticalPanel
     {
         String[] results = new String[3];
         if (instructions.length() > 10) {
-            if (instructions.substring(0, 10).matches("<t#......>")) {
+            if (instructions.substring(0, 10).matches("{t#......}")) {
                 results[1] = instructions.substring(2, 9);
                 instructions = instructions.substring(10);
             }
         }
         if (instructions.length() > 11) {
-            if (instructions.substring(0, 11).matches("<bg#......>")) {
+            if (instructions.substring(0, 11).matches("{bg#......}")) {
                 results[2] = instructions.substring(3, 10);
                 instructions = instructions.substring(11);
             }
@@ -116,11 +116,11 @@ public class InstructionsPanel extends VerticalPanel
                 String instructions = editor.getHTML();
                 String bgcolor = toolbar.getBackgroundColor();
                 if (bgcolor != null && bgcolor.matches("#......")) {
-                    instructions = "<bg" + bgcolor + ">" + instructions;
+                    instructions = "{bg" + bgcolor + "}" + instructions;
                 }
                 String tcolor = toolbar.getTextColor();
                 if (tcolor != null && tcolor.matches("#......")) {
-                    instructions = "<t" + tcolor + ">" + instructions;
+                    instructions = "{t" + tcolor + "}" + instructions;
                 }
                 saveInstructions(instructions);
             }
