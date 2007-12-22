@@ -6,14 +6,17 @@ package client.catalog;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
@@ -22,6 +25,7 @@ import client.item.BaseItemDetailPanel;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.CommentsPanel;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.FlashClients;
@@ -114,10 +118,30 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     CCatalog.ident, _item.getType(), _listing.catalogId, this);
                 return true;
             }
-            public boolean gotResult (Object result) {
-                MsoyUI.info(CCatalog.msgs.msgListingBought());
 
-                // tutorial events
+            public boolean gotResult (Object result) {
+                // if the flash client is not around, just display "bought it" and be done
+                String msg = CCatalog.msgs.msgListingBought();
+                if (!FlashClients.clientExists()) {
+                    MsoyUI.info(msg);
+                    return false; // don't reenable purchase
+                }
+
+                // otherwise allow us to use this item immediately in some cases
+                if (_item.getType() == Item.AVATAR) {
+                    final Avatar avatar = (Avatar)result;
+                    MsoyUI.infoAction(msg, CCatalog.msgs.msgListingWearIt(), new ClickListener() {
+                        public void onClick (Widget sender) {
+                            FlashClients.useAvatar(avatar.itemId, avatar.scale);
+                            Frame.setContentMinimized(true, null);
+                        }
+                    });
+
+                } else { // TODO: "use it" for furni and decor?
+                    MsoyUI.info(msg);
+                }
+
+                // and report to the client that we generated a tutorial event
                 if (_item.getType() == Item.DECOR) {
                     FlashClients.tutorialEvent("decorBought");
                 } else if (_item.getType() == Item.FURNITURE) {

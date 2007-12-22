@@ -637,7 +637,7 @@ img {
 
 .infoPopup {
   padding: 15px;
-  width: 500px;
+  max-width: 500px;
 }
 
 .itemPopup {

@@ -6,11 +6,14 @@ package client.util;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.WidgetUtil;
 
 /**
  * Contains useful user interface related methods.
@@ -130,6 +133,26 @@ public class MsoyUI
     public static void info (String message)
     {
         new InfoPopup(message).show();
+    }
+
+    /**
+     * Displays informational feedback along with an action button which will dismiss the info
+     * display and take an action.
+     */
+    public static void infoAction (String message, String actionLabel, ClickListener action)
+    {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.add(new Label(message));
+        panel.add(WidgetUtil.makeShim(10, 10));
+        Button button = new Button(actionLabel, action);
+        panel.add(button);
+        final InfoPopup popup = new InfoPopup(panel);
+        button.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                popup.hide();
+            }
+        });
+        popup.show();
     }
 
     /**

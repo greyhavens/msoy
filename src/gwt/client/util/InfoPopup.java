@@ -16,6 +16,13 @@ public class InfoPopup extends BorderedPopup
         setWidget(MsoyUI.createLabel(message, "infoPopup"));
     }
 
+    public InfoPopup (Widget contents)
+    {
+        super(true);
+        contents.addStyleName("infoPopup");
+        setWidget(contents);
+    }
+
     public void showNear (Widget parent)
     {
         _centerOnShow = false;
