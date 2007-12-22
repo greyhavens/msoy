@@ -5,11 +5,8 @@ package com.threerings.msoy.world.client {
 
 import flash.display.Bitmap;
 import flash.display.Sprite;
-
-import flash.external.ExternalInterface;
-
 import flash.events.MouseEvent;
-
+import flash.external.ExternalInterface;
 import flash.text.TextField;
 
 import mx.binding.utils.BindingUtils;
@@ -19,7 +16,6 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 
 import mx.controls.Button;
-import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.HSlider;
 import mx.controls.Label;
@@ -35,7 +31,7 @@ import com.threerings.util.ValueEvent;
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.world.client.OccupantSprite;
 
-public class AvatarViewerComp extends Canvas
+public class AvatarViewerComp extends VBox
 {
     public function AvatarViewerComp ()
     {
@@ -45,19 +41,19 @@ public class AvatarViewerComp extends Canvas
     {
         super.createChildren();
 
-        var contents :VBox = new VBox();
+        width = stage.stageWidth;
+        height = stage.stageHeight;
 
         // create an HBox to hold "walking", "facing", "talk"
         var controls: HBox = new HBox();
+        controls.percentWidth = 100;
         controls.setStyle("verticalAlign", "middle");
+        controls.setStyle("horizontalAlign", "center");
 
-        controls.addChild(MsoyUI.createLabel("Walking:"));
-        var walking :CheckBox = new CheckBox();
-        controls.addChild(walking);
-
-        controls.addChild(MsoyUI.createLabel("Idle:"));
-        var idle :CheckBox = new CheckBox();
-        controls.addChild(idle);
+        var mode :ComboBox = new ComboBox();
+        mode.dataProvider = [ "Standing", "Walking", "Idle" ];
+        mode.selectedIndex = 0;
+        controls.addChild(mode);
 
         controls.addChild(MsoyUI.createLabel("Facing angle:"));
 
@@ -70,20 +66,30 @@ public class AvatarViewerComp extends Canvas
         var talk :Button = new Button();
         talk.label = "Talk!";
         controls.addChild(talk);
-        contents.addChild(controls);
+        addChild(controls);
 
         // create an HBox to hold the scaling controls
         _scaleControls = new HBox();
+        _scaleControls.percentWidth = 100;
+        _scaleControls.setStyle("horizontalAlign", "center");
         createScaleControls();
-        contents.addChild(_scaleControls);
+        addChild(_scaleControls);
 
-        contents.addChild(_holder = new Canvas());
-        addChild(contents);
+        addChild(_holder = new Canvas());
+        _holder.percentWidth = 100;
+        _holder.percentHeight = 100;
+
+        // draw a gradient background
+        var bmp :Bitmap = Bitmap(new BACKGROUND());
+        var bgsprite :Sprite = new Sprite();
+        bgsprite.graphics.beginBitmapFill(bmp.bitmapData);
+        bgsprite.graphics.drawRect(0, 0, width, height);
+        bgsprite.graphics.endFill();
+        _holder.rawChildren.addChildAt(bgsprite, 0);
 
         // bind actions to the user interface elements
         talk.addEventListener(FlexEvent.BUTTON_DOWN, speak);
-        BindingUtils.bindSetter(setMoving, walking, "selected");
-        BindingUtils.bindSetter(setIdle, idle, "selected");
+        BindingUtils.bindSetter(setMode, mode, "selectedIndex");
 
         // finally, load our parameters and see what we should do.
         ParameterUtil.getParameters(this, gotParams);
@@ -150,20 +156,6 @@ public class AvatarViewerComp extends Canvas
                 // on the last one, add a listener
                 avatar.addEventListener(MouseEvent.CLICK, handleMouseClick);
                 avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
-
-                _holder.width = avatar.getMaxContentWidth();
-                _holder.height = avatar.getMaxContentHeight();
-
-                // draw a gradient background
-                var bmp :Bitmap = Bitmap(new BACKGROUND());
-                var sprite :Sprite = new Sprite();
-                sprite.graphics.beginBitmapFill(bmp.bitmapData);
-                sprite.graphics.drawRect(0, 0, _holder.width, _holder.height);
-                sprite.graphics.endFill();
-                _holder.rawChildren.addChildAt(sprite, 0);
-
-                // add a click listener on the background area, too
-                sprite.addEventListener(MouseEvent.CLICK, handleMouseClick);
             }
         }
 
@@ -210,17 +202,11 @@ public class AvatarViewerComp extends Canvas
         }
     }
 
-    protected function setMoving (moving :Boolean) :void
+    protected function setMode (mode :int) :void
     {
         for each (var avatar :ViewerAvatarSprite in _avatars) {
-            avatar.setMoving(moving);
-        }
-    }
-
-    protected function setIdle (idle :Boolean) :void
-    {
-        for each (var avatar :ViewerAvatarSprite in _avatars) {
-            avatar.setIdle(idle);
+            avatar.setMoving(mode == 1);
+            avatar.setIdle(mode == 2);
         }
     }
 
@@ -310,7 +296,6 @@ public class AvatarViewerComp extends Canvas
     protected var _scaleControls :HBox;
 
     protected var _scaleSlider :HSlider;
-
     protected var _scaleReset :Button;
 
     [Embed(source="../../../../../../../pages/images/item/detail_preview_bg.png")]
@@ -362,6 +347,8 @@ class ViewerAvatarSprite extends MemberSprite
     {
         _scale = scale;
         scaleUpdated();
+        x = (stage.stageWidth - width)/2;
+        y = Math.max(0, (stage.stageHeight - height - parent.y));
     }
 
     override public function getState () :String
