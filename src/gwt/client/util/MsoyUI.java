@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import client.shell.CShell;
+
 /**
  * Contains useful user interface related methods.
  */
@@ -132,7 +134,7 @@ public class MsoyUI
      */
     public static void info (String message)
     {
-        new InfoPopup(message).show();
+        infoAction(message, null, null);
     }
 
     /**
@@ -142,16 +144,21 @@ public class MsoyUI
     public static void infoAction (String message, String actionLabel, ClickListener action)
     {
         HorizontalPanel panel = new HorizontalPanel();
-        panel.add(new Label(message));
-        panel.add(WidgetUtil.makeShim(10, 10));
-        Button button = new Button(actionLabel, action);
-        panel.add(button);
         final InfoPopup popup = new InfoPopup(panel);
-        button.addClickListener(new ClickListener() {
+        ClickListener hider = new ClickListener() {
             public void onClick (Widget sender) {
                 popup.hide();
             }
-        });
+        };
+        panel.add(new Label(message));
+        panel.add(WidgetUtil.makeShim(20, 10));
+        if (actionLabel != null) {
+            Button button = new Button(actionLabel, action);
+            button.addClickListener(hider);
+            panel.add(button);
+            panel.add(WidgetUtil.makeShim(5, 10));
+        }
+        panel.add(new Button(CShell.cmsgs.dismiss(), hider));
         popup.show();
     }
 
