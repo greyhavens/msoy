@@ -66,11 +66,11 @@ public class InstructionsPanel extends VerticalPanel
     protected String[] decodeInstructions (String instructions)
     {
         String[] results = new String[3];
-        if (instructions.length() > 10 && instructions.substring(0, 10).matches("{t#......}")) {
+        if (instructions.length() > 9 && instructions.substring(0, 10).matches("{t#......}")) {
             results[1] = instructions.substring(2, 9);
             instructions = instructions.substring(10);
         }
-        if (instructions.length() > 11 && instructions.substring(0, 11).matches("{bg#......}")) {
+        if (instructions.length() > 10 && instructions.substring(0, 11).matches("{bg#......}")) {
             results[2] = instructions.substring(3, 10);
             instructions = instructions.substring(11);
         }
