@@ -110,7 +110,7 @@ public class GameDirector extends BasicDirector
     /**
      * Requests that we join the given player in the given game.
      */
-    public function joinPlayer (gameId :int, memberId :int, ghost :String, gport :int) :void
+    public function joinPlayer (gameId :int, memberId :int) :void
     {
         if (_liaison != null) {
             if (_liaison is AVRGameLiaison || _liaison.gameId != gameId) {
@@ -121,7 +121,7 @@ public class GameDirector extends BasicDirector
 
         if (_liaison == null) {
             _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyCodes.JOIN_PLAYER, memberId);
-            _liaison.start(ghost, gport);
+            _liaison.start(); // game host/port are unknown here
         } else {
             LobbyGameLiaison(_liaison).joinPlayer(memberId);
         }

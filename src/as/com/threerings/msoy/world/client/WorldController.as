@@ -78,9 +78,6 @@ public class WorldController extends MsoyController
     /** Command to go to a member's current scene. */
     public static const GO_MEMBER_LOCATION :String = "GoMemberLocation";
 
-    /** Command to join a member's current game. */
-    public static const JOIN_PLAYER_GAME :String = "JoinPlayerGame";
-
     /** Command to join a member's currently pending game table. */
     public static const JOIN_PLAYER_TABLE :String = "JoinPlayerTable";
 
@@ -363,15 +360,6 @@ public class WorldController extends MsoyController
     {
         // pass the buck to the world director
         _wctx.getWorldDirector().goToMemberLocation(memberId);
-    }
-
-    /**
-     * Handles the JOIN_PLAYER_GAME command.
-     */
-    public function handleJoinPlayerGame (gameId :int, playerId :int,
-                                          ghost :String = null, gport :int = 0) :void
-    {
-        _wctx.getGameDirector().joinPlayer(gameId, playerId, ghost, gport);
     }
 
     /**
