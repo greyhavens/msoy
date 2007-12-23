@@ -143,11 +143,10 @@ public class ThreadListPanel extends PagedGrid
             RowPanel bits = new RowPanel();
             for (int ii = 0; ii < FLAG_IMAGES.length; ii++) {
                 if ((thread.flags & (1 << ii)) != 0) {
-                    bits.add(new Image("/images/msgs/" + FLAG_IMAGES[ii] + ".png"));
+                    Image image = new Image("/images/msgs/" + FLAG_IMAGES[ii] + ".png");
+                    image.setTitle(FLAG_TIPS[ii]);
+                    bits.add(image);
                 }
-            }
-            if (thread.isAnnouncement()) {
-                bits.add(new Label(CMsgs.mmsgs.tlpAnnounce()));
             }
 
             Hyperlink toThread;
@@ -222,4 +221,9 @@ public class ThreadListPanel extends PagedGrid
 
     /** Images displayed next to threads that have special flags. */
     protected static final String[] FLAG_IMAGES = { "announce", "sticky", "locked" };
+
+    /** Tooltips for our image icons. */
+    protected static final String[] FLAG_TIPS = {
+        CMsgs.mmsgs.tlpAnnounceTip(), CMsgs.mmsgs.tlpStickyTip(), CMsgs.mmsgs.tlpLockedTip()
+    };
 }
