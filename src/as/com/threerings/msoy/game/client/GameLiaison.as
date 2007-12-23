@@ -65,11 +65,23 @@ public class GameLiaison
         // create our custom context which we'll use to connect to lobby/game servers
         _gctx = new LiaisonGameContext(wctx);
         _gctx.getClient().addClientObserver(this);
+    }
 
-        // locate the game server to start everything off
-        var mgsvc :MsoyGameService =
-            (_wctx.getClient().requireService(MsoyGameService) as MsoyGameService);
-        mgsvc.locateGame(_wctx.getClient(), gameId, this);
+    /**
+     * Starts this game liaison. If the game host and port are supplied, they will be used
+     * immediately, otherwise the liaison will first ask its world server to locate the game in
+     * question.
+     */
+    public function start (ghost :String = null, gport :int = 0) :void
+    {
+        if (ghost != null && gport != 0) {
+            gameLocated(ghost, gport);
+        } else {
+            log.info("Resolving location of game [id=" + _gameId + "].");
+            var mgsvc :MsoyGameService =
+                (_wctx.getClient().requireService(MsoyGameService) as MsoyGameService);
+            mgsvc.locateGame(_wctx.getClient(), gameId, this);
+        }
     }
 
     /**

@@ -195,10 +195,12 @@ public class index extends Page
                 if (config.server != null && config.server.indexOf("bering") != -1) {
                     WorldClient.displayFlashLobby(config, action);
                 } else {
+                    String hostPort = "&ghost=" + config.server + "&gport=" + config.port;
                     if (action.equals("m") || action.equals("f") || action.equals("s")) {
-                        WorldClient.displayFlash("playNow=" + config.gameId + "&mode=" + action);
+                        WorldClient.displayFlash(
+                            "playNow=" + config.gameId + "&mode=" + action + hostPort);
                     } else {
-                        WorldClient.displayFlash("gameLobby=" + config.gameId);
+                        WorldClient.displayFlash("gameLobby=" + config.gameId + hostPort);
                     }
                 }
             } else {

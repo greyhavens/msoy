@@ -59,7 +59,7 @@ public class GameDirector extends BasicDirector
     /**
      * Requests that the lobby for the specified game be joined and displayed.
      */
-    public function displayLobby (gameId :int) :void
+    public function displayLobby (gameId :int, ghost :String, gport :int) :void
     {
         log.info("Displaying lobby [gameId=" + gameId + "].");
 
@@ -74,6 +74,7 @@ public class GameDirector extends BasicDirector
         if (_liaison == null) {
             // create our new liaison, which will resolve the lobby and do all the business
             _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyCodes.SHOW_LOBBY);
+            _liaison.start(ghost, gport);
         }
     }
 
@@ -83,7 +84,7 @@ public class GameDirector extends BasicDirector
      * @param mode one of either 's' for single player, 'f' for friends-only quick game, or 'm' for
      * anyone quick game.
      */
-    public function playNow (gameId :int, modeStr: String) :void
+    public function playNow (gameId :int, modeStr: String, ghost :String, gport :int) :void
     {
         var mode :int = LobbyCodes.PLAY_NOW_SINGLE;
         if (modeStr == "f") {
@@ -102,13 +103,14 @@ public class GameDirector extends BasicDirector
         if (_liaison == null) {
             // create our new liaison, which will head on into the game once we're logged on
             _liaison = new LobbyGameLiaison(_wctx, gameId, mode);
+            _liaison.start(ghost, gport);
         }
     }
 
     /**
      * Requests that we join the given player in the given game.
      */
-    public function joinPlayer (gameId :int, memberId :int) :void
+    public function joinPlayer (gameId :int, memberId :int, ghost :String, gport :int) :void
     {
         if (_liaison != null) {
             if (_liaison is AVRGameLiaison || _liaison.gameId != gameId) {
@@ -119,6 +121,7 @@ public class GameDirector extends BasicDirector
 
         if (_liaison == null) {
             _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyCodes.JOIN_PLAYER, memberId);
+            _liaison.start(ghost, gport);
         } else {
             LobbyGameLiaison(_liaison).joinPlayer(memberId);
         }
@@ -135,7 +138,7 @@ public class GameDirector extends BasicDirector
                 _liaison = null;
             }
         }
-        displayLobby(gameId);
+        displayLobby(gameId, null, 0); // game host/port is not known here
         LobbyGameLiaison(_liaison).joinPlayerTable(memberId);
     }
 
@@ -161,6 +164,7 @@ public class GameDirector extends BasicDirector
             var memberObj :MemberObject = _wctx.getMemberObject();
             if (memberObj.avrGameId > 0) {
                 _liaison = new AVRGameLiaison(_wctx, memberObj.avrGameId);
+                _liaison.start();
             }
         }
     }
@@ -186,6 +190,7 @@ public class GameDirector extends BasicDirector
         }
 
         _liaison = new AVRGameLiaison(_wctx, gameId);
+        _liaison.start();
     }
 
     public function leaveAVRGame () :void

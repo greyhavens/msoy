@@ -368,9 +368,10 @@ public class WorldController extends MsoyController
     /**
      * Handles the JOIN_PLAYER_GAME command.
      */
-    public function handleJoinPlayerGame (gameId :int, playerId :int) :void
+    public function handleJoinPlayerGame (gameId :int, playerId :int,
+                                          ghost :String = null, gport :int = 0) :void
     {
-        _wctx.getGameDirector().joinPlayer(gameId, playerId);
+        _wctx.getGameDirector().joinPlayer(gameId, playerId, ghost, gport);
     }
 
     /**
@@ -386,14 +387,12 @@ public class WorldController extends MsoyController
             function (location :MemberLocation) :void {
                 if (location.gameId == 0) {
                     _wctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.no_longer_lobbying");
-                    return;
-                }
-                if (location.sceneId == 0) {
+                } else if (location.sceneId == 0) {
                     // if the game already started, take them straight into it.
                     _wctx.getWorldDirector().goToMemberLocation(location.memberId, location);
-                    return;
+                } else {
+                    _wctx.getGameDirector().joinPlayerTable(location.gameId, location.memberId);
                 }
-                _wctx.getGameDirector().joinPlayerTable(location.gameId, location.memberId);
             }));
         restoreSceneURL();
     }
@@ -438,7 +437,7 @@ public class WorldController extends MsoyController
     /**
      * Handles JOIN_GAME_LOBBY (and gameLobby=XX).
      */
-    public function handleJoinGameLobby (gameId :int) :void
+    public function handleJoinGameLobby (gameId :int, ghost :String = null, gport :int = 0) :void
     {
         // if we're not running in the GWT app, we need to display a page externally
         if (!inGWTApp() && displayPage("world", "game_l_" + gameId)) {
@@ -454,7 +453,7 @@ public class WorldController extends MsoyController
         }
 
         // now display the lobby interface
-        _wctx.getGameDirector().displayLobby(gameId);
+        _wctx.getGameDirector().displayLobby(gameId, ghost, gport);
     }
 
     /**
@@ -587,10 +586,12 @@ public class WorldController extends MsoyController
             _wctx.getTopPanel().setPlaceView(new NoPlaceView(_wctx));
 
         } else if (null != params["gameLobby"]) {
-            handleJoinGameLobby(int(params["gameLobby"]));
+            handleJoinGameLobby(
+                int(params["gameLobby"]), String(params["ghost"]), int(params["gport"]));
 
         } else if (null != params["playNow"]) {
-            _wctx.getGameDirector().playNow(int(params["playNow"]), params["mode"] as String);
+            _wctx.getGameDirector().playNow(int(params["playNow"]), params["mode"] as String,
+                                            String(params["ghost"]), int(params["gport"]));
 
         } else if (null != params["worldGame"]) {
             handleJoinAVRGame(int(params["worldGame"]));
