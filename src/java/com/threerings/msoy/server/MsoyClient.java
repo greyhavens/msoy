@@ -94,6 +94,9 @@ public class MsoyClient extends WhirledClient
         String sessTok = ((MsoyCredentials)getCredentials()).sessionToken;
         _eventLog.userLoggedOut(_memobj.getMemberId(), sessTok, activeSeconds, idleSeconds);
 
+        // remove our idle tracker
+        _memobj.removeListener(_idleTracker);
+
         // nothing more needs doing for guests
         if (_memobj.isGuest()) {
             _memobj = null;
