@@ -200,7 +200,8 @@ public class JSONMarshaller<T>
             T obj = _pclass.newInstance();
             @SuppressWarnings("unchecked") Iterator<String> keys = jObj.keys();
             while (keys.hasNext()) {
-                String key = keys.next(), mkey = _migmap.get(key);
+                String key = keys.next();
+                String mkey = _migmap != null ? _migmap.get(key) : null;
                 Field field = _fields.get(mkey == null ? key : mkey);
                 if (field == null) {
                     // log? throw exception?
