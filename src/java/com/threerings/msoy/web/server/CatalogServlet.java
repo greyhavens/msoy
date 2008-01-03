@@ -366,7 +366,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // we will modify the original item (it's a clone, no need to worry) to create the new
             // catalog listing prototype item
             int originalItemId = originalItem.itemId;
-            ItemRecord listItem = originalItem;
+            final ItemRecord listItem = originalItem;
             listItem.prepareForListing(oldListItem);
 
             // use the updated description
@@ -385,6 +385,13 @@ public class CatalogServlet extends MsoyServiceServlet
                 logUserAction(mrec, UserAction.UPDATED_LISTING, details);
             }
 
+            // kick off a notification that the list item was updated to e.g. reload game lobbies
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.itemMan.itemUpdated(listItem);
+                }
+            });
+            
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "List item failed [item=" + item + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
