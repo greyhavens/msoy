@@ -17,7 +17,7 @@ import com.threerings.panopticon.common.hessian.Event;
  */
 public class MsoyEvents
 {
-    public static class CurrentMemberStats extends TimedEvent
+    public static class CurrentMemberStats extends MsoyEvent
     {
         public String serverName;
         public int total;
@@ -25,14 +25,14 @@ public class MsoyEvents
         public int guests;
     }
 
-    public static class Login extends TimedEvent
+    public static class Login extends MsoyEvent
     {
         public int memberId;
         public boolean firstLogin;
         public String sessionToken;
     }
 
-    public static class Logout extends TimedEvent
+    public static class Logout extends MsoyEvent
     {
         public int memberId;
         public String sessionToken;
@@ -40,14 +40,14 @@ public class MsoyEvents
         public int idleSeconds;
     }
 
-    public static class MailSent extends TimedEvent
+    public static class MailSent extends MsoyEvent
     {
         public int senderId;
         public int recipientId;
         public int payloadType;
     }
 
-    public static class FlowTransaction extends TimedEvent
+    public static class FlowTransaction extends MsoyEvent
     {
         public int memberId;
         public int actionType;
@@ -56,7 +56,7 @@ public class MsoyEvents
         public String details;
     }
 
-    public static class ItemPurchase extends TimedEvent
+    public static class ItemPurchase extends MsoyEvent
     {
         public int memberId;
         public byte itemType;
@@ -65,7 +65,7 @@ public class MsoyEvents
         public int goldCost;
     }
 
-    public static class ItemCatalogListing extends TimedEvent
+    public static class ItemCatalogListing extends MsoyEvent
     {
         public int creatorId;
         public byte itemType;
@@ -76,35 +76,35 @@ public class MsoyEvents
         public int salesTarget;
     }
 
-    public static class FriendshipAction extends TimedEvent
+    public static class FriendshipAction extends MsoyEvent
     {
         public int memberId;
         public int friendId;
         public boolean isAdded;
     }
 
-    public static class GroupMembershipAction extends TimedEvent
+    public static class GroupMembershipAction extends MsoyEvent
     {
         public int memberId;
         public int groupId;
         public boolean isJoined;
     }
 
-    public static class GroupRankModification extends TimedEvent
+    public static class GroupRankModification extends MsoyEvent
     {
         public int memberId;
         public int groupId;
         public byte newRank;
     }
 
-    public static class TrophyEarned extends TimedEvent
+    public static class TrophyEarned extends MsoyEvent
     {
         public int recipientId;
         public int gameId;
         public String trophyIdent;
     }
 
-    public static class PrizeEarned extends TimedEvent
+    public static class PrizeEarned extends MsoyEvent
     {
         public int recipientId;
         public int gameId;
@@ -112,16 +112,8 @@ public class MsoyEvents
         public byte prizeItemType;
     }
 
-    protected static class TimedEvent extends BaseEvent
-    {
-        public long timestamp = System.currentTimeMillis();
-
-        public String timestampToString () {
-            return _efmt.format(new Date(timestamp));
-        }
-    }
-
-    protected static class BaseEvent implements Event, Serializable
+    protected static class MsoyEvent extends Event
+        implements Serializable
     {
         public String getName () {
             String name = getClass().getName();
@@ -132,6 +124,4 @@ public class MsoyEvents
             return getName() + StringUtil.fieldsToString(this);
         }
     }
-
-    protected static final DateFormat _efmt = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss:SSS");
 }
