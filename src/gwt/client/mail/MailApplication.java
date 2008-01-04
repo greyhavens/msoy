@@ -742,7 +742,7 @@ public class MailApplication extends VerticalPanel
         if (now.getYear() != date.getYear()) {
             // e.g. 25/10/06
             return date.getDay() + "/" + date.getMonth() + "/" + 
-                   zeroPad((1900 + date.getYear()) % 100);
+                   zeroPad(date.getYear() % 100);
         }
         
         long hourDiff = (nowTime - date.getTime()) / (3600 * 1000);
