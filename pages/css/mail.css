@@ -156,6 +156,8 @@
 }
 
 .HeaderPanel .Row .Date {
+  text-align: right;
+  padding-right: 8px;
   width: 80px;
 }
 

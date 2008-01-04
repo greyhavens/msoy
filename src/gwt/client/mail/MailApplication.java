@@ -741,22 +741,29 @@ public class MailApplication extends VerticalPanel
         Date now = new Date(nowTime);
         if (now.getYear() != date.getYear()) {
             // e.g. 25/10/06
-            return date.getDay() + "/" + date.getMonth() + "/" + date.getYear();
+            return date.getDay() + "/" + date.getMonth() + "/" + 
+                   zeroPad((1900 + date.getYear()) % 100);
         }
+        
         long hourDiff = (nowTime - date.getTime()) / (3600 * 1000);
         if (hourDiff > 6*24) {
             // e.g. Oct 25
-            return date.toString().substring(4, 10);
+            return _months[date.getMonth()] + " " + date.getDay();
         }
         if (hourDiff > 23) {
             // e.g. Wed 15:10
-            String str = date.toString();
-            return str.substring(0, 3) + " " + str.substring(11, 16);
+            return _days[date.getDay()] + " " + date.getHours() + ":" + 
+            zeroPad(date.getMinutes());
         }
         // e.g. 15:10
-        return date.toString().substring(11, 16);
+        return date.getHours() + ":" + zeroPad(date.getMinutes());
     }
 
+    protected static String zeroPad (int n)
+    {
+        return (n < 10 ? "0" : "") + n;
+    }
+    
     protected static class MailCheckBox extends CheckBox
     {
         public MailHeaders headers;
@@ -790,6 +797,14 @@ public class MailApplication extends VerticalPanel
     protected FlowPanel _pagerPages;
     protected Button _pagerPrevious;
     protected Button _pagerNext;
+
+    protected static final String[] _months = {
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    };
+    
+    protected static final String[] _days = {
+        "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+    };
 
     /** The number of page numbers to display in the pager before we shortcut with ... */
     protected static final int PAGES_TO_SHOW = 3;
