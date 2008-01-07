@@ -786,9 +786,8 @@ public class RoomController extends SceneController
             if (item.isUsed()) {
                 // TODO: add a method to Item so that each item returns a translatable string
                 // (or translated), and we can use that here instead of this business
-                var msg :String = itemType == Item.DECOR ? "l.decor" :
-                    (itemType == Item.AUDIO ? "l.audio" : "l.furni");
-                (new ItemUsedDialog(_wdctx, Msgs.EDITING.get(msg), function () :void {
+                var msg :String = Item.getTypeKey(itemType);
+                (new ItemUsedDialog(_wdctx, Msgs.ITEM.get(msg), function () :void {
                     var confWrap :ConfirmAdapter = new ConfirmAdapter(
                         // failure function
                         function (cause :String) :void {

@@ -150,6 +150,14 @@ public /*abstract*/ class Item
     }
 
     /**
+     * Get the translation key for the specified item type.
+     */
+    public static function getTypeKey (type :int) :String
+    {
+        return "m." + getTypeName(type);
+    }
+
+    /**
      * Get the Stringy name of the specified item type.
      */
     public static function getTypeName (type :int) :String
@@ -223,6 +231,14 @@ public /*abstract*/ class Item
     public function getType () :int
     {
         throw new Error("abstract");
+    }
+
+    /**
+     * Get the translation key for this type of item.
+     */
+    public function getTypeKey () :String
+    {
+        return Item.getTypeKey(getType());
     }
 
     /**

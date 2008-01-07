@@ -193,6 +193,14 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     }
 
     /**
+     * Get the translation key for the specified item type.
+     */
+    public static String getTypeKey (byte type)
+    {
+        return "m." + getTypeName(type);
+    }
+
+    /**
      * Gets the Stringy name of the specified item type.
      */
     public static String getTypeName (byte type)
@@ -248,6 +256,14 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      * Gets the type code for this item.
      */
     public abstract byte getType ();
+
+    /**
+     * Get the translation key for this type of item.
+     */
+    public String getTypeKey ()
+    {
+        return getTypeKey(getType());
+    }
 
     /**
      * Returns prototype item instances for all subtypes that can be created for this item.
