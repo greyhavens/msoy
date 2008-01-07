@@ -587,8 +587,7 @@ public class RoomController extends SceneController
         // pop up the menu where the mouse is
         if (menuItems.length > 0) {
             var menu :CommandMenu = CommandMenu.createMenu(menuItems);
-// TODO: see note in createChangeAvatarMenu, regarding avatar thumbnails.
-//            menu.variableRowHeight = true;
+            menu.variableRowHeight = true;
             menu.setDispatcher(_roomView);
             menu.popUpIn(_roomView.getBounds(_roomView.stage));
         }
@@ -1080,24 +1079,18 @@ public class RoomController extends SceneController
         var avItems :Array = [];
         var avatars :Array = (us.avatarCache != null) ? us.avatarCache.toArray() : [];
         ArrayUtil.sort(avatars);
-        // TODO: showing the thumbnails at half-thumbnail size is currently broken due
-        // to layout bugs in ScrollableMenu when there are icons and scrollbars are needed.
-        // Additonally, setting variableRowHeight=true breaks the ScrollableMenu. Both
-        // are needed to make this feature work correctly.
-//            var iconW :Number = 20; //*/ MediaDesc.DIMENSIONS[0];
-//            var iconH :Number = 20; //*/ MediaDesc.DIMENSIONS[1];
-        for (var ii :int = 0; ii < Math.min(avatars.length, 5); ii++) {
+        var iconW :Number = 20;
+        var iconH :Number = 20; // 1/3 of thumbnail height
+        for (var ii :int = 0; ii < avatars.length; ii++) {
             var av :Avatar = avatars[ii] as Avatar;
             avItems.push({ label: av.name, enabled: !av.equals(us.avatar),
-                // TODO
-                // iconObject: MediaWrapper.createScaled(av.getThumbnailMedia(), iconW, iconH),
+                iconObject: MediaWrapper.createScaled(av.getThumbnailMedia(), iconW, iconH),
                 callback: _wdctx.getWorldDirector().setAvatar, arg: av.itemId });
         }
         // add defaults
         avItems.push({ label: Msgs.ITEM.get("m.default"), enabled: (us.avatar != null),
-            // TODO
-            // iconObject: MediaWrapper.createScaled(
-            //    Avatar.getDefaultMemberAvatarMedia(), iconW, iconH),
+            iconObject: MediaWrapper.createScaled(
+                Avatar.getDefaultMemberAvatarMedia(), iconW, iconH),
             callback: _wdctx.getWorldDirector().setAvatar, arg: 0 });
 
         avItems.push({ type: "separator" });
