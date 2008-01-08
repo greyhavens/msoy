@@ -33,7 +33,8 @@ public class ChatPrefsDialog extends FloatingPanel
         open(true);
 
         // listen for preferences changes that happen without us..
-        Prefs.config.addEventListener(ConfigValueSetEvent.TYPE, handlePrefsUpdated, false, 0, true);
+        Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
+            handlePrefsUpdated, false, 0, true);
     }
 
     override protected function createChildren () :void

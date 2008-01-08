@@ -48,7 +48,7 @@ public class FloatingPanel extends TitleWindow
         addEventListener(CloseEvent.CLOSE, handleClose);
 
         // add a listener to handle command events we generate
-        addEventListener(CommandEvent.TYPE, handleCommand);
+        addEventListener(CommandEvent.COMMAND, handleCommand);
     }
 
     /**

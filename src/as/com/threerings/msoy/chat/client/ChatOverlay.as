@@ -83,7 +83,8 @@ public class ChatOverlay
         createStandardFormats();
 
         // listen for preferences changes, update history mode
-        Prefs.config.addEventListener(ConfigValueSetEvent.TYPE, handlePrefsUpdated, false, 0, true);
+        Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
+            handlePrefsUpdated, false, 0, true);
     }
 
     /**
