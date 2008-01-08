@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" 
+    width="100%" height="100%" initialize="loadResources()"
+    horizontalAlign="center" paddingBottom="5">
+
+	<mx:Metadata>
+		[Event("slideshowView")]
+		[Event("carouselView")]
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+		import flash.events.Event;
+		import mx.events.ListEvent;
+		import mx.events.FlexEvent;
+		import samples.photoviewer.Gallery;
+		import samples.photoviewer.Photo;
+		
+	
+		import mx.resources.*;
+		
+		[ResourceBundle("strings")]
+		private static var stringResources:ResourceBundle;
+		[Bindable]
+		private var slideShowTooltip:String;
+		[Bindable]
+		private var visualListTooltip:String;
+		[Bindable]
+		private var photoWord:String;
+	
+		private function loadResources():void
+		{
+			slideShowTooltip = stringResources.getString("slideShowTooltipKey");
+			visualListTooltip = stringResources.getString("visualListTooltipKey");
+			photoWord = stringResources.getString("photoWordKey");
+		}
+		
+			
+		[Bindable]
+        public var gallery:Gallery;
+        		
+		[Bindable]
+		private var selectedPhoto:Photo;
+		
+		]]>
+	</mx:Script>
+
+	<mx:Binding source="gallery.selected" destination="photoList.selectedIndex" />	
+	<mx:Binding source="photoList.selectedIndex" destination="gallery.selected" />
+	<mx:Binding source="gallery.photos.getItemAt(gallery.selected) as Photo" 
+	    destination="selectedPhoto" />
+
+	
+	<mx:Spacer height="10%" />
+	
+	<mx:Canvas width="66%" height="66%">
+	
+    	<mx:VBox id="largeView" width="100%" height="100%" horizontalAlign="center" horizontalCenter="0">
+    	
+    		<mx:Image id="photoImage" source="galleries/{selectedPhoto.source}"
+    		    scaleContent="true" maintainAspectRatio="true"
+    			verticalAlign="bottom" horizontalAlign="center" 
+    			width="100%" height="100%" 
+    			completeEffect="Fade" />
+    	
+    		<mx:Text id="photoDescription" 
+    			text="{selectedPhoto.description}"
+    		 	textAlign="center"
+    			styleName="photoDescription" 
+    			width="60%" height="40"/>
+    	
+    		<mx:Label id="photoName" text="{selectedPhoto.name}"
+    			styleName="photoName"/>
+    	
+    	</mx:VBox>
+	</mx:Canvas>
+		
+	<mx:Spacer height="10%" />
+	
+	<mx:VBox width="90%" styleName="thumbnailListBorderBox"
+	    verticalGap="2" horizontalAlign="center"
+	    borderStyle="solid" cornerRadius="10">
+	    
+	    <mx:HBox width="100%" verticalAlign="middle" paddingLeft="5" paddingRight="5">
+	        <mx:Label text="{gallery.name} ({gallery.photos.length} {photoWord})" 
+                styleName="thumbnailTitleBar"/>
+
+            <mx:Spacer width="100%" />
+
+			<NavButton id="carouselButton" icon="@Embed('assets/icon_carousel.png')" 
+			    toolTip="{visualListTooltip}"
+			    click="dispatchEvent(new Event('carouselView'))"
+				creationComplete="if(carouselButton.accessibilityProperties != null)carouselButton.setStyle('focusThickness', 3)" />
+			    
+		    <NavButton id="slideshowButton" icon="@Embed('assets/icon_slideshow.png')" 
+		        toolTip="{slideShowTooltip}"
+		        click="dispatchEvent(new Event('slideshowView'))"
+				creationComplete="if(slideshowButton.accessibilityProperties != null)slideshowButton.setStyle('focusThickness', 3)" />
+	    </mx:HBox>
+			
+		<mx:HorizontalList id="photoList" dataProvider="{gallery.photos}"
+		    width="98%" height="135" selectedIndex="0"
+		    itemRenderer="Thumbnail"
+		    styleName="thumbnailList" />
+
+	</mx:VBox>
+
+</mx:VBox>

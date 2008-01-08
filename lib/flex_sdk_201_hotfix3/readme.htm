@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Welcome to Adobe Flex 2 SDK</title>
+<style type="text/css">
+<!--
+body {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.heading {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-style: normal;
+	font-weight: bold;
+	color: #FF0000;
+}
+.style8 {
+	font-family: Arial;
+	font-size: 10.0pt;
+}
+-->
+</style>
+</head>
+
+<body>
+<h2>Adobe<sup><span
+style='font-size:10.0pt;font-family:Arial'>&reg;</span></sup> Flex<sup><span
+style='font-size:10.0pt;font-family:Arial'>&#8482;</span></sup> SDK</h2>
+<p><strong>Version 2.0.1 </strong></p>
+<table border="0" cellspacing="0" cellpadding="0" width="650"
+ style='width:487.5pt'>
+  <tr>
+    <td width="344" valign="bottom" style='width:258.0pt;padding:0in 0in 0in 0in'><p><span style='font-size:13.5pt;font-family:Arial;color:red'>Readme </span></p></td>
+    <td width="302" valign="bottom" style='width:226.5pt;padding:0in 0in 0in 0in'><p align="right" style='text-align:right'><strong>December 2006</strong></p></td>
+  </tr>
+</table>
+<p>&copy; 2004-2006 Adobe Macromedia LLC Software and its licensors. All rights   reserved.</p>
+<p><span style='font-size:10.0pt;font-family:Arial'>This file contains
+  important information including a link to the Release Notes that were not available when the product documentation was written. <br />
+Review this information before running Adobe</span><span
+style='font-size:10.0pt;font-family:Arial'> Flex 2 SDK.</span></p>
+<div align="center" style='text-align:center'>
+  <hr size="2" width="100%" noshade="noshade" color="black" align="center" />
+</div>
+<p><a name="Contents" id="Contents"></a><span class="heading">Contents</span></p>
+<p><strong><a href="#What's_Included">What's Included </a></strong> </p>
+<p><a
+href="#Getting_Started"><strong>Getting Started </strong></a></p>
+<strong><a href="#Release_Notes">Release Notes </a></strong>
+<p><a href="#Documentation"><strong>Documentation </strong></a></p>
+<p><a href="#Samples"><strong>Samples</strong></a></p>
+<p><a href="#Community_Resources"><strong>Community and Resources </strong></a></p>
+<p><a href="#Licenses_and_Copyrights"><strong>Additional Licenses and Copyrights</strong></a></p>
+<p>&nbsp;</p>
+<hr size="2" width="100%" noshade="noshade" color="black" align="center" />
+<p><a name="What's_Included" id="What's_Included"></a><span class="heading">What's Included </span></p>
+<blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>
+  <p>Flex SDK contains the following directories:</p>
+  <blockquote>
+    <p>asdoc<br />
+Contains ASDoc related files. ASDoc is a command-line tool that is you can use to create HTML documentation from the<br />
+classes in your Flex application.</p>
+    <p>bin <br />
+Contains command-line tools such as mxmlc, compc, asdoc and fdb. You use these tools to compile, debug and document Flex applications and components. <br />
+The bin/jvm.config file contains Java VM settings. </p>
+    <p>frameworks<br />
+      Contains the framework.swc file, frameworks.swc source code, and other helper files that you use to compile Flex applications. <br />
+    The frameworks/flex-config.xml file includes the default compiler options.</p>
+    <p>players<br />
+    Contains debugger versions of Adobe<sup><span
+style='font-size:10.0pt;font-family:Arial'>&reg;</span></sup> Flash<sup><span
+style='font-size:10.0pt;font-family:Arial'>&reg;</span></sup> Player 9.</p>
+    <p>lib<br />
+      Contains JAR files used by the compilers.</p>
+    <p>resources<br />
+      Contains HTML templates for <span class="style8"> </span>Flash<span class="style8"> </span>Player detection and history management. <br />
+For information on how to use these files, see  &quot;Creating a Wrapper&quot;  in <em>Building and Deploying Flex 2 Applications</em>. </p>
+    <p>samples<br />
+      Contains source code for sample applications.    </p>
+  </blockquote>
+  <p><strong>Note: </strong>You can store this directory structure anywhere, but the bin and lib directories must be at the same level.</p>
+</blockquote>
+<div>
+  <div>
+    <div>
+      <blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>
+        <blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>&nbsp;</blockquote>
+      </blockquote>
+    </div>
+    <p><span style='font-size:10.0pt;font-family:&quot;Courier New&quot;'><a href="#Contents"><span
+style='font-size:7.5pt;font-family:Arial'>Back to Contents</span></a></span></p>
+    <span
+style='font-size:10.0pt;font-family:&quot;Courier New&quot;'>
+      <hr size="2" width="100%" noshade="noshade" color="black" align="center" />
+    </span></div>
+</div>
+<p><a name="Getting_Started" id="Getting_Started"></a><span class="heading">Getting Started </span></p>
+<blockquote>
+  <p>Before you begin using Flex SDK, do the following: </p>
+  <ul>
+    <li>Read the Installation Instructions on the <a href="http://www.adobe.com/go/flex_documentation">Flex Documentation Resource Center</a>.</li>
+    <li>Compile the sample applications. For information on compiling the Flex SDK sample applications, see  <a href="#Samples">Flex Samples</a>.</li>
+  </ul>
+  <blockquote>
+    <p>For information on using the command-line compilers, see &quot;Using the Flex Compilers&quot; in <em>Building and Deploying Flex 2<br />
+      Applications,</em>  available on the <a href="http://www.adobe.com/go/flex_documentation">Flex Documentation Resource Center</a><a href="http://www.adobe.com/go/flex_documentation"></a>. </p>
+    <p>For  information on using fdb, see &quot;Using the Command-line Debugger&quot; in <em>Building and Deploying Flex 2<br />
+      Applications,</em>  available on the <a href="http://www.adobe.com/go/flex_documentation">Flex Documentation Resource Center</a>. </p>
+  </blockquote>
+</blockquote>
+<div>
+  <div>
+    <div>
+      <blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>
+        <blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>&nbsp;</blockquote>
+      </blockquote>
+    </div>
+    <p><span style='font-size:10.0pt;font-family:&quot;Courier New&quot;'><a href="#Contents"><span
+style='font-size:7.5pt;font-family:Arial'>Back to Contents</span></a></span></p>
+    <span
+style='font-size:10.0pt;font-family:&quot;Courier New&quot;'>
+    <hr size="2" width="100%" noshade="noshade" color="black" align="center" />
+    </span>
+    <p><a name="Release_Notes" id="Release_Notes"></a><span class="heading">Release Notes </span></p>
+    <blockquote>
+      <p>The Flex 2 SDK <a href="http://www.adobe.com/go/flex2_releasenotes_sdk">Release Notes</a> provides   system configuration information, additional getting started information, and a list of the current known issues. </p>
+    </blockquote>
+    <div>
+      <div>
+        <div>
+          <blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>
+            <blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>&nbsp;</blockquote>
+          </blockquote>
+        </div>
+        <p><span style='font-size:10.0pt;font-family:&quot;Courier New&quot;'><a href="#Contents"><span
+style='font-size:7.5pt;font-family:Arial'>Back to Contents</span></a></span></p>
+        <span
+style='font-size:10.0pt;font-family:&quot;Courier New&quot;'>
+        <hr size="2" width="100%" noshade="noshade" color="black" align="center" />
+        </span></div>
+    </div>
+    <p><a name="Documentation" id="Documentation"></a><span class="heading">Documentation  </span></p>
+    <blockquote>
+      <p class="h2"><span class="body">
+        Documentation for Flex  is available
+        on the <a href="http://www.adobe.com/go/flex_documentation">Flex Documentation Resource Center</a></span>: </p>
+      <ul>
+        <li><em>Getting Started with Flex 2 </em>provides an   introduction to Flex 2 SDK, Flex Builder 2, and Flex Data Services 2. <br />
+        This book   is intended for application developers who are new to the Flex product line and   require an overview of Flex features and capabilities. </li>
+        <li><em>Flex 2 Developer's Guide</em> describes   application development basics, such as MXML and ActionScript syntax, creating   applications,<br /> 
+        using Flex components, the Flex data model, error handling, and   Flex Charting 2. It includes chapters that deal specifically with Flex Data   Services 2. </li>
+        <li><em>Building and Deploying Flex 2 Applications</em> describes the tasks you perform when analyzing, designing, building, and   deploying a Flex 2 application. </li>
+        <li><em>Adobe Flex 2  Language   Reference</em> describes the Flex 2 MXML and ActionScript 3.0      programming interfaces, including code examples (HTML only). </li>
+        <li><em>Creating and Extending Flex 2 Components</em> provides   instructions on creating, using, and extending components. <br />
+        </li>
+        <li><em>Migrating Applications to Flex 2</em> describes how to migrate a Flex application from version 1.0 or 1.5 to version 2 (PDF only).<br />
+        </li>
+        <li><em>Programming ActionScript 3.0</em> provides concepts and usage information for ActionScript 3.0.<br />
+        </li>
+        <li>Release Notes and Installation Instructions. </li>
+      </ul>
+      <p>&nbsp;</p>
+    </blockquote>
+    <p><span style='font-size:10.0pt;font-family:&quot;Courier New&quot;'><a href="#Contents"><span
+style='font-size:7.5pt;font-family:Arial'>Back to Contents</span></a></span></p>
+    <div class="MsoNormal" align="center" style='text-align:center'><span
+style='font-size:10.0pt;font-family:&quot;Courier New&quot;'>
+      <hr size="2" width="100%" noshade="noshade" color="black" align="center" />
+    </span></div>
+    <p><a name="Samples" id="Samples"></a><span class="heading">Samples</span></p>
+    <blockquote>
+      <p>The SDK samples directory contains source code for sample applications.</p>
+      <p>To compile  the Flex 2 SDK sample applications:</p>
+      <blockquote>
+        <p> Windows: Run the build-samples.bat file in the <em>flex_sdk_dir</em>/samples directory.<br />
+          Macintosh or Unix: Run the build-samples.sh file in the <em>flex_sdk_dir</em>/samples directory.</p>
+      </blockquote>
+      <p>The scripts require that the SDK bin directory that contains the mxmlc compiler is at the same level as the samples directory. </p>
+      <p>        After you compile the samples,  open the HTML file for each sample in a browser to view them (explorer.html, flexstore.html, hybridstore.html, PhotoViewer.html, finder.html).</p>
+      <p>You can download additional <a href="http://www.adobe.com/go/flex2_sample_apps">Flex samples</a><span class="style8"> from the Adobe Flex Developer Center.</span></p>
+      <p>&nbsp;</p>
+    </blockquote>
+    <p><span style='font-size:10.0pt;font-family:&quot;Courier New&quot;'><a href="#Contents"><span
+style='font-size:7.5pt;font-family:Arial'>Back to Contents</span></a></span></p>
+    <div align="center" class="MsoNormal" style='text-align:center' href="#community"><span
+style='font-size:10.0pt;font-family:&quot;Courier New&quot;'>
+      <hr size="2" width="100%" noshade="noshade" color="black" align="center" />
+    </span></div>
+    <p><a name="Community_Resources" id="Community_Resources"></a><span class="heading">Community and Resources </span></p>
+    
+        <blockquote>
+          <p>You can access the Flex 2 community and online resources from the following pages: </p>
+          <ul>
+            <li><a href="http://www.flex.org/">Flex.org</a></li>
+            <li><a href="http://www.adobe.com/go/flex2_product">Flex Product Home Page</a> </li>
+            <li><a href="http://www.adobe.com/go/flex2_devcenter ">Flex Developer Center</a> </li>
+            <li><a href="http://www.adobe.com/go/flex2_support">Flex Support Center </a> </li>
+            <li><a href="http://www.adobe.com/go/flex2_forums">Flex Forums</a> </li>
+            <li><a href="http://www.adobe.com/go/labs_home">Adobe Labs</a></li>
+          </ul>
+    </blockquote>
+    <p><span style='font-size:10.0pt;font-family:&quot;Courier New&quot;'><a href="#Contents"><span
+style='font-size:7.5pt;font-family:Arial'>Back to Contents</span></a></span></p>
+    <div align="center" class="MsoNormal" style='text-align:center' href="#community"><span
+style='font-size:10.0pt;font-family:&quot;Courier New&quot;'>
+      <hr size="2" width="100%" noshade="noshade" color="black" align="center" />
+    </span></div>
+    <p><a name="Licenses_and_Copyrights" id="Licenses_and_Copyrights"></a><span class="heading">Additional Licenses and Copyrights</span></p>
+    <blockquote>
+      <p><span style='font-size:10.0pt;font-family:Arial'>By installing this product,
+        in addition to the Adobe license terms, you also agree to be bound by the third-party
+        terms specified in the <a href="additional-legal-notices.htm">additional-legal-notices.htm</a> document, provided to you with the Adobe product documentation. Adobe
+        recommends that you review these third-party terms.</span></p>
+    </blockquote>
+    <p><span style='font-size:10.0pt;font-family:&quot;Courier New&quot;'><a href="#Contents"><span
+style='font-size:7.5pt;font-family:Arial'>Back to Contents</span></a></span></p>
+    <div class="MsoNormal" align="center" style='text-align:center'><span
+style='font-size:10.0pt;font-family:&quot;Courier New&quot;'>
+      <hr size="2" width="100%" noshade="noshade" color="black" align="center" />
+    </span></div>
+    <p>&copy; 2004-2006 Adobe Macromedia LLC Software and its licensors. All rights   reserved. </p>
+  </div>
+</div>
+</body>
+</html>

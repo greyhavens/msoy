@@ -1,0 +1,36 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Photo Viewer Readme</title>
+<link href="../readme.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h1>Photo Viewer Readme </h1>
+<p><a href="PhotoViewer.html" target="_blank">Run Photo Viewer </a></p>
+<p>The Photo Viewer application is a straightforward photo-viewing application. The first screen shows thumbnails of each photo in the gallery. When you click  those thumbnails,  the selected image shows in the main part of the screen. The next screen is a different list view, which uses a component that simulates a carousel. If you press  the Next and Previous buttons,  the carousel rotates so that the selected image is centered. The final view is a slide show. The image shows full-screen, but if you hold the mouse over it, control bars  appear that show the details. You can also pause the slide show, move to another image, or change back to other views. </p>
+
+<h2>Flex framework features</h2>
+
+<p>The thumbnail view shows how you can use a HorizontalList component  to display images, especially when you use a custom itemRenderer that controls its own highlighting and states, based on the user's selection. The Carousel is a custom component that moves and resizes the images by using effects. This component is  simple, but you could create more complex animations. Notice how easy it is to add the corner decorations by using the Graphics class in the CarouselImage component. The slide show is also straightforward, but demonstrates how sometimes you must customize the mouse event handling to accurately show and hide the control bars.</p>
+<p>This application has been made keyboard accessible. All content and buttons are focusable without a mouse and the navigation bar in the slideshow view can be controlled using the up and down arrow keys. Note that the slideshow keyboard behavior is not based on a standard interaction paradigm, which means that it would be important to document similar usage in your own applications. </p>
+<p>This application also shows how to use resource bundles to internationalize and localize your application. The build scripts show how you can change the locale of the application, which  compiles in a different resource bundle. Bundles for the application are provided for English, Japanese, French, and German. </p>
+<h2>Notes for Adobe<sup class="h2sup">&reg;</sup> Flex<sup class="h2sup">&#8482;</sup> Builder<sup class="h2sup">&#8482;</sup> 2</h2>
+
+<p>The &quot;run&quot; links in this Readme file point to an HTML wrapper that is located in the same directory as the Readme, which in turn must be in the same directory as the compiled SWF file. If you are running this application in Flex Builder,  the compiled SWF file and its matching HTML wrapper may be in the <a href="bin/PhotoViewer.html">bin</a> directory. </p>
+<p>To change the language of the application from U.S. English, select  Project &gt; Properties. Select the Flex Compiler page, in the Additional compiler arguments box, change the <code>-locale</code> setting  to the language of your choice. All localized properties files are in the locale directory. </p>
+<p>If you download the photoviewer source from adobe.com and have created a new project for this application, be sure that this application compiles with the necessary arguments. select  Project &gt; Properties. Select the Flex Compiler page, in the Additional compiler arguments box, change the value to:
+-use-network=false -library-path+=locale/{locale} -source-path+=locale/{locale} -locale=en_US. Otherwise, you will get an error that says, "Unable to resolve a class for ResourceBundle: strings".
+
+<h2>Notes for Adobe<sup class="h2sup">&reg;</sup> Flex<sup class="h2sup">&#8482;</sup> SDK</h2>
+<p>The build script for the Photo Viewer application assumes that you  run the application  from the local
+  file system (<code>file:///</code> in your browser).  If you plan to run the application from a web
+  server (<code>http://</code> in your browser), change the <code>-use-network</code> setting in
+the build script to <code>true</code>.</p>
+<p>To change the language of the application from U.S. English, edit the appropriate build script, and change the <code>-locale</code> setting to the language of your choice. All localized properties files are in the locale directory. </p>
+<p><a href="PhotoViewer.html" target="_blank">Run Photo Viewer </a></p>
+</body>
+</html>

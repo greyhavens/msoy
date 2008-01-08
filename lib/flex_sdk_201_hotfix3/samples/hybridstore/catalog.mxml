@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+	paddingTop="0" paddingLeft="0" paddingRight="0" paddingBottom="0" styleName="plain"
+    backgroundColor="#FFFFFF" initialize="setupCallbacks()" creationComplete="srv.send()">
+
+    <mx:Script>
+        <![CDATA[
+
+		private var min:int = 0;
+		private var max:int = 1000;
+		private var _camera:Boolean;
+		private var _video:Boolean;
+		private var _triband:Boolean;
+
+        private function filterItem(item:Object):Boolean
+        {
+        	return	(item.price >= min && item.price <= max) &&
+					(!_camera || item.camera) &&
+					(!_video || item.video) &&
+					(!_triband || item.triband);
+        }
+
+		private function setupCallbacks():void
+		{
+		    if (ExternalInterface.available)
+		    {
+		        ExternalInterface.addCallback("setMinimum", setMinimum);
+		        ExternalInterface.addCallback("setMaximum", setMaximum);
+		        ExternalInterface.addCallback("setCamera", setCamera);
+		        ExternalInterface.addCallback("setVideo", setVideo);
+		        ExternalInterface.addCallback("setTriband", setTriband);
+		        ExternalInterface.addCallback("layoutTiles", layoutTiles);
+		    }
+		}
+
+		public function setMinimum(minimum:int):void
+		{
+			min = minimum;
+			if (list != null)
+			    list.filter(filterItem, false);
+		}
+
+		public function setMaximum(maximum:int):void
+		{
+			max = maximum;
+			if (list != null)
+			    list.filter(filterItem, false);
+		}
+
+		public function setCamera(camera:Boolean):void
+		{
+			_camera = camera;
+			if (list != null)
+			    list.filter(filterItem, true);
+		}
+
+		public function setVideo(video:Boolean):void
+		{
+			_video = video;
+			if (list != null)
+			    list.filter(filterItem, true);
+		}
+
+		public function setTriband(triband:Boolean):void
+		{
+			_triband = triband;
+			if (list != null)
+			    list.filter(filterItem, true);
+		}
+        
+        public function layoutTiles():void
+        {
+            if (list != null)
+        	    list.layoutTiles();	
+        }
+
+		]]>
+    </mx:Script>
+
+    <mx:HTTPService id="srv" url="catalog.xml" result="list.filter(filterItem, true)"/>
+
+	<AnimatedTileList id="list" dataProvider="{srv.lastResult.catalog.product}" 
+		itemRenderer="Thumbnail" width="700" height="528"/>
+		
+</mx:Application>

@@ -1,0 +1,159 @@
+/*
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+*/
+
+/* Style for color-specific state - Beige */
+
+/*
+//----------------------------
+//  Global styles
+//----------------------------
+*/
+.global
+{
+    highlightAlphas:        .5, .25;
+    borderColor:            #939A9D;
+    headerColors:           #A65904, #E68701;
+    themeColor:             #75B1CE;
+    rollOverColor:          #D6E6EE;
+    selectionColor:         #B8D5E4;
+}
+
+/*
+//----------------------------
+// Type selectors
+//----------------------------
+*/
+Application
+{
+    backgroundColor:		#EAE6DD;
+    backgroundImage:        Embed("assets/beige_background.jpg");
+}
+
+/*
+//----------------------------
+// Apply to Panels and Alerts by default
+//----------------------------
+*/
+.windowStatus {
+	color: #FFCC99;
+}
+
+.windowStyles {		/* catalog panel's title text */
+	color: #FFCC99;
+}
+
+/*
+//----------------------------
+// Named styles
+//----------------------------
+*/
+
+.colorPanel /* for the background of some surfaces */
+{
+    borderStyle:            "solid";
+    borderThickness:        0;
+    backgroundColor:		#BCB29F;
+    backgroundAlpha:		0.4;
+    color: 					#170505;
+    cornerRadius:           4;
+    dropShadowEnabled:      true;
+}
+
+.homeProgramHeader /* in HomeView */
+{
+    fontWeight:             "bold";
+    fontSize:               13;
+    color:                  #BE7E3F;
+}
+
+.homeMap
+{
+    borderStyle:            "solid";
+    cornerRadius:           4;
+    backgroundColor:        #BE7E3F;
+    alpha:                  1;
+    dottedMap:              Embed("assets/beige_dotted_map.png");
+}
+
+.instructions
+{
+    alpha:                  .85;
+    color:                  #5C5857;
+}
+
+.storeControlBar
+{
+    fillAlphas: 			.60, .40;
+    fillColors: 			#8F8879, #BCB29F;
+    highlightAlphas:		.05, .25;
+    cornerRadius: 			3;
+	shadowDistance:         4;
+	paddingLeft:            0;
+	paddingRight:           0;
+	paddingTop:             0;
+	paddingBottom:          0;
+	horizontalGap:          0;
+    storeLogo:              Embed("assets/logo_orange.png");
+}
+
+.storeButtonBar
+{
+    cornerRadius:           0;
+    buttonStyleName:        "storeButton";
+    themeColor:             #A65904;
+}
+
+.storeButton
+{
+    cornerRadius:           0;
+    fillColors:             #8F8879, #BCB29F, #A65904, #E68701;
+    fillAlphas:             1, 1;
+    highlightAlphas:        .5, .25;
+    fontWeight:             "normal";
+    selectedOverSkin:       ClassReference("samples.flexstore.ButtonBarButtonSkin");
+    selectedUpSkin:         ClassReference("samples.flexstore.ButtonBarButtonSkin");
+    overSkin:               ClassReference("samples.flexstore.ButtonBarButtonSkin");
+}
+
+.catalogTitleButtonSelected
+{
+    color:                  #FFFFFF;
+    fontWeight:             "bold";
+}
+
+.catalogTitleButtonDeselected
+{
+    color:                  #222222;
+    fontWeight:             "bold";
+}
+
+.catalogTitleButtonHighlighted
+{
+    color:                  #FFCC99;
+    fontWeight:             "bold";
+}
+
+.catalogPanel
+{
+    highlightAlphas:        .5, .25;
+    headerColors:           #A65904, #E68701;
+    borderAlpha:            1;
+    borderColor:            #FFFFFF;
+    borderThicknessRight:   1;
+    borderThicknessBottom:  1;
+    paddingRight:           0;
+    paddingBottom:          0;
+}
+
+

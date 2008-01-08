@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<project name="framework" default="main" basedir=".">
+
+    <property name="compc.dir" value="${basedir}/../bin" />
+    <property name="locale.dir" value="locale" />    
+
+    <target name="main" depends="build-framework,build-framework-rb" />
+    
+    <target name="build-framework" depends="setup" description="use this to build framework.swc">
+
+        <property file="framework-classes.properties"/>
+        
+        <exec executable="${compc.dir}/${compc.exe}" failonerror="true">
+            <arg line="-include-namespaces=http://www.adobe.com/2006/mxml
+                       -namespace http://www.adobe.com/2006/mxml core-framework-manifest.xml
+                       -external-library-path=libs/playerglobal.swc
+                       -source-path=source
+                       -accessible=true
+                       -include-classes ${flex.classes}
+                       -include-file defaults.css defaults.css
+                       -include-file Assets.swf Assets.swf
+                       -resource-bundle-list=rb.properties
+                       -o libs/framework.swc"/>
+        </exec>
+    </target>
+    
+    <target name="build-framework-rb" depends="setup" description="use this to build framework_rb.swc">
+        <antcall target="framework-rb-call">
+            <param name="flex.locale" value="en_US" />
+        </antcall>
+    </target>
+
+    <target name="framework-rb-call">
+    
+        <property file="rb.properties"/>
+        <property name="flex.bundles" value="${bundles}" />
+        
+        <exec executable="${compc.dir}/${compc.exe}" failonerror="true">
+            <arg line="-library-path=
+                       -include-libraries=
+                       -source-path source ${locale.dir}/${flex.locale}
+                       -include-resource-bundles ${flex.bundles}
+                       -o ${locale.dir}/${flex.locale}/framework_rb.swc"/>
+        </exec>
+    </target>
+
+    <target name="setup" depends="os-props,win,not-win" />
+
+    <target name="os-props">
+        <condition property="windows">
+            <os family="windows" />
+        </condition>
+    </target>
+
+    <target name="win" if="windows">
+        <property name="compc.exe" value="compc.exe" />
+    </target>
+
+    <target name="not-win" unless="windows">
+        <property name="compc.exe" value="compc" />
+    </target>
+
+
+</project>

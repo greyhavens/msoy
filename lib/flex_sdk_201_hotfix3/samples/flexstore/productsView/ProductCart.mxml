@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" 
+    xmlns:productsView="productsView.*"
+    horizontalAlign="right"
+    paddingTop="8"
+    paddingBottom="8"
+    paddingRight="4"
+    paddingLeft="4"
+    horizontalScrollPolicy="off"
+    verticalScrollPolicy="off">
+    
+    <mx:Script>
+        <![CDATA[
+        
+        import mx.controls.Alert;
+        
+        import samples.flexstore.Product;
+        import samples.flexstore.ProductListEvent;
+        
+        [Bindable]
+        public var numProducts:int=0;
+        
+        [Bindable]
+        private var total:Number = 0;
+
+        private const SHIPPING:Number = 1.99;
+        
+        private function productListEventHandler(event:ProductListEvent):void
+        {
+            switch (event.type)
+            {
+                case ProductListEvent.ADD_PRODUCT:
+                    event.product.qty = 0;  
+                    //fall through into the same logic as dup          
+                case ProductListEvent.DUPLICATE_PRODUCT:
+                    event.product.qty++;
+                    total += event.product.price;
+                    numProducts++;
+                    break;            
+                case ProductListEvent.PRODUCT_QTY_CHANGE:
+                case ProductListEvent.REMOVE_PRODUCT:
+                    var items:Array = productList.items;
+                    total = 0; 
+                    numProducts = 0;
+                    for (var i:int=0; i < items.length; i++)
+                    {
+                        var product:Product = items[i].product;
+                        total += product.qty * product.price;
+                        numProducts += product.qty;
+                    }       
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        ]]>
+    </mx:Script>
+    
+    <mx:CurrencyFormatter currencySymbol="$" id="cf" precision="2"/>
+    
+    <mx:Label width="100%" text="Your Shopping Cart" styleName="sectionHeader"/>
+        
+    <productsView:ProductList id="productList" height="100%" width="100%"
+        newItemStartX="-100" newItemStartY="-100" 
+        addProduct="productListEventHandler(event)"
+        duplicateProduct="productListEventHandler(event)"
+        productQtyChange="productListEventHandler(event)"
+        removeProduct="productListEventHandler(event)"
+        showQuantity="true"
+        />
+    
+    <mx:Form verticalGap="0" paddingRight="0">
+
+        <mx:FormItem label="Total:">
+
+            <mx:Label width="70" text="{cf.format(total)}" textAlign="right"/>
+
+        </mx:FormItem>
+
+        <mx:FormItem label="Shipping:">
+
+            <mx:Label width="70" text="{cf.format(numProducts * SHIPPING)}" textAlign="right"/>
+
+        </mx:FormItem>
+
+        <mx:FormItem label="Grand Total:" fontWeight="bold">
+
+            <mx:Label width="70" text="{cf.format(total + (numProducts * SHIPPING))}" textAlign="right"/>
+
+        </mx:FormItem>
+
+    </mx:Form>
+
+    <mx:Button label="Submit Order"  click="Alert.show('This feature is not implemented in this sample', 'Submit Order')"/>
+
+</mx:VBox>

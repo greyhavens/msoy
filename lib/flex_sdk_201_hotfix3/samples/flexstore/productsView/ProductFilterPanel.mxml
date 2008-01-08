@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" 
+    xmlns:productsView="productsView.*"
+    xmlns:flexstore="samples.flexstore.*"
+    height="100%" 
+    paddingLeft="4" 
+    paddingRight="12" 
+    paddingTop="12" 
+    paddingBottom="8" 
+    verticalGap="0"
+    currentState="showingThumbnails">
+    
+    <mx:Metadata>
+       [Event(name="filter", type="samples.flexstore.ProductFilterEvent")] 
+       [Event("compare")]
+    </mx:Metadata>
+    
+    <mx:Script>
+        <![CDATA[
+        import mx.controls.sliderClasses.Slider;
+        import mx.controls.Alert; 
+        import samples.flexstore.ProductFilterEvent;
+           
+        private var thumbBeingPressed:Boolean;
+           
+        private function dispatchFilter():void
+        {
+            var event:ProductFilterEvent = 
+                new ProductFilterEvent(filter, thumbBeingPressed);
+            dispatchEvent(event);
+            currentState = "showingThumbnails";
+        }
+        
+        private function sliderValue(values:Array, index:int):Number
+        {
+            return values[index];
+        }
+        
+        private function productRemoved():void
+        {
+            if (currentState == "showingComparison")
+            {
+                if (productList.items.length == 0)
+                {
+                    dispatchFilter();
+                }
+                else
+                {
+                    attemptCompare();
+                }
+            }
+        }
+        
+        private function attemptCompare():void
+        {
+            if (productList.items.length > 0)
+            {
+                dispatchEvent(new Event("compare"));
+                currentState = "showingComparison";
+            }
+            else
+            {
+                Alert.show("There are no items to compare.", "Compare");
+            }
+        }
+        
+        ]]>
+    </mx:Script>
+    
+    <flexstore:ProductFilter id="filter">
+        <flexstore:series>{series.selectedItem}</flexstore:series>
+        <flexstore:minPrice>{sliderValue(priceSlider.values, 0)}</flexstore:minPrice>
+        <flexstore:maxPrice>{sliderValue(priceSlider.values, 1)}</flexstore:maxPrice>
+        <flexstore:triband>{cbTriband.selected}</flexstore:triband>
+        <flexstore:camera>{cbCamera.selected}</flexstore:camera>
+        <flexstore:video>{cbVideo.selected}</flexstore:video>
+    </flexstore:ProductFilter>
+
+    <mx:CurrencyFormatter currencySymbol="$" id="cf"/>    
+    
+    <mx:Label text="Find" styleName="sectionHeader"/>
+    
+    <mx:HBox width="100%">
+        <mx:TextInput styleName="glass" width="100%"/>
+        <mx:Button styleName="glass" label="Go" click="Alert.show('This feature is not implemented in this sample', 'Find')"/>
+    </mx:HBox>
+
+    <mx:Spacer height="18"/>
+
+    <mx:HRule width="100%"/>
+
+    <mx:Spacer height="8"/>
+
+    <mx:HBox paddingTop="0" paddingLeft="0" verticalAlign="bottom">
+        <mx:Label text="Filter" styleName="sectionHeader"/>
+        <mx:Label text="({filter.count} items selected)" color="{getStyle('themeColor')}" fontWeight="bold"/>
+    </mx:HBox>
+
+    <mx:Spacer height="8"/>
+
+    <mx:Label text="Series"/>
+
+    <mx:ComboBox id="series" styleName="glass" width="140" change="dispatchFilter();">
+        <mx:dataProvider>
+            <mx:Array>
+                <mx:String>All Series</mx:String>
+                <mx:String>3000</mx:String>
+                <mx:String>6000</mx:String>
+                <mx:String>7000</mx:String>
+                <mx:String>9000</mx:String>
+            </mx:Array>
+        </mx:dataProvider>
+    </mx:ComboBox>
+
+    <mx:Spacer height="18"/>
+
+    <mx:Label text="Price"/>
+
+    <mx:HSlider id="priceSlider" styleName="glassSlider" minimum="0" maximum="1100" tickInterval="50" snapInterval="10"
+        width="100%" thumbCount="2" values="[0,1100]" labels="[$0,$1100]" liveDragging="true" dataTipFormatFunction="{cf.format}"
+        change="dispatchFilter()"
+        thumbPress="thumbBeingPressed=true"
+        thumbRelease="thumbBeingPressed=false;dispatchFilter()"
+        />
+
+    <mx:Spacer height="18"/>
+
+    <mx:Label text="Required Features"/>
+
+    <mx:Spacer height="4"/>
+
+    <mx:CheckBox id="cbTriband" styleName="glass" label="Tri-Band" click="dispatchFilter();"/>
+    <mx:Spacer height="4"/>
+    <mx:CheckBox id="cbCamera" styleName="glass" label="Camera" click="dispatchFilter()"/>
+    <mx:Spacer height="4"/>
+    <mx:CheckBox id="cbVideo" styleName="glass" label="Video" click="dispatchFilter();"/>
+
+    <mx:Spacer height="18"/>
+
+    <mx:HRule width="100%"/>
+
+    <mx:Spacer height="8"/>
+
+        <mx:HBox>
+            <mx:Label text="Compare" styleName="sectionHeader"/>
+            <mx:Label text="(Drag items here to compare)" styleName="instructions"/>
+        </mx:HBox>
+
+
+    <mx:Spacer height="4"/>
+
+    <!-- height is maxItems * ProductListItem.HEIGHT + 2px border -->
+    <productsView:ProductList id="productList" height="{productList.maxItems * ProductListItem.HEIGHT + 2}" width="100%"
+        newItemStartX="300" newItemStartY="-100" maxItems="4" 
+        removeProduct="productRemoved()"/>
+
+    <mx:Spacer height="8"/>
+    
+    <mx:Button id="compareButton" styleName="glass" />
+    
+    <mx:states>
+       <mx:State name="showingThumbnails">
+          <mx:SetProperty target="{compareButton}" name="label" value="Compare Items" />
+          <mx:SetStyle target="{compareButton}" name="icon" value="@Embed('/assets/icon_compare.png')" />
+          <mx:SetEventHandler target="{compareButton}" name="click" handler="attemptCompare()" />
+       </mx:State>
+       <mx:State name="showingComparison">
+           <mx:SetProperty target="{compareButton}" name="label" value="Back to thumbnail view" />
+           <mx:SetStyle target="{compareButton}" name="icon" value="@Embed('/assets/icon_tiles.png')" />
+           <mx:SetEventHandler target="{compareButton}" name="click" handler="dispatchFilter()" />
+       </mx:State>
+    </mx:states>
+
+</mx:VBox>

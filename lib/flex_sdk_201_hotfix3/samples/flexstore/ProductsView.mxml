@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<!-- width and height hard-coded in the root tag to better support the 
+     Design view in FlexBuilder since we know the width and height from the 
+     settings in flexstore.mxml -->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+    xmlns:productsView="productsView.*"
+    width="990" height="550"
+    currentState="showFilter">
+
+    <mx:Script>
+        <![CDATA[
+        import mx.collections.ArrayCollection;
+        import samples.flexstore.Product;
+                
+        private var _catalog:ArrayCollection;
+        
+        [Bindable]
+        public function get catalog():ArrayCollection
+        {
+            return _catalog;
+        }
+        
+        public function set catalog(c:ArrayCollection):void
+        {
+            _catalog = c;
+            if (filterPanel != null)
+            {
+                filterPanel.filter.count = c.length;
+            }
+        }
+        
+        public function addToCompare(product:Product):void
+        {
+            //setting the state before adding the product avoids jumpiness in the transition, not sure why
+            currentState = 'showFilter';
+            filterPanel.productList.addProduct(product);
+        }
+        
+        public function addToCart(product:Product):void
+        {
+            //setting the state before adding the product avoids jumpiness in the transition, not sure why
+            currentState = 'showCart'; 
+            cartPanel.productList.addProduct(product);
+        }
+        
+        
+        ]]>
+    </mx:Script>
+    
+    <mx:HBox 
+        styleName="colorPanel"
+        dropShadowEnabled="true" 
+        height="100%" width="100%" 
+        verticalScrollPolicy="off" 
+        horizontalGap="0">
+    
+        <productsView:Grip id="filterGrip" gripIcon="@Embed('/assets/icon_magnifier.png')" 
+            gripTip="Show filter panel" click="currentState = 'showFilter'"/>
+    
+        <productsView:ProductFilterPanel id="filterPanel" width="265" height="100%"
+            filter="catalogPanel.filter(event.filter, event.live)"
+            compare="catalogPanel.compare(filterPanel.productList.getProducts())"
+            creationComplete="if (catalog) filterPanel.filter.count = catalog.length"/>
+    
+        <mx:Spacer width="100%"/>
+        
+        <productsView:ProductCart id="cartPanel" width="265" height="100%"/>
+
+        <productsView:Grip id="cartGrip" gripIcon="@Embed('/assets/icon_cart_empty.png')"
+            gripTip="Show cart" click="currentState = 'showCart'"/>
+    
+    </mx:HBox>
+        
+    <productsView:ProductCatalogPanel id="catalogPanel" y="4" width="685" height="540"
+        catalog="{catalog}"
+        compare="addToCompare(event.product)"
+        purchase="addToCart(event.product)"
+        cartCount="{cartPanel.numProducts}"/>
+    
+    <mx:states>
+       <mx:State name="showFilter">
+          <mx:SetStyle target="{catalogPanel}" name="left" value="285"/>
+       </mx:State>        
+       <mx:State name="showCart">
+           <mx:SetStyle target="{catalogPanel}" name="right" value="285"/>
+       </mx:State>
+    </mx:states>
+    
+    <!-- 
+      make sure to use transitions here instead of applying a Move effect
+      to the Panel itself which will result in odd behavior
+    -->
+    <mx:transitions>
+       <mx:Transition fromState="*" toState="*">
+          <mx:Move target="{catalogPanel}" />
+       </mx:Transition>
+    </mx:transitions>
+        
+</mx:Canvas>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" 
+	implements="mx.controls.listClasses.IDropInListItemRenderer"
+	width="100" height="110" initialize="loadResources()"
+    paddingTop="0" paddingBottom="0"
+    verticalScrollPolicy="off" horizontalScrollPolicy="off"
+	verticalGap="0" horizontalAlign="center" 
+	rollOver="updatePosition(event)"
+	rollOut="updatePosition(event)">
+	
+	<mx:Script>
+		<![CDATA[
+		    import mx.events.FlexEvent;
+		    import mx.events.ListEvent;
+		    import mx.controls.listClasses.ListBase;
+			import mx.controls.listClasses.IDropInListItemRenderer;
+			import mx.controls.listClasses.BaseListData;
+		
+			import mx.resources.*;
+			
+			[ResourceBundle("strings")]
+			[Bindable]
+			private var stringResources:ResourceBundle;
+			[Bindable]
+			private var ofWord:String;
+			
+			private function loadResources():void
+			{
+				ofWord = stringResources.getString("ofWordKey");
+			}
+
+		    [Bindable]
+			private var listOwner:ListBase;
+			[Bindable]
+			private var index:int;
+			[Bindable]
+			private var positionString:String;
+		    
+			private var _listData:BaseListData;
+
+		    [Bindable]
+		    public function get listData():BaseListData
+		    {
+		    	return _listData;
+		    }
+		    
+		    public function set listData(value:BaseListData):void
+		    {
+		    	if (_listData != value)
+		    	{
+			    	_listData = value;
+					listOwner = _listData.owner as ListBase;
+					
+					// use weak references so when the listOwner changes, we garbage collect old listeners
+					listOwner.addEventListener(FlexEvent.VALUE_COMMIT, updatePosition, false, 0, true);
+					listOwner.addEventListener(Event.CHANGE, updatePosition, false, 0, true);
+	    	    }
+		    }
+		    
+		    private function updatePosition(event:Event):void
+		    {
+                index = listOwner.itemRendererToIndex(this);
+                positionString = (index + 1) + " " + ofWord +" " + listOwner.dataProvider.length;
+                
+                if (index == listOwner.selectedIndex)
+                {
+                    currentState = 'selected';
+                }
+                else if (event.type == MouseEvent.ROLL_OVER)
+                {
+                    currentState = 'rollover';
+                }
+                else
+                {
+                    currentState = '';
+                }
+		    }
+		]]>
+	</mx:Script>
+	
+	<mx:Label id="position" width="100" height="20"/>
+	
+	<mx:Canvas id="imageBox" width="95%" height="90" borderStyle="solid">
+    	<mx:Image source="galleries/{data.source}" width="100%" height="100%" 
+    	    horizontalAlign="center" verticalAlign="middle" />		
+	</mx:Canvas>
+	
+    <mx:states>
+        <mx:State name="rollover">
+            <mx:SetProperty target="{position}" name="text" value="{positionString}" />
+            <mx:SetStyle target="{imageBox}" name="styleName" value="thumbnailRolledOver" />
+        </mx:State>
+        <mx:State name="selected" basedOn="rollover">
+            <mx:SetStyle target="{imageBox}" name="styleName" value="thumbnailSelected" />           
+        </mx:State>
+    </mx:states>
+    
+</mx:VBox>

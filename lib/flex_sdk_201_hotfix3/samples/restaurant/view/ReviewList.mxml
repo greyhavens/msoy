@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="view.*"
+    width="100%" height="100%"
+    verticalGap="4"
+    creationComplete="initComp()"
+    verticalScrollPolicy="off" 
+    showInAutomationHierarchy="true">
+
+    <mx:Script>
+
+        <![CDATA[
+        import samples.restaurant.Review;
+        import samples.restaurant.ServiceLocator;
+        import samples.restaurant.TokenResponder;
+
+        import mx.collections.ArrayCollection;
+        import mx.rpc.AbstractService;
+        import mx.rpc.AsyncToken;
+        import mx.rpc.events.ResultEvent;
+        import mx.utils.ArrayUtil;
+
+
+    	// Reference to the single WebService instance for the RestaurantWS web service.
+        private var service:AbstractService;
+
+    	// The list of reviews
+        [Bindable]
+        public var reviews:ArrayCollection = new ArrayCollection();
+        
+        [Bindable]
+        public var beginTabIndex:int;
+
+        private function initComp():void 
+		{
+            service = ServiceLocator.getRestaurantService();
+            addEventListener("focus", focusEventHandler);
+        }
+        
+        /* when the user cancels from writing a new review focus should go back to the 
+           add review button */
+        private function focusEventHandler(event:Event):void
+        {
+        	focusManager.setFocus(addButton);	
+        }
+
+        // The restaurant for which we need to display reviews
+        private var _restaurant:Object;
+
+        public function set restaurant(restaurant:Object):void 
+		{
+      		// When the restaurant changes: retrieve the list of reviews
+          	reviews = null;
+            _restaurant = restaurant;
+            if (restaurant != null) 
+			{
+                var token: AsyncToken = AsyncToken(service.getReviews(restaurant.restaurantId));
+                // Specify that we want the 'getReviewsResult' function to be called when the call completes.
+                // See control.RestaurantService.as for details on how the resultHandler token is used to invoke getReviewsResult.
+                token.addResponder(new TokenResponder(getReviewsResult, "Error Retrieving Review"));
+            }
+        }
+
+        [Bindable]
+        public function get restaurant():Object 
+		{
+            return _restaurant;
+        }
+
+        private function getReviewsResult(event:ResultEvent):void 
+		{
+            //deserialize the anonymous review objects into
+            //a strongly typed instance
+            var temp:ArrayCollection = new ArrayCollection();
+            var source:Array = ArrayUtil.toArray(event.result.source);
+            for (var i:int=0; i < source.length; i++) 
+			{
+                //Review knows how to take an anonymous object
+                //and copy the properties over
+                temp.addItem(new Review(source[i]));
+            }
+            reviews = temp;
+        }
+
+        ]]>
+    </mx:Script>
+
+    <mx:DateFormatter id="df" formatString="MMMM DD, YYYY"/>
+
+  <mx:HBox horizontalGap="4" width="100%" horizontalAlign="left">
+    <mx:Label text="Reviews" fontSize="12" fontWeight="bold"/>
+     <mx:Button id="addButton" icon="@Embed('../assets/img/plus.png')" toolTip="Write Review" width="50"
+         click="rtr.addNewReview()" tabIndex="{beginTabIndex}" 
+         creationComplete="if(addButton.accessibilityProperties != null)addButton.setStyle('focusThickness', 3)"/>
+  </mx:HBox>
+
+  <mx:VBox id="containingBox" width="100%" height="100%" borderStyle="outset" 
+  	verticalGap="0" horizontalScrollPolicy="off" verticalScrollPolicy="off" >
+
+         <mx:HBox id="header" paddingLeft="4" width="100%" backgroundColor="#CCCCCC">
+            <mx:Label text="Rating" width="100"/>
+            <mx:VRule height="18"/>
+            <mx:Label text="Reviewer" width="120"/>
+            <mx:VRule height="18"/>
+             <mx:Label text="Date" width="120"/>
+    	</mx:HBox>
+
+    <!--
+    The ReviewThumbnailRepeater creates ReviewThumbnails for each
+    review.  We could have used a regular repeater here, but by writing our
+    own we have much better control over when and how children get
+    created.  In this instance we only create children when the
+    binding sets the dataProvider, and then add a child when the
+    user wants to add a new review.  The standard repeater would
+    have recreated all of the children when the user added a new
+    review or canceled a new review.
+    -->
+    <ThumbnailRepeater id="rtr" minHeight="5"
+    	dataProvider="{reviews}" 
+    	restaurant="{restaurant}" 
+    	width="100%" height="100%" beginTabIndex="{beginTabIndex + 1}" 
+    	tabEnabled="true" />
+
+  </mx:VBox>
+</mx:VBox>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+    xmlns:productsView="productsView.*"
+    horizontalScrollPolicy="off" verticalScrollPolicy="off">
+
+    <mx:Metadata>
+        [Event(name="purchase", type="samples.flexstore.ProductThumbEvent")]
+        [Event(name="compare", type="samples.flexstore.ProductThumbEvent")]
+        [Event(name="browse", type="samples.flexstore.ProductThumbEvent")]
+    </mx:Metadata>
+
+    <mx:Script>
+        <![CDATA[
+
+		import mx.events.*;
+		
+		import samples.flexstore.Product;
+		import samples.flexstore.ProductThumbEvent;
+
+        private var _product:Product;
+        
+        [Bindable]
+        public function get product():Product
+        {
+            return _product;
+        }
+        
+        public function set product(p:Product):void
+        {
+            _product = p;
+            tn.selectedIndex = 0;
+        }
+        
+	]]>
+    </mx:Script>
+
+    <mx:CurrencyFormatter currencySymbol="$" id="cf" precision="2"/>
+
+    <mx:TabNavigator id="tn" width="100%" height="100%" 
+                    left="4" right="8" top="4" bottom="4">
+
+        <mx:VBox width="100%" height="100%" label="Features" verticalGap="8"
+            paddingLeft="8" paddingTop="8" paddingRight="8" paddingBottom="8" showEffect="Fade" hideEffect="Fade">
+
+            <mx:HBox width="100%" horizontalGap="12">
+
+                <mx:Image id="img" width="101" height="200" source="{product.image}"/>
+
+                <mx:VBox id="descr" width="100%" height="100%" paddingTop="0" verticalGap="4">
+
+                    <mx:Label text="{product.name}" fontSize="11" fontWeight="bold"/>
+
+	                <mx:Text text="{product.featureString}" width="80" height="48"/>
+
+                    <mx:Label text="{product.highlight1}" color="#EE8D0C"/>
+
+                    <mx:Label text="{product.highlight2}" color="#EE8D0C"/>
+
+                    <mx:Label text="{cf.format(product.price)}" fontWeight="bold"/>
+
+                </mx:VBox>
+            </mx:HBox>
+
+            <mx:Text id="descriptionText" width="100%" height="100%" text="{product.description}"/>
+
+        </mx:VBox>
+
+        <productsView:ProductSupport width="100%" height="100%" label="Support" showEffect="Fade" hideEffect="Fade"/>
+
+    </mx:TabNavigator>
+
+    <mx:VBox verticalGap="4" right="16" top="36">
+        <mx:Spacer width="100%"/>
+        <mx:Button icon="@Embed('/assets/icon_cart_empty.png')" click="dispatchEvent(new ProductThumbEvent(ProductThumbEvent.PURCHASE, product))" width="30" toolTip="Add to cart"/>
+        <mx:Button icon="@Embed('/assets/icon_compare.png')" click="dispatchEvent(new ProductThumbEvent(ProductThumbEvent.COMPARE, product))" width="30" toolTip="Add to compare list"/>
+        <mx:Button icon="@Embed('/assets/icon_tiles.png')" click="dispatchEvent(new ProductThumbEvent(ProductThumbEvent.BROWSE, product));" width="30" toolTip="Back to thumbnail view"/>
+    </mx:VBox>
+
+</mx:Canvas>

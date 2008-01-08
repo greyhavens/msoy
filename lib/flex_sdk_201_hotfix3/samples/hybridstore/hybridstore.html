@@ -1,0 +1,135 @@
+<!-- saved from url=(0014)about:internet -->
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003-2006 Adobe Macromedia Software LLC and its licensors.
+// All Rights Reserved.
+// The following is Sample Code and is subject to all restrictions on such code
+// as contained in the End User License Agreement accompanying this product.
+// If you have received this file from a source other than Adobe,
+// then your use, modification, or distribution of it requires
+// the prior written permission of Adobe.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<html>
+<head>
+<title>Hybrid Store</title>
+<link rel="stylesheet" type="text/css" href="hybridstore.css">
+
+<script type="text/javascript" src="AC_OETags.js" ></script>
+<script type="text/javascript" src="js/YAHOO.js" ></script>
+<script type="text/javascript" src="js/event.js" ></script>
+<script type="text/javascript" src="js/dom.js" ></script>
+<script type="text/javascript" src="js/dragdrop.js" ></script>
+<script type="text/javascript" src="js/slider.js" ></script>
+
+<script type="text/javascript">
+
+    var slider1, slider2;
+
+    function init() {
+
+        document.getElementById("camera").checked = false;
+        document.getElementById("video").checked = false;
+        document.getElementById("triband").checked = false;
+
+        slider1 = YAHOO.widget.Slider.getHorizSlider("slider1", "thumb1", 0, 180, 2);
+        slider1.onChange = function(offsetFromStart) {
+            var newValue = offsetFromStart * 5;
+            document.getElementById("value1").innerHTML = newValue;
+            try
+            {
+                //this can be called early so catch any errors pre-callback registration
+                getSWF().setMinimum(newValue);
+            }
+            catch (e) {}
+        };
+        slider1.onMouseUp = function() {
+            getSWF().layoutTiles();
+        };
+        slider2 = YAHOO.widget.Slider.getHorizSlider("slider2", "thumb2", 180, 0, 2);
+        slider2.onChange = function(offsetFromStart) {
+            var newValue = 1000 + offsetFromStart * 5;
+            document.getElementById("value2").innerHTML = newValue;
+            try
+            {
+                //this can be called early so catch any errors pre-callback registration
+                getSWF().setMaximum(newValue);
+            }
+            catch (e) {}
+        };
+        slider2.onMouseUp = function() {
+            getSWF().layoutTiles();
+        };
+    }
+
+    var theSWF;
+
+    function getSWF() {
+        if (theSWF == null)
+        {
+            theSWF = document.getElementById("flexApp");
+        }
+        return theSWF;
+    }
+
+
+    window.onload = init;
+
+</script>
+
+</head>
+<body style="margin-top:20px; margin-left:20px; background: #E57000 url('assets/background.jpg'); background-repeat: no-repeat;">
+
+<div style="position: absolute; top:30px; left:750px; color: #DDDDDD">Welcome, <b>Flex User</b> | <a href="" style="color: #DDDDDD">Logout</a></div>
+
+<div style="position: absolute; top:120px; left:40px; width:220px; height:510px;">
+
+<font style="color: #E57000; font-weight: bold">Price Range:</font><br />
+<br />
+
+<div id="slider1" class="sliderBG"
+    onkeypress="return handleHorizSliderKey(this, YAHOO.util.Event.getEvent(event))" >
+    Minimum: $<span id="value1" >0</span>
+    <div id="thumb1" class="thumb"><img id="img1" src="assets/xdslider.png"></div>
+</div>
+<br /><br />
+<div id="slider2" class="sliderBG"
+    onkeypress="return handleHorizSliderKey(this, YAHOO.util.Event.getEvent(event))" >
+    Maximum: $<span id="value2" >1000</span>
+    <div id="thumb2" class="thumbRight"><img src="assets/xdslider.png"></div>
+</div>
+
+<br /><br /><br />
+
+<font style="color: #E57000; font-weight: bold">Features:</font><br />
+<br />
+<table>
+<tr><td><input type="checkbox" id="camera" onClick="getSWF().setCamera(this.checked);"/></td><td>Camera</td></tr>
+<tr><td><input type="checkbox" id="video" onClick="getSWF().setVideo(this.checked);"/></td><td>Video</td></tr>
+<tr><td><input type="checkbox" id="triband" onClick="getSWF().setTriband(this.checked);"/></td><td>Triband</td></tr>
+</table>
+
+</div>
+
+
+<div style="position: absolute; top:101px; left:249px; width:700px; height:528px; overflow:hidden;">
+<script>
+AC_FL_RunContent(
+                    "src", "catalog",
+                    "width", "700",
+                    "height", "528",
+                    "align", "middle",
+                    "id", "flexApp",
+                    "quality", "high",
+                    "bgcolor", "#ffffff",
+                    "name", "catalog",
+                    "allowScriptAccess","always",
+                    "type", "application/x-shockwave-flash",
+                    "pluginspage", "http://www.adobe.com/go/getflashplayer"
+    );
+</script>
+</div>
+</body>
+</html>

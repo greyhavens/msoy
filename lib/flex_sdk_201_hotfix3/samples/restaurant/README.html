@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Restaurant Finder Readme</title>
+<link href="../readme.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h1>Restaurant Finder Readme </h1>
+<p><a href="finder.html" target="_blank">Run Restaurant Finder</a><br />
+<a href="recentReviews.html" target="_blank">Run Recent Reviews</a></p>
+<p><a class="highlight" href="#security">Getting security errors?  See Deployment Notes</a></p>
+<p>The Restaurant Finder application shows how to use the Adobe<sup>&reg;</sup> Flex<sup>&#8482;</sup> SOAP web-service support
+  for CRUD operations in a master-detail type application.  The default state
+  shows a list of all restaurants in the system.  When you click   on a restaurant,
+   the details about that restaurant and summaries of reviews appear. When you select a summary, the details of the review appear.  You can add  reviews to
+  the review list.  You can also filter the list of restaurants  by restaurant
+type.</p>
+<p>There is also an application to view the 10 most recent restaurant reviews.
+  From the recent reviews application, click the restaurant name. The 
+  Finder application opens with the restaurant selected. The recent reviews
+  application shows how Flex can interact with RESTful style web services in
+  addition to the SOAP-style web services.  A small component
+  like this could be a useful addition to a larger site like a portal.</p>
+<p>You can configure the Restaurant Finder application  to connect to a local deployment of
+  the  services or the Adobe hosted  services.  To change the location
+  of the  services, edit the <em>samples/restaurant/ServiceLocator.as</em> file, and
+  replace the URL in both of the lines that contain <code>&quot;ws.wsdl = &quot;</code>.  You must then
+  recompile the finder.mxml application.  The  hosted SOAP services have the following URLs: </p>
+<ul>
+<li>http://www.adobe.com/go/flex_restaurant_category_service?wsdl</li>
+<li>http://www.adobe.com/go/flex_restaurant_restaurant_service?wsdl</li>
+</ul>
+<p>To change the location of the REST service for the Recent Reviews app open recentReviews.mxml and replace the url in the HTTPService. You must then recompile the recentReviews.mxml application. The URL for the hosted REST service is http://www.adobe.com/go/flex_restaurant_recent_reviews. </p>
+<p>To deploy the services you must have a Java servlet
+  container.  You can use Ant to build a WAR file that contains everything you
+  need.  You can also run the &quot;compile&quot; target just to build the Java classes and
+  then copy the recentReviews.jsp and WEB-INF folder into an existing WAR.
+  You may need to adjust your wsdl URLs according to the WAR file's context path and
+  your servlet container's port.  The source code for the SOAP services is in the
+  WEB-INF/src folder and all services  use a local HSQL DB located in the
+  WEB-INF/db folder.</p>
+
+  <p>
+  This application has also been developed to be accessible to users with disabilities. You can  use the application with the keyboard alone, and the contents can be ready by a screen reader. Since this application has a fairly linear flow of control, 
+  it is well suited to be accessible. </p>
+  <h2>Flex framework features </h2>
+
+<p>The Restaurant Finder shows how simple it is to build CRUD applications on
+top of SOAP services.  Serialization and deserialization of SOAP requests
+and responses is automatically handled by Flex (though you'll see that we do
+convert some objects into strongly typed classes on our own).  Developers
+interact with SOAP services in a simple RPC fashion, dealing with objects, not
+SOAP packets, headers, and so on. </p>
+
+<p>The recentReviews application shows how easy it is to use an HTTPService to get data
+  from the server.  Although you could use the data directly, this application creates  a strongly typed class that provides type safety in other parts of the
+  application.</p>
+<p>The ReviewThumbnail class  shows how you can use states in components to edit 
+  in-context.  This class  contains summary and detail views,
+  maintains   loose coupling, and maximizes component reuse.  The Restaurant Finder application also shows
+  how you can use transitions  to control the appearance of moving from one
+  state to another.</p>
+  <p>
+  The entire application demonstrates how the tabIndex property can be used to control tab order for an application 
+  with a dynamic UI. The ReviewThumbnail component demonstrates one approach to ensuring proper tab order when states introduce additional complexity. Data binding is used to assign to the tabIndex, which simplifies the task tremendously.  </p>
+
+  <h2>Implementation notes</h2>
+
+<p>The list of reviews does not use the standard Flex Repeater component. The standard Repeater refreshes 
+all of the children when its dataProvider changes. This behavior had a negative performance impact for this 
+application. Instead, the application uses a custom repeater-like class, ThumbnailRepeater, which only 
+creates the children when the whole list of reviews changes. When you add a review, only one new child is 
+created, instead of all the children being recreated. By not using a standard Flex component, traditional list functionality had to be implemented. This included adding keyboard navigation between rows and taking that navigation into account for proper scrolling. Scrolling 
+was implemented by keeping track of the current pane pixel range and adjusting verticalScrollPosition when 
+the selected item was outside the range. </p>
+
+<p>This application includes a simple ServiceLocator class, which demonstrates one technique
+for centralizing your remote data access.  This ServiceLocator class re-uses the same service objects from multiple components without passing them around.  This is only one approach to this problem; for example, with more services,
+a different system might be appropriate.</p>
+
+<p>Notice that the finder handles  service results by using the Responder
+approach instead of listening for events.  This allows finer-grained control
+over each response.  This approach is also  useful when using centralized services so that
+you don't necessarily hear events for calls that weren't related to your
+component.</p>
+
+<p>The Rating component was written as an MXML component but could have easily
+been written solely in  ActionScript.</p>
+
+<p> A few additional classes were added for accessibility. In order to allow the user to tab through all of the components, 
+traditionally non-focusable components had to be made focusable. The application includes an accessible version of the 
+Label, Image and Text classes, along with an AccImpl helper class that controls screen reader interactions. The techniques 
+used for these classes can be extended for making other accessible components.</p>
+
+<p> For the standard accessible framework components, communicating with the screen reader is accomplished easily by setting a tooltip. 
+The screen reader will automatically read the tooltip when the component receives focus. For components that were modified to be made accessible, screen 
+reader messages can be controlled through the accessibilityProperties or by creating an accessibilityImplementation. 
+The use of accessibilityProperties is demonstrated in ReviewThumbnail and accessibilityImplementation is used for the 
+custom accessible Labels, Images, and Text components.
+
+<h2>Deployment notes</h2>
+<p><a name="security" id="security"></a>If you are not running this sample from within Adobe<sup>&reg;</sup> Flex<sup>&#8482;</sup> Builder<sup>&#8482;</sup> 2, the application may be affected by Adobe<sup>&reg;</sup> Flash<sup>&reg;</sup> Player security restrictions. Adobe expects that you initially run this sample on your local hard drive, by using a path that starts with <code>file:///</code>. However, the compiler for the sample  applications sets the <code>-use-network</code> flag  to <code>true</code>. This allows the individual applications to run, but may prevent them from loading the HTML files  in the same directory. If you click  a button to go to the other application, you might receive a run-time error. To avoid this, you can run the Restaurant Finder application  from a web server so that it is accessed with a path that starts with <code>http://</code>. If you create a project in Flex Builder for this sample, the sample runs  correctly, because Flex Builder creates a <em>policy file</em> that tells Flash Player that the application is safe to run. You can also <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html">edit your security settings</a> to trust these files. </p>
+<p>The hosted web services are behind a load-balancer and the different
+computers behind the load balancer maintain their own copies of the database.
+Therefore, reviews that you add in one instance of the application may not appear the next time you run the application.
+If this happens, you can refresh the application in your browser to try to
+access the correct database instance.</p>
+<h2>Notes for Adobe<sup class="h2sup">&reg;</sup> Flex<sup class="h2sup">&#8482;</sup> Builder<sup class="h2sup">&#8482;</sup> 2</h2>
+<p>The default HTML wrapper generated by Flex Builder for the Restaurant Finder application overwrites the 
+provided version and does not support url parameters (which the Recent Reviews application uses). To prevent 
+Flex Builder from overwriting the provided HTML wrapper, select Project &gt; Properties. Select the Flex 
+Compiler page, deselect the Generate HTML wrapper file option.  </p>
+<p> To run this application with accessibility enabled select Project &gt; Properties. Select the Flex Compiler page and check &quot;Generate accessible SWF file.&quot;</p>
+<p>To have Flex Builder compile the Recent Reviews application, you must add it to the Flex Applications list. </p>
+<p>The &quot;run&quot; links in this Readme file point to an HTML wrapper that is located in the same directory as the Readme, which in turn must be in the same directory as the compiled SWF file. If you are running this application in Flex Builder,  the compiled SWF file and its matching HTML wrapper may be in the <a href="bin/finder.html">bin</a> directory. </p>
+<h2>Notes for Adobe<sup class="h2sup">&reg;</sup> Flex<sup class="h2sup">&#8482;</sup> SDK</h2>
+<p>To compile with accessibility, add <code>-accessible=true</code> in the options <code></code>.</p>
+<p><a href="finder.html" target="_blank">Run Restaurant Finder</a><br />
+<a href="recentReviews.html" target="_blank">Run Recent Reviews</a></p>
+</body>
+</html>
+
+
+
