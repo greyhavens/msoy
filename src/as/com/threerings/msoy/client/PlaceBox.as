@@ -108,20 +108,15 @@ public class PlaceBox extends LayeredContainer
         _mask.graphics.drawRect(0, 0, width, height);
         _mask.graphics.endFill();
 
-        for (var ii :int = 0; ii < numChildren; ii ++) {
-            var child :DisplayObject = unwrap(getChildAt(ii));
-            if (child != _placeView) {
-                // don't resize our overlays
-                continue;
-            }
-
-            if (child is UIComponent) {
-                UIComponent(child).setActualSize(width, height);
-            } else if (child is PlaceLayer) {
-                PlaceLayer(child).setPlaceSize(width, height);
-            } else {
-                Log.getLog(this).warning("PlaceView is not a MsoyPlaceView or an UIComponent.");
-            }
+        if (_placeView == null) {
+            return;
+        }
+        if (_placeView is UIComponent) {
+            UIComponent(_placeView).setActualSize(width, height);
+        } else if (_placeView is PlaceLayer) {
+            PlaceLayer(_placeView).setPlaceSize(width, height);
+        } else {
+            Log.getLog(this).warning("PlaceView is not a MsoyPlaceView or an UIComponent.");
         }
     }
 
