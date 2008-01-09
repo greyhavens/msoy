@@ -1,0 +1,103 @@
+<html>
+<body>
+<base target="docs">
+<b>WhirledGameControl</b>
+<ul>
+<li> Event: <a href="asdocs/com/threerings/ezgame/AbstractGameControl.html#event:unload">Event.UNLOAD</a>
+<li> <a href="asdocs/com/threerings/ezgame/AbstractGameControl.html#isConnected()">isConnected()</a>
+<li> <a href="asdocs/com/threerings/ezgame/AbstractControl.html#doBatch()">doBatch()</a>
+<li> <b>local</b>
+     <ul>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#event:keyDown">KeyboardEvent.KEY_DOWN</a>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#event:keyUp">KeyboardEvent.KEY_UP</a>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#event:SizeChanged">SizeChangedEvent.SIZE_CHANGED</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#getSize()">getSize()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#feedback()">feedback()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#filter()">filter()</a>
+     <li> <a href="asdocs/com/whirled/LocalSubControl.html#backToWhirled()">backToWhirled()</a>
+     <li> <a href="asdocs/com/whirled/LocalSubControl.html#clearScores()">clearScores()</a>
+     <li> <a href="asdocs/com/whirled/LocalSubControl.html#getHeadShot()">getHeadShot()</a>
+     <li> <a href="asdocs/com/whirled/LocalSubControl.html#setMappedScores()">setMappedScores()</a>
+     <li> <a href="asdocs/com/whirled/LocalSubControl.html#setOccupantsLabel()">setOccupantsLabel()</a>
+     <li> <a href="asdocs/com/whirled/LocalSubControl.html#setPlayerScores()">setPlayerScores()</a>
+     <li> <a href="asdocs/com/whirled/LocalSubControl.html#setShowButtons()">setShowButtons()</a>
+     </ul>
+<li> <b>net</b>
+     <ul>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZNetSubControl.html#event:msgReceived">MessageReceivedEvent.MESSAGE_RECEIVED</a>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZNetSubControl.html#event:propChanged">PropertyChangedEvent.PROPERTY_CHANGED</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZNetSubControl.html#get()">get()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZNetSubControl.html#getPropertyNames()">getPropertyNames()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZNetSubControl.html#sendMessage()">sendMessage()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZNetSubControl.html#set()">set()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZNetSubControl.html#setImmediate()">setImmediate()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZNetSubControl.html#testAndSet()">testAndSet()</a>
+     </ul>
+<li> <b>player</b>
+     <ul>
+     <li> Event: <a href="asdocs/com/whirled/PlayerSubControl.html#event:flowAwarded">FlowAwardedEvent.FLOW_AWARDED</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZPlayerSubControl.html#getUserCookie()">getUserCookie()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZPlayerSubControl.html#setUserCookie()">setUserCookie()</a>
+     <li> <a href="asdocs/com/whirled/PlayerSubControl.html#awardPrize()">awardPrize()</a>
+     <li> <a href="asdocs/com/whirled/PlayerSubControl.html#awardTrophy()">awardTrophy()</a>
+     <li> <a href="asdocs/com/whirled/PlayerSubControl.html#getPlayerItemPacks()">getPlayerItemPacks()</a>
+     <li> <a href="asdocs/com/whirled/PlayerSubControl.html#holdsTrophy()">holdsTrophy()</a>
+     </ul>
+<li> <b>game</b>
+     <ul>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#event:ControlChanged">StateChangedEvent.CONTROL_CHANGED</a>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#event:GameEnded">StateChangedEvent.GAME_ENDED</a>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#event:GameStarted">StateChangedEvent.GAME_STARTED</a>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#event:OccupantEntered">OccupantChangedEvent.OCCUPANT_ENTERED</a>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#event:OccupantLeft">OccupantChangedEvent.OCCUPANT_LEFT</a>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#event:RoundEnded">StateChangedEvent.ROUND_ENDED</a>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#event:RoundStarted">StateChangedEvent.ROUND_STARTED</a>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#event:TurnChanged">StateChangedEvent.TURN_CHANGED</a>
+     <li> Event: <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#event:UserChat">UserChatEvent.USER_CHAT</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#amInControl()">amInControl()</a>
+     <li> <a href="asdocs/com/whirled/GameSubControl.html#endGame()">endGame()</a>
+     <li> <a href="asdocs/com/whirled/GameSubControl.html#endGameWithScore()">endGameWithScore()</a>
+     <li> <a href="asdocs/com/whirled/GameSubControl.html#endGameWithScores()">endGameWithScores()</a>
+     <li> <a href="asdocs/com/whirled/GameSubControl.html#endGameWithWinners()">endGameWithWinners()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#endRound()">endRound()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#getConfig()">getConfig()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#getControllerId()">getControllerId()</a>
+     <li> <a href="asdocs/com/whirled/GameSubControl.html#getItemPacks()">getItemPacks()</a>
+     <li> <a href="asdocs/com/whirled/GameSubControl.html#getLevelPacks()">getLevelPacks()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#getMyId()">getMyId()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#getOccupantIds()">getOccupantIds()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#getOccupantName()">getOccupantName()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#getRound()">getRound()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#getTurnHolder()">getTurnHolder()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#isInPlay()">isInPlay()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#isMyTurn()">isMyTurn()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#playerReady()">playerReady()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#restartGameIn()">restartGameIn()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#startNextTurn()">startNextTurn()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZGameSubControl.html#systemMessage()">systemMessage()</a>
+     <li> <b>seating</b>
+          <ul>
+          <li> <a href="asdocs/com/threerings/ezgame/EZSeatingSubControl.html#getMyPosition()">getMyPosition()</a>
+          <li> <a href="asdocs/com/threerings/ezgame/EZSeatingSubControl.html#getPlayerIds()">getPlayerIds()</a>
+          <li> <a href="asdocs/com/threerings/ezgame/EZSeatingSubControl.html#getPlayerNames()">getPlayerNames()</a>
+          <li> <a href="asdocs/com/threerings/ezgame/EZSeatingSubControl.html#getPlayerPosition()">getPlayerPosition()</a>
+          </ul>
+     </ul>
+<li> <b>services</b>
+     <ul>
+     <li> <a href="asdocs/com/threerings/ezgame/EZServicesSubControl.html#checkDictionaryWord()">checkDictionaryWord()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZServicesSubControl.html#getDictionaryLetterSet()">getDictionaryLetterSet()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZServicesSubControl.html#startTicker()">startTicker()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZServicesSubControl.html#stopTicker()">stopTicker()</a>
+     <li> <b>bags</b>
+          <ul>
+          <li> <a href="asdocs/com/threerings/ezgame/EZBagsSubControl.html#addTo()">addTo()</a>
+          <li> <a href="asdocs/com/threerings/ezgame/EZBagsSubControl.html#create()">create()</a>
+          <li> <a href="asdocs/com/threerings/ezgame/EZBagsSubControl.html#deal()">deal()</a>
+          <li> <a href="asdocs/com/threerings/ezgame/EZBagsSubControl.html#merge()">merge()</a>
+          <li> <a href="asdocs/com/threerings/ezgame/EZBagsSubControl.html#pick()">pick()</a>
+          </ul>
+     </ul>
+</ul>
+</body>
+</html>
