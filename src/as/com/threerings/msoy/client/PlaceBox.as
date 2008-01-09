@@ -29,6 +29,9 @@ public class PlaceBox extends LayeredContainer
     /** The layer priority of the scrolling chat. */
     public static const LAYER_CHAT_SCROLL :int = 20;
 
+    /** The layer priority of the occupant Listi. */
+    public static const LAYER_CHAT_LIST :int = 25;
+
     /** The layer priority of fading chat messages. */
     public static const LAYER_CHAT_STATIC :int = 30;
 
@@ -107,11 +110,16 @@ public class PlaceBox extends LayeredContainer
 
         for (var ii :int = 0; ii < numChildren; ii ++) {
             var child :DisplayObject = unwrap(getChildAt(ii));
+            if (child != _placeView) {
+                // don't resize our overlays
+                continue;
+            }
+
             if (child is UIComponent) {
                 UIComponent(child).setActualSize(width, height);
             } else if (child is PlaceLayer) {
                 PlaceLayer(child).setPlaceSize(width, height);
-            } else if (child == _placeView) {
+            } else {
                 Log.getLog(this).warning("PlaceView is not a MsoyPlaceView or an UIComponent.");
             }
         }
