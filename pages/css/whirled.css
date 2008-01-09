@@ -85,6 +85,15 @@
   text-align: center;
 }
 
+.FeedContainer a {
+  color: #355B6E;
+  text-decoration: none;
+}
+
+.FeedContainer a:hover {
+  text-decoration: underline;
+}
+
 .MePanelContainer {
   vertical-align: top;
 }
