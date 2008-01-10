@@ -290,9 +290,14 @@
 
 .FeedWidget .TextContainer {
   font-size: 12px;
-  padding: 3px;
+  padding: 3px 3px 3px 6px;
   width: 100%;
   text-align: left;
+}
+
+.FeedWidget .ThumbnailContainer {
+    height: 32px;
+    vertical-align: middle;
 }
 
 .FeedWidget .FeedIcon {

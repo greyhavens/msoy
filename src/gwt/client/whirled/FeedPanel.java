@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.FeedMessage;
 import com.threerings.msoy.person.data.FriendFeedMessage;
 import com.threerings.msoy.person.data.GroupFeedMessage;
@@ -33,6 +34,7 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
+import client.util.MediaUtil;
 import client.util.MsoyUI;
 import client.game.GameDetailPanel;
 
@@ -307,6 +309,53 @@ public class FeedPanel extends VerticalPanel
             return null;
         }
 
+        /**
+         * Helper function which creates a clickable widget from the supplied media information.
+         */
+        protected Widget buildMedia (final FeedMessage message)
+        {
+            MediaDesc media;
+            ClickListener clicker;
+            switch (message.type) {
+            case 102: // FRIEND_WON_TROPHY
+                // TEMP: remove after servers are 4 weeks past 01/10/2008
+                if (message.data.length < 3) {
+                    return null;
+                }
+                // ENDTEMP
+                media = MediaDesc.stringToMD(message.data[2]);
+                if (media == null) {
+                    return null;
+                }
+                clicker = new ClickListener() {
+                    public void onClick (Widget sender) {
+                        Application.go(Page.GAME, Args.compose(
+                                    "d", message.data[1], GameDetailPanel.TROPHIES_TAB));
+                    }
+                };
+                return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
+
+            case 103: // FRIEND_LISTED_ITEM
+                // TEMP: remove after servers are 4 weeks past 01/10/2008
+                if (message.data.length < 4) {
+                    return null;
+                }
+                // ENDTEMP
+                media = MediaDesc.stringToMD(message.data[3]);
+                if (media == null) {
+                    return null;
+                }
+                clicker = new ClickListener() {
+                    public void onClick (Widget sender) {
+                        Application.go(Page.CATALOG, Args.compose(
+                                    message.data[1], "i", message.data[2]));
+                    }
+                };
+                return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
+            }
+            return null;
+        }
+
         protected void addFriendMessage (FriendFeedMessage message)
         {
             String friendLink = profileLink(message.friend);
@@ -322,12 +371,12 @@ public class FeedPanel extends VerticalPanel
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new BasicWidget(CWhirled.msgs.friendWonTrophy(
+                add(new ThumbnailWidget(buildMedia(message), CWhirled.msgs.friendWonTrophy(
                                 friendLink, buildString(message))));
                 break;
 
             case 103: // FRIEND_LISTED_ITEM
-                add(new BasicWidget(CWhirled.msgs.friendListedItem(
+                add(new ThumbnailWidget(buildMedia(message), CWhirled.msgs.friendListedItem(
                                 friendLink, buildString(message))));
                 break;
 
@@ -385,6 +434,24 @@ public class FeedPanel extends VerticalPanel
             return combine;
         }
 
+        /**
+         * Helpfer function with creates an array of media widgets from feed messages.
+         */
+        protected Widget[] buildMediaArray (ArrayList list)
+        {
+            ArrayList media = new ArrayList();
+            for (int ii = 0, ll = list.size(); ii < ll; ii++) {
+                Widget w = buildMedia((FeedMessage)list.get(ii));
+                if (w != null) {
+                    media.add(w);
+                }
+            }
+            if (media.isEmpty()) {
+                return null;
+            }
+            return (Widget[])media.toArray(new Widget[media.size()]);
+        }
+
         protected void addLeftAggregateFriendMessage (ArrayList list)
         {
             FriendFeedMessage message = (FriendFeedMessage)((ArrayList)list).get(0);
@@ -401,12 +468,12 @@ public class FeedPanel extends VerticalPanel
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new BasicWidget(CWhirled.msgs.friendWonTrophies(
+                add(new ThumbnailWidget(buildMediaArray(list), CWhirled.msgs.friendWonTrophies(
                                 friendLink, standardCombine(list))));
                 break;
 
             case 103: // FRIEND_LISTED_ITEM
-                add(new BasicWidget(CWhirled.msgs.friendListedItem(
+                add(new ThumbnailWidget(buildMediaArray(list), CWhirled.msgs.friendListedItem(
                                 friendLink, standardCombine(list))));
                 break;
 
@@ -428,7 +495,7 @@ public class FeedPanel extends VerticalPanel
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new BasicWidget(CWhirled.msgs.friendWonTrophy(
+                add(new ThumbnailWidget(buildMediaArray(list), CWhirled.msgs.friendWonTrophy(
                                 friendLinks, buildString(message))));
                 break;
             }
@@ -477,32 +544,45 @@ public class FeedPanel extends VerticalPanel
             setCellSpacing(0);
             setCellPadding(0);
 
-            /*
-            HorizontalPanel iconContainer = new HorizontalPanel();
-            iconContainer.setStyleName("IconContainer");
-            iconContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
-            iconContainer.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            iconContainer.add(image);
-            */
             Image image = new Image("/images/whirled/" + icon + ".png");
             image.setStyleName("FeedIcon");
             setWidget(0, 0, image);
             getFlexCellFormatter().setStyleName(0, 0, "IconContainer");
 
-            /*
-            HorizontalPanel htmlContainer = new HorizontalPanel();
-            htmlContainer.setStyleName("HTMLContainer");
-            htmlContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_LEFT);
-            htmlContainer.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            htmlContainer.add(new HTML(html));
-            */
             setWidget(0, 1, new HTML(html));
             getFlexCellFormatter().addStyleName(0, 1, "TextContainer");
         }
     }
 
-    protected static class ThumbnailWidget extends HorizontalPanel
+    protected static class ThumbnailWidget extends FlexTable
     {
+        public ThumbnailWidget (Widget icon, String html)
+        {
+            this(icon == null ? null : new Widget[] { icon }, html);
+        }
+
+        public ThumbnailWidget (Widget[] icons, String html)
+        {
+            setStyleName("FeedWidget");
+            setCellSpacing(0);
+            setCellPadding(0);
+            int col = 0;
+
+            if (icons != null && icons.length > 0) {
+                FlexTable iconContainer = new FlexTable();
+                iconContainer.setCellSpacing(2);
+                iconContainer.setCellPadding(0);
+                for (int ii = 0; ii < icons.length; ii++) {
+                    iconContainer.setWidget(0, ii, icons[ii]);
+                    iconContainer.getFlexCellFormatter().setStyleName(0, ii, "ThumbnailContainer");
+                }
+                setWidget(0, col, iconContainer);
+                getFlexCellFormatter().setStyleName(0, col++, "ThumbnailContainer");
+            }
+
+            setWidget(0, col, new HTML(html));
+            getFlexCellFormatter().addStyleName(0, 1, "TextContainer");
+        }
     }
 
     protected static class DateWidget extends HorizontalPanel
