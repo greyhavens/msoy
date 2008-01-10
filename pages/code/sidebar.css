@@ -1,0 +1,11 @@
+body {
+  font-size: small;
+}
+
+ul {
+  padding-left: 15px;
+}
+
+ul ul {
+  padding-left: 0px;
+}

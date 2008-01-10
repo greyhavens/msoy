@@ -1,4 +1,33 @@
 <html>
+<head>
+  <link rel="stylesheet" href="sidebar.css" type="text/css"/>
+  <script>
+  function getElement (name) {
+    if (top.docs.document.getElementsByName(name).length == 0) {
+      return undefined;
+    }
+    node = top.docs.document.getElementsByName(name)[0];
+    while (node.nodeName.toLowerCase() != "table") {
+      node = node.nextSibling;
+    }
+    return node.firstChild.nextSibling.firstChild.firstChild.nextSibling;
+  }
+  function highlight (name) {
+    highfunc = function () {
+      if (top.docs.document.highlighted) {
+        top.docs.document.highlighted.style.color = "#000000";
+      }
+      top.docs.document.highlighted = getElement(name);
+      top.docs.document.highlighted.style.color = "#FF0000";
+    }
+    if (getElement(name)) {
+      highfunc();
+    } else {
+      setTimeout("highlight('" + name + "')", 0);
+    }
+  }
+  </script>
+</head>
 <body>
 <base target="docs">
 <b>WhirledGameControl</b>
@@ -11,9 +40,11 @@
      <li> Event: <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#event:keyDown">KeyboardEvent.KEY_DOWN</a>
      <li> Event: <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#event:keyUp">KeyboardEvent.KEY_UP</a>
      <li> Event: <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#event:SizeChanged">SizeChangedEvent.SIZE_CHANGED</a>
-     <li> <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#getSize()">getSize()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#getSize()"
+     onclick="highlight('getSize()')">getSize()</a>
      <li> <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#feedback()">feedback()</a>
-     <li> <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#filter()">filter()</a>
+     <li> <a href="asdocs/com/threerings/ezgame/EZLocalSubControl.html#filter()"
+     onclick="highlight('filter()')">filter()</a>
      <li> <a href="asdocs/com/whirled/LocalSubControl.html#backToWhirled()">backToWhirled()</a>
      <li> <a href="asdocs/com/whirled/LocalSubControl.html#clearScores()">clearScores()</a>
      <li> <a href="asdocs/com/whirled/LocalSubControl.html#getHeadShot()">getHeadShot()</a>
