@@ -2,15 +2,24 @@
 <head>
   <link rel="stylesheet" href="sidebar.css" type="text/css"/>
   <script>
+  function findElement (node, nodeName) {
+    if (node.nodeName.toLowerCase() == nodeName) {
+      return node;
+    } else if (node.nextSibling) {
+      return findElement(node.nextSibling, nodeName);
+    } else {
+      return undefined;
+    }
+  }
   function getElement (name) {
     if (top.docs.document.getElementsByName(name).length == 0) {
       return undefined;
     }
     node = top.docs.document.getElementsByName(name)[0];
-    while (node.nodeName.toLowerCase() != "table") {
-      node = node.nextSibling;
-    }
-    return node.firstChild.nextSibling.firstChild.firstChild.nextSibling;
+    table = findElement(node, "table");
+    tbody = findElement(table.firstChild, "tbody");
+    tr = findElement(tbody.firstChild, "tr");
+    return findElement(tr.firstChild, "td");
   }
   function highlight (name) {
     highfunc = function () {
