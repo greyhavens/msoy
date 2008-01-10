@@ -41,6 +41,7 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameRecord;
@@ -271,7 +272,8 @@ public class GameGameRegistry
                 // publish the trophy earning event to the member's feed
                 MsoyGameServer.feedRepo.publishMemberMessage(
                     trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
-                    trophy.name + "\t" + trophy.gameId);
+                    trophy.name + "\t" + trophy.gameId +
+                    "\t" + MediaDesc.mdToString(trec.trophyMedia));
             }
             public void handleSuccess () {
                 MsoyGameServer.worldClient.reportTrophyAward(trophy.memberId, gameName, trec);

@@ -32,6 +32,7 @@ import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -280,7 +281,8 @@ public class CatalogServlet extends MsoyServiceServlet
             if (pricing != CatalogListing.PRICING_HIDDEN) {
                 MsoyServer.feedRepo.publishMemberMessage(mrec.memberId,
                     FeedMessageType.FRIEND_LISTED_ITEM, listItem.name + "\t" +
-                    String.valueOf(repo.getItemType()) + "\t" + String.valueOf(record.catalogId));
+                    String.valueOf(repo.getItemType()) + "\t" + String.valueOf(record.catalogId) +
+                    "\t" + MediaDesc.mdToString(listItem.getThumbMediaDesc()));
             }
 
             return record.toListing();
@@ -391,7 +393,7 @@ public class CatalogServlet extends MsoyServiceServlet
                     MsoyServer.itemMan.itemUpdated(listItem);
                 }
             });
-            
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "List item failed [item=" + item + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);

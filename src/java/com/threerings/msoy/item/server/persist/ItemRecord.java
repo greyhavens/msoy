@@ -284,8 +284,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.mature = mature;
         item.furniMedia = (furniMediaHash == null) ?
             null : new MediaDesc(furniMediaHash, furniMimeType, furniConstraint);
-        item.thumbMedia = (thumbMediaHash == null) ?
-            null : new MediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
+        item.thumbMedia = getThumbMediaDesc();
         return item;
     }
 
@@ -324,6 +323,16 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public String toString ()
     {
         return StringUtil.fieldsToString(this);
+    }
+
+    /**
+     * Returns the MediaDesc for the thumbnail media of this item, or null if there is no
+     * thumbnail media.
+     */
+    public MediaDesc getThumbMediaDesc ()
+    {
+        return (thumbMediaHash == null) ?
+            null : new MediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
     }
 
     /**

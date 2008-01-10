@@ -16,7 +16,7 @@ public class MediaDesc implements Streamable, IsSerializable
 {
     /** The unsupported MIME types. */
     public static final byte INVALID_MIME_TYPE = -1;
-    
+
     /** The MIME type for plain UTF-8 text. */
     public static final byte TEXT_PLAIN = 0;
 
@@ -396,6 +396,48 @@ public class MediaDesc implements Streamable, IsSerializable
             return (size == HALF_THUMBNAIL_SIZE) ?
                 HALF_VERTICALLY_CONSTRAINED : VERTICALLY_CONSTRAINED;
         }
+    }
+
+    /**
+     * Converts a MediaDesc into a colon delimited String.
+     */
+    public static String mdToString (MediaDesc md)
+    {
+        if (md == null) {
+            return "";
+        }
+        // Using StringBuffer for GWT compatability
+        StringBuffer buf = new StringBuffer();
+        buf.append(hashToString(md.hash));
+        buf.append(":").append(md.mimeType);
+        buf.append(":").append(md.constraint);
+        return buf.toString();
+    }
+
+    /**
+     * Creates a MediaDesc from a colon delimited String.
+     */
+    public static MediaDesc stringToMD (String str)
+    {
+        String[] data = str.split(":");
+        byte[] hash = stringToHash(data[0]);
+        if (hash == null) {
+            return null;
+        }
+        byte mimeType = -1;
+        byte constraint = 0;
+        try {
+            mimeType = Byte.parseByte(data[1]);
+        } catch (NumberFormatException nfe) {
+            // don't care
+        }
+        try {
+            constraint = Byte.parseByte(data[2]);
+        } catch (NumberFormatException nfe) {
+            // don't care
+        }
+
+        return new MediaDesc(hash, mimeType, constraint);
     }
 
     /** Used for unserialization. */
