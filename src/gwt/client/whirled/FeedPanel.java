@@ -15,9 +15,11 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -310,12 +312,12 @@ public class FeedPanel extends VerticalPanel
             String friendLink = profileLink(message.friend);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
-                add(new BasicWidget(CWhirled.msgs.friendAddedFriend(
+                add(new IconWidget("friend_added_friend", CWhirled.msgs.friendAddedFriend(
                                 friendLink, buildString(message))));
                 break;
 
             case 101: // FRIEND_UPDATED_ROOM
-                add(new BasicWidget(CWhirled.msgs.friendUpdatedRoom(
+                add(new IconWidget("friend_updated_room", CWhirled.msgs.friendUpdatedRoom(
                                 friendLink, buildString(message))));
                 break;
 
@@ -330,7 +332,7 @@ public class FeedPanel extends VerticalPanel
                 break;
 
             case 104: // FRIEND_GAINED_LEVEL
-                add(new BasicWidget(CWhirled.msgs.friendGainedLevel(
+                add(new IconWidget("friend_gained_level", CWhirled.msgs.friendGainedLevel(
                                 friendLink, buildString(message))));
                 break;
             }
@@ -389,12 +391,13 @@ public class FeedPanel extends VerticalPanel
             String friendLink = profileLink(message.friend);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
-                add(new BasicWidget(CWhirled.msgs.friendAddedFriends(
+                add(new IconWidget("friend_added_friend", CWhirled.msgs.friendAddedFriends(
                                 friendLink, standardCombine(list))));
                 break;
 
             case 101: // FRIEND_UPDATED_ROOM
-                add(new BasicWidget(CWhirled.msgs.friendsUpdatedRoom(friendLinkCombine(list))));
+                add(new IconWidget("friend_updated_room",
+                            CWhirled.msgs.friendsUpdatedRoom(friendLinkCombine(list))));
                 break;
 
             case 102: // FRIEND_WON_TROPHY
@@ -408,7 +411,8 @@ public class FeedPanel extends VerticalPanel
                 break;
 
             case 104: // FRIEND_GAINED_LEVEL
-                add(new BasicWidget(CWhirled.msgs.friendsGainedLevel(friendLinkCombine(list))));
+                add(new IconWidget("friend_gained_level",
+                            CWhirled.msgs.friendsGainedLevel(friendLinkCombine(list))));
                 break;
             }
         }
@@ -419,7 +423,7 @@ public class FeedPanel extends VerticalPanel
             String friendLinks = profileCombine(list);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
-                add(new BasicWidget(CWhirled.msgs.friendAddedFriendsRight(
+                add(new IconWidget("friend_added_friend", CWhirled.msgs.friendAddedFriendsRight(
                                 friendLinks, buildString(message))));
                 break;
 
@@ -465,6 +469,42 @@ public class FeedPanel extends VerticalPanel
         }
     }
 
+    protected static class IconWidget extends FlexTable
+    {
+        public IconWidget (String icon, String html)
+        {
+            setStyleName("FeedWidget");
+            setCellSpacing(0);
+            setCellPadding(0);
+
+            /*
+            HorizontalPanel iconContainer = new HorizontalPanel();
+            iconContainer.setStyleName("IconContainer");
+            iconContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+            iconContainer.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            iconContainer.add(image);
+            */
+            Image image = new Image("/images/whirled/" + icon + ".png");
+            image.setStyleName("FeedIcon");
+            setWidget(0, 0, image);
+            getFlexCellFormatter().setStyleName(0, 0, "IconContainer");
+
+            /*
+            HorizontalPanel htmlContainer = new HorizontalPanel();
+            htmlContainer.setStyleName("HTMLContainer");
+            htmlContainer.setHorizontalAlignment(HorizontalPanel.ALIGN_LEFT);
+            htmlContainer.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            htmlContainer.add(new HTML(html));
+            */
+            setWidget(0, 1, new HTML(html));
+            getFlexCellFormatter().addStyleName(0, 1, "TextContainer");
+        }
+    }
+
+    protected static class ThumbnailWidget extends HorizontalPanel
+    {
+    }
+
     protected static class DateWidget extends HorizontalPanel
     {
         public DateWidget (Date date)
@@ -476,7 +516,7 @@ public class FeedPanel extends VerticalPanel
             setStyleName("FeedWidget");
             addStyleName("FeedDate");
             setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            setHorizontalAlignment(HorizontalPanel.ALIGN_LEFT);
+            setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
             add(new Label(label));
         }
     }

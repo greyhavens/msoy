@@ -265,9 +265,7 @@
 
 .FeedWidget {
   width: 100%;
-  background-image: url(/images/whirled/bg_gradient.png);
-  background-repeat: repeat-x;
-  background-color: #F4F3F4;
+  background-color: #FFFFFF;
   border-bottom: 1px solid #DADADA;
 }
 
@@ -279,9 +277,27 @@
 .FeedDate {
   font-size: 12px;
   font-weight: bold;
-  padding: 8px 3px 3px 3px;
-  background-color: #DADADA;
+  text-align: center;
+  padding: 6px 3px 6px 3px;
+  background-color: #F4F3F4;
   border-bottom: 1px solid #AAAAAA;
+}
+
+.FeedWidget .IconContainer {
+  width: 32px;
+  height: 20px;
+}
+
+.FeedWidget .TextContainer {
+  font-size: 12px;
+  padding: 3px;
+  width: 100%;
+  text-align: left;
+}
+
+.FeedWidget .FeedIcon {
+  width: 30px;
+  height: 20px;
 }
 
 .PictureBox img {
