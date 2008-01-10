@@ -700,6 +700,7 @@ HScrollBar {
 
 Menu {
   openDuration: 0;
+  checkIcon: Embed(source="../../rsrc/media/skins/selected_menu_icon.png");
 }
 
 MenuBar {

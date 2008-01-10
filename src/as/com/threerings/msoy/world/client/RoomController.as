@@ -498,7 +498,7 @@ public class RoomController extends SceneController
             for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
                 availActions.push({
                     label: Msgs.GENERAL.get("l.avail_" + ii), callback: updateAvailability, arg: ii,
-                    icon: (ii == _wdctx.getMemberObject().availability) ? SEL_MENU_ICON : null });
+                    type: "check", toggled: (ii == us.availability) });
             }
             menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"),
                              children: availActions, enabled: canControl });
@@ -523,8 +523,13 @@ public class RoomController extends SceneController
             var states :Array = avatar.getAvatarStates();
             if (states.length > 0) {
                 var worldStates :Array = [];
+                var curState :String = avatar.getState();
+                if (curState == null) {
+                    curState = states[0];
+                }
                 for each (var state :String in states) {
-                    worldStates.push({ label: state, callback: doAvatarState, arg :state });
+                    worldStates.push({ label: state, callback: doAvatarState, arg :state,
+                        type: "check", toggled: (curState == state) });
                 }
                 menuItems.push({ label: Msgs.GENERAL.get("l.avStates"),
                     children: worldStates, enabled: canControl });
@@ -1737,9 +1742,6 @@ public class RoomController extends SceneController
 
     /** A flag to indicate that the room editor should be opened when the view is un-minimized */
     protected var _openEditor :Boolean = false;
-
-    [Embed(source="../../../../../../../rsrc/media/skins/selected_menu_icon.png")]
-    protected static const SEL_MENU_ICON :Class;
 }
 }
 
