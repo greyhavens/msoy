@@ -126,6 +126,7 @@ public class AVRGamePanel extends UIComponent
 
         if (_gameObj == null) {
             // we've already been shut down
+            log.warning("AVRG load aborted due to shutdown.");
             return;
         }
 
@@ -135,12 +136,14 @@ public class AVRGamePanel extends UIComponent
 
     protected function handleResize (evt :ResizeEvent) :void
     {
-        // an AVRG panel should be designed for 700 x 500
-        var scale :Number = Math.min(1, this.height / stage.stageHeight);
-        // so we'll brutally scale it accordingly
-        this.scaleX = this.scaleY = scale;
+        if (stage != null) {
+            // an AVRG panel should be designed for 700 x 500
+            var scale :Number = Math.min(1, this.height / stage.stageHeight);
+            // so we'll brutally scale it accordingly
+            this.scaleX = this.scaleY = scale;
 
-        _backend.panelResized();
+            _backend.panelResized();
+        }
     }
 
     protected var _wctx :WorldContext;
