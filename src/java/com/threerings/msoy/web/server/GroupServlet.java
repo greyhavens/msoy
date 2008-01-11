@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.util.Predicate;
 import com.samskivert.util.Tuple;
 
@@ -27,6 +28,7 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.group.data.GroupCodes;
 import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.group.data.GroupExtras;
 import com.threerings.msoy.group.data.GroupMembership;
@@ -248,9 +250,12 @@ public class GroupServlet extends MsoyServiceServlet
 
             return gRec.toGroupObject();
 
+        } catch (DuplicateKeyException dke) {
+            throw new ServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to create group [for=" + mrec.who() +
-                    ", group=" + group + ", extras=" + extras + "].");
+                    ", group=" + group + ", extras=" + extras + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
