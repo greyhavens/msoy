@@ -137,9 +137,8 @@ public class AVRGamePanel extends UIComponent
     protected function handleResize (evt :ResizeEvent) :void
     {
         if (stage != null) {
-            // an AVRG panel should be designed for 700 x 500
+            // scale the AVRG panel to match the stage height
             var scale :Number = Math.min(1, this.height / stage.stageHeight);
-            // so we'll brutally scale it accordingly
             this.scaleX = this.scaleY = scale;
 
             _backend.panelResized();
