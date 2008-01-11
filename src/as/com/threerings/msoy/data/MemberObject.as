@@ -107,7 +107,7 @@ public class MemberObject extends MsoyBodyObject
     public static const UNAVAILABLE :int = 2;
 
     /** The member name and id for this user. */
-    public var memberName :MemberName;
+    public var memberName :VizMemberName;
 
     /** The Game ID of the in-avr game that the user is in, if any. */
     public var avrGameId :int;
@@ -274,7 +274,7 @@ public class MemberObject extends MsoyBodyObject
     {
         super.readObject(ins);
 
-        memberName = (ins.readObject() as MemberName);
+        memberName = (ins.readObject() as VizMemberName);
         avrGameId = ins.readInt();
         flow = ins.readInt();
         accFlow = ins.readInt();
