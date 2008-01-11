@@ -371,7 +371,7 @@ public class MemberManager
                 _memberRepo.configureDisplayName(user.getMemberId(), name);
             }
             public void handleSuccess () {
-                user.setMemberName(new MemberName(name, user.getMemberId()));
+                user.updateDisplayName(name);
                 updateOccupantInfo(user);
             }
         });

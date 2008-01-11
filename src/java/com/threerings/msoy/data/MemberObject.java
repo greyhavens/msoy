@@ -117,7 +117,7 @@ public class MemberObject extends MsoyBodyObject
     public static final int UNAVAILABLE = 2;
 
     /** The name and id information for this user. */
-    public MemberName memberName;
+    public VizMemberName memberName;
 
     /** The id of the currently active AVR game for this user, or 0 for none. */
     public int avrGameId;
@@ -200,10 +200,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public MediaDesc getHeadShotMedia ()
     {
-        if (avatar != null) {
-            return avatar.getThumbnailMedia();
-        }
-        return Avatar.getDefaultThumbnailMediaFor(Item.AVATAR);
+        return memberName.getPhoto();
     }
 
     /**
@@ -340,6 +337,14 @@ public class MemberObject extends MsoyBodyObject
         location = null;
     }
 
+    /**
+     * Publishes this member's updated display name to their member object.
+     */
+    public void updateDisplayName (String displayName)
+    {
+        setMemberName(new VizMemberName(displayName, getMemberId(), memberName.getPhoto()));
+    }
+
     // from interface MsoyUserObject
     public MemberName getMemberName ()
     {
@@ -385,9 +390,9 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setMemberName (MemberName value)
+    public void setMemberName (VizMemberName value)
     {
-        MemberName ovalue = this.memberName;
+        VizMemberName ovalue = this.memberName;
         requestAttributeChange(
             MEMBER_NAME, value, ovalue);
         this.memberName = value;

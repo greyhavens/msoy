@@ -16,7 +16,9 @@ import com.threerings.stats.data.StatSet;
 import com.threerings.crowd.server.CrowdClientResolver;
 
 import com.threerings.msoy.person.data.MailFolder;
+import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.MailRepository;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.group.data.GroupMembership;
 
@@ -25,6 +27,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
@@ -80,8 +83,13 @@ public class MsoyClientResolver extends CrowdClientResolver
         // the wild and there's no point in generating a crapload of events during user
         // initialization when we know that no one is listening
 
+        // we need their profile photo to create the member name
+        ProfileRecord precord = MsoyServer.profileRepo.loadProfile(member.memberId);
+        userObj.memberName = new VizMemberName(
+            member.name, member.memberId,
+            (precord == null) ? Profile.DEFAULT_PHOTO : precord.getPhoto());
+
         // configure various bits directly from their member record
-        userObj.memberName = member.getName();
         userObj.homeSceneId = member.homeSceneId;
         userObj.flow = member.flow;
         userObj.accFlow = member.accFlow;
@@ -138,7 +146,8 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void resolveGuest (MemberObject userObj)
         throws Exception
     {
-        userObj.setMemberName((MemberName) _username);
+        userObj.setMemberName(new VizMemberName(_username.toString(), MemberName.GUEST_ID,
+                                                Profile.DEFAULT_PHOTO));
     }
 
     @Override // from ClientResolver

@@ -48,7 +48,7 @@ public class MemberNodeActions
         }
 
         protected void execute (MemberObject memobj) {
-            memobj.setMemberName(new MemberName(_name, _memberId));
+            memobj.updateDisplayName(_name);
             MsoyServer.memberMan.updateOccupantInfo(memobj);
         }
 
