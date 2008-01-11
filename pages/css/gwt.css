@@ -190,6 +190,33 @@ img {
   padding-right: 3px;
 }
 
+.frameDialog {
+  width: 100%;
+}
+
+.frameDialog .Title {
+  background: #222222;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  white-space: nowrap;
+  padding-left: 5px;
+}
+
+.frameDialog .CloseCell {
+  background: #222222;
+  width: 13px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-right: 2px;
+}
+
+.frameDialog .CloseBox {
+  background-image: url(/images/ui/close.png);
+  width: 13px;
+  height: 13px;
+}
+
 .formDialog td {
   vertical-align: top;
 }
@@ -451,7 +478,6 @@ img {
   width: 2px;
   height: 2px;
 }
-
 
 .separatorLine {
   background-image: url(/images/ui/separator.png);
@@ -765,15 +791,6 @@ img {
 
 .pageSeparator {
   vertical-align: top;
-}
-
-.pageSeparator .Separator {
-  position: relative;
-  background: black;
-  left: 7px;
-  top: -560px;
-  width: 1px;
-  height: 20px;
 }
 
 .pageSeparator .CloseBoxHolder {

@@ -11,6 +11,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -87,7 +88,6 @@ public class Frame
                 setContentMinimized(false, null);
             }
         });
-        _separatorLine = MsoyUI.createLabel("", "Separator");
 
         // set up the window to not scroll, Page will scroll just our page content
         Window.enableScrolling(false);
@@ -114,16 +114,12 @@ public class Frame
     {
         if (minimized && _minimizeContent.isAttached()) {
             RootPanel.get(SEPARATOR).remove(_minimizeContent);
-            RootPanel.get(SEPARATOR).remove(_separatorLine);
             RootPanel.get(SEPARATOR).add(_maximizeContent);
-            RootPanel.get(SEPARATOR).add(_separatorLine);
             new SlideContentOff().start(onComplete);
 
         } else if (!minimized && _maximizeContent.isAttached()) {
             RootPanel.get(SEPARATOR).remove(_maximizeContent);
-            RootPanel.get(SEPARATOR).remove(_separatorLine);
             RootPanel.get(SEPARATOR).add(_minimizeContent);
-            RootPanel.get(SEPARATOR).add(_separatorLine);
             new SlideContentOn().start(onComplete);
 
         } else if (onComplete != null) {
@@ -184,14 +180,12 @@ public class Frame
 
         if (_maximizeContent.isAttached()) {
             RootPanel.get(SEPARATOR).remove(_maximizeContent);
-            RootPanel.get(SEPARATOR).remove(_separatorLine);
             History.newItem(_closeToken);
 
         } else {
             new SlideContentOff().start(new Command() {
                 public void execute () {
                     RootPanel.get(SEPARATOR).remove(_minimizeContent);
-                    RootPanel.get(SEPARATOR).remove(_separatorLine);
                     History.newItem(_closeToken);
                 }
             });
@@ -203,10 +197,10 @@ public class Frame
     /**
      * Displays the supplied dialog in the frame.
      */
-    public static void showDialog (Widget dialog)
+    public static void showDialog (String title, Widget dialog)
     {
         // TODO: animate this sliding down
-        RootPanel.get(HEADER).add(dialog);
+        RootPanel.get(HEADER).add(new DialogPanel(title, dialog));
     }
 
     /**
@@ -231,7 +225,8 @@ public class Frame
         RootPanel header = RootPanel.get(HEADER);
         int removed = 0;
         for (int ii = 0; ii < header.getWidgetCount(); ii++) {
-            if (pred.isMatch(header.getWidget(ii))) {
+            Widget widget = header.getWidget(ii);
+            if (widget instanceof DialogPanel && pred.isMatch(((DialogPanel)widget).getContent())) {
                 header.remove(ii);
                 removed++;
             }
@@ -247,6 +242,9 @@ public class Frame
     {
         RootPanel.get(CONTENT).clear();
 
+        // clear out any lingering dialogs
+        clearDialog(Predicate.TRUE);
+
         // note that this is our current content
         _content = content;
         displayingJava = contentIsJava;
@@ -257,7 +255,6 @@ public class Frame
             RootPanel.get(SEPARATOR).clear();
             RootPanel.get(SEPARATOR).add(_closeContent);
             RootPanel.get(SEPARATOR).add(_minimizeContent);
-            RootPanel.get(SEPARATOR).add(_separatorLine);
             new SlideContentOn().start(null);
 
         } else {
@@ -383,9 +380,35 @@ public class Frame
         protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
     }
 
+    protected static class DialogPanel extends FlexTable
+    {
+        public DialogPanel (String title, Widget content) {
+            setCellPadding(0);
+            setCellSpacing(0);
+            setStyleName("frameDialog");
+
+            setText(0, 0, title);
+            getFlexCellFormatter().setStyleName(0, 0, "Title");
+
+            setWidget(0, 1, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
+                public void onClick (Widget sender) {
+                    clearDialog(getContent());
+                }
+            }));
+            getFlexCellFormatter().setStyleName(0, 1, "CloseCell");
+
+            setWidget(1, 0, content);
+            getFlexCellFormatter().setStyleName(1, 0, "Content");
+        }
+
+        public Widget getContent () {
+            return getWidget(1, 0);
+        }
+    }
+
     protected static Widget _content;
     protected static String _closeToken;
-    protected static Label _minimizeContent, _maximizeContent, _separatorLine;
+    protected static Label _minimizeContent, _maximizeContent;
     protected static FlowPanel _closeContent;
 
     // constants for our top-level elements

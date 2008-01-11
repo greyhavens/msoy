@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -17,6 +18,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -26,21 +28,21 @@ import com.threerings.msoy.item.data.all.Photo;
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
 import client.shell.CShell;
-import client.util.BorderedPopup;
-import client.util.MediaUtil;
+import client.shell.Frame;
 
 /**
  * Allows a member to select an image from their inventory. In the future, will support fancy
  * things like immediately uploading an image for use instead of getting one from their inventory,
  * and possibly doing a Google images or Flickr search.
  */
-public class ImageChooserPopup extends BorderedPopup
+public class ImageChooserPopup extends VerticalPanel
 {
     public static void displayImageChooser (final AsyncCallback callback)
     {
         CShell.membersvc.loadInventory(CShell.ident, Item.PHOTO, 0, new AsyncCallback() {
             public void onSuccess (Object result) {
-                new ImageChooserPopup((List)result, callback).show();
+                Frame.showDialog(
+                    CShell.cmsgs.pickImage(), new ImageChooserPopup((List)result, callback));
             }
             public void onFailure (Throwable caught) {
                 callback.onFailure(caught);
@@ -54,27 +56,22 @@ public class ImageChooserPopup extends BorderedPopup
      */
     public ImageChooserPopup (List images, AsyncCallback callback)
     {
-        super(true);
         _callback = callback;
-
-        VerticalPanel contents = new VerticalPanel();
-        contents.setStyleName("imageChooser");
-        contents.add(MsoyUI.createLabel(CShell.cmsgs.pickImage(), "Title"));
-        contents.add(new PhotoGrid(images));
-        setWidget(contents);
+        setStyleName("imageChooser");
+        add(new PhotoGrid(images));
     }
 
     protected void photoSelected (Photo photo)
     {
         _callback.onSuccess(photo);
-        hide();
+        Frame.clearDialog(this);
     }
 
     protected class PhotoGrid extends PagedGrid
         implements EditorHost
     {
         public PhotoGrid (List images) {
-            super(3, 5, NAV_ON_BOTTOM);
+            super(2, 7, NAV_ON_BOTTOM);
             setCellAlignment(HasAlignment.ALIGN_CENTER, HasAlignment.ALIGN_MIDDLE);
             setModel(new SimpleDataModel(images), 0);
         }
@@ -93,12 +90,15 @@ public class ImageChooserPopup extends BorderedPopup
         // @Override // from PagedGrid
         protected Widget createWidget (Object item) {
             final Photo photo = (Photo)item;
+            if (photo == null) {
+                return null;
+            }
             Widget image = MediaUtil.createMediaView(
                 photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
-                public void onClick (Widget sender) {
-                    photoSelected(photo);
-                }
-            });
+                    public void onClick (Widget sender) {
+                        photoSelected(photo);
+                    }
+                });
             image.addStyleName("Photo");
             return image;
         }
@@ -106,6 +106,18 @@ public class ImageChooserPopup extends BorderedPopup
         // @Override // from PagedGrid
         protected String getEmptyMessage () {
             return CShell.cmsgs.haveNoImages();
+        }
+
+        // @Override // from PagedGrid
+        protected void formatCell (HTMLTable.CellFormatter formatter, int row, int col, int limit) {
+            super.formatCell(formatter, row, col, limit);
+            formatter.setWidth(row, col, MediaDesc.THUMBNAIL_WIDTH+"px");
+            formatter.setHeight(row, col, MediaDesc.THUMBNAIL_HEIGHT+"px");
+        }
+
+        // @Override // from PagedGrid
+        protected boolean padToFullPage () {
+            return true;
         }
 
         // @Override // from PagedGrid

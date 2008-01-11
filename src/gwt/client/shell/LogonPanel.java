@@ -35,7 +35,7 @@ public class LogonPanel extends SimplePanel
             }
         });
         if (cleared == 0) {
-            Frame.showDialog(new LogonPanel(parent));
+            Frame.showDialog("Logon to Whirled:", new LogonPanel(parent));
         }
     }
 
