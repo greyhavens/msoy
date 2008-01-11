@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.util.MsoyUI;
+import client.util.Predicate;
 
 /**
  * The frame wraps the top-level page HTML and handles displaying the navigation, the page content,
@@ -200,6 +201,45 @@ public class Frame
     }
 
     /**
+     * Displays the supplied dialog in the frame.
+     */
+    public static void showDialog (Widget dialog)
+    {
+        // TODO: animate this sliding down
+        RootPanel.get(HEADER).add(dialog);
+    }
+
+    /**
+     * Clears the specified dialog from the frame. Returns true if the dialog was located and
+     * cleared, false if not.
+     */
+    public static boolean clearDialog (final Widget dialog)
+    {
+        return clearDialog(new Predicate() {
+            public boolean isMatch (Object o) {
+                return (o == dialog);
+            }
+        }) > 0;
+    }
+
+    /**
+     * Clears all dialogs that match the specified predicate. Returns the number of dialogs
+     * cleared.
+     */
+    public static int clearDialog (Predicate pred)
+    {
+        RootPanel header = RootPanel.get(HEADER);
+        int removed = 0;
+        for (int ii = 0; ii < header.getWidgetCount(); ii++) {
+            if (pred.isMatch(header.getWidget(ii))) {
+                header.remove(ii);
+                removed++;
+            }
+        }
+        return removed;
+    }
+
+    /**
      * Configures the widget to be displayed in the content portion of the frame. Will animate the
      * content sliding on if appropriate.
      */
@@ -349,6 +389,7 @@ public class Frame
     protected static FlowPanel _closeContent;
 
     // constants for our top-level elements
+    protected static final String HEADER = "header";
     protected static final String NAVIGATION = "navigation";
     protected static final String CONTENT = "content";
     protected static final String SEPARATOR = "seppy";
