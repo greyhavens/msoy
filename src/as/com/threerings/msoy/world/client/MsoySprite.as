@@ -398,13 +398,15 @@ public class MsoySprite extends MsoyMediaContainer
         configureMouseProperties();
     }
 
-    override protected function setupSwfOrImage (url :String) :void
+    override protected function initLoader () :Loader
     {
-        super.setupSwfOrImage(url);
+        var loader :Loader = super.initLoader();
 
         _backend = createBackend();
-        _backend.init(Loader(_media));
+        _backend.init(loader);
         _backend.setSprite(this);
+
+        return loader;
     }
 
     override protected function configureMask (ww :int, hh :int) :void
