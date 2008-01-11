@@ -75,7 +75,7 @@ public class GroupList extends FlexTable
             getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
             setWidget(0, col++, new Button(CGroup.msgs.listNewGroup(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    new GroupEdit().show();
+                    Application.go(Page.GROUP, "edit");
                 }
             }));
         } else {

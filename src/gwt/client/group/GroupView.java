@@ -58,7 +58,6 @@ import client.util.TagDetailPanel;
  * (unless the group's policy is PUBLIC) and pop up the group editor.
  */
 public class GroupView extends VerticalPanel
-    implements GroupEdit.GroupSubmissionListener
 {
     public GroupView (Page parent, ForumModels fmodels)
     {
@@ -73,19 +72,29 @@ public class GroupView extends VerticalPanel
     /**
      * Configures this view to display the specified group.
      */
-    public void setGroup (int groupId)
+    public void setGroup (int groupId, boolean refresh)
     {
-        if (_group == null || _group.groupId != groupId) {
+        if (_group == null || _group.groupId != groupId || refresh) {
             _me = null; // we'll recompute this when we get the group detail
             loadGroup(groupId);
         }
         _forums.displayGroupThreads(groupId);
     }
 
-    // from interface GroupEdit.GroupSubmissionListener
-    public void groupSubmitted (Group group)
+    /**
+     * Returns the currently loaded group.
+     */
+    public Group getGroup ()
     {
-        loadGroup(group.groupId);
+        return _group;
+    }
+
+    /**
+     * Returns the currently loaded group extras.
+     */
+    public GroupExtras getGroupExtras ()
+    {
+        return _extras;
     }
 
     /**
@@ -111,6 +120,7 @@ public class GroupView extends VerticalPanel
             return; // the forum list will have already reported no such group, so just bail
         }
 
+        _parent.setPageTitle(CGroup.msgs.groupTitle(), _detail.group.name);
         _group = _detail.group;
         _extras = _detail.extras;
 
@@ -155,7 +165,7 @@ public class GroupView extends VerticalPanel
         if (amManager()) {
             buttons.add(new Button(CGroup.msgs.viewEdit(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    new GroupEdit(_group, _extras, GroupView.this).show();
+                    Application.go(Page.GROUP, Args.compose("edit", _group.groupId));
                 }
             }));
         }

@@ -8,11 +8,14 @@ import java.util.Collection;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupExtras;
@@ -20,8 +23,8 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 
 import client.shell.Application;
+import client.shell.Args;
 import client.shell.Page;
-import client.util.BorderedDialog;
 import client.util.LimitedTextArea;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -30,38 +33,28 @@ import client.util.PhotoChoiceBox;
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.
  */
-public class GroupEdit extends BorderedDialog
+public class GroupEdit extends FlexTable
 {
-    /**
-     * A callback interface for classes that want to know when a group successfully committed.
-     */
-    public static interface GroupSubmissionListener
-    {
-        /**
-         * Called by {@link GroupEdit}; reloads the group.
-         */
-        public void groupSubmitted (Group group);
-    }
-
     /**
      * This constructor is for creating new Groups.
      */
-    public GroupEdit ()
+    public GroupEdit (Page parent)
     {
-        this(new Group(), new GroupExtras(), null);
+        this(parent, new Group(), new GroupExtras());
     }
 
-    public GroupEdit (Group group, GroupExtras extras, GroupSubmissionListener listener)
+    public GroupEdit (Page parent, Group group, GroupExtras extras)
     {
-        super();
-
         _group = group;
         _extras = extras;
-        _listener = listener;
+
+        setStyleName("groupEditor");
+        setCellSpacing(5);
+        setCellPadding(0);
 
         String title = _group.groupId == 0 ?
             CGroup.msgs.editCreateTitle() : CGroup.msgs.editEditTitle();
-        _header.add(createTitleLabel(title, "GroupTitle"));
+        parent.setPageTitle(title, group.name);
 
         // set up our editor contents
         _name = MsoyUI.createTextBox(_group.name, GroupName.LENGTH_MAX, 20);
@@ -87,7 +80,7 @@ public class GroupEdit extends BorderedDialog
         _homepage = MsoyUI.createTextBox(_extras.homepageUrl, 255, 40);
         addRow(CGroup.msgs.editHomepage(), _homepage);
 
-        _charter = new LimitedTextArea(Group.MAX_CHARTER_LENGTH, 40, 3);
+        _charter = new LimitedTextArea(Group.MAX_CHARTER_LENGTH, 60, 3);
         _charter.setText(_extras.charter);
         addRow(CGroup.msgs.editCharter(), _charter);
 
@@ -109,36 +102,30 @@ public class GroupEdit extends BorderedDialog
         _bgmode.setSelectedIndex(_extras.backgroundControl);
         addRow(CGroup.msgs.editMode(), _bgmode);
 
-        _footer.add(_submit = new Button(CGroup.cmsgs.submit(), new ClickListener() {
+        HorizontalPanel footer = new HorizontalPanel();
+        footer.add(_submit = new Button(CGroup.cmsgs.submit(), new ClickListener() {
             public void onClick (Widget sender) {
                 commitEdit();
             }
         }));
-        _footer.add(new Button(CGroup.cmsgs.cancel(), new ClickListener() {
+        footer.add(WidgetUtil.makeShim(5, 5));
+        footer.add(new Button(CGroup.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
-                hide();
+                Application.go(Page.GROUP, ""+_group.groupId);
             }
         }));
-    }
-
-    // @Override // from BorderedDialog
-    protected Widget createContents ()
-    {
-        FlexTable contents = new FlexTable();
-        contents.setStyleName("groupEditor");
-        contents.setCellSpacing(5);
-        contents.setCellPadding(0);
-        return contents;
+        int frow = getRowCount();
+        setWidget(frow, 1, footer);
+        getFlexCellFormatter().setHorizontalAlignment(frow, 1, HasAlignment.ALIGN_RIGHT);
     }
 
     protected void addRow (String label, Widget contents)
     {
-        FlexTable table = (FlexTable)_contents;
-        int row = table.getRowCount();
-        table.setText(row, 0, label);
-        table.getFlexCellFormatter().setStyleName(row, 0, "nowrapLabel");
-        table.getFlexCellFormatter().addStyleName(row, 0, "rightLabel");
-        table.setWidget(row, 1, contents);
+        int row = getRowCount();
+        setText(row, 0, label);
+        getFlexCellFormatter().setStyleName(row, 0, "nowrapLabel");
+        getFlexCellFormatter().addStyleName(row, 0, "rightLabel");
+        setWidget(row, 1, contents);
     }
 
     protected void commitEdit ()
@@ -164,14 +151,8 @@ public class GroupEdit extends BorderedDialog
 
         final MsoyCallback updateCallback = new MsoyCallback() {
             public void onSuccess (Object result) {
-                hide();
-                if (_listener != null) {
-                    _listener.groupSubmitted(_group);
-                } else if (_group.groupId == 0) {
-                    // new group created - go to the new group view page
-                    Group newGroup = (Group)result;
-                    Application.go(Page.GROUP, "" + newGroup.groupId);
-                }
+                int groupId = (result == null) ? _group.groupId : ((Group)result).groupId;
+                Application.go(Page.GROUP, Args.compose(String.valueOf(groupId), "r"));
             }
         };
         // check if we're trying to set the policy to exclusive on a group that has tags
@@ -198,7 +179,6 @@ public class GroupEdit extends BorderedDialog
 
     protected Group _group;
     protected GroupExtras _extras;
-    protected GroupSubmissionListener _listener;
 
     protected TextBox _name, _blurb, _homepage;
     protected PhotoChoiceBox _logo, _background;

@@ -5,6 +5,7 @@ package client.group;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.web.client.DeploymentConfig;
 
 import client.msgs.ForumModels;
@@ -40,7 +41,20 @@ public class index extends MsgsEntryPoint
 
         if (args.get(0, 0) != 0) {
             setContent(_gview);
-            _gview.setGroup(args.get(0, 0));
+            _gview.setGroup(args.get(0, 0), args.get(1, "").equals("r"));
+
+        } else if (args.get(0, "").equals("edit")) {
+            int groupId = args.get(1, 0);
+            if (groupId == 0) {
+                setContent(new GroupEdit(this));
+            } else {
+                Group group = _gview.getGroup();
+                if (group == null && group.groupId != groupId) {
+                    MsoyUI.error("ZOMG! That's not supported yet."); // pants! TODO
+                    return;
+                }
+                setContent(new GroupEdit(this, group, _gview.getGroupExtras()));
+            }
 
         } else if (args.get(0, "").equals("unread")) {
             ForumPanel fpanel = new ForumPanel(_fmodels);
