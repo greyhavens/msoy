@@ -424,7 +424,7 @@ public class RoomController extends SceneController
         if (menuItems.length > 0) {
             var menu :CommandMenu = CommandMenu.createMenu(menuItems);
             menu.setDispatcher(_roomView);
-            menu.popUpIn(_roomView.getBounds(_roomView.stage));
+            menu.popUpIn(_roomView.parent.getBounds(_roomView.stage));
         }
     }
 
@@ -594,7 +594,7 @@ public class RoomController extends SceneController
             var menu :CommandMenu = CommandMenu.createMenu(menuItems);
             menu.variableRowHeight = true;
             menu.setDispatcher(_roomView);
-            menu.popUpIn(_roomView.getBounds(_roomView.stage));
+            menu.popUpIn(_roomView.parent.getBounds(_roomView.stage));
         }
     }
 
@@ -633,7 +633,7 @@ public class RoomController extends SceneController
         if (menuItems.length > 0) {
             var menu :CommandMenu = CommandMenu.createMenu(menuItems);
             menu.setDispatcher(_roomView);
-            menu.popUpIn(_roomView.getBounds(_roomView.stage));
+            menu.popUpIn(_roomView.parent.getBounds(_roomView.stage));
         }
     }
 
