@@ -18,7 +18,7 @@ import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.msgs.MailComposition;
-import client.shell.Page;
+import client.shell.Frame;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PromptPopup;
@@ -28,12 +28,12 @@ import client.util.PromptPopup;
  */
 public class FriendsPanel extends VerticalPanel
 {
-    public FriendsPanel (Page page, int memberId)
+    public FriendsPanel (int memberId)
     {
         setStyleName("friendsPanel");
-        _page = page;
-        _page.setPageTitle(CProfile.msgs.friendsTitle());
         _memberId = memberId;
+
+        Frame.setTitle(CProfile.msgs.friendsTitle());
 
         if (memberId <= 0) {
             add(new Label(CProfile.msgs.friendsNoSuchMember()));
@@ -49,7 +49,7 @@ public class FriendsPanel extends VerticalPanel
                     add(new Label(CProfile.msgs.friendsNoSuchMember()));
                 } else {
                     ProfileService.FriendsResult data = (ProfileService.FriendsResult)result;
-                    _page.setPageTitle(CProfile.msgs.friendsTitle(), data.name.toString());
+                    Frame.setTitle(CProfile.msgs.friendsTitle(), data.name.toString());
                     add(_grid = new FriendsGrid(data.friends));
                 }
             }
@@ -124,7 +124,6 @@ public class FriendsPanel extends VerticalPanel
         }
     }
 
-    protected Page _page;
     protected int _memberId;
     protected FriendsGrid _grid;
 

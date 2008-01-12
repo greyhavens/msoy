@@ -99,6 +99,27 @@ public class Frame
     }
 
     /**
+     * Sets the title of the browser window and the page (displayed below the Whirled logo).
+     */
+    public static void setTitle (String title)
+    {
+        setTitle(title, null);
+    }
+
+    /**
+     * Sets the title and subtitle of the browser window and the page. The subtitle is displayed to
+     * the right of the title in the page and tacked onto the title for the browser window.
+     */
+    public static void setTitle (String title, String subtitle)
+    {
+        if (_content != null) {
+            _content.setPageTitle(title, subtitle);
+        }
+        title = (subtitle == null) ? title : (title + "-" + subtitle);
+        Window.setTitle(CShell.cmsgs.windowTitle(title));
+    }
+
+    /**
      * Minimizes or maximizes the page content. NOOP if the content min/max interface is not being
      * displayed.
      */

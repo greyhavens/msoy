@@ -13,6 +13,7 @@ import client.msgs.ForumPanel;
 import client.msgs.MsgsEntryPoint;
 import client.msgs.ThreadPanel;
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -31,7 +32,7 @@ public class index extends MsgsEntryPoint
     // @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        setPageTitle(CGroup.msgs.groupTitle());
+        Frame.setTitle(CGroup.msgs.groupTitle());
 
         // if we're not a dev deployment, disallow guests
         if (!DeploymentConfig.devDeployment && CGroup.ident == null) {
@@ -46,14 +47,14 @@ public class index extends MsgsEntryPoint
         } else if (args.get(0, "").equals("edit")) {
             int groupId = args.get(1, 0);
             if (groupId == 0) {
-                setContent(new GroupEdit(this));
+                setContent(new GroupEdit());
             } else {
                 Group group = _gview.getGroup();
                 if (group == null && group.groupId != groupId) {
                     MsoyUI.error("ZOMG! That's not supported yet."); // pants! TODO
                     return;
                 }
-                setContent(new GroupEdit(this, group, _gview.getGroupExtras()));
+                setContent(new GroupEdit(group, _gview.getGroupExtras()));
             }
 
         } else if (args.get(0, "").equals("unread")) {
@@ -90,6 +91,6 @@ public class index extends MsgsEntryPoint
     }
 
     protected ForumModels _fmodels = new ForumModels();
-    protected GroupView _gview = new GroupView(this, _fmodels);
+    protected GroupView _gview = new GroupView(_fmodels);
     protected GroupList _glist;
 }

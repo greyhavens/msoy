@@ -6,7 +6,6 @@ package client.shell;
 import java.util.ArrayList;
 
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -71,25 +70,6 @@ public abstract class Page
      */
     public void onPageUnload ()
     {
-    }
-
-    /**
-     * Sets the title of the browser window and the page (displayed below the Whirled logo).
-     */
-    public void setPageTitle (String title)
-    {
-        setPageTitle(title, null);
-    }
-
-    /**
-     * Sets the title and subtitle of the browser window and the page. The subtitle is displayed to
-     * the right of the title in the page and tacked onto the title for the browser window.
-     */
-    public void setPageTitle (String title, String subtitle)
-    {
-        _content.setPageTitle(title, subtitle);
-        title = (subtitle == null) ? title : (title + "-" + subtitle);
-        Window.setTitle(CShell.cmsgs.windowTitle(title));
     }
 
     /**

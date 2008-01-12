@@ -74,7 +74,7 @@ public class index extends Page
             return;
         }
 
-        setPageTitle(CSwiftly.msgs.projectsTitle());
+        Frame.setTitle(CSwiftly.msgs.projectsTitle());
         final int projectId = args.get(0, 0);
         if (projectId == 0) {
             // display the project create/list panel

@@ -43,6 +43,7 @@ import client.msgs.ForumModels;
 import client.msgs.ForumPanel;
 import client.shell.Application;
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
@@ -59,11 +60,10 @@ import client.util.TagDetailPanel;
  */
 public class GroupView extends VerticalPanel
 {
-    public GroupView (Page parent, ForumModels fmodels)
+    public GroupView (ForumModels fmodels)
     {
         super();
         setWidth("100%");
-        _parent = parent;
 
         add(_table = new MyFlexTable());
         add(_forums = new ForumPanel(fmodels));
@@ -120,7 +120,7 @@ public class GroupView extends VerticalPanel
             return; // the forum list will have already reported no such group, so just bail
         }
 
-        _parent.setPageTitle(CGroup.msgs.groupTitle(), _detail.group.name);
+        Frame.setTitle(CGroup.msgs.groupTitle(), _detail.group.name);
         _group = _detail.group;
         _extras = _detail.extras;
 
@@ -128,8 +128,6 @@ public class GroupView extends VerticalPanel
         if (CGroup.ident != null) {
             _me = GroupView.findMember(_detail.members, CGroup.getMemberId());
         }
-
-        _parent.setPageTitle("Groups", _group.name);
 
         _table.clear();
         _table.setStyleName("groupView");
@@ -483,7 +481,6 @@ public class GroupView extends VerticalPanel
         }
     }
 
-    protected Page _parent;
     protected Group _group;
     protected GroupExtras _extras;
     protected GroupDetail _detail;

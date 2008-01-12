@@ -9,6 +9,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.Application;
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -59,13 +60,13 @@ public class index extends Page
     {
         if (CInventory.ident == null) {
             // if we have no creds, just display a message saying login
-            setPageTitle(CInventory.msgs.inventoryTitle());
+            Frame.setTitle(CInventory.msgs.inventoryTitle());
             setContent(MsoyUI.createLabel(CInventory.msgs.logon(), "infoLabel"));
             _inventory = null;
 
         } else {
             if (_inventory == null) {
-                setPageTitle(CInventory.msgs.inventoryTitle());
+                Frame.setTitle(CInventory.msgs.inventoryTitle());
                 setContent(_inventory = new InventoryPanel());
                 setPageTabs(_inventory.getTabs());
             }

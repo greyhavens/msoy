@@ -17,6 +17,7 @@ import com.threerings.msoy.web.client.ProfileService;
 import client.util.MsoyUI;
 import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 
 /**
@@ -50,7 +51,7 @@ public class index extends MsgsEntryPoint
         }
 
         if (args.get(0, "").equals("f")) {
-            setContent(new FriendsPanel(this, args.get(1, 0)));
+            setContent(new FriendsPanel(args.get(1, 0)));
             return;
         }
 
@@ -89,7 +90,7 @@ public class index extends MsgsEntryPoint
         CProfile.profilesvc.loadProfile(CProfile.ident, _memberId = memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 ProfileService.ProfileResult pdata = (ProfileService.ProfileResult)result;
-                setPageTitle(CProfile.msgs.profileTitle(), pdata.name.toString());
+                Frame.setTitle(CProfile.msgs.profileTitle(), pdata.name.toString());
                 switch (pdata.layout.layout) {
                 default:
                 case ProfileLayout.ONE_COLUMN_LAYOUT:
@@ -110,7 +111,7 @@ public class index extends MsgsEntryPoint
 
     protected void displaySearch (Args args) 
     {
-        setPageTitle(CProfile.msgs.profileSearchTitle());
+        Frame.setTitle(CProfile.msgs.profileSearchTitle());
         if (_search == null) {
             _search = new SearchPanel();
         }

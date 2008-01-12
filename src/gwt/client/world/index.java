@@ -160,7 +160,7 @@ public class index extends Page
         CWorld.worldsvc.serializePopularPlaces(CWorld.ident, 20, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (requestEntryCount == _entryCounter) {
-                    setPageTitle(CWorld.msgs.hotSpotsTitle());
+                    Frame.setTitle(CWorld.msgs.hotSpotsTitle());
                     setFlashContent(FlashClients.createPopularPlacesDefinition((String) result));
                 }
             }
@@ -240,18 +240,18 @@ public class index extends Page
             break;
 
         case LaunchConfig.FLASH_SOLO:
-            setPageTitle(config.name);
+            Frame.setTitle(config.name);
             setFlashContent(WidgetUtil.createFlashObjectDefinition(
                                 "game", config.gameMediaPath, 800, 600, null));
             break;
 
         case LaunchConfig.JAVA_SOLO:
-            setPageTitle(config.name);
+            Frame.setTitle(config.name);
             setContent(new Label("Not yet supported"));
             break;
 
         default:
-            setPageTitle(config.name);
+            Frame.setTitle(config.name);
             setContent(new Label(CWorld.msgs.errUnknownGameType("" + config.type)));
             break;
         }

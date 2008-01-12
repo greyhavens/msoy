@@ -17,6 +17,7 @@ import com.threerings.msoy.web.client.WorldServiceAsync;
 
 import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.FlashClients;
 import client.util.MsoyUI;
@@ -53,10 +54,10 @@ public class index extends MsgsEntryPoint
             }
         };
         if ("whirledwide".equals(action)) {
-            setPageTitle(CWhirled.msgs.titleWhirledwide());
+            Frame.setTitle(CWhirled.msgs.titleWhirledwide());
             setContent(new Whirledwide(popDisplay));
         } else if ("mywhirled".equals(action)) {
-            setPageTitle(CWhirled.msgs.titleMyWhirled());
+            Frame.setTitle(CWhirled.msgs.titleMyWhirled());
             setContent(new MyWhirled(popDisplay));
             FlashClients.tutorialEvent("myWhirledVisited");
         }

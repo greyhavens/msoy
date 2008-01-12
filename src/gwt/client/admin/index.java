@@ -10,6 +10,7 @@ import com.threerings.msoy.web.client.AdminService;
 import com.threerings.msoy.web.client.AdminServiceAsync;
 
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -39,7 +40,7 @@ public class index extends Page
             setContent(MsoyUI.createLabel(CAdmin.msgs.lackPrivileges(), "infoLabel"));
 
         } else if (args.get(0, "").equals("browser")) {
-            setPageTitle(CAdmin.msgs.browserTitle());
+            Frame.setTitle(CAdmin.msgs.browserTitle());
             if (_playerBrowser == null) {
                 _playerBrowser = new PlayerBrowserPanel();
             } 
@@ -47,11 +48,11 @@ public class index extends Page
             _playerBrowser.displayPlayersInvitedBy(args.get(1, 0));
 
         } else if (args.get(0, "").equals("review")) {
-            setPageTitle(CAdmin.msgs.reviewTitle());
+            Frame.setTitle(CAdmin.msgs.reviewTitle());
             setContent(new ReviewPanel());
 
         } else {
-            setPageTitle(CAdmin.msgs.title());
+            Frame.setTitle(CAdmin.msgs.title());
             setContent(new DashboardPanel());
         }
     }

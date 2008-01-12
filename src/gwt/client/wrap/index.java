@@ -44,7 +44,7 @@ public class index extends Page
 
     protected void displayPage (String title, String url)
     {
-        setPageTitle(title);
+        client.shell.Frame.setTitle(title);
         Frame frame = new Frame(url);
         frame.setStyleName("wrappedFrame");
         setContent(frame);

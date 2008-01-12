@@ -57,12 +57,12 @@ public class index extends Page
             if (getContent() instanceof GameDetailPanel) {
                 panel = (GameDetailPanel)getContent();
             } else {
-                setContent(panel = new GameDetailPanel(this));
+                setContent(panel = new GameDetailPanel());
             }
             panel.setGame(args.get(1, 0), args.get(2, ""));
 
         } else if (action.equals("t")) {
-            setContent(new TrophyCasePanel(this, args.get(1, 0)));
+            setContent(new TrophyCasePanel(args.get(1, 0)));
 
         } else {
             // TODO: display the arcade

@@ -24,6 +24,7 @@ import com.threerings.msoy.item.data.all.Photo;
 
 import client.shell.Application;
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.LimitedTextArea;
 import client.util.MsoyCallback;
@@ -38,12 +39,12 @@ public class GroupEdit extends FlexTable
     /**
      * This constructor is for creating new Groups.
      */
-    public GroupEdit (Page parent)
+    public GroupEdit ()
     {
-        this(parent, new Group(), new GroupExtras());
+        this(new Group(), new GroupExtras());
     }
 
-    public GroupEdit (Page parent, Group group, GroupExtras extras)
+    public GroupEdit (Group group, GroupExtras extras)
     {
         _group = group;
         _extras = extras;
@@ -54,7 +55,7 @@ public class GroupEdit extends FlexTable
 
         String title = _group.groupId == 0 ?
             CGroup.msgs.editCreateTitle() : CGroup.msgs.editEditTitle();
-        parent.setPageTitle(title, group.name);
+        Frame.setTitle(title, group.name);
 
         // set up our editor contents
         _name = MsoyUI.createTextBox(_group.name, GroupName.LENGTH_MAX, 20);

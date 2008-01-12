@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.msoy.web.data.TrophyCase;
 
-import client.shell.Page;
+import client.shell.Frame;
 import client.util.HeaderBox;
 
 /**
@@ -17,10 +17,9 @@ import client.util.HeaderBox;
  */
 public class TrophyCasePanel extends FlexTable
 {
-    public TrophyCasePanel (Page parent, int memberId)
+    public TrophyCasePanel (int memberId)
     {
-        _parent = parent;
-        _parent.setPageTitle(CGame.msgs.caseTitle());
+        Frame.setTitle(CGame.msgs.caseTitle());
         setCellPadding(0);
         setCellSpacing(5);
 
@@ -37,7 +36,7 @@ public class TrophyCasePanel extends FlexTable
 
     protected void setTrophyCase (TrophyCase tcase)
     {
-        _parent.setPageTitle(CGame.msgs.caseTitle(), tcase.owner.toString());
+        Frame.setTitle(CGame.msgs.caseTitle(), tcase.owner.toString());
 
         if (tcase.shelves.length == 0) {
             setText(0, 0, CGame.msgs.caseEmpty());
@@ -54,6 +53,4 @@ public class TrophyCasePanel extends FlexTable
             box.setContent(new TrophyGrid(shelf.trophies));
         }
     }
-
-    protected Page _parent;
 }

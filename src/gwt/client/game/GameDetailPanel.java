@@ -30,6 +30,7 @@ import client.item.ItemRating;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.CommentsPanel;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.CreatorLabel;
 import client.util.ItemUtil;
@@ -49,10 +50,9 @@ public class GameDetailPanel extends VerticalPanel
     public static final String TOPRANKINGS_TAB = "tr";
     public static final String METRICS_TAB = "m";
 
-    public GameDetailPanel (Page page)
+    public GameDetailPanel ()
     {
-        _page = page;
-        _page.setPageTitle(CGame.msgs.gdpTitle());
+        Frame.setTitle(CGame.msgs.gdpTitle());
         setStyleName("gameDetail");
     }
 
@@ -82,7 +82,7 @@ public class GameDetailPanel extends VerticalPanel
         clear();
 
         _gameId = gameId;
-        _page.setPageTitle(CGame.msgs.gdpTitle(), detail.getGame().name);
+        Frame.setTitle(CGame.msgs.gdpTitle(), detail.getGame().name);
 
         FlexTable top = new FlexTable();
         top.setCellPadding(0);
@@ -310,7 +310,6 @@ public class GameDetailPanel extends VerticalPanel
         return (avgMins > 1) ? CGame.msgs.gdpMinutes(""+avgMins) : CGame.msgs.gdpMinute();
     }
 
-    protected Page _page;
     protected StyledTabPanel _tabs;
     protected int _gameId;
     protected String _seltab;

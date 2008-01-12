@@ -9,6 +9,7 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 
 import client.item.ItemTypePanel;
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -57,7 +58,7 @@ public class index extends Page
         }
 
         if (_catalog == null) {
-            setPageTitle(CCatalog.msgs.catalogTitle());
+            Frame.setTitle(CCatalog.msgs.catalogTitle());
             ItemTypePanel typeTabs = new ItemTypePanel(CATALOG);
             setContent(_catalog = new CatalogPanel(typeTabs));
             setPageTabs(typeTabs);

@@ -10,6 +10,7 @@ import com.threerings.msoy.person.data.MailFolder;
 import client.msgs.MsgsEntryPoint;
 import client.shell.Application;
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -41,7 +42,7 @@ public class index extends MsgsEntryPoint
         }
         // make sure we're displaying the application
         if (!_mainView.isAttached()) {
-            setPageTitle(CMail.msgs.mailTitle());
+            Frame.setTitle(CMail.msgs.mailTitle());
             setContent(_mainView);
         }
 
