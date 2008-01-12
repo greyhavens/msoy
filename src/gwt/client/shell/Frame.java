@@ -10,12 +10,15 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.util.MsoyUI;
@@ -67,17 +70,6 @@ public class Frame
             naviPanel.add(navi);
         }
 
-        // create our content manipulation buttons
-        Label closeBox = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
-            public void onClick (Widget sender) {
-                closeContent();
-            }
-        });
-        _closeContent = new FlowPanel();
-        _closeContent.add(closeBox);
-        _closeContent.setVisible(false); 
-        _closeContent.setStyleName("CloseBoxHolder");
-        
         _minimizeContent = MsoyUI.createActionLabel("", "Minimize", new ClickListener() {
             public void onClick (Widget sender) {
                 setContentMinimized(true, null);
@@ -192,6 +184,18 @@ public class Frame
         }
 
         _content = null;
+        _contlist = null;
+        _scroller = null;
+    }
+
+    /**
+     * Requests that the specified widget be scrolled into view.
+     */
+    public static void ensureVisible (Widget widget)
+    {
+        if (_scroller != null) {
+            _scroller.ensureVisible(widget);
+        }
     }
 
     /**
@@ -199,8 +203,12 @@ public class Frame
      */
     public static void showDialog (String title, Widget dialog)
     {
-        // TODO: animate this sliding down
-        RootPanel.get(HEADER).add(new DialogPanel(title, dialog));
+        Dialog pd = new Dialog(title, dialog);
+        if (_contlist != null) {
+            _contlist.insert(pd, 0); // TODO: animate this sliding down
+        } else {
+            RootPanel.get(HEADER).add(pd); // TODO: animate this sliding down
+        }
     }
 
     /**
@@ -222,14 +230,9 @@ public class Frame
      */
     public static int clearDialog (Predicate pred)
     {
-        RootPanel header = RootPanel.get(HEADER);
-        int removed = 0;
-        for (int ii = 0; ii < header.getWidgetCount(); ii++) {
-            Widget widget = header.getWidget(ii);
-            if (widget instanceof DialogPanel && pred.isMatch(((DialogPanel)widget).getContent())) {
-                header.remove(ii);
-                removed++;
-            }
+        int removed = clearDialog(RootPanel.get(HEADER), pred);
+        if (_contlist != null) {
+            removed += clearDialog(_contlist, pred);
         }
         return removed;
     }
@@ -238,7 +241,7 @@ public class Frame
      * Configures the widget to be displayed in the content portion of the frame. Will animate the
      * content sliding on if appropriate.
      */
-    public static void setContent (Widget content, boolean contentIsJava)
+    protected static void setContent (Page.Content content, boolean contentIsJava)
     {
         RootPanel.get(CONTENT).clear();
 
@@ -246,21 +249,26 @@ public class Frame
         clearDialog(Predicate.TRUE);
 
         // note that this is our current content
-        _content = content;
+        _contlist = new VerticalPanel();
+        _contlist.setWidth("100%");
+        _contlist.add(_content = content);
+        _scroller = new ScrollPanel(_contlist);
+        _scroller.setHeight((Window.getClientHeight() - 50) + "px");
         displayingJava = contentIsJava;
 
         // if we're displaying the client or we have a minimized page, unminimize things first
         if (_maximizeContent.isAttached() ||
             (_closeToken != null && !_minimizeContent.isAttached())) {
             RootPanel.get(SEPARATOR).clear();
-            RootPanel.get(SEPARATOR).add(_closeContent);
             RootPanel.get(SEPARATOR).add(_minimizeContent);
             new SlideContentOn().start(null);
 
         } else {
-            RootPanel.get(CONTENT).add(_content);
+            RootPanel.get(CONTENT).add(_scroller);
             RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
         }
+
+        _content.setCloseVisible(RootPanel.get(CLIENT).getWidgetCount() > 0);
     }
 
     protected static void restoreClient ()
@@ -284,6 +292,19 @@ public class Frame
         if (div != null) {
             DOM.removeChild(DOM.getParent(div), div);
         }
+    }
+
+    protected static int clearDialog (ComplexPanel panel, Predicate pred)
+    {
+        int removed = 0;
+        for (int ii = 0; ii < panel.getWidgetCount(); ii++) {
+            Widget widget = panel.getWidget(ii);
+            if (widget instanceof Dialog && pred.isMatch(((Dialog)widget).getContent())) {
+                panel.remove(ii);
+                removed++;
+            }
+        }
+        return removed;
     }
 
     /**
@@ -332,7 +353,7 @@ public class Frame
         public SlideContentOff () {
             RootPanel.get(CONTENT).clear();
             WorldClient.setMinimized(false);
-            _closeContent.setVisible(false);
+            _content.setCloseVisible(false);
         }
 
         public void run () {
@@ -358,10 +379,7 @@ public class Frame
     {
         public void run () {
 //             if (_startWidth <= _endWidth) {
-                _closeContent.setVisible(true);
-                DOM.setStyleAttribute(_closeContent.getElement(), "left",
-                                      (CONTENT_WIDTH + CLOSE_BUTTON_OFFSET) + "px");
-                RootPanel.get(CONTENT).add(_content);
+                RootPanel.get(CONTENT).add(_scroller);
                 RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
                 RootPanel.get(CLIENT).setWidth(_endWidth + "px");
                 WorldClient.setMinimized(true);
@@ -380,36 +398,43 @@ public class Frame
         protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
     }
 
-    protected static class DialogPanel extends FlexTable
+    protected static class Dialog extends FlexTable
     {
-        public DialogPanel (String title, Widget content) {
+        public Dialog (String title, Widget content)
+        {
             setCellPadding(0);
             setCellSpacing(0);
-            setStyleName("frameDialog");
+            setStyleName("pageHeader");
 
             setText(0, 0, title);
-            getFlexCellFormatter().setStyleName(0, 0, "Title");
+            getFlexCellFormatter().setStyleName(0, 0, "TitleCell");
 
             setWidget(0, 1, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
                 public void onClick (Widget sender) {
-                    clearDialog(getContent());
+                    Frame.clearDialog(getContent());
                 }
             }));
             getFlexCellFormatter().setStyleName(0, 1, "CloseCell");
 
             setWidget(1, 0, content);
-            getFlexCellFormatter().setStyleName(1, 0, "Content");
+            getFlexCellFormatter().setColSpan(1, 0, 2);
+
+            setWidget(2, 0, WidgetUtil.makeShim(5, 5));
+            getFlexCellFormatter().setColSpan(2, 0, 2);
         }
 
-        public Widget getContent () {
+        public Widget getContent ()
+        {
             return getWidget(1, 0);
         }
     }
 
-    protected static Widget _content;
     protected static String _closeToken;
+
+    protected static Page.Content _content;
+    protected static VerticalPanel _contlist;
+    protected static ScrollPanel _scroller;
     protected static Label _minimizeContent, _maximizeContent;
-    protected static FlowPanel _closeContent;
 
     // constants for our top-level elements
     protected static final String HEADER = "header";

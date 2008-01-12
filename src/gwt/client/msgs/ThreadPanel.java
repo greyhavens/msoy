@@ -36,7 +36,7 @@ public class ThreadPanel extends TitledListPanel
     public ThreadPanel (Page parent, int threadId, int page, int scrollToId, ForumModels fmodels)
     {
         _threadId = threadId;
-        _mpanel = new MessagesPanel(parent, this, scrollToId);
+        _mpanel = new MessagesPanel(this, scrollToId);
 
         // look for our thread in the resolved group thread models
         ForumThread thread = fmodels.findThread(threadId);
@@ -74,17 +74,7 @@ public class ThreadPanel extends TitledListPanel
 
     public void postReply (ForumMessage inReplyTo)
     {
-        String title = CMsgs.mmsgs.threadReplyHeader(_thread.subject);
-        VerticalPanel both = new VerticalPanel();
-        both.setWidth("100%");
-        both.add(new ReplyPanel(inReplyTo));
-        both.add(_mpanel);
-        setContents(title, both);
-    }
-
-    public void clearReply ()
-    {
-        showMessages();
+        Frame.showDialog(CMsgs.mmsgs.threadReplyHeader(_thread.subject), new ReplyPanel(inReplyTo));
     }
 
     public void editPost (ForumMessage message, AsyncCallback callback)
@@ -128,7 +118,7 @@ public class ThreadPanel extends TitledListPanel
 
             _footer.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    clearReply();
+                    Frame.clearDialog(ReplyPanel.this);
                 }
             }));
             Button submit = new Button(CMsgs.cmsgs.submit());

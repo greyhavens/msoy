@@ -12,8 +12,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.WebCreds;
@@ -89,27 +87,9 @@ public abstract class Page
      */
     public void setPageTitle (String title, String subtitle)
     {
-        if (_tabs == null) {
-            createContentContainer();
-        }
-        _tabs.setText(0, 0, title);
-        if (subtitle != null) {
-            _tabs.setText(0, 1, subtitle);
-            title += " - " + subtitle;
-        } else {
-            _tabs.setHTML(0, 1, "&nbsp;");
-        }
+        _content.setPageTitle(title, subtitle);
+        title = (subtitle == null) ? title : (title + "-" + subtitle);
         Window.setTitle(CShell.cmsgs.windowTitle(title));
-    }
-
-    /**
-     * Requests that the specified widget be scrolled into view.
-     */
-    public void ensureVisible (Widget widget)
-    {
-        if (_scroller != null) {
-            _scroller.ensureVisible(widget);
-        }
     }
 
     /**
@@ -163,51 +143,13 @@ public abstract class Page
      */
     protected void setContent (Widget content, boolean contentIsJava)
     {
-        // create our content container if need be
-        if (_content == null) {
-            createContentContainer();
-        }
-
-        // display our content in the frame (inside a scroll panel)
         Frame.setContent(_content, contentIsJava);
-        _content.setWidget(1, 0, _scroller = new ScrollPanel(content));
-        _scroller.setHeight((Window.getClientHeight() - 70) + "px");
-
-        // if there isn't anything in the tabs/subtitle area, we need something there to cause IE
-        // to properly use up the space
-        if (_tabs.getWidget(0, 1) == null && _tabs.getText(0, 1).length() == 0) {
-            _tabs.setHTML(0, 1, "&nbsp;");
-        }
-    }
-
-    protected void createContentContainer ()
-    {
-        _content = new FlexTable();
-        _content.setCellPadding(0);
-        _content.setCellSpacing(0);
-        _content.setWidth("100%");
-        _content.setHeight("100%");
-
-        // a separate table for this entire row, so that
-        // we can set individual cell widths correctly
-        _tabs = new FlexTable();
-        _tabs.setCellPadding(0);
-        _tabs.setCellSpacing(0);
-        _tabs.setWidth("100%");
-        _tabs.getFlexCellFormatter().setStyleName(0, 0, "pageHeaderTitle");
-        _tabs.getFlexCellFormatter().setStyleName(0, 1, "pageHeaderContent");
-        _content.setWidget(0, 0, _tabs);
-
-        _content.getFlexCellFormatter().setHeight(1, 0, "100%");
-        _content.getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
+        _content.setContent(content);
     }
 
     protected void setPageTabs (Widget tabs)
     {
-        if (_tabs == null) {
-            createContentContainer();
-        }
-        _tabs.setWidget(0, 1, tabs);
+        _content.setPageTabs(tabs);
     }
 
     /**
@@ -228,6 +170,69 @@ public abstract class Page
         History.onHistoryChanged(History.getToken());
     }
 
-    protected ScrollPanel _scroller;
-    protected FlexTable _content, _tabs;
+    protected static class Content extends FlexTable
+    {
+        public Content () {
+            setCellPadding(0);
+            setCellSpacing(0);
+            setWidth("100%");
+            setHeight("100%");
+
+            // a separate table for the header, so that we can set individual cell widths correctly
+            _tabs = new FlexTable();
+            _tabs.setStyleName("pageHeader");
+            _tabs.setCellPadding(0);
+            _tabs.setCellSpacing(0);
+            _tabs.getFlexCellFormatter().setStyleName(0, 0, "TitleCell");
+            _tabs.getFlexCellFormatter().setWidth(0, 0, "118px");
+            _tabs.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
+            _tabs.getFlexCellFormatter().setStyleName(0, 1, "TabsCell");
+
+            _closeBox = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
+                public void onClick (Widget sender) {
+                    Frame.closeContent();
+                }
+            });
+            _tabs.setWidget(0, 2, _closeBox);
+            _tabs.getFlexCellFormatter().setStyleName(0, 2, "CloseCell");
+            setCloseVisible(false);
+
+            setWidget(0, 0, _tabs);
+
+            getFlexCellFormatter().setHeight(1, 0, "100%");
+            getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
+        }
+
+        public void setPageTitle (String title, String subtitle) {
+            _tabs.setText(0, 0, title);
+            if (subtitle != null) {
+                _tabs.setText(0, 1, subtitle);
+            } else {
+                _tabs.setHTML(0, 1, "&nbsp;");
+            }
+        }
+
+        public void setPageTabs (Widget tabs) {
+            _tabs.setWidget(0, 1, tabs);
+        }
+
+        public void setCloseVisible (boolean visible) {
+            _closeBox.setVisible(visible);
+        }
+
+        public void setContent (Widget content) {
+            setWidget(1, 0, content);
+
+            // if there isn't anything in the tabs/subtitle area, we need something there to cause
+            // IE to properly use up the space
+            if (_tabs.getWidget(0, 1) == null && _tabs.getText(0, 1).length() == 0) {
+                _tabs.setHTML(0, 1, "&nbsp;");
+            }
+        }
+
+        protected FlexTable _tabs;
+        protected Label _closeBox;
+    }
+
+    protected Content _content = new Content();
 }

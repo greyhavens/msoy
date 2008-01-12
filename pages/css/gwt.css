@@ -190,20 +190,31 @@ img {
   padding-right: 3px;
 }
 
-.frameDialog {
+/** Page styles */
+.pageHeader {
   width: 100%;
 }
 
-.frameDialog .Title {
+.pageHeader .TitleCell {
   background: #222222;
   font-size: 14px;
   font-weight: bold;
+  height: 20px;
   color: white;
   white-space: nowrap;
   padding-left: 5px;
 }
 
-.frameDialog .CloseCell {
+.pageHeader .TabsCell {
+  background: #222222;
+  height: 20px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+}
+
+.pageHeader .CloseCell {
   background: #222222;
   width: 13px;
   padding-top: 2px;
@@ -211,12 +222,41 @@ img {
   padding-right: 2px;
 }
 
-.frameDialog .CloseBox {
+.pageHeader .CloseCell .CloseBox {
   background-image: url(/images/ui/close.png);
   width: 13px;
   height: 13px;
 }
 
+.pageSeparator {
+  vertical-align: top;
+}
+
+.pageSeparator .Minimize {
+  background-image: url(/images/ui/minimize_content.png);
+  background-repeat: no-repeat;
+  border-top: #222222 solid 19px;
+  width: 8px;
+  height: 525px;
+}
+
+.pageSeparator .Maximize {
+  background-image: url(/images/ui/maximize_content.png);
+  background-repeat: no-repeat;
+  border-top: #222222 solid 19px;
+  width: 8px;
+  height: 525px;
+}
+
+.SeparatorFromFlash {
+  position: absolute;
+  background: black;
+  width: 1px;
+  height: 20px;
+  top: 30px;
+}
+
+/** Misc styles. */
 .formDialog td {
   vertical-align: top;
 }
@@ -766,70 +806,6 @@ img {
 .promptPopup .Content {
   padding: 15px 15px 0px 15px;
   width: 400px;
-}
-
-.pageHeaderTitle {
-  background: #222222;
-  font-size: 14px;
-  font-weight: bold;
-  width: 118px;
-  height: 20px;
-  color: white;
-  text-align: center;
-  white-space: nowrap;
-  padding-left: 5px;
-}
-
-.pageHeaderContent {
-  background: #222222;
-  height: 20px;
-  text-align: left;
-  font-size: 14px;
-  font-weight: bold;
-  color: white;
-}
-
-.pageSeparator {
-  vertical-align: top;
-}
-
-.pageSeparator .CloseBoxHolder {
-  position: absolute;
-  left: 0px;
-  width: 16px;
-  height: 16px;
-  padding-top: 4px;
-}
-
-.pageSeparator .CloseBox {
-  background-image: url(/images/ui/close.png);
-  float: right;
-  width: 13px;
-  height: 13px;
-}
-
-.pageSeparator .Minimize {
-  background-image: url(/images/ui/minimize_content.png);
-  background-repeat: no-repeat;
-  border-top: #222222 solid 19px;
-  width: 8px;
-  height: 525px;
-}
-
-.pageSeparator .Maximize {
-  background-image: url(/images/ui/maximize_content.png);
-  background-repeat: no-repeat;
-  border-top: #222222 solid 19px;
-  width: 8px;
-  height: 525px;
-}
-
-.SeparatorFromFlash {
-  position: absolute;
-  background: black;
-  width: 1px;
-  height: 20px;
-  top: 30px;
 }
 
 .sendInvites .Header, .sendInvitesResultsPopup .Header, .invitation .Header {

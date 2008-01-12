@@ -23,8 +23,8 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
+import client.shell.Frame;
 import client.shell.MessagePanel;
-import client.shell.Page;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PromptPopup;
@@ -34,14 +34,13 @@ import client.util.PromptPopup;
  */
 public class MessagesPanel extends PagedGrid
 {
-    public MessagesPanel (Page page, ThreadPanel parent, int scrollToId)
+    public MessagesPanel (ThreadPanel parent, int scrollToId)
     {
         super(MESSAGES_PER_PAGE, 1, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");
         setWidth("100%");
         setHeight("100%");
 
-        _ppage = page;
         _parent = parent;
         _scrollToId = scrollToId;
     }
@@ -68,7 +67,7 @@ public class MessagesPanel extends PagedGrid
             _scrollToId = 0;
             DeferredCommand.addCommand(new Command() {
                 public void execute () {
-                    _ppage.ensureVisible(panel);
+                    Frame.ensureVisible(panel);
                 }
             });
         }
@@ -234,9 +233,6 @@ public class MessagesPanel extends PagedGrid
         protected ForumThread _thread;
         protected ForumMessage _message;
     }
-
-    /** The page that contains us. Used for scroll fiddling. */
-    protected Page _ppage;
 
     /** The thread panel in which we're hosted. */
     protected ThreadPanel _parent;
