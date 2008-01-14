@@ -581,7 +581,7 @@ public class FeedPanel extends VerticalPanel
             }
 
             setWidget(0, col, new HTML(html));
-            getFlexCellFormatter().addStyleName(0, 1, "TextContainer");
+            getFlexCellFormatter().addStyleName(0, col, "TextContainer");
         }
     }
 
