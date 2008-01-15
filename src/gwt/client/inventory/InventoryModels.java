@@ -15,6 +15,7 @@ import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.SubItem;
 
 /**
  * Maintains information on our member's inventory.
@@ -42,6 +43,11 @@ public class InventoryModels
         });
     }
 
+    public DataModel getModel (byte type, int suiteId)
+    {
+        return (DataModel)_models.get(new Key(type, suiteId));
+    }
+
     public Item findItem (byte type, final int itemId)
     {
         Predicate itemP = new Predicate() {
@@ -63,9 +69,15 @@ public class InventoryModels
         return null;
     }
 
-    public DataModel getModel (byte type, int suiteId)
+    public void updateItem (Item item)
     {
-        return (DataModel)_models.get(new Key(type, suiteId));
+        for (Iterator iter = _models.entrySet().iterator(); iter.hasNext(); ) {
+            Map.Entry entry = (Map.Entry)iter.next();
+            Key key = (Key)entry.getKey();
+            if (key.matches(item)) {
+                ((SimpleDataModel)entry.getValue()).updateItem(item);
+            }
+        }
     }
 
     protected static class Key {
@@ -75,6 +87,11 @@ public class InventoryModels
         public Key (byte type, int suiteId) {
             this.type = type;
             this.suiteId = suiteId;
+        }
+
+        public boolean matches (Item item) {
+            return item.getType() == type &&
+                suiteId == (item instanceof SubItem ? ((SubItem)item).suiteId : 0);
         }
 
         public int hashCode() {

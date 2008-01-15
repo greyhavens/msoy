@@ -153,27 +153,6 @@ public class GameEditor extends ItemEditor
 
         addRow(CShell.emsgs.gameWatchable(), _watchable = new CheckBox());
         _watchable.setChecked(true);
-        addSpacer();
-
-        addRow(CShell.emsgs.gameDefinition(), _extras = new TextArea());
-        _extras.setCharacterWidth(60);
-        _extras.setVisibleLines(5);
-        addRow(CShell.emsgs.gameAVRG(), _avrg = new CheckBox());
-        addSpacer();
-
-        addTip(CShell.emsgs.gameJavaTip());
-        addRow(CShell.emsgs.gameIdent(), _ident = new TextBox());
-        addRow(CShell.emsgs.gameController(), _controller = new TextBox());
-        _controller.setVisibleLength(40);
-
-        // these are only available to OOO presently
-        _manager = new TextBox();
-        _lwjgl = new CheckBox();
-        if (CShell.isAdmin()) {
-            addRow(CShell.emsgs.gameManager(), _manager);
-            _manager.setVisibleLength(40);
-            addRow(CShell.emsgs.gameLWJGL(), _lwjgl);
-        }
 
         // add a tab for uploading the game media
         addSpacer();
@@ -200,6 +179,27 @@ public class GameEditor extends ItemEditor
         addRow(CShell.emsgs.gameShotTab(), shotter, CShell.emsgs.gameShotTitle());
 
         super.addExtras();
+
+        addSpacer();
+        addRow(CShell.emsgs.gameDefinition(), _extras = new TextArea());
+        _extras.setCharacterWidth(60);
+        _extras.setVisibleLines(5);
+        addRow(CShell.emsgs.gameAVRG(), _avrg = new CheckBox());
+        addSpacer();
+
+        addTip(CShell.emsgs.gameJavaTip());
+        addRow(CShell.emsgs.gameIdent(), _ident = new TextBox());
+        addRow(CShell.emsgs.gameController(), _controller = new TextBox());
+        _controller.setVisibleLength(40);
+
+        // these are only available to OOO presently
+        _manager = new TextBox();
+        _lwjgl = new CheckBox();
+        if (CShell.isAdmin()) {
+            addRow(CShell.emsgs.gameManager(), _manager);
+            _manager.setVisibleLength(40);
+            addRow(CShell.emsgs.gameLWJGL(), _lwjgl);
+        }
     }
 
     // @Override // from ItemEditor

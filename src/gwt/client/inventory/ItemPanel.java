@@ -103,7 +103,7 @@ public class ItemPanel extends VerticalPanel
         showInventory();
 
         if (_contents.hasModel()) {
-            _contents.displayPage(page, false);
+            _contents.displayPage(page, true);
         } else {
             _startPage = page;
         }
@@ -128,13 +128,26 @@ public class ItemPanel extends VerticalPanel
     }
 
     /**
+     * Requests that detail for the specified item be displayed.
+     */
+    public void showDetail (Item item)
+    {
+        if (_detail != null && _detail.item.getIdent().equals(item.getIdent())) {
+            _detail.item = item;
+            showDetail(_detail);
+        } else {
+            showDetail(item.getIdent());
+        }
+    }
+
+    /**
      * Displays the supplied item detail.
      */
     public void showDetail (ItemDetail detail)
     {
         _detail = detail;
         clear();
-        add(new ItemDetailPanel(_detail, this));
+        add(new ItemDetailPanel(_models, _detail, this));
     }
 
     /**

@@ -7,6 +7,8 @@ import java.util.HashMap;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.SimplePanel;
+
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import client.item.ItemTypePanel;
@@ -34,7 +36,12 @@ public class InventoryPanel extends SimplePanel
         if (itemId == 0) {
             getItemPanel(itemType).setPage(pageNo);
         } else {
-            getItemPanel(itemType).showDetail(new ItemIdent(itemType, itemId));
+            Item item = _models.findItem(itemType, itemId);
+            if (item == null) {
+                getItemPanel(itemType).showDetail(new ItemIdent(itemType, itemId));
+            } else {
+                getItemPanel(itemType).showDetail(item);
+            }
         }
         _itemTabs.selectTab(itemType);
         setWidget(getItemPanel(itemType));

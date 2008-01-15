@@ -35,7 +35,7 @@ import client.util.RowPanel;
 public class ItemDetailPanel extends BaseItemDetailPanel
     implements DoListItemPopup.ListedListener
 {
-    public ItemDetailPanel (ItemDetail detail, ItemPanel panel)
+    public ItemDetailPanel (InventoryModels models, ItemDetail detail, ItemPanel panel)
     {
         super(detail);
         _panel = panel;
@@ -48,7 +48,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 continue;
             }
             addTabBelow(CInventory.dmsgs.getString("pItemType" + types[ii].getType()),
-                        new SubItemPanel(types[ii].getType(), _item, panel), false);
+                        new SubItemPanel(models, types[ii].getType(), _item, panel), false);
         }
     }
 

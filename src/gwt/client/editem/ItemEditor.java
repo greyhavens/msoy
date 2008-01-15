@@ -121,8 +121,6 @@ public abstract class ItemEditor extends FlexTable
         HorizontalPanel footer = new HorizontalPanel();
         int row = getRowCount();
         setWidget(row, 1, footer);
-//         getFlexCellFormatter().setColSpan(row, 0, 2);
-//         getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
         footer.add(_esubmit = new Button("submit"));
         _esubmit.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
@@ -539,21 +537,21 @@ public abstract class ItemEditor extends FlexTable
             return;
         }
 
-        MsoyCallback cb = new MsoyCallback() {
-            public void onSuccess (Object result) {
-                if (result instanceof Item) {
-                    MsoyUI.info(CShell.emsgs.msgItemCreated());
-                    _item = (Item)result;
-                } else {
-                    MsoyUI.info(CShell.emsgs.msgItemUpdated());
-                }
-                _parent.editComplete(_item);
-            }
-        };
         if (_item.itemId == 0) {
-            CShell.itemsvc.createItem(CShell.ident, _item, _parentItem, cb);
+            CShell.itemsvc.createItem(CShell.ident, _item, _parentItem, new MsoyCallback() {
+                public void onSuccess (Object result) {
+                    MsoyUI.info(CShell.emsgs.msgItemCreated());
+                    _parent.editComplete((Item)result);
+                }
+            });
+
         } else {
-            CShell.itemsvc.updateItem(CShell.ident, _item, cb);
+            CShell.itemsvc.updateItem(CShell.ident, _item, new MsoyCallback() {
+                public void onSuccess (Object result) {
+                    MsoyUI.info(CShell.emsgs.msgItemUpdated());
+                    _parent.editComplete(_item);
+                }
+            });
         }
     }
 

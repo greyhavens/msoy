@@ -5,7 +5,6 @@ package client.inventory;
 
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
@@ -22,6 +21,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
+import client.util.MsoyCallback;
 
 /**
  * Displays a set of sub-items on an item's detail page.
@@ -29,8 +29,9 @@ import client.editem.ItemEditor;
 public class SubItemPanel extends VerticalPanel
     implements EditorHost
 {
-    public SubItemPanel (byte type, Item parent, final ItemPanel panel)
+    public SubItemPanel (InventoryModels models, byte type, Item parent, final ItemPanel panel)
     {
+        _models = models;
         _type = type;
         _parent = parent;
         _contents = new PagedGrid(ROWS, ItemPanel.COLUMNS, PagedGrid.NAV_ON_TOP) {
@@ -89,18 +90,14 @@ public class SubItemPanel extends VerticalPanel
             return;
         }
 
-        CInventory.membersvc.loadInventory(
-            CInventory.ident, _type, _parent.getSuiteId(), new AsyncCallback() {
+        _models.loadModel(_type, _parent.getSuiteId(), new MsoyCallback() {
             public void onSuccess (Object result) {
                 _contents.setModel(new SimpleDataModel(_items = (List)result), 0);
-            }
-            public void onFailure (Throwable caught) {
-                CInventory.log("loadInventory failed", caught);
-                add(new Label(CInventory.serverError(caught)));
             }
         });
     }
 
+    protected InventoryModels _models;
     protected byte _type;
     protected Item _parent;
 

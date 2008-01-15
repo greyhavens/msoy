@@ -72,8 +72,8 @@ public class index extends Page
     public void editComplete (Item item)
     {
         if (item != null) {
-            // TODO: update inventory model
-            displayInventory(item.getType(), -1, item.itemId);
+            _models.updateItem(item);
+            Application.go(Page.INVENTORY, Args.compose(""+item.getType(), "0", ""+item.itemId));
         } else {
             History.back();
         }
