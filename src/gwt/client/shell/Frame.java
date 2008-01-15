@@ -10,7 +10,6 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.threerings.gwt.ui.WidgetUtil;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -21,8 +20,10 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.Predicate;
+
 import client.util.MsoyUI;
-import client.util.Predicate;
 
 /**
  * The frame wraps the top-level page HTML and handles displaying the navigation, the page content,

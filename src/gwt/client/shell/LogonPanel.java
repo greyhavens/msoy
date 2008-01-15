@@ -15,12 +15,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.util.CookieUtil;
+import com.threerings.gwt.util.Predicate;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.util.MsoyUI;
-import client.util.Predicate;
 
 /**
  * Displays a logon user interface.
