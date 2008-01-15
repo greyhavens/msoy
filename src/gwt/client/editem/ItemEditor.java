@@ -5,7 +5,6 @@ package client.editem;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -135,8 +134,7 @@ public abstract class ItemEditor extends FlexTable
         footer.add(ecancel = new Button(CShell.cmsgs.cancel()));
         ecancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-// TODO!
-                History.back();
+                _parent.editComplete(null);
             }
         });
     }

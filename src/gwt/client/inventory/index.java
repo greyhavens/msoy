@@ -4,6 +4,7 @@
 package client.inventory;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.History;
 
 import com.threerings.msoy.item.data.all.Item;
 
@@ -70,8 +71,12 @@ public class index extends Page
     // from interface EditorHost
     public void editComplete (Item item)
     {
-        // TODO: update inventory model
-        displayInventory(item.getType(), -1, item.itemId);
+        if (item != null) {
+            // TODO: update inventory model
+            displayInventory(item.getType(), -1, item.itemId);
+        } else {
+            History.back();
+        }
     }
 
     // @Override // from Page

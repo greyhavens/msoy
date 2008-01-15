@@ -1,0 +1,216 @@
+//
+// $Id$
+
+package client.admin;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.gwt.ItemDetail;
+
+import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
+import client.util.BorderedPopup;
+import client.util.ClickCallback;
+import client.util.MsoyUI;
+import client.util.RowPanel;
+
+/**
+ * Displays an item to be reviewed.
+ */
+public class ReviewItem extends VerticalPanel
+{
+    public ReviewItem (ReviewPanel parent, ItemDetail detail)
+    {
+        _parent = parent;
+        _item = detail.item;
+
+        // TODO: say what flags are set on it
+
+        // the name displays an item inspector
+        String name = _item.name + " - " + detail.creator.toString();
+        String args = Args.compose(""+_item.getType(), "0", ""+_item.itemId);
+        add(Application.createLink(name, Page.INVENTORY, args));
+
+        add(new Label(_item.description));
+
+        // then a row of action buttons
+        RowPanel line = new RowPanel();
+
+//             // TODO: Let's nix 'delist' for a bit and see if we need it later.
+//             if (item.ownerId == 0) {
+//                 Button button = new Button("Delist");
+//                 new ClickCallback(button) {
+//                     public boolean callService () {
+//                         CAdmin.catalogsvc.listItem(CAdmin.ident, item.getIdent(), false, this);
+//                         return true;
+//                     }
+//                     public boolean gotResult (Object result) {
+//                         if (result != null) {
+//                             MsoyUI.info(CAdmin.msgs.reviewDelisted());
+//                             return false; // don't reenable delist
+//                         }
+//                         MsoyUI.error(CAdmin.msgs.errListingNotFound());
+//                         return true;
+//                     }
+//                 };
+//                 line.add(button);
+//             }
+
+        // a button to mark someting as mature
+        if (_item.isSet(Item.FLAG_FLAGGED_MATURE)) {
+            _mark = new Button(CAdmin.msgs.reviewMark());
+            new ClickCallback(_mark) {
+                public boolean callService () {
+                    if (_item == null) {
+                        // should not happen, but let's be careful
+                        return false;
+                    }
+                    CAdmin.itemsvc.setMature(CAdmin.ident, _item.getIdent(), true, this);
+                    return true;
+                }
+                public boolean gotResult (Object result) {
+                    MsoyUI.info(CAdmin.msgs.reviewMarked());
+                    return false; // don't reenable button
+                }
+            };
+            line.add(_mark);
+        }
+
+        // a button to delete an item and possibly all its clones
+        _delete = new Button(_item.ownerId != 0 ?
+                             CAdmin.msgs.reviewDelete() : CAdmin.msgs.reviewDeleteAll());
+        _delete.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                if (_item == null) {
+                    // should not happen, but let's be careful
+                    return;
+                }
+                new DeleteDialog().show();
+            }
+        });
+        line.add(_delete);
+
+        // a button to signal we're done
+        _done = new Button(CAdmin.msgs.reviewDone());
+        new ClickCallback(_done) {
+            public boolean callService () {
+                if (_item == null) {
+                    _parent.refresh();
+                    return false;
+                }
+                byte flags = (byte) (Item.FLAG_FLAGGED_COPYRIGHT | Item.FLAG_FLAGGED_MATURE);
+                CAdmin.itemsvc.setFlags(CAdmin.ident, _item.getIdent(), flags, (byte) 0, this);
+                return true;
+            }
+            public boolean gotResult (Object result) {
+                // the flags are set: refresh the UI
+                _parent.refresh();
+                // keep the button disabled until the UI refreshes
+                return false;
+            }
+        };
+        line.add(_done);
+        add(line);
+    }
+
+    /**
+     * Handle the deletion message and prompt.
+     */
+    protected class DeleteDialog extends BorderedPopup
+        implements KeyboardListener
+    {
+        public DeleteDialog ()
+        {
+            VerticalPanel content = new VerticalPanel();
+            content.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+
+            content.add(new Label(CAdmin.msgs.reviewDeletionPrompt()));
+
+            _area = new TextArea();
+            _area.setCharacterWidth(60);
+            _area.setVisibleLines(4);
+            _area.addKeyboardListener(this);
+            content.add(_area);
+
+            _feedback = new Label();
+            content.add(_feedback);
+
+            _yesButton = new Button(CAdmin.msgs.reviewDeletionDo());
+            _yesButton.setEnabled(false);
+            final Button noButton = new Button(CAdmin.msgs.reviewDeletionDont());
+            ClickListener listener = new ClickListener () {
+                public void onClick (Widget sender) {
+                    if (sender == _yesButton) {
+                        doDelete();
+                    }
+                    hide();
+                }
+            };
+            _yesButton.addClickListener(listener);
+            noButton.addClickListener(listener);
+            RowPanel buttons = new RowPanel();
+            buttons.add(_yesButton);
+            buttons.add(noButton);
+            content.add(buttons);
+
+            setWidget(content);
+            show();
+        }
+
+        public void onKeyDown (Widget sender, char keyCode, int modifiers) { /* empty*/ }
+        public void onKeyPress (Widget sender, char keyCode, int modifiers) { /* empty */ }
+        public void onKeyUp (Widget sender, char keyCode, int modifiers)
+        {
+            _yesButton.setEnabled(_area.getText().trim().length() > 0);
+        }
+
+        protected void doDelete ()
+        {
+            if (!_yesButton.isEnabled()) {
+                return; // you just never know
+            }
+
+            CAdmin.itemsvc.deleteItemAdmin(
+                CAdmin.ident, _item.getIdent(), CAdmin.msgs.reviewDeletionMailHeader(),
+                CAdmin.msgs.reviewDeletionMailMessage(_item.name, _area.getText().trim()),
+                new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        MsoyUI.info(CAdmin.msgs.reviewDeletionSuccess(result.toString()));
+                        if (_mark != null) {
+                            _mark.setEnabled(false);
+                        }
+                        _delete.setEnabled(false);
+                        _item = null;
+                        hide();
+                    }
+                    public void onFailure (Throwable caught) {
+                        _feedback.setText(
+                            CAdmin.msgs.reviewErrDeletionFailed(caught.getMessage()));
+                        if (_mark != null) {
+                            _mark.setEnabled(true);
+                        }
+                        _delete.setEnabled(true);
+                        hide();
+                    }
+                });
+        }
+
+        protected TextArea _area;
+        protected Label _feedback;
+        protected Button _yesButton;
+    }
+
+    protected ReviewPanel _parent;
+    protected Item _item;
+    protected Button _mark, _delete, _done;
+}
