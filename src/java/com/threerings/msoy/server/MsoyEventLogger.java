@@ -12,7 +12,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.panopticon.client.net.LoggingConnection;
-import com.threerings.panopticon.common.hessian.Event;
+import com.threerings.panopticon.common.Event;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyBaseServer;

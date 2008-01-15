@@ -21,7 +21,7 @@ import com.samskivert.util.LoopingThread;
 import com.samskivert.util.Queue;
 import com.samskivert.util.Throttle;
 
-import com.threerings.panopticon.common.hessian.Event;
+import com.threerings.panopticon.common.Event;
 
 import static com.threerings.msoy.Log.log;
 
