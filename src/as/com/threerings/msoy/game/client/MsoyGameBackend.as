@@ -136,9 +136,9 @@ class Headshot extends MediaContainer
         }
     }
 
-    override protected function loadingComplete (event :Event) :void
+    override protected function handleComplete (event :Event) :void
     {
-        super.loadingComplete(event);
+        super.handleComplete(event);
 
         state = STATE_COMPLETE;
 
@@ -148,9 +148,9 @@ class Headshot extends MediaContainer
         callbacks = null;
     }
 
-    override protected function loadError (event :IOErrorEvent) :void
+    override protected function handleIOError (event :IOErrorEvent) :void
     {
-        super.loadError(event);
+        super.handleIOError(event);
 
         state = STATE_ERROR;
 
