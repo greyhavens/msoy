@@ -35,28 +35,27 @@ public class LevelPackEditor extends SubItemEditor
     }
 
     // @Override // from ItemEditor
-    protected void populateInfoTab (FlexTable info)
+    protected void addInfo ()
     {
-        super.populateInfoTab(info);
+        super.addInfo();
 
-        addSpacer(info);
-        addInfoRow(info, CShell.emsgs.packPremium(), _premium = new CheckBox());
-        addInfoTip(info, CShell.emsgs.lpackPremiumTip());
+        addSpacer();
+        addRow(CShell.emsgs.packPremium(), _premium = new CheckBox());
+        addTip(CShell.emsgs.lpackPremiumTip());
     }
 
     // @Override from ItemEditor
-    protected void createFurniUploader (TabPanel tabs)
+    protected void addFurniUploader ()
     {
         // level packs' furni media are their primary media
-        String title = CShell.emsgs.lpackMainTitle();
-        createFurniUploader(title, false, new MediaUpdater() {
+        addSpacer();
+        addRow(CShell.emsgs.lpackMainTab(), createFurniUploader(false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _item.furniMedia = desc;
                 return null;
             }
-        });
-        tabs.add(_furniUploader, CShell.emsgs.lpackMainTab());
+        }), CShell.emsgs.lpackMainTitle());
     }
 
     // @Override // from ItemEditor

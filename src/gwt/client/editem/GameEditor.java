@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.DOMException;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
@@ -125,14 +126,14 @@ public class GameEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createInterface (VerticalPanel contents, TabPanel tabs)
+    protected void addExtras ()
     {
         // add a tab for configuring the game
-        FlexTable bits = new FlexTable();
-        tabs.add(bits, CShell.emsgs.gameConfigTab());
+//         FlexTable bits = new FlexTable();
+//         addRow(CShell.emsgs.gameConfigTab(), bits);
 
         // seated continuous games are disabled for now.
-        addInfoRow(bits, CShell.emsgs.gameGameType(),
+        addRow(CShell.emsgs.gameGameType(),
                    bind(_matchType = new ListBox(), new Binder() {
             public void valueChanged () {
                 // TODO: disable or hide min/max players and watchable if this is a party game
@@ -142,51 +143,51 @@ public class GameEditor extends ItemEditor
         _matchType.addItem(CShell.dmsgs.getString("gameType2"));
 
         // TODO: it'd be nice to force-format this text field for integers, or something.
-        addInfoRow(bits, CShell.emsgs.gameMinPlayers(), _minPlayers = new TextBox());
+        addRow(CShell.emsgs.gameMinPlayers(), _minPlayers = new TextBox());
         _minPlayers.setText("1");
         _minPlayers.setVisibleLength(5);
 
-        addInfoRow(bits, CShell.emsgs.gameMaxPlayers(), _maxPlayers = new TextBox());
+        addRow(CShell.emsgs.gameMaxPlayers(), _maxPlayers = new TextBox());
         _maxPlayers.setText("1");
         _maxPlayers.setVisibleLength(5);
 
-        addInfoRow(bits, CShell.emsgs.gameWatchable(), _watchable = new CheckBox());
+        addRow(CShell.emsgs.gameWatchable(), _watchable = new CheckBox());
         _watchable.setChecked(true);
+        addSpacer();
 
-        addSpacer(bits);
-
-        addInfoRow(bits, new Label(CShell.emsgs.gameDefinition()));
-        addInfoRow(bits, _extras = new TextArea());
+        addRow(CShell.emsgs.gameDefinition(), _extras = new TextArea());
         _extras.setCharacterWidth(60);
         _extras.setVisibleLines(5);
-        addInfoRow(bits, CShell.emsgs.gameAVRG(), _avrg = new CheckBox());
-        addSpacer(bits);
+        addRow(CShell.emsgs.gameAVRG(), _avrg = new CheckBox());
+        addSpacer();
 
-        addInfoTip(bits, CShell.emsgs.gameJavaTip());
-        addInfoRow(bits, CShell.emsgs.gameIdent(), _ident = new TextBox());
-        addInfoRow(bits, CShell.emsgs.gameController(), _controller = new TextBox());
+        addTip(CShell.emsgs.gameJavaTip());
+        addRow(CShell.emsgs.gameIdent(), _ident = new TextBox());
+        addRow(CShell.emsgs.gameController(), _controller = new TextBox());
         _controller.setVisibleLength(40);
 
         // these are only available to OOO presently
         _manager = new TextBox();
         _lwjgl = new CheckBox();
         if (CShell.isAdmin()) {
-            addInfoRow(bits, CShell.emsgs.gameManager(), _manager);
+            addRow(CShell.emsgs.gameManager(), _manager);
             _manager.setVisibleLength(40);
-            addInfoRow(bits, CShell.emsgs.gameLWJGL(), _lwjgl);
+            addRow(CShell.emsgs.gameLWJGL(), _lwjgl);
         }
 
         // add a tab for uploading the game media
-        tabs.add(createMainUploader(CShell.emsgs.gameMainTitle(), false, new MediaUpdater() {
+        addSpacer();
+        addRow(CShell.emsgs.gameMainTab(), createMainUploader(false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _game.gameMedia = desc;
                 return null;
             }
-        }), CShell.emsgs.gameMainTab());
+        }));
+        addTip(CShell.emsgs.gameMainTitle());
 
         // add a tab for uploading the game screenshot
-        MediaUploader shotter = createAuxUploader(CShell.emsgs.gameShotTitle(), new MediaUpdater() {
+        MediaUploader shotter = createAuxUploader(new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (width != Game.SHOT_WIDTH || height != Game.SHOT_HEIGHT || !desc.isImage()) {
                     return CShell.emsgs.errInvalidShot(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT);
@@ -196,9 +197,10 @@ public class GameEditor extends ItemEditor
             }
         });
         shotter.setHint(CShell.emsgs.gameShotHint(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT));
-        tabs.add(shotter, CShell.emsgs.gameShotTab());
+        addRow(CShell.emsgs.gameShotTab(), shotter);
+        addTip(CShell.emsgs.gameShotTitle());
 
-        super.createInterface(contents, tabs);
+        super.addExtras();
     }
 
     // @Override // from ItemEditor

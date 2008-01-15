@@ -29,11 +29,11 @@ public class PetEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createFurniUploader (TabPanel tabs)
+    protected void addFurniUploader ()
     {
         // pets are special; their furni media are their primary media
-        String title = CShell.emsgs.petMainTitle();
-        createFurniUploader(title, false, new MediaUpdater() {
+        addSpacer();
+        addRow(CShell.emsgs.petMainTab(), createFurniUploader(false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errPetNotFlash();
@@ -41,8 +41,7 @@ public class PetEditor extends ItemEditor
                 _item.furniMedia = desc;
                 return null;
             }
-        });
-        tabs.add(_furniUploader, CShell.emsgs.petMainTab());
+        }), CShell.emsgs.petMainTitle());
     }
 
     protected Pet _pet;

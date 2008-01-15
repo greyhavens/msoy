@@ -18,10 +18,9 @@ import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
-import client.editem.EditorHost;
-import client.editem.ItemEditor;
 import client.item.BaseItemDetailPanel;
 import client.shell.Application;
+import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
 import client.util.ClickCallback;
@@ -133,9 +132,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             button = new Button(CInventory.msgs.detailEdit());
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _panel);
-                    editor.setItem(_item);
-                    editor.show();
+                    Application.go(Page.INVENTORY,
+                                   Args.compose("e", ""+_item.getType(), ""+_item.itemId));
                 }
             });
             _buttons.add(button);

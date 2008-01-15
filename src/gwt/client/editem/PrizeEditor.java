@@ -46,20 +46,14 @@ public class PrizeEditor extends SubItemEditor
     }
 
     // @Override // from ItemEditor
-    protected void createInterface (VerticalPanel contents, TabPanel tabs)
+    protected void addInfo ()
     {
-        // we don't have a furni media or a thumbnail media
-    }
+        super.addInfo();
 
-    // @Override // from ItemEditor
-    protected void populateInfoTab (FlexTable info)
-    {
-        super.populateInfoTab(info);
-
-        addSpacer(info);
+        addSpacer();
 
         _targetType = new ListBox();
-        addInfoRow(info, CShell.emsgs.prizeTargetType(), _targetType = new ListBox());
+        addRow(CShell.emsgs.prizeTargetType(), _targetType = new ListBox());
         _targetType.addItem(CShell.emsgs.prizeSelectType(), "0");
         for (int ii = 0; ii < Item.GIFT_TYPES.length; ii++) {
             byte type = Item.GIFT_TYPES[ii];
@@ -69,14 +63,20 @@ public class PrizeEditor extends SubItemEditor
         // TODO: display a UI where they can select an item from their inventory that has a
         // non-zero catalog id
         _targetCatalogId = new NumberTextBox(false, 10, 10);
-        addInfoRow(info, CShell.emsgs.prizeTargetId(), _targetCatalogId);
-        addInfoTip(info, CShell.emsgs.prizeTargetIdTip());
+        addRow(CShell.emsgs.prizeTargetId(), _targetCatalogId);
+        addTip(CShell.emsgs.prizeTargetIdTip());
     }
 
     // @Override // from ItemEditor
-    protected void addDescription (FlexTable info)
+    protected void addDescription ()
     {
         // we want no description
+    }
+
+    // @Override // from ItemEditor
+    protected void addExtras ()
+    {
+        // we don't have a furni media or a thumbnail media
     }
 
     // @Override // from ItemEditor

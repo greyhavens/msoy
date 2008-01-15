@@ -31,14 +31,15 @@ public class AdminItemPopup extends BaseItemDetailPopup
         // if it's an original item, an admin can edit it
         if (_item.sourceId == 0) {
             Button button = new Button(CAdmin.msgs.itemPopupEdit());
-            button.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _parent);
-                    editor.setItem(_item);
-                    editor.show();
-                    hide();
-                }
-            });
+// TODO
+//             button.addClickListener(new ClickListener() {
+//                 public void onClick (Widget sender) {
+//                     ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _parent);
+//                     editor.setItem(_item);
+//                     editor.show();
+//                     hide();
+//                 }
+//             });
             controls.add(button);
         }
     }

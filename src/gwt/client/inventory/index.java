@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.item.data.all.Item;
 
+import client.editem.ItemEditor;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
@@ -31,7 +32,44 @@ public class index extends Page
     // @Override from Page
     public void onHistoryChanged (Args args)
     {
-        updateInterface(args);
+        if (CInventory.ident == null) {
+            // if we have no creds, just display a message saying login
+            setTitle(null);
+            setContent(MsoyUI.createLabel(CInventory.msgs.logon(), "infoLabel"));
+            _inventory = null;
+            return;
+        }
+
+        // if we're editing an item, display that interface
+        if (args.get(0, "").equals("e")) {
+            byte type = (byte)args.get(1, Item.AVATAR);
+            ItemEditor editor = ItemEditor.createItemEditor(type);
+            int itemId = args.get(2, 0);
+            if (itemId != 0) {
+                setTitle(CInventory.msgs.editItemTitle());
+                Item item = _models.findItem(type, itemId);
+                if (item == null) {
+                    MsoyUI.error("TODO!");
+                } else {
+                    editor.setItem(item);
+                }
+            } else {
+                setTitle(CInventory.msgs.createItemTitle());
+                editor.setItem(editor.createBlankItem());
+            }
+            setContent(editor);
+            return;
+        }
+
+        // otherwise we're viewing our inventory
+        setTitle(null);
+        setContent(_inventory);
+        setPageTabs(_inventory.getTabs());
+
+        byte type = (byte)args.get(0, Item.AVATAR);
+        int pageNo = args.get(1, 0);
+        int itemId = args.get(2, 0);
+        _inventory.display(type, pageNo, itemId);
     }
 
     // @Override // from Page
@@ -56,27 +94,11 @@ public class index extends Page
         Application.go(Page.WHIRLED, "whirledwide");
     }
 
-    protected void updateInterface (Args args)
+    protected void setTitle (String subtitle)
     {
-        if (CInventory.ident == null) {
-            // if we have no creds, just display a message saying login
-            Frame.setTitle(CInventory.msgs.inventoryTitle());
-            setContent(MsoyUI.createLabel(CInventory.msgs.logon(), "infoLabel"));
-            _inventory = null;
-
-        } else {
-            if (_inventory == null) {
-                Frame.setTitle(CInventory.msgs.inventoryTitle());
-                setContent(_inventory = new InventoryPanel());
-                setPageTabs(_inventory.getTabs());
-            }
-
-            byte type = (byte)args.get(0, Item.AVATAR);
-            int pageNo = args.get(1, 0);
-            int itemId = args.get(2, 0);
-            _inventory.display(type, pageNo, itemId);
-        }
+        Frame.setTitle(CInventory.msgs.inventoryTitle(), subtitle);
     }
 
-    protected InventoryPanel _inventory;
+    protected InventoryModels _models = new InventoryModels();
+    protected InventoryPanel _inventory = new InventoryPanel(_models);
 }

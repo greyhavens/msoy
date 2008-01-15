@@ -32,9 +32,9 @@ public class AudioEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createInterface (VerticalPanel contents, TabPanel tabs)
+    protected void addExtras ()
     {
-        tabs.add(createMainUploader(CShell.emsgs.audioMainTitle(), false, new MediaUpdater() {
+        addRow(CShell.emsgs.audioMainTab(), createMainUploader(false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.isAudio()) {
                     return CShell.emsgs.errAudioNotAudio();
@@ -43,16 +43,10 @@ public class AudioEditor extends ItemEditor
                 maybeSetNameFromFilename(name);
                 return null;
             }
-        }), CShell.emsgs.audioMainTab());
+        }));
+        addTip(CShell.emsgs.audioMainTitle());
 
-        super.createInterface(contents, tabs);
-    }
-
-    // @Override from ItemEditor
-    protected int getDefaultTabIndex ()
-    {
-        // if this is a blank item, start on the main media panel, otherwise the default
-        return (_audio.audioMedia == null) ? 1 : super.getDefaultTabIndex();
+        super.addExtras();
     }
 
     protected Audio _audio;

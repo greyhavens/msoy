@@ -24,7 +24,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.EditorHost;
-import client.editem.ItemEditor;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
@@ -42,8 +41,9 @@ public class ItemPanel extends VerticalPanel
     /** The number of columns of items to display. */
     public static final int COLUMNS = 3;
 
-    public ItemPanel (byte type)
+    public ItemPanel (InventoryModels models, byte type)
     {
+        _models = models;
         _type = type;
 
         // this will contain our items
@@ -160,9 +160,9 @@ public class ItemPanel extends VerticalPanel
 
     protected void loadInventory ()
     {
-        CInventory.membersvc.loadInventory(CInventory.ident, _type, 0, new AsyncCallback() {
+        _models.loadModel(_type, 0, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _contents.setModel(new SimpleDataModel((List)result), _startPage);
+                _contents.setModel((SimpleDataModel)result, _startPage);
             }
             public void onFailure (Throwable caught) {
                 CInventory.log("loadInventory failed", caught);
@@ -175,16 +175,6 @@ public class ItemPanel extends VerticalPanel
     {
         Widget top = (getWidgetCount() > 0) ? getWidget(0) : null;
         return (top instanceof ItemDetailPanel && ((ItemDetailPanel)top).isShowing(ident));
-    }
-
-    protected void createNewItem ()
-    {
-        ItemEditor editor = ItemEditor.createItemEditor(_type, this);
-        if (editor != null) {
-            _create.setEnabled(false);
-            editor.setItem(editor.createBlankItem());
-            editor.show();
-        }
     }
 
     protected void addUploadInterface ()
@@ -228,7 +218,7 @@ public class ItemPanel extends VerticalPanel
         _create = new Button(CInventory.msgs.panelCreateNew());
         _create.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-                createNewItem();
+                Application.go(Page.INVENTORY, Args.compose("e", _type));
             }
         });
         contents.setWidget(0, 1, _create);
@@ -280,13 +270,14 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
-    protected PagedGrid _contents;
-    protected Button _create, _next, _prev;
-    protected VerticalPanel _upload;
-
+    protected InventoryModels _models;
     protected byte _type;
     protected int _startPage;
     protected ItemDetail _detail;
+
+    protected PagedGrid _contents;
+    protected Button _create, _next, _prev;
+    protected VerticalPanel _upload;
 
     /** Only get the furni list for the current room once, and feed it to each ItemEntry */
     protected List _itemList = new ArrayList();

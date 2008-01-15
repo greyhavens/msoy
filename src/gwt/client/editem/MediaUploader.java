@@ -6,13 +6,13 @@ package client.editem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -26,7 +26,7 @@ import client.util.MsoyUI;
 /**
  * Helper class, used in ItemEditor.
  */
-public class MediaUploader extends VerticalPanel
+public class MediaUploader extends FlexTable
 {
     public static final int NORMAL = 0;
     public static final int THUMBNAIL = 1;
@@ -35,31 +35,31 @@ public class MediaUploader extends VerticalPanel
     /**
      * @param id the type of the uploader to create, e.g. {@link Item#MAIN_MEDIA} . This value is
      * later passed to the bridge to identify the hash/mimeType returned by the server.
-     * @param title A title to be displayed to the user.
      * @param mode whether we're uploading normal media, thumbnail media or normal media that
      * should also generate a thumbnail image when changed.
      * @param updater the updater that knows how to set the media hash on the item.
      */
-    public MediaUploader (String mediaId, String title, int mode, ItemEditor.MediaUpdater updater)
+    public MediaUploader (String mediaId, int mode, ItemEditor.MediaUpdater updater)
     {
         setStyleName("mediaUploader");
+        setCellPadding(0);
+        setCellSpacing(0);
 
         _mode = mode;
         _updater = updater;
-        _title = title;
 
-        add(_status = MsoyUI.createLabel(_title, "Status"));
+        getFlexCellFormatter().setRowSpan(0, 0, 2);
+        getFlexCellFormatter().setStyleName(0, 0, "Preview");
+        getFlexCellFormatter().setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
+        getFlexCellFormatter().setVerticalAlignment(0, 0, HorizontalPanel.ALIGN_MIDDLE);
+        setText(0, 0, "");
 
-        HorizontalPanel hpan = new HorizontalPanel();
-        hpan.setVerticalAlignment(HorizontalPanel.ALIGN_BOTTOM);
-        hpan.setSpacing(10);
-        hpan.add(_target = new HorizontalPanel());
-        _target.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
-        _target.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        _target.setStyleName(_mode == THUMBNAIL ? "Thumbnail" : "Preview");
-        hpan.add(_hint = MsoyUI.createLabel("", "Tip"));
+        getFlexCellFormatter().setWidth(0, 1, "5px");
+        getFlexCellFormatter().setRowSpan(0, 1, 2);
+
+        setWidget(0, 2, _hint = MsoyUI.createLabel("", "Tip"));
         _hint.setWidth((2 * MediaDesc.THUMBNAIL_WIDTH) + "px");
-        add(hpan);
+        getFlexCellFormatter().setVerticalAlignment(0, 1, HorizontalPanel.ALIGN_TOP);
 
         _form = new FormPanel();
         _panel = new HorizontalPanel();
@@ -109,7 +109,8 @@ public class MediaUploader extends VerticalPanel
             }
         });
 
-        add(_form);
+        setWidget(1, 0, _form);
+        getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
     }
 
     /**
@@ -117,11 +118,15 @@ public class MediaUploader extends VerticalPanel
      */
     public void setMedia (MediaDesc desc)
     {
-        _target.clear();
         if (desc != null) {
-            int size = _mode == THUMBNAIL ? MediaDesc.THUMBNAIL_SIZE : MediaDesc.PREVIEW_SIZE;
-            _target.add(MediaUtil.createMediaView(desc, size));
-            _status.setText(_title);
+            int width = MediaDesc.THUMBNAIL_WIDTH, height = MediaDesc.THUMBNAIL_HEIGHT;
+            if (_mode != THUMBNAIL) {
+                width *= 2;
+                height *= 2;
+            }
+            setWidget(0, 0, MediaUtil.createMediaView(desc, width, height, null));
+        } else {
+            setText(0, 0, "");
         }
     }
 
@@ -159,10 +164,7 @@ public class MediaUploader extends VerticalPanel
 
     protected ItemEditor.MediaUpdater _updater;
 
-    protected String _title;
-    protected Label _status;
     protected Label _hint;
-    protected HorizontalPanel _target;
     protected HorizontalPanel _panel;
 
     protected FormPanel _form;

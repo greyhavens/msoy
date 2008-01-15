@@ -29,11 +29,11 @@ public class PropEditor extends SubItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createFurniUploader (TabPanel tabs)
+    protected void addFurniUploader ()
     {
         // props are special; their furni media are their primary media
-        String title = CShell.emsgs.propMainTitle();
-        createFurniUploader(title, true, new MediaUpdater() {
+        addSpacer();
+        addRow(CShell.emsgs.propMainTab(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errPropNotFlash();
@@ -41,8 +41,7 @@ public class PropEditor extends SubItemEditor
                 _item.furniMedia = desc;
                 return null;
             }
-        });
-        tabs.add(_furniUploader, CShell.emsgs.propMainTab());
+        }), CShell.emsgs.propMainTitle());
     }
 
     protected Prop _prop;

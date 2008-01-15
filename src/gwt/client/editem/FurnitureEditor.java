@@ -36,12 +36,10 @@ public class FurnitureEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createFurniUploader (TabPanel tabs)
+    protected void addFurniUploader ()
     {
-        FlexTable furni = new FlexTable();
-
-        String title = CShell.emsgs.editorFurniTitle();
-        createFurniUploader(title, true, new MediaUpdater() {
+        addSpacer();
+        addRow(CShell.emsgs.editorFurniTab(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errFurniNotFlash();
@@ -49,18 +47,15 @@ public class FurnitureEditor extends ItemEditor
                 _item.furniMedia = desc;
                 return null;
             }
-        });
-        addInfoRow(furni, _furniUploader);
+        }), CShell.emsgs.editorFurniTitle());
 
         RowPanel hsrow = new RowPanel();
         hsrow.add(_hotSpotX = new TextBox());
         hsrow.add(_hotSpotY = new TextBox());
         _hotSpotX.setVisibleLength(5);
         _hotSpotY.setVisibleLength(5);
-        addInfoRow(furni, CShell.emsgs.furniHotSpot(), hsrow);
-        addInfoTip(furni, CShell.emsgs.furniHotSpotTip());
-
-        tabs.add(furni, CShell.emsgs.editorFurniTab());
+        addRow(CShell.emsgs.furniHotSpot(), hsrow);
+        addTip(CShell.emsgs.furniHotSpotTip());
     }
 
     // @Override from ItemEditor

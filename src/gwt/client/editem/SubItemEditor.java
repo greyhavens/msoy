@@ -25,14 +25,14 @@ public abstract class SubItemEditor extends ItemEditor
     }
 
     // @Override // from ItemEditor
-    protected void populateInfoTab (FlexTable info)
+    protected void addInfo ()
     {
-        super.populateInfoTab(info);
+        super.addInfo();
 
-        addSpacer(info);
-        addInfoRow(info, CShell.emsgs.subIdent(), _ident = new TextBox());
+        addSpacer();
+        addRow(CShell.emsgs.subIdent(), _ident = new TextBox());
         _ident.setMaxLength(SubItem.MAX_IDENT_LENGTH);
-        addInfoTip(info, CShell.emsgs.subIdentTip());
+        addTip(CShell.emsgs.subIdentTip());
     }
 
     // @Override // from ItemEditor

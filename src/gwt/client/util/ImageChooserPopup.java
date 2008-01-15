@@ -125,18 +125,19 @@ public class ImageChooserPopup extends VerticalPanel
             return true;
         }
 
-        // @Override // from PagedGrid
-        protected void addCustomControls (FlexTable controls) {
-            super.addCustomControls(controls);
-            Button upload = new Button(CShell.cmsgs.uploadImage(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    ItemEditor editor = ItemEditor.createItemEditor(Item.PHOTO, PhotoGrid.this);
-                    editor.setItem(editor.createBlankItem());
-                    editor.show();
-                }
-            });
-            controls.setWidget(0, 0, upload);
-        }
+// TODO
+//         // @Override // from PagedGrid
+//         protected void addCustomControls (FlexTable controls) {
+//             super.addCustomControls(controls);
+//             Button upload = new Button(CShell.cmsgs.uploadImage(), new ClickListener() {
+//                 public void onClick (Widget sender) {
+//                     ItemEditor editor = ItemEditor.createItemEditor(Item.PHOTO, PhotoGrid.this);
+//                     editor.setItem(editor.createBlankItem());
+//                     editor.show();
+//                 }
+//             });
+//             controls.setWidget(0, 0, upload);
+//         }
     }
 
     protected AsyncCallback _callback;

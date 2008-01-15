@@ -61,15 +61,14 @@ public class FlashClients
     }
 
     /**
-     * Creates a decor viewer, and embeds it in a container object, with which it can communicate
-     * via the Flash/Javascript interface.
+     * Creates a decor viewer, and embeds it in the supplied HTML object which *must* be already
+     * added to the DOM.
      */
-    public static void embedDecorViewer (Panel container)
+    public static void embedDecorViewer (HTML html)
     {
-        WidgetUtil.embedFlashObject(
-            container, WidgetUtil.createFlashObjectDefinition(
-                "decorViewer", "/clients/" + DeploymentConfig.version + "/decorviewer.swf",
-                600, 400, ""));
+        html.setHTML(WidgetUtil.createFlashObjectDefinition(
+                         "decorViewer", "/clients/" + DeploymentConfig.version + "/decorviewer.swf",
+                         600, 400, ""));
     }
 
     /**

@@ -37,24 +37,10 @@ public class DecorEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createInterface (VerticalPanel contents, TabPanel tabs)
+    protected void addFurniUploader ()
     {
-        super.createInterface(contents, tabs);
-
-        // note: the container has to be added to the page *before* we add the flash viewer
-        VerticalPanel bits = new VerticalPanel();
-        tabs.add(bits, CShell.emsgs.decorConfigTab());
-
-        FlashClients.embedDecorViewer(bits); 
-        bits.add(_label = new HTML());
-        configureCallbacks(this);
-    }
-
-    // @Override from ItemEditor
-    protected void createFurniUploader (TabPanel tabs)
-    {
-        String title = CShell.emsgs.decorMainTitle();
-        createFurniUploader(title, true, new MediaUpdater() {
+        addSpacer();
+        addRow(CShell.emsgs.decorMainTab(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errFurniNotFlash();
@@ -67,12 +53,19 @@ public class DecorEditor extends ItemEditor
                     _decor.depth = (short) height;
                     // clear offsets
                     _decor.offsetX = _decor.offsetY = 0;
+                    sendDecorUpdateToFlash();
                     updateDebuggingLabel();
                 }
                 return null;
             }
-        });
-        tabs.add(_furniUploader, CShell.emsgs.decorMainTab());
+        }), CShell.emsgs.decorMainTitle());
+
+        addSpacer();
+        HTML viewer = new HTML();
+        // note: the container has to be added to the page *before* we add the flash viewer
+        addRow(CShell.emsgs.decorConfigTab(), viewer);
+        FlashClients.embedDecorViewer(viewer); 
+        configureCallbacks(this);
     }
 
     // @Override from ItemEditor
@@ -88,7 +81,7 @@ public class DecorEditor extends ItemEditor
     /**
      * When the decor item had changed, updates numeric values being displayed.
      */
-    protected void updateDebuggingLabel()
+    protected void updateDebuggingLabel ()
     {
         // the following is useful while debugging gwt/flash interop
         
@@ -103,7 +96,7 @@ public class DecorEditor extends ItemEditor
         // so we "format" this float by hand to three decimal places. ugh. :(
         String horizon = Float.toString(Math.round (_decor.horizon * 1000f) / 1000f);
         
-        _label.setHTML(
+        MsoyUI.info(
             CShell.emsgs.decorDimensions() + " " + _decor.width + " x " +
             _decor.height + " x " + _decor.depth + "<br/>" +
             CShell.emsgs.decorHorizon() + " " + horizon + " / " +
@@ -111,21 +104,6 @@ public class DecorEditor extends ItemEditor
             CShell.emsgs.decorType() + " " + typelabel);
         */
     }
-    
-    /**
-     * Configures foreign interface that will be called by Flash.
-     */
-    protected static native void configureCallbacks (DecorEditor editor) /*-{
-        $wnd.updateDecorInit = function () {
-            editor.@client.editem.DecorEditor::sendDecorUpdateToFlash()();
-        };
-        $wnd.updateDecor = function (width, height, depth, horizon, 
-                                     type, offsetX, offsetY, hideWalls) 
-        {
-            editor.@client.editem.DecorEditor::updateDecorFromFlash(SSSFBFFZ)(
-                width, height, depth, horizon, type, offsetX, offsetY, hideWalls);
-        };
-    }-*/;
 
     /**
      * Receives a number of values from DecorViewer, and updates the Decor item accordingly.
@@ -156,6 +134,21 @@ public class DecorEditor extends ItemEditor
         decorUpdateHelper(_decor.width, _decor.height, _decor.depth, _decor.horizon, _decor.type,
                           _decor.offsetX, _decor.offsetY, _decor.hideWalls);
     }
+    
+    /**
+     * Configures foreign interface that will be called by Flash.
+     */
+    protected static native void configureCallbacks (DecorEditor editor) /*-{
+        $wnd.updateDecorInit = function () {
+            editor.@client.editem.DecorEditor::sendDecorUpdateToFlash()();
+        };
+        $wnd.updateDecor = function (width, height, depth, horizon, 
+                                     type, offsetX, offsetY, hideWalls) 
+        {
+            editor.@client.editem.DecorEditor::updateDecorFromFlash(SSSFBFFZ)(
+                width, height, depth, horizon, type, offsetX, offsetY, hideWalls);
+        };
+    }-*/;
 
     protected static native void decorUpdateHelper (
         int width, int height, int depth, float horizon, byte type,
@@ -175,6 +168,4 @@ public class DecorEditor extends ItemEditor
     }-*/;
 
     protected Decor _decor;
-    protected HTML _label;
-
 }

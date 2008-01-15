@@ -52,17 +52,18 @@ public class SubItemPanel extends VerticalPanel
         // if our parent is an original item, allow creation of subitems
         if (_parent.sourceId == 0) {
             _create = new Button(CInventory.msgs.panelCreateNew());
-            _create.addClickListener(new ClickListener() {
-                public void onClick (Widget widget) {
-                    ItemEditor editor = ItemEditor.createItemEditor(_type, SubItemPanel.this);
-                    if (editor != null) {
-                        _create.setEnabled(false);
-                        editor.setItem(editor.createBlankItem());
-                        editor.setParentItem(_parent.getIdent());
-                        editor.show();
-                    }
-                }
-            });
+// TODO
+//             _create.addClickListener(new ClickListener() {
+//                 public void onClick (Widget widget) {
+//                     ItemEditor editor = ItemEditor.createItemEditor(_type, SubItemPanel.this);
+//                     if (editor != null) {
+//                         _create.setEnabled(false);
+//                         editor.setItem(editor.createBlankItem());
+//                         editor.setParentItem(_parent.getIdent());
+//                         editor.show();
+//                     }
+//                 }
+//             });
             add(_create);
         }
     }

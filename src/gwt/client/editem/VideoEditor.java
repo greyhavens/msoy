@@ -40,10 +40,9 @@ public class VideoEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createInterface (VerticalPanel contents, TabPanel tabs)
+    protected void addExtras ()
     {
-        Widget mainUploader = createMainUploader(
-            CShell.emsgs.videoMainTitle(), false, new MediaUpdater() {
+        addRow(CShell.emsgs.videoMainTab(), createMainUploader(false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: remove this hack?
                 if (!desc.isVideo()) {
@@ -53,20 +52,15 @@ public class VideoEditor extends ItemEditor
                 updateAlternateSources(desc);
                 return null;
             }
-        });
+        }));
+        addTip(CShell.emsgs.videoMainTitle());
 
-        VerticalPanel pan = new VerticalPanel();
-        pan.add(mainUploader);
-        pan.add(new HTML("<hr>"));
-        pan.add(new Label(CShell.emsgs.videoOptionYoutube()));
-        pan.add(createYouTubeUploader());
-//        pan.add(new HTML("<hr>"));
-//        pan.add(new Label(CShell.emsgs.videoOptionGoogle()));
-//        pan.add(createGoogleUploader());
+        addRow(new Label(CShell.emsgs.videoOptionYoutube()));
+        addRow(createYouTubeUploader());
+//        addRow(new Label(CShell.emsgs.videoOptionGoogle()));
+//        addRow(createGoogleUploader());
 
-        tabs.add(pan, CShell.emsgs.videoMainTab());
-
-        super.createInterface(contents, tabs);
+        super.addExtras();
     }
 
     /**
@@ -148,14 +142,13 @@ public class VideoEditor extends ItemEditor
     {
         String id = ((video != null) && video.isExternalVideo()) ?
             MediaDesc.bytesToString(video.hash) : "";
-
         if (_youtubeIdBox != null) {
-            _youtubeIdBox.setText(video != null && video.mimeType == MediaDesc.VIDEO_YOUTUBE ? id
-                : "");
+            _youtubeIdBox.setText(video != null &&
+                                  video.mimeType == MediaDesc.VIDEO_YOUTUBE ? id : "");
         }
         if (_googleIdBox != null) {
-            _googleIdBox.setText(video != null && video.mimeType == MediaDesc.VIDEO_GOOGLE ? id
-                : "");
+            _googleIdBox.setText(video != null &&
+                                 video.mimeType == MediaDesc.VIDEO_GOOGLE ? id : "");
         }
     }
 

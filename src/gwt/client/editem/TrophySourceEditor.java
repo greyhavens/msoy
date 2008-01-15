@@ -37,33 +37,32 @@ public class TrophySourceEditor extends SubItemEditor
     }
 
     // @Override // from ItemEditor
-    protected void populateInfoTab (FlexTable info)
+    protected void addInfo ()
     {
-        addInfoTip(info, CShell.emsgs.trophyNameTip());
+        super.addInfo();
+        addTip(CShell.emsgs.trophyNameTip());
 
-        super.populateInfoTab(info);
+        addSpacer();
+        addRow(CShell.emsgs.trophyOrder(), _order = new NumberTextBox(false, 3, 3));
+        addTip(CShell.emsgs.trophyOrderTip());
 
-        addSpacer(info);
-        addInfoRow(info, CShell.emsgs.trophyOrder(), _order = new NumberTextBox(false, 3, 3));
-        addInfoTip(info, CShell.emsgs.trophyOrderTip());
-
-        addSpacer(info);
-        addInfoRow(info, CShell.emsgs.trophySecret(), _secret = new CheckBox());
-        addInfoTip(info, CShell.emsgs.trophySecretTip());
+        addSpacer();
+        addRow(CShell.emsgs.trophySecret(), _secret = new CheckBox());
+        addTip(CShell.emsgs.trophySecretTip());
     }
 
     // @Override from ItemEditor
-    protected void createFurniUploader (TabPanel tabs)
+    protected void addFurniUploader ()
     {
         // we have no furni tab
     }
 
     // @Override from ItemEditor
-    protected void createThumbUploader (TabPanel tabs)
+    protected void addThumbUploader ()
     {
         // trophy' thumb media are their primary media
-        String title = CShell.emsgs.trophyMainTitle();
-        createThumbUploader(title, new MediaUpdater() {
+        addSpacer();
+        addRow(CShell.emsgs.trophyMainTab(), createThumbUploader(new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (width != TrophySource.TROPHY_WIDTH || height != TrophySource.TROPHY_HEIGHT ||
                     !desc.isImage()) {
@@ -72,8 +71,7 @@ public class TrophySourceEditor extends SubItemEditor
                 _item.thumbMedia = desc;
                 return null;
             }
-        });
-        tabs.add(_thumbUploader, CShell.emsgs.trophyMainTab());
+        }), CShell.emsgs.trophyMainTitle());
     }
 
     // @Override // from ItemEditor

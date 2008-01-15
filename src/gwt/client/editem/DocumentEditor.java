@@ -31,17 +31,18 @@ public class DocumentEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createInterface (VerticalPanel contents, TabPanel tabs)
+    protected void addExtras ()
     {
-        tabs.add(createMainUploader(CShell.emsgs.documentMainTitle(), false, new MediaUpdater() {
+        addRow(CShell.emsgs.documentMainTab(), createMainUploader(false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _doc.docMedia = desc;
                 return null;
             }
-        }), CShell.emsgs.documentMainTab());
+        }));
+        addTip(CShell.emsgs.documentMainTitle());
 
-        super.createInterface(contents, tabs);
+        super.addExtras();
     }
 
     protected Document _doc;

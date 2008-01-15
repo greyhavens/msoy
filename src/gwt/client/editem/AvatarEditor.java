@@ -5,6 +5,7 @@ package client.editem;
 
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -32,9 +33,10 @@ public class AvatarEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createInterface (VerticalPanel contents, TabPanel tabs)
+    protected void addExtras ()
     {
-        tabs.add(createMainUploader(CShell.emsgs.avatarMainTitle(), false, new MediaUpdater() {
+        addSpacer();
+        addRow(CShell.emsgs.avatarMainTab(), createMainUploader(false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errAvatarNotFlash();
@@ -43,31 +45,15 @@ public class AvatarEditor extends ItemEditor
                 _avatar.scale = 1f;
                 return null;
             }
-        }), CShell.emsgs.avatarMainTab());
+        }), CShell.emsgs.avatarMainTitle());
 
-        super.createInterface(contents, tabs);
+        super.addExtras();
     }
 
     // @Override from ItemEditor
-    protected void createFurniUploader (TabPanel tabs)
+    protected void addFurniUploader ()
     {
         // nada: avatars should no longer have a furni visualization
-    }
-
-    // @Override from ItemEditor
-    protected void createThumbUploader (TabPanel tabs)
-    {
-        String title = CShell.emsgs.avatarThumbTitle();
-        createThumbUploader(title, new MediaUpdater() {
-            public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!desc.isImage()) {
-                    return CShell.emsgs.errThumbNotImage();
-                }
-                _item.thumbMedia = desc;
-                return null;
-            }
-        });
-        tabs.add(_thumbUploader, CShell.emsgs.avatarThumbTab());
     }
 
     protected Avatar _avatar;

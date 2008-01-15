@@ -27,30 +27,29 @@ public class ItemPackEditor extends SubItemEditor
     }
 
     // @Override // from ItemEditor
-    protected void populateInfoTab (FlexTable info)
+    protected void addInfo ()
     {
-        super.populateInfoTab(info);
+        super.addInfo();
 
-        addSpacer(info);
+        addSpacer();
         CheckBox box = new CheckBox();
         box.setChecked(true);
         box.setEnabled(false);
-        addInfoRow(info, CShell.emsgs.packPremium(), box);
-        addInfoTip(info, CShell.emsgs.ipackPremiumTip());
+        addRow(CShell.emsgs.packPremium(), box);
+        addTip(CShell.emsgs.ipackPremiumTip());
     }
 
     // @Override from ItemEditor
-    protected void createFurniUploader (TabPanel tabs)
+    protected void addFurniUploader ()
     {
         // item packs' furni media are their primary media
-        String title = CShell.emsgs.ipackMainTitle();
-        createFurniUploader(title, false, new MediaUpdater() {
+        addSpacer();
+        addRow(CShell.emsgs.ipackMainTab(), createFurniUploader(false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _item.furniMedia = desc;
                 return null;
             }
-        });
-        tabs.add(_furniUploader, CShell.emsgs.ipackMainTab());
+        }), CShell.emsgs.ipackMainTitle());
     }
 }

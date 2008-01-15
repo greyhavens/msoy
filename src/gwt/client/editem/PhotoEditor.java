@@ -32,9 +32,9 @@ public class PhotoEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createInterface (VerticalPanel contents, TabPanel tabs)
+    protected void addInfo ()
     {
-        tabs.add(createMainUploader(CShell.emsgs.photoMainTitle(), true, new MediaUpdater() {
+        addRow(CShell.emsgs.photoMainTab(), createMainUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errPhotoNotFlash();
@@ -45,16 +45,9 @@ public class PhotoEditor extends ItemEditor
                 maybeSetNameFromFilename(name);
                 return null;
             }
-        }), CShell.emsgs.photoMainTab());
-
-        super.createInterface(contents, tabs);
-    }
-
-    // @Override from ItemEditor
-    protected int getDefaultTabIndex ()
-    {
-        // if this is a blank item, start on the main media panel, otherwise the default
-        return (_photo.photoMedia == null) ? 1 : super.getDefaultTabIndex();
+        }));
+        addTip(CShell.emsgs.photoMainTitle());
+        super.addInfo();
     }
 
     protected Photo _photo;

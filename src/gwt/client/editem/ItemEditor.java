@@ -5,36 +5,38 @@ package client.editem;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import com.threerings.gwt.ui.WidgetUtil;
+
 import client.shell.CShell;
 import client.util.BorderedDialog;
 import client.util.LimitedTextArea;
 import client.util.MsoyUI;
 import client.util.MsoyCallback;
-import client.util.StyledTabPanel;
 
 /**
  * The base class for an interface for creating and editing digital items.
  */
-public abstract class ItemEditor extends BorderedDialog
+public abstract class ItemEditor extends FlexTable
 {
     public static class Binder
     {
@@ -63,7 +65,7 @@ public abstract class ItemEditor extends BorderedDialog
      * Creates an item editor interface for items of the specified type.  Returns null if the type
      * is unknown.
      */
-    public static ItemEditor createItemEditor (int type, EditorHost host)
+    public static ItemEditor createItemEditor (int type/*, EditorHost host*/)
     {
         ItemEditor editor = null;
         if (type == Item.PHOTO) {
@@ -99,69 +101,44 @@ public abstract class ItemEditor extends BorderedDialog
         } else {
             return null; // woe be the caller
         }
-        editor.init(host);
+//         editor.init(host);
         return editor;
     }
 
     public ItemEditor ()
     {
-        super(false);
-
         // we have to do this wacky singleton crap because GWT and/or JavaScript doesn't seem to
         // cope with our trying to create an anonymous function that calls an instance method on a
         // JavaScript object
         _singleton = this;
 
-        _header.add(_etitle = createTitleLabel("title", "Title"));
+        setStyleName("itemEditor");
 
-        VerticalPanel contents = (VerticalPanel)_contents;
-        contents.add(_mediaTabs = new StyledTabPanel());
+        addInfo();
+        addExtras();
+        addDescription();
 
-        // create and populate our info tab
-        FlexTable info = new FlexTable();
-
-        // create a name entry field
-        addInfoRow(info, CShell.emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _item.name = text;
-            }
-        }));
-        _name.setMaxLength(Item.MAX_NAME_LENGTH);
-
-        populateInfoTab(info);
-        addDescription(info);
-        _mediaTabs.add(info, CShell.emsgs.editorInfoTab());
-
-        // create the rest of the interface
-        createInterface(contents, _mediaTabs);
-
-        _footer.add(_esubmit = new Button("submit"));
+        addSpacer();
+        HorizontalPanel footer = new HorizontalPanel();
+        int row = getRowCount();
+        setWidget(row, 1, footer);
+//         getFlexCellFormatter().setColSpan(row, 0, 2);
+//         getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
+        footer.add(_esubmit = new Button("submit"));
         _esubmit.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 commitEdit();
             }
         });
+        footer.add(WidgetUtil.makeShim(5, 5));
         Button ecancel;
-        _footer.add(ecancel = new Button(CShell.cmsgs.cancel()));
+        footer.add(ecancel = new Button(CShell.cmsgs.cancel()));
         ecancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-                hide();
+// TODO!
+                History.back();
             }
         });
-    }
-
-    // @Override // from BorderedPopup
-    public void show ()
-    {
-        _mediaTabs.selectTab(getDefaultTabIndex());
-        super.show();
-    }
-
-    // @Override // from BorderedPopup
-    protected void onClosed (boolean autoClosed)
-    {
-        super.onClosed(autoClosed);
-        _parent.editComplete(_updatedItem);
     }
 
     /**
@@ -179,8 +156,6 @@ public abstract class ItemEditor extends BorderedDialog
     public void setItem (Item item)
     {
         _item = item;
-        _etitle.setText((item.itemId <= 0) ?
-                        CShell.emsgs.editorUploadTitle() : CShell.emsgs.editorEditTitle());
         _esubmit.setText(CShell.emsgs.editorSave());
 
         safeSetText(_name, _item.name);
@@ -220,40 +195,52 @@ public abstract class ItemEditor extends BorderedDialog
         configureBridge();
     }
 
-    // @Override // from BorderedDialog
-    protected Widget createContents ()
+    /**
+     * Adds the non-media metadata editing fields for this item. By default this is only its name.
+     */
+    protected void addInfo ()
     {
-        VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("itemEditorContents");
-        return panel;
+        addRow(CShell.emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
+            public void textUpdated (String text) {
+                _item.name = text;
+            }
+        }));
+        _name.setMaxLength(Item.MAX_NAME_LENGTH);
     }
 
     /**
-     * Derived classes can add additional editable components to the main display or as tabs by
-     * overriding this method. Anything added before the call to super will go above the tabs in
-     * the contents and before the furniture and thumbnail tabs. Anything added after will go
-     * after.
+     * Adds the item description to the editor interface. Items that do not require a description
+     * can override this method with a null body.
      */
-    protected void createInterface (VerticalPanel contents, TabPanel tabs)
+    protected void addDescription ()
     {
-        createFurniUploader(tabs);
-        createThumbUploader(tabs);
+        addSpacer();
+        _description = new LimitedTextArea(Item.MAX_DESCRIPTION_LENGTH, 40, 3);
+        bind(_description.getTextArea(), new Binder() {
+            public void textUpdated (String text) {
+                _item.description = text;
+            }
+        });
+        addRow(CShell.emsgs.editorDescrip(), _description, CShell.emsgs.editorDescripTip());
+    }
+
+    /**
+     * Derived classes can add additional editable components to the display by overriding this
+     * method. Anything added before a call to super will go above the furniture and thumbnail
+     * image uploaders, anything added after will go after.
+     */
+    protected void addExtras ()
+    {
+        addFurniUploader();
+        addThumbUploader();
         _thumbUploader.setHint(CShell.emsgs.editorThumbHint(
             String.valueOf(MediaDesc.THUMBNAIL_WIDTH), String.valueOf(MediaDesc.THUMBNAIL_HEIGHT)));
     }
 
-    /**
-     * Returns the index of the tab to be selected by default when this dialog is shown.
-     */
-    protected int getDefaultTabIndex ()
+    protected void addFurniUploader ()
     {
-        return 0;
-    }
-
-    protected void createFurniUploader (TabPanel tabs)
-    {
-        String title = CShell.emsgs.editorFurniTitle();
-        createFurniUploader(title, true, new MediaUpdater() {
+        addSpacer();
+        addRow(CShell.emsgs.editorFurniTab(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errFurniNotFlash();
@@ -261,14 +248,13 @@ public abstract class ItemEditor extends BorderedDialog
                 _item.furniMedia = desc;
                 return null;
             }
-        });
-        tabs.add(_furniUploader, CShell.emsgs.editorFurniTab());
+        }), CShell.emsgs.editorFurniTitle());
     }
 
-    protected void createThumbUploader (TabPanel tabs)
+    protected void addThumbUploader ()
     {
-        String title = CShell.emsgs.editorThumbTitle();
-        createThumbUploader(title, new MediaUpdater() {
+        addSpacer();
+        addRow(CShell.emsgs.editorThumbTab(), createThumbUploader(new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
                     return CShell.emsgs.errThumbNotImage();
@@ -276,31 +262,7 @@ public abstract class ItemEditor extends BorderedDialog
                 _item.thumbMedia = desc;
                 return null;
             }
-        });
-        tabs.add(_thumbUploader, CShell.emsgs.editorThumbTab());
-    }
-
-    /**
-     * All items have an "extra information" tab which by default contains the item description but
-     * can be extended by overriding this method.
-     */
-    protected void populateInfoTab (FlexTable info)
-    {
-    }
-
-    protected void addDescription (FlexTable info)
-    {
-        addSpacer(info);
-
-        addInfoRow(info, new Label(CShell.emsgs.editorDescrip()));
-        _description = new LimitedTextArea(Item.MAX_DESCRIPTION_LENGTH, 40, 3);
-        bind(_description.getTextArea(), new Binder() {
-            public void textUpdated (String text) {
-                _item.description = text;
-            }
-        });
-        addInfoRow(info, _description);
-        addInfoTip(info, CShell.emsgs.editorDescripTip());
+        }), CShell.emsgs.editorThumbTitle());
     }
 
     protected void safeSetText (TextBoxBase box, String value)
@@ -311,93 +273,109 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * Helper function for overriders of {@link #populateInfoTab}.
+     * Helper function for overriders of {@link #addInfo} etc.
      */
-    protected void addInfoRow (FlexTable info, String label, Widget widget)
+    protected void addRow (String label, Widget widget)
     {
-        int row = info.getRowCount();
-        info.setText(row, 0, label);
+        addRow(label, widget, null);
+    }
+
+    /**
+     * Helper function for overriders of {@link #addInfo} etc.
+     */
+    protected void addRow (String label, Widget widget, String tip)
+    {
+        int row = getRowCount();
         // this aims to make the label column skinny; it even works on some browsers...
-        info.getFlexCellFormatter().setWidth(row, 0, "50px");
-        info.getFlexCellFormatter().setStyleName(row, 0, "nowrapLabel");
-        info.setWidget(row, 1, widget);
+        getFlexCellFormatter().setWidth(row, 0, "50px");
+        if (tip != null) {
+            FlowPanel flow = new FlowPanel();
+            flow.add(MsoyUI.createLabel(label, "nowrapLabel"));
+            flow.add(MsoyUI.createLabel(tip, "tipLabel"));
+            setWidget(row, 0, flow);
+        } else {
+            setText(row, 0, label); // let unadorned labels wrap
+        }
+        getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);
+        setWidget(row, 1, widget);
     }
 
     /**
-     * Helper function for overriders of {@link #populateInfoTab}.
+     * Helper function for overriders of {@link #addInfo} etc.
      */
-    protected void addInfoRow (FlexTable info, Widget widget)
+    protected void addRow (Widget widget)
     {
-        int row = info.getRowCount();
-        info.setWidget(row, 0, widget);
-        info.getFlexCellFormatter().setColSpan(row, 0, 2);
+        int row = getRowCount();
+        setWidget(row, 0, widget);
+        getFlexCellFormatter().setColSpan(row, 0, 2);
+        getFlexCellFormatter().setStyleName(row, 0, "Item");
     }
 
     /**
-     * Helper function for overriders of {@link #populateInfoTab}.
+     * Helper function for overriders of {@link #addInfo} etc.
      */
-    protected void addInfoTip (FlexTable info, String tip)
+    protected void addTip (String tip)
     {
-        int row = info.getRowCount();
-        info.setText(row, 0, tip);
-        info.getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
-        info.getFlexCellFormatter().setWidth(row, 0, "400px"); // wrap long text
-        info.getFlexCellFormatter().setColSpan(row, 0, 2);
+        int row = getRowCount();
+        setText(row, 1, tip);
+        getFlexCellFormatter().setStyleName(row, 1, "tipLabel");
+        getFlexCellFormatter().setWidth(row, 1, "400px");
     }
 
-    protected void addSpacer (FlexTable info)
+    /**
+     * Helper function for overriders of {@link #addInfo} etc.
+     */
+    protected void addSpacer ()
     {
-        int row = info.getRowCount();
-        info.setText(row, 0, " ");
-        info.getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
-        info.getFlexCellFormatter().setHeight(row, 0, "10px");
-        info.getFlexCellFormatter().setColSpan(row, 0, 2);
+        int row = getRowCount();
+        setText(row, 0, " ");
+        getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
+        getFlexCellFormatter().setHeight(row, 0, "10px");
+        getFlexCellFormatter().setColSpan(row, 0, 2);
     }
 
     /**
      * This should be called by item editors that are used for editing media that has a 'main'
      * piece of media.
      */
-    protected MediaUploader createMainUploader (String title, boolean thumb, MediaUpdater updater)
+    protected MediaUploader createMainUploader (boolean thumb, MediaUpdater updater)
     {
         int mode = thumb ? MediaUploader.NORMAL_PLUS_THUMBNAIL : MediaUploader.NORMAL;
-        return (_mainUploader = createUploader(Item.MAIN_MEDIA, title, mode, updater));
+        return (_mainUploader = createUploader(Item.MAIN_MEDIA, mode, updater));
     }
 
     /**
      * This should be called by item editors that are used for editing media that has an additional
      * piece of media in addition to main, furni and thumbnail.
      */
-    protected MediaUploader createAuxUploader (String title, MediaUpdater updater)
+    protected MediaUploader createAuxUploader (MediaUpdater updater)
     {
-        return (_auxUploader = createUploader(Item.AUX_MEDIA, title, MediaUploader.NORMAL, updater));
+        return (_auxUploader = createUploader(Item.AUX_MEDIA, MediaUploader.NORMAL, updater));
     }
 
     /**
      * This should be called if item editors want to create a custom furni uploader.
      */
-    protected MediaUploader createFurniUploader (String title, boolean thumb, MediaUpdater updater)
+    protected MediaUploader createFurniUploader (boolean thumb, MediaUpdater updater)
     {
         int mode = thumb ? MediaUploader.NORMAL_PLUS_THUMBNAIL : MediaUploader.NORMAL;
-        return (_furniUploader = createUploader(Item.FURNI_MEDIA, title, mode, updater));
+        return (_furniUploader = createUploader(Item.FURNI_MEDIA, mode, updater));
     }
 
     /**
      * This should be called if item editors want to create a custom thumbnail uploader.
      */
-    protected MediaUploader createThumbUploader (String title, MediaUpdater updater)
+    protected MediaUploader createThumbUploader (MediaUpdater updater)
     {
-        return (_thumbUploader =
-                createUploader(Item.THUMB_MEDIA, title, MediaUploader.THUMBNAIL, updater));
+        return (_thumbUploader = createUploader(Item.THUMB_MEDIA, MediaUploader.THUMBNAIL, updater));
     }
 
     /**
      * Creates and configures a media uploader.
      */
-    protected MediaUploader createUploader (
-        String id, String title, int mode, MediaUpdater updater)
+    protected MediaUploader createUploader (String id, int mode, MediaUpdater updater)
     {
-        return new MediaUploader(id, title, mode, updater);
+        return new MediaUploader(id, mode, updater);
     }
 
     /**
@@ -559,8 +537,9 @@ public abstract class ItemEditor extends BorderedDialog
                 } else {
                     MsoyUI.info(CShell.emsgs.msgItemUpdated());
                 }
-                _updatedItem = _item; // this will be passed to our parent in onClosed()
-                hide();
+                _parent.editComplete(_item);
+// TODO!
+//                 hide();
             }
         };
         if (_item.itemId == 0) {
@@ -641,21 +620,17 @@ public abstract class ItemEditor extends BorderedDialog
 
     protected EditorHost _parent;
 
-    protected TabPanel _mediaTabs;
-    protected Item _item, _updatedItem;
+    protected Item _item;
     protected ItemIdent _parentItem;
 
-    protected VerticalPanel _content;
-
-    protected Label _etitle;
     protected TextBox _name;
     protected LimitedTextArea _description;
     protected Button _esubmit;
-
-    protected static ItemEditor _singleton;
 
     protected MediaUploader _thumbUploader;
     protected MediaUploader _furniUploader;
     protected MediaUploader _mainUploader;
     protected MediaUploader _auxUploader;
+
+    protected static ItemEditor _singleton;
 }

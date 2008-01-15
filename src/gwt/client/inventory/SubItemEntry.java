@@ -46,15 +46,16 @@ public class SubItemEntry extends ItemEntry
         button.addStyleName("tinyButton");
         buttons.add(button);
 
-        button = new Button(CInventory.msgs.detailEdit(), new ClickListener() {
-            public void onClick (Widget sender) {
-                ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _spanel);
-                editor.setItem(_item);
-                editor.show();
-            }
-        });
-        button.addStyleName("tinyButton");
-        buttons.add(button);
+// TODO
+//         button = new Button(CInventory.msgs.detailEdit(), new ClickListener() {
+//             public void onClick (Widget sender) {
+//                 ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _spanel);
+//                 editor.setItem(_item);
+//                 editor.show();
+//             }
+//         });
+//         button.addStyleName("tinyButton");
+//         buttons.add(button);
 
         setWidget(2, 0, buttons);
     }
