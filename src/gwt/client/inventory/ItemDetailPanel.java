@@ -106,6 +106,12 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         return (_item.ownerId == CShell.getMemberId());
     }
 
+    // @Override // BaseItemDetailPanel
+    protected void onBackClicked ()
+    {
+        Application.go(Page.INVENTORY, ""+_item.getType());
+    }
+
     protected void addOwnerButtons ()
     {
         Button button;

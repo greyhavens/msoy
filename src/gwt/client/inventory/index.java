@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.item.data.all.Item;
 
+import client.editem.EditorHost;
 import client.editem.ItemEditor;
 import client.shell.Application;
 import client.shell.Args;
@@ -18,6 +19,7 @@ import client.util.MsoyUI;
  * Handles the MetaSOY inventory application.
  */
 public class index extends Page
+    implements EditorHost
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
@@ -43,7 +45,7 @@ public class index extends Page
         // if we're editing an item, display that interface
         if (args.get(0, "").equals("e")) {
             byte type = (byte)args.get(1, Item.AVATAR);
-            ItemEditor editor = ItemEditor.createItemEditor(type);
+            ItemEditor editor = ItemEditor.createItemEditor(type, this);
             int itemId = args.get(2, 0);
             if (itemId != 0) {
                 setTitle(CInventory.msgs.editItemTitle());
@@ -62,14 +64,14 @@ public class index extends Page
         }
 
         // otherwise we're viewing our inventory
-        setTitle(null);
-        setContent(_inventory);
-        setPageTabs(_inventory.getTabs());
+        displayInventory((byte)args.get(0, Item.AVATAR), args.get(1, -1), args.get(2, 0));
+    }
 
-        byte type = (byte)args.get(0, Item.AVATAR);
-        int pageNo = args.get(1, 0);
-        int itemId = args.get(2, 0);
-        _inventory.display(type, pageNo, itemId);
+    // from interface EditorHost
+    public void editComplete (Item item)
+    {
+        // TODO: update inventory model
+        displayInventory(item.getType(), -1, item.itemId);
     }
 
     // @Override // from Page
@@ -92,6 +94,14 @@ public class index extends Page
     {
         // go to whirledwide instead of reloading as a non-member
         Application.go(Page.WHIRLED, "whirledwide");
+    }
+
+    protected void displayInventory (byte type, int pageNo, int itemId)
+    {
+        setTitle(null);
+        setContent(_inventory);
+        setPageTabs(_inventory.getTabs());
+        _inventory.display(type, pageNo, itemId);
     }
 
     protected void setTitle (String subtitle)

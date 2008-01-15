@@ -65,7 +65,7 @@ public abstract class ItemEditor extends FlexTable
      * Creates an item editor interface for items of the specified type.  Returns null if the type
      * is unknown.
      */
-    public static ItemEditor createItemEditor (int type/*, EditorHost host*/)
+    public static ItemEditor createItemEditor (int type, EditorHost host)
     {
         ItemEditor editor = null;
         if (type == Item.PHOTO) {
@@ -101,7 +101,7 @@ public abstract class ItemEditor extends FlexTable
         } else {
             return null; // woe be the caller
         }
-//         editor.init(host);
+        editor.init(host);
         return editor;
     }
 
@@ -538,8 +538,6 @@ public abstract class ItemEditor extends FlexTable
                     MsoyUI.info(CShell.emsgs.msgItemUpdated());
                 }
                 _parent.editComplete(_item);
-// TODO!
-//                 hide();
             }
         };
         if (_item.itemId == 0) {

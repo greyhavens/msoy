@@ -50,7 +50,11 @@ public abstract class BaseItemDetailPanel extends FlexTable
 
         getFlexCellFormatter().setVerticalAlignment(0, 0, VerticalPanel.ALIGN_TOP);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
-        setWidget(0, 0, MsoyUI.createBackArrow());
+        setWidget(0, 0, MsoyUI.createBackArrow(new ClickListener() {
+            public void onClick (Widget sender) {
+                onBackClicked();
+            }
+        }));
 
         FlexTable box = new FlexTable();
         box.setStyleName("Box");
@@ -197,6 +201,14 @@ public abstract class BaseItemDetailPanel extends FlexTable
             // try immediately updating in the whirled client
             sendAvatarScaleToWorld(av.itemId, newScale);
         }
+    }
+
+    /**
+     * Called when the user clicks our back arrow.
+     */
+    protected void onBackClicked ()
+    {
+        History.back();
     }
 
     // @Override // Panel

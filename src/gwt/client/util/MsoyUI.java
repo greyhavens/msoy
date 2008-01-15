@@ -111,11 +111,19 @@ public class MsoyUI
      */
     public static Image createBackArrow ()
     {
-        return createActionImage("/images/ui/back_arrow.png", new ClickListener() {
+        return createBackArrow(new ClickListener() {
             public void onClick (Widget sender) {
                 History.back();
             }
         });
+    }
+
+    /**
+     * Creates an arrow that invokes the specified callback.
+     */
+    public static Image createBackArrow (ClickListener callback)
+    {
+        return createActionImage("/images/ui/back_arrow.png", callback);
     }
 
     /**

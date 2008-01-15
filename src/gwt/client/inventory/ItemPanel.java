@@ -85,6 +85,12 @@ public class ItemPanel extends VerticalPanel
      */
     public void setPage (int page)
     {
+        // if we're asked to display the "default" page, display the last page we remember
+        if (page < 0) {
+            page = _mostRecentPage;
+        }
+        _mostRecentPage = page; // now remember this age
+
         // refresh our item list every time we switch pages; it's cheap
         _itemList.clear();
         if (_type == Item.PET) {
@@ -272,7 +278,7 @@ public class ItemPanel extends VerticalPanel
 
     protected InventoryModels _models;
     protected byte _type;
-    protected int _startPage;
+    protected int _startPage, _mostRecentPage;
     protected ItemDetail _detail;
 
     protected PagedGrid _contents;
