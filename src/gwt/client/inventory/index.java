@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
@@ -20,7 +21,6 @@ import client.util.MsoyUI;
  * Handles the MetaSOY inventory application.
  */
 public class index extends Page
-    implements EditorHost
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
@@ -44,11 +44,20 @@ public class index extends Page
         }
 
         // if we're editing an item, display that interface
-        if (args.get(0, "").equals("e")) {
+        if (args.get(0, "").equals("e") || args.get(0, "").equals("c")) {
             byte type = (byte)args.get(1, Item.AVATAR);
-            ItemEditor editor = ItemEditor.createItemEditor(type, this);
-            int itemId = args.get(2, 0);
-            if (itemId != 0) {
+            ItemEditor editor = ItemEditor.createItemEditor(type, new EditorHost() {
+                public void editComplete (Item item) {
+                    if (item != null) {
+                        _models.updateItem(item);
+                        CInventory.viewParent(item);
+                    } else {
+                        History.back();
+                    }
+                }
+            });
+            if (args.get(0, "").equals("e")) {
+                int itemId = args.get(2, 0);
                 setTitle(CInventory.msgs.editItemTitle());
                 Item item = _models.findItem(type, itemId);
                 if (item == null) {
@@ -59,6 +68,10 @@ public class index extends Page
             } else {
                 setTitle(CInventory.msgs.createItemTitle());
                 editor.setItem(editor.createBlankItem());
+                byte ptype = (byte)args.get(2, 0);
+                if (ptype != 0) {
+                    editor.setParentItem(new ItemIdent(ptype, args.get(3, 0)));
+                }
             }
             setContent(editor);
             return;
@@ -66,17 +79,6 @@ public class index extends Page
 
         // otherwise we're viewing our inventory
         displayInventory((byte)args.get(0, Item.AVATAR), args.get(1, -1), args.get(2, 0));
-    }
-
-    // from interface EditorHost
-    public void editComplete (Item item)
-    {
-        if (item != null) {
-            _models.updateItem(item);
-            Application.go(Page.INVENTORY, Args.compose(""+item.getType(), "0", ""+item.itemId));
-        } else {
-            History.back();
-        }
     }
 
     // @Override // from Page

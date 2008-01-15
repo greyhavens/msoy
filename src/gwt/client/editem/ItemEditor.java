@@ -241,8 +241,16 @@ public abstract class ItemEditor extends FlexTable
     {
         addFurniUploader();
         addThumbUploader();
-        _thumbUploader.setHint(CShell.emsgs.editorThumbHint(
-            String.valueOf(MediaDesc.THUMBNAIL_WIDTH), String.valueOf(MediaDesc.THUMBNAIL_HEIGHT)));
+        _thumbUploader.setHint(getThumbnailHint());
+    }
+
+    /**
+     * Returns the hint displayed next to the thumbnail uploader.
+     */
+    protected String getThumbnailHint ()
+    {
+        return CShell.emsgs.editorThumbHint(
+            String.valueOf(MediaDesc.THUMBNAIL_WIDTH), String.valueOf(MediaDesc.THUMBNAIL_HEIGHT));
     }
 
     protected void addFurniUploader ()

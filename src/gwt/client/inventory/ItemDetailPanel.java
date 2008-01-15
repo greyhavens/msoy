@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -38,6 +39,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     public ItemDetailPanel (InventoryModels models, ItemDetail detail, ItemPanel panel)
     {
         super(detail);
+        _models = models;
         _panel = panel;
 
         // if this item supports sub-items, add a tab for those item types
@@ -109,7 +111,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     // @Override // BaseItemDetailPanel
     protected void onUpClicked ()
     {
-        Application.go(Page.INVENTORY, ""+_item.getType());
+        CInventory.viewParent(_item);
     }
 
     protected void addOwnerButtons ()
@@ -125,7 +127,12 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                     return true;
                 }
                 public boolean gotResult (Object result) {
-                    _panel.itemDeleted(_item);
+                    // remove the item from our cached models
+                    int suiteId = (_item instanceof SubItem) ? ((SubItem)_item).suiteId : 0;
+                    DataModel model = _models.getModel(_item.getType(), suiteId);
+                    if (model != null) {
+                        model.removeItem(_item);
+                    }
                     MsoyUI.info(CInventory.msgs.msgItemDeleted());
                     History.back(); // back up to the page that contained the item
                     return false;
@@ -138,8 +145,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             button = new Button(CInventory.msgs.detailEdit());
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.INVENTORY,
-                                   Args.compose("e", ""+_item.getType(), ""+_item.itemId));
+                    CInventory.editItem(_item.getType(), _item.itemId);
                 }
             });
             _buttons.add(button);
@@ -208,6 +214,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
     }
 
+    protected InventoryModels _models;
     protected ItemPanel _panel;
     protected Label _listTip;
     protected Button _listBtn;

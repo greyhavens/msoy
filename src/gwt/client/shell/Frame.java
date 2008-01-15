@@ -318,6 +318,9 @@ public class Frame
 
     protected static int clearDialog (ComplexPanel panel, Predicate pred)
     {
+        if (panel == null) {
+            return 0; // cope with stale index.html files
+        }
         int removed = 0;
         for (int ii = 0; ii < panel.getWidgetCount(); ii++) {
             Widget widget = panel.getWidget(ii);

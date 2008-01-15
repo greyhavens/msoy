@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 
-import client.editem.ItemEditor;
 import client.util.RowPanel;
 
 /**
@@ -19,10 +18,9 @@ import client.util.RowPanel;
 public class SubItemEntry extends ItemEntry
     implements DoListItemPopup.ListedListener
 {
-    public SubItemEntry (SubItemPanel spanel, ItemPanel panel, Item item)
+    public SubItemEntry (Item item)
     {
-        super(panel, item, null);
-        _spanel = spanel;
+        super(item, null);
     }
 
     // @Override // from ItemEntry
@@ -46,16 +44,13 @@ public class SubItemEntry extends ItemEntry
         button.addStyleName("tinyButton");
         buttons.add(button);
 
-// TODO
-//         button = new Button(CInventory.msgs.detailEdit(), new ClickListener() {
-//             public void onClick (Widget sender) {
-//                 ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _spanel);
-//                 editor.setItem(_item);
-//                 editor.show();
-//             }
-//         });
-//         button.addStyleName("tinyButton");
-//         buttons.add(button);
+        button = new Button(CInventory.msgs.detailEdit(), new ClickListener() {
+            public void onClick (Widget sender) {
+                CInventory.editItem(_item.getType(), _item.itemId);
+            }
+        });
+        button.addStyleName("tinyButton");
+        buttons.add(button);
 
         setWidget(2, 0, buttons);
     }
@@ -69,6 +64,4 @@ public class SubItemEntry extends ItemEntry
             setItem(item);
         }
     }
-
-    protected SubItemPanel _spanel;
 }

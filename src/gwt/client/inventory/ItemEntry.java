@@ -26,6 +26,7 @@ import client.util.events.FurniChangedEvent;
 import client.util.events.PetEvent;
 import client.util.events.PetListener;
 
+import client.shell.Frame;
 import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MediaUtil;
@@ -36,11 +37,10 @@ import client.util.MsoyUI;
  */
 public class ItemEntry extends FlexTable
 {
-    public ItemEntry (ItemPanel panel, Item item, List itemList)
+    public ItemEntry (Item item, List itemList)
     {
         setCellPadding(0);
         setCellSpacing(0);
-        _panel = panel;
         _itemList = itemList;
         setStyleName("itemEntry");
         setItem(item);
@@ -58,7 +58,7 @@ public class ItemEntry extends FlexTable
 
         ClickListener clicker = new ClickListener() {
             public void onClick (Widget sender) {
-                _panel.requestShowDetail(_item.getIdent());
+                CInventory.viewItem(_item.getType(), _item.itemId);
             }
         };
         setWidget(0, 0, MediaUtil.createMediaView(
@@ -168,7 +168,7 @@ public class ItemEntry extends FlexTable
                         FlashClients.useAvatar(0, 0);
                     } else {
                         FlashClients.useAvatar(_item.itemId, ((Avatar) _item).scale);
-                        _panel.minimizeInventory();
+                        minimizeInventory();
                     }
                 }
             });
@@ -182,7 +182,7 @@ public class ItemEntry extends FlexTable
                         FlashClients.useItem(0, _item.getType());
                     } else {
                         FlashClients.useItem(_item.itemId, _item.getType());
-                        _panel.minimizeInventory();
+                        minimizeInventory();
                     }
                 }
             });
@@ -196,7 +196,7 @@ public class ItemEntry extends FlexTable
                         FlashClients.removePet(_item.itemId);
                     } else {
                         FlashClients.usePet(_item.itemId);
-                        _panel.minimizeInventory();
+                        minimizeInventory();
                     }
                 }
             });
@@ -210,7 +210,7 @@ public class ItemEntry extends FlexTable
                         FlashClients.removeFurni(_item.itemId, _item.getType());
                     } else {
                         FlashClients.useItem(_item.itemId, _item.getType());
-                        _panel.minimizeInventory();
+                        minimizeInventory();
                     }
                 }
             });
@@ -233,7 +233,11 @@ public class ItemEntry extends FlexTable
         }
     }
 
-    protected ItemPanel _panel;
+    protected static void minimizeInventory ()
+    {
+        Frame.setContentMinimized(true, null);
+    }
+
     protected Item _item;
 
     protected FlashEventListener _listener;

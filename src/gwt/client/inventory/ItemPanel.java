@@ -7,11 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -26,7 +24,6 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 import client.editem.EditorHost;
 import client.shell.Application;
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
@@ -55,7 +52,7 @@ public class ItemPanel extends VerticalPanel
                 Application.go(Page.INVENTORY, Args.compose(new String[] { ""+_type, ""+page }));
             }
             protected Widget createWidget (Object item) {
-                return new ItemEntry(ItemPanel.this, (Item)item, _itemList);
+                return new ItemEntry((Item)item, _itemList);
             }
             protected String getEmptyMessage () {
                 return CInventory.msgs.panelNoItems(CInventory.dmsgs.getString("itemType" + _type));
@@ -71,13 +68,8 @@ public class ItemPanel extends VerticalPanel
             }
         }
         if (isCatalogItem) {
-            addUploadInterface();
+            createUploadInterface();
         }
-    }
-
-    public void minimizeInventory ()
-    {
-        Frame.setContentMinimized(true, null);
     }
 
     /**
@@ -150,16 +142,6 @@ public class ItemPanel extends VerticalPanel
         add(new ItemDetailPanel(_models, _detail, this));
     }
 
-    /**
-     * Called by the {@link ItemEntry} to request that we do the browser history jockeying to
-     * cause the specified item's detail to be shown.
-     */
-    public void requestShowDetail (ItemIdent ident)
-    {
-        Application.go(Page.INVENTORY, Args.compose(new String[] {
-            ""+ident.type, ""+_contents.getPage(), ""+ident.itemId }));
-    }
-
     // from EditorHost
     public void editComplete (Item item)
     {
@@ -177,26 +159,13 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
-    protected void loadInventory ()
-    {
-        _models.loadModel(_type, 0, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                _contents.setModel((SimpleDataModel)result, _startPage);
-            }
-            public void onFailure (Throwable caught) {
-                CInventory.log("loadInventory failed", caught);
-                add(new Label(CInventory.serverError(caught)));
-            }
-        });
-    }
-
     protected boolean isShowing (ItemIdent ident)
     {
         Widget top = (getWidgetCount() > 0) ? getWidget(0) : null;
         return (top instanceof ItemDetailPanel && ((ItemDetailPanel)top).isShowing(ident));
     }
 
-    protected void addUploadInterface ()
+    protected void createUploadInterface ()
     {
         // this will allow us to create new items
         _upload = new VerticalPanel();
@@ -237,7 +206,7 @@ public class ItemPanel extends VerticalPanel
         _create = new Button(CInventory.msgs.panelCreateNew());
         _create.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-                Application.go(Page.INVENTORY, Args.compose("e", _type));
+                CInventory.createItem(_type, (byte)0, 0);
             }
         });
         contents.setWidget(0, 1, _create);
@@ -260,19 +229,11 @@ public class ItemPanel extends VerticalPanel
 
         // trigger the loading of our inventory the first time we're displayed
         if (!_contents.hasModel()) {
-            loadInventory();
-        }
-    }
-
-    /**
-     * Called by an active {@link ItemDetailPanel} to let us know that an item has been deleted
-     * from our inventory.
-     */
-    protected void itemDeleted (Item item)
-    {
-        // this may be from a sub-item in which case we ignore it
-        if (item.getType() == _type) {
-            _contents.removeItem(item);
+            _models.loadModel(_type, 0, new MsoyCallback() {
+                public void onSuccess (Object result) {
+                    _contents.setModel((SimpleDataModel)result, _startPage);
+                }
+            });
         }
     }
 

@@ -3,12 +3,9 @@
 
 package client.inventory;
 
-import java.util.List;
-
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -17,82 +14,68 @@ import com.threerings.msoy.item.data.all.SubItem;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.SimpleDataModel;
+import com.threerings.gwt.util.DataModel;
 
-import client.editem.EditorHost;
-import client.editem.ItemEditor;
 import client.util.MsoyCallback;
 
 /**
  * Displays a set of sub-items on an item's detail page.
  */
-public class SubItemPanel extends VerticalPanel
-    implements EditorHost
+public class SubItemPanel extends PagedGrid
 {
     public SubItemPanel (InventoryModels models, byte type, Item parent, final ItemPanel panel)
     {
+        super(ROWS, ItemPanel.COLUMNS, PagedGrid.NAV_ON_BOTTOM);
+        addStyleName("subInventoryContents");
+
         _models = models;
         _type = type;
         _parent = parent;
-        _contents = new PagedGrid(ROWS, ItemPanel.COLUMNS, PagedGrid.NAV_ON_TOP) {
-            protected Widget createWidget (Object item) {
-                return new SubItemEntry(SubItemPanel.this, panel, (Item)item);
-            }
-            protected String getEmptyMessage () {
-                return CInventory.msgs.panelNoItems(CInventory.dmsgs.getString("itemType" + _type));
-            }
-            protected boolean displayNavi (int items) {
-                return items > _rows * _cols;
-            }
-        };
-        _contents.addStyleName("subInventoryContents");
-        add(_contents);
-
-        add(WidgetUtil.makeShim(1, 10));
 
         // if our parent is an original item, allow creation of subitems
-        if (_parent.sourceId == 0) {
-            _create = new Button(CInventory.msgs.panelCreateNew());
-// TODO
-//             _create.addClickListener(new ClickListener() {
-//                 public void onClick (Widget widget) {
-//                     ItemEditor editor = ItemEditor.createItemEditor(_type, SubItemPanel.this);
-//                     if (editor != null) {
-//                         _create.setEnabled(false);
-//                         editor.setItem(editor.createBlankItem());
-//                         editor.setParentItem(_parent.getIdent());
-//                         editor.show();
-//                     }
-//                 }
-//             });
-            add(_create);
-        }
-    }
-
-    // from EditorHost
-    public void editComplete (Item item)
-    {
-        _create.setEnabled(true);
-
-        if (item != null) {
-            // refresh our item list
-            _items.remove(item);
-            _items.add(0, item);
-            _contents.setModel(new SimpleDataModel(_items), 0);
-        }
+        _create.setVisible(_parent.sourceId == 0);
     }
 
     // @Override // from UIObject
     public void setVisible (boolean visible)
     {
         super.setVisible(visible);
-        if (!visible || _contents.hasModel()) {
+        if (!visible || hasModel()) {
             return;
         }
 
         _models.loadModel(_type, _parent.getSuiteId(), new MsoyCallback() {
             public void onSuccess (Object result) {
-                _contents.setModel(new SimpleDataModel(_items = (List)result), 0);
+                setModel((DataModel)result, 0);
+            }
+        });
+    }
+
+    // @Override // from PagedGrid
+    protected Widget createWidget (Object item)
+    {
+        return new SubItemEntry((Item)item);
+    }
+
+    // @Override // from PagedGrid
+    protected String getEmptyMessage ()
+    {
+        return CInventory.msgs.panelNoItems(CInventory.dmsgs.getString("itemType" + _type));
+    }
+
+    // @Override // from PagedGrid
+    protected boolean displayNavi (int items)
+    {
+        return true;
+    }
+
+    // @Override // from PagedGrid
+    protected void addCustomControls (FlexTable controls)
+    {
+        controls.setWidget(0, 0, _create = new Button(CInventory.msgs.panelCreateNew()));
+        _create.addClickListener(new ClickListener() {
+            public void onClick (Widget widget) {
+                CInventory.createItem(_type, _parent.getType(), _parent.itemId);
             }
         });
     }
@@ -100,11 +83,7 @@ public class SubItemPanel extends VerticalPanel
     protected InventoryModels _models;
     protected byte _type;
     protected Item _parent;
-
-    protected PagedGrid _contents;
     protected Button _create;
-
-    protected List _items;
 
     protected static final int ROWS = 5;
 }

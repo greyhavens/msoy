@@ -71,7 +71,13 @@ public class TrophySourceEditor extends SubItemEditor
                 _item.thumbMedia = desc;
                 return null;
             }
-        }), CShell.emsgs.trophyMainTitle());
+        }));
+    }
+
+    // @Override from ItemEditor
+    protected String getThumbnailHint ()
+    {
+        return CShell.emsgs.trophyMainTitle();
     }
 
     // @Override // from ItemEditor
