@@ -4,6 +4,7 @@
 package client.editem;
 
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -61,9 +62,10 @@ public class DecorEditor extends ItemEditor
         }), CShell.emsgs.decorMainTitle());
 
         addSpacer();
+        addRow(new Label(CShell.emsgs.decorConfigTab()));
         HTML viewer = new HTML();
-        // note: the container has to be added to the page *before* we add the flash viewer
-        addRow(CShell.emsgs.decorConfigTab(), viewer);
+        // note: the container has to be added to the DOM *before* we add the flash viewer
+        addRow(viewer);
         FlashClients.embedDecorViewer(viewer); 
         configureCallbacks(this);
     }
