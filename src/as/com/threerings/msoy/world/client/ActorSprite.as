@@ -10,6 +10,7 @@ import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.world.data.ActorInfo;
+import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 /**
@@ -73,6 +74,7 @@ public class ActorSprite extends OccupantSprite
         // if the state has changed, dispatch an event 
         if (stateChanged) {
             callUserCode("stateSet_v1", getActorInfo().getState());
+            callAVRGCode("actorStateSet_v1", getActorInfo().getState());
         }
     }
 
@@ -82,6 +84,35 @@ public class ActorSprite extends OccupantSprite
         return "ActorSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
     }
 
+    /**
+     * Update the actor's scene location. Called by our backend in response to a request from
+     * usercode.
+     */
+    public function setLocationFromUser (x :Number, y :Number, z: Number, orient :Number) :void
+    {
+        if (_ident != null && parent is RoomView) {
+            (parent as RoomView).getRoomController().requestMove(
+                _ident, new MsoyLocation(x, y, z, orient));
+        }
+    }
+
+    /**
+     * Update the actor's orientation.
+     * Called by user code when it wants to change the actor's scene location.
+     */
+    public function setOrientationFromUser (orient :Number) :void
+    {
+        // TODO
+        Log.getLog(this).debug("user-set orientation is currently TODO.");
+    }
+
+    public function setMoveSpeedFromUser (speed :Number) :void
+    {
+        if (!isNaN(speed)) {
+            // don't worry, it'll be bounded by the minimum at the appropriate place
+            _moveSpeed = speed;
+        }
+    }
     // from OccupantSprite
     override protected function configureDisplay (
         oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
@@ -104,6 +135,7 @@ public class ActorSprite extends OccupantSprite
         } else {
             callUserCode("appearanceChanged_v1", locArray, _loc.orient, isMoving());
         }
+        callAVRGCode("actorAppearanceChanged_v1");
     }
 
     // from MsoySprite
@@ -112,34 +144,15 @@ public class ActorSprite extends OccupantSprite
         return new ActorBackend();
     }
 
-    /**
-     * Update the actor's scene location. Called by our backend in response to a request from
-     * usercode.
-     */
-    internal function setLocationFromUser (x :Number, y :Number, z: Number, orient :Number) :void
+    // a helper function to call functions in the AVRG backend
+    protected function callAVRGCode (name :String, ... args) :*
     {
-        if (_ident != null && parent is RoomView) {
-            (parent as RoomView).getRoomController().requestMove(
-                _ident, new MsoyLocation(x, y, z, orient));
+        if (_ident != null && parent is RoomView && _occInfo is MemberInfo) {
+            args.unshift(MemberInfo(_occInfo).getMemberId());
+            args.unshift(name);
+            return RoomView(parent).callAVRGCode.apply(parent, args);
         }
-    }
-
-    /**
-     * Update the actor's orientation.
-     * Called by user code when it wants to change the actor's scene location.
-     */
-    internal function setOrientationFromUser (orient :Number) :void
-    {
-        // TODO
-        Log.getLog(this).debug("user-set orientation is currently TODO.");
-    }
-
-    internal function setMoveSpeedFromUser (speed :Number) :void
-    {
-        if (!isNaN(speed)) {
-            // don't worry, it'll be bounded by the minimum at the appropriate place
-            _moveSpeed = speed;
-        }
+        return undefined;
     }
 }
 }

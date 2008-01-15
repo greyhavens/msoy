@@ -52,6 +52,7 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
+import com.threerings.msoy.avrg.client.AVRGameBackend;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -634,6 +635,15 @@ public class RoomView extends AbstractRoomView
                     addBody(occInfo);
                 }
             }
+        }
+    }
+
+    /** Executes a usercode method through the AVRG backend. */
+    public function callAVRGCode (... args) :*
+    {
+        var backend :AVRGameBackend = _ctx.getGameDirector().getAVRGameBackend();
+        if (backend != null) {
+            return backend.callUserCode.apply(backend, args);
         }
     }
 

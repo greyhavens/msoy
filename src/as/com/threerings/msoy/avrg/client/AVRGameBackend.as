@@ -38,10 +38,12 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.QuestState;
 
 import com.threerings.msoy.world.client.AbstractRoomView;
+import com.threerings.msoy.world.client.MemberSprite;
 import com.threerings.msoy.world.client.MobSprite;
 import com.threerings.msoy.world.client.RoomMetrics;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.RoomObject;
 
 import com.threerings.msoy.avrg.data.AVRGameObject;
@@ -156,6 +158,14 @@ public class AVRGameBackend extends ControlBackend
         o["setMobDecoration_v1"] = setMobDecoration_v1;
         o["setMobHotSpot_v1"] = setMobHotSpot_v1;
 
+        // AVRG Avatar functions
+        o["getAvatarInfo_v1"] = getAvatarInfo_v1;
+
+        o["setAvatarState_v1"] = setAvatarState_v1;
+        o["setAvatarMoveSpeed_v1"] = setAvatarMoveSpeed_v1;
+        o["setAvatarLocation_v1"] = setAvatarLocation_v1;
+        o["setAvatarOrientation_v1"] = setAvatarOrientation_v1;
+
         _stateBackend.populateSubProperties(o);
         _questBackend.populateSubProperties(o);
     }
@@ -225,11 +235,20 @@ public class AVRGameBackend extends ControlBackend
     protected function isPlayerHere_v1 (id :int) :Boolean
     {
         if (isPlaying() && _roomObj != null) {
-            var fakeName :MemberName = new MemberName(null, id);
+            var fakeName :MemberName = new MemberName("", id);
             return (_gameObj.getOccupantInfo(fakeName) != null &&
                     _roomObj.getOccupantInfo(fakeName) != null);
         }
         return false;
+    }
+
+    protected function getPlayerName_v1 (playerId :int) :String
+    {
+        var occInfo :OccupantInfo = _roomObj.getOccupantInfo(new MemberName("", playerId));
+        if (occInfo != null && occInfo is MemberInfo && occInfo.username != null) {
+            return occInfo.username.toString();
+        }
+        return null;
     }
 
     protected function getPlayerIds_v1 () :Array
@@ -258,7 +277,7 @@ public class AVRGameBackend extends ControlBackend
                 if (sprite != null) {
                     return false;
                 }
-                view.getRoomObject().roomService.spawnMob(
+                _roomObj.roomService.spawnMob(
                     _wctx.getClient(), _ctrl.getGameId(), mobId, mobName,
                     loggingInvocationListener("spawnMob"));
                 return true;
@@ -276,7 +295,7 @@ public class AVRGameBackend extends ControlBackend
                 if (sprite == null) {
                     return false;
                 }
-                view.getRoomObject().roomService.despawnMob(
+                _roomObj.roomService.despawnMob(
                     _wctx.getClient(), _ctrl.getGameId(), mobId,
                     loggingInvocationListener("despawnMob"));
                 return true;
@@ -319,6 +338,74 @@ public class AVRGameBackend extends ControlBackend
         }
     }
 
+    protected function getAvatarInfo_v1 () :String
+    {
+        var sprite :MemberSprite = getAvatarSprite();
+        if (sprite != null) {
+            var data :Object = new Object();
+            data.state = sprite.getState();
+            data.x = sprite.getLocation().x;
+            data.y = sprite.getLocation().y;
+            data.z = sprite.getLocation().z;
+            data.orientation = sprite.getLocation().orient;
+            data.moveSpeed = sprite.getMoveSpeed();
+            data.isMoving = sprite.isMoving();
+            data.isIdle = sprite.isIdle();
+            data.bounds = sprite.getBounds(sprite.parent);
+        }
+        return null;
+    }
+
+    protected function setAvatarState_v1 (state :String) :Boolean
+    {
+        var sprite :MemberSprite = getAvatarSprite();
+        if (sprite != null) {
+            sprite.setState(state);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Called by user code to configure the default move speed for this actor.
+     */
+    protected function setAvatarMoveSpeed_v1 (pixelsPerSecond :Number) :Boolean
+    {
+        var sprite :MemberSprite = getAvatarSprite();
+        if (sprite != null) {
+            sprite.setMoveSpeedFromUser(pixelsPerSecond);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Called by user code when it wants to change the actor's scene location.
+     */
+    protected function setAvatarLocation_v1 (
+        x :Number, y :Number, z: Number, orient :Number) :Boolean
+    {
+        var sprite :MemberSprite = getAvatarSprite();
+        if (sprite != null) {
+            sprite.setLocationFromUser(x, y, z, orient);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Called by user code when it wants to change the actor's scene orientation.
+     */
+    protected function setAvatarOrientation_v1 (orient :Number) :Boolean
+    {
+        var sprite :MemberSprite = getAvatarSprite();
+        if (sprite != null) {
+            sprite.setOrientationFromUser(orient);
+            return true;
+        }
+        return false;
+    }
+
     protected function playerEntered (name :Name) :void
     {
         if (name is MemberName) {
@@ -331,6 +418,17 @@ public class AVRGameBackend extends ControlBackend
         if (name is MemberName) {
             callUserCode("playerLeft_v1", MemberName(name).getMemberId());
         }
+    }
+
+    protected function getAvatarSprite () :MemberSprite
+    {
+        if (isPlaying()) {
+            var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+            if (view != null) {
+                return view.getMyAvatar();
+            }
+        }
+        return null;
     }
 
     protected function loggingConfirmListener (svc :String, processed :Function = null)
