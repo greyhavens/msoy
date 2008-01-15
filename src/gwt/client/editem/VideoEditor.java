@@ -52,8 +52,7 @@ public class VideoEditor extends ItemEditor
                 updateAlternateSources(desc);
                 return null;
             }
-        }));
-        addTip(CShell.emsgs.videoMainTitle());
+        }), CShell.emsgs.videoMainTitle());
 
         addRow(new Label(CShell.emsgs.videoOptionYoutube()));
         addRow(createYouTubeUploader());

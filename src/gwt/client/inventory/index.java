@@ -51,7 +51,7 @@ public class index extends Page
                 setTitle(CInventory.msgs.editItemTitle());
                 Item item = _models.findItem(type, itemId);
                 if (item == null) {
-                    MsoyUI.error("TODO!");
+                    editor.setItem(type, itemId);
                 } else {
                     editor.setItem(item);
                 }

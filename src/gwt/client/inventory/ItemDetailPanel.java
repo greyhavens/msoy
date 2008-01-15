@@ -107,7 +107,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     }
 
     // @Override // BaseItemDetailPanel
-    protected void onBackClicked ()
+    protected void onUpClicked ()
     {
         Application.go(Page.INVENTORY, ""+_item.getType());
     }

@@ -150,6 +150,18 @@ public abstract class ItemEditor extends FlexTable
     }
 
     /**
+     * Instructs the editor to load the specified item and edit it.
+     */
+    public void setItem (byte type, int itemId)
+    {
+        CShell.itemsvc.loadItem(CShell.ident, new ItemIdent(type, itemId), new MsoyCallback() {
+            public void onSuccess (Object result) {
+                setItem((Item)result);
+            }
+        });
+    }
+
+    /**
      * Configures this editor with an item to edit. The item may be freshly constructed if we are
      * using the editor to create a new item.
      */

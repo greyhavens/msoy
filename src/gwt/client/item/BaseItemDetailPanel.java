@@ -52,7 +52,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
         getFlexCellFormatter().setRowSpan(0, 0, 2);
         setWidget(0, 0, MsoyUI.createBackArrow(new ClickListener() {
             public void onClick (Widget sender) {
-                onBackClicked();
+                onUpClicked();
             }
         }));
 
@@ -204,9 +204,9 @@ public abstract class BaseItemDetailPanel extends FlexTable
     }
 
     /**
-     * Called when the user clicks our back arrow.
+     * Called when the user clicks our up arrow.
      */
-    protected void onBackClicked ()
+    protected void onUpClicked ()
     {
         History.back();
     }

@@ -183,8 +183,7 @@ public class GameEditor extends ItemEditor
                 _game.gameMedia = desc;
                 return null;
             }
-        }));
-        addTip(CShell.emsgs.gameMainTitle());
+        }), CShell.emsgs.gameMainTitle());
 
         // add a tab for uploading the game screenshot
         MediaUploader shotter = createAuxUploader(new MediaUpdater() {
@@ -197,8 +196,8 @@ public class GameEditor extends ItemEditor
             }
         });
         shotter.setHint(CShell.emsgs.gameShotHint(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT));
-        addRow(CShell.emsgs.gameShotTab(), shotter);
-        addTip(CShell.emsgs.gameShotTitle());
+        addSpacer();
+        addRow(CShell.emsgs.gameShotTab(), shotter, CShell.emsgs.gameShotTitle());
 
         super.addExtras();
     }

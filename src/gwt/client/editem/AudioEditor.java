@@ -43,8 +43,7 @@ public class AudioEditor extends ItemEditor
                 maybeSetNameFromFilename(name);
                 return null;
             }
-        }));
-        addTip(CShell.emsgs.audioMainTitle());
+        }), CShell.emsgs.audioMainTitle());
 
         super.addExtras();
     }
