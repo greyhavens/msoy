@@ -110,7 +110,8 @@ public class TrophyRecord extends PersistentRecord
         trophy.gameId = gameId;
         trophy.name = name;
         trophy.trophyMedia = new MediaDesc(
-            trophyMediaHash, trophyMimeType, MediaDesc.NOT_CONSTRAINED);
+            trophyMediaHash, trophyMimeType, MediaDesc.computeConstraint(
+                MediaDesc.THUMBNAIL_SIZE, TrophySource.TROPHY_WIDTH, TrophySource.TROPHY_HEIGHT));
         trophy.whenEarned = whenEarned.getTime();
         return trophy;
     }
