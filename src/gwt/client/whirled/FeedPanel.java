@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.person.data.FeedMessage;
 import com.threerings.msoy.person.data.FriendFeedMessage;
 import com.threerings.msoy.person.data.GroupFeedMessage;
@@ -327,6 +328,10 @@ public class FeedPanel extends VerticalPanel
                 if (media == null) {
                     return null;
                 }
+                // TEMP: remove after servers are 4 weeks past 01/15/2008
+                media.constraint = MediaDesc.computeConstraint(MediaDesc.THUMBNAIL_SIZE,
+                        TrophySource.TROPHY_WIDTH, TrophySource.TROPHY_HEIGHT);
+                // ENDTEMP
                 clicker = new ClickListener() {
                     public void onClick (Widget sender) {
                         Application.go(Page.GAME, Args.compose(
