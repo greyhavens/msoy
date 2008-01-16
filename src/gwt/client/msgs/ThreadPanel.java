@@ -99,6 +99,20 @@ public class ThreadPanel extends TitledListPanel
         }
     }
 
+    protected static boolean checkMessageText (String text)
+    {
+        if (text.length() == 0) {
+            MsoyUI.error(CMsgs.mmsgs.errMissingReply());
+            return false;
+        }
+        int extra = text.length() - ForumMessage.MAX_MESSAGE_LENGTH;
+        if (extra > 0) {
+            MsoyUI.error(CMsgs.mmsgs.errMessageTooLong(""+extra));
+            return false;
+        }
+        return true;
+    }
+
     protected class ReplyPanel extends TableFooterPanel
     {
         public ReplyPanel (ForumMessage inReplyTo)
@@ -126,16 +140,9 @@ public class ThreadPanel extends TitledListPanel
             new ClickCallback(submit) {
                 public boolean callService () {
                     String text = _editor.getHTML();
-                    if (text.length() == 0) {
-                        MsoyUI.error(CMsgs.mmsgs.errMissingReply());
+                    if (!checkMessageText(text)) {
                         return false;
                     }
-                    int extra = text.length() - ForumMessage.MAX_MESSAGE_LENGTH;
-                    if (extra > 0) {
-                        MsoyUI.error(CMsgs.mmsgs.errMessageTooLong(""+extra));
-                        return false;
-                    }
-                    // TODO: when we support quoting, make sure there's more than the quoted text
                     CMsgs.forumsvc.postMessage(CMsgs.ident, _threadId, replyId, text, this);
                     return true;
                 }
@@ -172,12 +179,12 @@ public class ThreadPanel extends TitledListPanel
                     showMessages();
                 }
             }));
+
             Button submit = new Button(CMsgs.cmsgs.submit());
             new ClickCallback(submit) {
                 public boolean callService () {
                     _text = _editor.getHTML();
-                    if (_text.length() == 0) {
-                        MsoyUI.error(CMsgs.mmsgs.errMissingReply());
+                    if (!checkMessageText(_text)) {
                         return false;
                     }
                     CMsgs.forumsvc.editMessage(CMsgs.ident, _message.messageId, _text, this);
