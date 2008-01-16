@@ -3,11 +3,18 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
+import flash.display.Loader;
+
 import flash.events.MouseEvent;
+
 import flash.filters.GlowFilter;
+
+import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
@@ -36,9 +43,7 @@ import com.threerings.msoy.world.data.MsoyScene;
 // on another. Then: change things so that this DisplayObject is never scaled, but rather
 // the scale is applied directly to _media. Or, if not possible, we can undo the sprite's
 // scale on _other.
-// We need to do this for two reasons:
-// 1) so we can more easily snapshot actor decorations
-// 2) so we can not have scaled-down name labels.
+// We need to do this so that name labels and decorations are not scaled up or down.
 public class OccupantSprite extends MsoySprite
 {
     /** The maximum width of an occupant sprite. */
@@ -259,6 +264,30 @@ public class OccupantSprite extends MsoySprite
         if (configureDecorations(oldInfo, newInfo)) {
             arrangeDecorations();
         }
+    }
+
+    override public function snapshot (bitmapData :BitmapData, matrix :Matrix) :Boolean
+    {
+        var success :Boolean = true;
+
+        // now snapshot everything, including the decorations and name label
+        for (var ii :int = 0; ii < numChildren; ii++) {
+            var d :DisplayObject = getChildAt(ii);
+            if (d == _media && _media is Loader) {
+                success = super.snapshot(bitmapData, matrix);
+
+            } else {
+                var m :Matrix = d.transform.matrix;
+                m.concat(matrix);
+                try {
+                    bitmapData.draw(d, m, null, null, null, true);
+                } catch (serr :SecurityError) {
+                    log.info("Unable to snapshot occupant decoration: " + serr);
+                }
+            }
+        }
+
+        return success;
     }
 
     /**
