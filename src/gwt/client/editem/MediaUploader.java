@@ -117,8 +117,8 @@ public class MediaUploader extends FlexTable
         getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
 
         // TEMP: display the media chooser applet next to the old HTML upload based uploader but
-        // only to admins until we're actually ready to go live with the new hotness
-        if (CShell.isAdmin()) {
+        // only on dev until we're actually ready to go live with the new hotness
+        if (DeploymentConfig.devDeployment) {
             String[] args = new String[] {
                 "media_id", mediaId, "authtoken", CShell.ident.token,
                 // "server", config.server, "port", "" + config.port,
