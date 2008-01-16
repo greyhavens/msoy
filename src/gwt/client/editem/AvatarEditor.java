@@ -38,7 +38,9 @@ public class AvatarEditor extends ItemEditor
         addSpacer();
         addRow(CShell.emsgs.avatarMainTab(), createMainUploader(false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!desc.hasFlashVisual()) {
+                // TODO: when all item types support zipped media, change
+                // hasFlashVisual to support ZIP.
+                if (!desc.hasFlashVisual() && (desc.mimeType != MediaDesc.APPLICATION_ZIP)) {
                     return CShell.emsgs.errAvatarNotFlash();
                 }
                 _avatar.avatarMedia = desc;
