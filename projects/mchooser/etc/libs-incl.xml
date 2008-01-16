@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<project name="library-dependencies">
+  <fileset dir="${libs.dir}" id="mchooser.libs">
+    <include name="ant.jar"/>
+    <include name="google-collect.jar"/>
+    <include name="junit4.jar"/>
+    <include name="proguard.jar"/>
+    <include name="retroweaver-all-1.2.2.jar"/>
+    <include name="retroweaver-rt-1.2.2.jar"/>
+    <include name="samskivert.jar"/>
+  </fileset>
+</project>

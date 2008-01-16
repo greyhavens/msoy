@@ -1,0 +1,102 @@
+<?xml version="1.0" standalone="yes"?>
+<!-- build configuration -->
+<project name="mchooser" default="compile" basedir=".">
+
+  <!-- configuration parameters -->
+  <property name="app.name"     value="mchooser"/>
+  <property name="deploy.dir"   value="dist"/>
+  <property name="classes.dir"  value="${deploy.dir}/classes"/>
+  <property name="libs.dir"     value="../../extlibs/java"/>
+  <import file="etc/libs-incl.xml"/>
+
+  <!-- declare our classpath business -->
+  <path id="classpath">
+    <pathelement location="${classes.dir}"/>
+    <fileset dir="${deploy.dir}/lib" includes="**/*.jar"/>
+  </path>
+
+  <!-- prepares the application directories -->
+  <target name="prepare">
+    <mkdir dir="${deploy.dir}"/>
+    <mkdir dir="${deploy.dir}/lib"/>
+    <mkdir dir="${classes.dir}"/>
+    <copy todir="${classes.dir}">
+      <fileset dir="src/java" includes="**/*.properties"/>
+      <fileset dir="src/java" includes="**/*.tmpl"/>
+    </copy>
+    <copy todir="${deploy.dir}/lib" flatten="true">
+      <fileset refid="${app.name}.libs"/>
+    </copy>
+  </target>
+
+  <!-- cleans out the intermediate build files -->
+  <target name="clean">
+    <delete dir="${deploy.dir}/classes"/>
+    <delete failonerror="false"><fileset dir="${deploy.dir}" includes="*.jar"/></delete>
+  </target>
+
+  <!-- wipes the entire build directory clean -->
+  <target name="distclean">
+    <delete dir="${deploy.dir}"/>
+  </target>
+
+  <!-- build the java class files -->
+  <target name="compile" depends="prepare">
+    <javac srcdir="src/java" destdir="${classes.dir}" includeAntRuntime="false"
+           debug="on" optimize="{$build.optimize}" deprecation="on" source="1.4" target="1.4">
+      <classpath refid="classpath"/>
+      <compilerarg value="-Xlint"/>
+      <compilerarg value="-Xlint:-serial"/>
+      <include name="com/threerings/msoy/MediaChooserApplet.java"/>
+    </javac>
+    <javac srcdir="src/java" destdir="${classes.dir}" includeAntRuntime="false"
+           debug="on" optimize="{$build.optimize}" deprecation="on" source="1.5" target="1.5">
+      <classpath refid="classpath"/>
+      <compilerarg value="-Xlint"/>
+      <compilerarg value="-Xlint:-serial"/>
+      <exclude name="com/threerings/msoy/MediaChooserApplet.java"/>
+    </javac>
+  </target>
+
+  <!-- builds our distribution jar file -->
+  <target name="dist" depends="prepare,compile">
+    <jar destfile="${deploy.dir}/mchooser-applet.jar">
+      <fileset dir="${classes.dir}" includes="com/threerings/msoy/MediaChooserApplet**"/>
+    </jar>
+    <jar destfile="${deploy.dir}/mchooser.jar">
+      <fileset dir="${classes.dir}" includes="com/threerings/msoy/mchooser/**"/>
+    </jar>
+  </target>
+
+  <!-- optimizes, combines and removes dead code -->
+  <target name="proguard" depends="dist">
+    <!-- first run proguard on the code to include everything we need and nothing more -->
+    <taskdef resource="proguard/ant/task.properties" classpath="${deploy.dir}/lib/proguard.jar"/>
+    <proguard>
+      -injars dist/mchooser.jar
+      -libraryjars ${java.home}/lib/rt.jar
+      -dontskipnonpubliclibraryclasses
+
+      -outjars dist/mchooser-pro.jar
+      -printseeds dist/proguard.seeds
+      -printmapping dist/proguard.map
+
+      -keep public class com.threerings.msoy.mchooser.MediaChooserFrame {
+          *;
+      }
+    </proguard>
+
+    <!-- then run retroweaver to make the code 1.4 compatible -->
+    <taskdef name="weave" classname="com.rc.retroweaver.ant.RetroWeaverTask"
+             classpath="${deploy.dir}/lib/retroweaver-all-1.2.2.jar"/>
+    <weave inputjar="${basedir}/${deploy.dir}/${app.name}-pro.jar"
+           outputjar="${basedir}/${deploy.dir}/${app.name}-retro-pro.jar"/>
+
+    <!-- finally combine the retroweaved jar file with the retroweaver runtime -->
+    <unjar src="${deploy.dir}/${app.name}-retro-pro.jar" dest="${deploy.dir}/rptmp"/>
+    <unjar src="${deploy.dir}/lib/retroweaver-rt-1.2.2.jar" dest="${deploy.dir}/rptmp"/>
+    <jar destfile="${deploy.dir}/${app.name}-retro-pro.jar" basedir="${deploy.dir}/rptmp"/>
+    <delete dir="${deploy.dir}/rptmp"/>
+  </target>
+
+</project>

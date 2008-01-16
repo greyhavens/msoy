@@ -641,6 +641,24 @@
     <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients/${build_version}"/>
   </target>
 
+  <!-- builds the media chooser applet -->
+  <target name="mchooser">
+    <ant dir="projects/mchooser" target="proguard" inheritAll="false"/>
+    <copy file="projects/mchooser/${deploy.dir}/mchooser-applet.jar"
+          todir="pages/clients/${build_version}"/>
+    <copy file="projects/mchooser/${deploy.dir}/mchooser-retro-pro.jar"
+          tofile="pages/clients/${build_version}/mchooser.jar"/>
+    <if><isset property="cert_dir"/><then>
+      <property file="${cert_dir}/certificate.properties"/>
+    </then><else>
+      <property name="sign.keystore" value="lib/dev-keystore.dat"/>
+      <property name="sign.storepass" value="secret"/>
+      <property name="sign.alias" value="threerings-dev"/>
+    </else></if>
+    <signjar jar="pages/clients/${build_version}/mchooser.jar" keystore="${sign.keystore}"
+             lazy="true" alias="${sign.alias}" storepass="${sign.storepass}"/>
+  </target>
+
   <!-- builds our Java clients -->
   <property name="jclients" value="admin,game,lwjgl-game,swiftly"/>
   <target name="jclients" depends="dist"
