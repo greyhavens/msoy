@@ -30,6 +30,15 @@ import com.threerings.msoy.world.data.MsoyScene;
  * Displays a visualization of an occupant in a scene (could be a member, a pet, a MOB, all sorts
  * of kraaaazy stuff).
  */
+//
+// TODO: refactor nameLabel & decorations so that they are all on a single
+// child of this MsoySprite, so that _media is one child and the rest is
+// on another. Then: change things so that this DisplayObject is never scaled, but rather
+// the scale is applied directly to _media. Or, if not possible, we can undo the sprite's
+// scale on _other.
+// We need to do this for two reasons:
+// 1) so we can more easily snapshot actor decorations
+// 2) so we can not have scaled-down name labels.
 public class OccupantSprite extends MsoySprite
 {
     /** The maximum width of an occupant sprite. */
