@@ -87,6 +87,7 @@
     <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/redstone-xmlrpc.jar"/>
     <file name="${extlibs.dir}/s3lib.jar"/>
+    <file name="${extlibs.dir}/s3upload.jar"/>
     <file name="${extlibs.dir}/servlet-api.jar"/>
     <file name="${extlibs.dir}/slf4j-api.jar"/>
     <file name="${extlibs.dir}/slf4j-jdk14.jar"/>
@@ -891,6 +892,21 @@
     <antcall target="maven-deploy-to-dist">
       <reference refid="msoy.deploy" torefid="deploy.dist.filelist"/>
     </antcall>
+  </target>
+
+  <!-- TEMP: task to upload things to S3 until we can put this in a pre-install script -->
+  <target name="s3publish">
+    <taskdef name="s3upload" classname="com.threerings.ant.S3Upload">
+      <classpath>
+        <!--<fileset dir="${deploy.dir}/lib" includes="s3upload.jar"/>-->
+        <fileset dir="${deploy.dir}/lib" includes="s3upload.jar"/>
+      </classpath>
+    </taskdef>
+    <s3upload awsAuthId="${media_s3id}" awsAuthKey="${media_s3key}"
+              awsBucket="${media_s3bucket}" accessPolicy="public_read">
+      <fileset dir="pages/media" includes="MediaStub.swf"/>
+      <fileset dir="pages" includes="crossdomain.xml"/>
+    </s3upload>
   </target>
 
   <!-- cleans out the compiled code -->
