@@ -40,6 +40,7 @@ import com.threerings.msoy.game.data.QuestState;
 import com.threerings.msoy.world.client.AbstractRoomView;
 import com.threerings.msoy.world.client.MemberSprite;
 import com.threerings.msoy.world.client.MobSprite;
+import com.threerings.msoy.world.client.OccupantSprite;
 import com.threerings.msoy.world.client.RoomMetrics;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.WorldContext;
@@ -338,27 +339,28 @@ public class AVRGameBackend extends ControlBackend
         }
     }
 
-    protected function getAvatarInfo_v1 () :String
+    protected function getAvatarInfo_v1 (playerId :int) :Object
     {
-        var sprite :MemberSprite = getAvatarSprite();
+        var sprite :MemberSprite = getAvatarSprite(playerId);
         if (sprite != null) {
-            var data :Object = new Object();
-            data.state = sprite.getState();
-            data.x = sprite.getLocation().x;
-            data.y = sprite.getLocation().y;
-            data.z = sprite.getLocation().z;
-            data.orientation = sprite.getLocation().orient;
-            data.moveSpeed = sprite.getMoveSpeed();
-            data.isMoving = sprite.isMoving();
-            data.isIdle = sprite.isIdle();
-            data.bounds = sprite.getBounds(sprite.parent);
+            return [
+                sprite.getState(),
+                sprite.getLocation().x,
+                sprite.getLocation().y,
+                sprite.getLocation().z,
+                sprite.getLocation().orient,
+                sprite.getMoveSpeed(),
+                sprite.isMoving(),
+                sprite.isIdle(),
+                sprite.getBounds(sprite.stage)
+            ];
         }
         return null;
     }
 
     protected function setAvatarState_v1 (state :String) :Boolean
     {
-        var sprite :MemberSprite = getAvatarSprite();
+        var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setState(state);
             return true;
@@ -371,7 +373,7 @@ public class AVRGameBackend extends ControlBackend
      */
     protected function setAvatarMoveSpeed_v1 (pixelsPerSecond :Number) :Boolean
     {
-        var sprite :MemberSprite = getAvatarSprite();
+        var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setMoveSpeedFromUser(pixelsPerSecond);
             return true;
@@ -385,7 +387,7 @@ public class AVRGameBackend extends ControlBackend
     protected function setAvatarLocation_v1 (
         x :Number, y :Number, z: Number, orient :Number) :Boolean
     {
-        var sprite :MemberSprite = getAvatarSprite();
+        var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setLocationFromUser(x, y, z, orient);
             return true;
@@ -398,7 +400,7 @@ public class AVRGameBackend extends ControlBackend
      */
     protected function setAvatarOrientation_v1 (orient :Number) :Boolean
     {
-        var sprite :MemberSprite = getAvatarSprite();
+        var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setOrientationFromUser(orient);
             return true;
@@ -420,12 +422,27 @@ public class AVRGameBackend extends ControlBackend
         }
     }
 
-    protected function getAvatarSprite () :MemberSprite
+    protected function getMySprite () :MemberSprite
     {
         if (isPlaying()) {
             var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
             if (view != null) {
                 return view.getMyAvatar();
+            }
+        }
+        return null;
+    }
+
+    protected function getAvatarSprite (playerId :int) :MemberSprite
+    {
+        if (isPlaying()) {
+            var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+            if (view != null) {
+                var name :MemberName = new MemberName("", playerId);
+                var sprite :OccupantSprite = view.getOccupantByName(name);
+                if (sprite != null && _gameObj.getOccupantInfo(name) != null) {
+                    return sprite as MemberSprite;
+                }
             }
         }
         return null;
