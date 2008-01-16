@@ -3,7 +3,10 @@
 
 package com.threerings.msoy.client {
 
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
+
+import flash.geom.Matrix;
 
 import mx.core.Container;
 import mx.core.UIComponent;
@@ -38,6 +41,21 @@ public class LayeredContainer extends Container
             removeChild(_base);
             log.debug("Base layer cleared [base=" + _base + "]");
             _base = null;
+        }
+    }
+
+    /**
+     * Snapshot all the overlays.
+     */
+    public function snapshotOverlays (bitmapData :BitmapData, matrix :Matrix) :void
+    {
+        for (var ii :int = 0; ii < numChildren; ii++) {
+            var disp :DisplayObject = getChildAt(ii);
+            if (disp != _base) {
+                var m :Matrix = disp.transform.matrix;
+                m.concat(matrix);
+                bitmapData.draw(disp, m, null, null, null, true);
+            }
         }
     }
 

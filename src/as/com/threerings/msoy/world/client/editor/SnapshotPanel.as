@@ -14,10 +14,12 @@ import mx.controls.Text;
 
 import com.threerings.util.Log;
 
+import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.OccupantSprite;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -34,8 +36,12 @@ public class SnapshotPanel extends FloatingPanel
         _bitmap = capture(view);
     }
 
-    /** Captures the current room view into a bitmap. */
-    protected function capture (view :RoomView) :BitmapData
+    /**
+     * Captures the current room view into a bitmap.
+     */
+    protected function capture (
+        view :RoomView, includeOccupants :Boolean = true, includeOverlays :Boolean = true)
+        :BitmapData
     {
         // draw the room, scaling down to the appropriate size
         var newScale :Number = IMAGE_HEIGHT / view.getScrollBounds().height;
@@ -49,6 +55,10 @@ public class SnapshotPanel extends FloatingPanel
             matrix.scale(newScale, newScale);
 
             if (child is MsoySprite) {
+                if (!includeOccupants && (child is OccupantSprite)) {
+                    continue; // skip occupants
+                }
+
                 var success :Boolean = MsoySprite(child).snapshot(room, matrix);
                 allSuccess &&= success;
 
@@ -62,6 +72,16 @@ public class SnapshotPanel extends FloatingPanel
                     Log.getLog(this).info("Unable to snapshot Room element: " + err);
                     allSuccess = false;
                 }
+            }
+        }
+
+        if (includeOverlays) {
+            var d :DisplayObject = view;
+            while (!(d is LayeredContainer) && d.parent != null) {
+                d = d.parent;
+            }
+            if (d is LayeredContainer) {
+                (d as LayeredContainer).snapshotOverlays(room, matrix);
             }
         }
 
