@@ -862,8 +862,8 @@
   </target>
 
   <!-- builds top-level flash applications. -->
-  <target name="flashapps"
-          depends="asprepare,aslib,mediastub,avatarviewer,videoviewer,decorviewer,neighborhood,tutorial">
+  <target name="flashapps" depends="asprepare,aslib,mediastub,tutorial,avatarviewer,
+                                    videoviewer,decorviewer,neighborhood">
     <antcall target="asquick"><param name="astype" value="world"/></antcall>
     <antcall target="asquick"><param name="astype" value="game"/></antcall>
   </target>
