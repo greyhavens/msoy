@@ -6,7 +6,7 @@
   <property name="app.name"     value="mchooser"/>
   <property name="deploy.dir"   value="dist"/>
   <property name="classes.dir"  value="${deploy.dir}/classes"/>
-  <property name="libs.dir"     value="../../extlibs/java"/>
+  <property name="libs.dir"     value="../../${deploy.dir}/lib"/>
   <import file="etc/libs-incl.xml"/>
 
   <!-- declare our classpath business -->
@@ -97,6 +97,13 @@
     <unjar src="${deploy.dir}/lib/retroweaver-rt-1.2.2.jar" dest="${deploy.dir}/rptmp"/>
     <jar destfile="${deploy.dir}/${app.name}-retro-pro.jar" basedir="${deploy.dir}/rptmp"/>
     <delete dir="${deploy.dir}/rptmp"/>
+  </target>
+
+  <!-- runs the media chooser test application -->
+  <target name="test" depends="dist">
+    <java classname="com.threerings.msoy.mchooser.MediaChooser" fork="true">
+      <classpath refid="classpath"/>
+    </java>
   </target>
 
 </project>
