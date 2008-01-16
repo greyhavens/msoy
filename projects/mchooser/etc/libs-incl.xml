@@ -2,6 +2,7 @@
 <project name="library-dependencies">
   <fileset dir="${libs.dir}" id="mchooser.libs">
     <include name="ant.jar"/>
+    <include name="commons-io.jar"/>
     <include name="google-collect.jar"/>
     <include name="junit4.jar"/>
     <include name="proguard.jar"/>

@@ -73,7 +73,9 @@
     <!-- first run proguard on the code to include everything we need and nothing more -->
     <taskdef resource="proguard/ant/task.properties" classpath="${deploy.dir}/lib/proguard.jar"/>
     <proguard>
-      -injars dist/mchooser.jar
+      -injars dist/lib/samskivert-0.0-SNAPSHOT.jar(**/swing/**,**/util/**)
+      -injars dist/lib/commons-io.jar(!META-INF/*)
+      -injars dist/mchooser.jar(!META-INF/*)
       -libraryjars ${java.home}/lib/rt.jar
       -dontskipnonpubliclibraryclasses
 
@@ -81,7 +83,7 @@
       -printseeds dist/proguard.seeds
       -printmapping dist/proguard.map
 
-      -keep public class com.threerings.msoy.mchooser.MediaChooserFrame {
+      -keep public class com.threerings.msoy.mchooser.MediaChooser {
           *;
       }
     </proguard>
