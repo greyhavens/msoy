@@ -10,7 +10,6 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -25,7 +24,7 @@ public class InventoryModels
     public void loadModel (byte type, int suiteId, final AsyncCallback cb)
     {
         final Key key = new Key(type, suiteId);
-        DataModel model = (DataModel)_models.get(key);
+        SimpleDataModel model = (SimpleDataModel)_models.get(key);
         if (model != null) {
             cb.onSuccess(model);
             return;
@@ -33,7 +32,7 @@ public class InventoryModels
 
         CInventory.membersvc.loadInventory(CInventory.ident, type, suiteId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                DataModel model = new SimpleDataModel((List)result);
+                SimpleDataModel model = new SimpleDataModel((List)result);
                 _models.put(key, model);
                 cb.onSuccess(model);
             }
@@ -43,9 +42,9 @@ public class InventoryModels
         });
     }
 
-    public DataModel getModel (byte type, int suiteId)
+    public SimpleDataModel getModel (byte type, int suiteId)
     {
-        return (DataModel)_models.get(new Key(type, suiteId));
+        return (SimpleDataModel)_models.get(new Key(type, suiteId));
     }
 
     public Item findItem (byte type, final int itemId)

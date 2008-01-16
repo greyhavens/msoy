@@ -9,6 +9,11 @@
   font-size: 12px;
 }
 
+.inventoryFilters {
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
 .inventoryContents {
   border: white solid 10px;
   width: 650px;

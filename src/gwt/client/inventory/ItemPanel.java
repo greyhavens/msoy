@@ -9,11 +9,15 @@ import java.util.List;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -42,6 +46,23 @@ public class ItemPanel extends VerticalPanel
     {
         _models = models;
         _type = type;
+
+        // this will contain radio buttons for setting filters (eventually it will have user
+        // creatable folders)
+        _filters = new FlowPanel();
+        _filters.setStyleName("inventoryFilters");
+        _filters.add(new InlineLabel(CInventory.msgs.ipfTitle()));
+        _filters.add(createFilter(CInventory.msgs.ipfAll(), Predicate.TRUE));
+        _filters.add(createFilter(CInventory.msgs.ipfUploaded(), new Predicate() {
+            public boolean isMatch (Object o) {
+                return ((Item)o).sourceId == 0;
+            }
+        }));
+        _filters.add(createFilter(CInventory.msgs.ipfPurchased(), new Predicate() {
+            public boolean isMatch (Object o) {
+                return ((Item)o).sourceId != 0;
+            }
+        }));
 
         // this will contain our items
         int rows = (Window.getClientHeight() - Application.HEADER_HEIGHT -
@@ -72,6 +93,18 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
+    protected RadioButton createFilter (String label, final Predicate pred)
+    {
+        RadioButton button = new RadioButton("filters", label);
+        button.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                showInventory(0, pred);
+            }
+        });
+        button.setChecked(pred == Predicate.TRUE);
+        return button;
+    }
+
     /**
      * Requests that the specified page of inventory items be displayed.
      */
@@ -92,13 +125,7 @@ public class ItemPanel extends VerticalPanel
         }
 
         // make sure we're shoing and have our data
-        showInventory();
-
-        if (_contents.hasModel()) {
-            _contents.displayPage(page, true);
-        } else {
-            _startPage = page;
-        }
+        showInventory(page, null);
     }
 
     /**
@@ -216,25 +243,44 @@ public class ItemPanel extends VerticalPanel
      * Requests that the current inventory page be displayed (clearing out any currently displayed
      * item detail view).
      */
-    protected void showInventory ()
+    protected void showInventory (final int page, final Predicate pred)
     {
         // don't fiddle with things if the inventory is already showing
         if (!_contents.isAttached()) {
             clear();
+            add(_filters);
             add(_contents);
             if (_upload != null) {
                 add(_upload);
             }
         }
 
-        // trigger the loading of our inventory the first time we're displayed
-        if (!_contents.hasModel()) {
-            _models.loadModel(_type, 0, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    _contents.setModel((SimpleDataModel)result, _startPage);
-                }
-            });
+        // maybe we're changing our predicate or changing page on an already loaded model
+        SimpleDataModel model = _models.getModel(_type, 0);
+        if (model != null) {
+            if (pred == null) {
+                _contents.displayPage(page, true);
+            } else {
+                _contents.setModel(model.filter(pred), page);
+            }
+            return;
         }
+
+        // otherwise we have to load
+        _models.loadModel(_type, 0, new MsoyCallback() {
+            public void onSuccess (Object result) {
+                SimpleDataModel model = (SimpleDataModel)result;
+                if (pred != null) {
+                    model = model.filter(pred);
+                }
+                _contents.setModel(model, page);
+            }
+        });
+    }
+
+    protected SimpleDataModel getFilteredModel (Predicate pred)
+    {
+        return null;
     }
 
     /**
@@ -252,9 +298,10 @@ public class ItemPanel extends VerticalPanel
 
     protected InventoryModels _models;
     protected byte _type;
-    protected int _startPage, _mostRecentPage;
+    protected int _mostRecentPage;
     protected ItemDetail _detail;
 
+    protected FlowPanel _filters;
     protected PagedGrid _contents;
     protected Button _create, _next, _prev;
     protected VerticalPanel _upload;
