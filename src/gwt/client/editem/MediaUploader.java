@@ -11,15 +11,19 @@ import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.web.client.DeploymentConfig;
 
 import com.threerings.gwt.ui.SmartFileUpload;
+import com.threerings.gwt.ui.WidgetUtil;
 
+import client.shell.CShell;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
 
@@ -111,6 +115,21 @@ public class MediaUploader extends FlexTable
 
         setWidget(1, 0, _form);
         getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
+
+        // TEMP: display the media chooser applet next to the old HTML upload based uploader but
+        // only to admins until we're actually ready to go live with the new hotness
+        if (CShell.isAdmin()) {
+            String[] args = new String[] {
+                "media_id", mediaId, "authtoken", CShell.ident.token,
+                // "server", config.server, "port", "" + config.port,
+            };
+            HTML upload = WidgetUtil.createApplet(
+                "upload", "/clients/" + DeploymentConfig.version + "/mchooser-applet.jar," +
+                "/clients/" + DeploymentConfig.version + "/mchooser.jar",
+                "com.threerings.msoy.MediaChooserApplet",
+                CHOOSER_WIDTH, CHOOSER_HEIGHT, true, args);
+            _panel.add(upload);
+        }
     }
 
     /**
@@ -172,4 +191,7 @@ public class MediaUploader extends FlexTable
     protected String _submitted;
 
     protected int _mode;
+
+    protected static final int CHOOSER_WIDTH = 60;
+    protected static final int CHOOSER_HEIGHT = 28;
 }

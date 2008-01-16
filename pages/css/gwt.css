@@ -4,7 +4,7 @@
  * CSS styles shared by all GWT stuff.
  */
 
-img, embed { 
+img, embed, applet, object { 
   display: block; /* no descender padding thanks */
 }
 
