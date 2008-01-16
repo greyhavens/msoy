@@ -526,6 +526,7 @@ public class MediaDesc implements Streamable, IsSerializable
         case VIDEO_YOUTUBE:
         case VIDEO_GOOGLE:
         case APPLICATION_SHOCKWAVE_FLASH:
+        case APPLICATION_ZIP: // because we support zipped content..
             return true;
 
         default:

@@ -4,15 +4,20 @@
 package com.threerings.msoy.world.client.editor {
 
 import flash.display.BitmapData;
+import flash.display.DisplayObject;
+
 import flash.geom.Matrix;
 
 import mx.core.BitmapAsset;
 import mx.controls.Image;
 import mx.controls.Text;
 
+import com.threerings.util.Log;
+
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
 
+import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -34,9 +39,33 @@ public class SnapshotPanel extends FloatingPanel
     {
         // draw the room, scaling down to the appropriate size
         var newScale :Number = IMAGE_HEIGHT / view.getScrollBounds().height;
-        var matrix :Matrix = new Matrix(newScale, 0, 0, newScale);
         var room :BitmapData = new BitmapData(IMAGE_WIDTH, IMAGE_HEIGHT);
-        room.draw(view, matrix, null, null, null, true);
+        var allSuccess :Boolean = true;
+
+        for (var ii :int = 0; ii < view.numChildren; ii++) {
+            var child :DisplayObject = view.getChildAt(ii);
+
+            var matrix :Matrix = child.transform.matrix; // makes a clone...
+            matrix.scale(newScale, newScale);
+
+            if (child is MsoySprite) {
+                var success :Boolean = MsoySprite(child).snapshot(room, matrix);
+                allSuccess &&= success;
+
+            } else {
+                try {
+                    room.draw(child, matrix, null, null, null, true);
+                    trace("== Snapshot: raw sprite");
+
+                } catch (err :SecurityError) {
+                    // not a critical error
+                    Log.getLog(this).info("Unable to snapshot Room element: " + err);
+                    allSuccess = false;
+                }
+            }
+        }
+
+        _success = allSuccess;
         return room;
     }
 
@@ -58,6 +87,13 @@ public class SnapshotPanel extends FloatingPanel
         _preview.source = new BitmapAsset(_bitmap);
         addChild(_preview);
 
+        if (!_success) {
+            var msg :Text = new Text();
+            msg.text = Msgs.EDITING.get("m.snapshot_some_failed");
+            msg.width = int(IMAGE_WIDTH);
+            addChild(msg);
+        }
+
         addButtons(FloatingPanel.OK_BUTTON, FloatingPanel.CANCEL_BUTTON);
     }
 
@@ -70,5 +106,8 @@ public class SnapshotPanel extends FloatingPanel
     protected var _bitmap :BitmapData;
     protected var _preview :Image;
     protected var _ctrl :SnapshotController;
+
+    /** Were we successful in snapshotting every single scene element? */
+    protected var _success :Boolean;
 }
 }
