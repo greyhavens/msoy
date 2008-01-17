@@ -49,8 +49,8 @@ public class UploadServlet extends AbstractUploadServlet
         // pass a WebIdent down here.
 
         // TODO: check that this is a supported content type
-        log.info("Received file: [type: " + item.getContentType() + ", size="
-            + item.getSize() + ", id=" + item.getFieldName() + "].");
+        log.info("Received file: [type: " + item.getContentType() +
+                 ", size=" + item.getSize() + ", id=" + item.getFieldName() + "].");
 
         // check the file size now that we know mimetype,
         // or freak out if we still don't know the mimetype.

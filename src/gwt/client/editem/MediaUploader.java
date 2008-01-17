@@ -120,8 +120,10 @@ public class MediaUploader extends FlexTable
         // only on dev until we're actually ready to go live with the new hotness
         if (DeploymentConfig.devDeployment) {
             String[] args = new String[] {
-                "media_id", mediaId, "authtoken", CShell.ident.token,
-                // "server", config.server, "port", "" + config.port,
+                "server", GWT.getHostPageBaseURL(),
+                "media", mediaId,
+                "auth", CShell.ident.token,
+                "mtype", "image",
             };
             HTML upload = WidgetUtil.createApplet(
                 "upload", "/clients/" + DeploymentConfig.version + "/mchooser-applet.jar," +
