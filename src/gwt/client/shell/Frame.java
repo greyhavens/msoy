@@ -116,7 +116,7 @@ public class Frame
         if (_content != null) {
             _content.setPageTitle(title, subtitle);
         }
-        title = (subtitle == null) ? title : (title + "-" + subtitle);
+        title = (subtitle == null) ? title : (title + " - " + subtitle);
         Window.setTitle(CShell.cmsgs.windowTitle(title));
     }
 
