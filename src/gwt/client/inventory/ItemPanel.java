@@ -309,7 +309,8 @@ public class ItemPanel extends VerticalPanel
     /** Only get the furni list for the current room once, and feed it to each ItemEntry */
     protected List _itemList = new ArrayList();
 
-    protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ + 10 /* gap */;
+    protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ +
+        10 /* gap */ + 25 /*  filters */;
     protected static final int BLURB_HEIGHT = 25 /* gap */ + 33 /* title */ + 72 /* contents */;
-    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT/2 + 15 /* gap */;
+    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT + 5 /* gap */;
 }
