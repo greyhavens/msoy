@@ -26,11 +26,8 @@ public class TitledListPanel extends FlexTable
         _bheader = new FlexTable();
         _bheader.setCellSpacing(0);
         _bheader.setCellPadding(0);
-        _bheader.setWidget(0, 0, MsoyUI.createActionLabel("", "Back", new ClickListener() {
-            public void onClick (Widget sender) {
-                History.back();
-            }
-        }));
+        _bheader.setWidget(0, 0, MsoyUI.createBackArrow());
+        _bheader.getFlexCellFormatter().setStyleName(0, 0, "Back");
         _bheader.getFlexCellFormatter().setStyleName(0, 1, "Title");
         _bheader.getFlexCellFormatter().setWidth(0, 1, "100%");
     }

@@ -123,10 +123,7 @@
 }
 
 .titledListPanel .Header .Back {
-    background-image: url(/images/ui/back_arrow.png);
-    height: 20px;
-    width: 16px;
-    margin-left: 5px;
+    padding-left: 5px;
 }
 
 .threadSummaryPanel {
