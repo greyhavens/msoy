@@ -7,6 +7,7 @@ import java.net.URL;
 
 import javax.swing.JLabel;
 
+import com.threerings.msoy.mchooser.Config;
 import com.threerings.msoy.mchooser.MediaChooser;
 import com.threerings.msoy.mchooser.MediaSource;
 import com.threerings.msoy.mchooser.SourcePanel;
@@ -21,7 +22,7 @@ public class ChooseImageMode
     public ChooseImageMode ()
     {
         _sources = new SourcePanel(this);
-        _sources.addSource(new LocalFileSource(LocalFileSource.Type.IMAGE));
+        _sources.addSource(new LocalFileSource(Config.IMAGE));
     }
 
     // from interface MediaChooser.Mode
@@ -29,6 +30,11 @@ public class ChooseImageMode
     {
         _chooser = chooser;
         _sources.activate(chooser);
+    }
+
+    // from interface MediaChooser.Mode
+    public void deactivated ()
+    {
     }
 
     // from interface MediaSource.ResultReceiver

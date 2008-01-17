@@ -13,6 +13,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.threerings.msoy.mchooser.Config;
 import com.threerings.msoy.mchooser.MediaChooser;
 import com.threerings.msoy.mchooser.MediaSource;
 
@@ -24,9 +25,7 @@ import static com.threerings.msoy.mchooser.MediaChooser.log;
 public class LocalFileSource
     implements MediaSource
 {
-    public static enum Type { IMAGE, AUDIO };
-
-    public LocalFileSource (Type type)
+    public LocalFileSource (String type)
     {
         _type = type;
     }
@@ -48,11 +47,12 @@ public class LocalFileSource
         chooser.setDialogType(JFileChooser.OPEN_DIALOG);
 
         // set up our filters
-        switch (_type) {
-        case IMAGE:
+        if (_type == Config.IMAGE) {
             chooser.addChoosableFileFilter(
                 new FileNameExtensionFilter("Image files", "jpg", "jpeg", "gif", "png", "bmp"));
-            break;
+        } else if (_type == Config.AUDIO) {
+            chooser.addChoosableFileFilter(
+                new FileNameExtensionFilter("Audio files", "mp3"));
         }
 
         // set up a listener that will report the selection back to the chooser
@@ -74,7 +74,7 @@ public class LocalFileSource
         return chooser;
     }
 
-    protected Type _type;
+    protected String _type;
 
     protected static final String START_DIR_KEY = "localFileStart";
 }

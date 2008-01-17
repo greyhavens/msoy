@@ -4,7 +4,7 @@
 package com.threerings.msoy;
 
 import java.applet.Applet;
-import javax.swing.JFrame;
+import java.util.Observer;
 
 import java.awt.Button;
 import java.awt.event.ActionEvent;
@@ -31,11 +31,13 @@ public class MediaChooserApplet extends Applet
 
     protected void openMediaChooser ()
     {
-        System.err.println("Doin' my biz!");
         try {
-            Class mcfc = Class.forName("com.threerings.msoy.mchooser.MediaChooserFrame");
-            JFrame frame = (JFrame)mcfc.newInstance();
-            frame.setVisible(true);
+            Class mcfc = Class.forName("com.threerings.msoy.mchooser.MediaChooserBridge");
+            // we use this Observable hack because we need an interface known to the 1.4 VM that
+            // allows us to pass an argument; we can't use reflection because we're running in
+            // unsigned code even though we're calling into signed code
+            Observer obs = (Observer)mcfc.newInstance();
+            obs.update(null, this);
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }

@@ -32,7 +32,7 @@ public class PreviewImageMode
     public PreviewImageMode (URL imageSource)
     {
         try {
-            init(IOUtils.toByteArray(imageSource.openStream()));
+            init(imageSource.getFile(), IOUtils.toByteArray(imageSource.openStream()));
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to read image media [url=" + imageSource + "].", e);
         }
@@ -46,7 +46,12 @@ public class PreviewImageMode
         _chooser.setMain(_preview);
     }
 
-    protected void init (byte[] media)
+    // from interface MediaChooser.Mode
+    public void deactivated ()
+    {
+    }
+
+    protected void init (final String name, final byte[] media)
     {
         _tip = new JLabel("Preview");
 
@@ -62,14 +67,13 @@ public class PreviewImageMode
         JButton upload = new JButton("Upload");
         upload.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent event) {
-                // TODO: _chooser.pushMode(new UploadMediaMode(_media));
+                _chooser.pushMode(new UploadMediaMode(name, media));
             }
         });
         uprow.add(upload);
         _preview.add(uprow, BorderLayout.SOUTH);
     }
 
-    protected byte[] _media;
     protected MediaChooser _chooser;
     protected JLabel _tip;
     protected JPanel _preview;
