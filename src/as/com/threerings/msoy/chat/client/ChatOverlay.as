@@ -33,8 +33,10 @@ import mx.controls.VScrollBar;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.MessageManager;
+import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
 import com.threerings.crowd.chat.client.ChatDisplay;
@@ -56,6 +58,7 @@ import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.VizMemberName;
 
 import com.threerings.msoy.notify.data.NotifyMessage;
 
@@ -64,8 +67,6 @@ public class ChatOverlay
 {
     public static const SCROLL_BAR_LEFT :int = 1;
     public static const SCROLL_BAR_RIGHT :int = 2;
-
-    public var log :Log = Log.getLog(this);
 
     public function ChatOverlay (msgMan :MessageManager, scrollBarSide :int = SCROLL_BAR_LEFT)
     {
@@ -94,9 +95,12 @@ public class ChatOverlay
     {
         // NOTE: The docs swear up and down that the point needs to be in stage coords,
         // but only local coords seem to work. Bug?
-        var overlays :Array = [_scrollOverlay, _staticOverlay];
+        var overlays :Array = [_scrollOverlay, _staticOverlay, _occupantList];
         var stagePoint :Point = new Point(stageX, stageY);
         for each (var overlay :Sprite in overlays) {
+            if (overlay == null) {
+                continue;
+            }
             var p :Point = overlay.globalToLocal(stagePoint);
             var objs :Array = overlay.getObjectsUnderPoint(p);
             for each (var obj :DisplayObject in objs) {
@@ -146,6 +150,20 @@ public class ChatOverlay
     {
         if (history == _history) {
             return;
+        }
+
+        if (_occupantList != null) {
+            if (_target != null) {
+                _target.removeOverlay(_occupantList);
+            }
+            _occupantList = null;
+        }
+
+        if (history.channelIdent != null) {
+            _occupantList = _occLists.get(history.channelIdent);
+            if (_occupantList != null && _target != null) {
+                _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
+            }
         }
 
         if (_history != null) {
@@ -200,6 +218,9 @@ public class ChatOverlay
             // removing from the old
             _target.removeOverlay(_scrollOverlay);
             _target.removeOverlay(_staticOverlay);
+            if (_occupantList != null) {
+                _target.removeOverlay(_occupantList);
+            }
             _target.removeEventListener(ResizeEvent.RESIZE, handleContainerResize);
 
             // stop listening to our chat history
@@ -219,9 +240,16 @@ public class ChatOverlay
             _scrollOverlay.y = 0;
             _target.addOverlay(_scrollOverlay, PlaceBox.LAYER_CHAT_SCROLL);
 
+            if (_occupantList != null) {
+                _occupantList.x = 0;
+                _occupantList.y = 0;
+                _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
+            }
+
             _staticOverlay.x = 0;
             _staticOverlay.y = 0;
             _target.addOverlay(_staticOverlay, PlaceBox.LAYER_CHAT_STATIC);
+
             _target.addEventListener(ResizeEvent.RESIZE, handleContainerResize);
 
             // resume listening to our chat history
@@ -344,6 +372,32 @@ public class ChatOverlay
             _staticOverlay.removeChild(glyph);
         }
         glyph.wasRemoved();
+    }
+
+    public function closedChannel (channelIdent :Name) :void
+    {
+        var occList :ChannelOccupantList = _occLists.remove(channelIdent);
+        if (occList != null && occList == _occupantList && _target != null) {
+            _target.removeOverlay(_occupantList); 
+        }
+    }
+
+    public function chatterJoined (channelIdent :Name, chatter :VizMemberName) :void
+    {
+        var list :ChannelOccupantList = _occLists.get(channelIdent);
+        if (list == null) {
+            list = new ChannelOccupantList();
+            _occLists.put(channelIdent, list);
+        }
+        list.addChatter(chatter);
+    }
+
+    public function chatterLeft (channelIdent :Name, chatter :Name) :void
+    {
+        var list :ChannelOccupantList = _occLists.get(channelIdent);
+        if (list != null) {
+            list.removeChatter(chatter);
+        }
     }
 
     protected function showCurrentSubtitles () :void
@@ -1031,11 +1085,10 @@ public class ChatOverlay
      */
     protected function scrollUpSubtitles (dy :int) :void
     {
-        var minY :int = _targetBounds.y;
         for (var ii :int = 0; ii < _subtitles.length; ii++) {
             var glyph :ChatGlyph = (_subtitles[ii] as ChatGlyph);
             var newY :int = int(glyph.y) - dy;
-            if (newY <= minY) {
+            if (newY <= getMinHistY()) {
                 _subtitles.splice(ii, 1);
                 ii--;
                 removeGlyph(glyph);
@@ -1171,14 +1224,21 @@ public class ChatOverlay
     protected function configureHistoryBarSize (... ignored) :void
     {
         if (_targetBounds != null && _historyBar != null) {
-            _historyBar.height = _targetBounds.height;
+            _historyBar.height = _targetBounds.height - 
+                (_occupantList != null ? _occupantList.height + _occupantList.y : 0);
             if (_scrollBarSide == SCROLL_BAR_LEFT) {
-                _historyBar.move(_targetBounds.x, _targetBounds.y);
+                _historyBar.move(_targetBounds.x, getMinHistY());
             } else {
                 _historyBar.move(
-                    _targetBounds.x + _targetBounds.width - ScrollBar.THICKNESS, _targetBounds.y);
+                    _targetBounds.x + _targetBounds.width - ScrollBar.THICKNESS, getMinHistY());
             }
         }
+    }
+
+    protected function getMinHistY () :int
+    {
+        return _targetBounds.y +
+            (_occupantList != null ? _occupantList.y + _occupantList.height : 0);
     }
 
     /**
@@ -1194,13 +1254,12 @@ public class ChatOverlay
 
         var hsize :int = _history.size();
         var ypos :int = _targetBounds.bottom - PAD;
-        var min :int = _targetBounds.y;
         for (var ii :int = 0; ii < hsize; ii++) {
             var glyph :ChatGlyph = getHistorySubtitle(ii);
             ypos -= int(glyph.height);
 
             // oop, we passed it, it was the last one
-            if (ypos <= min) {
+            if (ypos <= getMinHistY()) {
                 _histOffset = Math.max(0, ii - 1);
                 _histOffsetFinal = true;
                 return;
@@ -1228,13 +1287,12 @@ public class ChatOverlay
         if (_history.size() > 0) {
             // start from the bottom...
             var ypos :int = _targetBounds.bottom - PAD;
-            var min :int = _targetBounds.y;
             for (ii = first; ii >= 0; ii--, count++) {
                 glyph = getHistorySubtitle(ii);
 
                 // see if it will fit
                 ypos -= int(glyph.height);
-                if ((count != 0) && ypos <= min) {
+                if ((count != 0) && ypos <= getMinHistY()) {
                     break; // don't add that one
                 }
 
@@ -1307,6 +1365,8 @@ public class ChatOverlay
         return w;
     }
 
+    private static const log :Log = Log.getLog(ChatOverlay);
+
     /** Used to translate messages. */
     protected var _msgMan :MessageManager;
 
@@ -1317,6 +1377,11 @@ public class ChatOverlay
     /** The overlay we place on top of our target that contains all the chat glyphs that should
      * not scroll. */
     protected var _staticOverlay :Sprite;
+
+    /** The list that contains names and headshots of everyone current subscribed to the currently
+     * shown channel */
+    protected var _occupantList :ChannelOccupantList;
+    protected var _occLists :HashMap = new HashMap();
 
     /** The target container over which we're overlaying chat. */
     protected var _target :LayeredContainer;

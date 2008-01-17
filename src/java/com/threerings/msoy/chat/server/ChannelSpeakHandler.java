@@ -6,8 +6,8 @@ package com.threerings.msoy.chat.server;
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.server.SpeakProvider;
 import com.threerings.crowd.chat.server.SpeakUtil;
-import com.threerings.msoy.chat.data.ChatterInfo;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.util.MessageManager;
@@ -65,17 +65,17 @@ public abstract class ChannelSpeakHandler
      */
     protected class ReportListener implements PeerChatService.ConfirmListener
     {
-        public ReportListener (ChatterInfo userInfo) {
-            _userInfo = userInfo;
+        public ReportListener (VizMemberName name) {
+            _name = name;
         }
         public void requestProcessed () {
             // nothing to do
         }
         public void requestFailed (String cause) {
             log.info("Subscription channel: channel action failed [channel=" + _ch.getChannel() +
-                     ", user=" + _userInfo.name + ", cause = " + cause + "].");
+                     ", user=" + _name + ", cause = " + cause + "].");
         }
-        protected ChatterInfo _userInfo;
+        protected VizMemberName _name;
     };
 
     /** Reference to our channel wrapper. */

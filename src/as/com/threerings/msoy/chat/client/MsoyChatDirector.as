@@ -34,7 +34,6 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelMarshaller;
 import com.threerings.msoy.chat.data.ChatChannelObject;
-import com.threerings.msoy.chat.data.ChatterInfo;
 
 /**
  * Handles the dispatching of chat messages based on their "channel" (room/game, individual, or
@@ -51,7 +50,6 @@ public class MsoyChatDirector extends ChatDirector
 
         // let the compiler know that these must be compiled into the client
         var c :Class = ChatChannelMarshaller;
-        c = ChatterInfo;
 
         var msg :MessageBundle = _msgmgr.getBundle(_bundle);
         registerCommandHandler(msg, "away", new AwayHandler());
@@ -127,6 +125,8 @@ public class MsoyChatDirector extends ChatDirector
         }
         // filter out any transient (feedback, etc.) messages from this channel's chat history
         getHistory(channel).filterTransient();
+        // notify the overlay so it can clear its occupancy list
+        _wctx.getTopPanel().getChatOverlay().closedChannel(channel.ident);
     }
 
     /**
@@ -168,7 +168,7 @@ public class MsoyChatDirector extends ChatDirector
     {
         if (display is ChatOverlay) {
             (display as ChatOverlay).setHistory(_roomHistory);
-            (_ctx as MsoyContext).getTopPanel().setActiveOverlay(display as ChatOverlay);
+            _wctx.getTopPanel().setActiveOverlay(display as ChatOverlay);
         }
         super.pushChatDisplay(display);
     }
@@ -178,7 +178,7 @@ public class MsoyChatDirector extends ChatDirector
     {
         if (display is ChatOverlay) {
             (display as ChatOverlay).setHistory(_roomHistory);
-            (_ctx as MsoyContext).getTopPanel().setActiveOverlay(display as ChatOverlay);
+            _wctx.getTopPanel().setActiveOverlay(display as ChatOverlay);
         }
         super.addChatDisplay(display);
     }
@@ -232,7 +232,7 @@ public class MsoyChatDirector extends ChatDirector
     {
         var history :HistoryList = (_histories.get(channel) as HistoryList);
         if (history == null) {
-            _histories.put(channel, history = new HistoryList());
+            _histories.put(channel, history = new HistoryList(channel.ident));
         }
         return history;
     }

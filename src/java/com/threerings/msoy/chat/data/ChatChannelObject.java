@@ -6,6 +6,8 @@ package com.threerings.msoy.chat.data;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 
+import com.threerings.msoy.data.VizMemberName;
+
 import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.data.SpeakObject;
 
@@ -36,7 +38,7 @@ public class ChatChannelObject extends DObject
     public ChatChannel channel;
 
     /** Info for all channel participants. */
-    public DSet<ChatterInfo> chatters = new DSet<ChatterInfo>();
+    public DSet<VizMemberName> chatters = new DSet<VizMemberName>();
 
     /**
      * Peer storage for recently received ChannelMessage chat message instances.
@@ -61,8 +63,8 @@ public class ChatChannelObject extends DObject
     // from interface SpeakObject
     public void applyToListeners (ListenerOp op)
     {
-        for (ChatterInfo info : chatters) {
-            op.apply(info.name);
+        for (VizMemberName name : chatters) {
+            op.apply(name);
         }
     }
 
@@ -88,7 +90,7 @@ public class ChatChannelObject extends DObject
      * <code>chatters</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToChatters (ChatterInfo elem)
+    public void addToChatters (VizMemberName elem)
     {
         requestEntryAdd(CHATTERS, chatters, elem);
     }
@@ -108,7 +110,7 @@ public class ChatChannelObject extends DObject
      * <code>chatters</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateChatters (ChatterInfo elem)
+    public void updateChatters (VizMemberName elem)
     {
         requestEntryUpdate(CHATTERS, chatters, elem);
     }
@@ -123,10 +125,10 @@ public class ChatChannelObject extends DObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setChatters (DSet<com.threerings.msoy.chat.data.ChatterInfo> value)
+    public void setChatters (DSet<com.threerings.msoy.data.VizMemberName> value)
     {
         requestAttributeChange(CHATTERS, value, this.chatters);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.chat.data.ChatterInfo> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.VizMemberName> clone =
             (value == null) ? null : value.typedClone();
         this.chatters = clone;
     }

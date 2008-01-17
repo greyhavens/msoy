@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.chat.client {
 
+import com.threerings.util.Name;
 import com.threerings.util.ObserverList;
 
 import com.threerings.crowd.chat.data.ChatMessage;
@@ -12,6 +13,16 @@ import com.threerings.msoy.chat.data.TimedMessageDisplay;
 
 public class HistoryList
 {
+    public function HistoryList (channelIdent :Name = null) 
+    {
+        _channelIdent = channelIdent;
+    }
+
+    public function get channelIdent () :Name
+    {
+        return _channelIdent;
+    }
+
     /**
      * @return the current size of the history.
      */
@@ -94,16 +105,20 @@ public class HistoryList
         });
     }
 
+    /** The maximum number of history entries we'll keep. */
+    protected static const MAX_HISTORY :int = 1000;
+
+    /** The number of history entries we'll prune when we hit the max. */
+    protected static const PRUNE_HISTORY :int = 100;
+
     /** The array in which we store historical chat. */
     protected var _history :Array = new Array();
 
     /** A list of overlays interested in history. */
     protected var _obs :ObserverList = new ObserverList();
 
-    /** The maximum number of history entries we'll keep. */
-    protected static const MAX_HISTORY :int = 1000;
-
-    /** The number of history entries we'll prune when we hit the max. */
-    protected static const PRUNE_HISTORY :int = 100;
+    /** The ident of the channel this history contains entries for, or null if it is not 
+     * representing a channel (private tells). */
+    protected var _channelIdent :Name;
 }
 }

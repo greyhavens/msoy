@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.peer.client;
 
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatterInfo;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
@@ -18,18 +18,18 @@ public interface PeerChatService extends InvocationService
     /**
      * Asks the host to forward the specified chat message on the channel's speak object.
      */
-    public void forwardSpeak (Client client, ChatterInfo chatter, ChatChannel channel,
+    public void forwardSpeak (Client client, VizMemberName chatter, ChatChannel channel,
                               String message, byte mode, PeerChatService.ConfirmListener listener);
         
     /**
      * Asks the host to add a new user to the channel.
      */
-    public void addUser (Client client, ChatterInfo chatter, ChatChannel channel,
+    public void addUser (Client client, VizMemberName chatter, ChatChannel channel,
                          PeerChatService.ConfirmListener listener);
 
     /**
      * Asks the host to remove an existing user from the channel.
      */
-    public void removeUser (Client client, ChatterInfo chatter, ChatChannel channel,
+    public void removeUser (Client client, VizMemberName chatter, ChatChannel channel,
                             PeerChatService.ConfirmListener listener);
 }

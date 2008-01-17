@@ -4,8 +4,8 @@
 package com.threerings.msoy.chat.server;
 
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatterInfo;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 
@@ -25,7 +25,7 @@ public class HostedSpeakHandler extends ChannelSpeakHandler
     public void speak (ClientObject caller, String message, byte mode)
     {
         if (validateSpeaker(caller, mode)) {
-            ChatterInfo chatter = new ChatterInfo((MemberObject)caller);
+            VizMemberName chatter = ((MemberObject)caller).memberName;
             ChatChannel channel = _ch.getChannel();
             try {
                 _mgr.forwardSpeak((ClientObject)null, chatter, channel, message, mode,

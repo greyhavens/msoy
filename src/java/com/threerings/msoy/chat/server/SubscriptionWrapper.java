@@ -8,7 +8,7 @@ import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
-import com.threerings.msoy.chat.data.ChatterInfo;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -91,22 +91,22 @@ public class SubscriptionWrapper extends ChannelWrapper
     }
     
     // from abstract class ChannelWrapper 
-    public void addChatter (ChatterInfo userInfo)
+    public void addChatter (VizMemberName chatter)
     {
         removeStaleMessagesFromHistory();
         MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
         host.peerChatService.addUser(
-            MsoyServer.peerMan.getPeerClient(host.nodeName), userInfo, _channel,
-            new ChatterListener(userInfo, 1));
+            MsoyServer.peerMan.getPeerClient(host.nodeName), chatter, _channel,
+            new ChatterListener(chatter, 1));
     }
 
     // from abstract class ChannelWrapper 
-    public void removeChatter (ChatterInfo userInfo)
+    public void removeChatter (VizMemberName chatter)
     {
         MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
         host.peerChatService.removeUser(
-            MsoyServer.peerMan.getPeerClient(host.nodeName), userInfo, _channel,
-            new ChatterListener(userInfo, -1));
+            MsoyServer.peerMan.getPeerClient(host.nodeName), chatter, _channel,
+            new ChatterListener(chatter, -1));
     }
 
     /**
@@ -115,8 +115,8 @@ public class SubscriptionWrapper extends ChannelWrapper
      */
     protected class ChatterListener implements PeerChatService.ConfirmListener
     {
-        public ChatterListener (ChatterInfo userInfo, int delta) {
-            _userInfo = userInfo;
+        public ChatterListener (VizMemberName chatter, int delta) {
+            _chatter = chatter;
             _delta = delta;
         }
         public void requestProcessed () {
@@ -128,10 +128,10 @@ public class SubscriptionWrapper extends ChannelWrapper
         }
         public void requestFailed (String cause) {
             log.info("Subscription channel: chatter action failed [channel=" + _channel
-                     + ", user=" + _userInfo.name + ", count=" + _localChatterCount +
+                     + ", user=" + _chatter + ", count=" + _localChatterCount +
                      ", cause = " + cause + "].");
         }
-        protected ChatterInfo _userInfo;
+        protected VizMemberName _chatter;
         protected int _delta;
     };
 

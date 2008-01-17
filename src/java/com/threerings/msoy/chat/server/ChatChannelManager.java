@@ -34,6 +34,7 @@ import com.threerings.msoy.group.server.persist.GroupRecord;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
@@ -44,7 +45,6 @@ import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelObject;
-import com.threerings.msoy.chat.data.ChatterInfo;
 
 import static com.threerings.msoy.Log.log;
 
@@ -170,7 +170,7 @@ public class ChatChannelManager
     }
 
     // from interface PeerChatProvider
-    public void forwardSpeak (ClientObject caller, ChatterInfo chatter, ChatChannel channel,
+    public void forwardSpeak (ClientObject caller, VizMemberName chatter, ChatChannel channel,
                               String message, byte mode,
                               ChatChannelService.ConfirmListener listener)
         throws InvocationException
@@ -182,14 +182,14 @@ public class ChatChannelManager
         }
 
         // all that's left is sending the chat message out to everybody
-        ChannelMessage msg = new ChannelMessage(chatter.name, message, mode);
+        ChannelMessage msg = new ChannelMessage(chatter, message, mode);
         wrapper.getCCObj().postMessage(ChatChannelCodes.CHAT_MESSAGE, new Object[] { msg });
 
         listener.requestProcessed();
     }
 
     // from interface PeerChatProvider
-    public void addUser (ClientObject caller, ChatterInfo chatter, ChatChannel channel,
+    public void addUser (ClientObject caller, VizMemberName chatter, ChatChannel channel,
                          PeerChatService.ConfirmListener listener)
         throws InvocationException
     {
@@ -204,7 +204,7 @@ public class ChatChannelManager
     }
 
     // from interface PeerChatProvider
-    public void removeUser (ClientObject caller, ChatterInfo chatter, ChatChannel channel,
+    public void removeUser (ClientObject caller, VizMemberName chatter, ChatChannel channel,
                             PeerChatService.ConfirmListener listener)
         throws InvocationException
     {
@@ -313,16 +313,15 @@ public class ChatChannelManager
      */
     protected void addChatter (ChannelWrapper wrapper, MemberObject user)
     {
-        ChatterInfo userInfo = new ChatterInfo(user);
         ChatChannelObject ccobj = wrapper.getCCObj();
 
-        if (ccobj.chatters.containsKey(user.memberName)) {
+        if (ccobj.chatters.containsKey(user.memberName.getKey())) {
             log.warning("User already in chat channel, cannot add [user=" + user.who() +
                         ", channel=" + ccobj.channel + "].");
             return;
         }
 
-        wrapper.addChatter(userInfo);
+        wrapper.addChatter(user.memberName);
     }
 
     /**
@@ -330,16 +329,15 @@ public class ChatChannelManager
      */
     protected void removeChatter (ChannelWrapper wrapper, MemberObject user)
     {
-        ChatterInfo userInfo = new ChatterInfo(user);
         ChatChannelObject ccobj = wrapper.getCCObj();
 
-        if (! wrapper.hasMember(userInfo)) {
+        if (!wrapper.hasMember(user.memberName)) {
             log.warning("User not in chat channel, cannot remove [user=" + user.who() +
                         ", channel=" + ccobj.channel + "].");
             return;
         }
 
-        wrapper.removeChatter(userInfo);
+        wrapper.removeChatter(user.memberName);
     }
 
     /**
@@ -350,14 +348,13 @@ public class ChatChannelManager
         // do this in two phases because removeChatter() can result in the wrapper itself being
         // removed which would then break our iterator due to concurrent modification
         ArrayList<ChannelWrapper> toRemove = new ArrayList<ChannelWrapper>();
-        ChatterInfo userInfo = new ChatterInfo(user);
         for (ChannelWrapper wrapper : _wrappers.values()) {
-            if (wrapper.hasMember(userInfo)) {
+            if (wrapper.hasMember(user.memberName)) {
                 toRemove.add(wrapper);
             }
         }
         for (ChannelWrapper wrapper : toRemove) {
-            wrapper.removeChatter(userInfo);
+            wrapper.removeChatter(user.memberName);
         }
 
         if (toRemove.size() > 0) {  // just for testing

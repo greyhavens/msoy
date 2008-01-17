@@ -34,7 +34,7 @@ public class ChatChannelObject extends DObject
     public var channel :ChatChannel;
 
     /** Info for all channel participants. */
-    public var chatters :DSet/*ChatterInfo*/ = new DSet();
+    public var chatters :DSet/*VizMemberName*/ = new DSet();
 
     /**
      * Peer storage for recently received ChannelMessage chat message instances.

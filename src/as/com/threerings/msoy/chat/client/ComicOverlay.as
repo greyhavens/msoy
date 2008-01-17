@@ -502,6 +502,8 @@ public class ComicOverlay extends ChatOverlay
         return super.getDisplayDurationIndex() - 1;
     }
 
+    private static const log :Log = Log.getLog(ComicOverlay);
+
     /** Giver of life, context. */
     protected var _ctx :MsoyContext;
 

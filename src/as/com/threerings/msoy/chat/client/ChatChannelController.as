@@ -20,12 +20,12 @@ import com.threerings.crowd.chat.data.SystemMessage;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
-import com.threerings.msoy.chat.data.ChatterInfo;
 
 /**
  * Controlles the chat that gets displayed for a given chat channel.
@@ -52,14 +52,10 @@ public class ChatChannelController
             redispatchMissedMessages();
             if (!serverSwitch) {
                 // report on the current occupants of the channel
-                var occs :String = "";
-                for each (var ci :ChatterInfo in _ccobj.chatters.toArray()) {
-                    if (occs.length > 0) {
-                        occs += ", ";
-                    }
-                    occs += ci.name;
+                var ident :Name = _ccobj.channel.ident;
+                for each (var chatter :VizMemberName in _ccobj.chatters.toArray()) {
+                    _ctx.getTopPanel().getChatOverlay().chatterJoined(ident, chatter);
                 }
-                displayFeedback(MessageBundle.tcompose("m.channel_occs", occs));
             }                 
         }
     }
@@ -97,21 +93,20 @@ public class ChatChannelController
     public function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == ChatChannelObject.CHATTERS) {
-            var ci :ChatterInfo = (event.getEntry() as ChatterInfo);
+            var chatter :VizMemberName = (event.getEntry() as VizMemberName);
 
             // did the departing chatter come back? if so, just remove them from the expiring set
-            if (_departing.contains(ci.name)) {
-                _departing.remove(ci.name);
+            if (_departing.contains(chatter)) {
+                _departing.remove(chatter);
                 return;
             }
 
             // if I just saw myself entering the channel, ignore the event
-            if (Util.equals(ci.name, _ctx.getMyName())) {
+            if (Util.equals(chatter, _ctx.getMyName())) {
                 return;
             }
 
-            // someone new just entered. display a message.
-            displayFeedback(MessageBundle.tcompose("m.channel_entered", ci.name));           
+            _ctx.getTopPanel().getChatOverlay().chatterJoined(_ccobj.channel.ident, chatter);
         }
     }
 
@@ -124,8 +119,8 @@ public class ChatChannelController
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
         if (event.getName() == ChatChannelObject.CHATTERS) {
-            var ci :ChatterInfo = (event.getOldEntry() as ChatterInfo);
-            _departing.add(ci.name);
+            var chatter :VizMemberName = (event.getOldEntry() as VizMemberName);
+            _departing.add(chatter);
         }
     }
 
@@ -165,7 +160,7 @@ public class ChatChannelController
 
     protected function handleDeparted (name :MemberName) :void
     {
-        displayFeedback(MessageBundle.tcompose("m.channel_left", name));
+        _ctx.getTopPanel().getChatOverlay().chatterLeft(_ccobj.channel.ident, name);
     }
 
     protected function redispatchMissedMessages () :void

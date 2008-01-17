@@ -988,3 +988,14 @@ Tree {
   paddingRight: 5px;
   paddingBottom: 5px;
 }
+
+.chatterRenderer {
+  borderThickness: 0;
+  borderStyle: "none";
+  paddingTop: 2px;
+  paddingBottom: 2px;
+  paddingLeft: 2px;
+  backgroundColor: white;
+  backgroundAlpha: 0.5;
+  verticalAlign: middle;
+}

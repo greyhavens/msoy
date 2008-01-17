@@ -4,7 +4,7 @@
 package com.threerings.msoy.peer.server;
 
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatterInfo;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -20,18 +20,18 @@ public interface PeerChatProvider extends InvocationProvider
     /**
      * Handles a {@link PeerChatService#addUser} request.
      */
-    public void addUser (ClientObject caller, ChatterInfo arg1, ChatChannel arg2, InvocationService.ConfirmListener arg3)
+    public void addUser (ClientObject caller, VizMemberName arg1, ChatChannel arg2, InvocationService.ConfirmListener arg3)
         throws InvocationException;
 
     /**
      * Handles a {@link PeerChatService#forwardSpeak} request.
      */
-    public void forwardSpeak (ClientObject caller, ChatterInfo arg1, ChatChannel arg2, String arg3, byte arg4, InvocationService.ConfirmListener arg5)
+    public void forwardSpeak (ClientObject caller, VizMemberName arg1, ChatChannel arg2, String arg3, byte arg4, InvocationService.ConfirmListener arg5)
         throws InvocationException;
 
     /**
      * Handles a {@link PeerChatService#removeUser} request.
      */
-    public void removeUser (ClientObject caller, ChatterInfo arg1, ChatChannel arg2, InvocationService.ConfirmListener arg3)
+    public void removeUser (ClientObject caller, VizMemberName arg1, ChatChannel arg2, InvocationService.ConfirmListener arg3)
         throws InvocationException;
 }

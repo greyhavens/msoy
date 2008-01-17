@@ -4,7 +4,7 @@
 package com.threerings.msoy.peer.server;
 
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatterInfo;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.PeerChatMarshaller;
 import com.threerings.presents.client.Client;
@@ -44,21 +44,21 @@ public class PeerChatDispatcher extends InvocationDispatcher
         case PeerChatMarshaller.ADD_USER:
             ((PeerChatProvider)provider).addUser(
                 source,
-                (ChatterInfo)args[0], (ChatChannel)args[1], (InvocationService.ConfirmListener)args[2]
+                (VizMemberName)args[0], (ChatChannel)args[1], (InvocationService.ConfirmListener)args[2]
             );
             return;
 
         case PeerChatMarshaller.FORWARD_SPEAK:
             ((PeerChatProvider)provider).forwardSpeak(
                 source,
-                (ChatterInfo)args[0], (ChatChannel)args[1], (String)args[2], ((Byte)args[3]).byteValue(), (InvocationService.ConfirmListener)args[4]
+                (VizMemberName)args[0], (ChatChannel)args[1], (String)args[2], ((Byte)args[3]).byteValue(), (InvocationService.ConfirmListener)args[4]
             );
             return;
 
         case PeerChatMarshaller.REMOVE_USER:
             ((PeerChatProvider)provider).removeUser(
                 source,
-                (ChatterInfo)args[0], (ChatChannel)args[1], (InvocationService.ConfirmListener)args[2]
+                (VizMemberName)args[0], (ChatChannel)args[1], (InvocationService.ConfirmListener)args[2]
             );
             return;
 

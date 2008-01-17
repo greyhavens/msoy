@@ -4,8 +4,8 @@
 package com.threerings.msoy.chat.server;
 
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatterInfo;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.presents.data.ClientObject;
@@ -23,7 +23,7 @@ public class SubscriptionSpeakHandler extends ChannelSpeakHandler
     public void speak (ClientObject caller, String message, byte mode)
     {
         if (validateSpeaker(caller, mode)) {
-            ChatterInfo chatter = new ChatterInfo((MemberObject)caller);
+            VizMemberName chatter = ((MemberObject)caller).memberName;
             ChatChannel channel = _ch.getChannel();
             MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(channel);
             host.peerChatService.forwardSpeak(

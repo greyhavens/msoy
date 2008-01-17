@@ -7,7 +7,7 @@ import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
-import com.threerings.msoy.chat.data.ChatterInfo;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -61,24 +61,24 @@ public class HostedWrapper extends ChannelWrapper
     }
 
     // from abstract class ChannelWrapper 
-    public void addChatter (ChatterInfo userInfo)
+    public void addChatter (VizMemberName chatter)
     {
         try {
             removeStaleMessagesFromHistory();
-            _mgr.addUser(null, userInfo, _channel, new ChatterListener(userInfo));
+            _mgr.addUser(null, chatter, _channel, new ChatterListener(chatter));
         } catch (Exception ex) {
-            log.warning("Host failed to add a new user [user=" + userInfo +
+            log.warning("Host failed to add a new user [user=" + chatter +
                         ", channel=" + _channel + ", error=" + ex.getMessage() + "].");
         }
     }
 
     // from abstract class ChannelWrapper 
-    public void removeChatter (ChatterInfo userInfo)
+    public void removeChatter (VizMemberName chatter)
     {
         try {
-            _mgr.removeUser(null, userInfo, _channel, new ChatterListener(userInfo));
+            _mgr.removeUser(null, chatter, _channel, new ChatterListener(chatter));
         } catch (Exception ex) {
-            log.warning("Host failed to remove a user [user=" + userInfo +
+            log.warning("Host failed to remove a user [user=" + chatter +
                         ", channel=" + _channel + ", error=" + ex.getMessage() + "].");
         }
     }
@@ -91,7 +91,7 @@ public class HostedWrapper extends ChannelWrapper
      * @param chatter user to be added or removed from this channel
      * @param addAction if true, the user will be added, otherwise they will be removed
      */
-    protected void updateDistributedObject (ChatterInfo chatter, boolean addAction)
+    protected void updateDistributedObject (VizMemberName chatter, boolean addAction)
     {
         if (addAction) {
             _ccobj.addToChatters(chatter);
@@ -110,16 +110,16 @@ public class HostedWrapper extends ChannelWrapper
      */
     protected class ChatterListener implements PeerChatService.ConfirmListener
     {
-        public ChatterListener (ChatterInfo userInfo) {
-            _userInfo = userInfo;
+        public ChatterListener (VizMemberName chatter) {
+            _chatter = chatter;
         }
         public void requestProcessed () {
         }
         public void requestFailed (String cause) {
             log.info("Hosted channel: chatter action failed [channel=" + _channel +
-                     ", user=" + _userInfo.name + ", chatterCount=" +
+                     ", user=" + _chatter + ", chatterCount=" +
                      _ccobj.chatters.size() + ", cause = " + cause + "].");
         }
-        protected ChatterInfo _userInfo;
+        protected VizMemberName _chatter;
     };
 }

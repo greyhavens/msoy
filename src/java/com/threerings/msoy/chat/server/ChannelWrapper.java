@@ -12,8 +12,8 @@ import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelObject;
-import com.threerings.msoy.chat.data.ChatterInfo;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.VizMemberName;
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -54,22 +54,22 @@ public abstract class ChannelWrapper
     public abstract void shutdown ();
 
     /** Asks the hosting server to add the specified user to the wrapped channel. */
-    public abstract void addChatter (ChatterInfo userInfo);
+    public abstract void addChatter (VizMemberName chatter);
 
     /** Asks the hosting server to remove the speficied user from the wrapped channel. */
-    public abstract void removeChatter (ChatterInfo userInfo);
+    public abstract void removeChatter (VizMemberName chatter);
 
     /** Does this channel contain the specified chatter? */
-    public boolean hasMember (ChatterInfo chatter)
+    public boolean hasMember (VizMemberName chatter)
     {
-        return ready() && _ccobj.chatters.containsKey(chatter.name);
+        return ready() && _ccobj.chatters.containsKey(chatter.getKey());
     }
     
     /** Does this channel contain the specified chatter? */
     public boolean hasMember (ClientObject chatter) 
     { 
         MemberObject who = (MemberObject)chatter;
-        return ready() && (who == null || _ccobj.chatters.containsKey(who.memberName));
+        return ready() && (who == null || _ccobj.chatters.containsKey(who.memberName.getKey()));
     }
 
     // from interface MessageListener
