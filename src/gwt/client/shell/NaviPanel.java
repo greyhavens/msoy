@@ -126,11 +126,12 @@ public class NaviPanel extends FlexTable
                 addLink(menu, "My Home", Page.WORLD, "m" + creds.getMemberId());
                 if (_scenes.size() > 0) {
                     MenuBar smenu = new MenuBar(true);
-                    Iterator siter = _scenes.iterator();
-                    while (siter.hasNext()) {
-                        SceneData data = (SceneData)siter.next();
-                        addLink(smenu, data.name, Page.WORLD, "s" + data.id);
-                    }
+                    createMenu(smenu, _scenes, new ItemCreator() {
+                        public void createItem (MenuBar menu, Object item) {
+                            SceneData data = (SceneData)item;
+                            addLink(menu, data.name, Page.WORLD, "s" + data.id);
+                        }
+                    });
                     menu.addItem("My Rooms", smenu);
                 }
                 if (_friends.size() > 0) {
