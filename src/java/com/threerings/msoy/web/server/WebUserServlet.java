@@ -5,7 +5,10 @@ package com.threerings.msoy.web.server;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import java.util.logging.Level;
 
@@ -18,6 +21,7 @@ import com.samskivert.util.ResultListener;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -435,7 +439,13 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // load up their scenes list
         try {
-            data.scenes = MsoyServer.sceneRepo.getOwnedScenes(mrec.memberId);
+            List<SceneBookmarkEntry> scenes = MsoyServer.sceneRepo.getOwnedScenes(mrec.memberId);
+            Collections.sort(scenes, new Comparator<SceneBookmarkEntry>() {
+                public int compare (SceneBookmarkEntry one, SceneBookmarkEntry two) {
+                    return one.sceneName.compareTo(two.sceneName);
+                }
+            });
+            data.scenes = scenes;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load scene list [id=" + mrec.memberId + "].", pe);
             data.scenes = new ArrayList<Object>();
