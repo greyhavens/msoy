@@ -177,7 +177,7 @@ public class UploadServlet extends AbstractUploadServlet
     }
 
     /** Represents different potential upload clients. */
-    protected static enum Client { GWT, MCHOOSER };
+    protected enum Client { GWT, MCHOOSER };
 
     /** Prevent Captain Insano from showing up to fill our drives. */
     protected static final int SMALL_MEDIA_MAX_SIZE = 5 * MEGABYTE;
