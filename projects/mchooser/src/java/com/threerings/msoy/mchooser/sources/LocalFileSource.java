@@ -94,24 +94,23 @@ public class LocalFileSource
 
         @Override // from FileFiler
         public boolean accept (File file) {
-            if (file == null) {
-                return false;
-            }
-            if (file.isDirectory()) {
-                return true;
-            }
-            String fext = file.getName().substring(file.getName().lastIndexOf(".")+1).toLowerCase();
+            return (file != null && (file.isDirectory() || matches(file.getName())));
+        }
+
+        @Override // from FileFiler
+        public String getDescription() {
+            return _description;
+        }
+
+        protected boolean matches (String name)
+        {
+            String fext = name.substring(name.lastIndexOf(".")+1).toLowerCase();
             for (String ext : _extensions) {
                 if (fext.equals(ext)) {
                     return true;
                 }
             }
             return false;
-        }
-
-        @Override // from FileFiler
-        public String getDescription() {
-            return _description;
         }
 
         protected String _description;
