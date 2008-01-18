@@ -39,11 +39,12 @@ public class MediaUploader extends FlexTable
     /**
      * @param id the type of the uploader to create, e.g. {@link Item#MAIN_MEDIA} . This value is
      * later passed to the bridge to identify the hash/mimeType returned by the server.
+     * @param type the type of media being chosen: {@link ItemEditor#TYPE_IMAGE}, etc.
      * @param mode whether we're uploading normal media, thumbnail media or normal media that
      * should also generate a thumbnail image when changed.
      * @param updater the updater that knows how to set the media hash on the item.
      */
-    public MediaUploader (String mediaId, int mode, ItemEditor.MediaUpdater updater)
+    public MediaUploader (String mediaId, String type, int mode, ItemEditor.MediaUpdater updater)
     {
         setStyleName("mediaUploader");
         setCellPadding(0);
@@ -65,73 +66,75 @@ public class MediaUploader extends FlexTable
         _hint.setWidth((2 * MediaDesc.THUMBNAIL_WIDTH) + "px");
         getFlexCellFormatter().setVerticalAlignment(0, 1, HorizontalPanel.ALIGN_TOP);
 
-        _form = new FormPanel();
-        _panel = new HorizontalPanel();
-        _form.setWidget(_panel);
-        _form.setStyleName("Controls");
-
-        if (GWT.isScript()) {
-            _form.setAction("/uploadsvc");
-        } else {
-            _form.setAction("http://localhost:8080/uploadsvc");
-        }
-        _form.setEncoding(FormPanel.ENCODING_MULTIPART);
-        _form.setMethod(FormPanel.METHOD_POST);
-
-        _upload = new SmartFileUpload();
-        _upload.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                uploadMedia();
-            }
-        });
-
         // appending PLUS_THUMB to the media id will indicate to the upload servlet that we want it
         // to also generate a thumbnail image and report that to us as well after uploading
         if (mode == NORMAL_PLUS_THUMBNAIL) {
             mediaId += Item.PLUS_THUMB;
         }
-        _upload.setName(mediaId);
-        _panel.add(_upload);
 
-        _form.addFormHandler(new FormHandler() {
-            public void onSubmit (FormSubmitEvent event) {
-                // don't let them submit until they plug in a file...
-                if (_upload.getFilename().length() == 0) {
-                    event.setCancelled(true);
-                }
-            }
-            public void onSubmitComplete (FormSubmitCompleteEvent event) {
-                String result = event.getResults();
-                result = (result == null) ? "" : result.trim();
-                if (result.length() > 0) {
-                    // TODO: This is fugly as all hell, but at least we're now reporting
-                    // *something* to the user
-                    MsoyUI.error(result);
-                } else {
-                    _submitted = _upload.getFilename();
-                }
-            }
-        });
-
-        setWidget(1, 0, _form);
-        getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
-
-        // TEMP: display the media chooser applet next to the old HTML upload based uploader but
-        // only on dev until we're actually ready to go live with the new hotness
+        // TEMP: display the media chooser applet only on dev until we're actually ready to go live
+        // with the new hotness
         if (DeploymentConfig.devDeployment) {
             String[] args = new String[] {
                 "server", GWT.isScript() ? GWT.getHostPageBaseURL() : "http://localhost:8080/",
                 "media", mediaId,
                 "auth", CShell.ident.token,
-                "mtype", "image",
+                "mtype", type,
             };
-            HTML upload = WidgetUtil.createApplet(
-                "upload", "/clients/" + DeploymentConfig.version + "/mchooser-applet.jar," +
-                "/clients/" + DeploymentConfig.version + "/mchooser.jar",
-                "com.threerings.msoy.MediaChooserApplet",
-                CHOOSER_WIDTH, CHOOSER_HEIGHT, true, args);
-            _panel.add(upload);
+            setWidget(1, 0, WidgetUtil.createApplet(
+                          "upload",
+                          "/clients/" + DeploymentConfig.version + "/mchooser-applet.jar," +
+                          "/clients/" + DeploymentConfig.version + "/mchooser.jar",
+                          "com.threerings.msoy.MediaChooserApplet",
+                          CHOOSER_WIDTH, CHOOSER_HEIGHT, true, args));
+
+        } else {
+            _form = new FormPanel();
+            _panel = new HorizontalPanel();
+            _form.setWidget(_panel);
+            _form.setStyleName("Controls");
+
+            if (GWT.isScript()) {
+                _form.setAction("/uploadsvc");
+            } else {
+                _form.setAction("http://localhost:8080/uploadsvc");
+            }
+            _form.setEncoding(FormPanel.ENCODING_MULTIPART);
+            _form.setMethod(FormPanel.METHOD_POST);
+
+            _upload = new SmartFileUpload();
+            _upload.addChangeListener(new ChangeListener() {
+                public void onChange (Widget sender) {
+                    uploadMedia();
+                }
+            });
+
+            _upload.setName(mediaId);
+            _panel.add(_upload);
+
+            _form.addFormHandler(new FormHandler() {
+                public void onSubmit (FormSubmitEvent event) {
+                    // don't let them submit until they plug in a file...
+                    if (_upload.getFilename().length() == 0) {
+                        event.setCancelled(true);
+                    }
+                }
+                public void onSubmitComplete (FormSubmitCompleteEvent event) {
+                    String result = event.getResults();
+                    result = (result == null) ? "" : result.trim();
+                    if (result.length() > 0) {
+                        // TODO: This is fugly as all hell, but at least we're now reporting
+                        // *something* to the user
+                        MsoyUI.error(result);
+                    } else {
+                        _submitted = _upload.getFilename();
+                    }
+                }
+            });
+
+            setWidget(1, 0, _form);
         }
+        getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
     }
 
     /**

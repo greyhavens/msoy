@@ -36,7 +36,7 @@ public class PhotoEditor extends ItemEditor
     {
         super.addInfo();
 
-        addRow(CShell.emsgs.photoMainTab(), createMainUploader(true, new MediaUpdater() {
+        addRow(CShell.emsgs.photoLabel(), createMainUploader(TYPE_IMAGE, true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errPhotoNotFlash();
@@ -47,7 +47,7 @@ public class PhotoEditor extends ItemEditor
                 maybeSetNameFromFilename(name);
                 return null;
             }
-        }), CShell.emsgs.photoMainTitle());
+        }), CShell.emsgs.photoTip());
     }
 
     protected Photo _photo;

@@ -41,7 +41,7 @@ public class DecorEditor extends ItemEditor
     protected void addFurniUploader ()
     {
         addSpacer();
-        addRow(CShell.emsgs.decorMainTab(), createFurniUploader(true, new MediaUpdater() {
+        addRow(CShell.emsgs.decorLabel(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errFurniNotFlash();
@@ -59,7 +59,7 @@ public class DecorEditor extends ItemEditor
                 }
                 return null;
             }
-        }), CShell.emsgs.decorMainTitle());
+        }), CShell.emsgs.decorTip());
 
         addSpacer();
         addRow(new Label(CShell.emsgs.decorConfigTab()));

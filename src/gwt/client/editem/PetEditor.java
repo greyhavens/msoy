@@ -33,7 +33,7 @@ public class PetEditor extends ItemEditor
     {
         // pets are special; their furni media are their primary media
         addSpacer();
-        addRow(CShell.emsgs.petMainTab(), createFurniUploader(false, new MediaUpdater() {
+        addRow(CShell.emsgs.petLabel(), createFurniUploader(false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CShell.emsgs.errPetNotFlash();
@@ -41,7 +41,7 @@ public class PetEditor extends ItemEditor
                 _item.furniMedia = desc;
                 return null;
             }
-        }), CShell.emsgs.petMainTitle());
+        }), CShell.emsgs.petTip());
     }
 
     protected Pet _pet;

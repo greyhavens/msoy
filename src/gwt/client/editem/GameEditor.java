@@ -156,16 +156,16 @@ public class GameEditor extends ItemEditor
 
         // add a tab for uploading the game media
         addSpacer();
-        addRow(CShell.emsgs.gameMainTab(), createMainUploader(false, new MediaUpdater() {
+        addRow(CShell.emsgs.gameLabel(), createMainUploader(TYPE_CODE, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _game.gameMedia = desc;
                 return null;
             }
-        }), CShell.emsgs.gameMainTitle());
+        }), CShell.emsgs.gameTip());
 
         // add a tab for uploading the game screenshot
-        MediaUploader shotter = createAuxUploader(new MediaUpdater() {
+        MediaUploader shotter = createAuxUploader(TYPE_IMAGE, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (width != Game.SHOT_WIDTH || height != Game.SHOT_HEIGHT || !desc.isImage()) {
                     return CShell.emsgs.errInvalidShot(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT);

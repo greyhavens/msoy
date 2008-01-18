@@ -44,12 +44,14 @@ public class ItemPackEditor extends SubItemEditor
     {
         // item packs' furni media are their primary media
         addSpacer();
-        addRow(CShell.emsgs.ipackMainTab(), createFurniUploader(false, new MediaUpdater() {
+        MediaUploader upper = createUploader(
+            Item.FURNI_MEDIA, TYPE_ANY, MediaUploader.NORMAL, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _item.furniMedia = desc;
                 return null;
             }
-        }), CShell.emsgs.ipackMainTitle());
+        });
+        addRow(CShell.emsgs.ipackLabel(), upper, CShell.emsgs.ipackTip());
     }
 }

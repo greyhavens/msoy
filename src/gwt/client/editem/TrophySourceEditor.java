@@ -62,7 +62,7 @@ public class TrophySourceEditor extends SubItemEditor
     {
         // trophy' thumb media are their primary media
         addSpacer();
-        addRow(CShell.emsgs.trophyMainTab(), createThumbUploader(new MediaUpdater() {
+        addRow(CShell.emsgs.trophyLabel(), createThumbUploader(new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (width != TrophySource.TROPHY_WIDTH || height != TrophySource.TROPHY_HEIGHT ||
                     !desc.isImage()) {
@@ -77,7 +77,7 @@ public class TrophySourceEditor extends SubItemEditor
     // @Override from ItemEditor
     protected String getThumbnailHint ()
     {
-        return CShell.emsgs.trophyMainTitle();
+        return CShell.emsgs.trophyTip();
     }
 
     // @Override // from ItemEditor

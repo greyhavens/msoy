@@ -356,19 +356,19 @@ public abstract class ItemEditor extends FlexTable
      * This should be called by item editors that are used for editing media that has a 'main'
      * piece of media.
      */
-    protected MediaUploader createMainUploader (boolean thumb, MediaUpdater updater)
+    protected MediaUploader createMainUploader (String type, boolean thumb, MediaUpdater updater)
     {
         int mode = thumb ? MediaUploader.NORMAL_PLUS_THUMBNAIL : MediaUploader.NORMAL;
-        return createUploader(Item.MAIN_MEDIA, mode, updater);
+        return createUploader(Item.MAIN_MEDIA, type, mode, updater);
     }
 
     /**
      * This should be called by item editors that are used for editing media that has an additional
      * piece of media in addition to main, furni and thumbnail.
      */
-    protected MediaUploader createAuxUploader (MediaUpdater updater)
+    protected MediaUploader createAuxUploader (String type, MediaUpdater updater)
     {
-        return createUploader(Item.AUX_MEDIA, MediaUploader.NORMAL, updater);
+        return createUploader(Item.AUX_MEDIA, type, MediaUploader.NORMAL, updater);
     }
 
     /**
@@ -377,7 +377,7 @@ public abstract class ItemEditor extends FlexTable
     protected MediaUploader createFurniUploader (boolean thumb, MediaUpdater updater)
     {
         int mode = thumb ? MediaUploader.NORMAL_PLUS_THUMBNAIL : MediaUploader.NORMAL;
-        return createUploader(Item.FURNI_MEDIA, mode, updater);
+        return createUploader(Item.FURNI_MEDIA, TYPE_FLASH, mode, updater);
     }
 
     /**
@@ -385,15 +385,15 @@ public abstract class ItemEditor extends FlexTable
      */
     protected MediaUploader createThumbUploader (MediaUpdater updater)
     {
-        return createUploader(Item.THUMB_MEDIA, MediaUploader.THUMBNAIL, updater);
+        return createUploader(Item.THUMB_MEDIA, TYPE_IMAGE, MediaUploader.THUMBNAIL, updater);
     }
 
     /**
      * Creates and configures a media uploader.
      */
-    protected MediaUploader createUploader (String id, int mode, MediaUpdater updater)
+    protected MediaUploader createUploader (String id, String type, int mode, MediaUpdater updater)
     {
-        MediaUploader uploader = new MediaUploader(id, mode, updater);
+        MediaUploader uploader = new MediaUploader(id, type, mode, updater);
         _uploaders.put(id, uploader);
         return uploader;
     }
@@ -646,4 +646,11 @@ public abstract class ItemEditor extends FlexTable
     protected HashMap _uploaders = new HashMap();
 
     protected static ItemEditor _singleton;
+
+    protected static final String TYPE_IMAGE = "image";
+    protected static final String TYPE_AUDIO = "audio";
+    protected static final String TYPE_VIDEO = "video";
+    protected static final String TYPE_FLASH = "flash";
+    protected static final String TYPE_CODE = "code";
+    protected static final String TYPE_ANY = "any";
 }

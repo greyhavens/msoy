@@ -33,14 +33,15 @@ public class DocumentEditor extends ItemEditor
     // @Override from ItemEditor
     protected void addExtras ()
     {
-        addRow(CShell.emsgs.documentMainTab(), createMainUploader(false, new MediaUpdater() {
+        String label = CShell.emsgs.documentLabel();
+        addRow(label, createMainUploader(TYPE_ANY, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _doc.docMedia = desc;
                 return null;
             }
         }));
-        addTip(CShell.emsgs.documentMainTitle());
+        addTip(CShell.emsgs.documentTip());
 
         super.addExtras();
     }

@@ -36,7 +36,7 @@ public class AvatarEditor extends ItemEditor
     protected void addExtras ()
     {
         addSpacer();
-        addRow(CShell.emsgs.avatarMainTab(), createMainUploader(false, new MediaUpdater() {
+        addRow(CShell.emsgs.avatarLabel(), createMainUploader(TYPE_FLASH, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: when all item types support zipped media, change
                 // hasFlashVisual to support ZIP.
@@ -47,7 +47,7 @@ public class AvatarEditor extends ItemEditor
                 _avatar.scale = 1f;
                 return null;
             }
-        }), CShell.emsgs.avatarMainTitle());
+        }), CShell.emsgs.avatarTip());
 
         super.addExtras();
     }

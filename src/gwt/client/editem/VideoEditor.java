@@ -42,7 +42,7 @@ public class VideoEditor extends ItemEditor
     // @Override from ItemEditor
     protected void addExtras ()
     {
-        addRow(CShell.emsgs.videoMainTab(), createMainUploader(false, new MediaUpdater() {
+        addRow(CShell.emsgs.videoLabel(), createMainUploader(TYPE_VIDEO, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: remove this hack?
                 if (!desc.isVideo()) {
@@ -52,7 +52,7 @@ public class VideoEditor extends ItemEditor
                 updateAlternateSources(desc);
                 return null;
             }
-        }), CShell.emsgs.videoMainTitle());
+        }), CShell.emsgs.videoTip());
 
         addRow(new Label(CShell.emsgs.videoOptionYoutube()));
         addRow(createYouTubeUploader());

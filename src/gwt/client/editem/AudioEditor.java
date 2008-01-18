@@ -34,7 +34,7 @@ public class AudioEditor extends ItemEditor
     // @Override from ItemEditor
     protected void addExtras ()
     {
-        addRow(CShell.emsgs.audioMainTab(), createMainUploader(false, new MediaUpdater() {
+        addRow(CShell.emsgs.audioLabel(), createMainUploader(TYPE_AUDIO, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.isAudio()) {
                     return CShell.emsgs.errAudioNotAudio();
@@ -43,7 +43,7 @@ public class AudioEditor extends ItemEditor
                 maybeSetNameFromFilename(name);
                 return null;
             }
-        }), CShell.emsgs.audioMainTitle());
+        }), CShell.emsgs.audioTip());
 
         super.addExtras();
     }
