@@ -6,6 +6,7 @@ package com.threerings.msoy.world.client {
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Loader;
+import flash.display.Sprite;
 
 import flash.events.MouseEvent;
 
@@ -37,13 +38,6 @@ import com.threerings.msoy.world.data.MsoyScene;
  * Displays a visualization of an occupant in a scene (could be a member, a pet, a MOB, all sorts
  * of kraaaazy stuff).
  */
-//
-// TODO: refactor nameLabel & decorations so that they are all on a single
-// child of this MsoySprite, so that _media is one child and the rest is
-// on another. Then: change things so that this DisplayObject is never scaled, but rather
-// the scale is applied directly to _media. Or, if not possible, we can undo the sprite's
-// scale on _other.
-// We need to do this so that name labels and decorations are not scaled up or down.
 public class OccupantSprite extends MsoySprite
 {
     /** The maximum width of an occupant sprite. */
@@ -72,6 +66,8 @@ public class OccupantSprite extends MsoySprite
 
         // _label.cacheAsBitmap = true;
 
+        addChild(_extras);
+
         _label.selectable = false;
         _label.autoSize = TextFieldAutoSize.CENTER;
         _label.filters = [ new GlowFilter(0, 1, 2, 2, 255) ];
@@ -83,11 +79,25 @@ public class OccupantSprite extends MsoySprite
         labelFormat.size = 12;
         labelFormat.bold = true;
         _label.defaultTextFormat = labelFormat;
-        addChild(_label);
+        _extras.addChild(_label);
 
         if (occInfo != null) {
             setOccupantInfo(occInfo);
         }
+
+        roomScaleUpdated();
+    }
+
+    override public function roomScaleUpdated () :void
+    {
+        super.roomScaleUpdated();
+
+        // undo the scale on _extras
+        var matrix :Matrix = this.transform.concatenatedMatrix;
+        _extras.scaleX = 1 / matrix.a;
+        _extras.scaleY = 1 / matrix.d;
+        recheckLabel();
+        arrangeDecorations();
     }
 
     /**
@@ -130,7 +140,7 @@ public class OccupantSprite extends MsoySprite
         // For now, I'll just sort, but I don't like it!
         _decorations.sort(decorationSort);
 
-        addChild(dec);
+        _extras.addChild(dec);
         arrangeDecorations();
     }
 
@@ -143,7 +153,7 @@ public class OccupantSprite extends MsoySprite
             for (var ii :int = 0; ii < _decorations.length; ii++) {
                 if (_decorations[ii].dec == dec) {
                     _decorations.splice(ii, 1);
-                    removeChild(dec);
+                    _extras.removeChild(dec);
                     if (_decorations.length == 0) {
                         _decorations = null;
                     }
@@ -163,7 +173,7 @@ public class OccupantSprite extends MsoySprite
             return;
         }
         for (var ii :int = 0; ii < _decorations.length; ii++) {
-            removeChild(_decorations[ii].dec as DisplayObject);
+            _extras.removeChild(_decorations[ii].dec as DisplayObject);
         }
         _decorations = null;
         // this function sets _bubblePosition, even if there are no decorations
@@ -570,13 +580,15 @@ public class OccupantSprite extends MsoySprite
     {
         var hotSpot :Point = getMediaHotSpot();
         // note: may overflow the media area..
-        _label.x = Math.abs(getMediaScaleX() * _locScale * _fxScaleX) * hotSpot.x -
+        _label.x = Math.abs(getMediaScaleX() * _locScale * _fxScaleX) * hotSpot.x / _extras.scaleX -
             (_label.width/2);
         // if we have a configured _height use that in relation to the hot spot y position,
         // otherwise assume our label goes above our bounding box
         var baseY :Number = isNaN(_height) ? 0 :
             Math.abs(getMediaScaleY() * _locScale * _fxScaleY) * (hotSpot.y - _height);
-        _label.y = baseY - _label.height;
+        _label.y = (baseY - _label.height) / _extras.scaleY;
+
+        // TODO: I believe something's booched in the y position calculations with _extras.scaleY
     }
 
     /**
@@ -588,23 +600,22 @@ public class OccupantSprite extends MsoySprite
         // note: may overflow the media area..
         var hotSpot :Point = getMediaHotSpot();
         var hotX :Number = Math.abs(getMediaScaleX() * _locScale * _fxScaleX) * hotSpot.x;
-        if (_decorations == null) {
-            checkAndSetBubblePosition(new Point(hotX, _label.y));
-            return;
-        }
 
         var baseY :Number = _label.y; // we depend on recheckLabel()
+        if (_decorations != null) {
+            // place the decorations over the name label, with our best guess as to their size
+            for (var ii :int = 0; ii < _decorations.length; ii++) {
+                var dec :DisplayObject = DisplayObject(_decorations[ii].dec);
+                var rect :Rectangle = _decorations[ii]["bounds"] as Rectangle;
+                if (rect == null) {
+                    rect = dec.getRect(dec);
+                }
+                baseY -= (rect.height + DECORATION_PAD) / _extras.scaleX;
+                dec.x = (hotX - (rect.width/2) - rect.x) / _extras.scaleX;
+                dec.y = (baseY - rect.y);
 
-        // place the decorations over the name label, with our best guess as to their size
-        for (var ii :int = 0; ii < _decorations.length; ii++) {
-            var dec :DisplayObject = DisplayObject(_decorations[ii].dec);
-            var rect :Rectangle = _decorations[ii]["bounds"] as Rectangle;
-            if (rect == null) {
-                rect = dec.getRect(dec);
+                // TODO: I believe something is booched in the Y positioning calculations
             }
-            baseY -= (rect.height + DECORATION_PAD);
-            dec.x = hotX - (rect.width/2) - rect.x;
-            dec.y = baseY - rect.y;
         }
 
         checkAndSetBubblePosition(new Point(hotX, baseY));
@@ -701,6 +712,9 @@ public class OccupantSprite extends MsoySprite
     {
         // nada
     }
+
+    /** Contains extra children (nameLabel, decorations) that should not be scaled. */
+    protected var _extras :Sprite = new Sprite();
 
     /** A label containing the occupant's name. Note: this is not a decoration, as decorations do
      * their own seperate hit-testing and glowing, and we want the name label to be 'part' of the

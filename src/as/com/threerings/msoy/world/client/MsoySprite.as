@@ -85,6 +85,14 @@ public class MsoySprite extends DataPackMediaContainer
     }
 
     /**
+     * Called by the containing room when it changes scale.
+     */
+    public function roomScaleUpdated () :void
+    {
+        // nada
+    }
+
+    /**
      * Snapshot this sprite into the specified BitmapData.
      *
      * @return true on success.

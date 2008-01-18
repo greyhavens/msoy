@@ -246,7 +246,7 @@ public class AbstractRoomView extends Sprite
     {
         _otherSprites.push(sprite);
         addChildAt(sprite, 1);
-        locationUpdated(sprite);
+        relayoutSprite(sprite);
     }
 
     /**
@@ -378,13 +378,27 @@ public class AbstractRoomView extends Sprite
 
         configureScrollRect();
 
-        var sprite :MsoySprite;
-        for each (sprite in _furni.values()) {
-            locationUpdated(sprite);
+        relayoutSprites(_furni.values());
+        relayoutSprites(_otherSprites);
+    }
+
+    /**
+     * Called from relayout(), relayout the specified sprites.
+     */
+    protected function relayoutSprites (sprites :Array) :void
+    {
+        for each (var sprite :MsoySprite in sprites) {
+            relayoutSprite(sprite);
         }
-        for each (sprite in _otherSprites) {
-            locationUpdated(sprite);
-        }
+    }
+
+    /**
+     * Do anything necessary to (re)layout a sprite.
+     */
+    protected function relayoutSprite (sprite :MsoySprite) :void
+    {
+        locationUpdated(sprite);
+        sprite.roomScaleUpdated();
     }
 
     /**
@@ -444,6 +458,7 @@ public class AbstractRoomView extends Sprite
         var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);
         addChildAt(sprite, 1);
         sprite.setLocation(furni.loc);
+        sprite.roomScaleUpdated();
         sprite.setEditing(_editing);
         _furni.put(furni.id, sprite);
         return sprite;

@@ -731,16 +731,9 @@ public class RoomView extends AbstractRoomView
             }
         }
 
-        var sprite :MsoySprite;
-        for each (sprite in _occupants.values()) {
-            locationUpdated(sprite);
-        }
-        for each (sprite in _pendingRemovals.values()) {
-            locationUpdated(sprite);
-        }
-        for each (sprite in _effects.values()) {
-            locationUpdated(sprite);
-        }
+        relayoutSprites(_occupants.values());
+        relayoutSprites(_pendingRemovals.values());
+        relayoutSprites(_effects.values());
     }
 
     override protected function shouldLoadAll () :Boolean
@@ -837,6 +830,7 @@ public class RoomView extends AbstractRoomView
             _occupants.put(bodyOid, occupant);
             addChildAt(occupant, 1);
             occupant.setEntering(loc);
+            occupant.roomScaleUpdated();
 
             // if we ever add ourselves, we follow it
             if (bodyOid == _ctx.getClient().getClientOid()) {
@@ -915,6 +909,7 @@ public class RoomView extends AbstractRoomView
         var sprite :EffectSprite = new EffectSprite(_ctrl.adjustEffectData(effect));
         addChildAt(sprite, 1);
         sprite.setLocation(effect.loc);
+        sprite.roomScaleUpdated();
         _effects.put(effect.id, sprite);
         return sprite;
     }
