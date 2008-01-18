@@ -938,6 +938,7 @@
     <delete dir="pages/clients"/>
     <ant dir="projects/neighborhood" target="clean" inheritAll="false"/>
     <ant dir="projects/games/tutorial" target="clean" inheritAll="false"/>
+    <ant dir="projects/mchooser" target="distclean" inheritAll="false"/>
     <delete file="pages/media/static/game/tutorial.swf"/>
     <delete file="pages/media/MediaStub.swf"/>
     <for list="${gmsgs.list}" param="which"><sequential>
