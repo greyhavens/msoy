@@ -6,9 +6,14 @@ package com.threerings.msoy.world.client {
 import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
+import flash.events.SecurityErrorEvent;
 
 import flash.display.Loader;
 import flash.display.LoaderInfo;
+
+import flash.net.URLLoader;
+import flash.net.URLLoaderDataFormat;
+import flash.net.URLRequest;
 
 import flash.utils.ByteArray;
 
@@ -27,6 +32,11 @@ import com.threerings.msoy.world.data.MsoyDataPack;
  * Note that this is essentially an abstract class that should only be extended by MsoySprite.
  * I could roll all this into MsoySprite, but this is cleaner.
  */
+//
+// NOTE:
+// If a bug in FZip is fixed that allows re-zipping, we can roll back to r7363
+// and only provide the bytes needed by the _content (and not _content itself).
+//
 public class DataPackMediaContainer extends MsoyMediaContainer
 {
     public function DataPackMediaContainer ()
@@ -39,12 +49,12 @@ public class DataPackMediaContainer extends MsoyMediaContainer
      */
     public function getAndClearDataPack () :ByteArray
     {
-        if (_pack == null) {
+        if (_packLoader == null) {
             return null;
         }
 
-        var ba :ByteArray = _pack.toByteArray();
-        _pack = null;
+        var ba :ByteArray = _packLoader.data as ByteArray;
+        _packLoader = null;
         return ba;
     }
 
@@ -53,9 +63,12 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         var isZip :Boolean = isZipUrl(url);
         // if it's a zip, always start loading it in the background...
         if (isZip) {
-            _pack = new MsoyDataPack(_url);
-            _pack.addEventListener(Event.COMPLETE, handleZipComplete);
-            _pack.addEventListener(ErrorEvent.ERROR, handleZipError);
+            _packLoader = new URLLoader();
+            _packLoader.dataFormat = URLLoaderDataFormat.BINARY;
+            _packLoader.addEventListener(Event.COMPLETE, handlePackComplete);
+            _packLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handlePackError);
+            _packLoader.addEventListener(IOErrorEvent.IO_ERROR, handlePackError);
+            _packLoader.load(new URLRequest(_url));
         }
 
         if (shouldUseStub(url)) {
@@ -134,9 +147,13 @@ public class DataPackMediaContainer extends MsoyMediaContainer
     protected function handleStubIOError (event :IOErrorEvent) :void
     {
         // we *may* be loading a datapack. If so, shut it down.
-        if (_pack != null) {
-            _pack.close();
-            _pack = null;
+        if (_packLoader != null) {
+            try {
+                _packLoader.close();
+            } catch (err :Error) {
+                // no worries
+            }
+            _packLoader = null;
         }
 
         // call the regular error handler
@@ -162,10 +179,11 @@ public class DataPackMediaContainer extends MsoyMediaContainer
     /**
      * Handle the COMPLETE event while loading the zip file.
      */
-    protected function handleZipComplete (event :Event) :void
+    protected function handlePackComplete (event :Event) :void
     {
         checkPackComplete();
     }
+
     /**
      * Check to see if both the stub and the datapack are loaded and start
      * loading the content bytes.
@@ -174,7 +192,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
     {
         // make sure the pack is ready. If the pack is null it means we already
         // had an error loading the zip and we should just exit uneventfully here.
-        if ((_pack == null) || !_pack.isComplete()) {
+        if ((_packLoader == null) || (_packLoader.data == null)) {
             return;
         }
 
@@ -185,15 +203,14 @@ public class DataPackMediaContainer extends MsoyMediaContainer
             return;
         }
 
+        var pack :MsoyDataPack = new MsoyDataPack(_packLoader.data);
+
         // if both are ready, make it happen
-        var ba :ByteArray = _pack.getFile("_content");
+        var ba :ByteArray = pack.getFile("_content");
         if (ba == null) {
-            handleZipError(null);
+            handlePackError(null);
             return;
         }
-
-        // great! remove that file
-        _pack.removeFile("_content");
 
         if (!usingStub) {
             Loader(_media).loadBytes(ba);
@@ -220,14 +237,14 @@ public class DataPackMediaContainer extends MsoyMediaContainer
     /**
      * Handle an error while loading a zip file.
      */
-    protected function handleZipError (event :ErrorEvent) :void
+    protected function handlePackError (event :Event) :void
     {
-        _pack = null;
+        _packLoader = null;
         stoppedLoading();
         setupBrokenImage(-1, -1);
     }
 
-    /** The datapack. Used only while loading. */
-    protected var _pack :MsoyDataPack;
+    /** The URLLoader used to load the bytes for a DataPack. */
+    protected var _packLoader :URLLoader;
 }
 }
