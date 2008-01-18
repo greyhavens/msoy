@@ -22,7 +22,7 @@ public class PhotoEditor extends ItemEditor
     {
         super.setItem(item);
         _photo = (Photo)item;
-        _mainUploader.setMedia(_photo.photoMedia);
+        setUploaderMedia(Item.MAIN_MEDIA, _photo.photoMedia);
     }
 
     // @Override from ItemEditor

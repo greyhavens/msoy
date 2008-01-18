@@ -29,7 +29,7 @@ public class VideoEditor extends ItemEditor
     {
         super.setItem(item);
         _video = (Video)item;
-        _mainUploader.setMedia(_video.videoMedia);
+        setUploaderMedia(Item.MAIN_MEDIA, _video.videoMedia);
         updateAlternateSources(_video.videoMedia);
     }
 

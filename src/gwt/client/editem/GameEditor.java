@@ -40,8 +40,8 @@ public class GameEditor extends ItemEditor
     {
         super.setItem(item);
         _game = (Game)item;
-        _mainUploader.setMedia(_game.gameMedia);
-        _auxUploader.setMedia(_game.shotMedia);
+        setUploaderMedia(Item.MAIN_MEDIA, _game.gameMedia);
+        setUploaderMedia(Item.AUX_MEDIA, _game.shotMedia);
 
         // if we have no game configuration, leave everything as default
         if (_game.config == null || _game.config.length() == 0) {

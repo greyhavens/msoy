@@ -23,7 +23,7 @@ public class AvatarEditor extends ItemEditor
     {
         super.setItem(item);
         _avatar = (Avatar)item;
-        _mainUploader.setMedia(_avatar.avatarMedia);
+        setUploaderMedia(Item.MAIN_MEDIA, _avatar.avatarMedia);
     }
 
     // @Override from ItemEditor

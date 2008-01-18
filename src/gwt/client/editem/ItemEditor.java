@@ -32,6 +32,8 @@ import client.util.LimitedTextArea;
 import client.util.MsoyUI;
 import client.util.MsoyCallback;
 
+import java.util.HashMap;
+
 /**
  * The base class for an interface for creating and editing digital items.
  */
@@ -241,7 +243,7 @@ public abstract class ItemEditor extends FlexTable
     {
         addFurniUploader();
         addThumbUploader();
-        _thumbUploader.setHint(getThumbnailHint());
+        getUploader(Item.THUMB_MEDIA).setHint(getThumbnailHint());
     }
 
     /**
@@ -357,7 +359,7 @@ public abstract class ItemEditor extends FlexTable
     protected MediaUploader createMainUploader (boolean thumb, MediaUpdater updater)
     {
         int mode = thumb ? MediaUploader.NORMAL_PLUS_THUMBNAIL : MediaUploader.NORMAL;
-        return (_mainUploader = createUploader(Item.MAIN_MEDIA, mode, updater));
+        return createUploader(Item.MAIN_MEDIA, mode, updater);
     }
 
     /**
@@ -366,7 +368,7 @@ public abstract class ItemEditor extends FlexTable
      */
     protected MediaUploader createAuxUploader (MediaUpdater updater)
     {
-        return (_auxUploader = createUploader(Item.AUX_MEDIA, MediaUploader.NORMAL, updater));
+        return createUploader(Item.AUX_MEDIA, MediaUploader.NORMAL, updater);
     }
 
     /**
@@ -375,7 +377,7 @@ public abstract class ItemEditor extends FlexTable
     protected MediaUploader createFurniUploader (boolean thumb, MediaUpdater updater)
     {
         int mode = thumb ? MediaUploader.NORMAL_PLUS_THUMBNAIL : MediaUploader.NORMAL;
-        return (_furniUploader = createUploader(Item.FURNI_MEDIA, mode, updater));
+        return createUploader(Item.FURNI_MEDIA, mode, updater);
     }
 
     /**
@@ -383,7 +385,7 @@ public abstract class ItemEditor extends FlexTable
      */
     protected MediaUploader createThumbUploader (MediaUpdater updater)
     {
-        return (_thumbUploader = createUploader(Item.THUMB_MEDIA, MediaUploader.THUMBNAIL, updater));
+        return createUploader(Item.THUMB_MEDIA, MediaUploader.THUMBNAIL, updater);
     }
 
     /**
@@ -391,7 +393,9 @@ public abstract class ItemEditor extends FlexTable
      */
     protected MediaUploader createUploader (String id, int mode, MediaUpdater updater)
     {
-        return new MediaUploader(id, mode, updater);
+        MediaUploader uploader = new MediaUploader(id, mode, updater);
+        _uploaders.put(id, uploader);
+        return uploader;
     }
 
     /**
@@ -399,20 +403,17 @@ public abstract class ItemEditor extends FlexTable
      */
     protected MediaUploader getUploader (String id)
     {
-        if (Item.FURNI_MEDIA.equals(id)) {
-            return _furniUploader;
+        return (MediaUploader)_uploaders.get(id);
+    }
 
-        } else if (Item.THUMB_MEDIA.equals(id)) {
-            return _thumbUploader;
-
-        } else if (Item.MAIN_MEDIA.equals(id)) {
-            return _mainUploader; // could be null...
-
-        } else if (Item.AUX_MEDIA.equals(id)) {
-            return _auxUploader; // could be null...
-
-        } else {
-            return null;
+    /**
+     * Updates the media displayed by the specified uploader if it exists.
+     */
+    protected void setUploaderMedia (String id, MediaDesc desc)
+    {
+        MediaUploader uploader = getUploader(id);
+        if (uploader != null) {
+            uploader.setMedia(desc);
         }
     }
 
@@ -484,9 +485,7 @@ public abstract class ItemEditor extends FlexTable
      */
     protected void recheckFurniMedia ()
     {
-        if (_furniUploader != null) {
-            _furniUploader.setMedia(_item.getFurniMedia());
-        }
+        setUploaderMedia(Item.FURNI_MEDIA, _item.getFurniMedia());
     }
 
     /**
@@ -494,9 +493,7 @@ public abstract class ItemEditor extends FlexTable
      */
     protected void recheckThumbMedia ()
     {
-        if (_thumbUploader != null) {
-            _thumbUploader.setMedia(_item.getThumbnailMedia());
-        }
+        setUploaderMedia(Item.THUMB_MEDIA, _item.getThumbnailMedia());
     }
 
     /**
@@ -506,7 +503,12 @@ public abstract class ItemEditor extends FlexTable
     protected static void callBridge (
         String id, String mediaHash, int mimeType, int constraint, int width, int height)
     {
-        _singleton.setHash(id, mediaHash, mimeType, constraint, width, height);
+        // for some reason the strings that come in from JavaScript are not "real" and if we just
+        // pass them straight on through to GWT, freakoutery occurs (of the non-hand-waving
+        // variety); so we convert them hackily to GWT strings here
+        String fix = "" + id;
+        String fhash = "" + mediaHash;
+        _singleton.setHash(fid, fhash, mimeType, constraint, width, height);
     }
 
     /**
@@ -641,10 +643,7 @@ public abstract class ItemEditor extends FlexTable
     protected LimitedTextArea _description;
     protected Button _esubmit;
 
-    protected MediaUploader _thumbUploader;
-    protected MediaUploader _furniUploader;
-    protected MediaUploader _mainUploader;
-    protected MediaUploader _auxUploader;
+    protected HashMap _uploaders = new HashMap();
 
     protected static ItemEditor _singleton;
 }

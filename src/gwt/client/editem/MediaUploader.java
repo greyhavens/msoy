@@ -120,7 +120,7 @@ public class MediaUploader extends FlexTable
         // only on dev until we're actually ready to go live with the new hotness
         if (DeploymentConfig.devDeployment) {
             String[] args = new String[] {
-                "server", GWT.getHostPageBaseURL(),
+                "server", GWT.isScript() ? GWT.getHostPageBaseURL() : "http://localhost:8080/",
                 "media", mediaId,
                 "auth", CShell.ident.token,
                 "mtype", "image",

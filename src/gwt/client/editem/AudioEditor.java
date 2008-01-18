@@ -22,7 +22,7 @@ public class AudioEditor extends ItemEditor
     {
         super.setItem(item);
         _audio = (Audio)item;
-        _mainUploader.setMedia(_audio.audioMedia);
+        setUploaderMedia(Item.MAIN_MEDIA, _audio.audioMedia);
     }
 
     // @Override from ItemEditor
