@@ -4,9 +4,12 @@
 package com.threerings.msoy.mchooser.modes;
 
 import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
 
@@ -14,6 +17,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import javax.imageio.ImageIO;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import com.samskivert.swing.HGroupLayout;
 import org.apache.commons.io.IOUtils;
@@ -30,12 +36,11 @@ public class PreviewImageMode
     implements MediaChooser.Mode
 {
     public PreviewImageMode (URL imageSource)
+        throws IOException
     {
-        try {
-            init(imageSource.getFile(), IOUtils.toByteArray(imageSource.openStream()));
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to read image media [url=" + imageSource + "].", e);
-        }
+        String name = imageSource.getFile();
+        name = name.substring(name.lastIndexOf("/")+1);
+        init(name, IOUtils.toByteArray(imageSource.openStream()));
     }
 
     // from interface MediaChooser.Mode
@@ -52,13 +57,19 @@ public class PreviewImageMode
     }
 
     protected void init (final String name, final byte[] media)
+        throws IOException
     {
+        _image = ImageIO.read(new MemoryCacheImageInputStream(new ByteArrayInputStream(media)));
+        if (_image == null) {
+            throw new IOException("Unable to decode " + name);
+        }
+
         _tip = new JLabel("Preview");
 
         // TODO: allow scrolling around, etc.
         _preview = new JPanel(new BorderLayout(5, 5));
         if (media != null) {
-            _preview.add(new JLabel(new ImageIcon(media)), BorderLayout.CENTER);
+            _preview.add(new JLabel(new ImageIcon(_image)), BorderLayout.CENTER);
         } else {
             _preview.add(new JLabel("Error loading media."), BorderLayout.CENTER);
         }
@@ -75,6 +86,8 @@ public class PreviewImageMode
     }
 
     protected MediaChooser _chooser;
+    protected BufferedImage _image;
+
     protected JLabel _tip;
     protected JPanel _preview;
 }

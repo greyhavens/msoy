@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.mchooser.modes;
 
+import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.JLabel;
@@ -12,6 +13,8 @@ import com.threerings.msoy.mchooser.MediaChooser;
 import com.threerings.msoy.mchooser.MediaSource;
 import com.threerings.msoy.mchooser.SourcePanel;
 import com.threerings.msoy.mchooser.sources.LocalFileSource;
+
+import static com.threerings.msoy.mchooser.MediaChooser.log;
 
 /**
  * Displays the image choosing interface.
@@ -40,8 +43,12 @@ public class ChooseFlashMode
     // from interface MediaSource.ResultReceiver
     public void mediaSelected (URL media)
     {
-        // TODO: if it's an image, show the preview/editor
-        _chooser.pushMode(new UploadMediaMode(media));
+        try {
+            _chooser.pushMode(new PreviewImageMode(media));
+        } catch (IOException ioe) {
+            log.info("Unable to preview media [media=" + media + ", error=" + ioe + "].");
+            _chooser.pushMode(new UploadMediaMode(media));
+        }
     }
 
     protected MediaChooser _chooser;
