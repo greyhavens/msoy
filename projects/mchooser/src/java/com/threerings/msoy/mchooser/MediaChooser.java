@@ -132,13 +132,16 @@ public class MediaChooser
         _back.setEnabled(_modeStack.size() > 1);
     }
 
-    public void reportUploadComplete (String callback)
+    public void reportUpload (String mediaId, String hash, int mimeType, int constraint,
+                              int width, int height)
     {
         if (_window != null) {
             try {
-                _window.call("eval", new Object[] { callback });
+                Object[] args = new Object[] { mediaId, hash, mimeType, constraint, width, height };
+                _window.call("setHash", args);
             } catch (Exception e) {
-                log.log(Level.WARNING, "Failed to invoke callback '" + callback + "'.", e);
+                log.log(Level.WARNING, "Failed to invoke setHash(" + mediaId + ", " + hash + ", " +
+                        mimeType + ", " + constraint + ", " + width + ", " + height + ").", e);
             }
             stop();
         }

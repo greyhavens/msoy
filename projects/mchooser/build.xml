@@ -76,9 +76,6 @@
     <proguard>
       -injars dist/lib/samskivert-0.0-SNAPSHOT.jar(**/swing/**,**/util/**)
       -injars dist/lib/commons-io.jar(!META-INF/*)
-      -injars dist/lib/commons-codec.jar(!META-INF/*)
-      -injars dist/lib/commons-logging.jar(!META-INF/*,!**/*Servlet*)
-      -injars dist/lib/commons-httpclient.jar(!META-INF/*)
       -injars dist/mchooser.jar(!META-INF/*)
       -libraryjars ${java.home}/lib/rt.jar
       -dontskipnonpubliclibraryclasses
@@ -87,8 +84,6 @@
       -printseeds dist/proguard.seeds
       -printmapping dist/proguard.map
 
-      -keep public class org.apache.commons.logging.impl.LogFactoryImpl
-      -keep public class org.apache.commons.logging.impl.Jdk14Logger
       -keep public class com.threerings.msoy.mchooser.MediaChooserBridge
     </proguard>
 
