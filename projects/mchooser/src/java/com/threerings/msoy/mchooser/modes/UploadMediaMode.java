@@ -3,17 +3,22 @@
 
 package com.threerings.msoy.mchooser.modes;
 
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+
+import org.apache.commons.io.IOUtils;
 
 import com.threerings.msoy.mchooser.MediaChooser;
 
@@ -29,6 +34,17 @@ public class UploadMediaMode
     {
         _name = name;
         _media = media;
+    }
+
+    public UploadMediaMode (URL source)
+    {
+        try {
+            _name = source.getFile();
+            _media = IOUtils.toByteArray(source.openStream());
+        } catch (Exception e) {
+            // TODO: fail the upload
+            log.log(Level.WARNING, "Failed to read image media [url=" + source + "].", e);
+        }
     }
 
     // from interface MediaChooser.Mode

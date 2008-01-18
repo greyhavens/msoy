@@ -3,15 +3,16 @@
 
 package com.threerings.msoy.mchooser;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Map;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.google.common.collect.Maps;
 import com.samskivert.swing.VGroupLayout;
@@ -42,14 +43,17 @@ public class SourcePanel extends JPanel
         _chooser = chooser;
         _chooser.setSidebar(this);
         _chooser.setMain(_selcomp);
+        if (_sgroup.getButtonCount() > 0) {
+            _sgroup.getElements().nextElement().setSelected(true);
+        }
     }
 
     public void addSource (final MediaSource source)
     {
         JRadioButton choice = new JRadioButton(source.getName());
-        choice.addActionListener(new ActionListener() {
-            public void actionPerformed (ActionEvent event) {
-                if (_selection != source) {
+        choice.getModel().addChangeListener(new ChangeListener() {
+            public void stateChanged (ChangeEvent event) {
+                if (((ButtonModel)event.getSource()).isSelected() && _selection != source) {
                     _selection = source;
                     _chooser.setMain(_selcomp = source.createChooser(_receiver));
                 }

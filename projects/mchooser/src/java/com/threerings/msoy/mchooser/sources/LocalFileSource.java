@@ -53,6 +53,16 @@ public class LocalFileSource
         } else if (_type == Config.AUDIO) {
             chooser.addChoosableFileFilter(
                 new FileNameExtensionFilter("Audio files", "mp3"));
+        } else if (_type == Config.VIDEO) {
+            chooser.addChoosableFileFilter(
+                new FileNameExtensionFilter("Video files", "flv", "mpg", "mpeg", "mov", "avi"));
+        } else if (_type == Config.FLASH) {
+            chooser.addChoosableFileFilter(
+                new FileNameExtensionFilter(
+                    "Visualizable files", "swf", "jpg", "jpeg", "gif", "png", "bmp"));
+        } else if (_type == Config.CODE) {
+            chooser.addChoosableFileFilter(
+                new FileNameExtensionFilter("Code files", "swf", "jar", "zip"));
         }
 
         // set up a listener that will report the selection back to the chooser

@@ -27,8 +27,12 @@ import com.samskivert.swing.VGroupLayout;
 import com.samskivert.swing.util.SwingUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.mchooser.modes.ChooseAnyMode;
+import com.threerings.msoy.mchooser.modes.ChooseAudioMode;
+import com.threerings.msoy.mchooser.modes.ChooseCodeMode;
+import com.threerings.msoy.mchooser.modes.ChooseFlashMode;
 import com.threerings.msoy.mchooser.modes.ChooseImageMode;
-import com.threerings.msoy.mchooser.sources.LocalFileSource;
+import com.threerings.msoy.mchooser.modes.ChooseVideoMode;
 
 /**
  * The main media chooser "application".
@@ -98,7 +102,15 @@ public class MediaChooser
         if (config.type == Config.IMAGE) {
             pushMode(new ChooseImageMode());
         } else if (config.type == Config.AUDIO) {
-            throw new RuntimeException("TODO");
+            pushMode(new ChooseAudioMode());
+        } else if (config.type == Config.VIDEO) {
+            pushMode(new ChooseVideoMode());
+        } else if (config.type == Config.FLASH) {
+            pushMode(new ChooseFlashMode());
+        } else if (config.type == Config.CODE) {
+            pushMode(new ChooseCodeMode());
+        } else if (config.type == Config.ANY) {
+            pushMode(new ChooseAnyMode());
         }
 
         SwingUtil.centerWindow(_frame);
