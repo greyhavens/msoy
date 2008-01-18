@@ -88,23 +88,50 @@ public class UploadServlet extends AbstractUploadServlet
             UploadUtil.publishUploadFile(uploadFile);
         }
 
+        // determine whether we're responding to the mchooser or a GWT upload
+        Client client = Client.GWT;
+        for (FileItem fitem : allItems) {
+            if (fitem.getFieldName().equals("client")) {
+                String text = null;
+                try {
+                    text = fitem.getString("UTF-8");
+                    client = Enum.valueOf(Client.class, text.toUpperCase());
+                } catch (Exception e) {
+                    log.warning("Invalid client identifier [text=" + text + ", error=" + e + "].");
+                }
+            }
+        }
+
         // finally write out the magical incantations that are needed to cause our magical little
         // frame to communicate the newly assigned mediaHash to the ItemEditor widget
         PrintStream out = null;
         try {
             out = new PrintStream(rsp.getOutputStream());
-            out.println("<html>");
-            out.println("<head></head>");
-            String script = "parent.setHash('" + mediaId + "', '" + info.hash + "', " +
-                info.mimeType + ", " + info.constraint + ", " +
-                info.width + ", " + info.height + ")";
-            if (tinfo != null) {
-                script += "; parent.setHash('" + Item.THUMB_MEDIA + "', '" + tinfo.hash + "', " +
-                    tinfo.mimeType + ", " + tinfo.constraint + ", " +
-                    tinfo.width + ", " + tinfo.height + ")";
+            switch (client) {
+            case GWT:
+                out.println("<html>");
+                out.println("<head></head>");
+                String script = "parent.setHash('" + mediaId + "', '" + info.hash + "', " +
+                    info.mimeType + ", " + info.constraint + ", " +
+                    info.width + ", " + info.height + ")";
+                if (tinfo != null) {
+                    script += "; parent.setHash('" + Item.THUMB_MEDIA + "', '" + tinfo.hash + "', " +
+                        tinfo.mimeType + ", " + tinfo.constraint + ", " +
+                        tinfo.width + ", " + tinfo.height + ")";
+                }
+                out.println("<body onLoad=\"" + script + "\"></body>");
+                out.println("</html>");
+                break;
+
+            case MCHOOSER:
+                out.println(mediaId + " " + info.hash + " " + info.mimeType + " " +
+                            info.constraint + " " + info.width + " " + info.height);
+                if (tinfo != null) {
+                    out.println(Item.THUMB_MEDIA + " " + tinfo.hash + " " + tinfo.mimeType + " " +
+                                tinfo.constraint + " " + tinfo.width + " " + tinfo.height);
+                }
+                break;
             }
-            out.println("<body onLoad=\"" + script + "\"></body>");
-            out.println("</html>");
 
         } finally {
             StreamUtil.close(out);
@@ -148,6 +175,9 @@ public class UploadServlet extends AbstractUploadServlet
                 "File size is too big for specified mimeType", length, limit);
         }
     }
+
+    /** Represents different potential upload clients. */
+    protected static enum Client { GWT, MCHOOSER };
 
     /** Prevent Captain Insano from showing up to fill our drives. */
     protected static final int SMALL_MEDIA_MAX_SIZE = 5 * MEGABYTE;

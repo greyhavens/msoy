@@ -104,12 +104,12 @@ public abstract class AbstractUploadServlet extends HttpServlet
         throws FileUploadException
     {
         ArrayList<FileItem> items = new ArrayList<FileItem>();
-        
+
         // TODO: create a custom file item factory that just puts items in the right place from the
         // start and computes the SHA hash on the way
         ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory(
             DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD, ServerConfig.mediaDir));
-        
+
         // enforce maximum sizes for the client supplied content size and the temporary file
         upload.setSizeMax(getMaxUploadSize());
         upload.setFileSizeMax(getMaxUploadSize());
@@ -221,6 +221,6 @@ public abstract class AbstractUploadServlet extends HttpServlet
             this.function = function;
         }
     }
-    
+
     protected static final int MEGABYTE = 1024 * 1024;
 }
