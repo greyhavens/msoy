@@ -48,7 +48,6 @@ import com.threerings.flash.FilterUtil;
 import com.threerings.flash.VideoDisplayer;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -65,7 +64,7 @@ import com.threerings.msoy.world.data.RoomObject;
  * A base sprite that concerns itself with the mundane details of loading and communication with
  * the loaded media content.
  */
-public class MsoySprite extends MsoyMediaContainer
+public class MsoySprite extends DataPackMediaContainer
     implements RoomElement
 {
     /** The type of a ValueEvent that is dispatched when the location is updated, but ONLY if the
@@ -78,11 +77,6 @@ public class MsoySprite extends MsoyMediaContainer
     public static const PORTAL_HOVER :uint = 0x7BFFB0; // happy green
     public static const GAME_HOVER :uint = 0xFFFFFF;  // white
     public static const OTHER_HOVER :uint = 0x000000; // black
-
-    public function MsoySprite ()
-    {
-        super(null);
-    }
 
     // from ContextMenuProvider, via MsoyMediaContainer
     override public function populateContextMenu (ctx :MsoyContext, items :Array) :void

@@ -64,6 +64,7 @@ public class EntityBackend extends ControlBackend
 
         var loc :MsoyLocation = _sprite.getLocation();
         o["location"] = [ loc.x, loc.y, loc.z ];
+        o["datapack"] = _sprite.getAndClearDataPack();
     }
 
     protected function getCamera_v1 (index :String = null) :Camera
