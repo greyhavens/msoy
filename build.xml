@@ -672,6 +672,9 @@
     </jar>
   </target>
 
+  <!-- builds top-level Java applications. -->
+  <target name="javaapps" depends="jclients,mchooser"/>
+
   <!-- generates fields for persistent record classes -->
   <target name="genrecord" depends="prepare">
     <taskdef name="grecord" classname="com.samskivert.jdbc.depot.tools.GenRecordTask"
@@ -885,7 +888,7 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="prepare,mavendeps,distprojects,dist,flashapps,jclients,tests"
+  <target name="distall" depends="prepare,mavendeps,distprojects,dist,flashapps,javaapps,tests"
         description="Rebuilds all subprojects and whole top-level distribution.">
     <antcall target="gclient">
       <param name="full" value="true"/>
