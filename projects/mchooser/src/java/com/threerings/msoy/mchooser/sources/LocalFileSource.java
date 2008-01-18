@@ -102,8 +102,7 @@ public class LocalFileSource
             return _description;
         }
 
-        protected boolean matches (String name)
-        {
+        protected boolean matches (String name) {
             String fext = name.substring(name.lastIndexOf(".")+1).toLowerCase();
             for (String ext : _extensions) {
                 if (fext.equals(ext)) {
