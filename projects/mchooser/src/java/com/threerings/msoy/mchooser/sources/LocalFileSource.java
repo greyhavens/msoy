@@ -11,7 +11,7 @@ import java.util.logging.Level;
 
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileFilter;
 
 import com.threerings.msoy.mchooser.Config;
 import com.threerings.msoy.mchooser.MediaChooser;
@@ -82,6 +82,40 @@ public class LocalFileSource
             }
         });
         return chooser;
+    }
+
+    /** We'd use the JDK version but that's 1.6 only and we want to support 1.4. */
+    protected static class FileNameExtensionFilter extends FileFilter
+    {
+        public FileNameExtensionFilter (String descrip, String... extensions) {
+            _description = descrip;
+            _extensions = extensions;
+        }
+
+        @Override // from FileFiler
+        public boolean accept (File file) {
+            if (file == null) {
+                return false;
+            }
+            if (file.isDirectory()) {
+                return true;
+            }
+            String fext = file.getName().substring(file.getName().lastIndexOf(".")+1).toLowerCase();
+            for (String ext : _extensions) {
+                if (fext.equals(ext)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override // from FileFiler
+        public String getDescription() {
+            return _description;
+        }
+
+        protected String _description;
+        protected String[] _extensions;
     }
 
     protected String _type;
