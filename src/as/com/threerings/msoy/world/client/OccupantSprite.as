@@ -84,8 +84,6 @@ public class OccupantSprite extends MsoySprite
         if (occInfo != null) {
             setOccupantInfo(occInfo);
         }
-
-        roomScaleUpdated();
     }
 
     override public function roomScaleUpdated () :void
