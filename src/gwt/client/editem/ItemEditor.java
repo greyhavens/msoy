@@ -506,7 +506,7 @@ public abstract class ItemEditor extends FlexTable
         // for some reason the strings that come in from JavaScript are not "real" and if we just
         // pass them straight on through to GWT, freakoutery occurs (of the non-hand-waving
         // variety); so we convert them hackily to GWT strings here
-        String fix = "" + id;
+        String fid = "" + id;
         String fhash = "" + mediaHash;
         _singleton.setHash(fid, fhash, mimeType, constraint, width, height);
     }
