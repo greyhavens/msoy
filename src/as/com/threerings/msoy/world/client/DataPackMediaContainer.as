@@ -35,7 +35,7 @@ import com.threerings.msoy.world.data.MsoyDataPack;
 //
 // NOTE:
 // If a bug in FZip is fixed that allows re-zipping, we can roll back to r7363
-// and only provide the bytes needed by the _content (and not _content itself).
+// and only provide the bytes needed by the _CONTENT (and not _CONTENT itself).
 //
 public class DataPackMediaContainer extends MsoyMediaContainer
 {
@@ -206,9 +206,9 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         var pack :MsoyDataPack = new MsoyDataPack(_packLoader.data);
 
         // if both are ready, make it happen
-        var ba :ByteArray = pack.getFile("_content");
+        var ba :ByteArray = pack.getContent();
         if (ba == null) {
-            handlePackError(null);
+            handlePackError("No content found in DataPack.");
             return;
         }
 
@@ -237,8 +237,9 @@ public class DataPackMediaContainer extends MsoyMediaContainer
     /**
      * Handle an error while loading a zip file.
      */
-    protected function handlePackError (event :Event) :void
+    protected function handlePackError (eventOrErrorMsg :Object) :void
     {
+        log.warning("Error loading media datapack [error=" + eventOrErrorMsg + "].");
         _packLoader = null;
         stoppedLoading();
         setupBrokenImage(-1, -1);

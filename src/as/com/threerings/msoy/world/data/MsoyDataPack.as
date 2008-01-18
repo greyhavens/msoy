@@ -23,6 +23,14 @@ public class MsoyDataPack extends DataPack
     }
 
     /**
+     * Get the primary content.
+     */
+    public function getContent () :ByteArray
+    {
+        return getFile(CONTENT_DATANAME);
+    }
+
+    /**
      * Completely remove the specified file.
      */
     public function removeFile (name :String) :Boolean
@@ -60,6 +68,18 @@ public class MsoyDataPack extends DataPack
         var ba :ByteArray = new ByteArray();
         _zip.serialize(ba);
         return ba;
+    }
+
+    override protected function validateName (name :String) :void
+    {
+        switch (name) {
+        case CONTENT_DATANAME: // this name is OK here
+            break;
+
+        default:
+            super.validateName(name);
+            break;
+        }
     }
 }
 }
