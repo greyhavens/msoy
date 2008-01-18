@@ -256,10 +256,9 @@ public class MemberServlet extends MsoyServiceServlet
             }
 
             // make sure this user hasn't already invited this address
-            if (inviter != null) {
-                if (MsoyServer.memberRepo.loadInvite(email, inviter.memberId) != null) {
-                    return InvitationResults.ALREADY_INVITED;
-                }
+            int inviterId = (inviter == null) ? 0 : inviter.memberId;
+            if (MsoyServer.memberRepo.loadInvite(email, inviterId) != null) {
+                return InvitationResults.ALREADY_INVITED;
             }
 
             String inviteId = MsoyServer.memberRepo.generateInviteId();
@@ -281,7 +280,6 @@ public class MemberServlet extends MsoyServiceServlet
                 return e.getMessage();
             }
 
-            int inviterId = (inviter == null) ? 0 : inviter.memberId;
             MsoyServer.memberRepo.addInvite(email, inviterId, inviteId);
             return InvitationResults.SUCCESS;
 
