@@ -86,6 +86,8 @@
     <file name="${extlibs.dir}/proguard.jar"/>
     <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/redstone-xmlrpc.jar"/>
+    <file name="${extlibs.dir}/retroweaver-all-1.2.2.jar"/>
+    <file name="${extlibs.dir}/retroweaver-rt-1.2.2.jar"/>
     <file name="${extlibs.dir}/s3lib.jar"/>
     <file name="${extlibs.dir}/servlet-api.jar"/>
     <file name="${extlibs.dir}/slf4j-api.jar"/>
