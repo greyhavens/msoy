@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.ui {
 
+import flash.errors.IllegalOperationError;
+
 import com.threerings.util.Util;
 import com.threerings.util.ValueEvent;
 
@@ -34,11 +36,13 @@ public class MsoyMediaContainer extends MediaContainer
 
     override public function setMedia (url :String) :void
     {
-        // TODO: ???
-        // I think that if you're using this class you should be setting the media
-        // via a MediaDesc, but don't want to completely break the behavior of super..
-        log.warning("setMedia() called on a MsoyMediaContainer... letting it pass.");
-        super.setMedia(url);
+        if (allowSetMedia()) {
+            super.setMedia(url);
+
+        } else {
+            throw new IllegalOperationError("setMedia() should not be called " +
+                "on a MsoyMediaContainer, use setMediaDesc instead.");
+        }
     }
 
     /**
@@ -119,6 +123,14 @@ public class MsoyMediaContainer extends MediaContainer
                 setIsBlocked(Boolean(event.value[1]));
             }
         }
+    }
+
+    /**
+     * Do we allow setMedia(url) to be called?
+     */
+    protected function allowSetMedia () :Boolean
+    {
+        return false;
     }
 
     /** Our Media descriptor. */

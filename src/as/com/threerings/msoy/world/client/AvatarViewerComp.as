@@ -390,6 +390,11 @@ class ViewerAvatarSprite extends MemberSprite
         gotControl();
     }
 
+    override protected function allowSetMedia () :Boolean
+    {
+        return true;
+    }
+
     protected var _moving :Boolean = false;
 
     protected var _idle :Boolean = false;
