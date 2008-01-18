@@ -159,7 +159,9 @@ public class MediaUploader extends FlexTable
      */
     public void setUploadedMedia (MediaDesc desc, int width, int height)
     {
-        String result = _updater.updateMedia(_upload.getFilename(), desc, width, height);
+        // TODO: have the media chooser tell us the original file name
+        // String result = _updater.updateMedia(_upload.getFilename(), desc, width, height);
+        String result = _updater.updateMedia("", desc, width, height);
         if (result == null) {
             setMedia(desc);
         } else {
