@@ -43,6 +43,12 @@ public class PreviewImageMode
         init(name, IOUtils.toByteArray(imageSource.openStream()));
     }
 
+    public PreviewImageMode (String name, byte[] media)
+        throws IOException
+    {
+        init(name, media);
+    }
+
     // from interface MediaChooser.Mode
     public void activate (MediaChooser chooser)
     {

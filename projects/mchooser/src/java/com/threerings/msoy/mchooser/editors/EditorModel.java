@@ -5,6 +5,7 @@ package com.threerings.msoy.mchooser.editors;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import java.io.ByteArrayOutputStream;
@@ -65,13 +66,26 @@ public class EditorModel
     public byte[] getImageBytes ()
         throws IOException
     {
-        // TODO: generate our rotated, scaled, cropped image
-        BufferedImage image = _image;
+        // generate our rotated, scaled, cropped image
+        int width = (int)Math.round(_image.getWidth() * _scaleX);
+        int height = (int)Math.round(_image.getHeight() * _scaleY);
+        BufferedImage image = new BufferedImage(width, height, _image.getType());
+        Graphics2D gfx = image.createGraphics();
+        try {
+            gfx.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                                 RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            gfx.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            gfx.rotate(_rotation);
+            gfx.scale(_scaleX, _scaleY);
+            gfx.drawImage(_image, null, null);
+        } finally {
+            gfx.dispose();
+        }
 
         // determine if we want a transparent or non-transparent image
         String format = (image.getTransparency() == BufferedImage.OPAQUE) ? "JPG" : "PNG";
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        ImageIO.write(_image, format, bout);
+        ImageIO.write(image, format, bout);
         return bout.toByteArray();
     }
 
@@ -95,12 +109,27 @@ public class EditorModel
         }
     }
 
+    public double getRotation ()
+    {
+        return _rotation;
+    }
+
     public void setRotation (double rotation)
     {
         if (_rotation != rotation) {
             _rotation = rotation;
             fireStateChanged();
         }
+    }
+
+    public double getScaleX ()
+    {
+        return _scaleX;
+    }
+
+    public double getScaleY ()
+    {
+        return _scaleY;
     }
 
     public void setScale (double scaleX, double scaleY)
@@ -115,6 +144,8 @@ public class EditorModel
     public void paint (Graphics2D gfx)
     {
         gfx.translate(_offset.x, _offset.y);
+        gfx.rotate(_rotation);
+        gfx.scale(_scaleX, _scaleY);
         gfx.drawImage(_image, null, null);
     }
 

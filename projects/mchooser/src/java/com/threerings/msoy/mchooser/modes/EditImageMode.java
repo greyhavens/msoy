@@ -77,7 +77,8 @@ public class EditImageMode
         upload.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent event) {
                 try {
-                    _chooser.pushMode(new UploadMediaMode(name, _editor.getModel().getImageBytes()));
+//                    _chooser.pushMode(new UploadMediaMode(name, _editor.getModel().getImageBytes()));
+                    _chooser.pushMode(new PreviewImageMode(name, _editor.getModel().getImageBytes()));
                 } catch (IOException ioe) {
                     // TODO: display error
                     ioe.printStackTrace(System.err);

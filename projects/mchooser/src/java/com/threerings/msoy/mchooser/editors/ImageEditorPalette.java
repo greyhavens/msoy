@@ -30,13 +30,14 @@ public class ImageEditorPalette extends JPanel
 
         add(new JLabel("Edit Image"));
         addTool(new MoveTool());
+        addTool(new ScaleTool());
         // activate the first tool (move)
         _tgroup.getElements().nextElement().setSelected(true);
 
         add(new JButton(_undo));
     }
 
-    protected void addTool (final ImageEditorTool tool)
+    protected void addTool (final EditorTool tool)
     {
         tool.init(_editor);
         JRadioButton tbutton = new JRadioButton(tool.getName());
@@ -51,7 +52,7 @@ public class ImageEditorPalette extends JPanel
         add(tbutton);
     }
 
-    protected void selectTool (ImageEditorTool tool)
+    protected void selectTool (EditorTool tool)
     {
         if (_selection != null) {
             _selection.deactivate();
@@ -69,6 +70,6 @@ public class ImageEditorPalette extends JPanel
     };
 
     protected ImageEditor _editor;
-    protected ImageEditorTool _selection;
+    protected EditorTool _selection;
     protected ButtonGroup _tgroup = new ButtonGroup();
 }

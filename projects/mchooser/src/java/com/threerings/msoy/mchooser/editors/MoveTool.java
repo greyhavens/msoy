@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
  */
 public class MoveTool extends MouseTool
 {
-    @Override // from XXX
+    @Override // from EditorTool
     public String getName ()
     {
         return "Move";
@@ -28,13 +28,11 @@ public class MoveTool extends MouseTool
     public void mouseReleased (MouseEvent e)
     {
         final Point offset = getOffset(e);
-        if (!offset.equals(_downOffset)) {
-            _editor.applyOp(new EditorOp() {
-                public void apply (EditorModel model) {
-                    model.setOffset(offset);
-                }
-            });
-        }
+        _editor.applyOp(new EditorOp() {
+            public void apply (EditorModel model) {
+                model.setOffset(offset);
+            }
+        });
 
         _downPos = null;
         _downOffset = null;

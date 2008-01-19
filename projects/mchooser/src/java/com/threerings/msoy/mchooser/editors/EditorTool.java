@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 /**
  * Performs an operation on an image in the image editor.
  */
-public abstract class ImageEditorTool
+public abstract class EditorTool
 {
     /**
      * Returns the human readable name of this editor.

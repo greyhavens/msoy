@@ -10,10 +10,10 @@ import java.awt.event.MouseMotionListener;
 /**
  * A tool that listens for mouse events on the editor.
  */
-public abstract class MouseTool extends ImageEditorTool
+public abstract class MouseTool extends EditorTool
     implements MouseListener, MouseMotionListener
 {
-    @Override // from ImageEditorTool
+    @Override // from EditorTool
     public void activate ()
     {
         super.activate();
@@ -21,7 +21,7 @@ public abstract class MouseTool extends ImageEditorTool
         _editor.addMouseMotionListener(this);
     }
 
-    @Override // from ImageEditorTool
+    @Override // from EditorTool
     public void deactivate ()
     {
         super.deactivate();
