@@ -37,7 +37,7 @@ import com.threerings.msoy.game.client.FloatingTableDisplay;
 public class TopPanel extends Canvas 
     implements LocationObserver
 {
-    public static const DECORATIVE_MARGIN_HEIGHT :int = 4;
+    public static const DECORATIVE_MARGIN_HEIGHT :int = 0;
 
     public static const LEFT_PANEL_WIDTH :int = 700;
     public static const RIGHT_SIDEBAR_WIDTH :int = 300;
@@ -53,6 +53,7 @@ public class TopPanel extends Canvas
         percentHeight = 100;
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
+        styleName = "topPanel";
 
         var chatTabs :ChatTabBar = new ChatTabBar(_ctx);
         _ctx.getMsoyChatDirector().setChatTabs(chatTabs);

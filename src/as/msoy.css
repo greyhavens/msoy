@@ -30,6 +30,10 @@ Panel {
   titleStyleName: "msoyTitleStyle";
 }
 
+.topPanel {
+  backgroundColor: #222222;
+}
+
 .entityPopup {
   headerColors: #0000FF, #444444;
 }
