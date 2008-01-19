@@ -44,7 +44,7 @@ public class ChooseFlashMode
     public void mediaSelected (URL media)
     {
         try {
-            _chooser.pushMode(new PreviewImageMode(media));
+            _chooser.pushMode(new EditImageMode(media));
         } catch (IOException ioe) {
             log.info("Unable to preview media [media=" + media + ", error=" + ioe + "].");
             _chooser.pushMode(new UploadMediaMode(media));

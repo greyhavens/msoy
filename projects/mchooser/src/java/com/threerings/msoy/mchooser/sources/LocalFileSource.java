@@ -3,14 +3,17 @@
 
 package com.threerings.msoy.mchooser.sources;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
+import java.io.File;
 import java.util.logging.Level;
 
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
 import com.threerings.msoy.mchooser.Config;
@@ -43,8 +46,11 @@ public class LocalFileSource
         File startDir = new File(MediaChooser.prefs.get(START_DIR_KEY,
                                                         System.getProperty("user.home")));
 
+        JPanel panel = new JPanel(new BorderLayout(0, 0));
+
         final JFileChooser chooser = new JFileChooser(startDir);
         chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+        chooser.setControlButtonsAreShown(false);
 
         // set up our filters
         if (_type == Config.IMAGE) {
@@ -81,7 +87,13 @@ public class LocalFileSource
                 }
             }
         });
-        return chooser;
+
+        panel.add(chooser, BorderLayout.CENTER);
+        JLabel tip = new JLabel("Double click the file you wish to select.");
+        tip.setHorizontalAlignment(JLabel.CENTER);
+        panel.add(tip, BorderLayout.SOUTH);
+
+        return panel;
     }
 
     /** We'd use the JDK version but that's 1.6 only and we want to support 1.4. */
