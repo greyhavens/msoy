@@ -76,6 +76,8 @@ public class ChannelOccupantList extends HBox
 
 import flash.display.DisplayObject;
 
+import flash.geom.Rectangle;
+
 import mx.core.ScrollPolicy;
 
 import mx.containers.HBox;
@@ -84,6 +86,8 @@ import mx.containers.VBox;
 import mx.controls.Image;
 import mx.controls.Label;
 import mx.controls.VScrollBar;
+
+import mx.events.ScrollEvent;
 
 import com.threerings.util.Log;
 
@@ -94,6 +98,7 @@ class ListBox extends VBox
     public function ListBox (scrollBar :VScrollBar)
     {
         _scrollBar = scrollBar;
+        _scrollBar.addEventListener(ScrollEvent.SCROLL, onScroll);
 
         percentWidth = 100;
         percentHeight = 100;
@@ -105,11 +110,14 @@ class ListBox extends VBox
     {
         super.updateDisplayList(unscaledWidth, unscaledHeight);
 
-        // TODO: if the bottom of the last entry is lower than parent.heigh, then we need to 
-        // mess with the scroll bar
         var dispObj :DisplayObject = getChildAt(numChildren - 1);
         var bottom :int = dispObj.y + dispObj.height;
-        log.debug("bottom [" + bottom + "]");
+        _scrollBar.setScrollProperties(parent.height, parent.height, bottom);
+    }
+
+    protected function onScroll (event :ScrollEvent) :void
+    {
+        scrollRect = new Rectangle(0, event.position - parent.height, parent.width, parent.height);
     }
 
     private static const log :Log = Log.getLog(ListBox);
