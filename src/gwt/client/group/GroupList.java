@@ -51,11 +51,11 @@ public class GroupList extends FlexTable
         setStyleName("groupList");
 
         int col = 0;
-        getFlexCellFormatter().setStyleName(0, col, "PopularTags");
-        setWidget(0, col++, _popularTags = new FlowPanel());
-
         getFlexCellFormatter().setStyleName(0, col, "Intro");
         setText(0, col++, CGroup.msgs.listIntro());
+
+        getFlexCellFormatter().setStyleName(0, col, "PopularTags");
+        setWidget(0, col++, _popularTags = new FlowPanel());
 
         RowPanel search = new RowPanel();
         final TextBox searchInput = new TextBox();

@@ -83,11 +83,11 @@
 }
 
 .groupList .Intro {
-    padding-left: 10px;
     padding-bottom: 10px;
 }
 
 .groupList .PopularTags {
+    padding-left: 10px;
     vertical-align: top;
 }
 
