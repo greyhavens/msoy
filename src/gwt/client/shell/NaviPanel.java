@@ -155,20 +155,20 @@ public class NaviPanel extends FlexTable
 
         click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                MenuBar fmenu = new MenuBar(true);
-                fmenu.addItem("Find People", true, new Command() {
+                menu.addItem("Find People", true, new Command() {
                     public void execute () {
                         Application.go(Page.PROFILE, "search");
                         clearPopup();
                     }
                 });
+                MenuBar fmenu = new MenuBar(true);
                 createMenu(fmenu, _friends, new ItemCreator() {
                     public void createItem (MenuBar menu, Object item) {
                         MemberName name = (MemberName)item;
                         addLink(menu, name.toString(), Page.PROFILE, "" + name.getMemberId());
                     }
                 });
-                menu.addItem("Profiles", fmenu);
+                menu.addItem("Friends", fmenu);
                 addLink(menu, "Groups", Page.GROUP, "");
                 menu.addItem("Invitations", true, new Command() {
                     public void execute () {
