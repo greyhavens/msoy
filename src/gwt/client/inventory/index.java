@@ -83,14 +83,14 @@ public class index extends Page
         } else if ("r".equals(arg0)) {
             byte type = (byte) args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
+            ItemRemixer remixer = new ItemRemixer();
             Item item = _models.findItem(type, itemId);
-            if (item == null) {
-                // TODO: load up remixing anyway
-                Application.go(Page.INVENTORY, ""+type);
-                return;
+            if (item != null) {
+                remixer.setItem(item);
+            } else {
+                remixer.setItem(type, itemId);
             }
             setTitle(CInventory.msgs.remixItemTitle());
-            ItemRemixer remixer = new ItemRemixer(item);
             setContent(remixer);
             return;
         }

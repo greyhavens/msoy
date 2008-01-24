@@ -16,17 +16,21 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 
+import client.shell.CShell;
+
 import client.util.FlashClients;
 import client.util.MediaUtil;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
 public class ItemRemixer extends FlexTable
 {
-    public ItemRemixer (Item item)
+    public ItemRemixer ()
     {
         setStyleName("itemRemixer");
         setCellPadding(0);
@@ -41,12 +45,24 @@ public class ItemRemixer extends FlexTable
             }
         }));
 
+        configureBridge();
+    }
+
+    public void setItem (byte type, int itemId)
+    {
+        CShell.itemsvc.loadItem(CShell.ident, new ItemIdent(type, itemId), new MsoyCallback() {
+            public void onSuccess (Object result) {
+                setItem((Item) result);
+            }
+        });
+    }
+
+    public void setItem (Item item)
+    {
         HorizontalPanel hpan = new HorizontalPanel();
-        setWidget(0, 1, hpan);
         hpan.add(createRemixControls(item));
         hpan.add(createPreview(item));
-
-        configureBridge();
+        setWidget(0, 1, hpan);
     }
 
     protected Widget createRemixControls (Item item)
@@ -68,6 +84,8 @@ public class ItemRemixer extends FlexTable
                 "remixPreview", "/clients/" + DeploymentConfig.version + "/avatarviewer.swf", 
                 360, 450, "message=" + URL.encodeComponent("Loading preview..."));
         }
+
+        // TODO: viewers for other item types
 
         MediaDesc preview = item.getPreviewMedia();
         return MediaUtil.createMediaView(preview, MediaDesc.PREVIEW_SIZE);
