@@ -8,6 +8,10 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.external.ExternalInterface;
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
+
+import flash.utils.ByteArray;
 
 import mx.binding.utils.BindingUtils;
 
@@ -26,15 +30,60 @@ import com.threerings.flash.FPSDisplay;
 import com.threerings.flash.MediaContainer;
 import com.threerings.flex.CommandMenu;
 import com.threerings.util.ParameterUtil;
+import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.world.client.OccupantSprite;
 
+import com.threerings.msoy.utils.Base64Decoder;
+
 public class AvatarViewerComp extends VBox
 {
     public function AvatarViewerComp ()
     {
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.addCallback("setMediaBytes", loadBytesBase64);
+            } else {
+                trace("ExternalInterface is not available.");
+            }
+        } catch (err :Error) {
+            trace("Error accessing ExternalInterface: " + err);
+        }
+    }
+
+    /**
+     * Load the media to display as a byteArray.
+     */
+    public function loadBytes (bytes :ByteArray) :void
+    {
+        var avatar :ViewerAvatarSprite;
+        for each (avatar in _avatars) {
+            avatar.shutdown();
+            _holder.rawChildren.removeChild(avatar);
+        }
+        _avatars.length = 0;
+
+        avatar = new ViewerAvatarSprite(1);
+        _avatars.push(avatar);
+
+        avatar.setMediaBytes(bytes);
+        _holder.rawChildren.addChild(avatar);
+
+        // on the last one, add a listener
+        avatar.addEventListener(MouseEvent.CLICK, handleMouseClick);
+        avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+    }
+
+    /**
+     * Load bytes encoded into a base64 string.
+     */
+    protected function loadBytesBase64 (base64EncBytes :String) :void
+    {
+        var b64 :Base64Decoder = new Base64Decoder();
+        b64.decode(base64EncBytes);
+        loadBytes(b64.toByteArray());
     }
 
     override protected function createChildren () :void
@@ -124,7 +173,7 @@ public class AvatarViewerComp extends VBox
      */
     protected function gotParams (params :Object) :void
     {
-        var media :String = String(params["avatar"]);
+        var media :String = params["avatar"] as String;
         var scale :Number = Number(params["scale"]);
         if (isNaN(scale) || (scale == 0)) {
             scale = 1;
@@ -136,6 +185,23 @@ public class AvatarViewerComp extends VBox
         if (!scaling) {
             _scaleControls.includeInLayout = false;
             _scaleControls.visible = false;
+        }
+
+        if (StringUtil.isBlank(media)) {
+            var msg :String = params["message"] as String;
+            if (msg != null) {
+                var av :ViewerAvatarSprite = new ViewerAvatarSprite(1);
+                _avatars.push(av);
+                _holder.rawChildren.addChild(av);
+
+                var tf :TextField = new TextField();
+                tf.autoSize = TextFieldAutoSize.LEFT;
+                tf.defaultTextFormat = new TextFormat(null, 24);
+                tf.text = msg;
+                tf.width = tf.textWidth + 5;
+                av.setMediaObject(tf);
+            }
+            return;
         }
 
         var count :int = 1;

@@ -45,7 +45,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
     }
 
     /**
-     * Get the default DataPack, with the _content removed, and clear it from memory.
+     * Get the default DataPack as bytes, and clear it from memory.
      */
     public function getAndClearDataPack () :ByteArray
     {
@@ -56,6 +56,28 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         var ba :ByteArray = _packLoader.data as ByteArray;
         _packLoader = null;
         return ba;
+    }
+
+    /**
+     * Set the media to be displayed as a ByteArray representing zipped (remixable) media.
+     */
+    public function setMediaBytes (zippedBytes :ByteArray) :void
+    {
+        if (_media != null) {
+            shutdown(false);
+        }
+        _url = null;
+
+        // this is funny, but it works
+        _packLoader = new URLLoader();
+        _packLoader.data = zippedBytes;
+
+        // load it!
+        willShowNewMedia();
+        startedLoading();
+        initLoader();
+        checkPackComplete(); // in here the bytes will be extracted
+        didShowNewMedia();
     }
 
     override protected function setupSwfOrImage (url :String) :void
@@ -109,7 +131,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
     protected function shouldUseStub (url :String) :Boolean
     {
         // we use the stub only on non-file non-images
-        return !(isImage(url) || isFileUrl(url));
+        return !((url == null) || isImage(url) || isFileUrl(url));
     }
 
     /**
