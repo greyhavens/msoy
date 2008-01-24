@@ -28,6 +28,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.RoomName;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -81,7 +82,7 @@ public class MsoyChatDirector extends ChatDirector
      * Opens the chat interface for the supplied player, group or private chat channel, selecting
      * the appropriate tab if said channel is already open.
      *
-     * @param name either a MemberName, GroupName or ChannelName.
+     * @param name either a MemberName, GroupName, ChannelName or RoomName
      */
     public function openChannel (name :Name) :void
     {
@@ -289,6 +290,8 @@ public class MsoyChatDirector extends ChatDirector
             return ChatChannel.makeGroupChannel(name as GroupName);
         } else if (name is ChannelName) {
             return ChatChannel.makePrivateChannel(name as ChannelName);
+        } else if (name is RoomName) {
+            return ChatChannel.makeRoomChannel(name as RoomName);    
         } else {
             log.warning("Requested to open unknown type of channel [name=" + name +
                         ", type=" + ClassUtil.getClassName(name) + "].");

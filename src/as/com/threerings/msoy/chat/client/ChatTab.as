@@ -136,7 +136,7 @@ public class ChatTab extends HBox
             return;
         }
 
-        if (_controller == null) {
+        if (_controller == null || _controller.channel.type == ChatChannel.ROOM_CHANNEL) {
             style += "RoomTab";
             if (state == SELECTED) {
                 _ctx.getTopPanel().getControlBar().setChatColor(COLOR_ROOM);

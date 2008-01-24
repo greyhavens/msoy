@@ -128,6 +128,10 @@ public class ChatChannelManager
             // TODO: access controls
             break;
 
+        case ChatChannel.ROOM_CHANNEL:
+            // TODO: check room access before trying to join the channel
+            break;
+
         default:
             log.warning("Member requested to join invalid channel [who=" + user.who() +
                         ", channel=" + channel + "].");

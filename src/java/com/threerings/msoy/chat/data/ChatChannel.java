@@ -9,6 +9,7 @@ import com.threerings.util.Name;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.ChannelName;
+import com.threerings.msoy.data.all.RoomName;
 
 /**
  * Defines a particular chat channel.
@@ -23,6 +24,9 @@ public class ChatChannel extends SimpleStreamableObject
 
     /** A chat channel created by a player into whom they invite other players. */
     public static final int PRIVATE_CHANNEL = 3;
+
+    /** A chat channel for room chat. */
+    public static final int ROOM_CHANNEL = 4;
 
     /** The type of this chat channel. */
     public int type;
@@ -53,6 +57,14 @@ public class ChatChannel extends SimpleStreamableObject
     public static ChatChannel makePrivateChannel (ChannelName channel)
     {
         return new ChatChannel(PRIVATE_CHANNEL, channel);
+    }
+
+    /**
+     * Creates a channel identifier for the specified named room channel.
+     */
+    public static ChatChannel makeRoomChannel (RoomName room)
+    {
+        return new ChatChannel(ROOM_CHANNEL, room);
     }
 
     /** Used for unserialization. */

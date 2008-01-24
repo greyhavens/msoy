@@ -50,6 +50,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
 import com.threerings.msoy.world.data.MsoyScene;
@@ -826,6 +827,11 @@ public class WorldController extends MsoyController
             headerBar.setLocationName(scene.getName());
             headerBar.setEmbedLinkButtonVisible(!_wctx.getMsoyClient().isEmbedded());
 
+            // subscribe to the new scene's channel, if we haven't already
+            var roomName :RoomName = new RoomName(scene.getName(), scene.getId());
+            _wctx.getMsoyChatDirector().openChannel(roomName);
+
+            // update the owner link
             var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
             if (model != null) {
                 var svc :MemberService =

@@ -65,9 +65,6 @@ public class MsoySceneRegistry extends SceneRegistry
             }
         }
 
-        // now check to see if the destination scene is already hosted on a server
-        String nodeName = MsoyServer.peerMan.getSceneHost(sceneId);
-
         // if this member has followers, tell them all to make the same scene move
         for (MemberName follower :
                  memobj.followers.toArray(new MemberName[memobj.followers.size()])) {
@@ -81,6 +78,9 @@ public class MsoySceneRegistry extends SceneRegistry
             }
             folobj.postMessage(RoomCodes.FOLLOWEE_MOVED, sceneId);
         }
+
+        // now check to see if the destination scene is already hosted on a server
+        String nodeName = MsoyServer.peerMan.getSceneHost(sceneId);
 
         // if it's hosted on this server, then send the client directly to the scene
         if (MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeName)) {

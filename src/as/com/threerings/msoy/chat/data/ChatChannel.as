@@ -12,6 +12,7 @@ import com.threerings.util.Name;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.ChannelName;
+import com.threerings.msoy.data.all.RoomName;
 
 /**
  * Defines a particular chat channel.
@@ -27,6 +28,10 @@ public class ChatChannel extends SimpleStreamableObject
 
     /** A chat channel created by a player into whom they invite other players. */
     public static const PRIVATE_CHANNEL :int = 3;
+
+    /** A chat channel carrying room chat.  GROUP_CHANNEL is a more specific subtype of 
+     * ROOM_CHANNEL */
+    public static const ROOM_CHANNEL :int = 4;
 
     /** The type of this chat channel. */
     public var type :int;
@@ -57,6 +62,14 @@ public class ChatChannel extends SimpleStreamableObject
     public static function makePrivateChannel (channel :ChannelName) :ChatChannel
     {
         return new ChatChannel(PRIVATE_CHANNEL, channel);
+    }
+
+    /** 
+     * Creates a channel identifier for the specified room.
+     */
+    public static function makeRoomChannel (room :RoomName) :ChatChannel
+    {
+        return new ChatChannel(ROOM_CHANNEL, room);
     }
 
     public function ChatChannel (type :int = 0, ident :Name = null)
