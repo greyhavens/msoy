@@ -36,21 +36,14 @@ import com.threerings.util.ValueEvent;
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.world.client.OccupantSprite;
 
-import com.threerings.msoy.utils.Base64Decoder;
+import com.threerings.msoy.utils.Base64Receiver;
 
 public class AvatarViewerComp extends VBox
 {
     public function AvatarViewerComp ()
     {
-        try {
-            if (ExternalInterface.available) {
-                ExternalInterface.addCallback("setMediaBytes", loadBytesBase64);
-            } else {
-                trace("ExternalInterface is not available.");
-            }
-        } catch (err :Error) {
-            trace("Error accessing ExternalInterface: " + err);
-        }
+        // configure a receiver to receive our javascript bytes
+        new Base64Receiver(loadBytes, "setMediaBytes");
     }
 
     /**
@@ -74,16 +67,6 @@ public class AvatarViewerComp extends VBox
         // on the last one, add a listener
         avatar.addEventListener(MouseEvent.CLICK, handleMouseClick);
         avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
-    }
-
-    /**
-     * Load bytes encoded into a base64 string.
-     */
-    protected function loadBytesBase64 (base64EncBytes :String) :void
-    {
-        var b64 :Base64Decoder = new Base64Decoder();
-        b64.decode(base64EncBytes);
-        loadBytes(b64.toByteArray());
     }
 
     override protected function createChildren () :void
