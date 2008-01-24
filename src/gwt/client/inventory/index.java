@@ -11,6 +11,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
+import client.remix.ItemRemixer;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
@@ -43,8 +44,10 @@ public class index extends Page
             return;
         }
 
+        String arg0 = args.get(0, "");
+
         // if we're editing an item, display that interface
-        if (args.get(0, "").equals("e") || args.get(0, "").equals("c")) {
+        if ("e".equals(arg0) || "c".equals(arg0)) {
             byte type = (byte)args.get(1, Item.AVATAR);
             ItemEditor editor = ItemEditor.createItemEditor(type, new EditorHost() {
                 public void editComplete (Item item) {
@@ -56,7 +59,7 @@ public class index extends Page
                     }
                 }
             });
-            if (args.get(0, "").equals("e")) {
+            if ("e".equals(arg0)) {
                 int itemId = args.get(2, 0);
                 setTitle(CInventory.msgs.editItemTitle());
                 Item item = _models.findItem(type, itemId);
@@ -74,6 +77,21 @@ public class index extends Page
                 }
             }
             setContent(editor);
+            return;
+
+        // or maybe we're remixing an item
+        } else if ("r".equals(arg0)) {
+            byte type = (byte) args.get(1, Item.AVATAR);
+            int itemId = args.get(2, 0);
+            Item item = _models.findItem(type, itemId);
+            if (item == null) {
+                // TODO: load up remixing anyway
+                Application.go(Page.INVENTORY, ""+type);
+                return;
+            }
+            setTitle(CInventory.msgs.remixItemTitle());
+            ItemRemixer remixer = new ItemRemixer(item);
+            setContent(remixer);
             return;
         }
 

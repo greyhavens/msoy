@@ -39,6 +39,11 @@ public class CInventory extends CShell
         Application.go(Page.INVENTORY, Args.compose("e", ""+type, ""+itemId));
     }
 
+    public static void remixItem (byte type, int itemId)
+    {
+        Application.go(Page.INVENTORY, Args.compose("r", ""+type, ""+itemId));
+    }
+
     public static void createItem (byte type, byte ptype, int pitemId)
     {
         Application.go(Page.INVENTORY, Args.compose(new String[] {
