@@ -157,6 +157,7 @@ public class UploadServlet extends AbstractUploadServlet
         case MediaDesc.VIDEO_MPEG:
         case MediaDesc.VIDEO_QUICKTIME:
         case MediaDesc.VIDEO_MSVIDEO:
+        case MediaDesc.APPLICATION_ZIP:
             limit = LARGE_MEDIA_MAX_SIZE;
             break;
 
