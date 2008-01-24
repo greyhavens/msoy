@@ -65,7 +65,7 @@ public class SnapshotPanel extends FloatingPanel
             } else {
                 try {
                     room.draw(child, matrix, null, null, null, true);
-                    trace("== Snapshot: raw sprite");
+                    //trace("== Snapshot: raw sprite");
 
                 } catch (err :SecurityError) {
                     // not a critical error

@@ -119,7 +119,7 @@ public class MsoySprite extends DataPackMediaContainer
                 // on a different sub-object that undoes parent scale to
                 // keep scale consistent.
                 Object(Loader(_media).content).snapshot(bitmapData, m, r);
-                trace("== Snapshot: inside stub");
+                //trace("== Snapshot: inside stub");
                 return true;
 
             } catch (serr :SecurityError) {
@@ -135,7 +135,7 @@ public class MsoySprite extends DataPackMediaContainer
         // do the snapshot outselves
         try {
             bitmapData.draw(this, matrix, null, null, null, true);
-            trace("== Snapshot: MsoySprite");
+            //trace("== Snapshot: MsoySprite");
             return true;
 
         } catch (serr :SecurityError) {
