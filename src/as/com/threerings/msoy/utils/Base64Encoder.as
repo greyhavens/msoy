@@ -148,13 +148,14 @@ public class Base64Encoder
         var oldPosition:uint = data.position;
         data.position = offset;
         var plainIndex:uint = offset;
+        var endPosition :uint = offset + length;
 
-        while (plainIndex < length)
+        while (plainIndex < endPosition)
         {
             _work[_count] = data[plainIndex];
             _count++;
 
-            if (_count == _work.length || offset + length - plainIndex == 1)
+            if (_count == _work.length || endPosition - plainIndex == 1)
             {
                 encodeBlock();
                 _count = 0;
