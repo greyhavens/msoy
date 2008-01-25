@@ -56,6 +56,10 @@ public abstract class Page
      */
     public void onPageLoad ()
     {
+        // we need to let the frame know about our content table immediately so that calls to
+        // Frame.setTitle() prior to Page.setContent() will properly propagate the title to the
+        // page content table
+        Frame.setContent(_content, false);
     }
 
     /**
