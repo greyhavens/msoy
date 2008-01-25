@@ -20,6 +20,9 @@ import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.util.PersistingUnit;
+
+import com.threerings.whirled.server.SceneManager;
 
 import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -38,6 +41,7 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.chat.client.ChatChannelService;
@@ -45,6 +49,9 @@ import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelObject;
+
+import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.MsoySceneModel;
 
 import static com.threerings.msoy.Log.log;
 
@@ -87,12 +94,12 @@ public class ChatChannelManager
                              final ChatChannelService.ResultListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject)caller;
+        final MemberObject member = (MemberObject)caller;
 
         // ensure this member has access to this channel
         switch (channel.type) {
         case ChatChannel.GROUP_CHANNEL:
-            GroupMembership gm = user.groups.get(channel.ident);
+            GroupMembership gm = member.groups.get(channel.ident);
             if (gm != null) {
                 // we're already members, no need to check further
                 break;
@@ -101,24 +108,22 @@ public class ChatChannelManager
             // else check that the group is public
             final GroupName gName = (GroupName) channel.ident;
 
-            MsoyServer.invoker.postUnit(new RepositoryUnit("joinChannel") {
-                public void invokePersist () throws PersistenceException {
+            MsoyServer.invoker.postUnit(new PersistingUnit("joinChannel", listener) {
+                public void invokePersistent () throws PersistenceException {
                     GroupRecord gRec = MsoyServer.groupRepo.loadGroup(gName.getGroupId());
                     _policy = (gRec == null) ? 0 : gRec.policy;
                 }
                 public void handleSuccess () {
                     if (_policy == Group.POLICY_PUBLIC) {
-                        resolveAndJoinChannel(user, channel, listener);
+                        resolveAndJoinChannel(member, channel, listener);
                     } else {
-                        log.warning("Unable to join non-public channel [user=" + user +
+                        log.warning("Unable to join non-public channel [member=" + member +
                                     ", channel=" + channel + "]");
                         listener.requestFailed(E_ACCESS_DENIED);
                     }
                 }
-                public void handleFailure (Exception pe) {
-                    log.warning("Unable to load group [group=" + gName +
-                                ", error=" + pe + ", cause=" + pe.getCause() + "]");
-                    listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                protected String getFailureMessage () {
+                     return "Unable to load group [group=" + gName + "]";
                 }
                 protected int _policy;
             });
@@ -129,17 +134,57 @@ public class ChatChannelManager
             break;
 
         case ChatChannel.ROOM_CHANNEL:
-            // TODO: check room access before trying to join the channel
+            final int sceneId = ((RoomName) channel.ident).getSceneId();
+            SceneManager scmgr = MsoyServer.screg.getSceneManager(sceneId);
+            if (scmgr != null) {
+                // in most cases, the channel and the scene will be hosted on the same server, so
+                // we can just pull the scene out of the scene manager and ask it about
+                // permissions
+                if (!((MsoyScene) scmgr.getScene()).canEnter(member)) {
+                    log.warning("Unable to join channel due to access restrictions [member=" + 
+                        member + ", channel=" + channel + "]");
+                    listener.requestFailed(E_ACCESS_DENIED);
+                    return;
+                }
+
+            } else {
+                // scene isn't resolved here, need to load up the MsoySceneModel and ask it
+                MsoyServer.invoker.postUnit(new PersistingUnit("joinChannel", listener) {
+                    public void invokePersistent () throws Exception {
+                        MsoySceneModel model = 
+                            (MsoySceneModel) MsoyServer.sceneRepo.loadSceneModel(sceneId);
+                        if (model != null) {
+                            _hasRights = model.canEnter(member);
+                        }
+                    }
+                    public void handleSuccess () {
+                        if (!_hasRights && member.tokens.isSupport()) {
+                            log.warning("Allowing support+ to enter a room channel they " +
+                                "otherwise couldn't enter [sceneId=" + sceneId + "]");
+                            _hasRights = true;
+                        }
+
+                        if (_hasRights) {
+                            resolveAndJoinChannel(member, channel, listener);
+                        }
+                        return;
+                    }
+                    protected String getFailureMessage () {
+                        return "Unable to load scene model [sceneId=" + sceneId + "]";
+                    }
+                    protected boolean _hasRights = false;
+                });
+            }
             break;
 
         default:
-            log.warning("Member requested to join invalid channel [who=" + user.who() +
+            log.warning("Member requested to join invalid channel [who=" + member.who() +
                         ", channel=" + channel + "].");
             throw new InvocationException(E_INTERNAL_ERROR);
         }
 
         // if we made it this far, we can do our joining immediately
-        resolveAndJoinChannel(user, channel, listener);
+        resolveAndJoinChannel(member, channel, listener);
     }
 
     // from interface ChatChannelProvider

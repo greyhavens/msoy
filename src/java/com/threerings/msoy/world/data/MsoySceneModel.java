@@ -12,6 +12,8 @@ import com.samskivert.util.ListUtil;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.spot.data.Portal;
 
+import com.threerings.msoy.data.MemberObject;
+
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -155,6 +157,43 @@ public class MsoySceneModel extends SceneModel
     {
         validatePortalInfo();
         return _portalInfo.values().iterator();
+    }
+
+    /**
+     * Can the specified member enter the scene?
+     */
+    public boolean canEnter (MemberObject member)
+    {
+        boolean hasRights = false;
+
+        if (ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+            switch (accessControl) {
+            case MsoySceneModel.ACCESS_EVERYONE:
+                hasRights = true;
+                break;
+            case MsoySceneModel.ACCESS_OWNER_ONLY:
+                hasRights = member.isGroupManager(ownerId);
+                break;
+            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
+                hasRights = member.isGroupMember(ownerId);
+                break;
+            }
+
+        } else {
+            switch (accessControl) {
+            case MsoySceneModel.ACCESS_EVERYONE:
+                hasRights = true;
+                break;
+            case MsoySceneModel.ACCESS_OWNER_ONLY:
+                hasRights = (member.getMemberId() == ownerId);
+                break;
+            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
+                hasRights = (member.getMemberId() == ownerId) || member.isFriend(ownerId);
+                break;
+            }
+        }
+
+        return hasRights;
     }
 
     /**

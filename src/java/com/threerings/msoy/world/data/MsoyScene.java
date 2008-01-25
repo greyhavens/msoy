@@ -64,35 +64,7 @@ public class MsoyScene extends SceneImpl
      */
     public boolean canEnter (MemberObject member)
     {
-        int sceneOwner = _model.ownerId;
-        boolean hasRights = false;
-
-        if (_model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-            switch (_model.accessControl) {
-            case MsoySceneModel.ACCESS_EVERYONE:
-                hasRights = true;
-                break;
-            case MsoySceneModel.ACCESS_OWNER_ONLY:
-                hasRights = member.isGroupManager(sceneOwner);
-                break;
-            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
-                hasRights = member.isGroupMember(sceneOwner);
-                break;
-            }
-
-        } else {
-            switch (_model.accessControl) {
-            case MsoySceneModel.ACCESS_EVERYONE:
-                hasRights = true;
-                break;
-            case MsoySceneModel.ACCESS_OWNER_ONLY:
-                hasRights = (member.getMemberId() == sceneOwner);
-                break;
-            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
-                hasRights = (member.getMemberId() == sceneOwner) || member.isFriend(sceneOwner);
-                break;
-            }
-        }
+        boolean hasRights = _model.canEnter(member);
 
         if (! hasRights && member.tokens.isSupport()) {
             log.info("Allowing support+ to enter scene which they otherwise couldn't enter " +
