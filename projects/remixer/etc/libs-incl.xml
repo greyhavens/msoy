@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<project name="library-dependencies">
+  <fileset dir="${libs.dir}" id="remixer.libs">
+    <include name="commons-io.jar"/>
+    <include name="commons-codec.jar"/>
+    <include name="commons-collections.jar"/>
+    <include name="commons-digester.jar"/>
+    <include name="junit4.jar"/>
+    <include name="proguard.jar"/>
+    <include name="retroweaver-all-1.2.2.jar"/>
+    <include name="retroweaver-rt-1.2.2.jar"/>
+    <include name="samskivert-0.0-SNAPSHOT.jar"/>
+    <include name="whirled-code.jar"/>
+  </fileset>
+</project>
