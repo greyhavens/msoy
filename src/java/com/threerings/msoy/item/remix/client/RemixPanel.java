@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.remix.client;
 
+import java.applet.Applet;
+
 import java.awt.BorderLayout;
 
 import java.awt.event.ActionEvent;
@@ -16,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
@@ -29,9 +32,11 @@ import com.whirled.DataPack;
 
 import com.whirled.remix.data.EditableDataPack;
 
+import com.threerings.msoy.utils.Base64Sender;
+
 public class RemixPanel extends JPanel
 {
-    public RemixPanel (String url)
+    public RemixPanel (String url, Applet container)
     {
         super(new BorderLayout());
 
@@ -51,6 +56,8 @@ public class RemixPanel extends JPanel
         butPan.add(new JButton(_cancel));
         butPan.add(new JButton(_remix));
         add(butPan, BorderLayout.SOUTH);
+
+        _sender = new Base64Sender(container, "remixPreview", "setMediaBytes");
 
         startPackLoading(url);
     }
@@ -78,6 +85,8 @@ public class RemixPanel extends JPanel
 
         addFields(panel, _pack.getDataFields(), true);
         addFields(panel, _pack.getFileFields(), false);
+
+        add(new JScrollPane(panel), BorderLayout.CENTER);
     }
 
     protected void addFields (JPanel panel, List<String> fields, final boolean areData)
@@ -155,7 +164,7 @@ public class RemixPanel extends JPanel
 
     protected void updatePreview ()
     {
-        // TODO
+        _sender.sendBytes(_pack.toByteArray());
     }
 
     /** The datapack we're editing. */
@@ -164,4 +173,6 @@ public class RemixPanel extends JPanel
     protected Action _cancel;
 
     protected Action _remix;
+
+    protected Base64Sender _sender;
 }

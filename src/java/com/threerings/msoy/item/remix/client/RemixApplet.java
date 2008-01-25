@@ -15,7 +15,7 @@ public class RemixApplet extends JApplet
         super.init();
 
         String mediaURL = getParameter("media");
-        add(new RemixPanel(mediaURL), BorderLayout.CENTER);
+        add(new RemixPanel(mediaURL, this), BorderLayout.CENTER);
     }
 
     @Override
