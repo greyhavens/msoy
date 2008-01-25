@@ -166,14 +166,18 @@ public class ChatChannelManager
 
                         if (_hasRights) {
                             resolveAndJoinChannel(member, channel, listener);
+                        } else {
+                            log.warning("Unable to join channel due to access restrictions " +
+                                "[member=" + member + ", channel=" + channel + "]");
+                            listener.requestFailed(E_ACCESS_DENIED);
                         }
-                        return;
                     }
                     protected String getFailureMessage () {
                         return "Unable to load scene model [sceneId=" + sceneId + "]";
                     }
                     protected boolean _hasRights = false;
                 });
+                return;
             }
             break;
 
