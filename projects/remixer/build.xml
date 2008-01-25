@@ -63,12 +63,13 @@
     <!-- first run proguard on the code to include everything we need and nothing more -->
     <taskdef resource="proguard/ant/task.properties" classpath="${deploy.dir}/lib/proguard.jar"/>
     <proguard>
-      -injars dist/lib/samskivert-0.0-SNAPSHOT.jar(**/util/**,**/swing/**)
-      -injars dist/lib/commons-codec.jar(!META-INF/*)
-      -injars dist/lib/commons-collections.jar(!META-INF/*)
-      -injars dist/lib/commons-io.jar(!META-INF/*)
-      -injars dist/lib/commons-digester.jar(!META-INF/*)
-      -injars dist/lib/whirled-code.jar(com/whirled/DataPack.class,com/whirled/remix/data/EditableDataPack.class)
+      -injars dist/lib/samskivert-0.0-SNAPSHOT.jar(**/xml/**,**/util/**,**/swing/**)
+      -injars dist/lib/commons-codec.jar(**/*.class)
+      -injars dist/lib/commons-collections.jar(**/*.class)
+      -injars dist/lib/commons-io.jar(**/*.class)
+      -injars dist/lib/commons-digester.jar(**/*.class)
+      -injars dist/lib/whirled-code.jar(com/whirled/DataPack*.class,
+                                        com/whirled/remix/data/EditableDataPack*.class)
       -injars dist/remixer.jar(!META-INF/*)
       -libraryjars ${java.home}/lib/rt.jar
       -dontskipnonpubliclibraryclasses
