@@ -76,6 +76,7 @@
     <proguard>
       -injars dist/lib/samskivert-0.0-SNAPSHOT.jar(**/swing/**,**/util/**)
       -injars dist/lib/commons-io.jar(!META-INF/*)
+      -injars dist/lib/google-collect.jar(!META-INF/*)
       -injars dist/mchooser.jar(!META-INF/*)
       -libraryjars ${java.home}/lib/rt.jar
       -dontskipnonpubliclibraryclasses
