@@ -213,7 +213,9 @@ public class ChatOverlay
         if (_target != null) {
             // removing from the old
             _target.removeOverlay(_scrollOverlay);
-            _target.removeOverlay(_staticOverlay);
+            if (_target.containsOverlay(_staticOverlay)) {
+                _target.removeOverlay(_staticOverlay);
+            }
             removeOccupantList();
             _target.removeEventListener(ResizeEvent.RESIZE, handleContainerResize);
 
@@ -224,7 +226,8 @@ public class ChatOverlay
             clearGlyphs(_subtitles);
             clearGlyphs(_showingHistory);
             setHistoryEnabled(false);
-            //setHistorySliding(false);
+            _target = null; // don't let history sliding re-add the overlay
+            setHistorySliding(false);
         }
 
         _target = target;
@@ -237,9 +240,11 @@ public class ChatOverlay
 
             displayOccupantList();
 
-            _staticOverlay.x = 0;
-            _staticOverlay.y = 0;
-            _target.addOverlay(_staticOverlay, PlaceBox.LAYER_CHAT_STATIC);
+            if (_chatContainer == null) {
+                _staticOverlay.x = 0;
+                _staticOverlay.y = 0;
+                _target.addOverlay(_staticOverlay, PlaceBox.LAYER_CHAT_STATIC);
+            }
 
             _target.addEventListener(ResizeEvent.RESIZE, handleContainerResize);
 
@@ -331,14 +336,12 @@ public class ChatOverlay
         } else { 
             _ctx.getTopPanel().slideOutChat();
 
+            _historyBar = null;
+            _chatContainer = null;
             if (_target != null) {
                 _target.addOverlay(_staticOverlay, PlaceBox.LAYER_CHAT_STATIC);
+                setHistoryEnabled(Prefs.getShowingChatHistory());
             }
-
-            _historyBar = null;
-            setHistoryEnabled(Prefs.getShowingChatHistory());
-
-            _chatContainer = null;
         }
             
         if (_occupantList != null) {
