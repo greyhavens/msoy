@@ -106,7 +106,10 @@ public class MediaDirector extends BasicDirector
         super.clientDidLogoff(event);
 
         // release our hold on our avatar
-        _ourAvatar = null;
+        if (_ourAvatar != null) {
+            _ourAvatar.shutdown();
+            _ourAvatar = null;
+        }
     }
 
     /** A casted copy of the context. */
