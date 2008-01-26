@@ -592,6 +592,7 @@ public class TopPanel extends Canvas
         var left :int = getLeftPanelWidth();
         if (_chat != null) {
             left += _chatBounds.width;
+            w -= _chatBounds.width;
             _chat.setStyle("top", top);
             _chat.setStyle("bottom", bottom);
             _chat.setStyle("left", getLeftPanelWidth());
