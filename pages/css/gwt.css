@@ -397,6 +397,7 @@ img, embed, applet, object {
 
 .pagedGrid .Empty {
   padding: 5px;
+  text-align: center;
 }
 
 .dottedGrid .Grid {

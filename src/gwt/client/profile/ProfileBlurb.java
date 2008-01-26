@@ -85,7 +85,7 @@ public class ProfileBlurb extends Blurb
             homepage.setTitle(CProfile.msgs.showHomepage());
             buttons.add(homepage);
         }
-        if (_name.getMemberId() != CProfile.getMemberId()) {
+        if (CProfile.getMemberId() != 0 && _name.getMemberId() != CProfile.getMemberId()) {
             buttons.add(newControl(CProfile.msgs.sendMail(), "SendMail", new ClickListener() {
                 public void onClick (Widget widget) {
                     new MailComposition(_name, null, null, null).show();

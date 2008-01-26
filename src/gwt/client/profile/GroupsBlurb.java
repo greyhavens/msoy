@@ -8,6 +8,8 @@ import java.util.List;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -19,6 +21,7 @@ import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.GroupCard;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import client.msgs.GroupInvite;
@@ -47,6 +50,17 @@ public class GroupsBlurb extends Blurb
         setContent(new GroupsGrid(pdata.groups));
     }
 
+    protected static Widget createEmptyTable (String message, String link, String page, String args)
+    {
+        FlowPanel bits = new FlowPanel();
+        bits.add(WidgetUtil.makeShim(25, 50));
+        bits.add(new HTML(message));
+        bits.add(WidgetUtil.makeShim(25, 25));
+        bits.add(Application.createLink(link, page, args));
+        bits.setStyleName("Empty");
+        return bits;
+    }
+
     protected class GroupsGrid extends PagedGrid
     {
         public GroupsGrid (List groups) {
@@ -59,8 +73,17 @@ public class GroupsBlurb extends Blurb
         // @Override // from PagedGrid
         protected String getEmptyMessage ()
         {
-            return (CProfile.getMemberId() == _name.getMemberId()) ?
-                CProfile.msgs.notInGroupsSelf() : CProfile.msgs.notInGroupsOther();
+            return CProfile.msgs.notInGroupsOther();
+        }
+
+        // @Override // from PagedGrid
+        protected Widget createEmptyContents ()
+        {
+            if (CProfile.getMemberId() != _name.getMemberId()) {
+                return super.createEmptyContents();
+            }
+            return createEmptyTable(CProfile.msgs.notInGroupsSelf(),
+                                    CProfile.msgs.notInGroupsJoin(), Page.GROUP, "");
         }
 
         // @Override // from PagedGrid

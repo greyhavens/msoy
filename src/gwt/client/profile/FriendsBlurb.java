@@ -40,13 +40,7 @@ public class FriendsBlurb extends Blurb
     {
         setHeader(CProfile.msgs.friendsTitle());
 
-        String empty = CProfile.getMemberId() == _name.getMemberId() ?
-            CProfile.msgs.noFriendsSelf() : CProfile.msgs.noFriendsOther();
-        ProfileGrid grid = new ProfileGrid(
-            FRIEND_ROWS, FRIEND_COLUMNS, ProfileGrid.NAV_ON_BOTTOM, empty);
-        grid.addStyleName("dottedGrid");
-        grid.setVerticalOrienation(true);
-        grid.setWidth("100%");
+        FriendsGrid grid = new FriendsGrid();
         grid.setModel(new SimpleDataModel(pdata.friends), 0);
 
         FlexTable footer = new FlexTable();
@@ -92,6 +86,26 @@ public class FriendsBlurb extends Blurb
         content.addStyleName("friendsBlurb");
         content.getFlexCellFormatter().setStyleName(0, 0, ""); // avoid double dottage
         setContent(content);
+    }
+
+    protected class FriendsGrid extends ProfileGrid
+    {
+        public FriendsGrid () {
+            super(FRIEND_ROWS, FRIEND_COLUMNS, NAV_ON_BOTTOM, CProfile.msgs.noFriendsOther());
+            addStyleName("dottedGrid");
+            setVerticalOrienation(true);
+            setWidth("100%");
+        }
+
+        // @Override // from PagedGrid
+        protected Widget createEmptyContents ()
+        {
+            if (CProfile.getMemberId() != _name.getMemberId()) {
+                return super.createEmptyContents();
+            }
+            return GroupsBlurb.createEmptyTable(CProfile.msgs.noFriendsSelf(),
+                                                CProfile.msgs.noFriendsFindEm(), Page.PROFILE, "");
+        }
     }
 
     protected static final int FRIEND_COLUMNS = 3;
