@@ -39,6 +39,7 @@ public class ChatChannelController
         _ctx = ctx;
         _channel = channel;
         _history = history;
+        _occList = new ChannelOccupantList();
 
         _departing = new ExpiringSet(3.0, handleDeparted);
     }
@@ -54,7 +55,7 @@ public class ChatChannelController
                 // report on the current occupants of the channel
                 var ident :Name = _ccobj.channel.ident;
                 for each (var chatter :VizMemberName in _ccobj.chatters.toArray()) {
-                    _ctx.getTopPanel().getChatOverlay().chatterJoined(ident, chatter);
+                    _occList.addChatter(chatter);
                 }
             }                 
         }
@@ -69,7 +70,7 @@ public class ChatChannelController
     {
         var overlay :ChatOverlay = _ctx.getTopPanel().getChatOverlay();
         if (overlay != null) {
-            overlay.setHistory(_history);
+            overlay.setHistory(_history, _occList);
         }
     }
 
@@ -106,7 +107,7 @@ public class ChatChannelController
                 return;
             }
 
-            _ctx.getTopPanel().getChatOverlay().chatterJoined(_ccobj.channel.ident, chatter);
+            _occList.addChatter(chatter);
         }
     }
 
@@ -160,7 +161,7 @@ public class ChatChannelController
 
     protected function handleDeparted (name :MemberName) :void
     {
-        _ctx.getTopPanel().getChatOverlay().chatterLeft(_ccobj.channel.ident, name);
+        _occList.removeChatter(name);
     }
 
     protected function redispatchMissedMessages () :void
@@ -208,5 +209,6 @@ public class ChatChannelController
 
     protected var _channel :ChatChannel;
     protected var _history :HistoryList;
+    protected var _occList :ChannelOccupantList;
 }
 }

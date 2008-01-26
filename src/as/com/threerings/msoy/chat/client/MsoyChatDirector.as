@@ -126,8 +126,6 @@ public class MsoyChatDirector extends ChatDirector
         }
         // filter out any transient (feedback, etc.) messages from this channel's chat history
         getHistory(channel).filterTransient();
-        // notify the overlay so it can clear its occupancy list
-        _wctx.getTopPanel().getChatOverlay().closedChannel(channel.ident);
     }
 
     /**

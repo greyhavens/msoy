@@ -148,7 +148,8 @@ public class ChatOverlay
     /**
      * Configures this chat overlay with its chat history list.
      */
-    public function setHistory (history :HistoryList) :void
+    public function setHistory (history :HistoryList, 
+        occupantList :ChannelOccupantList = null) :void
     {
         if (history == _history) {
             return;
@@ -156,13 +157,10 @@ public class ChatOverlay
 
         if (_occupantList != null) {
             removeOccupantList();
-            _occupantList = null;
         }
 
-        if (history.channelIdent != null) {
-            _occupantList = _occLists.get(history.channelIdent);
-            displayOccupantList();
-        }
+        _occupantList = occupantList;
+        displayOccupantList();
 
         if (_history != null) {
             _history.removeChatOverlay(this);
@@ -226,7 +224,7 @@ public class ChatOverlay
             clearGlyphs(_subtitles);
             clearGlyphs(_showingHistory);
             setHistoryEnabled(false);
-            setHistorySliding(false);
+            //setHistorySliding(false);
         }
 
         _target = target;
@@ -325,6 +323,9 @@ public class ChatOverlay
                 _target.removeChild(_historyBar);
             }
 
+            if (_targetBounds == null) {
+                _targetBounds = getDefaultTargetBounds();
+            }
             _ctx.getTopPanel().slideInChat(
                 _chatContainer = new ChatContainer(_historyBar, _staticOverlay), _targetBounds);
         } else { 
@@ -403,32 +404,6 @@ public class ChatOverlay
             _staticOverlay.removeChild(glyph);
         }
         glyph.wasRemoved();
-    }
-
-    public function closedChannel (channelIdent :Name) :void
-    {
-        var occList :ChannelOccupantList = _occLists.remove(channelIdent);
-        if (occList != null && occList == _occupantList && _target != null) {
-            _target.removeOverlay(_occupantList); 
-        }
-    }
-
-    public function chatterJoined (channelIdent :Name, chatter :VizMemberName) :void
-    {
-        var list :ChannelOccupantList = _occLists.get(channelIdent);
-        if (list == null) {
-            list = new ChannelOccupantList();
-            _occLists.put(channelIdent, list);
-        }
-        list.addChatter(chatter);
-    }
-
-    public function chatterLeft (channelIdent :Name, chatter :Name) :void
-    {
-        var list :ChannelOccupantList = _occLists.get(channelIdent);
-        if (list != null) {
-            list.removeChatter(chatter);
-        }
     }
 
     protected function removeOccupantList () :void
@@ -532,14 +507,19 @@ public class ChatOverlay
         }
     }
 
+    protected function getDefaultTargetBounds () :Rectangle
+    {
+        var height :int = _target.height * _subtitlePercentage;
+        return new Rectangle(0, 0, DEFAULT_WIDTH + ScrollBar.THICKNESS, height);
+    }
+
     /**
      * Layout.
      */
     protected function layout () :void
     {
         if (_targetBounds == null) {
-            var height :int = _target.height * _subtitlePercentage;
-            _targetBounds = new Rectangle(0, 0, DEFAULT_WIDTH + ScrollBar.THICKNESS, height);
+            _targetBounds = getDefaultTargetBounds();
         } 
         // make a guess as to the extent of the history (how many avg sized subtitles will fit in
         // the subtitle area
@@ -1448,7 +1428,6 @@ public class ChatOverlay
     /** The list that contains names and headshots of everyone current subscribed to the currently
      * shown channel */
     protected var _occupantList :ChannelOccupantList;
-    protected var _occLists :HashMap = new HashMap();
 
     /** The target container over which we're overlaying chat. */
     protected var _target :LayeredContainer;
