@@ -70,7 +70,7 @@ public class RemixPanel extends JPanel
             }
 
             public void requestFailed (Exception cause) {
-                // TODO
+                throw new RuntimeException(cause);
             }
         };
         _pack = new EditableDataPack(url, rl);
@@ -107,6 +107,8 @@ public class RemixPanel extends JPanel
                     changeEntry(fname, areData);
                 }
             });
+            hbox.add(but);
+            panel.add(hbox);
         }
     }
 
@@ -165,6 +167,7 @@ public class RemixPanel extends JPanel
     protected void updatePreview ()
     {
         _sender.sendBytes(_pack.toByteArray());
+        _remix.setEnabled(true);
     }
 
     /** The datapack we're editing. */

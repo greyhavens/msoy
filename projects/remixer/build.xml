@@ -68,6 +68,8 @@
       -injars dist/lib/commons-collections.jar(**/*.class)
       -injars dist/lib/commons-io.jar(**/*.class)
       -injars dist/lib/commons-digester.jar(**/*.class)
+      -injars dist/lib/commons-logging.jar(**/*.class)
+      -injars dist/lib/servlet-api.jar(**/*.class)
       -injars dist/lib/whirled-code.jar(com/whirled/DataPack*.class,
                                         com/whirled/remix/data/EditableDataPack*.class)
       -injars dist/remixer.jar(!META-INF/*)
@@ -78,7 +80,7 @@
       -printseeds dist/proguard.seeds
       -printmapping dist/proguard.map
 
-      -keep class com.threerings.msoy.item.remix.client.RemixApplet
+      -keep class * extends java.applet.Applet
     </proguard>
 
     <!-- then run retroweaver to make the code 1.4 compatible -->

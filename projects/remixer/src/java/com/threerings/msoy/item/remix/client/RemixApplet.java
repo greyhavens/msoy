@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 
 import javax.swing.JApplet;
 
+import com.samskivert.util.StringUtil;
+
 public class RemixApplet extends JApplet
 {
     @Override
@@ -14,7 +16,7 @@ public class RemixApplet extends JApplet
     {
         super.init();
 
-        String mediaURL = getParameter("media");
+        String mediaURL = StringUtil.decode(getParameter("media"));
         add(new RemixPanel(mediaURL, this), BorderLayout.CENTER);
     }
 

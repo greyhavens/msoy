@@ -28,13 +28,15 @@ public class Base64Sender
         Applet containingApplet, String targetName, String functionName,
         int maxChunkSize, int chunksPerSecond)
     {
-        JSObject win = JSObject.getWindow(containingApplet);
-        JSObject doc = (JSObject) win.getMember("document");
-        _target = (JSObject) doc.getMember(targetName);
-
-        if (_target == null) {
-            throw new IllegalArgumentException("Unable to find target: " + targetName);
-        }
+        _app = containingApplet;
+        _targetName = targetName;
+//        JSObject win = JSObject.getWindow(containingApplet);
+//        JSObject doc = (JSObject) win.getMember("document");
+//        _target = (JSObject) doc.getMember(targetName);
+//
+//        if (_target == null) {
+//            throw new IllegalArgumentException("Unable to find target: " + targetName);
+//        }
 
         _funcName = functionName;
         _maxChunkSize = maxChunkSize * 4 / 3; // convert pre-encoded byte chunk size to post-size
@@ -49,6 +51,12 @@ public class Base64Sender
 
     public void sendBytes (byte[] bytes)
     {
+        if (_target == null) {
+            JSObject win = JSObject.getWindow(_app);
+            JSObject doc = (JSObject) win.getMember("document");
+            _target = (JSObject) doc.getMember(_targetName);
+        }
+
         if (_bytes != null) {
             _interval.cancel();
             send(".reset");
@@ -101,4 +109,8 @@ public class Base64Sender
     protected int _chunksPerSecond;
 
     protected Interval _interval;
+
+
+    protected String _targetName;
+    protected Applet _app;
 }
