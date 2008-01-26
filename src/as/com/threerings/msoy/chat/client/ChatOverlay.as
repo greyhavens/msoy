@@ -55,6 +55,7 @@ import com.threerings.msoy.chat.data.TimedMessageDisplay;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
@@ -68,9 +69,10 @@ public class ChatOverlay
     public static const SCROLL_BAR_LEFT :int = 1;
     public static const SCROLL_BAR_RIGHT :int = 2;
 
-    public function ChatOverlay (msgMan :MessageManager, scrollBarSide :int = SCROLL_BAR_LEFT)
+    public function ChatOverlay (ctx :MsoyContext, scrollBarSide :int = SCROLL_BAR_LEFT)
     {
-        _msgMan = msgMan;
+        _ctx = ctx;
+        _msgMan = _ctx.getMessageManager();
 
         _scrollBarSide = scrollBarSide;
         _scrollOverlay = new Sprite();
@@ -153,17 +155,13 @@ public class ChatOverlay
         }
 
         if (_occupantList != null) {
-            if (_target != null) {
-                _target.removeOverlay(_occupantList);
-            }
+            removeOccupantList();
             _occupantList = null;
         }
 
         if (history.channelIdent != null) {
             _occupantList = _occLists.get(history.channelIdent);
-            if (_occupantList != null && _target != null) {
-                _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
-            }
+            displayOccupantList();
         }
 
         if (_history != null) {
@@ -218,9 +216,7 @@ public class ChatOverlay
             // removing from the old
             _target.removeOverlay(_scrollOverlay);
             _target.removeOverlay(_staticOverlay);
-            if (_occupantList != null) {
-                _target.removeOverlay(_occupantList);
-            }
+            removeOccupantList();
             _target.removeEventListener(ResizeEvent.RESIZE, handleContainerResize);
 
             // stop listening to our chat history
@@ -230,6 +226,7 @@ public class ChatOverlay
             clearGlyphs(_subtitles);
             clearGlyphs(_showingHistory);
             setHistoryEnabled(false);
+            setHistorySliding(false);
         }
 
         _target = target;
@@ -240,11 +237,7 @@ public class ChatOverlay
             _scrollOverlay.y = 0;
             _target.addOverlay(_scrollOverlay, PlaceBox.LAYER_CHAT_SCROLL);
 
-            if (_occupantList != null) {
-                _occupantList.x = 0;
-                _occupantList.y = 0;
-                _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
-            }
+            displayOccupantList();
 
             _staticOverlay.x = 0;
             _staticOverlay.y = 0;
@@ -258,6 +251,7 @@ public class ChatOverlay
             _targetBounds = targetBounds;
             layout();
             setHistoryEnabled(Prefs.getShowingChatHistory());
+            setHistorySliding(Prefs.getSlidingChatHistory());
         }
     }
 
@@ -304,7 +298,7 @@ public class ChatOverlay
             _target.removeEventListener(Event.ADDED_TO_STAGE, handleTargetAdded);
             _target.removeEventListener(Event.REMOVED_FROM_STAGE, handleTargetRemoved);
             handleTargetRemoved();
-            _target.removeChild(_historyBar);
+            _historyBar.parent.removeChild(_historyBar);
             _historyBar.removeEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
             _historyBar.removeEventListener(FlexEvent.UPDATE_COMPLETE, configureHistoryBarSize);
             _historyBar = null;
@@ -312,6 +306,43 @@ public class ChatOverlay
             clearGlyphs(_showingHistory);
 
             showCurrentSubtitles();
+        }
+    }
+
+    public function setHistorySliding (sliding :Boolean) :void
+    {
+        if (sliding == (_chatContainer != null)) {
+            return; // no change
+        }
+
+        if (sliding) {
+            if (_historyBar == null) {
+                setHistoryEnabled(true);
+            }
+
+            if (_target != null) {
+                _target.removeOverlay(_staticOverlay);
+                _target.removeChild(_historyBar);
+            }
+
+            _ctx.getTopPanel().slideInChat(
+                _chatContainer = new ChatContainer(_historyBar, _staticOverlay), _targetBounds);
+        } else { 
+            _ctx.getTopPanel().slideOutChat();
+
+            if (_target != null) {
+                _target.addOverlay(_staticOverlay, PlaceBox.LAYER_CHAT_STATIC);
+            }
+
+            _historyBar = null;
+            setHistoryEnabled(Prefs.getShowingChatHistory());
+
+            _chatContainer = null;
+        }
+            
+        if (_occupantList != null) {
+            removeOccupantList();
+            displayOccupantList();
         }
     }
 
@@ -400,6 +431,36 @@ public class ChatOverlay
         }
     }
 
+    protected function removeOccupantList () :void
+    {
+        if (_occupantList == null) {
+            return;
+        }
+            
+        if (_target != null && _target.containsOverlay(_occupantList)) {
+            _target.removeOverlay(_occupantList);
+        } else if (_chatContainer != null && _occupantList.parent == _chatContainer) {
+            _chatContainer.clearOccupantList();
+        } else if (_occupantList.parent != null) {
+            _occupantList.parent.removeChild(_occupantList);
+        }
+    }
+
+    protected function displayOccupantList () :void
+    {
+        if (_occupantList == null) {
+            return;
+        }
+
+        _occupantList.x = 0;
+        _occupantList.y = 0;
+        if (_chatContainer != null) {
+            _chatContainer.addOccupantList(_occupantList);
+        } else if (_target != null) {
+            _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
+        }
+    }
+
     protected function showCurrentSubtitles () :void
     {
         if (_target == null) {
@@ -449,6 +510,12 @@ public class ChatOverlay
         case Prefs.CHAT_HISTORY:
             if (_target != null) {
                 setHistoryEnabled(Boolean(event.value));
+            }
+            break;
+
+        case Prefs.CHAT_SLIDING:
+            if (_target != null) {
+                setHistorySliding(Boolean(event.value));
             }
             break;
 
@@ -1536,5 +1603,45 @@ public class ChatOverlay
 
     /** The normal alpha value for bubbles on the overlay. */
     protected static const ALPHA :Number = .8;
+
+    protected var _ctx :MsoyContext;
+
+    protected var _chatContainer :ChatContainer;
 }
+}
+
+import flash.display.Sprite;
+
+import mx.controls.scrollClasses.ScrollBar;
+
+import mx.core.UIComponent;
+
+import com.threerings.msoy.chat.client.ChannelOccupantList;
+
+class ChatContainer extends UIComponent
+{
+    public function ChatContainer (scrollBar :ScrollBar, chat :Sprite) 
+    {
+        addChild(scrollBar);
+        addChild(chat);
+    }
+
+    public function addOccupantList (occList :ChannelOccupantList) :void
+    {
+        if (_occList != null && _occList != occList) {
+            removeChild(_occList);
+        }
+
+        addChild(_occList = occList);
+    }
+
+    public function clearOccupantList () :void
+    {
+        if (_occList != null) {
+            removeChild(_occList);
+            _occList = null;
+        }
+    }
+
+    protected var _occList :ChannelOccupantList;
 }

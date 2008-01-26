@@ -9,6 +9,7 @@ import flash.media.SoundTransform;
 import flash.utils.Dictionary;
 
 import com.threerings.util.Config;
+import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
@@ -36,6 +37,7 @@ public class Prefs
     public static const CHAT_DECAY :String = "chatDecay";
     public static const CHAT_FILTER :String = "chatFilter";
     public static const CHAT_HISTORY :String = "chatHistory";
+    public static const CHAT_SLIDING :String = "chatSliding";
     public static const LOG_TO_CHAT :String = "logToChat";
     public static const BLEEPED_MEDIA :String = "bleepedMedia";
 
@@ -183,6 +185,19 @@ public class Prefs
         config.setValue(CHAT_HISTORY, showing);
     }
 
+    /** 
+     * Returns whether the chat history is slid to the side or not.
+     */
+    public static function getSlidingChatHistory () :Boolean
+    {
+        return (config.getValue(CHAT_SLIDING, false) as Boolean);
+    }
+
+    public static function setSlidingChatHistory (sliding :Boolean) :void
+    {
+        config.setValue(CHAT_SLIDING, sliding);
+    }
+
     public static function getLogToChat () :Boolean
     {
         return (config.getValue(LOG_TO_CHAT, false) as Boolean);
@@ -245,5 +260,7 @@ public class Prefs
     }
 
     staticInit();
+
+    private static const log :Log = Log.getLog(Prefs);
 }
 }

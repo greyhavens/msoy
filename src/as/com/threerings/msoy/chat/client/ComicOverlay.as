@@ -37,8 +37,7 @@ public class ComicOverlay extends ChatOverlay
      */
     public function ComicOverlay (ctx :MsoyContext)
     {
-        super(ctx.getMessageManager());
-        _ctx = ctx;
+        super(ctx);
     }
 
     /**
@@ -503,9 +502,6 @@ public class ComicOverlay extends ChatOverlay
     }
 
     private static const log :Log = Log.getLog(ComicOverlay);
-
-    /** Giver of life, context. */
-    protected var _ctx :MsoyContext;
 
     /** The provider of info about laying out bubbles. */ 
     protected var _provider :ChatInfoProvider;

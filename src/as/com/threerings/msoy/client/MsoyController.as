@@ -64,7 +64,10 @@ public class MsoyController extends Controller
     public static const TOGGLE_FULLSCREEN :String = "ToggleFullscreen";
 
     /** Command to issue to toggle the chat display. */
-    public static const TOGGLE_CHAT :String = "ToggleChat";
+    public static const TOGGLE_CHAT_HIDE :String = "ToggleChatHide";
+
+    /** Command to issue to toggle the chat display sliding to the side. */
+    public static const TOGGLE_CHAT_SLIDE :String = "ToggleChatSlide";
 
     /** Command to log us on. */
     public static const LOGON :String = "Logon";
@@ -215,11 +218,19 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handles the TOGGLE_CHAT command.
+     * Handles the TOGGLE_CHAT_HIDE command.
      */
-    public function handleToggleChat () :void
+    public function handleToggleChatHide () :void
     {
         Prefs.setShowingChatHistory(!Prefs.getShowingChatHistory());
+    }
+
+    /** 
+     * Handles the TOGGLE_CHAT_SLIDE command.
+     */
+    public function handleToggleChatSlide () :void
+    {
+        Prefs.setSlidingChatHistory(!Prefs.getSlidingChatHistory());
     }
 
     /**
@@ -379,7 +390,7 @@ public class MsoyController extends Controller
         switch (event.keyCode) {
         // TODO: not F7
         case Keyboard.F7:
-            handleToggleChat();
+            handleToggleChatHide();
             break;
         case Keyboard.LEFT:
             if (event.ctrlKey) {

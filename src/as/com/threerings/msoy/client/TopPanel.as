@@ -427,6 +427,30 @@ public class TopPanel extends Canvas
         return _minimized;
     }
 
+    public function slideInChat (chat :UIComponent, bounds :Rectangle) :void
+    {
+        _chatBounds = bounds;
+        if (_chat != null) {
+            // we already own the chat
+            return;
+        }
+
+        addChild(_chat = chat);
+        layoutPanels();
+    }
+
+    public function slideOutChat () :void
+    {
+        if (_chat == null) {
+            // we don't currently own the chat
+            return;
+        }
+
+        removeChild(_chat);
+        _chat = null;
+        layoutPanels();
+    }
+
     protected function stageResized (event :Event) :void
     {
         layoutPanels();
@@ -565,9 +589,17 @@ public class TopPanel extends Canvas
         bottom += ControlBar.HEIGHT;
         h -= ControlBar.HEIGHT;
 
+        var left :int = getLeftPanelWidth();
+        if (_chat != null) {
+            left += _chatBounds.width;
+            _chat.setStyle("top", top);
+            _chat.setStyle("bottom", bottom);
+            _chat.setStyle("left", getLeftPanelWidth());
+            _chat.setStyle("right", left);
+        }
         _placeBox.setStyle("top", top);
         _placeBox.setStyle("bottom", bottom);
-        _placeBox.setStyle("left", getLeftPanelWidth());
+        _placeBox.setStyle("left", left);
         _placeBox.setStyle("right", getRightPanelWidth());
         _placeBox.wasResized(w, h);
     }
@@ -611,6 +643,10 @@ public class TopPanel extends Canvas
     protected var _minimized :Boolean = false;
 
     protected var _activeOverlay :ChatOverlay;
+
+    /** When chat is operating in slide mode (non-overlay), we manage it here. */
+    protected var _chat :UIComponent;
+    protected var _chatBounds :Rectangle;
 
     protected static const MIN_FLASH_VERSION :int = 9;
     protected static const MIN_FLASH_REVISION :int = 28;

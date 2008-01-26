@@ -115,6 +115,11 @@ public class LayeredContainer extends Container
         }
     }
 
+    public function containsOverlay (overlay :DisplayObject) :Boolean
+    {
+        return _layers[overlay.name] != null;
+    }
+
     protected function wrap (object :DisplayObject) :DisplayObject
     {
         return (object is UIComponent) ? object : new FlexWrapper(object);

@@ -31,7 +31,7 @@ public class GameChatContainer extends LayeredContainer
         width = TopPanel.RIGHT_SIDEBAR_WIDTH;
         height = 500; // games are given 500 vertical pixels, so so are we.
 
-        _overlay = new ChatOverlay(_ctx.getMessageManager(), ChatOverlay.SCROLL_BAR_RIGHT);
+        _overlay = new ChatOverlay(_ctx, ChatOverlay.SCROLL_BAR_RIGHT);
         _overlay.setClickableGlyphs(true);
         _chatDtr.addChatDisplay(_overlay);
 

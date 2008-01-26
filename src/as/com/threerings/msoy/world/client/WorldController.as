@@ -165,10 +165,16 @@ public class WorldController extends MsoyController
     {
         var menuData :Array = [];
         if (!(_wctx.getTopPanel().getPlaceView() is MsoyGamePanel)) {
-            var toggleHideLabel :String = Prefs.getShowingChatHistory() ?
-                Msgs.GENERAL.get("m.hide_chat") : Msgs.GENERAL.get("m.show_chat");
-            var toggleHide :Object = { label: toggleHideLabel, command: TOGGLE_CHAT };
-            menuData.push(toggleHide);
+            if (!Prefs.getSlidingChatHistory()) {
+                var toggleHideLabel :String = Prefs.getShowingChatHistory() ?
+                    Msgs.GENERAL.get("m.hide_chat") : Msgs.GENERAL.get("m.show_chat");
+                var toggleHide :Object = { label: toggleHideLabel, command: TOGGLE_CHAT_HIDE };
+                menuData.push(toggleHide);
+            }
+            var toggleSlideLabel :String = Prefs.getSlidingChatHistory() ? 
+                Msgs.GENERAL.get("m.overlay_chat") : Msgs.GENERAL.get("m.slide_chat");
+            var toggleSlide :Object = { label: toggleSlideLabel, command: TOGGLE_CHAT_SLIDE };
+            menuData.push(toggleSlide);
             menuData.push({ type: "separator" });
         }
 
