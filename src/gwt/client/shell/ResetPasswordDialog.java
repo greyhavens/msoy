@@ -84,7 +84,7 @@ public class ResetPasswordDialog extends BorderedDialog
         contents.getFlexCellFormatter().setColSpan(row, 0, 2);
         contents.getFlexCellFormatter().setStyleName(row, 0, "Status");
         contents.setWidget(row++, 0, _status = new Label(""));
-        _status.setText(CShell.cmsgs.createMissingPassword());
+        _status.setText(CShell.cmsgs.resetMissingPassword());
 
         _footer.add(_submit = new Button(CShell.cmsgs.resetSubmit(), submit));
         _footer.add(new Button(CShell.cmsgs.dismiss(), new ClickListener() {

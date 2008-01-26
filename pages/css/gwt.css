@@ -190,6 +190,10 @@ img, embed, applet, object {
   padding-right: 3px;
 }
 
+.statusPanel a {
+  color: #AAB5B9;
+}
+
 /** Page styles */
 .pageHeader {
   width: 100%;
@@ -262,16 +266,16 @@ img, embed, applet, object {
 }
 
 .formDialog .Intro {
-  width: 400px;
+  width: 600px;
 }
 
 .formDialog .Tip {
   font-size: 12px;
-  width: 200px;
+  width: 300px;
 }
 
 .formDialog .Status {
-  width: 400px;
+  width: 600px;
 }
 
 .formDialog .Error {
@@ -822,7 +826,6 @@ img, embed, applet, object {
 .sendInvites .Pending, .sendInvitesResultsPopup .Email {
   font-size: 12px;
   text-align: center;
-  cursor: pointer;
 }
 
 .sendInvitesResultsPopup .ResultsHeader {
@@ -831,11 +834,6 @@ img, embed, applet, object {
   font-size: 22px;
   font-weight: bold;
   white-space: nowrap;
-}
-
-.invitation .Body {
-  font-size: 12px;
-  width: 400px;
 }
 
 .wrappedFrame {

@@ -28,6 +28,7 @@ public abstract class Page
     }
 
     // constants for our various pages
+    public static final String ACCOUNT = "account";
     public static final String ADMIN = "admin";
     public static final String CATALOG = "catalog";
     public static final String GAME = "game";

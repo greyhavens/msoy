@@ -90,6 +90,14 @@ public class StatusPanel extends FlexTable
     }
 
     /**
+     * Called when we've created a new account to start our session.
+     */
+    public void accountCreated (SessionData data)
+    {
+        didLogon(data);
+    }
+
+    /**
      * Clears out our credentials and displays the logon interface.
      */
     public void logoff ()
@@ -104,11 +112,7 @@ public class StatusPanel extends FlexTable
 
         setText(0, 0, "New to Whirled?");
         setHTML(0, 1, "&nbsp;");
-        setWidget(0, 2, MsoyUI.createActionLabel("Create an account!", new ClickListener() {
-            public void onClick (Widget sender) {
-                new CreateAccountDialog(StatusPanel.this, null).show();
-            }
-        }));
+        setWidget(0, 2, Application.createLink("Create an account!", Page.ACCOUNT, "create"));
     }
 
     /**

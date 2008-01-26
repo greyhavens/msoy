@@ -176,6 +176,15 @@ public class Application
             args.setToken(token.substring(dashidx+1));
         }
 
+        // TEMP: migrate old style invites to new style
+        if ("invite".equals(page) || "optout".equals(page)) {
+            token = Args.compose(page, args.get(0, ""));
+            args = new Args();
+            args.setToken(token);
+            page = "account";
+        }
+        // END TEMP
+
         if (!displayPopup(page, args)) {
             displayPage(page, args);
         }
@@ -253,10 +262,7 @@ public class Application
 
     protected boolean displayPopup (String ident, Args args)
     {
-        if ("invite".equals(ident)) {
-            InvitationDialog.display(_status, args.get(0, ""));
-
-        } else if ("optout".equals(ident)) {
+        if ("optout".equals(ident)) {
             OptOutDialog.display(args.get(0, ""));
 
         } else if ("resetpw".equals(ident)) {
@@ -323,6 +329,7 @@ public class Application
 
     protected void createMappings ()
     {
+        _creators.put(Page.ACCOUNT, client.account.index.getCreator());
         _creators.put(Page.ADMIN, client.admin.index.getCreator());
         _creators.put(Page.CATALOG, client.catalog.index.getCreator());
         _creators.put(Page.GAME, client.game.index.getCreator());

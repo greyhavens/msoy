@@ -92,6 +92,10 @@ public class index extends Page
                 // go to a specific member's home
                 WorldClient.displayFlash("memberHome=" + action.substring(1));
 
+            } else if (action.startsWith("h")) {
+                // go to our home; TODO: require login if we're not logged in
+                WorldClient.displayFlash("memberHome=" + CWorld.getMemberId());
+
             } else if (action.startsWith("c")) {
                 // join a group chat
                 WorldClient.displayFlash("groupChat=" + action.substring(1));

@@ -90,40 +90,68 @@ public class NaviPanel extends FlexTable
      */
     public void didLogon (final WebCreds creds)
     {
+        rebuildMenus(creds);
+    }
+
+    /**
+     * Called when the player logs off (or navigates to a page and is currently logged off).
+     */
+    public void didLogoff ()
+    {
+        _friends.clear();
+        _scenes.clear();
+        rebuildMenus(null);
+    }
+
+    protected void rebuildMenus (final WebCreds creds)
+    {
         int menuidx = 0;
-        ClickListener click = new MenuPopper() {
-            protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
-                addLink(menu, "My Home", Page.WORLD, "m" + creds.getMemberId());
-                addLink(menu, "My Discussions", Page.GROUP, "unread");
-                addLink(menu, "My Profile", Page.PROFILE, "" + creds.getMemberId());
-                addLink(menu, "My Mail", Page.MAIL, "");
-                menu.addItem("My Account", true, new Command() {
-                    public void execute () {
-                        CShell.usersvc.getAccountInfo(CShell.ident, new MsoyCallback() {
-                            public void onSuccess (Object result) {
-                                new EditAccountDialog((AccountInfo) result).show();
-                                clearPopup();
-                            }
-                        });
-                    }
-                });
-                menu.addItem("Logoff", true, new Command() {
-                    public void execute () {
-                        _status.logoff();
-                        clearPopup();
-                    }
-                });
-            }
-        };
-        setWidget(0, menuidx++, new NaviButton(
-                      CShell.cmsgs.menuMe(), _images.me(), _images.ome(), click));
+        ClickListener click;
+
+        if (creds == null) {
+            click = new ClickListener() {
+                public void onClick (Widget sender) {
+                    LogonPanel.toggleShowLogon(_status);
+                }
+            };
+            setWidget(0, menuidx++, new NaviButton(
+                          CShell.cmsgs.menuLogon(), _images.me(), _images.ome(), click));
+
+        } else {
+            click = new MenuPopper() {
+                protected void populateMenu (Widget sender, MenuBar menu) {
+                    addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
+                    addLink(menu, "My Home", Page.WORLD, "h");
+                    addLink(menu, "My Discussions", Page.GROUP, "unread");
+                    addLink(menu, "My Profile", Page.PROFILE, "" + creds.getMemberId());
+                    addLink(menu, "My Mail", Page.MAIL, "");
+                    menu.addItem("My Account", true, new Command() {
+                        public void execute () {
+                            CShell.usersvc.getAccountInfo(CShell.ident, new MsoyCallback() {
+                                public void onSuccess (Object result) {
+                                    new EditAccountDialog((AccountInfo) result).show();
+                                    clearPopup();
+                                }
+                            });
+                        }
+                    });
+                    menu.addItem("Logoff", true, new Command() {
+                        public void execute () {
+                            _status.logoff();
+                            clearPopup();
+                        }
+                    });
+                }
+            };
+            setWidget(0, menuidx++, new NaviButton(
+                          CShell.cmsgs.menuMe(), _images.me(), _images.ome(), click));
+        }
 
         click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "Whirledwide", Page.WHIRLED, "whirledwide");
                 addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
-                addLink(menu, "My Home", Page.WORLD, "m" + creds.getMemberId());
+                addLink(menu, "My Home", Page.WORLD, "h");
                 if (_scenes.size() > 0) {
                     MenuBar smenu = new MenuBar(true);
                     createMenu(smenu, _scenes, new ItemCreator() {
@@ -155,31 +183,19 @@ public class NaviPanel extends FlexTable
 
         click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                menu.addItem("Find People", true, new Command() {
-                    public void execute () {
-                        Application.go(Page.PROFILE, "search");
-                        clearPopup();
-                    }
-                });
-                MenuBar fmenu = new MenuBar(true);
-                createMenu(fmenu, _friends, new ItemCreator() {
-                    public void createItem (MenuBar menu, Object item) {
-                        MemberName name = (MemberName)item;
-                        addLink(menu, name.toString(), Page.PROFILE, "" + name.getMemberId());
-                    }
-                });
-                menu.addItem("Friends", fmenu);
+                addLink(menu, "Find People", Page.PROFILE, "search");
+                if (_friends.size() > 0) {
+                    MenuBar fmenu = new MenuBar(true);
+                    createMenu(fmenu, _friends, new ItemCreator() {
+                        public void createItem (MenuBar menu, Object item) {
+                            MemberName name = (MemberName)item;
+                            addLink(menu, name.toString(), Page.PROFILE, "" + name.getMemberId());
+                        }
+                    });
+                    menu.addItem("Friends", fmenu);
+                }
                 addLink(menu, "Groups", Page.GROUP, "");
-                menu.addItem("Invitations", true, new Command() {
-                    public void execute () {
-                        CShell.membersvc.getInvitationsStatus(CShell.ident, new MsoyCallback() {
-                            public void onSuccess (Object result) {
-                                new SendInvitesDialog((MemberInvites)result).show();
-                                clearPopup();
-                            }
-                        });
-                    }
-                });
+                addLink(menu, "Invitations", Page.ACCOUNT, "invites");
             }
         };
         setWidget(0, menuidx++, new NaviButton(
@@ -252,64 +268,6 @@ public class NaviPanel extends FlexTable
             }
             start = end;
         }
-    }
-
-    /**
-     * Called when the player logs off (or navigates to a page and is currently logged off).
-     */
-    public void didLogoff ()
-    {
-        int menuidx = 0;
-        ClickListener click = new ClickListener() {
-            public void onClick (Widget sender) {
-                LogonPanel.toggleShowLogon(_status);
-            }
-        };
-        setWidget(0, menuidx++, new NaviButton(
-                      CShell.cmsgs.menuLogon(), _images.me(), _images.ome(), click));
-
-        click = new MenuPopper() {
-            protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "Whirledwide", Page.WHIRLED, "whirledwide");
-            }
-        };
-        setWidget(0, menuidx++, new NaviButton(
-                      CShell.cmsgs.menuPlaces(), _images.places(), _images.oplaces(), click));
-
-        click = new MenuPopper() {
-            protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "Groups", Page.GROUP, "");
-            }
-        };
-        setWidget(0, menuidx++, new NaviButton(
-                      CShell.cmsgs.menuPeople(), _images.people(), _images.opeople(), click));
-
-        click = new MenuPopper() {
-            protected void populateMenu (Widget sender, MenuBar menu) {
-                for (int ii = 0; ii < Item.TYPES.length; ii++) {
-                    byte type = Item.TYPES[ii];
-                    addLink(menu, CShell.dmsgs.getString("pItemType" + type),
-                            Page.CATALOG, "" + type);
-                }
-            }
-        };
-        setWidget(0, menuidx++, new NaviButton(
-                      CShell.cmsgs.menuCatalog(), _images.catalog(), _images.ocatalog(), click));
-
-        click = new MenuPopper() {
-            protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "Tutorials", Page.WRAP, Args.compose("w", "Tutorials"));
-                addLink(menu, "Online Support", Page.WRAP, Args.compose("w", "Support"));
-                addURLInNewFrame(menu, "Whirled Wiki", "http://wiki.whirled.com/");
-                addLink(menu, "About Whirled", Page.WRAP, Args.compose("w", "About"));
-            }
-        };
-        setWidget(0, menuidx++, new NaviButton(
-                      CShell.cmsgs.menuHelp(), _images.help(), _images.ohelp(), click));
-
-        setText(0, menuidx++, ""); // clear the last menu
-        _friends.clear();
-        _scenes.clear();
     }
 
     protected void addLink (MenuBar menu, String text, final String page, final String args)
