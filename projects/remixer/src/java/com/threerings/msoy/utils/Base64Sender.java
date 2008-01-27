@@ -44,18 +44,25 @@ public class Base64Sender
 
         _interval = new Interval(RunQueue.AWT) {
             public void expired () {
-                doChunk();
+                if (!doChunk()) {
+                    cancel(); // this interval
+                }
             }
         };
     }
 
     public void sendBytes (byte[] bytes)
     {
-        if (_target == null) {
-            JSObject win = JSObject.getWindow(_app);
-            JSObject doc = (JSObject) win.getMember("document");
-            _target = (JSObject) doc.getMember(_targetName);
-        }
+//        if (_target == null) {
+//            JSObject win = JSObject.getWindow(_app);
+//            _target = (JSObject) win.getMember(_targetName);
+//            if (_target == null) {
+//                System.err.println("Trying to get target from document....");
+//                JSObject doc = (JSObject) win.getMember("document");
+//                _target = (JSObject) doc.getMember(_targetName);
+//            }
+//            System.err.println("Got js _target: " + _target);
+//        }
 
         if (_bytes != null) {
             _interval.cancel();
@@ -65,7 +72,7 @@ public class Base64Sender
         _bytes = Base64.encodeBase64(bytes);
         _position = 0;
         if (doChunk()) {
-            _interval.schedule(1000 / _chunksPerSecond);
+            _interval.schedule(1000 / _chunksPerSecond, true);
         }
     }
 
@@ -76,24 +83,43 @@ public class Base64Sender
     {
         int length = Math.min(_bytes.length - _position, _maxChunkSize);
         if (length > 0) {
-            send(new String(_bytes, _position, length));
-            _position += length;
+            if (send(new String(_bytes, _position, length))) {
+                _position += length;
+
+            } else {
+                // we did not succeed in sending this chunk..
+                System.err.println("Did not send. Waiting...");
+            }
         }
 
         if (_position == _bytes.length) {
             // we're done sending
             _bytes = null;
             send(null);
-            _interval.cancel();
             return false;
         }
 
         return true; // more to send
     }
 
-    protected void send (String s)
+    protected boolean send (String s)
     {
-        _target.call(_funcName, new Object[] { s });
+        JSObject win = JSObject.getWindow(_app);
+        Object resultValue = win.call("setMediaBytes", new Object[] { s });
+        // resultValue may be null or a Boolean
+//        boolean result = Boolean.TRUE.equals(resultValue);
+        boolean result = true; // TODO: FIXME!
+        if (result) {
+            if (s == null) {
+                System.err.println("Sent a null.");
+            } else {
+                System.err.println("Sent a String (" + s.length() + ")");
+            }
+        }
+
+//        _target.call(_funcName, new Object[] { s });
+
+        return result;
     }
 
     protected int _position;

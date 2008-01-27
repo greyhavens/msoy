@@ -81,6 +81,8 @@ public class RemixPanel extends JPanel
      */
     protected void packAvailable ()
     {
+        updatePreview();
+
         JPanel panel = GroupLayout.makeVBox();
 
         addFields(panel, _pack.getDataFields(), true);
@@ -130,6 +132,7 @@ public class RemixPanel extends JPanel
     {
         JPanel pan = setupEdit(entry);
 
+        final JDialog dialog = new JDialog();
         final DataPack.DataType type = (DataPack.DataType) entry.getType();
         final JTextField field = new JTextField(type.formatValue(entry.value));
         pan.add(field);
@@ -142,12 +145,13 @@ public class RemixPanel extends JPanel
                     entry.value = newValue;
                     updatePreview();
                 }
+                dialog.dispose();
             }
         });
         pan.add(button);
 
-        JDialog dialog = new JDialog();
         dialog.add(pan, BorderLayout.CENTER);
+        dialog.pack();
         dialog.setVisible(true);
     }
 
@@ -166,6 +170,7 @@ public class RemixPanel extends JPanel
 
     protected void updatePreview ()
     {
+        System.err.println("Now updating preview..");
         _sender.sendBytes(_pack.toByteArray());
         _remix.setEnabled(true);
     }
