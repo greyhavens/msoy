@@ -75,14 +75,15 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         // load it!
         willShowNewMedia();
         startedLoading();
-        initLoader();
-        checkPackComplete(); // in here the bytes will be extracted
-        didShowNewMedia();
+        setupSwfOrImage(_url);
+//        initLoader();
+//        checkPackComplete(); // in here the bytes will be extracted
+//        didShowNewMedia();
     }
 
     override protected function setupSwfOrImage (url :String) :void
     {
-        var isZip :Boolean = isZipUrl(url);
+        var isZip :Boolean = url != null && isZipUrl(url);
         // if it's a zip, always start loading it in the background...
         if (isZip) {
             _packLoader = new URLLoader();
@@ -130,6 +131,10 @@ public class DataPackMediaContainer extends MsoyMediaContainer
      */
     protected function shouldUseStub (url :String) :Boolean
     {
+        if (url == null) {
+            return true;
+        }
+
         // we use the stub only on non-file non-images
         return !((url == null) || isImage(url) || isFileUrl(url));
     }
@@ -141,7 +146,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
     {
         var info :LoaderInfo = (event.target as LoaderInfo);
 
-        if (isZipUrl(_url)) {
+        if (_url == null || isZipUrl(_url)) {
             checkPackComplete();
             return;
         }
