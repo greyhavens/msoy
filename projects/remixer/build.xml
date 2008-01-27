@@ -82,9 +82,8 @@
 
       -keep class * extends java.applet.Applet
       -keep class org.apache.commons.logging.impl.LogFactoryImpl
-      -keep class org.apache.commons.logging.impl.Jdk14Logger {
-        *;
-      }
+      -keep class org.apache.commons.logging.impl.Jdk14Logger { *; }
+      -keep class com.whirled.DataPack* { *; }
     </proguard>
 
     <!-- then run retroweaver to make the code 1.4 compatible -->
