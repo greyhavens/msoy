@@ -22,7 +22,7 @@ public class Base64Sender
         _funcName = externalFunctionName;
         _maxChunkSize = maxChunkSize;
         _timer = new Timer(1); // fire every frame
-        _timer.addEventListener(TimerEvent.TIMER, doChunk);
+        _timer.addEventListener(TimerEvent.TIMER, handleTimerEvent);
     }
 
     /**
