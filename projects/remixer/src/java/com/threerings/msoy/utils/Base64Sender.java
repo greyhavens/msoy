@@ -28,15 +28,9 @@ public class Base64Sender
         Applet containingApplet, String targetName, String functionName,
         int maxChunkSize, int chunksPerSecond)
     {
-        _app = containingApplet;
+        JSObject win = JSObject.getWindow(containingApplet);
+        _doc = (JSObject) win.getMember("document");
         _targetName = targetName;
-//        JSObject win = JSObject.getWindow(containingApplet);
-//        JSObject doc = (JSObject) win.getMember("document");
-//        _target = (JSObject) doc.getMember(targetName);
-//
-//        if (_target == null) {
-//            throw new IllegalArgumentException("Unable to find target: " + targetName);
-//        }
 
         _funcName = functionName;
         _maxChunkSize = maxChunkSize * 4 / 3; // convert pre-encoded byte chunk size to post-size
@@ -53,17 +47,6 @@ public class Base64Sender
 
     public void sendBytes (byte[] bytes)
     {
-//        if (_target == null) {
-//            JSObject win = JSObject.getWindow(_app);
-//            _target = (JSObject) win.getMember(_targetName);
-//            if (_target == null) {
-//                System.err.println("Trying to get target from document....");
-//                JSObject doc = (JSObject) win.getMember("document");
-//                _target = (JSObject) doc.getMember(_targetName);
-//            }
-//            System.err.println("Got js _target: " + _target);
-//        }
-
         if (_bytes != null) {
             _interval.cancel();
             send(".reset");
@@ -104,20 +87,21 @@ public class Base64Sender
 
     protected boolean send (String s)
     {
-        JSObject win = JSObject.getWindow(_app);
-        Object resultValue = win.call("setMediaBytes", new Object[] { s });
-        // resultValue may be null or a Boolean
-//        boolean result = Boolean.TRUE.equals(resultValue);
-        boolean result = true; // TODO: FIXME!
-        if (result) {
-            if (s == null) {
-                System.err.println("Sent a null.");
-            } else {
-                System.err.println("Sent a String (" + s.length() + ")");
-            }
+        JSObject target = (JSObject) _doc.eval("getElementById('" + _targetName + "');");
+        if (target == null) {
+//            System.err.println("Can't find target.");
+            return false;
         }
 
-//        _target.call(_funcName, new Object[] { s });
+        Object resultValue = target.call("setMediaBytes", new Object[] { s });
+        boolean result = Boolean.TRUE.equals(resultValue);
+//        if (result) {
+//            if (s == null) {
+//                System.err.println("Sent a null.");
+//            } else {
+//                System.err.println("Sent a String (" + s.length() + ")");
+//            }
+//        }
 
         return result;
     }
@@ -126,9 +110,9 @@ public class Base64Sender
 
     protected byte[] _bytes;
 
-    protected String _funcName;
+    protected String _targetName;
 
-    protected JSObject _target;
+    protected String _funcName;
 
     protected int _maxChunkSize;
 
@@ -136,7 +120,5 @@ public class Base64Sender
 
     protected Interval _interval;
 
-
-    protected String _targetName;
-    protected Applet _app;
+    protected JSObject _doc;
 }
