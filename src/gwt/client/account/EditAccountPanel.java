@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shell;
+package client.account;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
@@ -22,133 +22,143 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.AccountInfo;
 
-import client.util.BorderedDialog;
+import client.shell.Frame;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
 /**
  * Displays account information, allows twiddling.
  */
-public class EditAccountDialog extends BorderedDialog
+public class EditAccountPanel extends FlexTable
 {
-    public EditAccountDialog (AccountInfo accountInfo)
+    public EditAccountPanel ()
     {
-        _header.add(createTitleLabel(CShell.cmsgs.editTitle(), null));
+        setCellSpacing(10);
+        setStyleName("editAccount");
 
+        Frame.setTitle(CAccount.msgs.accountTitle(), CAccount.msgs.editSubtitle());
+
+        CAccount.usersvc.getAccountInfo(CAccount.ident, new MsoyCallback() {
+            public void onSuccess (Object result) {
+                init((AccountInfo)result);
+            }
+        });
+    }
+
+    protected void init (AccountInfo accountInfo)
+    {
         _accountInfo = accountInfo;
-        FlexTable contents = (FlexTable)_contents;
-        contents.setCellSpacing(10);
-        contents.setStyleName("editAccount");
 
         int row = 0;
 
         // configure or display permaname interface
-        if (CShell.creds.permaName == null) {
-            contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
-            contents.getFlexCellFormatter().setColSpan(row, 0, 3);
-            contents.setText(row++, 0, CShell.cmsgs.editPickPermaNameHeader());
+        if (CAccount.creds.permaName == null) {
+            getFlexCellFormatter().setStyleName(row, 0, "Header");
+            getFlexCellFormatter().setColSpan(row, 0, 3);
+            setText(row++, 0, CAccount.msgs.editPickPermaNameHeader());
 
-            contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-            contents.setText(row, 0, CShell.cmsgs.editPermaName());
-            contents.setWidget(row, 1, _pname = new TextBox());
+            getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+            setText(row, 0, CAccount.msgs.editPermaName());
+            setWidget(row, 1, _pname = new TextBox());
             _pname.addKeyboardListener(_valpname);
-            _uppname = new Button(CShell.cmsgs.submit(), new ClickListener() {
+            _uppname = new Button(CAccount.cmsgs.submit(), new ClickListener() {
                 public void onClick (Widget widget) {
                     configurePermaName();
                 }
             });
             _uppname.setEnabled(false);
-            contents.setWidget(_permaRow = row++, 2, _uppname);
+            setWidget(_permaRow = row++, 2, _uppname);
 
-            contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
-            contents.getFlexCellFormatter().setColSpan(row, 0, 3);
-            contents.setHTML(row++, 0, CShell.cmsgs.editPermaNameTip());
+            getFlexCellFormatter().setStyleName(row, 0, "Tip");
+            getFlexCellFormatter().setColSpan(row, 0, 3);
+            setHTML(row++, 0, CAccount.msgs.editPermaNameTip());
 
         } else {
-            contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-            contents.setText(row, 0, CShell.cmsgs.editPermaName());
-            contents.getFlexCellFormatter().setStyleName(row, 1, "PermaName");
-            contents.setText(row++, 1, CShell.creds.permaName);
+            getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+            setText(row, 0, CAccount.msgs.editPermaName());
+            getFlexCellFormatter().setStyleName(row, 1, "PermaName");
+            setText(row++, 1, CAccount.creds.permaName);
         }
 
-        // configure real name interface
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
-        contents.getFlexCellFormatter().setColSpan(row, 0, 3);
-        contents.setText(row++, 0, CShell.cmsgs.editRealNameHeader());
-        
-        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.editRealName());
-        contents.setWidget(row, 1, _rname = new TextBox());
-        _rname.setText(_accountInfo.realName);
-        _rname.addKeyboardListener(_valrname);
-        _uprname = new Button(CShell.cmsgs.update(), new ClickListener() {
-            public void onClick (Widget widget) {
-                updateRealName();
-            }
-        });
-        _uprname.setEnabled(false);
-        contents.setWidget(row++, 2, _uprname);
-
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
-        contents.getFlexCellFormatter().setColSpan(row, 0, 3);
-        contents.setHTML(row++, 0, CShell.cmsgs.editRealNameTip());
-
         // configure email address interface
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
-        contents.getFlexCellFormatter().setColSpan(row, 0, 3);
-        contents.setText(row++, 0, CShell.cmsgs.editEmailHeader());
+        getFlexCellFormatter().setStyleName(row, 0, "Header");
+        getFlexCellFormatter().setColSpan(row, 0, 3);
+        setText(row++, 0, CAccount.msgs.editEmailHeader());
 
-        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.editEmail());
-        contents.setWidget(row, 1, _email = new TextBox());
-        _email.setText(CShell.creds.accountName);
+        getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        setText(row, 0, CAccount.msgs.editEmail());
+        setWidget(row, 1, _email = new TextBox());
+        _email.setText(CAccount.creds.accountName);
         _email.addKeyboardListener(_valemail);
-        _upemail = new Button(CShell.cmsgs.update(), new ClickListener() {
+        _upemail = new Button(CAccount.cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updateEmail();
             }
         });
         _upemail.setEnabled(false);
-        contents.setWidget(row++, 2, _upemail);
+        setWidget(row++, 2, _upemail);
 
         // configure email preferences interface
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
-        contents.getFlexCellFormatter().setColSpan(row, 0, 3);
-        contents.setText(row++, 0, CShell.cmsgs.editEPrefsHeader());
+        getFlexCellFormatter().setStyleName(row, 0, "Header");
+        getFlexCellFormatter().setColSpan(row, 0, 3);
+        setText(row++, 0, CAccount.msgs.editEPrefsHeader());
 
-        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.editWhirledMailEmail());
+        getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        setText(row, 0, CAccount.msgs.editWhirledMailEmail());
         RowPanel bits = new RowPanel();
         bits.add(_whirledEmail = new CheckBox());
-        bits.add(MsoyUI.createLabel(CShell.cmsgs.editWhirledMailEmailTip(), "tipLabel"));
-        contents.getFlexCellFormatter().setColSpan(row, 1, 2);
-        contents.setWidget(row++, 1, bits);
+        bits.add(MsoyUI.createLabel(CAccount.msgs.editWhirledMailEmailTip(), "tipLabel"));
+        getFlexCellFormatter().setColSpan(row, 1, 2);
+        setWidget(row++, 1, bits);
         _whirledEmail.setChecked(_accountInfo.emailWhirledMail);
 
-        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.editAnnounceEmail());
+        getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        setText(row, 0, CAccount.msgs.editAnnounceEmail());
         bits = new RowPanel();
         bits.add(_announceEmail = new CheckBox());
-        bits.add(MsoyUI.createLabel(CShell.cmsgs.editAnnounceEmailTip(), "tipLabel"));
-        contents.getFlexCellFormatter().setColSpan(row, 1, 2);
-        contents.setWidget(row++, 1, bits);
+        bits.add(MsoyUI.createLabel(CAccount.msgs.editAnnounceEmailTip(), "tipLabel"));
+        getFlexCellFormatter().setColSpan(row, 1, 2);
+        setWidget(row++, 1, bits);
         _announceEmail.setChecked(_accountInfo.emailAnnouncements);
 
-        _upeprefs = new Button(CShell.cmsgs.update(), new ClickListener() {
+        _upeprefs = new Button(CAccount.cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updateEmailPrefs();
             }
         });
-        contents.setWidget(row++, 2, _upeprefs);
+        setWidget(row++, 2, _upeprefs);
+
+        // configure real name interface
+        getFlexCellFormatter().setStyleName(row, 0, "Header");
+        getFlexCellFormatter().setColSpan(row, 0, 3);
+        setText(row++, 0, CAccount.msgs.editRealNameHeader());
+        
+        getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        setText(row, 0, CAccount.msgs.editRealName());
+        setWidget(row, 1, _rname = new TextBox());
+        _rname.setText(_accountInfo.realName);
+        _rname.addKeyboardListener(_valrname);
+        _uprname = new Button(CAccount.cmsgs.update(), new ClickListener() {
+            public void onClick (Widget widget) {
+                updateRealName();
+            }
+        });
+        _uprname.setEnabled(false);
+        setWidget(row++, 2, _uprname);
+
+        getFlexCellFormatter().setStyleName(row, 0, "Tip");
+        getFlexCellFormatter().setColSpan(row, 0, 3);
+        setHTML(row++, 0, CAccount.msgs.editRealNameTip());
 
         // configure password interface
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
-        contents.getFlexCellFormatter().setColSpan(row, 0, 3);
-        contents.setText(row++, 0, CShell.cmsgs.editPasswordHeader());
+        getFlexCellFormatter().setStyleName(row, 0, "Header");
+        getFlexCellFormatter().setColSpan(row, 0, 3);
+        setText(row++, 0, CAccount.msgs.editPasswordHeader());
 
-        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.editPassword());
-        contents.setWidget(row++, 1, _password = new PasswordTextBox());
+        getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        setText(row, 0, CAccount.msgs.editPassword());
+        setWidget(row++, 1, _password = new PasswordTextBox());
         _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 _confirm.setFocus(true);
@@ -156,27 +166,21 @@ public class EditAccountDialog extends BorderedDialog
         }));
         _password.addKeyboardListener(_valpass);
 
-        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.editConfirm());
-        contents.setWidget(row, 1, _confirm = new PasswordTextBox());
+        getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        setText(row, 0, CAccount.msgs.editConfirm());
+        setWidget(row, 1, _confirm = new PasswordTextBox());
         _confirm.addKeyboardListener(_valpass);
-        _uppass = new Button(CShell.cmsgs.update(), new ClickListener() {
+        _uppass = new Button(CAccount.cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updatePassword();
             }
         });
-        contents.setWidget(row++, 2, _uppass);
+        setWidget(row++, 2, _uppass);
         _uppass.setEnabled(false);
 
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Status");
-        contents.getFlexCellFormatter().setColSpan(row, 0, 3);
-        contents.setWidget(row++, 0, _status = new Label(CShell.cmsgs.editTip()));
-
-        _footer.add(new Button(CShell.cmsgs.dismiss(), new ClickListener() {
-            public void onClick (Widget widget) {
-                hide();
-            }
-        }));
+        getFlexCellFormatter().setStyleName(row, 0, "Status");
+        getFlexCellFormatter().setColSpan(row, 0, 3);
+        setWidget(row++, 0, _status = new Label(CAccount.msgs.editTip()));
     }
 
     protected void updateRealName ()
@@ -185,17 +189,17 @@ public class EditAccountDialog extends BorderedDialog
         _accountInfo.realName = _rname.getText().trim();
         _uprname.setEnabled(false);
         _rname.setEnabled(false);
-        CShell.usersvc.updateAccountInfo(CShell.ident, _accountInfo, new AsyncCallback() {
+        CAccount.usersvc.updateAccountInfo(CAccount.ident, _accountInfo, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _rname.setEnabled(true);
                 _uprname.setEnabled(false);
-                setStatus(CShell.cmsgs.realNameUpdated());
+                setStatus(CAccount.msgs.realNameUpdated());
             }
             public void onFailure (Throwable cause) {
                 _rname.setText(_accountInfo.realName = oldRealName);
                 _rname.setEnabled(true);
                 _uprname.setEnabled(true);
-                setError(CShell.serverError(cause));
+                setError(CAccount.serverError(cause));
             }
         });
     }
@@ -204,14 +208,14 @@ public class EditAccountDialog extends BorderedDialog
     {
         final String email = _email.getText().trim();
         _upemail.setEnabled(false);
-        CShell.usersvc.updateEmail(CShell.ident, email, new AsyncCallback() {
+        CAccount.usersvc.updateEmail(CAccount.ident, email, new AsyncCallback() {
             public void onSuccess (Object result) {
-                CShell.creds.accountName = email;
-                setStatus(CShell.cmsgs.emailUpdated());
+                CAccount.creds.accountName = email;
+                setStatus(CAccount.msgs.emailUpdated());
             }
             public void onFailure (Throwable cause) {
                 _upemail.setEnabled(true);
-                setError(CShell.serverError(cause));
+                setError(CAccount.serverError(cause));
             }
         });
     }
@@ -219,38 +223,38 @@ public class EditAccountDialog extends BorderedDialog
     protected void updateEmailPrefs ()
     {
         _upeprefs.setEnabled(false);
-        CShell.usersvc.updateEmailPrefs(CShell.ident, _whirledEmail.isChecked(),
+        CAccount.usersvc.updateEmailPrefs(CAccount.ident, _whirledEmail.isChecked(),
                                         _announceEmail.isChecked(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 _upeprefs.setEnabled(true);
-                setStatus(CShell.cmsgs.eprefsUpdated());
+                setStatus(CAccount.msgs.eprefsUpdated());
             }
             public void onFailure (Throwable cause) {
                 _upeprefs.setEnabled(true);
-                setError(CShell.serverError(cause));
+                setError(CAccount.serverError(cause));
             }
         });
     }
 
     protected void updatePassword ()
     {
-        final String password = CShell.md5hex(_password.getText().trim());
+        final String password = CAccount.md5hex(_password.getText().trim());
         _uppass.setEnabled(false);
         _password.setEnabled(false);
         _confirm.setEnabled(false);
-        CShell.usersvc.updatePassword(CShell.ident, password, new AsyncCallback() {
+        CAccount.usersvc.updatePassword(CAccount.ident, password, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _password.setText("");
                 _password.setEnabled(true);
                 _confirm.setText("");
                 _confirm.setEnabled(true);
-                setStatus(CShell.cmsgs.passwordUpdated());
+                setStatus(CAccount.msgs.passwordUpdated());
             }
             public void onFailure (Throwable cause) {
                 _password.setEnabled(true);
                 _confirm.setEnabled(true);
                 _uppass.setEnabled(true);
-                setError(CShell.serverError(cause));
+                setError(CAccount.serverError(cause));
             }
         });
     }
@@ -260,20 +264,19 @@ public class EditAccountDialog extends BorderedDialog
         final String pname = _pname.getText().trim();
         _uppname.setEnabled(false);
         _pname.setEnabled(false);
-        CShell.usersvc.configurePermaName(CShell.ident, pname, new AsyncCallback() {
+        CAccount.usersvc.configurePermaName(CAccount.ident, pname, new AsyncCallback() {
             public void onSuccess (Object result) {
-                CShell.creds.permaName = pname;
-                FlexTable contents = (FlexTable)_contents;
-                contents.getFlexCellFormatter().setStyleName(_permaRow, 1, "PermaName");
-                contents.setText(_permaRow, 1, pname);
-                contents.setText(_permaRow, 2, "");
-                contents.setText(_permaRow+1, 0, "");
-                setStatus(CShell.cmsgs.permaNameConfigured());
+                CAccount.creds.permaName = pname;
+                getFlexCellFormatter().setStyleName(_permaRow, 1, "PermaName");
+                setText(_permaRow, 1, pname);
+                setText(_permaRow, 2, "");
+                setText(_permaRow+1, 0, "");
+                setStatus(CAccount.msgs.permaNameConfigured());
             }
             public void onFailure (Throwable cause) {
                 _pname.setEnabled(true);
                 _uppname.setEnabled(true);
-                setError(CShell.serverError(cause));
+                setError(CAccount.serverError(cause));
             }
         });
     }
@@ -283,7 +286,7 @@ public class EditAccountDialog extends BorderedDialog
         String realName = _rname.getText().trim();
         boolean valid = false;
         if (!_accountInfo.realName.equals(realName)) {
-            setStatus(CShell.cmsgs.editNameReady());
+            setStatus(CAccount.msgs.editNameReady());
             valid = true;
         } else {
             setStatus("");
@@ -296,10 +299,10 @@ public class EditAccountDialog extends BorderedDialog
         String email = _email.getText().trim();
         boolean valid = false;
         if (email.length() < 4 || email.indexOf("@") == -1 ||
-            email.equals(CShell.creds.accountName)) {
+            email.equals(CAccount.creds.accountName)) {
             setStatus("");
         } else {
-            setStatus(CShell.cmsgs.editEmailReady());
+            setStatus(CAccount.msgs.editEmailReady());
             valid = true;
         }
         _upemail.setEnabled(valid);
@@ -310,11 +313,11 @@ public class EditAccountDialog extends BorderedDialog
         boolean valid = false;
         String password = _password.getText().trim(), confirm = _confirm.getText().trim();
         if (confirm.length() == 0) {
-            setError(CShell.cmsgs.editMissingConfirm());
+            setError(CAccount.msgs.editMissingConfirm());
         } else if (!password.equals(confirm)) {
-            setError(CShell.cmsgs.editPasswordMismatch());
+            setError(CAccount.msgs.editPasswordMismatch());
         } else {
-            setStatus(CShell.cmsgs.editPasswordReady());
+            setStatus(CAccount.msgs.editPasswordReady());
             valid = true;
         }
         _uppass.setEnabled(valid);
@@ -327,7 +330,7 @@ public class EditAccountDialog extends BorderedDialog
             char c = pname.charAt(ii);
             if ((ii == 0 && !Character.isLetter(c)) ||
                 (!Character.isLetter(c) && !Character.isDigit(c) && c != '_')) {
-                setError(CShell.cmsgs.editPermaInvalid());
+                setError(CAccount.msgs.editPermaInvalid());
                 _uppname.setEnabled(false);
                 return;
             }
@@ -337,20 +340,14 @@ public class EditAccountDialog extends BorderedDialog
         if (pname.length() == 0) {
             setStatus("");
         } else if (pname.length() < MemberName.MINIMUM_PERMANAME_LENGTH) {
-            setError(CShell.cmsgs.editPermaShort());
+            setError(CAccount.msgs.editPermaShort());
         } else if (pname.length() > MemberName.MAXIMUM_PERMANAME_LENGTH) {
-            setError(CShell.cmsgs.editPermaLong());
+            setError(CAccount.msgs.editPermaLong());
         } else {
-            setStatus(CShell.cmsgs.editPermaReady());
+            setStatus(CAccount.msgs.editPermaReady());
             valid = true;
         }
         _uppname.setEnabled(valid);
-    }
-
-    // @Override // from BorderedDialog
-    protected Widget createContents ()
-    {
-        return new FlexTable();
     }
 
     protected void setError (String text) 

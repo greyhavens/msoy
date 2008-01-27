@@ -39,6 +39,9 @@ public class index extends Page
         } else if (args.get(0, "").equals("create")) {
             showCreateAccount(null);
 
+        } else if (args.get(0, "").equals("edit")) {
+            setContent(new EditAccountPanel());
+
         } else if (CAccount.ident == null) {
             setContent(MsoyUI.createLabel(CAccount.msgs.indexLogon(), "infoLabel"));
 

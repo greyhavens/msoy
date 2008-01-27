@@ -125,16 +125,7 @@ public class NaviPanel extends FlexTable
                     addLink(menu, "My Discussions", Page.GROUP, "unread");
                     addLink(menu, "My Profile", Page.PROFILE, "" + creds.getMemberId());
                     addLink(menu, "My Mail", Page.MAIL, "");
-                    menu.addItem("My Account", true, new Command() {
-                        public void execute () {
-                            CShell.usersvc.getAccountInfo(CShell.ident, new MsoyCallback() {
-                                public void onSuccess (Object result) {
-                                    new EditAccountDialog((AccountInfo) result).show();
-                                    clearPopup();
-                                }
-                            });
-                        }
-                    });
+                    addLink(menu, "My Account", Page.ACCOUNT, "edit");
                     menu.addItem("Logoff", true, new Command() {
                         public void execute () {
                             _status.logoff();
