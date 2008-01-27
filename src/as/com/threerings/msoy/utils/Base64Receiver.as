@@ -30,7 +30,7 @@ public class Base64Receiver
     /**
      * This method is exposed to javascript.
      */
-    protected function receiveBytes (base64Encoded :String) :void
+    protected function receiveBytes (base64Encoded :String) :Boolean
     {
         // a null indicates that sending is done
         if (base64Encoded == null) {
@@ -54,6 +54,8 @@ public class Base64Receiver
             }
             _decoder.decode(base64Encoded);
         }
+
+        return true; // indicate to the receiver that we got the bytes
     }
 
     /** The function to call when we have a result. */

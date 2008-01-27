@@ -41,39 +41,50 @@ public class Base64Sender
 
         _bytes = bytes;
         _position = 0;
-        doChunk();
+        if (doChunk()) {
+            _timer.start();
+        }
     }
 
-    protected function doChunk (... ignored) :void
+    protected function handleTimerEvent (event :TimerEvent) :void
+    {
+        if (!doChunk()) {
+            _timer.reset();
+        }
+    }
+
+    protected function doChunk () :Boolean
     {
         var length :int = Math.min(_bytes.length - _position, _maxChunkSize);
         if (length > 0) {
             var encoder :Base64Encoder = new Base64Encoder();
             encoder.insertNewLines = false;
             encoder.encodeBytes(_bytes, _position, length);
-            send(encoder.toString());
-            _position += length;
+            if (send(encoder.toString())) {
+                _position += length;
+            } else {
+                trace("Could not send. Waiting...");
+            }
         }
 
         if (_position == _bytes.length) {
             // we're done sending
             _bytes = null;
             send(null);
-            _timer.reset();
-
-        } else {
-            // there is more to send!
-            _timer.start(); // no effect if already started...
+            return false;
         }
+
+        return true;
     }
 
-    protected function send (s :String) :void
+    protected function send (s :String) :Boolean
     {
         try {
-            ExternalInterface.call(_funcName, s);
+            return Boolean(ExternalInterface.call(_funcName, s));
 
         } catch (err :Error) {
             Log.getLog(this).logStackTrace(err);
+            return false;
         }
     }
 
