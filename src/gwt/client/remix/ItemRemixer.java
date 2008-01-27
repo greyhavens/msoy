@@ -44,8 +44,6 @@ public class ItemRemixer extends FlexTable
                 History.back();
             }
         }));
-
-        configureBridge();
     }
 
     public void setItem (byte type, int itemId)
@@ -100,10 +98,4 @@ public class ItemRemixer extends FlexTable
         MediaDesc preview = item.getPreviewMedia();
         return MediaUtil.createMediaView(preview, MediaDesc.PREVIEW_SIZE);
     }
-
-    protected static native void configureBridge () /*-{
-        $wnd.setMediaBytes = function (base64bytes) {
-            $doc.getElementById("remixPreview").setMediaBytes(base64bytes);
-        };
-    }-*/;
 }
