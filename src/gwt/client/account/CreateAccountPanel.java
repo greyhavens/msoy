@@ -41,7 +41,7 @@ public class CreateAccountPanel extends FlexTable
     public CreateAccountPanel (Invitation invite)
     {
         setCellSpacing(10);
-        setStyleName("formDialog");
+        setStyleName("formPanel");
 
         Frame.setTitle(CAccount.msgs.welcomeTitle(), CAccount.msgs.createTitle());
         _invite = invite;

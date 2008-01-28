@@ -261,24 +261,24 @@ img, embed, applet, object {
 }
 
 /** Misc styles. */
-.formDialog td {
+.formPanel td {
   vertical-align: top;
 }
 
-.formDialog .Intro {
+.formPanel .Intro {
   width: 600px;
 }
 
-.formDialog .Tip {
+.formPanel .Tip {
   font-size: 12px;
   width: 300px;
 }
 
-.formDialog .Status {
+.formPanel .Status {
   width: 600px;
 }
 
-.formDialog .Error {
+.formPanel .Error {
   color: red;
 }
 

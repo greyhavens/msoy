@@ -177,16 +177,48 @@ public class Application
         }
 
         // TEMP: migrate old style invites to new style
-        if ("invite".equals(page) || "optout".equals(page)) {
-            token = Args.compose(page, args.get(0, ""));
+        if ("invite".equals(page) || "optout".equals(page) || "resetpw".equals(page)) {
+            token = Args.compose(page, args.get(0, ""), args.get(1, ""));
             args = new Args();
             args.setToken(token);
             page = "account";
         }
         // END TEMP
 
-        if (!displayPopup(page, args)) {
-            displayPage(page, args);
+        CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
+
+        // replace the page if necessary
+        if (_page == null || !_page.getPageId().equals(page)) {
+            // tell any existing page that it's being unloaded
+            if (_page != null) {
+                _page.onPageUnload();
+                _page = null;
+            }
+
+            // locate the creator for this page
+            Page.Creator creator = (Page.Creator)_creators.get(page);
+            if (creator == null) {
+                Frame.showDialog(CShell.cmsgs.errorTitle(),
+                                 new Label("Unknown page requested '" + page + "'."));
+                return;
+            }
+
+            // create the entry point and fire it up
+            _page = creator.createPage();
+            _page.init();
+            _page.onPageLoad();
+
+            // tell the page about its arguments
+            _page.onHistoryChanged(args);
+
+        } else {
+            final Args fargs = args;
+            Frame.setContentMinimized(false, new Command() {
+                public void execute () {
+                    // now tell the page about its arguments
+                    _page.onHistoryChanged(fargs);
+                }
+            });
         }
     }
 
@@ -220,56 +252,6 @@ public class Application
         CShell.emsgs = (EditemMessages)GWT.create(EditemMessages.class);
         CShell.dmsgs = (DynamicMessages)GWT.create(DynamicMessages.class);
         CShell.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
-    }
-
-    protected void displayPage (String ident, final Args args)
-    {
-        CShell.log("Displaying page [ident=" + ident + ", args=" + args + "].");
-
-        // replace the page if necessary
-        if (_page == null || !_page.getPageId().equals(ident)) {
-            // tell any existing page that it's being unloaded
-            if (_page != null) {
-                _page.onPageUnload();
-                _page = null;
-            }
-
-            // locate the creator for this page
-            Page.Creator creator = (Page.Creator)_creators.get(ident);
-            if (creator == null) {
-                Frame.showDialog(CShell.cmsgs.errorTitle(),
-                                 new Label("Unknown page requested '" + ident + "'."));
-                return;
-            }
-
-            // create the entry point and fire it up
-            _page = creator.createPage();
-            _page.init();
-            _page.onPageLoad();
-
-            // tell the page about its arguments
-            _page.onHistoryChanged(args);
-
-        } else {
-            Frame.setContentMinimized(false, new Command() {
-                public void execute () {
-                    // now tell the page about its arguments
-                    _page.onHistoryChanged(args);
-                }
-            });
-        }
-    }
-
-    protected boolean displayPopup (String ident, Args args)
-    {
-        if ("resetpw".equals(ident)) {
-            ResetPasswordDialog.display(args);
-
-        } else {
-            return false;
-        }
-
-        return true;
     }
 
     /**
