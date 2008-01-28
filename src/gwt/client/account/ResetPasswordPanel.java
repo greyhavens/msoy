@@ -40,12 +40,21 @@ public class ResetPasswordPanel extends FlexTable
         getFlexCellFormatter().setColSpan(row, 0, 2);
         getFlexCellFormatter().setStyleName(row, 0, "Intro");
 
+        // make sure we're not currently logged in
+        if (CAccount.getMemberId() != 0) {
+            setText(row, 0, CAccount.msgs.resetLogout());
+            return;
+        }
+
+        // make sure we got something in the way of arguments
         _memberId = args.get(1, 0);
         _code = args.get(2, "");
         if (_memberId == 0 || _code.equals("")) {
             setText(row, 0, CAccount.msgs.resetInvalid());
             return;
         }
+
+        // all systems go!
         setText(row++, 0, CAccount.msgs.resetIntro());
 
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
@@ -103,8 +112,6 @@ public class ResetPasswordPanel extends FlexTable
         CAccount.usersvc.resetPassword(_memberId, _code, password, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (((Boolean)result).booleanValue()) {
-                    // override the dialog token with whirled
-                    Application.setCurrentToken(Page.WHIRLED);
                     MsoyUI.info(CAccount.msgs.resetReset());
                 } else {
                     MsoyUI.error(CAccount.msgs.resetInvalid());
