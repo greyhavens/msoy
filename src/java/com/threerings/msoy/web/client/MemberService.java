@@ -59,8 +59,8 @@ public interface MemberService extends RemoteService
      *
      * @gwt.typeArgs addresses <java.lang.String>
      */
-    public InvitationResults sendInvites (WebIdent ident, List addresses, String customMessage,
-                                          boolean anonymous)
+    public InvitationResults sendInvites (WebIdent ident, List addresses, String fromName,
+                                          String customMessage, boolean anonymous)
         throws ServiceException;
 
     /** 

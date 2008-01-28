@@ -165,8 +165,8 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public InvitationResults sendInvites (WebIdent ident, List addresses, String customMessage,
-                                          boolean anonymous)
+    public InvitationResults sendInvites (WebIdent ident, List addresses, String fromName,
+                                          String customMessage, boolean anonymous)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
@@ -192,7 +192,7 @@ public class MemberServlet extends MsoyServiceServlet
         ir.results = new String[addresses.size()];
         for (int ii = 0; ii < addresses.size(); ii++) {
             String email = (String)addresses.get(ii);
-            ir.results[ii] = sendInvite(anonymous ? null : mrec, email, customMessage);
+            ir.results[ii] = sendInvite(anonymous ? null : mrec, email, fromName, customMessage);
         }
         return ir;
     }
@@ -237,7 +237,8 @@ public class MemberServlet extends MsoyServiceServlet
     /**
      * Helper function for {@link #sendInvites}.
      */
-    protected String sendInvite (MemberRecord inviter, String email, String customMessage)
+    protected String sendInvite (MemberRecord inviter, String email, String fromName,
+                                 String customMessage)
     {
         try {
             // make sure this address is valid
@@ -266,7 +267,7 @@ public class MemberServlet extends MsoyServiceServlet
             // create and send the invitation
             VelocityContext ctx = new VelocityContext();
             if (inviter != null) {
-                ctx.put("friend", inviter.name);
+                ctx.put("friend", fromName);
                 ctx.put("email", inviter.accountName);
             }
             ctx.put("custom_message", customMessage);

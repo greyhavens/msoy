@@ -43,7 +43,7 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#sendInvites}.
      */
-    public void sendInvites (WebIdent ident, List addresses, String customMessage,
+    public void sendInvites (WebIdent ident, List addresses, String fromName, String customMessage,
                              boolean anonymous, AsyncCallback callback);
 
     /**

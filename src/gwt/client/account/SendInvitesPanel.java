@@ -11,12 +11,14 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
@@ -31,7 +33,7 @@ import client.util.MsoyUI;
  * Display a UI allowing users to send out the invites that have been granted to them, as well
  * as view pending invites they've sent in the past.
  */
-public class SendInvitesPanel extends FlexTable
+public class SendInvitesPanel extends VerticalPanel
 {
     /** Originally formulated by lambert@nas.nasa.gov. */
     public static final String EMAIL_REGEX = "^([-A-Za-z0-9_.!%+]+@" +
@@ -39,7 +41,7 @@ public class SendInvitesPanel extends FlexTable
 
     public SendInvitesPanel ()
     {
-        setCellSpacing(10);
+        setSpacing(10);
         setStyleName("sendInvites");
         Frame.setTitle(CAccount.msgs.sendInvitesTitle(), CAccount.msgs.sendInvitesSubtitle());
         reinit();
@@ -56,38 +58,28 @@ public class SendInvitesPanel extends FlexTable
 
     protected void init (final MemberInvites invites)
     {
+        clear();
         _invites = invites;
 
-        int row = 0;
-        FlexCellFormatter formatter = getFlexCellFormatter();
-        formatter.setStyleName(row, 0, "Header");
-        formatter.setColSpan(row, 0, 3);
-        setText(row++, 0, CAccount.msgs.sendInvitesSendHeader("" + invites.availableInvitations));
+        String header = CAccount.msgs.sendInvitesSendHeader("" + invites.availableInvitations);
+        add(MsoyUI.createLabel(header, "Header"));
 
         if (_invites.availableInvitations > 0) {
-            formatter.setStyleName(row, 0, "Tip");
-            formatter.setColSpan(row, 0, 3);
-            setText(row++, 0, CAccount.msgs.sendInvitesSendTip(
-                "" + _invites.availableInvitations));
+            add(makeRow(CAccount.msgs.sendInvitesAddresses(),
+                        _emailAddresses = MsoyUI.createTextArea("", 40, 4)));
 
-            formatter.setVerticalAlignment(row, 0, HasVerticalAlignment.ALIGN_TOP);
-            setText(row, 0, CAccount.msgs.sendInvitesEmailAddresses());
-            setWidget(row++, 1, _emailAddresses = new TextArea());
-            _emailAddresses.setCharacterWidth(40);
-            _emailAddresses.setVisibleLines(4);
+            String tip = CAccount.msgs.sendInvitesSendTip("" + _invites.availableInvitations);
+            add(MsoyUI.createLabel(tip, "tipLabel"));
 
-            setText(row++, 0, CAccount.msgs.sendInvitesCustomMessage());
-            formatter.setColSpan(row, 0, 3);
-            setWidget(row++, 0, _customMessage = new TextArea());
-            _customMessage.setCharacterWidth(80);
-            _customMessage.setVisibleLines(6);
-            _customMessage.setText(CAccount.msgs.sendInvitesCustomDefault());
+            add(makeRow(CAccount.msgs.sendInvitesFrom(), _fromName = MsoyUI.createTextBox(
+                            CAccount.creds.name.toString(), MAX_FROM_LEN, MAX_FROM_LEN)));
+
+            add(_customMessage = MsoyUI.createTextArea(
+                    CAccount.msgs.sendInvitesCustomDefault(), 80, 6));
+
+            setHorizontalAlignment(ALIGN_RIGHT);
             _anonymous = new CheckBox(CAccount.msgs.sendInvitesAnonymous());
-            if (CAccount.isAdmin()) {
-                setWidget(row, 1, _anonymous);
-            }
-            setWidget(row++, 2, new Button(CAccount.msgs.sendInvitesSendEmail(),
-                                           new ClickListener() {
+            Button send = new Button(CAccount.msgs.sendInvitesSendEmail(), new ClickListener() {
                 public void onClick (Widget widget) {
                     if ("".equals(_emailAddresses.getText())) {
                         MsoyUI.info(CAccount.msgs.sendInvitesEnterAddresses());
@@ -95,39 +87,51 @@ public class SendInvitesPanel extends FlexTable
                         checkAndSend();
                     }
                 }
-            }));
+            });
+            if (CAccount.isAdmin()) {
+                add(makeRow(_anonymous, send));
+            } else {
+                add(send);
+            }
 
         } else {
-            formatter.setStyleName(row, 0, "Tip");
-            formatter.setColSpan(row, 0, 3);
-            setText(row++, 0, CAccount.msgs.sendInvitesNoneAvailable());
+            add(MsoyUI.createLabel(CAccount.msgs.sendInvitesNoneAvailable(), "tipLabel"));
         }
 
-        formatter.setStyleName(row, 0, "Header");
-        formatter.setColSpan(row, 0, 3);
-        setText(row++, 0, CAccount.msgs.sendInvitesPendingHeader());
+        setHorizontalAlignment(ALIGN_LEFT);
+        add(MsoyUI.createLabel(CAccount.msgs.sendInvitesPendingHeader(), "Header"));
 
         if (_invites.pendingInvitations.isEmpty()) {
-            formatter.setStyleName(row, 0, "Tip");
-            formatter.setColSpan(row, 0, 3);
-            setText(row++, 0, CAccount.msgs.sendInvitesNoPending());
+            add(new Label(CAccount.msgs.sendInvitesNoPending()));
 
         } else {
-            formatter.setColSpan(row, 0, 3);
-            setText(row++, 0, CAccount.msgs.sendInvitesPendingTip());
+            add(new Label(CAccount.msgs.sendInvitesPendingTip()));
 
             int prow = 0;
             FlexTable penders = new FlexTable();
+            penders.setStyleName("tipLabel");
             penders.setWidth("100%");
             for (Iterator iter = _invites.pendingInvitations.iterator(); iter.hasNext(); ) {
                 Invitation inv = (Invitation)iter.next();
                 penders.setText(prow, 0, inv.inviteeEmail);
                 penders.setText(prow++, 1, invites.serverUrl + inv.inviteId);
             }
-            formatter.setStyleName(row, 0, "Tip");
-            formatter.setColSpan(row, 0, 3);
-            setWidget(row++, 0, penders);
+            add(penders);
         }
+    }
+
+    protected HorizontalPanel makeRow (String label, Widget right)
+    {
+        return makeRow(MsoyUI.createLabel(label, "rightLabel"), right);
+    }
+
+    protected HorizontalPanel makeRow (Widget label, Widget right)
+    {
+        HorizontalPanel row = new HorizontalPanel();
+        row.add(label);
+        row.add(WidgetUtil.makeShim(10, 10));
+        row.add(right);
+        return row;
     }
 
     protected void checkAndSend ()
@@ -157,10 +161,12 @@ public class SendInvitesPanel extends FlexTable
             return;
         }
 
-        CAccount.membersvc.sendInvites(CAccount.ident, valid, _customMessage.getText(),
-                                       _anonymous.isChecked(), new MsoyCallback() {
+        String from = _fromName.getText().trim(), msg = _customMessage.getText().trim();
+        boolean anon = _anonymous.isChecked();
+        CAccount.membersvc.sendInvites(CAccount.ident, valid, from, msg, anon, new MsoyCallback() {
             public void onSuccess (Object result) {
                 FlashClients.tutorialEvent("friendInvited");
+                reinit();
                 new ResultsPopup(valid, (InvitationResults)result).show();
             }
         });
@@ -172,7 +178,7 @@ public class SendInvitesPanel extends FlexTable
         {
             VerticalPanel top = new VerticalPanel();
             top.setStyleName("sendInvitesResultsPopup");
-            top.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+            top.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
             top.add(MsoyUI.createLabel(CAccount.msgs.sendInvitesResults(), "ResultsHeader"));
 
             FlexTable contents = new FlexTable();
@@ -194,7 +200,7 @@ public class SendInvitesPanel extends FlexTable
             }
 
             contents.getFlexCellFormatter().setHorizontalAlignment(
-                row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+                row, 0, VerticalPanel.ALIGN_RIGHT);
             contents.setWidget(row++, 0, new Button(CAccount.cmsgs.dismiss(), new ClickListener() {
                 public void onClick (Widget widget) {
                     hide();
@@ -206,7 +212,10 @@ public class SendInvitesPanel extends FlexTable
     }
 
     protected TextArea _emailAddresses;
+    protected TextBox _fromName;
     protected TextArea _customMessage;
     protected CheckBox _anonymous;
     protected MemberInvites _invites;
+
+    protected static final int MAX_FROM_LEN = 40;
 }

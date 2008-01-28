@@ -817,17 +817,6 @@ img, embed, applet, object {
   font-weight: bold;
 }
 
-.sendInvites .Tip {
-  width: 400px;
-  font-size: 12px;
-  text-align: center;
-}
-
-.sendInvites .Pending, .sendInvitesResultsPopup .Email {
-  font-size: 12px;
-  text-align: center;
-}
-
 .sendInvitesResultsPopup .ResultsHeader {
   background: #222222;
   color: #EAEFF1;
