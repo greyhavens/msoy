@@ -17,9 +17,9 @@ import client.shell.Page;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
-public class InvitationPanel extends FlexTable
+public class AcceptInvitePanel extends FlexTable
 {
-    public InvitationPanel (index parent, String inviteId)
+    public AcceptInvitePanel (index parent, String inviteId)
     {
         setCellSpacing(10);
         setStyleName("invitation");

@@ -36,7 +36,7 @@ public class index extends Page
 
         if (args.get(0, "").equals("invite")) {
             _onLogonRedirect = true;
-            setContent(new InvitationPanel(this, args.get(1, "")));
+            setContent(new AcceptInvitePanel(this, args.get(1, "")));
 
         } else if (args.get(0, "").equals("invites")) {
             setContent(new SendInvitesPanel());
