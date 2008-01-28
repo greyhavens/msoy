@@ -121,7 +121,7 @@ public class Swirl extends Sprite
     {
         var swirlClip :MovieClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
         _swirl = new Buttonizer(swirlClip);
-        _swirl.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
+        _swirl.addEventListener(MouseEvent.MOUSE_DOWN, function (evt :Event) :void {
             _view.swirlClicked(_swirlState);
         });
 
