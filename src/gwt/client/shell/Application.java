@@ -262,10 +262,7 @@ public class Application
 
     protected boolean displayPopup (String ident, Args args)
     {
-        if ("optout".equals(ident)) {
-            OptOutDialog.display(args.get(0, ""));
-
-        } else if ("resetpw".equals(ident)) {
+        if ("resetpw".equals(ident)) {
             ResetPasswordDialog.display(args);
 
         } else {

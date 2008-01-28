@@ -42,6 +42,9 @@ public class index extends Page
         } else if (args.get(0, "").equals("edit")) {
             setContent(new EditAccountPanel());
 
+        } else if (args.get(0, "").equals("optout")) {
+            setContent(new OptOutPanel(args.get(1, "")));
+
         } else if (CAccount.ident == null) {
             setContent(MsoyUI.createLabel(CAccount.msgs.indexLogon(), "infoLabel"));
 
