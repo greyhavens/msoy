@@ -260,10 +260,18 @@ public class Frame
     }
 
     /**
-     * Configures the widget to be displayed in the content portion of the frame. Will animate the
-     * content sliding on if appropriate.
+     * Configures the frame with our page's content table.
      */
-    protected static void setContent (Page.Content content, boolean contentIsJava)
+    protected static void initContent (Page.Content content)
+    {
+        _content = content;
+    }
+
+    /**
+     * Displays the page content table previously configured via {@link #initContent}. Will animate
+     * the content sliding on if appropriate.
+     */
+    protected static void showContent (boolean contentIsJava)
     {
         RootPanel.get(CONTENT).clear();
 
@@ -273,7 +281,7 @@ public class Frame
         // note that this is our current content
         _contlist = new VerticalPanel();
         _contlist.setWidth("100%");
-        _contlist.add(_content = content);
+        _contlist.add(_content);
         _scroller = new ScrollPanel(_contlist);
         _scroller.setHeight((Window.getClientHeight() - 50) + "px");
         displayingJava = contentIsJava;
