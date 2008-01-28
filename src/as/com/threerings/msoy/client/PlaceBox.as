@@ -108,15 +108,23 @@ public class PlaceBox extends LayeredContainer
         _mask.graphics.drawRect(0, 0, width, height);
         _mask.graphics.endFill();
 
-        if (_placeView == null) {
-            return;
+        // any PlaceLayer layers get informed of the size change
+        for (var ii :int = 0; ii < numChildren; ii ++) {
+            var child :DisplayObject = unwrap(getChildAt(ii));
+            if (child == _placeView) {
+                continue; // we'll handle this later
+            } else if (child is PlaceLayer) {
+                PlaceLayer(child).setPlaceSize(width, height);
+            }
         }
+
+        // now inform the place view of its new size
         if (_placeView is UIComponent) {
             UIComponent(_placeView).setActualSize(width, height);
         } else if (_placeView is PlaceLayer) {
             PlaceLayer(_placeView).setPlaceSize(width, height);
-        } else {
-            Log.getLog(this).warning("PlaceView is not a MsoyPlaceView or an UIComponent.");
+        } else if (_placeView != null) {
+            Log.getLog(this).warning("PlaceView is not a PlayerLayer or an UIComponent.");
         }
     }
 

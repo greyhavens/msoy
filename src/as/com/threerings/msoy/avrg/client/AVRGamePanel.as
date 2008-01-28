@@ -19,6 +19,7 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.TopPanel;
 
 import com.threerings.msoy.world.client.RoomView;
@@ -28,7 +29,7 @@ import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 
 public class AVRGamePanel extends UIComponent
-    implements AttributeChangeListener
+    implements AttributeChangeListener, PlaceLayer
 {
     public static const log :Log = Log.getLog(AVRGamePanel);
 
@@ -63,6 +64,13 @@ public class AVRGamePanel extends UIComponent
             // if the media changes, brutally reload the AVRG
             loadMedia();
         }
+    }
+
+    // from PlaceLayer
+    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        // we want to be the full size of the display
+        setActualSize(unscaledWidth, unscaledHeight);
     }
 
     protected function loadMedia () :void {
