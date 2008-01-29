@@ -13,6 +13,10 @@ import flash.text.TextFormatAlign;
 
 import mx.core.Container;
 
+import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.UserMessage;
+
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
@@ -20,12 +24,15 @@ import com.threerings.util.Name;
 
 import com.threerings.flash.ColorUtil;
 
+import com.threerings.msoy.chat.data.TimedMessageDisplay;
+
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.LayeredContainer;
 
-import com.threerings.crowd.chat.data.ChatCodes;
-import com.threerings.crowd.chat.data.ChatMessage;
-import com.threerings.crowd.chat.data.UserMessage;
+import com.threerings.msoy.data.all.RoomName;
+
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.data.MsoyScene;
 
 /**
  * Implements comic chat in the metasoy client.
@@ -141,6 +148,19 @@ public class ComicOverlay extends ChatOverlay
     {
         _newPlacePoint -= adjustment;
         super.historyUpdated(adjustment);
+
+        // if this message came in on the channel that is associated with our current room,
+        // display a bubble for it
+        var ident :RoomName = _history.channelIdent as RoomName;
+        var scene :MsoyScene = !(_ctx is WorldContext) ? null :
+            ((_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene);
+        if (ident != null && scene != null && ident.getSceneId() == scene.getId()) {
+            var timed :TimedMessageDisplay = _history.get(_history.size() - 1);
+            var type :int = getType(timed.msg, false);
+            if (type != IGNORECHAT) {
+                displayTypedMessageNow(timed.msg, type);
+            }
+        }
     }
 
     override protected function shouldShowFromHistory (msg :ChatMessage, index :int) :Boolean
@@ -180,8 +200,7 @@ public class ComicOverlay extends ChatOverlay
             var speaker :Name = umsg.getSpeakerDisplayName();
             var speakerBubblePos :Point = _provider.getBubblePosition(speaker);
             if (speakerBubblePos == null) {
-                log.warning("ChatOverlay.InfoProvider doesn't know the speaker! " +
-                    "[speaker=" + speaker + ", type=" + type + "].");
+                // this just means we have someone chatting in the channel that isn't an occupant.
                 return false;
             }
             return createBubble(msg, type, speaker, speakerBubblePos);
