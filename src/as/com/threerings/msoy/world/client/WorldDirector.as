@@ -7,6 +7,7 @@ import com.threerings.util.Log;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.client.ResultWrapper;
@@ -91,7 +92,12 @@ public class WorldDirector extends BasicDirector
     protected function goToHome (ownerType :int, ownerId :int) :void
     {
         if (!_wctx.getClient().isLoggedOn()) {
-            log.warning("Can't go, not online [type=" + ownerType + ", id=" + ownerId + "].");
+            log.info("Delaying goToHome, not online [type=" + ownerType + ", id=" + ownerId + "].");
+            var waiter :ClientAdapter = new ClientAdapter(null, function (event :*) :void {
+                _wctx.getClient().removeClientObserver(waiter);
+                goToHome(ownerType, ownerId);
+            });
+            _wctx.getClient().addClientObserver(waiter);
             return;
         }
         _msvc.getHomeId(_wctx.getClient(), ownerType, ownerId, new ResultWrapper(
