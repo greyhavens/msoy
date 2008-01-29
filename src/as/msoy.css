@@ -1003,3 +1003,10 @@ Tree {
   backgroundAlpha: 0.5;
   verticalAlign: middle;
 }
+
+.chatContainer {
+  backgroundColor: white;
+  borderThickness: 0;
+  borderStyle: "solid";
+  borderColor: white;
+}

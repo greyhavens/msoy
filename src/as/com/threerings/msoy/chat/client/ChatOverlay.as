@@ -74,14 +74,22 @@ public class ChatOverlay
         _ctx = ctx;
         _msgMan = _ctx.getMessageManager();
 
+        // overlay for chat that stays in a given place in the scene, and is therefore scrolled
+        // with it.
         _scrollBarSide = scrollBarSide;
         _scrollOverlay = new Sprite();
         _scrollOverlay.mouseEnabled = false;
         _scrollOverlay.blendMode = BlendMode.LAYER;
 
+        // overlay for chat that stays in a given place on the screen.
         _staticOverlay = new Sprite();
         _staticOverlay.mouseEnabled = false;
         _staticOverlay.blendMode = BlendMode.LAYER;
+
+        // overlay for history chat that may get pulled out and put on the side in slide chat mode
+        _historyOverlay = new Sprite();
+        _historyOverlay.mouseEnabled = false;
+        _historyOverlay.blendMode = BlendMode.LAYER;
 
         createStandardFormats();
 
@@ -97,7 +105,7 @@ public class ChatOverlay
     {
         // NOTE: The docs swear up and down that the point needs to be in stage coords,
         // but only local coords seem to work. Bug?
-        var overlays :Array = [_scrollOverlay, _staticOverlay, _occupantList];
+        var overlays :Array = [_scrollOverlay, _staticOverlay, _historyOverlay, _occupantList];
         var stagePoint :Point = new Point(stageX, stageY);
         for each (var overlay :Sprite in overlays) {
             if (overlay == null) {
@@ -213,8 +221,9 @@ public class ChatOverlay
         if (_target != null) {
             // removing from the old
             _target.removeOverlay(_scrollOverlay);
-            if (_target.containsOverlay(_staticOverlay)) {
-                _target.removeOverlay(_staticOverlay);
+            _target.removeOverlay(_staticOverlay);
+            if (_target.containsOverlay(_historyOverlay)) {
+                _target.removeOverlay(_historyOverlay);
             }
             removeOccupantList();
             _target.removeEventListener(ResizeEvent.RESIZE, handleContainerResize);
@@ -238,12 +247,16 @@ public class ChatOverlay
             _scrollOverlay.y = 0;
             _target.addOverlay(_scrollOverlay, PlaceBox.LAYER_CHAT_SCROLL);
 
+            _staticOverlay.x = 0;
+            _staticOverlay.y = 0;
+            _target.addOverlay(_staticOverlay, PlaceBox.LAYER_CHAT_STATIC);
+
             displayOccupantList();
 
             if (_chatContainer == null) {
-                _staticOverlay.x = 0;
-                _staticOverlay.y = 0;
-                _target.addOverlay(_staticOverlay, PlaceBox.LAYER_CHAT_STATIC);
+                _historyOverlay.x = 0;
+                _historyOverlay.y = 0;
+                _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
             }
 
             _target.addEventListener(ResizeEvent.RESIZE, handleContainerResize);
@@ -324,7 +337,7 @@ public class ChatOverlay
             }
 
             if (_target != null) {
-                _target.removeOverlay(_staticOverlay);
+                _target.removeOverlay(_historyOverlay);
                 _target.removeChild(_historyBar);
             }
 
@@ -332,14 +345,14 @@ public class ChatOverlay
                 _targetBounds = getDefaultTargetBounds();
             }
             _ctx.getTopPanel().slideInChat(
-                _chatContainer = new ChatContainer(_historyBar, _staticOverlay), _targetBounds);
+                _chatContainer = new ChatContainer(_historyBar, _historyOverlay), _targetBounds);
         } else { 
             _ctx.getTopPanel().slideOutChat();
 
             _historyBar = null;
             _chatContainer = null;
             if (_target != null) {
-                _target.addOverlay(_staticOverlay, PlaceBox.LAYER_CHAT_STATIC);
+                _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
                 setHistoryEnabled(Prefs.getShowingChatHistory());
             }
         }
@@ -401,10 +414,8 @@ public class ChatOverlay
      */
     public function removeGlyph (glyph :ChatGlyph) :void
     {
-        if (glyph.parent == _scrollOverlay) {
-            _scrollOverlay.removeChild(glyph);
-        } else if (glyph.parent == _staticOverlay) {
-            _staticOverlay.removeChild(glyph);
+        if (glyph.parent != null) {
+            glyph.parent.removeChild(glyph);
         }
         glyph.wasRemoved();
     }
@@ -644,7 +655,7 @@ public class ChatOverlay
         glyph.y = _targetBounds.bottom - height - PAD;
         scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
         _subtitles.push(glyph);
-        _staticOverlay.addChild(glyph);
+        _historyOverlay.addChild(glyph);
     }
 
     /**
@@ -1033,7 +1044,8 @@ public class ChatOverlay
     {
         ArrayUtil.removeFirst(_subtitles, glyph);
         // the glyph may have already been removed, but still expire
-        if (glyph.parent == _scrollOverlay || glyph.parent == _staticOverlay) {
+        if (glyph.parent == _scrollOverlay || glyph.parent == _staticOverlay || 
+            glyph.parent == _historyOverlay) {
             removeGlyph(glyph);
         }
     }
@@ -1180,7 +1192,7 @@ public class ChatOverlay
      */
     protected function clearGlyphs (glyphs :Array) :void
     {
-        if (_scrollOverlay != null && _staticOverlay != null) {
+        if (_scrollOverlay != null && _staticOverlay != null && _historyOverlay != null) {
             for each (var glyph :ChatGlyph in glyphs) {
                 removeGlyph(glyph);
             }
@@ -1359,12 +1371,12 @@ public class ChatOverlay
         // the screen correctly
         for (ii = _showingHistory.length - 1; ii >= 0; ii--) {
             glyph = (_showingHistory[ii] as SubtitleGlyph);
-            // only the static overlay contains subtitles
-            var managed :Boolean = _staticOverlay.contains(glyph);
+            // only the history overlay contains subtitles
+            var managed :Boolean = _historyOverlay.contains(glyph);
             if (glyph.histIndex <= first && glyph.histIndex > (first - count)) {
                 // it should be showing
                 if (!managed) {
-                    _staticOverlay.addChild(glyph);
+                    _historyOverlay.addChild(glyph);
                 }
             } else {
                 // it shouldn't be showing
@@ -1425,8 +1437,12 @@ public class ChatOverlay
     protected var _scrollOverlay :Sprite;
 
     /** The overlay we place on top of our target that contains all the chat glyphs that should
-     * not scroll. */
+     * not scroll with the scene. */
     protected var _staticOverlay :Sprite;
+
+    /** The overlay we place on top of our target that contains all the history subtitle chat
+     * glyphs. */
+    protected var _historyOverlay :Sprite;
 
     /** The list that contains names and headshots of everyone current subscribed to the currently
      * shown channel */
@@ -1596,16 +1612,23 @@ import flash.display.Sprite;
 
 import mx.controls.scrollClasses.ScrollBar;
 
+import mx.core.Container;
 import mx.core.UIComponent;
+
+import com.threerings.flex.FlexWrapper;
+
+import com.threerings.util.Log;
 
 import com.threerings.msoy.chat.client.ChannelOccupantList;
 
-class ChatContainer extends UIComponent
+class ChatContainer extends Container
 {
     public function ChatContainer (scrollBar :ScrollBar, chat :Sprite) 
     {
+        styleName = "chatContainer";
+        autoLayout = false;
         addChild(scrollBar);
-        addChild(chat);
+        addChild(new FlexWrapper(chat));
     }
 
     public function addOccupantList (occList :ChannelOccupantList) :void
@@ -1624,6 +1647,8 @@ class ChatContainer extends UIComponent
             _occList = null;
         }
     }
+
+    private static const log :Log = Log.getLog(ChatContainer);
 
     protected var _occList :ChannelOccupantList;
 }

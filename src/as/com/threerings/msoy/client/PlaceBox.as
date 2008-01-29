@@ -29,11 +29,14 @@ public class PlaceBox extends LayeredContainer
     /** The layer priority of the scrolling chat. */
     public static const LAYER_CHAT_SCROLL :int = 20;
 
-    /** The layer priority of the occupant Listi. */
+    /** The layer priority of the occupant List. */
     public static const LAYER_CHAT_LIST :int = 25;
 
-    /** The layer priority of fading chat messages. */
+    /** The layer priority of non-moving chat messages. */
     public static const LAYER_CHAT_STATIC :int = 30;
+
+    /** The layer priority of history chat messages. */
+    public static const LAYER_CHAT_HISTORY :int = 35;
 
     /** The layer priority of the AVRG panel. */
     public static const LAYER_AVRG_PANEL :int = 40;

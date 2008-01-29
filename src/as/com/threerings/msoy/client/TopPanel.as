@@ -9,6 +9,7 @@ import flash.geom.Rectangle;
 import flash.system.Capabilities;
 
 import mx.core.Application;
+import mx.core.Container;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
@@ -19,6 +20,7 @@ import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
 
 import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.ValueEvent;
 
@@ -427,7 +429,7 @@ public class TopPanel extends Canvas
         return _minimized;
     }
 
-    public function slideInChat (chat :UIComponent, bounds :Rectangle) :void
+    public function slideInChat (chat :Container, bounds :Rectangle) :void
     {
         _chatBounds = bounds;
         if (_chat != null) {
@@ -435,6 +437,8 @@ public class TopPanel extends Canvas
             return;
         }
 
+        chat.autoLayout = false;
+        chat.includeInLayout = false;
         addChild(_chat = chat);
         layoutPanels();
     }
@@ -596,7 +600,7 @@ public class TopPanel extends Canvas
             _chat.setStyle("top", top);
             _chat.setStyle("bottom", bottom);
             _chat.setStyle("left", getLeftPanelWidth());
-            _chat.setStyle("right", left);
+            _chat.setStyle("right", getRightPanelWidth() + w);
         }
         _placeBox.setStyle("top", top);
         _placeBox.setStyle("bottom", bottom);
@@ -609,6 +613,8 @@ public class TopPanel extends Canvas
     {
         return (view is MsoyPlaceView) && (view as MsoyPlaceView).padVertical();
     }
+
+    private static const log :Log = Log.getLog(TopPanel);
 
     /** The giver of life. */
     protected var _ctx :MsoyContext;
@@ -646,7 +652,7 @@ public class TopPanel extends Canvas
     protected var _activeOverlay :ChatOverlay;
 
     /** When chat is operating in slide mode (non-overlay), we manage it here. */
-    protected var _chat :UIComponent;
+    protected var _chat :Container;
     protected var _chatBounds :Rectangle;
 
     protected static const MIN_FLASH_VERSION :int = 9;

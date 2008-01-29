@@ -11,6 +11,8 @@ import flash.geom.Matrix;
 import mx.core.Container;
 import mx.core.UIComponent;
 
+import com.threerings.flex.FlexWrapper;
+
 import com.threerings.util.Log;
 
 /**
@@ -135,17 +137,4 @@ public class LayeredContainer extends Container
 
     protected var _base :DisplayObject;
 }
-}
-
-import flash.display.DisplayObject;
-import mx.core.UIComponent;
-
-/** Wraps a non-Flex component for use in Flex. */
-class FlexWrapper extends UIComponent
-{
-    public function FlexWrapper (object :DisplayObject)
-    {
-        mouseEnabled = false;
-        addChild(object);
-    }
 }
