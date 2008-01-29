@@ -40,10 +40,6 @@ public class Frame
     /** The offset of the content close button, from the left edge of the separator bar. */
     public static final int CLOSE_BUTTON_OFFSET = -16;
 
-    /** Indicates whether we are currently displaying a Java applet over the parts of the page
-     * where popups might show up. */
-    public static boolean displayingJava = false;
-
     /**
      * Called by the Application to initialize us once in the lifetime of the app.
      */
@@ -87,16 +83,6 @@ public class Frame
 
         // set up the callbackd that our flash clients can call
         configureCallbacks();
-    }
-
-    /**
-     * Returns true if we need to do our popup hackery, false if not.
-     */
-    public static boolean needPopupHack ()
-    {
-        // if we're displaying a Java applet, we always need the popup hack, but for Flash we only
-        // need it on Linux (we always assume there's some goddamned Flash on the page)
-        return displayingJava || isLinux();
     }
 
     /**
@@ -271,7 +257,7 @@ public class Frame
      * Displays the page content table previously configured via {@link #initContent}. Will animate
      * the content sliding on if appropriate.
      */
-    protected static void showContent (boolean contentIsJava)
+    protected static void showContent ()
     {
         RootPanel.get(CONTENT).clear();
 
@@ -284,7 +270,6 @@ public class Frame
         _contlist.add(_content);
         _scroller = new ScrollPanel(_contlist);
         _scroller.setHeight((Window.getClientHeight() - 50) + "px");
-        displayingJava = contentIsJava;
 
         // if we're displaying the client or we have a minimized page, unminimize things first
         if (_maximizeContent.isAttached() ||

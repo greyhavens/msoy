@@ -108,7 +108,7 @@ public abstract class Page
         // empty node first, add it to the DOM tree, and then initialize it with the Flash object
         // definition.  Also see: WidgetUtil.embedFlashObject()
         HTML control = new HTML();
-        setContent(control, false);
+        setContent(control);
         control.setHTML(definition);
         return control;
     }
@@ -118,15 +118,7 @@ public abstract class Page
      */
     protected void setContent (Widget content)
     {
-        setContent(content, false);
-    }
-
-    /**
-     * Clears out any existing content and sets the specified widget as the main page content.
-     */
-    protected void setContent (Widget content, boolean contentIsJava)
-    {
-        Frame.showContent(contentIsJava);
+        Frame.showContent();
         _content.setContent(content);
     }
 

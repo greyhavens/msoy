@@ -138,7 +138,6 @@ public class WorldClient extends Widget
             closeClient(false); // clear out our flash client if we have one
             RootPanel.get(Frame.CLIENT).clear();
             RootPanel.get(Frame.CLIENT).add(_jclient = client);
-            Frame.displayingJava = true;
         } else {
             clientMinimized(false);
         }
@@ -158,7 +157,6 @@ public class WorldClient extends Widget
             RootPanel.get(Frame.CLIENT).clear();
             _curFlashArgs = null;
             _jclient = null;
-            Frame.displayingJava = false;
         }
         if (restoreContent) {
             RootPanel.get(Frame.CLIENT).setWidth("0px");

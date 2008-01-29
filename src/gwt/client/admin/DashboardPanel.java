@@ -92,7 +92,6 @@ public class DashboardPanel extends FlexTable
 
     protected void finishDisplayDashboard (ConnectConfig config)
     {
-        Frame.displayingJava = true;
         Frame.closeClient(false);
 
         // we have to serve admin-client.jar from the server to which it will connect back due to

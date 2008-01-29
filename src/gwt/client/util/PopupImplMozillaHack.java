@@ -6,8 +6,6 @@ package client.util;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.impl.PopupImplMozilla;
 
-import client.shell.Frame;
-
 /**
  * Mozilla implementation of {@link PopupImpl} that does the right thing with Flash and other
  * non-well-behaved layers.
@@ -18,9 +16,7 @@ public class PopupImplMozillaHack extends PopupImplMozilla
     public void onShow (Element popup)
     {
         super.onShow(popup);
-        if (Frame.needPopupHack()) {
-            createIFrame(popup);
-        }
+        createIFrame(popup);
     }
 
     // @Override // from PopupImpl

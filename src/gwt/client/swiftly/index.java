@@ -84,7 +84,7 @@ public class index extends Page
             // load up the information needed to launch the applet
             CSwiftly.swiftlysvc.getConnectConfig(CSwiftly.ident, projectId, new MsoyCallback() {
                 public void onSuccess (Object result) {
-                    setContent(new SwiftlyPanel((SwiftlyConnectConfig)result, projectId), true);
+                    setContent(new SwiftlyPanel((SwiftlyConnectConfig)result, projectId));
                 }
             });
         }
