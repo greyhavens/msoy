@@ -55,7 +55,7 @@ public class LobbyGameLiaison extends GameLiaison
         loading.styleName = "lobbyLoadingBox";
         loading.width = LobbyPanel.LOBBY_PANEL_WIDTH;
         loading.percentHeight = 100;
-        loading.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.locating_game")));
+        loading.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.locating_game"), "topLevelLabel"));
         _wctx.getTopPanel().setLeftPanel(loading);
     }
 

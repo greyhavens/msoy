@@ -1010,3 +1010,15 @@ Tree {
   borderStyle: "solid";
   borderColor: white;
 }
+
+.lobbyPanel {
+  backgroundColor: white;
+}
+
+.topLevelLabel {
+  color: white;
+}
+
+.gameChatContainer {
+  backgroundColor: white;
+}

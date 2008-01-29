@@ -42,6 +42,7 @@ public class DisconnectedPanel extends VBox
         _message = new Text();
         _message.setStyle("fontSize", 12);
         _message.setStyle("fontWeight", "bold");
+        _message.styleName = "topLevelLabel";
         addChild(_message);
 
         if (msg != null) {

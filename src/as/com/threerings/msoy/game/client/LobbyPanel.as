@@ -88,6 +88,7 @@ public class LobbyPanel extends VBox
         controller = ctrl;
 
         width = LOBBY_PANEL_WIDTH;
+        styleName = "lobbyPanel";
     }
 
     public function init (lobbyObj :LobbyObject, friendsOnly :Boolean) :void

@@ -30,6 +30,7 @@ public class GameChatContainer extends LayeredContainer
         var topPanel :TopPanel = _ctx.getTopPanel();
         width = TopPanel.RIGHT_SIDEBAR_WIDTH;
         height = 500; // games are given 500 vertical pixels, so so are we.
+        styleName = "gameChatContainer";
 
         _overlay = new ChatOverlay(_ctx, ChatOverlay.SCROLL_BAR_RIGHT);
         _overlay.setClickableGlyphs(true);
