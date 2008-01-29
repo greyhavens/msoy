@@ -18,41 +18,35 @@ a {
 
 <table cellpadding="0" cellspacing="0" width="700"
        style="border: 1px solid #000000; margin: 0px 25px 25px 25px; background: #FFFFFF;">
-<tr><td><img src="cid:header_star_left.png"></td>
+<!--<tr><td><img src="cid:header_star_left.png"></td>
     <td><img src="cid:header_bar.png" width="660" height="19"></td>
-    <td><img src="cid:header_star_right.png"></td></tr>
+    <td><img src="cid:header_star_right.png"></td></tr>-->
 
 <tr><td colspan="3">
 
 <table cellpadding="0" cellspacing="0" style="margin: 20px 35px 0px 35px">
-<tr><td><img src="cid:whirled_logo_small.png"></td>
-    <td width="100%" align="center" style="font-size: 24px; color: #023249;">
-      <b>You have been invited to join Whirled!</b></td>
-    <td><a href="http://www.threerings.net/"><img border="0" src="cid:threerings_logo_small.png"></a></td></tr>
-
-<tr><td colspan="3" style="padding-top: 15px">
-
-<p> You have been invited to join Three Rings' exciting new player-created online
-world filled with games, chat and adventure. </p>
+<tr><td width="100%" align="center" style="font-size: 24px; color: #023249;">
 #if ($friend)
-<p> <b>${friend} &lt;${email}&gt;</b> sent you this invitation and said:
-
-<blockquote>
-"${custom_message}"
-</blockquote>
-</p>
+      <b>${friend} wants you to join them in Whirled!</b>
 #else
-<p><blockquote> Please note, Whirled is still in closed alpha. Please do not
-post about it to forums and blogs -- as members of the Alpha Elite you are
-sworn to secrecy! </blockquote></p>
+      <b>Join us in Whirled!</b>
+#end
+    </td></tr>
+
+<tr><td style="padding-top: 15px">
+#if ($friend)
+<p> You have been invited by ${friend} &lt;${email}&gt; to join Three Rings'
+exciting new player-created online world of games, chat and adventure. </p>
+<blockquote>"${custom_message}"</blockquote>
+#else
+<p> You have been invited to join Three Rings' exciting new player-created
+online world of games, chat and adventure. </p>
 #end
 </td></tr>
 
-<tr><td colspan="3">
-<p> Use the following URL to accept this invitation and explore the Whirled:</p>
+<tr><td>
+<p> Start exploring Whirled now:</p>
 <p><font color="#3b86b0"><b><a href="${server_url}/#account-invite_${invite_id}">${server_url}/#account-invite_${invite_id}</a></b></font></p>
-<p align="right">- The Keepers of the Peas at Three Rings</p>
-
 </td></tr>
 </table>
 
@@ -60,11 +54,8 @@ sworn to secrecy! </blockquote></p>
 <tr><td><img src="cid:ss_room_brown.jpg"></td>
     <td><img src="cid:ss_treehouse.jpg"></td>
     <td><img src="cid:ss_room_pink.jpg"></td></tr>
-<tr><td><img src="cid:ss_drift.jpg"></td>
-    <td><img src="cid:ss_brawler.jpg"></td>
-    <td><img src="cid:ss_smith.jpg"></td></tr>
 <tr><td><img src="cid:ss_tangleword.jpg"></td>
-    <td><img src="cid:ss_zyraxxus.jpg"></td>
+    <td><img src="cid:ss_brawler.jpg"></td>
     <td><img src="cid:ss_catalog.jpg"></td></tr>
 </table>
 
@@ -81,6 +72,7 @@ received this email in error please accept our apologies and ignore it. If you
 do not create an account using this invitation to Whirled you will not receive
 further email.</p>
 #end
+<p align="right">- The Keepers of the Peas at Three Rings</p>
 </div>
 
 </td></tr>
