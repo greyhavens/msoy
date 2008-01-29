@@ -62,6 +62,8 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.VizMemberName;
 
+import com.threerings.msoy.game.client.MsoyGamePanel;
+
 import com.threerings.msoy.notify.data.NotifyMessage;
 
 public class ChatOverlay
@@ -269,7 +271,8 @@ public class ChatOverlay
             _targetBounds = targetBounds;
             layout();
             setHistoryEnabled(Prefs.getShowingChatHistory());
-            setHistorySliding(Prefs.getSlidingChatHistory());
+            // explicitly disable sliding chat history for game chat containers
+            setHistorySliding(Prefs.getSlidingChatHistory() && !(_target is GameChatContainer));
         }
     }
 
