@@ -105,7 +105,7 @@ public class ChatTabBar extends HBox
         if (controller != null) {
             controller.addMessage(msg);
             var index :int = getControllerIndex(channel);
-            if (index != _selectedIndex) {
+            if (index != _selectedIndex && channel != null) {
                 (_tabs[index] as ChatTab).setVisualState(ChatTab.ATTENTION);
             }
             return;
