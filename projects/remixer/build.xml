@@ -63,7 +63,7 @@
     <!-- first run proguard on the code to include everything we need and nothing more -->
     <taskdef resource="proguard/ant/task.properties" classpath="${deploy.dir}/lib/proguard.jar"/>
     <proguard>
-      -injars dist/lib/samskivert-0.0-SNAPSHOT.jar(**/xml/**,**/util/**,**/swing/**)
+      -injars dist/lib/samskivert-0.0-SNAPSHOT.jar(com/samskivert/Log.class,**/xml/**,**/util/**,**/swing/**)
       -injars dist/lib/commons-codec.jar(**/*.class)
       -injars dist/lib/commons-collections.jar(**/*.class)
       -injars dist/lib/commons-io.jar(**/*.class)
