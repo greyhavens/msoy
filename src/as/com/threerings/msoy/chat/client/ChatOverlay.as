@@ -69,10 +69,13 @@ public class ChatOverlay
     public static const SCROLL_BAR_LEFT :int = 1;
     public static const SCROLL_BAR_RIGHT :int = 2;
 
-    public function ChatOverlay (ctx :MsoyContext, scrollBarSide :int = SCROLL_BAR_LEFT)
+    public function ChatOverlay (ctx :MsoyContext, scrollBarSide :int = SCROLL_BAR_LEFT,
+        includeOccupantList :Boolean = true)
     {
         _ctx = ctx;
         _msgMan = _ctx.getMessageManager();
+
+        _includeOccList = includeOccupantList;
 
         // overlay for chat that stays in a given place in the scene, and is therefore scrolled
         // with it.
@@ -163,9 +166,7 @@ public class ChatOverlay
             return;
         }
 
-        if (_occupantList != null) {
-            removeOccupantList();
-        }
+        removeOccupantList();
 
         _occupantList = occupantList;
         displayOccupantList();
@@ -357,10 +358,8 @@ public class ChatOverlay
             }
         }
             
-        if (_occupantList != null) {
-            removeOccupantList();
-            displayOccupantList();
-        }
+        removeOccupantList();
+        displayOccupantList();
     }
 
     /**
@@ -422,7 +421,7 @@ public class ChatOverlay
 
     protected function removeOccupantList () :void
     {
-        if (_occupantList == null) {
+        if (_occupantList == null || !_includeOccList) {
             return;
         }
             
@@ -437,7 +436,7 @@ public class ChatOverlay
 
     protected function displayOccupantList () :void
     {
-        if (_occupantList == null) {
+        if (_occupantList == null || !_includeOccList) {
             return;
         }
 
@@ -1287,7 +1286,8 @@ public class ChatOverlay
     {
         if (_targetBounds != null && _historyBar != null) {
             _historyBar.height = _targetBounds.height - 
-                (_occupantList != null ? _occupantList.height + _occupantList.y : 0);
+                ((_occupantList != null && _includeOccList) ?
+                  _occupantList.height + _occupantList.y : 0);
             if (_scrollBarSide == SCROLL_BAR_LEFT) {
                 _historyBar.move(_targetBounds.x, getMinHistY());
             } else {
@@ -1300,7 +1300,8 @@ public class ChatOverlay
     protected function getMinHistY () :int
     {
         return _targetBounds.y +
-            (_occupantList != null ? _occupantList.y + _occupantList.height : 0);
+            ((_occupantList != null && _includeOccList) ? 
+              _occupantList.y + _occupantList.height : 0);
     }
 
     /**
@@ -1605,6 +1606,8 @@ public class ChatOverlay
     protected var _ctx :MsoyContext;
 
     protected var _chatContainer :ChatContainer;
+
+    protected var _includeOccList :Boolean;
 }
 }
 
