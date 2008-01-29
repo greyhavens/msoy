@@ -36,8 +36,6 @@ public class ChannelOccupantList extends HBox
         _scroll.percentHeight = 100;
 
         addChild(_playersContainer = new ListBox(_scroll));
-
-        setStyle("horizontalGap", 0);
     }
 
     public function addChatter (info :VizMemberName) :void
