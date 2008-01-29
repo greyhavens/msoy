@@ -1082,9 +1082,7 @@ public class ChatOverlay
 
         } else if (msg is UserMessage) {
             var type :int;
-            if (msg is ChannelMessage) {
-                type = CHANNEL;
-            } else if (ChatCodes.USER_CHAT_TYPE == localtype) {
+            if (ChatCodes.USER_CHAT_TYPE == localtype) {
                 type = TELL;
             } else {
                 type = PLACE;
@@ -1591,7 +1589,9 @@ public class ChatOverlay
     /** Type code for notifications. */
     protected static const NOTIFICATION :int = 11 << 4;
 
-    /** Our internal code for channel chat. */
+    /** Our internal code for channel chat. This is currently unused, as all channel chat is 
+     * associated with a place.  If we have private, non-place channels in the future, this will
+     * be used again. */
     protected static const CHANNEL :int = 12 << 4;
 
     /** Our internal code for a chat type we will ignore. */
