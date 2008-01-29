@@ -11,4 +11,5 @@
   cursor: pointer;
   background-image: url(/images/account/join.png);
   font-size: 21px;
+  white-space: nowrap;
 }
