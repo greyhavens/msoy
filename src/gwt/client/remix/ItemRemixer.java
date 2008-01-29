@@ -23,6 +23,8 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 
 import client.shell.CShell;
 
+import client.inventory.CInventory;
+
 import client.util.FlashClients;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
@@ -41,7 +43,11 @@ public class ItemRemixer extends FlexTable
         formatter.setRowSpan(0, 0, 2);
         setWidget(0, 0, MsoyUI.createBackArrow(new ClickListener() {
             public void onClick (Widget sender) {
-                History.back();
+                if (_item == null) {
+                    History.back();
+                } else {
+                    CInventory.viewItem(_item.getType(), _item.itemId);
+                }
             }
         }));
     }
@@ -57,6 +63,7 @@ public class ItemRemixer extends FlexTable
 
     public void setItem (Item item)
     {
+        _item = item;
         HorizontalPanel hpan = new HorizontalPanel();
         hpan.add(createRemixControls(item));
         hpan.add(createPreview(item));
@@ -98,4 +105,7 @@ public class ItemRemixer extends FlexTable
         MediaDesc preview = item.getPreviewMedia();
         return MediaUtil.createMediaView(preview, MediaDesc.PREVIEW_SIZE);
     }
+
+    /** The item we're remixing. */
+    protected Item _item;
 }
