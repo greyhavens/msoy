@@ -27,6 +27,7 @@ import mx.events.ScrollEvent;
 
 import mx.core.Container;
 import mx.core.IRawChildrenContainer;
+import mx.core.UIComponent;
 
 import mx.controls.scrollClasses.ScrollBar;
 import mx.controls.VScrollBar;
@@ -437,6 +438,15 @@ public class ChatOverlay
     protected function displayOccupantList () :void
     {
         if (_occupantList == null || !_includeOccList) {
+            // TODO: This is a temporary hack.  The occupant lists are going to be merged into
+            // some kind of super class that handles the display basics, and this will be rethought
+            // then
+            var rightPanel :UIComponent = _ctx.getTopPanel().getRightPanel();
+            if (rightPanel is GameChatContainer) {
+                // we want to send on null occ list, so that the game chat can restore the game 
+                // list
+                (rightPanel as GameChatContainer).displayOccupantList(_occupantList);
+            }
             return;
         }
 

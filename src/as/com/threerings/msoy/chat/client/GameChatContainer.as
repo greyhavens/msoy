@@ -15,6 +15,8 @@ import mx.core.UIComponent;
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.data.ChatCodes;
 
+import com.threerings.util.Log;
+
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.MsoyContext;
@@ -71,6 +73,28 @@ public class GameChatContainer extends LayeredContainer
         }
     }
 
+    public function displayOccupantList (occList :ChannelOccupantList) :void
+    {
+        if (occList != null) {
+            if (_playerList.parent == this) {
+                removeChild(_playerList);
+            }
+
+            _channelOccList = occList;
+            if (_channelOccList.parent != this) {
+                addChild(_channelOccList = occList);
+            }
+        } else {
+            if (_channelOccList != null && _channelOccList.parent == this) {
+                removeChild(_channelOccList);
+            }
+
+            if (_playerList.parent != this) {
+                addChild(_playerList);
+            }
+        }
+    }
+
     protected function handleAddRemove (event :Event) :void
     {
         var chatTop :Number = _tabBar.y + _tabBar.height;
@@ -78,10 +102,13 @@ public class GameChatContainer extends LayeredContainer
         _overlay.setHistoryEnabled(true);
     }
 
+    private static const log :Log = Log.getLog(GameChatContainer);
+
     protected var _ctx :MsoyContext;
     protected var _overlay :ChatOverlay;
     protected var _chatDtr :ChatDirector;
     protected var _playerList :UIComponent;
+    protected var _channelOccList :ChannelOccupantList;
     protected var _tabBar :HBox;
 }
 }
