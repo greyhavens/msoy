@@ -445,6 +445,9 @@ public class ChatOverlay
             if (rightPanel is GameChatContainer) {
                 // we want to send on null occ list, so that the game chat can restore the game 
                 // list
+                if (_occupantList != null) {
+                    _occupantList.setRightSideScrollbar(true);
+                }
                 (rightPanel as GameChatContainer).displayOccupantList(_occupantList);
             }
             return;
@@ -453,8 +456,10 @@ public class ChatOverlay
         _occupantList.x = 0;
         _occupantList.y = 0;
         if (_chatContainer != null) {
+            _occupantList.setRightSideScrollbar(true);
             _chatContainer.addOccupantList(_occupantList);
         } else if (_target != null) {
+            _occupantList.setRightSideScrollbar(false);
             _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
         }
     }
@@ -1298,11 +1303,11 @@ public class ChatOverlay
             _historyBar.height = _targetBounds.height - 
                 ((_occupantList != null && _includeOccList) ?
                   _occupantList.height + _occupantList.y : 0);
-            if (_scrollBarSide == SCROLL_BAR_LEFT) {
+            if (_scrollBarSide == SCROLL_BAR_LEFT && _chatContainer == null) {
                 _historyBar.move(_targetBounds.x, getMinHistY());
             } else {
                 _historyBar.move(
-                    _targetBounds.x + _targetBounds.width - ScrollBar.THICKNESS, getMinHistY());
+                    _targetBounds.x + _targetBounds.width - ScrollBar.THICKNESS + 1, getMinHistY());
             }
         }
     }
@@ -1371,7 +1376,8 @@ public class ChatOverlay
 
                 // position it
                 glyph.x = _targetBounds.x + PAD + 
-                    (_scrollBarSide == SCROLL_BAR_LEFT ? ScrollBar.THICKNESS : 0);
+                    (_scrollBarSide == SCROLL_BAR_LEFT && _chatContainer == null ? 
+                     ScrollBar.THICKNESS : 0);
                 glyph.y = ypos;
                 ypos -= getHistorySubtitleSpacing(ii);
             }

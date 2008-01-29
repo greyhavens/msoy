@@ -23,7 +23,7 @@ public class ChannelOccupantList extends HBox
         super();
 
         // set up the UI
-        width = 300;
+        width = 316;
         height = 125;
 
         styleName = "channelOccupantList";
@@ -36,6 +36,8 @@ public class ChannelOccupantList extends HBox
         _scroll.percentHeight = 100;
 
         addChild(_playersContainer = new ListBox(_scroll));
+
+        setStyle("horizontalGap", 0);
     }
 
     public function addChatter (info :VizMemberName) :void
@@ -64,6 +66,20 @@ public class ChannelOccupantList extends HBox
                 _playersContainer.removeChildAt(ii);
                 break;
             }
+        }
+    }
+
+    public function setRightSideScrollbar (rightSide :Boolean) :void
+    {
+        if ((getChildIndex(_scroll) == 0) != rightSide) {
+            return; // no change
+        }
+
+        removeChild(_scroll);
+        if (rightSide) {
+            addChild(_scroll);
+        } else {
+            addChildAt(_scroll, 0);
         }
     }
 

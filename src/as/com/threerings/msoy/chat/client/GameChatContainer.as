@@ -82,10 +82,12 @@ public class GameChatContainer extends LayeredContainer
 
             _channelOccList = occList;
             if (_channelOccList.parent != this) {
+                _channelOccList.width = 300;
                 addChild(_channelOccList = occList);
             }
         } else {
             if (_channelOccList != null && _channelOccList.parent == this) {
+                _channelOccList.width = 316;
                 removeChild(_channelOccList);
             }
 
