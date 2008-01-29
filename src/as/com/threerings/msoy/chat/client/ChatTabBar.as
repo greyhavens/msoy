@@ -96,7 +96,12 @@ public class ChatTabBar extends HBox
 
     public function addMessage (channel :ChatChannel, msg :ChatMessage) :void
     {
-        var controller :ChatChannelController = getController(channel);
+        var controller :ChatChannelController;
+        if (channel == null) {
+            controller = getCurrentController();
+        } else {
+            controller = getController(channel);
+        }
         if (controller != null) {
             controller.addMessage(msg);
             var index :int = getControllerIndex(channel);

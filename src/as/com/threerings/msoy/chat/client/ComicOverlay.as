@@ -15,6 +15,7 @@ import mx.core.Container;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.SystemMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.util.ArrayUtil;
@@ -154,12 +155,14 @@ public class ComicOverlay extends ChatOverlay
         var ident :RoomName = _history.channelIdent as RoomName;
         var scene :MsoyScene = !(_ctx is WorldContext) ? null :
             ((_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene);
+        var timed :TimedMessageDisplay = _history.get(_history.size() - 1);
         if (ident != null && scene != null && ident.getSceneId() == scene.getId()) {
-            var timed :TimedMessageDisplay = _history.get(_history.size() - 1);
             var type :int = getType(timed.msg, false);
             if (type != IGNORECHAT) {
                 displayTypedMessageNow(timed.msg, type);
             }
+        } else if (timed.msg is SystemMessage) {
+            displayTypedMessageNow(timed.msg, getType(timed.msg, false));
         }
     }
 

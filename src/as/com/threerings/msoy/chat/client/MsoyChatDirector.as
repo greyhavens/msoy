@@ -239,19 +239,7 @@ public class MsoyChatDirector extends ChatDirector
     // from ChatDirector
     override protected function dispatchPreparedMessage (msg :ChatMessage) :void
     {
-        // determine which channel this message is targeted to.
-        var channel :ChatChannel = determineChannel(msg);
-        if (channel != null) {
-            _chatTabs.addMessage(channel, msg);
-
-        } else {
-            // add this message to the room chat history
-            _roomHistory.addMessage(msg);
-            // dispatch it normally as room chat displays are registered normally
-            super.dispatchPreparedMessage(msg);
-            // notify the tab bar that the room received chat
-            _chatTabs.locationReceivedMessage();
-        }
+        _chatTabs.addMessage(determineChannel(msg), msg);
     }
 
     override protected function suppressTooManyCaps () :Boolean
