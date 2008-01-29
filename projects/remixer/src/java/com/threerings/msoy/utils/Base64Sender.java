@@ -115,14 +115,19 @@ public class Base64Sender
             System.err.print("Could not find document! "); // just print,
             return false;
         }
-        JSObject target = (JSObject) doc.eval("getElementById('" + _targetName + "');");
+
+        // make sure the target is there
+        JSObject target = (JSObject) doc.call("getElementById", new Object[] { _targetName });
         if (target == null) {
-            System.err.print("Could not find target! "); // just print,
-//            System.err.println("Can't find target.");
+            System.err.println("Can't find target [name=" + _targetName + "].");
             return false;
         }
 
-        Object resultValue = target.call("setMediaBytes", new Object[] { s });
+        // but then call eval() with our string because otherwise we end up sending a JavaScript
+        // string object that Flash chokes on
+        String arg = (s == null) ? "null" : ("'" + s + "'");
+        Object resultValue = doc.eval("getElementById('" + _targetName + "')." +
+                                      "setMediaBytes(" + arg + ")");
         boolean result = Boolean.TRUE.equals(resultValue);
         if (result) {
             if (s == null) {
