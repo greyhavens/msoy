@@ -39,7 +39,9 @@ public class ChatChannelController
         _ctx = ctx;
         _channel = channel;
         _history = history;
-        _occList = new ChannelOccupantList();
+        if (_channel.type != ChatChannel.MEMBER_CHANNEL) {
+            _occList = new ChannelOccupantList();
+        }
 
         _departing = new ExpiringSet(3.0, handleDeparted);
     }
@@ -51,9 +53,8 @@ public class ChatChannelController
             _ccobj.addListener(this);
 
             redispatchMissedMessages();
-            if (!serverSwitch) {
+            if (!serverSwitch && _occList != null) {
                 // report on the current occupants of the channel
-                var ident :Name = _ccobj.channel.ident;
                 for each (var chatter :VizMemberName in _ccobj.chatters.toArray()) {
                     _occList.addChatter(chatter);
                 }
@@ -93,7 +94,7 @@ public class ChatChannelController
     // from interface SetListener
     public function entryAdded (event :EntryAddedEvent) :void
     {
-        if (event.getName() == ChatChannelObject.CHATTERS) {
+        if (event.getName() == ChatChannelObject.CHATTERS && _occList != null) {
             var chatter :VizMemberName = (event.getEntry() as VizMemberName);
 
             // did the departing chatter come back? if so, just remove them from the expiring set
@@ -161,7 +162,9 @@ public class ChatChannelController
 
     protected function handleDeparted (name :MemberName) :void
     {
-        _occList.removeChatter(name);
+        if (_occList != null) {
+            _occList.removeChatter(name);
+        }
     }
 
     protected function redispatchMissedMessages () :void
