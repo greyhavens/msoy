@@ -133,22 +133,44 @@ public class RemixPanel extends JPanel
         JPanel pan = setupEdit(entry);
 
         final JDialog dialog = new JDialog();
+        dialog.setTitle("Edit '" + entry.name + "'");
         final DataPack.DataType type = (DataPack.DataType) entry.getType();
+        //
+        // TODO: different editors for different data types- gotta be idiot proof
+        //
         final JTextField field = new JTextField(type.formatValue(entry.value));
         pan.add(field);
 
-        JButton button = new JButton("OK");
-        button.addActionListener(new ActionListener() {
+        final Action cancelAction = new AbstractAction("Cancel") {
             public void actionPerformed (ActionEvent e) {
-                Object newValue = type.parseValue(field.getText().trim());
+                dialog.dispose();
+            }
+        };
+        final Action okAction = new AbstractAction("OK") {
+            public void actionPerformed (ActionEvent e) {
+                String txtValue = field.getText().trim();
+                Object newValue = null;
+                try {
+                    newValue = type.parseValue(txtValue, true);
+                } catch (RuntimeException re) {
+                    // TODO:
+                    System.err.println("Unable to parse: " + re);
+                    return;
+                }
                 if (!ObjectUtil.equals(newValue, entry.value)) {
                     entry.value = newValue;
                     updatePreview();
                 }
                 dialog.dispose();
             }
-        });
-        pan.add(button);
+        };
+
+        field.addActionListener(okAction);
+
+        JPanel butPan = GroupLayout.makeButtonBox(GroupLayout.RIGHT);
+        butPan.add(new JButton(cancelAction));
+        butPan.add(new JButton(okAction));
+        pan.add(butPan);
 
         dialog.add(pan, BorderLayout.CENTER);
         dialog.pack();
@@ -159,7 +181,7 @@ public class RemixPanel extends JPanel
     {
         JDialog dialog = new JDialog();
 
-        JPanel pan = GroupLayout.makeVBox();
+        JPanel pan = GroupLayout.makeVBox(GroupLayout.NONE, GroupLayout.LEFT, GroupLayout.STRETCH);
         pan.add(new JLabel("Name: " + entry.name));
         pan.add(new JLabel("Description: " + entry.info));
         DataPack.AbstractType type = entry.getType();
