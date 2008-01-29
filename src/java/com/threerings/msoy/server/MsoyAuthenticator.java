@@ -207,10 +207,6 @@ public class MsoyAuthenticator extends Authenticator
 
                 // potentially allow GUEST access
                 if (member == null) {
-                    if ((!RuntimeConfig.server.guestsAllowed && !creds.featuredPlaceView) ||
-                        !RuntimeConfig.server.nonAdminsAllowed) {
-                        throw new ServiceException(MsoyAuthCodes.NO_GUESTS);
-                    }
                     rsp.authdata = null;
                     rdata.code = MsoyAuthResponseData.SUCCESS;
                     _eventLog.userLoggedIn(MemberName.GUEST_ID, false, creds.sessionToken);
