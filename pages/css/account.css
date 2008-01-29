@@ -1,0 +1,14 @@
+/** 
+ * $Id$
+ *
+ * CSS styles for the account pages.
+ */
+
+.createAccount .JoinButton {
+  border: none;
+  width: 103px;
+  height: 48px;
+  cursor: pointer;
+  background-image: url(/images/account/join.png);
+  font-size: 21px;
+}

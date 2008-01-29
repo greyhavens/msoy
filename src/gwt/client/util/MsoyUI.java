@@ -75,7 +75,9 @@ public class MsoyUI
         if (text != null) {
             box.setText(text);
         }
-        box.setMaxLength(maxLength);
+        if (maxLength > 0) {
+            box.setMaxLength(maxLength);
+        }
         if (visibleLength > 0) {
             box.setVisibleLength(visibleLength);
         }

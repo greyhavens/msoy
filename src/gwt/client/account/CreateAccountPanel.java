@@ -11,7 +11,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.DeploymentConfig;
@@ -31,6 +32,7 @@ import client.shell.Application;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.DateFields;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
 /**
@@ -38,12 +40,35 @@ import client.util.MsoyUI;
  */
 public class CreateAccountPanel extends FlexTable
 {
-    public CreateAccountPanel (Invitation invite)
+    public CreateAccountPanel (String inviteId)
     {
         setCellSpacing(10);
         setStyleName("formPanel");
-
+        addStyleName("createAccount");
         Frame.setTitle(CAccount.msgs.welcomeTitle(), CAccount.msgs.createTitle());
+
+        if (inviteId.equals("")) {
+            init(null);
+        } else {
+            CAccount.membersvc.getInvitation(inviteId, false, new MsoyCallback() {
+                public void onSuccess (Object result) {
+                    init((Invitation)result);
+                }
+            });
+        }
+    }
+
+    // @Override // from Widget
+    protected void onLoad ()
+    {
+        super.onLoad();
+        if (_email != null) {
+            _email.setFocus(true);
+        }
+    }
+
+    protected void init (Invitation invite)
+    {
         _invite = invite;
 
         int row = 0;
@@ -53,7 +78,7 @@ public class CreateAccountPanel extends FlexTable
 
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         setText(row, 0, CAccount.msgs.createEmail());
-        setWidget(row, 1, _email = new TextBox());
+        setWidget(row, 1, _email = MsoyUI.createTextBox("", -1, 30));
         _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 _password.setFocus(true);
@@ -64,6 +89,7 @@ public class CreateAccountPanel extends FlexTable
             _email.setText(invite.inviteeEmail);
         }
         _email.addKeyboardListener(_validator);
+        _email.setFocus(true);
         getFlexCellFormatter().setStyleName(row, 2, "Tip");
         setText(row++, 2, CAccount.msgs.createEmailTip());
 
@@ -92,7 +118,7 @@ public class CreateAccountPanel extends FlexTable
 
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         setText(row, 0, CAccount.msgs.createDisplayName());
-        _name = MsoyUI.createTextBox("", Profile.MAX_DISPLAY_NAME_LENGTH, -1);
+        _name = MsoyUI.createTextBox("", Profile.MAX_DISPLAY_NAME_LENGTH, 30);
         setWidget(row, 1, _name);
         _name.addKeyboardListener(_validator);
         getFlexCellFormatter().setStyleName(row, 2, "Tip");
@@ -100,7 +126,7 @@ public class CreateAccountPanel extends FlexTable
 
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         setText(row, 0, CAccount.msgs.createRealName());
-        setWidget(row, 1, _rname = new TextBox());
+        setWidget(row, 1, _rname = MsoyUI.createTextBox("", -1, 30));
         getFlexCellFormatter().setStyleName(row, 2, "Tip");
         setText(row++, 2, CAccount.msgs.createRealNameTip());
 
@@ -114,43 +140,19 @@ public class CreateAccountPanel extends FlexTable
         getFlexCellFormatter().setColSpan(row, 0, 3);
         getFlexCellFormatter().setStyleName(row, 0, "Status");
         setWidget(row++, 0, _status = new Label(""));
-        _status.setText(CAccount.msgs.createMissingEmail());
 
-        HorizontalPanel footer = new HorizontalPanel();
-        footer.add(new Button(CAccount.msgs.createCreate(), new ClickListener() {
+        Button create = new Button(CAccount.msgs.createCreate(), new ClickListener() {
             public void onClick (Widget sender) {
-                if (!validateData(true)) {
-                    return;
-                }
-
-                String[] today = new Date().toString().split(" ");
-                String thirteenYearsAgo = "";
-                for (int ii = 0; ii < today.length; ii++) {
-                    if (today[ii].matches("[0-9]{4}")) {
-                        int year = Integer.valueOf(today[ii]).intValue();
-                        today[ii] = "" + (year - 13);
-                    }
-                    thirteenYearsAgo += today[ii] + " ";
-                }
-
-                Date dob = DateFields.toDate(_dateOfBirth.getDate());
-                if (new Date(thirteenYearsAgo).compareTo(dob) < 0) {
-                    setError(CAccount.msgs.createNotThirteen());
-                } else {
-                    createAccount();
-                }
+                createAccount();
             }
-        }));
-        getFlexCellFormatter().setColSpan(row, 0, 3);
-        setWidget(row++, 0, footer);
-    }
+        });
+        create.setStyleName("JoinButton");
+        getFlexCellFormatter().setHorizontalAlignment(row, 1, HasAlignment.ALIGN_RIGHT);
+        setWidget(row, 1, create);
+        setWidget(row++, 2, MsoyUI.createLabel(CAccount.msgs.createAlphaNote(), "Tip"));
 
-//     // @Override // from PopupPanel
-//     public void show ()
-//     {
-//         super.show();
-//         _email.setFocus(true);
-//     }
+        validateData(false);
+    }
 
     protected boolean validateData (boolean forceError)
     {
@@ -184,6 +186,26 @@ public class CreateAccountPanel extends FlexTable
 
     protected void createAccount ()
     {
+        if (!validateData(true)) {
+            return;
+        }
+
+        String[] today = new Date().toString().split(" ");
+        String thirteenYearsAgo = "";
+        for (int ii = 0; ii < today.length; ii++) {
+            if (today[ii].matches("[0-9]{4}")) {
+                int year = Integer.valueOf(today[ii]).intValue();
+                today[ii] = "" + (year - 13);
+            }
+            thirteenYearsAgo += today[ii] + " ";
+        }
+
+        Date dob = DateFields.toDate(_dateOfBirth.getDate());
+        if (new Date(thirteenYearsAgo).compareTo(dob) < 0) {
+            setError(CAccount.msgs.createNotThirteen());
+            return;
+        }
+
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim();
         AccountInfo info = new AccountInfo();

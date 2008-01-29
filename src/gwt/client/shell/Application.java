@@ -178,6 +178,9 @@ public class Application
 
         // TEMP: migrate old style invites to new style
         if ("invite".equals(page) || "optout".equals(page) || "resetpw".equals(page)) {
+            if ("invite".equals(page)) {
+                page = "i";
+            }
             token = Args.compose(page, args.get(0, ""), args.get(1, ""));
             args = new Args();
             args.setToken(token);

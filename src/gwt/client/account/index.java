@@ -34,22 +34,29 @@ public class index extends Page
     {
         _onLogonRedirect = false;
 
-        if (args.get(0, "").equals("invite")) {
+        String action = args.get(0, "");
+        if (action.equals("i")) {
+            // TODO: send them to the house of the inviter with a helpful box
+//             CAccount.membersvc.getInvitation(inviteId, true, new MsoyCallback() {
+//                 public void onSuccess (Object result) {
+//                     TODO((Invitation)result);
+//                 }
+//             });
             _onLogonRedirect = true;
-            setContent(new AcceptInvitePanel(this, args.get(1, "")));
+            setContent(new CreateAccountPanel(args.get(1, "")));
 
-        } else if (args.get(0, "").equals("invites")) {
+        } else if (action.equals("create")) {
+            _onLogonRedirect = true;
+            setContent(new CreateAccountPanel(args.get(1, "")));
+
+        } else if (action.equals("invites")) {
             setContent(new SendInvitesPanel());
 
-        } else if (args.get(0, "").equals("create")) {
-            _onLogonRedirect = true;
-            showCreateAccount(null);
-
-        } else if (args.get(0, "").equals("optout")) {
+        } else if (action.equals("optout")) {
             _onLogonRedirect = true;
             setContent(new OptOutPanel(args.get(1, "")));
 
-        } else if (args.get(0, "").equals("resetpw")) {
+        } else if (action.equals("resetpw")) {
             _onLogonRedirect = true;
             setContent(new ResetPasswordPanel(args));
 
@@ -84,11 +91,6 @@ public class index extends Page
 
         // load up our translation dictionaries
         CAccount.msgs = (AccountMessages)GWT.create(AccountMessages.class);
-    }
-
-    protected void showCreateAccount (Invitation invite)
-    {
-        setContent(new CreateAccountPanel(invite));
     }
 
     protected boolean _onLogonRedirect;
