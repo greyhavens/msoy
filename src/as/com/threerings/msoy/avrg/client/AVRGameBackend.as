@@ -344,6 +344,7 @@ public class AVRGameBackend extends ControlBackend
         var sprite :MemberSprite = getAvatarSprite(playerId);
         if (sprite != null) {
             return [
+                sprite.getActorInfo().username.toString(),
                 sprite.getState(),
                 sprite.getLocation().x,
                 sprite.getLocation().y,
