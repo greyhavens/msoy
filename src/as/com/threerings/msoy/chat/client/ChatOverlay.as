@@ -271,7 +271,7 @@ public class ChatOverlay
 
             _targetBounds = targetBounds;
             layout();
-            setHistoryEnabled(Prefs.getShowingChatHistory());
+            setHistoryEnabled(Prefs.getShowingChatHistory() || Prefs.getSlidingChatHistory());
             // explicitly disable sliding chat history for game chat containers
             setHistorySliding(Prefs.getSlidingChatHistory() && !(_target is GameChatContainer));
         }
@@ -525,7 +525,7 @@ public class ChatOverlay
         switch (event.name) {
         case Prefs.CHAT_HISTORY:
             if (_target != null) {
-                setHistoryEnabled(Boolean(event.value));
+                setHistoryEnabled(Boolean(event.value) || Prefs.getSlidingChatHistory());
             }
             break;
 
