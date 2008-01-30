@@ -43,7 +43,12 @@ public class AvatarViewerComp extends VBox
     public function AvatarViewerComp ()
     {
         // configure a receiver to receive our javascript bytes
-        new Base64Receiver(loadBytes, "setMediaBytes");
+        try {
+            new Base64Receiver(loadBytes, "setMediaBytes");
+        } catch (err :Error) {
+            // don't worry if we can't set it up.
+            trace(err);
+        }
     }
 
     /**
@@ -67,6 +72,9 @@ public class AvatarViewerComp extends VBox
         // on the last one, add a listener
         avatar.addEventListener(MouseEvent.CLICK, handleMouseClick);
         avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+
+        setMode(_mode);
+        setOrient(_orient);
     }
 
     override protected function createChildren () :void
@@ -253,6 +261,7 @@ public class AvatarViewerComp extends VBox
 
     protected function setMode (mode :int) :void
     {
+        _mode = mode;
         for each (var avatar :ViewerAvatarSprite in _avatars) {
             avatar.setMoving(mode == 1);
             avatar.setIdle(mode == 2);
@@ -262,6 +271,7 @@ public class AvatarViewerComp extends VBox
     protected function setOrient (val :Number) :void
     {
         var orient :int = int(val);
+        _orient = orient;
 
         for each (var avatar :ViewerAvatarSprite in _avatars) {
             avatar.setOrientation(orient);
@@ -343,6 +353,9 @@ public class AvatarViewerComp extends VBox
 
     /** Holds scaling controls, only visible sometimes. */
     protected var _scaleControls :HBox;
+
+    protected var _orient :int;
+    protected var _mode :int;
 
     protected var _scaleSlider :HSlider;
     protected var _scaleReset :Button;
