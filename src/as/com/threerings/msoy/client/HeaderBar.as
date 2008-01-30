@@ -61,7 +61,9 @@ public class HeaderBar extends HBox
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
 
         if (_tabsContainer.parent == this) {
-            _tabs.locationName = loc;
+            // if we hold the tabs, other location switching code will ensure that the proper
+            // location tab is sitting at the front of the line of tabs.
+            _tabs.locationName = null;
         } else {
             _tabs.locationName = Msgs.CHAT.get("l.game_channel");
         }
@@ -126,7 +128,7 @@ public class HeaderBar extends HBox
         if (_tabsContainer.parent != null) {
             _tabsContainer.parent.removeChild(_tabsContainer);
         }
-        _tabs.locationName = _loc.text;
+        _tabs.locationName = null;
         if (_loc.parent == this) {
             _loc.visible = _loc.includeInLayout = false;
         }
