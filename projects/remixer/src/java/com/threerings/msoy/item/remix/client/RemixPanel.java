@@ -6,6 +6,7 @@ package com.threerings.msoy.item.remix.client;
 import java.applet.Applet;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +15,10 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,11 +26,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import com.samskivert.swing.AWTResultListener;
 import com.samskivert.swing.GroupLayout;
 import com.samskivert.swing.VGroupLayout;
 
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.RunQueue;
 
 import com.whirled.DataPack;
 
@@ -73,7 +79,7 @@ public class RemixPanel extends JPanel
                 throw new RuntimeException(cause);
             }
         };
-        _pack = new EditableDataPack(url, rl);
+        _pack = new EditableDataPack(url, new AWTResultListener<EditableDataPack>(rl));
     }
 
     /**
@@ -81,14 +87,17 @@ public class RemixPanel extends JPanel
      */
     protected void packAvailable ()
     {
-        updatePreview();
+        System.err.println("On awt thread: " + RunQueue.AWT.isDispatchThread());
 
-        JPanel panel = GroupLayout.makeVBox();
+        JPanel panel = GroupLayout.makeVBox(GroupLayout.NONE, GroupLayout.TOP, GroupLayout.STRETCH);
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         addFields(panel, _pack.getDataFields(), true);
         addFields(panel, _pack.getFileFields(), false);
 
         add(new JScrollPane(panel), BorderLayout.CENTER);
+
+        updatePreview();
     }
 
     protected void addFields (JPanel panel, List<String> fields, final boolean areData)
@@ -100,7 +109,7 @@ public class RemixPanel extends JPanel
         panel.add(new JLabel(areData ? "Data fields" : "Files"));
 
         for (String name : fields) {
-            JPanel hbox = GroupLayout.makeHBox();
+            JPanel hbox = GroupLayout.makeHBox(GroupLayout.NONE, GroupLayout.LEFT);
             hbox.add(new JLabel(name));
             JButton but = new JButton("Change");
             final String fname = name;
@@ -134,12 +143,11 @@ public class RemixPanel extends JPanel
 
         final JDialog dialog = new JDialog();
         dialog.setTitle("Edit '" + entry.name + "'");
+
         final DataPack.DataType type = (DataPack.DataType) entry.getType();
-        //
-        // TODO: different editors for different data types- gotta be idiot proof
-        //
-        final JTextField field = new JTextField(type.formatValue(entry.value));
-        pan.add(field);
+        final Editor editor = getEditor(type);
+        editor.setValue(entry.value);
+        pan.add(editor.getComponent());
 
         final Action cancelAction = new AbstractAction("Cancel") {
             public void actionPerformed (ActionEvent e) {
@@ -148,15 +156,7 @@ public class RemixPanel extends JPanel
         };
         final Action okAction = new AbstractAction("OK") {
             public void actionPerformed (ActionEvent e) {
-                String txtValue = field.getText().trim();
-                Object newValue = null;
-                try {
-                    newValue = type.parseValue(txtValue, true);
-                } catch (RuntimeException re) {
-                    // TODO:
-                    System.err.println("Unable to parse: " + re);
-                    return;
-                }
+                Object newValue = editor.getValue();
                 if (!ObjectUtil.equals(newValue, entry.value)) {
                     entry.value = newValue;
                     updatePreview();
@@ -165,7 +165,7 @@ public class RemixPanel extends JPanel
             }
         };
 
-        field.addActionListener(okAction);
+        editor.setActionListeners(okAction, cancelAction);
 
         JPanel butPan = GroupLayout.makeButtonBox(GroupLayout.RIGHT);
         butPan.add(new JButton(cancelAction));
@@ -197,6 +197,23 @@ public class RemixPanel extends JPanel
         _remix.setEnabled(true);
     }
 
+    protected Editor getEditor (DataPack.DataType type)
+    {
+        switch (type) {
+        case COLOR:
+            return new ColorEditor();
+
+        case STRING:
+            return new StringEditor();
+
+        case NUMBER:
+            return new NumberEditor();
+
+        default:
+            throw new RuntimeException("No editor defined for DataPack DataType: " + type);
+        }
+    }
+
     /** The datapack we're editing. */
     protected EditableDataPack _pack;
 
@@ -205,4 +222,91 @@ public class RemixPanel extends JPanel
     protected Action _remix;
 
     protected Base64Sender _sender;
+}
+
+abstract class Editor
+{
+    public abstract void setValue (Object value);
+
+    public abstract Object getValue ();
+
+    public abstract JComponent getComponent ();
+
+    public void setActionListeners (ActionListener ok, ActionListener cancel)
+    {
+        // nada by default
+    }
+}
+
+class ColorEditor extends Editor
+{
+    public ColorEditor ()
+    {
+        _chooser = new JColorChooser();
+    }
+
+    public void setValue (Object value)
+    {
+        _chooser.setColor((Color) value);
+    }
+
+    public Object getValue ()
+    {
+        return _chooser.getColor();
+    }
+
+    public JComponent getComponent ()
+    {
+        return _chooser;
+    }
+
+    protected JColorChooser _chooser;
+}
+
+class StringEditor extends Editor
+{
+    public StringEditor ()
+    {
+        _field = new JTextField();
+    }
+
+    public void setValue (Object value)
+    {
+        _field.setText((String) value);
+    }
+
+    public Object getValue ()
+    {
+        return _field.getText().trim();
+    }
+
+    public JComponent getComponent ()
+    {
+        return _field;
+    }
+
+    @Override
+    public void setActionListeners (ActionListener ok, ActionListener cancel)
+    {
+        _field.addActionListener(ok);
+    }
+
+    protected JTextField _field;
+}
+
+class NumberEditor extends StringEditor
+{
+    public void setValue (Object value)
+    {
+        if (value instanceof Number) {
+            value = DataPack.DataType.NUMBER.formatValue(value);
+        }
+        super.setValue(value);
+    }
+
+    public Object getValue ()
+    {
+        Object val = super.getValue();
+        return (val == null) ? val : DataPack.DataType.NUMBER.parseValue((String) val, true);
+    }
 }
