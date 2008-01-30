@@ -46,6 +46,11 @@ public class ChatTabBar extends HBox
         if (_selectedIndex != -1) {
             activeTab = _tabs[_selectedIndex] as ChatTab;
             activeTab.setVisualState(ChatTab.UNSELECTED);
+            _selectedIndex = -1;
+        }
+
+        if (_tabs.length == 0) {
+            return;
         }
 
         _selectedIndex = (ii + _tabs.length) % _tabs.length;
@@ -172,9 +177,14 @@ public class ChatTabBar extends HBox
         return getControllerIndex(channel) != -1;
     }
 
+    public function getFirstController () :ChatChannelController
+    {
+        return _tabs.length > 0 ? (_tabs[0] as ChatTab).controller : null;
+    }
+
     public function getCurrentController () :ChatChannelController
     {
-        return (_tabs[_selectedIndex] as ChatTab).controller;
+        return _tabs.length > 0 ? (_tabs[_selectedIndex] as ChatTab).controller : null;
     }
 
     public function getLocationHistory () :HistoryList
@@ -217,6 +227,17 @@ public class ChatTabBar extends HBox
     public function chatTabIndex (tab :ChatTab) :int
     {
         return _tabs.indexOf(tab);
+    }
+
+    public function closeTab (channel :ChatChannel) :void
+    {
+        var index :int = getControllerIndex(channel);
+        if (index == -1) {
+            log.debug("asked to remove tab we don't appear to have [" + channel + "]");
+            return;
+        }
+
+        removeTabAt(index, true);
     }
 
     protected function addTab (tab :ChatTab, index :int = -1) :void
@@ -270,18 +291,16 @@ public class ChatTabBar extends HBox
         if (tab == null) {
             return;
         }
-        tab.controller.shutdown();
-        _ctx.getMsoyChatDirector().closeChannel(tab.controller.channel);
 
         var index :int = ArrayUtil.indexOf(_tabs, event.target);
         if (index < 0) {
             return;
         }
 
-        removeTabAt(index);
+        removeTabAt(index, true);
     }
 
-    protected function removeTabAt (index :int) :void
+    protected function removeTabAt (index :int, shutdown :Boolean = false) :void
     {
         var tab :ChatTab = _tabs[index] as ChatTab;
         for (var ii :int = index; ii < _tabs.length; ii++) {
@@ -292,10 +311,17 @@ public class ChatTabBar extends HBox
         if (_selectedIndex == index) {
             // if this was the selected tab, we no longer have a selected tab.
             _selectedIndex = -1;
+        } else if (_selectedIndex > index) {
+            _selectedIndex--;
         }
 
         // default back to location chat when a tab is closed
         selectedIndex = 0;
+
+        if (shutdown) {
+            tab.controller.shutdown();
+            _ctx.getMsoyChatDirector().closeChannel(tab.controller.channel);
+        }
     }
 
     protected function getController (channel :ChatChannel) :ChatChannelController

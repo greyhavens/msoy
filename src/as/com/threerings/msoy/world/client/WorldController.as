@@ -26,6 +26,7 @@ import com.threerings.presents.net.Credentials;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
 
+import com.threerings.msoy.chat.client.ChatChannelController;
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.item.data.all.Item;
@@ -845,9 +846,17 @@ public class WorldController extends MsoyController
             headerBar.setLocationName(scene.getName());
             headerBar.setEmbedLinkButtonVisible(!_wctx.getMsoyClient().isEmbedded());
 
+            var currentController :ChatChannelController = 
+                headerBar.getChatTabs().getFirstController();
+
             // subscribe to the new scene's channel, if we haven't already
             var roomName :RoomName = new RoomName(scene.getName(), scene.getId());
             _wctx.getMsoyChatDirector().openChannel(roomName, true);
+
+            if (currentController != null && currentController.channel != null) {
+                // close down the previous rooms chat tab by default
+                headerBar.getChatTabs().closeTab(currentController.channel);
+            }
 
             // update the owner link
             var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
