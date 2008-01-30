@@ -70,6 +70,12 @@ public abstract class BaseItemDetailPanel extends FlexTable
         box.setWidget(2, 0, _extras = new HorizontalPanel());
         box.getFlexCellFormatter().setStyleName(2, 1, "Buttons");
         box.setWidget(2, 1, _buttons = new HorizontalPanel());
+        if (_item.isRatable()) {
+            box.getFlexCellFormatter().setColSpan(3, 0, 2);
+            box.getFlexCellFormatter().setStyleName(3, 0, "Rating");
+            box.setWidget(3, 0, new ItemRating(_detail.item, CShell.getMemberId(),
+                                               _detail.memberRating, true));
+        }
         getFlexCellFormatter().setRowSpan(0, 1, 2);
         getFlexCellFormatter().setVerticalAlignment(0, 1, VerticalPanel.ALIGN_TOP);
         setWidget(0, 1, box);
@@ -140,10 +146,6 @@ public abstract class BaseItemDetailPanel extends FlexTable
 
     protected void createInterface (VerticalPanel details)
     {
-        if (_item.isRatable()) {
-            details.add(new ItemRating(_detail.item, CShell.getMemberId(), _detail.memberRating));
-            details.add(WidgetUtil.makeShim(1, 5));
-        }
         details.add(_creator = new CreatorLabel());
         _creator.setMember(_detail.creator);
         details.add(_description = new Label(ItemUtil.getDescription(_item)));

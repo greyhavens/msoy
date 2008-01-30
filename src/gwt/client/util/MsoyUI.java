@@ -109,6 +109,16 @@ public class MsoyUI
     }
 
     /**
+     * Creates a button with big text.
+     */
+    public static Button createBigButton (String label, ClickListener listener)
+    {
+        Button button = new Button(label, listener);
+        button.addStyleName("bigButton");
+        return button;
+    }
+
+    /**
      * Creates an arrow that does History.back().
      */
     public static Image createBackArrow ()
@@ -136,6 +146,16 @@ public class MsoyUI
         Image image = new Image(path);
         image.addStyleName("actionLabel");
         image.addClickListener(onClick);
+        return image;
+    }
+
+    /**
+     * Creates an image that will render inline with text (rather than forcing a break).
+     */
+    public static Image createInlineImage (String path)
+    {
+        Image image = new Image(path);
+        image.setStyleName("inline");
         return image;
     }
 

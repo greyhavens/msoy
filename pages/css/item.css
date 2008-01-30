@@ -117,6 +117,15 @@
   width: 1px;
 }
 
+.itemDetailPanel .Box .Rating {
+  padding: 5px;
+}
+
+.itemDetailPanel .Box .Rating table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .itemDetailPanel .Details {
   width: 250px;
 }

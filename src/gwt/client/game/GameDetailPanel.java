@@ -108,8 +108,8 @@ public class GameDetailPanel extends VerticalPanel
         if (detail.listedItem != null) {
             box.setWidget(2, 0, WidgetUtil.makeShim(1, 5));
             box.getFlexCellFormatter().setHorizontalAlignment(3, 0, HasAlignment.ALIGN_CENTER);
-            box.setWidget(3, 0, new ItemRating(
-                              detail.listedItem, CGame.getMemberId(), detail.memberRating));
+            box.setWidget(3, 0, new ItemRating(detail.listedItem, CGame.getMemberId(),
+                                               detail.memberRating, false));
         }
 
         top.getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);

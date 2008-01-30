@@ -8,7 +8,6 @@ import java.util.Date;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -44,7 +43,6 @@ public class CreateAccountPanel extends FlexTable
     {
         setCellSpacing(10);
         setStyleName("formPanel");
-        addStyleName("createAccount");
         Frame.setTitle(CAccount.msgs.welcomeTitle(), CAccount.msgs.createTitle());
 
         if (inviteId.equals("")) {
@@ -141,14 +139,12 @@ public class CreateAccountPanel extends FlexTable
         getFlexCellFormatter().setStyleName(row, 0, "Status");
         setWidget(row++, 0, _status = new Label(""));
 
-        Button create = new Button(CAccount.msgs.createCreate(), new ClickListener() {
+        getFlexCellFormatter().setHorizontalAlignment(row, 1, HasAlignment.ALIGN_RIGHT);
+        setWidget(row, 1, MsoyUI.createBigButton(CAccount.msgs.createCreate(), new ClickListener() {
             public void onClick (Widget sender) {
                 createAccount();
             }
-        });
-        create.setStyleName("JoinButton");
-        getFlexCellFormatter().setHorizontalAlignment(row, 1, HasAlignment.ALIGN_RIGHT);
-        setWidget(row, 1, create);
+        }));
         setWidget(row++, 2, MsoyUI.createLabel(CAccount.msgs.createAlphaNote(), "Tip"));
 
         validateData(false);

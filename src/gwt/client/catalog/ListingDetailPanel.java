@@ -7,13 +7,13 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -44,30 +44,17 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _listing = listing;
         _panel = panel;
 
+        // createInterface() has already been called by our superclass constructor so now we can
+        // fill in information from our listing record
         _listed.setText(CCatalog.msgs.listingListed(_lfmt.format(listing.listedDate)));
         _purchases.setText(CCatalog.msgs.listingPurchases("" + listing.purchases));
-
-        _extras.add(_price = new FlexTable());
-        _price.setCellPadding(0);
-        _price.setCellSpacing(0);
-        FlexCellFormatter formatter = _price.getFlexCellFormatter();
-        formatter.setWidth(0, 0, "15px"); // gap!
-        formatter.setStyleName(0, 0, "Icon");
-        _price.setWidget(0, 0, new Image("/images/header/symbol_gold.png"));
-        formatter.setWidth(0, 1, "25px"); // gap!
-        _price.setText(0, 1, String.valueOf(_listing.goldCost));
-
-        formatter.setWidth(0, 2, "15px"); // gap!
-        formatter.setStyleName(0, 2, "Icon");
-        _price.setWidget(0, 2, new Image("/images/header/symbol_flow.png"));
-        _price.setText(0, 3, String.valueOf(_listing.flowCost));
+//         _goldCost.setText(String.valueOf(_listing.goldCost));
+        _flowCost.setText(String.valueOf(_listing.flowCost));
 
         // if we are the creator (lister) of this item, allow us to delist it
         if (_listing.creator.getMemberId() == CCatalog.getMemberId() || CCatalog.isAdmin()) {
-            _details.add(WidgetUtil.makeShim(1, 10));
-            _details.add(new Label(CCatalog.msgs.listingDelistTip()));
             Button delist = new Button(CCatalog.msgs.listingDelist());
-            new ClickCallback(delist) {
+            new ClickCallback(delist, CCatalog.msgs.listingDelistConfirm()) {
                 public boolean callService () {
                     CCatalog.catalogsvc.removeListing(
                         CCatalog.ident, _item.getType(), _listing.catalogId, this);
@@ -80,7 +67,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     return false;
                 }
             };
-            _details.add(delist);
+            _buttons.add(delist);
 
             if (_listing.originalItemId != 0) {
                 // also add a link to view the original
@@ -110,8 +97,19 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         ItemUtil.addItemSpecificButtons(_item, _buttons);
 
+        details.add(WidgetUtil.makeShim(1, 10));
+        FlowPanel price = new FlowPanel();
+        price.add(new InlineLabel(CCatalog.msgs.listingPrice(), false, false, true));
+//         price.add(MsoyUI.createInlineImage("/images/header/symbol_gold.png"));
+//         price.add(_goldCost = new InlineLabel("", false, false, true));
+        price.add(MsoyUI.createInlineImage("/images/header/symbol_flow.png"));
+        price.add(_flowCost = new InlineLabel("", false, false, true));
+        details.add(price);
+
         // TODO: enable/disable purchase button depending on member's gold/flow wealth?
-        _buttons.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
+        details.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
+        _purchase.addStyleName("bigButton"); // make it big!
+        _purchase.addStyleName("buyButton"); // really big!
         new ClickCallback(_purchase) {
             public boolean callService () {
                 CCatalog.catalogsvc.purchaseItem(
@@ -179,9 +177,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected CatalogListing _listing;
     protected CatalogPanel _panel;
 
-    protected FlexTable _price;
     protected Button _purchase;
     protected Label _purchases, _listed;
+    protected Label _goldCost, _flowCost;
 
     protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
 }

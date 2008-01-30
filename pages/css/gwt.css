@@ -71,6 +71,14 @@ img, embed, applet, object {
     height: 12px;
 }
 
+.bigButton {
+  border: none;
+  width: 103px;
+  height: 48px;
+  background-image: url(/images/ui/big_button.png);
+  font-size: 21px;
+}
+
 .gwt-PushButton {
     text-align: center;
 }

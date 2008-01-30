@@ -45,3 +45,8 @@
 .listingContainer .Cost {
   font-size: 12px;
 }
+
+.buyButton {
+  font-size: 28px;
+  font-weight: bold;
+}
