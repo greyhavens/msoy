@@ -99,6 +99,7 @@ public class ChatTab extends HBox
 
     public function displayChat () :void
     {
+        log.debug("displayChat [" + _controller + "]");
         if (_controller != null) {
             _controller.displayChat();
         } else {
@@ -132,7 +133,7 @@ public class ChatTab extends HBox
             break;
 
         default:
-            Log.getLog(this).warning("Unknown visual state [" + state + "]");
+            log.warning("Unknown visual state [" + state + "]");
             return;
         }
 
@@ -152,8 +153,7 @@ public class ChatTab extends HBox
                 _ctx.getTopPanel().getControlBar().setChatColor(COLOR_TELL);
             }
         } else {
-            Log.getLog(this).warning("Unkown channel type for skinning [" + 
-                _controller.channel.type + "]");
+            log.warning("Unkown channel type for skinning [" + _controller.channel.type + "]");
             return;
         }
 
@@ -246,6 +246,8 @@ public class ChatTab extends HBox
                                                              _closeButton.height);
         }
     }
+
+    private static const log :Log = Log.getLog(ChatTab);
     
     protected static const BUTTON_SKIN :String = "buttonSkin";
     protected static const CLOSE_SKIN :String = "closeSkin";

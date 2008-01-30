@@ -84,11 +84,17 @@ public class ChatTabBar extends HBox
         _chatDirector = dir;
     }
 
-    public function displayChat (channel :ChatChannel, history :HistoryList = null) :void
+    public function displayChat (channel :ChatChannel, history :HistoryList = null, 
+        inFront :Boolean = false) :void
     {
         var index :int = getControllerIndex(channel);
         if (index != -1) {
-            selectedIndex = index;
+            if (inFront) {
+                moveTabToFront(channel);
+                selectedIndex = 0;
+            } else {
+                selectedIndex = index;
+            }
             return;
         }
 
@@ -98,7 +104,12 @@ public class ChatTabBar extends HBox
                 channel + "]");
             return;
         }
-        addAndSelect(new ChatTab(_ctx, this, channel, history));
+        if (inFront) {
+            addTab(new ChatTab(_ctx, this, channel, history), 0);
+            selectedIndex = 0;
+        } else {
+            addAndSelect(new ChatTab(_ctx, this, channel, history));
+        }
     }
 
     public function addMessage (channel :ChatChannel, msg :ChatMessage) :void
@@ -163,14 +174,39 @@ public class ChatTabBar extends HBox
 
     public function getLocationHistory () :HistoryList
     {
-        if (_chatDirector == null) {
-            return _ctx.getMsoyChatDirector().getRoomHistory();
-        } else if (_chatDirector is MsoyChatDirector) {
-            return (_chatDirector as MsoyChatDirector).getRoomHistory();
-        } else if (_chatDirector is GameChatDirector) {
+        if (_chatDirector is GameChatDirector) {
             return (_chatDirector as GameChatDirector).getGameHistory();
         }
+
+        log.debug("asked for location history in a non-game");
         return null;
+    }
+
+    public function moveTabToFront (channel :ChatChannel) :void
+    {
+        var index :int = getControllerIndex(channel);
+        if (index == -1) {
+            log.debug("asked to move unknown tab to front [" + channel + "]");
+            return;
+        }
+
+        var selected :Boolean = _selectedIndex == index;
+        var tab :ChatTab = _tabs[index];
+        removeTabAt(index);
+        addTab(tab, 0);
+        if (selected) {
+            selectedIndex = 0;
+        }
+    }
+
+    public function displayActiveChat (defaultList :HistoryList) :void
+    {
+        if (_selectedIndex < 0 || _tabs.length <= 0) {
+            _ctx.getTopPanel().getChatOverlay().setHistory(defaultList); 
+            return;
+        }
+
+        (_tabs[_selectedIndex] as ChatTab).displayChat();
     }
 
     protected function addTab (tab :ChatTab, index :int = -1) :void

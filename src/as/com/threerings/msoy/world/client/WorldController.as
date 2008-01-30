@@ -847,7 +847,7 @@ public class WorldController extends MsoyController
 
             // subscribe to the new scene's channel, if we haven't already
             var roomName :RoomName = new RoomName(scene.getName(), scene.getId());
-            _wctx.getMsoyChatDirector().openChannel(roomName);
+            _wctx.getMsoyChatDirector().openChannel(roomName, true);
 
             // update the owner link
             var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;

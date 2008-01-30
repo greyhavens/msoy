@@ -165,12 +165,12 @@ public class ChatOverlay
     public function setHistory (history :HistoryList, 
         occupantList :ChannelOccupantList = null) :void
     {
+        log.debug("setHistory [" + history.channelIdent + ", " + occupantList + "]");
         if (history == _history) {
             return;
         }
 
         removeOccupantList();
-
         _occupantList = occupantList;
         displayOccupantList();
 

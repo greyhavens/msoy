@@ -69,11 +69,6 @@ public class MsoyChatDirector extends ChatDirector
         _chatTabs = tabs;
     }
 
-    public function getRoomHistory () :HistoryList
-    {
-        return _roomHistory;
-    }
-
     /**
      * Return true if we've already got a chat channel open with the specified Name.
      */
@@ -88,21 +83,21 @@ public class MsoyChatDirector extends ChatDirector
      *
      * @param name either a MemberName, GroupName, ChannelName or RoomName
      */
-    public function openChannel (name :Name) :void
+    public function openChannel (name :Name, inFront :Boolean = false) :void
     {
         var channel :ChatChannel = makeChannel(name);
 
         // if this is a member or already open channel, open/select the UI immediately
         if (channel.type == ChatChannel.MEMBER_CHANNEL ||
                 _chandlers.containsKey(channel.toLocalType())) {
-            _chatTabs.displayChat(channel, getHistory(channel));
+            _chatTabs.displayChat(channel, getHistory(channel), inFront);
             return;
         }
 
         // otherwise we have to subscribe to the channel first
         var showTabFn :Function = function (ccobj :ChatChannelObject) :void {
             // once the subscription went through, show the chat history
-            _chatTabs.displayChat(channel, getHistory(channel));
+            _chatTabs.displayChat(channel, getHistory(channel), inFront);
             // if this is a tabbed channel, make sure to update its distributed object reference
             _chatTabs.reinitController(channel, ccobj);
         };
@@ -170,8 +165,8 @@ public class MsoyChatDirector extends ChatDirector
     override public function pushChatDisplay (display :ChatDisplay) :void
     {
         if (display is ChatOverlay) {
-            (display as ChatOverlay).setHistory(_roomHistory);
             _wctx.getTopPanel().setActiveOverlay(display as ChatOverlay);
+            _chatTabs.displayActiveChat(_roomHistory);
         }
         super.pushChatDisplay(display);
     }
@@ -180,8 +175,8 @@ public class MsoyChatDirector extends ChatDirector
     override public function addChatDisplay (display :ChatDisplay) :void
     {
         if (display is ChatOverlay) {
-            (display as ChatOverlay).setHistory(_roomHistory);
             _wctx.getTopPanel().setActiveOverlay(display as ChatOverlay);
+            _chatTabs.displayActiveChat(_roomHistory);
         }
         super.addChatDisplay(display);
     }

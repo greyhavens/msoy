@@ -48,7 +48,7 @@ public class ChatChannelController
 
     public function init (ccobj :ChatChannelObject, serverSwitch :Boolean = false) :void
     {
-        if (ccobj != null) {
+        if (ccobj != null && _ccobj != ccobj) {
             _ccobj = ccobj;
             _ccobj.addListener(this);
 
