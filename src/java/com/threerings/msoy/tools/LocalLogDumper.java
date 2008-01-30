@@ -95,7 +95,7 @@ public class LocalLogDumper
         
         // it matches, let's parse it out
         int year = Integer.parseInt(m.group(1));
-        int month = Integer.parseInt(m.group(2));
+        int month = Integer.parseInt(m.group(2)) - 1; // nota bene: months are zero-indexed!
         int day = Integer.parseInt(m.group(3));
         
         Calendar c = Calendar.getInstance();
