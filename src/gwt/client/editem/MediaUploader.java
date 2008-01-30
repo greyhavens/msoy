@@ -74,7 +74,7 @@ public class MediaUploader extends FlexTable
 
         // TEMP: display the media chooser applet only on dev until we're actually ready to go live
         // with the new hotness
-        if (DeploymentConfig.devDeployment) {
+        if (false && DeploymentConfig.devDeployment) {
             String[] args = new String[] {
                 "server", GWT.isScript() ? GWT.getHostPageBaseURL() : "http://localhost:8080/",
                 "media", mediaId,
