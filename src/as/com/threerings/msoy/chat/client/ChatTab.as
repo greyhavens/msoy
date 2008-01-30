@@ -99,7 +99,6 @@ public class ChatTab extends HBox
 
     public function displayChat () :void
     {
-        log.debug("displayChat [" + _controller + "]");
         if (_controller != null) {
             _controller.displayChat();
         } else {
