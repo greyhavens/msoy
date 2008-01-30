@@ -87,8 +87,8 @@ public class ChatTabBar extends HBox
 
         // this tab hasn't been created yet.
         if (history == null) {
-            Log.getLog(this).warning(
-                "Cannot display chat for an unknown channel without a history [" + channel + "]");
+            log.warning("Cannot display chat for an unknown channel without a history [" + 
+                channel + "]");
             return;
         }
         addAndSelect(new ChatTab(_ctx, this, channel, history));
@@ -109,6 +109,12 @@ public class ChatTabBar extends HBox
                 (_tabs[index] as ChatTab).setVisualState(ChatTab.ATTENTION);
             }
             return;
+        } 
+
+        if (channel == null) {
+            getLocationHistory().addMessage(msg);
+            locationReceivedMessage();
+            return;
         }
 
         // if this is a message from a member, we can pop up a new tab, and set it to ATTENTION
@@ -119,8 +125,7 @@ public class ChatTabBar extends HBox
             (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
         } else {
             // else this arrived (most likely) after we already closed the channel tab.
-            Log.getLog(this).info(
-                "Dropping late arriving channel chat message [msg=" + msg + "].");
+            log.info("Dropping late arriving channel chat message [msg=" + msg + "].");
         }
     }
 
@@ -240,6 +245,8 @@ public class ChatTabBar extends HBox
         }
         return -1;
     }
+    
+    private static const log :Log = Log.getLog(ChatTabBar);
 
     protected var _tabs :Array = [];
     protected var _selectedIndex :int = -1;

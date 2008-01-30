@@ -24,6 +24,8 @@ import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.whirled.server.SceneManager;
 
+import com.threerings.util.Name;
+
 import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.data.PeerChatMarshaller;
@@ -223,7 +225,7 @@ public class ChatChannelManager
     }
 
     // from interface PeerChatProvider
-    public void forwardSpeak (ClientObject caller, VizMemberName chatter, ChatChannel channel,
+    public void forwardSpeak (ClientObject caller, Name chatter, ChatChannel channel,
                               String message, byte mode,
                               ChatChannelService.ConfirmListener listener)
         throws InvocationException

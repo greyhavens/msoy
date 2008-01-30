@@ -11,6 +11,7 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
+import com.threerings.util.Name;
 
 /**
  * Defines the server-side of the {@link PeerChatService}.
@@ -26,7 +27,7 @@ public interface PeerChatProvider extends InvocationProvider
     /**
      * Handles a {@link PeerChatService#forwardSpeak} request.
      */
-    public void forwardSpeak (ClientObject caller, VizMemberName arg1, ChatChannel arg2, String arg3, byte arg4, InvocationService.ConfirmListener arg5)
+    public void forwardSpeak (ClientObject caller, Name arg1, ChatChannel arg2, String arg3, byte arg4, InvocationService.ConfirmListener arg5)
         throws InvocationException;
 
     /**

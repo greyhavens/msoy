@@ -10,6 +10,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
+import com.threerings.util.Name;
 
 /**
  * Provides the implementation of the {@link PeerChatService} interface
@@ -38,7 +39,7 @@ public class PeerChatMarshaller extends InvocationMarshaller
     public static final int FORWARD_SPEAK = 2;
 
     // from interface PeerChatService
-    public void forwardSpeak (Client arg1, VizMemberName arg2, ChatChannel arg3, String arg4, byte arg5, InvocationService.ConfirmListener arg6)
+    public void forwardSpeak (Client arg1, Name arg2, ChatChannel arg3, String arg4, byte arg5, InvocationService.ConfirmListener arg6)
     {
         InvocationMarshaller.ConfirmMarshaller listener6 = new InvocationMarshaller.ConfirmMarshaller();
         listener6.listener = arg6;

@@ -13,6 +13,7 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.util.Name;
 
 /**
  * Dispatches requests to the {@link PeerChatProvider}.
@@ -51,7 +52,7 @@ public class PeerChatDispatcher extends InvocationDispatcher
         case PeerChatMarshaller.FORWARD_SPEAK:
             ((PeerChatProvider)provider).forwardSpeak(
                 source,
-                (VizMemberName)args[0], (ChatChannel)args[1], (String)args[2], ((Byte)args[3]).byteValue(), (InvocationService.ConfirmListener)args[4]
+                (Name)args[0], (ChatChannel)args[1], (String)args[2], ((Byte)args[3]).byteValue(), (InvocationService.ConfirmListener)args[4]
             );
             return;
 

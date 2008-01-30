@@ -7,6 +7,7 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.util.Name;
 
 /**
  * Performs chat channel subscriptions across peers in a cluster configuration.
@@ -18,7 +19,7 @@ public interface PeerChatService extends InvocationService
     /**
      * Asks the host to forward the specified chat message on the channel's speak object.
      */
-    public void forwardSpeak (Client client, VizMemberName chatter, ChatChannel channel,
+    public void forwardSpeak (Client client, Name chatter, ChatChannel channel,
                               String message, byte mode, PeerChatService.ConfirmListener listener);
         
     /**

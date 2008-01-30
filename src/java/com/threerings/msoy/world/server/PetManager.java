@@ -13,13 +13,16 @@ import com.samskivert.util.HashIntMap;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
-import com.threerings.crowd.chat.server.SpeakUtil;
+import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.msoy.chat.data.ChatChannel;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.server.persist.PetRecord;
@@ -27,6 +30,7 @@ import com.threerings.msoy.item.data.all.Pet;
 
 import com.threerings.msoy.world.client.PetService;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
+import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.PetCodes;
 import com.threerings.msoy.world.data.PetInfo;
 import com.threerings.msoy.world.data.RoomObject;
@@ -214,8 +218,12 @@ public class PetManager
             }
 
             // it's in the room, let's chat
-            PlaceObject place = mgr.getPlaceObject();
-            SpeakUtil.sendSpeak(place, petInfo.username, null, message);
+            MsoyScene scene = (MsoyScene) mgr.getScene();
+            ChatChannel channel = ChatChannel.makeRoomChannel(
+                new RoomName(scene.getName(), scene.getId()));
+            MsoyServer.channelMan.forwardSpeak(
+                caller, petInfo.username, channel, message, ChatCodes.DEFAULT_MODE, listener);
+            return;
         }
 
         listener.requestProcessed();
