@@ -457,6 +457,12 @@ public class ChatOverlay
             return;
         }
 
+        if (_occupantList.parent != null) {
+            // make sure its been removed from its parent.  Flex has a hard time with the 
+            // auto-removal of children.
+            _occupantList.parent.removeChild(_occupantList);
+        } 
+
         _occupantList.x = 0;
         _occupantList.y = 0;
         if (_chatContainer != null) {

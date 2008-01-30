@@ -60,6 +60,11 @@ public class GameChatContainer extends LayeredContainer
 
     public function shutdown () :void
     {
+        if (_channelOccList != null && _channelOccList.parent == this) {
+            _channelOccList.width = 316;
+            removeChild(_channelOccList);
+            _channelOccList = null;
+        }
         _chatDtr.removeChatDisplay(_overlay);
         _ctx.getTopPanel().getHeaderBar().replaceTabsContainer();
         _ctx.getTopPanel().getControlBar().inSidebar(false);
@@ -75,25 +80,24 @@ public class GameChatContainer extends LayeredContainer
 
     public function displayOccupantList (occList :ChannelOccupantList) :void
     {
-        if (occList != null) {
-            if (_playerList.parent == this) {
-                removeChild(_playerList);
-            }
+        if (_playerList.parent == this) {
+            removeChild(_playerList);
+        }
 
-            _channelOccList = occList;
-            if (_channelOccList.parent != this) {
-                _channelOccList.width = 300;
-                addChild(_channelOccList = occList);
-            }
-        } else {
-            if (_channelOccList != null && _channelOccList.parent == this) {
-                _channelOccList.width = 316;
+        if (_channelOccList != null) {
+            if (_channelOccList.parent == this) {
                 removeChild(_channelOccList);
             }
+            _channelOccList.width = 316;
+            _channelOccList = null;
+        }
 
-            if (_playerList.parent != this) {
-                addChild(_playerList);
-            }
+        if (occList == null) {
+            addChild(_playerList);
+        } else {
+            _channelOccList = occList;
+            _channelOccList.width = 300;
+            addChild(_channelOccList);
         }
     }
 
