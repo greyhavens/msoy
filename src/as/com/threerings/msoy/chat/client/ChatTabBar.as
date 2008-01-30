@@ -214,6 +214,11 @@ public class ChatTabBar extends HBox
         (_tabs[_selectedIndex] as ChatTab).displayChat();
     }
 
+    public function chatTabIndex (tab :ChatTab) :int
+    {
+        return _tabs.indexOf(tab);
+    }
+
     protected function addTab (tab :ChatTab, index :int = -1) :void
     {
         tab.addEventListener(ChatTab.TAB_CLICK, selectTab);

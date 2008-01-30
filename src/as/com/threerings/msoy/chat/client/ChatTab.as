@@ -116,7 +116,7 @@ public class ChatTab extends HBox
         case SELECTED: 
             style = "selected"; 
             displayShine(false);
-            displayCloseBox(_controller != null);
+            displayCloseBox(_bar.chatTabIndex(this) != 0);
             break;
 
         case UNSELECTED: 
