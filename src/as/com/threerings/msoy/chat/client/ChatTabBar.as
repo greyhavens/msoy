@@ -95,7 +95,6 @@ public class ChatTabBar extends HBox
         var index :int = getControllerIndex(channel);
         if (index != -1) {
             if (inFront) {
-                log.debug("moving tab to front [" + channel + "]");
                 moveTabToFront(channel);
                 selectedIndex = 0;
             } else {
@@ -111,7 +110,6 @@ public class ChatTabBar extends HBox
             return;
         }
         if (inFront) {
-            log.debug("adding new tab in front [" + channel + "]");
             addTab(new ChatTab(_ctx, this, channel, history), 0);
             selectedIndex = 0;
         } else {

@@ -350,6 +350,8 @@ public class ChatOverlay
             }
             _ctx.getTopPanel().slideInChat(
                 _chatContainer = new ChatContainer(_historyBar, _historyOverlay), _targetBounds);
+            configureHistoryBarSize();
+            figureCurrentHistory();
         } else { 
             _ctx.getTopPanel().slideOutChat();
 
