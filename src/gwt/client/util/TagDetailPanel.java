@@ -28,9 +28,6 @@ import com.threerings.msoy.data.all.TagCodes;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.CShell;
-import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.RowPanel;
 
 /**
  * Displays tagging information for a particular item.
@@ -104,13 +101,13 @@ public class TagDetailPanel extends VerticalPanel
                     protected void addMenuItems () {
                         addMenuItem(CShell.cmsgs.tagMatureFlag(), new Command() {
                             public void execute () {
-                                maybeUpdateFlag(CShell.cmsgs.tagMatureFlag(),
+                                maybeUpdateFlag(CShell.cmsgs.tagMaturePrompt(),
                                                 Item.FLAG_FLAGGED_MATURE);
                             }
                         });
                         addMenuItem(CShell.cmsgs.tagCopyrightFlag(), new Command() {
                             public void execute () {
-                                maybeUpdateFlag(CShell.cmsgs.tagCopyrightFlag(),
+                                maybeUpdateFlag(CShell.cmsgs.tagCopyrightPrompt(),
                                                 Item.FLAG_FLAGGED_COPYRIGHT);
                             }
                         });
@@ -126,14 +123,12 @@ public class TagDetailPanel extends VerticalPanel
         refreshTags();
     }
 
-    protected void maybeUpdateFlag (String menuLabel, final byte flag)
+    protected void maybeUpdateFlag (String prompt, final byte flag)
     {
-        new PromptPopup(CShell.cmsgs.tagFlagPrompt(menuLabel), CShell.cmsgs.tagFlagFlagButton(),
-                        CShell.cmsgs.tagFlagCancelButton()) {
+        new PromptPopup(prompt, CShell.cmsgs.tagFlagFlag(), CShell.cmsgs.cancel()) {
             public void onAffirmative () {
                 _service.setFlags(flag);
-            }
-            public void onNegative () {
+                MsoyUI.info(CShell.cmsgs.tagThanks());
             }
         }.prompt();
     }
