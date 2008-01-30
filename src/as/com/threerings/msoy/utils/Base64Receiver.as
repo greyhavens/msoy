@@ -18,11 +18,15 @@ public class Base64Receiver
      * @param resultFn signature: function (ByteArray) :void
      * @param externalFunctionName the name of the function to expose to javascript. Default is
      *        "setBytes".
+     *
+     * @throws an Error if the callback cannot be set up on the ExternalInterface.
      */
     public function Base64Receiver (resultFn :Function, externalFunctionName :String = "setBytes")
     {
         if (ExternalInterface.available) {
             ExternalInterface.addCallback(externalFunctionName, receiveBytes);
+        } else {
+            throw new Error("Cannot configure a Base64Receiver: ExternalInterface not available.");
         }
         _resultFn = resultFn;
     }
