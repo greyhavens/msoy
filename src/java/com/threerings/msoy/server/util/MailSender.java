@@ -162,12 +162,16 @@ public class MailSender
 
                 for (String image : images) {
                     MimeBodyPart ipart = new MimeBodyPart();
-                    URL iurl = MailSender.class.getClassLoader().getResource(
-                        "rsrc/email/" + template + "/" + image);
-                    ipart.setDataHandler(new DataHandler(new URLDataSource(iurl)));
-                    ipart.setFileName(image);
-                    ipart.setContentID("<" + image + ">");
-                    htmlParts.addBodyPart(ipart);
+                    String ipath = "rsrc/email/" + template + "/" + image;
+                    URL iurl = MailSender.class.getClassLoader().getResource(ipath);
+                    if (iurl == null) {
+                        log.warning("Unable to find mail resource [path=" + ipath + "].");
+                    } else {
+                        ipart.setDataHandler(new DataHandler(new URLDataSource(iurl)));
+                        ipart.setFileName(image);
+                        ipart.setContentID("<" + image + ">");
+                        htmlParts.addBodyPart(ipart);
+                    }
                 }
 
                 MimeBodyPart alternativePart = new MimeBodyPart();
@@ -182,6 +186,7 @@ public class MailSender
             return null;
 
         } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to send email.", e);
             return e.getMessage();
         }
     }
