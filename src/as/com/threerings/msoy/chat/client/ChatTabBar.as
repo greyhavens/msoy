@@ -67,8 +67,13 @@ public class ChatTabBar extends HBox
         // if this function is called with name == null, a separate call will shuffle the
         // appropriate tab to the front, and we should make sure that if the first tab was a room
         // tab, it is cleared out.
-        if (name == null && _tabs.length != 0 && (_tabs[0] as ChatTab).controller == null) {
-            removeTabAt(0);
+        if (name == null && _tabs.length != 0) {
+            for (var ii :int = 0; ii < _tabs.length; ii++) {
+                if ((_tabs[ii] as ChatTab).controller == null) {
+                    removeTabAt(ii);
+                    break;
+                }
+            }
         } else if (name != null) {
             if (_tabs.length == 0 || ((_tabs[0] as ChatTab).controller != null)) {
                 addTab(new ChatTab(_ctx, this, null, null, name), 0);
@@ -90,6 +95,7 @@ public class ChatTabBar extends HBox
         var index :int = getControllerIndex(channel);
         if (index != -1) {
             if (inFront) {
+                log.debug("moving tab to front [" + channel + "]");
                 moveTabToFront(channel);
                 selectedIndex = 0;
             } else {
@@ -105,6 +111,7 @@ public class ChatTabBar extends HBox
             return;
         }
         if (inFront) {
+            log.debug("adding new tab in front [" + channel + "]");
             addTab(new ChatTab(_ctx, this, channel, history), 0);
             selectedIndex = 0;
         } else {
