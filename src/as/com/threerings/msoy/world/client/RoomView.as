@@ -454,7 +454,6 @@ public class RoomView extends AbstractRoomView
     {
         // this method is only notified of chat on this room's channel
         if (msg is UserMessage) {
-            log.debug("chat made it to the room view [" + msg + "]");
             var umsg :UserMessage = (msg as UserMessage);
             if (umsg.speaker.equals(_ctx.getMemberObject().memberName)) {
                 _ctx.getGameDirector().tutorialEvent("playerSpoke");
