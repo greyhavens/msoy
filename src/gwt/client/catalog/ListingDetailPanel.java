@@ -16,7 +16,6 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
@@ -28,7 +27,6 @@ import client.shell.CommentsPanel;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.ClickCallback;
-import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MsoyUI;
 import client.util.PopupMenu;
@@ -106,7 +104,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         price.add(_flowCost = new InlineLabel("", false, false, true));
         details.add(price);
 
-        // TODO: enable/disable purchase button depending on member's gold/flow wealth?
         details.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
         _purchase.addStyleName("bigButton"); // make it big!
         _purchase.addStyleName("buyButton"); // really big!
@@ -116,39 +113,10 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     CCatalog.ident, _item.getType(), _listing.catalogId, this);
                 return true;
             }
-
             public boolean gotResult (Object result) {
-                // if the flash client is not around, just display "bought it" and be done
-                String msg = CCatalog.msgs.msgListingBought();
-                if (!FlashClients.clientExists()) {
-                    MsoyUI.info(msg);
-                    return false; // don't reenable purchase
-                }
-
-                // otherwise allow us to use this item immediately in some cases
-                if (_item.getType() == Item.AVATAR) {
-                    final Avatar avatar = (Avatar)result;
-                    MsoyUI.infoAction(msg, CCatalog.msgs.msgListingWearIt(), new ClickListener() {
-                        public void onClick (Widget sender) {
-                            FlashClients.useAvatar(avatar.itemId, avatar.scale);
-                            Frame.setContentMinimized(true, null);
-                        }
-                    });
-
-                } else { // TODO: "use it" for furni and decor?
-                    MsoyUI.info(msg);
-                }
-
-                // and report to the client that we generated a tutorial event
-                if (_item.getType() == Item.DECOR) {
-                    FlashClients.tutorialEvent("decorBought");
-                } else if (_item.getType() == Item.FURNITURE) {
-                    FlashClients.tutorialEvent("furniBought");
-                } else if (_item.getType() == Item.AVATAR) {
-                    FlashClients.tutorialEvent("avatarBought");
-                }
-
-                return false; // don't reenable purchase
+                // tell our parent panel that we bought the item, it can display fanciness
+                _panel.itemPurchased((Item)result);
+                return false; // don't reenable buy button
             }
         };
         _purchase.setEnabled(CCatalog.getMemberId() > 0);

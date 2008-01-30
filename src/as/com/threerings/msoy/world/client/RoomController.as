@@ -544,7 +544,7 @@ public class RoomController extends SceneController
                 } else {
                     menuItems.push({ label: Msgs.GENERAL.get("b.logout"),
                         callback: function () :void {
-                            var sceneId :int = _wdctx.getSceneDirector().getScene().getId();
+                            var sceneId :int = _scene.getId();
                             var observer :ClientAdapter;
                             var logon :Function = function (...ignored) :void {
                                 _wdctx.getSceneDirector().moveTo(sceneId);
@@ -693,43 +693,67 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Function to get the item id for item types that there can be only one of, like decor and
-     * audio.  If an invalid item type specified, or there is none of the type specified in this
-     * room, 0 is returned.
-     */
-    public function getItemId (itemType :int) :int
-    {
-        var scene :MsoyScene = _wdctx.getSceneDirector().getScene() as MsoyScene;
-        if (itemType == Item.DECOR) {
-            return (scene.getSceneModel() as MsoySceneModel).decor.itemId;
-        } else if (itemType == Item.AUDIO) {
-            return (scene.getSceneModel() as MsoySceneModel).audioData.itemId;
-        } else {
-            return 0;
-        }
-    }
-
-    /**
      * Returns true if the local client is allowed to edit the current scene.
      */
     public function canEditRoom () : Boolean
     {
-        var scene :MsoyScene = _wdctx.getSceneDirector().getScene() as MsoyScene;
-        return (scene != null && scene.canEdit(_wdctx.getMemberObject()));
+        return (_scene != null && _scene.canEdit(_wdctx.getMemberObject()));
+    }
+
+    /**
+     * Called from JavaScript to determine if the item in question is in use (as decor, furni, the
+     * user's current avatar, an active pet, anything).
+     */
+    public function isItemInUse (itemType :int, itemId :int) :Boolean
+    {
+        if (itemType == Item.AVATAR) {
+            var avatar :Avatar = _wdctx.getMemberObject().avatar;
+            return (avatar == null) ? false : (avatar.itemId == itemId);
+
+        } else if (itemType == Item.PET) {
+            // ensure this pet really is in this room
+            for each (var pet :PetSprite in _roomView.getPets()) {
+                if (pet.getItemIdent().itemId == itemId) {
+                    return true;
+                }
+            }
+            return false;
+
+        } else if (itemType == Item.DECOR) {
+            return (_scene.getDecor() != null) && (_scene.getDecor().itemId == itemId);
+
+        } else if (itemType == Item.AUDIO) {
+            return (_scene.getAudioData() != null) && (_scene.getAudioData().itemId == itemId);
+
+        } else {
+            for each (var furni :FurniData in _scene.getFurni()) {
+                if (furni.itemType == itemType && furni.itemId == itemId) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     /**
      * This is called from JavaScript to select this room's decor, audio, or add a piece of furni.
      */
-    public function useItem (itemId :int, itemType :int) :void
+    public function useItem (itemType :int, itemId :int) :void
     {
-        if (!canEditRoom()) {
-            _wdctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.no_permission");
+        if (itemType == Item.AVATAR) {
+            _wdctx.getWorldDirector().setAvatar(itemId, 1);
             return;
         }
 
-        if (itemId == 0) {
-            clearItem(itemType);
+        if (itemType == Item.PET) {
+            var svc :PetService = _ctx.getClient().requireService(PetService) as PetService;
+            svc.callPet(_wdctx.getClient(), itemId, 
+                        new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS, null, "m.pet_called"));
+            return;
+        }
+
+        if (!canEditRoom()) {
+            _wdctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.no_permission");
             return;
         }
 
@@ -745,24 +769,22 @@ public class RoomController extends SceneController
 
             // a function we'll invoke when we're ready to use the item
             var useNewItem :Function = function () :void {
-                var oldScene :MsoyScene = _wdctx.getSceneDirector().getScene() as MsoyScene;
+                var newScene :MsoyScene;
 
                 if (item.getType() == Item.DECOR) {
-                    var newScene :MsoyScene = oldScene.clone() as MsoyScene;
-                    var newSceneModel :MsoySceneModel =
-                    (newScene.getSceneModel() as MsoySceneModel);
+                    newScene = _scene.clone() as MsoyScene;
+                    var newSceneModel :MsoySceneModel = (newScene.getSceneModel() as MsoySceneModel);
                     newSceneModel.decor = item as Decor;
-                    applyUpdate(new SceneUpdateAction(_wdctx, oldScene, newScene));
+                    applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
                     _wdctx.getGameDirector().tutorialEvent("decorInstalled");
 
                 } else if (item.getType() == Item.AUDIO) {
-                    newScene = oldScene.clone() as MsoyScene;
-                    var ad :AudioData =
-                        (newScene.getSceneModel() as MsoySceneModel).audioData;
+                    newScene = _scene.clone() as MsoyScene;
+                    var ad :AudioData = (newScene.getSceneModel() as MsoySceneModel).audioData;
                     var audio :Audio = item as Audio;
                     ad.itemId = audio.itemId;
                     ad.media = audio.audioMedia;
-                    applyUpdate(new SceneUpdateAction(_wdctx, oldScene, newScene));
+                    applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
 
                 } else {
                     // create a generic furniture descriptor
@@ -813,12 +835,41 @@ public class RoomController extends SceneController
             }, gotItem));
     }
 
-    public function removeFurni (itemId :int, itemType :int) :void
+    /**
+     * This is called from JavaScript to clear an item from use, be it furni, decor, a pet, etc.
+     */
+    public function clearItem (itemType :int, itemId :int) :void
     {
-        for each (var furni :FurniData in _scene.getFurni()) {
-            if (furni.itemId == itemId && furni.itemType == itemType) {
-                applyUpdate(new FurniUpdateAction(_wdctx, furni, null));
-                break;
+        if (itemType == Item.AVATAR) {
+            _wdctx.getWorldDirector().setAvatar(0, 0);
+
+        } else if (itemType == Item.PET) {
+            // ensure this pet really is in this room
+            for each (var pet :PetSprite in _roomView.getPets()) {
+                if (pet.getItemIdent().itemId == itemId) {
+                    handleOrderPet(itemId, Pet.ORDER_SLEEP);
+                    break;
+                }
+            }
+
+        } else if (itemType == Item.DECOR || itemType == Item.AUDIO) {
+            var newScene :MsoyScene = _scene.clone() as MsoyScene;
+            if (itemType == Item.DECOR) {
+                var newSceneModel :MsoySceneModel = (newScene.getSceneModel() as MsoySceneModel);
+                newSceneModel.decor = MsoySceneModel.defaultMsoySceneModelDecor();
+                applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
+
+            } else if (itemType == Item.AUDIO) {
+                (newScene.getSceneModel() as MsoySceneModel).audioData.itemId = 0;
+                applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
+            }
+
+        } else {
+            for each (var furni :FurniData in _scene.getFurni()) {
+                if (furni.itemType == itemType && furni.itemId == itemId) {
+                    applyUpdate(new FurniUpdateAction(_wdctx, furni, null));
+                    break;
+                }
             }
         }
     }
@@ -1103,23 +1154,6 @@ public class RoomController extends SceneController
         // return a menu item for changing their avatar
         return { label: Msgs.GENERAL.get("b.change_avatar"), children: avItems,
             enabled: canControl };
-    }
-
-    /**
-     * Clears out items like decor and audio of which there can be only one in a scene.
-     */
-    protected function clearItem (itemType :int) :void
-    {
-        var oldScene :MsoyScene = _wdctx.getSceneDirector().getScene() as MsoyScene;
-        var newScene :MsoyScene = oldScene.clone() as MsoyScene;
-        if (itemType == Item.DECOR) {
-            var newSceneModel :MsoySceneModel = (newScene.getSceneModel() as MsoySceneModel);
-            newSceneModel.decor = MsoySceneModel.defaultMsoySceneModelDecor();
-            applyUpdate(new SceneUpdateAction(_wdctx, oldScene, newScene));
-        } else if (itemType == Item.AUDIO) {
-            (newScene.getSceneModel() as MsoySceneModel).audioData.itemId = 0;
-            applyUpdate(new SceneUpdateAction(_wdctx, oldScene, newScene));
-        }
     }
 
     /**

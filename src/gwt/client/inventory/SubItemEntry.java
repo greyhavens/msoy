@@ -20,7 +20,7 @@ public class SubItemEntry extends ItemEntry
 {
     public SubItemEntry (Item item)
     {
-        super(item, null);
+        super(item);
     }
 
     // @Override // from ItemEntry

@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.DataModel;
 
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
@@ -32,6 +33,7 @@ import client.item.TagCloud;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
@@ -231,6 +233,22 @@ public class CatalogPanel extends VerticalPanel
                 add(new ListingDetailPanel((ItemDetail)result, listing, CatalogPanel.this));
             }
         });
+    }
+
+    protected void itemPurchased (Item item)
+    {
+        // report to the client that we generated a tutorial event
+        if (item.getType() == Item.DECOR) {
+            FlashClients.tutorialEvent("decorBought");
+        } else if (item.getType() == Item.FURNITURE) {
+            FlashClients.tutorialEvent("furniBought");
+        } else if (item.getType() == Item.AVATAR) {
+            FlashClients.tutorialEvent("avatarBought");
+        }
+
+        // display the "you bought an item" UI
+        clear();
+        add(new BoughtItemPanel(item));
     }
 
     protected void setFilteredBy (String text)

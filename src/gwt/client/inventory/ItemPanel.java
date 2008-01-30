@@ -3,9 +3,6 @@
 
 package client.inventory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -29,7 +26,6 @@ import client.editem.EditorHost;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
-import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
@@ -73,7 +69,7 @@ public class ItemPanel extends VerticalPanel
                 Application.go(Page.INVENTORY, Args.compose(new String[] { ""+_type, ""+page }));
             }
             protected Widget createWidget (Object item) {
-                return new ItemEntry((Item)item, _itemList);
+                return new ItemEntry((Item)item);
             }
             protected String getEmptyMessage () {
                 return CInventory.msgs.panelNoItems(CInventory.dmsgs.getString("itemType" + _type));
@@ -115,14 +111,6 @@ public class ItemPanel extends VerticalPanel
             page = _mostRecentPage;
         }
         _mostRecentPage = page; // now remember this age
-
-        // refresh our item list every time we switch pages; it's cheap
-        _itemList.clear();
-        if (_type == Item.PET) {
-            _itemList.addAll(FlashClients.getPetList());
-        } else {
-            _itemList.addAll(FlashClients.getFurniList());
-        }
 
         // make sure we're shoing and have our data
         showInventory(page, null);
@@ -305,9 +293,6 @@ public class ItemPanel extends VerticalPanel
     protected PagedGrid _contents;
     protected Button _create, _next, _prev;
     protected VerticalPanel _upload;
-
-    /** Only get the furni list for the current room once, and feed it to each ItemEntry */
-    protected List _itemList = new ArrayList();
 
     protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ +
         10 /* gap */ + 25 /*  filters */;

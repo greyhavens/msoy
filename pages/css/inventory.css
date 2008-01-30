@@ -56,34 +56,6 @@
   font-style: italic;
 }
 
-.itemEntry .Tip {
-  font-size: 10px;
-  color: #AABDC8;
-  padding-left: 5px;
-}
-
-.itemEntry .AvatarActive, .itemEntry .AvatarInactive {
-  background-image: url(/images/ui/checkbox_avatar_active.png);
-  margin-top: 4px;
-  width: 18px;
-  height: 18px;
-}
-
-.itemEntry .AvatarInactive {
-  background-image: url(/images/ui/checkbox_avatar_inactive.png);
-}
-
-.itemEntry .RoomActive, .itemEntry .RoomInactive {
-  background-image: url(/images/ui/checkbox_room_active.png);
-  margin-top: 4px;
-  width: 18px;
-  height: 18px;
-}
-
-.itemEntry .RoomInactive {
-  background-image: url(/images/ui/checkbox_room_inactive.png);
-}
-
 .itemEntry .Ident {
   font-size: 10px;
 }

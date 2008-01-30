@@ -140,7 +140,11 @@ public class ChatTabBar extends HBox
         } 
 
         if (channel == null) {
-            getLocationHistory().addMessage(msg);
+            if (getLocationHistory() != null) {
+                getLocationHistory().addMessage(msg);
+            } else {
+                log.warning("Dropping " + msg);
+            }
             locationReceivedMessage();
             return;
         }

@@ -240,7 +240,8 @@ public class MsoyChatDirector extends ChatDirector
     {
         _chatTabs.addMessage(determineChannel(msg), msg);
 
-        if (getCurrentRoomChannel().equals(determineChannel(msg))) {
+        if (getCurrentRoomChannel() != null &&
+            getCurrentRoomChannel().equals(determineChannel(msg))) {
             super.dispatchPreparedMessage(msg);
         }
     }

@@ -125,53 +125,28 @@ public class FlashClients
     }
 
     /**
+     * Returns true if the item in question is in use, false if not.
+     */
+    public static boolean isItemInUse (Item item)
+    {
+        return isItemInUseNative(item.getType(), item.itemId);
+    }
+
+    /**
      * Tells the actionscript client that we'd like to use this item in the current room.  This can
      * be used to add furni, or set the background audio or decor.
      */
-    public static void useItem (int itemId, byte itemType)
+    public static void useItem (byte itemType, int itemId)
     {
-        useItemNative(itemId, itemType);
+        useItemNative(itemType, itemId);
     }
 
     /**
-     * Tells the actionscript client to remove the given item from the current room.
+     * Tells the actionscript client to remove the given item from use.
      */
-    public static void removeFurni (int itemId, byte itemType)
+    public static void clearItem (byte itemType, int itemId)
     {
-        removeFurniNative(itemId, itemType);
-    }
-
-    /**
-     * Gets the item list of items being used as furni in the current room.
-     */
-    public static List getFurniList ()
-    {
-        JavaScriptObject items = getFurniListNative();
-        List furnis = new ArrayList();
-        for (int ii = 0; ii < getLength(items); ii++) {
-            JavaScriptObject furni = getJavaScriptElement(items, ii);
-            furnis.add(new ItemIdent(getByteElement(furni, 0), getIntElement(furni, 1)));
-        }
-        return furnis;
-    }
-
-    public static List getPetList ()
-    {
-        JavaScriptObject petIds = getPetsNative();
-        List pets = new ArrayList();
-        for (int ii = 0; ii < getLength(petIds); ii++) {
-            pets.add(new ItemIdent(Item.PET, getIntElement(petIds, ii)));
-        }
-        return pets;
-    }
-
-    /**
-     * Fetches the id for the given itemType, where itemType can be type that the scene can have
-     * only one of, such as decor or audio.
-     */
-    public static int getSceneItemId (byte itemType)
-    {
-        return getSceneItemIdNative(itemType);
+        clearItemNative(itemType, itemId);
     }
 
     /**
@@ -184,25 +159,8 @@ public class FlashClients
     }
 
     /**
-     * Fetches the currently active avatar id that is being used by the client.  If 0 is returned,
-     * the flash client is either not open (check clientExits() before calling), or we're using
-     * the default avatar.
+     * Informs the client of a tutorial event.
      */
-    public static int getAvatarId ()
-    {
-        return getAvatarIdNative();
-    }
-
-    public static void usePet (int petId)
-    {
-        usePetNative(petId);
-    }
-
-    public static void removePet (int petId)
-    {
-        removePetNative(petId);
-    }
-
     public static void tutorialEvent (String eventName)
     {
         tutorialEventNative(eventName);
@@ -278,45 +236,34 @@ public class FlashClients
     }-*/;
 
     /**
-     * Does the actual <code>useItem()</code> call.
+     * Does the actual <code>isItemInUse()</code> call.
      */
-    protected static native void useItemNative (int itemId, byte itemType) /*-{
+    protected static native boolean isItemInUseNative (byte itemType, int itemId) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.useItem(itemId, itemType);
-        }
-    }-*/;
-
-    /**
-     * Does the actual <code>removeFurni()</code> call.
-     */
-    protected static native void removeFurniNative (int itemId, byte itemType) /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            client.removeFurni(itemId, itemType);
-        }
-    }-*/;
-
-    /**
-     * Does the actual <code>getFurniList()</code> call.
-     */
-    protected static native JavaScriptObject getFurniListNative () /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            return client.getFurniList();
-        }
-        return [];
-    }-*/;
-
-    /**
-     * Does the actual <code>getSceneItemId()</code> call.
-     */
-    protected static native int getSceneItemIdNative(byte itemType) /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            return client.getSceneItemId(itemType);
+            return client.isItemInUse(itemType, itemId);
         }
         return 0;
+    }-*/;
+
+    /**
+     * Does the actual <code>useItem()</code> call.
+     */
+    protected static native void useItemNative (byte itemType, int itemId) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            client.useItem(itemType, itemId);
+        }
+    }-*/;
+
+    /**
+     * Does the actual <code>clearItem()</code> call.
+     */
+    protected static native void clearItemNative (byte itemType, int itemId) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            client.clearItem(itemType, itemId);
+        }
     }-*/;
 
     /**
@@ -327,48 +274,6 @@ public class FlashClients
         if (client) {
             client.useAvatar(avatarId, scale);
         }
-    }-*/;
-
-    /**
-     * Does the actual <code>getAvatarId()</code> call.
-     */
-    protected static native int getAvatarIdNative () /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            return client.getAvatarId();
-        }
-        return 0;
-    }-*/;
-
-    /**
-     * Does the actual <code>usePet()</code> call.
-     */
-    protected static native void usePetNative (int petId) /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            client.usePet(petId);
-        }
-    }-*/;
-
-    /**
-     * Does the actual <code>removePet()</code> call.
-     */
-    protected static native void removePetNative (int petId) /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            client.removePet(petId);
-        }
-    }-*/;
-
-    /**
-     * Does the actual <code>getPets()</code> call.
-     */
-    protected static native JavaScriptObject getPetsNative () /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            return client.getPets();
-        }
-        return [];
     }-*/;
 
     /**

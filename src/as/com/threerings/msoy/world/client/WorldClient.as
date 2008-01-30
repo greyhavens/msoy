@@ -53,14 +53,12 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemList;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
-import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.data.all.Prop;
 
 import com.threerings.msoy.avrg.data.AVRGameMarshaller;
 import com.threerings.msoy.avrg.data.AVRMarshaller;
 
-import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.chat.data.ChatChannel;
 
 import com.threerings.msoy.notify.data.GuestInviteNotification;
@@ -281,16 +279,6 @@ public class WorldClient extends MsoyClient
     }
 
     /**
-     * Exposed to javascript so that it can check the avatar that its showing in the inventory 
-     * browser agains the avatar that the user is currently wearing.
-     */
-    protected function externalGetAvatarId () :int
-    {
-        var avatar :Avatar = _wctx.getMemberObject().avatar;
-        return avatar == null ? 0 : avatar.itemId;
-    }
-
-    /**
      * Exposed to javascript so that the avatarviewer may update the scale of an avatar
      * in real-time.
      */
@@ -303,84 +291,34 @@ public class WorldClient extends MsoyClient
     }
 
     /**
+     * Exposed to javascript so that it may find out if a particular item is in use.
+     */
+    protected function externalIsItemInUse (itemType :int, itemId :int) :Boolean
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        return (view != null) && view.getRoomController().isItemInUse(itemType, itemId);
+    }
+
+    /**
      * Exposed to javascript so that it may tell us to use items in the current room, either as
      * background items, or as furni as apporpriate.
      */ 
-    protected function externalUseItem (itemId :int, itemType :int) :void
+    protected function externalUseItem (itemType :int, itemId :int) :void
     {
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
-            view.getRoomController().useItem(itemId, itemType);
+            view.getRoomController().useItem(itemType, itemId);
         }
     }
 
     /**
-     * Exposed to javascript so that it may tell us to remove furni from the current room.
+     * Exposed to javascript so that it may tell us to remove an item from use.
      */
-    protected function externalRemoveFurni (itemId :int, itemType :int) :void
+    protected function externalClearItem (itemType :int, itemId :int) :void
     {
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
-            view.getRoomController().removeFurni(itemId, itemType);
-        }
-    }
-
-    /**
-     * Exposed to javascript so that it may find out the id of some specific item types for the
-     * current room.
-     */
-    protected function externalGetSceneItemId (itemType :int) :int
-    {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (view != null) {
-            return view.getRoomController().getItemId(itemType);
-        } else {
-            return 0;
-        }
-    }
-
-    protected function externalGetFurniList () :Array 
-    {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (view != null) {
-            return view.getRoomController().getFurniList();
-        } else {
-            return [];
-        }
-    }
-
-    protected function externalUsePet (petId :int) :void
-    {
-        var svc :PetService = _ctx.getClient().requireService(PetService) as PetService;
-        svc.callPet(_wctx.getClient(), petId, 
-            new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS, null, "m.pet_called"));
-    }
-
-    protected function externalRemovePet (petId :int) :void
-    {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (view != null) {
-            // ensure this pet really is in this room
-            for each (var pet :PetSprite in view.getPets()) {
-                if (pet.getItemIdent().itemId == petId) {
-                    CommandEvent.dispatch(view, RoomController.ORDER_PET, [petId, Pet.ORDER_SLEEP]);
-                    break;
-                }
-            }
-        }
-    }
-
-    protected function externalGetPets () :Array
-    {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (view != null) {
-            var petIds :Array = [];
-            for each (var pet :PetSprite in view.getPets()) {
-                petIds.push(pet.getItemIdent().itemId);
-            }
-            return petIds;
-        } else {
-            return [];
+            view.getRoomController().clearItem(itemType, itemId);
         }
     }
 
@@ -423,15 +361,10 @@ public class WorldClient extends MsoyClient
         ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
         ExternalInterface.addCallback("inRoom", externalInRoom);
         ExternalInterface.addCallback("useAvatar", externalUseAvatar);
-        ExternalInterface.addCallback("getAvatarId", externalGetAvatarId);
         ExternalInterface.addCallback("updateAvatarScale", externalUpdateAvatarScale);
+        ExternalInterface.addCallback("isItemInUse", externalIsItemInUse);
         ExternalInterface.addCallback("useItem", externalUseItem);
-        ExternalInterface.addCallback("removeFurni", externalRemoveFurni);
-        ExternalInterface.addCallback("getSceneItemId", externalGetSceneItemId);
-        ExternalInterface.addCallback("getFurniList", externalGetFurniList);
-        ExternalInterface.addCallback("usePet", externalUsePet);
-        ExternalInterface.addCallback("removePet", externalRemovePet);
-        ExternalInterface.addCallback("getPets", externalGetPets);
+        ExternalInterface.addCallback("clearItem", externalClearItem);
         ExternalInterface.addCallback("tutorialEvent", externalTutorialEvent);
         ExternalInterface.addCallback("openChannel", externalOpenChannel);
     }
