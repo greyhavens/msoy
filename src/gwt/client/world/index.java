@@ -93,10 +93,6 @@ public class index extends Page
                 // go to a specific member's home
                 WorldClient.displayFlash("memberHome=" + action.substring(1));
 
-            } else if (action.startsWith("h")) {
-                // go to our home; TODO: require login if we're not logged in
-                WorldClient.displayFlash("memberHome=" + CWorld.getMemberId());
-
             } else if (action.startsWith("c")) {
                 // join a group chat
                 WorldClient.displayFlash("groupChat=" + action.substring(1));
@@ -108,8 +104,15 @@ public class index extends Page
             } else if (action.equals("i")) {
                 displayInvite(args.get(1, ""));
 
+            } else if (CWorld.getMemberId() == 0) {
+                setContent(MsoyUI.createLabel(CWorld.msgs.logonForHome(), "infoLabel"));
+
+            } else if (action.startsWith("h")) {
+                // go to our home
+                WorldClient.displayFlash("memberHome=" + CWorld.getMemberId());
+
             } else {
-                MsoyUI.error(CWorld.msgs.unknownLocation());
+                setContent(MsoyUI.createLabel(CWorld.msgs.unknownLocation(), "infoLabel"));
             }
 
         } catch (NumberFormatException e) {
