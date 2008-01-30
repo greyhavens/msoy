@@ -233,6 +233,17 @@ public class ChatTabBar extends HBox
         return _tabs.indexOf(tab);
     }
 
+    public function tabChecked (channel :ChatChannel) :Boolean
+    {
+        var index :int = getControllerIndex(channel);
+        if (index == -1) {
+            log.debug("asked for checked on a tab we don't appear to have [" + channel + "]");
+            return false;
+        }
+
+        return (_tabs[index] as ChatTab).checked;
+    }
+
     public function closeTab (channel :ChatChannel) :void
     {
         var index :int = getControllerIndex(channel);

@@ -38,6 +38,8 @@ import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelMarshaller;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 
+import com.threerings.msoy.notify.data.NotifyMessage;
+
 import com.threerings.msoy.world.client.WorldContext;
 
 /**
@@ -238,11 +240,21 @@ public class MsoyChatDirector extends ChatDirector
     // from ChatDirector
     override protected function dispatchPreparedMessage (msg :ChatMessage) :void
     {
-        _chatTabs.addMessage(determineChannel(msg), msg);
+        if (msg is NotifyMessage) {
+            // notify messages don't go into the chat history, which is what happens when you
+            // pass it off to the chat tabs
+            _displays.apply(function (overlay :Object) :void {
+                if (overlay is ComicOverlay) {
+                    (overlay as ComicOverlay).displayMessage(msg, false);
+                }
+            });
+        } else {
+            _chatTabs.addMessage(determineChannel(msg), msg);
 
-        if (getCurrentRoomChannel() != null &&
-            getCurrentRoomChannel().equals(determineChannel(msg))) {
-            super.dispatchPreparedMessage(msg);
+            if (getCurrentRoomChannel() != null &&
+                getCurrentRoomChannel().equals(determineChannel(msg))) {
+                super.dispatchPreparedMessage(msg);
+            }
         }
     }
 

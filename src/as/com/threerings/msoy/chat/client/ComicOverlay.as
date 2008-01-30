@@ -32,6 +32,8 @@ import com.threerings.msoy.client.LayeredContainer;
 
 import com.threerings.msoy.data.all.RoomName;
 
+import com.threerings.msoy.notify.data.NotifyMessage;
+
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.data.MsoyScene;
 
@@ -67,6 +69,16 @@ public class ComicOverlay extends ChatOverlay
             clearBubbles(true);
         }
         super.setTarget(target, targetBounds);
+    }
+
+    override protected function displayTypedMessageNow (msg :ChatMessage, type :int) :Boolean
+    {
+        if (msg is NotifyMessage) {
+            displayBubble(msg, type);
+            return true;
+        }
+         
+        return super.displayTypedMessageNow(msg, type);
     }
 
     override public function clear () :void

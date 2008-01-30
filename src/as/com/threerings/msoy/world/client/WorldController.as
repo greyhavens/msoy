@@ -855,7 +855,9 @@ public class WorldController extends MsoyController
 
             if (currentController != null && currentController.channel != null) {
                 // close down the previous rooms chat tab by default
-                headerBar.getChatTabs().closeTab(currentController.channel);
+                if (!headerBar.getChatTabs().tabChecked(currentController.channel)) {
+                    headerBar.getChatTabs().closeTab(currentController.channel);
+                }
             }
 
             // update the owner link
