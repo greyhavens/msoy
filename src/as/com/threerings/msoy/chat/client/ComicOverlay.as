@@ -159,10 +159,10 @@ public class ComicOverlay extends ChatOverlay
         if (ident != null && scene != null && ident.getSceneId() == scene.getId()) {
             var type :int = getType(timed.msg, false);
             if (type != IGNORECHAT) {
-                displayTypedMessageNow(timed.msg, type);
+                displayBubble(timed.msg, type);
             }
         } else if (timed.msg is SystemMessage) {
-            displayTypedMessageNow(timed.msg, getType(timed.msg, false));
+            displayBubble(timed.msg, getType(timed.msg, false));
         }
     }
 
@@ -189,7 +189,7 @@ public class ComicOverlay extends ChatOverlay
         return (placeOf(type)) == PLACE;
     }
 
-    override protected function displayTypedMessageNow (msg :ChatMessage, type :int) :Boolean
+    protected function displayBubble (msg :ChatMessage, type :int) :Boolean
     {
         switch (placeOf(type)) {
         case INFO:

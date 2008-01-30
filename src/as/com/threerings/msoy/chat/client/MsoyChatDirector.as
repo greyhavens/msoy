@@ -23,6 +23,8 @@ import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.TellFeedbackMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
+import com.threerings.whirled.data.Scene;
+
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ChannelName;
@@ -35,6 +37,8 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelMarshaller;
 import com.threerings.msoy.chat.data.ChatChannelObject;
+
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Handles the dispatching of chat messages based on their "channel" (room/game, individual, or
@@ -240,6 +244,10 @@ public class MsoyChatDirector extends ChatDirector
     override protected function dispatchPreparedMessage (msg :ChatMessage) :void
     {
         _chatTabs.addMessage(determineChannel(msg), msg);
+
+        if (getCurrentRoomChannel().equals(determineChannel(msg))) {
+            super.dispatchPreparedMessage(msg);
+        }
     }
 
     override protected function suppressTooManyCaps () :Boolean
@@ -301,6 +309,20 @@ public class MsoyChatDirector extends ChatDirector
             return handler.channel;
         }
         return null;
+    }
+
+    protected function getCurrentRoomChannel () :ChatChannel
+    {
+        if (!(_wctx is WorldContext)) {
+            return null;
+        }
+
+        var scene :Scene = (_wctx as WorldContext).getSceneDirector().getScene();
+        if (scene == null) {
+            return null;
+        }
+
+        return ChatChannel.makeRoomChannel(new RoomName(scene.getName(), scene.getId()));
     }
 
     protected var _wctx :MsoyContext;
