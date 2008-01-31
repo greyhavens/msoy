@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import javax.swing.JApplet;
 
 import com.samskivert.util.Interval;
+import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
 
 public class RemixApplet extends JApplet
@@ -17,8 +18,13 @@ public class RemixApplet extends JApplet
     {
         super.init();
 
-        String mediaURL = StringUtil.decode(getParameter("media"));
-        add(new RemixPanel(mediaURL, this), BorderLayout.CENTER);
+        // ensure we setup the UI on the awt thread.
+        RunQueue.AWT.postRunnable(new Runnable() {
+            public void run () {
+                String mediaURL = StringUtil.decode(getParameter("media"));
+                add(new RemixPanel(mediaURL, RemixApplet.this), BorderLayout.CENTER);
+            }
+        });
     }
 
     @Override

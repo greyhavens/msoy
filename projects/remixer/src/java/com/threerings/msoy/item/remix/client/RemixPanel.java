@@ -7,6 +7,8 @@ import java.applet.Applet;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +19,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -29,6 +32,8 @@ import javax.swing.JTextField;
 import com.samskivert.swing.AWTResultListener;
 import com.samskivert.swing.GroupLayout;
 import com.samskivert.swing.VGroupLayout;
+
+import com.samskivert.swing.util.SwingUtil;
 
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
@@ -96,6 +101,7 @@ public class RemixPanel extends JPanel
         addFields(panel, _pack.getFileFields(), false);
 
         add(new JScrollPane(panel), BorderLayout.CENTER);
+        SwingUtil.refresh(this);
 
         updatePreview();
     }
@@ -139,15 +145,84 @@ public class RemixPanel extends JPanel
 
     protected void changeEntry (final DataPack.DataEntry entry)
     {
-        JPanel pan = setupEdit(entry);
+        final JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        GridBagConstraints labelConstraints = new GridBagConstraints();
+        labelConstraints.fill = GridBagConstraints.HORIZONTAL;
+        labelConstraints.anchor = GridBagConstraints.NORTHWEST;
+        GridBagConstraints compConstraints = (GridBagConstraints) labelConstraints.clone();
+        compConstraints.gridwidth = GridBagConstraints.REMAINDER;
+
+        // set up the editor panel
+        setupEdit(entry, panel, labelConstraints, compConstraints);
+
+        final JCheckBox presentBox = entry.optional ? new JCheckBox() : null;
+
+        // if we're editing a data entry, we might have a default value that can be reverted-to.
+        JButton revButton = null;
+        // TODO: since values are called null by not specifying them, there's currently
+        // no way to specify the defaultValue as null, but if it's optional we say that
+        // null is the default. We may want to change this.
+        boolean hasDefault = (entry.defaultValue != null) || (entry.optional);
+        if (hasDefault) {
+            revButton = new JButton("Revert to default");
+            panel.add(new JLabel(""), labelConstraints);
+            panel.add(revButton, compConstraints);
+        }
+        final JButton revertButton = revButton;
+
+        panel.add(new JLabel("Present:"), labelConstraints);
+        if (presentBox == null) {
+            panel.add(new JLabel("<Required>"), compConstraints);
+
+        } else {
+            presentBox.setSelected(entry.value != null);
+            panel.add(presentBox, compConstraints);
+        }
 
         final JDialog dialog = new JDialog();
         dialog.setTitle("Edit '" + entry.name + "'");
 
         final DataPack.DataType type = (DataPack.DataType) entry.getType();
         final Editor editor = getEditor(type);
+        final JComponent editorComp = editor.getComponent();
         editor.setValue(entry.value);
-        pan.add(editor.getComponent());
+        panel.add(editorComp, compConstraints);
+
+        editorComp.setVisible(presentBox == null || presentBox.isSelected());
+        ActionListener presentAction = null;
+        if (presentBox != null) {
+            presentAction = new ActionListener() {
+                public void actionPerformed (ActionEvent e) {
+                    boolean present = presentBox.isSelected();
+                    editorComp.setVisible(present);
+                    if (revertButton != null) {
+                        Object newValue = present ? editor.getValue() : null;
+                        revertButton.setEnabled(!ObjectUtil.equals(newValue, entry.defaultValue));
+                    }
+                    SwingUtil.refresh(panel);
+                    dialog.pack();
+                }
+            };
+            presentBox.addActionListener(presentAction);
+        }
+        if (revertButton != null) {
+            revertButton.setEnabled(!ObjectUtil.equals(entry.value, entry.defaultValue));
+            final ActionListener fPresentAction = presentAction;
+            revertButton.addActionListener(new ActionListener() {
+                public void actionPerformed (ActionEvent e) {
+                    editor.setValue(entry.defaultValue);
+                    revertButton.setEnabled(false);
+                    if (entry.defaultValue == null) {
+                        presentBox.setSelected(false);
+                    }
+                    if (fPresentAction != null) {
+                        fPresentAction.actionPerformed(e);
+                    }
+                }
+            });
+        }
 
         final Action cancelAction = new AbstractAction("Cancel") {
             public void actionPerformed (ActionEvent e) {
@@ -156,7 +231,12 @@ public class RemixPanel extends JPanel
         };
         final Action okAction = new AbstractAction("OK") {
             public void actionPerformed (ActionEvent e) {
-                Object newValue = editor.getValue();
+                Object newValue;
+                if (presentBox == null || presentBox.isSelected()) {
+                    newValue = editor.getValue();
+                } else {
+                    newValue = null;
+                }
                 if (!ObjectUtil.equals(newValue, entry.value)) {
                     entry.value = newValue;
                     updatePreview();
@@ -170,24 +250,26 @@ public class RemixPanel extends JPanel
         JPanel butPan = GroupLayout.makeButtonBox(GroupLayout.RIGHT);
         butPan.add(new JButton(cancelAction));
         butPan.add(new JButton(okAction));
-        pan.add(butPan);
+        panel.add(butPan);
 
-        dialog.add(pan, BorderLayout.CENTER);
+        dialog.add(panel, BorderLayout.CENTER);
         dialog.pack();
         dialog.setVisible(true);
     }
 
-    protected JPanel setupEdit (DataPack.AbstractEntry entry)
+    protected void setupEdit (
+        DataPack.AbstractEntry entry, JPanel panel, GridBagConstraints labelConstraints,
+        GridBagConstraints compConstraints)
     {
-        JDialog dialog = new JDialog();
+        panel.add(new JLabel("Name:"), labelConstraints);
+        panel.add(new JLabel(entry.name), compConstraints);
 
-        JPanel pan = GroupLayout.makeVBox(GroupLayout.NONE, GroupLayout.LEFT, GroupLayout.STRETCH);
-        pan.add(new JLabel("Name: " + entry.name));
-        pan.add(new JLabel("Description: " + entry.info));
+        panel.add(new JLabel("Description:"), labelConstraints);
+        panel.add(new JLabel(entry.info), compConstraints);
+
         DataPack.AbstractType type = entry.getType();
-        pan.add(new JLabel("Type: " + type.toString() + " (" + type.getDescription() + ")"));
-
-        return pan;
+        panel.add(new JLabel("Type:"), labelConstraints);
+        panel.add(new JLabel(type.toString() + " (" + type.getDescription() + ")"), compConstraints);
     }
 
     protected void updatePreview ()
@@ -200,6 +282,9 @@ public class RemixPanel extends JPanel
     protected Editor getEditor (DataPack.DataType type)
     {
         switch (type) {
+        case BOOLEAN:
+            return new BooleanEditor();
+
         case COLOR:
             return new ColorEditor();
 
@@ -236,6 +321,31 @@ abstract class Editor
     {
         // nada by default
     }
+}
+
+class BooleanEditor extends Editor
+{
+    public BooleanEditor ()
+    {
+        _check = new JCheckBox();
+    }
+
+    public void setValue (Object value)
+    {
+        _check.setSelected(Boolean.TRUE.equals(value));
+    }
+
+    public Object getValue ()
+    {
+        return Boolean.valueOf(_check.isSelected());
+    }
+
+    public JComponent getComponent ()
+    {
+        return _check;
+    }
+
+    protected JCheckBox _check;
 }
 
 class ColorEditor extends Editor
