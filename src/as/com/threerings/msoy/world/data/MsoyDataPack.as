@@ -5,8 +5,9 @@ package com.threerings.msoy.world.data {
 
 import flash.utils.ByteArray;
 
-import deng.fzip.FZip;
-import deng.fzip.FZipFile;
+import nochump.util.zip.ZipEntry;
+import nochump.util.zip.ZipFile;
+import nochump.util.zip.ZipOutput;
 
 import com.whirled.DataPack;
 
@@ -30,34 +31,34 @@ public class MsoyDataPack extends DataPack
         return getFile(CONTENT_DATANAME);
     }
 
-    /**
-     * Completely remove the specified file.
-     */
-    public function removeFile (name :String) :Boolean
-    {
-        var value :String  = getFileName(name);
-        if (value == null) {
-            return false;
-        }
-
-        // remove the actual file from the zip
-        for (var ii :int = _zip.getFileCount() - 1; ii >= 0; ii--) {
-            var file :FZipFile = _zip.getFileAt(ii);
-            if (file.filename == value) {
-                _zip.removeFileAt(ii);
-                break;
-            }
-        }
-
-        // delete the record for the file from the metadata
-        delete _metadata..file.(@name == name)[0];
-
-        // and we-write the metadata inside the zip
-        var dataFile :FZipFile = _zip.getFileByName(METADATA_FILENAME);
-        dataFile.setContentAsString(String(_metadata));
-
-        return true;
-    }
+//    /**
+//     * Completely remove the specified file.
+//     */
+//    public function removeFile (name :String) :Boolean
+//    {
+//        var value :String  = getFileName(name);
+//        if (value == null) {
+//            return false;
+//        }
+//
+//        // remove the actual file from the zip
+//        for (var ii :int = _zip.getFileCount() - 1; ii >= 0; ii--) {
+//            var file :FZipFile = _zip.getFileAt(ii);
+//            if (file.filename == value) {
+//                _zip.removeFileAt(ii);
+//                break;
+//            }
+//        }
+//
+//        // delete the record for the file from the metadata
+//        delete _metadata..file.(@name == name)[0];
+//
+//        // and we-write the metadata inside the zip
+//        var dataFile :FZipFile = _zip.getFileByName(METADATA_FILENAME);
+//        dataFile.setContentAsString(String(_metadata));
+//
+//        return true;
+//    }
 
     /**
      * Turn this datapack into a ByteArray that may be passed to another
@@ -65,9 +66,19 @@ public class MsoyDataPack extends DataPack
      */
     public function toByteArray () :ByteArray
     {
-        var ba :ByteArray = new ByteArray();
-        _zip.serialize(ba);
-        return ba;
+        // TODO: validate
+        var outZip :ZipOutput = new ZipOutput();
+        for (var ii :int = 0; ii < _zip.size; ii++) {
+            var entry :ZipEntry = _zip.entries[ii];
+            var outEntry :ZipEntry = new ZipEntry(entry.name);
+            outZip.putNextEntry(outEntry);
+            var ba :ByteArray = _zip.getInput(entry);
+            ba.position = 0;
+            outZip.write(ba);
+            outZip.closeEntry();
+        }
+        outZip.finish();
+        return outZip.byteArray;
     }
 
     override protected function validateName (name :String) :void
