@@ -341,6 +341,9 @@ public class AvatarViewerComp extends VBox
             menuItems.push({ label: "Change state...",
                 children: stateItems });
         }
+        if (menuItems.length == 0) {
+            menuItems.push({ label: "No actions" });
+        }
 
         CommandMenu.createMenu(menuItems).popUpIn(getBounds(stage));
     }
