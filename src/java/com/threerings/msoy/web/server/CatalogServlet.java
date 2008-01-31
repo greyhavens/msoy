@@ -161,6 +161,14 @@ public class CatalogServlet extends MsoyServiceServlet
             String details = itemType + " " + catalogId + " " + flowCost + " " + listing.goldCost;
 
             if (flowCost > 0) {
+                // if the creator of this item is purchasing it, just deduct 70% of the cost
+                // instead of taking 100% and paying them 30% and inflating their flowEarned
+                int creatorPortion = (3 * listing.flowCost) / 10;
+                if (mrec.memberId == listing.item.creatorId) {
+                    flowCost -= creatorPortion;
+                    creatorPortion = 0;
+                }
+
                 // take flow from purchaser
                 MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
                     mrec.memberId, flowCost, UserAction.BOUGHT_ITEM, details);
@@ -168,9 +176,8 @@ public class CatalogServlet extends MsoyServiceServlet
                 MemberNodeActions.flowUpdated(flowRec);
 
                 // give 30% of it to the creator
-                // TODO: hold this in escrow
-                int creatorPortion = (3 * listing.flowCost) / 10;
                 if (creatorPortion > 0) {
+                    // TODO: hold this in escrow
                     flowRec = MsoyServer.memberRepo.getFlowRepository().grantFlow(
                         listing.item.creatorId, creatorPortion, UserAction.RECEIVED_PAYOUT,
                         details + " " + mrec.memberId);
