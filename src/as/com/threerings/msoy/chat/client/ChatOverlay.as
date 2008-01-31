@@ -102,8 +102,6 @@ public class ChatOverlay
         // listen for preferences changes, update history mode
         Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
             handlePrefsUpdated, false, 0, true);
-
-        log.debug("NEW OVERLAY");
     }
 
     /**
