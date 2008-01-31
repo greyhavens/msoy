@@ -167,6 +167,7 @@ public class Frame
         WorldClient.closeClient(true);
         _closeToken = null;
         RootPanel.get(SEPARATOR).clear();
+        _content.setCloseVisible(false);
     }
 
     /**
@@ -401,6 +402,7 @@ public class Frame
                 RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
                 RootPanel.get(CLIENT).setWidth(_endWidth + "px");
                 WorldClient.setMinimized(true);
+                _content.setCloseVisible(true);
                 done();
 
 //             } else {
