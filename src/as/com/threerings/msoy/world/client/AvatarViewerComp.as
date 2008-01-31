@@ -288,7 +288,7 @@ public class AvatarViewerComp extends VBox
             avatar.setScale(scale);
         }
 
-        if (ExternalInterface.available) {
+        if (_scaleControls.visible && ExternalInterface.available) {
             try {
                 ExternalInterface.call("updateAvatarScale", scale);
             } catch (e :Error) {
