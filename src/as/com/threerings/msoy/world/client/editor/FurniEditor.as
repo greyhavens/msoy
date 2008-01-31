@@ -152,13 +152,13 @@ public class FurniEditor extends FurniHighlight
 
         // draw outer and inner outlines
         g.lineStyle(0, 0x000000, 0.5, true);
-        g.drawRect(0, 0, w, h);
-        g.drawRect(-2, -2, w + 4, h + 4);
+        dashRect(g, 0, 0, w, h);
+        dashRect(g, -2, -2, w + 4, h + 4);
         g.drawRect(targetRoot.x - 1, targetRoot.y, 2, (targetLocation.y - targetRoot.y) + 2);
 
         // draw center lines
         g.lineStyle(0, 0xffffff, 1, true);
-        g.drawRect(-1, -1, w + 2, h + 2);
+        dashRect(g, -1, -1, w + 2, h + 2);
         g.moveTo(targetRoot.x, targetRoot.y);
         g.lineTo(targetLocation.x, targetLocation.y + 1);
 

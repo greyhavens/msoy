@@ -18,7 +18,6 @@ import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.MsoyLocation;
 
-
 /**
  * Component responsible for tracking and highlighting targets of mouse hovers and editing actions.
  */
@@ -35,7 +34,7 @@ public class FurniHighlight
         _controller.roomView.addChild(_border);
         target = null;
     }
-    
+
     public function end () :void
     {
         target = null;
@@ -47,7 +46,7 @@ public class FurniHighlight
     {
         return _target;
     }
-    
+
     /** Displays or hides a hover rectangle around the specified sprite. */
     public function set target (sprite :FurniSprite) :void
     {
@@ -77,7 +76,7 @@ public class FurniHighlight
     protected function clearBorder () :void
     {
         _border.graphics.clear();
-    }        
+    }
 
     /** Assuming a clear border shape, draws the border details. */
     protected function repaintBorder () :void
@@ -87,17 +86,49 @@ public class FurniHighlight
         var h :Number = target.getActualHeight();
 
         g.clear();
-        
-        // draw outer and inner outlines
-        g.lineStyle(0, 0x000000, 0.5, true);
-        g.drawRect(0, 0, w, h);
-        g.drawRect(-2, -2, w + 4, h + 4);
 
-        // draw center lines
+        // draw dashed outline
         g.lineStyle(0, 0xffffff, 1, true);
-        g.drawRect(-1, -1, w + 2, h + 2);
-
+        dashRect(g, 0, 0, w, h);
     }
+
+    protected static function dashRect (g :Graphics, x :Number, y :Number,
+                                        width :Number, height :Number,
+                                        dashLength :Number = 5, spaceLength :Number = 5) :void
+    {
+        dashTo(g, x, y, x + width, y);
+        dashTo(g, x + width, y, x + width, y + height);
+        dashTo(g, x + width, y + height, x, y + height);
+        dashTo(g, x, y + height, x, y);
+    }
+
+	protected static function dashTo (g :Graphics, x1 :Number, y1 :Number, x2 :Number, y2 :Number,
+                                      dashLength :Number = 5, spaceLength :Number = 5) :void
+	{
+		var dx :Number = (x2 - x1), dy :Number = (y2 - y1);
+		var length :Number = Math.sqrt(dx*dx + dy*dy);
+		var units :Number = length/(dashLength+spaceLength);
+		var dashSpaceRatio :Number = dashLength/(dashLength+spaceLength);
+		var dashX :Number = (dx/units)*dashSpaceRatio, dashY :Number = (dy/units)*dashSpaceRatio;
+		var spaceX :Number = (dx/units)-dashX, spaceY :Number = (dy/units)-dashY;
+
+		g.moveTo(x1, y1);
+		while (length > 0) {
+			x1 += dashX;
+			y1 += dashY;
+			length -= dashLength;
+			if (length < 0) {
+                x1 = x2;
+                y1 = y2;
+			}
+			g.lineTo(x1, y1);
+			x1 += spaceX;
+			y1 += spaceY;
+			g.moveTo(x1, y1);
+			length -= spaceLength;
+		}
+		g.moveTo(x2, y2);
+	}
 
     /** Called by the media container when the sprite's visuals finished loading. */
     protected function handleSizeKnown (event :Event) :void

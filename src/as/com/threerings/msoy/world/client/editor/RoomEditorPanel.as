@@ -56,8 +56,8 @@ public class RoomEditorPanel extends FloatingPanel
     {
         super.open(modal, parent, avoid);
 
-        this.x = stage.stageWidth - width - TopPanel.DECORATIVE_MARGIN_HEIGHT;
-        this.y = HeaderBar.HEIGHT + TopPanel.DECORATIVE_MARGIN_HEIGHT;
+        this.x = stage.stageWidth - width - GAP;
+        this.y = HeaderBar.HEIGHT + TopPanel.DECORATIVE_MARGIN_HEIGHT + GAP;
     }
 
     // @Override from FloatingPanel
@@ -204,5 +204,7 @@ public class RoomEditorPanel extends FloatingPanel
     protected var _room :RoomPanel;
     protected var _namebox :ComboBox;
     protected var _controller :RoomEditorController;
+
+    protected static const GAP :int = 10;
 }
 }

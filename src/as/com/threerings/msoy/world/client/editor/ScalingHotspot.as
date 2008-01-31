@@ -68,9 +68,9 @@ public class ScalingHotspot extends Hotspot
     // @Override from Hotspot
     override protected function initializeDisplay () :void
     {
-        _displayStandard = new HOTSPOT_LOCKED() as DisplayObject;
-        _displayUnlocked = new HOTSPOT() as DisplayObject;
-        _displayMouseOver = _displayStandard; //new HOTSPOT_OVER() as DisplayObject;
+        _displayStandard = new HOTSPOT() as DisplayObject;
+        _displayStandard.alpha = 0.35;
+        _displayMouseOver = new HOTSPOT_OVER() as DisplayObject;
     }
 
     /**
@@ -97,11 +97,7 @@ public class ScalingHotspot extends Hotspot
 
         // should we snap?
         var noSnap :Boolean = event.shiftKey || event.altKey || event.ctrlKey;
-        if (noSnap) {
-            switchDisplay(_displayUnlocked);
-
-        } else {
-            switchDisplay(_displayStandard);
+        if (!noSnap) {
             var scale :Number = Math.min(Math.abs(x), Math.abs(y));
             x = scale * ((x < 0) ? -1 : 1);
             y = scale * ((y < 0) ? -1 : 1);
@@ -121,13 +117,10 @@ public class ScalingHotspot extends Hotspot
     /** Bitmap used for hotspot with no scale locking. */
     protected var _displayUnlocked :DisplayObject;
 
-
     // Bitmaps galore!
     [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale.png")]
     public static const HOTSPOT :Class;
     [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale_over.png")]
-//    public static const HOTSPOT_OVER :Class;
-//    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale_locked.png")]
-    public static const HOTSPOT_LOCKED :Class;
+    public static const HOTSPOT_OVER :Class;
 }
 }

@@ -37,13 +37,13 @@ public class MovementWallHotspot extends Hotspot
 
             _lastSize.x = targetWidth;
             _lastSize.y = targetHeight;
-            
+
             var g :Graphics = (_displayStandard as Shape).graphics;
             g.clear();
             g.beginFill(0xffffff, 0.0);
             g.drawRect(0, 0, targetWidth, targetHeight);
             g.endFill();
-            
+
             g = (_displayMouseOver as Shape).graphics;
             g.clear();
             g.beginFill(0xffffff, 0.0);
@@ -67,7 +67,7 @@ public class MovementWallHotspot extends Hotspot
 
         adjustCurrentBitmapPosition();
     }
-    
+
     // @Override from Hotspot
     override protected function updateAction (event :MouseEvent) :void
     {
@@ -92,7 +92,7 @@ public class MovementWallHotspot extends Hotspot
             _currentDisplay.y = - _lastSize.y / 2;
         }
     }
-    
+
     /** Moves the furni over to the new location. */
     protected function updateTargetLocation (sx :Number, sy :Number) :void
     {

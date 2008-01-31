@@ -44,6 +44,7 @@ public class MovementYHotspot extends Hotspot
     {
         // do not call super - we're providing different bitmaps
         _displayStandard = new HOTSPOT() as DisplayObject;
+        _displayStandard.alpha = 0.35;
         _displayMouseOver = new HOTSPOT_OVER() as DisplayObject;
     }
 
