@@ -219,7 +219,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
         super.onDetach();
 
         // persist our new scale to the server
-        if (_scaleUpdated) {
+        if (_scaleUpdated && _item.ownerId == CShell.getMemberId()) {
             CShell.itemsvc.scaleAvatar(
                 CShell.ident, _item.itemId, ((Avatar) _item).scale, new MsoyCallback() {
                 public void onSuccess (Object result) {
