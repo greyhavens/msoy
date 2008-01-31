@@ -92,8 +92,6 @@ public class RemixPanel extends JPanel
      */
     protected void packAvailable ()
     {
-        System.err.println("On awt thread: " + RunQueue.AWT.isDispatchThread());
-
         JPanel panel = GroupLayout.makeVBox(GroupLayout.NONE, GroupLayout.TOP, GroupLayout.STRETCH);
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 

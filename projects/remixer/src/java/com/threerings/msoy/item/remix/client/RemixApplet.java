@@ -32,13 +32,4 @@ public class RemixApplet extends JApplet
     {
         return "Whirled Remixer";
     }
-
-    @Override
-    public void destroy ()
-    {
-        super.destroy();
-
-        // The RemixPanel uses Intervals, and we have to take special care of them in applets
-        Interval.resetTimer();
-    }
 }
