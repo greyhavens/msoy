@@ -182,6 +182,8 @@ public class NaviPanel extends FlexTable
                 addLink(menu, "Find People", Page.PROFILE, "search");
                 if (_friends.size() > 0) {
                     MenuBar fmenu = new MenuBar(true);
+                    addLink(fmenu, "All Friends", Page.PROFILE,
+                            Args.compose("f", CShell.getMemberId()));
                     createMenu(fmenu, _friends, new ItemCreator() {
                         public void createItem (MenuBar menu, Object item) {
                             MemberName name = (MemberName)item;
