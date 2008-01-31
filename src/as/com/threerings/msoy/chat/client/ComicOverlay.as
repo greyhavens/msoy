@@ -69,16 +69,28 @@ public class ComicOverlay extends ChatOverlay
             clearBubbles(true);
         }
         super.setTarget(target, targetBounds);
+
+        if (_target != null) {
+            while (_notifications.length > 0) {
+                var msg :NotifyMessage = _notifications.shift() as NotifyMessage;
+                displayBubble(msg, getType(msg, false));
+            }
+        }
     }
 
-    override protected function displayTypedMessageNow (msg :ChatMessage, type :int) :Boolean
+    override public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
     {
         if (msg is NotifyMessage) {
-            displayBubble(msg, type);
-            return true;
+            if (_target == null) {
+                _notifications.push(msg);
+                // assume we'll succeed when our target is set
+                return true;
+            } else {
+                return displayBubble(msg, getType(msg, false));
+            }
         }
-         
-        return super.displayTypedMessageNow(msg, type);
+
+        return super.displayMessage(msg, alreadyDisplayed);
     }
 
     override public function clear () :void
@@ -150,7 +162,8 @@ public class ComicOverlay extends ChatOverlay
     {
         for each (var cloud :BubbleCloud in _bubbles.values()) {
             for each (var bubble :BubbleGlyph in cloud.bubbles) {
-                if (all || isPlaceOrientedType(bubble.getType())) {
+                if ((all || isPlaceOrientedType(bubble.getType())) && 
+                        bubble.getType() != NOTIFICATION) {
                     cloud.removeBubble(bubble);
                 }
             }
@@ -208,6 +221,7 @@ public class ComicOverlay extends ChatOverlay
         case FEEDBACK:
         case ATTENTION:
         case BROADCAST:
+        case NOTIFICATION:
             return createBubble(msg, type, null, null);
 
         case PLACE: 
@@ -312,6 +326,7 @@ public class ComicOverlay extends ChatOverlay
         switch (placeOf(type)) {
         case INFO:
         case ATTENTION:
+        case NOTIFICATION:
             return drawRectangle;
         }
 
@@ -556,6 +571,8 @@ public class ComicOverlay extends ChatOverlay
 
     protected var _lastBubbleExpire :int = 0;
 
+    protected var _notifications :Array = [];
+
     /** The maximum number of bubbles to show per user. */
     protected static const MAX_BUBBLES_PER_USER :int = 3;
 
@@ -664,6 +681,8 @@ class BubbleCloud
         // make sure the bubble gets removed from the overlay, whether we found it here or not.
         _scrollOverlay.removeGlyph(bubble);
     }
+
+    private static const log :Log = Log.getLog(BubbleCloud);
 
     /** The space we force between adjacent bubbles. */
     protected static const BUBBLE_SPACING :int = 5;

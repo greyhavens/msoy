@@ -408,7 +408,6 @@ public class ChatOverlay
     // from ChatDisplay
     public function displayMessage (msg :ChatMessage, alreadyDisp :Boolean) :Boolean
     {
-        log.debug("display message [" + msg + ", " + _target + "]");
         if (_target == null) {
             return false;
         }

@@ -169,6 +169,11 @@ public class MsoyChatDirector extends ChatDirector
         if (display is ChatOverlay) {
             _wctx.getTopPanel().setActiveOverlay(display as ChatOverlay);
             _chatTabs.displayActiveChat(_roomHistory);
+
+            if (display is ComicOverlay) {
+                // show any waiting notifications
+                displayNotifications(display as ComicOverlay);
+            }
         }
         super.pushChatDisplay(display);
     }
@@ -179,6 +184,11 @@ public class MsoyChatDirector extends ChatDirector
         if (display is ChatOverlay) {
             _wctx.getTopPanel().setActiveOverlay(display as ChatOverlay);
             _chatTabs.displayActiveChat(_roomHistory);
+
+            if (display is ComicOverlay) {
+                // show any waiting notificatiosn
+                displayNotifications(display as ComicOverlay);
+            }
         }
         super.addChatDisplay(display);
     }
@@ -237,17 +247,29 @@ public class MsoyChatDirector extends ChatDirector
         return history;
     }
 
+    protected function displayNotifications (overlay :ComicOverlay) :void
+    {
+        while (_notifications.length > 0) {
+            overlay.displayMessage((_notifications.shift() as NotifyMessage), false);
+        }
+    }
+
     // from ChatDirector
     override protected function dispatchPreparedMessage (msg :ChatMessage) :void
     {
         if (msg is NotifyMessage) {
             // notify messages don't go into the chat history, which is what happens when you
             // pass it off to the chat tabs
+            var displayed :Boolean = false;
             _displays.apply(function (overlay :Object) :void {
-                if (overlay is ComicOverlay) {
-                    (overlay as ComicOverlay).displayMessage(msg, false);
+                if (overlay is ComicOverlay && 
+                    (overlay as ComicOverlay).displayMessage(msg, displayed)) {
+                    displayed = true;
                 }
             });
+            if (!displayed) {
+                _notifications.push(msg);
+            }
         } else {
             _chatTabs.addMessage(determineChannel(msg), msg);
 
@@ -341,6 +363,8 @@ public class MsoyChatDirector extends ChatDirector
 
     protected var _roomHistory :HistoryList = new HistoryList();
     protected var _histories :HashMap = new HashMap();
+
+    protected var _notifications :Array = [];
 }
 }
 
