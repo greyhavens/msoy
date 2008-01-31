@@ -108,6 +108,19 @@ public class ComicOverlay extends ChatOverlay
         }
     }
 
+    override public function setHistorySliding (sliding :Boolean) :void
+    {
+        super.setHistorySliding(sliding);
+
+        if (_target != null) {
+            _target.callLater(function () :void {
+                for each (var cloud :BubbleCloud in _bubbles.values()) {
+                    cloud.viewWidth = _target.width;
+                }
+            });
+        }
+    }
+
     /**
      * Get the expire time for the specified chat.
      */
@@ -611,6 +624,19 @@ class BubbleCloud
     public function get bubbles () :Array 
     {
         return _bubbles;
+    }
+
+    public function set viewWidth (w :Number) :void
+    {
+        _viewWidth = w;
+        if (_pos == null) {
+            for each (var bubble :BubbleGlyph in _bubbles) {
+                // force the bubbles to be repositioned.
+                bubble.x = 0;
+                bubble.y = 0;
+            }
+            setSpeakerLocation(_pos);
+        }
     }
 
     public function setSpeakerLocation (pos :Point) :void
