@@ -110,7 +110,6 @@ public class UploadMediaMode
             out.close();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder buf = new StringBuilder();
             for (String line; (line = reader.readLine()) != null; ) {
                 postResult(line);
             }
