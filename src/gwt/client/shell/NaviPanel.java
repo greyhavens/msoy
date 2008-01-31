@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.WebCreds;
@@ -142,8 +143,8 @@ public class NaviPanel extends FlexTable
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "Whirledwide", Page.WHIRLED, "whirledwide");
                 addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
-                addLink(menu, "My Home", Page.WORLD, "h");
-                if (_scenes.size() > 0) {
+                // if we have more than one room show "My Rooms"
+                if (_scenes.size() > 1) {
                     MenuBar smenu = new MenuBar(true);
                     createMenu(smenu, _scenes, new ItemCreator() {
                         public void createItem (MenuBar menu, Object item) {
@@ -152,6 +153,8 @@ public class NaviPanel extends FlexTable
                         }
                     });
                     menu.addItem("My Rooms", smenu);
+                } else { // otherwise show "My Home"
+                    addLink(menu, "My Home", Page.WORLD, "h");
                 }
                 if (_friends.size() > 0) {
                     MenuBar fmenu = new MenuBar(true);
@@ -166,7 +169,9 @@ public class NaviPanel extends FlexTable
                 if (CShell.isSupport()) {
                     addLink(menu, "Admin Console", Page.ADMIN, "");
                 }
-                addLink(menu, "Projects", Page.SWIFTLY, "");
+                if (DeploymentConfig.devDeployment) {
+                    addLink(menu, "Projects", Page.SWIFTLY, "");
+                }
             }
         };
         setWidget(0, menuidx++, new NaviButton(
