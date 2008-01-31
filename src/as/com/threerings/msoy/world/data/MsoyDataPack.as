@@ -66,15 +66,10 @@ public class MsoyDataPack extends DataPack
      */
     public function toByteArray () :ByteArray
     {
-        // TODO: validate
         var outZip :ZipOutput = new ZipOutput();
-        for (var ii :int = 0; ii < _zip.size; ii++) {
-            var entry :ZipEntry = _zip.entries[ii];
-            var outEntry :ZipEntry = new ZipEntry(entry.name);
-            outZip.putNextEntry(outEntry);
-            var ba :ByteArray = _zip.getInput(entry);
-            ba.position = 0;
-            outZip.write(ba);
+        for each (var entry :ZipEntry in _zip.entries) {
+            outZip.putNextEntry(entry);
+            outZip.write(_zip.getInput(entry));
             outZip.closeEntry();
         }
         outZip.finish();
