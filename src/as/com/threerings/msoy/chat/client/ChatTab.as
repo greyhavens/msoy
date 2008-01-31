@@ -145,7 +145,7 @@ public class ChatTab extends HBox
             // commented out until I get new check box art from Jon
 //            displayCheckBox(_bar.chatTabIndex(this) == 0 && _controller != null &&
 //                            _controller.channel.type == ChatChannel.ROOM_CHANNEL);
-            displayCloseBox(false);
+            displayCheckBox(false);
             break;
 
         case UNSELECTED: 
