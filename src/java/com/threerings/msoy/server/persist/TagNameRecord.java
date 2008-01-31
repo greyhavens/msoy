@@ -49,8 +49,7 @@ public class TagNameRecord extends PersistentRecord
 
     /** A regexp pattern to validate tags */
     public static final Pattern VALID_TAG = Pattern.compile(
-        "[a-z](_?[a-z0-9]){" + (TagCodes.MIN_TAG_LENGTH-1) + "," +
-        (TagCodes.MAX_TAG_LENGTH-1) + "}");
+        "([_a-z0-9]){" + TagCodes.MIN_TAG_LENGTH + "," + TagCodes.MAX_TAG_LENGTH + "}");
 
     /** The ID of this tag. */
     @Id
