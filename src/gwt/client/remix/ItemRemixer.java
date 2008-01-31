@@ -70,23 +70,23 @@ public class ItemRemixer extends FlexTable
         setWidget(0, 1, hpan);
     }
 
-    protected Widget createRemixControls (Item item)
-    {
-        MediaDesc preview = item.getPreviewMedia();
-
-        return WidgetUtil.createApplet("remixControls",
-            "/clients/" + DeploymentConfig.version + "/remixer-applet.jar",
-            "com.threerings.msoy.item.remix.client.RemixApplet", 300, 400, true,
-            new String[] { "media", URL.encodeComponent(preview.getMediaPath()) });
-    }
-
 //    protected Widget createRemixControls (Item item)
 //    {
 //        MediaDesc preview = item.getPreviewMedia();
-//        String flashVars = "media=" + URL.encodeComponent(preview.getMediaPath());
-//        return WidgetUtil.createFlashContainer("remixControls", "/media/RemixStub.swf",
-//            200, 200, flashVars);
+//
+//        return WidgetUtil.createApplet("remixControls",
+//            "/clients/" + DeploymentConfig.version + "/remixer-applet.jar",
+//            "com.threerings.msoy.item.remix.client.RemixApplet", 300, 400, true,
+//            new String[] { "media", URL.encodeComponent(preview.getMediaPath()) });
 //    }
+
+    protected Widget createRemixControls (Item item)
+    {
+        MediaDesc preview = item.getPreviewMedia();
+        String flashVars = "media=" + URL.encodeComponent(preview.getMediaPath());
+        return WidgetUtil.createFlashContainer("remixControls", "/media/Remixer.swf",
+            200, 200, flashVars);
+    }
 
     protected Widget createPreview (Item item)
     {
