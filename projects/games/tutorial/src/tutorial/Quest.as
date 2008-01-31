@@ -82,8 +82,8 @@ public class Quest
             "playerMoved",
             "Learning to Walk",
             "Take a Walk Around",
-            "In Whirled, everyone has an Avatar which represents them and can walk around. " +
-            "Try moving around your room:",
+            "This is your room! That wiggly block of tofu is your Avatar. In Whirled, everyone " +
+            "has an Avatar which represents them and can move around. Try walking around your room:",
             [ "Move your mouse on the floor and you'll see a little dot.",
               "Click your mouse and you'll walk to the dot." ],
             "",
@@ -100,11 +100,11 @@ public class Quest
             [ "Click in the chat box in the lower left corner of the [[Whirled]] toolbar.",
               "Type a message and click [[Send]] or press the [[Enter]] key." ],
             "",
-            "Excellent! We'll give you [[200 flow]] for your efforts.<br><br>" +
+            "Excellent! Now if you see anyone walk by in Whirled you know how to say hi!<br><br>" +
+            "We'll also give you [[200 flow]] for your efforts. [[Flow]] is the currency in " +
+            "Whirled and in a sec we'll show you how to buy stuff with it.<br><br>" +
             "Notice in the upper right of the page, next to your name, it shows you how much " +
-            "[[flow]] you have.<br><br>" +
-            "Click [[Onward]] and we'll show you how to spend that flow on " +
-            "something fun!",
+            "[[flow]] you have. Now let's move [[Onward!]]",
             200, false),
 
         makeQuest(
@@ -116,7 +116,7 @@ public class Quest
             "your mind. Let's go shopping and pick out a new one:",
             [ "Click on [[Catalog -> Avatars]] at the top of the page.",
               "Pick one you like and [[click on it]].",
-              "Press the [[Buy]] button below the avatar image to buy it." ],
+              "Press the [[Buy]] button to buy it." ],
             "",
             null,
             0, false),
@@ -151,7 +151,7 @@ public class Quest
             "how to invite your friends to [[Whirled]] in the next step.<br><br>" + 
             "When you're ready to continue, click back in this window.",
             null,
-            0, false),
+            0, true),
 
         makeQuest(
             "inviteFriends",
@@ -185,7 +185,7 @@ public class Quest
             "posted by going to [[Me -> My Discussions]]<br><br>" + 
             "When you're ready to continue, click back in this window.",
             null,
-            0, false),
+            0, true),
 
         makeQuest(
             "visitMyWhirled",
@@ -194,7 +194,7 @@ public class Quest
             "My Whirled",
             "My Whirled is an easy way to see what your friends are doing and join in on the fun.",
             [ "Click on [[Places -> My Whirled]] or the [[logo]] in the upper left to see " +
-              "which of your friends are online now.", 
+              "which of your friends are [[online now]].", 
               "Click any friend's name to [[go to where they are]].", 
               "If you have no friends online, click [[Whirledwide]] to find popular spots and " +
               "meet new people." ],
