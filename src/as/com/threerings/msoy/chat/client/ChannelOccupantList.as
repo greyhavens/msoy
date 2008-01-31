@@ -124,9 +124,11 @@ class ListBox extends VBox
     {
         super.updateDisplayList(unscaledWidth, unscaledHeight);
 
-        var dispObj :DisplayObject = getChildAt(numChildren - 1);
-        var bottom :int = dispObj.y + dispObj.height;
-        _scrollBar.setScrollProperties(parent.height, parent.height, bottom);
+        if (numChildren > 0) {
+            var dispObj :DisplayObject = getChildAt(numChildren - 1);
+            var bottom :int = dispObj.y + dispObj.height;
+            _scrollBar.setScrollProperties(parent.height, parent.height, bottom);
+        }
     }
 
     protected function onScroll (event :ScrollEvent) :void
