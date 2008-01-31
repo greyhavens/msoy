@@ -21,11 +21,13 @@ import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.item.BaseItemDetailPanel;
+import client.item.ItemActivator;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
 import client.util.ClickCallback;
+import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -150,6 +152,11 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 }
             });
             _buttons.add(button);
+        }
+
+        if (_item.ownerId == CShell.getMemberId() && FlashClients.clientExists()) {
+            _details.add(WidgetUtil.makeShim(1, 10));
+            _details.add(new ItemActivator(_item));
         }
 
         if (_item.catalogId != 0 || _item.sourceId == 0) {
