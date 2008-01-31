@@ -18,13 +18,13 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import client.shell.Frame;
+
 /**
  * Utility methods for generating flash clients.
  */
 public class FlashClients
 {
-    public static final String HOOD_SKIN_URL = "/media/static/hood_pastoral.swf";
-
     /**
      * Creates a world client, and embeds it in a container object, with which it can communicate
      * via the Flash/Javascript interface.
@@ -34,7 +34,7 @@ public class FlashClients
         WidgetUtil.embedFlashObject(
             container, WidgetUtil.createFlashObjectDefinition(
                 "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-                "100%", String.valueOf(CLIENT_HEIGHT), flashVars));
+                "100%", String.valueOf(Frame.CLIENT_HEIGHT), flashVars));
     }
 
     /**
@@ -46,7 +46,7 @@ public class FlashClients
         WidgetUtil.embedFlashObject(
             container, WidgetUtil.createFlashObjectDefinition(
                 "asclient", "/clients/" + DeploymentConfig.version + "/game-client.swf",
-                "100%", String.valueOf(CLIENT_HEIGHT), flashVars));
+                "100%", String.valueOf(Frame.CLIENT_HEIGHT), flashVars));
     }
 
     /**
@@ -80,7 +80,7 @@ public class FlashClients
     {
         return WidgetUtil.createFlashObjectDefinition(
             "hotspots", "/clients/" + DeploymentConfig.version + "/neighborhood.swf",
-            "100%", String.valueOf(CLIENT_HEIGHT - BLACKBAR_HEIGHT),
+            "100%", String.valueOf(Frame.CLIENT_HEIGHT - BLACKBAR_HEIGHT),
             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
     }
 
@@ -230,7 +230,8 @@ public class FlashClients
     protected static native boolean inRoomNative () /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            return client.inRoom();
+            // exception from JavaScript break GWT; don't let that happen
+            try { return client.inRoom(); } catch (e) {}
         }
         return false;
     }-*/;
@@ -241,7 +242,8 @@ public class FlashClients
     protected static native boolean isItemInUseNative (byte itemType, int itemId) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            return client.isItemInUse(itemType, itemId);
+            // exception from JavaScript break GWT; don't let that happen
+            try { return client.isItemInUse(itemType, itemId); } catch (e) {}
         }
         return 0;
     }-*/;
@@ -252,7 +254,8 @@ public class FlashClients
     protected static native void useItemNative (byte itemType, int itemId) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.useItem(itemType, itemId);
+            // exception from JavaScript break GWT; don't let that happen
+            try { client.useItem(itemType, itemId); } catch (e) {}
         }
     }-*/;
 
@@ -262,7 +265,8 @@ public class FlashClients
     protected static native void clearItemNative (byte itemType, int itemId) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.clearItem(itemType, itemId);
+            // exception from JavaScript break GWT; don't let that happen
+            try { client.clearItem(itemType, itemId); } catch (e) {}
         }
     }-*/;
 
@@ -272,7 +276,8 @@ public class FlashClients
     protected static native void useAvatarNative (int avatarId, float scale) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.useAvatar(avatarId, scale);
+            // exception from JavaScript break GWT; don't let that happen
+            try { client.useAvatar(avatarId, scale); } catch (e) {}
         }
     }-*/;
 
@@ -282,15 +287,15 @@ public class FlashClients
     protected static native void tutorialEventNative (String eventName) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.tutorialEvent(eventName);
+            // exception from JavaScript break GWT; don't let that happen
+            try { client.tutorialEvent(eventName); } catch (e) {}
         }
     }-*/;
 
     // TODO: put this in Application?
-    protected static final int HEADER_HEIGHT = 50;
     protected static final int BLACKBAR_HEIGHT = 20;
-    protected static final int CLIENT_HEIGHT = 544;
 
+    protected static final String HOOD_SKIN_URL = "/media/static/hood_pastoral.swf";
     protected static final String FEATURED_PLACE_WIDTH = "424px";
     protected static final String FEATURED_PLACE_HEIGHT = "200px";
 }

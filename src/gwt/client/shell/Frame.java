@@ -10,6 +10,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -31,6 +32,12 @@ import client.util.MsoyUI;
  */
 public class Frame
 {
+    /** The height of our page header (just the menus and status stuff). */
+    public static final int HEADER_HEIGHT = 50;
+
+    /** The height of our Flash or Java client in pixels. */
+    public static final int CLIENT_HEIGHT = 544;
+
     /** The maximum width of our content UI, the remainder is used by the world client. */
     public static final int CONTENT_WIDTH = 700;
 
@@ -78,8 +85,9 @@ public class Frame
             }
         });
 
-        // set up the window to not scroll, Page will scroll just our page content
-        Window.enableScrolling(false);
+        // if we're tall enough, handle scrolling ourselves
+        Window.enableScrolling(pageTooShort());
+        Window.addWindowResizeListener(_resizer);
 
         // set up the callbackd that our flash clients can call
         configureCallbacks();
@@ -164,9 +172,13 @@ public class Frame
             return;
         }
 
-        WorldClient.closeClient(true);
+        WorldClient.clientWillClose();
         _closeToken = null;
         RootPanel.get(SEPARATOR).clear();
+        CShell.log("Clearing client in closeClient");
+        RootPanel.get(Frame.CLIENT).clear();
+        RootPanel.get(Frame.CLIENT).setWidth("0px");
+        RootPanel.get(Frame.CONTENT).setWidth("100%");
         _content.setCloseVisible(false);
     }
 
@@ -269,8 +281,16 @@ public class Frame
         _contlist = new VerticalPanel();
         _contlist.setWidth("100%");
         _contlist.add(_content);
-        _scroller = new ScrollPanel(_contlist);
-        _scroller.setHeight((Window.getClientHeight() - 50) + "px");
+
+        Widget content;
+        if (pageTooShort()) {
+            content = _contlist;
+            Window.enableScrolling(true);
+        } else {
+            content = (_scroller = new ScrollPanel(_contlist));
+            _scroller.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
+            Window.enableScrolling(false);
+        }
 
         // if we're displaying the client or we have a minimized page, unminimize things first
         if (_maximizeContent.isAttached() ||
@@ -280,11 +300,16 @@ public class Frame
             new SlideContentOn().start(null);
 
         } else {
-            RootPanel.get(CONTENT).add(_scroller);
+            RootPanel.get(CONTENT).add(content);
             RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
         }
 
         _content.setCloseVisible(RootPanel.get(CLIENT).getWidgetCount() > 0);
+    }
+
+    protected static boolean pageTooShort ()
+    {
+        return Window.getClientHeight() < (HEADER_HEIGHT + CLIENT_HEIGHT);
     }
 
     protected static void restoreClient ()
@@ -398,7 +423,11 @@ public class Frame
     {
         public void run () {
 //             if (_startWidth <= _endWidth) {
-                RootPanel.get(CONTENT).add(_scroller);
+                if (_scroller == null) {
+                    RootPanel.get(CONTENT).add(_contlist);
+                } else {
+                    RootPanel.get(CONTENT).add(_scroller);
+                }
                 RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
                 RootPanel.get(CLIENT).setWidth(_endWidth + "px");
                 WorldClient.setMinimized(true);
@@ -448,6 +477,14 @@ public class Frame
             return getWidget(1, 0);
         }
     }
+
+    protected static WindowResizeListener _resizer = new WindowResizeListener() {
+        public void onWindowResized (int width, int height) {
+            if (_scroller != null) {
+                _scroller.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
+            }
+        }
+    };
 
     protected static String _closeToken;
 

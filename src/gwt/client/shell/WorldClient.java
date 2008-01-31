@@ -41,7 +41,7 @@ public class WorldClient extends Widget
         }
 
         String flashArgs = "featuredPlace=" + sceneId;
-        if (!featuredPlaceGo(flashArgs)) {
+        if (!clientGo("featuredplace", flashArgs)) {
             flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port +
                          "&httpPort=" + _defaultServer.httpPort;
             String partner = Application.getPartner();
@@ -83,7 +83,7 @@ public class WorldClient extends Widget
 
         // create our client if necessary
         if (_curFlashArgs == null) {
-            closeClient(false); // clear our Java client if we have one
+            clientWillClose(); // clear our Java client if we have one
             _curFlashArgs = flashArgs; // note our new flash args before we tack on server info
             flashArgs += "&host=" + _defaultServer.server +
                 "&port=" + _defaultServer.port +
@@ -95,12 +95,13 @@ public class WorldClient extends Widget
             if (CShell.ident != null) {
                 flashArgs += "&token=" + CShell.ident.token;
             }
+            CShell.log("Clearing client in displayFlash");
             RootPanel.get(Frame.CLIENT).clear();
             FlashClients.embedWorldClient(RootPanel.get(Frame.CLIENT), flashArgs);
 
         } else {
             // note our new current flash args
-            clientGo(_curFlashArgs = flashArgs);
+            clientGo("asclient", _curFlashArgs = flashArgs);
             clientMinimized(false);
         }
     }
@@ -110,7 +111,7 @@ public class WorldClient extends Widget
         // let the page know that we're displaying a client
         Frame.setShowingClient(History.getToken());
 
-        closeClient(false); // clear our Java or Flash client if we have one
+        clientWillClose(); // clear our Java or Flash client if we have one
 
         String flashArgs = "gameLobby=" + config.gameId;
         if (!action.equals("")) {
@@ -122,6 +123,7 @@ public class WorldClient extends Widget
         if (CShell.ident != null) {
             flashArgs += "&token=" + CShell.ident.token;
         }
+        CShell.log("Clearing client in displayFlashLobby");
         RootPanel.get(Frame.CLIENT).clear();
         FlashClients.embedGameClient(RootPanel.get(Frame.CLIENT), flashArgs);
     }
@@ -135,7 +137,8 @@ public class WorldClient extends Widget
         _curFlashArgs = null;
 
         if (_jclient != client) {
-            closeClient(false); // clear out our flash client if we have one
+            clientWillClose(); // clear out our flash client if we have one
+            CShell.log("Clearing client in displayJava");
             RootPanel.get(Frame.CLIENT).clear();
             RootPanel.get(Frame.CLIENT).add(_jclient = client);
         } else {
@@ -148,19 +151,14 @@ public class WorldClient extends Widget
         clientMinimized(minimized);
     }
 
-    public static void closeClient (boolean restoreContent)
+    public static void clientWillClose ()
     {
         if (_curFlashArgs != null || _jclient != null) {
             if (_curFlashArgs != null) {
                 clientUnload(); // TODO: make this work for jclient
             }
-            RootPanel.get(Frame.CLIENT).clear();
             _curFlashArgs = null;
             _jclient = null;
-        }
-        if (restoreContent) {
-            RootPanel.get(Frame.CLIENT).setWidth("0px");
-            RootPanel.get(Frame.CONTENT).setWidth("100%");
         }
     }
 
@@ -173,25 +171,13 @@ public class WorldClient extends Widget
     }
 
     /**
-     * Tells the featured places view to show a particular location.
-     */
-    protected static native boolean featuredPlaceGo (String where) /*-{
-        var client = $doc.getElementById("featuredplace");
-        if (client) {
-            client.clientGo(where);
-            return true;
-        }
-        return false;
-    }-*/;
-
-    /**
      * Tells the World client to go to a particular location.
      */
-    protected static native boolean clientGo (String where) /*-{
-        var client = $doc.getElementById("asclient");
+    protected static native boolean clientGo (String id, String where) /*-{
+        var client = $doc.getElementById(id);
         if (client) {
-            client.clientGo(where);
-            return true;
+            // exception from JavaScript break GWT; don't let that happen
+            try { client.clientGo(where);  return true; } catch (e) {}
         }
         return false;
     }-*/;
@@ -202,7 +188,8 @@ public class WorldClient extends Widget
     protected static native void clientLogon (int memberId, String token) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.clientLogon(memberId, token);
+            // exception from JavaScript break GWT; don't let that happen
+            try { client.clientLogon(memberId, token); } catch (e) {}
         }
     }-*/;
 
@@ -212,7 +199,8 @@ public class WorldClient extends Widget
     protected static native void clientUnload () /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.onUnload();
+            // exception from JavaScript break GWT; don't let that happen
+            try { client.onUnload(); } catch (e) {}
         }
     }-*/;
 
@@ -222,7 +210,8 @@ public class WorldClient extends Widget
     protected static native void clientMinimized (boolean mini) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.setMinimized(mini);
+            // exception from JavaScript break GWT; don't let that happen
+            try { client.setMinimized(mini); } catch (e) {}
         }
     }-*/;
 
