@@ -58,7 +58,7 @@ public class FurniEditor extends FurniHighlight
                 _originalTargetData = null;
             }
         }
-        
+
         _activeHotspot = hotspot;
     }
 
@@ -68,7 +68,7 @@ public class FurniEditor extends FurniHighlight
         // update furni
         target.setMediaScaleX(x);
         target.setMediaScaleY(y);
-        
+
         _controller.targetSpriteUpdated();
     }
 
@@ -77,7 +77,7 @@ public class FurniEditor extends FurniHighlight
     {
         target.setLocation(loc);          // change position on screen...
         target.getFurniData().loc = loc;  // ...and in the data parameters
-        
+
         _controller.targetSpriteUpdated();
     }
 
@@ -87,10 +87,8 @@ public class FurniEditor extends FurniHighlight
         super.start();
 
         _hotspots = new Array();
-        _hotspots.push(_defaultHotspot = new MovementWallHotspot(this));
+        _hotspots.push(_defaultHotspot = new MovementXZHotspot(this));
         _hotspots.push(new ScalingHotspot(this));
-        _hotspots.push(new MovementYHotspot(this));
-        _hotspots.push(new MovementXZHotspot(this));
 
         for each (var hotspot :Hotspot in _hotspots) {
             _border.addChild(hotspot);
@@ -104,7 +102,7 @@ public class FurniEditor extends FurniHighlight
         for each (var hotspot :Hotspot in _hotspots) {
             hotspot.deinit();
             _border.removeChild(hotspot);
-        }            
+        }
 
         super.end();
     }
@@ -130,25 +128,25 @@ public class FurniEditor extends FurniHighlight
     {
         // note: do not call super - this is a complete replacement.
         // it paints the border and adjusts all hotspots.
-        
+
         var g :Graphics = _border.graphics;
         var w :Number = target.getActualWidth();
         var h :Number = target.getActualHeight();
         var view :RoomView = _controller.roomView;
 
         g.clear();
-        
+
         // compute location info for the stem from the current location to the floor
 
         // get target location in room and stage coordinates
         var roomLocation :MsoyLocation = target.getLocation();
         var stageLocation :Point = view.localToGlobal(view.layout.locationToPoint(roomLocation));
         var targetLocation :Point = target.globalToLocal(stageLocation);
-        
+
         // get stem root location by dropping the target y value, and converting back to screen
         var roomRoot :MsoyLocation = new MsoyLocation(roomLocation.x, 0, roomLocation.z, 0);
         var stageRoot :Point = view.localToGlobal(view.layout.locationToPoint(roomRoot));
-        var targetRoot :Point = target.globalToLocal(stageRoot); 
+        var targetRoot :Point = target.globalToLocal(stageRoot);
 
         // draw outer and inner outlines
         g.lineStyle(0, 0x000000, 0.5, true);
@@ -173,12 +171,12 @@ public class FurniEditor extends FurniHighlight
             hotspot.updateDisplay(w, h);
         }
     }
-    
+
     /** Copy of the target's original furni data, created when the user activates a hotspot. */
     protected var _originalTargetData :FurniData;
 
     /** The default hotspot; chosen if the player immediately clicks and drags a furni. */
-    protected var _defaultHotspot :MovementWallHotspot;
+    protected var _defaultHotspot :Hotspot;
 
     /** Reference to the currently active hotspot. */
     protected var _activeHotspot :Hotspot;

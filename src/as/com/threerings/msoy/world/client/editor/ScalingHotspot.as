@@ -69,7 +69,6 @@ public class ScalingHotspot extends Hotspot
     override protected function initializeDisplay () :void
     {
         _displayStandard = new HOTSPOT() as DisplayObject;
-        _displayStandard.alpha = 0.35;
         _displayMouseOver = new HOTSPOT_OVER() as DisplayObject;
     }
 
