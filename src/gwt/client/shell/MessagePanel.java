@@ -72,6 +72,7 @@ public class MessagePanel extends FlexTable
         getFlexCellFormatter().setStyleName(0, 1, "LeftPad");
 
         if (textIsHTML()) {
+            text = text.replaceAll(WHIRLED_REGEX, WHIRLED_REPLACE);
             setHTML(1, 0, text);
         } else {
             setText(1, 0, text);
@@ -107,4 +108,7 @@ public class MessagePanel extends FlexTable
     }
 
     protected static SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
+
+    protected static final String WHIRLED_REGEX = "http://.*\\.whirled\\.com/#([^ ]+)";
+    protected static final String WHIRLED_REPLACE = "<a href=\"#$1\">link</a>";
 }
