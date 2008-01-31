@@ -17,11 +17,13 @@ import com.threerings.util.Log;
 public class Base64Sender
 {
     public function Base64Sender (
-        externalFunctionName :String = "setBytes", maxChunkSize :int = 81920)
+        targetName :String, externalFunctionName :String = "setBytes", maxChunkSize :int = 81920,
+        chunksPerSecond :int = 10)
     {
+        _targetName = targetName;
         _funcName = externalFunctionName;
         _maxChunkSize = maxChunkSize;
-        _timer = new Timer(1); // fire every frame
+        _timer = new Timer(1000 / chunksPerSecond);
         _timer.addEventListener(TimerEvent.TIMER, handleTimerEvent);
     }
 
@@ -39,8 +41,10 @@ public class Base64Sender
             _timer.reset();
         }
 
+        trace("Sending " + bytes.length + " bytes...");
         _bytes = bytes;
         _position = 0;
+        _failures = 0;
         if (doChunk()) {
             _timer.start();
         }
@@ -64,6 +68,12 @@ public class Base64Sender
                 _position += length;
             } else {
                 trace("Could not send. Waiting...");
+                if (++_failures >= _maxFailures) {
+                    trace("Too many failures. Giving up.");
+                    _bytes = null;
+                    return false;
+                }
+                // else, fall through: return true
             }
         }
 
@@ -79,23 +89,32 @@ public class Base64Sender
 
     protected function send (s :String) :Boolean
     {
+        var arg :String = (s == null) ? "null" : ("'" + s + "'");
+        var js :String = "document.getElementById('" + _targetName + "')." + 
+            _funcName + "(" + arg + ")";
         try {
-            return Boolean(ExternalInterface.call(_funcName, s));
+            return Boolean(ExternalInterface.call("eval", js));
 
         } catch (err :Error) {
             Log.getLog(this).logStackTrace(err);
-            return false;
         }
+        return false;
     }
 
     protected var _position :int;
 
     protected var _bytes :ByteArray;
 
+    protected var _targetName :String;
+
     protected var _funcName :String;
 
     protected var _maxChunkSize :int;
 
     protected var _timer :Timer;
+
+    protected var _failures :int;
+
+    protected var _maxFailures :int = 50;
 }
 }
