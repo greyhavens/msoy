@@ -41,7 +41,6 @@ public class Base64Sender
             _timer.reset();
         }
 
-        trace("Sending " + bytes.length + " bytes...");
         _bytes = bytes;
         _position = 0;
         _failures = 0;
