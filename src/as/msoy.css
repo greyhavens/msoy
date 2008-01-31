@@ -81,9 +81,9 @@ TabNavigator, TabBar {
   fontFamily: Arial;
   fontWeight: bold;
   closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
-  checkboxUpSkin: Embed(source="../../rsrc/media/skins/checkbox.png");
-  checkboxOverSkin: Embed(source="../../rsrc/media/skins/checkbox_over.png");
-  checkboxSelectedSkin: Embed(source="../../rsrc/media/skins/checkbox_selected.png");
+  checkboxUpSkin: Embed(source="../../rsrc/media/skins/tab/checkbox_small.png");
+  checkboxOverSkin: Embed(source="../../rsrc/media/skins/tab/checkbox_small_over.png");
+  checkboxSelectedSkin: Embed(source="../../rsrc/media/skins/tab/checkbox_small_selected.png");
 }
 
 .unselectedRoomTab, .attentionRoomTab {
@@ -312,6 +312,12 @@ Window {
 }
 
 .controlBarButtonVolume {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume_down.png");
+}
+
+.controlBarButtonZoom {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume_down.png");
