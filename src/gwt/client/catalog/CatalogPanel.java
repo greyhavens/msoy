@@ -60,8 +60,8 @@ public class CatalogPanel extends VerticalPanel
 
         _typeTabs = typeTabs;
 
-        int rows = (Window.getClientHeight() - Application.HEADER_HEIGHT -
-                    HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT;
+        int rows = Math.max(1, (Window.getClientHeight() - Application.HEADER_HEIGHT -
+                                HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT);
         _items = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
                 Application.go(Page.CATALOG, composeArgs(_query, page));

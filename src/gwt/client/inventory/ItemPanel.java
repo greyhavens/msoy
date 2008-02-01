@@ -61,8 +61,8 @@ public class ItemPanel extends VerticalPanel
         }));
 
         // this will contain our items
-        int rows = (Window.getClientHeight() - Application.HEADER_HEIGHT -
-                    NAV_BAR_ETC - BLURB_HEIGHT) / BOX_HEIGHT;
+        int rows = Math.max(1, (Window.getClientHeight() - Application.HEADER_HEIGHT -
+                                NAV_BAR_ETC - BLURB_HEIGHT) / BOX_HEIGHT);
         _contents = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
