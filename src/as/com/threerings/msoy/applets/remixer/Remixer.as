@@ -1,5 +1,6 @@
 package com.threerings.msoy.applets.remixer {
 
+import flash.display.BitmapData;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -10,12 +11,15 @@ import flash.external.ExternalInterface;
 
 import flash.utils.ByteArray;
 
+import com.adobe.images.JPGEncoder;
+
 import com.whirled.remix.data.EditableDataPack;
 
 import com.threerings.util.ParameterUtil;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
+import com.threerings.flash.CameraSnapshotter;
 import com.threerings.flash.SimpleTextButton;
 
 import com.threerings.msoy.utils.Base64Sender;
@@ -48,6 +52,11 @@ public class Remixer extends Sprite
         btn.addEventListener(MouseEvent.CLICK, changeEyeColor);
         addChild(btn);
 
+        btn = new SimpleTextButton("change texture");
+        btn.addEventListener(MouseEvent.CLICK, changeTexture);
+        btn.y = 50;
+        addChild(btn);
+
         btn = new SimpleTextButton("Save");
         btn.addEventListener(MouseEvent.CLICK, commit);
         btn.y = 400;
@@ -78,6 +87,33 @@ public class Remixer extends Sprite
         updatePreview();
     }
 
+    protected function changeTexture (... ignored) :void
+    {
+        if (_snapper != null) {
+            return;
+        }
+
+        _snapper = new CameraSnapshotter(300, 300);
+        _snapper.addEventListener(Event.COMPLETE, handleSnapshotArrived);
+        _snapper.x = 100;
+        addChild(_snapper);
+    }
+
+    protected function handleSnapshotArrived (event :ValueEvent) :void
+    {
+        removeChild(_snapper);
+        _snapper = null;
+
+        var bmp :BitmapData = event.value as BitmapData;
+        if (bmp == null) {
+            return;
+        }
+
+        var encoder :JPGEncoder = new JPGEncoder(75);
+        _pack.replaceFile("texture", "mix-texture.jpg", encoder.encode(bmp));
+        updatePreview();
+    }
+
     protected function updatePreview () :void
     {
         // send the bytes to our previewer
@@ -103,6 +139,8 @@ public class Remixer extends Sprite
     }
 
     protected var _pack :EditableDataPack;
+
+    protected var _snapper :CameraSnapshotter;
 
     protected var _params :Object;
 }
