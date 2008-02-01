@@ -40,15 +40,24 @@ public class ChannelOccupantList extends HBox
 
     public function addChatter (info :VizMemberName) :void
     {
-        for (var ii :int = 0; ii < _playersContainer.numChildren; ii++) {
+        var ii :int;
+        for (ii = 0; ii < _playersContainer.numChildren; ii++) {
             var current :VizMemberName = 
                 (_playersContainer.getChildAt(ii) as ChatterRenderer).data as VizMemberName;
             if (MemberName.BY_DISPLAY_NAME(current, info) > 0) {
                 break;
             }
         }
-        // do it outside to catch the case where this chatter goes at the end, or the list is 
-        // empty
+
+        if (ii != 0) {
+            var previous :VizMemberName = 
+                (_playersContainer.getChildAt(ii - 1) as ChatterRenderer).data as VizMemberName;
+            if (info.equals(previous)) {
+                // we were told to add someone that's already in the list
+                return;
+            }
+        }
+
         var renderer :ChatterRenderer = new ChatterRenderer();
         renderer.data = info;
         _playersContainer.addChildAt(renderer, ii);
