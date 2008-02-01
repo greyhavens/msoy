@@ -75,12 +75,9 @@ public class MovementXZHotspot extends Hotspot
             _editor.updateTargetLocation(cloc.loc);
 
         } else {
-            sx = (sx - _anchor.x) + _originalHotspot.x;
-            sy = (sy - _anchor.y) + _originalHotspot.y + getStemHeight();
-
             var loc :MsoyLocation = _editor.roomView.layout.pointToLocationAtHeight(sx, sy, 0);
             if (loc != null) {
-                // and since click location is now on the floor, don't forget to restore stem height
+                // since click location is now on the floor, don't forget to restore stem height
                 loc.y = _editor.target.getLocation().y;
                 _editor.updateTargetLocation(loc);
             }

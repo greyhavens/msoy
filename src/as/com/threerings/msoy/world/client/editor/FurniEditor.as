@@ -87,7 +87,8 @@ public class FurniEditor extends FurniHighlight
         super.start();
 
         _hotspots = new Array();
-        _hotspots.push(_defaultHotspot = new MovementXZHotspot(this));
+        _hotspots.push(_defaultHotspot = new SpriteDragHotspot(this));
+        _hotspots.push(new MovementXZHotspot(this));
         _hotspots.push(new ScalingHotspot(this));
 
         for each (var hotspot :Hotspot in _hotspots) {
