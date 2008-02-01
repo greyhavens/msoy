@@ -137,9 +137,9 @@ public class MediaDesc
     /**
      * Convert the specified String back into a media hash.
      */
-    public static function stringToHash (arg1 :String) :ByteArray
+    public static function stringToHash (hash :String) :ByteArray
     {
-        throw new Error("Unimplemented");
+        return StringUtil.unhexlate(hash);
     }
 
     /**
@@ -268,7 +268,23 @@ public class MediaDesc
      */
     public static function mimeTypeToString (mimeType :int) :String
     {
-        throw new Error("Unimplemented");
+        switch (mimeType) {
+        case TEXT_PLAIN: return "text/plain";
+        case TEXT_ACTIONSCRIPT: return "text/x-actionscript";
+        case IMAGE_PNG: return "image/png";
+        case IMAGE_JPEG: return "image/jpeg";
+        case IMAGE_GIF: return "image/gif";
+        case AUDIO_MPEG: return "audio/mpeg";
+//        case AUDIO_WAV: return "audo/wav";
+        case VIDEO_FLASH: return "video/flash";
+        case VIDEO_MPEG: return "video/mpeg";
+        case VIDEO_QUICKTIME: return "video/quicktime";
+        case VIDEO_MSVIDEO: return "video/msvideo";
+        case APPLICATION_SHOCKWAVE_FLASH: return "application/x-shockwave-flash";
+        case APPLICATION_JAVA_ARCHIVE: return "application/java-archive";
+        case APPLICATION_ZIP: return "application/zip";
+        default: return "application/octet-stream";
+        }
     }
 
     /**
