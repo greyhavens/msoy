@@ -1,0 +1,12 @@
+<!-- build configuration -->
+<project name="hallucination" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Hal"/>
+  <property name="app.type" value="avatar"/>
+  <property name="flex.use-network" value="true"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>

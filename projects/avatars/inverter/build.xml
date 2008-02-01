@@ -1,0 +1,11 @@
+<!-- build configuration -->
+<project name="inverter" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Inverter"/>
+  <property name="app.type" value="avatar"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>

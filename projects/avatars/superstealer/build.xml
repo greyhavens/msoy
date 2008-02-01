@@ -1,0 +1,11 @@
+<!-- build configuration -->
+<project name="superstealer" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="SuperStealer"/>
+  <property name="app.type" value="avatar"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>
