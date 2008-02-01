@@ -280,14 +280,6 @@ public class WorldController extends MsoyController
     }
 
     /**
-     * Handles the POPUP_NOTIFICATIONS command.
-     */
-    public function handlePopupNotifications (... ignored) :void
-    {
-        _wctx.getNotificationDirector().displayNotifications();
-    }
-
-    /**
      * Handles the VIEW_ITEM command.
      */
     public function handleViewItem (ident :ItemIdent) :void

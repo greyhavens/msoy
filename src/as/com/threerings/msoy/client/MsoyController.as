@@ -81,9 +81,6 @@ public class MsoyController extends Controller
     /** Command to display a zoom slider. */
     public static const POP_ZOOM :String = "PopZoom";
 
-    /** Command to display the notificaitons popup. */
-    public static const POPUP_NOTIFICATIONS :String = "PopupNotifications";
-
     /** Command to display the chat channel menu. */
     public static const POP_CHANNEL_MENU :String = "PopChannelMenu";
 

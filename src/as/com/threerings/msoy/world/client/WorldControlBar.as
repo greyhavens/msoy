@@ -47,8 +47,7 @@ public class WorldControlBar extends ControlBar
      */
     public function setNotificationsAvailable (avail :Boolean) :void
     {
-        _notifyBtn.enabled = avail;
-        _notifyBtn.toolTip = Msgs.GENERAL.get("i.notifications" + (avail ? "_avail" : ""));
+        // NOOP - notifications do not persist: TODO: fully rip out the old notification system
     }
 
     /**
@@ -56,7 +55,7 @@ public class WorldControlBar extends ControlBar
      */
     public function setNotificationsShowing (showing :Boolean) :void
     {
-        _notifyBtn.selected = showing;
+        // NOOP - see setNotificationsAvailable
     }
 
     // from ControlBar
@@ -91,12 +90,6 @@ public class WorldControlBar extends ControlBar
         _hotZoneBtn.addEventListener(MouseEvent.ROLL_OVER, hotHandler);
         _hotZoneBtn.addEventListener(MouseEvent.ROLL_OUT, hotHandler);
 
-        _notifyBtn = new CommandButton(MsoyController.POPUP_NOTIFICATIONS);
-        _notifyBtn.toolTip = Msgs.GENERAL.get("i.notifications");
-        _notifyBtn.styleName = "controlBarButtonNotify";
-        _notifyBtn.enabled = false;
-        _notifyBtn.toggle = true;
-
         _snapBtn = new CommandButton();
         _snapBtn.toolTip = Msgs.GENERAL.get("i.snapshot");
         _snapBtn.setCommand(MsoyController.SNAPSHOT);
@@ -116,7 +109,6 @@ public class WorldControlBar extends ControlBar
     {
         addGroupChild(_roomeditBtn, [ UI_STD ]);
         addGroupChild(_hotZoneBtn, [ UI_STD, UI_GUEST ]);
-        addGroupChild(_notifyBtn, [ UI_STD, UI_GUEST ]);
         // TODO: snapshots are not functional; revisit
         if (_ctx.getTokens() != null && _ctx.getTokens().isAdmin()) {
             addGroupChild(_snapBtn, [ UI_STD ]);
@@ -135,9 +127,6 @@ public class WorldControlBar extends ControlBar
 
     /** Button for editing the current scene. */
     protected var _roomeditBtn :CommandButton;
-
-    /** Displays notification status. */
-    protected var _notifyBtn :CommandButton;
 
     /** Hovering over this shows clickable components. */
     protected var _hotZoneBtn :CommandButton;
