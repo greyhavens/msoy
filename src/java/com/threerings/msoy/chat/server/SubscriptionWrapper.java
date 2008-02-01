@@ -95,6 +95,10 @@ public class SubscriptionWrapper extends ChannelWrapper
     {
         removeStaleMessagesFromHistory();
         MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
+        if (host == null) {
+            log.warning("host for known channel not found! [" + _channel + "]");
+            return;
+        }
         host.peerChatService.addUser(
             MsoyServer.peerMan.getPeerClient(host.nodeName), chatter, _channel,
             new ChatterListener(chatter, 1));
