@@ -49,16 +49,7 @@ public class index extends Page
         // if we're editing an item, display that interface
         if ("e".equals(arg0) || "c".equals(arg0)) {
             byte type = (byte)args.get(1, Item.AVATAR);
-            ItemEditor editor = ItemEditor.createItemEditor(type, new EditorHost() {
-                public void editComplete (Item item) {
-                    if (item != null) {
-                        _models.updateItem(item);
-                        CInventory.viewParent(item);
-                    } else {
-                        History.back();
-                    }
-                }
-            });
+            ItemEditor editor = ItemEditor.createItemEditor(type, createEditorHost());
             if ("e".equals(arg0)) {
                 int itemId = args.get(2, 0);
                 setTitle(CInventory.msgs.editItemTitle());
@@ -83,7 +74,7 @@ public class index extends Page
         } else if ("r".equals(arg0)) {
             byte type = (byte) args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
-            ItemRemixer remixer = new ItemRemixer();
+            ItemRemixer remixer = new ItemRemixer(createEditorHost());
             Item item = _models.findItem(type, itemId);
             if (item != null) {
                 remixer.setItem(item);
@@ -97,6 +88,20 @@ public class index extends Page
 
         // otherwise we're viewing our inventory
         displayInventory((byte)args.get(0, Item.AVATAR), args.get(1, -1), args.get(2, 0));
+    }
+
+    protected EditorHost createEditorHost ()
+    {
+        return new EditorHost() {
+            public void editComplete (Item item) {
+                if (item != null) {
+                    _models.updateItem(item);
+                    CInventory.viewParent(item);
+                } else {
+                    History.back();
+                }
+            }
+        };
     }
 
     // @Override // from Page

@@ -3,6 +3,8 @@
 
 package client.remix;
 
+import com.google.gwt.core.client.GWT;
+
 import com.google.gwt.http.client.URL;
 
 import com.google.gwt.user.client.History;
@@ -25,6 +27,8 @@ import client.shell.CShell;
 
 import client.inventory.CInventory;
 
+import client.editem.EditorHost;
+
 import client.util.FlashClients;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
@@ -32,8 +36,11 @@ import client.util.MsoyUI;
 
 public class ItemRemixer extends FlexTable
 {
-    public ItemRemixer ()
+    public ItemRemixer (EditorHost host)
     {
+        _singleton = this;
+        _parent = host;
+
         setStyleName("itemRemixer");
         setCellPadding(0);
         setCellSpacing(5);
@@ -50,6 +57,8 @@ public class ItemRemixer extends FlexTable
                 }
             }
         }));
+
+        configureBridges();
     }
 
     public void setItem (byte type, int itemId)
@@ -83,7 +92,13 @@ public class ItemRemixer extends FlexTable
     protected Widget createRemixControls (Item item)
     {
         MediaDesc preview = item.getPreviewMedia();
-        String flashVars = "media=" + URL.encodeComponent(preview.getMediaPath());
+        String serverURL = GWT.isScript() ? GWT.getHostPageBaseURL()
+                                          : "http://tasman.sea.earth.threerings.net:8080/";
+
+        String flashVars = "media=" + URL.encodeComponent(preview.getMediaPath()) + "&" +
+            "server=" + URL.encodeComponent(serverURL) + "&" +
+            "mediaId=" + URL.encodeComponent(Item.MAIN_MEDIA) + "&" +
+            "auth=" + URL.encodeComponent(CShell.ident.token);
         return WidgetUtil.createFlashContainer("remixControls", "/media/Remixer.swf",
             540, 450, flashVars);
     }
@@ -105,6 +120,54 @@ public class ItemRemixer extends FlexTable
         MediaDesc preview = item.getPreviewMedia();
         return MediaUtil.createMediaView(preview, MediaDesc.PREVIEW_SIZE);
     }
+
+    protected void setHash (
+        String id, String mediaHash, int mimeType, int constraint, int width, int height)
+    {
+        if (id != Item.MAIN_MEDIA) {
+            CShell.log("setHash() called on remixer for non-main media: " + id);
+            return;
+        }
+
+        MediaDesc desc = new MediaDesc(mediaHash, (byte) mimeType, (byte) constraint);
+
+        // TODO: this logic is in the item editor.. somewhere else?
+        byte type = _item.getType();
+        if (type == Item.AVATAR) {
+            ((Avatar) _item).avatarMedia = desc;
+
+        } else {
+            CShell.log("setHash() called for unhandled item type: " + _item.getType());
+            return;
+        }
+
+        CShell.itemsvc.updateItem(CShell.ident, _item, new MsoyCallback() {
+            public void onSuccess (Object result) {
+                MsoyUI.info(CShell.emsgs.msgItemUpdated());
+                _parent.editComplete((Item) result);
+            }
+        });
+    }
+
+    protected static void bridgeSetHash (
+        String id, String mediaHash, int mimeType, int constraint, int width, int height)
+    {
+        // for some reason the strings that come in from JavaScript aren't quite right, so
+        // we jiggle them thusly
+        String fid = "" + id;
+        String fhash = "" + mediaHash;
+        _singleton.setHash(fid, fhash, mimeType, constraint, width, height);
+    }
+
+    protected static native void configureBridges () /*-{
+        $wnd.setHash = function (id, hash, type, constraint, width, height) {
+            @client.remix.ItemRemixer::bridgeSetHash(Ljava/lang/String;Ljava/lang/String;IIII)(id, hash, type, constraint, width, height);
+        };
+    }-*/;
+
+    protected static ItemRemixer _singleton;
+
+    protected EditorHost _parent;
 
     /** The item we're remixing. */
     protected Item _item;
