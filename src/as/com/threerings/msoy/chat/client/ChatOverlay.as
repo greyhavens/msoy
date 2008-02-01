@@ -171,7 +171,9 @@ public class ChatOverlay
 
         removeOccupantList();
         _occupantList = occupantList;
-        displayOccupantList();
+        if (Prefs.getShowingOccupantList() || !_includeOccList) {
+            displayOccupantList();
+        }
 
         if (_history != null) {
             _history.removeChatOverlay(this);
@@ -254,7 +256,9 @@ public class ChatOverlay
             _staticOverlay.y = 0;
             _target.addOverlay(_staticOverlay, PlaceBox.LAYER_CHAT_STATIC);
 
-            displayOccupantList();
+            if (Prefs.getShowingOccupantList() || !_includeOccList) {
+                displayOccupantList();
+            }
 
             if (_chatContainer == null) {
                 _historyOverlay.x = 0;
@@ -363,8 +367,10 @@ public class ChatOverlay
             }
         }
             
-        removeOccupantList();
-        displayOccupantList();
+        if (Prefs.getShowingOccupantList() || !_includeOccList) {
+            removeOccupantList();
+            displayOccupantList();
+        }
     }
 
     /**
@@ -531,6 +537,16 @@ public class ChatOverlay
                 setHistorySliding(Boolean(event.value));
             }
             break;
+
+        case Prefs.OCCUPANT_LIST:
+            if (_target != null) {
+                if (Boolean(event.value)) {
+                    displayOccupantList();
+                } else {
+                    removeOccupantList();
+                }
+                layout();
+            }
 
         case Prefs.CHAT_FONT_SIZE:
             createStandardFormats();
@@ -1309,7 +1325,7 @@ public class ChatOverlay
     {
         if (_targetBounds != null && _historyBar != null) {
             _historyBar.height = _targetBounds.height - 
-                ((_occupantList != null && _includeOccList) ?
+                ((_occupantList != null && _includeOccList && Prefs.getShowingOccupantList()) ?
                   _occupantList.height + _occupantList.y : 0);
             if (_scrollBarSide == SCROLL_BAR_LEFT && _chatContainer == null) {
                 _historyBar.move(_targetBounds.x, getMinHistY());
@@ -1323,7 +1339,7 @@ public class ChatOverlay
     protected function getMinHistY () :int
     {
         return _targetBounds.y +
-            ((_occupantList != null && _includeOccList) ? 
+            ((_occupantList != null && _includeOccList && Prefs.getShowingOccupantList()) ? 
               _occupantList.y + _occupantList.height : 0);
     }
 
