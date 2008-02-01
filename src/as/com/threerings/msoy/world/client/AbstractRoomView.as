@@ -411,7 +411,12 @@ public class AbstractRoomView extends Sprite
     protected function computeScale () :Number
     {
         var maxScale :Number = _actualHeight / _layout.metrics.sceneHeight;
-        var minScale :Number = _actualWidth / _layout.metrics.sceneWidth;
+        log.debug("computeScale [" + _ctx.getTopPanel().isMinimized() + ", " + 
+            _fullSizeActualWidth + ", " + _actualWidth + "]");
+        if (isNaN(_fullSizeActualWidth) || !_ctx.getTopPanel().isMinimized()) {
+            _fullSizeActualWidth = _actualWidth;
+        }
+        var minScale :Number = _fullSizeActualWidth / _layout.metrics.sceneWidth;
         if (maxScale > minScale && !_ctx.getMsoyClient().isFeaturedPlaceView()) {
             _ctx.getTopPanel().getControlBar().enableZoomControl(true);
             return minScale + (maxScale - minScale) * Prefs.getZoom();
@@ -514,6 +519,9 @@ public class AbstractRoomView extends Sprite
 
     /** The actual screen width of this component. */
     protected var _actualWidth :Number;
+
+    /** The actual width we had last time we weren't minimized */
+    protected var _fullSizeActualWidth :Number;
 
     /** The actual screen height of this component. */
     protected var _actualHeight :Number;

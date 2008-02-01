@@ -281,10 +281,10 @@ public class TopPanel extends Canvas
             _tableDisp.x += _leftPanel.width;
         }
 
+        minimizePlaceView();
+
         addChild(_leftPanel); // add to end
         layoutPanels();
-
-        minimizePlaceView();
     }
 
     /**
