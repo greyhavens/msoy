@@ -83,14 +83,14 @@ public class WebUserServlet extends MsoyServiceServlet
         InvitationRecord invite = null;
         if (inviteId != null) {
             try {
-                invite = MsoyServer.memberRepo.inviteAvailable(invite.inviteId);
+                invite = MsoyServer.memberRepo.inviteAvailable(inviteId);
                 if (invite == null) {
                     throw new ServiceException(MsoyAuthCodes.INVITE_ALREADY_REDEEMED);
                 }
                 ignoreRestrict = true;
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "Checking invite availability failed " +
-                        "[inviteId=" + invite.inviteId + "]", pe);
+                        "[inviteId=" + inviteId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
         }
