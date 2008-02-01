@@ -361,6 +361,26 @@ img, embed, applet, object {
   text-align: center;
 }
 
+.pagedGrid .Controls table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pagedGrid .Controls .Page {
+  padding: 0px 2px;
+}
+
+.pagedGrid .Controls .Link {
+  cursor: pointer;
+  cursor: hand;
+  text-decoration: underline;
+  padding: 0px 2px;
+}
+
+.pagedGrid .Controls .Current {
+  font-weight: bold;
+}
+
 .pagedGrid .Footer .gwt-Button {
     border-top: none;
     border-bottom: none;
