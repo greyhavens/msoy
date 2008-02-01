@@ -184,6 +184,12 @@ public class ControlBar extends HBox
         _chatControl.setChatColor(color);
     }
 
+    public function enableZoomControl (enabled :Boolean ) :void
+    {
+        // TODO: when we have a real zoom btn icon with a disabled skin, this will look/work better
+        _zoomBtn.alpha = enabled ? 1 : 0.5;
+    }
+
     // from HBox
     override protected function updateDisplayList (w :Number, h :Number) :void
     {
@@ -212,6 +218,11 @@ public class ControlBar extends HBox
         _volBtn.toolTip = Msgs.GENERAL.get("i.volume");
         _volBtn.setCommand(MsoyController.POP_VOLUME, _volBtn);
         _volBtn.styleName = "controlBarButtonVolume";
+
+        _zoomBtn = new CommandButton();
+        _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
+        _zoomBtn.setCommand(MsoyController.POP_ZOOM, _zoomBtn);
+        _zoomBtn.styleName = "controlBarButtonZoom";
 
         _backBtn = new CommandButton();
         _backBtn.toolTip = Msgs.GENERAL.get("i.goBack");
@@ -242,6 +253,9 @@ public class ControlBar extends HBox
         addGroupChild(_chatControl, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
         addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
         addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR ]);
+        if (DeploymentConfig.devDeployment) {
+            addGroupChild(_zoomBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT ]);
+        }
 
         // add our various control buttons
         addControlButtons();
@@ -345,6 +359,9 @@ public class ControlBar extends HBox
 
     /** Handles volume adjustment. */
     protected var _volBtn :CommandButton;
+
+    /** Handles room zooming. */
+    protected var _zoomBtn :CommandButton;
 
     /** The back-movement button. */
     protected var _backBtn :CommandButton;

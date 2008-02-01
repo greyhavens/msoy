@@ -33,6 +33,7 @@ public class Prefs
     public static const SESSION_TOKEN :String = "sessionTok";
     public static const MACHINE_IDENT :String = "machIdent";
     public static const VOLUME :String = "volume";
+    public static const ZOOM :String = "zoom";
     public static const CHAT_FONT_SIZE :String = "chatFontSize";
     public static const CHAT_DECAY :String = "chatDecay";
     public static const CHAT_FILTER :String = "chatFilter";
@@ -115,6 +116,16 @@ public class Prefs
     {
         config.setValue(VOLUME, vol);
         useSoundVolume();
+    }
+
+    public static function getZoom () :Number
+    {
+        return (config.getValue(ZOOM, 1) as Number);
+    }
+
+    public static function setZoom (zoom :Number) :void
+    {
+        config.setValue(ZOOM, zoom);
     }
 
     /**

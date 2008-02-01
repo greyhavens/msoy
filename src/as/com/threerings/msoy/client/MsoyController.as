@@ -78,6 +78,9 @@ public class MsoyController extends Controller
     /** Command to display a volume slider. */
     public static const POP_VOLUME :String = "PopVolume";
 
+    /** Command to display a zoom slider. */
+    public static const POP_ZOOM :String = "PopZoom";
+
     /** Command to display the notificaitons popup. */
     public static const POPUP_NOTIFICATIONS :String = "PopupNotifications";
 
@@ -268,6 +271,19 @@ public class MsoyController extends Controller
         }
     }
 
+    /**
+     * Handle the POP_ZOOM command.
+     */
+    public function handlePopZoom (trigger :Button) :void
+    {
+        if (ZoomPopup.popupExists()) {
+            ZoomPopup.destroyCurrentInstance();
+        } else {
+            var popup :ZoomPopup = new ZoomPopup(trigger);
+            popup.show();
+        }
+    }
+
     // from ClientObserver
     public function clientWillLogon (event :ClientEvent) :void
     {
@@ -426,7 +442,9 @@ public class MsoyController extends Controller
      */
     protected function locationChanged (place :PlaceObject) :void
     {
-        updateTopPanel(_mctx.getTopPanel().getHeaderBar(), _mctx.getTopPanel().getControlBar());
+        if (!_mctx.getMsoyClient().isFeaturedPlaceView()) {
+            updateTopPanel(_mctx.getTopPanel().getHeaderBar(), _mctx.getTopPanel().getControlBar());
+        }
     }
 
     /**

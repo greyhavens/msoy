@@ -19,6 +19,7 @@ import mx.binding.utils.ChangeWatcher;
 
 import mx.core.Container;
 
+import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
@@ -111,6 +112,10 @@ public class RoomView extends AbstractRoomView
 
         _loadingSpinner = DisplayObject(new LOADING_SPINNER());
         FurniSprite.setLoadingWatcher(this);
+
+        // listen for preferences changes, update zoom
+        Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
+            handlePrefsUpdated, false, 0, true);
     }
 
     /**
@@ -658,6 +663,15 @@ public class RoomView extends AbstractRoomView
             sprite.gotControl();
         } else {
             log.info("Received got control for unknown sprite [item=" + ident + "].");
+        }
+    }
+
+    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
+    {
+        switch (event.name) {
+        case Prefs.ZOOM:
+            relayout();
+            break;
         }
     }
 

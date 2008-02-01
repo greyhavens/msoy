@@ -18,6 +18,7 @@ import flash.utils.getTimer; // function import
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
+import com.threerings.util.Log;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -375,6 +376,9 @@ public class AbstractRoomView extends Sprite
         var scale :Number = computeScale();
         scaleY = scale;
         scaleX = scale;
+        if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
+            y = (_actualHeight - _layout.metrics.sceneHeight * scale) / 2;
+        }
 
         configureScrollRect();
 
@@ -406,7 +410,18 @@ public class AbstractRoomView extends Sprite
      */
     protected function computeScale () :Number
     {
-        return (_actualHeight / _layout.metrics.sceneHeight);
+        var maxScale :Number = _actualHeight / _layout.metrics.sceneHeight;
+        var minScale :Number = _actualWidth / _layout.metrics.sceneWidth;
+        if (maxScale > minScale && !_ctx.getMsoyClient().isFeaturedPlaceView()) {
+            _ctx.getTopPanel().getControlBar().enableZoomControl(true);
+            return minScale + (maxScale - minScale) * Prefs.getZoom();
+        } else {
+            if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
+                _ctx.getTopPanel().getControlBar().enableZoomControl(false);
+            }
+            // no zooming TODO: disable zoom control
+            return maxScale;
+        }
     }
 
     /**
@@ -482,6 +497,8 @@ public class AbstractRoomView extends Sprite
         removeChild(sprite);
         _ctx.getMediaDirector().returnSprite(sprite);
     }
+
+    private static const log :Log = Log.getLog(AbstractRoomView);
 
     /** The msoy context. */
     protected var _ctx :WorldContext;
