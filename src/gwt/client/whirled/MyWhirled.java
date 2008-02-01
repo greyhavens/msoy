@@ -134,12 +134,11 @@ public class MyWhirled extends FlexTable
             protected String getEmptyMessage () {
                 return CWhirled.msgs.noPeople();
             }
-            protected String getHeaderText (int start, int limit, int total) {
-                if (start == 0 && limit == total) {
-                    return CWhirled.msgs.headerPeople();
-                } else {
-                    return CWhirled.msgs.headerPeoplePart(""+(start+1), ""+(start+limit), ""+total);
-                }
+            protected void configureNavi (FlexTable controls, int row, int col,
+                                          int start, int limit, int total) {
+                String text = (start == 0 && limit == total) ? CWhirled.msgs.headerPeople() :
+                    CWhirled.msgs.headerPeoplePart(""+(start+1), ""+(start+limit), ""+total);
+                controls.setText(row, col, text);
             }
             protected boolean alwaysDisplayNavi () {
                 return true;
