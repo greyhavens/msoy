@@ -10,8 +10,6 @@ import java.awt.Window;
 import javax.swing.JApplet;
 import javax.swing.JRootPane;
 
-import com.samskivert.util.Interval;
-
 import com.threerings.media.FrameManager;
 
 import com.threerings.presents.client.Client;
@@ -78,13 +76,6 @@ public class GameWrapper
                 client.logoff(true);
             }
         }
-    }
-
-    // from interface GameApplet.Delegate
-    public void destroy ()
-    {
-        // we need to cope with our threads being destroyed but our classes not being unloaded
-        Interval.resetTimer();
     }
 
     protected GameClient _client;

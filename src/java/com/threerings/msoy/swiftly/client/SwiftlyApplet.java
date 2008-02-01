@@ -25,7 +25,6 @@ import org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel;
 
 import com.samskivert.servlet.user.Password;
 import com.samskivert.swing.util.SwingUtil;
-import com.samskivert.util.Interval;
 import com.samskivert.util.OneLineLogFormatter;
 import com.samskivert.util.StringUtil;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -120,14 +119,6 @@ public class SwiftlyApplet extends JApplet
         for (ShutdownNotifier notifier : _notifiers) {
             notifier.shuttingDown();
         }
-    }
-
-    @Override // from Applet
-    public void destroy ()
-    {
-        super.destroy();
-        // we need to cope with our threads being destroyed but our classes not being unloaded
-        Interval.resetTimer();
     }
 
     // from interface ClientObserver

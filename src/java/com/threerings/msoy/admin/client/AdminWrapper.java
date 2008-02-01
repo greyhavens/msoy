@@ -7,7 +7,6 @@ import java.awt.EventQueue;
 import javax.swing.JApplet;
 
 import com.samskivert.util.Config;
-import com.samskivert.util.Interval;
 import com.samskivert.util.RunQueue;
 
 import com.threerings.util.MessageManager;
@@ -73,13 +72,6 @@ public class AdminWrapper
         if (_client != null && _client.isLoggedOn()) {
             _client.logoff(true);
         }
-    }
-
-    public void destroy ()
-    {
-        log.info("AdminApplet destroyed.");
-        // we need to cope with our threads being destroyed but our classes not being unloaded
-        Interval.resetTimer();
     }
 
     protected class AdminContextImpl implements AdminContext
