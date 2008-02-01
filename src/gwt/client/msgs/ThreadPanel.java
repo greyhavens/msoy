@@ -147,6 +147,7 @@ public class ThreadPanel extends TitledListPanel
                     return true;
                 }
                 public boolean gotResult (Object result) {
+                    Frame.clearDialog(ReplyPanel.this);
                     replyPosted((ForumMessage)result);
                     return false;
                 }
