@@ -603,28 +603,27 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Check if the invitation is available for use, or has been claimed already.
+     * Check if the invitation is available for use, or has been claimed already. Returns null if
+     * it has already been claimed, an invite record if not.
      */
-    public boolean inviteAvailable (String inviteId)
+    public InvitationRecord inviteAvailable (String inviteId)
         throws PersistenceException
     {
-        return (load(InvitationRecord.class, new Where(InvitationRecord.INVITE_ID_C, inviteId))).
-            inviteeId == 0;
+        InvitationRecord rec = load(InvitationRecord.class,
+                                    new Where(InvitationRecord.INVITE_ID_C, inviteId));
+        return (rec == null || rec.inviteeId != 0) ? null : rec;
     }
 
     /**
      * Update the invitation indicated with the new memberId, and make friends of these people.
      */
-    public void linkInvite (Invitation invite, MemberRecord member)
+    public void linkInvite (String inviteId, MemberRecord member)
         throws PersistenceException
     {
-        InvitationRecord invRec = load(InvitationRecord.class, invite.inviteId);
+        InvitationRecord invRec = load(InvitationRecord.class, inviteId);
         invRec.inviteeId = member.memberId;
         update(invRec, InvitationRecord.INVITEE_ID);
-
-        if (invite.inviter != null) {
-            noteFriendship(invite.inviter.getMemberId(), member.memberId);
-        }
+        noteFriendship(invRec.inviterId, member.memberId);
     }
 
     /**
@@ -689,14 +688,14 @@ public class MemberRepository extends DepotRepository
      * Adds the invitee's email address to the opt-out list, and sets this invitation's inviteeId
      * to -1, indicating that it is no longer available, and the invitee chose to opt-out.
      */
-    public void optOutInvite (Invitation invite)
+    public void optOutInvite (String inviteId)
         throws PersistenceException
     {
-        addOptOutEmail(invite.inviteeEmail);
-        InvitationRecord invRec = loadInvite(invite.inviteId, false);
+        InvitationRecord invRec = loadInvite(inviteId, false);
         if (invRec != null) {
             invRec.inviteeId = -1;
             update(invRec, InvitationRecord.INVITEE_ID);
+            addOptOutEmail(invRec.inviteeEmail);
         }
     }
 

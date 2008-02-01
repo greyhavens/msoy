@@ -24,6 +24,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.InvitationRecord;
+import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
@@ -35,7 +37,6 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.ConnectConfig;
-import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SessionData;
@@ -63,7 +64,7 @@ public class WebUserServlet extends MsoyServiceServlet
     // from interface WebUserService
     public SessionData register (long clientVersion, String username, String password,
                                  final String displayName, int[] bdayvec, AccountInfo info,
-                                 int expireDays, final Invitation invite)
+                                 int expireDays, String inviteId)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
@@ -79,10 +80,11 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // check invitation validity
         boolean ignoreRestrict = false;
-        int inviterId = 0;
-        if (invite != null) {
+        InvitationRecord invite = null;
+        if (inviteId != null) {
             try {
-                if (!MsoyServer.memberRepo.inviteAvailable(invite.inviteId)) {
+                invite = MsoyServer.memberRepo.inviteAvailable(invite.inviteId);
+                if (invite == null) {
                     throw new ServiceException(MsoyAuthCodes.INVITE_ALREADY_REDEEMED);
                 }
                 ignoreRestrict = true;
@@ -90,9 +92,6 @@ public class WebUserServlet extends MsoyServiceServlet
                 log.log(Level.WARNING, "Checking invite availability failed " +
                         "[inviteId=" + invite.inviteId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-            }
-            if (invite.inviter != null) {
-                inviterId = invite.inviter.getMemberId();
             }
         }
 
@@ -105,7 +104,7 @@ public class WebUserServlet extends MsoyServiceServlet
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         final MemberRecord newAccount = MsoyServer.author.createAccount(
-            username, password, displayName, ignoreRestrict, inviterId);
+            username, password, displayName, ignoreRestrict, invite);
 
         // store the user's birthday and realname in their profile
         ProfileRecord prec = new ProfileRecord();
@@ -122,24 +121,36 @@ public class WebUserServlet extends MsoyServiceServlet
         // if we are responding to an invitation, wire that all up
         if (invite != null) {
             try {
-                MsoyServer.memberRepo.linkInvite(invite, newAccount);
+                MsoyServer.memberRepo.linkInvite(inviteId, newAccount);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "linking invites failed [inviteId=" + invite.inviteId +
+                log.log(Level.WARNING, "Linking invites failed [inviteId=" + inviteId +
                         ", memberId=" + newAccount.memberId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
 
-            if (invite.inviter != null) {
+            MemberNameRecord invname;
+            try {
+                invname = (invite.inviterId == 0) ? null :
+                    MsoyServer.memberRepo.loadMemberName(invite.inviterId);
+            } catch (PersistenceException pe) {
+                log.log(Level.WARNING, "Failed to lookup inviter name [inviteId=" + inviteId +
+                        ", memberId=" + invite.inviterId + "]", pe);
+                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+            }
+
+            if (invname != null) {
                 // send a notification email to the inviter that the friend has accepted
+                final InvitationRecord finvite = invite;
+                final MemberName inviter = invname.toMemberName();
                 MsoyServer.omgr.postRunnable(new Runnable() {
                     public void run () {
                         // send them a whirled mail informing them of the acceptance
                         String subject = MsoyServer.msgMan.getBundle("server").get(
                             "m.invite_accepted_subject");
                         String body = MsoyServer.msgMan.getBundle("server").get(
-                            "m.invite_accepted_body", invite.inviteeEmail, displayName);
+                            "m.invite_accepted_body", finvite.inviteeEmail, displayName);
                         MsoyServer.mailMan.deliverMessage(
-                            newAccount.memberId, invite.inviter.getMemberId(), subject, body, null,
+                            newAccount.memberId, finvite.inviterId, subject, body, null,
                             false, new ResultListener.NOOP<Void>());
 
                         // note the establishment of this friendship in the appropriate manager
@@ -152,11 +163,11 @@ public class WebUserServlet extends MsoyServiceServlet
                         // TODO: We'd like to bring this down to one or possibly two lines, and
                         // TODO: will tackle this problem when notification has been peerified.
                         MsoyServer.friendMan.friendshipEstablished(
-                            new MemberName(displayName, newAccount.memberId), invite.inviter);
+                            new MemberName(displayName, newAccount.memberId), inviter);
 
                         // and possibly send a runtime notification as well
                         MsoyServer.notifyMan.notifyInvitationAccepted(
-                            invite.inviter, displayName, invite.inviteeEmail);
+                            finvite.inviterId, displayName, finvite.inviteeEmail);
                     }
                 });
             }

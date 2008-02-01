@@ -376,7 +376,7 @@ public class MsoyServer extends MsoyBaseServer
         sceneRepo.finishInit(itemMan.getDecorRepository());
 
         // create and start up our HTTP server
-        httpServer = new MsoyHttpServer(_logdir);
+        httpServer = new MsoyHttpServer(_logdir, _eventLog);
         httpServer.start();
 
         // start up an interval that checks to see if our code has changed and auto-restarts the

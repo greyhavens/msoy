@@ -7,7 +7,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.web.data.Invitation;
 
 /**
  * The asynchronous (client-side) version of {@link WebUserService}.
@@ -24,7 +23,7 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#register}.
      */
     public void register (long clientVersion, String username, String password, String displayName,
-                          int[] birthday, AccountInfo info, int expireDays, Invitation invite, 
+                          int[] birthday, AccountInfo info, int expireDays, String inviteId, 
                           AsyncCallback callback);
 
     /**

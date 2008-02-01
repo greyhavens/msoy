@@ -41,11 +41,11 @@ public class NotificationManager
      * member!
      */
     public void notifyInvitationAccepted (
-        MemberName inviter, String inviteeDisplayName, String inviteeEmail)
+        int inviterId, String inviteeDisplayName, String inviteeEmail)
     {
         // avoid creating any objects unless the target is around to receive it
         // PEER TODO: user may be resolved on another world server
-        MemberObject target = MsoyServer.lookupMember(inviter);
+        MemberObject target = MsoyServer.lookupMember(inviterId);
         if (target != null) {
             dispatchChatOnlyNotification(target, MessageBundle.tcompose(
                 "m.invite_accepted", inviteeEmail, inviteeDisplayName));

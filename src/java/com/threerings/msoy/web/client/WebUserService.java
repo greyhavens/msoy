@@ -7,7 +7,6 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.ConnectConfig;
-import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebIdent;
@@ -36,7 +35,7 @@ public interface WebUserService extends RemoteService
      */
     public SessionData register (long clientVersion, String email, String password,
                                  String displayName, int[] birthday, AccountInfo info,
-                                 int expireDays, Invitation invite)
+                                 int expireDays, String inviteId)
         throws ServiceException;
 
     /**

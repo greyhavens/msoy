@@ -196,6 +196,30 @@ public class MsoyEventLogger
         post(message);
     }
 
+    public void inviteSent (String inviteId, int inviterId, String recipient)
+    {
+        MsoyEvents.InviteSent message = new MsoyEvents.InviteSent();
+        message.inviteId = inviteId;
+        message.inviterId = inviterId;
+        message.recipient = recipient;
+        post(message);
+    }
+
+    public void inviteViewed (String inviteId)
+    {
+        MsoyEvents.InviteViewed message = new MsoyEvents.InviteViewed();
+        message.inviteId = inviteId;
+        post(message);
+    }
+
+    public void accountCreated (int newMemberId, String inviteId)
+    {
+        MsoyEvents.AccountCreated message = new MsoyEvents.AccountCreated();
+        message.newMemberId = newMemberId;
+        message.inviteId = inviteId;
+        post(message);
+    }
+
     /** Posts a log message to the appropriate place. */
     protected void post (Event message)
     {

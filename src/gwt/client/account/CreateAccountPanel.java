@@ -67,7 +67,7 @@ public class CreateAccountPanel extends FlexTable
 
     protected void init (Invitation invite)
     {
-        _invite = invite;
+        _inviteId = (invite == null) ? null : invite.inviteId;
 
         int row = 0;
         getFlexCellFormatter().setColSpan(row, 0, 3);
@@ -208,7 +208,7 @@ public class CreateAccountPanel extends FlexTable
         info.realName = _rname.getText().trim();
         setStatus(CAccount.msgs.creatingAccount());
         CAccount.usersvc.register(DeploymentConfig.version, email, CAccount.md5hex(password), name, 
-            _dateOfBirth.getDate(), info, 1, _invite, new AsyncCallback() {
+            _dateOfBirth.getDate(), info, 1, _inviteId, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     // clear our current token otherwise didLogon() will try to load it
                     Application.setCurrentToken(null);
@@ -246,7 +246,7 @@ public class CreateAccountPanel extends FlexTable
         }
     };
 
-    protected Invitation _invite;
+    protected String _inviteId;
     protected TextBox _email, _name, _rname;
     protected PasswordTextBox _password, _confirm;
     protected DateFields _dateOfBirth;

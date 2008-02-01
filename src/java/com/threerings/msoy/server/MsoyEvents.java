@@ -112,6 +112,24 @@ public class MsoyEvents
         public byte prizeItemType;
     }
 
+    public static class InviteSent extends MsoyEvent
+    {
+        public String inviteId;
+        public int inviterId;
+        public String recipient;
+    }
+
+    public static class InviteViewed extends MsoyEvent
+    {
+        public String inviteId;
+    }
+
+    public static class AccountCreated extends MsoyEvent
+    {
+        public int newMemberId;
+        public String inviteId;
+    }
+
     protected static class MsoyEvent extends BaseEvent
         implements Serializable
     {

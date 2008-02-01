@@ -54,5 +54,5 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#optOut}.
      */
-    public void optOut (Invitation invite, AsyncCallback callback);
+    public void optOut (String inviteId, AsyncCallback callback);
 }

@@ -206,6 +206,12 @@ public class MemberServlet extends MsoyServiceServlet
             if (invRec == null) {
                 return null;
             }
+
+            // if we're viewing this invite, log that it was viewed
+            if (viewing) {
+                _eventLogger.inviteViewed(inviteId);
+            }
+
             MemberName inviter = null;
             if (invRec.inviterId > 0) {
                 MemberNameRecord mnr = MsoyServer.memberRepo.loadMemberName(invRec.inviterId);
@@ -220,16 +226,15 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public void optOut (Invitation invite)
+    public void optOut (String inviteId)
         throws ServiceException
     {
         try {
-            if (!MsoyServer.memberRepo.inviteAvailable(invite.inviteId)) {
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            if (MsoyServer.memberRepo.inviteAvailable(inviteId) != null) {
+                MsoyServer.memberRepo.optOutInvite(inviteId);
             }
-            MsoyServer.memberRepo.optOutInvite(invite);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "optOut failed [inviteId=" + invite.inviteId + "]", pe);
+            log.log(Level.WARNING, "optOut failed [inviteId=" + inviteId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -281,7 +286,10 @@ public class MemberServlet extends MsoyServiceServlet
                 return e.getMessage();
             }
 
+            // record the invite and that we sent it
             MsoyServer.memberRepo.addInvite(email, inviterId, inviteId);
+            _eventLogger.inviteSent(inviteId, inviterId, email);
+
             return InvitationResults.SUCCESS;
 
         } catch (PersistenceException pe) {

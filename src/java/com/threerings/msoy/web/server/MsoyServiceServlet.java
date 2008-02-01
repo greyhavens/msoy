@@ -15,6 +15,7 @@ import com.samskivert.io.PersistenceException;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -90,6 +91,14 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     }
 
     /**
+     * Initializes this servlet.
+     */
+    public void init (MsoyEventLogger eventLogger)
+    {
+        _eventLogger = eventLogger;
+    }
+
+    /**
      * A convenience method to record that a user took an action, and potentially award them flow
      * for doing so.
      */
@@ -119,6 +128,9 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     {
         return (mrec == null) ? null : mrec.who();
     }
+
+    /** Used to log interesting events for later grindage. */
+    protected MsoyEventLogger _eventLogger;
 
     /** Contains a mapping of authenticated members. */
     protected static Map<String,Integer> _members = Collections.synchronizedMap(

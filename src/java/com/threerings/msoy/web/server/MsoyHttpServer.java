@@ -23,6 +23,7 @@ import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
 
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.client.DeploymentConfig;
 
@@ -35,7 +36,7 @@ public class MsoyHttpServer extends Server
      * Creates and prepares our HTTP server for operation but does not yet start listening on the
      * HTTP port.
      */
-    public MsoyHttpServer (File logdir)
+    public MsoyHttpServer (File logdir, MsoyEventLogger eventLogger)
         throws IOException
     {
         SelectChannelConnector conn = new SelectChannelConnector();
@@ -46,7 +47,11 @@ public class MsoyHttpServer extends Server
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         Context context = new Context(contexts, "/", Context.NO_SESSIONS);
         for (int ii = 0; ii < SERVLETS.length; ii++) {
-            context.addServlet(new ServletHolder(SERVLETS[ii]), "/" + SERVLET_NAMES[ii]);
+            HttpServlet servlet = SERVLETS[ii];
+            if (servlet instanceof MsoyServiceServlet) {
+                ((MsoyServiceServlet)servlet).init(eventLogger);
+            }
+            context.addServlet(new ServletHolder(servlet), "/" + SERVLET_NAMES[ii]);
         }
         context.addServlet(new ServletHolder(new MediaProxyServlet()),
                            DeploymentConfig.PROXY_PREFIX + "*");

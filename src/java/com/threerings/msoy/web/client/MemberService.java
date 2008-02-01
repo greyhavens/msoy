@@ -75,6 +75,6 @@ public interface MemberService extends RemoteService
     /**
      * Adds the email address from the given invite to the opt-out list.
      */
-    public void optOut (Invitation invite)
+    public void optOut (String inviteId)
         throws ServiceException;
 }

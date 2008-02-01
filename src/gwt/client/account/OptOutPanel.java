@@ -46,7 +46,7 @@ public class OptOutPanel extends FlexTable
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(new Button(CAccount.msgs.optOutAccept(), new ClickListener() {
             public void onClick (Widget widget) {
-                CAccount.membersvc.optOut(invite, new MsoyCallback() {
+                CAccount.membersvc.optOut(invite.inviteId, new MsoyCallback() {
                     public void onSuccess (Object result) {
                         clear();
                         setText(1, 0, CAccount.msgs.optOutSuccessful(invite.inviteeEmail));

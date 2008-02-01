@@ -200,7 +200,7 @@ public class FacebookServlet extends HttpServlet
             String password = ""; // TODO?
 
             log.info("Creating Facebook account [name=" + name + ", id=" + fbUserId + "].");
-            mrec = MsoyServer.author.createAccount(email, password, name, true, 0);
+            mrec = MsoyServer.author.createAccount(email, password, name, true, null);
             MsoyServer.memberRepo.mapExternalAccount(
                 ExternalMapRecord.FACEBOOK, String.valueOf(fbUserId), mrec.memberId);
 
