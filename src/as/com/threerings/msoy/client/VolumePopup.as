@@ -40,7 +40,7 @@ public class VolumePopup extends Canvas
         var r : Rectangle = trigger.getBounds(trigger.stage);
         width = 29;
         height = 100;
-        x = trigger.x - 1;
+        x = r.x - 1;
         y = r.y - height;
         verticalScrollPolicy = horizontalScrollPolicy = ScrollPolicy.OFF;
         
