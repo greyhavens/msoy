@@ -52,7 +52,7 @@ public class MsoySceneRegistry extends SceneRegistry
     /**
      * Called by the RoomManager a member updates a room.
      */
-    public void memberUpdatedRoom (final MemberObject user, final MsoyScene scene)
+    public void memberUpdatedRoom (MemberObject user, final MsoyScene scene)
     {
         // publish to this member's feed that they updated their room
         final int memId = user.getMemberId();
