@@ -228,6 +228,13 @@ public class MsoyEventLogger
         post(message);
     }
 
+    public void profileUpdated (int memberId)
+    {
+        MsoyEvents.ProfileUpdated message = new MsoyEvents.ProfileUpdated();
+        message.memberId = memberId;
+        post(message);
+    }
+
     /** Posts a log message to the appropriate place. */
     protected void post (Event message)
     {

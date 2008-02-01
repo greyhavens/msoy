@@ -136,6 +136,11 @@ public class MsoyEvents
         public int sceneId;
     }
 
+    public static class ProfileUpdated extends MsoyEvent
+    {
+        public int memberId;
+    }
+
     protected static class MsoyEvent extends BaseEvent
         implements Serializable
     {
