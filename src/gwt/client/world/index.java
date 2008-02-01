@@ -58,20 +58,16 @@ public class index extends Page
             _refresher = null;
         }
 
-        // don't show the flash client in the GWT shell
-        if (!GWT.isScript()) {
-            return;
-        }
-
-        // if we're not a dev deployment, disallow guests
-        if (!DeploymentConfig.devDeployment && CWorld.ident == null) {
-            setContent(MsoyUI.createLabel(CWorld.cmsgs.noGuests(), "infoLabel"));
-            return;
-        }
-
         try {
             String action = args.get(0, "s1");
-            if (action.startsWith("s")) {
+            if (action.equals("i")) {
+                displayInvite(args.get(1, ""));
+
+            } else if (!DeploymentConfig.devDeployment && CWorld.ident == null) {
+                // if we're not a dev deployment, disallow guests
+                setContent(MsoyUI.createLabel(CWorld.cmsgs.noGuests(), "infoLabel"));
+
+            } else if (action.startsWith("s")) {
                 String sceneId = action.substring(1);
                 if (args.getArgCount() <= 1) {
                     WorldClient.displayFlash("sceneId=" + sceneId);
@@ -100,9 +96,6 @@ public class index extends Page
             } else if (action.startsWith("p")) {
                 // display popular places by request
                 displayHotSpots(_entryCounter);
-
-            } else if (action.equals("i")) {
-                displayInvite(args.get(1, ""));
 
             } else if (CWorld.getMemberId() == 0) {
                 setContent(MsoyUI.createLabel(CWorld.msgs.logonForHome(), "infoLabel"));
