@@ -40,10 +40,10 @@ public class MsoySceneRegistry extends SceneRegistry
     implements MsoySceneProvider
 {
     public MsoySceneRegistry (InvocationManager invmgr, SceneRepository screp,
-                              MsoyEventLogger eventLogger)
+                              MsoyEventLogger eventLog)
     {
         super(invmgr, screp, new MsoySceneFactory(), new MsoySceneFactory());
-        _eventLogger = eventLogger;
+        _eventLog = eventLog;
 
         // register our extra scene service
         invmgr.registerDispatcher(new MsoySceneDispatcher(this), SceneCodes.WHIRLED_GROUP);
@@ -69,7 +69,7 @@ public class MsoySceneRegistry extends SceneRegistry
         });
 
         // record this edit to the grindy log
-        _eventLogger.roomUpdated(memId, scene.getId());
+        _eventLog.roomUpdated(memId, scene.getId());
     }
 
     // from interface MsoySceneProvider
@@ -173,5 +173,5 @@ public class MsoySceneRegistry extends SceneRegistry
         MsoyServer.peerMan.forwardMemberObject(nodeName, memobj);
     }
 
-    protected MsoyEventLogger _eventLogger;
+    protected MsoyEventLogger _eventLog;
 }

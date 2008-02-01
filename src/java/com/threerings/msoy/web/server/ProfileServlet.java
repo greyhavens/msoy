@@ -93,7 +93,7 @@ public class ProfileServlet extends MsoyServiceServlet
             // record that the user updated their profile
             logUserAction(memrec, (nrec.modifications == 1) ?
                           UserAction.CREATED_PROFILE : UserAction.UPDATED_PROFILE, null);
-            _eventLogger.profileUpdated(memrec.memberId);
+            _eventLog.profileUpdated(memrec.memberId);
 
             // handle a display name change if necessary
             if (memrec.name == null || !memrec.name.equals(displayName)) {

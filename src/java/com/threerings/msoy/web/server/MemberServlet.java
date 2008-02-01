@@ -209,7 +209,7 @@ public class MemberServlet extends MsoyServiceServlet
 
             // if we're viewing this invite, log that it was viewed
             if (viewing) {
-                _eventLogger.inviteViewed(inviteId);
+                _eventLog.inviteViewed(inviteId);
             }
 
             MemberName inviter = null;
@@ -288,7 +288,7 @@ public class MemberServlet extends MsoyServiceServlet
 
             // record the invite and that we sent it
             MsoyServer.memberRepo.addInvite(email, inviterId, inviteId);
-            _eventLogger.inviteSent(inviteId, inviterId, email);
+            _eventLog.inviteSent(inviteId, inviterId, email);
 
             return InvitationResults.SUCCESS;
 

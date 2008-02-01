@@ -93,9 +93,9 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     /**
      * Initializes this servlet.
      */
-    public void init (MsoyEventLogger eventLogger)
+    public void init (MsoyEventLogger eventLog)
     {
-        _eventLogger = eventLogger;
+        _eventLog = eventLog;
     }
 
     /**
@@ -130,7 +130,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     }
 
     /** Used to log interesting events for later grindage. */
-    protected MsoyEventLogger _eventLogger;
+    protected MsoyEventLogger _eventLog;
 
     /** Contains a mapping of authenticated members. */
     protected static Map<String,Integer> _members = Collections.synchronizedMap(

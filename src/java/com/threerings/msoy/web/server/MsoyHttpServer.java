@@ -36,7 +36,7 @@ public class MsoyHttpServer extends Server
      * Creates and prepares our HTTP server for operation but does not yet start listening on the
      * HTTP port.
      */
-    public MsoyHttpServer (File logdir, MsoyEventLogger eventLogger)
+    public MsoyHttpServer (File logdir, MsoyEventLogger eventLog)
         throws IOException
     {
         SelectChannelConnector conn = new SelectChannelConnector();
@@ -49,7 +49,7 @@ public class MsoyHttpServer extends Server
         for (int ii = 0; ii < SERVLETS.length; ii++) {
             HttpServlet servlet = SERVLETS[ii];
             if (servlet instanceof MsoyServiceServlet) {
-                ((MsoyServiceServlet)servlet).init(eventLogger);
+                ((MsoyServiceServlet)servlet).init(eventLog);
             }
             context.addServlet(new ServletHolder(servlet), "/" + SERVLET_NAMES[ii]);
         }
