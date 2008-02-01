@@ -6,14 +6,9 @@ package client.world;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -50,14 +45,6 @@ public class index extends Page
     // @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        _entryCounter++;
-
-        // cancel our refresher interval as we'll restart it if needed below
-        if (_refresher != null) {
-            _refresher.cancel();
-            _refresher = null;
-        }
-
         try {
             String action = args.get(0, "s1");
             if (action.equals("i")) {
@@ -94,8 +81,8 @@ public class index extends Page
                 WorldClient.displayFlash("groupChat=" + action.substring(1));
 
             } else if (action.startsWith("p")) {
-                // display popular places by request
-                displayHotSpots(_entryCounter);
+                // display popular places
+                displayHotSpots();
 
             } else if (CWorld.getMemberId() == 0) {
                 setContent(MsoyUI.createLabel(CWorld.msgs.logonForHome(), "infoLabel"));
@@ -126,11 +113,6 @@ public class index extends Page
         super.onPageUnload();
 
         clearCallbacks();
-
-        if (_refresher != null) {
-            _refresher.cancel();
-            _refresher = null;
-        }
     }
 
     // @Override // from Page
@@ -159,19 +141,12 @@ public class index extends Page
         return WORLD;
     }
 
-    protected void displayHotSpots (final int requestEntryCount)
+    protected void displayHotSpots ()
     {
-        CWorld.worldsvc.serializePopularPlaces(CWorld.ident, 20, new AsyncCallback() {
+        CWorld.worldsvc.serializePopularPlaces(CWorld.ident, 20, new MsoyCallback() {
             public void onSuccess (Object result) {
-                if (requestEntryCount == _entryCounter) {
-                    Frame.setTitle(CWorld.msgs.hotSpotsTitle());
-                    setFlashContent(FlashClients.createPopularPlacesDefinition((String) result));
-                }
-            }
-            public void onFailure (Throwable caught) {
-                if (requestEntryCount == _entryCounter) {
-                    setContent(new Label(CWorld.serverError(caught)));
-                }
+                Frame.setTitle(CWorld.msgs.hotSpotsTitle());
+                setFlashContent(FlashClients.createPopularPlacesDefinition((String) result));
             }
         });
     }
@@ -327,12 +302,6 @@ public class index extends Page
     protected static native void clearCallbacks () /*-{
        $wnd.howdyPardner = null;
     }-*/;
-
-    /** A counter to help asynchronous callbacks to figure out if they've been obsoleted. */
-    protected int _entryCounter;
-
-    /** Handles periodic refresh of the popular places view. */
-    protected Timer _refresher;
 
     /** A command to be run when Java reports readiness. */
     protected Command _javaReadyCommand;
