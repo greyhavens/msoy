@@ -411,8 +411,6 @@ public class AbstractRoomView extends Sprite
     protected function computeScale () :Number
     {
         var maxScale :Number = _actualHeight / _layout.metrics.sceneHeight;
-        log.debug("computeScale [" + _ctx.getTopPanel().isMinimized() + ", " + 
-            _fullSizeActualWidth + ", " + _actualWidth + "]");
         if (isNaN(_fullSizeActualWidth) || !_ctx.getTopPanel().isMinimized()) {
             _fullSizeActualWidth = _actualWidth;
         }
