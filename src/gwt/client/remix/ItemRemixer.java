@@ -85,7 +85,7 @@ public class ItemRemixer extends FlexTable
         MediaDesc preview = item.getPreviewMedia();
         String flashVars = "media=" + URL.encodeComponent(preview.getMediaPath());
         return WidgetUtil.createFlashContainer("remixControls", "/media/Remixer.swf",
-            200, 200, flashVars);
+            540, 450, flashVars);
     }
 
     protected Widget createPreview (Item item)
