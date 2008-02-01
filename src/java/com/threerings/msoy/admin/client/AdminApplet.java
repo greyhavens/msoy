@@ -59,7 +59,6 @@ public class AdminApplet extends JApplet
             _init = dclass.getMethod("init", JApplet.class, String.class, Integer.TYPE);
             _start = dclass.getMethod("start", String.class);
             _stop = dclass.getMethod("stop");
-            _destroy = dclass.getMethod("destroy");
             _init.invoke(_delegate, this, server, port);
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to load wrapper class.", e);
@@ -88,18 +87,6 @@ public class AdminApplet extends JApplet
         }
     }
 
-    @Override // from Applet
-    public void destroy ()
-    {
-        super.destroy();
-        super.destroy();
-        try {
-            _destroy.invoke(_delegate);
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to invoke destroy().", e);
-        }
-    }
-
     protected Object _delegate;
-    protected Method _init, _start, _stop, _destroy;
+    protected Method _init, _start, _stop;
 }

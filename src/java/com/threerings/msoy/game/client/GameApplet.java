@@ -75,7 +75,6 @@ public class GameApplet extends JApplet
             _init = dclass.getMethod("init", JApplet.class, String.class, Integer.TYPE);
             _start = dclass.getMethod("start", String.class, Integer.TYPE, Integer.TYPE);
             _stop = dclass.getMethod("stop");
-            _destroy = dclass.getMethod("destroy");
             _init.invoke(_delegate, this, server, port);
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to load wrapper class.", e);
@@ -104,17 +103,6 @@ public class GameApplet extends JApplet
             _stop.invoke(_delegate);
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to invoke stop().", e);
-        }
-    }
-
-    @Override // from Applet
-    public void destroy ()
-    {
-        super.destroy();
-        try {
-            _destroy.invoke(_delegate);
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to invoke destroy().", e);
         }
     }
 
