@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="DataPack,com.whirled.DataPack,_zip,_metadata,close,isComplete,getNamespace,getString,getNumber,getBoolean,getArray,getPoint,getRectangle,getData,getFile,getFileAsString,getFileAsXML,getSounds,getDisplayObjects,getSwfLoaders,doGetObjects,doLoadObject,getFileInternal,validateAccess,validateComplete,handleLoadError,handleParseError,handleLoadingComplete,dispatchError" name="keywords">
+<meta content="DataPack,com.whirled.DataPack,close,isComplete,getNamespace,getString,getNumber,getBoolean,getColor,getArray,getPoint,getRectangle,getData,getFile,getFileAsString,getFileAsXML,getSounds,getDisplayObjects,getSwfLoaders" name="keywords">
 <title>com.whirled.DataPack</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../all-classes.html')" href="../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../all-classes.html')" href="../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../index-list.html')" href="../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../index.html?com/whirled/DataPack.html&amp;com/whirled/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
-<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;DataPack</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td>
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;DataPack</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
 </tr>
 <tr class="titleTableRow3">
 <td colspan="2">&nbsp;</td>
@@ -27,7 +27,7 @@
 </table>
 <script type="text/javascript" language="javascript">
 <!--
-if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class DataPack"); titleBar_setSubNav(false,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class DataPack"); titleBar_setSubNav(false,false,false,false,true,false,true,false,false,false,false,false,false,false);}
 --></script>
 <div class="MainContent">
 <table cellspacing="0" cellpadding="0" class="classHeaderTable">
@@ -47,23 +47,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <br>
 <hr>
 </div>
-<a name="propertySummary"></a><a name="protectedPropertySummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Properties</div>
-<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_metadata">_metadata</a> : XML<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">DataPack</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_zip">_zip</a> : FZip<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">DataPack</td>
-</tr>
-</table>
-</div>
 <a name="methodSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Public Methods</div>
@@ -74,9 +57,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#DataPack()">DataPack</a>(url:String)</div>
+<a class="signatureLink" href="#DataPack()">DataPack</a>(urlOrByteArray:*)</div>
 <div class="summaryTableDescription">
-     Construct a DataPack to be loaded from specified URL.</div>
+     Construct a DataPack to be loaded from specified source.</div>
 </td><td class="summaryTableOwnerCol">DataPack</td>
 </tr>
 <tr class="">
@@ -101,6 +84,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#getBoolean()">getBoolean</a>(name:String):Boolean</div>
 <div class="summaryTableDescription">
      Convenience function to access some data as a Boolean.</div>
+</td><td class="summaryTableOwnerCol">DataPack</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getColor()">getColor</a>(name:String):uint</div>
+<div class="summaryTableDescription">
+     Convenience function to access some data as a color (uint).</div>
 </td><td class="summaryTableOwnerCol">DataPack</td>
 </tr>
 <tr class="">
@@ -209,78 +200,28 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 </div>
-<a name="protectedMethodSummary"></a>
+<a name="eventSummary"></a>
 <div class="summarySection">
-<div class="summaryTableTitle">Protected Methods</div>
-<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<div class="summaryTableTitle">Events</div>
+<table id="summaryTableEvent" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
-<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+<th>&nbsp;</th><th colspan="2">Event</th><th>Summary</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#dispatchError()">dispatchError</a>(message:String):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">DataPack</td>
+<a class="signatureLink" href="#event:complete">complete</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when the DataPack has completed loading.</td><td class="summaryTableOwnerCol">DataPack</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#doGetObjects()">doGetObjects</a>(names:Array, callback:Function, useSubDomain:Boolean, returnRawLoaders:Boolean):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">DataPack</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#doLoadObject()">doLoadObject</a>(name:String, bytes:ByteArray, loadHandler:Function, useSubDomain:Boolean, returnRawLoaders:Boolean):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">DataPack</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#getFileInternal()">getFileInternal</a>(name:String, asString:Boolean):*</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">DataPack</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#handleLoadError()">handleLoadError</a>(event:ErrorEvent):void</div>
-<div class="summaryTableDescription">
-     Handle some sort of problem loading the datapack.</div>
-</td><td class="summaryTableOwnerCol">DataPack</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#handleLoadingComplete()">handleLoadingComplete</a>(event:Event):void</div>
-<div class="summaryTableDescription">
-     Handle the successful completion of datapack loading.</div>
-</td><td class="summaryTableOwnerCol">DataPack</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#handleParseError()">handleParseError</a>(event:FZipErrorEvent):void</div>
-<div class="summaryTableDescription">
-     Handle some sort of problem parsing datapack.</div>
-</td><td class="summaryTableOwnerCol">DataPack</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#validateAccess()">validateAccess</a>(name:String):String</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">DataPack</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#validateComplete()">validateComplete</a>():void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">DataPack</td>
+<a class="signatureLink" href="#event:error">error</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when the DataPack could not load due to an error.</td><td class="summaryTableOwnerCol">DataPack</td>
 </tr>
 </table>
 </div>
@@ -289,26 +230,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 showHideInherited();
 --></script>
 <div class="MainContent">
-<a name="propertyDetail"></a>
-<div class="detailSectionHeader">Property detail</div>
-<a name="_metadata"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_metadata</td><td class="detailHeaderType">property</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _metadata:XML</code>
-</div>
-<a name="_zip"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_zip</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _zip:FZip</code>
-</div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
 <a name="DataPack()"></a>
@@ -318,12 +239,23 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function DataPack(url:String)</code><p>
-     Construct a DataPack to be loaded from specified URL.
-     </p><span class="label">Parameters</span>
+<code>public function DataPack(urlOrByteArray:*)</code><p>
+     Construct a DataPack to be loaded from specified source.
+     Note that passing a ByteArray will result in a DataPack that is instantly complete.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">url</span>:String</code></td>
+<td width="20px"></td><td><code><span class="label">urlOrByteArray</span>:*</code> &mdash; a url (as a String or as a URLRequest) from which to load the
+            DataPack, or a ByteArray containing the raw data.
+          </td>
+</tr>
+</table>
+<br>
+<span class="label">Throws</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code></code> &mdash; if urlOrByteArray is not of the right type.
+     </td>
 </tr>
 </table>
 </div>
@@ -340,90 +272,6 @@ showHideInherited();
      Stop loading a DataPack, if not yet complete. You should probably call this
      during shutdown.
      </p></div>
-<a name="dispatchError()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">dispatchError</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function dispatchError(message:String):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">message</span>:String</code></td>
-</tr>
-</table>
-</div>
-<a name="doGetObjects()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">doGetObjects</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function doGetObjects(names:Array, callback:Function, useSubDomain:Boolean, returnRawLoaders:Boolean):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">names</span>:Array</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">callback</span>:Function</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">useSubDomain</span>:Boolean</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">returnRawLoaders</span>:Boolean</code></td>
-</tr>
-</table>
-</div>
-<a name="doLoadObject()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">doLoadObject</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function doLoadObject(name:String, bytes:ByteArray, loadHandler:Function, useSubDomain:Boolean, returnRawLoaders:Boolean):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">bytes</span>:ByteArray</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">loadHandler</span>:Function</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">useSubDomain</span>:Boolean</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">returnRawLoaders</span>:Boolean</code></td>
-</tr>
-</table>
-</div>
 <a name="getArray()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -467,6 +315,29 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="getColor()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getColor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getColor(name:String):uint</code><p>
+     Convenience function to access some data as a color (uint).
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>uint</code></td>
 </tr>
 </table>
 </div>
@@ -594,33 +465,6 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>XML</code></td>
-</tr>
-</table>
-</div>
-<a name="getFileInternal()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getFileInternal</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function getFileInternal(name:String, asString:Boolean):*</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">asString</span>:Boolean</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>*</code></td>
 </tr>
 </table>
 </div>
@@ -789,54 +633,6 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="handleLoadError()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">handleLoadError</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function handleLoadError(event:ErrorEvent):void</code><p>
-     Handle some sort of problem loading the datapack.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">event</span>:ErrorEvent</code></td>
-</tr>
-</table>
-</div>
-<a name="handleLoadingComplete()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">handleLoadingComplete</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function handleLoadingComplete(event:Event):void</code><p>
-     Handle the successful completion of datapack loading.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">event</span>:Event</code></td>
-</tr>
-</table>
-</div>
-<a name="handleParseError()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">handleParseError</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function handleParseError(event:FZipErrorEvent):void</code><p>
-     Handle some sort of problem parsing datapack.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">event</span>:FZipErrorEvent</code></td>
-</tr>
-</table>
-</div>
 <a name="isComplete()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -854,36 +650,31 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="validateAccess()"></a>
+<div class="detailSectionHeader">Event detail</div>
+<a name="event:complete"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">validateAccess</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">complete</td><td class="detailHeaderType">event&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function validateAccess(name:String):String</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>String</code></td>
-</tr>
-</table>
-</div>
-<a name="validateComplete()"></a>
+<span class="label">Event object type: </span><a href=""><code>flash.events.Event</code></a>
+<br>
+<p></p><p>
+ Dispatched when the DataPack has completed loading.
+  </p></div>
+<a name="event:error"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">validateComplete</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">error</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function validateComplete():void</code>
-</div>
+<span class="label">Event object type: </span><a href=""><code>flash.events.ErrorEvent</code></a>
+<br>
+<p></p><p>
+ Dispatched when the DataPack could not load due to an error.
+  </p></div>
 <br>
 <br>
 <hr>

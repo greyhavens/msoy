@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="UserChatEvent,com.threerings.ezgame.UserChatEvent,TYPE,_speaker,_message,speaker,message,toString,clone" name="keywords">
+<meta content="UserChatEvent,com.threerings.ezgame.UserChatEvent,USER_CHAT,speaker,message,toString,clone" name="keywords">
 <title>com.threerings.ezgame.UserChatEvent</title>
 </head>
 <body>
@@ -80,36 +80,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 </div>
-<a name="protectedPropertySummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Properties</div>
-<div class="showHideLinks">
-<div class="hideInheritedProtectedProperty" id="hideInheritedProtectedProperty">
-<a onclick="javascript:setInheritedVisible(false,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Protected Properties</a>
-</div>
-<div class="showInheritedProtectedProperty" id="showInheritedProtectedProperty">
-<a onclick="javascript:setInheritedVisible(true,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Properties</a>
-</div>
-</div>
-<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EZEvent.html#_gameCtrl">_gameCtrl</a> : <a href="../ezgame/AbstractGameControl.html">AbstractGameControl</a>
-<div class="summaryTableDescription"> The game control for this event.</div>
-</td><td class="summaryTableOwnerCol"><a href="EZEvent.html">EZEvent</a></td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_message">_message</a> : String<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">UserChatEvent</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_speaker">_speaker</a> : int<div class="summaryTableDescription"> Our implementation details.</div>
-</td><td class="summaryTableOwnerCol">UserChatEvent</td>
-</tr>
-</table>
-</div>
 <a name="methodSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Public Methods</div>
@@ -149,7 +119,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TYPE">TYPE</a> : String = "UserChat"<div class="summaryTableDescription">[static] The type of a property change event.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#USER_CHAT">USER_CHAT</a> : String = "UserChat"<div class="summaryTableDescription">[static]
+     The type of a property change event.</div>
 </td><td class="summaryTableOwnerCol">UserChatEvent</td>
 </tr>
 </table>
@@ -161,19 +132,10 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="_message"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_message</td><td class="detailHeaderType">property</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _message:String</code>
-</div>
 <a name="message"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">message</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">message</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -184,14 +146,6 @@ showHideInherited();
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get message():Object</code>
 <br>
 </div>
-<a name="_speaker"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_speaker</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _speaker:int</code><p> Our implementation details. </p></div>
 <a name="speaker"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -272,14 +226,16 @@ showHideInherited();
 </div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
-<a name="TYPE"></a>
+<a name="USER_CHAT"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">TYPE</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">USER_CHAT</td><td class="detailHeaderType">constant</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const TYPE:String = "UserChat"</code><p> The type of a property change event. </p></div>
+<code>public static const USER_CHAT:String = "UserChat"</code><p>
+     The type of a property change event.
+     </p></div>
 <br>
 <br>
 <hr>

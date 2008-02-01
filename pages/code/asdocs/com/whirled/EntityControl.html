@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="EntityControl,com.whirled.EntityControl,_location,_tickInterval,_ticker,_hasControl,getLogicalLocation,getPixelLocation,getRoomBounds,canEditRoom,triggerAction,sendMessage,sendSignal,getMemories,lookupMemory,getRoomProperties,getRoomProperty,hasControl,requestControl,setTickInterval,getInstanceId,getViewerName,updateMemory,setRoomProperty,setHotSpot,showPopup,clearPopup,getCamera,getMicrophone,populateProperties,gotInitProperties,messageReceived_v1,signalReceived_v1,memoryChanged_v1,roomPropertyChanged_v1,gotControl_v1,recheckTicker,stopTicker,handleUnload" name="keywords">
+<meta content="EntityControl,com.whirled.EntityControl,_location,_tickInterval,_ticker,_hasControl,_datapack,getDefaultDataPack,getLogicalLocation,getPixelLocation,getRoomBounds,canEditRoom,triggerAction,sendMessage,sendSignal,getMemories,lookupMemory,getRoomProperties,getRoomProperty,hasControl,requestControl,setTickInterval,getInstanceId,getViewerName,updateMemory,setRoomProperty,setHotSpot,showPopup,clearPopup,getCamera,getMicrophone,populateProperties,gotInitProperties,messageReceived_v1,signalReceived_v1,memoryChanged_v1,roomPropertyChanged_v1,gotControl_v1,recheckTicker,stopTicker,handleUnload" name="keywords">
 <title>com.whirled.EntityControl</title>
 </head>
 <body>
@@ -65,6 +65,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_datapack">_datapack</a> : ByteArray<div class="summaryTableDescription"> The default datapack, if any.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_hasControl">_hasControl</a> : Boolean = false<div class="summaryTableDescription"> Whether this instance has control.</div>
@@ -150,6 +154,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#getCamera()">getCamera</a>(index:String = null):Camera</div>
 <div class="summaryTableDescription">
      Access the local user's camera.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getDefaultDataPack()">getDefaultDataPack</a>():ByteArray</div>
+<div class="summaryTableDescription">
+     Get the default datapack for this entity, or null if there is none defined.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -529,10 +541,18 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
+<a name="_datapack"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_datapack</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _datapack:ByteArray</code><p> The default datapack, if any. </p></div>
 <a name="_hasControl"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_hasControl</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_hasControl</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -631,6 +651,27 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Camera</code></td>
+</tr>
+</table>
+</div>
+<a name="getDefaultDataPack()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getDefaultDataPack</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getDefaultDataPack():ByteArray</code><p>
+     Get the default datapack for this entity, or null if there is none defined.
+     The DataPack is returned as a ByteArray, which can easily be passed to the
+     com.whirled.DataPack constructor. We do not return a DataPack for you, because otherwise
+     including this class would include all the DataPack support classes, even if your
+     project never made use of it.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>ByteArray</code></td>
 </tr>
 </table>
 </div>
@@ -1089,22 +1130,26 @@ showHideInherited();
      coordinate.
           If unset, the default hotspot will be based off of the SWF dimensions, with x = width / 2,
      y = height.
-     </p><span class="label">Parameters</span>
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">x</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">x</span>:Number</code> &mdash; the new hotspot x coordinate
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">y</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">y</span>:Number</code> &mdash; the new hotspot y coordinate
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">height</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">height</span>:Number</code> &mdash; if specified, the entity's actual current height, as pixels above the hotspot.
+                   This is used by avatars to position the name label.
+     </td>
 </tr>
 </table>
 </div>

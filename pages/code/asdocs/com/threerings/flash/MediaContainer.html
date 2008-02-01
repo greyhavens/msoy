@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="MediaContainer,com.threerings.flash.MediaContainer,SIZE_KNOWN,log,_url,_w,_h,_media,_initialized,_isImage,isContentInitialized,getMedia,setMedia,setMediaClass,setMediaObject,willShowNewMedia,didShowNewMedia,setupVideo,setupSwfOrImage,setupBrokenImage,getApplicationDomain,shutdown,getContentWidth,getContentHeight,getMaxContentWidth,getMaxContentHeight,getMediaScaleX,getMediaScaleY,containerDimensionsUpdated,hitTestPoint,toString,getContext,getSecurityDomain,isImage,removeListeners,loadError,loadProgress,handleVideoSizeKnown,handleVideoError,handleInit,loadingComplete,configureMask,updateContentDimensions,contentDimensionsUpdated,updateLoadingProgress,startedLoading,stoppedLoading" name="keywords">
+<meta content="MediaContainer,com.threerings.flash.MediaContainer,SIZE_KNOWN,log,_url,_w,_h,_media,_initialized,_isImage,isContentInitialized,getMedia,setMedia,setMediaClass,setMediaObject,willShowNewMedia,showNewMedia,didShowNewMedia,setupVideo,setupSwfOrImage,initLoader,setupBrokenImage,getApplicationDomain,shutdown,getContentWidth,getContentHeight,getMaxContentWidth,getMaxContentHeight,getMediaScaleX,getMediaScaleY,containerDimensionsUpdated,hitTestPoint,toString,getContext,getSecurityDomain,isImage,addListeners,removeListeners,handleIOError,handleProgress,handleVideoSizeKnown,handleVideoError,handleInit,handleComplete,configureMask,updateContentDimensions,contentDimensionsUpdated,getMaskRectangle,updateLoadingProgress,startedLoading,stoppedLoading" name="keywords">
 <title>com.threerings.flash.MediaContainer</title>
 </head>
 <body>
@@ -236,7 +236,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#configureMask()">configureMask</a>(ww:int, hh:int):void</div>
+<a class="signatureLink" href="#addListeners()">addListeners</a>(info:LoaderInfo):void</div>
+<div class="summaryTableDescription">
+     Add our listeners to the LoaderInfo object.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#configureMask()">configureMask</a>(rect:Rectangle):void</div>
 <div class="summaryTableDescription">
      Configure the mask for this object.</div>
 </td><td class="summaryTableOwnerCol">MediaContainer</td>
@@ -269,6 +277,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getMaskRectangle()">getMaskRectangle</a>():Rectangle</div>
+<div class="summaryTableDescription">
+     Get the mask area, or null if no mask is needed.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#getSecurityDomain()">getSecurityDomain</a>(imageURL:String):SecurityDomain</div>
 <div class="summaryTableDescription">
      Return the security domain to use for the specified image url.</div>
@@ -277,9 +293,33 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#handleComplete()">handleComplete</a>(event:Event):void</div>
+<div class="summaryTableDescription">
+     Callback function to receive COMPLETE events for swfs or images.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#handleInit()">handleInit</a>(event:Event):void</div>
 <div class="summaryTableDescription">
      Handles the INIT event for content loaded with a Loader.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleIOError()">handleIOError</a>(event:IOErrorEvent):void</div>
+<div class="summaryTableDescription">
+     A callback to receive IO_ERROR events.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleProgress()">handleProgress</a>(event:ProgressEvent):void</div>
+<div class="summaryTableDescription">
+     A callback to receive PROGRESS events.</div>
 </td><td class="summaryTableOwnerCol">MediaContainer</td>
 </tr>
 <tr class="">
@@ -301,34 +341,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#initLoader()">initLoader</a>():Loader</div>
+<div class="summaryTableDescription">
+     Initialize a Loader as our _media, and configure it however needed to prepare
+     loading user content.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#isImage()">isImage</a>(url:String):Boolean</div>
 <div class="summaryTableDescription">
      Does the specified url represent an image?
      </div>
-</td><td class="summaryTableOwnerCol">MediaContainer</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#loadError()">loadError</a>(event:IOErrorEvent):void</div>
-<div class="summaryTableDescription">
-     A callback to receive IO_ERROR events.</div>
-</td><td class="summaryTableOwnerCol">MediaContainer</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#loadingComplete()">loadingComplete</a>(event:Event):void</div>
-<div class="summaryTableDescription">
-     Callback function to receive COMPLETE events for swfs or images.</div>
-</td><td class="summaryTableOwnerCol">MediaContainer</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#loadProgress()">loadProgress</a>(event:ProgressEvent):void</div>
-<div class="summaryTableDescription">
-     A callback to receive PROGRESS events.</div>
 </td><td class="summaryTableOwnerCol">MediaContainer</td>
 </tr>
 <tr class="">
@@ -362,6 +387,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#setupVideo()">setupVideo</a>(url:String):void</div>
 <div class="summaryTableDescription">
      Configure this sprite to show a video.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#showNewMedia()">showNewMedia</a>(url:String):void</div>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">MediaContainer</td>
 </tr>
 <tr class="">
@@ -535,25 +567,35 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="configureMask()"></a>
+<a name="addListeners()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">configureMask</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">addListeners</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function configureMask(ww:int, hh:int):void</code><p>
+<code>protected function addListeners(info:LoaderInfo):void</code><p>
+     Add our listeners to the LoaderInfo object.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">info</span>:LoaderInfo</code></td>
+</tr>
+</table>
+</div>
+<a name="configureMask()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">configureMask</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function configureMask(rect:Rectangle):void</code><p>
      Configure the mask for this object.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">ww</span>:int</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">hh</span>:int</code></td>
+<td width="20px"></td><td><code><span class="label">rect</span>:Rectangle</code></td>
 </tr>
 </table>
 </div>
@@ -676,6 +718,23 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="getMaskRectangle()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getMaskRectangle</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function getMaskRectangle():Rectangle</code><p>
+     Get the mask area, or null if no mask is needed.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Rectangle</code></td>
+</tr>
+</table>
+</div>
 <a name="getMaxContentHeight()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -785,6 +844,22 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="handleComplete()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleComplete</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleComplete(event:Event):void</code><p>
+     Callback function to receive COMPLETE events for swfs or images.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:Event</code></td>
+</tr>
+</table>
+</div>
 <a name="handleInit()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -798,6 +873,38 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">event</span>:Event</code></td>
+</tr>
+</table>
+</div>
+<a name="handleIOError()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleIOError</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleIOError(event:IOErrorEvent):void</code><p>
+     A callback to receive IO_ERROR events.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:IOErrorEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="handleProgress()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleProgress</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleProgress(event:ProgressEvent):void</code><p>
+     A callback to receive PROGRESS events.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:ProgressEvent</code></td>
 </tr>
 </table>
 </div>
@@ -873,6 +980,24 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="initLoader()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">initLoader</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function initLoader():Loader</code><p>
+     Initialize a Loader as our _media, and configure it however needed to prepare
+     loading user content.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Loader</code></td>
+</tr>
+</table>
+</div>
 <a name="isContentInitialized()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -912,54 +1037,6 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Boolean</code></td>
-</tr>
-</table>
-</div>
-<a name="loadError()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">loadError</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function loadError(event:IOErrorEvent):void</code><p>
-     A callback to receive IO_ERROR events.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">event</span>:IOErrorEvent</code></td>
-</tr>
-</table>
-</div>
-<a name="loadingComplete()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">loadingComplete</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function loadingComplete(event:Event):void</code><p>
-     Callback function to receive COMPLETE events for swfs or images.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">event</span>:Event</code></td>
-</tr>
-</table>
-</div>
-<a name="loadProgress()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">loadProgress</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function loadProgress(event:ProgressEvent):void</code><p>
-     A callback to receive PROGRESS events.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">event</span>:ProgressEvent</code></td>
 </tr>
 </table>
 </div>
@@ -1076,6 +1153,20 @@ showHideInherited();
 <code>protected function setupVideo(url:String):void</code><p>
      Configure this sprite to show a video.
      </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">url</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="showNewMedia()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">showNewMedia</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function showNewMedia(url:String):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">url</span>:String</code></td>

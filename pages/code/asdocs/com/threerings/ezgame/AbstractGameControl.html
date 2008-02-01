@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="AbstractGameControl,com.threerings.ezgame.AbstractGameControl,_connected,_funcs,_subControls,_localCtrl,_netCtrl,_playerCtrl,_gameCtrl,_servicesCtrl,isConnected,createSubControls,createLocalControl,createNetControl,createPlayerControl,createGameControl,createServicesControl,populateProperties,setHostProps,callHostCode,handleRootClick" name="keywords">
+<meta content="AbstractGameControl,com.threerings.ezgame.AbstractGameControl,isConnected" name="keywords">
 <title>com.threerings.ezgame.AbstractGameControl</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/ezgame/AbstractGameControl.html&amp;com/threerings/ezgame/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
-<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;AbstractGameControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;AbstractGameControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
 </tr>
 <tr class="titleTableRow3">
 <td colspan="2">&nbsp;</td>
@@ -27,7 +27,7 @@
 </table>
 <script type="text/javascript" language="javascript">
 <!--
-if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class AbstractGameControl"); titleBar_setSubNav(false,true,false,false,true,false,true,false,false,false,false,false,false,false);}
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class AbstractGameControl"); titleBar_setSubNav(false,false,false,false,true,false,true,false,false,false,false,false,false,false);}
 --></script>
 <div class="MainContent">
 <table cellspacing="0" cellpadding="0" class="classHeaderTable">
@@ -49,52 +49,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
  <p></p>
 <br>
 <hr>
-</div>
-<a name="propertySummary"></a><a name="protectedPropertySummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Properties</div>
-<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_connected">_connected</a> : Boolean<div class="summaryTableDescription"> Are we connected? </div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_funcs">_funcs</a> : Object<div class="summaryTableDescription"> Contains functions exposed to us from the EZGame host.</div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_gameCtrl">_gameCtrl</a> : <a href="../ezgame/EZGameSubControl.html">EZGameSubControl</a>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_localCtrl">_localCtrl</a> : <a href="../ezgame/EZLocalSubControl.html">EZLocalSubControl</a>
-<div class="summaryTableDescription"> Specific sub-controls.</div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_netCtrl">_netCtrl</a> : <a href="../ezgame/EZNetSubControl.html">EZNetSubControl</a>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_playerCtrl">_playerCtrl</a> : <a href="../ezgame/EZPlayerSubControl.html">EZPlayerSubControl</a>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_servicesCtrl">_servicesCtrl</a> : <a href="../ezgame/EZServicesSubControl.html">EZServicesSubControl</a>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_subControls">_subControls</a> : Array<div class="summaryTableDescription"> Holds all our sub-controls.</div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-</table>
 </div>
 <a name="methodSummary"></a>
 <div class="summarySection">
@@ -122,22 +76,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="AbstractControl.html#callHostCodeFriend()">callHostCodeFriend</a>(name:String, args:Array):*</div>
-<div class="summaryTableDescription">
-     Exposed to sub controls.</div>
-</td><td class="summaryTableOwnerCol"><a href="AbstractControl.html">AbstractControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="AbstractControl.html#dispatchEvent()">dispatchEvent</a>(event:Event):Boolean</div>
-<div class="summaryTableDescription">
-     Your own events may not be dispatched here.</div>
-</td><td class="summaryTableOwnerCol"><a href="AbstractControl.html">AbstractControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="AbstractControl.html#doBatch()">doBatch</a>(fn:Function):void</div>
 <div class="summaryTableDescription">
      Execute the specified function as a batch of commands that will be sent to the server
@@ -148,126 +86,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#isConnected()">isConnected</a>():Boolean</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-</table>
-</div>
-<a name="protectedMethodSummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Methods</div>
-<div class="showHideLinks">
-<div class="hideInheritedProtectedMethod" id="hideInheritedProtectedMethod">
-<a onclick="javascript:setInheritedVisible(false,'ProtectedMethod');" href="#protectedMethodSummary" class="showHideLink"><img src="../../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Protected Methods</a>
-</div>
-<div class="showInheritedProtectedMethod" id="showInheritedProtectedMethod">
-<a onclick="javascript:setInheritedVisible(true,'ProtectedMethod');" href="#protectedMethodSummary" class="showHideLink"><img src="../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Methods</a>
-</div>
-</div>
-<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#callHostCode()">callHostCode</a>(name:String, ... args):*</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="AbstractControl.html#checkIsConnected()">checkIsConnected</a>():void</div>
 <div class="summaryTableDescription">
-     Helper method to throw an error if we're not connected.</div>
-</td><td class="summaryTableOwnerCol"><a href="AbstractControl.html">AbstractControl</a></td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#createGameControl()">createGameControl</a>():<a href="../ezgame/EZGameSubControl.html">EZGameSubControl</a>
-</div>
-<div class="summaryTableDescription">
-     Create the 'game' subcontrol.</div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#createLocalControl()">createLocalControl</a>():<a href="../ezgame/EZLocalSubControl.html">EZLocalSubControl</a>
-</div>
-<div class="summaryTableDescription">
-     Create the 'local' subcontrol.</div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#createNetControl()">createNetControl</a>():<a href="../ezgame/EZNetSubControl.html">EZNetSubControl</a>
-</div>
-<div class="summaryTableDescription">
-     Create the 'net' subcontrol.</div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#createPlayerControl()">createPlayerControl</a>():<a href="../ezgame/EZPlayerSubControl.html">EZPlayerSubControl</a>
-</div>
-<div class="summaryTableDescription">
-     Create the 'player' subcontrol.</div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#createServicesControl()">createServicesControl</a>():<a href="../ezgame/EZServicesSubControl.html">EZServicesSubControl</a>
-</div>
-<div class="summaryTableDescription">
-     Create the 'services' subcontrol.</div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#createSubControls()">createSubControls</a>():void</div>
-<div class="summaryTableDescription">
-     Create any subcontrols used by this game.</div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="AbstractControl.html#dispatch()">dispatch</a>(event:Event):void</div>
-<div class="summaryTableDescription">
-     Secret function to dispatch property changed events.</div>
-</td><td class="summaryTableOwnerCol"><a href="AbstractControl.html">AbstractControl</a></td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#handleRootClick()">handleRootClick</a>(evt:MouseEvent):void</div>
-<div class="summaryTableDescription">
-     Internal method that is called whenever the mouse clicks our root.</div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#populateProperties()">populateProperties</a>(o:Object):void</div>
-<div class="summaryTableDescription">
-     Populate any properties or functions we want to expose to the other side of the ezgame
-     security boundary.</div>
-</td><td class="summaryTableOwnerCol">AbstractGameControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#setHostProps()">setHostProps</a>(o:Object):void</div>
-<div class="summaryTableDescription">
-     Sets the properties we received from the host framework on the other side of the security
-     boundary.</div>
+     Are we connected and running inside the game environment, or has someone just
+     loaded up our SWF by itself?
+     </div>
 </td><td class="summaryTableOwnerCol">AbstractGameControl</td>
 </tr>
 </table>
@@ -295,76 +117,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 showHideInherited();
 --></script>
 <div class="MainContent">
-<a name="propertyDetail"></a>
-<div class="detailSectionHeader">Property detail</div>
-<a name="_connected"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_connected</td><td class="detailHeaderType">property</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _connected:Boolean</code><p> Are we connected? </p></div>
-<a name="_funcs"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_funcs</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _funcs:Object</code><p> Contains functions exposed to us from the EZGame host. </p></div>
-<a name="_gameCtrl"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_gameCtrl</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _gameCtrl:<a href="../ezgame/EZGameSubControl.html">EZGameSubControl</a></code>
-</div>
-<a name="_localCtrl"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_localCtrl</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _localCtrl:<a href="../ezgame/EZLocalSubControl.html">EZLocalSubControl</a></code><p> Specific sub-controls. </p></div>
-<a name="_netCtrl"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_netCtrl</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _netCtrl:<a href="../ezgame/EZNetSubControl.html">EZNetSubControl</a></code>
-</div>
-<a name="_playerCtrl"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_playerCtrl</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _playerCtrl:<a href="../ezgame/EZPlayerSubControl.html">EZPlayerSubControl</a></code>
-</div>
-<a name="_servicesCtrl"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_servicesCtrl</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _servicesCtrl:<a href="../ezgame/EZServicesSubControl.html">EZServicesSubControl</a></code>
-</div>
-<a name="_subControls"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_subControls</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _subControls:Array</code><p> Holds all our sub-controls. </p></div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
 <a name="AbstractGameControl()"></a>
@@ -391,191 +143,21 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="callHostCode()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">callHostCode</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected override function callHostCode(name:String, ... args):*</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code>... <span class="label">args</span></code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>*</code></td>
-</tr>
-</table>
-</div>
-<a name="createGameControl()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">createGameControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function createGameControl():<a href="../ezgame/EZGameSubControl.html">EZGameSubControl</a></code><p>
-     Create the 'game' subcontrol.
-     </p><p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code><a href="../ezgame/EZGameSubControl.html">EZGameSubControl</a></code></td>
-</tr>
-</table>
-</div>
-<a name="createLocalControl()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">createLocalControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function createLocalControl():<a href="../ezgame/EZLocalSubControl.html">EZLocalSubControl</a></code><p>
-     Create the 'local' subcontrol.
-     </p><p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code><a href="../ezgame/EZLocalSubControl.html">EZLocalSubControl</a></code></td>
-</tr>
-</table>
-</div>
-<a name="createNetControl()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">createNetControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function createNetControl():<a href="../ezgame/EZNetSubControl.html">EZNetSubControl</a></code><p>
-     Create the 'net' subcontrol.
-     </p><p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code><a href="../ezgame/EZNetSubControl.html">EZNetSubControl</a></code></td>
-</tr>
-</table>
-</div>
-<a name="createPlayerControl()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">createPlayerControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function createPlayerControl():<a href="../ezgame/EZPlayerSubControl.html">EZPlayerSubControl</a></code><p>
-     Create the 'player' subcontrol.
-     </p><p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code><a href="../ezgame/EZPlayerSubControl.html">EZPlayerSubControl</a></code></td>
-</tr>
-</table>
-</div>
-<a name="createServicesControl()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">createServicesControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function createServicesControl():<a href="../ezgame/EZServicesSubControl.html">EZServicesSubControl</a></code><p>
-     Create the 'services' subcontrol.
-     </p><p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code><a href="../ezgame/EZServicesSubControl.html">EZServicesSubControl</a></code></td>
-</tr>
-</table>
-</div>
-<a name="createSubControls()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">createSubControls</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function createSubControls():void</code><p>
-     Create any subcontrols used by this game.
-     </p></div>
-<a name="handleRootClick()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">handleRootClick</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function handleRootClick(evt:MouseEvent):void</code><p>
-     Internal method that is called whenever the mouse clicks our root.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">evt</span>:MouseEvent</code></td>
-</tr>
-</table>
-</div>
 <a name="isConnected()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">isConnected</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">isConnected</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function isConnected():Boolean</code>
-<p></p>
+<code>public override function isConnected():Boolean</code><p>
+     Are we connected and running inside the game environment, or has someone just
+     loaded up our SWF by itself?
+     </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Boolean</code></td>
-</tr>
-</table>
-</div>
-<a name="populateProperties()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">populateProperties</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected override function populateProperties(o:Object):void</code><p>
-     Populate any properties or functions we want to expose to the other side of the ezgame
-     security boundary.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">o</span>:Object</code></td>
-</tr>
-</table>
-</div>
-<a name="setHostProps()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">setHostProps</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected override function setHostProps(o:Object):void</code><p>
-     Sets the properties we received from the host framework on the other side of the security
-     boundary.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">o</span>:Object</code></td>
 </tr>
 </table>
 </div>

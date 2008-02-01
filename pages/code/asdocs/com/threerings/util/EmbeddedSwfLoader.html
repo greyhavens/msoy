@@ -42,13 +42,30 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
- Allows you to load an embeded SWF stored as a Byte Array then access any stored classes
+ Allows you to load an embeded SWF stored as a ByteArray then access any stored classes
  within the SWF.
- Embed your swf like:
+ 
+ An Event.COMPLETE will be dispatched upon the successful completion of a call to
+ <code>load</code>.  IOErrorEvent.IO_ERROR will be dispatched if there's a problem reading the
+ ByteArray.
+  Embed your swf like this (take note of the mimeType!):
+ <code><pre>
  [Embed(source="foo.swf", mimeType="application/octet-stream")]
- Then, instantiate that class and pass it to load() as a ByteArray.
-  An Event.COMPLETE will be dispatched upon the successful completion of a call to
- {<p></p>
+ private static const FOO_RESOURCE :Class;
+ </pre></code>
+  Then:
+  <code><pre>
+ var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
+ loader.addEventListener(Event.COMPLETE, handleComplete);
+ loader.addEventListener(IOErrorEvent.IO_ERROR, handleFailure);
+ loader.load(FOO_RESOURCE);
+  ...
+ function handleComplete (event :Event) :void
+ {
+     var myMovie = loader.getContent();
+ ...
+ </pre></code>
+  <p></p>
 <br>
 <hr>
 </div>
@@ -80,7 +97,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#EmbeddedSwfLoader()">EmbeddedSwfLoader</a>(useSubDomain:Boolean = false)</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Create an EmbeddedSwfLoader, good for loading one SWF from a ByteArray.</div>
 </td><td class="summaryTableOwnerCol">EmbeddedSwfLoader</td>
 </tr>
 <tr class="">
@@ -126,9 +144,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#load()">load</a>(byteArray:ByteArray):void</div>
+<a class="signatureLink" href="#load()">load</a>(byteArrayOrClass:Object):void</div>
 <div class="summaryTableDescription">
-     Load the SWF from a Byte Array.</div>
+     Load the SWF from a ByteArray.</div>
 </td><td class="summaryTableOwnerCol">EmbeddedSwfLoader</td>
 </tr>
 </table>
@@ -184,10 +202,18 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function EmbeddedSwfLoader(useSubDomain:Boolean = false)</code><span class="label">Parameters</span>
+<code>public function EmbeddedSwfLoader(useSubDomain:Boolean = false)</code><p>
+     Create an EmbeddedSwfLoader, good for loading one SWF from a ByteArray.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">useSubDomain</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">useSubDomain</span>:Boolean</code> (default = <code>false</code>)<code></code> &mdash; if true, load the SWF and all its classes and symbols into a
+      child ApplicationDomain. This means that they would be not normally reachable by the rest
+      of your code after they're loaded, you would only be able to access the contents using
+      this EmbeddedSwfLoader. This also means that those classes or symbols won't interfere
+      with others loaded with the same name, and the classes can be garbage collected when
+      no longer in use.
+     </td>
 </tr>
 </table>
 </div>
@@ -229,8 +255,8 @@ showHideInherited();
 <span class="label">Throws</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code></code> &mdash; when the swf has not completed loading or the class does
-     not exist
+<td width="20"></td><td><code></code> &mdash; when the swf has not completed loading
+     or the class does not exist.
      </td>
 </tr>
 </table>
@@ -244,11 +270,19 @@ showHideInherited();
 <div class="detailBody">
 <code>public function getContent():DisplayObject</code><p>
      Get the top-level display object defined in the loaded SWF.
-     </p><p></p>
+          </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>DisplayObject</code></td>
+</tr>
+</table>
+<br>
+<span class="label">Throws</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code></code> &mdash; if the SWF is not yet completely loaded.
+     </td>
 </tr>
 </table>
 </div>
@@ -278,8 +312,8 @@ showHideInherited();
 <span class="label">Throws</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code></code> &mdash; when the swf has not completed loading or the class does
-     not exist
+<td width="20"></td><td><code></code> &mdash; when the swf has not completed loading
+     or the function does not exist.
      </td>
 </tr>
 </table>
@@ -310,8 +344,8 @@ showHideInherited();
 <span class="label">Throws</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code></code> &mdash; when the swf has not completed loading or the class does
-     not exist
+<td width="20"></td><td><code></code> &mdash; when the swf has not completed loading
+     or the symbol does not exist.
      </td>
 </tr>
 </table>
@@ -354,13 +388,23 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function load(byteArray:ByteArray):void</code><p>
-     Load the SWF from a Byte Array.  A CLASS_LOADED event will be dispatched on successful 
-     completion of the load.  If any errors occur, a LOAD_ERROR event will be dispatched.
-     </p><span class="label">Parameters</span>
+<code>public function load(byteArrayOrClass:Object):void</code><p>
+     Load the SWF from a ByteArray. A COMPLETE event will be dispatched on successful 
+     completion of the load. If any errors occur, a IO_ERROR event will be dispatched.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">byteArray</span>:ByteArray</code></td>
+<td width="20px"></td><td><code><span class="label">byteArrayOrClass</span>:Object</code> &mdash; a flash.utils.ByteArray or a Class object that becomes one.
+     </td>
+</tr>
+</table>
+<br>
+<span class="label">Throws</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code></code> &mdash; The parameter must be a ByteArray, or a Class that becomes one. If AS
+     had overloading, this wouldn't be necessary, we could catch these problems at compile time.
+          </td>
 </tr>
 </table>
 </div>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="OccupantChangedEvent,com.threerings.ezgame.OccupantChangedEvent,OCCUPANT_ENTERED,OCCUPANT_LEFT,_occupantId,_player,occupantId,player,toString,clone" name="keywords">
+<meta content="OccupantChangedEvent,com.threerings.ezgame.OccupantChangedEvent,OCCUPANT_ENTERED,OCCUPANT_LEFT,occupantId,player,toString,clone" name="keywords">
 <title>com.threerings.ezgame.OccupantChangedEvent</title>
 </head>
 <body>
@@ -77,36 +77,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 </div>
-<a name="protectedPropertySummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Properties</div>
-<div class="showHideLinks">
-<div class="hideInheritedProtectedProperty" id="hideInheritedProtectedProperty">
-<a onclick="javascript:setInheritedVisible(false,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Protected Properties</a>
-</div>
-<div class="showInheritedProtectedProperty" id="showInheritedProtectedProperty">
-<a onclick="javascript:setInheritedVisible(true,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Properties</a>
-</div>
-</div>
-<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EZEvent.html#_gameCtrl">_gameCtrl</a> : <a href="../ezgame/AbstractGameControl.html">AbstractGameControl</a>
-<div class="summaryTableDescription"> The game control for this event.</div>
-</td><td class="summaryTableOwnerCol"><a href="EZEvent.html">EZEvent</a></td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_occupantId">_occupantId</a> : int<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">OccupantChangedEvent</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_player">_player</a> : Boolean<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">OccupantChangedEvent</td>
-</tr>
-</table>
-</div>
 <a name="methodSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Public Methods</div>
@@ -145,11 +115,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OCCUPANT_ENTERED">OCCUPANT_ENTERED</a> : String = "OccupantEntered"<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OCCUPANT_ENTERED">OCCUPANT_ENTERED</a> : String = "OccupantEntered"<div class="summaryTableDescription">[static]
+     </div>
 </td><td class="summaryTableOwnerCol">OccupantChangedEvent</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OCCUPANT_LEFT">OCCUPANT_LEFT</a> : String = "OccupantLeft"<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OCCUPANT_LEFT">OCCUPANT_LEFT</a> : String = "OccupantLeft"<div class="summaryTableDescription">[static]
+     </div>
 </td><td class="summaryTableOwnerCol">OccupantChangedEvent</td>
 </tr>
 </table>
@@ -161,19 +133,10 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="_occupantId"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_occupantId</td><td class="detailHeaderType">property</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _occupantId:int</code>
-</div>
 <a name="occupantId"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">occupantId</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">occupantId</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -181,15 +144,6 @@ showHideInherited();
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get occupantId():int</code>
 <br>
-</div>
-<a name="_player"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_player</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _player:Boolean</code>
 </div>
 <a name="player"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -280,8 +234,8 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const OCCUPANT_ENTERED:String = "OccupantEntered"</code>
-</div>
+<code>public static const OCCUPANT_ENTERED:String = "OccupantEntered"</code><p>
+     </p></div>
 <a name="OCCUPANT_LEFT"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -289,8 +243,8 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const OCCUPANT_LEFT:String = "OccupantLeft"</code>
-</div>
+<code>public static const OCCUPANT_LEFT:String = "OccupantLeft"</code><p>
+     </p></div>
 <br>
 <br>
 <hr>

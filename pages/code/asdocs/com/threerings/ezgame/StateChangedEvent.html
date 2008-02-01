@@ -70,28 +70,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 </div>
-<a name="protectedPropertySummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Properties</div>
-<div class="showHideLinks">
-<div class="hideInheritedProtectedProperty" id="hideInheritedProtectedProperty">
-<a onclick="javascript:setInheritedVisible(false,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Protected Properties</a>
-</div>
-<div class="showInheritedProtectedProperty" id="showInheritedProtectedProperty">
-<a onclick="javascript:setInheritedVisible(true,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Properties</a>
-</div>
-</div>
-<table id="summaryTableProtectedProperty" class="summaryTable hideInheritedProtectedProperty" cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EZEvent.html#_gameCtrl">_gameCtrl</a> : <a href="../ezgame/AbstractGameControl.html">AbstractGameControl</a>
-<div class="summaryTableDescription"> The game control for this event.</div>
-</td><td class="summaryTableOwnerCol"><a href="EZEvent.html">EZEvent</a></td>
-</tr>
-</table>
-</div>
 <a name="methodSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Public Methods</div>
@@ -130,23 +108,28 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#CONTROL_CHANGED">CONTROL_CHANGED</a> : String = "ControlChanged"<div class="summaryTableDescription">[static] Indicates that a new controller has been assigned.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#CONTROL_CHANGED">CONTROL_CHANGED</a> : String = "ControlChanged"<div class="summaryTableDescription">[static]
+     Indicates that a new controller has been assigned.</div>
 </td><td class="summaryTableOwnerCol">StateChangedEvent</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#GAME_ENDED">GAME_ENDED</a> : String = "GameEnded"<div class="summaryTableDescription">[static] Indicates that the game has transitioned to a ended state.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#GAME_ENDED">GAME_ENDED</a> : String = "GameEnded"<div class="summaryTableDescription">[static]
+     Indicates that the game has transitioned to a ended state.</div>
 </td><td class="summaryTableOwnerCol">StateChangedEvent</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#GAME_STARTED">GAME_STARTED</a> : String = "GameStarted"<div class="summaryTableDescription">[static] Indicates that the game has transitioned to a started state.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#GAME_STARTED">GAME_STARTED</a> : String = "GameStarted"<div class="summaryTableDescription">[static]
+     Indicates that the game has transitioned to a started state.</div>
 </td><td class="summaryTableOwnerCol">StateChangedEvent</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ROUND_ENDED">ROUND_ENDED</a> : String = "RoundEnded"<div class="summaryTableDescription">[static] Indicates that the current round has ended.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ROUND_ENDED">ROUND_ENDED</a> : String = "RoundEnded"<div class="summaryTableDescription">[static]
+     Indicates that the current round has ended.</div>
 </td><td class="summaryTableOwnerCol">StateChangedEvent</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ROUND_STARTED">ROUND_STARTED</a> : String = "RoundStarted"<div class="summaryTableDescription">[static] Indicates that a round has started.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ROUND_STARTED">ROUND_STARTED</a> : String = "RoundStarted"<div class="summaryTableDescription">[static]
+     Indicates that a round has started.</div>
 </td><td class="summaryTableOwnerCol">StateChangedEvent</td>
 </tr>
 <tr class="">
@@ -225,7 +208,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const CONTROL_CHANGED:String = "ControlChanged"</code><p> Indicates that a new controller has been assigned. </p></div>
+<code>public static const CONTROL_CHANGED:String = "ControlChanged"</code><p>
+     Indicates that a new controller has been assigned.
+     </p></div>
 <a name="GAME_ENDED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -233,7 +218,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const GAME_ENDED:String = "GameEnded"</code><p> Indicates that the game has transitioned to a ended state. </p></div>
+<code>public static const GAME_ENDED:String = "GameEnded"</code><p>
+     Indicates that the game has transitioned to a ended state.
+     </p></div>
 <a name="GAME_STARTED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -241,7 +228,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const GAME_STARTED:String = "GameStarted"</code><p> Indicates that the game has transitioned to a started state. </p></div>
+<code>public static const GAME_STARTED:String = "GameStarted"</code><p>
+     Indicates that the game has transitioned to a started state.
+     </p></div>
 <a name="ROUND_ENDED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -249,7 +238,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const ROUND_ENDED:String = "RoundEnded"</code><p> Indicates that the current round has ended. </p></div>
+<code>public static const ROUND_ENDED:String = "RoundEnded"</code><p>
+     Indicates that the current round has ended.
+     </p></div>
 <a name="ROUND_STARTED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -257,8 +248,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const ROUND_STARTED:String = "RoundStarted"</code><p> Indicates that a round has started. Games that do not require multiple rounds can ignore
-     this event. </p></div>
+<code>public static const ROUND_STARTED:String = "RoundStarted"</code><p>
+     Indicates that a round has started. Games that do not require multiple rounds can ignore
+     this event.
+     </p></div>
 <a name="TURN_CHANGED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -266,7 +259,8 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const TURN_CHANGED:String = "TurnChanged"</code><p> Indicates that the turn has changed. </p></div>
+<code>public static const TURN_CHANGED:String = "TurnChanged"</code><p> Indicates that the turn has changed.
+     </p></div>
 <br>
 <br>
 <hr>

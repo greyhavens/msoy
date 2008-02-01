@@ -71,37 +71,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 </div>
-<a name="protectedPropertySummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Properties</div>
-<div class="showHideLinks">
-<div class="hideInheritedProtectedProperty" id="hideInheritedProtectedProperty">
-<a onclick="javascript:setInheritedVisible(false,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Protected Properties</a>
-</div>
-<div class="showInheritedProtectedProperty" id="showInheritedProtectedProperty">
-<a onclick="javascript:setInheritedVisible(true,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Properties</a>
-</div>
-</div>
-<table id="summaryTableProtectedProperty" class="summaryTable hideInheritedProtectedProperty" cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../threerings/ezgame/EZGameSubControl.html#_gameConfig">_gameConfig</a> : Object<div class="summaryTableDescription"> Contains any custom game configuration data.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../threerings/ezgame/AbstractSubControl.html#_parent">_parent</a> : <a href="../threerings/ezgame/AbstractControl.html">AbstractControl</a>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/AbstractSubControl.html">AbstractSubControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../threerings/ezgame/EZGameSubControl.html#_seatingCtrl">_seatingCtrl</a> : <a href="../threerings/ezgame/EZSeatingSubControl.html">EZSeatingSubControl</a>
-<div class="summaryTableDescription"> The seating sub-control.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
-</tr>
-</table>
-</div>
 <a name="methodSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Public Methods</div>
@@ -135,24 +104,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/AbstractControl.html#callHostCodeFriend()">callHostCodeFriend</a>(name:String, args:Array):*</div>
-<div class="summaryTableDescription">
-     Exposed to sub controls.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/AbstractControl.html">AbstractControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/AbstractControl.html#dispatchEvent()">dispatchEvent</a>(event:Event):Boolean</div>
-<div class="summaryTableDescription">
-     Your own events may not be dispatched here.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/AbstractControl.html">AbstractControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="../threerings/ezgame/AbstractSubControl.html#doBatch()">doBatch</a>(fn:Function):void</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Execute the specified function as a batch of commands that will be sent to the server
+     together.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/AbstractSubControl.html">AbstractSubControl</a></td>
 </tr>
 <tr class="">
@@ -280,7 +235,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameSubControl.html#getTurnHolder()">getTurnHolder</a>():int</div>
+<a class="signatureLink" href="../threerings/ezgame/EZGameSubControl.html#getTurnHolderId()">getTurnHolderId</a>():int</div>
 <div class="summaryTableDescription">
      Returns the player id of the current turn holder, or 0 if it's nobody's turn.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
@@ -289,7 +244,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="../threerings/ezgame/AbstractSubControl.html#isConnected()">isConnected</a>():Boolean</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Are we connected and running inside the game environment, or has someone just
+     loaded up our SWF by itself?
+     </div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/AbstractSubControl.html">AbstractSubControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -321,24 +279,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/AbstractSubControl.html#populatePropertiesFriend()">populatePropertiesFriend</a>(o:Object):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/AbstractSubControl.html">AbstractSubControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="../threerings/ezgame/EZGameSubControl.html#restartGameIn()">restartGameIn</a>(seconds:int):void</div>
 <div class="summaryTableDescription">
      Requests to start the game again in the specified number of seconds.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/AbstractSubControl.html#setHostPropsFriend()">setHostPropsFriend</a>(o:Object):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/AbstractSubControl.html">AbstractSubControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -355,69 +299,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"> 
      Send a system chat message that will be seen by everyone in the game room,
      even observers.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
-</tr>
-</table>
-</div>
-<a name="protectedMethodSummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Methods</div>
-<div class="showHideLinks">
-<div class="hideInheritedProtectedMethod" id="hideInheritedProtectedMethod">
-<a onclick="javascript:setInheritedVisible(false,'ProtectedMethod');" href="#protectedMethodSummary" class="showHideLink"><img src="../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Protected Methods</a>
-</div>
-<div class="showInheritedProtectedMethod" id="showInheritedProtectedMethod">
-<a onclick="javascript:setInheritedVisible(true,'ProtectedMethod');" href="#protectedMethodSummary" class="showHideLink"><img src="../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Methods</a>
-</div>
-</div>
-<table id="summaryTableProtectedMethod" class="summaryTable hideInheritedProtectedMethod" cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/AbstractSubControl.html#callHostCode()">callHostCode</a>(name:String, ... args):*</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/AbstractSubControl.html">AbstractSubControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/AbstractControl.html#checkIsConnected()">checkIsConnected</a>():void</div>
-<div class="summaryTableDescription">
-     Helper method to throw an error if we're not connected.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/AbstractControl.html">AbstractControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameSubControl.html#createSeatingControl()">createSeatingControl</a>():<a href="../threerings/ezgame/EZSeatingSubControl.html">EZSeatingSubControl</a>
-</div>
-<div class="summaryTableDescription">
-     Create the 'seating' subcontrol.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/AbstractControl.html#dispatch()">dispatch</a>(event:Event):void</div>
-<div class="summaryTableDescription">
-     Secret function to dispatch property changed events.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/AbstractControl.html">AbstractControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameSubControl.html#populateProperties()">populateProperties</a>(o:Object):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameSubControl.html#setHostProps()">setHostProps</a>(o:Object):void</div>
-<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
 </tr>
 </table>
