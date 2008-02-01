@@ -50,8 +50,6 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.person.util.FeedMessageType;
-
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
@@ -755,8 +753,8 @@ public class RoomManager extends SpotSceneManager
             resolveMemories(newIdents);
         }
 
-        // mark this room change in the member's feed
-        publishMemberUpdate(user.getMemberId());
+        // let the registry know that rooms be gettin' updated
+        ((MsoySceneRegistry)MsoyServer.screg).memberUpdatedRoom(user, (MsoyScene)_scene);
     }
 
     /**
@@ -947,26 +945,6 @@ public class RoomManager extends SpotSceneManager
                 }
             });
         }
-    }
-
-    /**
-     * Publishes to the room owner's feed that they've updated the room.
-     */
-    protected void publishMemberUpdate (final int memberId)
-    {
-        MsoyServer.invoker.postUnit(new Invoker.Unit() {
-            public boolean invoke () {
-                try {
-                    MsoyServer.feedRepo.publishMemberMessage(memberId,
-                            FeedMessageType.FRIEND_UPDATED_ROOM,
-                            String.valueOf(_scene.getId()) + "\t" + _scene.getName());
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to publish feed [where=" + where() +
-                            ", memberId=" + memberId + "].", pe);
-                }
-                return false;
-            }
-        });
     }
 
     /** Listens to the room. */

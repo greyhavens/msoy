@@ -307,7 +307,7 @@ public class MsoyServer extends MsoyBaseServer
     protected SceneRegistry createSceneRegistry ()
         throws Exception
     {
-        return new MsoySceneRegistry(invmgr, sceneRepo = new MsoySceneRepository(perCtx));
+        return new MsoySceneRegistry(invmgr, sceneRepo = new MsoySceneRepository(perCtx), _eventLog);
     }
 
     @Override // from CrowdServer

@@ -130,6 +130,12 @@ public class MsoyEvents
         public String inviteId;
     }
 
+    public static class RoomUpdated extends MsoyEvent
+    {
+        public int memberId;
+        public int sceneId;
+    }
+
     protected static class MsoyEvent extends BaseEvent
         implements Serializable
     {

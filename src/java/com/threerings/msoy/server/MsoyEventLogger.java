@@ -220,6 +220,14 @@ public class MsoyEventLogger
         post(message);
     }
 
+    public void roomUpdated (int memberId, int sceneId)
+    {
+        MsoyEvents.RoomUpdated message = new MsoyEvents.RoomUpdated();
+        message.memberId = memberId;
+        message.sceneId = sceneId;
+        post(message);
+    }
+
     /** Posts a log message to the appropriate place. */
     protected void post (Event message)
     {

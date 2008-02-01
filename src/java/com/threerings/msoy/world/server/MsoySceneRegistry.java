@@ -5,6 +5,8 @@ package com.threerings.msoy.world.server;
 
 import java.util.logging.Level;
 
+import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.data.ClientObject;
@@ -19,9 +21,11 @@ import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -35,12 +39,37 @@ import static com.threerings.msoy.Log.log;
 public class MsoySceneRegistry extends SceneRegistry
     implements MsoySceneProvider
 {
-    public MsoySceneRegistry (InvocationManager invmgr, SceneRepository screp)
+    public MsoySceneRegistry (InvocationManager invmgr, SceneRepository screp,
+                              MsoyEventLogger eventLogger)
     {
         super(invmgr, screp, new MsoySceneFactory(), new MsoySceneFactory());
+        _eventLogger = eventLogger;
 
         // register our extra scene service
         invmgr.registerDispatcher(new MsoySceneDispatcher(this), SceneCodes.WHIRLED_GROUP);
+    }
+
+    /**
+     * Called by the RoomManager a member updates a room.
+     */
+    public void memberUpdatedRoom (final MemberObject user, final MsoyScene scene)
+    {
+        // publish to this member's feed that they updated their room
+        final int memId = user.getMemberId();
+        String uname = "publishRoomUpdate[id=" + memId + ", scid=" + scene.getId() + "]";
+        MsoyServer.invoker.postUnit(new RepositoryUnit(uname) {
+            public void invokePersist () throws PersistenceException {
+                MsoyServer.feedRepo.publishMemberMessage(
+                    memId, FeedMessageType.FRIEND_UPDATED_ROOM,
+                    String.valueOf(scene.getId()) + "\t" + scene.getName());
+            }
+            public void handleSuccess () {
+                // nada
+            }
+        });
+
+        // record this edit to the grindy log
+        _eventLogger.roomUpdated(memId, scene.getId());
     }
 
     // from interface MsoySceneProvider
@@ -143,4 +172,6 @@ public class MsoySceneRegistry extends SceneRegistry
         // forward this client's member object to the node to which they will shortly connect
         MsoyServer.peerMan.forwardMemberObject(nodeName, memobj);
     }
+
+    protected MsoyEventLogger _eventLogger;
 }
