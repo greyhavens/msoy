@@ -135,12 +135,13 @@ public class MsoyPeerManager extends CrowdPeerManager
      * Returns the node name of the peer that is hosting the specified scene, or null if no peer
      * has published that they are hosting the scene.
      */
-    public String getSceneHost (final int sceneId)
+    public Tuple<String, HostedRoom> getSceneHost (final int sceneId)
     {
-        return lookupNodeDatum(new Lookup<String>() {
-            public String lookup (NodeObject nodeobj) {
+        return lookupNodeDatum(new Lookup<Tuple<String, HostedRoom>>() {
+            public Tuple<String, HostedRoom> lookup (NodeObject nodeobj) {
                 HostedRoom info = ((MsoyNodeObject)nodeobj).hostedScenes.get(sceneId);
-                return (info == null) ? null : nodeobj.nodeName;
+                return (info == null) ? null : 
+                    new Tuple<String, HostedRoom>(nodeobj.nodeName, info);
             }
         });
     }
@@ -208,10 +209,11 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Called by the RoomManager when it is hosting a scene.
      */
-    public void roomDidStartup (int sceneId, String name, byte accessControl)
+    public void roomDidStartup (int sceneId, String name, int ownerId, byte ownerType, 
+        byte accessControl)
     {
         log.info("Hosting scene [id=" + sceneId + ", name=" + name + "].");
-        _mnobj.addToHostedScenes(new HostedRoom(sceneId, name, accessControl));
+        _mnobj.addToHostedScenes(new HostedRoom(sceneId, name, ownerId, ownerType, accessControl));
         // release our lock on this scene now that it is resolved and we are hosting it
         releaseLock(getSceneLock(sceneId), new ResultListener.NOOP<String>());
     }
@@ -228,9 +230,10 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Called by the RoomManager when information pertinant to the HostedRoom has been updated.
      */
-    public void roomUpdated (int sceneId, String name, byte accessControl)
+    public void roomUpdated (int sceneId, String name, int ownerId, byte ownerType, 
+        byte accessControl)
     {
-        _mnobj.updateHostedScenes(new HostedRoom(sceneId, name, accessControl));
+        _mnobj.updateHostedScenes(new HostedRoom(sceneId, name, ownerId, ownerType, accessControl));
     }
 
     /**

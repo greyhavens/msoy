@@ -8,6 +8,12 @@ package com.threerings.msoy.peer.data;
  */
 public class HostedRoom extends HostedPlace
 {
+    /** Room owner id, used for access control. */
+    public int ownerId;
+
+    /** Owner type used for access control. */
+    public byte ownerType;
+
     /** Access control information. See {@link MsoySceneModel}. */
     public byte accessControl;
 
@@ -21,9 +27,11 @@ public class HostedRoom extends HostedPlace
     /**
      * Creates a hosted game record.
      */
-    public HostedRoom (int placeId, String name, byte accessControl)
+    public HostedRoom (int placeId, String name, int ownerId, byte ownerType, byte accessControl)
     {
         super(placeId, name);
+        this.ownerId = ownerId;
+        this.ownerType = ownerType;
         this.accessControl = accessControl;
     }
 }

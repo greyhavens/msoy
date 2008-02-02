@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.Tuple;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -24,6 +25,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.util.FeedMessageType;
 
@@ -109,19 +111,34 @@ public class MsoySceneRegistry extends SceneRegistry
         }
 
         // now check to see if the destination scene is already hosted on a server
-        String nodeName = MsoyServer.peerMan.getSceneHost(sceneId);
+        Tuple<String, HostedRoom> nodeInfo = MsoyServer.peerMan.getSceneHost(sceneId);
 
         // if it's hosted on this server, then send the client directly to the scene
-        if (MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeName)) {
+        if (nodeInfo != null && MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeInfo.left)) {
             log.info("Going directly to resolved local scene " + sceneId + ".");
             resolveScene(sceneId, new MsoySceneMoveHandler(memobj, version, destLoc, listener));
             return;
         }
 
         // if it's hosted on another server; send the client to that server
-        if (nodeName != null) {
-            log.info("Going directly to remote node " + sceneId + "@" + nodeName + ".");
-            sendClientToNode(nodeName, memobj, listener);
+        if (nodeInfo != null) {
+            // first check access control on the remote scene
+            HostedRoom room = nodeInfo.right;
+            boolean hasRights = memobj.canEnterScene(room.ownerId, room.ownerType, 
+                                                     room.accessControl);
+            if (!hasRights && memobj.tokens.isSupport()) {
+                log.info("Allowing support+ to enter scene which they otherwise couldn't enter " +
+                    "[sceneId=" + sceneId + ", ownerId=" + room.ownerId + ", ownerType" + 
+                    room.ownerType + ", accessControl=" + room.accessControl + "].");
+                hasRights = true;
+            }
+
+            if (hasRights) {
+                log.info("Going to remote node " + sceneId + "@" + nodeInfo.left + ".");
+                sendClientToNode(nodeInfo.left, memobj, listener);
+            } else {
+                listener.requestFailed(RoomCodes.E_ENTRANCE_DENIED);
+            }
             return;
         }
 

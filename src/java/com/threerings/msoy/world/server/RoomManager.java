@@ -555,8 +555,9 @@ public class RoomManager extends SpotSceneManager
         _roomObj.addListener(_roomListener);
 
         // register ourselves in our peer object
-        MsoyServer.peerMan.roomDidStartup(_scene.getId(), _scene.getName(),
-                                          ((MsoyScene) _scene).getAccessControl());
+        MsoyScene mscene = (MsoyScene) _scene;
+        MsoyServer.peerMan.roomDidStartup(mscene.getId(), mscene.getName(), mscene.getId(), 
+                                          mscene.getOwnerType(), mscene.getAccessControl());
 
         // determine which (if any) items in this room have memories and load them up
         ArrayList<ItemIdent> memoryIds = new ArrayList<ItemIdent>();
@@ -677,8 +678,9 @@ public class RoomManager extends SpotSceneManager
                 // if the name or access controls were modified, we need to update our HostedPlace
                 if (msoyScene.getAccessControl() != up.accessControl ||
                     !msoyScene.getName().equals(up.name)) {
-                    MsoyServer.peerMan.roomUpdated(_scene.getId(), up.name,
-                                                  up.accessControl);
+                    MsoyServer.peerMan.roomUpdated(msoyScene.getId(), up.name, 
+                                                   msoyScene.getOwnerId(), msoyScene.getOwnerType(),
+                                                   up.accessControl);
                 }
             }
 

@@ -156,7 +156,8 @@ public class ChatChannelManager
                         MsoySceneModel model = 
                             (MsoySceneModel) MsoyServer.sceneRepo.loadSceneModel(sceneId);
                         if (model != null) {
-                            _hasRights = model.canEnter(member);
+                            _hasRights = member.canEnterScene(model.ownerId, model.ownerType, 
+                                                              model.accessControl);
                         }
                     }
                     public void handleSuccess () {

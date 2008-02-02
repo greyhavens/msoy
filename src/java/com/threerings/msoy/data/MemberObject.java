@@ -18,6 +18,7 @@ import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.world.data.MemberInfo;
+import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.ObserverInfo;
 import com.threerings.msoy.world.data.RoomObject;
 
@@ -344,6 +345,44 @@ public class MemberObject extends MsoyBodyObject
     {
         setMemberName(new VizMemberName(displayName, getMemberId(), memberName.getPhoto()));
     }
+
+    /**
+     * Can this member enter the specified scene?
+     */
+    public boolean canEnterScene (int ownerId, byte ownerType, byte accessControl)
+    {
+        boolean hasRights = false;
+
+        if (ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+            switch (accessControl) {
+            case MsoySceneModel.ACCESS_EVERYONE:
+                hasRights = true;
+                break;
+            case MsoySceneModel.ACCESS_OWNER_ONLY:
+                hasRights = isGroupManager(ownerId);
+                break;
+            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
+                hasRights = isGroupMember(ownerId);
+                break;
+            }
+
+        } else {
+            switch (accessControl) {
+            case MsoySceneModel.ACCESS_EVERYONE:
+                hasRights = true;
+                break;
+            case MsoySceneModel.ACCESS_OWNER_ONLY:
+                hasRights = (getMemberId() == ownerId);
+                break;
+            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
+                hasRights = (getMemberId() == ownerId) || isFriend(ownerId);
+                break;
+            }
+        }
+
+        return hasRights;
+    }
+
 
     // from interface MsoyUserObject
     public MemberName getMemberName ()

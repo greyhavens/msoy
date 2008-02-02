@@ -160,43 +160,6 @@ public class MsoySceneModel extends SceneModel
     }
 
     /**
-     * Can the specified member enter the scene?
-     */
-    public boolean canEnter (MemberObject member)
-    {
-        boolean hasRights = false;
-
-        if (ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-            switch (accessControl) {
-            case MsoySceneModel.ACCESS_EVERYONE:
-                hasRights = true;
-                break;
-            case MsoySceneModel.ACCESS_OWNER_ONLY:
-                hasRights = member.isGroupManager(ownerId);
-                break;
-            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
-                hasRights = member.isGroupMember(ownerId);
-                break;
-            }
-
-        } else {
-            switch (accessControl) {
-            case MsoySceneModel.ACCESS_EVERYONE:
-                hasRights = true;
-                break;
-            case MsoySceneModel.ACCESS_OWNER_ONLY:
-                hasRights = (member.getMemberId() == ownerId);
-                break;
-            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
-                hasRights = (member.getMemberId() == ownerId) || member.isFriend(ownerId);
-                break;
-            }
-        }
-
-        return hasRights;
-    }
-
-    /**
      * Invalidate our portal info if the specified piece of furniture is a portal.
      */
     protected void invalidatePortalInfo (FurniData changedFurni)

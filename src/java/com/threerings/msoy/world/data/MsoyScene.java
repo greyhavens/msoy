@@ -64,7 +64,8 @@ public class MsoyScene extends SceneImpl
      */
     public boolean canEnter (MemberObject member)
     {
-        boolean hasRights = _model.canEnter(member);
+        boolean hasRights = member.canEnterScene(_model.ownerId, _model.ownerType, 
+                                                 _model.accessControl);
 
         if (! hasRights && member.tokens.isSupport()) {
             log.info("Allowing support+ to enter scene which they otherwise couldn't enter " +
@@ -74,6 +75,22 @@ public class MsoyScene extends SceneImpl
         }
 
         return hasRights;
+    }
+
+    /** 
+     * Returns the owner id for the scene.
+     */
+    public int getOwnerId ()
+    {
+        return _model.ownerId;
+    }
+
+    /** 
+     * Returns the owner type for the scene.
+     */
+    public byte getOwnerType ()
+    {
+        return _model.ownerType;
     }
 
     /**
