@@ -12,8 +12,6 @@ import com.samskivert.util.ListUtil;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.spot.data.Portal;
 
-import com.threerings.msoy.data.MemberObject;
-
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
