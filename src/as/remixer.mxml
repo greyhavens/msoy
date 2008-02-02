@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    layout="absolute" styleName="plain"
+    verticalScrollPolicy="off" horizontalScrollPolicy="off"
+    width="100%" height="100%"
+    applicationComplete="addChild(new RemixControls(this));">
+<mx:Style source="msoy.css"/>
+<mx:Script>
+    <![CDATA[
+        import com.threerings.msoy.applets.remixer.RemixControls;
+    ]]>
+</mx:Script>
+</mx:Application>

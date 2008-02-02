@@ -99,7 +99,8 @@ public class ItemRemixer extends FlexTable
             "server=" + URL.encodeComponent(serverURL) + "&" +
             "mediaId=" + URL.encodeComponent(Item.MAIN_MEDIA) + "&" +
             "auth=" + URL.encodeComponent(CShell.ident.token);
-        return WidgetUtil.createFlashContainer("remixControls", "/media/Remixer.swf",
+        return WidgetUtil.createFlashContainer("remixControls",
+            "/clients/" + DeploymentConfig.version + "/remixer-client.swf",
             540, 450, flashVars);
     }
 

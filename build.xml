@@ -504,18 +504,8 @@
     <copy file="${deploy.dir}/MediaStub.swf" todir="pages/media"/>
   </target>
 
-  <!-- builds the remixer -->
-  <target name="remixer" depends="asprepare,aslib">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
-      <arg value="-load-config"/>
-      <arg value="etc/msoy-config.xml"/>
-      <arg value="-compiler.source-path=${asrc.dir}/"/>
-      <arg value="-output"/>
-      <arg value="${deploy.dir}/Remixer.swf"/>
-      <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/com/threerings/msoy/applets/remixer/Remixer.as"/>
-    </exec>
-    <copy file="${deploy.dir}/Remixer.swf" todir="pages/media"/>
+  <target name="remixer" depends="asprepare,aslib" description="Rebuilds the Flash game client.">
+    <antcall target="asquick"><param name="astype" value="remixer"/></antcall>
   </target>
 
   <!-- builds our avatar viewer thingy -->
@@ -957,7 +947,7 @@
     <ant dir="projects/mchooser" target="distclean" inheritAll="false"/>
     <delete file="pages/media/static/game/tutorial.swf"/>
     <delete file="pages/media/MediaStub.swf"/>
-    <delete file="pages/media/Remixer.swf"/>
+    <delete file="pages/media/Remixer.swf"/> <!-- temp -->
     <for list="${gmsgs.list}" param="which"><sequential>
       <propertyregex property="file" input="@{which}" regexp="\." replace="/"/>
       <delete file="${gsrc.dir}/client/${file}Messages.java"/>
