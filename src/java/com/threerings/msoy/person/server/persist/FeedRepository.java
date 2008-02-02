@@ -47,7 +47,7 @@ public class FeedRepository extends DepotRepository
     /**
      * Loads all applicable feed messages for the specified member.
      *
-     * @param a timestamp before which not to load messages or null if all available messages
+     * @param since a timestamp before which not to load messages or null if all available messages
      * should be loaded.
      */
     public List<FeedMessageRecord> loadMemberFeed (
@@ -56,18 +56,34 @@ public class FeedRepository extends DepotRepository
     {
         List<FeedMessageRecord> messages = Lists.newArrayList();
         loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, since);
-        SQLOperator actors = null;
         if (!friendIds.isEmpty()) {
+            SQLOperator actors = null;
             actors = new Conditionals.In(FriendFeedMessageRecord.ACTOR_ID_C, friendIds);
+            loadFeedMessages(messages, FriendFeedMessageRecord.class, actors, since);
         }
-        loadFeedMessages(messages, FriendFeedMessageRecord.class, actors, since);
-        SQLOperator groups = null;
         if (!groupIds.isEmpty()) {
+            SQLOperator groups = null;
             groups = new Conditionals.In(GroupFeedMessageRecord.GROUP_ID_C, groupIds);
+            loadFeedMessages(messages, GroupFeedMessageRecord.class, groups, since);
         }
-        loadFeedMessages(messages, GroupFeedMessageRecord.class, groups, since);
         return messages;
     }
+
+    /**
+     * Loads all applicable feed messages by the specified member.
+     *
+     * @param since a timestamp before which not to load messages of null if lal available messages
+     * should be loaded.
+     */
+    public List <FeedMessageRecord> loadPersonalFeed (int memberId, Timestamp since)
+        throws PersistenceException
+    {
+        List<FeedMessageRecord> messages = Lists.newArrayList();
+        SQLOperator actor = new Conditionals.Equals(FriendFeedMessageRecord.ACTOR_ID_C, memberId);
+        loadFeedMessages(messages, FriendFeedMessageRecord.class, actor, since);
+        return messages;
+    }
+
 
     /**
      * Publishes a global message which will show up in all users' feeds. Note: global messages are
