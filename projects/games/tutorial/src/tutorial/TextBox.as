@@ -123,7 +123,9 @@ public class TextBox extends Sprite
             _buttons.removeChildAt(0);
         }
 
-        _boxClip.gotoAndPlay(1, SCN_TEXTBOX_GROW);
+        _boxHandler.gotoScene(SCN_TEXTBOX_GROW, function () :void {
+                _boxClip.stop();
+        });
 
         replaceTimer(function () :void {
             _fadeIn.startAnimation();
@@ -215,10 +217,14 @@ public class TextBox extends Sprite
 
         this.addChild(_foreground);
 
+        _boxHandler = new ClipHandler(_boxClip);
+
         _fadeIn = new AlphaFade(_foreground, 0, 1, 300);
         _fadeOut = new AlphaFade(_foreground, 1, 0, 300, function () :void {
             _foreground.visible = false;
-            _boxClip.gotoAndPlay(1, SCN_TEXTBOX_SHRINK);
+            _boxHandler.gotoScene(SCN_TEXTBOX_SHRINK, function () :void {
+                    _boxClip.stop();
+            });
         });
 
         _done();
@@ -262,6 +268,8 @@ public class TextBox extends Sprite
 
     protected var _done :Function;
     protected var _boxClip :MovieClip;
+    protected var _boxHandler :ClipHandler;
+
     protected var _boxWidth :Number;
     protected var _boxHeight :Number;
 
