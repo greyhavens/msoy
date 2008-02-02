@@ -5,7 +5,10 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 import flash.events.ErrorEvent;
+import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
+import flash.events.ProgressEvent;
+import flash.events.SecurityErrorEvent;
 
 import flash.external.ExternalInterface;
 
@@ -125,17 +128,38 @@ public class Remixer extends Sprite
     {
         var uploader :MediaUploader = new MediaUploader(_params["server"], _params["auth"]);
         uploader.addEventListener(Event.COMPLETE, handleUploadComplete);
+        uploader.addEventListener(ProgressEvent.PROGRESS, handleUploadProgress);
+        uploader.addEventListener(IOErrorEvent.IO_ERROR, handleUploadError);
+        uploader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleUploadError);
         uploader.upload(_params["mediaId"], "datapack.zip", _pack.serialize());
     }
 
-    protected function handleUploadComplete (event :ValueEvent) :void
+    protected function handleUploadProgress (event :ProgressEvent) :void
     {
-        var result :Object = event.value;
+        // TODO
+        // unfortunately, it seems that the uploader doesn't show upload progress, only
+        // the progress of downloading the data back from the server.
+
+        //trace(":: progress " + (event.bytesLoaded * 100 / event.bytesTotal).toPrecision(3));
+    }
+
+    protected function handleUploadComplete (event :Event) :void
+    {
+        var uploader :MediaUploader = event.target as MediaUploader;
+
+        var result :Object = uploader.getResult();
+        trace("Got result: " + result);
 
         if (ExternalInterface.available) {
             ExternalInterface.call("setHash", result.mediaId, result.hash, result.mimeType,
                 result.constraint, result.width, result.height);
         }
+    }
+
+    protected function handleUploadError (event :ErrorEvent) :void
+    {
+        // TODO
+        trace("Oh noes! : " + event.text);
     }
 
     protected var _pack :EditableDataPack;

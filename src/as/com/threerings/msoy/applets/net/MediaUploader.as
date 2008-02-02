@@ -7,6 +7,10 @@ import flash.errors.IllegalOperationError;
 
 import flash.events.Event;
 import flash.events.EventDispatcher;
+import flash.events.HTTPStatusEvent;
+import flash.events.IOErrorEvent;
+import flash.events.ProgressEvent;
+import flash.events.SecurityErrorEvent;
 
 import flash.net.URLLoader;
 import flash.net.URLRequest;
@@ -14,15 +18,46 @@ import flash.net.URLRequestMethod;
 
 import flash.utils.ByteArray;
 
-import com.threerings.util.StringUtil;
-import com.threerings.util.ValueEvent;
-
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
+ * @eventType flash.events.Event.COMPLETE
+ */
+[Event(name="complete", type="flash.events.Event")]
+
+/**
+ * @eventType flash.events.HTTPStatusEvent.HTTP_STATUS
+ */
+[Event(name="httpStatus", type="flash.events.HTTPStatusEvent")]
+
+/**
+ * @eventType flash.events.IOErrorEvent.IO_ERROR
+ */
+[Event(name="ioError", type="flash.events.IOErrorEvent")]
+
+/**
+ * @eventType flash.events.Event.OPEN
+ */
+[Event(name="open", type="flash.events.Event")]
+
+/**
+ * @eventType flash.events.ProgressEvent.PROGRESS
+ */
+[Event(name="progress", type="flash.events.ProgressEvent")]
+
+/**
+ * @eventType flash.events.SecurityErrorEvent.SECURITY_ERROR
+ */
+[Event(name="securityError", type="flash.events.SecurityErrorEvent")]
+
+/**
+ * Uploads media to whirled from flash.
  */
 public class MediaUploader extends EventDispatcher
 {
+    /**
+     * Create a new media uploader.
+     */
     public function MediaUploader (serverURL :String, authToken :String)
     {
         _serverURL = serverURL;
@@ -31,6 +66,11 @@ public class MediaUploader extends EventDispatcher
 
     /**
      * Upload the specified media to the server.
+     *
+     * @param mediaId the Item media identifier: "main", "furni", "thumb"...
+     * @param filename the target filename of the bytes.
+     * @param media the raw media bytes. You may safely modify the bytes after starting
+     *              the upload.
      *
      * @throws IllegalOperationError if this uploader has already been used to upload.
      */
@@ -60,22 +100,51 @@ public class MediaUploader extends EventDispatcher
         request.data = body;
 
         _loader = new URLLoader();
-        _loader.addEventListener(Event.COMPLETE, handleComplete);
-        // TODO: error handling
+        // we dispatch all the loader's events as our own
+        for each (var eventType :String in [
+                Event.COMPLETE, HTTPStatusEvent.HTTP_STATUS, IOErrorEvent.IO_ERROR,
+                Event.OPEN, ProgressEvent.PROGRESS, SecurityErrorEvent.SECURITY_ERROR ]) {
+            _loader.addEventListener(eventType, dispatchEvent);
+        }
         _loader.load(request);
     }
 
-    protected function handleComplete (event :Event) :void
+    /**
+     * Close any current upload operation, if any, and prepare the uploader for re-use.
+     */
+    public function close () :void
     {
+        if (_loader != null) {
+            try {
+                _loader.close();
+            } catch (err :Error) {
+                // ignore
+            }
+            _loader = null;
+        }
+    }
+
+    /**
+     * Return the result of the upload, as an Object containing the following properties:
+     * {
+     *    mediaId: String ("main", "furni", "thumb" ...)
+     *    hash: String (MediaDesc hash)
+     *    mimeType: int (MediaDesc mimeType)
+     *    constraint: int (MediaDesc constraint)
+     *    width: int
+     *    height: int
+     * }
+     */
+    public function getResult () :Object
+    {
+        if (_loader == null || _loader.data == null) {
+            throw new IllegalOperationError("Uploader has not yet completed the upload.");
+        }
+
         var data :String = _loader.data as String;
         var bits :Array = data.split(" ");
 
-        var desc :MediaDesc = new MediaDesc();
-        desc.hash = MediaDesc.stringToHash(bits[1]);
-        desc.mimeType = parseInt(bits[2]);
-        desc.constraint = parseInt(bits[3]);
-
-        var result :Object = {
+        return {
             mediaId: bits[0],
             hash: bits[1],
             mimeType: parseInt(bits[2]),
@@ -83,8 +152,6 @@ public class MediaUploader extends EventDispatcher
             width: parseInt(bits[4]),
             height: parseInt(bits[5])
         };
-
-        dispatchEvent(new ValueEvent(Event.COMPLETE, result));
     }
 
     protected var _serverURL :String;
