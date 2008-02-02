@@ -349,7 +349,9 @@ public class WorldController extends MsoyController
      */
     public function handleGoScene (sceneId :int) :void
     {
-        if (!displayPageGWT("world", "s" + sceneId)) {
+        // TEMP: we are a guest and guests cannot currently go to scenes via URLs so we need to do
+        // this for now to support guests moving around once they come in via an invite
+        if (_wctx.getMemberObject().isGuest() || !displayPageGWT("world", "s" + sceneId)) {
             // fall back to breaking the back button
             _wctx.getSceneDirector().moveTo(sceneId);
         }
