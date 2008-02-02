@@ -218,8 +218,14 @@ public class MsoySceneDirector extends SceneDirector
         }
 
         // we're a guest and don't have a home! just go to the generic public area.
+        log.info("Scene locked, am guest, have no home, going to common scene.");
         var commonAreaId :int = 1; // = SceneRecord.PUBLIC_ROOM.getSceneId()
-        ctrl.handleGoScene(commonAreaId);
+        // TEMP: we are a guest and guests cannot currently go to scenes via URLs but we want to
+        // properly fall back to Brave New Whirled if someone with a locked room invites their
+        // friend to join Whirled and we fail to put the guest in the friend's room; so we go
+        // directly to scene 1 instead of routing it through GWT
+        _wctx.getSceneDirector().moveTo(commonAreaId);
+        // ctrl.handleGoScene(commonAreaId);
     }
 
     protected function memberMessageReceived (event :MessageEvent) :void
