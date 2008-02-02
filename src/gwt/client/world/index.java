@@ -287,6 +287,9 @@ public class index extends Page
     {
         if (invite == null) {
             setContent(MsoyUI.createLabel(CWorld.msgs.inviteMissing(), "infoLabel"));
+        } else if (invite.inviter == null) {
+            // go to Brave New Whirled's group room if we were invited anonymously
+            WorldClient.displayFlash("groupHome=19&invite=" + invite.inviteId);
         } else {
             WorldClient.displayFlash(
                 "memberHome=" + invite.inviter.getMemberId() + "&invite=" + invite.inviteId);

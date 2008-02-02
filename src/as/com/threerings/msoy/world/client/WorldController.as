@@ -583,6 +583,7 @@ public class WorldController extends MsoyController
         } else if (null != params["groupHome"]) {
             _sceneIdString = null;
             handleGoGroupHome(int(params["groupHome"]), true);
+            updateInviteOverlay(params["invite"], 0);
 
         } else if (null != params["memberScene"]) {
             _sceneIdString = null;

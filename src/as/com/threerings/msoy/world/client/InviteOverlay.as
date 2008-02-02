@@ -3,10 +3,11 @@
 
 package com.threerings.msoy.world.client {
 
-import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.text.TextField;
 import flash.events.MouseEvent;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 
@@ -20,7 +21,7 @@ public class InviteOverlay extends Sprite
         _inviteId = inviteId;
         _inviterId = inviterId;
 
-        var dialog :DisplayObject = (new JOIN_DIALOG() as DisplayObject);
+        var dialog :Sprite = (new JOIN_DIALOG() as Sprite);
         addChild(dialog);
 
         // position ourselves in the upper right
@@ -28,6 +29,14 @@ public class InviteOverlay extends Sprite
         y = dialog.height/2 + 5;
 
         dialog.addEventListener(MouseEvent.MOUSE_DOWN, mousePressed);
+
+        // if we were invited anonymously change our text
+        if (inviterId == 0) {
+            var text :TextField = dialog.getChildByName("where") as TextField;
+            if (text != null) {
+                text.text = Msgs.GENERAL.get("m.invite_sans_friend");
+            }
+        }
 
         // TODO: if we move around, change our text to reflect whether or not we're in our friend's
         // room
