@@ -119,7 +119,7 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         // if we are responding to an invitation, wire that all up
-        if (invite != null) {
+        if (invite != null && invite.inviterId != 0) {
             try {
                 MsoyServer.memberRepo.linkInvite(inviteId, newAccount);
             } catch (PersistenceException pe) {
@@ -130,8 +130,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
             MemberNameRecord invname;
             try {
-                invname = (invite.inviterId == 0) ? null :
-                    MsoyServer.memberRepo.loadMemberName(invite.inviterId);
+                invname = MsoyServer.memberRepo.loadMemberName(invite.inviterId);
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "Failed to lookup inviter name [inviteId=" + inviteId +
                         ", memberId=" + invite.inviterId + "]", pe);
