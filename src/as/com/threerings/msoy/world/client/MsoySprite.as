@@ -382,9 +382,10 @@ public class MsoySprite extends DataPackMediaContainer
         // TODO: remove someday
         // TEMP: dispatch a backwards compatible event to older style entities. This older method
         // was deprecated 2007-03-12, so hopefully we don't have to keep this around too long.
-        if (isAction) {
-            callUserCode("eventTriggered_v1", name, arg);
-        }
+        // Commented out 2008-02-03. We should be good.
+        //if (isAction) {
+        //    callUserCode("eventTriggered_v1", name, arg);
+        //}
     }
 
     /**
