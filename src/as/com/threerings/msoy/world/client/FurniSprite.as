@@ -9,6 +9,7 @@ import flash.display.DisplayObject;
 import flash.display.Loader;
 
 import flash.events.EventDispatcher;
+import flash.events.MouseEvent;
 import flash.events.TextEvent;
 
 import flash.filters.DisplacementMapFilter;
@@ -56,6 +57,7 @@ public class FurniSprite extends MsoySprite
         }
 
         checkPerspective();
+        checkMouse();
     }
 
     /**
@@ -111,6 +113,25 @@ public class FurniSprite extends MsoySprite
         checkPerspective();
         scaleUpdated();
         setLocation(furni.loc);
+        checkMouse();
+    }
+
+    protected function checkMouse () :void
+    {
+        var addOrRemove :Function = capturesMouse() ? addEventListener : removeEventListener;
+
+        for each (var eventType :String in [ MouseEvent.MOUSE_MOVE,
+                MouseEvent.MOUSE_OVER, MouseEvent.MOUSE_OUT,
+                MouseEvent.ROLL_OVER, MouseEvent.ROLL_OUT ]) {
+            addOrRemove(eventType, shuttleMouseEvent);
+        }
+    }
+
+    // TODO: do we really want to do this?
+    // Do we want to do it for all entities, including avatars?
+    protected function shuttleMouseEvent (event :MouseEvent) :void
+    {
+        callUserCode("mouseEvents_v1", event);
     }
 
     override public function getToolTipText () :String
