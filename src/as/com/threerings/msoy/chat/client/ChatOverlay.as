@@ -407,6 +407,7 @@ public class ChatOverlay
     public function clear () :void
     {
         clearGlyphs(_subtitles);
+        clearGlyphs(_showingHistory);
     }
 
     // from ChatDisplay
