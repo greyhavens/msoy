@@ -318,9 +318,10 @@ Window {
 }
 
 .controlBarButtonZoom {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume_down.png");
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_zoom.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_zoom_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_zoom_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_zoom_disabled.png");
 }
 
 .controlBarHoverZone {

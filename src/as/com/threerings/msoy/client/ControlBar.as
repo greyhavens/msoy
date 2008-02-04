@@ -186,8 +186,7 @@ public class ControlBar extends HBox
 
     public function enableZoomControl (enabled :Boolean ) :void
     {
-        // TODO: when we have a real zoom btn icon with a disabled skin, this will look/work better
-        _zoomBtn.alpha = enabled ? 1 : 0.5;
+        _zoomBtn.enabled = enabled;
     }
 
     // from HBox
@@ -253,9 +252,7 @@ public class ControlBar extends HBox
         addGroupChild(_chatControl, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
         addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
         addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR ]);
-        if (DeploymentConfig.devDeployment) {
-            addGroupChild(_zoomBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT ]);
-        }
+        addGroupChild(_zoomBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT ]);
 
         // add our various control buttons
         addControlButtons();
