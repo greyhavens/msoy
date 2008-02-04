@@ -20,6 +20,8 @@ import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
+import mx.controls.HRule;
+
 import com.adobe.images.JPGEncoder;
 
 import com.whirled.remix.data.EditableDataPack;
@@ -30,6 +32,7 @@ import com.threerings.util.StringUtil;
 import com.threerings.flash.CameraSnapshotter;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.utils.Base64Sender;
 
@@ -45,7 +48,6 @@ public class RemixControls extends VBox
         percentHeight = 100;
 
         _controls = new Grid();
-        _controls.setStyle("backgroundColor", 0xCCCCCC);
         _controls.setStyle("top", 0);
         _controls.percentWidth = 100;
         _controls.percentHeight = 100;
@@ -84,13 +86,35 @@ public class RemixControls extends VBox
         addEventListener(FieldEditor.FIELD_CHANGED, handleFieldChanged);
 
         var name :String;
-        for each (name in _pack.getDataFields()) {
-            _controls.addChild(new DataEditor(_pack, name));
+        var datas :Array = _pack.getDataFields();
+        if (datas.length > 0) {
+            GridUtil.addRow(_controls, "Data fields", "Present?", "Value", [2, 1]);
+            addRule();
+            for each (name in datas) {
+                _controls.addChild(new DataEditor(_pack, name));
+            }
         }
 
-        for each (name in _pack.getFileFields()) {
-            _controls.addChild(new FileEditor(_pack, name));
+        var files :Array = _pack.getFileFields();
+        if (files.length > 0) {
+            if (datas.length > 0) {
+                GridUtil.addRow(_controls, "", [4, 1]);
+            }
+            GridUtil.addRow(_controls, "Files", "Present?", "filename", [2, 1]);
+            addRule();
+            for each (name in files) {
+                _controls.addChild(new FileEditor(_pack, name));
+            }
         }
+    }
+
+    protected function addRule () :void
+    {
+        var rule :HRule = new HRule();
+        rule.percentWidth = 100;
+        rule.setStyle("strokeWidth", 1);
+        rule.setStyle("strokeColor", 0x000000);
+        GridUtil.addRow(_controls, rule, [4, 1]);
     }
 
     /**

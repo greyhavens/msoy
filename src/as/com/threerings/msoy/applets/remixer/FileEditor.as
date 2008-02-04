@@ -18,19 +18,37 @@ public class FileEditor extends FieldEditor
     {
         super(pack, name);
 
-        addPresentBox({ optional: true });
+        var entry :Object = pack.getFileEntry(name);
+
+        addPresentBox(entry);
 
         var lbl :Label = new Label();
-        lbl.text = "coming soon";
-        addComp(lbl, 2);
+        lbl.text = entry.value as String;
+        addComp(lbl, 1);
+
+        var change :CommandButton = CommandButton.create("View/Change (TODO)", function () :void {
+            // TODO
+        });
+        addComp(change, 1);
+        _component = change;
     }
 
+    // Necessary?
     protected function setupUnknown (entry :Object) :void
     {
         var lbl :Label = new Label();
         lbl.text = "Unknown entry of type '" + entry.type + "'.";
 
         addComp(lbl, 2);
+    }
+
+    override protected function updateEntry () :void
+    {
+        // TODO
+        if (!_present.selected) {
+            _pack.replaceFile(_name, null, null);
+            setChanged();
+        }
     }
 }
 }
