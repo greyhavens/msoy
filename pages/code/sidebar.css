@@ -6,6 +6,17 @@ ul {
   padding-left: 15px;
 }
 
-ul ul {
-  padding-left: 0px;
+.events {
+  list-style-type: square;
+  font-weight: bold;
+}
+
+.methods {
+  list-style-type: circle;
+  font-weight: normal;
+}
+
+.subcontrols {
+  list-style-type: disc;
+  font-weight: bold;
 }
