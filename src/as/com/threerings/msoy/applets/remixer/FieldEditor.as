@@ -37,12 +37,11 @@ public class FieldEditor extends GridRow
 
     protected function addPresentBox (entry :Object) :void
     {
-        // TODO: bind all this shit up?
-        var presentBox :CheckBox = new CheckBox();
-        presentBox.selected = (entry.value != null);
-        presentBox.enabled = entry.optional;
-        // TODO: modify presentBox..
-        addComp(presentBox);
+        _present = new CheckBox();
+        _present.selected = (entry.value != null);
+        _present.enabled = entry.optional;
+        _present.addEventListener(Event.CHANGE, handlePresentToggled);
+        addComp(_present);
     }
 
     protected function addComp (comp :UIComponent, colSpan :int = 1) :void
@@ -51,16 +50,34 @@ public class FieldEditor extends GridRow
         item.colSpan = colSpan;
     }
 
+    protected function handlePresentToggled (event :Event) :void
+    {
+        _component.enabled = _present.selected;
+        updateEntry();
+    }
+
+    protected function updateEntry () :void
+    {
+        throw new Error("abstract");
+    }
+
     /**
      * May be called or set as an event handler.
      */
     protected function setChanged (... ignored) :void
     {
+        // dispatch it upwards
         dispatchEvent(new Event(FIELD_CHANGED, true));
     }
 
     /** The name of the field we're editing. */
     protected var _name :String;
+
+    /** The component that's doing the editing. It should be able to
+     * enabled/disabled. */
+    protected var _component :UIComponent;
+
+    protected var _present :CheckBox;
 
     protected var _pack :EditableDataPack;
 }

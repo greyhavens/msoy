@@ -4,10 +4,16 @@
 package com.threerings.msoy.applets.remixer {
 
 import flash.events.Event;
+import flash.events.TextEvent;
 
 import mx.controls.CheckBox;
 import mx.controls.ColorPicker;
 import mx.controls.Label;
+import mx.controls.TextInput;
+
+import mx.validators.NumberValidator;
+import mx.validators.Validator;
+import mx.validators.ValidationResult;
 
 import com.threerings.flex.CommandButton;
 
@@ -20,32 +26,70 @@ public class DataEditor extends FieldEditor
         super(pack, name);
 
         var entry :Object = pack.getDataEntry(name);
+        _value = entry.value;
 
         addPresentBox(entry);
 
-        switch (String(entry.type)) {
-        case "Color":
-            setupColor(entry);
-            break;
+        try {
+            Object(this)["setup" + entry.type](entry);
 
-//        case "String":
-//            setupString(entry);
-//            break;
-
-        default:
+        } catch (err :Error) {
             setupUnknown(entry);
-            break;
         }
+
+        // and specify whether the component is selected
+        if (_component != null) {
+            _component.enabled = _present.selected;
+        }
+    }
+
+    protected function setupBoolean (entry :Object) :void
+    {
+        var tog :CheckBox = new CheckBox();
+        tog.selected = Boolean(entry.value);
+        tog.addEventListener(Event.CHANGE, function (... ignored) :void {
+            updateValue(tog.selected);
+        });
+        _component = tog;
+
+        addComp(tog, 2);
+    }
+
+    protected function setupString (entry :Object) :void
+    {
+        var input :TextInput = new TextInput();
+        if (entry.value != null) {
+            input.text = String(entry.value);
+        }
+//        input.addEventListener(TextEvent.TEXT_INPUT, function (... ignored) :void {
+//            updateValue(input.text);
+//        });
+        input.addEventListener(Event.CHANGE, function (... ignored) :void {
+            updateValue(input.text);
+        });
+        _component = input;
+
+        addComp(input, 2);
+    }
+
+    protected function setupNumber (entry :Object) :void
+    {
+        setupString(entry);
+        var val :NumberValidator = new NumberValidator();
+        val.source = _component;
+        val.property = "text";
+        _validator = val;
     }
 
     protected function setupColor (entry :Object) :void
     {
         var picker :ColorPicker = new ColorPicker();
         picker.selectedColor = uint(entry.value);
+        _value = picker.selectedColor;
         picker.addEventListener(Event.CLOSE, function (... ignored) :void {
-            _pack.setData(_name, picker.selectedColor);
-            setChanged();
+            updateValue(picker.selectedColor);
         });
+        _component = picker;
 
         addComp(picker, 2);
     }
@@ -57,5 +101,31 @@ public class DataEditor extends FieldEditor
 
         addComp(lbl, 2);
     }
+
+    protected function updateValue (value :*) :void
+    {
+        _value = value;
+        updateEntry();
+    }
+
+    override protected function updateEntry () :void
+    {
+        if (_validator != null) {
+            var results :Array = _validator.validate().results;
+            for each (var result :ValidationResult in results) {
+                if (result.isError) {
+                    // do not update...
+                    return;
+                }
+            }
+        }
+
+        _pack.setData(_name, _present.selected ? _value : null);
+        setChanged();
+    }
+
+    protected var _value :*;
+
+    protected var _validator :Validator;
 }
 }
