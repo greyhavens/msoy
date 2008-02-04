@@ -116,6 +116,10 @@ public class FloatingPanel extends TitleWindow
 
             // store the button for later retrieval
             _buttons[buttonId] = but;
+            // if we're showing a standard cancel button, also add the close "X"
+            if (buttonId == CANCEL_BUTTON) {
+                showCloseButton = true;
+            }
         }
 
         addChild(butBox);
@@ -139,11 +143,6 @@ public class FloatingPanel extends TitleWindow
             evt.stopImmediatePropagation();
             buttonClicked(buttonId);
         });
-
-        // if we're showing a standard cancel button, also add the close "X"
-        if (buttonId == CANCEL_BUTTON) {
-            showCloseButton = true;
-        }
     }
 
     /**
