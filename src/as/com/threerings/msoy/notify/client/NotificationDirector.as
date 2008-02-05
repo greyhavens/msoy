@@ -24,11 +24,18 @@ import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.client.MemberService;
 
+import com.threerings.msoy.chat.client.ChatTabBar;
+import com.threerings.msoy.chat.client.ReportingListener;
+
+import com.threerings.msoy.chat.data.ChatChannel;
+
+import com.threerings.msoy.client.Msgs;
+
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldControlBar;
 
@@ -146,8 +153,13 @@ public class NotificationDirector extends BasicDirector
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
             // display the message if the status changed
             if (entry.online != oldEntry.online) {
+                // show it in the notification area
                 dispatchChatNotification(MessageBundle.tcompose(
                     entry.online ? "m.friend_online" : "m.friend_offline",
+                    entry.name, entry.name.getMemberId()));
+                // if we have the tell tab open for this friend, show it in that tab's history too
+                dispatchTellNotification(entry.name, 
+                    Msgs.NOTIFY.get(entry.online ? "m.friend_online" : "m.friend_offline",
                     entry.name, entry.name.getMemberId()));
             }
         }
@@ -234,6 +246,18 @@ public class NotificationDirector extends BasicDirector
     {
         var msg :NotifyMessage = new NotifyMessage(text);
         _wctx.getChatDirector().dispatchMessage(msg, ChatCodes.USER_CHAT_TYPE);
+    }
+
+    /**
+     * Dispatch a friend-specific notification message to the user.
+     */
+    protected function dispatchTellNotification (name :MemberName, text :String) :void
+    {
+        var channel :ChatChannel = ChatChannel.makeMemberChannel(name);
+        var chatTabs :ChatTabBar = _wctx.getTopPanel().getHeaderBar().getChatTabs();
+        if (chatTabs.containsTab(channel)) {
+            chatTabs.addMessage(channel, new NotifyMessage(text));
+        }
     }
 
     /**
