@@ -220,11 +220,7 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // make sure we own this item
-            if (originalItem.ownerId != mrec.memberId) {
-                log.warning("Member requested to list unowned item [who=" + mrec.who() +
-                            ", item=" + item + "].");
-                throw new ServiceException(ItemCodes.ACCESS_DENIED);
-            }
+            requireIsUser(mrec, originalItem.ownerId, "listItem", originalItem);
 
             // make sure this item is not already listed
             if (originalItem.catalogId != 0) {
@@ -316,7 +312,7 @@ public class CatalogServlet extends MsoyServiceServlet
             }
             // if we're not the creator of the listing (who has to download it to update it) do
             // some access control checks
-            if (mrec == null || record.item.creatorId != mrec.memberId) {
+            if (mrec == null || (record.item.creatorId != mrec.memberId && !mrec.isAdmin())) {
                 // if the type in question is not salable, reject the request
                 if (!isSalable(itemType)) {
                     throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
@@ -352,11 +348,7 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // make sure we own this item
-            if (originalItem.ownerId != mrec.memberId) {
-                log.warning("Requested to update listing for unowned item [who=" + mrec.who() +
-                            ", item=" + item + "].");
-                throw new ServiceException(ItemCodes.ACCESS_DENIED);
-            }
+            requireIsUser(mrec, originalItem.ownerId, "updateListing", originalItem);
 
             // load up the old catalog record
             CatalogRecord record = repo.loadListing(originalItem.catalogId, false);
@@ -435,12 +427,7 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // make sure we own this item
-            if (originalItem.ownerId != mrec.memberId) {
-                log.warning("Member requested to list unowned item [who=" + mrec.who() +
-                            ", type=" + itemType + ", catId=" + catalogId +
-                            ", itemId=" + record.originalItemId + "].");
-                throw new ServiceException(ItemCodes.ACCESS_DENIED);
-            }
+            requireIsUser(mrec, originalItem.ownerId, "updatePricing", originalItem);
 
             // sanitize the sales target
             salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
@@ -476,12 +463,9 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // make sure we're the creator of the listed item
-            if (listing.item.creatorId != mrec.memberId && !mrec.isSupport()) {
-                log.warning("Member requested to delist unowned item [who=" + mrec.who() +
-                            ", type=" + itemType + ", catId=" + catalogId + "].");
-                throw new ServiceException(ItemCodes.ACCESS_DENIED);
-            }
+            requireIsUser(mrec, listing.item.creatorId, "removeListing", listing.item);
 
+            // go ahead and remove the user
             repo.removeListing(listing);
 
         } catch (PersistenceException pe) {
@@ -596,6 +580,20 @@ public class CatalogServlet extends MsoyServiceServlet
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to check salability [type=" + itemType + "].", e);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+    }
+
+    /**
+     * Ensures that the specified user or an admin is taking the requested action.
+     */
+    protected void requireIsUser (MemberRecord mrec, int targetId, String action, ItemRecord item)
+        throws ServiceException
+    {
+        if (mrec == null || (mrec.memberId != targetId && !mrec.isSupport())) {
+            String who = (mrec == null ? "null" : mrec.who());
+            log.warning("Access denied for catalog action [who=" + who + ", wanted=" + targetId +
+                        ", action=" + action + ", item=" + item + "].");
+            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
     }
 }
