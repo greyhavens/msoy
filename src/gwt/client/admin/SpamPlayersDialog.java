@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.util.BorderedDialog;
+import client.util.ClickCallback;
 import client.util.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.NumberTextBox;
@@ -54,11 +55,26 @@ public class SpamPlayersDialog extends BorderedDialog
         contents.setWidget(3, 0, niggles);
         contents.getFlexCellFormatter().setColSpan(3, 0, 2);
 
-        _footer.add(new Button(CAdmin.msgs.spamSend(), new ClickListener() {
-            public void onClick (Widget sender) {
-                spamPlayers(_subject.getText().trim(), _body.getText().trim(), false);
+        Button spam = new Button(CAdmin.msgs.spamSend());
+        new ClickCallback(spam, CAdmin.msgs.spamConfirm()) {
+            public boolean callService () {
+                String subject = _subject.getText().trim();
+                String body = _body.getText().trim();
+                int sid = _startId.getValue().intValue(), eid = _endId.getValue().intValue();
+                CAdmin.adminsvc.spamPlayers(CAdmin.ident, subject, body, sid, eid, this);
+                MsoyUI.info(CAdmin.msgs.spammingPleaseWait());
+                return true;
             }
-        }));
+            public boolean gotResult (Object result) {
+                int[] counts = (int[])result;
+                MsoyUI.info(CAdmin.msgs.spamSent(Integer.toString(counts[0]),
+                                                 Integer.toString(counts[1]),
+                                                 Integer.toString(counts[2])));
+                hide();
+                return false;
+            }
+        };
+        _footer.add(spam);
         _footer.add(new Button(CAdmin.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 hide();
@@ -70,29 +86,6 @@ public class SpamPlayersDialog extends BorderedDialog
     protected Widget createContents ()
     {
         return new FlexTable();
-    }
-
-    protected void spamPlayers (final String subject, final String body, boolean confirmed)
-    {
-        if (!confirmed) {
-            new PromptPopup(CAdmin.msgs.spamConfirm()) {
-                public void onAffirmative () {
-                    spamPlayers(subject, body, true);
-                }
-            }.setContext("\"" + subject + "\"").prompt();
-            return;
-        }
-
-        int sid = _startId.getValue().intValue(), eid = _endId.getValue().intValue();
-        CAdmin.adminsvc.spamPlayers(CAdmin.ident, subject, body, sid, eid, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                int[] counts = (int[])result;
-                MsoyUI.info(CAdmin.msgs.spamSent(Integer.toString(counts[0]),
-                                                 Integer.toString(counts[1]),
-                                                 Integer.toString(counts[2])));
-                hide();
-            }
-        });
     }
 
     protected TextBox _subject;
