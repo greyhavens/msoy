@@ -175,11 +175,15 @@ public class Frame
         WorldClient.clientWillClose();
         _closeToken = null;
         RootPanel.get(SEPARATOR).clear();
-        CShell.log("Clearing client in closeClient");
         RootPanel.get(Frame.CLIENT).clear();
         RootPanel.get(Frame.CLIENT).setWidth("0px");
         RootPanel.get(Frame.CONTENT).setWidth("100%");
         _content.setCloseVisible(false);
+
+        // if we're on a "world" page, go to "whirledwide"
+        if (History.getToken().startsWith(Page.WORLD)) {
+            Application.go(Page.WHIRLED, "whirledwide");
+        }
     }
 
     /**
