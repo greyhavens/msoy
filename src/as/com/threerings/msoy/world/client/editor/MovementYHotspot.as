@@ -27,8 +27,8 @@ public class MovementYHotspot extends Hotspot
     {
         super.updateDisplay(targetWidth, targetHeight);
         
-        this.x = targetWidth / 2;
-        this.y = targetHeight - _displayStandard.height;
+        this.x = 0;
+        this.y = targetHeight / 2;
     }
     
     // @Override from Hotspot
@@ -44,7 +44,6 @@ public class MovementYHotspot extends Hotspot
     {
         // do not call super - we're providing different bitmaps
         _displayStandard = new HOTSPOT() as DisplayObject;
-        _displayStandard.alpha = 0.35;
         _displayMouseOver = new HOTSPOT_OVER() as DisplayObject;
     }
 
