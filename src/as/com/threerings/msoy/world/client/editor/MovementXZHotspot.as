@@ -19,6 +19,9 @@ import com.threerings.msoy.world.data.MsoyLocation;
  */
 public class MovementXZHotspot extends Hotspot
 {
+    /** The hotspot won't go beyond this depth, even in advanced mode. */
+    public static const MAX_DEPTH :int = 10;
+    
     public function MovementXZHotspot (editor :FurniEditor)
     {
         super(editor);
@@ -84,13 +87,18 @@ public class MovementXZHotspot extends Hotspot
             }
         }
 
-        if (loc != null) {
-            if (! _advancedMode) {
-                loc.x = MathUtil.clamp(loc.x, 0, 1);
-                loc.z = MathUtil.clamp(loc.z, 0, 1);
-            }
-            _editor.updateTargetLocation(loc);
+        // see if the user specified an invalid location, or one that's too far away
+        if (loc == null || (_advancedMode && loc.z >= MAX_DEPTH)) {
+            return; 
         }
+
+        // in default mode, clamp to room boundaries
+        if (! _advancedMode) {
+            loc.x = MathUtil.clamp(loc.x, 0, 1);
+            loc.z = MathUtil.clamp(loc.z, 0, 1);
+        }
+        
+        _editor.updateTargetLocation(loc);
     }
 
     protected function getStemHeight () :Number
