@@ -103,8 +103,9 @@ public class FriendsBlurb extends Blurb
             if (CProfile.getMemberId() != _name.getMemberId()) {
                 return super.createEmptyContents();
             }
-            return GroupsBlurb.createEmptyTable(CProfile.msgs.noFriendsSelf(),
-                                                CProfile.msgs.noFriendsFindEm(), Page.PROFILE, "");
+            return GroupsBlurb.createEmptyTable(
+                CProfile.msgs.noFriendsSelf(), CProfile.msgs.noFriendsFindEm(),
+                Page.PROFILE, "search");
         }
     }
 
