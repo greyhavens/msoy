@@ -12,8 +12,7 @@ import flash.geom.Matrix;
 
 /**
  * This class turns any existing display object and turns it into an ez-button by adjusting
- * transformations as the user mouse-overs and mouse-clicks. TODO: custom 'hand' pointer but
- * alas this looks annoyingly complicated.
+ * transformations as the user mouse-overs and mouse-clicks.
  */
 public class Buttonizer extends Sprite
 {
@@ -21,30 +20,15 @@ public class Buttonizer extends Sprite
     {
         _pane = new Sprite();
         _pane.addChild(content);
-        this.addChild(_pane);
-
-        _downMatrix = new Matrix(1, 0, 0, 1, 3, 3);
-        _overColor = new ColorTransform(1.1, 1.1, 1.1);
-        this.addEventListener(Event.ADDED_TO_STAGE, start);
-    }
-
-    protected function start (event :Event) :void
-    {
-        _pane.removeEventListener(Event.ADDED_TO_STAGE, start);
-        _pane.addEventListener(Event.REMOVED_FROM_STAGE, end);
-
+        _pane.buttonMode = true;
         _pane.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
         _pane.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
         _pane.addEventListener(MouseEvent.ROLL_OVER, handleRollOver);
         _pane.addEventListener(MouseEvent.ROLL_OUT, handleRollOut);
-    }
+        this.addChild(_pane);
 
-    protected function end (event :Event) :void
-    {
-        _pane.removeEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
-        _pane.removeEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
-        _pane.removeEventListener(MouseEvent.ROLL_OVER, handleRollOver);
-        _pane.removeEventListener(MouseEvent.ROLL_OUT, handleRollOut);
+        _downMatrix = new Matrix(1, 0, 0, 1, 3, 3);
+        _overColor = new ColorTransform(1.1, 1.1, 1.1);
     }
 
     protected function handleMouseDown (event :Event) :void
