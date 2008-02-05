@@ -19,17 +19,18 @@ public class FileEditor extends FieldEditor
         var entry :Object = pack.getFileEntry(name);
         super(pack, name, entry);
 
-        addPresentBox(entry);
+        addUsedCheckBox(entry);
 
         var lbl :Label = new Label();
         lbl.text = entry.value as String;
-        addComp(lbl, 1);
+        addComp(lbl);
 
-        var change :CommandButton = CommandButton.create("View/Change (TODO)", function () :void {
+        var change :CommandButton = CommandButton.create("View/Change", function () :void {
             // TODO
         });
-        addComp(change, 1);
         _component = change;
+        addComp(change);
+        addDescriptionLabel(entry);
     }
 
     // Necessary?
@@ -38,13 +39,13 @@ public class FileEditor extends FieldEditor
         var lbl :Label = new Label();
         lbl.text = "Unknown entry of type '" + entry.type + "'.";
 
-        addComp(lbl, 2);
+        addComp(lbl, 3);
     }
 
     override protected function updateEntry () :void
     {
         // TODO
-        if (!_present.selected) {
+        if (!_used.selected) {
             _pack.replaceFile(_name, null, null);
             setChanged();
         }

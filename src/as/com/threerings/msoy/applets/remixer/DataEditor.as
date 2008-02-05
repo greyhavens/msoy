@@ -28,7 +28,7 @@ public class DataEditor extends FieldEditor
 
         _value = entry.value;
 
-        addPresentBox(entry);
+        addUsedCheckBox(entry);
 
         try {
             Object(this)["setup" + entry.type](entry);
@@ -39,7 +39,7 @@ public class DataEditor extends FieldEditor
 
         // and specify whether the component is selected
         if (_component != null) {
-            _component.enabled = _present.selected;
+            _component.enabled = _used.selected;
             _component.toolTip = entry.info;
         }
     }
@@ -53,34 +53,30 @@ public class DataEditor extends FieldEditor
         });
         _component = tog;
 
-        addComp(tog);
-        addComp(createDescriptionLabel(entry));
+        addComp(tog, 2);
+        addDescriptionLabel(entry);
     }
 
-    protected function setupString (entry :Object) :void
+    protected function setupString (entry :Object, validator :Validator = null) :void
     {
-        var input :TextInput = new TextInput();
+        var display :Label = new Label();
         if (entry.value != null) {
-            input.text = String(entry.value);
+            display.text = String(entry.value);
         }
-//        input.addEventListener(TextEvent.TEXT_INPUT, function (... ignored) :void {
-//            updateValue(input.text);
-//        });
-        input.addEventListener(Event.CHANGE, function (... ignored) :void {
-            updateValue(input.text);
-        });
-        _component = input;
+        addComp(display);
 
-        addComp(input, 2);
+        var dataEditor :DataEditor = this;
+        var change :CommandButton = CommandButton.create("View/Change", function () :void {
+            new PopupEditor(dataEditor, entry, display, validator);
+        });
+        _component = change;
+        addComp(change);
+        addDescriptionLabel(entry);
     }
 
     protected function setupNumber (entry :Object) :void
     {
-        setupString(entry);
-        var val :NumberValidator = new NumberValidator();
-        val.source = _component;
-        val.property = "text";
-        _validator = val;
+        setupString(entry, new NumberValidator());
     }
 
     protected function setupColor (entry :Object) :void
@@ -93,8 +89,8 @@ public class DataEditor extends FieldEditor
         });
         _component = picker;
 
-        addComp(picker);
-        addComp(createDescriptionLabel(entry));
+        addComp(picker, 2);
+        addDescriptionLabel(entry);
     }
 
     protected function setupUnknown (entry :Object) :void
@@ -102,10 +98,10 @@ public class DataEditor extends FieldEditor
         var lbl :Label = new Label();
         lbl.text = "Unknown entry of type '" + entry.type + "'.";
 
-        addComp(lbl, 2);
+        addComp(lbl, 3);
     }
 
-    protected function updateValue (value :*) :void
+    internal function updateValue (value :*) :void
     {
         _value = value;
         updateEntry();
@@ -113,22 +109,10 @@ public class DataEditor extends FieldEditor
 
     override protected function updateEntry () :void
     {
-        if (_validator != null) {
-            var results :Array = _validator.validate().results;
-            for each (var result :ValidationResult in results) {
-                if (result.isError) {
-                    // do not update...
-                    return;
-                }
-            }
-        }
-
-        _pack.setData(_name, _present.selected ? _value : null);
+        _pack.setData(_name, _used.selected ? _value : null);
         setChanged();
     }
 
     protected var _value :*;
-
-    protected var _validator :Validator;
 }
 }

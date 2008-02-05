@@ -36,23 +36,23 @@ public class FieldEditor extends GridRow
         addComp(lbl);
     }
 
-    protected function createDescriptionLabel (entry :Object) :Label
+    protected function addDescriptionLabel (entry :Object) :void
     {
         var lbl :Label = new Label();
         var tip :String = entry.info;
         if (tip != null) {
             lbl.text = "[ " + tip + " ]";
         }
-        return lbl;
+        addComp(lbl);
     }
 
-    protected function addPresentBox (entry :Object) :void
+    protected function addUsedCheckBox (entry :Object) :void
     {
-        _present = new CheckBox();
-        _present.selected = (entry.value != null);
-        _present.enabled = entry.optional;
-        _present.addEventListener(Event.CHANGE, handlePresentToggled);
-        addComp(_present);
+        _used = new CheckBox();
+        _used.selected = (entry.value != null);
+        _used.enabled = entry.optional;
+        _used.addEventListener(Event.CHANGE, handleUsedToggled);
+        addComp(_used);
     }
 
     protected function addComp (comp :UIComponent, colSpan :int = 1) :void
@@ -61,9 +61,9 @@ public class FieldEditor extends GridRow
         item.colSpan = colSpan;
     }
 
-    protected function handlePresentToggled (event :Event) :void
+    protected function handleUsedToggled (event :Event) :void
     {
-        _component.enabled = _present.selected;
+        _component.enabled = _used.selected;
         updateEntry();
     }
 
@@ -88,7 +88,7 @@ public class FieldEditor extends GridRow
      * enabled/disabled. */
     protected var _component :UIComponent;
 
-    protected var _present :CheckBox;
+    protected var _used :CheckBox;
 
     protected var _pack :EditableDataPack;
 }

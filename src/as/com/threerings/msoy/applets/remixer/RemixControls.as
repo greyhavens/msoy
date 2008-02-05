@@ -88,7 +88,7 @@ public class RemixControls extends VBox
         var name :String;
         var datas :Array = _pack.getDataFields();
         if (datas.length > 0) {
-            GridUtil.addRow(_controls, "Data fields", "Present?", "Value", [2, 1]);
+            GridUtil.addRow(_controls, "Data fields", "Used?", "Value", [2, 1]);
             addRule();
             for each (name in datas) {
                 _controls.addChild(new DataEditor(_pack, name));
@@ -100,7 +100,7 @@ public class RemixControls extends VBox
             if (datas.length > 0) {
                 GridUtil.addRow(_controls, "", [4, 1]);
             }
-            GridUtil.addRow(_controls, "Files", "Present?", "filename", [2, 1]);
+            GridUtil.addRow(_controls, "Files", "Used?", "filename", [2, 1]);
             addRule();
             for each (name in files) {
                 _controls.addChild(new FileEditor(_pack, name));
@@ -114,7 +114,7 @@ public class RemixControls extends VBox
         rule.percentWidth = 100;
         rule.setStyle("strokeWidth", 1);
         rule.setStyle("strokeColor", 0x000000);
-        GridUtil.addRow(_controls, rule, [4, 1]);
+        GridUtil.addRow(_controls, rule, [5, 1]);
     }
 
     /**
