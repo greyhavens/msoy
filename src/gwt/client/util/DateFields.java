@@ -5,9 +5,8 @@ package client.util;
 
 import java.util.Date;
 
-import com.google.gwt.user.client.ui.FocusListener;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,40 +22,31 @@ public class DateFields extends HorizontalPanel
     {
         setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 
-        FocusListener focusListener = new FocusListener() {
-            public void onFocus (Widget sender) {
-                if (sender == _day && "DD".equals(_day.getText())) {
-                    _day.setText("");
-                } else if (sender == _year && "YYYY".equals(_day.getText())) {
-                    _year.setText("");
-                }
-            }
-            public void onLostFocus (Widget sender) {
-                if (sender == _day && "".equals(_day.getText())) {
-                    _day.setText("DD");
-                } else if (sender == _year && "".equals(_year.getText())) {
-                    _year.setText("YYYY");
-                }
-            }
-        };
-
         Label divider;
         add(_month = new ListBox());
         for (int ii = 0; ii < MONTHS.length; ii++) { // TODO: localize
             _month.addItem(MONTHS[ii]);
         }
+        _month.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                populateDay(_month.getSelectedIndex());
+            }
+        });
         add(divider = new Label(" / "));
         divider.setWidth(15 + "px");
         divider.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
-        add(_day = new NumberTextBox(false, 2));
-        _day.setText("DD");
-        _day.addFocusListener(focusListener);
+
+        add(_day = new ListBox());
+        populateDay(0);
         add(divider = new Label(" / "));
         divider.setWidth(15 + "px");
         divider.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
-        add(_year = new NumberTextBox(false, 4));
-        _year.setText("YYYY");
-        _year.addFocusListener(focusListener);
+
+        add(_year = new ListBox());
+        int start = new Date().getYear()+1900-MIN_AGE;
+        for (int ii = 0; ii < 100-MIN_AGE; ii++) {
+            _year.addItem(""+(start-ii));
+        }
     }
 
     /**
@@ -64,9 +54,14 @@ public class DateFields extends HorizontalPanel
      */
     public void setDate (int[] date)
     {
-        _year.setText("" + date[0]);
+        for (int ii = 0; ii < _year.getItemCount(); ii++) {
+            if (Integer.parseInt(_year.getItemText(ii)) == date[0]) {
+                _year.setSelectedIndex(ii);
+                break;
+            }
+        }
         _month.setSelectedIndex(date[1]);
-        _day.setText("" + date[2]);
+        _day.setSelectedIndex(date[2]-1);
     }
 
     /**
@@ -75,33 +70,25 @@ public class DateFields extends HorizontalPanel
      */
     public int[] getDate () 
     {
-        try {
-            int day = _day.getValue().intValue();
-            int year = _year.getValue().intValue();
-            if (day > 0 && day <= 31 && year >= 0) {
-                return new int[] { year, _month.getSelectedIndex(), day };
-            }
-        } catch (NumberFormatException nfe) {
-            // let us return null in this case
-        }
-        return null;
+        int year = Integer.parseInt(_year.getItemText(_year.getSelectedIndex()));
+        return new int[] { year, _month.getSelectedIndex(), _day.getSelectedIndex() + 1 };
     }
 
-    /**
-     * Adds the given keyboard listener to all of the internal fields.  
-     */
-    public void addKeyboardListenerToFields (KeyboardListener listener) 
+    protected void populateDay (int month)
     {
-        _month.addKeyboardListener(listener);
-        _day.addKeyboardListener(listener);
-        _year.addKeyboardListener(listener);
+        int selidx = _day.getSelectedIndex();
+        _day.clear();
+        for (int ii = 0; ii < DAYS[month]; ii++) {
+            _day.addItem(""+(ii+1));
+        }
+        _day.setSelectedIndex(Math.max(0, Math.min(selidx, DAYS[month]-1)));
     }
 
-    protected ListBox _month;
-    protected NumberTextBox _day;
-    protected NumberTextBox _year;
+    protected ListBox _month, _day, _year;
 
     protected static final String[] MONTHS = {
         "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     };
+    protected static final int[] DAYS = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    protected static final int MIN_AGE = 13;
 }

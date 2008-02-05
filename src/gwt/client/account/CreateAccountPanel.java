@@ -131,7 +131,6 @@ public class CreateAccountPanel extends FlexTable
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         setText(row, 0, CAccount.msgs.createDateOfBirth());
         setWidget(row, 1, _dateOfBirth = new DateFields());
-        _dateOfBirth.addKeyboardListenerToFields(_validator);
         getFlexCellFormatter().setStyleName(row, 2, "Tip");
         setText(row++, 2, CAccount.msgs.createDateOfBirthTip());
 
