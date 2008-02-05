@@ -29,7 +29,7 @@ public class TextBox extends Sprite
 {
     public function TextBox (swirlBytes :ByteArray, done :Function)
     {
-        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
+        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader(true);
         loader.addEventListener(Event.COMPLETE, handleTextboxLoaded);
         loader.load(swirlBytes);
 

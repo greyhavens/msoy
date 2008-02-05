@@ -21,7 +21,7 @@ public class Swirl extends Sprite
 {
     public function Swirl (view :View, swirlBytes :ByteArray, done :Function)
     {
-        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
+        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader(true);
         loader.addEventListener(Event.COMPLETE, handleSwirlLoaded);
         loader.load(swirlBytes);
 
