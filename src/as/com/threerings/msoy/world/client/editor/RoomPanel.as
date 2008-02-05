@@ -81,7 +81,7 @@ public class RoomPanel extends BasePanel
         box.addChild(_homeButton);
 
         _name = new TextInput();
-        _name.percentWidth = 100;
+        _name.width = 200;
         box.addChild(_name);
 
         _buttonbar = new ToggleButtonBar();

@@ -128,6 +128,7 @@ public class ActionPanel extends BasePanel
 
         // this label is for support+
         _debug = new TextInput();
+        _debug.width = 250;
         _debug.editable = false;
         _debug.enabled = false;
         if (playerIsSupportPlus) {
@@ -199,17 +200,21 @@ public class ActionPanel extends BasePanel
 
     protected function createURLPanel () :UIComponent
     {
-        var grid :Grid = new Grid();
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.url"));
-        GridUtil.addRow(grid, _url = new TextInput());
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.urlTip"));
-        GridUtil.addRow(grid, _urlTip = new TextInput());
-
+        _url = new TextInput();
+        _url.width = 250;
         _url.addEventListener(Event.CHANGE, changedHandler);
         _url.addEventListener(FlexEvent.ENTER, applyHandler);
+
+        _urlTip = new TextInput();
+        _urlTip.width = 250;
         _urlTip.addEventListener(Event.CHANGE, changedHandler);
         _urlTip.addEventListener(FlexEvent.ENTER, applyHandler);
 
+        var grid :Grid = new Grid();
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.url"));
+        GridUtil.addRow(grid, _url);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.urlTip"));
+        GridUtil.addRow(grid, _urlTip);
         return grid;
     }
 
@@ -254,6 +259,7 @@ public class ActionPanel extends BasePanel
 
         _door = new TextInput();
         _door.editable = false;
+        _door.width = 250;
 
         var setportal :CommandButton = new CommandButton();
         setportal.label = Msgs.EDITING.get("b.set_portal");

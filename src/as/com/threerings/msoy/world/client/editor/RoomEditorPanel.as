@@ -17,6 +17,7 @@ import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
 import mx.controls.Button;
+import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.HRule;
 import mx.controls.Label;
@@ -130,7 +131,7 @@ public class RoomEditorPanel extends FloatingPanel
         var makeListener :Function = function (thunk :Function) :Function {
             return function (event :Event) :void { thunk(); };
         };
-        
+
         // container for room name
         var namebar :VBox = new VBox();
         namebar.styleName = "roomEditNameBar";
@@ -151,7 +152,7 @@ public class RoomEditorPanel extends FloatingPanel
         contents.addChild(box);
         
         _namebox = new ComboBox();
-        _namebox.percentWidth = 100;
+        _namebox.width = 250;
         _namebox.prompt = Msgs.EDITING.get("l.select_item");
         _namebox.addEventListener(ListEvent.CHANGE, nameListChanged);
         box.addChild(_namebox);
@@ -169,6 +170,18 @@ public class RoomEditorPanel extends FloatingPanel
         _undoButton.enabled = false;
         _undoButton.addEventListener(MouseEvent.CLICK, makeListener(_controller.actionUndo));
         box.addChild(_undoButton);
+
+        var spacer :VBox = new VBox();
+        spacer.percentWidth = 100;
+        spacer.height = 10;
+        contents.addChild(spacer);
+        
+        var advanced :CheckBox = new CheckBox();
+        advanced.label = Msgs.EDITING.get("l.advanced_editing");
+        advanced.addEventListener(Event.CHANGE, makeListener(function () :void {
+            _controller.actionAdvancedEditing(advanced.selected);
+        }));
+        // contents.addChild(advanced); // don't show it just yet
 
         var hr :HRule = new HRule();
         hr.percentWidth = 100;

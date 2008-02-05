@@ -315,6 +315,11 @@ public class RoomEditorController
         _panel = null;
     }
 
+    /** Tells the room controller the user updated advanced editing preferences. */
+    public function actionAdvancedEditing (advanced :Boolean) :void
+    {
+        // nothing yet :)
+    }
 
     // Functions for highlighting targets and displaying the furni editing UI
 
