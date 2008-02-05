@@ -23,9 +23,9 @@ public class DataEditor extends FieldEditor
 {
     public function DataEditor (pack :EditableDataPack, name :String)
     {
-        super(pack, name);
-
         var entry :Object = pack.getDataEntry(name);
+        super(pack, name, entry);
+
         _value = entry.value;
 
         addPresentBox(entry);
@@ -40,6 +40,7 @@ public class DataEditor extends FieldEditor
         // and specify whether the component is selected
         if (_component != null) {
             _component.enabled = _present.selected;
+            _component.toolTip = entry.info;
         }
     }
 
@@ -52,7 +53,8 @@ public class DataEditor extends FieldEditor
         });
         _component = tog;
 
-        addComp(tog, 2);
+        addComp(tog);
+        addComp(createDescriptionLabel(entry));
     }
 
     protected function setupString (entry :Object) :void
@@ -91,7 +93,8 @@ public class DataEditor extends FieldEditor
         });
         _component = picker;
 
-        addComp(picker, 2);
+        addComp(picker);
+        addComp(createDescriptionLabel(entry));
     }
 
     protected function setupUnknown (entry :Object) :void

@@ -16,9 +16,8 @@ public class FileEditor extends FieldEditor
 {
     public function FileEditor (pack :EditableDataPack, name :String)
     {
-        super(pack, name);
-
         var entry :Object = pack.getFileEntry(name);
+        super(pack, name, entry);
 
         addPresentBox(entry);
 

@@ -25,14 +25,25 @@ public class FieldEditor extends GridRow
      */
     public static const FIELD_CHANGED :String = "remixFieldChanged";
 
-    public function FieldEditor (pack :EditableDataPack, name :String)
+    public function FieldEditor (pack :EditableDataPack, name :String, entry :Object)
     {
         _pack = pack;
         _name = name;
 
         var lbl :Label = new Label();
+        lbl.toolTip = entry.info;
         lbl.text = name;
         addComp(lbl);
+    }
+
+    protected function createDescriptionLabel (entry :Object) :Label
+    {
+        var lbl :Label = new Label();
+        var tip :String = entry.info;
+        if (tip != null) {
+            lbl.text = "[ " + tip + " ]";
+        }
+        return lbl;
     }
 
     protected function addPresentBox (entry :Object) :void
