@@ -500,7 +500,7 @@ public class FeedPanel extends VerticalPanel
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new ThumbnailWidget(buildMediaArray(list), CWhirled.msgs.friendWonTrophy(
+                add(new ThumbnailWidget(buildMedia(message), CWhirled.msgs.friendWonTrophy(
                                 friendLinks, buildString(message))));
                 break;
             }
