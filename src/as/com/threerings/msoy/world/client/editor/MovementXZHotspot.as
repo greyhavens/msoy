@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
+import com.threerings.flash.MathUtil;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.world.client.ClickLocation;
 import com.threerings.msoy.world.client.FurniSprite;
@@ -67,20 +68,28 @@ public class MovementXZHotspot extends Hotspot
     /** Moves the furni over to the new location. */
     protected function updateTargetLocation (sx :Number, sy :Number) :void
     {
+        var loc :MsoyLocation = null;
         if (_currentDisplay == _displayYMouseOver) {
             sx -= (_anchor.x - _originalHotspot.x);
             sy -= (_anchor.y - _originalHotspot.y);
             var cloc :ClickLocation = _editor.roomView.layout.pointToFurniLocation(
                 sx, sy, _editor.target.getLocation(), RoomMetrics.N_UP, false);
-            _editor.updateTargetLocation(cloc.loc);
+            loc = cloc.loc;
 
         } else {
-            var loc :MsoyLocation = _editor.roomView.layout.pointToLocationAtHeight(sx, sy, 0);
+            loc = _editor.roomView.layout.pointToLocationAtHeight(sx, sy, 0);
             if (loc != null) {
                 // since click location is now on the floor, don't forget to restore stem height
                 loc.y = _editor.target.getLocation().y;
-                _editor.updateTargetLocation(loc);
             }
+        }
+
+        if (loc != null) {
+            if (! _advancedMode) {
+                loc.x = MathUtil.clamp(loc.x, 0, 1);
+                loc.z = MathUtil.clamp(loc.z, 0, 1);
+            }
+            _editor.updateTargetLocation(loc);
         }
     }
 

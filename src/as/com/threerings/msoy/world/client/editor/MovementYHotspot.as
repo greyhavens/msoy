@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
+import com.threerings.flash.MathUtil;
 import com.threerings.msoy.world.client.ClickLocation;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.RoomMetrics;
@@ -56,6 +57,10 @@ public class MovementYHotspot extends Hotspot
         var cloc :ClickLocation = _editor.roomView.layout.pointToFurniLocation(
             sx, sy, _editor.target.getLocation(), RoomMetrics.N_UP, false);
 
+        if (! _advancedMode) {
+            cloc.loc.y = MathUtil.clamp(cloc.loc.y, 0, 1);
+        }
+        
         _editor.updateTargetLocation(cloc.loc);
     }
 

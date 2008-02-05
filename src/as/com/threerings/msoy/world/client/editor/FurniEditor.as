@@ -81,6 +81,14 @@ public class FurniEditor extends FurniHighlight
         _controller.targetSpriteUpdated();
     }
 
+    /** Updates advanced editing state on all hotspots. */
+    public function setAdvancedMode (advanced :Boolean) :void
+    {
+        for each (var hotspot :Hotspot in _hotspots) {
+            hotspot.setAdvancedMode(advanced);
+        }                
+    }
+    
     // @Override from FurniHighlight
     override public function start () :void
     {

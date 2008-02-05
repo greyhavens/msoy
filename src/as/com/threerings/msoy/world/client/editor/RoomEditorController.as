@@ -318,7 +318,7 @@ public class RoomEditorController
     /** Tells the room controller the user updated advanced editing preferences. */
     public function actionAdvancedEditing (advanced :Boolean) :void
     {
-        // nothing yet :)
+        _edit.setAdvancedMode(advanced);
     }
 
     // Functions for highlighting targets and displaying the furni editing UI

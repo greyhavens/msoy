@@ -88,6 +88,14 @@ public class Hotspot extends Sprite
     }
 
     /**
+     * Called when the user sets or clear advanced editing options.
+     */
+    public function setAdvancedMode (advanced :Boolean) :void
+    {
+        _advancedMode = advanced;
+    }
+    
+    /**
      * This function is called when the user presses a mouse button on this hotspot.
      * Subclasses should override it to provide their own functionality,
      * but make sure to call this (superclass) handler as well.
@@ -282,6 +290,9 @@ public class Hotspot extends Sprite
 
     /** Reference to the editor. */
     protected var _editor :FurniEditor;
+
+    /** Are we in advanced editing mode? */
+    protected var _advancedMode :Boolean;
 
     /**
      * Mouse position at the beginning of the action. Also used to verify whether

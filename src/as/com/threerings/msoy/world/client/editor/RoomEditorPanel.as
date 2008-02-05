@@ -181,7 +181,7 @@ public class RoomEditorPanel extends FloatingPanel
         advanced.addEventListener(Event.CHANGE, makeListener(function () :void {
             _controller.actionAdvancedEditing(advanced.selected);
         }));
-        // contents.addChild(advanced); // don't show it just yet
+        contents.addChild(advanced);
 
         var hr :HRule = new HRule();
         hr.percentWidth = 100;
