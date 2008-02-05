@@ -434,7 +434,6 @@
       <arg value="-compiler.source-path=projects/vilya/src/as/"/>
       <arg value="-compiler.source-path=projects/toybox/src/as/"/>
       <arg value="-compiler.source-path=projects/whirled/src/as/"/>
-      <arg value="-compiler.source-path=rsrc/{locale}/i18n/"/>
       <arg value="-include-sources=projects/narya/src/as/"/>
       <arg value="-include-sources=projects/nenya/src/as/"/>
       <arg value="-include-sources=projects/vilya/src/as/"/>
