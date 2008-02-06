@@ -457,6 +457,14 @@ Window {
   fillAlphas: 0.6, 0.4, 0.6, 0.4;
 }
 
+.roomEditAdvanced {  
+  paddingBottom: 0;
+  paddingTop: 3;
+  paddingLeft: 0;
+  paddingRight: 0;
+  verticalGap: 0;
+} 
+
 .roomEditContents {  
   paddingBottom: 5;
   paddingTop: 5;

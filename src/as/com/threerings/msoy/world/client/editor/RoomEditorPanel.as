@@ -22,6 +22,7 @@ import mx.controls.ComboBox;
 import mx.controls.HRule;
 import mx.controls.Label;
 import mx.controls.Spacer;
+import mx.core.UIComponent;
 import mx.events.ListEvent;
 
 import com.threerings.flex.CommandButton;
@@ -115,6 +116,20 @@ public class RoomEditorPanel extends FloatingPanel
         _room.setHomeButtonEnabled(enabled);
     }
 
+    /** Add or remove advanced panels from display. */
+    public function displayAdvancedPanels (show :Boolean) :void
+    {
+        var alreadyDisplayed :Boolean = _contents.contains(_advancedPanels);
+
+        if (show && ! alreadyDisplayed) {
+            _contents.addChild(_advancedPanels);
+        }
+
+        if (! show && alreadyDisplayed) {
+            _contents.removeChild(_advancedPanels);
+        }
+    }
+    
     /** Handler for dealing with changes in the name selection box. */
     protected function nameListChanged (event :ListEvent) :void
     {
@@ -140,16 +155,16 @@ public class RoomEditorPanel extends FloatingPanel
         addChild(namebar);
 
         // container for everything else
-        var contents :VBox = new VBox();
-        contents.styleName = "roomEditContents";
-        contents.percentWidth = 100;
-        addChild(contents);
+        _contents = new VBox();
+        _contents.styleName = "roomEditContents";
+        _contents.percentWidth = 100;
+        addChild(_contents);
         
         // sub-container for object name and buttons
         var box :HBox = new HBox();
         box.styleName = "roomEditButtonBar";
         box.percentWidth = 100;
-        contents.addChild(box);
+        _contents.addChild(box);
         
         _namebox = new ComboBox();
         _namebox.width = 250;
@@ -174,46 +189,57 @@ public class RoomEditorPanel extends FloatingPanel
         var spacer :VBox = new VBox();
         spacer.percentWidth = 100;
         spacer.height = 10;
-        contents.addChild(spacer);
+        _contents.addChild(spacer);
         
         var advanced :CheckBox = new CheckBox();
         advanced.label = Msgs.EDITING.get("l.advanced_editing");
         advanced.addEventListener(Event.CHANGE, makeListener(function () :void {
             _controller.actionAdvancedEditing(advanced.selected);
         }));
-        contents.addChild(advanced);
-
-        var hr :HRule = new HRule();
-        hr.percentWidth = 100;
-        contents.addChild(hr);
+        _contents.addChild(advanced);
 
         // now create collapsing sections
-        var c :CollapsingContainer = new CollapsingContainer(Msgs.EDITING.get("t.item_prefs"));
-        c.setContents(_details = new DetailsPanel(_controller));
-        contents.addChild(c);
 
         hr = new HRule();
         hr.percentWidth = 100;
-        contents.addChild(hr);
-
-        c = new CollapsingContainer(Msgs.EDITING.get("t.item_action"));
-        c.setContents(_action = new ActionPanel(_controller)); 
-        contents.addChild(c);
-
-        hr = new HRule();
-        hr.percentWidth = 100;
-        contents.addChild(hr);
+        _contents.addChild(hr);
 
         c = new CollapsingContainer(Msgs.EDITING.get("t.item_custom"));
         c.setContents(_custom = new CustomPanel(c, hr));
-        contents.addChild(c);
+        _contents.addChild(c);
+
+        _advancedPanels = new VBox();
+        _advancedPanels.styleName = "roomEditAdvanced";
+        _advancedPanels.percentWidth = 100;
+        _contents.addChild(_advancedPanels);
+        
+        var hr :HRule = new HRule();
+        hr.percentWidth = 100;
+        _advancedPanels.addChild(hr);
+
+        var c :CollapsingContainer = new CollapsingContainer(Msgs.EDITING.get("t.item_prefs"));
+        c.setContents(_details = new DetailsPanel(_controller));
+        _advancedPanels.addChild(c);
+
+        hr = new HRule();
+        hr.percentWidth = 100;
+        _advancedPanels.addChild(hr);
+
+        c = new CollapsingContainer(Msgs.EDITING.get("t.item_action"));
+        c.setContents(_action = new ActionPanel(_controller)); 
+        _advancedPanels.addChild(c);
     }
+
+    protected var _contents :VBox;
 
     protected var _deleteButton :Button;
     protected var _undoButton :Button;
+    
     protected var _details :DetailsPanel;
     protected var _action :ActionPanel;
     protected var _custom :CustomPanel;
+    protected var _advancedPanels :VBox;
+    
     protected var _room :RoomPanel;
     protected var _namebox :ComboBox;
     protected var _controller :RoomEditorController;

@@ -119,6 +119,9 @@ public class RoomEditorController
         _view.addOtherSprite(_entranceSprite);
         var id :ItemIdent = _entranceSprite.getFurniData().getItemIdent();
         _names.put(id, { label: Msgs.EDITING.get("l.entrance"), data: id });
+
+        // hide advanced ui
+        actionAdvancedEditing(false);
     }
 
     /**
@@ -319,6 +322,7 @@ public class RoomEditorController
     public function actionAdvancedEditing (advanced :Boolean) :void
     {
         _edit.setAdvancedMode(advanced);
+        _panel.displayAdvancedPanels(advanced);
     }
 
     // Functions for highlighting targets and displaying the furni editing UI
