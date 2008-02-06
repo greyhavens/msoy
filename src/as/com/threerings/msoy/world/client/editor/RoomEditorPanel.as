@@ -16,7 +16,6 @@ import flash.geom.Rectangle;
 import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
-import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.HRule;
 import mx.controls.Label;

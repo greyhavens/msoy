@@ -8,12 +8,12 @@ import flash.events.Event;
 import mx.containers.GridItem;
 import mx.containers.GridRow;
 
-import mx.controls.CheckBox;
 import mx.controls.Label;
 
 import mx.core.UIComponent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.GridUtil;
 
 import com.whirled.remix.data.EditableDataPack;
@@ -48,10 +48,9 @@ public class FieldEditor extends GridRow
 
     protected function addUsedCheckBox (entry :Object) :void
     {
-        _used = new CheckBox();
+        _used = new CommandCheckBox(null, handleUsedToggled);
         _used.selected = (entry.value != null);
         _used.enabled = entry.optional;
-        _used.addEventListener(Event.CHANGE, handleUsedToggled);
         addComp(_used);
     }
 
@@ -61,9 +60,9 @@ public class FieldEditor extends GridRow
         item.colSpan = colSpan;
     }
 
-    protected function handleUsedToggled (event :Event) :void
+    protected function handleUsedToggled (selected :Boolean) :void
     {
-        _component.enabled = _used.selected;
+        _component.enabled = selected;
         updateEntry();
     }
 
@@ -88,7 +87,7 @@ public class FieldEditor extends GridRow
      * enabled/disabled. */
     protected var _component :UIComponent;
 
-    protected var _used :CheckBox;
+    protected var _used :CommandCheckBox;
 
     protected var _pack :EditableDataPack;
 }

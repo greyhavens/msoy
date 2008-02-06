@@ -15,7 +15,6 @@ import flash.utils.ByteArray;
 import mx.containers.Canvas;
 import mx.containers.Grid;
 import mx.containers.VBox;
-import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.Label;
 import mx.controls.Image;
@@ -30,6 +29,7 @@ import mx.events.SliderEvent;
 import mx.resources.ResourceBundle;
 
 import com.threerings.flash.MathUtil;
+import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.GridUtil;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.util.Log;
@@ -149,12 +149,10 @@ public class DecorViewerComp extends Canvas
         _mousePanel = mouseopts;
         vbox.addChild(mouseopts);
         
-        _horizonMode = new CheckBox();
-        _horizonMode.label = Msgs.EDITING.get("b.move_horizon");
-        _horizonMode.addEventListener(MouseEvent.CLICK, horizonModeSelectionHandler);
-        _offsetMode = new CheckBox();
-        _offsetMode.label = Msgs.EDITING.get("b.move_offset");
-        _offsetMode.addEventListener(MouseEvent.CLICK, offsetModeSelectionHandler);
+        _horizonMode = new CommandCheckBox(Msgs.EDITING.get("b.move_horizon"),
+            horizonModeSelectionHandler);
+        _offsetMode = new CommandCheckBox(Msgs.EDITING.get("b.move_offset"),
+            offsetModeSelectionHandler);
 
         GridUtil.addRow(mouseopts, Msgs.EDITING.get("l.move_selection"),
                         _horizonMode, _offsetMode);
@@ -182,9 +180,8 @@ public class DecorViewerComp extends Canvas
         _depthSlider.liveDragging = true;
         _depthSlider.addEventListener(SliderEvent.CHANGE, regularOptionsChanged);
 
-        _hideWallsBox = new CheckBox();
-        _hideWallsBox.label = Msgs.EDITING.get("l.hide_walls");
-        _hideWallsBox.addEventListener(Event.CHANGE, regularOptionsChanged);
+        _hideWallsBox = new CommandCheckBox(Msgs.EDITING.get("l.hide_walls"),
+            regularOptionsChanged);
             
         GridUtil.addRow(standard, Msgs.EDITING.get("l.scene_type"), _types,
                         Msgs.EDITING.get("l.scene_depth"), _depthSlider, _hideWallsBox);
@@ -263,7 +260,7 @@ public class DecorViewerComp extends Canvas
     /**
      * Called whenever any of the UI elements changes.
      */
-    protected function regularOptionsChanged (event :Event) :void
+    protected function regularOptionsChanged (... ignored) :void
     {
         // update data from sliders
         _decor.depth = _depthSlider.value;
@@ -527,16 +524,16 @@ public class DecorViewerComp extends Canvas
         updatePointerImage(true);
     }
 
-    protected function horizonModeSelectionHandler (event :MouseEvent) :void
+    protected function horizonModeSelectionHandler (selected :Boolean) :void
     {
         _offsetMode.selected = false;
-        setMouseMode(_horizonMode.selected ? MOUSE_MODE_HORIZON : MOUSE_MODE_DEFAULT);
+        setMouseMode(selected ? MOUSE_MODE_HORIZON : MOUSE_MODE_DEFAULT);
     }
     
-    protected function offsetModeSelectionHandler (event :MouseEvent) :void
+    protected function offsetModeSelectionHandler (selected :Boolean) :void
     {
         _horizonMode.selected = false;
-        setMouseMode(_offsetMode.selected ? MOUSE_MODE_OFFSET : MOUSE_MODE_DEFAULT);
+        setMouseMode(selected ? MOUSE_MODE_OFFSET : MOUSE_MODE_DEFAULT);
     }
 
     
@@ -571,8 +568,8 @@ public class DecorViewerComp extends Canvas
     protected var _scaleLabel :Label;
     protected var _depthSlider :HSlider;
     protected var _types :ComboBox;
-    protected var _offsetMode :CheckBox;
-    protected var _horizonMode :CheckBox;
+    protected var _offsetMode :CommandCheckBox;
+    protected var _horizonMode :CommandCheckBox;
 
     // advanced options
     protected var _widthBox :TextInput;
@@ -582,7 +579,7 @@ public class DecorViewerComp extends Canvas
     protected var _horizonXBox :TextInput;
     protected var _offsetXBox :TextInput;
     protected var _offsetYBox :TextInput;
-    protected var _hideWallsBox :CheckBox;
+    protected var _hideWallsBox :CommandCheckBox;
 
     // room preview
     protected var _preview :Canvas;

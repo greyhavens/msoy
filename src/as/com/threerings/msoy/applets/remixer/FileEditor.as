@@ -5,7 +5,6 @@ package com.threerings.msoy.applets.remixer {
 
 import flash.events.Event;
 
-import mx.controls.CheckBox;
 import mx.controls.Label;
 
 import com.threerings.flex.CommandButton;
