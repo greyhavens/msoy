@@ -27,6 +27,8 @@ import com.samskivert.jdbc.depot.operator.Arithmetic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 
+import com.threerings.msoy.server.persist.CountRecord;
+
 import com.threerings.msoy.fora.data.ForumThread;
 
 /**
@@ -34,14 +36,6 @@ import com.threerings.msoy.fora.data.ForumThread;
  */
 public class ForumRepository extends DepotRepository
 {
-    /** Used by {@link #loadThreadCount}. */
-    @Entity @Computed
-    public static class ThreadCountRecord extends PersistentRecord
-    {
-        @Computed(fieldDefinition="count(*)")
-        public int count;
-    }
-
     public ForumRepository (PersistenceContext ctx)
     {
         super(ctx);
@@ -69,7 +63,7 @@ public class ForumRepository extends DepotRepository
     public int loadThreadCount (int groupId)
         throws PersistenceException
     {
-        return load(ThreadCountRecord.class,
+        return load(CountRecord.class,
                     new FromOverride(ForumThreadRecord.class),
                     new Where(ForumThreadRecord.GROUP_ID_C, groupId)).count;
     }
