@@ -11,6 +11,7 @@ import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.data.WhatIsWhirledData;
 import com.threerings.msoy.web.data.WhirledwideData;
 
 /**
@@ -25,15 +26,21 @@ public interface WorldService extends RemoteService
         throws ServiceException;
 
     /**
-     * Get data for the MyWhirled view for the current user.
+     * Loads the data for the MyWhirled view for the calling user.
      */
     public MyWhirledData getMyWhirled (WebIdent ident)
         throws ServiceException;
 
     /**
-     * Get the data for the Whirledwide view for the current user.
+     * Loads the data for the Whirledwide page.
      */
     public WhirledwideData getWhirledwide ()
+        throws ServiceException;
+
+    /**
+     * Loads the data for the WhatIsWhirled page.
+     */
+    public WhatIsWhirledData getWhatIsWhirled ()
         throws ServiceException;
 
     /**

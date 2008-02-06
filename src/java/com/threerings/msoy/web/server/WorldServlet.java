@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.ExpiringReference;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
@@ -88,6 +89,7 @@ import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.data.WhatIsWhirledData;
 import com.threerings.msoy.web.data.WhirledwideData;
 import com.threerings.msoy.web.server.ServletWaiter;
 
@@ -403,6 +405,27 @@ public class WorldServlet extends MsoyServiceServlet
 
         whirledwide.newsHtml = RuntimeConfig.server.whirledwideNewsHtml;
         return whirledwide;
+    }
+
+    // from interface WorldService
+    public WhatIsWhirledData getWhatIsWhirled ()
+        throws ServiceException
+    {
+        try {
+            WhatIsWhirledData data = ExpiringReference.get(_whatIsWhirled);
+            if (data == null) {
+                data = new WhatIsWhirledData();
+                data.players = MsoyServer.memberRepo.getPopulationCount();
+                data.places = MsoyServer.sceneRepo.getSceneCount();
+                data.games = MsoyServer.itemMan.getGameRepository().getGameCount();
+                _whatIsWhirled = ExpiringReference.create(data, WHAT_IS_WHIRLED_EXPIRY);
+            }
+            return data;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load WhatIsWhirled data.", pe);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface WorldService
@@ -898,6 +921,11 @@ public class WorldServlet extends MsoyServiceServlet
         }
     }
 
+    /** Contains a cached copy of our WhatIsWhirled data. */
+    protected ExpiringReference<WhatIsWhirledData> _whatIsWhirled;
+
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int DEFAULT_FEED_DAYS = 2;
+
+    protected static final long WHAT_IS_WHIRLED_EXPIRY = /* 60*60* */ 1000L;
 }
