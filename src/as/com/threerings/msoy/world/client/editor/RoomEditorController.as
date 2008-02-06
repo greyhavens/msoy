@@ -43,6 +43,7 @@ import com.threerings.msoy.world.client.updates.SceneUpdateAction;
 
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
+import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
@@ -321,6 +322,18 @@ public class RoomEditorController
     {
         _edit.setAdvancedMode(advanced);
         _panel.displayAdvancedPanels(advanced);
+    }
+
+    /** Resets the edited furni to the base location, or size, or both. */
+    public function resetTarget (resetLocation :Boolean, resetSize :Boolean) :void
+    {
+        if (resetLocation) {
+            _edit.updateTargetLocation(new MsoyLocation(0.5, 0.5, 0.5));
+        }
+
+        if (resetSize) {
+            _edit.updateTargetScale(1.0, 1.0);
+        }
     }
 
     // Functions for highlighting targets and displaying the furni editing UI

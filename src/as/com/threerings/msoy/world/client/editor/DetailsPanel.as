@@ -11,7 +11,6 @@ import mx.controls.TextInput;
 import mx.events.FlexEvent;
 
 import com.threerings.flash.MathUtil;
-import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.world.data.FurniData;

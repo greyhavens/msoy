@@ -163,16 +163,36 @@ public class RoomEditorPanel extends FloatingPanel
         
         _namebox = new ComboBox();
         _namebox.percentWidth = 100;
-        _namebox.maxWidth = 250;
+        _namebox.maxWidth = 300;
         _namebox.prompt = Msgs.EDITING.get("l.select_item");
         _namebox.addEventListener(ListEvent.CHANGE, nameListChanged);
         box.addChild(_namebox);
 
+        // some furni-specific buttons
+        
+        var spacer :VBox = new VBox();
+        spacer.percentWidth = 100;
+        spacer.height = 10;
+        _contents.addChild(spacer);
+
+        box = new HBox();
+        box.styleName = "roomEditButtonBar";
+        box.percentWidth = 100;
+        _contents.addChild(box);
+
         _deleteButton = new CommandButton(null, _controller.actionDelete);
         _deleteButton.styleName = "roomEditButtonTrash3";
-        _deleteButton.toolTip = Msgs.EDITING.get("i.delete_button");
+        _deleteButton.toolTip = Msgs.EDITING.get("i.put_away_button");
         _deleteButton.enabled = false;
         box.addChild(_deleteButton);
+        
+        var b :CommandButton = new CommandButton(
+            Msgs.EDITING.get("b.reset_location"), _controller.resetTarget, [ true, false ]);
+        box.addChild(b);
+        
+        b = new CommandButton(
+            Msgs.EDITING.get("b.reset_scale"), _controller.resetTarget, [ false, true ]);
+        box.addChild(b);
         
         _undoButton = new CommandButton(null, _controller.actionUndo);
         _undoButton.styleName = "roomEditButtonUndo3";
@@ -180,11 +200,11 @@ public class RoomEditorPanel extends FloatingPanel
         _undoButton.enabled = false;
         box.addChild(_undoButton);
 
-        var spacer :VBox = new VBox();
+        spacer = new VBox();
         spacer.percentWidth = 100;
         spacer.height = 10;
         _contents.addChild(spacer);
-        
+
         _contents.addChild(new CommandCheckBox(Msgs.EDITING.get("l.advanced_editing"),
             _controller.actionAdvancedEditing));
 
