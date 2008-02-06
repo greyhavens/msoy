@@ -124,7 +124,7 @@ public class MovementXZHotspot extends Hotspot
     }
 
     /** Mouse gain parameter for experimental position adjustment. */
-    protected static const MOUSE_GAIN :Point = new Point(0.002, -0.01);
+    protected static const MOUSE_GAIN :Point = new Point(0.002, -0.005);
     
     /** Target location at the beginning of a move. */
     protected var _originalLocation :MsoyLocation;
