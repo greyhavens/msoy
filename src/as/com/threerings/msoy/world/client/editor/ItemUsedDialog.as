@@ -10,8 +10,9 @@ import mx.core.ScrollPolicy;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
-import mx.controls.Button;
 import mx.controls.TextArea;
+
+import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
@@ -52,26 +53,17 @@ public class ItemUsedDialog extends FloatingPanel
         // add buttons
         var buttons :HBox = new HBox();
         buttons.percentWidth = 100;
-        var button :Button = new Button();
-        button.label = Msgs.EDITING.get("b.item_used_yes");
-        button.addEventListener(MouseEvent.CLICK, onButton);
-        buttons.addChild(button);
+        buttons.addChild(new CommandButton(Msgs.EDITING.get("b.item_used_yes"), closeWithYes));
         var spacer :HBox = new HBox();
         spacer.percentWidth = 100;
         buttons.addChild(spacer);
-        button = new Button();
-        button.label = Msgs.EDITING.get("b.item_used_no");
-        button.addEventListener(MouseEvent.CLICK, onButton);
-        buttons.addChild(button);
+        buttons.addChild(new CommandButton(Msgs.EDITING.get("b.item_used_no"), close));
         content.addChild(buttons);
     }
 
-    protected function onButton (evt :MouseEvent) :void
+    protected function closeWithYes () :void
     {
-        var button :Button = evt.target as Button;
-        if (button != null && button.label == Msgs.EDITING.get("b.item_used_yes")) {
-            _yesClosure();
-        }
+        _yesClosure();
         close();
     }
 

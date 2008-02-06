@@ -10,8 +10,6 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.ui.Keyboard;
 
-import com.threerings.flex.CommandButton;
-
 import com.threerings.io.TypedArray;
 
 import com.threerings.msoy.client.Msgs;

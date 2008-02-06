@@ -66,7 +66,7 @@ public class DataEditor extends FieldEditor
         addComp(display);
 
         var dataEditor :DataEditor = this;
-        var change :CommandButton = CommandButton.create("View/Change", function () :void {
+        var change :CommandButton = new CommandButton("View/Change", function () :void {
             new PopupEditor(dataEditor, entry, display, validator);
         });
         _component = change;
@@ -103,8 +103,10 @@ public class DataEditor extends FieldEditor
 
     internal function updateValue (value :*) :void
     {
-        _value = value;
-        updateEntry();
+        if (value != _value) {
+            _value = value;
+            updateEntry();
+        }
     }
 
     override protected function updateEntry () :void

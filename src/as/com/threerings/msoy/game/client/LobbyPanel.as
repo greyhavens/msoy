@@ -351,7 +351,7 @@ public class LobbyPanel extends VBox
         leaveBtnBox.styleName = "lobbyCloseBox";
         leaveBtnBox.percentHeight = 100;
         titleBox.addChild(leaveBtnBox);
-        var leaveBtn :CommandButton = new CommandButton(LobbyController.CLOSE_LOBBY);
+        var leaveBtn :CommandButton = new CommandButton(null, LobbyController.CLOSE_LOBBY);
         leaveBtn.styleName = "closeButton";
         leaveBtnBox.addChild(leaveBtn);
 
@@ -382,11 +382,7 @@ public class LobbyPanel extends VBox
         var startBox :HBox = new HBox();
         startBox.styleName = "startBox";
         startBox.percentHeight = 100;
-        _createBtn = new CommandButton();
-        _createBtn.label = Msgs.GAME.get("b.start_game");
-        _createBtn.setCallback(function () :void {
-            showCreateGame();
-        });
+        _createBtn = new CommandButton(Msgs.GAME.get("b.start_game"), showCreateGame);
         startBox.addChild(_createBtn);
         _headerBox.addChild(startBox);
 

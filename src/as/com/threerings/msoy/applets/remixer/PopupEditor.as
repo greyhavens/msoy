@@ -57,9 +57,9 @@ public class PopupEditor extends TitleWindow
         GridUtil.addRow(grid, _txt, [2, 1]);
 
         var buttonBar :ButtonBar = new ButtonBar();
-        _okBtn = CommandButton.create("OK", close, true);
+        _okBtn = new CommandButton("OK", close, true);
         buttonBar.addChild(_okBtn);
-        buttonBar.addChild(CommandButton.create("Cancel", close, false));
+        buttonBar.addChild(new CommandButton("Cancel", close, false));
         GridUtil.addRow(grid, buttonBar, [2, 1]);
 
         if (_validator != null) {

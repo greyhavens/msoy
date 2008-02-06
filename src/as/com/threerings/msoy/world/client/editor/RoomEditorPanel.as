@@ -16,7 +16,6 @@ import flash.geom.Rectangle;
 import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
-import mx.controls.Button;
 import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.HRule;
@@ -143,10 +142,6 @@ public class RoomEditorPanel extends FloatingPanel
     {
         super.createChildren();
 
-        var makeListener :Function = function (thunk :Function) :Function {
-            return function (event :Event) :void { thunk(); };
-        };
-
         // container for room name
         var namebar :VBox = new VBox();
         namebar.styleName = "roomEditNameBar";
@@ -173,18 +168,16 @@ public class RoomEditorPanel extends FloatingPanel
         _namebox.addEventListener(ListEvent.CHANGE, nameListChanged);
         box.addChild(_namebox);
 
-        _deleteButton = new Button();
+        _deleteButton = new CommandButton(null, _controller.actionDelete);
         _deleteButton.styleName = "roomEditButtonTrash3";
         _deleteButton.toolTip = Msgs.EDITING.get("i.delete_button");
         _deleteButton.enabled = false;
-        _deleteButton.addEventListener(MouseEvent.CLICK, makeListener(_controller.actionDelete));
         box.addChild(_deleteButton);
         
-        _undoButton = new Button();
+        _undoButton = new CommandButton(null, _controller.actionUndo);
         _undoButton.styleName = "roomEditButtonUndo3";
         _undoButton.toolTip = Msgs.EDITING.get("i.undo_button");
         _undoButton.enabled = false;
-        _undoButton.addEventListener(MouseEvent.CLICK, makeListener(_controller.actionUndo));
         box.addChild(_undoButton);
 
         var spacer :VBox = new VBox();
@@ -192,11 +185,12 @@ public class RoomEditorPanel extends FloatingPanel
         spacer.height = 10;
         _contents.addChild(spacer);
         
+        // TODO: I will be making CommandCheckBox.. :)
         var advanced :CheckBox = new CheckBox();
         advanced.label = Msgs.EDITING.get("l.advanced_editing");
-        advanced.addEventListener(Event.CHANGE, makeListener(function () :void {
+        advanced.addEventListener(Event.CHANGE, function (event :Event) :void {
             _controller.actionAdvancedEditing(advanced.selected);
-        }));
+        });
         _contents.addChild(advanced);
 
         // now create collapsing sections
@@ -233,8 +227,8 @@ public class RoomEditorPanel extends FloatingPanel
 
     protected var _contents :VBox;
 
-    protected var _deleteButton :Button;
-    protected var _undoButton :Button;
+    protected var _deleteButton :CommandButton;
+    protected var _undoButton :CommandButton;
     
     protected var _details :DetailsPanel;
     protected var _action :ActionPanel;

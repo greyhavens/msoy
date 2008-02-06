@@ -8,7 +8,6 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 
 import mx.containers.HBox;
-import mx.controls.Button;
 import mx.controls.Label;
 import mx.controls.TextInput;
 import mx.core.UITextField;
@@ -65,21 +64,12 @@ public class LogonPanel extends FloatingPanel
 
         var buttons :HBox = new HBox();
         buttons.percentWidth = 100;
-        _logonBtn = new Button();
-        _logonBtn.label = Msgs.GENERAL.get("b.logon");
-        _logonBtn.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
-            doLogon();
-        });
+        _logonBtn = new CommandButton(Msgs.GENERAL.get("b.logon"), doLogon);
         buttons.addChild(_logonBtn);
         var spacer :HBox = new HBox();
         spacer.percentWidth = 100;
         buttons.addChild(spacer);
-        var button :Button = new Button();
-        button.label = Msgs.GENERAL.get("b.cancel");
-        button.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
-            close();
-        });
-        buttons.addChild(button);
+        buttons.addChild(new CommandButton(Msgs.GENERAL.get("b.cancel"), close));
         addChild(buttons);
 
         _error = new Label();
@@ -143,7 +133,7 @@ public class LogonPanel extends FloatingPanel
     protected var _password :TextInput;
     protected var _error :Label;
 
-    protected var _logonBtn :Button;
+    protected var _logonBtn :CommandButton;
 
 //     protected var _sceneId :int = -1;
 }

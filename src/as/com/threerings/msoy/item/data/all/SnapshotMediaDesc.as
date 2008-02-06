@@ -43,7 +43,7 @@ public class SnapshotMediaDesc extends MediaDesc
     }
 
     // from MediaDesc
-    override public String getMediaPath ()
+    override public function getMediaPath () :String
     {
         return getMediaPath(sceneId, mimeType);
     }

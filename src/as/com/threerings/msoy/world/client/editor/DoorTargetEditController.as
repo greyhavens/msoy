@@ -3,12 +3,9 @@
 
 package com.threerings.msoy.world.client.editor {
 
-import flash.events.MouseEvent;
-
 import mx.containers.Canvas;
 import mx.containers.HBox;
 import mx.containers.VBox;
-import mx.controls.Button;
 import mx.controls.Text;
 import mx.core.Container;
 import mx.core.ScrollPolicy;
@@ -18,6 +15,8 @@ import com.threerings.util.Log;
 import com.threerings.io.TypedArray;
 
 import com.threerings.presents.client.ResultWrapper;
+
+import com.threerings.flex.CommandButton;
 
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.data.Scene;
@@ -163,31 +162,16 @@ public class DoorTargetEditController
         elts.verticalScrollPolicy = ScrollPolicy.OFF;
         panel.addChild(elts);
 
-        var bcommit :Button = new Button();
-        bcommit.label = Msgs.EDITING.get("b.edit_door_ok");
-        bcommit.addEventListener(MouseEvent.CLICK, select);
-        elts.addChild(bcommit);
-
-        var bpurchase :Button = new Button();
-        bpurchase.label = Msgs.EDITING.get("b.buy_room");
-        bpurchase.addEventListener(MouseEvent.CLICK, purchase);
-        elts.addChild(bpurchase);
+        elts.addChild(new CommandButton(Msgs.EDITING.get("b.edit_door_ok"), select));
+        elts.addChild(new CommandButton(Msgs.EDITING.get("b.buy_room"), purchase));
 
         return panel;
     }
 
     /**
-     * Called when the player hits the 'close' button. Cancels editing.
-     */
-    public function cancel (event :MouseEvent) :void
-    {
-        deinit();
-    }
-
-    /**
      * Called when the player hits the 'select' button.
      */
-    protected function select (event :MouseEvent) :void
+    protected function select () :void
     {
         var sd :SceneDirector = _ctx.getSceneDirector();
         if (sd != null) {
@@ -199,7 +183,7 @@ public class DoorTargetEditController
     /**
      * Called when the player hits the 'purchase' button.
      */
-    protected function purchase (event :MouseEvent) :void
+    protected function purchase () :void
     {
         var roomObj :RoomObject = (_ctx.getLocationDirector().getPlaceObject() as RoomObject);
         roomObj.roomService.purchaseRoom(_ctx.getClient(), new ResultWrapper (

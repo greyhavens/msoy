@@ -155,21 +155,9 @@ public class TableCreationPanel extends HBox
         bottomRow.addChild(_buttonBox);
         contents.addChild(bottomRow);
 
-        var create :CommandButton = new CommandButton();
-        // we need to have the button go through this function so that the TableConfig and
-        // GameConfig are created when the button is pressed
-        create.setCallback(function () :void {
-            createGame(tconfigger, gconf);
-        });
-        create.label = Msgs.GAME.get("b.create");
-        _buttonBox.addChild(create);
-
-        var cancel :CommandButton = new CommandButton();
-        cancel.label = Msgs.GAME.get("b.cancel");
-        cancel.setCallback(function () :void {
-            _panel.hideCreateGame();
-        });
-        _buttonBox.addChild(cancel);
+        _buttonBox.addChild(
+            new CommandButton(Msgs.GAME.get("b.create"), createGame, [ tconfigger, gconf ]));
+        _buttonBox.addChild(new CommandButton(Msgs.GAME.get("b.cancel"), _panel.hideCreateGame));
     }
 
     protected function createGame (tconf :TableConfigurator, gconf :GameConfigurator) :void

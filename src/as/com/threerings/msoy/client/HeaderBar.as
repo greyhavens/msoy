@@ -75,10 +75,9 @@ public class HeaderBar extends HBox
             _owner.removeChildAt(0);
         }
         if (owner != "") {
-            var nameLink :CommandLinkButton = new CommandLinkButton();
+            var nameLink :CommandLinkButton = new CommandLinkButton(
+                Msgs.GENERAL.get("m.room_owner", owner), onClick);
             nameLink.styleName = "headerLink";
-            nameLink.label = Msgs.GENERAL.get("m.room_owner", owner);
-            nameLink.setCallback(onClick);
             nameLink.enabled = !_ctx.getMsoyClient().isEmbedded();
             _owner.addChild(nameLink);
         }
@@ -173,12 +172,10 @@ public class HeaderBar extends HBox
         controlBox.percentHeight = 100;
         addChild(controlBox);
 
-        _embedLinkButton = new CommandLinkButton();
+        _embedLinkButton = new CommandLinkButton(Msgs.GENERAL.get("b.share"), function () :void {
+                new EmbedDialog(_ctx);
+            });
         _embedLinkButton.styleName = "headerLink";
-        _embedLinkButton.label = Msgs.GENERAL.get("b.share");
-        _embedLinkButton.setCallback(function () :void {
-            new EmbedDialog(_ctx);
-        });
         controlBox.addChild(_embedLinkButton);
         setEmbedLinkButtonVisible(false);
         _extras.push(_embedLinkButton);

@@ -151,23 +151,21 @@ public class FloatingPanel extends TitleWindow
      */
     protected function createButton (buttonId :int) :Button
     {
-        var btn :CommandButton = new CommandButton();
-        btn.setCallback(buttonClicked, buttonId);
-
+        var label :String;
         switch (buttonId) {
         case CANCEL_BUTTON:
-            btn.label = Msgs.GENERAL.get("b.cancel");
+            label = Msgs.GENERAL.get("b.cancel");
             break;
 
         case OK_BUTTON:
-            btn.label = Msgs.GENERAL.get("b.ok");
+            label = Msgs.GENERAL.get("b.ok");
             break;
 
         default:
             throw new ArgumentError("Unknown buttonId: " + buttonId);
         }
 
-        return btn;
+        return new CommandButton(label, buttonClicked, buttonId);
     }
 
     /**

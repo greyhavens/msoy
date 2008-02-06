@@ -46,16 +46,12 @@ public class BasePanel extends VBox
     /** Subclasses can call this function to create a box filled in with panel buttons. */
     protected function makePanelButtons () :Container
     {
-        _applyButton = new CommandButton();
-        _applyButton.label = Msgs.EDITING.get("b.apply_changes");
+        _applyButton = new CommandButton(Msgs.EDITING.get("b.apply_changes"), applyChanges);
         _applyButton.styleName = "roomEditPanelButton";
         _applyButton.height = 20;
-        _applyButton.setCallback(applyChanges);
-        _cancelButton = new CommandButton();
-        _cancelButton.label = Msgs.EDITING.get("b.revert_changes");
+        _cancelButton = new CommandButton(Msgs.EDITING.get("b.revert_changes"), revertChanges);
         _cancelButton.styleName = "roomEditPanelButton";
         _cancelButton.height = 20;
-        _cancelButton.setCallback(revertChanges);
 
         _buttons = new HBox();
         _buttonsEnabled = false;

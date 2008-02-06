@@ -12,7 +12,6 @@ import mx.core.UIComponent;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
-import mx.controls.Button;
 import mx.controls.Spacer;
 import mx.core.UIComponent;
 

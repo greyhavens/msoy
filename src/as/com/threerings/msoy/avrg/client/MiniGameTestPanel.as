@@ -34,9 +34,7 @@ public class MiniGameTestPanel extends Grid
         _style.maximum = 1;
         _style.value = 0;
 
-        var btn :CommandButton = new CommandButton();
-        btn.label = "Perform";
-        btn.setCallback(perform);
+        var btn :CommandButton = new CommandButton("Perform", perform);
 
         GridUtil.addRow(this, "score", _score, [2, 1], btn, [1, 2]);
         GridUtil.addRow(this, "style", _style, [2, 1]);

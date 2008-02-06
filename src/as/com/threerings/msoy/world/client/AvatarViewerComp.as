@@ -19,7 +19,6 @@ import mx.containers.Canvas;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
-import mx.controls.Button;
 import mx.controls.ComboBox;
 import mx.controls.HSlider;
 import mx.controls.Label;
@@ -28,6 +27,7 @@ import mx.events.FlexEvent;
 
 import com.threerings.flash.FPSDisplay;
 import com.threerings.flash.MediaContainer;
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
 import com.threerings.util.ParameterUtil;
 import com.threerings.util.StringUtil;
@@ -103,9 +103,7 @@ public class AvatarViewerComp extends VBox
         canv.rawChildren.addChild(new OrientationControl(setOrient));
         controls.addChild(canv);
 
-        var talk :Button = new Button();
-        talk.label = "Talk!";
-        controls.addChild(talk);
+        controls.addChild(new CommandButton("Talk!", speak));
         addChild(controls);
 
         // create an HBox to hold the scaling controls
@@ -128,7 +126,6 @@ public class AvatarViewerComp extends VBox
         _holder.rawChildren.addChildAt(bgsprite, 0);
 
         // bind actions to the user interface elements
-        talk.addEventListener(FlexEvent.BUTTON_DOWN, speak);
         BindingUtils.bindSetter(setMode, mode, "selectedIndex");
 
         // finally, load our parameters and see what we should do.
@@ -140,9 +137,7 @@ public class AvatarViewerComp extends VBox
      */
     protected function createScaleControls () :void
     {
-        _scaleReset = new Button();
-        _scaleReset.label = "Reset scale";
-        _scaleReset.addEventListener(MouseEvent.CLICK, function (... ignored) :void {
+        _scaleReset = new CommandButton("Reset scale", function () :void {
             _scaleSlider.value = 1;
         });
 
@@ -252,7 +247,7 @@ public class AvatarViewerComp extends VBox
         scaleUpdated();
     }
 
-    protected function speak (... ignored) :void
+    protected function speak () :void
     {
         for each (var avatar :ViewerAvatarSprite in _avatars) {
             avatar.performAvatarSpoke();
@@ -361,7 +356,7 @@ public class AvatarViewerComp extends VBox
     protected var _mode :int;
 
     protected var _scaleSlider :HSlider;
-    protected var _scaleReset :Button;
+    protected var _scaleReset :CommandButton;
 
     [Embed(source="../../../../../../../pages/images/item/detail_preview_bg.png")]
     protected static const BACKGROUND :Class;

@@ -65,11 +65,7 @@ public class RoomPanel extends BasePanel
 
         // make this room my home button
         _homeButton = new CommandButton();
-        _homeButton.setCallback(function () :void {
-            // this is not the controlled panel for the RoomEditorController, so simply setting
-            // a command on RoomEditorController doesn't work - we must call the function directly.
-            _controller.makeMyHome();
-        });
+        _homeButton.setCallback(_controller.makeMyHome);
         _homeButton.styleName = "roomEditButtonMakeMyHome";
         _homeButton.toolTip = Msgs.EDITING.get("i.make_home_button");
         var sceneModel :MsoySceneModel = _controller.scene.getSceneModel() as MsoySceneModel;

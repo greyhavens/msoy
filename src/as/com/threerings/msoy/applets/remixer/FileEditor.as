@@ -25,7 +25,7 @@ public class FileEditor extends FieldEditor
         lbl.text = entry.value as String;
         addComp(lbl);
 
-        var change :CommandButton = CommandButton.create("View/Change", function () :void {
+        var change :CommandButton = new CommandButton("View/Change", function () :void {
             // TODO
         });
         _component = change;

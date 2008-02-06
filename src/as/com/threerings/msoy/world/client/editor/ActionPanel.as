@@ -11,7 +11,6 @@ import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.containers.ViewStack;
-import mx.controls.Button;
 import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.Label;
@@ -265,14 +264,11 @@ public class ActionPanel extends BasePanel
         _door.percentWidth = 100;
         _door.maxWidth = 250;
 
-        var setportal :CommandButton = new CommandButton();
-        setportal.label = Msgs.EDITING.get("b.set_portal");
-        setportal.setCallback(this.editPortalTarget);
-
         GridUtil.addRow(grid, Msgs.EDITING.get("l.dest_scene"));
         GridUtil.addRow(grid, _door);
         GridUtil.addRow(grid, Msgs.EDITING.get("l.set_portal"));
-        GridUtil.addRow(grid, setportal);
+        GridUtil.addRow(grid,
+            new CommandButton(Msgs.EDITING.get("b.set_portal"), editPortalTarget));
 
         return grid;
     }

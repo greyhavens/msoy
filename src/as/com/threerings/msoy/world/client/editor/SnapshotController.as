@@ -14,7 +14,6 @@ import flash.utils.ByteArray;
 
 import com.adobe.images.JPGEncoder;
 
-import com.threerings.flex.CommandButton;
 import com.threerings.util.StringUtil;
 
 import com.threerings.msoy.data.MsoyCodes;

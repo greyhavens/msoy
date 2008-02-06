@@ -95,14 +95,12 @@ public class ChatPrefsDialog extends FloatingPanel
         var hbox :HBox = new HBox();
 
         var bbox :VBox = new VBox();
-        _upFont = new CommandButton();
+        _upFont = new CommandButton(null, adjustFont, +1);
         _upFont.styleName = "plusButton";
         //_upFont.label = "+";
-        _upFont.setCallback(adjustFont, +1);
-        _downFont = new CommandButton();
+        _downFont = new CommandButton(null, adjustFont, -1);
         _downFont.styleName = "minusButton";
         //_downFont.label = "-";
-        _downFont.setCallback(adjustFont, -1);
         bbox.addChild(_upFont);
         bbox.addChild(_downFont);
 

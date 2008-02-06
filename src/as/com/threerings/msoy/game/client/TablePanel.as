@@ -78,8 +78,8 @@ public class TablePanel extends VBox
         if (table.players.length > 0 &&
             gctx.getPlayerObject().getVisibleName().equals(table.players[0]) &&
             (table.tconfig.desiredPlayerCount > table.tconfig.minimumPlayerCount)) {
-            _startBtn = new CommandButton(LobbyController.START_TABLE, table.tableId);
-            _startBtn.label = Msgs.GAME.get("b.start_now");
+            _startBtn = new CommandButton(
+                Msgs.GAME.get("b.start_now"), LobbyController.START_TABLE, table.tableId);
             _seatsGrid.addCell(_startBtn);
         }
 
@@ -134,9 +134,8 @@ public class TablePanel extends VBox
                 }
 
                 if (key != null) {
-                    var btn :CommandButton = new CommandButton(
+                    var btn :CommandButton = new CommandButton(Msgs.GAME.get(key),
                         MsoyController.GO_GAME, [ _game.gameId, table.gameOid ]);
-                    btn.label = Msgs.GAME.get(key);
                     _seatsGrid.addCell(btn);
                 }
             }
@@ -256,8 +255,8 @@ class SeatPanel extends VBox
                 removeChild(getChildAt(0));
             }
             if (_joinBtn == null) {
-                _joinBtn = new CommandButton(LobbyController.JOIN_TABLE, [ _table.tableId, _index ]);
-                _joinBtn.label = Msgs.GAME.get("b.join");
+                _joinBtn = new CommandButton(Msgs.GAME.get("b.join"),
+                    LobbyController.JOIN_TABLE, [ _table.tableId, _index ]);
             }
             addChild(_joinBtn);
         }

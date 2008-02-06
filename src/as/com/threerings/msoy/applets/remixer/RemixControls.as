@@ -49,6 +49,8 @@ public class RemixControls extends VBox
 
         _controls = new Grid();
         _controls.setStyle("top", 0);
+        _controls.setStyle("left", 0);
+        _controls.setStyle("right", 0);
         _controls.percentWidth = 100;
         _controls.percentHeight = 100;
         addChild(_controls);
@@ -58,7 +60,7 @@ public class RemixControls extends VBox
         butBox.percentWidth = 100;
         addChild(butBox);
 
-        butBox.addChild(_saveBtn = CommandButton.create("Save", commit));
+        butBox.addChild(_saveBtn = new CommandButton("Save", commit));
         _saveBtn.enabled = false;
 
         ParameterUtil.getParameters(app, gotParams);
