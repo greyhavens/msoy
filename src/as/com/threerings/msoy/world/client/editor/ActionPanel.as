@@ -178,10 +178,12 @@ public class ActionPanel extends BasePanel
     protected function createNonePanel () :UIComponent
     {
         var grid :Grid = new Grid();
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.captureMouse"), _captureMouse = new CheckBox());
+        GridUtil.addRow(grid, _ignoreMouse = new CheckBox());
+        _ignoreMouse.label = Msgs.EDITING.get("l.ignore_mouse");
+        _ignoreMouse.toolTip = Msgs.EDITING.get("l.ignore_mouse_tooltip");
 
-        _captureMouse.addEventListener(MouseEvent.CLICK, changedHandler);
-        _captureMouse.addEventListener(MouseEvent.CLICK, applyHandler);
+        _ignoreMouse.addEventListener(MouseEvent.CLICK, changedHandler);
+        _ignoreMouse.addEventListener(MouseEvent.CLICK, applyHandler);
 
         return grid;
     }
@@ -189,10 +191,10 @@ public class ActionPanel extends BasePanel
     protected function updateNonePanel () :void
     {
         if (_furniData != null) {
-            // null == capture mouse, "-" means don't.
+            // null == capture mouse, "-" means ignore mouse.
             // We don't just check for null, because we want to default back to capturing
             // if the user is switching from a different action type.
-            _captureMouse.selected = (_furniData.actionData != "-");
+            _ignoreMouse.selected = (_furniData.actionData == "-");
         }
     }
 
@@ -314,7 +316,7 @@ public class ActionPanel extends BasePanel
 
         switch (type) {
         case FurniData.ACTION_NONE:
-            newData.actionData = _captureMouse.selected ? null : "-";
+            newData.actionData = _ignoreMouse.selected ? "-" : null;
             break;
         case FurniData.ACTION_URL:
             newData.actionData = _url.text;
@@ -423,7 +425,7 @@ public class ActionPanel extends BasePanel
     protected var _readOnlyActionLabel :TextInput;
     protected var _actionTypeSelection :ComboBox;
     protected var _actionPanels :ViewStack;
-    protected var _captureMouse :CheckBox;
+    protected var _ignoreMouse :CheckBox;
     protected var _url :TextInput;
     protected var _urlTip :TextInput;
     protected var _helpTabAction :TextInput;
