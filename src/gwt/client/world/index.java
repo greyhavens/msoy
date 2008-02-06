@@ -15,7 +15,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WorldService;
 import com.threerings.msoy.web.client.WorldServiceAsync;
-import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.LaunchConfig;
 
 import client.shell.Application;
@@ -47,10 +46,7 @@ public class index extends Page
     {
         try {
             String action = args.get(0, "s1");
-            if (action.equals("i")) {
-                displayInvite(args.get(1, ""));
-
-            } else if (!DeploymentConfig.devDeployment && CWorld.ident == null) {
+            if (!DeploymentConfig.devDeployment && CWorld.ident == null) {
                 // if we're not a dev deployment, disallow guests
                 setContent(MsoyUI.createLabel(CWorld.cmsgs.noGuests(), "infoLabel"));
 
@@ -267,35 +263,6 @@ public class index extends Page
         }
     }
 
-    protected void displayInvite (String inviteId)
-    {
-        if (CWorld.getMemberId() != 0) {
-            // if they're logged in, just send them home
-            WorldClient.displayFlash("memberHome=" + CWorld.getMemberId());
-        } else if (_invite != null && _invite.inviteId.equals(inviteId)) {
-            displayInvitation(_invite);
-        } else {
-            CWorld.membersvc.getInvitation(inviteId, true, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    displayInvitation(_invite = (Invitation)result);
-                }
-            });
-        }
-    }
-
-    protected void displayInvitation (Invitation invite)
-    {
-        if (invite == null) {
-            setContent(MsoyUI.createLabel(CWorld.msgs.inviteMissing(), "infoLabel"));
-        } else if (invite.inviter == null) {
-            // go to Brave New Whirled's group room if we were invited anonymously
-            WorldClient.displayFlash("groupHome=19&invite=" + invite.inviteId);
-        } else {
-            WorldClient.displayFlash(
-                "memberHome=" + invite.inviter.getMemberId() + "&invite=" + invite.inviteId);
-        }
-    }
-
     protected static native void configureCallbacks (index page) /*-{
        $wnd.howdyPardner = function () {
             page.@client.world.index::javaReady()();
@@ -308,9 +275,6 @@ public class index extends Page
 
     /** A command to be run when Java reports readiness. */
     protected Command _javaReadyCommand;
-
-    /** Avoid needless refetchery. */
-    protected static Invitation _invite;
 
     protected static final int NEIGHBORHOOD_REFRESH_TIME = 60;
 }

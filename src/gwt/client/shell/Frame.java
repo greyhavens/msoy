@@ -14,11 +14,11 @@ import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -52,27 +52,44 @@ public class Frame
      */
     public static void init (NaviPanel navi, StatusPanel status)
     {
-        // add the logo, with link to My Whirled/Whirledwide
-        Image logo = new Image("/images/header/header_logo.png");
-        logo.addClickListener(new ClickListener() {
+        // create our member header
+        _mheader = new FlexTable();
+        _mheader.setWidth("100%");
+        _mheader.setCellPadding(0);
+        _mheader.setCellSpacing(0);
+        _mheader.setStyleName("msoyHeader");
+        _mheader.getFlexCellFormatter().setStyleName(0, 0, "Logo");
+        _mheader.setWidget(0, 0, MsoyUI.createActionImage(LOGO_PATH, new ClickListener() {
             public void onClick (Widget sender) {
-                boolean loggedIn = CShell.creds != null;
-                Application.go(Page.WHIRLED, loggedIn ? "mywhirled" : "whirledwide");
+                Application.go(Page.WHIRLED, "mywhirled");
             }
-        });
+        }));
+        _mheader.getFlexCellFormatter().setStyleName(0, 1, "Navi");
+        _mheader.setWidget(0, 1, navi);
+        _mheader.getFlexCellFormatter().setStyleName(0, 2, "Left");
+        _mheader.getFlexCellFormatter().setStyleName(0, 3, "Right");
+        _mheader.getFlexCellFormatter().setHorizontalAlignment(0, 3, HasAlignment.ALIGN_RIGHT);
+        _mheader.setWidget(0, 3, status);
 
-        RootPanel logoPanel = RootPanel.get("logo");
-        if (logoPanel != null) {
-            logoPanel.add(logo);
-        }
-        RootPanel statusPanel = RootPanel.get("status");
-        if (statusPanel != null) {
-            statusPanel.add(status);
-        }
-        RootPanel naviPanel = RootPanel.get(NAVIGATION);
-        if (naviPanel != null) {
-            naviPanel.add(navi);
-        }
+        // create our guest header
+        _gheader = new FlexTable();
+        _gheader.setWidth("100%");
+        _gheader.setCellPadding(0);
+        _gheader.setCellSpacing(0);
+        _gheader.setStyleName("msoyHeader");
+        _gheader.getFlexCellFormatter().setStyleName(0, 0, "Logo");
+        _gheader.setWidget(0, 0, MsoyUI.createActionImage(LOGO_PATH, new ClickListener() {
+            public void onClick (Widget sender) {
+                Application.go(Page.WHIRLED, "");
+            }
+        }));
+        FlexTable signup = new FlexTable();
+        signup.setWidget(0, 0, MsoyUI.createLabel("New to Whirled?", "New"));
+        signup.setWidget(1, 0, Application.createLink("Sign up!", Page.ACCOUNT, "create"));
+        _gheader.getFlexCellFormatter().setStyleName(0, 1, "Signup");
+        _gheader.setWidget(0, 1, signup);
+        _gheader.getFlexCellFormatter().setStyleName(0, 2, "Logon");
+        _gheader.setWidget(0, 2, new LogonPanel(true));
 
         _minimizeContent = MsoyUI.createActionLabel("", "Minimize", new ClickListener() {
             public void onClick (Widget sender) {
@@ -214,6 +231,18 @@ public class Frame
     }
 
     /**
+     * Shows or hides the navigation header as desired.
+     */
+    public static void setHeaderVisible (boolean visible)
+    {
+        RootPanel.get(HEADER).remove(_gheader);
+        RootPanel.get(HEADER).remove(_mheader);
+        if (visible) {
+            RootPanel.get(HEADER).add(CShell.getMemberId() == 0 ? _gheader : _mheader);
+        }
+    }
+
+    /**
      * Requests that the specified widget be scrolled into view.
      */
     public static void ensureVisible (Widget widget)
@@ -271,10 +300,10 @@ public class Frame
     }
 
     /**
-     * Displays the page content table previously configured via {@link #initContent}. Will animate
-     * the content sliding on if appropriate.
+     * Displays the supplied page content (which is generally the same as the table previously
+     * configured via {@link #initContent}). Will animate the content sliding on if appropriate.
      */
-    protected static void showContent ()
+    protected static void showContent (Widget page)
     {
         RootPanel.get(CONTENT).clear();
 
@@ -282,9 +311,9 @@ public class Frame
         clearDialog(Predicate.TRUE);
 
         // note that this is our current content
-        _contlist = new VerticalPanel();
+        _contlist = new FlowPanel();
         _contlist.setWidth("100%");
-        _contlist.add(_content);
+        _contlist.add(page);
 
         Widget content;
         if (pageTooShort()) {
@@ -321,24 +350,6 @@ public class Frame
         setContentMinimized(true, null);
     }
 
-    protected static void setSeparator (int x)
-    {
-        clearSeparator();
-        Label div = new Label();
-        div.setStyleName("SeparatorFromFlash");
-        DOM.setAttribute(div.getElement(), "id", "separatorFromFlash");
-        DOM.setStyleAttribute(div.getElement(), "left", x + "px");
-        RootPanel.get(NAVIGATION).add(div);
-    }
-
-    protected static void clearSeparator ()
-    {
-        Element div = DOM.getElementById("separatorFromFlash");
-        if (div != null) {
-            DOM.removeChild(DOM.getParent(div), div);
-        }
-    }
-
     protected static int clearDialog (ComplexPanel panel, Predicate pred)
     {
         if (panel == null) {
@@ -364,12 +375,6 @@ public class Frame
        };
        $wnd.clearClient = function () {
             @client.shell.Frame::closeClient(Z)(true);
-       };
-       $wnd.setSeparator = function (x) {
-            @client.shell.Frame::setSeparator(I)(x);
-       };
-       $wnd.clearSeparator = function () {
-            @client.shell.Frame::clearSeparator()();
        };
     }-*/;
 
@@ -490,17 +495,19 @@ public class Frame
         }
     };
 
+    protected static FlexTable _mheader, _gheader;
     protected static String _closeToken;
 
     protected static Page.Content _content;
-    protected static VerticalPanel _contlist;
+    protected static FlowPanel _contlist;
     protected static ScrollPanel _scroller;
     protected static Label _minimizeContent, _maximizeContent;
 
     // constants for our top-level elements
     protected static final String HEADER = "header";
-    protected static final String NAVIGATION = "navigation";
     protected static final String CONTENT = "content";
     protected static final String SEPARATOR = "seppy";
     protected static final String CLIENT = "client";
+
+    protected static final String LOGO_PATH = "/images/header/header_logo.png";
 }

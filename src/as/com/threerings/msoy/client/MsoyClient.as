@@ -231,20 +231,6 @@ public /*abstract*/ class MsoyClient extends Client
     }
 
     /**
-     * Notifies javascript that we need it to create a little black divider at the given position.
-     */
-    public function setSeparator (x :int) :void
-    {
-        try {
-            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
-                ExternalInterface.call("setSeparator", x);
-            }
-        } catch (err :Error) {
-            log.warning("ExternalInteface.call('setSeparator') failed: " + err);
-        }
-    }
-
-    /**
      * Dispatches an event to GWT.
      */
     public function dispatchEventToGWT (eventName :String, eventArgs :Array) :void
@@ -255,20 +241,6 @@ public /*abstract*/ class MsoyClient extends Client
             }
         } catch (err :Error) {
             Log.getLog(this).warning("triggerFlashEvent failed: " + err);
-        }
-    }
-
-    /**
-     * Notifies javascript that we no longer need the little black divider.
-     */
-    public function clearSeparator () :void
-    {
-        try {
-            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
-                ExternalInterface.call("clearSeparator");
-            }
-        } catch (err :Error) {
-            log.warning("ExternalInterface.call('clearSeparator') failed: " + err);
         }
     }
      

@@ -529,3 +529,32 @@
   padding: 5px;
   height: 216px;
 }
+
+.whatIsTheWhirled {
+  background-image: url(/images/landing/background.jpg);
+  width: 800px;
+  height: 630px;
+}
+
+.whatIsTheWhirled .Logon {
+  background-image: url(/images/landing/signin.jpg);
+  width: 105px;
+  height: 42px;
+  border: none;
+}
+
+.whatIsTheWhirled .Logon:hover {
+  background-image: url(/images/landing/signin_hover.jpg);
+}
+
+.whatIsTheWhirled .logonPanel {
+  color: #FFFFFF;
+  font-size: 14px;
+}
+
+.whatIsTheWhirled .logonPanel .gwt-TextBox,
+.whatIsTheWhirled .logonPanel .gwt-PasswordTextBox {
+  background: #FFFFFF;
+  border: 1px solid #000000;
+  font-size: 16px;
+}

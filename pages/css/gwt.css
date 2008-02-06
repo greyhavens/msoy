@@ -142,7 +142,8 @@ img, embed, applet, object {
 .msoyHeader .Logo {
   width: 124px;
   height: 50px;
-  cursor: pointer;
+  vertical-align: top;
+  background: #222222;
 }
 
 .msoyHeader .Logo img {
@@ -173,6 +174,30 @@ img, embed, applet, object {
   vertical-align: bottom;
 }
 
+.msoyHeader .Signup {
+  width: 300px;
+  text-align: center;
+  background: #222222;
+}
+
+.msoyHeader .Signup table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.msoyHeader .Signup a {
+  color: #FFFFFF;
+  font-size: 18px;
+}
+
+.msoyHeader .Logon {
+  background: #222222;
+}
+
+.msoyHeader .Logon table {
+  margin-top: 5px;
+}
+
 .naviPanel .Button {
   font-size: 10px;
   text-align: center;
@@ -183,6 +208,15 @@ img, embed, applet, object {
 
   cursor: pointer;
   cursor: hand;
+}
+
+.msoyHeader .logonPanel, .msoyHeader .logonPanel .gwt-TextBox,
+.msoyHeader .logonPanel .gwt-PasswordTextBox {
+  font-size: 10px;
+}
+
+.msoyHeader .logonPanel td {
+  vertical-align: middle;
 }
 
 .statusPanel {

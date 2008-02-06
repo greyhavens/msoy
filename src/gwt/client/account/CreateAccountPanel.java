@@ -24,7 +24,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.AccountInfo;
-import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.Application;
@@ -39,35 +38,11 @@ import client.util.MsoyUI;
  */
 public class CreateAccountPanel extends FlexTable
 {
-    public CreateAccountPanel (String inviteId)
+    public CreateAccountPanel ()
     {
         setCellSpacing(10);
         setStyleName("formPanel");
         Frame.setTitle(CAccount.msgs.welcomeTitle(), CAccount.msgs.createTitle());
-
-        if (inviteId.equals("")) {
-            init(null);
-        } else {
-            CAccount.membersvc.getInvitation(inviteId, false, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    init((Invitation)result);
-                }
-            });
-        }
-    }
-
-    // @Override // from Widget
-    protected void onLoad ()
-    {
-        super.onLoad();
-        if (_email != null) {
-            _email.setFocus(true);
-        }
-    }
-
-    protected void init (Invitation invite)
-    {
-        _inviteId = (invite == null) ? null : invite.inviteId;
 
         int row = 0;
         getFlexCellFormatter().setColSpan(row, 0, 3);
@@ -82,9 +57,10 @@ public class CreateAccountPanel extends FlexTable
                 _password.setFocus(true);
             }
         }));
-        if (invite != null && invite.inviteeEmail.matches(SendInvitesPanel.EMAIL_REGEX)) {
+        if (Application.activeInvite != null &&
+            Application.activeInvite.inviteeEmail.matches(SendInvitesPanel.EMAIL_REGEX)) {
             // provide the invitation email as the default
-            _email.setText(invite.inviteeEmail);
+            _email.setText(Application.activeInvite.inviteeEmail);
         }
         _email.addKeyboardListener(_validator);
         _email.setFocus(true);
@@ -149,6 +125,15 @@ public class CreateAccountPanel extends FlexTable
         validateData(false);
     }
 
+    // @Override // from Widget
+    protected void onLoad ()
+    {
+        super.onLoad();
+        if (_email != null) {
+            _email.setFocus(true);
+        }
+    }
+
     protected boolean validateData (boolean forceError)
     {
         String email = _email.getText().trim(), name = _name.getText().trim();
@@ -203,16 +188,18 @@ public class CreateAccountPanel extends FlexTable
 
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim();
+        String inviteId = (Application.activeInvite == null) ?
+            null : Application.activeInvite.inviteId;
         AccountInfo info = new AccountInfo();
         info.realName = _rname.getText().trim();
         setStatus(CAccount.msgs.creatingAccount());
         CAccount.usersvc.register(DeploymentConfig.version, email, CAccount.md5hex(password), name, 
-            _dateOfBirth.getDate(), info, 1, _inviteId, new AsyncCallback() {
+            _dateOfBirth.getDate(), info, 1, inviteId, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     // clear our current token otherwise didLogon() will try to load it
                     Application.setCurrentToken(null);
                     // pass our credentials into the application
-                    CAccount.app.getStatusPanel().accountCreated((SessionData)result);
+                    CAccount.app.didLogon((SessionData)result);
                     // then head to our home
                     Application.go(Page.WORLD, "h");
                 }
@@ -245,7 +232,6 @@ public class CreateAccountPanel extends FlexTable
         }
     };
 
-    protected String _inviteId;
     protected TextBox _email, _name, _rname;
     protected PasswordTextBox _password, _confirm;
     protected DateFields _dateOfBirth;

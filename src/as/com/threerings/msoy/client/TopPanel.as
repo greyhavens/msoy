@@ -300,7 +300,6 @@ public class TopPanel extends Canvas
                 }
             }
 
-            _ctx.getMsoyClient().clearSeparator();
             removeChild(_leftPanel);
             _leftPanel = null;
 
@@ -523,7 +522,6 @@ public class TopPanel extends Canvas
             _leftPanel.width = LEFT_PANEL_WIDTH;
             _controlBar.setStyle("left", _leftPanel.width);
             _headerBar.setStyle("left", _leftPanel.width);
-            _ctx.getMsoyClient().setSeparator(_leftPanel.width - 1);
         } else {
             _controlBar.setStyle("left", 0);
             _headerBar.setStyle("left", 0);

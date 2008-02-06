@@ -118,8 +118,21 @@ public abstract class Page
      */
     protected void setContent (Widget content)
     {
-        Frame.showContent();
-        _content.setContent(content);
+        setContent(content, true);
+    }
+
+    /**
+     * Clears out any existing content and sets the specified widget as the main page content.
+     */
+    protected void setContent (Widget content, boolean withHeader)
+    {
+        Frame.setHeaderVisible(withHeader);
+        if (withHeader) {
+            Frame.showContent(_content);
+            _content.setContent(content);
+        } else {
+            Frame.showContent(content);
+        }
     }
 
     protected void setPageTabs (Widget tabs)

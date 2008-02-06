@@ -11,22 +11,27 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 
+import com.threerings.gwt.util.CookieUtil;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.client.CommentService;
 import com.threerings.msoy.web.client.CommentServiceAsync;
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
+import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -42,6 +47,9 @@ public class Application
 {
     /** The height of our header (including the black bar with location label) in pixels. */
     public static final int HEADER_HEIGHT = 50 /* header */ + 20 /* location bar */;
+
+    /** Our active invitation if we landed at Whirled from an invite, null otherwise. */
+    public static Invitation activeInvite;
 
     /**
      * Returns a {@link Hyperlink} that displays the details of a given group.
@@ -157,10 +165,8 @@ public class Application
         History.addHistoryListener(this);
         _currentToken = History.getToken();
 
-        // initialize the status panel
-        _status.init();
-
-        // now wait for our status panel to call didLogon() or didLogoff()
+        // validate our session before considering ourselves logged on
+        validateSession(CookieUtil.get("creds"));
     }
 
     // from interface HistoryListener
@@ -181,12 +187,14 @@ public class Application
             token = Args.compose("i", args.get(0, ""));
             args = new Args();
             args.setToken(token);
-            page = "world";
+            page = Page.WHIRLED;
         } else if ("optout".equals(page) || "resetpw".equals(page)) {
             token = Args.compose(page, args.get(0, ""), args.get(1, ""));
             args = new Args();
             args.setToken(token);
-            page = "account";
+            page = Page.ACCOUNT;
+        } else if (Page.WORLD.equals(page) && args.get(0, "").equals("i")) {
+            page = Page.WHIRLED;
         }
         // END TEMP
 
@@ -235,6 +243,43 @@ public class Application
         return _status;
     }
 
+    /**
+     * Called when the player logs on (or when our session is validated).
+     */
+    public void didLogon (SessionData data)
+    {
+        CShell.creds = data.creds;
+        CShell.ident = new WebIdent(data.creds.getMemberId(), data.creds.token);
+        _navi.didLogon(data.creds);
+        _status.didLogon(data);
+        WorldClient.didLogon(data.creds);
+
+        if (_page != null) {
+            _page.didLogon(data.creds);
+        } else if (_currentToken != null) {
+            onHistoryChanged(_currentToken);
+        }
+    }
+
+    /**
+     * Called when the player logs off.
+     */
+    public void didLogoff ()
+    {
+        CShell.creds = null;
+        CShell.ident = null;
+        _navi.didLogoff();
+        _status.didLogoff();
+
+        if (_page == null) {
+            // we can now load our starting page
+            onHistoryChanged(_currentToken);
+        } else {
+            Frame.closeClient(false);
+            _page.didLogoff();
+        }
+    }
+
     protected void initContext ()
     {
         CShell.app = this;
@@ -260,37 +305,25 @@ public class Application
     }
 
     /**
-     * Called when the player logs on (or when our session is validated).
+     * Makes sure that our credentials are still valid.
      */
-    protected void didLogon (WebCreds creds)
+    protected void validateSession (String token)
     {
-        CShell.creds = creds;
-        CShell.ident = new WebIdent(creds.getMemberId(), creds.token);
-        _navi.didLogon(creds);
-        WorldClient.didLogon(creds);
-
-        if (_page != null) {
-            _page.didLogon(creds);
-        } else if (_currentToken != null) {
-            onHistoryChanged(_currentToken);
-        }
-    }
-
-    /**
-     * Called when the player logs off.
-     */
-    protected void didLogoff ()
-    {
-        CShell.creds = null;
-        CShell.ident = null;
-        _navi.didLogoff();
-
-        if (_page == null) {
-            // we can now load our starting page
-            onHistoryChanged(_currentToken);
+        if (token != null) {
+            CShell.usersvc.validateSession(DeploymentConfig.version, token, 1, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    if (result == null) {
+                        didLogoff();
+                    } else {
+                        didLogon((SessionData)result);
+                    }
+                }
+                public void onFailure (Throwable t) {
+                    didLogoff();
+                }
+            });
         } else {
-            Frame.closeClient(false);
-            _page.didLogoff();
+            didLogoff();
         }
     }
 
@@ -299,7 +332,7 @@ public class Application
      */
     protected void didLogonFromFlash (String displayName, int memberId, String token)
     {
-        _status.validateSession(token);
+        validateSession(token);
     }
 
     /**

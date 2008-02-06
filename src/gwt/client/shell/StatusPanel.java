@@ -5,7 +5,6 @@ package client.shell;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -19,7 +18,6 @@ import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
-import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -73,49 +71,6 @@ public class StatusPanel extends FlexTable
     }
 
     /**
-     * Called once the rest of our application is set up. Checks to see if we're already logged on,
-     * in which case it triggers a call to didLogon().
-     */
-    public void init ()
-    {
-        validateSession(CookieUtil.get("creds"));
-    }
-
-    /**
-     * Returns our credentials or null if we are not logged in.
-     */
-    public WebCreds getCredentials ()
-    {
-        return _creds;
-    }
-
-    /**
-     * Called when we've created a new account to start our session.
-     */
-    public void accountCreated (SessionData data)
-    {
-        didLogon(data);
-    }
-
-    /**
-     * Clears out our credentials and displays the logon interface.
-     */
-    public void logoff ()
-    {
-        _creds = null;
-        clearCookie("creds");
-        _app.didLogoff();
-
-        // hide our logged on bits
-        _levels.setVisible(false);
-        _mail.setVisible(false);
-
-        setText(0, 0, "New to Whirled?");
-        setHTML(0, 1, "&nbsp;");
-        setWidget(0, 2, Application.createLink("Create an account!", Page.ACCOUNT, "create"));
-    }
-
-    /**
      * Called to forcibly set our unread mail count when FlashEvents aren't available.
      */
     public void notifyUnreadMailCount (int unread)
@@ -123,34 +78,11 @@ public class StatusPanel extends FlexTable
         _mail.setCount(unread);
     }
 
-    protected void validateSession (String token)
-    {
-        if (token != null) {
-            // validate our session before considering ourselves logged on
-            CShell.usersvc.validateSession(DeploymentConfig.version, token, 1, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    if (result == null) {
-                        logoff();
-                    } else {
-                        didLogon((SessionData)result);
-                    }
-                }
-                public void onFailure (Throwable t) {
-                    logoff();
-                }
-            });
-
-        } else {
-            logoff();
-        }
-    }
-
     protected void didLogon (SessionData data)
     {
         _creds = data.creds;
         setCookie("creds", _creds.token);
         setCookie("who", _creds.accountName);
-        _app.didLogon(_creds);
 
         // configure our levels
         int idx = 0;
@@ -176,6 +108,20 @@ public class StatusPanel extends FlexTable
                                           SceneBookmarkEvent.SCENEBOOKMARK_ADDED,
                                           entry.sceneName, entry.sceneId));
         }
+    }
+
+    protected void didLogoff ()
+    {
+        _creds = null;
+        clearCookie("creds");
+
+        // hide our logged on bits
+        _levels.setVisible(false);
+        _mail.setVisible(false);
+
+        setText(0, 0, "New to Whirled?");
+        setHTML(0, 1, "&nbsp;");
+        setWidget(0, 2, Application.createLink("Create an account!", Page.ACCOUNT, "create"));
     }
 
     protected void setCookie (String name, String value)

@@ -112,7 +112,7 @@ public class NaviPanel extends FlexTable
         if (creds == null) {
             click = new ClickListener() {
                 public void onClick (Widget sender) {
-                    LogonPanel.toggleShowLogon(_status);
+//                     LogonPanel.toggleShowLogon(_status);
                 }
             };
             setWidget(0, menuidx++, new NaviButton(
@@ -129,7 +129,7 @@ public class NaviPanel extends FlexTable
                     addLink(menu, "My Account", Page.ACCOUNT, "edit");
                     menu.addItem("Logoff", true, new Command() {
                         public void execute () {
-                            _status.logoff();
+                            CShell.app.didLogoff();
                             clearPopup();
                         }
                     });
