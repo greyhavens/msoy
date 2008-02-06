@@ -25,6 +25,7 @@ import mx.core.UIComponent;
 import mx.events.ListEvent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandCheckBox;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.HeaderBar;
@@ -185,13 +186,8 @@ public class RoomEditorPanel extends FloatingPanel
         spacer.height = 10;
         _contents.addChild(spacer);
         
-        // TODO: I will be making CommandCheckBox.. :)
-        var advanced :CheckBox = new CheckBox();
-        advanced.label = Msgs.EDITING.get("l.advanced_editing");
-        advanced.addEventListener(Event.CHANGE, function (event :Event) :void {
-            _controller.actionAdvancedEditing(advanced.selected);
-        });
-        _contents.addChild(advanced);
+        _contents.addChild(new CommandCheckBox(Msgs.EDITING.get("l.advanced_editing"),
+            _controller.actionAdvancedEditing));
 
         // now create collapsing sections
 
