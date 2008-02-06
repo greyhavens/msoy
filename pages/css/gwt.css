@@ -210,13 +210,25 @@ img, embed, applet, object {
   cursor: hand;
 }
 
-.msoyHeader .logonPanel, .msoyHeader .logonPanel .gwt-TextBox,
-.msoyHeader .logonPanel .gwt-PasswordTextBox {
+.logonPanel .gwt-TextBox,
+.logonPanel .gwt-PasswordTextBox {
+  background: #FFFFFF;
+  border: 1px solid #000000;
+}
+
+.msoyHeader .logonPanel {
   font-size: 10px;
 }
 
 .msoyHeader .logonPanel td {
   vertical-align: middle;
+}
+
+.msoyHeader .logonPanel .gwt-TextBox,
+.msoyHeader .logonPanel .gwt-PasswordTextBox {
+  font-size: 10px;
+  width: 100px;
+  border: 1px solid #CCCCCC;
 }
 
 .statusPanel {
