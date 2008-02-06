@@ -27,6 +27,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.SelectClause;
@@ -40,6 +41,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
@@ -337,12 +339,9 @@ public class GroupRepository extends DepotRepository
     public int countMembers (int groupId)
         throws PersistenceException
     {
-        GroupMembershipCount count =
-            load(GroupMembershipCount.class, new Where(GroupMembershipRecord.GROUP_ID_C, groupId));
-        if (count == null) {
-            throw new PersistenceException("Group not found [groupId=" + groupId + "]");
-        }
-        return count.count;
+        return load(CountRecord.class,
+                    new FromOverride(GroupMembershipRecord.class),
+                    new Where(GroupMembershipRecord.GROUP_ID_C, groupId)).count;
     }
 
     /**
@@ -380,12 +379,12 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         Map<String, SQLExpression> fieldMap = Maps.newHashMap();
-        fieldMap.put(
-            GroupRecord.MEMBER_COUNT,
-            new SelectClause<GroupMembershipCount>(
-                    GroupMembershipCount.class,
-                    new String[] { GroupMembershipCount.COUNT },
-                    new Where(GroupMembershipRecord.GROUP_ID_C, groupId)));
+        fieldMap.put(GroupRecord.MEMBER_COUNT,
+                     new SelectClause<CountRecord>(
+                         CountRecord.class,
+                         new String[] { CountRecord.COUNT },
+                         new FromOverride(GroupMembershipRecord.class),
+                         new Where(GroupMembershipRecord.GROUP_ID_C, groupId)));
         updateLiteral(GroupRecord.class, groupId, fieldMap);
     }
 
