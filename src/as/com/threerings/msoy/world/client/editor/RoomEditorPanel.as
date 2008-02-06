@@ -186,14 +186,6 @@ public class RoomEditorPanel extends FloatingPanel
         _deleteButton.enabled = false;
         box.addChild(_deleteButton);
         
-        var b :CommandButton = new CommandButton(
-            Msgs.EDITING.get("b.reset_location"), _controller.resetTarget, [ true, false ]);
-        box.addChild(b);
-        
-        b = new CommandButton(
-            Msgs.EDITING.get("b.reset_scale"), _controller.resetTarget, [ false, true ]);
-        box.addChild(b);
-        
         _undoButton = new CommandButton(null, _controller.actionUndo);
         _undoButton.styleName = "roomEditButtonUndo3";
         _undoButton.toolTip = Msgs.EDITING.get("i.undo_button");

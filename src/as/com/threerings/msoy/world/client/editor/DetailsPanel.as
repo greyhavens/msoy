@@ -11,6 +11,7 @@ import mx.controls.TextInput;
 import mx.events.FlexEvent;
 
 import com.threerings.flash.MathUtil;
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.world.data.FurniData;
@@ -111,6 +112,18 @@ public class DetailsPanel extends BasePanel
                         Msgs.EDITING.get("l.scale_x"), _scalex,
                         Msgs.EDITING.get("l.scale_y"), _scaley);
 
+        // new grid for special buttons
+        
+        grid = new Grid();
+        grid.percentWidth = 100;
+        addChild(grid);
+
+        GridUtil.addRow(grid,
+                        new CommandButton(Msgs.EDITING.get("b.reset_location"),
+                                          _controller.resetTarget, [ true, false ]),
+                        new CommandButton(Msgs.EDITING.get("b.reset_scale"),
+                                          _controller.resetTarget, [ false, true ]));
+        
         addChild(makePanelButtons());
     }
 
