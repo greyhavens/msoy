@@ -17,6 +17,7 @@ import com.samskivert.jdbc.depot.FieldMarshaller;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
@@ -24,6 +25,7 @@ import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Logic;
 
+import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.GameFlowGrantLogRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
@@ -59,6 +61,15 @@ public class GameRepository extends ItemRepository<
         _ctx.registerMigration(GameDetailRecord.class, new EntityMigration.Rename(
                                    6, "playerMinutes", "singlePlayerMinutes"));
         // END TEMP
+    }
+
+    /**
+     * Returns the total number of games in the repository.
+     */
+    public int getGameCount ()
+        throws PersistenceException
+    {
+        return load(CountRecord.class, new FromOverride(GameDetailRecord.class)).count;
     }
 
     /**

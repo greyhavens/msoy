@@ -13,10 +13,11 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
-import com.samskivert.jdbc.depot.operator.Logic.And;
+import com.samskivert.jdbc.depot.operator.Logic;
 
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -29,14 +30,17 @@ import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.server.persist.CountRecord;
+
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.DecorRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
+
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 import static com.threerings.msoy.Log.log;
@@ -71,14 +75,23 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /**
+     * Returns the total number of scenes in the repository.
+     */
+    public int getSceneCount ()
+        throws PersistenceException
+    {
+        return load(CountRecord.class, new FromOverride(SceneRecord.class)).count;
+    }
+
+    /**
      * Retrieve a list of all the scenes that the user directly owns.
      */
     public List<SceneBookmarkEntry> getOwnedScenes (byte ownerType, int memberId)
         throws PersistenceException
     {
         List<SceneBookmarkEntry> marks = Lists.newArrayList();
-        Where where = new Where(new And(new Equals(SceneRecord.OWNER_TYPE_C, ownerType),
-                                        new Equals(SceneRecord.OWNER_ID_C, memberId)));
+        Where where = new Where(new Logic.And(new Equals(SceneRecord.OWNER_TYPE_C, ownerType),
+                                              new Equals(SceneRecord.OWNER_ID_C, memberId)));
         // TODO: use a @Computed record?
         for (SceneRecord scene : findAll(SceneRecord.class, where)) {
             marks.add(new SceneBookmarkEntry(scene.sceneId, scene.name, 0L));

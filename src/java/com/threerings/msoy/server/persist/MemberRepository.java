@@ -138,7 +138,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Returns the total number of members in Whirled.  TODO: Cache this!
+     * Returns the total number of members in Whirled.
      */
     public int getPopulationCount ()
         throws PersistenceException
@@ -149,8 +149,6 @@ public class MemberRepository extends DepotRepository
     /**
      * Calculate a count of the active member population, currently defined as anybody
      * whose last session is within the past 60 days.
-     *
-     * TODO: Cache this!
      */
     public int getActivePopulationCount ()
         throws PersistenceException
