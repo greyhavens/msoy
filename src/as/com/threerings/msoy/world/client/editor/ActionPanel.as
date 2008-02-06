@@ -128,7 +128,8 @@ public class ActionPanel extends BasePanel
 
         // this label is for support+
         _debug = new TextInput();
-        _debug.width = 250;
+        _debug.percentWidth = 100;
+        _debug.maxWidth = 250;
         _debug.editable = false;
         _debug.enabled = false;
         if (playerIsSupportPlus) {
@@ -201,12 +202,14 @@ public class ActionPanel extends BasePanel
     protected function createURLPanel () :UIComponent
     {
         _url = new TextInput();
-        _url.width = 250;
+        _url.percentWidth = 100;
+        _url.maxWidth = 250;
         _url.addEventListener(Event.CHANGE, changedHandler);
         _url.addEventListener(FlexEvent.ENTER, applyHandler);
 
         _urlTip = new TextInput();
-        _urlTip.width = 250;
+        _urlTip.percentWidth = 100;
+        _urlTip.maxWidth = 250;
         _urlTip.addEventListener(Event.CHANGE, changedHandler);
         _urlTip.addEventListener(FlexEvent.ENTER, applyHandler);
 
@@ -259,7 +262,8 @@ public class ActionPanel extends BasePanel
 
         _door = new TextInput();
         _door.editable = false;
-        _door.width = 250;
+        _door.percentWidth = 100;
+        _door.maxWidth = 250;
 
         var setportal :CommandButton = new CommandButton();
         setportal.label = Msgs.EDITING.get("b.set_portal");

@@ -468,8 +468,8 @@ Window {
 .roomEditContents {  
   paddingBottom: 5;
   paddingTop: 5;
-  paddingLeft: 3;
-  paddingRight: 3;
+  paddingLeft: 5;
+  paddingRight: 5;
   verticalGap: 2;
 } 
 

@@ -167,7 +167,8 @@ public class RoomEditorPanel extends FloatingPanel
         _contents.addChild(box);
         
         _namebox = new ComboBox();
-        _namebox.width = 250;
+        _namebox.percentWidth = 100;
+        _namebox.maxWidth = 250;
         _namebox.prompt = Msgs.EDITING.get("l.select_item");
         _namebox.addEventListener(ListEvent.CHANGE, nameListChanged);
         box.addChild(_namebox);
