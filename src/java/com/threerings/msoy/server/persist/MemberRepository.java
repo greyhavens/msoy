@@ -138,6 +138,15 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Returns the total number of members in Whirled.  TODO: Cache this!
+     */
+    public int getPopulationCount ()
+        throws PersistenceException
+    {
+        return load(CountRecord.class, new FromOverride(MemberRecord.class)).count;
+    }
+
+    /**
      * Calculate a count of the active member population, currently defined as anybody
      * whose last session is within the past 60 days.
      *
@@ -149,13 +158,9 @@ public class MemberRepository extends DepotRepository
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -60); // TODO: unmagick
         Date when = new Date(cal.getTimeInMillis());
-        MemberCountRecord record = load (
-            MemberCountRecord.class,
-            new FromOverride(MemberRecord.class),
-            new Where(new GreaterThan(MemberRecord.LAST_SESSION_C,
-                                      new LiteralExp("'" + when + "'"))), // TODO: DateExp?
-            new FieldDefinition(MemberCountRecord.POPULATION, new LiteralExp("COUNT(*)")));
-        return record.population;
+        return load(CountRecord.class, new FromOverride(MemberRecord.class),
+                    new Where(new GreaterThan(MemberRecord.LAST_SESSION_C, // TODO: DateExp?
+                                              new LiteralExp("'" + when + "'")))).count;
     }
 
     /**
