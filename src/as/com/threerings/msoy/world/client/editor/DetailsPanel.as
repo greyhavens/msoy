@@ -11,6 +11,7 @@ import mx.controls.TextInput;
 import mx.events.FlexEvent;
 
 import com.threerings.flash.MathUtil;
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.world.data.FurniData;
@@ -31,16 +32,20 @@ public class DetailsPanel extends BasePanel
     {
         super.updateDisplay(data);
 
+        var trimmed :Function = function (v :Number) :String {
+            return v.toFixed(2);
+        };
+        
         if (data == null) {
             _all.forEach(function (input :TextInput, ... rest) :void {
                     input.text = "0.0";
                 });
         } else {
-            _locx.text = String(data.loc.x);
-            _locy.text = String(data.loc.y);
-            _locz.text = String(data.loc.z);
-            _scalex.text = String(data.scaleX);
-            _scaley.text = String(data.scaleY);
+            _locx.text = trimmed(data.loc.x);
+            _locy.text = trimmed(data.loc.y);
+            _locz.text = trimmed(data.loc.z);
+            _scalex.text = trimmed(data.scaleX);
+            _scaley.text = trimmed(data.scaleY);
         }
     }
 
@@ -62,9 +67,9 @@ public class DetailsPanel extends BasePanel
         var data :FurniData = _furniData.clone() as FurniData;
         data.loc = _furniData.loc.clone() as MsoyLocation; 
 
-        data.loc.x = MathUtil.clamp(maybeReplace(_locx, data.loc.x), 0, 1);
-        data.loc.y = MathUtil.clamp(maybeReplace(_locy, data.loc.y), 0, 1);
-        data.loc.z = MathUtil.clamp(maybeReplace(_locz, data.loc.z), 0, 1);
+        data.loc.x = maybeReplace(_locx, data.loc.x);
+        data.loc.y = maybeReplace(_locy, data.loc.y);
+        data.loc.z = maybeReplace(_locz, data.loc.z);
         data.scaleX = maybeReplace(_scalex, data.scaleX);
         data.scaleY = maybeReplace(_scaley, data.scaleY);
 
@@ -99,8 +104,13 @@ public class DetailsPanel extends BasePanel
                 input.width = 40;
             });
 
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.location"), _locx, _locy, _locz);
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.scale"), _scalex, _scaley);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.location"),
+                        Msgs.EDITING.get("l.axis_x"), _locx,
+                        Msgs.EDITING.get("l.axis_y"), _locy,
+                        Msgs.EDITING.get("l.axis_z"), _locz);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.scale"),
+                        Msgs.EDITING.get("l.scale_x"), _scalex,
+                        Msgs.EDITING.get("l.scale_y"), _scaley);
 
         addChild(makePanelButtons());
     }
@@ -116,7 +126,6 @@ public class DetailsPanel extends BasePanel
             });
     }
 
-
     protected var _locx :TextInput;
     protected var _locy :TextInput;
     protected var _locz :TextInput;
@@ -125,7 +134,6 @@ public class DetailsPanel extends BasePanel
     protected var _locs :Array;
     protected var _scales :Array;
     protected var _all :Array;
-            
 }
 
 }
