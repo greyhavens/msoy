@@ -40,6 +40,8 @@ public class MovementXZHotspot extends Hotspot
     override protected function startAction (event :MouseEvent) :void
     {
         super.startAction(event);
+        _originalLocation = _editor.target.getLocation().clone() as MsoyLocation;
+        
         // make sure we're showing the proper action icon
         switchDisplay(event.shiftKey ? _displayYMouseOver : _displayMouseOver);
     }
@@ -80,11 +82,19 @@ public class MovementXZHotspot extends Hotspot
             loc = cloc.loc;
 
         } else {
+            loc = _originalLocation.clone() as MsoyLocation;
+
+            // get x and z location from mouse movement
+            loc.x += (sx - _anchor.x) * MOUSE_GAIN.x;
+            loc.z += (sy - _anchor.y) * MOUSE_GAIN.y;
+
+            /*
             loc = _editor.roomView.layout.pointToLocationAtHeight(sx, sy, 0);
             if (loc != null) {
                 // since click location is now on the floor, don't forget to restore stem height
                 loc.y = _editor.target.getLocation().y;
             }
+            */
         }
 
         // see if the user specified an invalid location, or one that's too far away
@@ -113,6 +123,12 @@ public class MovementXZHotspot extends Hotspot
         return Msgs.EDITING.get("i.moving");
     }
 
+    /** Mouse gain parameter for experimental position adjustment. */
+    protected static const MOUSE_GAIN :Point = new Point(0.002, -0.01);
+    
+    /** Target location at the beginning of a move. */
+    protected var _originalLocation :MsoyLocation;
+    
     /** Bitmap used for hotspot with mouseover when shift pressed. */
     protected var _displayYMouseOver :DisplayObject;
 
