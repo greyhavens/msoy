@@ -111,6 +111,18 @@ public class Frame
     }
 
     /**
+     * Called when the user logs on.
+     */
+    public static void didLogon ()
+    {
+        // make sure the correct header is showing
+        if (_gheader.isAttached()) {
+            // this will remove the guest header and replace it with the member header
+            setHeaderVisible(true);
+        }
+    }
+
+    /**
      * Sets the title of the browser window and the page (displayed below the Whirled logo).
      */
     public static void setTitle (String title)

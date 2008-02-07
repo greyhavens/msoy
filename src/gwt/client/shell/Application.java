@@ -253,6 +253,7 @@ public class Application
         _navi.didLogon(data.creds);
         _status.didLogon(data);
         WorldClient.didLogon(data.creds);
+        Frame.didLogon();
 
         if (_page != null) {
             _page.didLogon(data.creds);
