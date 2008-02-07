@@ -48,6 +48,14 @@ public class GameEditor extends ItemEditor
             return;
         }
 
+        // configure our genre
+        for (int ii = 0; ii < Game.GENRES.length; ii++) {
+            if (Game.GENRES[ii] == _game.genre) {
+                _genre.setSelectedIndex(ii);
+                break;
+            }
+        }
+
         // read our configuration information out of the game's XML config data
         Document xml;
         try {
@@ -128,13 +136,14 @@ public class GameEditor extends ItemEditor
     // @Override from ItemEditor
     protected void addExtras ()
     {
-        // add a tab for configuring the game
-//         FlexTable bits = new FlexTable();
-//         addRow(CShell.emsgs.gameConfigTab(), bits);
+        _genre = new ListBox();
+        for (int ii = 0; ii < Game.GENRES.length; ii++) {
+            _genre.addItem(CShell.dmsgs.getString("genre" + Game.GENRES[ii]));
+        }
+        addRow(CShell.emsgs.gameGenre(), _genre);
 
-        // seated continuous games are disabled for now.
-        addRow(CShell.emsgs.gameGameType(),
-                   bind(_matchType = new ListBox(), new Binder() {
+        // seated continuous games are disabled for 
+        addRow(CShell.emsgs.gameGameType(), bind(_matchType = new ListBox(), new Binder() {
             public void valueChanged () {
                 // TODO: disable or hide min/max players and watchable if this is a party game
             }
@@ -142,7 +151,7 @@ public class GameEditor extends ItemEditor
         _matchType.addItem(CShell.dmsgs.getString("gameType0"));
         _matchType.addItem(CShell.dmsgs.getString("gameType2"));
 
-        // TODO: it'd be nice to force-format this text field for integers, or something.
+        // TODO: it'd be nice to force-format this text field for integers, or something
         addRow(CShell.emsgs.gameMinPlayers(), _minPlayers = new TextBox());
         _minPlayers.setText("1");
         _minPlayers.setVisibleLength(5);
@@ -207,6 +216,9 @@ public class GameEditor extends ItemEditor
         throws Exception
     {
         super.prepareItem();
+
+        // configure our genre
+        _game.genre = Game.GENRES[_genre.getSelectedIndex()];
 
         // convert our configuration information back to an XML document
         Document xml = XMLParser.createDocument();
@@ -297,6 +309,7 @@ public class GameEditor extends ItemEditor
 
     protected Game _game;
 
+    protected ListBox _genre;
     protected TextBox _minPlayers, _maxPlayers;
     protected ListBox _matchType;
     protected CheckBox _watchable;

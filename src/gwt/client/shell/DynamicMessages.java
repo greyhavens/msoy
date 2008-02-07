@@ -107,4 +107,14 @@ public interface DynamicMessages extends ConstantsWithLookup
 
     public String listingPricing4 ();
     public String listingPricingTip4 ();
+
+    public String genre0 ();
+    public String genre1 ();
+    public String genre2 ();
+    public String genre3 ();
+    public String genre4 ();
+    public String genre5 ();
+    public String genre6 ();
+    public String genre7 ();
+    public String genre8 ();
 }
