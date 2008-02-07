@@ -105,7 +105,7 @@ public class RemixControls extends VBox
             GridUtil.addRow(_controls, "Files", "Used?", "filename", [2, 1]);
             addRule();
             for each (name in files) {
-                _controls.addChild(new FileEditor(_pack, name));
+                _controls.addChild(new FileEditor(_pack, name, _params["server"]));
             }
         }
     }
