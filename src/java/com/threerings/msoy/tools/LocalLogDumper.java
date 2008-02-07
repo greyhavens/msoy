@@ -129,7 +129,7 @@ public class LocalLogDumper
      * Reads and processes a single event file.
      */
     protected static void process (File file, ObjectOutputStream out) 
-        throws Exception
+        throws IOException, ClassNotFoundException
     {
         Long possibleTimestamp = getTimestampFromFile(file);
         
@@ -146,11 +146,22 @@ public class LocalLogDumper
             } catch (EOFException eofe) {
                 break;
             }
-                
-            if (! (o instanceof BaseEvent)) {
-                throw new IOException("Failed to load BaseEvent instances from file " + file);
-            }
-            
+
+            writeEvent(o, out, possibleTimestamp);
+
+            _eventcount++;
+        }
+
+        _filecount++;
+    }
+    
+    /** 
+     * Processes a single Java-serialized event.
+     */
+    protected static void writeEvent (Object o, ObjectOutputStream out, Long possibleTimestamp)
+        throws IOException
+    {
+        if (o instanceof BaseEvent) {
             // now try to fix up the event, if necessary
             BaseEvent event = (BaseEvent) o;
             if (event.timestamp == 0L && possibleTimestamp != null) {
@@ -164,10 +175,22 @@ public class LocalLogDumper
                 System.out.println(event);
             }
             
-            _eventcount++;
-        }
+            return;
+            
+        } 
 
-        _filecount++;
+        if (o instanceof byte[]) { 
+            byte[] bytes = (byte[]) o;
+            if (out != null) {
+                out.writeObject(bytes);
+            } else {
+                System.out.println("Serialized event: " + bytes);
+            }
+        
+            return;
+        } 
+
+        throw new IOException("Failed to read unknown event object: " + o); 
     }
     
     protected static int _filecount = 0;

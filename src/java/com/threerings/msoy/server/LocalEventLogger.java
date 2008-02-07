@@ -22,6 +22,7 @@ import com.samskivert.util.Queue;
 import com.samskivert.util.Throttle;
 
 import com.threerings.panopticon.common.Event;
+import com.threerings.panopticon.common.walken.EventSerializer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -67,7 +68,7 @@ public class LocalEventLogger extends LoopingThread
             // serialize our event into a byte buffer
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             ObjectOutputStream oout = new ObjectOutputStream(bout);
-            oout.writeObject(event);
+            oout.writeObject(EventSerializer.toBytes(event));
             oout.close();
             ByteBuffer data = ByteBuffer.wrap(bout.toByteArray());
 
