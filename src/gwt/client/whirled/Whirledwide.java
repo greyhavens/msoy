@@ -84,7 +84,7 @@ public class Whirledwide extends FlexTable
         allGames.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         allGames.add(MsoyUI.createActionImage("/images/whirled/all_games.png", new ClickListener() {
             public void onClick (Widget sender) {
-                Application.go(Page.CATALOG, "" + Item.GAME);
+                Application.go(Page.GAME, "");
             }
         }));
         topGamesContainer.add(allGames);

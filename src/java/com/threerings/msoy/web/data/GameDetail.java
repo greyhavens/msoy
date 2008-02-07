@@ -11,7 +11,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
- * Contains raw usage data on a particular game.
+ * Contains information displayed on a game's detail page.
  */
 public class GameDetail
     implements IsSerializable

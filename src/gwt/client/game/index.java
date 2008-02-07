@@ -65,7 +65,7 @@ public class index extends Page
             setContent(new TrophyCasePanel(args.get(1, 0)));
 
         } else {
-            // TODO: display the arcade
+            setContent(new ArcadePanel());
         }
     }
 

@@ -220,3 +220,33 @@
   font-size: xx-small;
   text-align: right;
 }
+
+.arcade .WhatIsGames {
+  border: 1px solid;
+  width: 200px;
+  height: 265px;
+}
+
+.arcade .MyGames {
+  border: 1px solid;
+  width: 200px;
+  height: 265px;
+}
+
+.arcade .FeaturedGame {
+  border: 1px solid;
+  width: 485px;
+  height: 265px;
+}
+
+.arcade .Categories {
+  border: 1px solid;
+  width: 125px;
+  height: 200px;
+}
+
+.arcade .GameCategory {
+  border: 1px solid;
+  width: 180px;
+  height: 200px;
+}

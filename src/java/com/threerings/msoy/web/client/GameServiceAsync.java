@@ -49,4 +49,9 @@ public interface GameServiceAsync
      */
     public void loadTopRanked (WebIdent ident, int gameId, boolean onlyMyFriends,
                                AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GameService#loadArcadeData}.
+     */
+    public void loadArcadeData (WebIdent ident, AsyncCallback callback);
 }

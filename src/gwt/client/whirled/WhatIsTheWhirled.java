@@ -39,7 +39,7 @@ public class WhatIsTheWhirled extends AbsolutePanel
 
         add(MsoyUI.createActionImage("/images/landing/playgames.jpg", new ClickListener() {
             public void onClick (Widget widget) {
-                Application.go(Page.WHIRLED, "whirledwide"); // TODO: arcade
+                Application.go(Page.GAME, "");
             }
         }), 540, 303);
 

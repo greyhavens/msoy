@@ -48,6 +48,7 @@ import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.GameService;
+import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.PlayerRating;
@@ -392,6 +393,12 @@ public class GameServlet extends MsoyServiceServlet
                     ", friends=" + onlyMyFriends + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+    }
+
+    // from interface GameService
+    public ArcadeData loadArcadeData (WebIdent ident)
+    {
+        return null; // TODO
     }
 
     protected PlayerRating[] toRatingResult (

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.LaunchConfig;
@@ -75,4 +76,9 @@ public interface GameService extends RemoteService
      */
     public PlayerRating[][] loadTopRanked (WebIdent ident, int gameId, boolean onlyMyFriends)
         throws ServiceException;
+
+    /**
+     * Loads up information for the arcade.
+     */
+    public ArcadeData loadArcadeData (WebIdent ident);
 }
