@@ -8,13 +8,9 @@ import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.logging.Level;
 
-import com.samskivert.util.Invoker;
-import com.samskivert.util.StringUtil;
-
 import com.threerings.panopticon.client.net.LoggingConnection;
 import com.threerings.panopticon.common.Event;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyBaseServer;
 
 import static com.threerings.msoy.Log.log;

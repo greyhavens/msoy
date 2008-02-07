@@ -29,7 +29,6 @@ import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.persist.MemberRecord;

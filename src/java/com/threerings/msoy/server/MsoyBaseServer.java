@@ -25,7 +25,6 @@ import com.threerings.stats.server.persist.StatRepository;
 
 import com.threerings.admin.server.AdminProvider;
 import com.threerings.admin.server.ConfigRegistry;
-import com.threerings.admin.server.DatabaseConfigRegistry;
 import com.threerings.whirled.server.WhirledServer;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;

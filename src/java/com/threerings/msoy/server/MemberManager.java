@@ -17,7 +17,6 @@ import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.threerings.util.MessageBundle;
 
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;

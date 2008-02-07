@@ -4,9 +4,6 @@
 package com.threerings.msoy.server;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import com.samskivert.util.StringUtil;
 
