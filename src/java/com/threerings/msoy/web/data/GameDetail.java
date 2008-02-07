@@ -72,12 +72,12 @@ public class GameDetail
     }
 
     /**
-     * Returns the average duration of this game.
+     * Returns the larger of the average single and multiplayer duration of this game.
      */
-    public int getAverageDuration (boolean multiplayer)
+    public int getAverageDuration ()
     {
-        float avg = multiplayer ? (multiPlayerMinutes / (float)multiPlayerGames) :
-            (singlePlayerMinutes / (float)singlePlayerGames);
-        return Math.max(1, Math.round(avg));
+        float mavg = (multiPlayerMinutes / (float)multiPlayerGames);
+        float savg = (singlePlayerMinutes / (float)singlePlayerGames);
+        return Math.max(1, Math.max(Math.round(savg), Math.round(mavg)));
     }
 }

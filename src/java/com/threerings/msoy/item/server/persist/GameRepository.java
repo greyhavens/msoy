@@ -5,12 +5,17 @@ package com.threerings.msoy.item.server.persist;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.ArrayIntSet;
+
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.FieldMarshaller;
@@ -18,6 +23,10 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.Limit;
+import com.samskivert.jdbc.depot.clause.OrderBy;
+import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
@@ -103,6 +112,36 @@ public class GameRepository extends ItemRepository<
             return null;
         }
         return loadItem(gameId < 0 ? gdr.sourceItemId : gdr.listedItemId);
+    }
+
+    /**
+     * Loads all listed game records in the specified genre, sorted from highest to lowest rating.
+     *
+     * @param genre the genre of game record to load or -1 to load all (listed) games.
+     * @param limit a limit to the number of records loaded or <= 0 to load all records.
+     */
+    public List<GameRecord> loadGenre (byte genre, int limit)
+        throws PersistenceException
+    {
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new Join(getItemClass(), ItemRecord.ITEM_ID,
+                             getCatalogClass(), CatalogRecord.LISTED_ITEM_ID));
+        if (limit > 0) {
+            clauses.add(new Limit(0, limit));
+        }
+        if (genre >= 0) {
+            clauses.add(new Where(new Conditionals.Equals(GameRecord.GENRE_C, genre)));
+        }
+
+        // sort out the primary and secondary order by clauses
+        List<SQLExpression> obExprs = Lists.newArrayList();
+        List<OrderBy.Order> obOrders = Lists.newArrayList();
+        addOrderByRating(obExprs, obOrders);
+        clauses.add(new OrderBy(obExprs.toArray(new SQLExpression[obExprs.size()]),
+                                obOrders.toArray(new OrderBy.Order[obOrders.size()])));
+
+        // finally fetch all the game records of interest
+        return findAll(getItemClass(), clauses.toArray(new QueryClause[clauses.size()]));
     }
 
     /**

@@ -5,6 +5,8 @@ package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.Column;
+import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -12,13 +14,26 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import com.threerings.msoy.web.data.FeaturedGameInfo;
+import com.threerings.msoy.web.data.GameInfo;
+
 /**
  * Extends Item with game info.
  */
+@Entity(indices={
+  @Index(name="ixGenre", fields={ GameRecord.GENRE })
+})
 @TableGenerator(name="itemId", pkColumnValue="GAME")
 public class GameRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #genre} field. */
+    public static final String GENRE = "genre";
+
+    /** The qualified column identifier for the {@link #genre} field. */
+    public static final ColumnExp GENRE_C =
+        new ColumnExp(GameRecord.class, GENRE);
+
     /** The column identifier for the {@link #config} field. */
     public static final String CONFIG = "config";
 
@@ -138,7 +153,10 @@ public class GameRecord extends ItemRecord
         new ColumnExp(GameRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 11;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 12;
+
+    /** This game's genre. */
+    public byte genre;
 
     /** The XML game configuration. */
     @Column(type="TEXT")
@@ -160,6 +178,31 @@ public class GameRecord extends ItemRecord
 
     /** The MIME type of the {@link #shotMediaHash} media. */
     public byte shotMimeType;
+
+    /**
+     * Creates a {@link GameInfo} record for this game.
+     */
+    public GameInfo toGameInfo ()
+    {
+        return toGameInfo(new GameInfo());
+    }
+
+    /**
+     * Populates and returns the supplied {@link GameInfo} record with this game's info.
+     */
+    public GameInfo toGameInfo (GameInfo info)
+    {
+        info.gameId = gameId;
+        info.name = name;
+        info.genre = genre;
+        info.thumbMedia = getThumbMediaDesc();
+        info.description = description;
+        if (info instanceof FeaturedGameInfo) {
+            ((FeaturedGameInfo)info).screenshot =
+                (shotMediaHash == null) ? null : new MediaDesc(shotMediaHash, shotMimeType);
+        }
+        return info;
+    }
 
     @Override // from ItemRecord
     public void prepareForListing (ItemRecord oldListing)
@@ -192,6 +235,7 @@ public class GameRecord extends ItemRecord
         super.fromItem(item);
 
         Game game = (Game)item;
+        genre = game.genre;
         config = game.config;
         if (game.gameMedia != null) {
             gameMediaHash = game.gameMedia.hash;
@@ -208,6 +252,7 @@ public class GameRecord extends ItemRecord
     protected Item createItem ()
     {
         Game object = new Game();
+        object.genre = genre;
         object.config = config;
         object.gameMedia = (gameMediaHash == null) ? null :
             new MediaDesc(gameMediaHash, gameMimeType);

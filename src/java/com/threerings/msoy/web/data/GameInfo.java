@@ -20,7 +20,7 @@ public class GameInfo
     public String name;
 
     /** The genre code for this game. */
-    public int genre;
+    public byte genre;
 
     /** This game's thumbnail icon. */
     public MediaDesc thumbMedia;

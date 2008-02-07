@@ -80,5 +80,6 @@ public interface GameService extends RemoteService
     /**
      * Loads up information for the arcade.
      */
-    public ArcadeData loadArcadeData (WebIdent ident);
+    public ArcadeData loadArcadeData (WebIdent ident)
+        throws ServiceException;
 }

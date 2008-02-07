@@ -9,13 +9,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
@@ -244,7 +244,7 @@ public abstract class ItemRepository<
             OrderBy.descending(getCloneColumn(CloneRecord.LAST_TOUCHED)), limit);
         int size = originals.size() + clones.size();
 
-        ArrayList<T> list = new ArrayList<T>(size);
+        List<T> list = Lists.newArrayListWithCapacity(size);
         list.addAll(originals);
         list.addAll(clones);
 
@@ -415,7 +415,7 @@ public abstract class ItemRepository<
     public int countListings (boolean mature, String search, int tag, int creator)
         throws PersistenceException
     {
-        ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
+        List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(getCatalogClass()));
         clauses.add(new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
                              getItemClass(), ItemRecord.ITEM_ID));
@@ -442,14 +442,14 @@ public abstract class ItemRepository<
                                   int creator, int offset, int rows)
         throws PersistenceException
     {
-        ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
+        List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
                              getItemClass(), ItemRecord.ITEM_ID));
         clauses.add(new Limit(offset, rows));
 
         // sort out the primary and secondary order by clauses
-        ArrayList<SQLExpression> obExprs = new ArrayList<SQLExpression>();
-        ArrayList<OrderBy.Order> obOrders = new ArrayList<OrderBy.Order>();
+        List<SQLExpression> obExprs = Lists.newArrayList();
+        List<OrderBy.Order> obOrders = Lists.newArrayList();
         switch(sortBy) {
         case CatalogListing.SORT_BY_LIST_DATE:
             addOrderByListDate(obExprs, obOrders);
@@ -856,11 +856,11 @@ public abstract class ItemRepository<
     /**
      * Helper function for {@link #countListings} and {@link #loadCatalog}.
      */
-    protected void addSearchClause (ArrayList<QueryClause> clauses, boolean mature, String search,
+    protected void addSearchClause (List<QueryClause> clauses, boolean mature, String search,
                                     int tag, int creator)
         throws PersistenceException
     {
-        List<SQLOperator> whereBits = new ArrayList<SQLOperator>();
+        List<SQLOperator> whereBits = Lists.newArrayList();
 
         if (search != null && search.length() > 0) {
             // an item matches the search query either if there is a full-text match against name
@@ -918,21 +918,19 @@ public abstract class ItemRepository<
         clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
     }
 
-    protected void addOrderByListDate (ArrayList<SQLExpression> exprs,
-                                       ArrayList<OrderBy.Order> orders)
+    protected void addOrderByListDate (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(getCatalogColumn(CatalogRecord.LISTED_DATE));
         orders.add(OrderBy.Order.DESC);
     }
 
-    protected void addOrderByRating (ArrayList<SQLExpression> exprs,
-                                     ArrayList<OrderBy.Order> orders)
+    protected void addOrderByRating (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(new FunctionExp("floor", getItemColumn(ItemRecord.RATING)));
         orders.add(OrderBy.Order.DESC);
     }
 
-    protected void addOrderByPrice (ArrayList<SQLExpression> exprs, ArrayList<OrderBy.Order> orders,
+    protected void addOrderByPrice (List<SQLExpression> exprs, List<OrderBy.Order> orders,
                                     OrderBy.Order order)
     {
         exprs.add(new Arithmetic.Add(getCatalogColumn(CatalogRecord.FLOW_COST),
@@ -941,8 +939,7 @@ public abstract class ItemRepository<
         orders.add(order);
     }
 
-    protected void addOrderByPurchases (ArrayList<SQLExpression> exprs,
-                                        ArrayList<OrderBy.Order> orders)
+    protected void addOrderByPurchases (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
         // TODO: someday make an indexed column that represents (purchases-returns)
         exprs.add(getCatalogColumn(CatalogRecord.PURCHASES));

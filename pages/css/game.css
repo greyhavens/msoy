@@ -239,13 +239,7 @@
   height: 265px;
 }
 
-.arcade .Categories {
-  border: 1px solid;
-  width: 125px;
-  height: 200px;
-}
-
-.arcade .GameCategory {
+.arcade .GameGenre {
   border: 1px solid;
   width: 180px;
   height: 200px;

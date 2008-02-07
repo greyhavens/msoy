@@ -18,6 +18,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 import com.threerings.presents.data.InvocationCodes;
 
@@ -49,6 +50,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.ArcadeData;
+import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.PlayerRating;
@@ -100,27 +102,9 @@ public class GameServlet extends MsoyServiceServlet
             }
 
             // determine how many players can play this game
-            MsoyMatchConfig match = new MsoyMatchConfig();
-            // start with arbitrary defaults
-            match.minSeats = 1;
-            match.maxSeats = 2;
-            Game game = detail.getGame();
-            try {
-                if (game != null && !StringUtil.isBlank(game.config)) {
-                    match = (MsoyMatchConfig)new MsoyGameParser().parseGame(game).match;
-                }
-            } catch (Exception e) {
-                log.log(Level.WARNING, "Failed to parse XML game definition [id=" + gameId +
-                        ", config=" + game.config + "]", e);
-            }
-            if (match == null) {
-                log.warning("Game missing match configuration [id=" + gameId +
-                            ", config=" + game.config + "].");
-            } else {
-                detail.minPlayers = match.minSeats;
-                detail.maxPlayers = (match.getMatchType() == GameConfig.PARTY) ?
-                    Integer.MAX_VALUE : match.maxSeats;
-            }
+            int[] players = getMinMaxPlayers(detail.getGame());
+            detail.minPlayers = players[0];
+            detail.maxPlayers = players[1];
 
             if (creatorId != 0) {
                 MemberRecord crrec = MsoyServer.memberRepo.loadMember(creatorId);
@@ -397,8 +381,73 @@ public class GameServlet extends MsoyServiceServlet
 
     // from interface GameService
     public ArcadeData loadArcadeData (WebIdent ident)
+        throws ServiceException
     {
-        return null; // TODO
+        try {
+            ArcadeData data = new ArcadeData();
+            GameRepository grepo = MsoyServer.itemMan.getGameRepository();
+
+            // load the "featured" game
+            List<GameRecord> games = grepo.loadGenre((byte)-1, 5);
+            if (games.size() > 0) {
+                GameRecord frec = RandomUtil.pickRandom(games);
+                GameDetailRecord gdr = grepo.loadGameDetail(frec.gameId);
+                data.featuredGame = (FeaturedGameInfo)frec.toGameInfo(new FeaturedGameInfo());
+                data.featuredGame.avgDuration = gdr.toGameDetail().getAverageDuration();
+                int[] players = getMinMaxPlayers((Game)frec.toItem());
+                data.featuredGame.minPlayers = players[0];
+                data.featuredGame.maxPlayers = players[1];
+                // TODO: load creator name
+            }
+
+            // load information about the genres
+            List<ArcadeData.Genre> genres = Lists.newArrayList();
+            for (byte gcode : Game.GENRES) {
+                ArcadeData.Genre genre = new ArcadeData.Genre();
+                genre.genre = gcode;
+                games = grepo.loadGenre(gcode, -1);
+                genre.gameCount = games.size();
+                if (genre.gameCount > 0) {
+                    genre.game1 = games.get(0).toGameInfo();
+                    if (genre.gameCount > 1) {
+                        genre.game2 = games.get(1).toGameInfo();
+                    }
+                    genres.add(genre);
+                }
+            }
+            data.genres = genres;
+
+            // TODO: load mrec and favorite games
+
+            return data;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failure loading arcade data [for=" + ident + "].");
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    protected int[] getMinMaxPlayers (Game game)
+    {
+        MsoyMatchConfig match = null;
+        try {
+            if (game != null && !StringUtil.isBlank(game.config)) {
+                match = (MsoyMatchConfig)new MsoyGameParser().parseGame(game).match;
+            }
+            if (match == null) {
+                log.warning("Game missing match configuration [game=" + game + "].");
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to parse XML game definition [id=" + game.gameId +
+                    ", config=" + game.config + "]", e);
+        }
+        if (match != null) {
+            return new int[] {
+                match.minSeats,
+                (match.getMatchType() == GameConfig.PARTY) ? Integer.MAX_VALUE : match.maxSeats
+            };
+        }
+        return new int[] { 1, 2 }; // arbitrary defaults
     }
 
     protected PlayerRating[] toRatingResult (

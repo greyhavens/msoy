@@ -6,6 +6,7 @@ package com.threerings.msoy.item.server.persist;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
+import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -21,7 +22,7 @@ import com.threerings.msoy.web.data.GameDetail;
  * contained in the detail record, but for now it serves simply to track a unique game identifier
  * that is shared by all versions of the same game.
  */
-
+@Entity
 @TableGenerator(name="gameId", pkColumnValue="GAME_ID")
 public class GameDetailRecord extends PersistentRecord
 {

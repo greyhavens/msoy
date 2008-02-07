@@ -8,6 +8,39 @@ package com.threerings.msoy.item.data.all;
  */
 public class Game extends Item
 {
+    /** A {@link #genre} constant. */
+    public static final byte GENRE_OTHER = 0;
+
+    /** A {@link #genre} constant. */
+    public static final byte GENRE_WORD = 1;
+
+    /** A {@link #genre} constant. */
+    public static final byte GENRE_CARD_BOARD = 2;
+
+    /** A {@link #genre} constant. */
+    public static final byte GENRE_PUZZLE = 3;
+
+    /** A {@link #genre} constant. */
+    public static final byte GENRE_STRATEGY = 4;
+
+    /** A {@link #genre} constant. */
+    public static final byte GENRE_ACTION_ARCADE = 5;
+
+    /** A {@link #genre} constant. */
+    public static final byte GENRE_ADVENTURE_RPG = 6;
+
+    /** A {@link #genre} constant. */
+    public static final byte GENRE_SPORTS_RACING = 7;
+
+    /** A {@link #genre} constant. */
+    public static final byte GENRE_MMO_WHIRLED = 8;
+
+    /** All game genres, in display order. */
+    public static final byte[] GENRES = {
+        GENRE_WORD, GENRE_CARD_BOARD, GENRE_PUZZLE, GENRE_STRATEGY, GENRE_ACTION_ARCADE,
+        GENRE_ADVENTURE_RPG, GENRE_SPORTS_RACING, GENRE_MMO_WHIRLED, GENRE_OTHER
+    };
+
     /** Identifies our lobby background table media. */
     public static final String TABLE_MEDIA = "table";
 
@@ -22,6 +55,9 @@ public class Game extends Item
 
     /** The height of a game screenshot. */
     public static final int SHOT_HEIGHT = 125;
+
+    /** This game's genre. */
+    public byte genre;
 
     /** The XML game configuration. */
     public String config;

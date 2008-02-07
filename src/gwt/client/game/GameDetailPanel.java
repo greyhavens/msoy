@@ -195,8 +195,7 @@ public class GameDetailPanel extends VerticalPanel
         } else {
             ivalues[0] = CGame.msgs.gdpPlayersFixed("" + detail.minPlayers, "" + detail.maxPlayers);
         }
-        ivalues[1] = avgMinsLabel(Math.max(detail.getAverageDuration(false),
-                                           detail.getAverageDuration(true)));
+        ivalues[1] = avgMinsLabel(detail.getAverageDuration());
         ivalues[2] = Integer.toString(detail.singlePlayerGames + detail.multiPlayerGames);
 
         for (int ii = 0; ii < ilabels.length; ii++) {
