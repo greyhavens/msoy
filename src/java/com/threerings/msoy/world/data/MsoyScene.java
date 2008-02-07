@@ -67,7 +67,7 @@ public class MsoyScene extends SceneImpl
         boolean hasRights = member.canEnterScene(_model.ownerId, _model.ownerType, 
                                                  _model.accessControl);
 
-        if (! hasRights && member.tokens.isSupport()) {
+        if (!hasRights && member.tokens.isSupport()) {
             log.info("Allowing support+ to enter scene which they otherwise couldn't enter " +
                      "[sceneId=" + getId() + ", sceneName=\"" + getName() +
                      "\", accessControl=" + _model.accessControl + "].");

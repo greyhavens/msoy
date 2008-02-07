@@ -351,38 +351,29 @@ public class MemberObject extends MsoyBodyObject
      */
     public boolean canEnterScene (int ownerId, byte ownerType, byte accessControl)
     {
-        boolean hasRights = false;
-
         if (ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
             switch (accessControl) {
             case MsoySceneModel.ACCESS_EVERYONE:
-                hasRights = true;
-                break;
+                return true;
             case MsoySceneModel.ACCESS_OWNER_ONLY:
-                hasRights = isGroupManager(ownerId);
-                break;
+                return isGroupManager(ownerId);
             case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
-                hasRights = isGroupMember(ownerId);
-                break;
+                return isGroupMember(ownerId);
             }
 
         } else {
             switch (accessControl) {
             case MsoySceneModel.ACCESS_EVERYONE:
-                hasRights = true;
-                break;
+                return true;
             case MsoySceneModel.ACCESS_OWNER_ONLY:
-                hasRights = (getMemberId() == ownerId);
-                break;
+                return (getMemberId() == ownerId);
             case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
-                hasRights = (getMemberId() == ownerId) || isFriend(ownerId);
-                break;
+                return (getMemberId() == ownerId) || isFriend(ownerId);
             }
         }
 
-        return hasRights;
+        return false;
     }
-
 
     // from interface MsoyUserObject
     public MemberName getMemberName ()
