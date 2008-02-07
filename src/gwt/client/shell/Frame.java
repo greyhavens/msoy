@@ -103,7 +103,7 @@ public class Frame
         });
 
         // if we're tall enough, handle scrolling ourselves
-        Window.enableScrolling(pageTooShort());
+        Window.enableScrolling(windowTooShort());
         Window.addWindowResizeListener(_resizer);
 
         // set up the callbackd that our flash clients can call
@@ -173,6 +173,9 @@ public class Frame
 
         // have the client take up all the space
         RootPanel.get(CLIENT).setWidth("100%");
+
+        // make sure the header is showing as we always want the header above the client
+        setHeaderVisible(true);
     }
 
     /**
@@ -316,7 +319,9 @@ public class Frame
         _contlist.add(page);
 
         Widget content;
-        if (pageTooShort()) {
+        // if we're not showing a Page.Content page or the browser is too short; don't try to do
+        // our own custom scrolling, just let everything scroll
+        if (windowTooShort() || page != _content) {
             content = _contlist;
             Window.enableScrolling(true);
         } else {
@@ -340,7 +345,7 @@ public class Frame
         _content.setCloseVisible(RootPanel.get(CLIENT).getWidgetCount() > 0);
     }
 
-    protected static boolean pageTooShort ()
+    protected static boolean windowTooShort ()
     {
         return Window.getClientHeight() < (HEADER_HEIGHT + CLIENT_HEIGHT);
     }
