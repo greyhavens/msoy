@@ -176,7 +176,7 @@ public class MsoySprite extends DataPackMediaContainer
     {
         this.x = x;
         this.y = y;
-        if (scale != _locScale) {
+        if (useLocationScale() && scale != _locScale) {
             _locScale = scale;
             scaleUpdated();
         }
@@ -569,6 +569,14 @@ public class MsoySprite extends DataPackMediaContainer
     public function getHoverColor () :uint
     {
         return 0; // black by default
+    }
+
+    /**
+     * Should we scale ourselves based on our location?
+     */
+    protected function useLocationScale () :Boolean
+    {
+        return true;
     }
 
     /**

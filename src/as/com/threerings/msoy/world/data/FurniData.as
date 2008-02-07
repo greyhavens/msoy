@@ -122,11 +122,7 @@ public class FurniData
      */
     public function setPerspective (perspective :Boolean) :void
     {
-        if (perspective) {
-            layoutInfo |= 1;
-        } else {
-            layoutInfo &= ~1;
-        }
+        setLayoutInfo(PERSPECTIVE_FLAG, perspective);
     }
 
     /**
@@ -134,7 +130,23 @@ public class FurniData
      */
     public function isPerspective () :Boolean
     {
-        return (layoutInfo & 1) != 0;
+        return isLayoutInfo(PERSPECTIVE_FLAG);
+    }
+
+    /**
+     * Set whether or not this furni doesn't scale.
+     */
+    public function setNoScale (noscale :Boolean) :void
+    {
+        setLayoutInfo(NOSCALE_FLAG, noscale);
+    }
+
+    /**
+     * Is this furniture non-scaling?
+     */
+    public function isNoScale () :Boolean
+    {
+        return isLayoutInfo(NOSCALE_FLAG);
     }
 
     // from DSet_Entry
@@ -248,5 +260,31 @@ public class FurniData
         actionType = ins.readByte();
         actionData = (ins.readField(String) as String);
     }
+
+    /**
+     * Set a layoutInfo flag on or off.
+     */
+    protected function setLayoutInfo (flag :int, on :Boolean) :void
+    {
+        if (on) {
+            layoutInfo |= flag;
+        } else {
+            layoutInfo &= ~flag;
+        }
+    }
+
+    /**
+     * Test a layoutInfo flag.
+     */
+    protected function isLayoutInfo (flag :int) :Boolean
+    {
+        return (layoutInfo & flag) != 0;
+    }
+
+    /** layoutInfo bitmask flag constant. Indicates if the furni is perspectivized. */
+    protected static const PERSPECTIVE_FLAG :int = (1 << 0);
+
+    /** layoutInfo bitmask flag constant. Indicates if the furni is non-scaling. */
+    protected static const NOSCALE_FLAG :int = (1 << 1);
 }
 }

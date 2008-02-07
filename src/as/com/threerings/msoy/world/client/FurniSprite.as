@@ -202,6 +202,11 @@ public class FurniSprite extends MsoySprite
         checkPerspective();
     }
 
+    override protected function useLocationScale () :Boolean
+    {
+        return !_furni.isNoScale();
+    }
+
     protected function checkPerspective () :void 
     {
         // PERSPECTIVIZATION DISABLED DURING ROOM LAYOUT REVAMP (ROBERT)

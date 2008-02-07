@@ -7,6 +7,7 @@ import flash.events.Event;
 
 import mx.containers.Grid;
 import mx.containers.VBox;
+import mx.controls.CheckBox;
 import mx.controls.TextInput;
 import mx.events.FlexEvent;
 
@@ -46,6 +47,7 @@ public class DetailsPanel extends BasePanel
             _locz.text = trimmed(data.loc.z);
             _scalex.text = trimmed(data.scaleX);
             _scaley.text = trimmed(data.scaleY);
+            _noscale.selected = data.isNoScale();
         }
     }
 
@@ -72,6 +74,7 @@ public class DetailsPanel extends BasePanel
         data.loc.z = maybeReplace(_locz, data.loc.z);
         data.scaleX = maybeReplace(_scalex, data.scaleX);
         data.scaleY = maybeReplace(_scaley, data.scaleY);
+        data.setNoScale(_noscale.selected);
 
         if (! _furniData.equivalent(data)) {
             return data;
@@ -118,6 +121,11 @@ public class DetailsPanel extends BasePanel
         grid.percentWidth = 100;
         addChild(grid);
 
+        _noscale = new CheckBox();
+        _noscale.label = Msgs.EDITING.get("b.noscale");
+        _noscale.addEventListener(Event.CHANGE, applyHandler);
+
+        GridUtil.addRow(grid, _noscale, [2, 1]);
         GridUtil.addRow(grid,
                         new CommandButton(Msgs.EDITING.get("b.reset_location"),
                                           _controller.resetTarget, [ true, false ]),
@@ -143,6 +151,7 @@ public class DetailsPanel extends BasePanel
     protected var _locz :TextInput;
     protected var _scalex :TextInput;
     protected var _scaley :TextInput;
+    protected var _noscale :CheckBox;
     protected var _locs :Array;
     protected var _scales :Array;
     protected var _all :Array;
