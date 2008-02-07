@@ -18,9 +18,10 @@ import com.threerings.msoy.world.client.FurniSprite;
  */
 public class ScalingHotspot extends Hotspot
 {
-    public function ScalingHotspot (editor :FurniEditor)
+    public function ScalingHotspot (editor :FurniEditor, top :Boolean, left :Boolean)
     {
         super(editor, false);
+        _corner = new Point(left ? 0 : 1, top ? 0 : 1);
     }
 
     // @Override from Hotspot
@@ -28,20 +29,8 @@ public class ScalingHotspot extends Hotspot
     {
         super.updateDisplay(targetWidth, targetHeight);
 
-        this.x = (_editor.target.getMediaScaleX() > 0) ? targetWidth : 0;
-        this.y = (_editor.target.getMediaScaleY() > 0) ? 0 : targetHeight;
-
-        // figure out if this hotspot is leaving the display area
-        var roomPos :Point = _editor.roomView.globalToLocal(
-            _editor.target.localToGlobal(new Point(this.x, this.y)));
-
-        if (roomPos.y < _currentDisplay.height / 2) {
-            roomPos.y = _currentDisplay.height / 2;
-            var localPos :Point = _editor.target.globalToLocal(
-                _editor.roomView.localToGlobal(roomPos));
-            this.y = localPos.y;
-        }
-
+        this.x = _corner.x * targetWidth;
+        this.y = _corner.y * targetHeight;
     }
 
     // @Override from Hotspot
@@ -69,7 +58,9 @@ public class ScalingHotspot extends Hotspot
     override protected function initializeDisplay () :void
     {
         _displayStandard = new HOTSPOT() as DisplayObject;
-        _displayMouseOver = new HOTSPOT_OVER() as DisplayObject;
+
+        var c :Class = (_corner.x == _corner.y) ? HOTSPOT_OVER_TOPLEFT : HOTSPOT_OVER_TOPRIGHT;
+        _displayMouseOver = new c() as DisplayObject;
     }
 
     /**
@@ -102,6 +93,14 @@ public class ScalingHotspot extends Hotspot
             y = scale * ((y < 0) ? -1 : 1);
         }
 
+        // don't allow for flipping during scaling - we'll have a separate button for that
+        if (x < 0 && _originalScale.x >= 0 || x > 0 && _originalScale.x <= 0 ||
+            y < 0 && _originalScale.y >= 0 || y > 0 && _originalScale.y <= 0)
+        {
+            return;
+        }
+
+        // finally, scale!
         _editor.updateTargetScale(x, y);
     }
 
@@ -110,6 +109,9 @@ public class ScalingHotspot extends Hotspot
         return Msgs.EDITING.get("i.scaling");
     }
 
+    /** Specifies which corner of the furni we occupy. */
+    protected var _corner :Point;
+    
     /** Sprite scale at the beginning of modifications. Only valid during action. */
     protected var _originalScale :Point;
 
@@ -117,9 +119,11 @@ public class ScalingHotspot extends Hotspot
     protected var _displayUnlocked :DisplayObject;
 
     // Bitmaps galore!
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale.png")]
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_scale.png")]
     public static const HOTSPOT :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale_over.png")]
-    public static const HOTSPOT_OVER :Class;
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_scale_over_l.png")]
+    public static const HOTSPOT_OVER_TOPLEFT :Class;
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_scale_over_r.png")]
+    public static const HOTSPOT_OVER_TOPRIGHT :Class;
 }
 }

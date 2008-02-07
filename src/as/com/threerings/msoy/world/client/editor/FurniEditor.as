@@ -100,7 +100,11 @@ public class FurniEditor extends FurniHighlight
         _hotspots.push(_defaultHotspot = new MovementWallHotspot(this));
         _hotspots.push(new MovementXZHotspot(this));
         _hotspots.push(new MovementYHotspot(this));
-        _hotspots.push(new ScalingHotspot(this));
+
+        _hotspots.push(new ScalingHotspot(this, true, true));
+        _hotspots.push(new ScalingHotspot(this, true, false));
+        _hotspots.push(new ScalingHotspot(this, false, true));
+        _hotspots.push(new ScalingHotspot(this, false, false));
 
         for each (var hotspot :Hotspot in _hotspots) {
             _border.addChild(hotspot);

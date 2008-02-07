@@ -118,11 +118,11 @@ public class MovementXZHotspot extends Hotspot
     protected var _displayYMouseOver :DisplayObject;
 
     // Bitmaps galore!
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_move_xz.png")]
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_move_xz.png")]
     public static const HOTSPOTXZ :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_move_xz_over.png")]
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_move_xz_over.png")]
     public static const HOTSPOTXZ_OVER :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_move_y_over.png")]
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_move_y_over.png")]
     public static const HOTSPOTY_OVER :Class;
 }
 }
