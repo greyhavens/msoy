@@ -86,7 +86,9 @@ public class FurniEditor extends FurniHighlight
     {
         for each (var hotspot :Hotspot in _hotspots) {
             hotspot.setAdvancedMode(advanced);
-        }                
+        }
+        
+        updateDisplay();
     }
     
     // @Override from FurniHighlight
@@ -95,7 +97,7 @@ public class FurniEditor extends FurniHighlight
         super.start();
 
         _hotspots = new Array();
-        _hotspots.push(_defaultHotspot = new SpriteDragHotspot(this));
+        _hotspots.push(_defaultHotspot = new MovementWallHotspot(this));
         _hotspots.push(new MovementXZHotspot(this));
         _hotspots.push(new MovementYHotspot(this));
         _hotspots.push(new ScalingHotspot(this));
@@ -129,7 +131,7 @@ public class FurniEditor extends FurniHighlight
     {
         super.clearBorder();
         for each (var hotspot :Hotspot in _hotspots) {
-            hotspot.visible = false;
+                hotspot.updateVisible(false);
         }
     }
 
@@ -177,7 +179,7 @@ public class FurniEditor extends FurniHighlight
 
         // now update hotspot positions
         for each (var hotspot :Hotspot in _hotspots) {
-            hotspot.visible = (_target != null);
+            hotspot.updateVisible(_target != null);
             hotspot.updateDisplay(w, h);
         }
     }

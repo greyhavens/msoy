@@ -23,9 +23,17 @@ import com.threerings.util.Log;
  */
 public class Hotspot extends Sprite
 {
-    public function Hotspot (editor :FurniEditor)
+    /**
+     * Constructor.
+     *
+     * @param editor Reference to the editor
+     * @param advancedOnly If true, this hotspot will only be visible in advanced mode.
+     */
+    public function Hotspot (editor :FurniEditor, advancedOnly :Boolean)
     {
         _editor = editor;
+        _displayInAdvancedOnly = advancedOnly;
+
         _tipTimer = new Timer(ToolTipManager.showDelay, 1);
         _tipTimer.addEventListener(TimerEvent.TIMER, handleTipTimer);
 
@@ -88,7 +96,16 @@ public class Hotspot extends Sprite
     }
 
     /**
-     * Called when the user sets or clear advanced editing options.
+     * Called whenever the target is selected or deselected, will display or hide
+     * the hotspot, as appropriate for its advanced mode setting.
+     */
+    public function updateVisible (visible :Boolean) :void
+    {
+        this.visible = visible && (_displayInAdvancedOnly ? _advancedMode : true);
+    }        
+    
+    /**
+     * Called when the user sets or clears advanced editing options.
      */
     public function setAdvancedMode (advanced :Boolean) :void
     {
@@ -294,6 +311,9 @@ public class Hotspot extends Sprite
     /** Are we in advanced editing mode? */
     protected var _advancedMode :Boolean;
 
+    /** Should we only display in advanced mode? */
+    protected var _displayInAdvancedOnly :Boolean;
+    
     /**
      * Mouse position at the beginning of the action. Also used to verify whether
      * a modification action is currently taking place (in which case its value is non-null).

@@ -24,7 +24,7 @@ public class MovementXZHotspot extends Hotspot
     
     public function MovementXZHotspot (editor :FurniEditor)
     {
-        super(editor);
+        super(editor, true);
     }
 
     // @Override from Hotspot

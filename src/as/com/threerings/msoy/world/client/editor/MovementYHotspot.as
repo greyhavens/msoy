@@ -20,7 +20,7 @@ public class MovementYHotspot extends Hotspot
 {
     public function MovementYHotspot (editor :FurniEditor)
     {
-        super(editor);
+        super(editor, true);
     }
 
     // @Override from Hotspot

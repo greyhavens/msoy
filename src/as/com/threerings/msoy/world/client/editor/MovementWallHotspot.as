@@ -21,7 +21,7 @@ public class MovementWallHotspot extends Hotspot
 {
     public function MovementWallHotspot (editor :FurniEditor)
     {
-        super(editor);
+        super(editor, false);
     }
 
     // @Override from Hotspot

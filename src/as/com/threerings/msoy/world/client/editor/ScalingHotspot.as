@@ -20,7 +20,7 @@ public class ScalingHotspot extends Hotspot
 {
     public function ScalingHotspot (editor :FurniEditor)
     {
-        super(editor);
+        super(editor, false);
     }
 
     // @Override from Hotspot
