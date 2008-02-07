@@ -155,11 +155,11 @@ public class RoomPanel extends BasePanel
     protected var _buttonbar :ToggleButtonBar;
     protected var _homeButton :CommandButton;
 
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/button_access_everyone.png")]
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/button_access_everyone.png")]
     protected static const ICON_EVERYONE :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/button_access_owner_and_friends.png")]
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/button_access_owner_and_friends.png")]
     protected static const ICON_OWNER_FRIENDS :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/button_access_owner_only.png")]
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/button_access_owner_only.png")]
     protected static const ICON_OWNER :Class;
     protected static const ICONS :Array = [ ICON_EVERYONE, ICON_OWNER_FRIENDS, ICON_OWNER ];
 }

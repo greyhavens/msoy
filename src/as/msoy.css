@@ -409,7 +409,7 @@ Window {
 } 
 
 .roomEditPanelContainer { 
-  backgroundImage: Embed(source="../../rsrc/media/skins/button/furniedit/button_bar_tile.png");
+  backgroundImage: Embed(source="../../rsrc/media/skins/button/roomeditor/button_bar_tile.png");
   backgroundSize: "100%";
   borderStyle: "none";
   borderThickness: 0;
@@ -426,7 +426,7 @@ Window {
 }
 
 .roomEditNameBar {  
-  backgroundImage: Embed(source="../../rsrc/media/skins/button/furniedit/name_bar_tile.png");
+  backgroundImage: Embed(source="../../rsrc/media/skins/button/roomeditor/name_bar_tile.png");
   backgroundSize: "100%";
   borderStyle: "none";
   paddingBottom: 5;
@@ -567,10 +567,10 @@ Window {
 }
 
 .roomEditButtonMakeMyHome {
-  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_makehome.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_makehome_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_makehome_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_makehome_disabled.png");
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/button_makehome.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/button_makehome_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/button_makehome_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/button_makehome_disabled.png");
   paddingLeft: 0;
   paddingRight: 0;
 }
@@ -595,14 +595,14 @@ Window {
 }
 
 .roomEditButtonExpand {
-  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_plus.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_plus.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_plus.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_plus.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_minus.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_minus.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_minus.png");
-  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_minus.png");
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_plus.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_plus.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_plus.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_plus.png");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_minus.png");
+  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_minus.png");
+  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_minus.png");
+  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_minus.png");
 }
 
 .roomEditAdvancedContainer { 
@@ -695,11 +695,11 @@ Window {
 } 
 
 .plusButton {
-  icon: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_plus.png");
+  icon: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_plus.png");
 }
 
 .minusButton {
-  icon: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_minus.png");
+  icon: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_minus.png");
 }
 
 VScrollBar {
