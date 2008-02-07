@@ -102,7 +102,7 @@ public class CatalogPanel extends VerticalPanel
                 CatalogListing.SORT_BY_PRICE_DESC,
                 CatalogListing.SORT_BY_PURCHASES, });
         _header.setWidget(0, 1, _searchSortPanel);
-        _header.setText(1, 0, CCatalog.msgs.catalogNoFilter());
+        _header.setHTML(1, 0, "&nbsp;");
     }
 
     public void display (Args args)
@@ -254,7 +254,7 @@ public class CatalogPanel extends VerticalPanel
     protected void setFilteredBy (String text)
     {
         if (text == null) {
-            _header.setText(1, 0, CCatalog.msgs.catalogNoFilter());
+            _header.setHTML(1, 0, "&nbsp;");
             return;
         }
 
