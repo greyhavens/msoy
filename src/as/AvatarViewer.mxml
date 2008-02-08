@@ -2,7 +2,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
     layout="absolute" styleName="plain"
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
-    applicationComplete="addChild(new AvatarViewerComp());">
+    applicationComplete="addChild(_viewer = new AvatarViewerComp());">
 <!-- width/height are defined in build.xml
      small: 360x450
      full: 600x488
@@ -10,7 +10,20 @@
 <mx:Style source="msoy.css"/>
 <mx:Script>
     <![CDATA[
+        import flash.utils.ByteArray;
+
         import com.threerings.msoy.world.client.AvatarViewerComp;
+
+        /**
+         * Exposed to callers.
+         */
+        public function loadBytes (bytes :ByteArray) :Boolean
+        {
+            _viewer.loadBytes(bytes);
+            return true;
+        }
+
+        protected var _viewer :AvatarViewerComp;
     ]]>
 </mx:Script>
 </mx:Application>

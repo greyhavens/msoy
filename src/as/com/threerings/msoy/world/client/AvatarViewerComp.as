@@ -63,7 +63,7 @@ public class AvatarViewerComp extends VBox
         }
         _avatars.length = 0;
 
-        avatar = new ViewerAvatarSprite(1);
+        avatar = new ViewerAvatarSprite(this);
         _avatars.push(avatar);
 
         avatar.setMediaBytes(bytes);
@@ -81,8 +81,8 @@ public class AvatarViewerComp extends VBox
     {
         super.createChildren();
 
-        width = stage.stageWidth;
-        height = stage.stageHeight;
+        percentWidth = 100;
+        percentHeight = 100;
 
         // create an HBox to hold "walking", "facing", "talk"
         var controls: HBox = new HBox();
@@ -121,7 +121,7 @@ public class AvatarViewerComp extends VBox
         var bmp :Bitmap = Bitmap(new BACKGROUND());
         var bgsprite :Sprite = new Sprite();
         bgsprite.graphics.beginBitmapFill(bmp.bitmapData);
-        bgsprite.graphics.drawRect(0, 0, width, height);
+        bgsprite.graphics.drawRect(0, 0, 1000, 1000);
         bgsprite.graphics.endFill();
         _holder.rawChildren.addChildAt(bgsprite, 0);
 
@@ -176,7 +176,7 @@ public class AvatarViewerComp extends VBox
         if (StringUtil.isBlank(media)) {
             var msg :String = params["message"] as String;
             if (msg != null) {
-                var av :ViewerAvatarSprite = new ViewerAvatarSprite(1);
+                var av :ViewerAvatarSprite = new ViewerAvatarSprite(this);
                 _avatars.push(av);
                 _holder.rawChildren.addChild(av);
 
@@ -198,7 +198,7 @@ public class AvatarViewerComp extends VBox
         }
 
         for (var ii :int = count; ii > 0; ii--) {
-            var avatar :ViewerAvatarSprite = new ViewerAvatarSprite(scale);
+            var avatar :ViewerAvatarSprite = new ViewerAvatarSprite(this, scale);
             _avatars.push(avatar);
 
             avatar.setMedia(media);
@@ -370,13 +370,16 @@ import flash.events.MouseEvent;
 
 import flash.geom.Point;
 
+import mx.core.UIComponent;
+
 import com.threerings.msoy.world.client.MemberSprite;
 
 class ViewerAvatarSprite extends MemberSprite
 {
-    public function ViewerAvatarSprite (scale :Number)
+    public function ViewerAvatarSprite (comp :UIComponent, scale :Number = 1)
     {
         super(null);
+        _comp = comp;
         _scale = scale; // defined in MemberSprite
         configureMouseProperties();
     }
@@ -407,8 +410,8 @@ class ViewerAvatarSprite extends MemberSprite
     {
         _scale = scale;
         scaleUpdated();
-        x = (stage.stageWidth - width)/2;
-        y = Math.max(0, (stage.stageHeight - height - parent.y));
+        x = (_comp.width - width)/2;
+        y = Math.max(0, (_comp.height - height - parent.y));
     }
 
     override public function getState () :String
@@ -454,6 +457,8 @@ class ViewerAvatarSprite extends MemberSprite
     {
         return true;
     }
+
+    protected var _comp :UIComponent;
 
     protected var _moving :Boolean = false;
 
