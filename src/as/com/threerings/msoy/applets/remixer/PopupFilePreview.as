@@ -118,7 +118,6 @@ public class PopupFilePreview extends TitleWindow
         var value :Array = event.value as Array;
         if (value != null) {
             _filename = value[0] as String;
-            if (value[1] is 
             setImage(value[1] as ByteArray);
         }
     }
