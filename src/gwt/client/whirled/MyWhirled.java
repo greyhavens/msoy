@@ -449,11 +449,9 @@ public class MyWhirled extends FlexTable
                 if (scene.sceneType == SceneCard.GAME) {
                     final PopupPanel personMenuPanel = new PopupPanel(true);
                     MenuBar menu = new MenuBar(true);
-                    String link = Application.createLinkHtml(
-                        CWhirled.msgs.viewProfile(), "profile", "" + id);
-                    menu.addItem(link, true, new Command() {
+                    menu.addItem(CWhirled.msgs.viewProfile(), new Command() {
                         public void execute () {
-                            personMenuPanel.hide();
+                            Application.go(Page.PROFILE, ""+id);
                         }
                     });
                     boolean inPending = (pendingTableMembers != null) &&
@@ -476,7 +474,7 @@ public class MyWhirled extends FlexTable
                 } else {
                     person.addClickListener(new ClickListener() {
                         public void onClick (Widget sender) {
-                            Application.go(Page.PROFILE, "" + id);
+                            Application.go(Page.PROFILE, ""+id);
                         }
                     });
                 }

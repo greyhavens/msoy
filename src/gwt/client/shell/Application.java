@@ -81,17 +81,15 @@ public class Application
      */
     public static Hyperlink createLink (String label, String page, String args)
     {
-        Hyperlink link = new Hyperlink(label, createLinkToken(page, args)) {
-            public void setText (String text) {
-                DOM.setInnerText(DOM.getChild(getElement(), 0), text);
-            }
-        };
+        Hyperlink link = new Hyperlink(label, createLinkToken(page, args));
         link.addStyleName("inline");
         return link;
     }
 
     /**
-     * Returns HTML that links to the specified page with the specified arguments.
+     * Returns HTML that links to the specified page with the specified arguments. Don't use this
+     * if you can avoid it. Hyperlink does special stuff to make the history mechanism work in some
+     * browsers and this breaks that.
      */
     public static String createLinkHtml (String label, String page, String args)
     {

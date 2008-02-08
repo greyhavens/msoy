@@ -335,11 +335,9 @@ public class GroupView extends VerticalPanel
     {
         // MenuBar(true) creates a vertical menu
         MenuBar menu = new MenuBar(true);
-        menu.addItem(Application.createLinkHtml(CGroup.msgs.viewViewProfile(), "profile",
-                                                "" + membership.member.getMemberId()),
-                     true, new Command() {
+        menu.addItem(CGroup.msgs.viewViewProfile(), new Command() {
             public void execute () {
-                parent.hide();
+                Application.go(Page.PROFILE, "" + membership.member.getMemberId());
             }
         });
         MenuItem promote = new MenuItem(CGroup.msgs.viewPromote(), new Command() {
