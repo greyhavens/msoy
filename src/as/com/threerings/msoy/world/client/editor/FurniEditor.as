@@ -103,7 +103,7 @@ public class FurniEditor extends FurniHighlight
 
         for each (var left :Boolean in [ true, false ]) {
             for each (var top :Boolean in [ true, false]) {
-                _hotspots.push(new RotatingHotspot(this, top, left));
+                // _hotspots.push(new RotatingHotspot(this, top, left));
                 _hotspots.push(new ScalingHotspot(this, top, left));
             }
         }
