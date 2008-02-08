@@ -5,26 +5,9 @@ package client.profile;
 
 import java.util.List;
 
-import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
-import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
-import com.threerings.gwt.ui.EnterClickAdapter;
 
 import com.threerings.gwt.util.SimpleDataModel;
-
-import client.shell.Application;
-import client.shell.Args;
-import client.shell.Page;
-import client.util.FlashClients;
 
 public class SearchPanel extends VerticalPanel
 {
@@ -36,56 +19,10 @@ public class SearchPanel extends VerticalPanel
 
     public SearchPanel ()
     {
-        setStyleName("searchResultsPanel");
+        setStyleName("searchPanel");
         setWidth("100%");
         setSpacing(10);
-
-        ClickListener goButtonListener = new ClickListener() {
-            public void onClick (Widget sender) {
-                String[] args =  {
-                    "search", null, "0", URL.encodeComponent(_search.getText().trim()) };
-                if (_radioName.isChecked()) {
-                    args[1] = "name";
-                } else if (_radioDisplayName.isChecked()) {
-                    args[1] = "display";
-                } else {
-                    args[1] = "email";
-                }
-                FlashClients.tutorialEvent("friendsSought");
-                Application.go(Page.PROFILE, Args.compose(args));
-            }
-        };
-
-        FlexTable searchPanel = new FlexTable();
-        searchPanel.addStyleName("SearchPanel");
-        add(searchPanel);
-        int row = 0;
-        searchPanel.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        searchPanel.setText(row, 0, CProfile.msgs.searchType());
-        searchPanel.setWidget(row, 1, _radioName = new RadioButton("searchType",
-            CProfile.msgs.searchRadioName()));
-        searchPanel.setWidget(row, 2, _radioDisplayName = new RadioButton("searchType",
-            CProfile.msgs.searchRadioDisplayName()));
-        searchPanel.setWidget(row++, 3, _radioEmail = new RadioButton("searchType",
-            CProfile.msgs.searchRadioEmail()));
-        _radioName.setChecked(true);
-
-        searchPanel.getFlexCellFormatter().setColSpan(row, 1, 3);
-        searchPanel.setWidget(row, 1, _search = new TextBox());
-        _search.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyPress (Widget sender, char charCode, int modifiers) {
-                DeferredCommand.add(new Command() {
-                    public void execute () {
-                        _go.setEnabled(_search.getText().trim().length() != 0);
-                    }
-                });
-            }
-        });
-        _search.addKeyboardListener(new EnterClickAdapter(goButtonListener));
-        _search.setVisibleLength(40);
-        searchPanel.setWidget(row++, 5,
-            _go = new Button(CProfile.msgs.searchGo(), goButtonListener));
-        _go.setEnabled(false);
+        add(new SearchControls());
     }
 
     public void clearResults ()
@@ -121,16 +58,6 @@ public class SearchPanel extends VerticalPanel
             _searchString.equals(search);
     }
 
-    // @Override // from Widget
-    protected void onAttach ()
-    {
-        super.onAttach();
-        _search.setFocus(true);
-    }
-
     protected ProfileGrid _profiles;
     protected String _searchType, _searchString;
-    protected RadioButton _radioName, _radioDisplayName, _radioEmail;
-    protected TextBox _search;
-    protected Button _go;
 }
