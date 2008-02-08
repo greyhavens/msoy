@@ -10,7 +10,6 @@ import java.util.Map;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -21,6 +20,7 @@ import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -84,18 +84,12 @@ public class GameDetailPanel extends VerticalPanel
         _gameId = gameId;
         Frame.setTitle(CGame.msgs.gdpTitle(), detail.getGame().name);
 
-        FlexTable top = new FlexTable();
-        top.setCellPadding(0);
-        top.setCellSpacing(0);
-
         int row = 0;
-        FlexTable box = new FlexTable();
-        box.setStyleName("Box");
-        box.setCellPadding(0);
-        box.setCellSpacing(0);
-        box.getFlexCellFormatter().setStyleName(0, 0, "Name");
-        box.setText(0, 0, detail.getGame().name);
-        box.getFlexCellFormatter().setStyleName(1, 0, "Screenshot");
+        SmartTable top = new SmartTable(0, 0);
+        top.setWidget(row, 0, MsoyUI.createBackArrow(), 1, "Up");
+
+        SmartTable box = new SmartTable("Box", 0, 0);
+        box.setText(0, 0, detail.getGame().name, 1, "Name");
         MediaDesc shot = detail.getGame().shotMedia;
         if (shot == null) {
             shot = detail.getGame().getThumbnailMedia();
@@ -103,7 +97,7 @@ public class GameDetailPanel extends VerticalPanel
         } else {
             CGame.log("Using " + shot + ".");
         }
-        box.setWidget(1, 0, new Image(shot.getMediaPath()));
+        box.setWidget(1, 0, new Image(shot.getMediaPath()), 1, "Screenshot");
 
         if (detail.listedItem != null) {
             box.setWidget(2, 0, WidgetUtil.makeShim(1, 5));
@@ -112,16 +106,16 @@ public class GameDetailPanel extends VerticalPanel
                                                detail.memberRating, false));
         }
 
-        top.getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);
-        top.setWidget(row, 0, box);
+        top.getFlexCellFormatter().setVerticalAlignment(row, 1, HasAlignment.ALIGN_TOP);
+        top.setWidget(row, 1, box);
 
         VerticalPanel details = new VerticalPanel();
         details.setStyleName("Details");
-        top.getFlexCellFormatter().setVerticalAlignment(row, 1, HasAlignment.ALIGN_TOP);
-        top.setWidget(row, 1, details);
-
         top.getFlexCellFormatter().setVerticalAlignment(row, 2, HasAlignment.ALIGN_TOP);
-        top.setWidget(row++, 2, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers));
+        top.setWidget(row, 2, details);
+
+        top.getFlexCellFormatter().setVerticalAlignment(row, 3, HasAlignment.ALIGN_TOP);
+        top.setWidget(row++, 3, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers));
         add(top);
 
         SimplePanel cbox = new SimplePanel();
@@ -144,10 +138,9 @@ public class GameDetailPanel extends VerticalPanel
 
         // note that they're playing the developer version if so
         if (_gameId < 0) {
-            top.setText(row, 0, "");
-            top.setText(row, 1, CGame.msgs.gdpDevVersion());
-            top.getFlexCellFormatter().setColSpan(row, 1, top.getCellCount(0));
-            top.getFlexCellFormatter().setStyleName(row++, 1, "InDevTip");
+            top.getFlexCellFormatter().setRowSpan(0, 0, 2);
+            top.getFlexCellFormatter().setRowSpan(0, 1, 2);
+            top.setText(row++, 0, CGame.msgs.gdpDevVersion(), top.getCellCount(0)-2, "InDevTip");
         }
 
         _tabs = new StyledTabPanel();

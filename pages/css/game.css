@@ -16,6 +16,10 @@
   width: 650px;
 }
 
+.gameDetail .Up { 
+  padding-right: 5px;
+}
+
 .gameDetail .Box { 
   text-align: center;
   border-right: white solid 15px;
