@@ -71,6 +71,22 @@
 
   <!-- optimizes, combines and removes dead code -->
   <target name="proguard" depends="dist">
+    <!-- Figure out if we're running Darwin -->
+    <condition property="platform.darwin">
+      <and>
+        <os family="mac"/>
+        <os family="unix"/>
+      </and>
+    </condition>
+
+    <!-- Determine where the Java rt.jar file lives -->
+    <condition property="rtClasses" value="${java.home}/../Classes/classes.jar">
+      <istrue value="${platform.darwin}"/>
+    </condition>
+    <condition property="rtClasses" value="${java.home}/lib/rt.jar">
+      <isfalse value="${platform.darwin}"/>
+    </condition>
+
     <!-- first run proguard on the code to include everything we need and nothing more -->
     <taskdef resource="proguard/ant/task.properties" classpath="${deploy.dir}/lib/proguard.jar"/>
     <proguard>
@@ -78,7 +94,7 @@
       -injars dist/lib/commons-io.jar(!META-INF/*)
       -injars dist/lib/google-collect.jar(!META-INF/*)
       -injars dist/mchooser.jar(!META-INF/*)
-      -libraryjars ${java.home}/lib/rt.jar
+      -libraryjars ${rtClasses}
       -dontskipnonpubliclibraryclasses
 
       -outjars dist/mchooser-pro.jar
