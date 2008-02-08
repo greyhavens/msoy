@@ -163,6 +163,22 @@ public class MyWhirled extends FlexTable
             }
         }));
 
+        // add a list of tools
+        sidebar.add(createHeader(CWhirled.msgs.headerTools()));
+        sidebar.add(box = createListBox("ListBox"));
+        box.add(Application.createLink("My Discussions", Page.GROUP, "unread"));
+        box.add(Application.createLink("My Mail", Page.MAIL, ""));
+        box.add(Application.createLink("My Account", Page.ACCOUNT, "edit"));
+        if (CWhirled.isSupport()) {
+            box.add(Application.createLink("Admin Console", Page.ADMIN, ""));
+        }
+        box.add(MsoyUI.createActionLabel("Logoff", new ClickListener() {
+            public void onClick (Widget sender) {
+                CWhirled.app.didLogoff();
+            }
+        }));
+
+        // add all of our rooms
         sidebar.add(createHeader(CWhirled.msgs.headerRooms()));
         sidebar.add(box = createListBox("ListBox"));
 
@@ -205,20 +221,6 @@ public class MyWhirled extends FlexTable
                 box.add(Application.createLink(cname, Page.WORLD, "c" + chatIds[ii]));
             }
         }
-
-        sidebar.add(createHeader(CWhirled.msgs.headerTools()));
-        sidebar.add(box = createListBox("ListBox"));
-        box.add(Application.createLink("My Discussions", Page.GROUP, "unread"));
-        box.add(Application.createLink("My Mail", Page.MAIL, ""));
-        box.add(Application.createLink("My Account", Page.ACCOUNT, "edit"));
-        if (CWhirled.isSupport()) {
-            box.add(Application.createLink("Admin Console", Page.ADMIN, ""));
-        }
-        box.add(MsoyUI.createActionLabel("Logoff", new ClickListener() {
-            public void onClick (Widget sender) {
-                CWhirled.app.didLogoff();
-            }
-        }));
 
         // sort our friends list alphabetically and map them by id
         List people = myWhirled.people;
