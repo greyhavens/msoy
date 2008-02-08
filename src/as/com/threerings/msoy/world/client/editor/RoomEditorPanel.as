@@ -102,6 +102,10 @@ public class RoomEditorPanel extends FloatingPanel
         for each (button in _actionButtons) {
             button.enabled = (target != null && target.isActionModifiable());
         }
+
+        for each (button in _targetButtons) {
+            button.enabled = (target != null);
+        }
     }
 
     /** Updates the name drop-down box with the selected item definitions. */
@@ -159,11 +163,14 @@ public class RoomEditorPanel extends FloatingPanel
     {
         super.createChildren();
 
-        var makeActionButton :Function = function (fn :Function, style :String, tooltip :String,
-                                                   buttonlist :Array) :CommandButton {
+        var makeActionButton :Function = function (
+            fn :Function, style :String, tooltip :String,
+            buttonlist :Array, enabled :Boolean = true) :CommandButton
+        {
             var b :CommandButton = new CommandButton(null, fn);
             b.styleName = style;
             b.toolTip = Msgs.EDITING.get(tooltip);
+            b.enabled = enabled;
             if (buttonlist != null) {
                 buttonlist.push(b);
             }
@@ -175,6 +182,7 @@ public class RoomEditorPanel extends FloatingPanel
         _actionButtons = new Array();
         _deleteButtons = new Array();
         _undoButtons = new Array();
+        _targetButtons = new Array();
 
         // container for room name
         var namebar :VBox = new VBox();
@@ -202,34 +210,79 @@ public class RoomEditorPanel extends FloatingPanel
         _namebox.addEventListener(ListEvent.CHANGE, nameListChanged);
         box.addChild(_namebox);
 
-        // right hand side buttons
-
+        // buttons galore
+        
         var spacer :VBox = new VBox();
         spacer.percentWidth = 100;
         spacer.height = 10;
         _contents.addChild(spacer);
 
-        var rhs :Grid = new Grid();
-        rhs.styleName = "roomEditRight";
-        rhs.percentWidth = 100;
-        _contents.addChild(rhs);
+        var buttons :HBox = new HBox();
+        _contents.addChild(buttons);
 
-        GridUtil.addRow(rhs,
+        // left side buttons
+        var leftgrid :Grid = new Grid();
+        leftgrid.styleName = "roomEditLeft";
+        leftgrid.percentWidth = 100;
+        buttons.addChild(leftgrid);
+
+        var makeYFn :Function = function (yoffset :Number) :Function {
+            return function () :void { _controller.actionAdjust(1, 1, yoffset); };
+        };
+
+        var makeScaleFn :Function = function (scalemulti :Number) :Function {
+            return function () :void { _controller.actionAdjust(scalemulti, scalemulti, 0); };
+        };
+            
+        var makeFlipFn :Function = function (h :Number, v :Number) :Function {
+            return function () :void { _controller.actionAdjust(h, v, 0); };
+        };
+
+        GridUtil.addRow(leftgrid,
+                        makeActionButton(makeScaleFn(1 / SCALEMULTI), "roomEditScaleDown",
+                                         "b.scale_down", _targetButtons),
+                        makeActionButton(makeScaleFn(SCALEMULTI), "roomEditScaleUp",
+                                         "b.scale_up", _targetButtons));
+        GridUtil.addRow(leftgrid,
+                        makeActionButton(makeYFn(-Y_DELTA), "roomEditMoveDown",
+                                         "b.move_down", _targetButtons),
+                        makeActionButton(makeYFn(Y_DELTA), "roomEditMoveUp",
+                                         "b.move_up", _targetButtons));
+        GridUtil.addRow(leftgrid,
+                        makeActionButton(noop, "roomEditRotateLeft",
+                                         "b.rotate_left", null, false),
+                        makeActionButton(noop, "roomEditRotateRight",
+                                         "b.rotate_right", null, false));
+        GridUtil.addRow(leftgrid,
+                        makeActionButton(makeFlipFn(-1, 1), "roomEditFlipH",
+                                         "b.flip_h", _targetButtons),
+                        makeActionButton(makeFlipFn(1, -1), "roomEditFlipV",
+                                         "b.flip_v", _targetButtons));
+        
+        // right side buttons
+        var rightgrid :Grid = new Grid();
+        rightgrid.styleName = "roomEditRight";
+        rightgrid.percentWidth = 100;
+        buttons.addChild(rightgrid);
+
+        GridUtil.addRow(rightgrid,
                         makeActionButton(_controller.actionDelete, "roomEditTrash",
                                          "b.put_away", _deleteButtons),
                         makeActionButton(displayFurnitureInventory, "roomEditAdd",
                                          "b.add_item", null));
-        GridUtil.addRow(rhs,
+        GridUtil.addRow(rightgrid,
                         makeActionButton(noop, "roomEditDoor",
                                          "b.make_door", _actionButtons),
                         makeActionButton(noop, "roomEditLink",
                                          "b.make_link", _actionButtons));
-        GridUtil.addRow(rhs,
+        GridUtil.addRow(rightgrid,
                         makeActionButton(_controller.actionUndo, "roomEditUndo",
                                          "b.undo", _undoButtons),
                         makeActionButton(_controller.actionUndo, "roomEditUndoAll",
                                          "b.undo_all", _undoButtons));
 
+        updateTargetSelected(null); // disable most buttons
+        
         spacer = new VBox();
         spacer.percentWidth = 100;
         spacer.height = 10;
@@ -270,11 +323,15 @@ public class RoomEditorPanel extends FloatingPanel
         _advancedPanels.addChild(c);
     }
 
+    protected static const Y_DELTA :Number = 0.1;
+    protected static const SCALEMULTI :Number = 1.2;
+        
     protected var _contents :VBox;
 
     protected var _undoButtons :Array; // of CommandButton
     protected var _deleteButtons :Array; // of CommandButton
     protected var _actionButtons :Array; // of CommandButton
+    protected var _targetButtons :Array; // of CommandButton
     
     protected var _details :DetailsPanel;
     protected var _action :ActionPanel;

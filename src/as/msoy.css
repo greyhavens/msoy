@@ -502,6 +502,70 @@ Window {
   paddingTop: 2;
 }
 
+.roomEditLeft { 
+  verticalAlign: "bottom";
+}
+
+.roomEditRight { 
+  verticalAlign: "bottom";
+}
+
+.roomEditScaleDown {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/scale_down.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/scale_down_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/scale_down_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/scale_down_disabled.png");
+}
+
+.roomEditScaleUp {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/scale_up.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/scale_up_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/scale_up_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/scale_up_disabled.png");
+}
+
+.roomEditMoveDown {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/down-to-floor.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/down-to-floor_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/down-to-floor_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/down-to-floor_disabled.png");
+}
+
+.roomEditMoveUp {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/up-off-floor.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/up-off-floor_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/up-off-floor_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/up-off-floor_disabled.png");
+}
+
+.roomEditRotateLeft {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/rot_left.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/rot_left_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/rot_left_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/rot_left_disabled.png");
+}
+
+.roomEditRotateRight {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/rot_right.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/rot_right_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/rot_right_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/rot_right_disabled.png");
+}
+
+.roomEditFlipH {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/flip_horiz.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/flip_horiz_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/flip_horiz_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/flip_horiz_disabled.png");
+}
+
+.roomEditFlipV {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/flip_vert.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/flip_vert_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/flip_vert_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/flip_vert_disabled.png");
+}
+
 .roomEditTrash {
   upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/put-away.png");
   overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/put-away_over.png");

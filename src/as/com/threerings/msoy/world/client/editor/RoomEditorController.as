@@ -276,6 +276,33 @@ public class RoomEditorController
         }
     }
 
+    /** Adjusts furni size and location from a panel button action. */
+    public function actionAdjust (
+        scaleMultiplierX :Number, scaleMultiplierY :Number, yOffset :Number) :void
+    {
+        if (_edit.target == null) {
+            return; 
+        }
+
+        var original :FurniData = _edit.target.getFurniData().clone() as FurniData;
+        
+        if (scaleMultiplierX != 1 || scaleMultiplierY != 1) {
+            _edit.updateTargetScale(
+                scaleMultiplierX * original.scaleX, scaleMultiplierY * original.scaleY);
+        }
+
+        if (yOffset != 0) {
+            _edit.updateTargetLocation(
+                new MsoyLocation(original.loc.x, original.loc.y + yOffset, original.loc.z));
+        }
+
+        var current :FurniData = _edit.target.getFurniData();
+        if (! original.equivalent(current)) {
+            updateFurni(original, current);
+        }
+    }        
+    
+
     /** Tells the room controller to start editing the specified door. */
     public function actionEditDoor (data :FurniData) :void
     {
