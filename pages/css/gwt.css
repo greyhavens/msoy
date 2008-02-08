@@ -427,16 +427,6 @@ img, embed, applet, object {
   font-weight: bold;
 }
 
-.pagedGrid .Footer .gwt-Button {
-    border-top: none;
-    border-bottom: none;
-    border-left: none;
-}
-
-.pagedGrid .BottomRight {
-  padding-right: 10px;
-}
-
 .pagedGrid .Button {
   font-size: 12px;
   width: 56px;
