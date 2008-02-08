@@ -294,7 +294,9 @@ public class MsoyChatDirector extends ChatDirector
         for each (var chandler :ChannelHandler in _chandlers.values()) {
             if (connected) {
                 // reconnect any open channels
-                chandler.connect();
+                if (_chatTabs == null || _chatTabs.shouldReconnectChannel(chandler.channel)) {
+                    chandler.connect();
+                }
             } else {
                 // we're already disconnected, so just clean up our local structures.
                 // we'll fill them in again if we reconnect on a different server.
@@ -368,6 +370,7 @@ public class MsoyChatDirector extends ChatDirector
 }
 }
 
+import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.ResultWrapper;
@@ -463,6 +466,8 @@ class ChannelHandler implements Subscriber
         var msg :String = MessageBundle.compose("m.join_channel_failed", cause);
         _ctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
     }
+    
+    private static const log :Log = Log.getLog(ChannelHandler);
 
     protected var _ctx :MsoyContext;
     protected var _showTabFn :Function;

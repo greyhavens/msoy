@@ -255,6 +255,24 @@ public class ChatTabBar extends HBox
         removeTabAt(index, true);
     }
 
+    public function shouldReconnectChannel (channel :ChatChannel) :Boolean
+    {
+        // if this is anything but a room channel, it should be reconnected.
+        if (channel.type != ChatChannel.ROOM_CHANNEL) {
+            return true;
+        }
+
+        // if we don't have a tab for this channel, assume the caller knows what its doing and say
+        // yes
+        var index :int = getControllerIndex(channel);
+        if (index == -1) {
+            return true;
+        }
+
+        // if this room channel does not have its check box checked, it should not be reconnected
+        return (_tabs[index] as ChatTab).checked;
+    }
+
     protected function addTab (tab :ChatTab, index :int = -1) :void
     {
         tab.addEventListener(ChatTab.TAB_CLICK, selectTab);
