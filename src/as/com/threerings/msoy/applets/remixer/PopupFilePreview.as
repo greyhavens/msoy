@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.applets.remixer {
 
+import flash.display.BitmapData;
 import flash.display.LoaderInfo;
 
 import flash.events.DataEvent;
@@ -21,10 +22,11 @@ import flash.net.URLRequestMethod;
 import flash.utils.ByteArray;
 
 import mx.controls.ButtonBar;
-import mx.controls.Image;
+import mx.controls.HRule;
 import mx.controls.Label;
 import mx.controls.ProgressBar;
 
+import mx.containers.HBox;
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
 
@@ -32,11 +34,17 @@ import mx.core.FlexLoader;
 
 import mx.managers.PopUpManager;
 
+import com.threerings.flash.CameraSnapshotter;
+
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandLinkButton;
 
 import com.whirled.remix.data.EditableDataPack;
 
 import com.threerings.msoy.utils.Base64Decoder;
+
+import com.threerings.msoy.applets.image.CameraSnapshotControl;
+import com.threerings.msoy.applets.image.ImagePreview;
 
 public class PopupFilePreview extends TitleWindow
 {
@@ -47,23 +55,39 @@ public class PopupFilePreview extends TitleWindow
         _name = name;
         _pack = pack;
         _serverURL = serverURL;
+        var entry :Object = pack.getFileEntry(name);
+        _type = entry.type;
 
         this.title = name;
 
         var box :VBox = new VBox();
         addChild(box);
-        _image = new Image();
+
+        _image = new ImagePreview();
         _image.maxWidth = 300;
         _image.maxHeight = 300;
         box.addChild(_image);
 
         setImage(pack.getFile(name));
 
-        var buttonBar :ButtonBar = new ButtonBar();
-        buttonBar.addChild(new CommandButton("Upload...", handleChooseFile));
-        box.addChild(buttonBar);
+        var hbox :HBox = new HBox();
+        var lbl :Label = new Label();
+        lbl.text = "Select new:";
+        hbox.addChild(lbl);
+        hbox.addChild(new CommandButton("Upload file", handleChooseFile));
+        if ((_type == "Image" || _type == "DisplayObject") && CameraSnapshotter.hasCamera()) {
+            hbox.addChild(new CommandButton("Take picture", handleChooseCamera));
+        }
 
-        buttonBar = new ButtonBar();
+        box.addChild(hbox);
+
+        var hrule :HRule = new HRule();
+        hrule.percentWidth = 100;
+        hrule.setStyle("strokeWidth", 1);
+        hrule.setStyle("strokeColor", 0x000000);
+        box.addChild(hrule);
+
+        var buttonBar :ButtonBar = new ButtonBar();
         buttonBar.addChild(new CommandButton("OK", close, true));
         buttonBar.addChild(new CommandButton("Cancel", close, false));
         box.addChild(buttonBar);
@@ -77,23 +101,21 @@ public class PopupFilePreview extends TitleWindow
 
     public function setImage (bytes :ByteArray) :void
     {
-        if (bytes != null) {
-            var l :FlexLoader = new FlexLoader();
-            l.contentLoaderInfo.addEventListener(Event.COMPLETE, handleFlexLoaderComplete);
-            l.loadBytes(bytes);
-        }
+        _image.setImage(bytes);
     }
 
-    protected function handleFlexLoaderComplete (event :Event) :void
+    public function setBitmap (bitmapData :BitmapData) :void
     {
-        _image.source = LoaderInfo(event.target).loader;
-        PopUpManager.centerPopUp(this);
+        _image.setBitmap(bitmapData);
     }
 
     protected function close (save :Boolean) :void
     {
-        if (save && _bytes != null) {
-            _parent.updateValue(_filename, _bytes);
+        if (save) {
+            var ba :ByteArray = _image.getImage(true);
+            if (ba != null) {
+                _parent.updateValue(_filename, ba);
+            }
         }
 
         PopUpManager.removePopUp(this);
@@ -114,6 +136,14 @@ public class PopupFilePreview extends TitleWindow
         }
 
         _fileRef.browse(getFilters());
+    }
+
+    protected function handleChooseCamera () :void
+    {
+        new CameraSnapshotControl(this, function (bitmapData :BitmapData) :void {
+            setBitmap(bitmapData);
+            _filename = "cameragrab.jpg";
+        });
     }
 
     protected function handleFileSelected (event :Event) :void
@@ -156,22 +186,18 @@ public class PopupFilePreview extends TitleWindow
         trace("Complete! " + event.data.length + " : " + _fileRef.size);
         var decoder :Base64Decoder = new Base64Decoder();
         decoder.decode(event.data);
-        var ba :ByteArray = decoder.toByteArray();
-
-        _bytes = ba;
+        setImage(decoder.toByteArray());
         _filename = _fileRef.name;
-        setImage(_bytes);
         showProgress();
     }
 
     protected function getFilters () :Array
     {
-        var fileType :String = _pack.getFileEntry(_name)["type"];
         var array :Array = [];
 
-        switch (fileType) {
+        switch (_type) {
         case "Blob":
-            return null;
+            return null; // no filter: show all files
 
         case "DisplayObject":
             array.push(new FileFilter("Flash movies", "*.swf"));
@@ -181,7 +207,7 @@ public class PopupFilePreview extends TitleWindow
             return array;
 
         default:
-            throw new Error("Don't understand " + fileType + " files yet.");
+            throw new Error("Don't understand " + _type + " files yet.");
         }
     }
 
@@ -191,16 +217,16 @@ public class PopupFilePreview extends TitleWindow
 
     protected var _pack :EditableDataPack;
 
+    protected var _type :String;
+
     protected var _serverURL :String;
 
     protected var _filename :String;
-
-    protected var _bytes :ByteArray;
 
     protected var _fileRef :FileReference;
 
     protected var _progress :ProgressBar;
 
-    protected var _image :Image;
+    protected var _image :ImagePreview;
 }
 }
