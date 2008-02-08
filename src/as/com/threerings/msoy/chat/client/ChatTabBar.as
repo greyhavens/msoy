@@ -172,7 +172,7 @@ public class ChatTabBar extends HBox
     {
         var controller :ChatChannelController = getController(channel);
         if (controller != null) {
-            controller.reinit(ccobj);
+            controller.init(ccobj);
         }
     }
 

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.chat.client {
 
+import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.Util;
@@ -46,9 +47,19 @@ public class ChatChannelController
         _departing = new ExpiringSet(3.0, handleDeparted);
     }
 
-    public function init (ccobj :ChatChannelObject, serverSwitch :Boolean = false) :void
+    public function init (ccobj :ChatChannelObject) :void
     {
-        if (ccobj != null && _ccobj != ccobj) {
+        if (ccobj == _ccobj) {
+            return;
+        }
+
+        var serverSwitch :Boolean = false;
+        if (_ccobj != null) {
+            shutdown();
+            serverSwitch = true;
+        }
+
+        if (ccobj != null) {
             _ccobj = ccobj;
             _ccobj.addListener(this);
 
@@ -80,14 +91,6 @@ public class ChatChannelController
         if (_ccobj != null) {
             _ccobj.removeListener(this);
             _ccobj = null;
-        }
-    }
-
-    public function reinit (ccobj :ChatChannelObject) :void
-    {
-        if (ccobj != _ccobj) {
-            shutdown();
-            init(ccobj, true);
         }
     }
 
@@ -201,6 +204,8 @@ public class ChatChannelController
             _ctx.getChatDirector().dispatchMessage(msg, _channel.toLocalType());
         }
     }
+
+    private static const log :Log = Log.getLog(ChatChannelController);
 
     protected var _ctx :MsoyContext;
 
