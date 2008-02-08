@@ -21,9 +21,7 @@ public class FeaturedGamePanel extends SmartTable
 {
     public FeaturedGamePanel (FeaturedGameInfo game)
     {
-        setStyleName("featuredGame");
-        setCellPadding(0);
-        setCellSpacing(0);
+        super("featuredGame", 0, 0);
 
         SmartTable title = new SmartTable("Title", 0, 0);
         title.getFlexCellFormatter().setStyleName(0, 0, "Star");
