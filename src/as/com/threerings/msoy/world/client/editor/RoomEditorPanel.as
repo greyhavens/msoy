@@ -29,6 +29,7 @@ import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.GridUtil;
 import com.threerings.util.CommandEvent;
 import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.SkinnableImage;
 
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
@@ -258,6 +259,11 @@ public class RoomEditorPanel extends FloatingPanel
                                          "b.flip_h", _targetButtons),
                         makeActionButton(makeFlipFn(1, -1), "roomEditFlipV",
                                          "b.flip_v", _targetButtons));
+
+        // divider
+        var div :SkinnableImage = new SkinnableImage();
+        div.styleName = "roomEditDiv";
+        buttons.addChild(div);
         
         // right side buttons
         var rightgrid :Grid = new Grid();

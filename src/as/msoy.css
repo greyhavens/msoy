@@ -506,6 +506,10 @@ Window {
   verticalAlign: "bottom";
 }
 
+.roomEditDiv {
+  backgroundSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/dot-separator.png");
+}
+
 .roomEditRight { 
   verticalAlign: "bottom";
 }
