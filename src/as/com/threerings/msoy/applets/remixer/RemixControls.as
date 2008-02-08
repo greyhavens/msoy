@@ -87,11 +87,12 @@ public class RemixControls extends VBox
 
         addEventListener(FieldEditor.FIELD_CHANGED, handleFieldChanged);
 
+        GridUtil.addRow(_controls, "Field", "Used?", "Value", [2, 1]);
+        addRule();
+
         var name :String;
         var datas :Array = _pack.getDataFields();
         if (datas.length > 0) {
-            GridUtil.addRow(_controls, "Data fields", "Used?", "Value", [2, 1]);
-            addRule();
             for each (name in datas) {
                 _controls.addChild(new DataEditor(_pack, name));
             }
@@ -99,11 +100,6 @@ public class RemixControls extends VBox
 
         var files :Array = _pack.getFileFields();
         if (files.length > 0) {
-            if (datas.length > 0) {
-                GridUtil.addRow(_controls, "", [4, 1]);
-            }
-            GridUtil.addRow(_controls, "Files", "Used?", "filename", [2, 1]);
-            addRule();
             for each (name in files) {
                 _controls.addChild(new FileEditor(_pack, name, _params["server"]));
             }
