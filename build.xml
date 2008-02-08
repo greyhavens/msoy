@@ -509,13 +509,6 @@
 
   <!-- builds our avatar viewer thingy -->
   <target name="avatarviewer" depends="asprepare,aslib">
-    <if><isset property="fullsize"/><then>
-      <property name="width" value="600"/>
-      <property name="height" value="488"/>
-    </then><else>
-      <property name="width" value="360"/>
-      <property name="height" value="450"/>
-    </else></if>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
@@ -523,8 +516,8 @@
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-default-size"/>
-      <arg value="${width}"/>
-      <arg value="${height}"/>
+      <arg value="600"/> <!-- see note in AvatarViewer.mxml about the size -->
+      <arg value="488"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/avatarviewer.swf"/>
       <arg value="-file-specs"/>

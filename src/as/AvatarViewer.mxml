@@ -3,9 +3,12 @@
     layout="absolute" styleName="plain"
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
     applicationComplete="addChild(_viewer = new AvatarViewerComp());">
-<!-- width/height are defined in build.xml
-     small: 360x450
-     full: 600x488
+<!-- 
+    Setting the width/height here defines them both for the SWF and
+    the Application. We want the SWF to have the large size (600x488)
+    so we set that size in build.xml.
+    But we also show the avatarviewer at a small size (360x450) and it
+    is written to work at that size as well on the inventory page.
 -->
 <mx:Style source="msoy.css"/>
 <mx:Script>
