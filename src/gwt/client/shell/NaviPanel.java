@@ -207,20 +207,9 @@ public class NaviPanel extends FlexTable
         setWidget(0, menuidx++, new NaviButton(
                       CShell.cmsgs.menuCatalog(), _images.catalog(), _images.ocatalog(), click));
 
-        click = new MenuPopper() {
-            protected void populateMenu (Widget sender, MenuBar menu) {
-                menu.addItem("Tutorials", true, new Command() {
-                    public void execute () {
-                        Window.open("/tutorial/en_US/index.html", "Tutorials",
-                                    "menubar=no,location=no,resizable=yes,scrollbars=yes," +
-                                    "status=no,width=400,height=500");
-                        clearPopup();
-                    }
-                });
-                addLink(menu, "Online Support", Page.WRAP, Args.compose("w", "Support"));
-                addLink(menu, "Bug Reports", Page.GROUP, "72"); // hardcoded First group id
-                addURLInNewFrame(menu, "Whirled Wiki", "http://wiki.whirled.com/");
-                addLink(menu, "About Whirled", Page.WRAP, "about");
+        click = new ClickListener() {
+            public void onClick (Widget sender) {
+                Application.go(Page.WHIRLED, "help");
             }
         };
         setWidget(0, menuidx++, new NaviButton(

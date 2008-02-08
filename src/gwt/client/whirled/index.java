@@ -40,20 +40,17 @@ public class index extends MsgsEntryPoint
     // @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        // if we're not logged in, default to whirledwide, if so, default to mywhirled
         String action = args.get(0, "");
-
-        // if we're logged in and specified no action, go to "My Whirled"
-        if (CWhirled.getMemberId() != 0 && action.equals("")) {
-            action = "mywhirled";
-        }
 
         if (action.equals("whirledwide")) {
             Frame.setTitle(CWhirled.msgs.titleWhirledwide());
             setContent(new Whirledwide(createPopulationDisplay()));
 
-        // only load their invitation and redirect to the main page if they're not logged in
+        } else if (action.equals("help")) {
+            setContent(new HelpPanel());
+
         } else if (action.equals("i") && CWhirled.getMemberId() == 0) {
+            // only load their invitation and redirect to the main page if they're not logged in
             String inviteId = args.get(1, "");
             if (Application.activeInvite != null &&
                 Application.activeInvite.inviteId.equals(inviteId)) {
@@ -67,8 +64,8 @@ public class index extends MsgsEntryPoint
                 });
             }
 
-        // if we are logged in, we always display mywhirled instead of the landing page
-        } else if (action.equals("mywhirled") && CWhirled.getMemberId() != 0) {
+        } else if (CWhirled.getMemberId() != 0) {
+            // if we are logged in, we always display mywhirled instead of the landing page
             Frame.setTitle(CWhirled.msgs.titleMyWhirled());
             setContent(new MyWhirled(createPopulationDisplay()));
             FlashClients.tutorialEvent("myWhirledVisited");

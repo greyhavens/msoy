@@ -573,3 +573,13 @@
   text-align: center;
   vertical-align: top;
 }
+
+.helpPanel {
+  padding: 5px;
+}
+
+.helpPanel .Title {
+  padding-top: 5px;
+  font-size: 16px;
+  font-weight: bold;
+}
