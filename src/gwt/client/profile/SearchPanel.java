@@ -9,6 +9,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
+import client.shell.Args;
+import client.shell.Frame;
+import client.util.MsoyCallback;
+
 public class SearchPanel extends VerticalPanel
 {
     /** The number of columns of items to display. */
@@ -22,7 +26,31 @@ public class SearchPanel extends VerticalPanel
         setStyleName("searchPanel");
         setWidth("100%");
         setSpacing(10);
-        add(new SearchControls());
+        Frame.setTitle(CProfile.msgs.profileSearchTitle());
+        add(_ctrls = new SearchControls());
+    }
+
+    public void setArgs (Args args)
+    {
+        final String type = args.get(1, "name");
+        final int page = args.get(2, 0);
+        final String query = args.get(3, "");
+
+        _ctrls.setSearch(type, query);
+
+        if (query.length() == 0) {
+            clearResults();
+
+        } else if (!showingResultsFor(type, query)) {
+            CProfile.profilesvc.findProfiles(type, query, new MsoyCallback() {
+                public void onSuccess (Object result) {
+                    setResults((List) result, page, type, query);
+                }
+            });
+
+        } else {
+            displayPage(page);
+        }
     }
 
     public void clearResults ()
@@ -58,6 +86,7 @@ public class SearchPanel extends VerticalPanel
             _searchString.equals(search);
     }
 
+    protected SearchControls _ctrls;
     protected ProfileGrid _profiles;
     protected String _searchType, _searchString;
 }

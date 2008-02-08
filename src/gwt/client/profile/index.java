@@ -111,36 +111,11 @@ public class index extends MsgsEntryPoint
 
     protected void displaySearch (Args args) 
     {
-        Frame.setTitle(CProfile.msgs.profileSearchTitle());
         if (_search == null) {
             _search = new SearchPanel();
         }
-
-        final String type = args.get(1, "name");
-        final int page = args.get(2, 0);
-        final String search = URL.decodeComponent(args.get(3, ""));
-
-        if (search.length() == 0) {
-            _search.clearResults();
-            setContent(_search);
-            return;
-        }
-
-        if (!_search.showingResultsFor(type, search)) {
-            CProfile.profilesvc.findProfiles(type, search, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    _search.setResults((List) result, page, type, search);
-                    setContent(_search);
-                }
-                public void onFailure (Throwable cause) {
-                    setContent(new Label(CProfile.serverError(cause)));
-                    CProfile.log("Failed to load search", cause);
-                }
-            });
-
-        } else {
-            _search.displayPage(page);
-        }
+        _search.setArgs(args);
+        setContent(_search);
     }
 
     protected int _memberId = -1;

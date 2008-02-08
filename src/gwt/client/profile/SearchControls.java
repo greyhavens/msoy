@@ -3,7 +3,6 @@
 
 package client.profile;
 
-import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
@@ -55,10 +54,20 @@ public class SearchControls extends SmartTable
         _go.setEnabled(false);
     }
 
+    public void setSearch (String type, String query)
+    {
+        for (int ii = 0; ii < TYPES.length; ii++) {
+            if (TYPES[ii].equals(type)) {
+                _types[ii].setChecked(true);
+            }
+        }
+        _search.setText(query);
+    }
+
     // from interface ClickListener
     public void onClick (Widget sender)
     {
-        String[] args =  { "search", null, "0", URL.encodeComponent(getQuery()) };
+        String[] args =  { "search", null, "0", getQuery() };
         for (int ii = 0; ii < _types.length; ii++) {
             if (_types[ii].isChecked()) {
                 args[1] = TYPES[ii];
