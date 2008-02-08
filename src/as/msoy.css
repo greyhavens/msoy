@@ -436,8 +436,8 @@ Window {
   borderStyle: "none";
   paddingBottom: 5;
   paddingTop: 5;
-  paddingLeft: 5;
-  paddingRight: 5;
+  paddingLeft: 8;
+  paddingRight: 8;
 } 
 
 .roomEditButtonBar {  
@@ -473,8 +473,8 @@ Window {
 .roomEditContents {  
   paddingBottom: 5;
   paddingTop: 5;
-  paddingLeft: 5;
-  paddingRight: 5;
+  paddingLeft: 8;
+  paddingRight: 8;
   verticalGap: 2;
 } 
 
@@ -518,6 +518,7 @@ Window {
 
 .roomEditRight { 
   verticalAlign: "bottom";
+  verticalGap: 30;
 }
 
 .roomEditScaleDown {

@@ -210,6 +210,7 @@ public class RoomEditorPanel extends FloatingPanel
         _namebox.percentWidth = 100;
         _namebox.maxWidth = 300;
         _namebox.prompt = Msgs.EDITING.get("l.select_item");
+        _namebox.toolTip = Msgs.EDITING.get("i.namebox_tip");
         _namebox.addEventListener(ListEvent.CHANGE, nameListChanged);
         box.addChild(_namebox);
 
