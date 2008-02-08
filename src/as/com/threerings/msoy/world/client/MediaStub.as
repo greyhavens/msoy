@@ -1,6 +1,7 @@
 package com.threerings.msoy.world.client {
 
 import flash.display.BitmapData;
+import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.Sprite;
@@ -32,6 +33,7 @@ public class MediaStub extends Sprite
     {
         // Allow the swf that loaded us to cross-script us.
         Security.allowDomain(this.root.loaderInfo.loaderURL);
+        this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
     }
 
     /**
@@ -73,6 +75,25 @@ public class MediaStub extends Sprite
             this.root.loaderInfo.sharedEvents.dispatchEvent);
 
         return loader;
+    }
+
+    /**
+     * Clean up as best we can.
+     */
+    protected function handleUnload (event :Event) :void
+    {
+        for (var ii :int = numChildren - 1; ii >= 0; ii--) {
+            var disp :DisplayObject = getChildAt(ii);
+            if (disp is Loader) {
+                var l :Loader = Loader(disp);
+                try {
+                    l.close();
+                } catch (err :Error) {
+                    // ignore
+                }
+                l.unload();
+            }
+        }
     }
 }
 }
