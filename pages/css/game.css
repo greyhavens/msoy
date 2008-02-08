@@ -43,8 +43,8 @@
 }
 
 .gameDetail .Details {
-  border-bottom: white solid 10px;
-  border-right: white solid 15px;
+  padding-bottom: 10px;
+  padding-right: 15px;
 }
 
 .gameDetail .Details td {
