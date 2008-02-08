@@ -502,56 +502,6 @@ Window {
   paddingTop: 2;
 }
 
-.roomEditButtonRoom {
-  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_room.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_room_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_room_down.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_room_selected.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_room_selected.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_room_selected.png");
-}
-
-.roomEditButtonMove {
-  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_move.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_move_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_move_down.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_move_selected.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_move_selected.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_move_selected.png");
-}
-
-.roomEditButtonScale {
-  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_scale.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_scale_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_scale_down.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_scale_selected.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_scale_selected.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_scale_selected.png");
-}
-
-.roomEditButtonPrefs {
-  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_actions.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_actions_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_actions_down.png");
-}
-
-.roomEditButtonTrash {
-  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_disabled.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_selected.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_selected.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_selected.png");
-}
-
-.roomEditButtonUndo {
-  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_undo.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_undo_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_undo_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_undo_disabled.png");
-}
-
 .roomEditButtonTrash3 {
   upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_trash.png");
   overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_trash_over.png");
