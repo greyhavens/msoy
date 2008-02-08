@@ -20,7 +20,6 @@ import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.CommandEvent;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 
@@ -37,7 +36,6 @@ import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldController;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.client.updates.SceneUpdateAction;
 
@@ -236,13 +234,6 @@ public class RoomEditorController
      */
     public function findAndSetTarget (ident :ItemIdent) :void
     {
-        // if the player selected the special "new item" option, pop up the inventory panel
-        if (ident == NEW_ITEM_SELECTION) {
-            CommandEvent.dispatch(_panel.parent, WorldController.VIEW_MY_FURNITURE);
-            setTarget(null, null);
-            return;
-        }
-
         // is this our special entrance sprite? if so, it's not in the room contents list.
         if (ident.equals(EntranceFurniData.ITEM_IDENT)) {
             setTarget(_entranceSprite, null);
@@ -490,11 +481,6 @@ public class RoomEditorController
         defs.push(_names.get(EntranceFurniData.ITEM_IDENT));
         defs.sortOn("label", Array.CASEINSENSITIVE);
 
-        // if we're running in a browser, add the "new item" selection
-        if (! _ctx.getWorldClient().isEmbedded()) {
-            defs.unshift({ label: Msgs.EDITING.get("l.new_furni"), data: NEW_ITEM_SELECTION });
-        }
-        
         _panel.updateNameList(defs);
         selectTargetName();
     }
@@ -536,9 +522,6 @@ public class RoomEditorController
      */
     protected var _names :HashMap = new HashMap();
 
-    /** Special ItemIdent instance for the "new item" option in name selection box. */
-    protected static const NEW_ITEM_SELECTION :ItemIdent = new ItemIdent();
-    
     protected var _ctx :WorldContext;
     protected var _view :RoomView;
     protected var _edit :FurniEditor;

@@ -27,6 +27,7 @@ import mx.events.ListEvent;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.GridUtil;
+import com.threerings.util.CommandEvent;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.HeaderBar;
@@ -36,6 +37,7 @@ import com.threerings.msoy.client.TopPanel;
 
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldController;
 import com.threerings.msoy.world.data.FurniData;
 
 
@@ -136,6 +138,13 @@ public class RoomEditorPanel extends FloatingPanel
             _contents.removeChild(_advancedPanels);
         }
     }
+
+    /** Displays the furniture inventory. */
+    protected function displayFurnitureInventory () :void
+    {
+        CommandEvent.dispatch(this.parent, WorldController.VIEW_MY_FURNITURE);
+        selectInNameList(null);
+    }
     
     /** Handler for dealing with changes in the name selection box. */
     protected function nameListChanged (event :ListEvent) :void
@@ -208,9 +217,13 @@ public class RoomEditorPanel extends FloatingPanel
         GridUtil.addRow(rhs,
                         makeActionButton(_controller.actionDelete, "roomEditTrash",
                                          "b.put_away", _deleteButtons),
-                        makeActionButton(noop, "roomEditAdd",
+                        makeActionButton(displayFurnitureInventory, "roomEditAdd",
                                          "b.add_item", null));
-
+        GridUtil.addRow(rhs,
+                        makeActionButton(noop, "roomEditDoor",
+                                         "b.make_door", _actionButtons),
+                        makeActionButton(noop, "roomEditLink",
+                                         "b.make_link", _actionButtons));
         GridUtil.addRow(rhs,
                         makeActionButton(_controller.actionUndo, "roomEditUndo",
                                          "b.undo", _undoButtons),

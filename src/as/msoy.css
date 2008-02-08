@@ -516,6 +516,20 @@ Window {
   disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/add-stuff_disabled.png");
 }
 
+.roomEditDoor {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/door.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/door_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/door_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/door_disabled.png");
+}
+
+.roomEditLink {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/make-url.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/make-url_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/make-url_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/make-url_disabled.png");
+}
+
 .roomEditUndo {
   upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/undo-shape.png");
   overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/undo-shape_over.png");
