@@ -98,24 +98,22 @@ public class GameDetailPanel extends VerticalPanel
             CGame.log("Using " + shot + ".");
         }
         box.setWidget(1, 0, new Image(shot.getMediaPath()), 1, "Screenshot");
-
         if (detail.listedItem != null) {
             box.setWidget(2, 0, WidgetUtil.makeShim(1, 5));
             box.getFlexCellFormatter().setHorizontalAlignment(3, 0, HasAlignment.ALIGN_CENTER);
             box.setWidget(3, 0, new ItemRating(detail.listedItem, CGame.getMemberId(),
                                                detail.memberRating, false));
         }
-
-        top.getFlexCellFormatter().setVerticalAlignment(row, 1, HasAlignment.ALIGN_TOP);
         top.setWidget(row, 1, box);
 
         VerticalPanel details = new VerticalPanel();
-        details.setStyleName("Details");
-        top.getFlexCellFormatter().setVerticalAlignment(row, 2, HasAlignment.ALIGN_TOP);
-        top.setWidget(row, 2, details);
+        top.setWidget(row, 2, details, 1, "Details");
 
-        top.getFlexCellFormatter().setVerticalAlignment(row, 3, HasAlignment.ALIGN_TOP);
-        top.setWidget(row++, 3, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers));
+        top.setWidget(row, 3, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers));
+        for (int ii = 0; ii < top.getCellCount(0); ii++) {
+            top.getFlexCellFormatter().setVerticalAlignment(row, ii, HasAlignment.ALIGN_TOP);
+        }
+        row++;
         add(top);
 
         SimplePanel cbox = new SimplePanel();
