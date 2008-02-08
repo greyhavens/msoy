@@ -120,46 +120,8 @@ public class GameDetailPanel extends VerticalPanel
         top.getFlexCellFormatter().setVerticalAlignment(row, 1, HasAlignment.ALIGN_TOP);
         top.setWidget(row, 1, details);
 
-        FlexTable pbbox = new FlexTable();
-        pbbox.setCellPadding(0);
-        pbbox.setCellSpacing(0);
-        pbbox.setText(0, 0, CGame.msgs.gdpPlay());
-        pbbox.getFlexCellFormatter().setStyleName(0, 0, "PlayTitle");
-        pbbox.getFlexCellFormatter().setColSpan(0, 0, 2);
-        Button play;
-
-        // if the game supports single-player play, it gets a "Quick Single" button
-        if (detail.minPlayers == 1 && !detail.isPartyGame()) {
-            addPlayButton(pbbox, 1, 0, "SinglePlay", CGame.msgs.gdpJustMe(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WORLD, Args.compose("game", "s", ""+_gameId));
-                }
-            });
-        }
-
-        // if the game supports multiplayer play, it gets "Quick Multi" and "Custom Game" buttons
-        if (detail.maxPlayers > 1) {
-            addPlayButton(pbbox, 1, 1, "FriendPlay", CGame.msgs.gdpMyFriends(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WORLD, Args.compose("game", "f", ""+_gameId));
-                }
-            });
-
-            addPlayButton(pbbox, 3, 0, "AnyonePlay", CGame.msgs.gdpAnyone(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WORLD, Args.compose("game", "m", ""+_gameId));
-                }
-            });
-
-            addPlayButton(pbbox, 3, 1, "CustomPlay", CGame.msgs.gdpCustom(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WORLD, Args.compose("game", "l", ""+_gameId));
-                }
-            });
-        }
-
         top.getFlexCellFormatter().setVerticalAlignment(row, 2, HasAlignment.ALIGN_TOP);
-        top.setWidget(row++, 2, pbbox);
+        top.setWidget(row++, 2, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers));
         add(top);
 
         SimplePanel cbox = new SimplePanel();
@@ -175,35 +137,10 @@ public class GameDetailPanel extends VerticalPanel
         details.add(WidgetUtil.makeShim(1, 5));
 
         // set up the game info table
-        FlexTable info = new FlexTable();
-        info.setCellPadding(0);
-        info.setCellSpacing(0);
-
-        int irow = 0;
-        info.setText(irow, 0, CGame.msgs.gdpInfoTitle());
-        info.getFlexCellFormatter().setStyleName(irow++, 0, "InfoTitle");
-
-        String[] ilabels = {
-            CGame.msgs.gdpPlayers(), CGame.msgs.gdpAvgDuration(), CGame.msgs.gdpGamesPlayed()
-        };
-
-        String[] ivalues = { null, null, null, };
-        if (detail.isPartyGame()) {
-            ivalues[0] = CGame.msgs.gdpPlayersParty("" + detail.minPlayers);
-        } else if (detail.minPlayers == detail.maxPlayers) {
-            ivalues[0] = CGame.msgs.gdpPlayersSame("" + detail.minPlayers);
-        } else {
-            ivalues[0] = CGame.msgs.gdpPlayersFixed("" + detail.minPlayers, "" + detail.maxPlayers);
-        }
-        ivalues[1] = avgMinsLabel(detail.getAverageDuration());
-        ivalues[2] = Integer.toString(detail.singlePlayerGames + detail.multiPlayerGames);
-
-        for (int ii = 0; ii < ilabels.length; ii++) {
-            info.setText(irow, 0, ilabels[ii]);
-            info.getFlexCellFormatter().setStyleName(irow, 0, "InfoLabel");
-            info.setHTML(irow++, 1, ivalues[ii]);
-        }
-        details.add(info);
+        details.add(new GameBitsPanel(CGame.msgs.gdpInfoTitle(), detail.getGame().genre,
+                                      detail.minPlayers, detail.maxPlayers,
+                                      detail.getAverageDuration(),
+                                      detail.singlePlayerGames + detail.multiPlayerGames));
 
         // note that they're playing the developer version if so
         if (_gameId < 0) {
@@ -242,18 +179,6 @@ public class GameDetailPanel extends VerticalPanel
             CGame.isAdmin()) {
             addTab(METRICS_TAB, CGame.msgs.tabMetrics(), new GameMetricsPanel(detail));
         }
-    }
-
-    protected void addPlayButton (FlexTable table, int row, int column,
-                                  String styleName, String tip, ClickListener onClick)
-    {
-        Button play = new Button("", onClick);
-        play.setStyleName("PlayButton");
-        play.addStyleName(styleName);
-        table.setWidget(row, column, play);
-        table.getFlexCellFormatter().setStyleName(row, column, "PlayCell");
-        table.setText(row+1, column, tip);
-        table.getFlexCellFormatter().setStyleName(row+1, column, "PlayLabel");
     }
 
     // from interface TabListener
@@ -302,11 +227,6 @@ public class GameDetailPanel extends VerticalPanel
             }
         }
         return "";
-    }
-
-    protected static String avgMinsLabel (int avgMins)
-    {
-        return (avgMins > 1) ? CGame.msgs.gdpMinutes(""+avgMins) : CGame.msgs.gdpMinute();
     }
 
     protected StyledTabPanel _tabs;

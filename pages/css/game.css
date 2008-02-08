@@ -52,58 +52,6 @@
   height: 22px;
 }
 
-.gameDetail .PlayTitle {
-  font-weight: bold;
-  font-size: 18px;
-  text-align: center;
-  vertical-align: top;
-  height: 25px;
-}
-
-.gameDetail .PlayCell {
-  text-align: center;
-}
-
-.gameDetail .PlayButton {
-  border: 1px none #000000;
-  width: 103px;
-  height: 48px;
-  cursor: pointer;
-}
-.gameDetail .SinglePlay {
-  background-image: url(/images/game/play_alone.png);
-  margin-right: 15px;
-}
-.gameDetail .FriendPlay {
-  background-image: url(/images/game/play_friends.png);
-}
-.gameDetail .AnyonePlay {
-  background-image: url(/images/game/play_anyone.png);
-  margin-right: 15px;
-}
-.gameDetail .CustomPlay {
-  background-image: url(/images/game/play_custom.png);
-}
-
-.gameDetail .PlayLabel {
-  font-size: 12px;
-  text-align: center;
-  vertical-align: top;
-  white-space: nowrap;
-  padding-bottom: 10px;
-}
-
-.gameDetail .InfoTitle {
-  padding-top: 10px;
-  font-weight: bold;
-  font-size: 12px;
-  color: #5F96AC;
-}
-
-.gameDetail .InfoLabel {
-  padding-right: 5px;
-}
-
 .gameDetail .InDevTip {
   font-size: 12px;
   padding-bottom: 10px;
@@ -111,6 +59,54 @@
 
 .gameDetail .gwt-TabPanelBottom {
   padding: 0px; /* override default */
+}
+
+.gameBits .Title {
+  padding-top: 10px;
+  font-weight: bold;
+  font-size: 12px;
+  color: #5F96AC;
+}
+
+.gameBits .Label {
+  padding-right: 5px;
+}
+
+.playPanel .Title {
+  text-align: center;
+  vertical-align: top;
+  font-weight: bold;
+  font-size: 16px;
+  color: #AABDC8;
+}
+
+.playPanel .Button {
+  border: 1px none #000000;
+  width: 103px;
+  height: 48px;
+  cursor: pointer;
+}
+.playPanel .SinglePlay {
+  background-image: url(/images/game/play_alone.png);
+  margin-right: 15px;
+}
+.playPanel .FriendPlay {
+  background-image: url(/images/game/play_friends.png);
+}
+.playPanel .AnyonePlay {
+  background-image: url(/images/game/play_anyone.png);
+  margin-right: 15px;
+}
+.playPanel .CustomPlay {
+  background-image: url(/images/game/play_custom.png);
+}
+
+.playPanel .Label {
+  font-size: 12px;
+  text-align: center;
+  vertical-align: top;
+  white-space: nowrap;
+  padding-bottom: 5px;
 }
 
 .instructionsPanel {
@@ -123,11 +119,6 @@
 
 .trophyGrid .Trophy {
   width: 115px;
-}
-
-.trophyGrid .Trophy img {
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .trophyGrid .Name {
@@ -221,26 +212,107 @@
   text-align: right;
 }
 
-.arcade .WhatIsGames {
-  border: 1px solid;
-  width: 200px;
-  height: 265px;
-}
-
 .arcade .MyGames {
   border: 1px solid;
-  width: 200px;
-  height: 265px;
+  width: 205px;
 }
 
-.arcade .FeaturedGame {
-  border: 1px solid;
-  width: 485px;
-  height: 265px;
+.arcade .Genre {
+  width: 225px;
 }
 
-.arcade .GameGenre {
-  border: 1px solid;
-  width: 180px;
-  height: 200px;
+.arcade .Genre .Title {
+  background-image: url(/images/whirled/places_tile.png);
+  height: 20px;
+  text-align: center;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.arcade .Genre .Game {
+  width: 100%;
+  border-bottom: 1px solid #DADADA;
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+}
+
+.arcade .Genre .Game .Thumb {
+  width: 80px;
+  height: 40px;
+  padding-right: 5px;
+}
+
+.arcade .Genre .Game .Name {
+  font-size: 12px;
+}
+
+.arcade .Genre .Game .Descrip {
+  font-size: 10px;
+  color: #AABDC8;
+}
+
+.arcade .Genre .Game .Players {
+  font-size: 10px;
+}
+
+.arcade .Genre .More {
+  width: 100%;
+  text-align: right;
+  height: 20px;
+  border-bottom: 1px solid #DADADA;
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+}
+
+.arcade .Genre .More a {
+  color: #6499AE;
+  font-size: 10px;
+  font-weight: bold;
+  padding-right: 5px;
+}
+
+.featuredGame {
+  width: 475px;
+}
+
+.featuredGame .Title {
+  width: 100%;
+}
+
+.featuredGame .Title .Star {
+  background-image: url(/images/whirled/games_star.png);
+  width: 20px;
+  height: 20px;
+}
+
+.featuredGame .Title .Text {
+  background-image: url(/images/whirled/games_tile.png);
+  height: 20px;
+  text-align: center;
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+.featuredGame .Shot {
+  width: 185px;
+  height: 135px;
+  padding: 5px 5px 0px 0px;
+}
+
+.featuredGame .Info {
+  vertical-align: top;
+  padding: 5px 5px 0px 0px;
+  font-size: 12px;
+}
+
+.featuredGame .Info .Online {
+  font-weight: bold;
+  color: #5F96AC;
+  font-size: 16px;
+}
+
+.featuredGame .Buttons {
+  vertical-align: top;
+  padding-top: 5px;
 }

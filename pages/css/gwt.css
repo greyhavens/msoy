@@ -47,8 +47,8 @@ img, embed, applet, object {
 }
 
 .gwt-Image {
-  margin: 0px;
-  padding: 0px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /** Form element styles. */

@@ -5,6 +5,7 @@ package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
@@ -30,4 +31,12 @@ public class GameInfo
 
     /** The number of players currently playing this game. */
     public int playersOnline;
+
+    /**
+     * Returns the media to be shown for this game's thumbnail.
+     */
+    public MediaDesc getThumbMedia ()
+    {
+        return (thumbMedia != null) ? thumbMedia : Item.getDefaultThumbnailMediaFor(Item.GAME);
+    }
 }

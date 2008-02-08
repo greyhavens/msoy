@@ -52,6 +52,7 @@ import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GameDetail;
+import com.threerings.msoy.web.data.GameInfo;
 import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.PlayerRating;
 import com.threerings.msoy.web.data.ServiceCodes;
@@ -387,7 +388,7 @@ public class GameServlet extends MsoyServiceServlet
             ArcadeData data = new ArcadeData();
             GameRepository grepo = MsoyServer.itemMan.getGameRepository();
 
-            // load the "featured" game
+            // determine the "featured" game
             List<GameRecord> games = grepo.loadGenre((byte)-1, 5);
             if (games.size() > 0) {
                 GameRecord frec = RandomUtil.pickRandom(games);
@@ -407,13 +408,15 @@ public class GameServlet extends MsoyServiceServlet
                 genre.genre = gcode;
                 games = grepo.loadGenre(gcode, -1);
                 genre.gameCount = games.size();
-                if (genre.gameCount > 0) {
-                    genre.game1 = games.get(0).toGameInfo();
-                    if (genre.gameCount > 1) {
-                        genre.game2 = games.get(1).toGameInfo();
-                    }
-                    genres.add(genre);
+                if (genre.gameCount == 0) {
+                    continue;
                 }
+                int fcount = Math.min(genre.gameCount, ArcadeData.Genre.HIGHLIGHTED_GAMES);
+                genre.games = new GameInfo[fcount];
+                for (int ii = 0; ii < fcount; ii++) {
+                    genre.games[ii] = games.get(ii).toGameInfo();
+                }
+                genres.add(genre);
             }
             data.genres = genres;
 

@@ -198,7 +198,7 @@ public class GameRecord extends ItemRecord
         info.thumbMedia = getThumbMediaDesc();
         info.description = description;
         if (info instanceof FeaturedGameInfo) {
-            ((FeaturedGameInfo)info).screenshot =
+            ((FeaturedGameInfo)info).shotMedia =
                 (shotMediaHash == null) ? null : new MediaDesc(shotMediaHash, shotMimeType);
         }
         return info;

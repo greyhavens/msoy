@@ -17,17 +17,17 @@ public class ArcadeData
     public static class Genre
         implements IsSerializable
     {
+        /** The number of games we highlight in each genre. */
+        public static final int HIGHLIGHTED_GAMES = 2;
+
         /** This genre's code. */
         public byte genre;
 
-        /** The number of games in this genre. */
+        /** The total number of games in this genre. */
         public int gameCount;
 
-        /** The first game in this genre. */
-        public GameInfo game1;
-
-        /** The second game in this genre. */
-        public GameInfo game2;
+        /** The highlighted games in this genre. */
+        public GameInfo[] games;
     }
 
     /** Info on the featured game. */

@@ -12,7 +12,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class FeaturedGameInfo extends GameInfo
 {
     /** The screenshot media. */
-    public MediaDesc screenshot;
+    public MediaDesc shotMedia;
 
     /** The name and id of the game's creator. */
     public MemberName creator;
@@ -25,4 +25,12 @@ public class FeaturedGameInfo extends GameInfo
 
     /** The average game duration in seconds. */
     public int avgDuration;
+
+    /**
+     * Returns the media to be shown for this game's screenshot.
+     */
+    public MediaDesc getShotMedia ()
+    {
+        return (shotMedia != null) ? shotMedia : getThumbMedia();
+    }
 }

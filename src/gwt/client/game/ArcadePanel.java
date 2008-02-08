@@ -16,7 +16,11 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
+import com.threerings.msoy.web.data.GameInfo;
 
+import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -41,7 +45,7 @@ public class ArcadePanel extends VerticalPanel
     protected void init (ArcadeData data)
     {
         HorizontalPanel row = new HorizontalPanel();
-        row.add(new WhatIsGamesPanel());
+        row.add(new MyGamesPanel());
         row.add(WidgetUtil.makeShim(5, 5));
         row.add(new FeaturedGamePanel(data.featuredGame));
         add(row);
@@ -58,14 +62,6 @@ public class ArcadePanel extends VerticalPanel
         }
     }
 
-    protected static class WhatIsGamesPanel extends FlexTable
-    {
-        public WhatIsGamesPanel ()
-        {
-            setStyleName("WhatIsGames");
-        }
-    }
-
     protected static class MyGamesPanel extends FlexTable
     {
         public MyGamesPanel ()
@@ -74,38 +70,67 @@ public class ArcadePanel extends VerticalPanel
         }
     }
 
-    protected static class FeaturedGamePanel extends FlexTable
+    protected static class GameGenrePanel extends FlexTable
     {
-        public FeaturedGamePanel (FeaturedGameInfo game)
-        {
-            setStyleName("FeaturedGame");
+        public GameGenrePanel (ArcadeData.Genre genre) {
+            setStyleName("Genre");
+            setCellPadding(0);
+            setCellSpacing(0);
 
-            setText(0, 0, game.name);
-            getFlexCellFormatter().setColSpan(0, 0, 2);
+            int row = 0;
+            setText(row, 0, CGame.dmsgs.getString("genre" + genre.genre));
+            getFlexCellFormatter().setStyleName(row++, 0, "Title");
 
-            ClickListener onClick = new ClickListener() {
-                public void onClick (Widget widget) {
-                    // TODO
-                }
-            };
+            for (int ii = 0; ii < genre.games.length; ii++) {
+                setWidget(row++, 0, new GameInfoPanel(genre.games[ii]));
+            }
 
-            MediaDesc shot = (game.screenshot == null) ?
-                Item.getDefaultThumbnailMediaFor(Item.GAME) : game.screenshot;
-            setWidget(1, 0, MediaUtil.createMediaView(
-                          shot, Game.SHOT_WIDTH, Game.SHOT_HEIGHT, onClick));
-            getFlexCellFormatter().setRowSpan(1, 0, 2);
-
-            setText(1, 1, "Players online: " + game.playersOnline);
-
-            setText(2, 0, game.description);
+            setWidget(row, 0, Application.createLink(CGame.msgs.genreMore(""+genre.gameCount),
+                                                     Page.GAME, Args.compose("g", genre.genre)));
+            getFlexCellFormatter().setStyleName(row++, 0, "More");
         }
     }
 
-    protected static class GameGenrePanel extends FlexTable
+    protected static class GameInfoPanel extends FlexTable
     {
-        public GameGenrePanel (ArcadeData.Genre genre)
-        {
-            setStyleName("GameGenre");
+        public GameInfoPanel (final GameInfo game) {
+            setStyleName("Game");
+
+            ClickListener onClick = new ClickListener() {
+                public void onClick (Widget widget) {
+                    Application.go(Page.GAME, Args.compose("d", game.gameId));
+                }
+            };
+            setWidget(0, 0, MediaUtil.createMediaView(
+                          game.getThumbMedia(), MediaDesc.THUMBNAIL_SIZE, onClick));
+            getFlexCellFormatter().setStyleName(0, 0, "Thumb");
+
+            setWidget(0, 1, MsoyUI.createActionLabel(game.name, onClick));
+            getFlexCellFormatter().setStyleName(0, 1, "Name");
+
+            setText(1, 0, truncate(game.description));
+            getFlexCellFormatter().setStyleName(1, 0, "Descrip");
+
+            setText(2, 0, (game.playersOnline == 1) ? CGame.msgs.genrePlayer() :
+                    CGame.msgs.genrePlayers(""+game.playersOnline));
+            getFlexCellFormatter().setStyleName(2, 0, "Players");
+            getFlexCellFormatter().setRowSpan(0, 0, 3);
         }
+
+        protected static String truncate (String descrip)
+        {
+            if (descrip.length() <= MAX_DESCRIP_LENGTH) {
+                return descrip;
+            }
+            for (int ii = 0; ii < MAX_DESCRIP_LENGTH; ii++) {
+                char c = descrip.charAt(ii);
+                if (c == '.' || c == '!') {
+                    return descrip.substring(0, ii+1);
+                }
+            }
+            return descrip.substring(0, MAX_DESCRIP_LENGTH-3) + "...";
+        }
+
+        protected static final int MAX_DESCRIP_LENGTH = 50;
     }
 }
