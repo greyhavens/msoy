@@ -299,12 +299,12 @@
 .featuredGame .Shot {
   width: 185px;
   height: 135px;
-  padding: 5px 5px 0px 0px;
+  padding: 5px 10px 0px 0px;
 }
 
 .featuredGame .Info {
   vertical-align: top;
-  padding: 5px 5px 0px 0px;
+  padding: 5px 10px 0px 0px;
   font-size: 12px;
 }
 
