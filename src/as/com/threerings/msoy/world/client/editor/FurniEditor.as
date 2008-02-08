@@ -101,10 +101,12 @@ public class FurniEditor extends FurniHighlight
         _hotspots.push(new MovementXZHotspot(this));
         _hotspots.push(new MovementYHotspot(this));
 
-        _hotspots.push(new ScalingHotspot(this, true, true));
-        _hotspots.push(new ScalingHotspot(this, true, false));
-        _hotspots.push(new ScalingHotspot(this, false, true));
-        _hotspots.push(new ScalingHotspot(this, false, false));
+        for each (var left :Boolean in [ true, false ]) {
+            for each (var top :Boolean in [ true, false]) {
+                // _hotspots.push(new RotatingHotspot(this, top, left));
+                _hotspots.push(new ScalingHotspot(this, top, left));
+            }
+        }
 
         for each (var hotspot :Hotspot in _hotspots) {
             _border.addChild(hotspot);
@@ -127,7 +129,7 @@ public class FurniEditor extends FurniHighlight
     override public function set target (sprite :FurniSprite) :void
     {
         super.target = sprite;
-        _controller.updateDeleteStatus(_target != null && ! (_target is EntranceSprite));
+        _controller.updateTargetSelected();
     }
 
     // @Override from FurniHighlight

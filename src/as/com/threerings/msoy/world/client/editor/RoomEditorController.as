@@ -196,10 +196,10 @@ public class RoomEditorController
         _panel.updateUndoStatus(undoAvailable);
     }
 
-    /** Called by the targetting system, to update the panel's delete button. */
-    public function updateDeleteStatus (deleteAvailable :Boolean) :void
+    /** Called by the targetting system when a target is being selected. */
+    public function updateTargetSelected () :void
     {
-        _panel.updateDeleteStatus(deleteAvailable);
+        _panel.updateTargetSelected(_edit.target);
     }
 
     /**

@@ -88,6 +88,20 @@ public class FurniSprite extends MsoySprite
         return _furni;
     }
 
+    /** Can this sprite be removed from the room? */
+    public function isRemovable () :Boolean
+    {
+        return true;
+    }
+
+    /** Can this sprite's action be modified? */
+    public function isActionModifiable () :Boolean
+    {
+        // game furnis can't be turned into something else - but everything else can
+        return ! (_furni.actionType == FurniData.ACTION_LOBBY_GAME ||
+                  _furni.actionType == FurniData.ACTION_WORLD_GAME);
+    }                  
+
     public function isPerspectable () :Boolean
     {
         return (_desc != null) && _desc.isImage();

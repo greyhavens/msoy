@@ -13,6 +13,7 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
@@ -25,6 +26,7 @@ import mx.events.ListEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.GridUtil;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.HeaderBar;
@@ -83,14 +85,20 @@ public class RoomEditorPanel extends FloatingPanel
     /** Updates the enabled status of the undo button (based on the size of the undo stack). */
     public function updateUndoStatus (enabled :Boolean) :void
     {
-        _undoButton.enabled = enabled;
+        for each (var button :CommandButton in _undoButtons) {
+            button.enabled = enabled;
+        }
     }
 
-    /** Updates the enabled status of the delete button (based on current selection). */
-    public function updateDeleteStatus (enabled :Boolean) :void
+    /** Updates the enabled status of any buttons that require a target furni to be selected. */
+    public function updateTargetSelected (target :FurniSprite) :void
     {
-        if (_deleteButton != null) { // just in case this gets called during initialization...
-            _deleteButton.enabled = enabled;
+        for each (var button :CommandButton in _deleteButtons) {
+            button.enabled = (target != null && target.isRemovable());
+        }
+
+        for each (button in _actionButtons) {
+            button.enabled = (target != null && target.isActionModifiable());
         }
     }
 
@@ -142,6 +150,23 @@ public class RoomEditorPanel extends FloatingPanel
     {
         super.createChildren();
 
+        var makeActionButton :Function = function (fn :Function, style :String, tooltip :String,
+                                                   buttonlist :Array) :CommandButton {
+            var b :CommandButton = new CommandButton(null, fn);
+            b.styleName = style;
+            b.toolTip = Msgs.EDITING.get(tooltip);
+            if (buttonlist != null) {
+                buttonlist.push(b);
+            }
+            return b;
+        }
+
+        var noop :Function = function (... ignore) :void { }
+
+        _actionButtons = new Array();
+        _deleteButtons = new Array();
+        _undoButtons = new Array();
+
         // container for room name
         var namebar :VBox = new VBox();
         namebar.styleName = "roomEditNameBar";
@@ -168,29 +193,29 @@ public class RoomEditorPanel extends FloatingPanel
         _namebox.addEventListener(ListEvent.CHANGE, nameListChanged);
         box.addChild(_namebox);
 
-        // some furni-specific buttons
-        
+        // right hand side buttons
+
         var spacer :VBox = new VBox();
         spacer.percentWidth = 100;
         spacer.height = 10;
         _contents.addChild(spacer);
 
-        box = new HBox();
-        box.styleName = "roomEditButtonBar";
-        box.percentWidth = 100;
-        _contents.addChild(box);
+        var rhs :Grid = new Grid();
+        rhs.styleName = "roomEditRight";
+        rhs.percentWidth = 100;
+        _contents.addChild(rhs);
 
-        _deleteButton = new CommandButton(null, _controller.actionDelete);
-        _deleteButton.styleName = "roomEditButtonTrash3";
-        _deleteButton.toolTip = Msgs.EDITING.get("i.put_away_button");
-        _deleteButton.enabled = false;
-        box.addChild(_deleteButton);
-        
-        _undoButton = new CommandButton(null, _controller.actionUndo);
-        _undoButton.styleName = "roomEditButtonUndo3";
-        _undoButton.toolTip = Msgs.EDITING.get("i.undo_button");
-        _undoButton.enabled = false;
-        box.addChild(_undoButton);
+        GridUtil.addRow(rhs,
+                        makeActionButton(_controller.actionDelete, "roomEditTrash",
+                                         "b.put_away", _deleteButtons),
+                        makeActionButton(noop, "roomEditAdd",
+                                         "b.add_item", null));
+
+        GridUtil.addRow(rhs,
+                        makeActionButton(_controller.actionUndo, "roomEditUndo",
+                                         "b.undo", _undoButtons),
+                        makeActionButton(_controller.actionUndo, "roomEditUndoAll",
+                                         "b.undo_all", _undoButtons));
 
         spacer = new VBox();
         spacer.percentWidth = 100;
@@ -234,8 +259,9 @@ public class RoomEditorPanel extends FloatingPanel
 
     protected var _contents :VBox;
 
-    protected var _deleteButton :CommandButton;
-    protected var _undoButton :CommandButton;
+    protected var _undoButtons :Array; // of CommandButton
+    protected var _deleteButtons :Array; // of CommandButton
+    protected var _actionButtons :Array; // of CommandButton
     
     protected var _details :DetailsPanel;
     protected var _action :ActionPanel;

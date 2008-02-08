@@ -28,5 +28,17 @@ public class EntranceSprite extends FurniSprite
         // so let's just clean up right here.
         stoppedLoading();
     }
+
+    // from FurniSprite
+    override public function isRemovable () :Boolean
+    {
+        return false;
+    }
+
+    // from FurniSprite
+    override public function isActionModifiable () :Boolean
+    {
+        return false;
+    }                  
 }
 }
