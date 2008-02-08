@@ -92,14 +92,12 @@
 }
 .playPanel .SinglePlay {
   background-image: url(/images/game/play_alone.png);
-  margin-right: 15px;
 }
 .playPanel .FriendPlay {
   background-image: url(/images/game/play_friends.png);
 }
 .playPanel .AnyonePlay {
   background-image: url(/images/game/play_anyone.png);
-  margin-right: 15px;
 }
 .playPanel .CustomPlay {
   background-image: url(/images/game/play_custom.png);
