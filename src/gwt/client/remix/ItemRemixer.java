@@ -75,19 +75,8 @@ public class ItemRemixer extends FlexTable
         _item = item;
         HorizontalPanel hpan = new HorizontalPanel();
         hpan.add(createRemixControls(item));
-        hpan.add(createPreview(item));
         setWidget(0, 1, hpan);
     }
-
-//    protected Widget createRemixControls (Item item)
-//    {
-//        MediaDesc preview = item.getPreviewMedia();
-//
-//        return WidgetUtil.createApplet("remixControls",
-//            "/clients/" + DeploymentConfig.version + "/remixer-applet.jar",
-//            "com.threerings.msoy.item.remix.client.RemixApplet", 300, 400, true,
-//            new String[] { "media", URL.encodeComponent(preview.getMediaPath()) });
-//    }
 
     protected Widget createRemixControls (Item item)
     {
@@ -101,25 +90,7 @@ public class ItemRemixer extends FlexTable
             "auth=" + URL.encodeComponent(CShell.ident.token);
         return WidgetUtil.createFlashContainer("remixControls",
             "/clients/" + DeploymentConfig.version + "/remixer-client.swf",
-            540, 450, flashVars);
-    }
-
-    protected Widget createPreview (Item item)
-    {
-        if (item instanceof Avatar) {
-            // TODO : I'm using a custom avatar viewer so I can pass the 'message', but this
-            // should probably be refactored.
-            //return FlashClients.createAvatarViewer("", 1, false);
-
-            return WidgetUtil.createFlashContainer(
-                "remixPreview", "/clients/" + DeploymentConfig.version + "/avatarviewer.swf", 
-                360, 450, "message=" + URL.encodeComponent("Loading preview..."));
-        }
-
-        // TODO: viewers for other item types
-
-        MediaDesc preview = item.getPreviewMedia();
-        return MediaUtil.createMediaView(preview, MediaDesc.PREVIEW_SIZE);
+            1000, 488, flashVars);
     }
 
     protected void setHash (
