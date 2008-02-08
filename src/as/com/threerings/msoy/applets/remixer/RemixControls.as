@@ -40,8 +40,6 @@ import com.threerings.msoy.applets.net.MediaUploader;
 
 import com.threerings.msoy.client.DeploymentConfig;
 
-import com.threerings.msoy.utils.Base64Sender;
-
 /**
  */
 public class RemixControls extends HBox
@@ -152,9 +150,6 @@ public class RemixControls extends HBox
 
     protected function updatePreview () :void
     {
-//        // send the bytes to our previewer
-//        var b64 :Base64Sender = new Base64Sender("remixPreview", "setMediaBytes");
-//        b64.sendBytes(_pack.serialize());
         _bytes = _pack.serialize();
         sendPreview();
     }
@@ -175,10 +170,10 @@ public class RemixControls extends HBox
             result = false;
         }
         if (result) {
-            trace("===== I SENT THE BYTES!!!");
             _bytes = null;
 
         } else {
+            // try every frame to send this preview..
             callLater(sendPreview);
         }
     }

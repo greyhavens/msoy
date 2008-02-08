@@ -77,9 +77,11 @@ public class PopupFilePreview extends TitleWindow
 
     public function setImage (bytes :ByteArray) :void
     {
-        var l :FlexLoader = new FlexLoader();
-        l.contentLoaderInfo.addEventListener(Event.COMPLETE, handleFlexLoaderComplete);
-        l.loadBytes(bytes);
+        if (bytes != null) {
+            var l :FlexLoader = new FlexLoader();
+            l.contentLoaderInfo.addEventListener(Event.COMPLETE, handleFlexLoaderComplete);
+            l.loadBytes(bytes);
+        }
     }
 
     protected function handleFlexLoaderComplete (event :Event) :void
@@ -91,7 +93,6 @@ public class PopupFilePreview extends TitleWindow
     protected function close (save :Boolean) :void
     {
         if (save && _bytes != null) {
-            trace("Saving " + _filename + " (" + _bytes.length + ")");
             _parent.updateValue(_filename, _bytes);
         }
 
@@ -119,7 +120,6 @@ public class PopupFilePreview extends TitleWindow
     {
         var req :URLRequest = new URLRequest(_serverURL + "echouploadsvc");
         req.method = URLRequestMethod.POST;
-        trace("Uploading to " + _serverURL + "echouploadsvc:  " + _fileRef.name);
 
         showProgress(_fileRef);
         _fileRef.upload(req);
