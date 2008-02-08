@@ -111,6 +111,12 @@ public class SubscriptionWrapper extends ChannelWrapper
     public void removeChatter (VizMemberName chatter)
     {
         MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
+        if (host == null) {
+            log.warning("attempting to remove chatter from channel with null host! [" + chatter +
+                ", " + _channel + "]");
+            return;
+        }
+
         host.peerChatService.removeUser(
             MsoyServer.peerMan.getPeerClient(host.nodeName), chatter, _channel,
             new ChatterListener(chatter, -1));
