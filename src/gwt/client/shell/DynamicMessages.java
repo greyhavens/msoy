@@ -45,6 +45,22 @@ public interface DynamicMessages extends ConstantsWithLookup
     public String pItemType13 ();
     public String pItemType14 ();
     public String pItemType15 ();
+    
+    public String catIntro1 ();
+    public String catIntro2 ();
+    public String catIntro3 ();
+    public String catIntro4 ();
+    public String catIntro5 ();
+    public String catIntro6 ();
+    public String catIntro7 ();
+    public String catIntro8 ();
+    public String catIntro9 ();
+    public String catIntro10 ();
+    public String catIntro11 ();
+    public String catIntro12 ();
+    public String catIntro13 ();
+    public String catIntro14 ();
+    public String catIntro15 ();
 
     public String itemUploadTitle1 ();
     public String itemUploadPitch1a ();

@@ -195,13 +195,18 @@ public class NaviPanel extends FlexTable
         setWidget(0, menuidx++, new NaviButton(
                       CShell.cmsgs.menuGames(), _images.games(), _images.ogames(), click));
 
-        click = new MenuPopper() {
-            protected void populateMenu (Widget sender, MenuBar menu) {
-                for (int ii = 0; ii < Item.TYPES.length; ii++) {
-                    byte type = Item.TYPES[ii];
-                    addLink(menu, CShell.dmsgs.getString("pItemType" + type),
-                            Page.CATALOG, "" + type);
-                }
+//         click = new MenuPopper() {
+//             protected void populateMenu (Widget sender, MenuBar menu) {
+//                 for (int ii = 0; ii < Item.TYPES.length; ii++) {
+//                     byte type = Item.TYPES[ii];
+//                     addLink(menu, CShell.dmsgs.getString("pItemType" + type),
+//                             Page.CATALOG, "" + type);
+//                 }
+//             }
+//         };
+        click = new ClickListener() {
+            public void onClick (Widget sender) {
+                Application.go(Page.CATALOG, "");
             }
         };
         setWidget(0, menuidx++, new NaviButton(

@@ -15,7 +15,7 @@ public class CatalogQuery
     implements IsSerializable
 {
     /** The type of item being browsed. */
-    public byte itemType = Item.AVATAR;
+    public byte itemType = Item.NOT_A_TYPE;
 
     /** The order in which to return the catalog listings. */
     public byte sortBy = CatalogListing.SORT_BY_RATING;

@@ -12,11 +12,14 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -139,6 +142,30 @@ public class CatalogPanel extends VerticalPanel
             } else {
                 gotListing.onSuccess(listing);
             }
+
+        } else if (argQuery.itemType == Item.NOT_A_TYPE) {
+            // display a grid of the selectable item types
+            clear();
+            add(MsoyUI.createLabel(CCatalog.msgs.catalogIntro(), "Intro"));
+            SmartTable types = new SmartTable(0, 10);
+            for (int ii = 0; ii < Item.TYPES.length; ii++) {
+                final byte type = Item.TYPES[ii];
+                ClickListener onClick = new ClickListener() {
+                    public void onClick (Widget sender) {
+                        Application.go(Page.CATALOG, ""+type);
+                    }
+                };
+                SmartTable ttable = new SmartTable("Type", 0, 2);
+                String tpath = Item.getDefaultThumbnailMediaFor(type).getMediaPath();
+                ttable.setWidget(0, 0, MsoyUI.createActionImage(tpath, onClick), 1, "Icon");
+                ttable.getFlexCellFormatter().setRowSpan(0, 0, 2);
+                String tname = CCatalog.dmsgs.getString("pItemType" + type);
+                ttable.setWidget(0, 1, MsoyUI.createActionLabel(tname, onClick), 1, "Name");
+                String tblurb = CCatalog.dmsgs.getString("catIntro" + type);
+                ttable.setText(1, 0, tblurb, 1, "Blurb");
+                types.setWidget(ii / 2, ii % 2, ttable);
+            }
+            add(types);
 
         } else /* mode.equals(LISTING_PAGE) */ {
             _query = argQuery;
