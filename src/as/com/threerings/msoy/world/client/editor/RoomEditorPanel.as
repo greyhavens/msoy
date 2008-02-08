@@ -168,8 +168,11 @@ public class RoomEditorPanel extends FloatingPanel
 
         var makeActionButton :Function = function (
             fn :Function, style :String, tooltip :String,
-            buttonlist :Array, enabled :Boolean = true) :CommandButton
+            buttonlist :Array, enabled :Boolean = true) :UIComponent
         {
+            var c :VBox = new VBox();
+            c.setStyle("horizontalAlign", "center");
+            
             var b :CommandButton = new CommandButton(null, fn);
             b.styleName = style;
             b.toolTip = Msgs.EDITING.get(tooltip);
@@ -177,7 +180,13 @@ public class RoomEditorPanel extends FloatingPanel
             if (buttonlist != null) {
                 buttonlist.push(b);
             }
-            return b;
+            c.addChild(b);
+
+            var img :SkinnableImage = new SkinnableImage();
+            img.styleName = style + "Text";
+            c.addChild(img);
+            
+            return c;
         }
 
         var noop :Function = function (... ignore) :void { }
@@ -288,7 +297,7 @@ public class RoomEditorPanel extends FloatingPanel
                         makeActionButton(_controller.actionUndo, "roomEditUndo",
                                          "b.undo", _undoButtons),
                         makeActionButton(_controller.actionUndo, "roomEditUndoAll",
-                                         "b.undo_all", _undoButtons));
+                                         "b.undo_all", null, false));
 
         updateTargetSelected(null); // disable most buttons
 
