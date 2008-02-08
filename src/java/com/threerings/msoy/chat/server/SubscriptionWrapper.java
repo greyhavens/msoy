@@ -96,7 +96,10 @@ public class SubscriptionWrapper extends ChannelWrapper
         removeStaleMessagesFromHistory();
         MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
         if (host == null) {
-            log.warning("host for known channel not found! [" + _channel + "]");
+            // TODO: This should mean that we're trying to subscribe to a channel that is hosted on
+            // another server *just* as that other server is shutting down the channel.  We should
+            // try to start hosting the channel now.
+            log.warning("host for known channel not found! [" + chatter + ", " + _channel + "]");
             return;
         }
         host.peerChatService.addUser(

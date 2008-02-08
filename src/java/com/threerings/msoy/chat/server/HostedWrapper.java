@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.chat.server;
 
+import com.samskivert.util.Interval;
+
+import com.threerings.presents.server.PresentsDObjectMgr;
+
 import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -66,6 +70,7 @@ public class HostedWrapper extends ChannelWrapper
         try {
             removeStaleMessagesFromHistory();
             _mgr.addUser(null, chatter, _channel, new ChatterListener(chatter));
+            cancelShutdowner();
         } catch (Exception ex) {
             log.warning("Host failed to add a new user [user=" + chatter +
                         ", channel=" + _channel + ", error=" + ex.getMessage() + "].");
@@ -98,9 +103,33 @@ public class HostedWrapper extends ChannelWrapper
         } else {
             _ccobj.removeFromChatters(chatter.getKey());
             if (_ccobj.chatters.size() == 0) {
-                shutdown();
-                _mgr.removeWrapper(HostedWrapper.this);
+                checkShutdownInterval();
             }
+        }
+    }
+
+    protected void checkShutdownInterval ()
+    {
+        // queue up a shutdown interval, unless we've already got one.
+        if (_shutdownInterval == null) {
+            _shutdownInterval = new Interval((PresentsDObjectMgr)_ccobj.getManager()) {
+                public void expired () {
+                    _mgr.removeWrapper(HostedWrapper.this);
+                    shutdown();
+                }
+            };
+            _shutdownInterval.schedule(SHUTDOWN_PERIOD);
+        }
+    }
+
+    /**
+     * Cancels any registered shutdown interval.
+     */
+    protected void cancelShutdowner ()
+    {
+        if (_shutdownInterval != null) {
+            _shutdownInterval.cancel();
+            _shutdownInterval = null;
         }
     }
 
@@ -122,4 +151,8 @@ public class HostedWrapper extends ChannelWrapper
         }
         protected VizMemberName _chatter;
     };
+
+    protected static final long SHUTDOWN_PERIOD = 5 * 60 * 1000L;
+
+    protected Interval _shutdownInterval;
 }
