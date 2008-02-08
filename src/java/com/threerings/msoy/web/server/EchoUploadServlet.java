@@ -4,9 +4,7 @@
 package com.threerings.msoy.web.server;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,7 +13,6 @@ import org.apache.commons.codec.binary.Base64;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.samskivert.io.StreamUtil;
 
@@ -31,15 +28,13 @@ public class EchoUploadServlet extends AbstractUploadServlet
     {
         // TODO: auth?
 
-        String id = item.getFieldName();
-        if (!"Filedata".equals(id)) {
-            return;
-        }
+        String encoded = new String(Base64.encodeBase64(item.get()));
+        rsp.setContentType("text/plain");
+        rsp.setContentLength(encoded.length());
 
-        PrintStream out = new PrintStream(rsp.getOutputStream());
+        PrintWriter out = rsp.getWriter();
         try {
-            // TODO: break this up..
-            out.println(new String(Base64.encodeBase64(item.get())));
+            out.print(encoded);
         } finally {
             StreamUtil.close(out);
         }
