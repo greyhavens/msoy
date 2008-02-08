@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
@@ -76,57 +77,14 @@ public class MyWhirled extends FlexTable
         setCellSpacing(0);
 
         getFlexCellFormatter().setRowSpan(row, 0, 3);
-        getFlexCellFormatter().setStyleName(row, 0, "MePanelContainer");
-        VerticalPanel mePanel = new VerticalPanel();
-        mePanel.setStyleName("MePanel");
-        setWidget(row, 0, mePanel);
-        VerticalPanel descriptionPanel = new VerticalPanel();
-        descriptionPanel.setStyleName("Description");
-        descriptionPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
-        descriptionPanel.add(new HTML(CWhirled.msgs.myWhirledDescription()));
-        Hyperlink whirledwideLink =
-            Application.createLink(CWhirled.msgs.titleWhirledwide(), Page.WHIRLED, "whirledwide");
-        whirledwideLink.setStyleName("Whirledwide");
-        descriptionPanel.add(whirledwideLink);
-        descriptionPanel.add(new HTML(CWhirled.msgs.whirledwideDescription()));
-        mePanel.add(descriptionPanel);
-        mePanel.add(_pictureBox = new VerticalPanel());
-        _pictureBox.setStyleName("PictureBox");
-        _pictureBox.addStyleName("borderedBox");
-        _pictureBox.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        _pictureBox.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
-        HorizontalPanel header = new HorizontalPanel();
-        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        header.setStyleName("SectionHeaderContainer");
-        Label title = new Label(CWhirled.msgs.headerRooms());
-        title.setStyleName("SectionHeader");
-        header.add(title);
-        mePanel.add(header);
-        mePanel.add(_roomsBox = new VerticalPanel());
-        _roomsBox.setStyleName("RoomsBox");
-        _roomsBox.addStyleName("borderedBox");
-        _roomsBox.setSpacing(3);
-        header = new HorizontalPanel();
-        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        header.setStyleName("SectionHeaderContainer");
-        title = new Label(CWhirled.msgs.headerChats());
-        title.setStyleName("SectionHeader");
-        header.add(title);
-        mePanel.add(header);
-        mePanel.add(_chatsBox = new VerticalPanel());
-        _chatsBox.setStyleName("ChatsBox");
-        _chatsBox.addStyleName("borderedBox");
-        _chatsBox.setSpacing(3);
+        getFlexCellFormatter().setStyleName(row, 0, "mePanelContainer");
 
         _peopleAttributes = new HashMap();
-
         getFlexCellFormatter().setColSpan(row, 1, 2);
-        setWidget(row++, 1, _people = new PagedGrid(PEOPLE_ROWS, PEOPLE_COLUMNS) {
+        _people = new PagedGrid(PEOPLE_ROWS, PEOPLE_COLUMNS, PagedGrid.NAV_ON_BOTTOM) {
             protected Widget createWidget (Object item) {
                 if (item == null) {
-                    Label shim = new Label();
-                    shim.setStyleName("PersonWidget");
-                    return shim;
+                    return MsoyUI.createLabel("", "PersonWidget");
                 } else {
                     return new PersonWidget((MemberCard) item, _peopleAttributes);
                 }
@@ -134,71 +92,142 @@ public class MyWhirled extends FlexTable
             protected String getEmptyMessage () {
                 return CWhirled.msgs.noPeople();
             }
-            protected void configureNavi (FlexTable controls, int row, int col,
-                                          int start, int limit, int total) {
-                String text = (start == 0 && limit == total) ? CWhirled.msgs.headerPeople() :
-                    CWhirled.msgs.headerPeoplePart(""+(start+1), ""+(start+limit), ""+total);
-                controls.setText(row, col, text);
-            }
-            protected boolean alwaysDisplayNavi () {
+            protected boolean displayNavi (int items) {
                 return true;
             }
-        });
-        _people.addStyleName("PeopleContainer");
+        };
+        _people.addStyleName("dottedGrid");
+        _people.setWidth("100%");
+        setWidget(row++, 1, createContainer("PeopleContainer",
+                                            CWhirled.msgs.headerPeople(), _people));
 
-        VerticalPanel placesContainer = new VerticalPanel();
-        setWidget(row, 0, placesContainer);
-        placesContainer.setStyleName("PlacesContainer");
-        header = new HorizontalPanel();
-        header.setStyleName("Header");
-        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        Label star = new Label();
-        star.setStyleName("HeaderLeft");
-        header.add(star);
-        title = new Label(CWhirled.msgs.headerPlaces());
-        title.setStyleName("HeaderCenter");
-        header.add(title);
-        header.setCellWidth(title, "100%");
-        star = new Label();
-        star.setStyleName("HeaderRight");
-        header.add(star);
-        placesContainer.add(header);
-        placesContainer.add(_places = new SceneList(SceneCard.ROOM));
-
-        VerticalPanel gamesContainer = new VerticalPanel();
-        setWidget(row++, 1, gamesContainer);
-        gamesContainer.setStyleName("GamesContainer");
-        header = new HorizontalPanel();
-        header.setStyleName("Header");
-        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        star = new Label();
-        star.setStyleName("HeaderLeft");
-        header.add(star);
-        title = new Label(CWhirled.msgs.headerGames());
-        title.setStyleName("HeaderCenter");
-        header.add(title);
-        header.setCellWidth(title, "100%");
-        star = new Label();
-        star.setStyleName("HeaderRight");
-        header.add(star);
-        gamesContainer.add(header);
-        gamesContainer.add(_games = new SceneList(SceneCard.GAME));
+        setWidget(row, 0, createContainer("PlacesContainer", CWhirled.msgs.headerPlaces(),
+                                          _places = new SceneList(SceneCard.ROOM)));
+        setWidget(row++, 1, createContainer("GamesContainer", CWhirled.msgs.headerGames(),
+                                            _games = new SceneList(SceneCard.GAME)));
 
         getFlexCellFormatter().setColSpan(row, 0, 2);
         setWidget(row++, 0, _feed = new FeedPanel());
     }
 
+    protected Widget createHeader (String title)
+    {
+        HorizontalPanel header = new HorizontalPanel();
+        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        header.setStyleName("SectionHeaderContainer");
+        header.add(MsoyUI.createLabel(title, "SectionHeader"));
+        return header;
+    }
+
+    protected VerticalPanel createListBox (String styleName)
+    {
+        VerticalPanel box = new VerticalPanel();
+        box.setStyleName(styleName);
+        box.addStyleName("borderedBox");
+        box.setSpacing(3);
+        return box;
+    }
+
+    protected Widget createContainer (String styleName, String title, Widget contents)
+    {
+        VerticalPanel container = new VerticalPanel();
+        container.setStyleName(styleName);
+        HorizontalPanel header = new HorizontalPanel();
+        header.setStyleName("Header");
+        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        header.add(MsoyUI.createLabel("", "HeaderLeft"));
+        Label tlabel = MsoyUI.createLabel(title, "HeaderCenter");
+        header.add(tlabel);
+        header.setCellWidth(tlabel, "100%");
+        header.add(MsoyUI.createLabel("", "HeaderRight"));
+        container.add(header);
+        container.add(contents);
+        return container;
+    }
+
     protected void fillUI (MyWhirledData myWhirled)
     {
+        // set up our sidebar
+        VerticalPanel sidebar = new VerticalPanel(), box;
+        sidebar.setStyleName("mePanel");
+        setWidget(0, 0, sidebar);
+
+        // add our own profile picture to the left column
+        sidebar.add(createHeader(CWhirled.msgs.headerProfile()));
+        sidebar.add(box = createListBox("PictureBox"));
+        box.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        MediaDesc photo = (myWhirled.photo == null) ? Profile.DEFAULT_PHOTO : myWhirled.photo;
+        box.add(MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
+            public void onClick (Widget sender) {
+                Application.go(Page.PROFILE, "" + CWhirled.getMemberId());
+            }
+        }));
+
+        sidebar.add(createHeader(CWhirled.msgs.headerRooms()));
+        sidebar.add(box = createListBox("ListBox"));
+
+        // first add our home room
+        Integer homeId = new Integer(myWhirled.homeSceneId);
+        box.add(createIconLink("/images/whirled/my_home.png",
+                               (String)myWhirled.ownedRooms.get(homeId),
+                               Page.WORLD, "s" + homeId));
+
+        // next add the remainder of our rooms in purchased order (lowest scene id first)
+        Object[] sceneIds = myWhirled.ownedRooms.keySet().toArray();
+        Arrays.sort(sceneIds);
+        for (int ii = 0; ii < sceneIds.length; ii++) {
+            if (homeId.equals(sceneIds[ii])) {
+                continue;
+            }
+            String sname = (String)myWhirled.ownedRooms.get(sceneIds[ii]);
+            box.add(Application.createLink(sname, Page.WORLD, "s" + sceneIds[ii]));
+        }
+
+        // add links to our stuff
+        sidebar.add(createHeader(CWhirled.msgs.headerStuff()));
+        sidebar.add(box = createListBox("ListBox"));
+        for (int ii = 0; ii < Item.TYPES.length; ii++) {
+            byte type = Item.TYPES[ii];
+            box.add(createIconLink(Item.getDefaultThumbnailMediaFor(type).getMediaPath(),
+                                   CWhirled.dmsgs.getString("pItemType" + type),
+                                   Page.INVENTORY, "" + type));
+        }
+
+        // add our active chats, if we have any
+        if (myWhirled.chats != null && myWhirled.chats.size() > 0) {
+            sidebar.add(createHeader(CWhirled.msgs.headerChats()));
+            sidebar.add(box = createListBox("ListBox"));
+            // show group chats in group-created order by sorting on group ids
+            Object[] chatIds = myWhirled.chats.keySet().toArray();
+            Arrays.sort(chatIds);
+            for (int ii = 0; ii < chatIds.length; ii++) {
+                String cname = (String)myWhirled.chats.get(chatIds[ii]);
+                box.add(Application.createLink(cname, Page.WORLD, "c" + chatIds[ii]));
+            }
+        }
+
+        sidebar.add(createHeader(CWhirled.msgs.headerTools()));
+        sidebar.add(box = createListBox("ListBox"));
+        box.add(Application.createLink("My Discussions", Page.GROUP, "unread"));
+        box.add(Application.createLink("My Mail", Page.MAIL, ""));
+        box.add(Application.createLink("My Account", Page.ACCOUNT, "edit"));
+        if (CWhirled.isSupport()) {
+            box.add(Application.createLink("Admin Console", Page.ADMIN, ""));
+        }
+        box.add(MsoyUI.createActionLabel("Logoff", new ClickListener() {
+            public void onClick (Widget sender) {
+                CWhirled.app.didLogoff();
+            }
+        }));
+
+        // sort our friends list alphabetically and map them by id
         List people = myWhirled.people;
         Object[] peopleArray = people.toArray();
-        // sort alphabetically
         Arrays.sort(peopleArray, new Comparator() {
             public int compare (Object o1, Object o2) {
                 if (!(o1 instanceof MemberCard) || !(o2 instanceof MemberCard)) {
                     return 0;
                 }
-
                 MemberCard m1 = (MemberCard) o1;
                 MemberCard m2 = (MemberCard) o2;
                 return ("" + m1.name).compareTo("" + m2.name);
@@ -249,54 +278,23 @@ public class MyWhirled extends FlexTable
         _places.populate(myWhirled.places, _peopleAttributes);
         _games.populate(myWhirled.games, _peopleAttributes, _pendingTableMembers);
 
-        // add our own profile picture to the left column
-        MediaDesc photo = (myWhirled.photo == null) ? Profile.DEFAULT_PHOTO : myWhirled.photo;
-        _pictureBox.add(
-            MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(Page.PROFILE, "" + CWhirled.getMemberId());
-            }
-        }));
-
-        // first add our home room
-        HorizontalPanel homeRow = new HorizontalPanel();
-        final Integer homeId = new Integer(myWhirled.homeSceneId);
-        homeRow.add(MsoyUI.createActionImage("/images/whirled/my_home.png", new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(Page.WORLD, "s" + homeId);
-            }
-        }));
-        homeRow.add(WidgetUtil.makeShim(2, 2));
-        homeRow.add(Application.createLink((String)myWhirled.ownedRooms.get(homeId),
-                                           Page.WORLD, "s" + homeId));
-        _roomsBox.add(homeRow);
-
-        // next add the remainder of our rooms in purchased order (lowest scene id first)
-        Object[] sceneIds = myWhirled.ownedRooms.keySet().toArray();
-        Arrays.sort(sceneIds);
-        for (int ii = 0; ii < sceneIds.length; ii++) {
-            if (homeId.equals(sceneIds[ii])) {
-                continue;
-            }
-            _roomsBox.add(Application.createLink((String)myWhirled.ownedRooms.get(sceneIds[ii]),
-                                                 Page.WORLD, "s" + sceneIds[ii]));
-        }
-
-        if (myWhirled.chats == null || myWhirled.chats.size() == 0) {
-            _chatsBox.add(new Label(CWhirled.msgs.noChats()));
-
-        } else {
-            // show group chats in group-created order by sorting on group ids
-            Object[] chatIds = myWhirled.chats.keySet().toArray();
-            Arrays.sort(chatIds);
-            for (int ii = 0; ii < chatIds.length; ii++) {
-                _chatsBox.add(Application.createLink((String)(myWhirled.chats.get(chatIds[ii])),
-                                                     Page.WORLD, "c" + chatIds[ii]));
-            }
-        }
-
         // configure the feed panel
         _feed.setFeed(myWhirled.feed, false);
+    }
+
+    protected Widget createIconLink (String icon, String label, final String page, final String args)
+    {
+        HorizontalPanel row = new HorizontalPanel();
+        Image image = MsoyUI.createActionImage(icon, new ClickListener() {
+            public void onClick (Widget sender) {
+                Application.go(page, args);
+            }
+        });
+        image.setWidth("18px");
+        row.add(image);
+        row.add(WidgetUtil.makeShim(2, 2));
+        row.add(Application.createLink(label, page, args));
+        return row;
     }
 
     protected static class SceneList extends ScrollPanel
@@ -524,10 +522,6 @@ public class MyWhirled extends FlexTable
     protected SceneList _places;
     protected SceneList _games;
     protected FeedPanel _feed;
-
-    protected VerticalPanel _pictureBox;
-    protected VerticalPanel _roomsBox;
-    protected VerticalPanel _chatsBox;
 
     /** Map of member Ids to a List of attributes for the person.
      * List is: [ name, style for name label ] */

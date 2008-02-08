@@ -61,7 +61,7 @@ public class Frame
         _mheader.getFlexCellFormatter().setStyleName(0, 0, "Logo");
         _mheader.setWidget(0, 0, MsoyUI.createActionImage(LOGO_PATH, new ClickListener() {
             public void onClick (Widget sender) {
-                Application.go(Page.WHIRLED, "mywhirled");
+                Application.go(Page.WHIRLED, "whirledwide");
             }
         }));
         _mheader.getFlexCellFormatter().setStyleName(0, 1, "Navi");

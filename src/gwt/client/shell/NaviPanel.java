@@ -110,68 +110,56 @@ public class NaviPanel extends FlexTable
         ClickListener click;
 
         if (creds == null) {
-            click = new ClickListener() {
-                public void onClick (Widget sender) {
-//                     LogonPanel.toggleShowLogon(_status);
-                }
-            };
-            setWidget(0, menuidx++, new NaviButton(
-                          CShell.cmsgs.menuLogon(), _images.me(), _images.ome(), click));
-
-        } else {
-            click = new MenuPopper() {
-                protected void populateMenu (Widget sender, MenuBar menu) {
-                    addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
-                    addLink(menu, "My Home", Page.WORLD, "h");
-                    addLink(menu, "My Discussions", Page.GROUP, "unread");
-                    addLink(menu, "My Profile", Page.PROFILE, "" + creds.getMemberId());
-                    addLink(menu, "My Mail", Page.MAIL, "");
-                    addLink(menu, "My Account", Page.ACCOUNT, "edit");
-                    menu.addItem("Logoff", true, new Command() {
-                        public void execute () {
-                            CShell.app.didLogoff();
-                            clearPopup();
-                        }
-                    });
-                }
-            };
-            setWidget(0, menuidx++, new NaviButton(
-                          CShell.cmsgs.menuMe(), _images.me(), _images.ome(), click));
+            CShell.log("ZOMG! Asked to display full header but we're not logged in.");
+            return;
         }
 
-        click = new MenuPopper() {
-            protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "Whirledwide", Page.WHIRLED, "whirledwide");
-                addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
-                // if we have more than one room show "My Rooms"
-                if (_scenes.size() > 1) {
-                    MenuBar smenu = new MenuBar(true);
-                    createMenu(smenu, _scenes, new ItemCreator() {
-                        public void createItem (MenuBar menu, Object item) {
-                            SceneData data = (SceneData)item;
-                            addLink(menu, data.name, Page.WORLD, "s" + data.id);
-                        }
-                    });
-                    menu.addItem("My Rooms", smenu);
-                } else { // otherwise show "My Home"
-                    addLink(menu, "My Home", Page.WORLD, "h");
-                }
-                if (_friends.size() > 0) {
-                    MenuBar fmenu = new MenuBar(true);
-                    createMenu(fmenu, _friends, new ItemCreator() {
-                        public void createItem (MenuBar menu, Object item) {
-                            MemberName name = (MemberName)item;
-                            addLink(menu, name + "'s Home", Page.WORLD, "m" + name.getMemberId());
-                        }
-                    });
-                    menu.addItem("Friends' Homes", fmenu);
-                }
-                if (CShell.isSupport()) {
-                    addLink(menu, "Admin Console", Page.ADMIN, "");
-                }
-                if (DeploymentConfig.devDeployment) {
-                    addLink(menu, "Projects", Page.SWIFTLY, "");
-                }
+        click = new ClickListener() {
+            public void onClick (Widget sender) {
+                Application.go(Page.WHIRLED, "mywhirled");
+            }
+        };
+        setWidget(0, menuidx++, new NaviButton(
+                      CShell.cmsgs.menuMe(), _images.me(), _images.ome(), click));
+
+//         click = new MenuPopper() {
+//             protected void populateMenu (Widget sender, MenuBar menu) {
+//                 addLink(menu, "Whirledwide", Page.WHIRLED, "whirledwide");
+//                 addLink(menu, "My Whirled", Page.WHIRLED, "mywhirled");
+//                 // if we have more than one room show "My Rooms"
+//                 if (_scenes.size() > 1) {
+//                     MenuBar smenu = new MenuBar(true);
+//                     createMenu(smenu, _scenes, new ItemCreator() {
+//                         public void createItem (MenuBar menu, Object item) {
+//                             SceneData data = (SceneData)item;
+//                             addLink(menu, data.name, Page.WORLD, "s" + data.id);
+//                         }
+//                     });
+//                     menu.addItem("My Rooms", smenu);
+//                 } else { // otherwise show "My Home"
+//                     addLink(menu, "My Home", Page.WORLD, "h");
+//                 }
+//                 if (_friends.size() > 0) {
+//                     MenuBar fmenu = new MenuBar(true);
+//                     createMenu(fmenu, _friends, new ItemCreator() {
+//                         public void createItem (MenuBar menu, Object item) {
+//                             MemberName name = (MemberName)item;
+//                             addLink(menu, name + "'s Home", Page.WORLD, "m" + name.getMemberId());
+//                         }
+//                     });
+//                     menu.addItem("Friends' Homes", fmenu);
+//                 }
+//                 if (CShell.isSupport()) {
+//                     addLink(menu, "Admin Console", Page.ADMIN, "");
+//                 }
+//                 if (DeploymentConfig.devDeployment) {
+//                     addLink(menu, "Projects", Page.SWIFTLY, "");
+//                 }
+//             }
+//         };
+        click = new ClickListener () {
+            public void onClick (Widget sender) {
+                Application.go(Page.WORLD, "h");
             }
         };
         setWidget(0, menuidx++, new NaviButton(
@@ -199,17 +187,13 @@ public class NaviPanel extends FlexTable
         setWidget(0, menuidx++, new NaviButton(
                       CShell.cmsgs.menuPeople(), _images.people(), _images.opeople(), click));
 
-        click = new MenuPopper() {
-            protected void populateMenu (Widget sender, MenuBar menu) {
-                for (int ii = 0; ii < Item.TYPES.length; ii++) {
-                    byte type = Item.TYPES[ii];
-                    addLink(menu, CShell.dmsgs.getString("pItemType" + type),
-                            Page.INVENTORY, "" + type);
-                }
+        click = new ClickListener() {
+            public void onClick (Widget sender) {
+                Application.go(Page.GAME, "");
             }
         };
         setWidget(0, menuidx++, new NaviButton(
-                      CShell.cmsgs.menuStuff(), _images.stuff(), _images.ostuff(), click));
+                      CShell.cmsgs.menuGames(), _images.games(), _images.ogames(), click));
 
         click = new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {

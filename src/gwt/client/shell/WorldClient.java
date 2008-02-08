@@ -72,14 +72,14 @@ public class WorldClient extends Widget
             return;
         }
 
+        // let the frame know that we're displaying a client (this clears out the content)
+        Frame.setShowingClient(pageToken);
+
         // if we're currently already displaying exactly what we've been asked to display; then
         // stop here because we're just restoring our client after closing a GWT page
         if (flashArgs.equals(_curFlashArgs)) {
             return;
         }
-
-        // let the page know that we're displaying a client
-        Frame.setShowingClient(pageToken);
 
         // create our client if necessary
         if (_curFlashArgs == null) {
@@ -95,7 +95,6 @@ public class WorldClient extends Widget
             if (CShell.ident != null) {
                 flashArgs += "&token=" + CShell.ident.token;
             }
-            CShell.log("Clearing client in displayFlash");
             RootPanel.get(Frame.CLIENT).clear();
             FlashClients.embedWorldClient(RootPanel.get(Frame.CLIENT), flashArgs);
 
@@ -123,7 +122,6 @@ public class WorldClient extends Widget
         if (CShell.ident != null) {
             flashArgs += "&token=" + CShell.ident.token;
         }
-        CShell.log("Clearing client in displayFlashLobby");
         RootPanel.get(Frame.CLIENT).clear();
         FlashClients.embedGameClient(RootPanel.get(Frame.CLIENT), flashArgs);
     }
@@ -138,7 +136,6 @@ public class WorldClient extends Widget
 
         if (_jclient != client) {
             clientWillClose(); // clear out our flash client if we have one
-            CShell.log("Clearing client in displayJava");
             RootPanel.get(Frame.CLIENT).clear();
             RootPanel.get(Frame.CLIENT).add(_jclient = client);
         } else {

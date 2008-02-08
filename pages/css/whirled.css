@@ -9,8 +9,28 @@
   margin: 7px;
 }
 
+.PeopleContainer .HeaderCenter, .PlacesContainer .HeaderCenter,
+.GamesContainer .HeaderCenter, .FeedContainer .HeaderCenter {
+  width: 100%;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+}
+
 .PeopleContainer {
   width: 539px;
+}
+
+.PeopleContainer .HeaderLeft, .PeopleContainer .HeaderRight {
+  background-image: url(/images/whirled/people_star.png);
+  width: 20px;
+  height: 20px;
+}
+
+.PeopleContainer .Header {
+  background-image: url(/images/whirled/people_tile.png);
+  height: 20px;
 }
 
 .PeopleContainer .PageHeader {
@@ -35,14 +55,6 @@
   height: 20px;
 }
 
-.PlacesContainer .HeaderCenter {
-  width: 100%;
-  color: white;
-  font-weight: bold;
-  font-size: 12px;
-  text-align: center;
-}
-
 .GamesContainer {
   margin-left: auto;
 }
@@ -58,14 +70,6 @@
   height: 20px;
 }
 
-.GamesContainer .HeaderCenter {
-  width: 100%;
-  color: white;
-  font-weight: bold;
-  font-size: 12px;
-  text-align: center;
-}
-
 .FeedContainer .HeaderLeft, .FeedContainer .HeaderRight {
   background-image: url(/images/whirled/default_star.png);
   width: 20px;
@@ -77,14 +81,6 @@
   height: 20px;
 }
 
-.FeedContainer .HeaderCenter {
-  width: 100%;
-  color: white;
-  font-weight: bold;
-  font-size: 12px;
-  text-align: center;
-}
-
 .FeedContainer a {
   color: #355B6E;
   text-decoration: none;
@@ -94,17 +90,17 @@
   text-decoration: underline;
 }
 
-.MePanelContainer {
+.mePanelContainer {
   vertical-align: top;
 }
 
-.MePanel {
+.mePanel {
   width: 118px;
   margin: 0px;
   border-bottom: 1px dotted;
 }
 
-.MePanel .Description {
+.mePanel .Description {
   width: 119px;
   background-color: #B5C9D4;
   border-bottom: 1px dotted;
@@ -113,18 +109,18 @@
   padding: 5px 15px 5px 15px;
 }
 
-.MePanel .Whirledwide {
+.mePanel .Whirledwide {
   font-size: 12px;
   font-weight: bold;
   text-align: center;
   padding: 10px 0px 3px 0px;
 }
 
-.MePanel .Whirledwide a {
+.mePanel .Whirledwide a {
   color: black;
 }
 
-.MePanel .borderedBox {
+.mePanel .borderedBox {
   width: 119px;
   border-left: 1px dotted;
   border-right: 1px dotted;
@@ -136,7 +132,7 @@
   background-color: #F4F3F4;
 }
 
-.MePanel .SectionHeaderContainer {
+.mePanel .SectionHeaderContainer {
   background-image: url(/images/whirled/default_tile.png);
   height: 20px;
   width: 119px;
@@ -145,7 +141,7 @@
   border-color: #1D6393;
 }
 
-.MePanel .SectionHeader {
+.mePanel .SectionHeader {
   width: 100%;
   font-size: 12px;
   font-weight: bold;
@@ -153,21 +149,21 @@
   color: white;
 }
 
-.MePanel .PictureBox {
+.mePanel .PictureBox {
   width: 100%;
   height: 88px;
 }
 
-.MePanel .PictureBox img {
+.mePanel .PictureBox img {
   display: block;
 }
 
-.MePanel .RoomsBox, .MePanel .ChatsBox {
-  font-size: 10px;
+.mePanel .ListBox {
+  font-size: 12px;
   color: #A9A8AD;
 }
 
-.MePanel .borderedBox a {
+.mePanel .borderedBox a {
   color: #A9A8AD;
 }
 
