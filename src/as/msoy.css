@@ -425,14 +425,19 @@ Window {
   verticalGap: 0;
 }
 
+.roomEditDetailsPanelGrid { 
+  horizontalGap: 1;
+  verticalGap: 2;
+}
+
 .roomEditNameBar {  
   backgroundImage: Embed(source="../../rsrc/media/skins/button/roomeditor/name_bar_tile.png");
   backgroundSize: "100%";
   borderStyle: "none";
   paddingBottom: 5;
   paddingTop: 5;
-  paddingLeft: 3;
-  paddingRight: 3;
+  paddingLeft: 5;
+  paddingRight: 5;
 } 
 
 .roomEditButtonBar {  
@@ -504,6 +509,7 @@ Window {
 
 .roomEditLeft { 
   verticalAlign: "bottom";
+  verticalGap: 15;
 }
 
 .roomEditDiv {

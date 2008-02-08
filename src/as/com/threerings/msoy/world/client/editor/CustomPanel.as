@@ -18,17 +18,25 @@ public class CustomPanel extends UIComponent
 {
     /**
      * Create a panel for holding custom configuration options.
-     *
-     * @param hiders a list of UIComponents that should be hidden if there is no custom
-     * config panel.
      */
-    public function CustomPanel (... hiders)
+    public function CustomPanel ()
     {
-        _hiders = hiders;
         maxWidth = 400;
         maxHeight = 300;
     }
 
+    /**
+     * Sets which components should be hidden.
+     *
+     * @param hiders a list of UIComponents that should be hidden if there is no custom
+     * config panel.
+     */
+    public function setHiders (hiders :Array) :void
+    {
+        _hiders = hiders;
+        recheckVisibility();
+    }
+    
     /**
      * Update the sprite for which we're displaying a custom panel.
      */

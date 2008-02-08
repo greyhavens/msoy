@@ -90,6 +90,7 @@ public class DetailsPanel extends BasePanel
         
         var grid :Grid = new Grid();
         grid.percentWidth = 100;
+        grid.styleName = "roomEditDetailsPanelGrid";
         addChild(grid);
 
         _locs = new Array();
@@ -107,13 +108,16 @@ public class DetailsPanel extends BasePanel
                 input.width = 40;
             });
 
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.location"),
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.location"), [6, 1]);
+        GridUtil.addRow(grid,
                         Msgs.EDITING.get("l.axis_x"), _locx,
                         Msgs.EDITING.get("l.axis_y"), _locy,
                         Msgs.EDITING.get("l.axis_z"), _locz);
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.scale"),
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.scale"), [6, 1]);
+        GridUtil.addRow(grid,
                         Msgs.EDITING.get("l.scale_x"), _scalex,
                         Msgs.EDITING.get("l.scale_y"), _scaley);
+        GridUtil.addRow(grid, "", [6, 1]);
 
         // new grid for special buttons
         
@@ -123,14 +127,15 @@ public class DetailsPanel extends BasePanel
 
         _noscale = new CheckBox();
         _noscale.label = Msgs.EDITING.get("b.noscale");
+        _noscale.toolTip = Msgs.EDITING.get("b.noscale_tip");
         _noscale.addEventListener(Event.CHANGE, applyHandler);
 
-        GridUtil.addRow(grid, _noscale, [2, 1]);
         GridUtil.addRow(grid,
                         new CommandButton(Msgs.EDITING.get("b.reset_location"),
                                           _controller.resetTarget, [ true, false ]),
                         new CommandButton(Msgs.EDITING.get("b.reset_scale"),
                                           _controller.resetTarget, [ false, true ]));
+        GridUtil.addRow(grid, _noscale, [2, 1]);
         
         addChild(makePanelButtons());
     }

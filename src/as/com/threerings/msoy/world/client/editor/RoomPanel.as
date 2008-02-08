@@ -8,6 +8,7 @@ import flash.events.Event;
 import mx.binding.utils.BindingUtils;
 import mx.containers.HBox;
 import mx.controls.HSlider;
+import mx.controls.Spacer;
 import mx.controls.TextInput;
 import mx.controls.ToggleButtonBar;
 import mx.events.FlexEvent;
@@ -58,9 +59,21 @@ public class RoomPanel extends BasePanel
     {
         super.createChildren();
 
-        // container for name and lock/home buttons
+        // container for name
         var box :HBox = new HBox();
         box.setStyle("horizontalGap", 4);
+        box.percentWidth = 100;
+        addChild(box);
+
+        _name = new TextInput();
+        _name.percentWidth = 100;
+        _name.maxWidth = 200;
+        box.addChild(_name);
+
+        // container for other buttons
+        box = new HBox();
+        box.setStyle("horizontalGap", 4);
+        box.percentWidth = 100;
         addChild(box);
 
         // make this room my home button
@@ -76,10 +89,10 @@ public class RoomPanel extends BasePanel
             _controller.scene.getId() != memberObject.homeSceneId;
         box.addChild(_homeButton);
 
-        _name = new TextInput();
-        _name.width = 200;
-        box.addChild(_name);
-
+        var spacer :Spacer = new Spacer();
+        spacer.percentWidth = 100;
+        box.addChild(spacer);
+        
         _buttonbar = new ToggleButtonBar();
         _buttonbar.styleName = "roomEditAccessButtons";
         box.addChild(_buttonbar);
