@@ -82,6 +82,15 @@ public class ScalingHotspot extends Hotspot
         var ratioX :Number = newoffset.x / oldoffset.x;
         var ratioY :Number = newoffset.y / oldoffset.y;
 
+        // if the original mouse pointer was roughly axis-aligned with the furni hotspot, 
+        // ignore scaling along that axis, because it's going to be very very noisy
+        if (Math.abs(oldoffset.x) < 5) {
+            ratioX = 20.0; // large value, so that the other axis will dominate
+        }
+        if (Math.abs(oldoffset.y) < 5) {
+            ratioY = 20.0; // as above
+        }        
+
         var x :Number = ratioX * _originalScale.x;
         var y :Number = ratioY * _originalScale.y;
 
@@ -94,10 +103,11 @@ public class ScalingHotspot extends Hotspot
         }
 
         // don't allow for flipping during scaling - we'll have a separate button for that
-        if (x < 0 && _originalScale.x >= 0 || x > 0 && _originalScale.x <= 0 ||
-            y < 0 && _originalScale.y >= 0 || y > 0 && _originalScale.y <= 0)
-        {
-            return;
+        if (x < 0 && _originalScale.x >= 0 || x > 0 && _originalScale.x <= 0) {
+            x = -x;
+        }
+        if (y < 0 && _originalScale.y >= 0 || y > 0 && _originalScale.y <= 0) {
+            y = -y;
         }
 
         // finally, scale!
