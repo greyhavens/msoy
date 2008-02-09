@@ -21,6 +21,7 @@ import mx.containers.VBox;
 
 import mx.managers.PopUpManager;
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.CameraSnapshotter;
@@ -64,6 +65,11 @@ public class PopupFilePreview extends TitleWindow
         hbox.addChild(new CommandButton("Upload file", handleChooseFile));
         if ((_type == "Image" || _type == "DisplayObject") && CameraSnapshotter.hasCamera()) {
             hbox.addChild(new CommandButton("Take picture", handleChooseCamera));
+        }
+        var filenames :Array = pack.getFilenames();
+        if (filenames.length > 0) {
+            // we need to wrap the array commandbutton arg in another array...
+            hbox.addChild(new CommandButton("From remix", handleChooseExistingFile, [ filenames ]));
         }
 
         box.addChild(hbox);
@@ -118,6 +124,12 @@ public class PopupFilePreview extends TitleWindow
     {
         var uploader :Uploader = new Uploader(_serverURL, getFilters());
         uploader.addEventListener(Event.COMPLETE, handleFileChosen);
+    }
+
+    protected function handleChooseExistingFile (filenames :Array) :void
+    {
+        var efc :ExistingFileChooser = new ExistingFileChooser(_pack, filenames);
+        efc.addEventListener(Event.COMPLETE, handleFileChosen);
     }
 
     protected function handleFileChosen (event :ValueEvent) :void
