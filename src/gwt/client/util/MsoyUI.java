@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -62,7 +63,9 @@ public class MsoyUI
         if (style != null) {
             label.setStyleName(style);
         }
-        label.addClickListener(listener);
+        if (listener != null) {
+            label.addClickListener(listener);
+        }
         return label;
     }
 
@@ -157,6 +160,26 @@ public class MsoyUI
         Image image = new Image(path);
         image.setStyleName("inline");
         return image;
+    }
+
+    /**
+     * Creates a box with a starry header.
+     */
+    public static Widget createBox (String styleName, String title, Widget contents)
+    {
+        VerticalPanel container = new VerticalPanel();
+        container.setStyleName(styleName + "Box");
+        HorizontalPanel header = new HorizontalPanel();
+        header.setStyleName("Header");
+        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        header.add(MsoyUI.createLabel("", "HeaderLeft"));
+        Label tlabel = createLabel(title, "HeaderCenter");
+        header.add(tlabel);
+        header.setCellWidth(tlabel, "100%");
+        header.add(createLabel("", "HeaderRight"));
+        container.add(header);
+        container.add(contents);
+        return container;
     }
 
     /**

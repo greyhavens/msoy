@@ -5,88 +5,31 @@
  */
 
 /**********  My Whirled ************/
-.PeopleContainer, .PlacesContainer, .GamesContainer, .FeedContainer {
-  margin: 7px;
-}
 
-.PeopleContainer .HeaderCenter, .PlacesContainer .HeaderCenter,
-.GamesContainer .HeaderCenter, .FeedContainer .HeaderCenter {
-  width: 100%;
-  color: white;
-  font-weight: bold;
-  font-size: 12px;
-  text-align: center;
-}
-
-.PeopleContainer {
-  width: 539px;
-}
-
-.PeopleContainer .HeaderLeft, .PeopleContainer .HeaderRight {
-  background-image: url(/images/whirled/people_star.png);
-  width: 20px;
-  height: 20px;
-}
-
-.PeopleContainer .Header {
-  background-image: url(/images/whirled/people_tile.png);
-  height: 20px;
-}
-
-.PeopleContainer .PageHeader {
-  background-image: url(/images/whirled/people_tile.png);
-  height: 20px;
-  font-weight: bold;
-  font-size: 12px;
-}
-
-.PlacesContainer, .GamesContainer, .FeedContainer {
-  width: 264px;
-}
-
-.PlacesContainer .HeaderLeft, .PlacesContainer .HeaderRight {
-  background-image: url(/images/whirled/places_star.png);
-  width: 20px;
-  height: 20px;
-}
-
-.PlacesContainer .Header {
-  background-image: url(/images/whirled/places_tile.png);
-  height: 20px;
-}
-
+/*
 .GamesContainer {
   margin-left: auto;
 }
+*/
 
-.GamesContainer .HeaderLeft, .GamesContainer .HeaderRight {
-  background-image: url(/images/whirled/games_star.png);
-  width: 20px;
-  height: 20px;
+.myWhirled .peopleBox, .myWhirled .placesBox, .myWhirled .gamesBox, .myWhirled .auxBox {
+  margin: 7px;
 }
 
-.GamesContainer .Header {
-  background-image: url(/images/whirled/games_tile.png);
-  height: 20px;
+.myWhirled .peopleContainer, .auxContainer {
+  width: 539px;
 }
 
-.FeedContainer .HeaderLeft, .FeedContainer .HeaderRight {
-  background-image: url(/images/whirled/default_star.png);
-  width: 20px;
-  height: 20px;
+.myWhirled .placesContainer, .gamesContainer {
+  width: 264px;
 }
 
-.FeedContainer .Header {
-  background-image: url(/images/whirled/default_tile.png);
-  height: 20px;
-}
-
-.FeedContainer a {
+.myWhirled .auxContainer a {
   color: #355B6E;
   text-decoration: none;
 }
 
-.FeedContainer a:hover {
+.myWhirled .auxContainer a:hover {
   text-decoration: underline;
 }
 

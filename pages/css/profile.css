@@ -128,6 +128,7 @@
   width: 80px;
   height: 60px;
   vertical-align: middle;
+  padding: 0px 10px;
 }
 
 .profileWidget .Name {
@@ -155,12 +156,12 @@
   font-size: 14px;
 }
 
-.friendsPanel .Grid {
-  border-bottom: 1px solid #DADADA;
-}
-
-.peoplePanel .Title {
+.friendsPanel .Title {
   padding-top: 5px;
   font-size: 16px;
   font-weight: bold;
+}
+
+.friendsPanel .Grid {
+  border-bottom: 1px solid #DADADA;
 }

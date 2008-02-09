@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -58,6 +57,7 @@ public class MyWhirled extends FlexTable
 {
     public MyWhirled (final PopulationDisplay popDisplay)
     {
+        setStyleName("myWhirled");
         buildUI();
 
         CWhirled.worldsvc.getMyWhirled(CWhirled.ident, new MsoyCallback() {
@@ -104,13 +104,11 @@ public class MyWhirled extends FlexTable
         };
         _people.addStyleName("dottedGrid");
         _people.setWidth("100%");
-        setWidget(row++, 1, createContainer("PeopleContainer",
-                                            CWhirled.msgs.headerPeople(), _people));
-
-        setWidget(row, 0, createContainer("PlacesContainer", CWhirled.msgs.headerPlaces(),
-                                          _places = new SceneList(SceneCard.ROOM)));
-        setWidget(row++, 1, createContainer("GamesContainer", CWhirled.msgs.headerGames(),
-                                            _games = new SceneList(SceneCard.GAME)));
+        setWidget(row++, 1, MsoyUI.createBox("people", CWhirled.msgs.headerPeople(), _people));
+        setWidget(row, 0, MsoyUI.createBox("places", CWhirled.msgs.headerPlaces(),
+                                           _places = new SceneList(SceneCard.ROOM)));
+        setWidget(row++, 1, MsoyUI.createBox("games", CWhirled.msgs.headerGames(),
+                                             _games = new SceneList(SceneCard.GAME)));
 
         getFlexCellFormatter().setColSpan(row, 0, 2);
         setWidget(row++, 0, _feed = new FeedPanel());
@@ -132,23 +130,6 @@ public class MyWhirled extends FlexTable
         box.addStyleName("borderedBox");
         box.setSpacing(3);
         return box;
-    }
-
-    protected Widget createContainer (String styleName, String title, Widget contents)
-    {
-        VerticalPanel container = new VerticalPanel();
-        container.setStyleName(styleName);
-        HorizontalPanel header = new HorizontalPanel();
-        header.setStyleName("Header");
-        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        header.add(MsoyUI.createLabel("", "HeaderLeft"));
-        Label tlabel = MsoyUI.createLabel(title, "HeaderCenter");
-        header.add(tlabel);
-        header.setCellWidth(tlabel, "100%");
-        header.add(MsoyUI.createLabel("", "HeaderRight"));
-        container.add(header);
-        container.add(contents);
-        return container;
     }
 
     protected void fillUI (MyWhirledData myWhirled)
@@ -509,11 +490,7 @@ public class MyWhirled extends FlexTable
             };
 
             add(MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE, goToFriend));
-            Label nameLabel = new Label("" + card.name);
-            if (goToFriend != null) {
-                nameLabel.addClickListener(goToFriend);
-            }
-            nameLabel.setStyleName("NameLabel");
+            Widget nameLabel = MsoyUI.createActionLabel("" + card.name, "NameLabel", goToFriend);
             if (attrs != null && attrs.size() >= 2) {
                 nameLabel.addStyleName("" + attrs.get(1));
             }

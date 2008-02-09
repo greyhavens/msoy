@@ -310,6 +310,55 @@ img, embed, applet, object {
   top: 30px;
 }
 
+/** Starry boxes */
+.peopleBox .HeaderCenter, .placesBox .HeaderCenter, .gamesBox .HeaderCenter, .auxBox .HeaderCenter {
+  width: 100%;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+}
+
+.peopleBox .HeaderLeft, .peopleBox .HeaderRight {
+  background-image: url(/images/whirled/people_star.png);
+  width: 20px;
+  height: 20px;
+}
+.peopleBox .Header {
+  background-image: url(/images/whirled/people_tile.png);
+  height: 20px;
+}
+
+.placesBox .HeaderLeft, .placesBox .HeaderRight {
+  background-image: url(/images/whirled/places_star.png);
+  width: 20px;
+  height: 20px;
+}
+.placesBox .Header {
+  background-image: url(/images/whirled/places_tile.png);
+  height: 20px;
+}
+
+.gamesBox .HeaderLeft, .gamesBox .HeaderRight {
+  background-image: url(/images/whirled/games_star.png);
+  width: 20px;
+  height: 20px;
+}
+.gamesBox .Header {
+  background-image: url(/images/whirled/games_tile.png);
+  height: 20px;
+}
+
+.auxBox .HeaderLeft, .auxBox .HeaderRight {
+  background-image: url(/images/whirled/default_star.png);
+  width: 20px;
+  height: 20px;
+}
+.auxBox .Header {
+  background-image: url(/images/whirled/default_tile.png);
+  height: 20px;
+}
+
 /** Misc styles. */
 .formPanel td {
   vertical-align: top;

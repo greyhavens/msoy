@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
@@ -14,6 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.Application;
 import client.shell.Args;
@@ -31,15 +33,23 @@ public class SearchControls extends SmartTable
     {
         super("searchControls", 0, 5);
 
-        int row = 0;
-        setText(row, 0, CProfile.msgs.searchType(), 1, "rightLabel");
+        int col = 0;
+        setText(0, col++, CProfile.msgs.searchTitle(), 1, "rightLabel");
         for (int ii = 0; ii < _types.length; ii++) {
-            setWidget(row, ii+1, _types[ii] = new RadioButton("searchType", TYPE_NAMES[ii]));
+            setWidget(0, col++, _types[ii] = new RadioButton("searchType", TYPE_NAMES[ii]));
         }
         _types[0].setChecked(true);
-        row++;
 
-        setWidget(row, 1, _search = MsoyUI.createTextBox("", -1, 40), _types.length, null);
+        FlowPanel invite = new FlowPanel();
+        invite.add(MsoyUI.createLabel(CProfile.msgs.searchInvite(), "nowrapLabel"));
+        invite.add(Application.createLink(CProfile.msgs.searchInviteGo(), Page.ACCOUNT, "invites"));
+        col += 1; // skip over the search button column
+        getFlexCellFormatter().setRowSpan(0, col, 2);
+        setWidget(0, col++, WidgetUtil.makeShim(20, 1));
+        getFlexCellFormatter().setRowSpan(0, col, 2);
+        setWidget(0, col++, invite);
+
+        setWidget(1, 1, _search = MsoyUI.createTextBox("", -1, 40), _types.length, null);
         _search.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char charCode, int modifiers) {
                 DeferredCommand.add(new Command() {
@@ -50,7 +60,7 @@ public class SearchControls extends SmartTable
             }
         });
         _search.addKeyboardListener(new EnterClickAdapter(this));
-        setWidget(row++, 5, _go = new Button(CProfile.msgs.searchGo(), this));
+        setWidget(1, 2, _go = new Button(CProfile.msgs.searchGo(), this));
         _go.setEnabled(false);
     }
 
@@ -96,8 +106,6 @@ public class SearchControls extends SmartTable
 
     protected static final String[] TYPES = { "name", "display", "email" };
     protected static final String[] TYPE_NAMES = {
-        CProfile.msgs.searchRadioName(),
-        CProfile.msgs.searchRadioDisplayName(),
-        CProfile.msgs.searchRadioEmail()
+        CProfile.msgs.searchName(), CProfile.msgs.searchDisplayName(), CProfile.msgs.searchEmail()
     };
 }

@@ -25,7 +25,7 @@ public class SearchPanel extends VerticalPanel
     {
         setStyleName("searchPanel");
         setWidth("100%");
-        setSpacing(10);
+        setSpacing(5);
         Frame.setTitle(CProfile.msgs.profileSearchTitle());
         add(_ctrls = new SearchControls());
     }
