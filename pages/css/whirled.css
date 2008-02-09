@@ -16,20 +16,20 @@
   margin: 7px;
 }
 
-.myWhirled .peopleContainer, .auxContainer {
+.myWhirled .peopleBox, .auxBox {
   width: 539px;
 }
 
-.myWhirled .placesContainer, .gamesContainer {
+.myWhirled .placesBox, .gamesBox {
   width: 264px;
 }
 
-.myWhirled .auxContainer a {
+.myWhirled .auxBox a {
   color: #355B6E;
   text-decoration: none;
 }
 
-.myWhirled .auxContainer a:hover {
+.myWhirled .auxBox a:hover {
   text-decoration: underline;
 }
 

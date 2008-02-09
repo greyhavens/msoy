@@ -69,7 +69,7 @@ public class FeedPanel extends VerticalPanel
 
     protected void buildUI ()
     {
-        setStyleName("feedBox");
+        setStyleName("auxBox");
 
         HorizontalPanel header = new HorizontalPanel();
         header.setStyleName("Header");
