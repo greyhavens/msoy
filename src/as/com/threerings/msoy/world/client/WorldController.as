@@ -388,7 +388,8 @@ public class WorldController extends MsoyController
      */
     public function handleJoinPlayerTable (memberId :int) :void
     {
-        var msvc :MemberService = (_wctx.getClient().requireService(MemberService) as MemberService);
+        var msvc :MemberService = 
+            (_wctx.getClient().requireService(MemberService) as MemberService);
         msvc.getCurrentMemberLocation(_wctx.getClient(), memberId, new ResultWrapper(
             function (cause :String) :void {
                 _wctx.displayFeedback(null, cause);
@@ -513,7 +514,8 @@ public class WorldController extends MsoyController
     {
         var msvc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
         msvc.followMember(_wctx.getClient(), memberId,
-                          new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS, null, "m.following"));
+                          new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS, null, 
+                                                "m.following"));
     }
 
     /**
@@ -771,7 +773,8 @@ public class WorldController extends MsoyController
         // get all the keys from a resource bundle...
         try {
             var numTips :int = StringUtil.parseInteger(Msgs.GENERAL.get("n.tip_count"));
-            _wctx.displayInfo(MsoyCodes.GENERAL_MSGS, "m.tip_" + int(1 + (Math.random() * numTips)));
+            _wctx.displayInfo(MsoyCodes.GENERAL_MSGS, 
+                              "m.tip_" + int(1 + (Math.random() * numTips)));
         } catch (err :Error) {
             // just omit the tip
         }
@@ -845,20 +848,11 @@ public class WorldController extends MsoyController
             _wctx.getMsoyClient().setWindowTitle(scene.getName());
             headerBar.setLocationName(scene.getName());
             headerBar.setEmbedLinkButtonVisible(!_wctx.getMsoyClient().isEmbedded());
-
-            var currentController :ChatChannelController = 
-                headerBar.getChatTabs().getFirstController();
+            headerBar.getChatTabs().clearUncheckedRooms();
 
             // subscribe to the new scene's channel, if we haven't already
             var roomName :RoomName = new RoomName(scene.getName(), scene.getId());
             _wctx.getMsoyChatDirector().openChannel(roomName, true);
-
-            if (currentController != null && currentController.channel != null) {
-                // close down the previous rooms chat tab by default
-                if (!headerBar.getChatTabs().tabChecked(currentController.channel)) {
-                    headerBar.getChatTabs().closeTab(currentController.channel);
-                }
-            }
 
             // update the owner link
             var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;

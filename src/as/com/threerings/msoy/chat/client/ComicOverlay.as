@@ -194,13 +194,18 @@ public class ComicOverlay extends ChatOverlay
         var scene :MsoyScene = !(_ctx is WorldContext) ? null :
             ((_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene);
         var timed :TimedMessageDisplay = _history.get(_history.size() - 1);
+        if (timed == null) {
+            return;
+        }
+
+        var type :int = getType(timed.msg, false);
         if (ident != null && scene != null && ident.getSceneId() == scene.getId()) {
-            var type :int = getType(timed.msg, false);
             if (type != IGNORECHAT) {
                 displayBubble(timed.msg, type);
             }
+
         } else if (timed.msg is SystemMessage) {
-            displayBubble(timed.msg, getType(timed.msg, false));
+            displayBubble(timed.msg, type);
         }
     }
 

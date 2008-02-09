@@ -60,11 +60,7 @@ public class HeaderBar extends HBox
         // allow text to center under the whirled logo if its not too long.
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
 
-        if (_tabsContainer.parent == this) {
-            // if we hold the tabs, other location switching code will ensure that the proper
-            // location tab is sitting at the front of the line of tabs.
-            _tabs.locationName = null;
-        } else {
+        if (_tabsContainer.parent != this) {
             _tabs.locationName = Msgs.CHAT.get("l.game_channel");
         }
     }

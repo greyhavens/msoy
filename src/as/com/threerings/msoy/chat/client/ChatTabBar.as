@@ -67,6 +67,10 @@ public class ChatTabBar extends HBox
         return (_tabs[0] as ChatTab).text;
     }
 
+    /** 
+     * Will make sure the first tab in the list is a non-channel based tab (currently just games), 
+     * and titles it with the given name.
+     */
     public function set locationName (name :String) :void
     {
         // if this function is called with name == null, a separate call will shuffle the
@@ -181,11 +185,6 @@ public class ChatTabBar extends HBox
         return getControllerIndex(channel) != -1;
     }
 
-    public function getFirstController () :ChatChannelController
-    {
-        return _tabs.length > 0 ? (_tabs[0] as ChatTab).controller : null;
-    }
-
     public function getCurrentController () :ChatChannelController
     {
         return _tabs.length > 0 ? (_tabs[_selectedIndex] as ChatTab).controller : null;
@@ -197,7 +196,8 @@ public class ChatTabBar extends HBox
             return (_chatDirector as GameChatDirector).getGameHistory();
         }
 
-        log.debug("asked for location history in a non-game");
+        log.warning("asked for location history in a non-game");
+        Log.dumpStack();
         return null;
     }
 
@@ -244,17 +244,6 @@ public class ChatTabBar extends HBox
         return (_tabs[index] as ChatTab).checked;
     }
 
-    public function closeTab (channel :ChatChannel) :void
-    {
-        var index :int = getControllerIndex(channel);
-        if (index == -1) {
-            log.debug("asked to remove tab we don't appear to have [" + channel + "]");
-            return;
-        }
-
-        removeTabAt(index, true);
-    }
-
     public function shouldReconnectChannel (channel :ChatChannel) :Boolean
     {
         // if this is anything but a room channel, it should be reconnected.
@@ -271,6 +260,17 @@ public class ChatTabBar extends HBox
 
         // if this room channel does not have its check box checked, it should not be reconnected
         return (_tabs[index] as ChatTab).checked;
+    }
+
+    public function clearUncheckedRooms () :void
+    {
+        for (var ii :int = 0; ii < _tabs.length; ii++) {
+            var tab :ChatTab = _tabs[ii] as ChatTab;
+            if (tab.controller != null && tab.controller.channel.type == ChatChannel.ROOM_CHANNEL &&
+                !tab.checked) {
+                removeTabAt(ii, true);
+            }
+        }
     }
 
     protected function addTab (tab :ChatTab, index :int = -1) :void
