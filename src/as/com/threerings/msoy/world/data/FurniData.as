@@ -122,7 +122,7 @@ public class FurniData
      */
     public function setPerspective (perspective :Boolean) :void
     {
-        setLayoutInfo(PERSPECTIVE_FLAG, perspective);
+        //setLayoutInfo(PERSPECTIVE_FLAG, perspective);
     }
 
     /**
@@ -130,7 +130,8 @@ public class FurniData
      */
     public function isPerspective () :Boolean
     {
-        return isLayoutInfo(PERSPECTIVE_FLAG);
+        return false;
+        //return isLayoutInfo(PERSPECTIVE_FLAG);
     }
 
     /**
@@ -281,10 +282,13 @@ public class FurniData
         return (layoutInfo & flag) != 0;
     }
 
-    /** layoutInfo bitmask flag constant. Indicates if the furni is perspectivized. */
-    protected static const PERSPECTIVE_FLAG :int = (1 << 0);
-
     /** layoutInfo bitmask flag constant. Indicates if the furni is non-scaling. */
-    protected static const NOSCALE_FLAG :int = (1 << 1);
+    protected static const NOSCALE_FLAG :int = (1 << 0);
+
+    /** layoutInfo bitmask flag constant. Indicates if the furni is perspectivized. */
+//    protected static const HORZ_PERSPECTIVE_FLAG :int = (1 << 1);
+
+    /** layoutInfo bitmask flag constant. Indicates if the furni is perspectivized. */
+//    protected static const VERT_PERSPECTIVE_FLAG :int = (1 << 2);
 }
 }
