@@ -96,7 +96,7 @@ public class FriendsPanel extends SmartTable
             super(Math.max(1, friends.size()), 1,
                   ProfileGrid.NAV_ON_TOP, (CProfile.getMemberId() == _memberId) ?
                   CProfile.msgs.noFriendsSelf() : CProfile.msgs.noFriendsOther());
-            setWidth("100%");
+            setWidth("600px");
             addStyleName("dottedGrid");
             setModel(new SimpleDataModel(friends), 0);
         }
@@ -143,7 +143,7 @@ public class FriendsPanel extends SmartTable
 
                 onClick = new ClickListener() {
                     public void onClick (Widget widget) {
-                        Application.go(Page.WORLD, Args.compose("m", _memberId));
+                        Application.go(Page.WORLD, Args.compose("m", card.name.getMemberId()));
                     }
                 };
                 extras.setWidget(
