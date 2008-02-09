@@ -97,9 +97,13 @@ public class MsoyChatDirector extends ChatDirector
         }
 
         // otherwise we have to subscribe to the channel first
+        var displayChat :Boolean = true;
         var showTabFn :Function = function (ccobj :ChatChannelObject) :void {
-            // once the subscription went through, show the chat history
-            _chatTabs.displayChat(channel, getHistory(channel), inFront);
+            // once the subscription went through, show the chat history the first time.
+            if (displayChat) {
+                _chatTabs.displayChat(channel, getHistory(channel), inFront);
+                displayChat = false;
+            }
             // if this is a tabbed channel, make sure to update its distributed object reference
             _chatTabs.reinitController(channel, ccobj);
         };

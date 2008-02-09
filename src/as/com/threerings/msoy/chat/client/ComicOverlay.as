@@ -268,6 +268,10 @@ public class ComicOverlay extends ChatOverlay
     protected function createBubble (
         msg :ChatMessage, type :int, speaker :Name, speakerBubblePos :Point) :Boolean
     {
+        if (_target == null) {
+            return false;
+        }
+
         var texts :Array = formatMessage(msg, type, false, _userBubbleFmt);
         var lifetime :int = getBubbleExpire(msg.timestamp, msg.message) - msg.timestamp;
         var bubble :BubbleGlyph =
