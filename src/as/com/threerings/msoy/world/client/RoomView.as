@@ -262,6 +262,10 @@ public class RoomView extends AbstractRoomView
      */
     public function getOccupantByName (name :Name) :OccupantSprite
     {
+        if (_roomObj == null) {
+            return null;
+        }
+
         var occInfo :OccupantInfo = _roomObj.getOccupantInfo(name);
         return (occInfo == null) ? null : getOccupant(occInfo.bodyOid);
     }
