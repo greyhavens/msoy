@@ -20,7 +20,6 @@ import com.threerings.msoy.web.data.MemberCard;
 
 import client.msgs.MailComposition;
 import client.shell.Application;
-import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.MsoyCallback;
@@ -96,7 +95,7 @@ public class FriendsPanel extends SmartTable
             super(Math.max(1, friends.size()), 1,
                   ProfileGrid.NAV_ON_TOP, (CProfile.getMemberId() == _memberId) ?
                   CProfile.msgs.noFriendsSelf() : CProfile.msgs.noFriendsOther());
-            setWidth("600px");
+            setWidth("650px");
             addStyleName("dottedGrid");
             setModel(new SimpleDataModel(friends), 0);
         }
@@ -143,7 +142,7 @@ public class FriendsPanel extends SmartTable
 
                 onClick = new ClickListener() {
                     public void onClick (Widget widget) {
-                        Application.go(Page.WORLD, Args.compose("m", card.name.getMemberId()));
+                        Application.go(Page.WORLD, "m" + card.name.getMemberId());
                     }
                 };
                 extras.setWidget(
