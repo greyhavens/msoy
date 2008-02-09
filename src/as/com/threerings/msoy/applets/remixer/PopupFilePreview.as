@@ -151,18 +151,15 @@ public class PopupFilePreview extends TitleWindow
 
     protected function getFilters () :Array
     {
-        var array :Array = [];
-
         switch (_type) {
         case "Blob":
             return null; // no filter: show all files
 
         case "DisplayObject":
-            array.push(new FileFilter("Flash movies", "*.swf"));
-            // fall through to Image
+            return [ new FileFilter("Images and SWFs", "*.jpg;*.jpeg;*.gif;*.png;*.swf") ];
+
         case "Image":
-            array.push(new FileFilter("Images", "*.jpg;*.jpeg;*.gif;*.png"));
-            return array;
+            return [ new FileFilter("Images", "*.jpg;*.jpeg;*.gif;*.png") ];
 
         default:
             throw new Error("Don't understand " + _type + " files yet.");
