@@ -29,6 +29,7 @@ public class FileEditor extends FieldEditor
         var change :CommandButton = new CommandButton("View/Change", showFile);
         _component = change;
         addComp(change);
+        change.enabled = (entry.value != null);
         addDescriptionLabel(entry);
     }
 
@@ -43,6 +44,14 @@ public class FileEditor extends FieldEditor
 
     internal function updateValue (filename :String, bytes :ByteArray) :void
     {
+        if (filename == null) {
+            if (_bytes == null) {
+                _used.selected = false;
+            }
+            return;
+        }
+
+        _component.enabled = true;
         _label.text = filename;
         _bytes = bytes;
         updateEntry();
@@ -51,10 +60,23 @@ public class FileEditor extends FieldEditor
         setChanged();
     }
 
+    override protected function handleUsedToggled (selected :Boolean) :void
+    {
+        if (selected && _bytes == null) {
+            // pop up the damn chooser
+            showFile();
+
+        } else {
+            super.handleUsedToggled(selected);
+        }
+    }
+
     override protected function updateEntry () :void
     {
-        _pack.replaceFile(_name, _used.selected ? _label.text : null, _bytes);
-        setChanged();
+        if (_bytes != null) {
+            _pack.replaceFile(_name, _used.selected ? _label.text : null, _bytes);
+            setChanged();
+        }
     }
 
     protected function showFile () :void

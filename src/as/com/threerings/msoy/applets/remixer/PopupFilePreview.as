@@ -57,8 +57,6 @@ public class PopupFilePreview extends TitleWindow
         _image.maxHeight = 300;
         box.addChild(_image);
 
-        setImage(pack.getFile(name));
-
         var hbox :HBox = new HBox();
         var lbl :Label = new Label();
         lbl.text = "Select new:";
@@ -77,9 +75,11 @@ public class PopupFilePreview extends TitleWindow
         box.addChild(hrule);
 
         var buttonBar :ButtonBar = new ButtonBar();
-        buttonBar.addChild(new CommandButton("OK", close, true));
+        buttonBar.addChild(_ok = new CommandButton("OK", close, true));
         buttonBar.addChild(new CommandButton("Cancel", close, false));
         box.addChild(buttonBar);
+
+        setImage(pack.getFile(name));
 
         PopUpManager.addPopUp(this, parent, true);
         PopUpManager.centerPopUp(this);
@@ -88,20 +88,27 @@ public class PopupFilePreview extends TitleWindow
     public function setImage (bytes :ByteArray) :void
     {
         _image.setImage(bytes);
+        _ok.enabled = (bytes != null);
     }
 
     public function setBitmap (bitmapData :BitmapData) :void
     {
         _image.setBitmap(bitmapData);
+        _ok.enabled = (bitmapData != null);
     }
 
     protected function close (save :Boolean) :void
     {
+        var saved :Boolean = false;
         if (save) {
             var ba :ByteArray = _image.getImage(true);
             if (ba != null) {
                 _parent.updateValue(_filename, ba);
+                saved = true;
             }
+        }
+        if (!saved) {
+            _parent.updateValue(null, null);
         }
 
         PopUpManager.removePopUp(this);
@@ -161,6 +168,8 @@ public class PopupFilePreview extends TitleWindow
     protected var _serverURL :String;
 
     protected var _filename :String;
+
+    protected var _ok :CommandButton;
 
     protected var _image :ImagePreview;
 }

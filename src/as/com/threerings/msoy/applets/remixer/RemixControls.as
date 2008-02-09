@@ -16,12 +16,14 @@ import flash.utils.ByteArray;
 
 import mx.core.Application;
 import mx.core.ScrollPolicy;
+import mx.core.UIComponent;
 
 import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
 import mx.controls.HRule;
+import mx.controls.Label;
 import mx.controls.SWFLoader;
 
 import com.adobe.images.JPGEncoder;
@@ -51,7 +53,7 @@ public class RemixControls extends HBox
 
         var vbox :VBox = new VBox();
         vbox.horizontalScrollPolicy = ScrollPolicy.OFF;
-        vbox.maxWidth = 400;
+        vbox.width = 400;
         addChild(vbox);
 
         _controls = new Grid();
@@ -71,8 +73,10 @@ public class RemixControls extends HBox
         _saveBtn.enabled = false;
 
         vbox = new VBox();
-        vbox.maxWidth = 600;
+        vbox.width = 600;
         addChild(vbox);
+        vbox.addChild(createPreviewHeader());
+
         _previewer = new SWFLoader();
         _previewer.width = 600;
         _previewer.height = 488;
@@ -83,6 +87,24 @@ public class RemixControls extends HBox
         vbox.addChild(_previewer);
 
         ParameterUtil.getParameters(app, gotParams);
+    }
+
+    protected function createPreviewHeader () :UIComponent
+    {
+        var box :HBox = new HBox();
+        box.percentWidth = 100;
+        box.setStyle("backgroundColor", 0x000000);
+
+        var lbl :Label = new Label();
+        lbl.text = "Preview";
+        lbl.percentWidth = 100;
+        lbl.setStyle("color", 0xFFFFFF);
+        lbl.setStyle("textAlign", "center");
+        lbl.setStyle("fontWeight", "bold");
+        lbl.setStyle("fontSize", 18);
+        box.addChild(lbl);
+
+        return box;
     }
 
     protected function gotParams (params :Object) :void
