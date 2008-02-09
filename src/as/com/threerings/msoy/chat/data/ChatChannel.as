@@ -6,8 +6,10 @@ package com.threerings.msoy.chat.data {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
+
 import com.threerings.util.Hashable;
 import com.threerings.util.Name;
+import com.threerings.util.StringUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.GroupName;
@@ -70,6 +72,21 @@ public class ChatChannel extends SimpleStreamableObject
     public static function makeRoomChannel (room :RoomName) :ChatChannel
     {
         return new ChatChannel(ROOM_CHANNEL, room);
+    }
+
+    /** 
+     * Returns the static type of the given localType.
+     */
+    public static function typeOf (localType :String) :int
+    {
+        var type :int = -1;
+        try {
+            type = StringUtil.parseInteger(localType.charAt(0));
+        } catch (err :ArgumentError) {
+            // NOOP, return -1
+        }
+
+        return type;
     }
 
     public function ChatChannel (type :int = 0, ident :Name = null)

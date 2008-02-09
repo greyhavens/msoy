@@ -52,6 +52,7 @@ import com.threerings.flash.ColorUtil;
 import com.threerings.whirled.spot.data.SpotCodes;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
+import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.TimedMessageDisplay;
 
 import com.threerings.msoy.client.ControlBar;
@@ -1108,6 +1109,9 @@ public class ChatOverlay
             var type :int;
             if (ChatCodes.USER_CHAT_TYPE == localtype) {
                 type = TELL;
+            } else if (msg is ChannelMessage && 
+                ChatChannel.typeOf(localtype) != ChatChannel.ROOM_CHANNEL) {
+                type = CHANNEL;
             } else {
                 type = PLACE;
             }
