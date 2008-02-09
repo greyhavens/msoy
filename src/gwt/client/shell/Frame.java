@@ -469,9 +469,13 @@ public class Frame
             String lpath = "/images/header/header_logo.png";
             setWidget(0, 0, MsoyUI.createActionImage(lpath, new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.WHIRLED, "");
+                    Application.go(Page.WHIRLED, getLogoArg());
                 }
             }), 1, "Logo");
+        }
+
+        protected String getLogoArg () {
+            return "";
         }
     }
 
@@ -507,6 +511,10 @@ public class Frame
             setWidget(0, col++, WidgetUtil.makeShim(156, 10), 1, "Left");
             getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
             setWidget(0, col++, CShell.app.getStatusPanel(), 1, "Right");
+        }
+
+        protected String getLogoArg () {
+            return "whirledwide";
         }
     }
 
