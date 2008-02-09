@@ -82,7 +82,7 @@ public class ItemRemixer extends FlexTable
     {
         MediaDesc preview = item.getPreviewMedia();
         String serverURL = GWT.isScript() ? GWT.getHostPageBaseURL()
-                                          : "http://tasman.sea.earth.threerings.net:8080/";
+                                          : "http://localhost:8080/";
 
         String flashVars = "media=" + URL.encodeComponent(preview.getMediaPath()) + "&" +
             "server=" + URL.encodeComponent(serverURL) + "&" +
@@ -90,7 +90,7 @@ public class ItemRemixer extends FlexTable
             "auth=" + URL.encodeComponent(CShell.ident.token);
         return WidgetUtil.createFlashContainer("remixControls",
             "/clients/" + DeploymentConfig.version + "/remixer-client.swf",
-            1000, 488, flashVars);
+            1000, 550, flashVars);
     }
 
     protected void setHash (
