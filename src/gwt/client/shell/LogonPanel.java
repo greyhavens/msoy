@@ -29,7 +29,7 @@ public class LogonPanel extends FlexTable
 {
     public LogonPanel (boolean headerMode)
     {
-        this(headerMode, new Button(CShell.cmsgs.menuLogon()));
+        this(headerMode, new Button(CShell.cmsgs.logonLogon()));
     }
 
     public LogonPanel (boolean headerMode, Button logon)

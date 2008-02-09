@@ -137,11 +137,11 @@ img, embed, applet, object {
 .msoyHeader {
   color: #EAEFF1;
   background: url(/images/header/header_tile.png);
+  height: 50px;
 }
 
 .msoyHeader .Logo {
   width: 124px;
-  height: 50px;
   vertical-align: top;
   background: #222222;
 }
@@ -152,25 +152,21 @@ img, embed, applet, object {
 
 .msoyHeader .Navi {
   width: 195px;
-  height: 50px;
 }
 
 .msoyHeader .Shim {
   background: url(/images/header/header_shim.png) no-repeat;
   width: 156px;
-  height: 50px;
 }
 
 .msoyHeader .Left {
   background: url(/images/header/header_left.png) no-repeat;
-  width: 156px;
-  height: 50px;
   vertical-align: bottom;
 }
 
 .msoyHeader .Right {
   background: url(/images/header/header_right.png) no-repeat right;
-  height: 50px;
+  width: 100%;
   vertical-align: bottom;
 }
 
@@ -198,7 +194,7 @@ img, embed, applet, object {
   margin-top: 5px;
 }
 
-.naviPanel .Button {
+.msoyHeader .Button {
   font-size: 10px;
   text-align: center;
   width: 45px;

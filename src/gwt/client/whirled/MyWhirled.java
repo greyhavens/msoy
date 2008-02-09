@@ -95,6 +95,12 @@ public class MyWhirled extends FlexTable
             protected boolean displayNavi (int items) {
                 return true;
             }
+            protected void addCustomControls (FlexTable controls) {
+                Hyperlink link = Application.createLink(
+                    "All your friends...", Page.PROFILE, Args.compose("f", CWhirled.getMemberId()));
+                link.addStyleName("nowrapLabel");
+                controls.setWidget(0, 0, link);
+            }
         };
         _people.addStyleName("dottedGrid");
         _people.setWidth("100%");

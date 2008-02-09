@@ -63,7 +63,7 @@ public class index extends MsgsEntryPoint
         // #profile-me falls through
 
         if (CProfile.ident != null) {
-            displayMemberPage(CProfile.getMemberId());
+            setContent(new PeoplePanel());
         } else {
             displaySearch(args);
         }

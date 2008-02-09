@@ -154,10 +154,9 @@ public class Application
         // set up the callbackd that our flash clients can call
         configureCallbacks(this);
 
-        // create our status and navigation panels and stuff them into the frame
+        // create our status panel and initialize the frame
         _status = new StatusPanel(this);
-        _navi = new NaviPanel(_status);
-        Frame.init(_navi, _status);
+        Frame.init();
 
         // wire ourselves up to the history-based navigation mechanism
         History.addHistoryListener(this);
@@ -248,7 +247,6 @@ public class Application
     {
         CShell.creds = data.creds;
         CShell.ident = new WebIdent(data.creds.getMemberId(), data.creds.token);
-        _navi.didLogon(data.creds);
         _status.didLogon(data);
         WorldClient.didLogon(data.creds);
         Frame.didLogon();
@@ -267,7 +265,6 @@ public class Application
     {
         CShell.creds = null;
         CShell.ident = null;
-        _navi.didLogoff();
         _status.didLogoff();
 
         if (_page == null) {
@@ -405,7 +402,6 @@ public class Application
     protected Page _page;
     protected HashMap _creators = new HashMap();
 
-    protected NaviPanel _navi;
     protected StatusPanel _status;
 
     protected static String _currentToken = "";

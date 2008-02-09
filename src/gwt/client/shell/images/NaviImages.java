@@ -6,22 +6,20 @@ package client.shell.images;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ImageBundle;
 
-import client.shell.NaviPanel;
-
 /**
- * Images used by the {@link NaviPanel}.
+ * Images used in the header.
  */
 public interface NaviImages extends ImageBundle
 {
     /**
-     * @gwt.resource catalog_over.png
+     * @gwt.resource shop_over.png
      */
-    AbstractImagePrototype ocatalog ();
+    AbstractImagePrototype oshop ();
 
     /**
-     * @gwt.resource catalog.png
+     * @gwt.resource shop.png
      */
-    AbstractImagePrototype catalog ();
+    AbstractImagePrototype shop ();
 
     /**
      * @gwt.resource games_over.png
@@ -54,32 +52,22 @@ public interface NaviImages extends ImageBundle
     AbstractImagePrototype me ();
 
     /**
-     * @gwt.resource people_over.png
+     * @gwt.resource friends_over.png
      */
-    AbstractImagePrototype opeople ();
+    AbstractImagePrototype ofriends ();
 
     /**
-     * @gwt.resource people.png
+     * @gwt.resource friends.png
      */
-    AbstractImagePrototype people ();
+    AbstractImagePrototype friends ();
 
     /**
-     * @gwt.resource places_over.png
+     * @gwt.resource worlds_over.png
      */
-    AbstractImagePrototype oplaces ();
+    AbstractImagePrototype oworlds ();
 
     /**
-     * @gwt.resource places.png
+     * @gwt.resource worlds.png
      */
-    AbstractImagePrototype places ();
-
-    /**
-     * @gwt.resource stuff_over.png
-     */
-    AbstractImagePrototype ostuff ();
-
-    /**
-     * @gwt.resource stuff.png
-     */
-    AbstractImagePrototype stuff ();
+    AbstractImagePrototype worlds ();
 }

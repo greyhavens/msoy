@@ -3,6 +3,7 @@
 
 package client.shell;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
@@ -11,19 +12,23 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
+
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.ComplexPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.Predicate;
 
+import client.shell.images.NaviImages;
 import client.util.MsoyUI;
 
 /**
@@ -50,47 +55,8 @@ public class Frame
     /**
      * Called by the Application to initialize us once in the lifetime of the app.
      */
-    public static void init (NaviPanel navi, StatusPanel status)
+    public static void init ()
     {
-        // create our member header
-        _mheader = new FlexTable();
-        _mheader.setWidth("100%");
-        _mheader.setCellPadding(0);
-        _mheader.setCellSpacing(0);
-        _mheader.setStyleName("msoyHeader");
-        _mheader.getFlexCellFormatter().setStyleName(0, 0, "Logo");
-        _mheader.setWidget(0, 0, MsoyUI.createActionImage(LOGO_PATH, new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(Page.WHIRLED, "whirledwide");
-            }
-        }));
-        _mheader.getFlexCellFormatter().setStyleName(0, 1, "Navi");
-        _mheader.setWidget(0, 1, navi);
-        _mheader.getFlexCellFormatter().setStyleName(0, 2, "Left");
-        _mheader.getFlexCellFormatter().setStyleName(0, 3, "Right");
-        _mheader.getFlexCellFormatter().setHorizontalAlignment(0, 3, HasAlignment.ALIGN_RIGHT);
-        _mheader.setWidget(0, 3, status);
-
-        // create our guest header
-        _gheader = new FlexTable();
-        _gheader.setWidth("100%");
-        _gheader.setCellPadding(0);
-        _gheader.setCellSpacing(0);
-        _gheader.setStyleName("msoyHeader");
-        _gheader.getFlexCellFormatter().setStyleName(0, 0, "Logo");
-        _gheader.setWidget(0, 0, MsoyUI.createActionImage(LOGO_PATH, new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(Page.WHIRLED, "");
-            }
-        }));
-        FlexTable signup = new FlexTable();
-        signup.setWidget(0, 0, MsoyUI.createLabel("New to Whirled?", "New"));
-        signup.setWidget(1, 0, Application.createLink("Sign up!", Page.ACCOUNT, "create"));
-        _gheader.getFlexCellFormatter().setStyleName(0, 1, "Signup");
-        _gheader.setWidget(0, 1, signup);
-        _gheader.getFlexCellFormatter().setStyleName(0, 2, "Logon");
-        _gheader.setWidget(0, 2, new LogonPanel(true));
-
         _minimizeContent = MsoyUI.createActionLabel("", "Minimize", new ClickListener() {
             public void onClick (Widget sender) {
                 setContentMinimized(true, null);
@@ -115,6 +81,9 @@ public class Frame
      */
     public static void didLogon ()
     {
+        // create a new member header as it contains member specific stuff
+        _mheader = new MemberHeader();
+
         // make sure the correct header is showing
         if (_gheader.isAttached()) {
             // this will remove the guest header and replace it with the member header
@@ -253,7 +222,7 @@ public class Frame
         RootPanel.get(HEADER).remove(_gheader);
         RootPanel.get(HEADER).remove(_mheader);
         if (visible) {
-            RootPanel.get(HEADER).add(CShell.getMemberId() == 0 ? _gheader : _mheader);
+            RootPanel.get(HEADER).add((CShell.getMemberId() == 0) ? _gheader : _mheader);
         }
     }
 
@@ -473,35 +442,99 @@ public class Frame
         protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
     }
 
-    protected static class Dialog extends FlexTable
+    protected static class Dialog extends SmartTable
     {
-        public Dialog (String title, Widget content)
-        {
-            setCellPadding(0);
-            setCellSpacing(0);
-            setStyleName("pageHeader");
-
-            setText(0, 0, title);
-            getFlexCellFormatter().setStyleName(0, 0, "TitleCell");
-
+        public Dialog (String title, Widget content) {
+            super("pageHeader", 0, 0);
+            setText(0, 0, title, 1, "TitleCell");
             setWidget(0, 1, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
                 public void onClick (Widget sender) {
                     Frame.clearDialog(getContent());
                 }
-            }));
-            getFlexCellFormatter().setStyleName(0, 1, "CloseCell");
-
-            setWidget(1, 0, content);
-            getFlexCellFormatter().setColSpan(1, 0, 2);
-
-            setWidget(2, 0, WidgetUtil.makeShim(5, 5));
-            getFlexCellFormatter().setColSpan(2, 0, 2);
+            }), 1, "CloseCell");
+            setWidget(1, 0, content, 2, null);
+            setWidget(2, 0, WidgetUtil.makeShim(5, 5), 2, null);
         }
 
-        public Widget getContent ()
-        {
+        public Widget getContent () {
             return getWidget(1, 0);
         }
+    }
+
+    protected static class Header extends SmartTable
+    {
+        public Header () {
+            super("msoyHeader", 0, 0);
+            setWidth("100%");
+            String lpath = "/images/header/header_logo.png";
+            setWidget(0, 0, MsoyUI.createActionImage(lpath, new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.WHIRLED, "");
+                }
+            }), 1, "Logo");
+        }
+    }
+
+    protected static class GuestHeader extends Header
+    {
+        public GuestHeader () {
+            SmartTable signup = new SmartTable();
+            signup.setWidget(0, 0, MsoyUI.createLabel("New to Whirled?", "New"));
+            signup.setWidget(1, 0, Application.createLink("Sign up!", Page.ACCOUNT, "create"));
+            setWidget(0, 1, signup, 1, "Signup");
+            setWidget(0, 2, new LogonPanel(true), 1, "Logon");
+        }
+    }
+
+    protected static class MemberHeader extends Header
+    {
+        public MemberHeader () {
+            int col = 1;
+            setWidget(0, col++, new NaviButton(CShell.cmsgs.menuMe(), _images.me(), _images.ome(),
+                                               Page.WHIRLED, "mywhirled"));
+            String arg = Args.compose("f", CShell.getMemberId());
+            setWidget(0, col++, new NaviButton(CShell.cmsgs.menuFriends(), _images.friends(),
+                                               _images.ofriends(), Page.PROFILE, arg));
+            setWidget(0, col++, new NaviButton(CShell.cmsgs.menuWorlds(), _images.worlds(),
+                                               _images.oworlds(), Page.GROUP, ""));
+            setWidget(0, col++, new NaviButton(CShell.cmsgs.menuGames(), _images.games(),
+                                               _images.ogames(), Page.GAME, ""));
+            setWidget(0, col++, new NaviButton(CShell.cmsgs.menuShop(), _images.shop(),
+                                               _images.oshop(), Page.CATALOG, ""));
+            setWidget(0, col++, new NaviButton(CShell.cmsgs.menuHelp(), _images.help(),
+                                               _images.ohelp(), Page.WHIRLED, "help"));
+
+            setWidget(0, col++, WidgetUtil.makeShim(156, 10), 1, "Left");
+            getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
+            setWidget(0, col++, CShell.app.getStatusPanel(), 1, "Right");
+        }
+    }
+
+    protected static class NaviButton extends Label
+    {
+        public NaviButton (String text, AbstractImagePrototype upImage,
+                           AbstractImagePrototype overImage, final String page, final String args) {
+            setStyleName("Button");
+
+            _upImage = upImage.createImage();
+            _overImage = overImage.createImage();
+
+            addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(page, args);
+                }
+            });
+            setText(text);
+            setBackgroundImage(_upImage);
+        }
+
+        protected void setBackgroundImage (Image image) {
+            int left = -image.getOriginLeft(), top = -image.getOriginTop();
+            String bgstr = "url('" + image.getUrl() + "') " + left + "px " + top + "px";
+            DOM.setStyleAttribute(getElement(), "background", bgstr);
+        }
+
+        protected Image _upImage, _overImage;
     }
 
     protected static WindowResizeListener _resizer = new WindowResizeListener() {
@@ -512,7 +545,7 @@ public class Frame
         }
     };
 
-    protected static FlexTable _mheader, _gheader;
+    protected static Header _mheader, _gheader = new GuestHeader();
     protected static String _closeToken;
 
     protected static Page.Content _content;
@@ -520,11 +553,12 @@ public class Frame
     protected static ScrollPanel _scroller;
     protected static Label _minimizeContent, _maximizeContent;
 
+    /** Our navigation menu images. */
+    protected static NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
+
     // constants for our top-level elements
     protected static final String HEADER = "header";
     protected static final String CONTENT = "content";
     protected static final String SEPARATOR = "seppy";
     protected static final String CLIENT = "client";
-
-    protected static final String LOGO_PATH = "/images/header/header_logo.png";
 }
