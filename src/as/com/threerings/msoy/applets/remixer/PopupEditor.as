@@ -35,6 +35,7 @@ public class PopupEditor extends TitleWindow
         _validator = validator;
 
         this.title = entry.name;
+        var type :String = entry.type as String;
 
         var grid :Grid = new Grid();
         addChild(grid);
@@ -44,7 +45,19 @@ public class PopupEditor extends TitleWindow
             desc = "<none>";
         }
         GridUtil.addRow(grid, "Description:", desc);
-        GridUtil.addRow(grid, "Type:", entry.type as String);
+        GridUtil.addRow(grid, "Type:", type);
+
+        if (type == "Number") {
+            var min :Number = Number(entry.min);
+            var max :Number = Number(entry.max);
+
+            if (!isNaN(min)) {
+                GridUtil.addRow(grid, "Minimum:", String(min));
+            }
+            if (!isNaN(max)) {
+                GridUtil.addRow(grid, "Maximum:", String(max));
+            }
+        }
 
         if (_validator == null) {
             _txt = new TextArea();

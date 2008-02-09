@@ -46,6 +46,10 @@ import com.threerings.msoy.client.DeploymentConfig;
  */
 public class RemixControls extends HBox
 {
+    public static const CONTROLS_WIDTH :int = 400;
+
+    public static const PREVIEW_WIDTH :int = 600;
+
     public function RemixControls (app :Application)
     {
         percentWidth = 100;
@@ -53,7 +57,7 @@ public class RemixControls extends HBox
 
         var vbox :VBox = new VBox();
         vbox.horizontalScrollPolicy = ScrollPolicy.OFF;
-        vbox.width = 400;
+        vbox.width = CONTROLS_WIDTH;
         addChild(vbox);
 
         _controls = new Grid();
@@ -62,6 +66,7 @@ public class RemixControls extends HBox
         _controls.setStyle("right", 0);
         _controls.percentWidth = 100;
         _controls.percentHeight = 100;
+        //_controls.width = CONTROLS_WIDTH;
         vbox.addChild(_controls);
 
         var butBox :HBox = new HBox();
@@ -73,7 +78,7 @@ public class RemixControls extends HBox
         _saveBtn.enabled = false;
 
         vbox = new VBox();
-        vbox.width = 600;
+        vbox.width = PREVIEW_WIDTH;
         addChild(vbox);
         vbox.addChild(createPreviewHeader());
 

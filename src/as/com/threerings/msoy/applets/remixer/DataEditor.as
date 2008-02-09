@@ -8,6 +8,7 @@ import flash.events.TextEvent;
 
 import mx.controls.CheckBox;
 import mx.controls.ColorPicker;
+import mx.controls.HSlider;
 import mx.controls.Label;
 import mx.controls.TextInput;
 
@@ -76,7 +77,28 @@ public class DataEditor extends FieldEditor
 
     protected function setupNumber (entry :Object) :void
     {
-        setupString(entry, new NumberValidator());
+        var min :Number = Number(entry.min);
+        var max :Number = Number(entry.max);
+
+        // TODO: allow min/max either way, but allow a hint to specify to use the slider
+        if (!isNaN(max) && !isNaN(min)) {
+            var hslider :HSlider = new HSlider();
+            hslider.minimum = min;
+            hslider.maximum = max;
+            hslider.value = Number(entry.value);
+            hslider.addEventListener(Event.CHANGE, function (... ignored) :void {
+                updateValue(hslider.value);
+            });
+            _component = hslider;
+            addComp(hslider, 2);
+            addDescriptionLabel(entry);
+
+        } else {
+            var val :NumberValidator = new NumberValidator();
+            val.minValue = min;
+            val.maxValue = max;
+            setupString(entry, val);
+        }
     }
 
     protected function setupColor (entry :Object) :void
