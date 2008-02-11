@@ -57,7 +57,7 @@ public class OptOutPanel extends FlexTable
         footer.add(WidgetUtil.makeShim(10, 10));
         footer.add(new Button(CAccount.msgs.optOutReject(), new ClickListener() {
             public void onClick (Widget widget) {
-                Application.go(Page.WHIRLED, "whirledwide");
+                Application.go(Page.WHIRLED, "");
             }
         }));
 

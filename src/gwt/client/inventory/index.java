@@ -122,8 +122,8 @@ public class index extends Page
     // @Override // from Page
     protected void didLogoff ()
     {
-        // go to whirledwide instead of reloading as a non-member
-        Application.go(Page.WHIRLED, "whirledwide");
+        // go to the landing page instead of reloading as a non-member
+        Application.go(Page.WHIRLED, "");
     }
 
     protected void displayInventory (byte type, int pageNo, int itemId)

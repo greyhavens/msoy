@@ -181,9 +181,9 @@ public class Frame
         RootPanel.get(Frame.CONTENT).setWidth("100%");
         _content.setCloseVisible(false);
 
-        // if we're on a "world" page, go to "whirledwide"
+        // if we're on a "world" page, go to the landing page
         if (History.getToken().startsWith(Page.WORLD)) {
-            Application.go(Page.WHIRLED, "whirledwide");
+            Application.go(Page.WHIRLED, "");
         }
     }
 

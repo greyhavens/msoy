@@ -359,7 +359,7 @@ public class MyWhirled extends FlexTable
                     Application.createLinkToken(Page.WHIRLED, "whirledwide"))));
             } else if (_sceneType == SceneCard.GAME) {
                 fakeSceneWidget.add(new HTML(CWhirled.msgs.emptyActiveGames(
-                    Application.createLinkToken(Page.WHIRLED, "whirledwide"))));
+                    Application.createLinkToken(Page.GAME, ""))));
             }
         }
 
