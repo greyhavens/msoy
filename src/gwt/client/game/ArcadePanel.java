@@ -45,7 +45,9 @@ public class ArcadePanel extends VerticalPanel
     protected void init (ArcadeData data)
     {
         HorizontalPanel row = new HorizontalPanel();
-        row.add(new MyGamesPanel());
+        Widget box = MsoyUI.createBox("aux", "My Favorite Games", new MyGamesPanel());
+        box.addStyleName("MyGames");
+        row.add(box);
         row.add(WidgetUtil.makeShim(5, 5));
         row.add(new FeaturedGamePanel(data.featuredGame));
         add(row);
@@ -66,7 +68,7 @@ public class ArcadePanel extends VerticalPanel
     {
         public MyGamesPanel ()
         {
-            setStyleName("MyGames");
+            setText(0, 0, "Coming soon!");
         }
     }
 
