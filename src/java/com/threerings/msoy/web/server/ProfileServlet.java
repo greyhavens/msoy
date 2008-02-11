@@ -226,7 +226,13 @@ public class ProfileServlet extends MsoyServiceServlet
             List<ProfileCard> list = MsoyServer.memberRepo.loadFriendCards(memberId);
             Collections.sort(list, new Comparator<ProfileCard>() {
                 public int compare (ProfileCard c1, ProfileCard c2) {
-                    return MemberName.compareNames(c1.name, c2.name);
+                    if (c1.lastLogon < c2.lastLogon) {
+                        return 1;
+                    } else if (c1.lastLogon > c2.lastLogon) {
+                        return -1;
+                    } else {
+                        return MemberName.compareNames(c1.name, c2.name);
+                    }
                 }
             });
             result.friends = list;
