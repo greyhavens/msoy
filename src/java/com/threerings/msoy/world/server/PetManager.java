@@ -211,7 +211,7 @@ public class PetManager
 
             // check if the user actually owns the pet
             PetInfo petInfo = (PetInfo)info;
-            if (!mgr.checkAssignControl(user, petInfo.getItemIdent(), "PetManager.sendChat")) {
+            if (!mgr.ensureEntityControl(user, petInfo.getItemIdent(), "PetManager.sendChat")) {
                 log.warning("sendChat() requested by non-owner [who=" + user.who() +
                             ", pet=" + petInfo + "].");
                 throw new InvocationException(PetCodes.E_INTERNAL_ERROR);

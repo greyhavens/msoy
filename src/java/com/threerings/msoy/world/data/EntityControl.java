@@ -6,20 +6,18 @@ package com.threerings.msoy.world.data;
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.msoy.item.data.all.ItemIdent;
-
 /**
- * Used to coordinate the "control" of a particular scene entity. The client that is in control of
- * the entity is the only one that will be allowed to make changes to the entity's distributed
- * state.
+ * Used to coordinate the "control" of some executable client content - currently either a room
+ * entity (item) or an AVRG. This mechanism elevates one specific client-side instance to play the
+ * role usually reserved for server-side logic.
  */
 public class EntityControl extends SimpleStreamableObject
     implements DSet.Entry
 {
-    /** Identifies the item being controlled. */
-    public ItemIdent ident;
-
-    /** The body oid of the client currently controlling this entity. */
+    /** Identifies what is being controlled. */
+    public Controllable controlled;
+    
+    /** The body oid of the client in control of this controllable. */
     public int controllerOid;
 
     /** Used when unserializing. */
@@ -28,15 +26,15 @@ public class EntityControl extends SimpleStreamableObject
     }
 
     /** Creates a controller mapping for the specified entity. */
-    public EntityControl (ItemIdent ident, int controllerOid)
+    public EntityControl (Controllable controlled, int controllerOid)
     {
-        this.ident = ident;
         this.controllerOid = controllerOid;
+        this.controlled = controlled;
     }
 
     // from interface DSet.Entry
     public Comparable getKey ()
     {
-        return ident;
+        return controlled.getKey();
     }
 }

@@ -8,20 +8,18 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.presents.dobj.DSet_Entry;
 
-import com.threerings.msoy.item.data.all.ItemIdent;
-
 /**
- * Used to coordinate the "control" of a particular scene entity. The client that is in control of
- * the entity is the only one that will be allowed to make changes to the entity's distributed
- * state.
+ * Used to coordinate the "control" of some executable client content - currently either a room
+ * entity (item) or an AVRG. This mechanism elevates one specific client-side instance to play the
+ * role usually reserved for server-side logic.
  */
 public class EntityControl extends SimpleStreamableObject
     implements DSet_Entry
 {
-    /** Identifies the item being controlled. */
-    public var ident :ItemIdent;
+    /** Identifies what is being controlled. */
+    public var controlled :Controllable;
 
-    /** The body oid of the client currently controlling this entity. */
+    /** The body oid of the client in control of this controllable. */
     public var controllerOid :int;
 
     public function EntityControl ()
@@ -31,14 +29,14 @@ public class EntityControl extends SimpleStreamableObject
     // from interface DSet_Entry
     public function getKey () :Object
     {
-        return ident;
+        return controlled.getKey();
     }
 
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        ident = (ins.readObject() as ItemIdent);
+        controlled = (ins.readObject() as Controllable);
         controllerOid = ins.readInt();
     }
 
@@ -46,7 +44,7 @@ public class EntityControl extends SimpleStreamableObject
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeObject(ident);
+        out.writeObject(controlled);
         out.writeInt(controllerOid);
     }
 }

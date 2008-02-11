@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -51,10 +52,12 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.client.RoomService;
+import com.threerings.msoy.world.data.Controllable;
+import com.threerings.msoy.world.data.ControllableEntity;
+import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.EffectData;
-import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
@@ -197,7 +200,7 @@ public class RoomManager extends SpotSceneManager
     public void requestControl (ClientObject caller, ItemIdent item)
     {
         MemberObject member = (MemberObject) caller;
-        boolean gotControl = checkAssignControl(member, item, "requestControl");
+        boolean gotControl = ensureEntityControl(member, item, "requestControl");
         // TODO: throw invocationexception on failure?
     }
 
@@ -215,7 +218,7 @@ public class RoomManager extends SpotSceneManager
 
         // if this client does not currently control this entity; ignore the request; if no one
         // controls it, this will assign this client as controller
-        if (isAction && !checkAssignControl(who, item, "triggerAction")) {
+        if (isAction && !ensureEntityControl(who, item, "triggerAction")) {
             log.info("Dropping sprite message for lack of control [who=" + who.who() +
                      ", item=" + item + ", name=" + name + "].");
             return;
@@ -267,7 +270,7 @@ public class RoomManager extends SpotSceneManager
 
         // if this client does not currently control this entity; ignore the request; if no one
         // controls it, this will assign this client as controller
-        if (!checkAssignControl(who, item, "setState")) {
+        if (!ensureEntityControl(who, item, "setState")) {
             log.info("Dropping change state for lack of control [who=" + who.who() +
                      ", item=" + item + ", state=" + state + "].");
             return;
@@ -466,7 +469,7 @@ public class RoomManager extends SpotSceneManager
         // if this client does not currently control this entity; ignore the request; if no one
         // controls it, this will assign this client as controller
         MemberObject who = (MemberObject) caller;
-        if (!checkAssignControl(who, item, "changeLocation")) {
+        if (!ensureEntityControl(who, item, "changeLocation")) {
             return;
         }
 
@@ -535,6 +538,36 @@ public class RoomManager extends SpotSceneManager
     {
         // we want to explicitly disable the standard method calling by name that we allow in more
         // trusted environments
+    }
+
+    /**
+     * Checks to see if an item is being controlled by any client. If not, the calling client is
+     * assigned as the item's controller and true is returned. If the item is already being
+     * controlled by the calling client, true is returned. Otherwise false is returned (indicating
+     * that another client currently has control of the item).
+     */
+    public boolean ensureEntityControl (MemberObject who, ItemIdent item, String from)
+    {
+        Integer memberOid = _avatarIdents.get(item);
+        if (memberOid != null) {
+            if (who.getOid() == memberOid.intValue()) {
+                // yes, you may control your own avatar
+                return true;
+            }
+            log.warning("Some user is trying to control another's avatar! " +
+                "[who=" + who.who() + ", avatar=" + item + "].");
+            return false;
+        }
+        // otherwise, it's for some entity other than a user's avatar...
+    
+        EntityControl ctrl = _roomObj.controllers.get(item);
+        if (ctrl == null) {
+            log.info("Assigning control [item=" + item + ", to=" + who.who() + "].");
+            _roomObj.addToControllers(
+                new EntityControl(new ControllableEntity(item), who.getOid()));
+            return true;
+        }
+        return (ctrl.controllerOid == who.getOid());
     }
 
     @Override // from PlaceManager
@@ -786,44 +819,15 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
-     * Checks to see if an item is being controlled by any client. If not, the calling client is
-     * assigned as the item's controller and true is returned. If the item is already being
-     * controlled by the calling client, true is returned. Otherwise false is returned (indicating
-     * that another client currently has control of the item).
-     */
-    public boolean checkAssignControl (MemberObject who, ItemIdent item, String from)
-    {
-        Integer memberOid = _avatarIdents.get(item);
-        if (memberOid != null) {
-            if (who.getOid() == memberOid.intValue()) {
-                // yes, you may control your own avatar
-                return true;
-            }
-            log.warning("Some user is trying to control another's avatar! " +
-                "[who=" + who.who() + ", avatar=" + item + "].");
-            return false;
-        }
-        // otherwise, it's for some entity other than a user's avatar...
-
-        EntityControl ctrl = _roomObj.controllers.get(item);
-        if (ctrl == null) {
-            log.info("Assigning control [item=" + item + ", to=" + who.who() + "].");
-            _roomObj.addToControllers(new EntityControl(item, who.getOid()));
-            return true;
-        }
-        return (ctrl.controllerOid == who.getOid());
-    }
-
-    /**
      * Reassigns all scene entities controlled by the specified client to new controllers.
      */
     protected void reassignControllers (int bodyOid)
     {
         // determine which items were under the control of this user
-        ArrayList<ItemIdent> items = new ArrayList<ItemIdent>();
+        List<Controllable> items = new ArrayList<Controllable>();
         for (EntityControl ctrl : _roomObj.controllers) {
             if (ctrl.controllerOid == bodyOid) {
-                items.add(ctrl.ident);
+                items.add(ctrl.controlled);
             }
         }
         if (items.size() == 0) {
@@ -833,8 +837,8 @@ public class RoomManager extends SpotSceneManager
         // clear out the old controller mappings
         try {
             _roomObj.startTransaction();
-            for (ItemIdent item : items) {
-                _roomObj.removeFromControllers(item);
+            for (Controllable item : items) {
+                _roomObj.removeFromControllers(item.getKey());
             }
         } finally {
             _roomObj.commitTransaction();
@@ -847,7 +851,7 @@ public class RoomManager extends SpotSceneManager
     /**
      * Handles a request to select a controller for the supplied set of items.
      */
-    protected boolean assignControllers (Collection<ItemIdent> items)
+    protected boolean assignControllers (Collection<Controllable> controllables)
     {
         // determine the available controllers
         HashIntMap<Controller> controllers = new HashIntMap<Controller>();
@@ -857,8 +861,8 @@ public class RoomManager extends SpotSceneManager
             }
         }
 
-        // if we have no potential controllers, the items will remain uncontrolled (which is much
-        // better than them being out of control :)
+        // if we have no potential controllers, the controllables will remain uncontrolled (which
+        // is much better than them being out of control :)
         if (controllers.size() == 0) {
             return false;
         }
@@ -867,7 +871,7 @@ public class RoomManager extends SpotSceneManager
         for (EntityControl ctrl : _roomObj.controllers) {
             Controller owner = controllers.get(ctrl.controllerOid);
             if (owner != null) {
-                owner.items++;
+                owner.load++;
             }
         }
 
@@ -876,12 +880,12 @@ public class RoomManager extends SpotSceneManager
         try {
             _roomObj.startTransaction();
             TreeSet<Controller> set = new TreeSet<Controller>(controllers.values());
-            for (ItemIdent item : items) {
+            for (Controllable controllable : controllables) {
                 Controller ctrl = set.first();
                 set.remove(ctrl);
-                ctrl.items++;
-                log.info("Assigning control [item=" + item + ", to=" + ctrl.bodyOid + "].");
-                _roomObj.addToControllers(new EntityControl(item, ctrl.bodyOid));
+                ctrl.load++;
+                log.info("Assigning control [item=" + controllable + ", to=" + ctrl.bodyOid + "].");
+                _roomObj.addToControllers(new EntityControl(controllable, ctrl.bodyOid));
                 set.add(ctrl);
             }
 
@@ -999,7 +1003,7 @@ public class RoomManager extends SpotSceneManager
     protected static class Controller implements Comparable<Controller>
     {
         public int bodyOid;
-        public int items;
+        public int load;
 
         public Controller (int bodyOid) {
             this.bodyOid = bodyOid;
@@ -1012,7 +1016,7 @@ public class RoomManager extends SpotSceneManager
             return bodyOid;
         }
         public int compareTo (Controller other) {
-            return (items - other.items);
+            return (load - other.load);
         }
     } // End: static class Controller
 

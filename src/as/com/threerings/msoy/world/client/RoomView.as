@@ -78,6 +78,8 @@ import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
+import com.threerings.msoy.world.data.Controllable;
+import com.threerings.msoy.world.data.ControllableEntity;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
@@ -363,7 +365,12 @@ public class RoomView extends AbstractRoomView
         } else if (RoomObject.CONTROLLERS == name) {
             var ctrl :EntityControl = (event.getEntry() as EntityControl);
             if (ctrl.controllerOid == _ctx.getMemberObject().getOid()) {
-                dispatchGotControl(ctrl.ident);
+                if (ctrl.controlled is ControllableEntity) {
+                    dispatchEntityGotControl(ctrl.controlled.getKey() as ItemIdent);
+
+                } else {
+                    log.debug("AVRG got control [gameId=" + ctrl.controlled.getKey() + "]");
+                }
             }
 
         } else if (RoomObject.EFFECTS == name) {
@@ -660,7 +667,7 @@ public class RoomView extends AbstractRoomView
     /**
      * Called when control of an entity is assigned to us.
      */
-    public function dispatchGotControl (ident :ItemIdent) :void
+    public function dispatchEntityGotControl (ident :ItemIdent) :void
     {
         var sprite :MsoySprite = (_entities.get(ident) as MsoySprite);
         if (sprite != null) {
