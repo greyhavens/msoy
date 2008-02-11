@@ -189,11 +189,13 @@ public class Frame
 
     /**
      * Clears the open content and restores the client to its full glory.
+     *
+     * @return true if the content was closed, false if we were not displaying content.
      */
-    public static void closeContent ()
+    public static boolean closeContent ()
     {
         if (_closeToken == null) {
-            return;
+            return false;
         }
 
         if (_maximizeContent.isAttached()) {
@@ -212,6 +214,7 @@ public class Frame
         _content = null;
         _contlist = null;
         _scroller = null;
+        return true;
     }
 
     /**
@@ -461,21 +464,14 @@ public class Frame
         }
     }
 
-    protected static class Header extends SmartTable
+    protected static abstract class Header extends SmartTable
+        implements ClickListener
     {
         public Header () {
             super("msoyHeader", 0, 0);
             setWidth("100%");
             String lpath = "/images/header/header_logo.png";
-            setWidget(0, 0, MsoyUI.createActionImage(lpath, new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WHIRLED, getLogoArg());
-                }
-            }), 1, "Logo");
-        }
-
-        protected String getLogoArg () {
-            return "";
+            setWidget(0, 0, MsoyUI.createActionImage(lpath, this), 1, "Logo");
         }
     }
 
@@ -487,6 +483,10 @@ public class Frame
             signup.setWidget(1, 0, Application.createLink("Sign up!", Page.ACCOUNT, "create"));
             setWidget(0, 1, signup, 1, "Signup");
             setWidget(0, 2, new LogonPanel(true), 1, "Logon");
+        }
+
+        public void onClick (Widget sender) {
+            History.newItem(""); // go to the main page
         }
     }
 
@@ -513,8 +513,11 @@ public class Frame
             setWidget(0, col++, CShell.app.getStatusPanel(), 1, "Right");
         }
 
-        protected String getLogoArg () {
-            return "whirledwide";
+        public void onClick (Widget sender) {
+            // if the world is open, close the content, otherwise go home
+            if (!Frame.closeContent()) {
+                Application.go(Page.WORLD, "h");
+            }
         }
     }
 
