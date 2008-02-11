@@ -553,7 +553,7 @@ public class Frame
         }
     };
 
-    protected static Header _mheader, _gheader = new GuestHeader();
+    protected static Header _mheader = new MemberHeader(), _gheader = new GuestHeader();
     protected static String _closeToken;
 
     protected static Page.Content _content;
