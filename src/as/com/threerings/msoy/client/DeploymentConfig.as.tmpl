@@ -1,4 +1,5 @@
 package com.threerings.msoy.client {
+
     // -- Auto-generated build configuration class --
     public class DeploymentConfig {
         public static const buildTime :String = "@build_time@";
@@ -10,5 +11,18 @@ package com.threerings.msoy.client {
         public static const devDeployment :Boolean = @dev_deployment@;
         public static const mediaURL :String = "@media_url@";
         public static const staticMediaURL :String = "@static_media_url@";
+
+        private static function staticInit () :void
+        {
+            if (-1 != mediaURL.indexOf(serverHost)) {
+                trace("\n\n====\n" +
+                    "WARNING! WARNING!\n" +
+                    "To properly test whirled, you need to have your media loaded " +
+                    "from a different address than the server. Try setting the media_url " +
+                    "in your server.properties to the IP address of your server." +
+                    "\n====\n\n");
+            }
+        }
+        staticInit();
     }
 }
