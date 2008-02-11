@@ -36,19 +36,10 @@ import com.threerings.util.ValueEvent;
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.world.client.OccupantSprite;
 
-import com.threerings.msoy.utils.Base64Receiver;
-
 public class AvatarViewerComp extends VBox
 {
     public function AvatarViewerComp ()
     {
-        // configure a receiver to receive our javascript bytes
-        try {
-            new Base64Receiver(loadBytes, "setMediaBytes");
-        } catch (err :Error) {
-            // don't worry if we can't set it up.
-            trace(err);
-        }
     }
 
     /**
