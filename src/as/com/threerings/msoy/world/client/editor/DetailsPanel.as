@@ -108,34 +108,31 @@ public class DetailsPanel extends BasePanel
                 input.width = 40;
             });
 
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.location"), [6, 1]);
-        GridUtil.addRow(grid,
-                        Msgs.EDITING.get("l.axis_x"), _locx,
-                        Msgs.EDITING.get("l.axis_y"), _locy,
-                        Msgs.EDITING.get("l.axis_z"), _locz);
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.scale"), [6, 1]);
-        GridUtil.addRow(grid,
-                        Msgs.EDITING.get("l.scale_x"), _scalex,
-                        Msgs.EDITING.get("l.scale_y"), _scaley);
-        GridUtil.addRow(grid, "", [6, 1]);
-
-        // new grid for special buttons
+        var resetLocation :CommandButton =
+            new CommandButton("", _controller.actionResetTarget, [ true, false ]);
+        resetLocation.styleName = "roomEditResetLocation";
+        resetLocation.toolTip = Msgs.EDITING.get("i.reset_location");
+        resetLocation.height = 17;
         
-        grid = new Grid();
-        grid.percentWidth = 100;
-        addChild(grid);
+        var resetScale :CommandButton =
+            new CommandButton("", _controller.actionResetTarget, [ false, true ]);
+        resetScale.styleName = "roomEditResetScale";
+        resetScale.toolTip = Msgs.EDITING.get("i.reset_scale");
+        resetScale.height = 17;
 
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.location"), [4, 1]);
+        GridUtil.addRow(grid, _locx, _locy, _locz, resetLocation);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.scale"), [4, 1]);
+        GridUtil.addRow(grid, _scalex, _scaley, "", resetScale);
+        GridUtil.addRow(grid, "", [3, 1]);
+
+        // more options below the grid
+        
         _noscale = new CheckBox();
         _noscale.label = Msgs.EDITING.get("b.noscale");
         _noscale.toolTip = Msgs.EDITING.get("b.noscale_tip");
         _noscale.addEventListener(Event.CHANGE, applyHandler);
-
-        GridUtil.addRow(grid,
-                        new CommandButton(Msgs.EDITING.get("b.reset_location"),
-                                          _controller.resetTarget, [ true, false ]),
-                        new CommandButton(Msgs.EDITING.get("b.reset_scale"),
-                                          _controller.resetTarget, [ false, true ]));
-        GridUtil.addRow(grid, _noscale, [2, 1]);
+        addChild(_noscale);
         
         addChild(makePanelButtons());
     }

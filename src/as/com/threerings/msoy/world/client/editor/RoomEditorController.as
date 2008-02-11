@@ -302,6 +302,25 @@ public class RoomEditorController
         }
     }        
     
+    /** Resets the edited furni to the base location, or size, or both. */
+    public function actionResetTarget (resetLocation :Boolean, resetSize :Boolean) :void
+    {
+        var original :FurniData = _edit.target.getFurniData().clone() as FurniData;
+        
+        if (resetLocation) {
+            _edit.updateTargetLocation(new MsoyLocation(0.5, 0.5, 0.5));
+        }
+
+        if (resetSize) {
+            _edit.updateTargetScale(1.0, 1.0);
+        }
+
+        var current :FurniData = _edit.target.getFurniData();
+        if (! original.equivalent(current)) {
+            updateFurni(original, current);
+        }
+    }
+
 
     /** Tells the room controller to start editing the specified door. */
     public function actionEditDoor (data :FurniData) :void
@@ -340,18 +359,6 @@ public class RoomEditorController
     {
         _edit.setAdvancedMode(advanced);
         _panel.displayAdvancedPanels(advanced);
-    }
-
-    /** Resets the edited furni to the base location, or size, or both. */
-    public function resetTarget (resetLocation :Boolean, resetSize :Boolean) :void
-    {
-        if (resetLocation) {
-            _edit.updateTargetLocation(new MsoyLocation(0.5, 0.5, 0.5));
-        }
-
-        if (resetSize) {
-            _edit.updateTargetScale(1.0, 1.0);
-        }
     }
 
     // Functions for highlighting targets and displaying the furni editing UI

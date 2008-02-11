@@ -699,6 +699,20 @@ Window {
   verticalAlign: "middle";
 }
 
+.roomEditResetLocation {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_location.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_location.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_location.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_location.png");
+}
+
+.roomEditResetScale {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_scale.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_scale.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_scale.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_scale.png");
+}
+
 .logonPanel {
   paddingRight: 2;
 }

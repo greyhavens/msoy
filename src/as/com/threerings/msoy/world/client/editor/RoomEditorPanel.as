@@ -134,15 +134,15 @@ public class RoomEditorPanel extends FloatingPanel
     /** Add or remove advanced panels from display. */
     public function displayAdvancedPanels (show :Boolean) :void
     {
-        var containsDefault :Boolean = _contents.contains(_defaultPanel);
-        var containsAdvanced :Boolean = _contents.contains(_advancedPanels);
+        var containsDefault :Boolean = _switchablePanels.contains(_defaultPanel);
+        var containsAdvanced :Boolean = _switchablePanels.contains(_advancedPanels);
 
         if (show) {
-            if (containsDefault) { _contents.removeChild(_defaultPanel); }
-            if (! containsAdvanced) { _contents.addChild(_advancedPanels); }
+            if (containsDefault) { _switchablePanels.removeChild(_defaultPanel); }
+            if (! containsAdvanced) { _switchablePanels.addChild(_advancedPanels); }
         } else {
-            if (! containsDefault) { _contents.addChild(_defaultPanel); }
-            if (containsAdvanced) { _contents.removeChild(_advancedPanels); }
+            if (! containsDefault) { _switchablePanels.addChild(_defaultPanel); }
+            if (containsAdvanced) { _switchablePanels.removeChild(_advancedPanels); }
         }
     }
 
@@ -203,17 +203,19 @@ public class RoomEditorPanel extends FloatingPanel
         namebar.addChild(_room = new RoomPanel(_controller));
         addChild(namebar);
 
-        // container for everything else
-        _contents = new VBox();
-        _contents.styleName = "roomEditContents";
-        _contents.percentWidth = 100;
-        addChild(_contents);
+        // container for item stuffs
         
-        // sub-container for object name and buttons
+        var contents :Grid = new Grid();
+        contents.styleName = "roomEditContents";
+        contents.percentWidth = 100;
+        addChild(contents);
+        
+        // item name combo box
+        
         var box :Box = new HBox();
         box.styleName = "roomEditButtonBar";
         box.percentWidth = 100;
-        _contents.addChild(box);
+        GridUtil.addRow(contents, box, [3, 1]);
         
         _namebox = new ComboBox();
         _namebox.percentWidth = 100;
@@ -223,17 +225,30 @@ public class RoomEditorPanel extends FloatingPanel
         _namebox.addEventListener(ListEvent.CHANGE, nameListChanged);
         box.addChild(_namebox);
 
-        // buttons galore
-        
         var spacer :VBox = new VBox();
         spacer.percentWidth = 100;
         spacer.height = 10;
-        _contents.addChild(spacer);
+        GridUtil.addRow(contents, spacer, [3, 1]);
 
+        // two containers, one for basic/advanced buttons, the other for
+        // buttons that show up in all contexts
+        
+        _switchablePanels = new VBox();
+
+        var div :SkinnableImage = new SkinnableImage();
+        div.styleName = "roomEditDiv";
+
+        var right :VBox = new VBox();
+        right.styleName = "roomEditRight";
+
+        GridUtil.addRow(contents, _switchablePanels, div, right);
+                
         _defaultPanel = new HBox();
-        _contents.addChild(_defaultPanel);
+        _switchablePanels.addChild(_defaultPanel);
 
-        // left side buttons
+        
+        // now let's populate the basic buttons panel
+        
         var leftgrid :Grid = new Grid();
         leftgrid.styleName = "roomEditLeft";
         leftgrid.percentWidth = 100;
@@ -273,41 +288,39 @@ public class RoomEditorPanel extends FloatingPanel
                                          "b.flip_v", _targetButtons));
 
         // divider
-        var div :SkinnableImage = new SkinnableImage();
+        div = new SkinnableImage();
         div.styleName = "roomEditDiv";
         _defaultPanel.addChild(div);
         
-        // right side buttons
-        var rightgrid :Grid = new Grid();
-        rightgrid.styleName = "roomEditRight";
-        rightgrid.percentWidth = 100;
-        _defaultPanel.addChild(rightgrid);
+        // item actions
+        var middle :VBox = new VBox();
+        middle.styleName = "roomEditRight";
+        _defaultPanel.addChild(middle);
 
-        GridUtil.addRow(rightgrid,
-                        makeActionButton(_controller.actionDelete, "roomEditTrash",
-                                         "b.put_away", _deleteButtons),
-                        makeActionButton(displayFurnitureInventory, "roomEditAdd",
-                                         "b.add_item", null));
-        GridUtil.addRow(rightgrid,
-                        makeActionButton(noop, "roomEditDoor",
-                                         "b.make_door", _actionButtons),
-                        makeActionButton(noop, "roomEditLink",
+        middle.addChild(makeActionButton(_controller.actionDelete, "roomEditTrash",
+                                         "b.put_away", _deleteButtons));
+        middle.addChild(makeActionButton(noop, "roomEditDoor",
+                                         "b.make_door", _actionButtons));
+        middle.addChild(makeActionButton(noop, "roomEditLink",
                                          "b.make_link", _actionButtons));
-        GridUtil.addRow(rightgrid,
-                        makeActionButton(_controller.actionUndo, "roomEditUndo",
-                                         "b.undo", _undoButtons),
-                        makeActionButton(_controller.actionUndo, "roomEditUndoAll",
-                                         "b.undo_all", null, false));
+        
+
+        right.addChild(makeActionButton(displayFurnitureInventory, "roomEditAdd",
+                                        "b.add_item", null));
+        right.addChild(makeActionButton(_controller.actionUndo, "roomEditUndo",
+                                        "b.undo", _undoButtons));
+        right.addChild(makeActionButton(_controller.actionUndo, "roomEditUndoAll",
+                                        "b.undo_all", null, false));
 
         updateTargetSelected(null); // disable most buttons
 
         
-        // now create collapsing sections
+        // now populate advanced settings panel
 
         _advancedPanels = new VBox();
         _advancedPanels.styleName = "roomEditAdvanced";
         _advancedPanels.percentWidth = 100;
-        _contents.addChild(_advancedPanels);
+        _switchablePanels.addChild(_advancedPanels);
 
         var addPanel :Function = function (label :String, panel :UIComponent) :Array {
             var hr :HRule = new HRule();
@@ -348,8 +361,7 @@ public class RoomEditorPanel extends FloatingPanel
     protected static const Y_DELTA :Number = 0.1;
     protected static const SCALEMULTI :Number = 1.2;
         
-    protected var _contents :VBox;
-
+    protected var _switchablePanels :Box;
     protected var _undoButtons :Array; // of CommandButton
     protected var _deleteButtons :Array; // of CommandButton
     protected var _actionButtons :Array; // of CommandButton
@@ -361,6 +373,7 @@ public class RoomEditorPanel extends FloatingPanel
 
     protected var _defaultPanel :Box;
     protected var _advancedPanels :Box;
+    protected var _genericIcons :Box;
     
     protected var _room :RoomPanel;
     protected var _namebox :ComboBox;
