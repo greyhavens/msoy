@@ -64,6 +64,9 @@ public class index extends Page
         } else if (action.equals("t")) {
             setContent(new TrophyCasePanel(args.get(1, 0)));
 
+        } else if (action.equals("g")) {
+            setContent(new GameGenrePanel((byte)args.get(1, 0)));
+
         } else {
             setContent(new ArcadePanel());
         }

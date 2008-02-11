@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.GameDetail;
+import com.threerings.msoy.web.data.GameGenreData;
 import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.PlayerRating;
@@ -81,5 +82,11 @@ public interface GameService extends RemoteService
      * Loads up information for the arcade.
      */
     public ArcadeData loadArcadeData (WebIdent ident)
+        throws ServiceException;
+
+    /**
+     * Loads up information on the specified game genre.
+     */
+    public GameGenreData loadGameGenre (WebIdent ident, byte genre)
         throws ServiceException;
 }

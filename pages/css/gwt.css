@@ -436,6 +436,7 @@ img, embed, applet, object {
   border-top: 1px solid #000000;
   border-bottom: 1px solid #000000;
   background: #222222;
+  color: #FFFFFF;
 }
 
 .pagedGrid .Footer {
@@ -445,7 +446,6 @@ img, embed, applet, object {
 
 .pagedGrid .Controls {
   width: 100%;
-  color: #000000;
   padding-left: 10px;
   padding-right: 10px;
   font-size: 12px;

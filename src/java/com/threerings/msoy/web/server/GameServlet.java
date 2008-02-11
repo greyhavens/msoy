@@ -52,6 +52,7 @@ import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GameDetail;
+import com.threerings.msoy.web.data.GameGenreData;
 import com.threerings.msoy.web.data.GameInfo;
 import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.PlayerRating;
@@ -425,7 +426,45 @@ public class GameServlet extends MsoyServiceServlet
             return data;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failure loading arcade data [for=" + ident + "].");
+            log.log(Level.WARNING, "loadArcadeData failed [for=" + ident + "].");
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface GameService
+    public GameGenreData loadGameGenre (WebIdent ident, byte genre)
+        throws ServiceException
+    {
+        try {
+            GameGenreData data = new GameGenreData();
+            GameRepository grepo = MsoyServer.itemMan.getGameRepository();
+
+            // load up all the games in this genre
+            List<GameRecord> games = grepo.loadGenre(genre, -1);
+
+            // convert them to game info objects
+            List<GameInfo> infos = Lists.newArrayList();
+            for (GameRecord grec : games) {
+                infos.add(grec.toGameInfo());
+            }
+            data.games = infos;
+
+            // determine the "featured" game
+            if (games.size() > 0) {
+                GameRecord frec = RandomUtil.pickRandom(games.iterator(), Math.min(5, games.size()));
+                GameDetailRecord gdr = grepo.loadGameDetail(frec.gameId);
+                data.featuredGame = (FeaturedGameInfo)frec.toGameInfo(new FeaturedGameInfo());
+                data.featuredGame.avgDuration = gdr.toGameDetail().getAverageDuration();
+                int[] players = getMinMaxPlayers((Game)frec.toItem());
+                data.featuredGame.minPlayers = players[0];
+                data.featuredGame.maxPlayers = players[1];
+                // TODO: load creator name
+            }
+
+            return data;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "loadGameGenre failed [for=" + ident + ", genre=" + genre + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }

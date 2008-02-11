@@ -38,7 +38,7 @@ public class FeaturedGamePanel extends SmartTable
         SmartTable info = new SmartTable(0, 0);
         info.setText(row++, 0, CGame.msgs.featuredOnline(""+game.playersOnline), 2, "Online");
         info.setWidget(row++, 0, WidgetUtil.makeShim(5, 5));
-        info.setText(row++, 0, game.description, 2, "Descrip");
+        info.setText(row++, 0, truncate(game.description), 2, "Descrip");
         info.setWidget(row++, 0, WidgetUtil.makeShim(5, 5));
         info.setWidget(row++, 0, new GameBitsPanel(null, game.genre, game.minPlayers,
                                                    game.maxPlayers, game.avgDuration, 0));
@@ -47,4 +47,12 @@ public class FeaturedGamePanel extends SmartTable
         // display play now buttons in column 3
         setWidget(1, 2, new PlayPanel(game.gameId, game.minPlayers, game.maxPlayers), 1, "Buttons");
     }
+
+    protected static String truncate (String descrip)
+    {
+        return (descrip.length() <= MAX_DESCRIP_LENGTH) ? descrip :
+            descrip.substring(0, MAX_DESCRIP_LENGTH-3) + "...";
+    }
+
+    protected static final int MAX_DESCRIP_LENGTH = 100;
 }

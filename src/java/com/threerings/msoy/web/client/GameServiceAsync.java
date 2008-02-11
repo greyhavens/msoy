@@ -54,4 +54,9 @@ public interface GameServiceAsync
      * The asynchronous version of {@link GameService#loadArcadeData}.
      */
     public void loadArcadeData (WebIdent ident, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GameService#loadGameGenre}.
+     */
+    public void loadGameGenre (WebIdent ident, byte genre, AsyncCallback callback);
 }

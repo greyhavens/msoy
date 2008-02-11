@@ -231,29 +231,29 @@
   font-weight: bold;
 }
 
-.arcade .Genre .Game {
+.gameEntry {
   width: 100%;
   border-bottom: 1px solid #DADADA;
   border-left: 1px dotted;
   border-right: 1px dotted;
 }
 
-.arcade .Genre .Game .Thumb {
+.gameEntry .Thumb {
   width: 80px;
   height: 40px;
   padding-right: 5px;
 }
 
-.arcade .Genre .Game .Name {
+.gameEntry .Name {
   font-size: 12px;
 }
 
-.arcade .Genre .Game .Descrip {
+.gameEntry .Descrip {
   font-size: 10px;
   color: #AABDC8;
 }
 
-.arcade .Genre .Game .Players {
+.gameEntry .Players {
   font-size: 10px;
 }
 
@@ -316,4 +316,9 @@
 .featuredGame .Buttons {
   vertical-align: top;
   padding-top: 5px;
+}
+
+.gameGenre .gameEntry {
+  border: none;
+  width: 220px;
 }
