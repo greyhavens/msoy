@@ -349,6 +349,27 @@ public class MsoySprite extends DataPackMediaContainer
     }
 
     /**
+     * Returns the center point of the media object, after scaling.
+     */
+    public function getMediaCentroid () :Point
+    {
+        var anchor :Point = new Point(getActualWidth() / 2, getActualHeight() / 2);
+
+        // if the furni is mirrored along one of the axes, undo that for anchor calculation
+        var xscale :Number = _locScale * getMediaScaleX() * _fxScaleX;
+        if (xscale < 0) {
+            anchor.x = -anchor.x;
+        }
+
+        var yscale :Number = _locScale * getMediaScaleY() * _fxScaleY;
+        if (yscale < 0) {
+            anchor.y = -anchor.y;
+        }
+
+        return anchor;
+    }
+
+    /**
      * Turn on or off the glow surrounding this sprite.
      */
     public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :String
@@ -568,7 +589,7 @@ public class MsoySprite extends DataPackMediaContainer
         _media.x = (xscale >= 0) ? 0 : Math.abs(Math.min(_w, getMaxContentWidth()) * xscale);
         _media.y = (yscale >= 0) ? 0 : Math.abs(Math.min(_h, getMaxContentHeight()) * yscale);
 
-        updateMediaAfterRotation(xscale, yscale);
+        updateMediaAfterRotation();
         
         // we may need to be repositioned
         locationUpdated();
@@ -578,22 +599,18 @@ public class MsoySprite extends DataPackMediaContainer
      * Called when media scale, rotation or location changes, adjusts the media position
      * to look like the sprite is rotated around its center.
      */
-    protected function updateMediaAfterRotation (xscale :Number, yscale :Number) :void
+    protected function updateMediaAfterRotation () :void
     {
         if (_media.rotation == 0) {
             return; // nothing to adjust
         }
 
         // rotation anchor as a vector from the origin in the upper left
-        var anchor :Point = new Point(getActualWidth() / 2, getActualHeight() / 2);
+        var anchor :Point = getMediaCentroid();
         if (anchor.x == 0 && anchor.y == 0) {
             return; // if the anchor is already in the upper left, we don't need to shift anything
         }
-
-        // if the furni is mirrored along one of the axes, undo that for anchor calculation
-        if (xscale < 0) { anchor.x = -anchor.x; }
-        if (yscale < 0) { anchor.y = -anchor.y; }
-        
+       
         // convert from Flash's whacked "degrees clockwise" to standard radians counter-clockwise,
         // and rotate the anchor vector by the given angle (caution: y+ points down, not up!)
         var theta :Number = _media.rotation * Math.PI / -180;

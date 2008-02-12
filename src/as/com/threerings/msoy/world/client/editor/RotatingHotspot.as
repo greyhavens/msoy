@@ -13,8 +13,8 @@ import com.threerings.util.Log;
 import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.world.client.ClickLocation;
+import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomMetrics;
-import com.threerings.msoy.world.client.FurniSprite;
 
 /**
  * Hotspot that rotates the object.
@@ -40,7 +40,7 @@ public class RotatingHotspot extends Hotspot
     override protected function startAction (event :MouseEvent) :void
     {
         super.startAction(event);
-        _originalScale = new Point(_editor.target.getMediaScaleX(), _editor.target.getMediaScaleY());
+        _originalRotation = _editor.target.getMediaRotation();
     }
 
     // @Override from Hotspot
@@ -54,7 +54,7 @@ public class RotatingHotspot extends Hotspot
     override protected function endAction (event :MouseEvent) :void
     {
         super.endAction(event);
-        _originalScale = null;
+        _originalRotation = 0;
     }
 
     // @Override from Hotspot
@@ -69,37 +69,43 @@ public class RotatingHotspot extends Hotspot
         _displayMouseOver = new c() as DisplayObject;
     }
 
-    /** Moves the furni over to the new location. */
-    protected function updateTargetRotation (sx :Number, sy :Number) :void
-    {
-        // testing only! this version just moves the furni around, doesn't actually rotate
-        
-        sx -= (_anchor.x - _originalHotspot.x);
-        sy -= (_anchor.y - _originalHotspot.y);
-
-        var cloc :ClickLocation = _editor.roomView.layout.pointToFurniLocation(
-            sx, sy, _editor.target.getLocation(), RoomMetrics.N_UP, false);
-
-        if (! _advancedMode) {
-            cloc.loc.y = MathUtil.clamp(cloc.loc.y, 0, 1);
-        }
-        
-        _editor.updateTargetLocation(cloc.loc);
-    }
-
     override protected function getToolTip () :String
     {
         return Msgs.EDITING.get("i.rotation");
     }
 
+    /** Moves the furni over to the new location. */
+    protected function updateTargetRotation (sx :Number, sy :Number) :void
+    {
+        var target :MsoySprite = _editor.target;
+        if (target == null) {
+            return;
+        }
+        
+        var center :Point = target.getMediaCentroid();
+
+        var originalTheta :Number = findAngle(center, target.globalToLocal(_anchor));
+        var currentTheta :Number = findAngle(center, target.globalToLocal(new Point(sx, sy)));
+        trace("ORIGINAL: " + originalTheta + ", CURRENT: " + currentTheta);
+
+        var delta :Number = currentTheta - originalTheta;
+        delta = delta * 180 / Math.PI;
+
+        _editor.updateTargetRotation(_originalRotation + delta);
+    }
+
+    protected function findAngle (from :Point, to :Point) :Number
+    {
+        var v :Point = to.subtract(from);
+        trace("VECTOR: " + v);
+        return Math.atan2(v.y, v.x);
+    }       
+
     /** Specifies which corner of the furni we occupy. */
     protected var _corner :Point;
     
-    /** Sprite scale at the beginning of modifications. Only valid during action. */
-    protected var _originalScale :Point;
-
-    /** Bitmap used for hotspot with no scale locking. */
-    protected var _displayUnlocked :DisplayObject;
+    /** Sprite rotation at the beginning of modifications. Only valid during action. */
+    protected var _originalRotation :Number;
 
     // Bitmaps galore!
     [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_rotate.png")]
