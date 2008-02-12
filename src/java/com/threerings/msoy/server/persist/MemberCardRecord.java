@@ -84,7 +84,14 @@ public class MemberCardRecord extends PersistentRecord
      */
     public MemberCard toMemberCard ()
     {
-        MemberCard card = new MemberCard();
+        return toMemberCard(new MemberCard());
+    }
+
+    /**
+     * Populates the supplied runtime record with data from this persistent record.
+     */
+    public MemberCard toMemberCard (MemberCard card)
+    {
         card.name = new MemberName(name, memberId);
         if (photoHash != null) {
             card.photo = new MediaDesc(photoHash, photoMimeType, photoConstraint);

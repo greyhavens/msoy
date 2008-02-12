@@ -166,10 +166,10 @@ public class index extends Page
 
         case LaunchConfig.FLASH_LOBBIED:
             if (gameOid <= 0) {
-                // TEMP: mdb alternate business in progress
-                if (config.server != null && config.server.indexOf("bering") != -1) {
-                    WorldClient.displayFlashLobby(config, action);
-                } else {
+//                 // TEMP: mdb alternate business in progress
+//                 if (config.server != null && config.server.indexOf("bering") != -1) {
+//                     WorldClient.displayFlashLobby(config, action);
+//                 } else {
                     String hostPort = "&ghost=" + config.server + "&gport=" + config.port;
                     if (action.equals("m") || action.equals("f") || action.equals("s")) {
                         WorldClient.displayFlash(
@@ -177,7 +177,7 @@ public class index extends Page
                     } else {
                         WorldClient.displayFlash("gameLobby=" + config.gameId + hostPort);
                     }
-                }
+//                 }
             } else {
                 WorldClient.displayFlash("gameLocation=" + gameOid);
             }

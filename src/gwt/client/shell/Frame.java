@@ -68,6 +68,10 @@ public class Frame
             }
         });
 
+        // create our default headers
+        _mheader = new MemberHeader();
+        _gheader = new GuestHeader();
+
         // if we're tall enough, handle scrolling ourselves
         Window.enableScrolling(windowTooShort());
         Window.addWindowResizeListener(_resizer);
@@ -556,7 +560,7 @@ public class Frame
         }
     };
 
-    protected static Header _mheader = new MemberHeader(), _gheader = new GuestHeader();
+    protected static Header _mheader, _gheader;
     protected static String _closeToken;
 
     protected static Page.Content _content;

@@ -43,6 +43,7 @@ import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.HostedGame;
+import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -79,6 +80,7 @@ import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -86,6 +88,7 @@ import com.threerings.msoy.web.client.WorldService;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MyWhirledData;
+import com.threerings.msoy.web.data.OnlineMemberCard;
 import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
@@ -150,95 +153,45 @@ public class WorldServlet extends MsoyServiceServlet
     public MyWhirledData getMyWhirled (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
-        final List<FriendEntry> friends;
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        final IntSet friendIds;
         ProfileRecord profile;
         Map<Integer, String> ownedRooms = Maps.newHashMap();
         final IntSet groupMemberships = new ArrayIntSet();
         List<FeedMessage> feed;
 
         try {
-            friends = MsoyServer.memberRepo.loadFriends(memrec.memberId, -1);
-            profile = MsoyServer.profileRepo.loadProfile(memrec.memberId);
-            for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(memrec.memberId)) {
+            friendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
+            profile = MsoyServer.profileRepo.loadProfile(mrec.memberId);
+            for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(mrec.memberId)) {
                 ownedRooms.put(scene.sceneId, scene.sceneName);
             }
-            for (GroupMembershipRecord gmr : MsoyServer.groupRepo.getMemberships(memrec.memberId)) {
+            for (GroupMembershipRecord gmr : MsoyServer.groupRepo.getMemberships(mrec.memberId)) {
                 groupMemberships.add(gmr.groupId);
             }
             // load up our feed information before we start fiddling with groupMemberships
-            feed = loadFeed(memrec, groupMemberships, DEFAULT_FEED_DAYS);
+            feed = loadFeed(mrec, groupMemberships, DEFAULT_FEED_DAYS);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Fetching friend list, profile, or room list failed! " +
-                    "[memberId=" + memrec.memberId + "]", pe);
+            log.log(Level.WARNING, "getMyWhirled failed [for=" + mrec.memberId + "]", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
-        // filter out who's not online on the dobj thread
-        final HashIntMap<MemberCard> onlineFriends = new HashIntMap<MemberCard>();
-        final HashIntMap<List<Integer>> places = new HashIntMap<List<Integer>>();
-        final HashIntMap<List<Integer>> games = new HashIntMap<List<Integer>>();
-        final Map<Integer, String> chats = Maps.newHashMap();
+        // hop over to the dobj thread and figure out which of our friends are online
+        final HashIntMap<OnlineMemberCard> onlineFriends = new HashIntMap<OnlineMemberCard>();
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
-            "getMyWhirled [memberId=" + memrec.memberId + "]");
+            "getMyWhirled [memberId=" + mrec.memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 try {
                     MsoyServer.peerMan.applyToNodes(new PeerManager.Operation() {
                         public void apply (NodeObject nodeobj) {
                             MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
-                            for (FriendEntry friend : friends) {
-                                MemberLocation memLoc =
-                                    mnobj.memberLocs.get(friend.name.getMemberId());
-                                if (memLoc == null || (memLoc.sceneId == 0 && memLoc.gameId == 0)) {
-                                    continue;
-                                }
-
-                                MemberCard memberCard = new MemberCard();
-                                memberCard.name = friend.name;
-                                onlineFriends.put(memberCard.name.getMemberId(), memberCard);
-                                if (memLoc.sceneId != 0) {
-                                    List<Integer> list = places.get(memLoc.sceneId);
-                                    if (list == null) {
-                                        list = Lists.newArrayList();
-                                        places.put(memLoc.sceneId, list);
-                                    }
-                                    list.add(memberCard.name.getMemberId());
-                                }
-
-                                // don't show developer versions of games in my whirled
-                                if (memLoc.gameId != 0 && !Game.isDeveloperVersion(memLoc.gameId) &&
-                                    memLoc.gameId != Game.TUTORIAL_GAME_ID) {
-                                    List<Integer> list = games.get(memLoc.gameId);
-                                    if (list == null) {
-                                        list = Lists.newArrayList();
-                                        games.put(memLoc.gameId, list);
-                                    }
-                                    list.add(memberCard.name.getMemberId());
-                                }
-                            }
-
-                            // for now, we're going to list all active games...
-                            for (HostedGame game : mnobj.hostedGames) {
-                                if (game.placeId == Game.TUTORIAL_GAME_ID ||
-                                    Game.isDeveloperVersion(game.placeId)) {
-                                    continue; // except the tutorial or in-development games!
-                                }
-                                if (games.get(game.placeId) == null) {
-                                    List<Integer> list = Lists.newArrayList();
-                                    games.put(game.placeId, list);
-                                }
-                            }
-
-                            // check if any of our groups have a chat hosted here...
-                            for (HostedChannel chat : mnobj.hostedChannels) {
-                                if (chat.channel.type == ChatChannel.GROUP_CHANNEL) {
-                                    GroupName group = (GroupName) chat.channel.ident;
-                                    if (groupMemberships.contains(group.getGroupId())) {
-                                        chats.put(group.getGroupId(), "" + group);
-                                        groupMemberships.remove(group.getGroupId());
-                                    }
+                            for (int friendId : friendIds) {
+                                OnlineMemberCard card = mnobj.getMemberCard(friendId);
+                                if (card != null) {
+                                    onlineFriends.put(friendId, card);
                                 }
                             }
                         }
@@ -246,62 +199,40 @@ public class WorldServlet extends MsoyServiceServlet
                     waiter.requestCompleted(null);
                 } catch (Exception e) {
                     waiter.requestFailed(e);
-                    return;
                 }
             }
         });
         waiter.waitForResult();
 
-        // if we don't have four games, load up our recent ratings to further populate "My Games"
-        if (games.size() < TARGET_MYWHIRLED_GAMES) {
-            try {
-                // load up twice as many as we need because we might get single and multiplayer
-                // ratings for each game
-                for (RatingRecord record : MsoyServer.ratingRepo.getRatings(
-                         memrec.memberId, -1L, (TARGET_MYWHIRLED_GAMES - games.size())*2)) {
-                    int gameId = Math.abs(record.gameId);
-                    if (!games.containsKey(gameId)) {
-                        List<Integer> list = Lists.newArrayList();
-                        games.put(gameId, list);
-                    }
-                    if (games.size() >= TARGET_MYWHIRLED_GAMES) {
-                        break;
+        // flesh out profile data for the online friends
+        PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+        try {
+            for (MemberCardRecord mcr :
+                     MsoyServer.memberRepo.loadMemberCards(onlineFriends.keySet())) {
+                OnlineMemberCard card = onlineFriends.get(mcr.memberId);
+                mcr.toMemberCard(card);
+                // game names are not filled in by MsoyNodeObject.getMemberCard so we have to get
+                // those from the popular places snapshot
+                if (card.placeType == OnlineMemberCard.GAME_PLACE) {
+                    PopularPlacesSnapshot.Place place = pps.getGame(card.placeId);
+                    if (place != null) {
+                        card.placeName = place.name;
                     }
                 }
-            } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Failed to load recent ratings " +
-                        "[memId=" + memrec.memberId + "]", pe);
-                // oh well, just keep on keepin' on
-            }
-        }
-
-        // flesh out profile data for the online friends
-        try {
-            for (ProfileRecord friendProfile : MsoyServer.profileRepo.loadProfiles(
-                     onlineFriends.keySet())) {
-                MemberCard card = onlineFriends.get(friendProfile.memberId);
-                card.photo = friendProfile.getPhoto();
             }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to fill member cards", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+            log.log(Level.WARNING, "Failed to populate member cards.", pe);
         }
 
-        PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
-
-        MyWhirledData myWhirled = new MyWhirledData();
-        myWhirled.places = getRoomSceneCards(places, pps);
-        myWhirled.games = getGameSceneCards(games, pps);
-        myWhirled.people = Lists.newArrayList(onlineFriends.values());
-        myWhirled.feed = feed;
+        MyWhirledData data = new MyWhirledData();
         if (profile != null) {
-            myWhirled.photo = (profile.photoHash == null) ? null : profile.getPhoto();
+            data.photo = (profile.photoHash == null) ? null : profile.getPhoto();
         }
-        myWhirled.homeSceneId = memrec.homeSceneId;
-        myWhirled.ownedRooms = ownedRooms;
-        myWhirled.chats = chats;
-        myWhirled.whirledPopulation = pps.getPopulationCount();
-        return myWhirled;
+        data.homeSceneId = mrec.homeSceneId;
+        data.friends = Lists.newArrayList(onlineFriends.values());
+        data.feed = feed;
+        data.rooms = ownedRooms;
+        return data;
     }
 
     // from WorldService

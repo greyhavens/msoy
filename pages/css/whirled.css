@@ -6,22 +6,8 @@
 
 /**********  My Whirled ************/
 
-/*
-.GamesContainer {
-  margin-left: auto;
-}
-*/
-
-.myWhirled .peopleBox, .myWhirled .placesBox, .myWhirled .gamesBox, .myWhirled .auxBox {
-  margin: 7px;
-}
-
 .myWhirled .peopleBox, .auxBox {
-  width: 539px;
-}
-
-.myWhirled .placesBox, .gamesBox {
-  width: 264px;
+  width: 560px;
 }
 
 .myWhirled .auxBox a {
@@ -33,13 +19,24 @@
   text-decoration: underline;
 }
 
-.mePanelContainer {
-  vertical-align: top;
+.myWhirled .Stuff, .myWhirled .Friends {
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+  border-bottom: 1px dotted;
+  width: 100%;
+}
+
+.myWhirled .Stuff .Item {
+  font-size: 12px;
+  text-align: center;
+}
+
+.myWhirled .Stuff .Item img {
+  width: 50px;
 }
 
 .mePanel {
   width: 118px;
-  margin: 0px;
   border-bottom: 1px dotted;
 }
 
@@ -50,17 +47,6 @@
   font-size: 10px;
   text-align: center;
   padding: 5px 15px 5px 15px;
-}
-
-.mePanel .Whirledwide {
-  font-size: 12px;
-  font-weight: bold;
-  text-align: center;
-  padding: 10px 0px 3px 0px;
-}
-
-.mePanel .Whirledwide a {
-  color: black;
 }
 
 .mePanel .borderedBox {
@@ -199,7 +185,7 @@
   border-color: black;
   border-style: dotted;
   border-width: 0px 1px 1px 1px;
-  width: 539px;
+  width: 100%;
 }
 
 .FeedWidget {

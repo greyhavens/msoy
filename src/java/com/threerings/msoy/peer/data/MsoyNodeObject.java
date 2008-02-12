@@ -8,6 +8,8 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.peer.data.CrowdNodeObject;
 
 import com.threerings.msoy.data.MemberLocation;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.web.data.OnlineMemberCard;
 
 /**
  * Maintains information on an MSOY peer server.
@@ -69,6 +71,37 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /** Dispatches Swiftly project room peer notifications. */
     public PeerProjectMarshaller peerProjectService;
+
+    /**
+     * If the specified member is online on this server, creates and populates an online member
+     * card with their id and the id and name of their current scene, or the id (no name) of their
+     * current game. The caller will have to get game info from the popular places snapshot.
+     */
+    public OnlineMemberCard getMemberCard (int memberId)
+    {
+        MemberLocation mloc = memberLocs.get(memberId);
+        if (mloc == null || (mloc.sceneId == 0 && mloc.gameId == 0)) {
+            return null;
+        }
+
+        OnlineMemberCard card = new OnlineMemberCard();
+        if (mloc.sceneId != 0) {
+            card.placeType = OnlineMemberCard.ROOM_PLACE;
+            card.placeId = mloc.sceneId;
+            HostedRoom room = hostedScenes.get(mloc.sceneId);
+            if (room != null) {
+                card.placeName = room.name;
+            }
+
+        // don't show developer versions of games
+        } else if (mloc.gameId != 0 && !Game.isDeveloperVersion(mloc.gameId) &&
+                   mloc.gameId != Game.TUTORIAL_GAME_ID) {
+            card.placeType = OnlineMemberCard.GAME_PLACE;
+            card.placeId = mloc.gameId;
+        }
+
+        return card;
+    }
 
     // AUTO-GENERATED: METHODS START
     /**
