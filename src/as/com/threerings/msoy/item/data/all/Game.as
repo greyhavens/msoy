@@ -19,6 +19,9 @@ public class Game extends Item
     /** We reserve a very unlikely gameId for the tutorial. */
     public static const TUTORIAL_GAME_ID :int = int.MAX_VALUE;
 
+    /** This game's genre. */
+    public var genre :int;
+
     /** XML game configuration. */
     public var config :String;
 
@@ -50,6 +53,7 @@ public class Game extends Item
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
+        genre = ins.readByte();
         config = (ins.readField(String) as String);
         gameMedia = (ins.readObject() as MediaDesc);
         gameId = ins.readInt();
@@ -60,6 +64,7 @@ public class Game extends Item
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
+        out.writeByte(genre);
         out.writeField(config);
         out.writeObject(gameMedia);
         out.writeInt(gameId);
