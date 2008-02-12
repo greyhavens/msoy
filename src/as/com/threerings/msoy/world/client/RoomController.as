@@ -89,6 +89,8 @@ import com.threerings.msoy.world.client.updates.UpdateStack;
 
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
+import com.threerings.msoy.world.data.Controllable;
+import com.threerings.msoy.world.data.ControllableEntity;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
@@ -1619,7 +1621,8 @@ public class RoomController extends SceneController
         }
         // ok, the ident does not belong to a member's avatar..
 
-        var ctrl :EntityControl = (_roomObj.controllers.get(ident) as EntityControl);
+        var ctrl :EntityControl =
+            _roomObj.controllers.get(new ControllableEntity(ident)) as EntityControl;
         if (ctrl == null) {
             return null;
 
