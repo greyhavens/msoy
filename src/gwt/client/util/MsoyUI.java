@@ -29,7 +29,9 @@ public class MsoyUI
     public static Label createLabel (String text, String styleName)
     {
         Label label = new Label(text);
-        label.setStyleName(styleName);
+        if (styleName != null) {
+            label.setStyleName(styleName);
+        }
         return label;
     }
 
@@ -59,10 +61,7 @@ public class MsoyUI
      */
     public static Label createCustomActionLabel (String text, String style, ClickListener listener)
     {
-        Label label = new Label(text);
-        if (style != null) {
-            label.setStyleName(style);
-        }
+        Label label = createLabel(text, style);
         if (listener != null) {
             label.addClickListener(listener);
         }

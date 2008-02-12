@@ -214,8 +214,8 @@
   text-align: right;
 }
 
-.arcade .MyGames {
-  width: 205px;
+.trophyCase {
+  width: 680px;
 }
 
 .arcade .Genre {
@@ -229,32 +229,6 @@
   color: #FFFFFF;
   font-size: 12px;
   font-weight: bold;
-}
-
-.gameEntry {
-  width: 100%;
-  border-bottom: 1px solid #DADADA;
-  border-left: 1px dotted;
-  border-right: 1px dotted;
-}
-
-.gameEntry .Thumb {
-  width: 80px;
-  height: 40px;
-  padding-right: 5px;
-}
-
-.gameEntry .Name {
-  font-size: 12px;
-}
-
-.gameEntry .Descrip {
-  font-size: 10px;
-  color: #AABDC8;
-}
-
-.gameEntry .Players {
-  font-size: 10px;
 }
 
 .arcade .Genre .More {
@@ -271,6 +245,16 @@
   font-size: 10px;
   font-weight: bold;
   padding-right: 5px;
+}
+
+.whyPlay {
+  width: 205px;
+  font-size: 14px;
+  padding-right: 5px;
+}
+
+.whyPlay ul {
+  padding-left: 25px;
 }
 
 .featuredGame {
@@ -316,6 +300,32 @@
 .featuredGame .Buttons {
   vertical-align: top;
   padding-top: 5px;
+}
+
+.gameEntry {
+  width: 100%;
+  border-bottom: 1px solid #DADADA;
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+}
+
+.gameEntry .Thumb {
+  width: 80px;
+  height: 40px;
+  padding-right: 5px;
+}
+
+.gameEntry .Name {
+  font-size: 12px;
+}
+
+.gameEntry .Descrip {
+  font-size: 10px;
+  color: #AABDC8;
+}
+
+.gameEntry .Players {
+  font-size: 10px;
 }
 
 .gameGenre .gameEntry {

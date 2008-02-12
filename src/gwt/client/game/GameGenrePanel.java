@@ -37,9 +37,7 @@ public class GameGenrePanel extends VerticalPanel
     protected void init (GameGenreData data)
     {
         HorizontalPanel row = new HorizontalPanel();
-//         Widget box = MsoyUI.createBox("aux", "My Favorite Games", new MyGamesPanel());
-//         box.addStyleName("MyGames");
-//         row.add(box);
+        row.add(new WhyPlayPanel());
         row.add(WidgetUtil.makeShim(5, 5));
         row.add(new FeaturedGamePanel(data.featuredGame));
         add(row);
