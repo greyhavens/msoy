@@ -57,7 +57,9 @@ public class FurniSprite extends MsoySprite
         }
 
         checkPerspective();
-        checkMouse();
+
+        addEventListener(MouseEvent.MOUSE_OVER, handleMouseHover);
+        addEventListener(MouseEvent.MOUSE_OUT, handleMouseHover);
     }
 
     /**
@@ -127,25 +129,6 @@ public class FurniSprite extends MsoySprite
         checkPerspective();
         scaleUpdated();
         setLocation(furni.loc);
-        checkMouse();
-    }
-
-    protected function checkMouse () :void
-    {
-        var addOrRemove :Function = capturesMouse() ? addEventListener : removeEventListener;
-
-        for each (var eventType :String in [ MouseEvent.MOUSE_MOVE,
-                MouseEvent.MOUSE_OVER, MouseEvent.MOUSE_OUT,
-                MouseEvent.ROLL_OVER, MouseEvent.ROLL_OUT ]) {
-            addOrRemove(eventType, shuttleMouseEvent);
-        }
-    }
-
-    // TODO: do we really want to do this?
-    // Do we want to do it for all entities, including avatars?
-    protected function shuttleMouseEvent (event :MouseEvent) :void
-    {
-        callUserCode("mouseEvents_v1", event);
     }
 
     override public function getToolTipText () :String
@@ -410,6 +393,15 @@ public class FurniSprite extends MsoySprite
         if (hasAction()) {
             CommandEvent.dispatch(this, RoomController.FURNI_CLICKED, _furni);
         }
+    }
+
+    /**
+     * Listens for MOUSE_OVER and MOUSE_OUT, which we only receive if the sprite
+     * has action.
+     */
+    protected function handleMouseHover (event :MouseEvent) :void
+    {
+        callUserCode("mouseHover_v1", (event.type == MouseEvent.MOUSE_OVER));
     }
 
     override protected function startedLoading () :void
