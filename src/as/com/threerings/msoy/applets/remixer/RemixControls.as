@@ -124,6 +124,7 @@ public class RemixControls extends HBox
 
     protected function handlePreviewerEvent (event :Event) :void
     {
+        // TODO
         trace("Previewer event: " + event);
     }
 

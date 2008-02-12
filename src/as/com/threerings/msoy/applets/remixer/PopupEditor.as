@@ -27,11 +27,9 @@ import com.threerings.flex.GridUtil;
 
 public class PopupEditor extends TitleWindow
 {
-    public function PopupEditor (
-        parent :DataEditor, entry :Object, display :Label, validator :Validator = null)
+    public function PopupEditor (parent :DataEditor, entry :Object, validator :Validator = null)
     {
         _parent = parent;
-        _display = display;
         _validator = validator;
 
         this.title = entry.name;
@@ -65,7 +63,7 @@ public class PopupEditor extends TitleWindow
         } else {
             _txt = new TextInput();
         }
-        _txt.text = display.text; //entry.value;
+        _txt.text = entry.value;
 
         GridUtil.addRow(grid, _txt, [2, 1]);
 
@@ -97,7 +95,6 @@ public class PopupEditor extends TitleWindow
     {
         if (save) {
             _parent.updateValue(_txt.text);
-            _display.text = _txt.text;
         }
 
         PopUpManager.removePopUp(this);
@@ -108,8 +105,6 @@ public class PopupEditor extends TitleWindow
     protected var _validator :Validator;
 
     protected var _txt :Object; // either a TextInput or TextArea (no common text base class)
-
-    protected var _display :Label;
 
     protected var _okBtn :CommandButton;
 }
