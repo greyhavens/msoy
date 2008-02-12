@@ -73,12 +73,13 @@ public class GameRepository extends ItemRepository<
     }
 
     /**
-     * Returns the total number of games in the repository.
+     * Returns the total number of listed games in the repository.
      */
     public int getGameCount ()
         throws PersistenceException
     {
-        return load(CountRecord.class, new FromOverride(GameDetailRecord.class)).count;
+        Where where = new Where(new Conditionals.NotEquals(GameDetailRecord.LISTED_ITEM_ID_C, 0));
+        return load(CountRecord.class, new FromOverride(GameDetailRecord.class), where).count;
     }
 
     /**
