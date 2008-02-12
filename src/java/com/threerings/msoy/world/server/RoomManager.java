@@ -1058,8 +1058,7 @@ public class RoomManager extends SpotSceneManager
     protected RoomListener _roomListener = new RoomListener();
 
     /** Mapping to keep track of spawned mobs. */
-    protected Map<Tuple<Integer, String>, MobObject> _mobs =
-        new HashMap<Tuple<Integer,String>, MobObject>();
+    protected Map<Tuple<Integer, String>, MobObject> _mobs = Maps.newHashMap();
 
     /** For all MemberInfo's, a mapping of ItemIdent to the member's oid. */
     protected Map<ItemIdent,Integer> _avatarIdents = Maps.newHashMap();
