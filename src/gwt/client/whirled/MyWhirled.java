@@ -76,11 +76,6 @@ public class MyWhirled extends SmartTable
         if (CWhirled.isSupport()) {
             box.add(Application.createLink("Admin Console", Page.ADMIN, ""));
         }
-        box.add(MsoyUI.createActionLabel("Logoff", new ClickListener() {
-            public void onClick (Widget sender) {
-                CWhirled.app.didLogoff();
-            }
-        }));
 
         // add all of our rooms
         sidebar.add(createHeader(CWhirled.msgs.headerRooms()));

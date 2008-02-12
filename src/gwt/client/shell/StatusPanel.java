@@ -52,15 +52,12 @@ public class StatusPanel extends FlexTable
                     if (oldLevel != 0 && oldLevel != newLevel) {
                         _levels.showLevelUpPopup();
                     }
-                    _levels.setVisible(true);
                     break;
                 case StatusChangeEvent.FLOW:
                     _levels.setFlow(event.getValue());
-                    _levels.setVisible(true);
                     break;
                 case StatusChangeEvent.GOLD:
                     _levels.setGold(event.getValue());
-                    _levels.setVisible(true);
                     break;
                 case StatusChangeEvent.MAIL:
                     _mail.setCount(event.getValue());
@@ -108,20 +105,19 @@ public class StatusPanel extends FlexTable
                                           SceneBookmarkEvent.SCENEBOOKMARK_ADDED,
                                           entry.sceneName, entry.sceneId));
         }
+
+        // add a logoff link
+        setWidget(0, idx++, MsoyUI.createActionLabel(CShell.cmsgs.statusLogoff(), new ClickListener() {
+            public void onClick (Widget sender) {
+                CShell.app.didLogoff();
+            }
+        }));
     }
 
     protected void didLogoff ()
     {
         _creds = null;
         clearCookie("creds");
-
-        // hide our logged on bits
-        _levels.setVisible(false);
-        _mail.setVisible(false);
-
-        setText(0, 0, "New to Whirled?");
-        setHTML(0, 1, "&nbsp;");
-        setWidget(0, 2, Application.createLink("Create an account!", Page.ACCOUNT, "create"));
     }
 
     protected void setCookie (String name, String value)
