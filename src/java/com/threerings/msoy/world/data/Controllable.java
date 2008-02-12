@@ -12,6 +12,6 @@ import com.threerings.io.SimpleStreamableObject;
  * {@see EntityControl}
  */
 public abstract class Controllable extends SimpleStreamableObject
+    implements Comparable<Controllable>
 {
-    public abstract Comparable getKey ();
 }

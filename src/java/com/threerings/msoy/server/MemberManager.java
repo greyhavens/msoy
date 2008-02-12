@@ -54,6 +54,7 @@ import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.world.server.RoomManager;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -621,6 +622,13 @@ public class MemberManager
      */
     public void updateAVRGameId (final MemberObject member, final int gameId)
     {
+        // immediately let the room manager relieve us of control, if needed
+        if (gameId == 0) {
+            PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(member.getPlaceOid());
+            if (pmgr instanceof RoomManager) {
+                ((RoomManager) pmgr).occupantLeftAVRGame(member.getOid());
+            }
+        }
         // assumes member != null i.e. we're on the right world server
         MsoyServer.invoker.postUnit(new Invoker.Unit("updateAVRGameId") {
             public boolean invoke () {

@@ -18,7 +18,13 @@ public class ControllableEntity extends Controllable
         _ident = ident;
     }
 
-    override public function getKey () :Object
+    override public function equals (other :Object) :Boolean
+    {
+        return ((other is ControllableEntity) && _ident != null &&
+                _ident.equals((other as ControllableEntity).getItemIdent()));
+    }
+
+    public function getItemIdent () :ItemIdent
     {
         return _ident;
     }

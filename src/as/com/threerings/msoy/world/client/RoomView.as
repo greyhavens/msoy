@@ -366,10 +366,12 @@ public class RoomView extends AbstractRoomView
             var ctrl :EntityControl = (event.getEntry() as EntityControl);
             if (ctrl.controllerOid == _ctx.getMemberObject().getOid()) {
                 if (ctrl.controlled is ControllableEntity) {
-                    dispatchEntityGotControl(ctrl.controlled.getKey() as ItemIdent);
+                    dispatchEntityGotControl(
+                        (ctrl.controlled as ControllableEntity).getItemIdent());
 
                 } else {
-                    log.debug("AVRG got control [gameId=" + ctrl.controlled.getKey() + "]");
+                    // TODO: actually handle AVRG's
+                    log.debug("AVRG got control [ctrl=" + ctrl.controlled + "]");
                 }
             }
 

@@ -4,6 +4,7 @@
 package com.threerings.msoy.world.data {
 
 import com.threerings.io.SimpleStreamableObject;
+import com.threerings.util.Equalable;
 
 /**
  * A reference to a client-side executable which can participate in the pseudo-server control
@@ -12,10 +13,11 @@ import com.threerings.io.SimpleStreamableObject;
  * {@see EntityControl}
  */
 public /*abstract*/ class Controllable extends SimpleStreamableObject
+    implements Equalable
 {
-    public function getKey () :Object
+    public function equals (other :Object) :Boolean
     {
-        throw new Error("abstract");
+        return false;
     }
 }
 }

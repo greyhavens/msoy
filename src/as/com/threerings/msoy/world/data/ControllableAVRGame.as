@@ -16,9 +16,15 @@ public class ControllableAVRGame extends Controllable
         _gameId = gameId;
     }
 
-    override public function getKey () :Object
+    override public function equals (other :Object) :Boolean
     {
-        return gameId;
+        return ((other is ControllableAVRGame) &&
+                _gameId == (other as ControllableAVRGame).getGameId());
+    }
+
+    public function getGameId () :int
+    {
+        return _gameId;
     }
 
     // from interface Streamable

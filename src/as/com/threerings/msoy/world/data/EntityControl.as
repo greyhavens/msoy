@@ -29,7 +29,7 @@ public class EntityControl extends SimpleStreamableObject
     // from interface DSet_Entry
     public function getKey () :Object
     {
-        return controlled.getKey();
+        return controlled;
     }
 
     // from interface Streamable

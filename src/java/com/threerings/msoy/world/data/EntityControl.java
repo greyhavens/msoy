@@ -35,6 +35,6 @@ public class EntityControl extends SimpleStreamableObject
     // from interface DSet.Entry
     public Comparable getKey ()
     {
-        return controlled.getKey();
+        return controlled;
     }
 }

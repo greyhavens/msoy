@@ -53,6 +53,7 @@ import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.Controllable;
+import com.threerings.msoy.world.data.ControllableAVRGame;
 import com.threerings.msoy.world.data.ControllableEntity;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.ActorInfo;
@@ -541,6 +542,35 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
+     * Checks to see if an AVRG is being controlled by any client. If not, the calling client is
+     * assigned as the AVRG controller and true is returned. If the AVRG is already being
+     * controlled by the calling client, true is returned. Otherwise false is returned (indicating
+     * that another client currently has control of the AVRG).
+     */
+    public boolean ensureAVRGameControl (MemberObject who, int gameId)
+    {
+        if (who.game.gameId != gameId) {
+            log.warning(
+                "Received AVRG control request from client not registered as playing [gameId=" +
+                gameId + ", who=" + who.who() + "]");
+            return false;
+        }
+        Controllable reference = new ControllableAVRGame(gameId);
+        EntityControl ctrl = _roomObj.controllers.get(reference);
+        if (ctrl == null) {
+            log.info("Assigning control [avrGameId=" + gameId + ", to=" + who.who() + "].");
+            _roomObj.addToControllers(new EntityControl(reference, who.getOid()));
+            return true;
+        }
+        return (ctrl.controllerOid == who.getOid());
+    }
+    
+    public void occupantLeftAVRGame (int memberOid)
+    {
+        reassignControllers(memberOid, true);
+    }
+    
+    /**
      * Checks to see if an item is being controlled by any client. If not, the calling client is
      * assigned as the item's controller and true is returned. If the item is already being
      * controlled by the calling client, true is returned. Otherwise false is returned (indicating
@@ -560,11 +590,11 @@ public class RoomManager extends SpotSceneManager
         }
         // otherwise, it's for some entity other than a user's avatar...
     
-        EntityControl ctrl = _roomObj.controllers.get(item);
+        Controllable reference = new ControllableEntity(item);
+        EntityControl ctrl = _roomObj.controllers.get(reference);
         if (ctrl == null) {
             log.info("Assigning control [item=" + item + ", to=" + who.who() + "].");
-            _roomObj.addToControllers(
-                new EntityControl(new ControllableEntity(item), who.getOid()));
+            _roomObj.addToControllers(new EntityControl(reference, who.getOid()));
             return true;
         }
         return (ctrl.controllerOid == who.getOid());
@@ -614,7 +644,7 @@ public class RoomManager extends SpotSceneManager
 
         // if this occupant just disconnected, reassign their controlled entities
         if (info.status == OccupantInfo.DISCONNECTED) {
-            reassignControllers(info.bodyOid);
+            reassignControllers(info.bodyOid, false);
         }
     }
 
@@ -624,7 +654,7 @@ public class RoomManager extends SpotSceneManager
         super.bodyLeft(bodyOid);
 
         // reassign this occupant's controlled entities
-        reassignControllers(bodyOid);
+        reassignControllers(bodyOid, false);
     }
 
     @Override // from PlaceManager
@@ -821,12 +851,13 @@ public class RoomManager extends SpotSceneManager
     /**
      * Reassigns all scene entities controlled by the specified client to new controllers.
      */
-    protected void reassignControllers (int bodyOid)
+    protected void reassignControllers (int bodyOid, boolean avrgOnly)
     {
         // determine which items were under the control of this user
         List<Controllable> items = new ArrayList<Controllable>();
         for (EntityControl ctrl : _roomObj.controllers) {
-            if (ctrl.controllerOid == bodyOid) {
+            if (ctrl.controllerOid == bodyOid &&
+                (!avrgOnly || !(ctrl.controlled instanceof ControllableAVRGame))) {
                 items.add(ctrl.controlled);
             }
         }
@@ -838,7 +869,7 @@ public class RoomManager extends SpotSceneManager
         try {
             _roomObj.startTransaction();
             for (Controllable item : items) {
-                _roomObj.removeFromControllers(item.getKey());
+                _roomObj.removeFromControllers(item);
             }
         } finally {
             _roomObj.commitTransaction();
