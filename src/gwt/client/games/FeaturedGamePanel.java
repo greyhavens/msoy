@@ -5,6 +5,7 @@ package client.games;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -17,43 +18,43 @@ import client.shell.Application;
 import client.shell.Page;
 import client.shell.Args;
 import client.util.MediaUtil;
+import client.util.MsoyUI;
 
 /**
  * Displays a featured game.
  */
-public class FeaturedGamePanel extends SmartTable
+public class FeaturedGamePanel extends VerticalPanel
 {
     public FeaturedGamePanel (FeaturedGameInfo game)
     {
-        super("featuredGame", 0, 0);
-
-        SmartTable title = new SmartTable("Title", 0, 0);
-        title.getFlexCellFormatter().setStyleName(0, 0, "Star");
-        title.setText(0, 1, CGames.msgs.featuredTitle(game.name), 1, "Text");
-        title.getFlexCellFormatter().setStyleName(0, 2, "Star");
-        setWidget(0, 0, title, 3, null);
+        MsoyUI.makeBox(this, "games", CGames.msgs.featuredTitle());
+        SmartTable contents = new SmartTable("featuredGame", 0, 5);
+        add(contents);
 
         // display our screenshot in column 1
-        FlowPanel shot = new FlowPanel();
-        shot.add(MediaUtil.createMediaView(
-                     game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, null));
-        shot.add(Application.createLink(CGames.msgs.arcadeMoreInfo(), Page.GAMES,
-                                        Args.compose("d", game.gameId)));
-        setWidget(1, 0, shot, 1, "Shot");
+        contents.setText(0, 0, game.name, 1, "Name");
+        Widget shot = MediaUtil.createMediaView(
+            game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, null);
+        contents.setWidget(1, 0, shot, 1, "Shot");
+        Widget link = Application.createLink(
+            CGames.msgs.featuredMoreInfo(), Page.GAMES, Args.compose("d", game.gameId));
+        contents.setWidget(2, 0, link, 1, "MoreInfo");
 
         // display the game info in column 2
-        int row = 0;
+        contents.setText(0, 1, CGames.msgs.featuredOnline(""+game.playersOnline), 1, "Online");
         SmartTable info = new SmartTable(0, 0);
-        info.setText(row++, 0, CGames.msgs.featuredOnline(""+game.playersOnline), 2, "Online");
-        info.setWidget(row++, 0, WidgetUtil.makeShim(5, 5));
-        info.setText(row++, 0, truncate(game.description), 2, "Descrip");
-        info.setWidget(row++, 0, WidgetUtil.makeShim(5, 5));
-        info.setWidget(row++, 0, new GameBitsPanel(null, game.genre, game.minPlayers,
-                                                   game.maxPlayers, game.avgDuration, 0));
-        setWidget(1, 1, info, 1, "Info");
+        info.addText(truncate(game.description), 1, "Descrip");
+        info.addWidget(WidgetUtil.makeShim(5, 5), 1, null);
+        info.addWidget(new GameBitsPanel(null, game.genre, game.minPlayers,
+                                         game.maxPlayers, game.avgDuration, 0), 1, null);
+        contents.setWidget(1, 1, info, 1, "Info");
+        contents.getFlexCellFormatter().setRowSpan(1, 1, 2);
 
         // display play now buttons in column 3
-        setWidget(1, 2, new PlayPanel(game.gameId, game.minPlayers, game.maxPlayers), 1, "Buttons");
+        contents.setText(0, 2, CGames.msgs.gdpPlay(), 1, "Play");
+        PlayPanel play = new PlayPanel(false, game.gameId, game.minPlayers, game.maxPlayers);
+        contents.setWidget(1, 2, play, 1, "Buttons");
+        contents.getFlexCellFormatter().setRowSpan(1, 2, 2);
     }
 
     protected static String truncate (String descrip)

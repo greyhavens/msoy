@@ -18,12 +18,14 @@ import client.shell.Page;
  */
 public class PlayPanel extends SmartTable
 {
-    public PlayPanel (final int gameId, int minPlayers, int maxPlayers)
+    public PlayPanel (boolean title, final int gameId, int minPlayers, int maxPlayers)
     {
         super("playPanel", 0, 0);
 
         int row = 0;
-        setText(row++, 0, CGames.msgs.gdpPlay(), 1, "Title");
+        if (title) {
+            setText(row++, 0, CGames.msgs.gdpPlay(), 1, "Title");
+        }
 
         // if the game supports single-player play, it gets a "Quick Single" button
         if (minPlayers == 1 && maxPlayers != Integer.MAX_VALUE) {

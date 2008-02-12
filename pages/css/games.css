@@ -261,47 +261,43 @@
   width: 475px;
 }
 
-.featuredGame .Title {
-  width: 100%;
-}
-
-.featuredGame .Title .Star {
-  background-image: url(/images/whirled/games_star.png);
-  width: 20px;
-  height: 20px;
-}
-
-.featuredGame .Title .Text {
-  background-image: url(/images/whirled/games_tile.png);
-  height: 20px;
+.featuredGame .Name {
   text-align: center;
   font-weight: bold;
-  color: #FFFFFF;
+  font-size: 16px;
 }
 
 .featuredGame .Shot {
   width: 185px;
-  padding: 5px 10px 0px 0px;
+  padding-right: 10px;
+}
+
+.featuredGame .MoreInfo {
   font-size: 12px;
   text-align: center;
-  vertical-align: top;
 }
 
 .featuredGame .Info {
   vertical-align: top;
-  padding: 5px 10px 0px 0px;
+  padding-right: 10px;
   font-size: 12px;
 }
 
-.featuredGame .Info .Online {
+.featuredGame .Online {
   font-weight: bold;
   color: #5F96AC;
   font-size: 16px;
 }
 
+.featuredGame .Play {
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: #AABDC8;
+}
+
 .featuredGame .Buttons {
   vertical-align: top;
-  padding-top: 5px;
 }
 
 .gameEntry {

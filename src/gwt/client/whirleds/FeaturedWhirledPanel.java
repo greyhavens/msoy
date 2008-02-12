@@ -30,15 +30,16 @@ public class FeaturedWhirledPanel extends VerticalPanel
     public FeaturedWhirledPanel (final Group group)
     {
         MsoyUI.makeBox(this, "people", CWhirleds.msgs.featuredTitle());
+        SmartTable contents = new SmartTable("featuredWhirled", 0, 5);
+        add(contents);
 
         // display our screenshot in column 1
-        SmartTable contents = new SmartTable("featuredWhirled", 0, 5);
         contents.setText(0, 0, group.name, 1, "Name");
         Widget shot = MediaUtil.createMediaView(group.getLogo(), MediaDesc.THUMBNAIL_SIZE);
         contents.setWidget(1, 0, shot, 1, "Shot");
-        contents.setWidget(2, 0, Application.createLink(
-                               CWhirleds.msgs.featuredMoreInfo(),
-                               Page.WHIRLEDS, Args.compose("d", group.groupId)), 1, "MoreInfo");
+        Widget link = Application.createLink(
+            CWhirleds.msgs.featuredMoreInfo(), Page.WHIRLEDS, Args.compose("d", group.groupId));
+        contents.setWidget(2, 0, link, 1, "MoreInfo");
 
         // display the game info in column 2
         contents.setText(0, 1, CWhirleds.msgs.featuredOnline("0" /*TODO*/), 1, "Online");
@@ -62,8 +63,6 @@ public class FeaturedWhirledPanel extends VerticalPanel
             }
         }));
         contents.setWidget(1, 2, buttons, 1, "Buttons");
-
-        add(contents);
     }
 
     protected static String truncate (String descrip)
