@@ -200,11 +200,16 @@ public class RoomManager extends SpotSceneManager
     // documentation inherited from RoomProvider
     public void requestControl (ClientObject caller, ItemIdent item)
     {
-        MemberObject member = (MemberObject) caller;
-        boolean gotControl = ensureEntityControl(member, item, "requestControl");
+        boolean gotControl = ensureEntityControl((MemberObject) caller, item, "requestControl");
         // TODO: throw invocationexception on failure?
     }
 
+    // documentation inherited from RoomProvider
+    public void requestAVRGameControl (ClientObject caller, int gameId)
+    {
+        boolean gotControl = ensureAVRGameControl((MemberObject) caller, gameId);
+        // TODO: throw invocationexception on failure?
+    }
     // documentation inherited from RoomProvider
     public void sendSpriteMessage (ClientObject caller, ItemIdent item, String name, byte[] arg,
                                    boolean isAction)

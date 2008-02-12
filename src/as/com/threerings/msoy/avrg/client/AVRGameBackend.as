@@ -152,6 +152,7 @@ public class AVRGameBackend extends ControlBackend
         o["getPlayerId_v1"] = getPlayerId_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getPlayerIds_v1"] = getPlayerIds_v1;
+        o["requestControl_v1"] = requestControl_v1;
         o["spawnMob_v1"] = spawnMob_v1;
         o["despawnMob_v1"] = despawnMob_v1;
 
@@ -267,6 +268,16 @@ public class AVRGameBackend extends ControlBackend
             }
         }
         return result;
+    }
+
+    protected function requestControl_v1 () :void
+    {
+        if (isPlaying()) {
+            var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+            if (view != null) {
+                RoomView(view).getRoomController().requestAVRGameControl();
+            }
+        }
     }
 
     protected function spawnMob_v1 (mobId :String, mobName :String) :Boolean

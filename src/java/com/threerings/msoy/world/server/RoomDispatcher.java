@@ -72,6 +72,13 @@ public class RoomDispatcher extends InvocationDispatcher
             );
             return;
 
+        case RoomMarshaller.REQUEST_AVRGAME_CONTROL:
+            ((RoomProvider)provider).requestAVRGameControl(
+                source,
+                ((Integer)args[0]).intValue()
+            );
+            return;
+
         case RoomMarshaller.REQUEST_CONTROL:
             ((RoomProvider)provider).requestControl(
                 source,

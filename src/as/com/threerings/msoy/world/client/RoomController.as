@@ -90,6 +90,7 @@ import com.threerings.msoy.world.client.updates.UpdateStack;
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.Controllable;
+import com.threerings.msoy.world.data.ControllableAVRGame;
 import com.threerings.msoy.world.data.ControllableEntity;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
@@ -177,6 +178,29 @@ public class RoomController extends SceneController
         if (result == null) {
             // only if nobody currently has control do we issue the request
             _roomObj.roomService.requestControl(_wdctx.getClient(), ident);
+        }
+    }
+
+    /**
+     * Requests that this client be given control of the specified item.
+     */
+    public function requestAVRGameControl () :void
+    {
+        var gameId :int = _wdctx.getGameDirector().getGameId();
+        if (gameId == 0) {
+            log.warning("Got AVRG control request, but we don't seem to be playing one.");
+            return;
+        }
+
+        if (_roomObj == null) {
+            log.warning("Cannot request AVRG control, no room object [gameId=" + gameId + "].");
+            return;
+        }
+
+        var result :Object = hasAVRGameControl();
+        if (result == null) {
+            // only if nobody currently has control do we issue the request
+            _roomObj.roomService.requestAVRGameControl(_wdctx.getClient(), gameId);
         }
     }
 
@@ -1637,7 +1661,28 @@ public class RoomController extends SceneController
         }
     }
 
-    override protected function sceneUpdated (update :SceneUpdate) :void
+     /**
+     * Does this client have control over the current AVRG?
+     *
+     * @returns true, false, or null if nobody currently has control.
+     */
+    protected function hasAVRGameControl () :Object
+    {
+        var gameId :int = _wdctx.getGameDirector().getGameId();
+        if (gameId == 0) {
+            log.warning("Got AVRG control request, but we don't seem to be playing one.");
+            return null;
+        }
+
+        var ctrl :EntityControl =
+            _roomObj.controllers.get(new ControllableAVRGame(gameId)) as EntityControl;
+        if (ctrl != null) {
+            return ctrl.controllerOid == _wdctx.getMemberObject().getOid();
+        }
+        return null;
+    }
+
+   override protected function sceneUpdated (update :SceneUpdate) :void
     {
         if (update is SceneAttrsUpdate) {
             var attrsUpdate :SceneAttrsUpdate = update as SceneAttrsUpdate;

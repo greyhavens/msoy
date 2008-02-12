@@ -79,6 +79,7 @@ import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.Controllable;
+import com.threerings.msoy.world.data.ControllableAVRGame;
 import com.threerings.msoy.world.data.ControllableEntity;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
@@ -370,8 +371,8 @@ public class RoomView extends AbstractRoomView
                         (ctrl.controlled as ControllableEntity).getItemIdent());
 
                 } else {
-                    // TODO: actually handle AVRG's
-                    log.debug("AVRG got control [ctrl=" + ctrl.controlled + "]");
+                    dispatchAVRGameGotControl(
+                        (ctrl.controlled as ControllableAVRGame).getGameId());
                 }
             }
 
@@ -677,6 +678,19 @@ public class RoomView extends AbstractRoomView
         } else {
             log.info("Received got control for unknown sprite [item=" + ident + "].");
         }
+    }
+
+    /**
+     * Called when control of an entity is assigned to us.
+     */
+    protected function dispatchAVRGameGotControl (gameId :int) :void
+    {
+        if (gameId != _ctx.getGameDirector().getGameId()) {
+            log.warning("Got control over an AVRG we're not playing [gameId=" + gameId + "]");
+            return;
+        }
+        log.debug("AVRG got control [gameId=" + gameId + "]");
+        callAVRGCode("gotControl_v1");
     }
 
     protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
