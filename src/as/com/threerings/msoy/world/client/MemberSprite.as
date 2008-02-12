@@ -83,9 +83,10 @@ public class MemberSprite extends ActorSprite
         // TODO: remove someday
         // TEMP: dispatch an old-style avatar action notification
         // Deprecated 2007-03-13
-        if (isAction) {
-            callUserCode("action_v1", name); // no arg
-        }
+        // Commented out 2008-02-11. We should be good.
+        //if (isAction) {
+        //    callUserCode("action_v1", name); // no arg
+        //}
     }
 
     // from ActorSprite
