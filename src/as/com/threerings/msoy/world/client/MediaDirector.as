@@ -38,21 +38,19 @@ public class MediaDirector extends BasicDirector
      */
     public function getSprite (occInfo :OccupantInfo) :OccupantSprite
     {
-        var isOurs :Boolean = (occInfo.bodyOid == _ctx.getClient().getClientOid());
-        if (isOurs && _ourAvatar != null) {
-            _ourAvatar.setOccupantInfo(occInfo);
-            return _ourAvatar;
-        }
-
-        if (occInfo is PetInfo) {
-            return new PetSprite(occInfo as PetInfo);
-
-        } else if (occInfo is MemberInfo) {
+        if (occInfo is MemberInfo) {
+            var isOurs :Boolean = _wctx.getMyName().equals(occInfo.username);
+            if (isOurs && _ourAvatar != null) {
+                return _ourAvatar;
+            }
             var sprite :MemberSprite = new MemberSprite(occInfo as MemberInfo);
             if (isOurs) {
                 _ourAvatar = sprite;
             }
             return sprite;
+
+        } else if (occInfo is PetInfo) {
+            return new PetSprite(occInfo as PetInfo);
 
         } else if (occInfo is MobInfo) {
             if (MobInfo(occInfo).getGameId() == _wctx.getGameDirector().getGameId()) {
