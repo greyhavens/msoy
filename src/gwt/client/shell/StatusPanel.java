@@ -107,11 +107,12 @@ public class StatusPanel extends FlexTable
         }
 
         // add a logoff link
-        setWidget(0, idx++, MsoyUI.createActionLabel(CShell.cmsgs.statusLogoff(), new ClickListener() {
+        ClickListener doLogoff = new ClickListener() {
             public void onClick (Widget sender) {
                 CShell.app.didLogoff();
             }
-        }));
+        };
+        setWidget(0, idx++, MsoyUI.createActionLabel(CShell.cmsgs.statusLogoff(), doLogoff));
     }
 
     protected void didLogoff ()
