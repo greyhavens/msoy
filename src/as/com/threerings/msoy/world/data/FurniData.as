@@ -70,6 +70,9 @@ public class FurniData
     /** A scale factor in the Y direction. */
     public var scaleY :Number = 1;
 
+    /** Rotation angle in degrees. */
+    public var rotation :Number = 0;
+
     /** The x location of this furniture's hot spot. */
     public var hotSpotX :int;
 
@@ -181,6 +184,7 @@ public class FurniData
             (this.layoutInfo == that.layoutInfo) &&
             (this.scaleX == that.scaleX) &&
             (this.scaleY == that.scaleY) &&
+            (this.rotation == that.rotation) &&
             (this.hotSpotX == that.hotSpotX) &&
             (this.hotSpotY == that.hotSpotY) &&
             (this.actionType == that.actionType) &&
@@ -213,6 +217,7 @@ public class FurniData
         this.layoutInfo = that.layoutInfo;
         this.scaleX = that.scaleX;
         this.scaleY = that.scaleY;
+        this.rotation = that.rotation;
         this.hotSpotX = that.hotSpotX;
         this.hotSpotY = that.hotSpotY;
         this.actionType = that.actionType;
@@ -239,6 +244,7 @@ public class FurniData
         out.writeByte(layoutInfo);
         out.writeFloat(scaleX);
         out.writeFloat(scaleY);
+        out.writeFloat(rotation);
         out.writeShort(hotSpotX);
         out.writeShort(hotSpotY);
         out.writeByte(actionType);
@@ -256,6 +262,7 @@ public class FurniData
         layoutInfo = ins.readByte();
         scaleX = ins.readFloat();
         scaleY = ins.readFloat();
+        rotation = ins.readFloat();
         hotSpotX = ins.readShort();
         hotSpotY = ins.readShort();
         actionType = ins.readByte();

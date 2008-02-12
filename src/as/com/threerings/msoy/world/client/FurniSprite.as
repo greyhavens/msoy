@@ -128,6 +128,7 @@ public class FurniSprite extends MsoySprite
         setMediaDesc(furni.media);
         checkPerspective();
         scaleUpdated();
+        rotationUpdated();
         setLocation(furni.loc);
     }
 
@@ -276,6 +277,12 @@ public class FurniSprite extends MsoySprite
         updatePerspective();
     }
 
+    override protected function rotationUpdated () :void
+    {
+        super.rotationUpdated();
+        updatePerspective();
+    }
+    
     protected function updatePerspective () :void
     {
         if (!(_media is Perspectivizer) || !(parent is AbstractRoomView)) {
@@ -307,6 +314,17 @@ public class FurniSprite extends MsoySprite
 //            graphics.lineTo(info.pN.x, info.pN.y);
 //            graphics.lineTo(info.p0.x, info.p0.y);
 //        }
+    }
+
+    override public function getMediaRotation () :Number
+    {
+        return _furni.rotation;
+    }
+    
+    override public function setMediaRotation (rotation :Number) :void
+    {
+        _furni.rotation = rotation;
+        rotationUpdated();
     }
 
     override public function getMediaScaleX () :Number

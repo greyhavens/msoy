@@ -67,6 +67,9 @@ public class FurniData extends SimpleStreamableObject
     /** A scale factor in the Y direction. */
     public float scaleY = 1f;
 
+    /** Rotation angle in degrees. */
+    public float rotation = 0f;
+
     /** The x location of this furniture's hot spot. */
     public short hotSpotX;
 
@@ -126,6 +129,7 @@ public class FurniData extends SimpleStreamableObject
             (this.layoutInfo == that.layoutInfo) &&
             (this.scaleX == that.scaleX) &&
             (this.scaleY == that.scaleY) &&
+            (this.rotation == that.rotation) &&
             (this.hotSpotX == that.hotSpotX) &&
             (this.hotSpotY == that.hotSpotY) &&
             (this.actionType == that.actionType) &&

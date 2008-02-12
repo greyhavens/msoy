@@ -255,37 +255,42 @@ public class RoomEditorPanel extends FloatingPanel
         _defaultPanel.addChild(leftgrid);
 
         var makeYFn :Function = function (yoffset :Number) :Function {
-            return function () :void { _controller.actionAdjust(1, 1, yoffset); };
+            return function () :void { _controller.actionAdjustYPosition(yoffset); };
         };
 
-        var makeScaleFn :Function = function (scalemulti :Number) :Function {
-            return function () :void { _controller.actionAdjust(scalemulti, scalemulti, 0); };
+        var makeScaleFn :Function = function (x :Number, y :Number) :Function {
+            return function () :void { _controller.actionAdjustScale(x, y); };
         };
             
-        var makeFlipFn :Function = function (h :Number, v :Number) :Function {
-            return function () :void { _controller.actionAdjust(h, v, 0); };
+        var makeRotateFn :Function = function (rotation :Number) :Function {
+            return function () :void { _controller.actionAdjustRotation(rotation); };
         };
 
+        
         GridUtil.addRow(leftgrid,
-                        makeActionButton(makeScaleFn(1 / SCALEMULTI), "roomEditScaleDown",
-                                         "b.scale_down", _targetButtons),
-                        makeActionButton(makeScaleFn(SCALEMULTI), "roomEditScaleUp",
-                                         "b.scale_up", _targetButtons));
+                        makeActionButton(
+                            makeScaleFn(1 / SCALEMULTI, 1 / SCALEMULTI),
+                            "roomEditScaleDown", "b.scale_down", _targetButtons),
+                        makeActionButton(
+                            makeScaleFn(SCALEMULTI, SCALEMULTI),
+                            "roomEditScaleUp", "b.scale_up", _targetButtons));
         GridUtil.addRow(leftgrid,
-                        makeActionButton(makeYFn(-Y_DELTA), "roomEditMoveDown",
-                                         "b.move_down", _targetButtons),
-                        makeActionButton(makeYFn(Y_DELTA), "roomEditMoveUp",
-                                         "b.move_up", _targetButtons));
+                        makeActionButton(
+                            makeYFn(- Y_DELTA), "roomEditMoveDown", "b.move_down", _targetButtons),
+                        makeActionButton(
+                            makeYFn(Y_DELTA), "roomEditMoveUp", "b.move_up", _targetButtons));
         GridUtil.addRow(leftgrid,
-                        makeActionButton(noop, "roomEditRotateLeft",
-                                         "b.rotate_left", null, false),
-                        makeActionButton(noop, "roomEditRotateRight",
-                                         "b.rotate_right", null, false));
+                        makeActionButton(
+                            makeRotateFn(- ROTATE_DELTA),
+                            "roomEditRotateLeft", "b.rotate_left", _targetButtons),
+                        makeActionButton(
+                            makeRotateFn(ROTATE_DELTA),
+                            "roomEditRotateRight", "b.rotate_right", _targetButtons));
         GridUtil.addRow(leftgrid,
-                        makeActionButton(makeFlipFn(-1, 1), "roomEditFlipH",
-                                         "b.flip_h", _targetButtons),
-                        makeActionButton(makeFlipFn(1, -1), "roomEditFlipV",
-                                         "b.flip_v", _targetButtons));
+                        makeActionButton(
+                            makeScaleFn(-1, 1), "roomEditFlipH", "b.flip_h", _targetButtons),
+                        makeActionButton(
+                            makeScaleFn(1, -1), "roomEditFlipV", "b.flip_v", _targetButtons));
 
         // divider
         div = new SkinnableImage();
@@ -359,6 +364,7 @@ public class RoomEditorPanel extends FloatingPanel
     }
 
     protected static const Y_DELTA :Number = 0.1;
+    protected static const ROTATE_DELTA :Number = 45;
     protected static const SCALEMULTI :Number = 1.2;
         
     protected var _switchablePanels :Box;

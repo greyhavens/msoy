@@ -276,49 +276,57 @@ public class RoomEditorController
         }
     }
 
-    /** Adjusts furni size and location from a panel button action. */
-    public function actionAdjust (
-        scaleMultiplierX :Number, scaleMultiplierY :Number, yOffset :Number) :void
+    /** Adjusts furni size from a panel button action. */
+    public function actionAdjustScale (multiplierX :Number, multiplierY :Number) :void
     {
-        if (_edit.target == null) {
-            return; 
-        }
+        withFurniUpdate(function () :void {
+                if (multiplierX != 1 || multiplierY != 1) {
+                    var f :FurniData = _edit.target.getFurniData().clone() as FurniData;
+                    _edit.updateTargetScale(multiplierX * f.scaleX, multiplierY * f.scaleY);
+                }
+            });
+    }
 
-        var original :FurniData = _edit.target.getFurniData().clone() as FurniData;
-        
-        if (scaleMultiplierX != 1 || scaleMultiplierY != 1) {
-            _edit.updateTargetScale(
-                scaleMultiplierX * original.scaleX, scaleMultiplierY * original.scaleY);
-        }
+    /** Adjusts furni size from a panel button action. */
+    public function actionAdjustRotation (rotationDelta :Number) :void
+    {
+        withFurniUpdate(function () :void {
+                if (rotationDelta != 0) {
+                    
+                    // rotate the furni
+                    var f :FurniData = _edit.target.getFurniData().clone() as FurniData;
+                    var newrotation :Number = f.rotation + rotationDelta;
+                    if (Math.abs(newrotation) < 1) {
+                        newrotation = 0; // clean up floating point artifacts
+                    }
+                    _edit.updateTargetRotation(newrotation);
+                }
+            });
+    }
 
-        if (yOffset != 0) {
-            _edit.updateTargetLocation(
-                new MsoyLocation(original.loc.x, original.loc.y + yOffset, original.loc.z));
-        }
-
-        var current :FurniData = _edit.target.getFurniData();
-        if (! original.equivalent(current)) {
-            updateFurni(original, current);
-        }
+    /** Adjusts furni location from a panel button action. */
+    public function actionAdjustYPosition (yDelta :Number) :void
+    {
+        withFurniUpdate(function () :void {
+                if (yDelta != 0) {
+                    var f :FurniData = _edit.target.getFurniData().clone() as FurniData;
+                    _edit.updateTargetLocation(
+                        new MsoyLocation(f.loc.x, f.loc.y + yDelta, f.loc.z));
+                }
+            });
     }        
     
     /** Resets the edited furni to the base location, or size, or both. */
     public function actionResetTarget (resetLocation :Boolean, resetSize :Boolean) :void
     {
-        var original :FurniData = _edit.target.getFurniData().clone() as FurniData;
-        
-        if (resetLocation) {
-            _edit.updateTargetLocation(new MsoyLocation(0.5, 0.5, 0.5));
-        }
-
-        if (resetSize) {
-            _edit.updateTargetScale(1.0, 1.0);
-        }
-
-        var current :FurniData = _edit.target.getFurniData();
-        if (! original.equivalent(current)) {
-            updateFurni(original, current);
-        }
+        withFurniUpdate(function () :void {
+                if (resetLocation) {
+                    _edit.updateTargetLocation(new MsoyLocation(0.5, 0.5, 0.5));
+                }
+                if (resetSize) {
+                    _edit.updateTargetScale(1.0, 1.0);
+                }
+            });
     }
 
 
@@ -414,6 +422,26 @@ public class RoomEditorController
         }
     }
 
+    /**
+     * Wraps the call to /thunk/ in a check for furni existence, and triggers an update
+     * to be sent to the server if /thunk/ modified the furni in any way.
+     */
+    protected function withFurniUpdate (thunk :Function) :void
+    {
+        if (_edit.target == null) {
+            return;
+        }
+        
+        var original :FurniData = _edit.target.getFurniData().clone() as FurniData;
+        
+        thunk();
+        
+        var current :FurniData = _edit.target.getFurniData();
+        if (! original.equivalent(current)) {
+            updateFurni(original, current);
+        }
+    }
+    
     /**
      * Helper function, returns an array of ItemIdents of pieces of furniture from the specified
      * /furnis/ array, whose names are not stored in the cache.

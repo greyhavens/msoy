@@ -81,6 +81,13 @@ public class FurniEditor extends FurniHighlight
         _controller.targetSpriteUpdated();
     }
 
+    /** Called by hotspots, changes the target's rotation. */
+    public function updateTargetRotation (rotation :Number) :void
+    {
+        target.setMediaRotation(rotation);
+        _controller.targetSpriteUpdated();
+    }
+
     /** Updates advanced editing state on all hotspots. */
     public function setAdvancedMode (advanced :Boolean) :void
     {

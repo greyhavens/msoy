@@ -104,6 +104,13 @@ public class SceneFurniRecord extends PersistentRecord
     public static final ColumnExp SCALE_Y_C =
         new ColumnExp(SceneFurniRecord.class, SCALE_Y);
 
+    /** The column identifier for the {@link #rotation} field. */
+    public static final String ROTATION = "rotation";
+
+    /** The qualified column identifier for the {@link #rotation} field. */
+    public static final ColumnExp ROTATION_C =
+        new ColumnExp(SceneFurniRecord.class, ROTATION);
+
     /** The column identifier for the {@link #hotSpotX} field. */
     public static final String HOT_SPOT_X = "hotSpotX";
 
@@ -135,7 +142,7 @@ public class SceneFurniRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The id of the scene in which this furni is placed. */
     @Id public int sceneId;
@@ -173,6 +180,9 @@ public class SceneFurniRecord extends PersistentRecord
     /** The furni's Y scale. */
     public float scaleY;
 
+    /** Rotation angle in degrees. */
+    public float rotation;
+
     /** The x location of this furniture's hot spot. */
     public short hotSpotX;
 
@@ -208,6 +218,7 @@ public class SceneFurniRecord extends PersistentRecord
         layoutInfo = data.layoutInfo;
         scaleX = data.scaleX;
         scaleY = data.scaleY;
+        rotation = data.rotation;
         hotSpotX = data.hotSpotX;
         hotSpotY = data.hotSpotY;
         actionType = data.actionType;
@@ -228,6 +239,7 @@ public class SceneFurniRecord extends PersistentRecord
         furni.layoutInfo = layoutInfo;
         furni.scaleX = scaleX;
         furni.scaleY = scaleY;
+        furni.rotation = rotation;
         furni.hotSpotX = hotSpotX;
         furni.hotSpotY = hotSpotY;
         furni.actionType = actionType;
