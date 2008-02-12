@@ -199,7 +199,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 buttons.addStyleName("Buttons");
                 buttons.add(new Button("View Profile", new ClickListener() {
                     public void onClick (Widget sender) {
-                        Application.go(Page.PROFILE, "" + _result.memberId);
+                        Application.go(Page.PEOPLE, "" + _result.memberId);
                     }
                 }));
                 Widget shim = WidgetUtil.makeShim(1, 25);

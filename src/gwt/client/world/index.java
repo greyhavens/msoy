@@ -115,7 +115,7 @@ public class index extends Page
     protected void didLogoff ()
     {
         // head to the landing page
-        Application.go(Page.WHIRLED, "");
+        Application.go(Page.ME, "");
     }
 
     // @Override // from Page

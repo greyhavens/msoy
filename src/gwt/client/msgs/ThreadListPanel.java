@@ -153,11 +153,11 @@ public class ThreadListPanel extends PagedGrid
             if (thread.hasUnreadMessages()) {
                 String args = threadArgs(
                     thread.threadId, thread.lastReadPostIndex, thread.lastReadPostId);
-                toThread = Application.createLink(thread.subject, Page.GROUP, args);
+                toThread = Application.createLink(thread.subject, Page.WHIRLEDS, args);
                 toThread.setTitle(CMsgs.mmsgs.tlpFirstUnreadTip());
             } else {
                 toThread = Application.createLink(
-                    thread.subject, Page.GROUP, threadArgs(thread.threadId, 0, 0));
+                    thread.subject, Page.WHIRLEDS, threadArgs(thread.threadId, 0, 0));
             }
             bits.add(toThread);
 
@@ -178,7 +178,7 @@ public class ThreadListPanel extends PagedGrid
             mrp.add(new Label(_pdate.format(thread.mostRecentPostTime)));
             Hyperlink latest = Application.createLink(
                 CMsgs.mmsgs.tlpBy(thread.mostRecentPoster.toString()),
-                Page.GROUP, threadArgs(thread.threadId, thread.posts-1, thread.mostRecentPostId));
+                Page.WHIRLEDS, threadArgs(thread.threadId, thread.posts-1, thread.mostRecentPostId));
             latest.setTitle(CMsgs.mmsgs.tlpLastTip());
             mrp.add(latest);
             setWidget(0, col, mrp);

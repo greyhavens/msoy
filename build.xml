@@ -147,10 +147,10 @@
   </filelist>
 
   <!-- enumerate our translation files -->
-  <property name="msgs1.list" value="shell.Shell,account.Account,admin.Admin,catalog.Catalog"/>
-  <property name="msgs2.list" value="game.Game,group.Group,inventory.Inventory,editem.Editem"/>
-  <property name="msgs3.list" value="item.Item,mail.Mail,msgs.Msgs,profile.Profile,swiftly.Swiftly"/>
-  <property name="msgs4.list" value="world.World,whirled.Whirled"/>
+  <property name="msgs1.list" value="shell.Shell,account.Account,admin.Admin,shop.Catalog"/>
+  <property name="msgs2.list" value="games.Game,whirleds.Group,stuff.Inventory,editem.Editem"/>
+  <property name="msgs3.list" value="item.Item,mail.Mail,msgs.Msgs,people.Profile,swiftly.Swiftly"/>
+  <property name="msgs4.list" value="world.World,me.Whirled"/>
   <property name="gmsgs.list" value="${msgs1.list},${msgs2.list},${msgs3.list},${msgs4.list}"/>
 
   <!-- declare our classpath -->

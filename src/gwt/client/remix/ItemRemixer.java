@@ -25,7 +25,7 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 
 import client.shell.CShell;
 
-import client.inventory.CInventory;
+import client.stuff.CInventory;
 
 import client.editem.EditorHost;
 

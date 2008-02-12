@@ -60,7 +60,7 @@ public class index extends Page
     protected void didLogon (WebCreds creds)
     {
         if (_onLogonRedirect) {
-            Application.go(Page.WHIRLED, "");
+            Application.go(Page.ME, "");
         } else {
             super.didLogon(creds);
         }

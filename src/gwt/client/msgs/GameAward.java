@@ -12,7 +12,7 @@ import com.threerings.msoy.person.data.MailMessage;
 
 import com.threerings.msoy.person.data.GameAwardPayload;
 
-import client.game.GameDetailPanel;
+import client.games.GameDetailPanel;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
@@ -39,7 +39,7 @@ public abstract class GameAward
             table.setText(0, 0, CMsgs.mmsgs.awardTitle());
             String args = Args.compose(new String[] {
                 "d", "" + _payload.gameId, GameDetailPanel.TROPHIES_TAB });
-            table.setWidget(0, 1, Application.createLink(_payload.gameName, Page.GAME, args));
+            table.setWidget(0, 1, Application.createLink(_payload.gameName, Page.GAMES, args));
             table.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
 
             table.setWidget(1, 1, MediaUtil.createMediaView(

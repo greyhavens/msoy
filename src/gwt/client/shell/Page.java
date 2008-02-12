@@ -30,16 +30,15 @@ public abstract class Page
     // constants for our various pages
     public static final String ACCOUNT = "account";
     public static final String ADMIN = "admin";
-    public static final String CATALOG = "catalog";
-    public static final String GAME = "game";
-    public static final String GROUP = "group";
-    public static final String INVENTORY = "inventory";
+    public static final String GAMES = "games";
     public static final String MAIL = "mail";
-    public static final String PROFILE = "profile";
+    public static final String ME = "me";
+    public static final String PEOPLE = "people";
+    public static final String SHOP = "shop";
+    public static final String STUFF = "stuff";
     public static final String SWIFTLY = "swiftly";
-    public static final String WHIRLED = "whirled";
+    public static final String WHIRLEDS = "whirleds";
     public static final String WORLD = "world";
-    public static final String WRAP = "wrap";
 
     /**
      * Called when the page is first resolved to initialize its bits.

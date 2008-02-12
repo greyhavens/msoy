@@ -56,7 +56,7 @@ public class Application
      */
     public static Hyperlink groupViewLink (String label, int groupId)
     {
-        return createLink(label, Page.GROUP, ""+groupId);
+        return createLink(label, Page.WHIRLEDS, ""+groupId);
     }
 
     /**
@@ -64,7 +64,7 @@ public class Application
      */
     public static Hyperlink memberViewLink (String label, int memberId)
     {
-        return createLink(label, Page.PROFILE, ""+memberId);
+        return createLink(label, Page.PEOPLE, ""+memberId);
     }
 
     /**
@@ -72,7 +72,7 @@ public class Application
      */
     public static Hyperlink memberViewLink (MemberName name)
     {
-        return createLink(name.toString(), Page.PROFILE, ""+name.getMemberId());
+        return createLink(name.toString(), Page.PEOPLE, ""+name.getMemberId());
     }
 
     /**
@@ -171,7 +171,7 @@ public class Application
     {
         _currentToken = token;
 
-        String page = (token == null || token.equals("")) ? Page.WHIRLED : token;
+        String page = (token == null || token.equals("")) ? Page.ME : token;
         Args args = new Args();
         int dashidx = token.indexOf("-");
         if (dashidx != -1) {
@@ -184,14 +184,14 @@ public class Application
             token = Args.compose("i", args.get(0, ""));
             args = new Args();
             args.setToken(token);
-            page = Page.WHIRLED;
+            page = Page.ME;
         } else if ("optout".equals(page) || "resetpw".equals(page)) {
             token = Args.compose(page, args.get(0, ""), args.get(1, ""));
             args = new Args();
             args.setToken(token);
             page = Page.ACCOUNT;
         } else if (Page.WORLD.equals(page) && args.get(0, "").equals("i")) {
-            page = Page.WHIRLED;
+            page = Page.ME;
         }
         // END TEMP
 
@@ -344,16 +344,15 @@ public class Application
     {
         _creators.put(Page.ACCOUNT, client.account.index.getCreator());
         _creators.put(Page.ADMIN, client.admin.index.getCreator());
-        _creators.put(Page.CATALOG, client.catalog.index.getCreator());
-        _creators.put(Page.GAME, client.game.index.getCreator());
-        _creators.put(Page.GROUP, client.group.index.getCreator());
-        _creators.put(Page.INVENTORY, client.inventory.index.getCreator());
+        _creators.put(Page.GAMES, client.games.index.getCreator());
         _creators.put(Page.MAIL, client.mail.index.getCreator());
-        _creators.put(Page.PROFILE, client.profile.index.getCreator());
+        _creators.put(Page.ME, client.me.index.getCreator());
+        _creators.put(Page.PEOPLE, client.people.index.getCreator());
+        _creators.put(Page.SHOP, client.shop.index.getCreator());
+        _creators.put(Page.STUFF, client.stuff.index.getCreator());
         _creators.put(Page.SWIFTLY, client.swiftly.index.getCreator());
-        _creators.put(Page.WHIRLED, client.whirled.index.getCreator());
+        _creators.put(Page.WHIRLEDS, client.whirleds.index.getCreator());
         _creators.put(Page.WORLD, client.world.index.getCreator());
-        _creators.put(Page.WRAP, client.wrap.index.getCreator());
     }
 
     /**

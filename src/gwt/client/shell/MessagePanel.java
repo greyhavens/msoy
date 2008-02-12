@@ -37,7 +37,7 @@ public class MessagePanel extends FlexTable
     {
         ClickListener onClick = new ClickListener() {
             public void onClick (Widget sender) {
-                Application.go(Page.PROFILE, "" + poster.name.getMemberId());
+                Application.go(Page.PEOPLE, "" + poster.name.getMemberId());
             }
         };
         setWidget(0, 0, MediaUtil.createMediaView(poster.photo, MediaDesc.THUMBNAIL_SIZE, onClick));

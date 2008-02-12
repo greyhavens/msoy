@@ -63,7 +63,7 @@ public class ItemUtil
         if (item instanceof Game) {
             panel.add(new Button(CShell.cmsgs.detailPlay(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.GAME, Args.compose("d" , ((Game)item).gameId));
+                    Application.go(Page.GAMES, Args.compose("d" , ((Game)item).gameId));
                 }
             }));
         }

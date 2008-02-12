@@ -56,7 +56,7 @@ public class index extends MsgsEntryPoint
     // @Override // from Page
     protected String getPageId ()
     {
-        return "mail";
+        return MAIL;
     }
 
     // @Override // from Page
@@ -72,7 +72,7 @@ public class index extends MsgsEntryPoint
     protected void didLogoff ()
     {
         // go to the landing page instead of reloading as a non-member
-        Application.go(Page.WHIRLED, "");
+        Application.go(Page.ME, "");
     }
 
     protected MailApplication _mainView;

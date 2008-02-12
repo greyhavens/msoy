@@ -39,7 +39,7 @@ public class ReviewItem extends VerticalPanel
         // the name displays an item inspector
         String name = _item.name + " - " + detail.creator.toString();
         String args = Args.compose(""+_item.getType(), "0", ""+_item.itemId);
-        add(Application.createLink(name, Page.INVENTORY, args));
+        add(Application.createLink(name, Page.STUFF, args));
 
         add(new Label(_item.description));
 

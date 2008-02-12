@@ -187,7 +187,7 @@ public class Frame
 
         // if we're on a "world" page, go to the landing page
         if (History.getToken().startsWith(Page.WORLD)) {
-            Application.go(Page.WHIRLED, "");
+            Application.go(Page.ME, "");
         }
     }
 
@@ -499,18 +499,18 @@ public class Frame
         public MemberHeader () {
             int col = 1;
             setWidget(0, col++, new NaviButton(CShell.cmsgs.menuMe(), _images.me(), _images.ome(),
-                                               Page.WHIRLED, "mywhirled"));
+                                               Page.ME, "mywhirled"));
             String arg = Args.compose("f", CShell.getMemberId());
             setWidget(0, col++, new NaviButton(CShell.cmsgs.menuFriends(), _images.friends(),
-                                               _images.ofriends(), Page.PROFILE, arg));
+                                               _images.ofriends(), Page.PEOPLE, arg));
             setWidget(0, col++, new NaviButton(CShell.cmsgs.menuWorlds(), _images.worlds(),
-                                               _images.oworlds(), Page.GROUP, ""));
+                                               _images.oworlds(), Page.WHIRLEDS, ""));
             setWidget(0, col++, new NaviButton(CShell.cmsgs.menuGames(), _images.games(),
-                                               _images.ogames(), Page.GAME, ""));
+                                               _images.ogames(), Page.GAMES, ""));
             setWidget(0, col++, new NaviButton(CShell.cmsgs.menuShop(), _images.shop(),
-                                               _images.oshop(), Page.CATALOG, ""));
+                                               _images.oshop(), Page.SHOP, ""));
             setWidget(0, col++, new NaviButton(CShell.cmsgs.menuHelp(), _images.help(),
-                                               _images.ohelp(), Page.WHIRLED, "help"));
+                                               _images.ohelp(), Page.ME, "help"));
 
             setWidget(0, col++, WidgetUtil.makeShim(156, 10), 1, "Left");
             getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);

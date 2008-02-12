@@ -42,7 +42,7 @@ public class index extends Page
     // @Override // from Page
     protected String getPageId ()
     {
-        return "swiftly";
+        return SWIFTLY;
     }
 
     // @Override // from Page

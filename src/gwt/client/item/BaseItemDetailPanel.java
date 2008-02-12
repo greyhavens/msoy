@@ -152,7 +152,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
 
         if (_item instanceof Game) {
             String args = Args.compose("d" , ((Game)_item).gameId);
-            details.add(Application.createLink("More info...", Page.GAME, args));
+            details.add(Application.createLink("More info...", Page.GAMES, args));
         }
     }
 
