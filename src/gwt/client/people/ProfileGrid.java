@@ -124,7 +124,7 @@ public class ProfileGrid extends PagedGrid
                     }
                     if (pcard.lastLogon > 0) {
                         Date last = new Date(((ProfileCard)card).lastLogon);
-                        setText(2, 0, CProfile.msgs.friendsLastOnline(_lfmt.format(last)));
+                        setText(2, 0, CPeople.msgs.friendsLastOnline(_lfmt.format(last)));
                     }
                 }
             }

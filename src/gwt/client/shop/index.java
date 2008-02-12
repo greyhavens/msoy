@@ -46,19 +46,19 @@ public class index extends Page
         super.initContext();
 
         // load up our translation dictionaries
-        CCatalog.msgs = (CatalogMessages)GWT.create(CatalogMessages.class);
+        CShop.msgs = (CatalogMessages)GWT.create(CatalogMessages.class);
     }
 
     protected void updateInterface (Args args)
     {
         // if we're not a dev deployment, disallow guests
-        if (!DeploymentConfig.devDeployment && CCatalog.ident == null) {
-            setContent(MsoyUI.createLabel(CCatalog.cmsgs.noGuests(), "infoLabel"));
+        if (!DeploymentConfig.devDeployment && CShop.ident == null) {
+            setContent(MsoyUI.createLabel(CShop.cmsgs.noGuests(), "infoLabel"));
             return;
         }
 
         if (_catalog == null) {
-            Frame.setTitle(CCatalog.msgs.catalogTitle());
+            Frame.setTitle(CShop.msgs.catalogTitle());
             ItemTypePanel typeTabs = new ItemTypePanel(SHOP);
             setContent(_catalog = new CatalogPanel(typeTabs));
             setPageTabs(typeTabs);

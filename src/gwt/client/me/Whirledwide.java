@@ -51,7 +51,7 @@ public class Whirledwide extends FlexTable
         setStyleName("WhirledwidePage");
         buildUI();
 
-        CWhirled.worldsvc.getWhirledwide(new MsoyCallback() {
+        CMe.worldsvc.getWhirledwide(new MsoyCallback() {
             public void onSuccess (Object result) {
                 WhirledwideData data = (WhirledwideData) result;
                 popDisplay.displayPopulation(data.whirledPopulation);
@@ -71,7 +71,7 @@ public class Whirledwide extends FlexTable
         getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);
         setWidget(row, 0, topGamesContainer);
         topGamesContainer.setStyleName("TopGamesContainer");
-        topGamesContainer.add(makeHeader(CWhirled.msgs.headerTopGames()));
+        topGamesContainer.add(makeHeader(CMe.msgs.headerTopGames()));
 
         VerticalPanel topGamesList = new VerticalPanel();
         topGamesList.addStyleName("TopGamesList");
@@ -94,7 +94,7 @@ public class Whirledwide extends FlexTable
         getFlexCellFormatter().setVerticalAlignment(row, 2, HasAlignment.ALIGN_TOP);
         setWidget(row, 2, playersContainer);
         playersContainer.setStyleName("PlayersContainer");
-        playersContainer.add(makeHeader(CWhirled.msgs.headerPlayers()));
+        playersContainer.add(makeHeader(CMe.msgs.headerPlayers()));
 
         VerticalPanel playersList = new VerticalPanel();
         playersList.addStyleName("PlayersList");
@@ -138,7 +138,7 @@ public class Whirledwide extends FlexTable
     {
         VerticalPanel newsBox = new VerticalPanel();
         newsBox.setStyleName("NewsBox");
-        newsBox.add(makeHeader(CWhirled.msgs.headerNews()));
+        newsBox.add(makeHeader(CMe.msgs.headerNews()));
 
         newsBox.add(_news = new ScrollPanel());
         _news.setStyleName("NewsContainer");
@@ -148,7 +148,7 @@ public class Whirledwide extends FlexTable
             _news.setWidget(new HTML(newsHtml));
         }
 
-        if (CWhirled.isAdmin()) {
+        if (CMe.isAdmin()) {
             newsBox.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
             newsBox.add(MsoyUI.createActionLabel("[edit news]", "tipLabel", new ClickListener() {
                 public void onClick (Widget sender) {
@@ -168,7 +168,7 @@ public class Whirledwide extends FlexTable
 
         VerticalPanel newsBox = new VerticalPanel();
         newsBox.setStyleName("NewsBox");
-        newsBox.add(makeHeader(CWhirled.msgs.headerNews()));
+        newsBox.add(makeHeader(CMe.msgs.headerNews()));
 
         final RichTextArea editor = new RichTextArea();
         editor.setWidth("100%");
@@ -182,17 +182,17 @@ public class Whirledwide extends FlexTable
         newsBox.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.setSpacing(5);
-        buttons.add(new Button(CWhirled.cmsgs.cancel(), new ClickListener() {
+        buttons.add(new Button(CMe.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget source) {
                 showNews(_wwdata.newsHtml);
             }
         }));
-        Button update = new Button(CWhirled.cmsgs.update());
+        Button update = new Button(CMe.cmsgs.update());
         buttons.add(update);
         new ClickCallback(update) {
             public boolean callService () {
                 _newsHtml = editor.getHTML();
-                CWhirled.worldsvc.updateWhirledNews(CWhirled.ident, _newsHtml, this);
+                CMe.worldsvc.updateWhirledNews(CMe.ident, _newsHtml, this);
                 return true;
             }
             public boolean gotResult (Object result) {
@@ -296,11 +296,11 @@ public class Whirledwide extends FlexTable
             HorizontalPanel nav = new HorizontalPanel();
             nav.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
             nav.setStyleName("SceneNavigation");
-            nav.add(_prevButton = new Button(CWhirled.msgs.prev(), this));
+            nav.add(_prevButton = new Button(CMe.msgs.prev(), this));
             _prevButton.addStyleName("PrevButton");
             nav.add(_sceneNameContainer = new FlowPanel());
             _sceneNameContainer.setStyleName("SceneNameContainer");
-            nav.add(_nextButton = new Button(CWhirled.msgs.next(), this));
+            nav.add(_nextButton = new Button(CMe.msgs.next(), this));
             _nextButton.addStyleName("NextButton");
             add(nav);
         }

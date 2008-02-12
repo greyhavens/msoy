@@ -51,18 +51,18 @@ public class FeedPanel extends VerticalPanel
         _fullPage = fullPage;
         _feeds.clear();
         _feeds.populate(feed, _fullPage);
-        _moreLabel.setText(_fullPage ? CWhirled.msgs.shortFeed() : CWhirled.msgs.fullFeed());
+        _moreLabel.setText(_fullPage ? CMe.msgs.shortFeed() : CMe.msgs.fullFeed());
     }
 
     protected void loadFeed (final boolean fullPage)
     {
         int feedDays = fullPage ? FULL_CUTOFF : SHORT_CUTOFF;
-        CWhirled.worldsvc.loadFeed(CWhirled.ident, feedDays, new AsyncCallback() {
+        CMe.worldsvc.loadFeed(CMe.ident, feedDays, new AsyncCallback() {
             public void onSuccess (Object result) {
                 setFeed((List)result, fullPage);
             }
             public void onFailure(Throwable caught) {
-                MsoyUI.error(CWhirled.serverError(caught));
+                MsoyUI.error(CMe.serverError(caught));
             }
         });
     }
@@ -77,7 +77,7 @@ public class FeedPanel extends VerticalPanel
         Label star = new Label();
         star.setStyleName("HeaderLeft");
         header.add(star);
-        Label title = new Label(CWhirled.msgs.headerFeed());
+        Label title = new Label(CMe.msgs.headerFeed());
         title.setStyleName("HeaderCenter");
         header.add(title);
         header.setCellWidth(title, "100%");
@@ -142,7 +142,7 @@ public class FeedPanel extends VerticalPanel
         public void populate (List messages, boolean fullPage)
         {
             if (messages.size() == 0) {
-                add(new BasicWidget(CWhirled.msgs.emptyFeed()));
+                add(new BasicWidget(CMe.msgs.emptyFeed()));
                 return;
             }
 
@@ -204,7 +204,7 @@ public class FeedPanel extends VerticalPanel
                 if (header > message.posted) {
                     header = startofDay(message.posted);
                     if (yesterday < message.posted) {
-                        add(new DateWidget(CWhirled.msgs.yesterday()));
+                        add(new DateWidget(CMe.msgs.yesterday()));
                     } else if (!fullPage) {
                         // stop after displaying today and yesterday; we let the server send us 48
                         // hours of feed messages to account for timezone differences, but we
@@ -285,7 +285,7 @@ public class FeedPanel extends VerticalPanel
                 // TEMP: remove after servers are 2 weeks past 11/06/2007
                 if (message.data.length == 1) {
                     return Application.createLinkHtml(
-                            CWhirled.msgs.room(((FriendFeedMessage)message).friend.toString()),
+                            CMe.msgs.room(((FriendFeedMessage)message).friend.toString()),
                             Page.WORLD, "s" + message.data[0]);
                 }
                 // ENDTEMP
@@ -297,7 +297,7 @@ public class FeedPanel extends VerticalPanel
                     Args.compose("d", message.data[1], GameDetailPanel.TROPHIES_TAB));
 
             case 103: // FRIEND_LISTED_ITEM
-                return CWhirled.msgs.descCombine(
+                return CMe.msgs.descCombine(
                             CShell.dmsgs.getString("itemType" + message.data[1]),
                             Application.createLinkHtml(message.data[0], Page.SHOP,
                                 Args.compose(message.data[1], "i", message.data[2])));
@@ -365,27 +365,27 @@ public class FeedPanel extends VerticalPanel
             String friendLink = profileLink(message.friend);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
-                add(new IconWidget("friend_added_friend", CWhirled.msgs.friendAddedFriend(
+                add(new IconWidget("friend_added_friend", CMe.msgs.friendAddedFriend(
                                 friendLink, buildString(message))));
                 break;
 
             case 101: // FRIEND_UPDATED_ROOM
-                add(new IconWidget("friend_updated_room", CWhirled.msgs.friendUpdatedRoom(
+                add(new IconWidget("friend_updated_room", CMe.msgs.friendUpdatedRoom(
                                 friendLink, buildString(message))));
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new ThumbnailWidget(buildMedia(message), CWhirled.msgs.friendWonTrophy(
+                add(new ThumbnailWidget(buildMedia(message), CMe.msgs.friendWonTrophy(
                                 friendLink, buildString(message))));
                 break;
 
             case 103: // FRIEND_LISTED_ITEM
-                add(new ThumbnailWidget(buildMedia(message), CWhirled.msgs.friendListedItem(
+                add(new ThumbnailWidget(buildMedia(message), CMe.msgs.friendListedItem(
                                 friendLink, buildString(message))));
                 break;
 
             case 104: // FRIEND_GAINED_LEVEL
-                add(new IconWidget("friend_gained_level", CWhirled.msgs.friendGainedLevel(
+                add(new IconWidget("friend_gained_level", CMe.msgs.friendGainedLevel(
                                 friendLink, buildString(message))));
                 break;
             }
@@ -405,7 +405,7 @@ public class FeedPanel extends VerticalPanel
         {
             return standardCombine(list, new StringBuilder() {
                 public String build (FeedMessage message) {
-                    return CWhirled.msgs.colonCombine(
+                    return CMe.msgs.colonCombine(
                         profileLink(((FriendFeedMessage)message).friend), buildString(message));
                 }
             });
@@ -430,9 +430,9 @@ public class FeedPanel extends VerticalPanel
             for (int ii = 1, ll = list.size(); ii < ll; ii++) {
                 FeedMessage message = (FeedMessage)list.get(ii);
                 if (ii + 1 == ll) {
-                    combine = CWhirled.msgs.andCombine(combine, builder.build(message));
+                    combine = CMe.msgs.andCombine(combine, builder.build(message));
                 } else {
-                    combine = CWhirled.msgs.commaCombine(combine, builder.build(message));
+                    combine = CMe.msgs.commaCombine(combine, builder.build(message));
                 }
             }
             return combine;
@@ -462,28 +462,28 @@ public class FeedPanel extends VerticalPanel
             String friendLink = profileLink(message.friend);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
-                add(new IconWidget("friend_added_friend", CWhirled.msgs.friendAddedFriends(
+                add(new IconWidget("friend_added_friend", CMe.msgs.friendAddedFriends(
                                 friendLink, standardCombine(list))));
                 break;
 
             case 101: // FRIEND_UPDATED_ROOM
                 add(new IconWidget("friend_updated_room",
-                            CWhirled.msgs.friendsUpdatedRoom(friendLinkCombine(list))));
+                            CMe.msgs.friendsUpdatedRoom(friendLinkCombine(list))));
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new ThumbnailWidget(buildMediaArray(list), CWhirled.msgs.friendWonTrophies(
+                add(new ThumbnailWidget(buildMediaArray(list), CMe.msgs.friendWonTrophies(
                                 friendLink, standardCombine(list))));
                 break;
 
             case 103: // FRIEND_LISTED_ITEM
-                add(new ThumbnailWidget(buildMediaArray(list), CWhirled.msgs.friendListedItem(
+                add(new ThumbnailWidget(buildMediaArray(list), CMe.msgs.friendListedItem(
                                 friendLink, standardCombine(list))));
                 break;
 
             case 104: // FRIEND_GAINED_LEVEL
                 add(new IconWidget("friend_gained_level",
-                            CWhirled.msgs.friendsGainedLevel(friendLinkCombine(list))));
+                            CMe.msgs.friendsGainedLevel(friendLinkCombine(list))));
                 break;
             }
         }
@@ -494,12 +494,12 @@ public class FeedPanel extends VerticalPanel
             String friendLinks = profileCombine(list);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
-                add(new IconWidget("friend_added_friend", CWhirled.msgs.friendAddedFriendsRight(
+                add(new IconWidget("friend_added_friend", CMe.msgs.friendAddedFriendsRight(
                                 friendLinks, buildString(message))));
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new ThumbnailWidget(buildMedia(message), CWhirled.msgs.friendWonTrophy(
+                add(new ThumbnailWidget(buildMedia(message), CMe.msgs.friendWonTrophy(
                                 friendLinks, buildString(message))));
                 break;
             }
@@ -512,7 +512,7 @@ public class FeedPanel extends VerticalPanel
             case 200: // GROUP_ANNOUNCEMENT
                 String threadLink = Application.createLinkHtml(
                     message.data[1], Page.WHIRLEDS, Args.compose("t", message.data[2]));
-                add(new BasicWidget(CWhirled.msgs.groupAnnouncement(message.data[0], threadLink)));
+                add(new BasicWidget(CMe.msgs.groupAnnouncement(message.data[0], threadLink)));
                 break;
             }
         }

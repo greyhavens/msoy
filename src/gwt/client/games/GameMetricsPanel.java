@@ -41,14 +41,14 @@ public class GameMetricsPanel extends VerticalPanel
             return;
         }
 
-        add(MsoyUI.createLabel(CGame.msgs.gmpLoading(), "Header"));
-        CGame.gamesvc.loadGameMetrics(CGame.ident, _detail.gameId, new AsyncCallback() {
+        add(MsoyUI.createLabel(CGames.msgs.gmpLoading(), "Header"));
+        CGames.gamesvc.loadGameMetrics(CGames.ident, _detail.gameId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 gotMetrics((GameMetrics)result);
             }
             public void onFailure (Throwable caught) {
-                CGame.log("loadGameMetrics failed", caught);
-                add(MsoyUI.createLabel(CGame.serverError(caught), "Header"));
+                CGames.log("loadGameMetrics failed", caught);
+                add(MsoyUI.createLabel(CGames.serverError(caught), "Header"));
             }
         });
     }
@@ -59,7 +59,7 @@ public class GameMetricsPanel extends VerticalPanel
         clear();
 
         if (metrics.singleTotalCount > 0) {
-            add(MsoyUI.createLabel(CGame.msgs.gmpSingleHeader(), "Header"));
+            add(MsoyUI.createLabel(CGames.msgs.gmpSingleHeader(), "Header"));
             add(createTilerDisplay(metrics.singleTotalCount, metrics.singleCounts,
                                    metrics.singleMaxScore, metrics.singleScores));
             add(WidgetUtil.makeShim(5, 5));
@@ -67,7 +67,7 @@ public class GameMetricsPanel extends VerticalPanel
         }
 
         if (metrics.multiTotalCount > 0) {
-            add(MsoyUI.createLabel(CGame.msgs.gmpMultiHeader(), "Header"));
+            add(MsoyUI.createLabel(CGames.msgs.gmpMultiHeader(), "Header"));
             add(createTilerDisplay(metrics.multiTotalCount, metrics.multiCounts,
                                    metrics.multiMaxScore, metrics.multiScores));
             add(WidgetUtil.makeShim(5, 5));
@@ -75,7 +75,7 @@ public class GameMetricsPanel extends VerticalPanel
         }
 
         if (metrics.singleTotalCount + metrics.multiTotalCount == 0) {
-            add(new Label(CGame.msgs.gmpNoMetrics()));
+            add(new Label(CGames.msgs.gmpNoMetrics()));
         }
     }
 
@@ -87,9 +87,9 @@ public class GameMetricsPanel extends VerticalPanel
 
         // display the hints
         table.getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
-        table.setText(row, 0, CGame.msgs.gmpCountsHint());
+        table.setText(row, 0, CGames.msgs.gmpCountsHint());
         table.getFlexCellFormatter().setStyleName(row, 1, "tipLabel");
-        table.setText(row++, 1, CGame.msgs.gmpScoresHint());
+        table.setText(row++, 1, CGames.msgs.gmpScoresHint());
 
         // display a graph of the raw counts by bucket
         int maxCount = 0;
@@ -100,7 +100,7 @@ public class GameMetricsPanel extends VerticalPanel
         for (int ii = 0; ii < counts.length; ii++) {
             data[ii] = (counts[ii] * GRAPH_HEIGHT) / maxCount;
         }
-        String xLabel = CGame.msgs.gmpCountsX(format(maxScore / 100f));
+        String xLabel = CGames.msgs.gmpCountsX(format(maxScore / 100f));
         table.setWidget(row, 0, createGraph(data, ""+maxScore, ""+maxCount, xLabel));
 
         // display a graph of the scores needed to achieve a particular percentile
@@ -109,11 +109,11 @@ public class GameMetricsPanel extends VerticalPanel
             data[ii] = Math.round((scores[ii] * GRAPH_HEIGHT) / maxScore);
         }
         table.setWidget(row++, 1, createGraph(data, ""+(counts.length-1), format(maxScore),
-                                              CGame.msgs.gmpScoresX()));
+                                              CGames.msgs.gmpScoresX()));
 
         // display the total number of scores recorded
-        table.setText(row, 0, CGame.msgs.gmpTotalCount(""+totalCount));
-        table.setText(row++, 1, CGame.msgs.gmpMaxPercentile(""+scores[scores.length-1]));
+        table.setText(row, 0, CGames.msgs.gmpTotalCount(""+totalCount));
+        table.setText(row++, 1, CGames.msgs.gmpMaxPercentile(""+scores[scores.length-1]));
 
         return table;
     }
@@ -121,16 +121,16 @@ public class GameMetricsPanel extends VerticalPanel
     protected RowPanel createResetUI (final boolean single)
     {
         RowPanel row = new RowPanel();
-        row.add(MsoyUI.createLabel(CGame.msgs.gmpResetHint(), "tipLabel"));
-        Button reset = new Button(CGame.msgs.gmpResetScores());
+        row.add(MsoyUI.createLabel(CGames.msgs.gmpResetHint(), "tipLabel"));
+        Button reset = new Button(CGames.msgs.gmpResetScores());
         row.add(reset);
-        new ClickCallback(reset, CGame.msgs.gmpResetConfirm()) {
+        new ClickCallback(reset, CGames.msgs.gmpResetConfirm()) {
             public boolean callService () {
-                CGame.gamesvc.resetGameScores(CGame.ident, _detail.gameId, single, this);
+                CGames.gamesvc.resetGameScores(CGames.ident, _detail.gameId, single, this);
                 return true;
             }
             public boolean gotResult (Object result) {
-                MsoyUI.info(CGame.msgs.gmpScoresReset());
+                MsoyUI.info(CGames.msgs.gmpScoresReset());
                 return true;
             }
         };

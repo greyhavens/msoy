@@ -30,7 +30,7 @@ public class TrophiesBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (ProfileService.ProfileResult pdata)
     {
-        setHeader(CProfile.msgs.trophiesTitle());
+        setHeader(CPeople.msgs.trophiesTitle());
 
         FlexTable grid = new FlexTable();
         grid.setCellSpacing(4);
@@ -43,7 +43,7 @@ public class TrophiesBlurb extends Blurb
 
         FlowPanel footer = new FlowPanel();
         String args = Args.compose("t", pdata.name.getMemberId());
-        footer.add(Application.createLink(CProfile.msgs.seeAll(), Page.GAMES, args));
+        footer.add(Application.createLink(CPeople.msgs.seeAll(), Page.GAMES, args));
 
         ContentFooterPanel content = new ContentFooterPanel(grid, footer);
         content.addStyleName("trophiesBlurb");

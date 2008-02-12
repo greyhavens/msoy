@@ -60,7 +60,7 @@ public class SubItemPanel extends PagedGrid
     // @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return CInventory.msgs.panelNoItems(CInventory.dmsgs.getString("itemType" + _type));
+        return CStuff.msgs.panelNoItems(CStuff.dmsgs.getString("itemType" + _type));
     }
 
     // @Override // from PagedGrid
@@ -72,10 +72,10 @@ public class SubItemPanel extends PagedGrid
     // @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
-        controls.setWidget(0, 0, _create = new Button(CInventory.msgs.panelCreateNew()));
+        controls.setWidget(0, 0, _create = new Button(CStuff.msgs.panelCreateNew()));
         _create.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-                CInventory.createItem(_type, _parent.getType(), _parent.itemId);
+                CStuff.createItem(_type, _parent.getType(), _parent.itemId);
             }
         });
     }

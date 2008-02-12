@@ -34,15 +34,15 @@ public class SearchControls extends SmartTable
         super("searchControls", 0, 5);
 
         int col = 0;
-        setText(0, col++, CProfile.msgs.searchTitle(), 1, "rightLabel");
+        setText(0, col++, CPeople.msgs.searchTitle(), 1, "rightLabel");
         for (int ii = 0; ii < _types.length; ii++) {
             setWidget(0, col++, _types[ii] = new RadioButton("searchType", TYPE_NAMES[ii]));
         }
         _types[0].setChecked(true);
 
         FlowPanel invite = new FlowPanel();
-        invite.add(MsoyUI.createLabel(CProfile.msgs.searchInvite(), "nowrapLabel"));
-        invite.add(Application.createLink(CProfile.msgs.searchInviteGo(), Page.ACCOUNT, "invites"));
+        invite.add(MsoyUI.createLabel(CPeople.msgs.searchInvite(), "nowrapLabel"));
+        invite.add(Application.createLink(CPeople.msgs.searchInviteGo(), Page.ACCOUNT, "invites"));
         col += 1; // skip over the search button column
         getFlexCellFormatter().setRowSpan(0, col, 2);
         setWidget(0, col++, WidgetUtil.makeShim(20, 1));
@@ -60,7 +60,7 @@ public class SearchControls extends SmartTable
             }
         });
         _search.addKeyboardListener(new EnterClickAdapter(this));
-        setWidget(1, 2, _go = new Button(CProfile.msgs.searchGo(), this));
+        setWidget(1, 2, _go = new Button(CPeople.msgs.searchGo(), this));
         _go.setEnabled(false);
     }
 
@@ -106,6 +106,6 @@ public class SearchControls extends SmartTable
 
     protected static final String[] TYPES = { "name", "display", "email" };
     protected static final String[] TYPE_NAMES = {
-        CProfile.msgs.searchName(), CProfile.msgs.searchDisplayName(), CProfile.msgs.searchEmail()
+        CPeople.msgs.searchName(), CPeople.msgs.searchDisplayName(), CPeople.msgs.searchEmail()
     };
 }

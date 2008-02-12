@@ -48,7 +48,7 @@ public class ListingContainer extends FlexTable
                       ItemUtil.getName(listing.item, true), "Name", clicker));
         getFlexCellFormatter().setColSpan(0, 1, 3);
 
-        setText(1, 0, CCatalog.msgs.itemBy(listing.creator.toString()));
+        setText(1, 0, CShop.msgs.itemBy(listing.creator.toString()));
         getFlexCellFormatter().setStyleName(1, 0, "Creator");
         getFlexCellFormatter().setColSpan(1, 0, 3);
 

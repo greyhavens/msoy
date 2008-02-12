@@ -38,7 +38,7 @@ public class FriendsBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (ProfileService.ProfileResult pdata)
     {
-        setHeader(CProfile.msgs.friendsTitle());
+        setHeader(CPeople.msgs.friendsTitle());
 
         FriendsGrid grid = new FriendsGrid();
         grid.setModel(new SimpleDataModel(pdata.friends), 0);
@@ -50,12 +50,12 @@ public class FriendsBlurb extends Blurb
 
         // always show the link if it's your own profile and you have at least one friend because
         // the all friends page is the only way to remove friends
-        boolean isSelf = (CProfile.getMemberId() == _name.getMemberId());
+        boolean isSelf = (CPeople.getMemberId() == _name.getMemberId());
         int moreThreshold =  isSelf ? 0 : FRIEND_COLUMNS * FRIEND_ROWS;
         Widget more;
         if (pdata.totalFriendCount > moreThreshold) {
             more = Application.createLink(
-                CProfile.msgs.seeAllFriends(""+pdata.totalFriendCount),
+                CPeople.msgs.seeAllFriends(""+pdata.totalFriendCount),
                 Page.PEOPLE, Args.compose("f", pdata.name.getMemberId()));
         } else {
             more = new HTML("&nbsp;");
@@ -64,18 +64,18 @@ public class FriendsBlurb extends Blurb
         footer.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_LEFT);
         footer.getFlexCellFormatter().setWidth(0, 0, "100%");
 
-        boolean canInvite = CProfile.getMemberId() > 0 && !isSelf && !pdata.isOurFriend;
+        boolean canInvite = CPeople.getMemberId() > 0 && !isSelf && !pdata.isOurFriend;
         if (canInvite) {
-            footer.setWidget(0, 1, new Button(CProfile.msgs.inviteFriend(), new ClickListener() {
+            footer.setWidget(0, 1, new Button(CPeople.msgs.inviteFriend(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    new MailComposition(_name, CProfile.msgs.inviteTitle(),
+                    new MailComposition(_name, CPeople.msgs.inviteTitle(),
                                         new FriendInvite.Composer(),
-                                        CProfile.msgs.inviteBody()).show();
+                                        CPeople.msgs.inviteBody()).show();
                 }
             }));
 
         } else if (isSelf) {
-            footer.setWidget(0, 1, new Button(CProfile.msgs.findFriends(), new ClickListener() {
+            footer.setWidget(0, 1, new Button(CPeople.msgs.findFriends(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.PEOPLE, "search");
                 }
@@ -91,7 +91,7 @@ public class FriendsBlurb extends Blurb
     protected class FriendsGrid extends ProfileGrid
     {
         public FriendsGrid () {
-            super(FRIEND_ROWS, FRIEND_COLUMNS, NAV_ON_BOTTOM, CProfile.msgs.noFriendsOther());
+            super(FRIEND_ROWS, FRIEND_COLUMNS, NAV_ON_BOTTOM, CPeople.msgs.noFriendsOther());
             addStyleName("dottedGrid");
             setVerticalOrienation(true);
             setWidth("100%");
@@ -100,11 +100,11 @@ public class FriendsBlurb extends Blurb
         // @Override // from PagedGrid
         protected Widget createEmptyContents ()
         {
-            if (CProfile.getMemberId() != _name.getMemberId()) {
+            if (CPeople.getMemberId() != _name.getMemberId()) {
                 return super.createEmptyContents();
             }
             return GroupsBlurb.createEmptyTable(
-                CProfile.msgs.noFriendsSelf(), CProfile.msgs.noFriendsFindEm(),
+                CPeople.msgs.noFriendsSelf(), CPeople.msgs.noFriendsFindEm(),
                 Page.PEOPLE, "search");
         }
     }

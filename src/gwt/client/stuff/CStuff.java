@@ -14,7 +14,7 @@ import com.threerings.msoy.item.data.all.SubItem;
 /**
  * Extends {@link CShell} and provides inventory-specific services.
  */
-public class CInventory extends CShell
+public class CStuff extends CShell
 {
     /** Messages used by the inventory interfaces. */
     public static InventoryMessages msgs;

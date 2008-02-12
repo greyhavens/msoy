@@ -39,7 +39,7 @@ public class MyWhirled extends SmartTable
     {
         super("myWhirled", 0, 0);
 
-        CWhirled.worldsvc.getMyWhirled(CWhirled.ident, new MsoyCallback() {
+        CMe.worldsvc.getMyWhirled(CMe.ident, new MsoyCallback() {
             public void onSuccess (Object result) {
                 MyWhirledData data = (MyWhirledData) result;
 //                 popDisplay.displayPopulation(data.whirledPopulation);
@@ -57,28 +57,28 @@ public class MyWhirled extends SmartTable
         getFlexCellFormatter().setVerticalAlignment(0, 0, VerticalPanel.ALIGN_TOP);
 
         // add our own profile picture to the left column
-        sidebar.add(createHeader(CWhirled.msgs.headerProfile()));
+        sidebar.add(createHeader(CMe.msgs.headerProfile()));
         sidebar.add(box = createListBox("PictureBox"));
         box.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         MediaDesc photo = (data.photo == null) ? Profile.DEFAULT_PHOTO : data.photo;
         box.add(MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
             public void onClick (Widget sender) {
-                Application.go(Page.PEOPLE, "" + CWhirled.getMemberId());
+                Application.go(Page.PEOPLE, "" + CMe.getMemberId());
             }
         }));
 
         // add a list of tools
-        sidebar.add(createHeader(CWhirled.msgs.headerTools()));
+        sidebar.add(createHeader(CMe.msgs.headerTools()));
         sidebar.add(box = createListBox("ListBox"));
         box.add(Application.createLink("My Discussions", Page.WHIRLEDS, "unread"));
         box.add(Application.createLink("My Mail", Page.MAIL, ""));
         box.add(Application.createLink("My Account", Page.ACCOUNT, "edit"));
-        if (CWhirled.isSupport()) {
+        if (CMe.isSupport()) {
             box.add(Application.createLink("Admin Console", Page.ADMIN, ""));
         }
 
         // add all of our rooms
-        sidebar.add(createHeader(CWhirled.msgs.headerRooms()));
+        sidebar.add(createHeader(CMe.msgs.headerRooms()));
         sidebar.add(box = createListBox("ListBox"));
 
         // first add our home room
@@ -130,10 +130,10 @@ public class MyWhirled extends SmartTable
             ppanel.addStyleName("rightLabel");
             ppanel.add(people);
             Hyperlink link = Application.createLink(
-                "All your friends...", Page.PEOPLE, Args.compose("f", CWhirled.getMemberId()));
+                "All your friends...", Page.PEOPLE, Args.compose("f", CMe.getMemberId()));
             link.addStyleName("tipLabel");
             ppanel.add(link);
-            contents.add(MsoyUI.createBox("people", CWhirled.msgs.headerPeople(), ppanel));
+            contents.add(MsoyUI.createBox("people", CMe.msgs.headerPeople(), ppanel));
         }
 
         // add links to our stuff
@@ -148,10 +148,10 @@ public class MyWhirled extends SmartTable
             };
             String ipath = Item.getDefaultThumbnailMediaFor(type).getMediaPath();
             stuff.setWidget(0, ii, MsoyUI.createActionImage(ipath, onClick), 1, "Item");
-            String ilabel = CWhirled.dmsgs.getString("pItemType" + type);
+            String ilabel = CMe.dmsgs.getString("pItemType" + type);
             stuff.setWidget(1, ii, MsoyUI.createActionLabel(ilabel, onClick), 1, "Item");
         }
-        contents.add(MsoyUI.createBox("aux", CWhirled.msgs.headerStuff(), stuff));
+        contents.add(MsoyUI.createBox("aux", CMe.msgs.headerStuff(), stuff));
 
         // add our news feed
         FeedPanel feed = new FeedPanel();
@@ -209,7 +209,7 @@ public class MyWhirled extends SmartTable
                     }
                 };
                 if (card.placeName != null) {
-                    where = CWhirled.msgs.friendIn(card.placeName);
+                    where = CMe.msgs.friendIn(card.placeName);
                 }
                 break;
 
@@ -220,7 +220,7 @@ public class MyWhirled extends SmartTable
                     }
                 };
                 if (card.placeName != null) {
-                    where = CWhirled.msgs.friendPlaying(card.placeName);
+                    where = CMe.msgs.friendPlaying(card.placeName);
                 }
                 break;
 

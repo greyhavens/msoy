@@ -73,13 +73,13 @@ public class CatalogPanel extends VerticalPanel
                 return new ListingContainer((CatalogListing)item);
             }
             protected String getEmptyMessage () {
-                String name = CCatalog.dmsgs.getString("itemType" + _query.itemType);
+                String name = CShop.dmsgs.getString("itemType" + _query.itemType);
                 if (_query.tag != null) {
-                    return CCatalog.msgs.catalogNoTag(name, _query.tag);
+                    return CShop.msgs.catalogNoTag(name, _query.tag);
                 } else if (_query.search != null) {
-                    return CCatalog.msgs.catalogNoMatch(name, _query.search);
+                    return CShop.msgs.catalogNoMatch(name, _query.search);
                 } else {
-                    return CCatalog.msgs.catalogNoList(name);
+                    return CShop.msgs.catalogNoList(name);
                 }
             }
         };
@@ -93,11 +93,11 @@ public class CatalogPanel extends VerticalPanel
         _searchSortPanel = new ItemSearchSortPanel(
             this,
             new String[] {
-                CCatalog.msgs.sortByRating(),
-                CCatalog.msgs.sortByListDate(),
-                CCatalog.msgs.sortByPriceAsc(),
-                CCatalog.msgs.sortByPriceDesc(),
-                CCatalog.msgs.sortByPurchases(), },
+                CShop.msgs.sortByRating(),
+                CShop.msgs.sortByListDate(),
+                CShop.msgs.sortByPriceAsc(),
+                CShop.msgs.sortByPriceDesc(),
+                CShop.msgs.sortByPurchases(), },
             new byte[] {
                 CatalogListing.SORT_BY_RATING,
                 CatalogListing.SORT_BY_LIST_DATE,
@@ -137,8 +137,8 @@ public class CatalogPanel extends VerticalPanel
                 }
             };
             if (listing == null) {
-                CCatalog.catalogsvc.loadListing(
-                    CCatalog.ident, argQuery.itemType, catalogId, gotListing);
+                CShop.catalogsvc.loadListing(
+                    CShop.ident, argQuery.itemType, catalogId, gotListing);
             } else {
                 gotListing.onSuccess(listing);
             }
@@ -146,7 +146,7 @@ public class CatalogPanel extends VerticalPanel
         } else if (argQuery.itemType == Item.NOT_A_TYPE) {
             // display a grid of the selectable item types
             clear();
-            add(MsoyUI.createLabel(CCatalog.msgs.catalogIntro(), "Intro"));
+            add(MsoyUI.createLabel(CShop.msgs.catalogIntro(), "Intro"));
             SmartTable types = new SmartTable(0, 10);
             for (int ii = 0; ii < Item.TYPES.length; ii++) {
                 final byte type = Item.TYPES[ii];
@@ -159,9 +159,9 @@ public class CatalogPanel extends VerticalPanel
                 String tpath = Item.getDefaultThumbnailMediaFor(type).getMediaPath();
                 ttable.setWidget(0, 0, MsoyUI.createActionImage(tpath, onClick), 1, "Icon");
                 ttable.getFlexCellFormatter().setRowSpan(0, 0, 2);
-                String tname = CCatalog.dmsgs.getString("pItemType" + type);
+                String tname = CShop.dmsgs.getString("pItemType" + type);
                 ttable.setWidget(0, 1, MsoyUI.createActionLabel(tname, onClick), 1, "Name");
-                String tblurb = CCatalog.dmsgs.getString("catIntro" + type);
+                String tblurb = CShop.dmsgs.getString("catIntro" + type);
                 ttable.setText(1, 0, tblurb, 1, "Blurb");
                 types.setWidget(ii / 2, ii % 2, ttable);
             }
@@ -174,11 +174,11 @@ public class CatalogPanel extends VerticalPanel
             _searchSortPanel.setSearch(_query.search == null ? "" : _query.search);
             _searchSortPanel.setSelectedSort(_query.sortBy);
             if (_query.search != null) {
-                setFilteredBy(CCatalog.msgs.catalogSearchFilter(_query.search));
+                setFilteredBy(CShop.msgs.catalogSearchFilter(_query.search));
             } else if (_query.tag != null) {
-                setFilteredBy(CCatalog.msgs.catalogTagFilter(_query.tag));
+                setFilteredBy(CShop.msgs.catalogTagFilter(_query.tag));
             } else if (_query.creatorId != 0) {
-                setFilteredBy(CCatalog.msgs.catalogCreatorFilter());
+                setFilteredBy(CShop.msgs.catalogCreatorFilter());
             } else {
                 setFilteredBy(null);
             }
@@ -254,7 +254,7 @@ public class CatalogPanel extends VerticalPanel
     protected void showListing (final CatalogListing listing)
     {
         // load up the item details
-        CCatalog.itemsvc.loadItemDetail(CCatalog.ident, listing.item.getIdent(), new MsoyCallback() {
+        CShop.itemsvc.loadItemDetail(CShop.ident, listing.item.getIdent(), new MsoyCallback() {
             public void onSuccess (Object result) {
                 clear();
                 add(new ListingDetailPanel((ItemDetail)result, listing, CatalogPanel.this));
@@ -287,7 +287,7 @@ public class CatalogPanel extends VerticalPanel
 
         RowPanel filter = new RowPanel();
         filter.add(new Label(text));
-        String clear = CCatalog.msgs.catalogClearFilter();
+        String clear = CShop.msgs.catalogClearFilter();
         filter.add(MsoyUI.createActionLabel(clear, new ClickListener() {
             public void onClick (Widget widget) {
                 clearFilters();
@@ -367,8 +367,8 @@ public class CatalogPanel extends VerticalPanel
         }
 
         public void doFetchRows (int start, int count, final AsyncCallback callback) {
-            CCatalog.catalogsvc.loadCatalog(
-                CCatalog.ident, _query, start, count, _listingCount == -1, new MsoyCallback() {
+            CShop.catalogsvc.loadCatalog(
+                CShop.ident, _query, start, count, _listingCount == -1, new MsoyCallback() {
                 public void onSuccess (Object result) {
                     _result = (CatalogService.CatalogResult)result;
                     if (_listingCount == -1) {

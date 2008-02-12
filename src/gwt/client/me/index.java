@@ -43,20 +43,20 @@ public class index extends MsgsEntryPoint
         String action = args.get(0, "");
 
         if (action.equals("whirledwide")) {
-            Frame.setTitle(CWhirled.msgs.titleWhirledwide());
+            Frame.setTitle(CMe.msgs.titleWhirledwide());
             setContent(new Whirledwide(createPopulationDisplay()));
 
         } else if (action.equals("help")) {
             setContent(new HelpPanel());
 
-        } else if (action.equals("i") && CWhirled.getMemberId() == 0) {
+        } else if (action.equals("i") && CMe.getMemberId() == 0) {
             // only load their invitation and redirect to the main page if they're not logged in
             String inviteId = args.get(1, "");
             if (Application.activeInvite != null &&
                 Application.activeInvite.inviteId.equals(inviteId)) {
                 Application.go(Page.ME, "");
             } else {
-                CWhirled.membersvc.getInvitation(inviteId, true, new MsoyCallback() {
+                CMe.membersvc.getInvitation(inviteId, true, new MsoyCallback() {
                     public void onSuccess (Object result) {
                         Application.activeInvite = (Invitation)result;
                         Application.go(Page.ME, "");
@@ -64,9 +64,9 @@ public class index extends MsgsEntryPoint
                 });
             }
 
-        } else if (CWhirled.getMemberId() != 0) {
+        } else if (CMe.getMemberId() != 0) {
             // if we are logged in, we always display mywhirled instead of the landing page
-            Frame.setTitle(CWhirled.msgs.titleMyWhirled());
+            Frame.setTitle(CMe.msgs.titleMyWhirled());
             setContent(new MyWhirled(createPopulationDisplay()));
             FlashClients.tutorialEvent("myWhirledVisited");
 
@@ -87,11 +87,11 @@ public class index extends MsgsEntryPoint
         super.initContext();
 
         // wire up our remote services
-        CWhirled.worldsvc = (WorldServiceAsync)GWT.create(WorldService.class);
-        ((ServiceDefTarget)CWhirled.worldsvc).setServiceEntryPoint("/worldsvc");
+        CMe.worldsvc = (WorldServiceAsync)GWT.create(WorldService.class);
+        ((ServiceDefTarget)CMe.worldsvc).setServiceEntryPoint("/worldsvc");
 
         // load up our translation dictionaries
-        CWhirled.msgs = (WhirledMessages)GWT.create(WhirledMessages.class);
+        CMe.msgs = (WhirledMessages)GWT.create(WhirledMessages.class);
     }
 
     protected void displayWhat ()
@@ -108,7 +108,7 @@ public class index extends MsgsEntryPoint
                 VerticalPanel container = new VerticalPanel();
                 container.setVerticalAlignment(VerticalPanel.ALIGN_BOTTOM);
                 container.add(WidgetUtil.makeShim(5, 3));
-                Label popLabel = new Label(CWhirled.msgs.populationDisplay("" + population));
+                Label popLabel = new Label(CMe.msgs.populationDisplay("" + population));
                 popLabel.setStyleName("PopulationDisplay");
                 container.add(popLabel);
                 setPageTabs(container);

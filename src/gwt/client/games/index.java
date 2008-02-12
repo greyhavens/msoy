@@ -45,8 +45,8 @@ public class index extends Page
     public void onHistoryChanged (Args args)
     {
         // if we're not a dev deployment, disallow guests
-        if (!DeploymentConfig.devDeployment && CGame.ident == null) {
-            setContent(MsoyUI.createLabel(CGame.cmsgs.noGuests(), "infoLabel"));
+        if (!DeploymentConfig.devDeployment && CGames.ident == null) {
+            setContent(MsoyUI.createLabel(CGames.cmsgs.noGuests(), "infoLabel"));
             return;
         }
 
@@ -84,10 +84,10 @@ public class index extends Page
         super.initContext();
 
         // wire up our remote services
-        CGame.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
-        ((ServiceDefTarget)CGame.gamesvc).setServiceEntryPoint("/gamesvc");
+        CGames.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
+        ((ServiceDefTarget)CGames.gamesvc).setServiceEntryPoint("/gamesvc");
 
         // load up our translation dictionaries
-        CGame.msgs = (GameMessages)GWT.create(GameMessages.class);
+        CGames.msgs = (GameMessages)GWT.create(GameMessages.class);
     }
 }

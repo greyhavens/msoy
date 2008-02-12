@@ -52,7 +52,7 @@ public class GroupList extends FlexTable
 
         int col = 0;
         getFlexCellFormatter().setStyleName(0, col, "Intro");
-        setText(0, col++, CGroup.msgs.listIntro());
+        setText(0, col++, CWhirleds.msgs.listIntro());
 
         getFlexCellFormatter().setStyleName(0, col, "PopularTags");
         setWidget(0, col++, _popularTags = new FlowPanel());
@@ -66,12 +66,12 @@ public class GroupList extends FlexTable
         };
         _searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
         search.add(_searchInput);
-        search.add(new Button(CGroup.msgs.listSearch(), doSearch), HasAlignment.ALIGN_MIDDLE);
+        search.add(new Button(CWhirleds.msgs.listSearch(), doSearch), HasAlignment.ALIGN_MIDDLE);
         setWidget(0, col++, search);
 
-        if (CGroup.getMemberId() > 0) {
+        if (CWhirleds.getMemberId() > 0) {
             getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
-            setWidget(0, col++, new Button(CGroup.msgs.listNewGroup(), new ClickListener() {
+            setWidget(0, col++, new Button(CWhirleds.msgs.listNewGroup(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WHIRLEDS, "edit");
                 }
@@ -90,7 +90,7 @@ public class GroupList extends FlexTable
                 return new GroupWidget((Group)item);
             }
             protected String getEmptyMessage () {
-                return CGroup.msgs.listNoGroups();
+                return CWhirleds.msgs.listNoGroups();
             }
         };
         _groupGrid.setWidth("100%");
@@ -124,7 +124,7 @@ public class GroupList extends FlexTable
         setModel("p", "", page, new ModelLoader() {
             public void loadModel (MsoyCallback callback) {
                 // TODO: this eventually needs to be a ServiceBackedDataModel
-                CGroup.groupsvc.getGroupsList(CGroup.ident, callback);
+                CWhirleds.groupsvc.getGroupsList(CWhirleds.ident, callback);
             }
         });
     }
@@ -135,18 +135,18 @@ public class GroupList extends FlexTable
             return false;
         }
 
-        InlineLabel tagLabel = new InlineLabel(CGroup.msgs.listCurrentTag() + " " + tag + " ");
+        InlineLabel tagLabel = new InlineLabel(CWhirleds.msgs.listCurrentTag() + " " + tag + " ");
         DOM.setStyleAttribute(tagLabel.getElement(), "fontWeight", "bold");
         _currentTag.add(tagLabel);
         _currentTag.add(new InlineLabel("("));
-        Hyperlink clearLink = Application.createLink(CGroup.msgs.listTagClear(), Page.WHIRLEDS, "");
+        Hyperlink clearLink = Application.createLink(CWhirleds.msgs.listTagClear(), Page.WHIRLEDS, "");
         DOM.setStyleAttribute(clearLink.getElement(), "display", "inline");
         _currentTag.add(clearLink);
         _currentTag.add(new InlineLabel(")"));
 
         setModel("tag", tag, page, new ModelLoader() {
             public void loadModel (MsoyCallback callback) {
-                CGroup.groupsvc.searchForTag(CGroup.ident, tag, callback);
+                CWhirleds.groupsvc.searchForTag(CWhirleds.ident, tag, callback);
             }
         });
         return true;
@@ -160,7 +160,7 @@ public class GroupList extends FlexTable
         _searchInput.setText(query);
         setModel("search", query, page, new ModelLoader() {
             public void loadModel (MsoyCallback callback) {
-                CGroup.groupsvc.searchGroups(CGroup.ident, query, callback);
+                CWhirleds.groupsvc.searchGroups(CWhirleds.ident, query, callback);
             }
         });
         return true;
@@ -185,15 +185,15 @@ public class GroupList extends FlexTable
     protected void loadPopularTags ()
     {
         _popularTags.clear();
-        InlineLabel popularTagsLabel = new InlineLabel(CGroup.msgs.listPopularTags() + " ");
+        InlineLabel popularTagsLabel = new InlineLabel(CWhirleds.msgs.listPopularTags() + " ");
         popularTagsLabel.addStyleName("PopularTagsLabel");
         _popularTags.add(popularTagsLabel);
 
-        CGroup.groupsvc.getPopularTags(CGroup.ident, POP_TAG_COUNT, new MsoyCallback() {
+        CWhirleds.groupsvc.getPopularTags(CWhirleds.ident, POP_TAG_COUNT, new MsoyCallback() {
             public void onSuccess (Object result) {
                 List tags = (List)result;
                 if (tags.size() == 0) {
-                    _popularTags.add(new InlineLabel(CGroup.msgs.listNoPopularTags()));
+                    _popularTags.add(new InlineLabel(CWhirleds.msgs.listNoPopularTags()));
                     return;
                 }
                 for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
@@ -237,10 +237,10 @@ public class GroupList extends FlexTable
             FlowPanel info = new FlowPanel();
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
             InlineLabel estab = new InlineLabel(
-                CGroup.msgs.groupEst(dateFormat.format(group.creationDate) + ", "));
+                CWhirleds.msgs.groupEst(dateFormat.format(group.creationDate) + ", "));
             estab.addStyleName("EstablishedDate");
             info.add(estab);
-            info.add(new InlineLabel(CGroup.msgs.listMemberCount("" + group.memberCount)));
+            info.add(new InlineLabel(CWhirleds.msgs.listMemberCount("" + group.memberCount)));
             setWidget(1, 0, info);
 
             setText(2, 0, group.blurb);

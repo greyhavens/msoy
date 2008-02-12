@@ -10,7 +10,7 @@ import client.shell.CShell;
 /**
  * Extends {@link CShell} and provides game-specific services.
  */
-public class CGame extends CShell
+public class CGames extends CShell
 {
     /** Provides game-related services. */
     public static GameServiceAsync gamesvc;

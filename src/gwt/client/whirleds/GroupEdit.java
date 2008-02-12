@@ -54,38 +54,38 @@ public class GroupEdit extends FlexTable
         setCellPadding(0);
 
         String title = _group.groupId == 0 ?
-            CGroup.msgs.editCreateTitle() : CGroup.msgs.editEditTitle();
+            CWhirleds.msgs.editCreateTitle() : CWhirleds.msgs.editEditTitle();
         Frame.setTitle(title, group.name);
 
         // set up our editor contents
         _name = MsoyUI.createTextBox(_group.name, GroupName.LENGTH_MAX, 20);
-        addRow(CGroup.msgs.editName(), _name);
+        addRow(CWhirleds.msgs.editName(), _name);
 
         // make sure the group's configured policy is consistent with what's shown in the GUI
         if (_group.policy == 0) {
             _group.policy = Group.POLICY_PUBLIC;
         }
         _policy = new ListBox();
-        _policy.addItem(CGroup.msgs.policyPublic());
-        _policy.addItem(CGroup.msgs.policyInvite());
-        _policy.addItem(CGroup.msgs.policyExclusive());
+        _policy.addItem(CWhirleds.msgs.policyPublic());
+        _policy.addItem(CWhirleds.msgs.policyInvite());
+        _policy.addItem(CWhirleds.msgs.policyExclusive());
         _policy.setSelectedIndex(_group.policy - Group.POLICY_PUBLIC);
-        addRow(CGroup.msgs.editPolicy(), _policy);
+        addRow(CWhirleds.msgs.editPolicy(), _policy);
 
-        addRow(CGroup.msgs.editLogo(), _logo = new PhotoChoiceBox(null));
+        addRow(CWhirleds.msgs.editLogo(), _logo = new PhotoChoiceBox(null));
         _logo.setMedia(_group.getLogo());
 
         _blurb = MsoyUI.createTextBox(_group.blurb, Group.MAX_BLURB_LENGTH, 40);
-        addRow(CGroup.msgs.editBlurb(), _blurb);
+        addRow(CWhirleds.msgs.editBlurb(), _blurb);
 
         _homepage = MsoyUI.createTextBox(_extras.homepageUrl, 255, 40);
-        addRow(CGroup.msgs.editHomepage(), _homepage);
+        addRow(CWhirleds.msgs.editHomepage(), _homepage);
 
         _charter = new LimitedTextArea(Group.MAX_CHARTER_LENGTH, 60, 3);
         _charter.setText(_extras.charter);
-        addRow(CGroup.msgs.editCharter(), _charter);
+        addRow(CWhirleds.msgs.editCharter(), _charter);
 
-        addRow(CGroup.msgs.editBackground(), _background = new PhotoChoiceBox(null) {
+        addRow(CWhirleds.msgs.editBackground(), _background = new PhotoChoiceBox(null) {
             protected MediaDesc toMedia (Photo photo) {
                 return (photo == null) ? null : new MediaDesc(
                     photo.photoMedia.hash, photo.photoMedia.mimeType,
@@ -98,19 +98,19 @@ public class GroupEdit extends FlexTable
         _background.setMedia(_extras.background);
 
         _bgmode = new ListBox();
-        _bgmode.addItem(CGroup.msgs.editTile());
-        _bgmode.addItem(CGroup.msgs.editAnchor());
+        _bgmode.addItem(CWhirleds.msgs.editTile());
+        _bgmode.addItem(CWhirleds.msgs.editAnchor());
         _bgmode.setSelectedIndex(_extras.backgroundControl);
-        addRow(CGroup.msgs.editMode(), _bgmode);
+        addRow(CWhirleds.msgs.editMode(), _bgmode);
 
         HorizontalPanel footer = new HorizontalPanel();
-        footer.add(_submit = new Button(CGroup.cmsgs.submit(), new ClickListener() {
+        footer.add(_submit = new Button(CWhirleds.cmsgs.submit(), new ClickListener() {
             public void onClick (Widget sender) {
                 commitEdit();
             }
         }));
         footer.add(WidgetUtil.makeShim(5, 5));
-        footer.add(new Button(CGroup.cmsgs.cancel(), new ClickListener() {
+        footer.add(new Button(CWhirleds.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 Application.go(Page.WHIRLEDS, ""+_group.groupId);
             }
@@ -146,7 +146,7 @@ public class GroupEdit extends FlexTable
             _group.name.length() > GroupName.LENGTH_MAX ||
             !(Character.isLetter(_group.name.charAt(0)) ||
               Character.isDigit(_group.name.charAt(0)))) {
-            MsoyUI.error(CGroup.msgs.errInvalidGroupName());
+            MsoyUI.error(CWhirleds.msgs.errInvalidGroupName());
             return;
         }
 
@@ -158,22 +158,22 @@ public class GroupEdit extends FlexTable
         };
         // check if we're trying to set the policy to exclusive on a group that has tags
         if (_group.policy == Group.POLICY_EXCLUSIVE) {
-            CGroup.groupsvc.getTags(CGroup.ident, _group.groupId, new MsoyCallback () {
+            CWhirleds.groupsvc.getTags(CWhirleds.ident, _group.groupId, new MsoyCallback () {
                 public void onSuccess (Object result) {
                     if (((Collection)result).size() > 0) {
-                        MsoyUI.error(CGroup.msgs.errTagsOnExclusive());
+                        MsoyUI.error(CWhirleds.msgs.errTagsOnExclusive());
                     } else if (_group.groupId > 0) {
-                        CGroup.groupsvc.updateGroup(CGroup.ident, _group, _extras, updateCallback);
+                        CWhirleds.groupsvc.updateGroup(CWhirleds.ident, _group, _extras, updateCallback);
                     } else {
-                        CGroup.groupsvc.createGroup(CGroup.ident, _group, _extras, updateCallback);
+                        CWhirleds.groupsvc.createGroup(CWhirleds.ident, _group, _extras, updateCallback);
                     }
                 } 
             });
         } else {
             if (_group.groupId > 0) {
-                CGroup.groupsvc.updateGroup(CGroup.ident, _group, _extras, updateCallback);
+                CWhirleds.groupsvc.updateGroup(CWhirleds.ident, _group, _extras, updateCallback);
             } else {
-                CGroup.groupsvc.createGroup(CGroup.ident, _group, _extras, updateCallback);
+                CWhirleds.groupsvc.createGroup(CWhirleds.ident, _group, _extras, updateCallback);
             }
         }
     }

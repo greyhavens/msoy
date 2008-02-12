@@ -52,7 +52,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             if (_item.sourceId != 0 && !types[ii].isSalable()) {
                 continue;
             }
-            addTabBelow(CInventory.dmsgs.getString("pItemType" + types[ii].getType()),
+            addTabBelow(CStuff.dmsgs.getString("pItemType" + types[ii].getType()),
                         new SubItemPanel(models, types[ii].getType(), _item, panel), false);
         }
     }
@@ -70,8 +70,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     {
         // if this was a first time listing, change "List..." to "Update listing..."
         if (!updated) {
-            _listTip.setText(CInventory.msgs.detailUplistTip());
-            _listBtn.setText(CInventory.msgs.detailUplist());
+            _listTip.setText(CStuff.msgs.detailUplistTip());
+            _listBtn.setText(CStuff.msgs.detailUplist());
         }
     }
 
@@ -91,12 +91,12 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         // will be straightforward
         /*_creator.setMember(_detail.creator, new PopupMenu() {
             protected void addMenuItems () {
-                this.addMenuItem(CInventory.imsgs.viewProfile(), new Command() {
+                this.addMenuItem(CStuff.imsgs.viewProfile(), new Command() {
                     public void execute () {
                         Application.go(Page.PEOPLE, "" + _detail.creator.getMemberId());
                     }
                 });
-                this.addMenuItem(CInventory.imsgs.browseCatalogFor(), new Command() {
+                this.addMenuItem(CStuff.imsgs.browseCatalogFor(), new Command() {
                     public void execute () {
                         // TODO
                     }
@@ -114,7 +114,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     // @Override // BaseItemDetailPanel
     protected void onUpClicked ()
     {
-        CInventory.viewParent(_item);
+        CStuff.viewParent(_item);
     }
 
     protected void addOwnerButtons ()
@@ -123,10 +123,10 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
         // don't show delete to anyone but the owner
         if (_item.ownerId == CShell.getMemberId()) {
-            button = new Button(CInventory.msgs.detailDelete());
-            new ClickCallback(button, CInventory.msgs.detailConfirmDelete()) {
+            button = new Button(CStuff.msgs.detailDelete());
+            new ClickCallback(button, CStuff.msgs.detailConfirmDelete()) {
                 public boolean callService () {
-                    CInventory.itemsvc.deleteItem(CInventory.ident, _item.getIdent(), this);
+                    CStuff.itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
@@ -136,7 +136,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                     if (model != null) {
                         model.removeItem(_item);
                     }
-                    MsoyUI.info(CInventory.msgs.msgItemDeleted());
+                    MsoyUI.info(CStuff.msgs.msgItemDeleted());
                     History.back(); // back up to the page that contained the item
                     return false;
                 }
@@ -145,10 +145,10 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         if (_item.sourceId == 0) {
-            button = new Button(CInventory.msgs.detailEdit());
+            button = new Button(CStuff.msgs.detailEdit());
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    CInventory.editItem(_item.getType(), _item.itemId);
+                    CStuff.editItem(_item.getType(), _item.itemId);
                 }
             });
             _buttons.add(button);
@@ -162,11 +162,11 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (_item.catalogId != 0 || _item.sourceId == 0) {
             String tip, butlbl;
             if (_item.catalogId != 0) {
-                tip = CInventory.msgs.detailUplistTip();
-                butlbl = CInventory.msgs.detailUplist();
+                tip = CStuff.msgs.detailUplistTip();
+                butlbl = CStuff.msgs.detailUplist();
             } else {
-                tip = CInventory.msgs.detailListTip();
-                butlbl = CInventory.msgs.detailList();
+                tip = CStuff.msgs.detailListTip();
+                butlbl = CStuff.msgs.detailList();
             }
             _details.add(WidgetUtil.makeShim(1, 10));
             _details.add(_listTip = new Label(tip));
@@ -182,10 +182,10 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             boolean salable = (!(_item instanceof SubItem) || ((SubItem)_item).isSalable());
             if (_item.catalogId != 0 && salable) {
                 // add a button for repricing the listing
-                buttons.add(new Button(CInventory.msgs.detailUpprice(), new ClickListener() {
+                buttons.add(new Button(CStuff.msgs.detailUpprice(), new ClickListener() {
                     public void onClick (Widget sender) {
-                        CInventory.catalogsvc.loadListing(
-                            CInventory.ident, _item.getType(), _item.catalogId, new MsoyCallback() {
+                        CStuff.catalogsvc.loadListing(
+                            CStuff.ident, _item.getType(), _item.catalogId, new MsoyCallback() {
                             public void onSuccess (Object result) {
                                 new DoListItemPopup(
                                     _item, (CatalogListing)result, ItemDetailPanel.this).show();
@@ -203,20 +203,20 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             CShell.isSupport();
         if (remixable) {
             _details.add(WidgetUtil.makeShim(1, 10));
-            _details.add(new Label(CInventory.msgs.detailRemixTip()));
-            button = new Button(CInventory.msgs.detailRemix());
+            _details.add(new Label(CStuff.msgs.detailRemixTip()));
+            button = new Button(CStuff.msgs.detailRemix());
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    CInventory.remixItem(_item.getType(), _item.itemId);
+                    CStuff.remixItem(_item.getType(), _item.itemId);
                 }
             });
 //            new ClickCallback(button) {
 //                public boolean callService () {
-//                    CInventory.itemsvc.remixItem(CInventory.ident, _item.getIdent(), this);
+//                    CStuff.itemsvc.remixItem(CStuff.ident, _item.getIdent(), this);
 //                    return true;
 //                }
 //                public boolean gotResult (Object result) {
-//                    MsoyUI.info(CInventory.msgs.msgItemRemixed());
+//                    MsoyUI.info(CStuff.msgs.msgItemRemixed());
 //                    _panel.itemRemixed(_item, (Item) result);
 //                    History.back();
 //                    return false;

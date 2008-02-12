@@ -41,7 +41,7 @@ public class ItemEntry extends FlexTable
 
         ClickListener clicker = new ClickListener() {
             public void onClick (Widget sender) {
-                CInventory.viewItem(_item.getType(), _item.itemId);
+                CStuff.viewItem(_item.getType(), _item.itemId);
             }
         };
         setWidget(0, 0, MediaUtil.createMediaView(

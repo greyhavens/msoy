@@ -33,7 +33,7 @@ public class GameTrophyPanel extends PagedGrid
         _gameId = gameId;
         addStyleName("gameTrophyPanel");
         addStyleName("dottedGrid");
-        add(new Label(CGame.msgs.gameTrophyLoading()));
+        add(new Label(CGames.msgs.gameTrophyLoading()));
         setCellAlignment(ALIGN_LEFT, ALIGN_TOP);
     }
 
@@ -45,13 +45,13 @@ public class GameTrophyPanel extends PagedGrid
             return;
         }
 
-        CGame.gamesvc.loadGameTrophies(CGame.ident, _gameId, new AsyncCallback() {
+        CGames.gamesvc.loadGameTrophies(CGames.ident, _gameId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 setModel(new SimpleDataModel((List)result), 0);
             }
             public void onFailure (Throwable caught) {
-                CGame.log("loadGameTrophies failed", caught);
-                add(new Label(CGame.serverError(caught)));
+                CGames.log("loadGameTrophies failed", caught);
+                add(new Label(CGames.serverError(caught)));
             }
         });
         _gameId = 0; // note that we've asked for our data
@@ -66,7 +66,7 @@ public class GameTrophyPanel extends PagedGrid
     // @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return CGame.msgs.gameTrophyNoTrophies();
+        return CGames.msgs.gameTrophyNoTrophies();
     }
 
     // @Override // from PagedGrid
@@ -93,13 +93,13 @@ public class GameTrophyPanel extends PagedGrid
                               trophy.trophyMedia, MediaDesc.THUMBNAIL_SIZE));
                 setText(0, 1, trophy.name);
                 if (trophy.description == null) {
-                    setText(1, 0, CGame.msgs.gameTrophySecret());
+                    setText(1, 0, CGames.msgs.gameTrophySecret());
                     getFlexCellFormatter().setStyleName(1, 0, "Italic");
                 } else {
                     setText(1, 0, trophy.description);
                 }
-                if (CGame.getMemberId() != 0 && trophy.whenEarned != null) {
-                    setText(2, 0, CGame.msgs.gameTrophyEarnedOn(
+                if (CGames.getMemberId() != 0 && trophy.whenEarned != null) {
+                    setText(2, 0, CGames.msgs.gameTrophyEarnedOn(
                                 _pfmt.format(new Date(trophy.whenEarned.longValue()))));
                     getFlexCellFormatter().setStyleName(2, 0, "Earned");
                 }

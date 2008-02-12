@@ -35,7 +35,7 @@ public class SubItemEntry extends ItemEntry
 
         RowPanel buttons = new RowPanel();
         String btitle = (item.catalogId == 0) ?
-            CInventory.msgs.detailList() : CInventory.msgs.detailUplist();
+            CStuff.msgs.detailList() : CStuff.msgs.detailUplist();
         Button button = new Button(btitle, new ClickListener() {
             public void onClick (Widget sender) {
                 new DoListItemPopup(_item, null, SubItemEntry.this).show();
@@ -44,9 +44,9 @@ public class SubItemEntry extends ItemEntry
         button.addStyleName("tinyButton");
         buttons.add(button);
 
-        button = new Button(CInventory.msgs.detailEdit(), new ClickListener() {
+        button = new Button(CStuff.msgs.detailEdit(), new ClickListener() {
             public void onClick (Widget sender) {
-                CInventory.editItem(_item.getType(), _item.itemId);
+                CStuff.editItem(_item.getType(), _item.itemId);
             }
         });
         button.addStyleName("tinyButton");

@@ -23,11 +23,11 @@ public class PlayPanel extends SmartTable
         super("playPanel", 0, 0);
 
         int row = 0;
-        setText(row++, 0, CGame.msgs.gdpPlay(), 1, "Title");
+        setText(row++, 0, CGames.msgs.gdpPlay(), 1, "Title");
 
         // if the game supports single-player play, it gets a "Quick Single" button
         if (minPlayers == 1 && maxPlayers != Integer.MAX_VALUE) {
-            addPlayButton(row, 0, "SinglePlay", CGame.msgs.gdpJustMe(), new ClickListener() {
+            addPlayButton(row, 0, "SinglePlay", CGames.msgs.gdpJustMe(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, Args.compose("game", "s", ""+gameId));
                 }
@@ -37,20 +37,20 @@ public class PlayPanel extends SmartTable
 
         // if the game supports multiplayer play, it gets "Quick Multi" buttons
         if (maxPlayers > 1) {
-            addPlayButton(row, 0, "FriendPlay", CGame.msgs.gdpMyFriends(), new ClickListener() {
+            addPlayButton(row, 0, "FriendPlay", CGames.msgs.gdpMyFriends(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, Args.compose("game", "f", ""+gameId));
                 }
             });
             row += 2;
 
-//             addPlayButton(pbbox, 3, 0, "AnyonePlay", CGame.msgs.gdpAnyone(), new ClickListener() {
+//             addPlayButton(pbbox, 3, 0, "AnyonePlay", CGames.msgs.gdpAnyone(), new ClickListener() {
 //                 public void onClick (Widget sender) {
 //                     Application.go(Page.WORLD, Args.compose("game", "m", ""+gameId));
 //                 }
 //             });
 
-//             addPlayButton(pbbox, 3, 1, "CustomPlay", CGame.msgs.gdpCustom(), new ClickListener() {
+//             addPlayButton(pbbox, 3, 1, "CustomPlay", CGames.msgs.gdpCustom(), new ClickListener() {
 //                 public void onClick (Widget sender) {
 //                     Application.go(Page.WORLD, Args.compose("game", "l", ""+gameId));
 //                 }

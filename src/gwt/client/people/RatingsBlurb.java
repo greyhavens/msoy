@@ -39,7 +39,7 @@ public class RatingsBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (ProfileService.ProfileResult pdata)
     {
-        setHeader(CProfile.msgs.ratingsTitle());
+        setHeader(CPeople.msgs.ratingsTitle());
         setContent(new RatingGrid(pdata.ratings));
     }
 
@@ -112,7 +112,7 @@ public class RatingsBlurb extends Blurb
             }
 
             if (entry.singleRating > 0) {
-                setText(1, 0, CProfile.msgs.ratingsSingle());
+                setText(1, 0, CPeople.msgs.ratingsSingle());
                 getFlexCellFormatter().setStyleName(1, 0, "Note");
                 setText(1, 1, "" + entry.singleRating);
                 getFlexCellFormatter().setStyleName(1, 1, "Rating");

@@ -32,11 +32,11 @@ public class index extends MsgsEntryPoint
     // @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        Frame.setTitle(CGroup.msgs.groupTitle());
+        Frame.setTitle(CWhirleds.msgs.groupTitle());
 
         // if we're not a dev deployment, disallow guests
-        if (!DeploymentConfig.devDeployment && CGroup.ident == null) {
-            setContent(MsoyUI.createLabel(CGroup.cmsgs.noGuests(), "infoLabel"));
+        if (!DeploymentConfig.devDeployment && CWhirleds.ident == null) {
+            setContent(MsoyUI.createLabel(CWhirleds.cmsgs.noGuests(), "infoLabel"));
             return;
         }
 
@@ -87,7 +87,7 @@ public class index extends MsgsEntryPoint
         super.initContext();
 
         // load up our translation dictionaries
-        CGroup.msgs = (GroupMessages)GWT.create(GroupMessages.class);
+        CWhirleds.msgs = (GroupMessages)GWT.create(GroupMessages.class);
     }
 
     protected ForumModels _fmodels = new ForumModels();

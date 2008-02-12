@@ -47,14 +47,14 @@ public class ItemPanel extends VerticalPanel
         // creatable folders)
         _filters = new FlowPanel();
         _filters.setStyleName("inventoryFilters");
-        _filters.add(new InlineLabel(CInventory.msgs.ipfTitle()));
-        _filters.add(createFilter(CInventory.msgs.ipfAll(), Predicate.TRUE));
-        _filters.add(createFilter(CInventory.msgs.ipfUploaded(), new Predicate() {
+        _filters.add(new InlineLabel(CStuff.msgs.ipfTitle()));
+        _filters.add(createFilter(CStuff.msgs.ipfAll(), Predicate.TRUE));
+        _filters.add(createFilter(CStuff.msgs.ipfUploaded(), new Predicate() {
             public boolean isMatch (Object o) {
                 return ((Item)o).sourceId == 0;
             }
         }));
-        _filters.add(createFilter(CInventory.msgs.ipfPurchased(), new Predicate() {
+        _filters.add(createFilter(CStuff.msgs.ipfPurchased(), new Predicate() {
             public boolean isMatch (Object o) {
                 return ((Item)o).sourceId != 0;
             }
@@ -72,7 +72,7 @@ public class ItemPanel extends VerticalPanel
                 return new ItemEntry((Item)item);
             }
             protected String getEmptyMessage () {
-                return CInventory.msgs.panelNoItems(CInventory.dmsgs.getString("itemType" + _type));
+                return CStuff.msgs.panelNoItems(CStuff.dmsgs.getString("itemType" + _type));
             }
         };
         _contents.addStyleName("inventoryContents");
@@ -127,7 +127,7 @@ public class ItemPanel extends VerticalPanel
         }
 
         // load up the item details
-        CInventory.itemsvc.loadItemDetail(CInventory.ident, ident, new MsoyCallback() {
+        CStuff.itemsvc.loadItemDetail(CStuff.ident, ident, new MsoyCallback() {
             public void onSuccess (Object result) {
                 showDetail((ItemDetail)result);
             }
@@ -194,7 +194,7 @@ public class ItemPanel extends VerticalPanel
         header.getCellFormatter().setStyleName(0, 0, "TitleLeft");
         header.getCellFormatter().setStyleName(0, 1, "TitleCenter");
         header.getCellFormatter().setStyleName(0, 2, "TitleRight");
-        header.setText(0, 1, CInventory.dmsgs.getString("itemUploadTitle" + _type));
+        header.setText(0, 1, CStuff.dmsgs.getString("itemUploadTitle" + _type));
         _upload.add(header);
 
         VerticalPanel cwrap = new VerticalPanel();
@@ -212,16 +212,16 @@ public class ItemPanel extends VerticalPanel
         cwrap.add(contents);
 
         // add the various "why to upload" pitches
-        String why = (CInventory.dmsgs.getString("itemUploadPitch" + _type + "a") + "<br>" +
-                      CInventory.dmsgs.getString("itemUploadPitch" + _type + "b") + "<br>" +
-                      CInventory.dmsgs.getString("itemUploadPitch" + _type + "c"));
+        String why = (CStuff.dmsgs.getString("itemUploadPitch" + _type + "a") + "<br>" +
+                      CStuff.dmsgs.getString("itemUploadPitch" + _type + "b") + "<br>" +
+                      CStuff.dmsgs.getString("itemUploadPitch" + _type + "c"));
         contents.setHTML(0, 0, why);
 
         // add the create button
-        _create = new Button(CInventory.msgs.panelCreateNew());
+        _create = new Button(CStuff.msgs.panelCreateNew());
         _create.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-                CInventory.createItem(_type, (byte)0, 0);
+                CStuff.createItem(_type, (byte)0, 0);
             }
         });
         contents.setWidget(0, 1, _create);

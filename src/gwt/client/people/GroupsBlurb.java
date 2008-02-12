@@ -46,7 +46,7 @@ public class GroupsBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (ProfileService.ProfileResult pdata)
     {
-        setHeader(CProfile.msgs.groupsTitle());
+        setHeader(CPeople.msgs.groupsTitle());
         setContent(new GroupsGrid(pdata.groups));
     }
 
@@ -73,17 +73,17 @@ public class GroupsBlurb extends Blurb
         // @Override // from PagedGrid
         protected String getEmptyMessage ()
         {
-            return CProfile.msgs.notInGroupsOther();
+            return CPeople.msgs.notInGroupsOther();
         }
 
         // @Override // from PagedGrid
         protected Widget createEmptyContents ()
         {
-            if (CProfile.getMemberId() != _name.getMemberId()) {
+            if (CPeople.getMemberId() != _name.getMemberId()) {
                 return super.createEmptyContents();
             }
-            return createEmptyTable(CProfile.msgs.notInGroupsSelf(),
-                                    CProfile.msgs.notInGroupsJoin(), Page.WHIRLEDS, "");
+            return createEmptyTable(CPeople.msgs.notInGroupsSelf(),
+                                    CPeople.msgs.notInGroupsJoin(), Page.WHIRLEDS, "");
         }
 
         // @Override // from PagedGrid
@@ -101,18 +101,18 @@ public class GroupsBlurb extends Blurb
         // @Override // from PagedGrid
         protected void addCustomControls (FlexTable controls)
         {
-            if (CProfile.getMemberId() > 0 && CProfile.getMemberId() != _name.getMemberId()) {
-                Button inviteButton = new Button(CProfile.msgs.inviteToGroup());
+            if (CPeople.getMemberId() > 0 && CPeople.getMemberId() != _name.getMemberId()) {
+                Button inviteButton = new Button(CPeople.msgs.inviteToGroup());
                 new ClickCallback(inviteButton) {
                     public boolean callService () {
-                        CProfile.groupsvc.getMembershipGroups(
-                            CProfile.ident, CProfile.getMemberId(), true, this);
+                        CPeople.groupsvc.getMembershipGroups(
+                            CPeople.ident, CPeople.getMemberId(), true, this);
                         return true;
                     }
                     public boolean gotResult (Object result) {
                         List inviteGroups = (List) result;
                         if (inviteGroups.size() == 0) {
-                            MsoyUI.infoNear(CProfile.msgs.haveNoGroups(), _trigger);
+                            MsoyUI.infoNear(CPeople.msgs.haveNoGroups(), _trigger);
                         } else {
                             new MailComposition(_name, "Join this group!",
                                                 new GroupInvite.Composer(inviteGroups),

@@ -29,7 +29,7 @@ public class FeaturedGamePanel extends SmartTable
 
         SmartTable title = new SmartTable("Title", 0, 0);
         title.getFlexCellFormatter().setStyleName(0, 0, "Star");
-        title.setText(0, 1, CGame.msgs.featuredTitle(game.name), 1, "Text");
+        title.setText(0, 1, CGames.msgs.featuredTitle(game.name), 1, "Text");
         title.getFlexCellFormatter().setStyleName(0, 2, "Star");
         setWidget(0, 0, title, 3, null);
 
@@ -37,14 +37,14 @@ public class FeaturedGamePanel extends SmartTable
         FlowPanel shot = new FlowPanel();
         shot.add(MediaUtil.createMediaView(
                      game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, null));
-        shot.add(Application.createLink(CGame.msgs.arcadeMoreInfo(), Page.GAMES,
+        shot.add(Application.createLink(CGames.msgs.arcadeMoreInfo(), Page.GAMES,
                                         Args.compose("d", game.gameId)));
         setWidget(1, 0, shot, 1, "Shot");
 
         // display the game info in column 2
         int row = 0;
         SmartTable info = new SmartTable(0, 0);
-        info.setText(row++, 0, CGame.msgs.featuredOnline(""+game.playersOnline), 2, "Online");
+        info.setText(row++, 0, CGames.msgs.featuredOnline(""+game.playersOnline), 2, "Online");
         info.setWidget(row++, 0, WidgetUtil.makeShim(5, 5));
         info.setText(row++, 0, truncate(game.description), 2, "Descrip");
         info.setWidget(row++, 0, WidgetUtil.makeShim(5, 5));

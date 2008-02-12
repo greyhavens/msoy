@@ -34,7 +34,7 @@ public class ArcadePanel extends VerticalPanel
         setStyleName("arcade");
         setSpacing(5);
 
-        CGame.gamesvc.loadArcadeData(CGame.ident, new MsoyCallback() {
+        CGames.gamesvc.loadArcadeData(CGames.ident, new MsoyCallback() {
             public void onSuccess (Object result) {
                 init((ArcadeData)result);
             }
@@ -77,14 +77,14 @@ public class ArcadePanel extends VerticalPanel
             setCellSpacing(0);
 
             int row = 0;
-            setText(row, 0, CGame.dmsgs.getString("genre" + genre.genre));
+            setText(row, 0, CGames.dmsgs.getString("genre" + genre.genre));
             getFlexCellFormatter().setStyleName(row++, 0, "Title");
 
             for (int ii = 0; ii < genre.games.length; ii++) {
                 setWidget(row++, 0, new GameEntry(genre.games[ii]));
             }
 
-            setWidget(row, 0, Application.createLink(CGame.msgs.genreMore(""+genre.gameCount),
+            setWidget(row, 0, Application.createLink(CGames.msgs.genreMore(""+genre.gameCount),
                                                      Page.GAMES, Args.compose("g", genre.genre)));
             getFlexCellFormatter().setStyleName(row++, 0, "More");
         }

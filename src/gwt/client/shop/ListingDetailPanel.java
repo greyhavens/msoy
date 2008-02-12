@@ -44,22 +44,22 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // createInterface() has already been called by our superclass constructor so now we can
         // fill in information from our listing record
-        _listed.setText(CCatalog.msgs.listingListed(_lfmt.format(listing.listedDate)));
-        _purchases.setText(CCatalog.msgs.listingPurchases("" + listing.purchases));
+        _listed.setText(CShop.msgs.listingListed(_lfmt.format(listing.listedDate)));
+        _purchases.setText(CShop.msgs.listingPurchases("" + listing.purchases));
 //         _goldCost.setText(String.valueOf(_listing.goldCost));
         _flowCost.setText(String.valueOf(_listing.flowCost));
 
         // if we are the creator (lister) of this item, allow us to delist it
-        if (_listing.creator.getMemberId() == CCatalog.getMemberId() || CCatalog.isAdmin()) {
-            Button delist = new Button(CCatalog.msgs.listingDelist());
-            new ClickCallback(delist, CCatalog.msgs.listingDelistConfirm()) {
+        if (_listing.creator.getMemberId() == CShop.getMemberId() || CShop.isAdmin()) {
+            Button delist = new Button(CShop.msgs.listingDelist());
+            new ClickCallback(delist, CShop.msgs.listingDelistConfirm()) {
                 public boolean callService () {
-                    CCatalog.catalogsvc.removeListing(
-                        CCatalog.ident, _item.getType(), _listing.catalogId, this);
+                    CShop.catalogsvc.removeListing(
+                        CShop.ident, _item.getType(), _listing.catalogId, this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
-                    MsoyUI.info(CCatalog.msgs.msgListingDelisted());
+                    MsoyUI.info(CShop.msgs.msgListingDelisted());
                     _panel.itemDelisted(_listing);
                     History.back();
                     return false;
@@ -70,7 +70,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             if (_listing.originalItemId != 0) {
                 // also add a link to view the original
                 _details.add(Application.createLink(
-                                 CCatalog.msgs.listingViewOrig(), Page.STUFF,
+                                 CShop.msgs.listingViewOrig(), Page.STUFF,
                                  Args.compose(""+detail.item.getType(), "0",
                                               ""+_listing.originalItemId)));
             }
@@ -83,7 +83,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 //         byte[] types = detail.item.getSalableSubTypes();
 //         if (types.length > 0) {
 //             for (int ii = 0; ii < types.length; ii++) {
-//                 addTabBelow(CCatalog.dmsgs.getString("pItemType" + types[ii]), new Label("TBD"));
+//                 addTabBelow(CShop.dmsgs.getString("pItemType" + types[ii]), new Label("TBD"));
 //             }
 //         }
     }
@@ -97,20 +97,20 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         details.add(WidgetUtil.makeShim(1, 10));
         FlowPanel price = new FlowPanel();
-        price.add(new InlineLabel(CCatalog.msgs.listingPrice(), false, false, true));
+        price.add(new InlineLabel(CShop.msgs.listingPrice(), false, false, true));
 //         price.add(MsoyUI.createInlineImage("/images/header/symbol_gold.png"));
 //         price.add(_goldCost = new InlineLabel("", false, false, true));
         price.add(MsoyUI.createInlineImage("/images/header/symbol_flow.png"));
         price.add(_flowCost = new InlineLabel("", false, false, true));
         details.add(price);
 
-        details.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
+        details.add(_purchase = new Button(CShop.msgs.listingBuy()));
         _purchase.addStyleName("bigButton"); // make it big!
         _purchase.addStyleName("buyButton"); // really big!
         new ClickCallback(_purchase) {
             public boolean callService () {
-                CCatalog.catalogsvc.purchaseItem(
-                    CCatalog.ident, _item.getType(), _listing.catalogId, this);
+                CShop.catalogsvc.purchaseItem(
+                    CShop.ident, _item.getType(), _listing.catalogId, this);
                 return true;
             }
             public boolean gotResult (Object result) {
@@ -119,7 +119,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 return false; // don't reenable buy button
             }
         };
-        _purchase.setEnabled(CCatalog.getMemberId() > 0);
+        _purchase.setEnabled(CShop.getMemberId() > 0);
 
         details.add(WidgetUtil.makeShim(1, 10));
         details.add(_listed = new Label());
@@ -127,12 +127,12 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         _creator.setMember(_detail.creator, new PopupMenu() {
             protected void addMenuItems () {
-                this.addMenuItem(CCatalog.imsgs.viewProfile(), new Command() {
+                this.addMenuItem(CShop.imsgs.viewProfile(), new Command() {
                     public void execute () {
                         Application.go(Page.PEOPLE, "" + _detail.creator.getMemberId());
                     }
                 });
-                this.addMenuItem(CCatalog.imsgs.browseCatalogFor(), new Command() {
+                this.addMenuItem(CShop.imsgs.browseCatalogFor(), new Command() {
                     public void execute () {
                         _panel.browseByCreator(
                             _detail.creator.getMemberId(), _detail.creator.toString());

@@ -47,13 +47,13 @@ public class DoListItemPopup extends BorderedDialog
         // whether or not we're repricing an existing listing
         boolean firstTime = (item.catalogId == 0), repricing = (listing != null);
 
-        _header.add(createTitleLabel(CInventory.msgs.doListHdrTop(), null));
+        _header.add(createTitleLabel(CStuff.msgs.doListHdrTop(), null));
         if (firstTime) {
-            _content.add(MsoyUI.createLabel(CInventory.msgs.doListBlurb(), "Blurb"));
+            _content.add(MsoyUI.createLabel(CStuff.msgs.doListBlurb(), "Blurb"));
         } else if (repricing) {
-            _content.add(MsoyUI.createLabel(CInventory.msgs.doUppriceBlurb(), "Blurb"));
+            _content.add(MsoyUI.createLabel(CStuff.msgs.doUppriceBlurb(), "Blurb"));
         } else {
-            HTML update = new HTML(CInventory.msgs.doUpdateBlurb());
+            HTML update = new HTML(CStuff.msgs.doUpdateBlurb());
             update.setStyleName("Blurb");
             _content.add(update);
         }
@@ -63,9 +63,9 @@ public class DoListItemPopup extends BorderedDialog
 
         // only add the description if we're not repricing
         if (!repricing) {
-            _content.add(MsoyUI.createLabel(CInventory.msgs.doListDescripHeader(), "Header"));
-            _content.add(MsoyUI.createLabel(firstTime ? CInventory.msgs.doListNeedsDescrip() :
-                                            CInventory.msgs.doUpdateNeedsDescrip(), "Blurb"));
+            _content.add(MsoyUI.createLabel(CStuff.msgs.doListDescripHeader(), "Header"));
+            _content.add(MsoyUI.createLabel(firstTime ? CStuff.msgs.doListNeedsDescrip() :
+                                            CStuff.msgs.doUpdateNeedsDescrip(), "Blurb"));
             _content.add(_description = new TextArea());
             _description.setText(item.description);
             _description.setCharacterWidth(50);
@@ -78,12 +78,12 @@ public class DoListItemPopup extends BorderedDialog
             pricing.setCellPadding(0);
             pricing.setCellSpacing(3);
 
-            int row = pricing.addText(CInventory.msgs.doListStrategy(), 1, "rightLabel");
+            int row = pricing.addText(CStuff.msgs.doListStrategy(), 1, "rightLabel");
             pricing.setWidget(row, 1, _pricingBox = new ListBox(), 1, null);
             int selectedPricing = (_item instanceof SubItem) ? 0 /* hidden */ : 1 /* manual */;
             for (int ii = 0; ii < CatalogListing.PRICING.length; ii++) {
                 String key = "listingPricing" + CatalogListing.PRICING[ii];
-                _pricingBox.addItem(CInventory.dmsgs.getString(key));
+                _pricingBox.addItem(CStuff.dmsgs.getString(key));
                 if (listing != null && listing.pricing == CatalogListing.PRICING[ii]) {
                     selectedPricing = ii;
                 }
@@ -91,7 +91,7 @@ public class DoListItemPopup extends BorderedDialog
             ChangeListener tipper = new ChangeListener() {
                 public void onChange (Widget sender) {
                     int pricing = getPricing();
-                    _pricingTip.setText(CInventory.dmsgs.getString("listingPricingTip" + pricing));
+                    _pricingTip.setText(CStuff.dmsgs.getString("listingPricingTip" + pricing));
                     boolean showSalesTarget = (pricing == CatalogListing.PRICING_ESCALATE ||
                                                pricing == CatalogListing.PRICING_LIMITED_EDITION);
                     _salesTargetLabel.setVisible(showSalesTarget);
@@ -103,23 +103,23 @@ public class DoListItemPopup extends BorderedDialog
             pricing.setWidget(row, 2, _pricingTip = new Label(""), 2, "Blurb");
             pricing.getFlexCellFormatter().setRowSpan(row, 2, 3);
 
-            _salesTargetLabel = new Label(CInventory.msgs.doListSalesTarget());
+            _salesTargetLabel = new Label(CStuff.msgs.doListSalesTarget());
             row = pricing.addWidget(_salesTargetLabel, 1, "rightLabel");
             pricing.setWidget(row, 1, _salesTarget = new NumberTextBox(false, 5, 5), 1, null);
             int salesTarget = (listing == null) ? DEFAULT_SALES_TARGET : listing.salesTarget;
             _salesTarget.setText(String.valueOf(salesTarget));
 
-            row = pricing.addText(CInventory.msgs.doListFlowCost(), 1, "rightLabel");
+            row = pricing.addText(CStuff.msgs.doListFlowCost(), 1, "rightLabel");
             pricing.setWidget(row, 1, _flowCost = new NumberTextBox(false, 5, 5), 1, null);
             int flowCost = (listing == null) ? DEFAULT_FLOW_COST : listing.flowCost;
             _flowCost.setText(String.valueOf(flowCost));
 
-//             row = pricing.addText(CInventory.msgs.doListGoldCost(), 1, "rightLabel");
+//             row = pricing.addText(CStuff.msgs.doListGoldCost(), 1, "rightLabel");
 //             pricing.setWidget(row, 1, _goldCost = new NumberTextBox(false, 5, 5), 2, null);
 //             int goldCost = (listing == null) ? DEFAULT_GOLD_COST : listing.goldCost;
 //             _goldCost.setText(String.valueOf(goldCost));
 
-            _content.add(MsoyUI.createLabel(CInventory.msgs.doListPricingHeader(), "Header"));
+            _content.add(MsoyUI.createLabel(CStuff.msgs.doListPricingHeader(), "Header"));
             _content.add(pricing);
 
             _pricingBox.setSelectedIndex(selectedPricing);
@@ -128,22 +128,22 @@ public class DoListItemPopup extends BorderedDialog
 
         _content.add(_status);
 
-        _footer.add(new Button(CInventory.msgs.doListBtnCancel(), new ClickListener() {
+        _footer.add(new Button(CStuff.msgs.doListBtnCancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 hide();
             }
         }));
 
-        String doLbl = firstTime ? CInventory.msgs.doListBtnGo() : CInventory.msgs.doUpdateBtnGo();
+        String doLbl = firstTime ? CStuff.msgs.doListBtnGo() : CStuff.msgs.doUpdateBtnGo();
         _footer.add(_doIt = new Button(doLbl));
 
         if (firstTime) {
             final String resultMsg = firstTime ?
-                CInventory.msgs.doListListed() : CInventory.msgs.doListUpdated();
+                CStuff.msgs.doListListed() : CStuff.msgs.doListUpdated();
             new ClickCallback(_doIt) {
                 public boolean callService () {
-                    CInventory.catalogsvc.listItem(
-                        CInventory.ident, _item.getIdent(), _description.getText(), getPricing(),
+                    CStuff.catalogsvc.listItem(
+                        CStuff.ident, _item.getIdent(), _description.getText(), getPricing(),
                         getSalesTarget(), getFlowCost(), 0 /* getGoldCost() */, this);
                     return true;
                 }
@@ -163,16 +163,16 @@ public class DoListItemPopup extends BorderedDialog
                     int pricing = getPricing(), salesTarget = getSalesTarget();
                     if (getPricing() == CatalogListing.PRICING_LIMITED_EDITION &&
                         listing != null && salesTarget <= listing.purchases) {
-                        MsoyUI.error(CInventory.msgs.doListHitLimit(""+listing.purchases));
+                        MsoyUI.error(CStuff.msgs.doListHitLimit(""+listing.purchases));
                         return false;
                     }
-                    CInventory.catalogsvc.updatePricing(
-                        CInventory.ident, _item.getType(), _item.catalogId, getPricing(),
+                    CStuff.catalogsvc.updatePricing(
+                        CStuff.ident, _item.getType(), _item.catalogId, getPricing(),
                         salesTarget, getFlowCost(), 0 /* getGoldCost() */, this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
-                    MsoyUI.info(CInventory.msgs.doListUpdated());
+                    MsoyUI.info(CStuff.msgs.doListUpdated());
                     hide();
                     _listener.itemListed(_item, true);
                     return false;
@@ -182,12 +182,12 @@ public class DoListItemPopup extends BorderedDialog
         } else {
             new ClickCallback(_doIt) {
                 public boolean callService () {
-                    CInventory.catalogsvc.updateListing(
-                        CInventory.ident, _item.getIdent(), _description.getText(), this);
+                    CStuff.catalogsvc.updateListing(
+                        CStuff.ident, _item.getIdent(), _description.getText(), this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
-                    MsoyUI.info(CInventory.msgs.doListUpdated());
+                    MsoyUI.info(CStuff.msgs.doListUpdated());
                     hide();
                     return false;
                 }

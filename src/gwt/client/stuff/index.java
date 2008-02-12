@@ -36,10 +36,10 @@ public class index extends Page
     // @Override from Page
     public void onHistoryChanged (Args args)
     {
-        if (CInventory.ident == null) {
+        if (CStuff.ident == null) {
             // if we have no creds, just display a message saying login
             setTitle(null);
-            setContent(MsoyUI.createLabel(CInventory.msgs.logon(), "infoLabel"));
+            setContent(MsoyUI.createLabel(CStuff.msgs.logon(), "infoLabel"));
             _inventory = null;
             return;
         }
@@ -52,7 +52,7 @@ public class index extends Page
             ItemEditor editor = ItemEditor.createItemEditor(type, createEditorHost());
             if ("e".equals(arg0)) {
                 int itemId = args.get(2, 0);
-                setTitle(CInventory.msgs.editItemTitle());
+                setTitle(CStuff.msgs.editItemTitle());
                 Item item = _models.findItem(type, itemId);
                 if (item == null) {
                     editor.setItem(type, itemId);
@@ -60,7 +60,7 @@ public class index extends Page
                     editor.setItem(item);
                 }
             } else {
-                setTitle(CInventory.msgs.createItemTitle());
+                setTitle(CStuff.msgs.createItemTitle());
                 editor.setItem(editor.createBlankItem());
                 byte ptype = (byte)args.get(2, 0);
                 if (ptype != 0) {
@@ -81,7 +81,7 @@ public class index extends Page
             } else {
                 remixer.setItem(type, itemId);
             }
-            setTitle(CInventory.msgs.remixItemTitle());
+            setTitle(CStuff.msgs.remixItemTitle());
             setContent(remixer);
             return;
         }
@@ -96,7 +96,7 @@ public class index extends Page
             public void editComplete (Item item) {
                 if (item != null) {
                     _models.updateItem(item);
-                    CInventory.viewParent(item);
+                    CStuff.viewParent(item);
                 } else {
                     History.back();
                 }
@@ -116,7 +116,7 @@ public class index extends Page
         super.initContext();
 
         // load up our translation dictionaries
-        CInventory.msgs = (InventoryMessages)GWT.create(InventoryMessages.class);
+        CStuff.msgs = (InventoryMessages)GWT.create(InventoryMessages.class);
     }
 
     // @Override // from Page
@@ -136,7 +136,7 @@ public class index extends Page
 
     protected void setTitle (String subtitle)
     {
-        Frame.setTitle(CInventory.msgs.inventoryTitle(), subtitle);
+        Frame.setTitle(CStuff.msgs.inventoryTitle(), subtitle);
     }
 
     protected InventoryModels _models = new InventoryModels();

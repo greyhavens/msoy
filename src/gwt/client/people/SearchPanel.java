@@ -26,7 +26,7 @@ public class SearchPanel extends VerticalPanel
         setStyleName("searchPanel");
         setWidth("100%");
         setSpacing(5);
-        Frame.setTitle(CProfile.msgs.profileSearchTitle());
+        Frame.setTitle(CPeople.msgs.profileSearchTitle());
         add(_ctrls = new SearchControls());
     }
 
@@ -42,7 +42,7 @@ public class SearchPanel extends VerticalPanel
             clearResults();
 
         } else if (!showingResultsFor(type, query)) {
-            CProfile.profilesvc.findProfiles(type, query, new MsoyCallback() {
+            CPeople.profilesvc.findProfiles(type, query, new MsoyCallback() {
                 public void onSuccess (Object result) {
                     setResults((List) result, page, type, query);
                 }
@@ -69,7 +69,7 @@ public class SearchPanel extends VerticalPanel
         _searchString = search;
         clearResults();
         add(_profiles = new ProfileGrid(ROWS, COLUMNS, ProfileGrid.NAV_ON_TOP,
-                                        CProfile.msgs.gridNoProfiles()));
+                                        CPeople.msgs.gridNoProfiles()));
         _profiles.setModel(new SimpleDataModel(cards), page);
     }
 

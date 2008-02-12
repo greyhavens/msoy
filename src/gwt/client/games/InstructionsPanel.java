@@ -39,7 +39,7 @@ public class InstructionsPanel extends VerticalPanel
 
         setHorizontalAlignment(ALIGN_LEFT);
         if (_detail.instructions == null || _detail.instructions.length() == 0) {
-            add(new Label(CGame.msgs.ipNoInstructions()));
+            add(new Label(CGames.msgs.ipNoInstructions()));
         } else {
             // snip off our background color if we have one
             String[] bits = decodeInstructions(_detail.instructions);
@@ -53,7 +53,7 @@ public class InstructionsPanel extends VerticalPanel
         }
 
         // if this is the owner of the game, add an edit button below the instructions
-        if (_detail.sourceItem != null && _detail.sourceItem.ownerId == CGame.getMemberId()) {
+        if (_detail.sourceItem != null && _detail.sourceItem.ownerId == CGames.getMemberId()) {
             setHorizontalAlignment(ALIGN_RIGHT);
             add(new Button("Edit", new ClickListener() {
                 public void onClick (Widget source) {
@@ -128,11 +128,11 @@ public class InstructionsPanel extends VerticalPanel
     {
         if (instructions.length() > GameDetail.MAX_INSTRUCTIONS_LENGTH) {
             int excess = instructions.length() - GameDetail.MAX_INSTRUCTIONS_LENGTH;
-            MsoyUI.error(CGame.msgs.ipInstructionsTooLong(""+excess));
+            MsoyUI.error(CGames.msgs.ipInstructionsTooLong(""+excess));
             return;
         }
-        CGame.gamesvc.updateGameInstructions(
-            CGame.ident, _detail.gameId, instructions, new MsoyCallback() {
+        CGames.gamesvc.updateGameInstructions(
+            CGames.ident, _detail.gameId, instructions, new MsoyCallback() {
             public void onSuccess (Object result) {
                 _detail.instructions = instructions;
                 showInstructions();

@@ -49,12 +49,12 @@ public class WhatIsTheWhirled extends AbsolutePanel
 
         add(new LogonPanel(false, logon), 555, 440);
 
-        CWhirled.worldsvc.getWhatIsWhirled(new AsyncCallback() {
+        CMe.worldsvc.getWhatIsWhirled(new AsyncCallback() {
             public void onSuccess (Object result) {
                 showData((WhatIsWhirledData)result);
             }
             public void onFailure (Throwable cause) {
-                CWhirled.log("Failed to load WhatIsWhirledData.", cause);
+                CMe.log("Failed to load WhatIsWhirledData.", cause);
                 // no user feedback, just leave that spot blank
             }
         });
@@ -78,6 +78,6 @@ public class WhatIsTheWhirled extends AbsolutePanel
     }
 
     protected static final String[] LABELS = {
-        CWhirled.msgs.dataPlayers(), CWhirled.msgs.dataPlaces(), CWhirled.msgs.dataGames()
+        CMe.msgs.dataPlayers(), CMe.msgs.dataPlaces(), CMe.msgs.dataGames()
     };
 }

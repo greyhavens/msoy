@@ -10,7 +10,7 @@ import com.threerings.msoy.web.client.WorldServiceAsync;
 /**
  * Extends {@link CShell} and provides group-specific services.
  */
-public class CWhirled extends CMsgs
+public class CMe extends CMsgs
 {
     /** Provides world-related services. */
     public static WorldServiceAsync worldsvc;

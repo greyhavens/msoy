@@ -21,20 +21,20 @@ public class TrophyCasePanel extends SmartTable
     public TrophyCasePanel (int memberId)
     {
         super("trophyCase", 0, 5);
-        Frame.setTitle(CGame.msgs.caseTitle());
+        Frame.setTitle(CGames.msgs.caseTitle());
 
         if (memberId == 0) {
-            setText(0, 0, CGame.msgs.noSuchPlayer());
+            setText(0, 0, CGames.msgs.noSuchPlayer());
             return;
         }
 
-        setText(0, 0, CGame.msgs.caseLoading());
-        CGame.gamesvc.loadTrophyCase(CGame.ident, memberId, new AsyncCallback() {
+        setText(0, 0, CGames.msgs.caseLoading());
+        CGames.gamesvc.loadTrophyCase(CGames.ident, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 setTrophyCase((TrophyCase)result);
             }
             public void onFailure (Throwable cause) {
-                setText(0, 0, CGame.serverError(cause));
+                setText(0, 0, CGames.serverError(cause));
             }
         });
     }
@@ -42,18 +42,18 @@ public class TrophyCasePanel extends SmartTable
     protected void setTrophyCase (TrophyCase tcase)
     {
         if (tcase == null) {
-            setText(0, 0, CGame.msgs.noSuchPlayer());
+            setText(0, 0, CGames.msgs.noSuchPlayer());
             return;
         }
 
-        Frame.setTitle(CGame.msgs.caseTitle(), tcase.owner.toString());
+        Frame.setTitle(CGames.msgs.caseTitle(), tcase.owner.toString());
         if (tcase.shelves.length == 0) {
-            setText(0, 0, (CGame.getMemberId() == tcase.owner.getMemberId()) ?
-                    CGame.msgs.caseEmptyMe() : CGame.msgs.caseEmpty());
+            setText(0, 0, (CGames.getMemberId() == tcase.owner.getMemberId()) ?
+                    CGames.msgs.caseEmptyMe() : CGames.msgs.caseEmpty());
             return;
         }
 
-        setText(0, 0, CGame.msgs.caseBlurb(), 2, null);
+        setText(0, 0, CGames.msgs.caseBlurb(), 2, null);
 
         for (int ii = 0; ii < tcase.shelves.length; ii++) {
             TrophyCase.Shelf shelf = tcase.shelves[ii];

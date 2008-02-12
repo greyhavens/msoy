@@ -23,12 +23,12 @@ public class WhyPlayPanel extends FlowPanel
     {
         setStyleName("whyPlay");
 
-        add(new HTML(CGame.msgs.whyPlayBlurb()));
+        add(new HTML(CGames.msgs.whyPlayBlurb()));
 
-        if (CGame.getMemberId() != 0) {
+        if (CGames.getMemberId() != 0) {
             add(WidgetUtil.makeShim(10, 10));
             Hyperlink link = Application.createLink(
-                "View your trophies", Page.GAMES, Args.compose("t", CGame.getMemberId()));
+                "View your trophies", Page.GAMES, Args.compose("t", CGames.getMemberId()));
             link.addStyleName("inline");
             add(link);
         }

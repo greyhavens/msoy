@@ -17,28 +17,28 @@ public class HelpPanel extends SmartTable
     public HelpPanel ()
     {
         super("helpPanel", 0, 10);
-        Frame.setTitle(CWhirled.msgs.helpTitle());
+        Frame.setTitle(CMe.msgs.helpTitle());
 
         int row = 0;
-        setText(row++, 0, CWhirled.msgs.helpIntro());
+        setText(row++, 0, CMe.msgs.helpIntro());
 
-        setText(row++, 0, CWhirled.msgs.helpQuestionsTitle(), 1, "Title");
-        setHTML(row++, 0, CWhirled.msgs.helpQuestions());
+        setText(row++, 0, CMe.msgs.helpQuestionsTitle(), 1, "Title");
+        setHTML(row++, 0, CMe.msgs.helpQuestions());
 
-        setText(row++, 0, CWhirled.msgs.helpBugsTitle(), 1, "Title");
-        setHTML(row++, 0, CWhirled.msgs.helpBugs());
+        setText(row++, 0, CMe.msgs.helpBugsTitle(), 1, "Title");
+        setHTML(row++, 0, CMe.msgs.helpBugs());
 
-        setText(row++, 0, CWhirled.msgs.helpWikiTitle(), 1, "Title");
-        setHTML(row++, 0, CWhirled.msgs.helpWiki());
+        setText(row++, 0, CMe.msgs.helpWikiTitle(), 1, "Title");
+        setHTML(row++, 0, CMe.msgs.helpWiki());
 
         // TODO: add a way to restart the tutorial
 
-        setText(row++, 0, CWhirled.msgs.helpTeamTitle(), 1, "Title");
-        setHTML(row++, 0, CWhirled.msgs.helpTeamEngineers());
-        setHTML(row++, 0, CWhirled.msgs.helpTeamArtists());
-        setHTML(row++, 0, CWhirled.msgs.helpTeamDPW());
-        setHTML(row++, 0, CWhirled.msgs.helpTeamWaving());
+        setText(row++, 0, CMe.msgs.helpTeamTitle(), 1, "Title");
+        setHTML(row++, 0, CMe.msgs.helpTeamEngineers());
+        setHTML(row++, 0, CMe.msgs.helpTeamArtists());
+        setHTML(row++, 0, CMe.msgs.helpTeamDPW());
+        setHTML(row++, 0, CMe.msgs.helpTeamWaving());
 
-        setHTML(row++, 0, CWhirled.msgs.helpCopyright("" + (1900 + new Date().getYear())));
+        setHTML(row++, 0, CMe.msgs.helpCopyright("" + (1900 + new Date().getYear())));
     }
 }

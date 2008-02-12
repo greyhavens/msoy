@@ -35,7 +35,7 @@ public class FriendsPanel extends SmartTable
     {
         super("friendsPanel", 0, 5);
 
-        Frame.setTitle(CProfile.msgs.friendsTitle());
+        Frame.setTitle(CPeople.msgs.friendsTitle());
 
         setWidget(0, 0, new SearchControls());
 
@@ -43,16 +43,16 @@ public class FriendsPanel extends SmartTable
             return;
         }
 
-        setText(1, 0, CProfile.msgs.friendsLoading());
+        setText(1, 0, CPeople.msgs.friendsLoading());
 
         _memberId = memberId;
-        CProfile.profilesvc.loadFriends(CProfile.ident, _memberId, new AsyncCallback() {
+        CPeople.profilesvc.loadFriends(CPeople.ident, _memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 gotFriends((ProfileService.FriendsResult)result);
             }
             public void onFailure (Throwable cause) {
-                CProfile.log("Failed to load friends", cause);
-                setText(1, 0, CProfile.serverError(cause));
+                CPeople.log("Failed to load friends", cause);
+                setText(1, 0, CPeople.serverError(cause));
             }
         });
     }
@@ -60,11 +60,11 @@ public class FriendsPanel extends SmartTable
     protected void gotFriends (ProfileService.FriendsResult data)
     {
         if (data == null) {
-            setText(1, 0, CProfile.msgs.friendsNoSuchMember());
+            setText(1, 0, CPeople.msgs.friendsNoSuchMember());
         } else {
-            Frame.setTitle(CProfile.msgs.friendsTitle(), data.name.toString());
+            Frame.setTitle(CPeople.msgs.friendsTitle(), data.name.toString());
             _grid = new FriendsGrid(data.friends);
-            String title = CProfile.msgs.friendsWhoseFriends(data.name.toString());
+            String title = CPeople.msgs.friendsWhoseFriends(data.name.toString());
             setWidget(1, 0, MsoyUI.createBox("people", title, _grid));
         }
     }
@@ -72,7 +72,7 @@ public class FriendsPanel extends SmartTable
     protected void removeFriend (final MemberCard friend, boolean confirmed)
     {
         if (!confirmed) {
-            new PromptPopup(CProfile.msgs.friendsRemoveConfirm(friend.name.toString())) {
+            new PromptPopup(CPeople.msgs.friendsRemoveConfirm(friend.name.toString())) {
                 public void onAffirmative () {
                     removeFriend(friend, true);
                 }
@@ -80,10 +80,10 @@ public class FriendsPanel extends SmartTable
             return;
         }
 
-        CProfile.membersvc.removeFriend(
-            CProfile.ident, friend.name.getMemberId(), new MsoyCallback() {
+        CPeople.membersvc.removeFriend(
+            CPeople.ident, friend.name.getMemberId(), new MsoyCallback() {
             public void onSuccess (Object result) {
-                MsoyUI.error(CProfile.msgs.friendsRemoved(friend.name.toString()));
+                MsoyUI.error(CPeople.msgs.friendsRemoved(friend.name.toString()));
                 _grid.removeItem(friend);
             }
         });
@@ -93,8 +93,8 @@ public class FriendsPanel extends SmartTable
     {
         public FriendsGrid (List friends) {
             super(Math.max(1, friends.size()), 1,
-                  ProfileGrid.NAV_ON_TOP, (CProfile.getMemberId() == _memberId) ?
-                  CProfile.msgs.noFriendsSelf() : CProfile.msgs.noFriendsOther());
+                  ProfileGrid.NAV_ON_TOP, (CPeople.getMemberId() == _memberId) ?
+                  CPeople.msgs.noFriendsSelf() : CPeople.msgs.noFriendsOther());
             setWidth("650px");
             addStyleName("dottedGrid");
             setModel(new SimpleDataModel(friends), 0);
@@ -118,7 +118,7 @@ public class FriendsPanel extends SmartTable
                 int row = 0;
                 ClickListener onClick;
 
-                if (CProfile.getMemberId() == _memberId) {
+                if (CPeople.getMemberId() == _memberId) {
                     onClick = new ClickListener() {
                         public void onClick (Widget widget) {
                             removeFriend(card, false);

@@ -21,29 +21,29 @@ public class GameBitsPanel extends SmartTable
             setText(row++, 0, title, 1, "Title");
         }
 
-        setText(row, 0, CGame.msgs.bitsGenre(), 1, "Label");
-        setText(row++, 1, CGame.dmsgs.getString("genre" + genre));
+        setText(row, 0, CGames.msgs.bitsGenre(), 1, "Label");
+        setText(row++, 1, CGames.dmsgs.getString("genre" + genre));
 
         if (maxPlayers == Integer.MAX_VALUE) {
-            setText(row, 1, CGame.msgs.bitsPlayersParty("" + minPlayers));
+            setText(row, 1, CGames.msgs.bitsPlayersParty("" + minPlayers));
         } else if (minPlayers == maxPlayers) {
-            setText(row, 1, CGame.msgs.bitsPlayersSame("" + minPlayers));
+            setText(row, 1, CGames.msgs.bitsPlayersSame("" + minPlayers));
         } else {
-            setText(row, 1, CGame.msgs.bitsPlayersFixed("" + minPlayers, "" + maxPlayers));
+            setText(row, 1, CGames.msgs.bitsPlayersFixed("" + minPlayers, "" + maxPlayers));
         }
-        setText(row++, 0, CGame.msgs.bitsPlayers(), 1, "Label");
+        setText(row++, 0, CGames.msgs.bitsPlayers(), 1, "Label");
 
-        setText(row, 0, CGame.msgs.bitsAvgDuration(), 1, "Label");
+        setText(row, 0, CGames.msgs.bitsAvgDuration(), 1, "Label");
         setText(row++, 1, avgMinsLabel(avgTime));
 
         if (gamesPlayed > 0) {
-            setText(row, 0, CGame.msgs.bitsGamesPlayed(), 1, "Label");
+            setText(row, 0, CGames.msgs.bitsGamesPlayed(), 1, "Label");
             setText(row++, 1, ""+gamesPlayed);
         }
     }
 
     protected static String avgMinsLabel (int avgMins)
     {
-        return (avgMins > 1) ? CGame.msgs.bitsMinutes(""+avgMins) : CGame.msgs.bitsMinute();
+        return (avgMins > 1) ? CGames.msgs.bitsMinutes(""+avgMins) : CGames.msgs.bitsMinute();
     }
 }

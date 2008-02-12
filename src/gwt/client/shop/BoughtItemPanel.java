@@ -30,7 +30,7 @@ public class BoughtItemPanel extends FlexTable
         setCellPadding(5);
 
         int row = 0;
-        setText(row, 0, CCatalog.msgs.bipTitle());
+        setText(row, 0, CShop.msgs.bipTitle());
         getFlexCellFormatter().setColSpan(row++, 0, 2);
 
         int prow = row;

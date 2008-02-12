@@ -52,7 +52,7 @@ public class GameDetailPanel extends VerticalPanel
 
     public GameDetailPanel ()
     {
-        Frame.setTitle(CGame.msgs.gdpTitle());
+        Frame.setTitle(CGames.msgs.gdpTitle());
         setStyleName("gameDetail");
     }
 
@@ -63,16 +63,16 @@ public class GameDetailPanel extends VerticalPanel
             return;
         }
 
-        add(new Label(CGame.msgs.gdpLoading()));
-        CGame.gamesvc.loadGameDetail(CGame.ident, gameId, new AsyncCallback() {
+        add(new Label(CGames.msgs.gdpLoading()));
+        CGames.gamesvc.loadGameDetail(CGames.ident, gameId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 setGameDetail(gameId, (GameDetail)result);
                 selectTab(tab);
             }
             public void onFailure (Throwable cause) {
-                CGame.log("Failed to load detail [id=" +  _gameId + "]", cause);
+                CGames.log("Failed to load detail [id=" +  _gameId + "]", cause);
                 clear();
-                add(new Label(CGame.serverError(cause)));
+                add(new Label(CGames.serverError(cause)));
             }
         });
     }
@@ -82,7 +82,7 @@ public class GameDetailPanel extends VerticalPanel
         clear();
 
         _gameId = gameId;
-        Frame.setTitle(CGame.msgs.gdpTitle(), detail.getGame().name);
+        Frame.setTitle(CGames.msgs.gdpTitle(), detail.getGame().name);
 
         int row = 0;
         SmartTable top = new SmartTable(0, 0);
@@ -93,15 +93,15 @@ public class GameDetailPanel extends VerticalPanel
         MediaDesc shot = detail.getGame().shotMedia;
         if (shot == null) {
             shot = detail.getGame().getThumbnailMedia();
-            CGame.log("No shot media, using " + shot + ".");
+            CGames.log("No shot media, using " + shot + ".");
         } else {
-            CGame.log("Using " + shot + ".");
+            CGames.log("Using " + shot + ".");
         }
         box.setWidget(1, 0, new Image(shot.getMediaPath()), 1, "Screenshot");
         if (detail.listedItem != null) {
             box.setWidget(2, 0, WidgetUtil.makeShim(1, 5));
             box.getFlexCellFormatter().setHorizontalAlignment(3, 0, HasAlignment.ALIGN_CENTER);
-            box.setWidget(3, 0, new ItemRating(detail.listedItem, CGame.getMemberId(),
+            box.setWidget(3, 0, new ItemRating(detail.listedItem, CGames.getMemberId(),
                                                detail.memberRating, false));
         }
         top.setWidget(row, 1, box);
@@ -129,7 +129,7 @@ public class GameDetailPanel extends VerticalPanel
         details.add(WidgetUtil.makeShim(1, 5));
 
         // set up the game info table
-        details.add(new GameBitsPanel(CGame.msgs.gdpInfoTitle(), detail.getGame().genre,
+        details.add(new GameBitsPanel(CGames.msgs.gdpInfoTitle(), detail.getGame().genre,
                                       detail.minPlayers, detail.maxPlayers,
                                       detail.getAverageDuration(),
                                       detail.singlePlayerGames + detail.multiPlayerGames));
@@ -138,7 +138,7 @@ public class GameDetailPanel extends VerticalPanel
         if (_gameId < 0) {
             top.getFlexCellFormatter().setRowSpan(0, 0, 2);
             top.getFlexCellFormatter().setRowSpan(0, 1, 2);
-            top.setText(row++, 0, CGame.msgs.gdpDevVersion(), top.getCellCount(0)-2, "InDevTip");
+            top.setText(row++, 0, CGames.msgs.gdpDevVersion(), top.getCellCount(0)-2, "InDevTip");
         }
 
         _tabs = new StyledTabPanel();
@@ -146,29 +146,29 @@ public class GameDetailPanel extends VerticalPanel
         add(_tabs);
 
         // add the about/instructions tab
-        addTab(INSTRUCTIONS_TAB, CGame.msgs.tabInstructions(), new InstructionsPanel(detail));
+        addTab(INSTRUCTIONS_TAB, CGames.msgs.tabInstructions(), new InstructionsPanel(detail));
 
         // add comments tab
         if (detail.listedItem != null) {
-            addTab(COMMENTS_TAB, CGame.msgs.tabComments(),
+            addTab(COMMENTS_TAB, CGames.msgs.tabComments(),
                    new CommentsPanel(detail.listedItem.getType(), detail.listedItem.catalogId));
         }
 
         // add trophies tab
-        addTab(TROPHIES_TAB, CGame.msgs.tabTrophies(), new GameTrophyPanel(detail.gameId));
+        addTab(TROPHIES_TAB, CGames.msgs.tabTrophies(), new GameTrophyPanel(detail.gameId));
 
         // add top rankings tabs
-        if (CGame.getMemberId() != 0) {
-            addTab(MYRANKINGS_TAB, CGame.msgs.tabMyRankings(),
+        if (CGames.getMemberId() != 0) {
+            addTab(MYRANKINGS_TAB, CGames.msgs.tabMyRankings(),
                    new TopRankingPanel(detail.gameId, true));
         }
-        addTab(TOPRANKINGS_TAB, CGame.msgs.tabTopRankings(),
+        addTab(TOPRANKINGS_TAB, CGames.msgs.tabTopRankings(),
                new TopRankingPanel(detail.gameId, false));
 
         // if we're the owner of the game or an admin, add the metrics tab
-        if ((detail.sourceItem != null && detail.sourceItem.ownerId == CGame.getMemberId()) ||
-            CGame.isAdmin()) {
-            addTab(METRICS_TAB, CGame.msgs.tabMetrics(), new GameMetricsPanel(detail));
+        if ((detail.sourceItem != null && detail.sourceItem.ownerId == CGames.getMemberId()) ||
+            CGames.isAdmin()) {
+            addTab(METRICS_TAB, CGames.msgs.tabMetrics(), new GameMetricsPanel(detail));
         }
     }
 

@@ -40,8 +40,8 @@ public class index extends MsgsEntryPoint
     public void onHistoryChanged (Args args)
     {
         // if we're not a dev deployment, disallow guests
-        if (!DeploymentConfig.devDeployment && CProfile.ident == null) {
-            setContent(MsoyUI.createLabel(CProfile.cmsgs.noGuests(), "infoLabel"));
+        if (!DeploymentConfig.devDeployment && CPeople.ident == null) {
+            setContent(MsoyUI.createLabel(CPeople.cmsgs.noGuests(), "infoLabel"));
             return;
         }
 
@@ -62,7 +62,7 @@ public class index extends MsgsEntryPoint
         }
         // #profile-me falls through
 
-        if (CProfile.ident != null) {
+        if (CPeople.ident != null) {
             setContent(new PeoplePanel());
         } else {
             displaySearch(args);
@@ -81,16 +81,16 @@ public class index extends MsgsEntryPoint
         super.initContext();
 
         // load up our translation dictionaries
-        CProfile.msgs = (ProfileMessages)GWT.create(ProfileMessages.class);
+        CPeople.msgs = (ProfileMessages)GWT.create(ProfileMessages.class);
     }
 
     protected void displayMemberPage (int memberId)
     {
         // issue a request for this member's profile page data
-        CProfile.profilesvc.loadProfile(CProfile.ident, _memberId = memberId, new AsyncCallback() {
+        CPeople.profilesvc.loadProfile(CPeople.ident, _memberId = memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 ProfileService.ProfileResult pdata = (ProfileService.ProfileResult)result;
-                Frame.setTitle(CProfile.msgs.profileTitle(), pdata.name.toString());
+                Frame.setTitle(CPeople.msgs.profileTitle(), pdata.name.toString());
                 switch (pdata.layout.layout) {
                 default:
                 case ProfileLayout.ONE_COLUMN_LAYOUT:
@@ -103,8 +103,8 @@ public class index extends MsgsEntryPoint
             }
 
             public void onFailure (Throwable cause) {
-                setContent(new Label(CProfile.serverError(cause)));
-                CProfile.log("Failed to load blurbs", cause);
+                setContent(new Label(CPeople.serverError(cause)));
+                CPeople.log("Failed to load blurbs", cause);
             }
         });
     }

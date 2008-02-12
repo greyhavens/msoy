@@ -30,7 +30,7 @@ public class InventoryModels
             return;
         }
 
-        CInventory.membersvc.loadInventory(CInventory.ident, type, suiteId, new AsyncCallback() {
+        CStuff.membersvc.loadInventory(CStuff.ident, type, suiteId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 SimpleDataModel model = new SimpleDataModel((List)result);
                 _models.put(key, model);

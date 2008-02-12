@@ -27,7 +27,7 @@ public class GameGenrePanel extends VerticalPanel
         setStyleName("gameGenre");
         setSpacing(5);
 
-        CGame.gamesvc.loadGameGenre(CGame.ident, genre, new MsoyCallback() {
+        CGames.gamesvc.loadGameGenre(CGames.ident, genre, new MsoyCallback() {
             public void onSuccess (Object result) {
                 init((GameGenreData)result);
             }

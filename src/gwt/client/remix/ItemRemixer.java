@@ -25,7 +25,7 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 
 import client.shell.CShell;
 
-import client.stuff.CInventory;
+import client.stuff.CStuff;
 
 import client.editem.EditorHost;
 
@@ -53,7 +53,7 @@ public class ItemRemixer extends FlexTable
                 if (_item == null) {
                     History.back();
                 } else {
-                    CInventory.viewItem(_item.getType(), _item.itemId);
+                    CStuff.viewItem(_item.getType(), _item.itemId);
                 }
             }
         }));
