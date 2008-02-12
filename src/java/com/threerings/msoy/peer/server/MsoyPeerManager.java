@@ -330,15 +330,17 @@ public class MsoyPeerManager extends CrowdPeerManager
 
         // do the forwarding deed
         ((MsoyNodeObject)node.nodeobj).msoyPeerService.forwardMemberObject(
-            node.getClient(), memobj, memobj.stats);
+            node.getClient(), memobj, memobj.actorState, memobj.stats);
     }
 
     // from interface MsoyPeerProvider
-    public void forwardMemberObject (ClientObject caller, MemberObject memobj, StatSet stats)
+    public void forwardMemberObject (
+        ClientObject caller, MemberObject memobj, String actorState, StatSet stats)
     {
         // clear out various bits in the received object
         memobj.clearForwardedObject();
         // fill their transient stats information back in
+        memobj.actorState = actorState;
         memobj.stats = stats;
         // place this member object in a temporary cache; if the member in question logs on in the
         // next 30 seconds, we'll use this object instead of re-resolving all of their data

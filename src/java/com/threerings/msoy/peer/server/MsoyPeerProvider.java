@@ -19,5 +19,5 @@ public interface MsoyPeerProvider extends InvocationProvider
     /**
      * Handles a {@link MsoyPeerService#forwardMemberObject} request.
      */
-    public void forwardMemberObject (ClientObject caller, MemberObject arg1, StatSet arg2);
+    public void forwardMemberObject (ClientObject caller, MemberObject arg1, String arg2, StatSet arg3);
 }
