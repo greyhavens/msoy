@@ -87,7 +87,7 @@ public class index extends MsgsEntryPoint
         super.initContext();
 
         // load up our translation dictionaries
-        CWhirleds.msgs = (GroupMessages)GWT.create(GroupMessages.class);
+        CWhirleds.msgs = (WhirledsMessages)GWT.create(WhirledsMessages.class);
     }
 
     protected ForumModels _fmodels = new ForumModels();

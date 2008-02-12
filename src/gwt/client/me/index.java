@@ -91,7 +91,7 @@ public class index extends MsgsEntryPoint
         ((ServiceDefTarget)CMe.worldsvc).setServiceEntryPoint("/worldsvc");
 
         // load up our translation dictionaries
-        CMe.msgs = (WhirledMessages)GWT.create(WhirledMessages.class);
+        CMe.msgs = (MeMessages)GWT.create(MeMessages.class);
     }
 
     protected void displayWhat ()

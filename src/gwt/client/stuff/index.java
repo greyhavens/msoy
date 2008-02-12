@@ -116,7 +116,7 @@ public class index extends Page
         super.initContext();
 
         // load up our translation dictionaries
-        CStuff.msgs = (InventoryMessages)GWT.create(InventoryMessages.class);
+        CStuff.msgs = (StuffMessages)GWT.create(StuffMessages.class);
     }
 
     // @Override // from Page

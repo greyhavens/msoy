@@ -12,12 +12,12 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 
 /**
- * Extends {@link CShell} and provides inventory-specific services.
+ * Extends {@link CShell} and provides stuff-specific services.
  */
 public class CStuff extends CShell
 {
-    /** Messages used by the inventory interfaces. */
-    public static InventoryMessages msgs;
+    /** Messages used by the stuff interfaces. */
+    public static StuffMessages msgs;
 
     public static void viewParent (Item item)
     {
@@ -46,7 +46,7 @@ public class CStuff extends CShell
 
     public static void createItem (byte type, byte ptype, int pitemId)
     {
-        Application.go(
-            Page.STUFF, Args.compose(new String[] { "c", ""+type, ""+ptype, ""+pitemId }));
+        Application.go(Page.STUFF, Args.compose(
+                           new String[] { "c", ""+type, ""+ptype, ""+pitemId }));
     }
 }

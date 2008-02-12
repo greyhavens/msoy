@@ -15,6 +15,6 @@ public class CGames extends CShell
     /** Provides game-related services. */
     public static GameServiceAsync gamesvc;
 
-    /** Messages used by the game interfaces. */
-    public static GameMessages msgs;
+    /** Messages used by the games interfaces. */
+    public static GamesMessages msgs;
 }

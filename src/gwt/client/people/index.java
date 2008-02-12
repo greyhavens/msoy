@@ -81,7 +81,7 @@ public class index extends MsgsEntryPoint
         super.initContext();
 
         // load up our translation dictionaries
-        CPeople.msgs = (ProfileMessages)GWT.create(ProfileMessages.class);
+        CPeople.msgs = (PeopleMessages)GWT.create(PeopleMessages.class);
     }
 
     protected void displayMemberPage (int memberId)

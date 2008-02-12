@@ -88,6 +88,6 @@ public class index extends Page
         ((ServiceDefTarget)CGames.gamesvc).setServiceEntryPoint("/gamesvc");
 
         // load up our translation dictionaries
-        CGames.msgs = (GameMessages)GWT.create(GameMessages.class);
+        CGames.msgs = (GamesMessages)GWT.create(GamesMessages.class);
     }
 }

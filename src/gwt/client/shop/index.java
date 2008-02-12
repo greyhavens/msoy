@@ -46,7 +46,7 @@ public class index extends Page
         super.initContext();
 
         // load up our translation dictionaries
-        CShop.msgs = (CatalogMessages)GWT.create(CatalogMessages.class);
+        CShop.msgs = (ShopMessages)GWT.create(ShopMessages.class);
     }
 
     protected void updateInterface (Args args)
