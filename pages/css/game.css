@@ -248,9 +248,9 @@
 }
 
 .whyPlay {
-  width: 205px;
+  width: 190px;
   font-size: 14px;
-  padding-right: 5px;
+  padding: 20px 5px 0px 10px;
 }
 
 .whyPlay ul {
@@ -281,8 +281,10 @@
 
 .featuredGame .Shot {
   width: 185px;
-  height: 135px;
   padding: 5px 10px 0px 0px;
+  font-size: 12px;
+  text-align: center;
+  vertical-align: top;
 }
 
 .featuredGame .Info {

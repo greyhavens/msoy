@@ -3,9 +3,9 @@
 
 package client.game;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -17,7 +17,7 @@ import client.util.MsoyUI;
 /**
  * Displays some reasons to play games.
  */
-public class WhyPlayPanel extends VerticalPanel
+public class WhyPlayPanel extends FlowPanel
 {
     public WhyPlayPanel ()
     {

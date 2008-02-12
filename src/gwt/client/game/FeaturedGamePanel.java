@@ -4,6 +4,7 @@
 package client.game;
 
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -12,6 +13,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 
+import client.shell.Application;
+import client.shell.Page;
+import client.shell.Args;
 import client.util.MediaUtil;
 
 /**
@@ -30,8 +34,12 @@ public class FeaturedGamePanel extends SmartTable
         setWidget(0, 0, title, 3, null);
 
         // display our screenshot in column 1
-        setWidget(1, 0, MediaUtil.createMediaView(
-                      game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, null), 1, "Shot");
+        FlowPanel shot = new FlowPanel();
+        shot.add(MediaUtil.createMediaView(
+                     game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, null));
+        shot.add(Application.createLink(CGame.msgs.arcadeMoreInfo(), Page.GAME,
+                                        Args.compose("d", game.gameId)));
+        setWidget(1, 0, shot, 1, "Shot");
 
         // display the game info in column 2
         int row = 0;
