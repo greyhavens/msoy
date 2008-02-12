@@ -166,8 +166,18 @@ public class MsoyUI
      */
     public static Widget createBox (String styleName, String title, Widget contents)
     {
-        VerticalPanel container = new VerticalPanel();
-        container.setStyleName(styleName + "Box");
+        VerticalPanel box = new VerticalPanel();
+        makeBox(box, styleName, title);
+        box.add(contents);
+        return box;
+    }
+
+    /**
+     * Adds a box header to and styles the supplied vertical panel.
+     */
+    public static void makeBox (VerticalPanel box, String styleName, String title)
+    {
+        box.addStyleName(styleName + "Box");
         HorizontalPanel header = new HorizontalPanel();
         header.setStyleName("Header");
         header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
@@ -176,9 +186,7 @@ public class MsoyUI
         header.add(tlabel);
         header.setCellWidth(tlabel, "100%");
         header.add(createLabel("", "HeaderRight"));
-        container.add(header);
-        container.add(contents);
-        return container;
+        box.add(header);
     }
 
     /**

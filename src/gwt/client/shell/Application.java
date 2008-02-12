@@ -56,7 +56,7 @@ public class Application
      */
     public static Hyperlink groupViewLink (String label, int groupId)
     {
-        return createLink(label, Page.WHIRLEDS, ""+groupId);
+        return createLink(label, Page.WHIRLEDS, Args.compose("d", groupId));
     }
 
     /**

@@ -40,11 +40,12 @@ public class index extends MsgsEntryPoint
             return;
         }
 
-        if (args.get(0, 0) != 0) {
+        String action = args.get(0, "");
+        if (action.equals("d")) {
             setContent(_gview);
-            _gview.setGroup(args.get(0, 0), args.get(1, "").equals("r"));
+            _gview.setGroup(args.get(1, 0), args.get(2, "").equals("r"));
 
-        } else if (args.get(0, "").equals("edit")) {
+        } else if (action.equals("edit")) {
             int groupId = args.get(1, 0);
             if (groupId == 0) {
                 setContent(new GroupEdit());
@@ -57,12 +58,12 @@ public class index extends MsgsEntryPoint
                 setContent(new GroupEdit(group, _gview.getGroupExtras()));
             }
 
-        } else if (args.get(0, "").equals("unread")) {
+        } else if (action.equals("unread")) {
             ForumPanel fpanel = new ForumPanel(_fmodels);
             fpanel.displayUnreadThreads(false);
             setContent(fpanel);
 
-        } else if (args.get(0, "").equals("t")) {
+        } else if (action.equals("t")) {
             int threadId = args.get(1, 0), page = args.get(2, 0), scrollToId = args.get(3, 0);
             setContent(new ThreadPanel(this, threadId, page, scrollToId, _fmodels));
 

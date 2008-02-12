@@ -247,10 +247,12 @@ public class GroupView extends VerticalPanel
         if (_group.policy != Group.POLICY_EXCLUSIVE) {
             people.setWidget(3, 0, new TagDetailPanel(new TagDetailPanel.TagService() {
                 public void tag (String tag, AsyncCallback callback) {
-                    CWhirleds.groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, true, callback);
+                    CWhirleds.groupsvc.tagGroup(
+                        CWhirleds.ident, _group.groupId, tag, true, callback);
                 }
                 public void untag (String tag, AsyncCallback callback) {
-                    CWhirleds.groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, false, callback);
+                    CWhirleds.groupsvc.tagGroup(
+                        CWhirleds.ident, _group.groupId, tag, false, callback);
                 }
                 public void getRecentTags (AsyncCallback callback) {
                     CWhirleds.groupsvc.getRecentTags(CWhirleds.ident, callback);

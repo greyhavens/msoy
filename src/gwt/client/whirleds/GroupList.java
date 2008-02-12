@@ -6,11 +6,9 @@ package client.whirleds;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Hyperlink;
@@ -23,6 +21,7 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.group.data.Group;
@@ -40,22 +39,18 @@ import client.util.RowPanel;
  * Display the public groups in a sensical manner, including a sorted list of characters that
  * start the groups, allowing people to select a subset of the public groups to view.
  */
-public class GroupList extends FlexTable
+public class GroupList extends SmartTable
 {
-    /** The number of columns to show in the PagedGrid */
-    public static final int GRID_COLUMNS = 2;
-
     public GroupList ()
     {
-        super();
-        setStyleName("groupList");
+        super("groupList", 2, 2);
 
-        int col = 0;
-        getFlexCellFormatter().setStyleName(0, col, "Intro");
-        setText(0, col++, CWhirleds.msgs.listIntro());
+        int row = 0;
+        setText(row++, 0, CWhirleds.msgs.listIntro(), 1, "Intro");
 
-        getFlexCellFormatter().setStyleName(0, col, "PopularTags");
-        setWidget(0, col++, _popularTags = new FlowPanel());
+        SmartTable filter = new SmartTable(0, 0);
+        filter.setWidth("100%");
+        filter.setWidget(0, 0, _popularTags = new FlowPanel(), 1, "PopularTags");
 
         RowPanel search = new RowPanel();
         _searchInput = MsoyUI.createTextBox("", 255, 20);
@@ -67,22 +62,11 @@ public class GroupList extends FlexTable
         _searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
         search.add(_searchInput);
         search.add(new Button(CWhirleds.msgs.listSearch(), doSearch), HasAlignment.ALIGN_MIDDLE);
-        setWidget(0, col++, search);
+        filter.setWidget(0, 1, search);
+        filter.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
+        setWidget(row++, 0, filter, 2, null);
 
-        if (CWhirleds.getMemberId() > 0) {
-            getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
-            setWidget(0, col++, new Button(CWhirleds.msgs.listNewGroup(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WHIRLEDS, "edit");
-                }
-            }));
-        } else {
-            setText(0, col++, "");
-        }
-
-        int rows = (Window.getClientHeight() - Application.HEADER_HEIGHT -
-                    HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT;
-        _groupGrid = new PagedGrid(rows, GRID_COLUMNS) {
+        _groupGrid = new PagedGrid(GRID_ROWS, GRID_COLUMNS) {
             protected void displayPageFromClick (int page) {
                 Application.go(Page.WHIRLEDS, Args.compose(_action, ""+page, _arg));
             }
@@ -94,8 +78,15 @@ public class GroupList extends FlexTable
             }
         };
         _groupGrid.setWidth("100%");
-        setWidget(1, 0, _groupGrid);
-        getFlexCellFormatter().setColSpan(1, 0, getCellCount(0));
+        setWidget(row++, 0, _groupGrid, 2, null);
+
+        if (CWhirleds.getMemberId() > 0) {
+            setWidget(row++, 0, new Button(CWhirleds.msgs.listNewGroup(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.WHIRLEDS, "edit");
+                }
+            }), 2, null);
+        }
 
         _currentTag = new FlowPanel();
         loadPopularTags();
@@ -136,12 +127,12 @@ public class GroupList extends FlexTable
         }
 
         InlineLabel tagLabel = new InlineLabel(CWhirleds.msgs.listCurrentTag() + " " + tag + " ");
-        DOM.setStyleAttribute(tagLabel.getElement(), "fontWeight", "bold");
+        tagLabel.addStyleName("Label");
         _currentTag.add(tagLabel);
         _currentTag.add(new InlineLabel("("));
-        Hyperlink clearLink = Application.createLink(CWhirleds.msgs.listTagClear(), Page.WHIRLEDS, "");
-        DOM.setStyleAttribute(clearLink.getElement(), "display", "inline");
-        _currentTag.add(clearLink);
+        Hyperlink clear = Application.createLink(CWhirleds.msgs.listTagClear(), Page.WHIRLEDS, "");
+        clear.addStyleName("inline");
+        _currentTag.add(clear);
         _currentTag.add(new InlineLabel(")"));
 
         setModel("tag", tag, page, new ModelLoader() {
@@ -177,6 +168,12 @@ public class GroupList extends FlexTable
                     _action = action;
                     _arg = arg;
                     _groupGrid.setModel(new SimpleDataModel((List)result), page);
+
+                    // TODO: revamp
+                    List groups = (List)result;
+                    if (groups.size() > 0) {
+                        setWidget(0, 1, new FeaturedWhirledPanel((Group)groups.get(0)));
+                    }
                 }
             });
         }
@@ -186,7 +183,7 @@ public class GroupList extends FlexTable
     {
         _popularTags.clear();
         InlineLabel popularTagsLabel = new InlineLabel(CWhirleds.msgs.listPopularTags() + " ");
-        popularTagsLabel.addStyleName("PopularTagsLabel");
+        popularTagsLabel.addStyleName("Label");
         _popularTags.add(popularTagsLabel);
 
         CWhirleds.groupsvc.getPopularTags(CWhirleds.ident, POP_TAG_COUNT, new MsoyCallback() {
@@ -200,7 +197,7 @@ public class GroupList extends FlexTable
                     String tag = (String)iter.next();
                     Hyperlink tagLink = Application.createLink(
                         tag, Page.WHIRLEDS, Args.compose("tag", "0", tag));
-                    DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
+                    tagLink.addStyleName("inline");
                     _popularTags.add(tagLink);
                     if (iter.hasNext()) {
                         _popularTags.add(new InlineLabel(", "));
@@ -216,28 +213,25 @@ public class GroupList extends FlexTable
         public void loadModel (MsoyCallback callback);
     }
 
-    protected class GroupWidget extends FlexTable
+    protected class GroupWidget extends SmartTable
     {
-        GroupWidget (final Group group)
-        {
-            super();
-            setStyleName("GroupWidget");
+        public GroupWidget (final Group group) {
+            super("GroupWidget", 2, 2);
 
-            setWidget(0, 0, MediaUtil.createMediaView(group.getLogo(), MediaDesc.THUMBNAIL_SIZE,
-                                                      new ClickListener() {
+            setWidget(0, 0, MediaUtil.createMediaView(
+                          group.getLogo(), MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.WHIRLEDS, "" + group.groupId);
+                    Application.go(Page.WHIRLEDS, Args.compose("d", group.groupId));
                 }
-            }));
-            getFlexCellFormatter().setStyleName(0, 0, "Logo");
+            }), 1, "Logo");
             getFlexCellFormatter().setRowSpan(0, 0, 3);
 
-            setWidget(0, 1, Application.createLink(group.name, Page.WHIRLEDS, "" + group.groupId));
+            setWidget(0, 1, Application.createLink(group.name, Page.WHIRLEDS,
+                                                   Args.compose("d", group.groupId)));
 
             FlowPanel info = new FlowPanel();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
             InlineLabel estab = new InlineLabel(
-                CWhirleds.msgs.groupEst(dateFormat.format(group.creationDate) + ", "));
+                CWhirleds.msgs.groupEst(EST_FMT.format(group.creationDate) + ", "));
             estab.addStyleName("EstablishedDate");
             info.add(estab);
             info.add(new InlineLabel(CWhirleds.msgs.listMemberCount("" + group.memberCount)));
@@ -249,14 +243,13 @@ public class GroupList extends FlexTable
 
     protected String _action, _arg;
 
-    protected FlowPanel _popularTags;
-    protected FlowPanel _currentTag;
+    protected FlowPanel _popularTags, _currentTag;
     protected TextBox _searchInput;
     protected PagedGrid _groupGrid;
 
-    protected static final int HEADER_HEIGHT = 15 /* gap */ + 45 /* top tags, etc. */;
-    protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ + 10 /* gap */;
-    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT + 15 /* gap */;
+    protected static final int POP_TAG_COUNT = 9;
+    protected static final int GRID_ROWS = 4;
+    protected static final int GRID_COLUMNS = 2;
 
-    protected static final int POP_TAG_COUNT = 10;
+    protected static final SimpleDateFormat EST_FMT = new SimpleDateFormat("MMM dd, yyyy");
 }

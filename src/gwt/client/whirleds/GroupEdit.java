@@ -112,7 +112,7 @@ public class GroupEdit extends FlexTable
         footer.add(WidgetUtil.makeShim(5, 5));
         footer.add(new Button(CWhirleds.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
-                Application.go(Page.WHIRLEDS, ""+_group.groupId);
+                Application.go(Page.WHIRLEDS, Args.compose("d", _group.groupId));
             }
         }));
         int frow = getRowCount();
@@ -153,7 +153,7 @@ public class GroupEdit extends FlexTable
         final MsoyCallback updateCallback = new MsoyCallback() {
             public void onSuccess (Object result) {
                 int groupId = (result == null) ? _group.groupId : ((Group)result).groupId;
-                Application.go(Page.WHIRLEDS, Args.compose(String.valueOf(groupId), "r"));
+                Application.go(Page.WHIRLEDS, Args.compose("d", String.valueOf(groupId), "r"));
             }
         };
         // check if we're trying to set the policy to exclusive on a group that has tags
@@ -163,9 +163,11 @@ public class GroupEdit extends FlexTable
                     if (((Collection)result).size() > 0) {
                         MsoyUI.error(CWhirleds.msgs.errTagsOnExclusive());
                     } else if (_group.groupId > 0) {
-                        CWhirleds.groupsvc.updateGroup(CWhirleds.ident, _group, _extras, updateCallback);
+                        CWhirleds.groupsvc.updateGroup(
+                            CWhirleds.ident, _group, _extras, updateCallback);
                     } else {
-                        CWhirleds.groupsvc.createGroup(CWhirleds.ident, _group, _extras, updateCallback);
+                        CWhirleds.groupsvc.createGroup(
+                            CWhirleds.ident, _group, _extras, updateCallback);
                     }
                 } 
             });

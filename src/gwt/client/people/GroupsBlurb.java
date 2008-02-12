@@ -27,6 +27,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 import client.msgs.GroupInvite;
 import client.msgs.MailComposition;
 import client.shell.Application;
+import client.shell.Args;
 import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.MediaUtil;
@@ -141,7 +142,7 @@ public class GroupsBlurb extends Blurb
 
             ClickListener profileClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.WHIRLEDS, "" + card.name.getGroupId());
+                    Application.go(Page.WHIRLEDS, Args.compose("d", card.name.getGroupId()));
                 }
             };
 

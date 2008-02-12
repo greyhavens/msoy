@@ -156,9 +156,9 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Creates a new group, defined by a {@link GroupRecord}. The key of the record must
-     * be null -- it will be filled in through the insertion, and returned.  A blank room is
-     * also created that is owned by the group.
+     * Creates a new group, defined by a {@link GroupRecord}. The key of the record must be null --
+     * it will be filled in through the insertion, and returned.  A blank room is also created that
+     * is owned by the group.
      */
     public int createGroup (GroupRecord record)
         throws PersistenceException
@@ -170,8 +170,8 @@ public class GroupRepository extends DepotRepository
         record.creationDate = new Date(System.currentTimeMillis());
         insert(record);
 
-        int sceneId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_GROUP,
-            record.groupId, /* TODO */ "Group " + record.name + "'s room", null, true);
+        int sceneId = MsoyServer.sceneRepo.createBlankRoom(
+            MsoySceneModel.OWNER_TYPE_GROUP, record.groupId, record.name, null, true);
         updateGroup(record.groupId, GroupRecord.HOME_SCENE_ID, sceneId);
 
         return record.groupId;
