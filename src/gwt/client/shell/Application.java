@@ -208,9 +208,9 @@ public class Application
             // locate the creator for this page
             Page.Creator creator = (Page.Creator)_creators.get(page);
             if (creator == null) {
-                Frame.showDialog(CShell.cmsgs.errorTitle(),
-                                 new Label("Unknown page requested '" + page + "'."));
-                return;
+                CShell.log("Page unknown, redirecting to me [page=" + page + "].");
+                creator = (Page.Creator)_creators.get(Page.ME);
+                args = new Args();
             }
 
             // create the entry point and fire it up
