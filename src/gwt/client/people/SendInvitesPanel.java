@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.account;
+package client.people;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -43,13 +43,13 @@ public class SendInvitesPanel extends VerticalPanel
     {
         setSpacing(10);
         setStyleName("sendInvites");
-        Frame.setTitle(CAccount.msgs.sendInvitesTitle(), CAccount.msgs.sendInvitesSubtitle());
+        Frame.setTitle(CPeople.msgs.sendInvitesTitle(), CPeople.msgs.sendInvitesSubtitle());
         reinit();
     }
 
     protected void reinit ()
     {
-        CAccount.membersvc.getInvitationsStatus(CAccount.ident, new MsoyCallback() {
+        CPeople.membersvc.getInvitationsStatus(CPeople.ident, new MsoyCallback() {
             public void onSuccess (Object result) {
                 init((MemberInvites)result);
             }
@@ -61,51 +61,51 @@ public class SendInvitesPanel extends VerticalPanel
         clear();
         _invites = invites;
 
-        String header = CAccount.msgs.sendInvitesSendHeader("" + invites.availableInvitations);
+        String header = CPeople.msgs.sendInvitesSendHeader("" + invites.availableInvitations);
         add(MsoyUI.createLabel(header, "Header"));
 
         if (_invites.availableInvitations > 0) {
-            add(makeRow(CAccount.msgs.sendInvitesAddresses(),
+            add(makeRow(CPeople.msgs.sendInvitesAddresses(),
                         _emailAddresses = MsoyUI.createTextArea("", 40, 4)));
 
-            String tip = CAccount.msgs.sendInvitesSendTip("" + _invites.availableInvitations);
+            String tip = CPeople.msgs.sendInvitesSendTip("" + _invites.availableInvitations);
             add(MsoyUI.createLabel(tip, "tipLabel"));
 
-            add(makeRow(CAccount.msgs.sendInvitesFrom(), _fromName = MsoyUI.createTextBox(
-                            CAccount.creds.name.toString(), MAX_FROM_LEN, MAX_FROM_LEN)));
+            add(makeRow(CPeople.msgs.sendInvitesFrom(), _fromName = MsoyUI.createTextBox(
+                            CPeople.creds.name.toString(), MAX_FROM_LEN, MAX_FROM_LEN)));
 
             add(_customMessage = MsoyUI.createTextArea(
-                    CAccount.msgs.sendInvitesCustomDefault(), 80, 6));
+                    CPeople.msgs.sendInvitesCustomDefault(), 80, 6));
 
             setHorizontalAlignment(ALIGN_RIGHT);
-            _anonymous = new CheckBox(CAccount.msgs.sendInvitesAnonymous());
-            Button send = new Button(CAccount.msgs.sendInvitesSendEmail(), new ClickListener() {
+            _anonymous = new CheckBox(CPeople.msgs.sendInvitesAnonymous());
+            Button send = new Button(CPeople.msgs.sendInvitesSendEmail(), new ClickListener() {
                 public void onClick (Widget widget) {
                     if ("".equals(_emailAddresses.getText())) {
-                        MsoyUI.info(CAccount.msgs.sendInvitesEnterAddresses());
+                        MsoyUI.info(CPeople.msgs.sendInvitesEnterAddresses());
                     } else {
                         checkAndSend();
                     }
                 }
             });
-            if (CAccount.isAdmin()) {
+            if (CPeople.isAdmin()) {
                 add(makeRow(_anonymous, send));
             } else {
                 add(send);
             }
 
         } else {
-            add(MsoyUI.createLabel(CAccount.msgs.sendInvitesNoneAvailable(), "tipLabel"));
+            add(MsoyUI.createLabel(CPeople.msgs.sendInvitesNoneAvailable(), "tipLabel"));
         }
 
         setHorizontalAlignment(ALIGN_LEFT);
-        add(MsoyUI.createLabel(CAccount.msgs.sendInvitesPendingHeader(), "Header"));
+        add(MsoyUI.createLabel(CPeople.msgs.sendInvitesPendingHeader(), "Header"));
 
         if (_invites.pendingInvitations.isEmpty()) {
-            add(new Label(CAccount.msgs.sendInvitesNoPending()));
+            add(new Label(CPeople.msgs.sendInvitesNoPending()));
 
         } else {
-            add(new Label(CAccount.msgs.sendInvitesPendingTip()));
+            add(new Label(CPeople.msgs.sendInvitesPendingTip()));
 
             int prow = 0;
             FlexTable penders = new FlexTable();
@@ -142,12 +142,12 @@ public class SendInvitesPanel extends VerticalPanel
             addresses[ii] = addresses[ii].trim();
             if (addresses[ii].matches(EMAIL_REGEX)) {
                 if (valid.contains(addresses[ii])) {
-                    MsoyUI.info(CAccount.msgs.sendInvitesDuplicateAddress(addresses[ii]));
+                    MsoyUI.info(CPeople.msgs.sendInvitesDuplicateAddress(addresses[ii]));
                     break;
                 }
                 valid.add(addresses[ii]);
             } else {
-                MsoyUI.info(CAccount.msgs.sendInvitesInvalidAddress(addresses[ii]));
+                MsoyUI.info(CPeople.msgs.sendInvitesInvalidAddress(addresses[ii]));
                 break;
             }
         }
@@ -155,15 +155,15 @@ public class SendInvitesPanel extends VerticalPanel
             return;
         }
 
-        if (!CAccount.isAdmin() && (valid.size() > _invites.availableInvitations)) {
-            MsoyUI.error(CAccount.msgs.sendInvitesTooMany(
+        if (!CPeople.isAdmin() && (valid.size() > _invites.availableInvitations)) {
+            MsoyUI.error(CPeople.msgs.sendInvitesTooMany(
                              "" + valid.size(), "" + _invites.availableInvitations));
             return;
         }
 
         String from = _fromName.getText().trim(), msg = _customMessage.getText().trim();
         boolean anon = _anonymous.isChecked();
-        CAccount.membersvc.sendInvites(CAccount.ident, valid, from, msg, anon, new MsoyCallback() {
+        CPeople.membersvc.sendInvites(CPeople.ident, valid, from, msg, anon, new MsoyCallback() {
             public void onSuccess (Object result) {
                 FlashClients.tutorialEvent("friendInvited");
                 reinit();
@@ -179,7 +179,7 @@ public class SendInvitesPanel extends VerticalPanel
             VerticalPanel top = new VerticalPanel();
             top.setStyleName("sendInvitesResultsPopup");
             top.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
-            top.add(MsoyUI.createLabel(CAccount.msgs.sendInvitesResults(), "ResultsHeader"));
+            top.add(MsoyUI.createLabel(CPeople.msgs.sendInvitesResults(), "ResultsHeader"));
 
             FlexTable contents = new FlexTable();
             contents.setCellSpacing(10);
@@ -189,19 +189,19 @@ public class SendInvitesPanel extends VerticalPanel
             for (int ii = 0; ii < invRes.results.length; ii++) {
                 String addr = (String)addrs.get(ii);
                 if (invRes.results[ii] == InvitationResults.SUCCESS) { // null == null
-                    contents.setText(row++, 0, CAccount.msgs.sendInvitesResultsSuccessful(addr));
+                    contents.setText(row++, 0, CPeople.msgs.sendInvitesResultsSuccessful(addr));
                 } else if (invRes.results[ii].startsWith("e.")) {
-                    contents.setText(row++, 0, CAccount.msgs.sendInvitesResultsFailed(
-                                         addr, CAccount.serverError(invRes.results[ii])));
+                    contents.setText(row++, 0, CPeople.msgs.sendInvitesResultsFailed(
+                                         addr, CPeople.serverError(invRes.results[ii])));
                 } else {
-                    contents.setText(row++, 0, CAccount.msgs.sendInvitesResultsFailed(
+                    contents.setText(row++, 0, CPeople.msgs.sendInvitesResultsFailed(
                                          addr, invRes.results[ii]));
                 }
             }
 
             contents.getFlexCellFormatter().setHorizontalAlignment(
                 row, 0, VerticalPanel.ALIGN_RIGHT);
-            contents.setWidget(row++, 0, new Button(CAccount.cmsgs.dismiss(), new ClickListener() {
+            contents.setWidget(row++, 0, new Button(CPeople.cmsgs.dismiss(), new ClickListener() {
                 public void onClick (Widget widget) {
                     hide();
                 }

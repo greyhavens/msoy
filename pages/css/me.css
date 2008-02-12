@@ -513,3 +513,25 @@
   font-size: 16px;
   font-weight: bold;
 }
+
+.editAccount .Header {
+  font-weight: bold;
+}
+
+.editAccount .Tip {
+  width: 400px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.editAccount .PermaName {
+  font-weight: bold;
+}
+
+.editAccount .Status {
+  width: 400px;
+}
+
+.editAccount .Error {
+  color: red;
+}

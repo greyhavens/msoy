@@ -381,28 +381,6 @@ img, embed, applet, object {
   color: red;
 }
 
-.editAccount .Header {
-  font-weight: bold;
-}
-
-.editAccount .Tip {
-  width: 400px;
-  font-size: 12px;
-  text-align: center;
-}
-
-.editAccount .PermaName {
-  font-weight: bold;
-}
-
-.editAccount .Status {
-  width: 400px;
-}
-
-.editAccount .Error {
-  color: red;
-}
-
 .imageChooser {
   padding: 10px;
 }
@@ -905,18 +883,6 @@ img, embed, applet, object {
 .promptPopup .Content {
   padding: 15px 15px 0px 15px;
   width: 400px;
-}
-
-.sendInvites .Header, .sendInvitesResultsPopup .Header, .invitation .Header {
-  font-weight: bold;
-}
-
-.sendInvitesResultsPopup .ResultsHeader {
-  background: #222222;
-  color: #EAEFF1;
-  font-size: 22px;
-  font-weight: bold;
-  white-space: nowrap;
 }
 
 .wrappedFrame {

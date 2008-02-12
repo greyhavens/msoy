@@ -42,7 +42,7 @@ public class SearchControls extends SmartTable
 
         FlowPanel invite = new FlowPanel();
         invite.add(MsoyUI.createLabel(CPeople.msgs.searchInvite(), "nowrapLabel"));
-        invite.add(Application.createLink(CPeople.msgs.searchInviteGo(), Page.ACCOUNT, "invites"));
+        invite.add(Application.createLink(CPeople.msgs.searchInviteGo(), Page.PEOPLE, "invites"));
         col += 1; // skip over the search button column
         getFlexCellFormatter().setRowSpan(0, col, 2);
         setWidget(0, col++, WidgetUtil.makeShim(20, 1));

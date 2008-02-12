@@ -26,6 +26,7 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.SessionData;
 
+import client.people.SendInvitesPanel;
 import client.shell.Application;
 import client.shell.Frame;
 import client.shell.Page;

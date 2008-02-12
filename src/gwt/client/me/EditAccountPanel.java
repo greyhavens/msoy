@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.account;
+package client.me;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
@@ -37,9 +37,9 @@ public class EditAccountPanel extends FlexTable
         setCellSpacing(10);
         setStyleName("editAccount");
 
-        Frame.setTitle(CAccount.msgs.accountTitle(), CAccount.msgs.editSubtitle());
+        Frame.setTitle(CMe.msgs.titleAccount(), CMe.msgs.editSubtitle());
 
-        CAccount.usersvc.getAccountInfo(CAccount.ident, new MsoyCallback() {
+        CMe.usersvc.getAccountInfo(CMe.ident, new MsoyCallback() {
             public void onSuccess (Object result) {
                 init((AccountInfo)result);
             }
@@ -53,16 +53,16 @@ public class EditAccountPanel extends FlexTable
         int row = 0;
 
         // configure or display permaname interface
-        if (CAccount.creds.permaName == null) {
+        if (CMe.creds.permaName == null) {
             getFlexCellFormatter().setStyleName(row, 0, "Header");
             getFlexCellFormatter().setColSpan(row, 0, 3);
-            setText(row++, 0, CAccount.msgs.editPickPermaNameHeader());
+            setText(row++, 0, CMe.msgs.editPickPermaNameHeader());
 
             getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-            setText(row, 0, CAccount.msgs.editPermaName());
+            setText(row, 0, CMe.msgs.editPermaName());
             setWidget(row, 1, _pname = new TextBox());
             _pname.addKeyboardListener(_valpname);
-            _uppname = new Button(CAccount.cmsgs.submit(), new ClickListener() {
+            _uppname = new Button(CMe.cmsgs.submit(), new ClickListener() {
                 public void onClick (Widget widget) {
                     configurePermaName();
                 }
@@ -72,26 +72,26 @@ public class EditAccountPanel extends FlexTable
 
             getFlexCellFormatter().setStyleName(row, 0, "Tip");
             getFlexCellFormatter().setColSpan(row, 0, 3);
-            setHTML(row++, 0, CAccount.msgs.editPermaNameTip());
+            setHTML(row++, 0, CMe.msgs.editPermaNameTip());
 
         } else {
             getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-            setText(row, 0, CAccount.msgs.editPermaName());
+            setText(row, 0, CMe.msgs.editPermaName());
             getFlexCellFormatter().setStyleName(row, 1, "PermaName");
-            setText(row++, 1, CAccount.creds.permaName);
+            setText(row++, 1, CMe.creds.permaName);
         }
 
         // configure email address interface
         getFlexCellFormatter().setStyleName(row, 0, "Header");
         getFlexCellFormatter().setColSpan(row, 0, 3);
-        setText(row++, 0, CAccount.msgs.editEmailHeader());
+        setText(row++, 0, CMe.msgs.editEmailHeader());
 
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CAccount.msgs.editEmail());
+        setText(row, 0, CMe.msgs.editEmail());
         setWidget(row, 1, _email = new TextBox());
-        _email.setText(CAccount.creds.accountName);
+        _email.setText(CMe.creds.accountName);
         _email.addKeyboardListener(_valemail);
-        _upemail = new Button(CAccount.cmsgs.update(), new ClickListener() {
+        _upemail = new Button(CMe.cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updateEmail();
             }
@@ -102,27 +102,27 @@ public class EditAccountPanel extends FlexTable
         // configure email preferences interface
         getFlexCellFormatter().setStyleName(row, 0, "Header");
         getFlexCellFormatter().setColSpan(row, 0, 3);
-        setText(row++, 0, CAccount.msgs.editEPrefsHeader());
+        setText(row++, 0, CMe.msgs.editEPrefsHeader());
 
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CAccount.msgs.editWhirledMailEmail());
+        setText(row, 0, CMe.msgs.editWhirledMailEmail());
         RowPanel bits = new RowPanel();
         bits.add(_whirledEmail = new CheckBox());
-        bits.add(MsoyUI.createLabel(CAccount.msgs.editWhirledMailEmailTip(), "tipLabel"));
+        bits.add(MsoyUI.createLabel(CMe.msgs.editWhirledMailEmailTip(), "tipLabel"));
         getFlexCellFormatter().setColSpan(row, 1, 2);
         setWidget(row++, 1, bits);
         _whirledEmail.setChecked(_accountInfo.emailWhirledMail);
 
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CAccount.msgs.editAnnounceEmail());
+        setText(row, 0, CMe.msgs.editAnnounceEmail());
         bits = new RowPanel();
         bits.add(_announceEmail = new CheckBox());
-        bits.add(MsoyUI.createLabel(CAccount.msgs.editAnnounceEmailTip(), "tipLabel"));
+        bits.add(MsoyUI.createLabel(CMe.msgs.editAnnounceEmailTip(), "tipLabel"));
         getFlexCellFormatter().setColSpan(row, 1, 2);
         setWidget(row++, 1, bits);
         _announceEmail.setChecked(_accountInfo.emailAnnouncements);
 
-        _upeprefs = new Button(CAccount.cmsgs.update(), new ClickListener() {
+        _upeprefs = new Button(CMe.cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updateEmailPrefs();
             }
@@ -132,14 +132,14 @@ public class EditAccountPanel extends FlexTable
         // configure real name interface
         getFlexCellFormatter().setStyleName(row, 0, "Header");
         getFlexCellFormatter().setColSpan(row, 0, 3);
-        setText(row++, 0, CAccount.msgs.editRealNameHeader());
+        setText(row++, 0, CMe.msgs.editRealNameHeader());
         
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CAccount.msgs.editRealName());
+        setText(row, 0, CMe.msgs.editRealName());
         setWidget(row, 1, _rname = new TextBox());
         _rname.setText(_accountInfo.realName);
         _rname.addKeyboardListener(_valrname);
-        _uprname = new Button(CAccount.cmsgs.update(), new ClickListener() {
+        _uprname = new Button(CMe.cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updateRealName();
             }
@@ -149,15 +149,15 @@ public class EditAccountPanel extends FlexTable
 
         getFlexCellFormatter().setStyleName(row, 0, "Tip");
         getFlexCellFormatter().setColSpan(row, 0, 3);
-        setHTML(row++, 0, CAccount.msgs.editRealNameTip());
+        setHTML(row++, 0, CMe.msgs.editRealNameTip());
 
         // configure password interface
         getFlexCellFormatter().setStyleName(row, 0, "Header");
         getFlexCellFormatter().setColSpan(row, 0, 3);
-        setText(row++, 0, CAccount.msgs.editPasswordHeader());
+        setText(row++, 0, CMe.msgs.editPasswordHeader());
 
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CAccount.msgs.editPassword());
+        setText(row, 0, CMe.msgs.editPassword());
         setWidget(row++, 1, _password = new PasswordTextBox());
         _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
@@ -167,10 +167,10 @@ public class EditAccountPanel extends FlexTable
         _password.addKeyboardListener(_valpass);
 
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CAccount.msgs.editConfirm());
+        setText(row, 0, CMe.msgs.editConfirm());
         setWidget(row, 1, _confirm = new PasswordTextBox());
         _confirm.addKeyboardListener(_valpass);
-        _uppass = new Button(CAccount.cmsgs.update(), new ClickListener() {
+        _uppass = new Button(CMe.cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updatePassword();
             }
@@ -180,7 +180,7 @@ public class EditAccountPanel extends FlexTable
 
         getFlexCellFormatter().setStyleName(row, 0, "Status");
         getFlexCellFormatter().setColSpan(row, 0, 3);
-        setWidget(row++, 0, _status = new Label(CAccount.msgs.editTip()));
+        setWidget(row++, 0, _status = new Label(CMe.msgs.editTip()));
     }
 
     protected void updateRealName ()
@@ -189,17 +189,17 @@ public class EditAccountPanel extends FlexTable
         _accountInfo.realName = _rname.getText().trim();
         _uprname.setEnabled(false);
         _rname.setEnabled(false);
-        CAccount.usersvc.updateAccountInfo(CAccount.ident, _accountInfo, new AsyncCallback() {
+        CMe.usersvc.updateAccountInfo(CMe.ident, _accountInfo, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _rname.setEnabled(true);
                 _uprname.setEnabled(false);
-                setStatus(CAccount.msgs.realNameUpdated());
+                setStatus(CMe.msgs.realNameUpdated());
             }
             public void onFailure (Throwable cause) {
                 _rname.setText(_accountInfo.realName = oldRealName);
                 _rname.setEnabled(true);
                 _uprname.setEnabled(true);
-                setError(CAccount.serverError(cause));
+                setError(CMe.serverError(cause));
             }
         });
     }
@@ -208,14 +208,14 @@ public class EditAccountPanel extends FlexTable
     {
         final String email = _email.getText().trim();
         _upemail.setEnabled(false);
-        CAccount.usersvc.updateEmail(CAccount.ident, email, new AsyncCallback() {
+        CMe.usersvc.updateEmail(CMe.ident, email, new AsyncCallback() {
             public void onSuccess (Object result) {
-                CAccount.creds.accountName = email;
-                setStatus(CAccount.msgs.emailUpdated());
+                CMe.creds.accountName = email;
+                setStatus(CMe.msgs.emailUpdated());
             }
             public void onFailure (Throwable cause) {
                 _upemail.setEnabled(true);
-                setError(CAccount.serverError(cause));
+                setError(CMe.serverError(cause));
             }
         });
     }
@@ -223,38 +223,38 @@ public class EditAccountPanel extends FlexTable
     protected void updateEmailPrefs ()
     {
         _upeprefs.setEnabled(false);
-        CAccount.usersvc.updateEmailPrefs(CAccount.ident, _whirledEmail.isChecked(),
+        CMe.usersvc.updateEmailPrefs(CMe.ident, _whirledEmail.isChecked(),
                                         _announceEmail.isChecked(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 _upeprefs.setEnabled(true);
-                setStatus(CAccount.msgs.eprefsUpdated());
+                setStatus(CMe.msgs.eprefsUpdated());
             }
             public void onFailure (Throwable cause) {
                 _upeprefs.setEnabled(true);
-                setError(CAccount.serverError(cause));
+                setError(CMe.serverError(cause));
             }
         });
     }
 
     protected void updatePassword ()
     {
-        final String password = CAccount.md5hex(_password.getText().trim());
+        final String password = CMe.md5hex(_password.getText().trim());
         _uppass.setEnabled(false);
         _password.setEnabled(false);
         _confirm.setEnabled(false);
-        CAccount.usersvc.updatePassword(CAccount.ident, password, new AsyncCallback() {
+        CMe.usersvc.updatePassword(CMe.ident, password, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _password.setText("");
                 _password.setEnabled(true);
                 _confirm.setText("");
                 _confirm.setEnabled(true);
-                setStatus(CAccount.msgs.passwordUpdated());
+                setStatus(CMe.msgs.passwordUpdated());
             }
             public void onFailure (Throwable cause) {
                 _password.setEnabled(true);
                 _confirm.setEnabled(true);
                 _uppass.setEnabled(true);
-                setError(CAccount.serverError(cause));
+                setError(CMe.serverError(cause));
             }
         });
     }
@@ -264,19 +264,19 @@ public class EditAccountPanel extends FlexTable
         final String pname = _pname.getText().trim();
         _uppname.setEnabled(false);
         _pname.setEnabled(false);
-        CAccount.usersvc.configurePermaName(CAccount.ident, pname, new AsyncCallback() {
+        CMe.usersvc.configurePermaName(CMe.ident, pname, new AsyncCallback() {
             public void onSuccess (Object result) {
-                CAccount.creds.permaName = pname;
+                CMe.creds.permaName = pname;
                 getFlexCellFormatter().setStyleName(_permaRow, 1, "PermaName");
                 setText(_permaRow, 1, pname);
                 setText(_permaRow, 2, "");
                 setText(_permaRow+1, 0, "");
-                setStatus(CAccount.msgs.permaNameConfigured());
+                setStatus(CMe.msgs.permaNameConfigured());
             }
             public void onFailure (Throwable cause) {
                 _pname.setEnabled(true);
                 _uppname.setEnabled(true);
-                setError(CAccount.serverError(cause));
+                setError(CMe.serverError(cause));
             }
         });
     }
@@ -286,7 +286,7 @@ public class EditAccountPanel extends FlexTable
         String realName = _rname.getText().trim();
         boolean valid = false;
         if (!_accountInfo.realName.equals(realName)) {
-            setStatus(CAccount.msgs.editNameReady());
+            setStatus(CMe.msgs.editNameReady());
             valid = true;
         } else {
             setStatus("");
@@ -299,10 +299,10 @@ public class EditAccountPanel extends FlexTable
         String email = _email.getText().trim();
         boolean valid = false;
         if (email.length() < 4 || email.indexOf("@") == -1 ||
-            email.equals(CAccount.creds.accountName)) {
+            email.equals(CMe.creds.accountName)) {
             setStatus("");
         } else {
-            setStatus(CAccount.msgs.editEmailReady());
+            setStatus(CMe.msgs.editEmailReady());
             valid = true;
         }
         _upemail.setEnabled(valid);
@@ -313,11 +313,11 @@ public class EditAccountPanel extends FlexTable
         boolean valid = false;
         String password = _password.getText().trim(), confirm = _confirm.getText().trim();
         if (confirm.length() == 0) {
-            setError(CAccount.msgs.editMissingConfirm());
+            setError(CMe.msgs.editMissingConfirm());
         } else if (!password.equals(confirm)) {
-            setError(CAccount.msgs.editPasswordMismatch());
+            setError(CMe.msgs.editPasswordMismatch());
         } else {
-            setStatus(CAccount.msgs.editPasswordReady());
+            setStatus(CMe.msgs.editPasswordReady());
             valid = true;
         }
         _uppass.setEnabled(valid);
@@ -330,7 +330,7 @@ public class EditAccountPanel extends FlexTable
             char c = pname.charAt(ii);
             if ((ii == 0 && !Character.isLetter(c)) ||
                 (!Character.isLetter(c) && !Character.isDigit(c) && c != '_')) {
-                setError(CAccount.msgs.editPermaInvalid());
+                setError(CMe.msgs.editPermaInvalid());
                 _uppname.setEnabled(false);
                 return;
             }
@@ -340,11 +340,11 @@ public class EditAccountPanel extends FlexTable
         if (pname.length() == 0) {
             setStatus("");
         } else if (pname.length() < MemberName.MINIMUM_PERMANAME_LENGTH) {
-            setError(CAccount.msgs.editPermaShort());
+            setError(CMe.msgs.editPermaShort());
         } else if (pname.length() > MemberName.MAXIMUM_PERMANAME_LENGTH) {
-            setError(CAccount.msgs.editPermaLong());
+            setError(CMe.msgs.editPermaLong());
         } else {
-            setStatus(CAccount.msgs.editPermaReady());
+            setStatus(CMe.msgs.editPermaReady());
             valid = true;
         }
         _uppname.setEnabled(valid);

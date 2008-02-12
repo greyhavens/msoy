@@ -47,12 +47,6 @@ public class index extends Page
 
         } else if (CAccount.ident == null) {
             setContent(MsoyUI.createLabel(CAccount.msgs.indexLogon(), "infoLabel"));
-
-        } else if (action.equals("invites")) {
-            setContent(new SendInvitesPanel());
-
-        } else {
-            setContent(new EditAccountPanel());
         }
     }
 

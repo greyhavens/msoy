@@ -72,7 +72,7 @@ public class MyWhirled extends SmartTable
         sidebar.add(box = createListBox("ListBox"));
         box.add(Application.createLink("My Discussions", Page.WHIRLEDS, "unread"));
         box.add(Application.createLink("My Mail", Page.MAIL, ""));
-        box.add(Application.createLink("My Account", Page.ACCOUNT, "edit"));
+        box.add(Application.createLink("My Account", Page.ME, "account"));
         if (CMe.isSupport()) {
             box.add(Application.createLink("Admin Console", Page.ADMIN, ""));
         }

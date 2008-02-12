@@ -45,27 +45,29 @@ public class index extends MsgsEntryPoint
             return;
         }
 
-        if (args.get(0, "").equals("search")) {
+        String action = args.get(0, "");
+        if (action.equals("search")) {
             displaySearch(args);
-            return;
-        }
 
-        if (args.get(0, "").equals("f")) {
+        } else if (action.equals("f")) {
             setContent(new FriendsPanel(args.get(1, 0)));
-            return;
-        }
 
-        int memberId = args.get(0, 0);
-        if (memberId != 0) {
-            displayMemberPage(memberId);
-            return;
-        }
-        // #profile-me falls through
+        } else if (action.equals("invites")) {
+            setContent(new SendInvitesPanel());
 
-        if (CPeople.ident != null) {
-            setContent(new PeoplePanel());
         } else {
-            displaySearch(args);
+            int memberId = args.get(0, 0);
+            if (memberId != 0) {
+                displayMemberPage(memberId);
+                return;
+            }
+            // #profile-me falls through
+
+            if (CPeople.ident != null) {
+                setContent(new PeoplePanel());
+            } else {
+                displaySearch(args);
+            }
         }
     }
 
