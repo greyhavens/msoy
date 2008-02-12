@@ -119,13 +119,6 @@ public class index extends Page
         CStuff.msgs = (StuffMessages)GWT.create(StuffMessages.class);
     }
 
-    // @Override // from Page
-    protected void didLogoff ()
-    {
-        // go to the landing page instead of reloading as a non-member
-        Application.go(Page.ME, "");
-    }
-
     protected void displayInventory (byte type, int pageNo, int itemId)
     {
         setTitle(null);

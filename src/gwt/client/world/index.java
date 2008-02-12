@@ -112,13 +112,6 @@ public class index extends Page
     }
 
     // @Override // from Page
-    protected void didLogoff ()
-    {
-        // head to the landing page
-        Application.go(Page.ME, "");
-    }
-
-    // @Override // from Page
     protected void initContext ()
     {
         super.initContext();

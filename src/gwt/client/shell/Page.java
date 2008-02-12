@@ -149,12 +149,12 @@ public abstract class Page
     }
 
     /**
-     * Called when the player logs off while viewing this page. The default implementation
-     * redisplays the current page with the current args (by calling {@link #onHistoryChanged}).
+     * Called when the player logs off while viewing this page. The default implementation sends
+     * the user to the landing page.
      */
     protected void didLogoff ()
     {
-        History.onHistoryChanged(History.getToken());
+        History.newItem(""); // go to the landing page
     }
 
     protected static class Content extends FlexTable

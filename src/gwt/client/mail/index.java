@@ -68,12 +68,5 @@ public class index extends MsgsEntryPoint
         CMail.msgs = (MailMessages)GWT.create(MailMessages.class);
     }
 
-    // @Override // from Page
-    protected void didLogoff ()
-    {
-        // go to the landing page instead of reloading as a non-member
-        Application.go(Page.ME, "");
-    }
-
     protected MailApplication _mainView;
 }
