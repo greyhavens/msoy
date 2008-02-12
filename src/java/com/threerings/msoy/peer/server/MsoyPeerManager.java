@@ -339,7 +339,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         // clear out various bits in the received object
         memobj.clearForwardedObject();
-        // fill their transient stats information back in
+        // fill their transient fields back in
         memobj.actorState = actorState;
         memobj.stats = stats;
         // place this member object in a temporary cache; if the member in question logs on in the
