@@ -20,6 +20,7 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
+
 import com.threerings.presents.data.InvocationCodes;
 
 import com.threerings.parlor.game.data.GameConfig;
@@ -44,9 +45,10 @@ import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.util.HTMLSanitizer;
+import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.util.HTMLSanitizer;
 
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.ArcadeData;
@@ -388,6 +390,7 @@ public class GameServlet extends MsoyServiceServlet
         try {
             ArcadeData data = new ArcadeData();
             GameRepository grepo = MsoyServer.itemMan.getGameRepository();
+            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
 
             // determine the "featured" game
             List<GameRecord> games = grepo.loadGenre((byte)-1, 5);
@@ -399,7 +402,10 @@ public class GameServlet extends MsoyServiceServlet
                 int[] players = getMinMaxPlayers((Game)frec.toItem());
                 data.featuredGame.minPlayers = players[0];
                 data.featuredGame.maxPlayers = players[1];
-                // TODO: load creator name
+                PopularPlacesSnapshot.Place ppg = pps.getGame(frec.gameId);
+                if (ppg != null) {
+                    data.featuredGame.playersOnline = ppg.population;
+                }
             }
 
             // load information about the genres
@@ -416,6 +422,10 @@ public class GameServlet extends MsoyServiceServlet
                 genre.games = new GameInfo[fcount];
                 for (int ii = 0; ii < fcount; ii++) {
                     genre.games[ii] = games.get(ii).toGameInfo();
+                    PopularPlacesSnapshot.Place ppg = pps.getGame(genre.games[ii].gameId);
+                    if (ppg != null) {
+                        genre.games[ii].playersOnline = ppg.population;
+                    }
                 }
                 genres.add(genre);
             }
