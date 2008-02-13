@@ -14,6 +14,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -40,29 +42,48 @@ public class ItemPanel extends VerticalPanel
 
     public ItemPanel (InventoryModels models, byte type)
     {
+        setStyleName("itemPanel");
+
         _models = models;
         _type = type;
 
         // this will contain radio buttons for setting filters (eventually it will have user
         // creatable folders)
-        _filters = new FlowPanel();
-        _filters.setStyleName("inventoryFilters");
-        _filters.add(new InlineLabel(CStuff.msgs.ipfTitle()));
-        _filters.add(createFilter(CStuff.msgs.ipfAll(), Predicate.TRUE));
-        _filters.add(createFilter(CStuff.msgs.ipfUploaded(), new Predicate() {
+        int col = 0;
+        _filters = new SmartTable("Filters", 0, 0);
+        _filters.setText(0, col++, CStuff.msgs.ipfTitle());
+        _filters.setWidget(0, col++, createFilter(CStuff.msgs.ipfAll(), Predicate.TRUE));
+        _filters.setWidget(0, col++, createFilter(CStuff.msgs.ipfUploaded(), new Predicate() {
             public boolean isMatch (Object o) {
                 return ((Item)o).sourceId == 0;
             }
         }));
-        _filters.add(createFilter(CStuff.msgs.ipfPurchased(), new Predicate() {
+        _filters.setWidget(0, col++, createFilter(CStuff.msgs.ipfPurchased(), new Predicate() {
             public boolean isMatch (Object o) {
                 return ((Item)o).sourceId != 0;
             }
         }));
 
+        if (isCatalogItem(type)) {
+            String slabel = CStuff.msgs.ipShopFor(CStuff.dmsgs.getString("pItemType" + _type));
+            _filters.setHTML(0, col++, "&nbsp;");
+            _filters.setText(0, col++, slabel, 0, "Shop");
+            _filters.setWidget(0, col++, new Button(CStuff.msgs.ipToCatalog(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.SHOP, ""+_type);
+                }
+            }));
+        }
+
+        // determine if we should show the creation UI at the bottom
+        int used = Application.HEADER_HEIGHT + NAV_BAR_ETC;
+        boolean showCreate = shouldShowCreate(type);
+        if (showCreate) {
+            used += BLURB_HEIGHT;
+        }
+
         // this will contain our items
-        int rows = Math.max(1, (Window.getClientHeight() - Application.HEADER_HEIGHT -
-                                NAV_BAR_ETC - BLURB_HEIGHT) / BOX_HEIGHT);
+        int rows = Math.max(1, (Window.getClientHeight() - used) / BOX_HEIGHT);
         _contents = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
@@ -74,31 +95,15 @@ public class ItemPanel extends VerticalPanel
             protected String getEmptyMessage () {
                 return CStuff.msgs.panelNoItems(CStuff.dmsgs.getString("itemType" + _type));
             }
-        };
-        _contents.addStyleName("inventoryContents");
-
-        boolean isCatalogItem = false;
-        for (int ii = 0; ii < Item.TYPES.length; ii++) {
-            if (type == Item.TYPES[ii]) {
-                isCatalogItem = true;
-                break;
+            protected boolean displayNavi (int items) {
+                return true;
             }
-        }
-        if (isCatalogItem) {
+        };
+        _contents.addStyleName("Contents");
+
+        if (showCreate) {
             createUploadInterface();
         }
-    }
-
-    protected RadioButton createFilter (String label, final Predicate pred)
-    {
-        RadioButton button = new RadioButton("filters", label);
-        button.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                showInventory(0, pred);
-            }
-        });
-        button.setChecked(pred == Predicate.TRUE);
-        return button;
     }
 
     /**
@@ -174,6 +179,39 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
+    protected boolean shouldShowCreate (byte type)
+    {
+        // if this is photos, music or videos, always show create
+        if (type == Item.PHOTO || type == Item.AUDIO || type == Item.VIDEO) {
+            return true;
+        }
+
+        // otherwise it has to be a catalog item and we have to be a minimum level
+        return isCatalogItem(type) && (CStuff.level >= MIN_CREATE_LEVEL);
+    }
+
+    protected boolean isCatalogItem (byte type)
+    {
+        for (int ii = 0; ii < Item.TYPES.length; ii++) {
+            if (type == Item.TYPES[ii]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected RadioButton createFilter (String label, final Predicate pred)
+    {
+        RadioButton button = new RadioButton("filters", label);
+        button.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                showInventory(0, pred);
+            }
+        });
+        button.setChecked(pred == Predicate.TRUE);
+        return button;
+    }
+
     protected boolean isShowing (ItemIdent ident)
     {
         Widget top = (getWidgetCount() > 0) ? getWidget(0) : null;
@@ -184,8 +222,7 @@ public class ItemPanel extends VerticalPanel
     {
         // this will allow us to create new items
         _upload = new VerticalPanel();
-        _upload.setSpacing(0);
-        _upload.setStyleName("uploadBlurb");
+        _upload.setStyleName("Upload");
 
         Grid header = new Grid(1, 3);
         header.setStyleName("Header");
@@ -198,7 +235,7 @@ public class ItemPanel extends VerticalPanel
         _upload.add(header);
 
         VerticalPanel cwrap = new VerticalPanel();
-        cwrap.setStyleName("Contents");
+        cwrap.setStyleName("Body");
         _upload.add(cwrap);
 
         Grid contents = new Grid(1, 2);
@@ -206,7 +243,7 @@ public class ItemPanel extends VerticalPanel
         contents.setCellSpacing(0);
         contents.setCellPadding(0);
         contents.getCellFormatter().setStyleName(0, 0, "Pitch");
-        contents.getCellFormatter().setStyleName(0, 1, "Upload");
+        contents.getCellFormatter().setStyleName(0, 1, "Button");
         contents.getCellFormatter().setHorizontalAlignment(0, 1, ALIGN_RIGHT);
         contents.getCellFormatter().setVerticalAlignment(0, 1, ALIGN_MIDDLE);
         cwrap.add(contents);
@@ -238,6 +275,9 @@ public class ItemPanel extends VerticalPanel
             clear();
             add(_filters);
             add(_contents);
+            if (_tocat != null) {
+                add(_tocat);
+            }
             if (_upload != null) {
                 add(_upload);
             }
@@ -289,13 +329,16 @@ public class ItemPanel extends VerticalPanel
     protected int _mostRecentPage;
     protected ItemDetail _detail;
 
-    protected FlowPanel _filters;
+    protected SmartTable _filters;
     protected PagedGrid _contents;
     protected Button _create, _next, _prev;
+    protected SmartTable _tocat;
     protected VerticalPanel _upload;
 
     protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ +
         10 /* gap */ + 25 /*  filters */;
     protected static final int BLURB_HEIGHT = 25 /* gap */ + 33 /* title */ + 72 /* contents */;
     protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT + 5 /* gap */;
+
+    protected static final int MIN_CREATE_LEVEL = 5;
 }
