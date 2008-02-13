@@ -247,7 +247,8 @@ public class ControlBar extends HBox
 
         // add our standard control bar features
         _chatControl = null;
-        _chatControl = new ChatControl(_ctx, Msgs.CHAT.get("b.send"), this.height - 4);
+        _chatControl = new ChatControl(
+            _ctx, Msgs.CHAT.get("b.send"), this.height, this.height - 4);
         addGroupChild(_chatControl, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
         addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
         addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR ]);

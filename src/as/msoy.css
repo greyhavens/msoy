@@ -747,6 +747,9 @@ Window {
 .chatControl {  
   paddingLeft: 4;
   paddingRight: 4;
+  paddingTop: 2;
+  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
+  backgroundSize: "100%";
 }
 
 .chatInput {
