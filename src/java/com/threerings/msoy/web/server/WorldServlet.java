@@ -94,7 +94,6 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.WhatIsWhirledData;
 import com.threerings.msoy.web.data.WhirledwideData;
-import com.threerings.msoy.web.server.ServletWaiter;
 
 import static com.threerings.msoy.Log.log;
 
@@ -180,29 +179,17 @@ public class WorldServlet extends MsoyServiceServlet
 
         // hop over to the dobj thread and figure out which of our friends are online
         final HashIntMap<OnlineMemberCard> onlineFriends = new HashIntMap<OnlineMemberCard>();
-        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
-            "getMyWhirled [memberId=" + mrec.memberId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                try {
-                    MsoyServer.peerMan.applyToNodes(new PeerManager.Operation() {
-                        public void apply (NodeObject nodeobj) {
-                            MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
-                            for (int friendId : friendIds) {
-                                OnlineMemberCard card = mnobj.getMemberCard(friendId);
-                                if (card != null) {
-                                    onlineFriends.put(friendId, card);
-                                }
-                            }
-                        }
-                    });
-                    waiter.requestCompleted(null);
-                } catch (Exception e) {
-                    waiter.requestFailed(e);
+        invokePeerOperation("getMyWhirled(" + mrec.memberId + ")", new PeerManager.Operation() {
+            public void apply (NodeObject nodeobj) {
+                MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
+                for (int friendId : friendIds) {
+                    OnlineMemberCard card = mnobj.getMemberCard(friendId);
+                    if (card != null) {
+                        onlineFriends.put(friendId, card);
+                    }
                 }
             }
         });
-        waiter.waitForResult();
 
         // flesh out profile data for the online friends
         PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
@@ -265,39 +252,27 @@ public class WorldServlet extends MsoyServiceServlet
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
-        final List<MemberCard> whirledPeople = Lists.newArrayList();
-        final ServletWaiter<Void> waiter = new ServletWaiter<Void>("getWhirledwide");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                try {
-                    final List<MemberCard> people = Lists.newArrayList();
-                    MsoyServer.peerMan.applyToNodes(new PeerManager.Operation() {
-                        public void apply (NodeObject nodeobj) {
-                            MsoyNodeObject mnobj = (MsoyNodeObject) nodeobj;
-                            for (MemberLocation memberLoc : mnobj.memberLocs) {
-                                if (memberLoc.memberId == MemberName.GUEST_ID) {
-                                    // don't include guests.
-                                    continue;
-                                }
-                                MemberCard member = new MemberCard();
-                                // card details get filled in back on the servlet thread
-                                member.name = new MemberName("", memberLoc.memberId);
-                                people.add(member);
-                            }
-                        }
-                    });
-                    for (int ii = 0; ii < 5 && people.size() > 0; ii++) {
-                        int randomPerson = (int) (Math.random() * people.size());
-                        whirledPeople.add(people.remove(randomPerson));
+        List<MemberCard> whirledPeople = Lists.newArrayList();
+        final List<MemberCard> people = Lists.newArrayList();
+        invokePeerOperation("getWhirledwide", new PeerManager.Operation() {
+            public void apply (NodeObject nodeobj) {
+                MsoyNodeObject mnobj = (MsoyNodeObject) nodeobj;
+                for (MemberLocation memberLoc : mnobj.memberLocs) {
+                    if (memberLoc.memberId == MemberName.GUEST_ID) {
+                        // don't include guests.
+                        continue;
                     }
-                    waiter.requestCompleted(null);
-                } catch (Exception e) {
-                    waiter.requestFailed(e);
-                    return;
+                    MemberCard member = new MemberCard();
+                    // card details get filled in back on the servlet thread
+                    member.name = new MemberName("", memberLoc.memberId);
+                    people.add(member);
                 }
             }
         });
-        waiter.waitForResult();
+        for (int ii = 0; ii < 5 && people.size() > 0; ii++) {
+            int randomPerson = (int) (Math.random() * people.size());
+            whirledPeople.add(people.remove(randomPerson));
+        }
 
         // Member cards
         try {

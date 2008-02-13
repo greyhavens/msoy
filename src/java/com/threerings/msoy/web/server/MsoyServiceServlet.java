@@ -12,6 +12,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.samskivert.io.PersistenceException;
 
+import com.threerings.presents.peer.server.PeerManager;
+
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -110,6 +112,27 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         if (flowRec != null) {
             MemberNodeActions.flowUpdated(flowRec);
         }
+    }
+
+    /**
+     * Invokes the supplied operation on all peer nodes (on the distributed object manager thread)
+     * and blocks the current thread until the execution has completed.
+     */
+    protected void invokePeerOperation (String name, final PeerManager.Operation op)
+        throws ServiceException
+    {
+        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(name);
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                try {
+                    MsoyServer.peerMan.applyToNodes(op);
+                    waiter.requestCompleted(null);
+                } catch (Exception e) {
+                    waiter.requestFailed(e);
+                }
+            }
+        });
+        waiter.waitForResult();
     }
 
     /**
