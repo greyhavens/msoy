@@ -7,12 +7,12 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
@@ -31,13 +31,11 @@ import client.util.events.StatusChangeListener;
 /**
  * Displays basic player status (name, flow count) and handles logging on and logging off.
  */
-public class StatusPanel extends FlexTable
+public class StatusPanel extends SmartTable
 {
     public StatusPanel (Application app)
     {
-        setStyleName("statusPanel");
-        setCellPadding(0);
-        setCellSpacing(0);
+        super("statusPanel", 0, 0);
         _app = app;
 
         FlashEvents.addListener(new StatusChangeListener() {
@@ -131,21 +129,19 @@ public class StatusPanel extends FlexTable
         CookieUtil.clear("/", name);
     }
 
-    protected static class MailDisplay extends FlexTable
+    protected static class MailDisplay extends SmartTable
     {
         public MailDisplay () {
-            setCellPadding(0);
-            setCellSpacing(0);
+            super("Mail", 0, 0);
 
             int idx = 0;
-            getFlexCellFormatter().setStyleName(0, idx, "Icon");
             Image image = new Image("/images/header/symbol_mail.png");
             image.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.MAIL, "");
                 }
             });
-            setWidget(0, idx++, image);
+            setWidget(0, idx++, image, 1, "Icon");
             _mailIx = idx; // the next cell will hold our count
             setCount(0);
         }
@@ -163,16 +159,14 @@ public class StatusPanel extends FlexTable
         protected int _mailIx;
     }
 
-    protected static class LevelsDisplay extends FlexTable
+    protected static class LevelsDisplay extends SmartTable
     {
         public LevelsDisplay () {
-            setCellPadding(0);
-            setCellSpacing(0);
+            super(0, 0);
 
             int idx = 0;
             getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-            getFlexCellFormatter().setStyleName(0, idx, "Icon");
-            setWidget(0, idx++, new Image("/images/header/symbol_flow.png"));
+            setWidget(0, idx++, new Image("/images/header/symbol_flow.png"), 1, "Icon");
             setText(0, _flowIdx = idx++, "0");
 
             // TODO: display once we've implemented gold!
@@ -182,12 +176,10 @@ public class StatusPanel extends FlexTable
             setText(0, _goldIdx = idx++, "0");*/
 
             getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-            getFlexCellFormatter().setStyleName(0, idx, "Icon");
-            setWidget(0, idx++, new Image("/images/header/symbol_level.png"));
+            setWidget(0, idx++, new Image("/images/header/symbol_level.png"), 1, "Icon");
             setText(0, _levelIdx = idx++, "0");
 
             getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-            getFlexCellFormatter().setStyleName(0, idx, "Icon");
         }
 
         public void setLevel (int level) {

@@ -240,6 +240,10 @@ img, embed, applet, object {
   padding-right: 3px;
 }
 
+.statusPanel .Mail {
+  padding-right: 25px;
+}
+
 .statusPanel a {
   color: #AAB5B9;
 }
