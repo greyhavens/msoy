@@ -5,6 +5,11 @@
     width="100%" height="100%"
     applicationComplete="addChild(new RemixControls(this));">
 <mx:Style source="msoy.css"/>
+<mx:Style>
+   LinkButton {
+      color: #000000;
+   }
+</mx:Style>
 <mx:Script>
     <![CDATA[
         import com.threerings.msoy.applets.remixer.RemixControls;

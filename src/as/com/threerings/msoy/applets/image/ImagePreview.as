@@ -20,13 +20,23 @@ import mx.core.FlexLoader;
 import com.adobe.images.JPGEncoder;
 import com.adobe.images.PNGEncoder;
 
+import com.threerings.util.ValueEvent;
+
+/**
+ * Dispatched when the size of the image is known.
+ */
+[Event(name="SizeKnown", type="com.threerings.util.ValueEvent")]
+
 /**
  * Displays an image. I think this could be the base class for our in-line image editing.
  */
 public class ImagePreview extends VBox
 {
+    public static const SIZE_KNOWN :String = "SizeKnown";
+
     public function ImagePreview ()
     {
+        setStyle("backgroundColor", 0xCCCCCC);
         _image = new Image();
         addChild(_image);
     }
@@ -35,6 +45,7 @@ public class ImagePreview extends VBox
     {
         _bytes = null;
         _image.source = new Bitmap(bitmapData);
+        dispatchEvent(new ValueEvent(SIZE_KNOWN, [ bitmapData.width, bitmapData.height ]));
     }
 
     public function setImage (bytes :ByteArray) :void
@@ -86,6 +97,7 @@ public class ImagePreview extends VBox
     protected function handleFlexLoaderComplete (event :Event) :void
     {
         _image.source = LoaderInfo(event.target).loader;
+        dispatchEvent(new ValueEvent(SIZE_KNOWN, [ event.target.width, event.target.height ]));
     }
 
     /** The control displaying the image, for now. */
