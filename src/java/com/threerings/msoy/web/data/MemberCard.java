@@ -10,7 +10,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Profile;
 
 /**
- * Contains a member's name and profile picture.
+ * Contains a member's name, profile picture and other bits.
  */
 public class MemberCard
     implements IsSerializable
@@ -20,4 +20,10 @@ public class MemberCard
 
     /** The member's profile photo (or the default). */
     public MediaDesc photo = Profile.DEFAULT_PHOTO;
+
+    /** The member's headline, status, whatever you want to call it. */
+    public String headline;
+
+    /** The date on which this member was last logged onto Whirled. */
+    public long lastLogon;
 }

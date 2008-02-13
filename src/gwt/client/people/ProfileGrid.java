@@ -16,7 +16,6 @@ import com.threerings.gwt.ui.PagedGrid;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.person.data.ProfileCard;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Application;
@@ -117,15 +116,12 @@ public class ProfileGrid extends PagedGrid
                 setHTML(1, 0, "&nbsp;");
                 setHTML(2, 0, "&nbsp;");
 
-                if (card instanceof ProfileCard) {
-                    ProfileCard pcard = (ProfileCard)card;
-                    if (pcard.headline != null && pcard.headline.length() > 0) {
-                        setText(1, 0, pcard.headline);
-                    }
-                    if (pcard.lastLogon > 0) {
-                        Date last = new Date(((ProfileCard)card).lastLogon);
-                        setText(2, 0, CPeople.msgs.friendsLastOnline(_lfmt.format(last)));
-                    }
+                if (card.headline != null && card.headline.length() > 0) {
+                    setText(1, 0, card.headline);
+                }
+                if (card.lastLogon > 0) {
+                    Date last = new Date(card.lastLogon);
+                    setText(2, 0, CPeople.msgs.friendsLastOnline(_lfmt.format(last)));
                 }
             }
         }

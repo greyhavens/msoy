@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.google.common.collect.Lists;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
@@ -20,11 +22,11 @@ import com.samskivert.util.StringUtil;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import com.threerings.msoy.data.UserAction;
-
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -35,7 +37,6 @@ import com.threerings.msoy.item.server.persist.GameRecord;
 
 import com.threerings.msoy.person.data.BlurbData;
 import com.threerings.msoy.person.data.Profile;
-import com.threerings.msoy.person.data.ProfileCard;
 import com.threerings.msoy.person.data.ProfileLayout;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
@@ -166,16 +167,16 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public List<ProfileCard> findProfiles (String type, String search)
+    public List<MemberCard> findProfiles (String type, String search)
         throws ServiceException
     {
         try {
             // locate the members that match the supplied search
-            IntMap<ProfileCard> cards = new HashIntMap<ProfileCard>();
+            IntMap<MemberCard> cards = new HashIntMap<MemberCard>();
             if ("email".equals(type)) {
                 MemberRecord memrec = MsoyServer.memberRepo.loadMember(search);
                 if (memrec != null) {
-                    ProfileCard card = new ProfileCard();
+                    MemberCard card = new MemberCard();
                     card.name = new MemberName(memrec.name, memrec.memberId);
                     cards.put(memrec.memberId, card);
                 }
@@ -189,7 +190,7 @@ public class ProfileServlet extends MsoyServiceServlet
                 }
                 if (names != null) {
                     for (MemberNameRecord mname : names) {
-                        ProfileCard card = new ProfileCard();
+                        MemberCard card = new MemberCard();
                         card.name = mname.toMemberName();
                         cards.put(mname.memberId, card);
                     }
@@ -199,7 +200,7 @@ public class ProfileServlet extends MsoyServiceServlet
             // load up their profile data
             resolveCardData(cards);
 
-            ArrayList<ProfileCard> results = new ArrayList<ProfileCard>();
+            ArrayList<MemberCard> results = new ArrayList<MemberCard>();
             results.addAll(cards.values());
             return results;
 
@@ -223,9 +224,12 @@ public class ProfileServlet extends MsoyServiceServlet
 
             FriendsResult result = new FriendsResult();
             result.name = tgtrec.getName();
-            List<ProfileCard> list = MsoyServer.memberRepo.loadFriendCards(memberId);
-            Collections.sort(list, new Comparator<ProfileCard>() {
-                public int compare (ProfileCard c1, ProfileCard c2) {
+            List<MemberCard> list = Lists.newArrayList();
+            for (MemberCardRecord mcr : MsoyServer.memberRepo.loadFriendCards(memberId)) {
+                list.add(mcr.toMemberCard());
+            }
+            Collections.sort(list, new Comparator<MemberCard>() {
+                public int compare (MemberCard c1, MemberCard c2) {
                     if (c1.lastLogon < c2.lastLogon) {
                         return 1;
                     } else if (c1.lastLogon > c2.lastLogon) {
@@ -389,9 +393,7 @@ public class ProfileServlet extends MsoyServiceServlet
         for (ProfileRecord profile : MsoyServer.profileRepo.loadProfiles(cards.intKeySet())) {
             MemberCard card = cards.get(profile.memberId);
             card.photo = profile.getPhoto();
-            if (card instanceof ProfileCard) {
-                ((ProfileCard)card).headline = profile.headline;
-            }
+            card.headline = profile.headline;
         }
     }
 

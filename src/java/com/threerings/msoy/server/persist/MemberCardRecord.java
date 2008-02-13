@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.sql.Timestamp;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
@@ -67,6 +69,10 @@ public class MemberCardRecord extends PersistentRecord
     @Computed(shadowOf=MemberRecord.class)
     public String name;
 
+    /** The time at which the player ended their last session. */
+    @Computed(shadowOf=MemberRecord.class)
+    public Timestamp lastSession;
+
     /** The hash code of the user's profile photo. */
     @Computed(shadowOf=ProfileRecord.class)
     public byte[] photoHash;
@@ -78,6 +84,10 @@ public class MemberCardRecord extends PersistentRecord
     /** The constraint for the photo image. */
     @Computed(shadowOf=ProfileRecord.class)
     public byte photoConstraint;
+
+    /** A short bit of text provided by the member. */
+    @Computed(shadowOf=ProfileRecord.class)
+    public String headline;
 
     /**
      * Creates a runtime record from this persistent record.
@@ -96,6 +106,8 @@ public class MemberCardRecord extends PersistentRecord
         if (photoHash != null) {
             card.photo = new MediaDesc(photoHash, photoMimeType, photoConstraint);
         }
+        card.headline = headline;
+        card.lastLogon = (lastSession == null) ? 0L : lastSession.getTime();
         return card;
     }
 

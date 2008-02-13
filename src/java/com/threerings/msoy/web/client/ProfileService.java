@@ -11,10 +11,10 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.person.data.Profile;
-import com.threerings.msoy.person.data.ProfileCard;
 import com.threerings.msoy.person.data.ProfileLayout;
 
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -78,7 +78,7 @@ public interface ProfileService extends RemoteService
         /**
          * This user's friends.
          *
-         * @gwt.typeArgs <com.threerings.msoy.person.data.ProfileCard>
+         * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
          */
         public List friends;
     }
@@ -99,9 +99,9 @@ public interface ProfileService extends RemoteService
 
     /**
      * Looks for profiles that match the specified search term. We'll aim to be smart about what we
-     * search. Returns a (possibly empty) list of {@link ProfileCard} records.
+     * search. Returns a (possibly empty) list of {@link MemberCard} records.
      *
-     * @gwt.typeArgs <com.threerings.msoy.person.data.ProfileCard>
+     * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
      */
     public List findProfiles (String type, String search)
         throws ServiceException;

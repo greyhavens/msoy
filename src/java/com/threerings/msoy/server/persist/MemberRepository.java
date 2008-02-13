@@ -46,7 +46,6 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
-import com.threerings.msoy.person.data.ProfileCard;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
@@ -197,8 +196,6 @@ public class MemberRepository extends DepotRepository
         if (memberIds.size() == 0) {
             return Collections.emptyList();
         }
-        // TODO: should we just move Profile.photo into member record? we frequently want a
-        // member's name and photo and have only their id
         return findAll(MemberCardRecord.class,
                        new FromOverride(MemberRecord.class),
                        new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C),
@@ -784,9 +781,9 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads a {@link ProfileCard} record for all confirmed friends of the specified member.
+     * Loads a {@link MemberCardRecord} record for all confirmed friends of the specified member.
      */
-    public List<ProfileCard> loadFriendCards (int memberId)
+    public List<MemberCardRecord> loadFriendCards (int memberId)
         throws PersistenceException
     {
         ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
@@ -798,11 +795,7 @@ public class MemberRepository extends DepotRepository
                            new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITER_ID_C))));
         clauses.add(new Join(MemberRecord.class, condition));
         clauses.add(new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C));
-        List<ProfileCard> list = new ArrayList<ProfileCard>();
-        for (ProfileCardRecord record : findAll(ProfileCardRecord.class, clauses)) {
-            list.add(record.toProfileCard());
-        }
-        return list;
+        return findAll(MemberCardRecord.class, clauses);
     }
 
     /**
