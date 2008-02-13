@@ -462,6 +462,10 @@
     <copy file="${deploy.dir}/${astype}-client.swf" todir="pages/clients/${build_version}"/>
   </target>
 
+  <target name="generate-link-report">
+    <xslt in="/tmp/link-report.xml" out="link-report.html" style="etc/link-report.xsl"/>
+  </target>
+
   <!-- builds our Flash world client -->
   <target name="asclient" depends="asprepare,aslib" description="Rebuilds the Flash world client.">
     <antcall target="asquick"><param name="astype" value="world"/></antcall>
