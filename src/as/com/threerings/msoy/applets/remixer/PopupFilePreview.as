@@ -19,6 +19,8 @@ import mx.containers.HBox;
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
 
+import mx.core.UIComponent;
+
 import mx.managers.PopUpManager;
 
 import com.threerings.util.ArrayUtil;
@@ -53,26 +55,39 @@ public class PopupFilePreview extends TitleWindow
         var box :VBox = new VBox();
         addChild(box);
 
-        _image = new ImagePreview();
-        _image.maxWidth = 300;
-        _image.maxHeight = 300;
-        box.addChild(_image);
-
         var hbox :HBox = new HBox();
-        var lbl :Label = new Label();
-        lbl.text = "Select new:";
-        hbox.addChild(lbl);
-        hbox.addChild(new CommandButton("Upload file", handleChooseFile));
+        box.addChild(hbox);
+
+        var controlBox :VBox = new VBox();
+        var previewBox :VBox = new VBox();
+        hbox.addChild(controlBox);
+        hbox.addChild(previewBox);
+
+        controlBox.addChild(makeHeader("Change..."));
+        controlBox.addChild(makeBullet(
+            new CommandLinkButton("Upload a new file...", handleChooseFile)));
         if ((_type == "Image" || _type == "DisplayObject") && CameraSnapshotter.hasCamera()) {
-            hbox.addChild(new CommandButton("Take picture", handleChooseCamera));
+            controlBox.addChild(makeBullet(
+            new CommandLinkButton("Take a snapshot with my webcam...", handleChooseCamera)));
         }
         var filenames :Array = pack.getFilenames();
         if (filenames.length > 0) {
             // we need to wrap the array commandbutton arg in another array...
-            hbox.addChild(new CommandButton("From remix", handleChooseExistingFile, [ filenames ]));
+            controlBox.addChild(makeBullet(
+                new CommandLinkButton("Use an existing file from the remix...",
+                handleChooseExistingFile, [ filenames ])));
         }
 
-        box.addChild(hbox);
+        previewBox.addChild(makeHeader("Preview"));
+        _image = new ImagePreview();
+        _image.addEventListener(ImagePreview.SIZE_KNOWN, handleSizeKnown);
+        _image.maxWidth = 300;
+        _image.maxHeight = 300;
+        _image.minWidth = 100;
+        _image.minHeight = 100;
+        previewBox.addChild(_image);
+        _label = new Label();
+        previewBox.addChild(_label);
 
         var hrule :HRule = new HRule();
         hrule.percentWidth = 100;
@@ -81,26 +96,33 @@ public class PopupFilePreview extends TitleWindow
         box.addChild(hrule);
 
         var buttonBar :ButtonBar = new ButtonBar();
-        buttonBar.addChild(_ok = new CommandButton("OK", close, true));
+        buttonBar.addChild(_ok = new CommandButton("Save", close, true));
         buttonBar.addChild(new CommandButton("Cancel", close, false));
         box.addChild(buttonBar);
 
-        setImage(pack.getFile(name));
+        setImage(entry.value, pack.getFile(name));
 
         PopUpManager.addPopUp(this, parent, true);
         PopUpManager.centerPopUp(this);
     }
 
-    public function setImage (bytes :ByteArray) :void
+    public function setImage (filename :String, bytes :ByteArray) :void
     {
+        setFilename(filename);
         _image.setImage(bytes);
         _ok.enabled = (bytes != null);
     }
 
-    public function setBitmap (bitmapData :BitmapData) :void
+    public function setBitmap (filename :String, bitmapData :BitmapData) :void
     {
+        setFilename(filename);
         _image.setBitmap(bitmapData);
         _ok.enabled = (bitmapData != null);
+    }
+
+    protected function handleSizeKnown (event :ValueEvent) :void
+    {
+        _label.text += " (" + event.value[0] + "x" + event.value[1] + ")";
     }
 
     protected function close (save :Boolean) :void
@@ -136,17 +158,52 @@ public class PopupFilePreview extends TitleWindow
     {
         var value :Array = event.value as Array;
         if (value != null) {
-            _filename = value[0] as String;
-            setImage(value[1] as ByteArray);
+            setImage(value[0] as String, value[1] as ByteArray);
         }
     }
 
     protected function handleChooseCamera () :void
     {
         new CameraSnapshotControl(this, function (bitmapData :BitmapData) :void {
-            setBitmap(bitmapData);
-            _filename = "cameragrab.jpg";
+            setBitmap("cameragrab.jpg", bitmapData);
         });
+    }
+
+    protected function makeHeader (title :String) :UIComponent
+    {
+        var box :HBox = new HBox();
+        box.percentWidth = 100;
+        box.setStyle("backgroundColor", 0x000000);
+
+        var lbl :Label = new Label();
+        lbl.text = title;
+        lbl.percentWidth = 100;
+        lbl.setStyle("color", 0xFFFFFF);
+        lbl.setStyle("textAlign", "center");
+        lbl.setStyle("fontWeight", "bold");
+        lbl.setStyle("fontSize", 12);
+        box.addChild(lbl);
+
+        return box;
+    }
+
+    protected function makeBullet (comp :UIComponent) :UIComponent
+    {
+        var box :HBox = new HBox();
+        box.setStyle("horizontalGap", 0);
+
+        var lbl :Label = new Label();
+        lbl.text = "-";
+        box.addChild(lbl);
+        box.addChild(comp);
+
+        return box;
+    }
+
+    protected function setFilename (filename :String) :void
+    {
+        _filename = filename;
+        _label.text = (filename == null) ? "<no file>" : filename;
     }
 
     protected function getFilters () :Array
@@ -181,5 +238,7 @@ public class PopupFilePreview extends TitleWindow
     protected var _ok :CommandButton;
 
     protected var _image :ImagePreview;
+
+    protected var _label :Label;
 }
 }
