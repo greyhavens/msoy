@@ -23,10 +23,8 @@ import client.util.MsoyCallback;
 public class WorldClient extends Widget
 {
     /**
-     * Display a scene in the Whirledwide Featured Places area.
-     *
-     * The scene will not display chat from the people talking, and the player will not
-     * have an avatar in the scene, and thus will not be walking around or chatting.
+     * Displays a scene in a mini-world client. The scene will not display chat, and the player
+     * will not have an avatar in the scene. Clicking the scene will take the player there.
      */
     public static void displayFeaturedPlace (final int sceneId, final Panel container)
     {

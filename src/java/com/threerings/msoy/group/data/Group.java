@@ -58,6 +58,9 @@ public class Group
     /** The group's logo. */
     public MediaDesc logo;
 
+    /** The id of this group's hall scene. */
+    public int homeSceneId;
+
     /** The id of the person who created the group. */
     public int creatorId;
 

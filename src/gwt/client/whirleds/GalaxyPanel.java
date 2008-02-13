@@ -3,7 +3,6 @@
 
 package client.whirleds;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.Window;
@@ -11,7 +10,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -25,6 +23,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.web.data.GalaxyData;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.shell.Application;
@@ -39,11 +38,11 @@ import client.util.RowPanel;
  * Display the public groups in a sensical manner, including a sorted list of characters that
  * start the groups, allowing people to select a subset of the public groups to view.
  */
-public class GroupList extends SmartTable
+public class GalaxyPanel extends SmartTable
 {
-    public GroupList ()
+    public GalaxyPanel ()
     {
-        super("groupList", 2, 2);
+        super("galaxy", 0, 5);
 
         int row = 0;
         setText(row++, 0, CWhirleds.msgs.listIntro(), 1, "Intro");
@@ -89,7 +88,16 @@ public class GroupList extends SmartTable
         }
 
         _currentTag = new FlowPanel();
-        loadPopularTags();
+        _popularTags.clear();
+        InlineLabel popularTagsLabel = new InlineLabel(CWhirleds.msgs.listPopularTags() + " ");
+        popularTagsLabel.addStyleName("Label");
+        _popularTags.add(popularTagsLabel);
+
+        CWhirleds.groupsvc.getGalaxyData(CWhirleds.ident, new MsoyCallback() {
+            public void onSuccess (Object result) {
+                init((GalaxyData)result);
+            }
+        });
     }
 
     public void setArgs (Args args)
@@ -120,6 +128,29 @@ public class GroupList extends SmartTable
         });
     }
 
+    protected void init (GalaxyData data)
+    {
+        // set up our featured whirled
+        setWidget(0, 1, new FeaturedWhirledPanel(data.featuredWhirled));
+
+        // set up our popular tags
+        if (data.popularTags.size() == 0) {
+            _popularTags.add(new InlineLabel(CWhirleds.msgs.listNoPopularTags()));
+        } else {
+            for (int ii = 0; ii < data.popularTags.size(); ii++) {
+                if (ii > 0) {
+                    _popularTags.add(new InlineLabel(", "));
+                }
+                String tag = (String)data.popularTags.get(ii);
+                Widget link = Application.createLink(
+                    tag, Page.WHIRLEDS, Args.compose("tag", "0", tag));
+                link.addStyleName("inline");
+                _popularTags.add(link);
+            }
+            _popularTags.add(_currentTag);
+        }
+    }
+
     protected boolean displayTag (final String tag, int page)
     {
         if (tag.equals("")) {
@@ -130,7 +161,7 @@ public class GroupList extends SmartTable
         tagLabel.addStyleName("Label");
         _currentTag.add(tagLabel);
         _currentTag.add(new InlineLabel("("));
-        Hyperlink clear = Application.createLink(CWhirleds.msgs.listTagClear(), Page.WHIRLEDS, "");
+        Widget clear = Application.createLink(CWhirleds.msgs.listTagClear(), Page.WHIRLEDS, "");
         clear.addStyleName("inline");
         _currentTag.add(clear);
         _currentTag.add(new InlineLabel(")"));
@@ -168,44 +199,9 @@ public class GroupList extends SmartTable
                     _action = action;
                     _arg = arg;
                     _groupGrid.setModel(new SimpleDataModel((List)result), page);
-
-                    // TODO: revamp
-                    List groups = (List)result;
-                    if (groups.size() > 0) {
-                        setWidget(0, 1, new FeaturedWhirledPanel((Group)groups.get(0)));
-                    }
                 }
             });
         }
-    }
-
-    protected void loadPopularTags ()
-    {
-        _popularTags.clear();
-        InlineLabel popularTagsLabel = new InlineLabel(CWhirleds.msgs.listPopularTags() + " ");
-        popularTagsLabel.addStyleName("Label");
-        _popularTags.add(popularTagsLabel);
-
-        CWhirleds.groupsvc.getPopularTags(CWhirleds.ident, POP_TAG_COUNT, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                List tags = (List)result;
-                if (tags.size() == 0) {
-                    _popularTags.add(new InlineLabel(CWhirleds.msgs.listNoPopularTags()));
-                    return;
-                }
-                for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
-                    String tag = (String)iter.next();
-                    Hyperlink tagLink = Application.createLink(
-                        tag, Page.WHIRLEDS, Args.compose("tag", "0", tag));
-                    tagLink.addStyleName("inline");
-                    _popularTags.add(tagLink);
-                    if (iter.hasNext()) {
-                        _popularTags.add(new InlineLabel(", "));
-                    }
-                }
-                _popularTags.add(_currentTag);
-            }
-        });
     }
 
     protected static interface ModelLoader

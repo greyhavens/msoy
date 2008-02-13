@@ -68,11 +68,11 @@ public class index extends MsgsEntryPoint
             setContent(new ThreadPanel(this, threadId, page, scrollToId, _fmodels));
 
         } else {
-            if (_glist == null) {
-                _glist = new GroupList();
+            if (_galaxy == null) {
+                _galaxy = new GalaxyPanel();
             }
-            setContent(_glist);
-            _glist.setArgs(args);
+            setContent(_galaxy);
+            _galaxy.setArgs(args);
         }
     }
 
@@ -93,5 +93,5 @@ public class index extends MsgsEntryPoint
 
     protected ForumModels _fmodels = new ForumModels();
     protected GroupView _gview = new GroupView(_fmodels);
-    protected GroupList _glist;
+    protected GalaxyPanel _galaxy;
 }

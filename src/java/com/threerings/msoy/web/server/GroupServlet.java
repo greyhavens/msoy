@@ -11,6 +11,8 @@ import java.util.Collection;
 
 import java.util.logging.Level;
 
+import com.google.common.collect.Lists;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.util.Predicate;
@@ -36,6 +38,7 @@ import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 
 import com.threerings.msoy.web.client.GroupService;
+import com.threerings.msoy.web.data.GalaxyData;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
@@ -49,6 +52,33 @@ import static com.threerings.msoy.Log.log;
 public class GroupServlet extends MsoyServiceServlet
     implements GroupService
 {
+    // from GroupService
+    public GalaxyData getGalaxyData (WebIdent ident)
+        throws ServiceException
+    {
+        try {
+            GalaxyData data = new GalaxyData();
+
+            // TODO: determine our featured whirled
+            GroupRecord group = MsoyServer.groupRepo.loadGroup(2);
+            data.featuredWhirled = group.toGroupObject();
+
+            // load up our popular tags
+            List<String> popularTags = Lists.newArrayList();
+            for (TagPopularityRecord popRec : MsoyServer.groupRepo.getTagRepository().getPopularTags(
+                     GalaxyData.POPULAR_TAG_COUNT)) {
+                popularTags.add(popRec.tag);
+            }
+            data.popularTags = popularTags;
+
+            return data;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getGalaxyData failed [for=" + ident + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
     // from GroupService
     public List<Group> getGroupsList (WebIdent ident)
         throws ServiceException
@@ -435,22 +465,6 @@ public class GroupServlet extends MsoyServiceServlet
             return result;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getTags failed [groupId=" + groupId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-    }
-
-    // from interface GroupService
-    public List<String> getPopularTags (WebIdent ident, int rows) throws ServiceException
-    {
-        try {
-            ArrayList<String> result = new ArrayList<String>();
-            for (TagPopularityRecord popRec : MsoyServer.groupRepo.getTagRepository().
-                    getPopularTags(rows)) {
-                result.add(popRec.tag);
-            }
-            return result;
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getPopularTags failed [rows=" + rows + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }

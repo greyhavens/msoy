@@ -240,6 +240,7 @@ public class GroupRecord extends PersistentRecord
         if (logoMediaHash != null) {
             group.logo = new MediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
         }
+        group.homeSceneId = homeSceneId;
         group.creatorId = creatorId;
         group.creationDate = new java.util.Date(creationDate.getTime());
         group.policy = policy;

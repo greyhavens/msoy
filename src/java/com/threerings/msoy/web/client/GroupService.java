@@ -12,6 +12,7 @@ import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.group.data.GroupExtras;
 
+import com.threerings.msoy.web.data.GalaxyData;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.WebIdent;
@@ -21,12 +22,19 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface GroupService extends RemoteService
 {
+    /**
+     * Loads the information displayed on the Galaxy page.
+     */
+    public GalaxyData getGalaxyData (WebIdent ident)
+        throws ServiceException;
+
     /** 
      * Get the list of all groups.
      *
      * @gwt.typeArgs <com.threerings.msoy.group.data.Group>
      */
-    public List getGroupsList (WebIdent ident) throws ServiceException;
+    public List getGroupsList (WebIdent ident)
+        throws ServiceException;
 
     /**
      * Performs a search against the name, blurb and charter fields.
@@ -115,16 +123,5 @@ public interface GroupService extends RemoteService
      * @gwt.typeArgs <java.lang.String>
      */
     public Collection getTags (WebIdent ident, int groupId)
-        throws ServiceException;
-
-    /**
-     * Gets the popular tags for groups.  The TagRepository method getPopularTags is not actually
-     * using its row parameter. If that changes in the future, this should be changed to make the
-     * rows returned configurable in the client.  Also, for some crazy reason, TagRepository is not
-     * sorting its results, so we're doing it on the client
-     *
-     * @gwt.typeArgs <java.lang.String>
-     */
-    public List getPopularTags (WebIdent ident, int rows)
         throws ServiceException;
 }

@@ -76,40 +76,40 @@
 }
 
 /* GroupList specific formattting */
-.groupList {
+.galaxy {
     padding: 0px 5px;
     font-size: 12px;
     width: 680px;
 }
 
-.groupList .Intro {
+.galaxy .Intro {
     padding-bottom: 10px;
     vertical-align: top;
 }
 
-.groupList .PopularTags {
+.galaxy .PopularTags {
     vertical-align: top;
     padding-right: 10px;
 }
 
-.groupList .PopularTags a {
+.galaxy .PopularTags a {
     font-style: italic;
     color: #696969;
 }
 
-.groupList .PopularTags .Label {
+.galaxy .PopularTags .Label {
     font-weight: bold;
 }
 
-.groupList .PopularTags #moreLink {
+.galaxy .PopularTags #moreLink {
     color: #CD853F;
 }
 
-.groupList .GroupWidget {
+.galaxy .GroupWidget {
     font-size: 13px;
 }
 
-.groupList .GroupWidget .Logo {
+.galaxy .GroupWidget .Logo {
     width: 80px;
     height: 60px;
     text-align: center;
@@ -117,50 +117,20 @@
     cursor: pointer;
 }
 
-.groupList .GroupWidget .EstablishedDate {
+.galaxy .GroupWidget .EstablishedDate {
     font-style: italic;
 }
 
 .featuredWhirled {
-  width: 475px;
+    width: 424px;
 }
 
 .featuredWhirled .Name {
-  text-align: center;
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.featuredWhirled .Shot {
-  padding-right: 10px;
+    font-weight: bold;
+    font-size: 16px;
 }
 
 .featuredWhirled .MoreInfo {
-  font-size: 12px;
-  text-align: center;
-}
-
-.featuredWhirled .Online, .featuredWhirled .Go {
-  font-weight: bold;
-  font-size: 16px;
-  color: #AABDC8;
-}
-
-.featuredWhirled .Go {
-  text-align: center;
-}
-
-.featuredWhirled .Info {
-  vertical-align: top;
-  padding-right: 10px;
-  font-size: 12px;
-}
-
-.featuredWhirled .Info .BitLabel {
-  padding-right: 5px;
-}
-
-.featuredWhirled .Buttons {
-  vertical-align: top;
-  width: 103px;
+    font-size: 12px;
+    text-align: center;
 }

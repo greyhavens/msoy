@@ -16,6 +16,11 @@ import com.threerings.msoy.web.data.WebIdent;
 public interface GroupServiceAsync
 {
     /**
+     * The asynchronous version of {@link GroupService#getGalaxyData}
+     */
+    public void getGalaxyData (WebIdent ident, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link GroupService#getGroupsList}
      */
     public void getGroupsList (WebIdent ident, AsyncCallback callback);
@@ -89,9 +94,4 @@ public interface GroupServiceAsync
      * The asynchronous version of {@link GroupService.getTags}
      */
     public void getTags (WebIdent ident, int groupId, AsyncCallback callback);
-
-    /**
-     * The asynchronous version of {@link GroupService.getPopularTags}
-     */
-    public void getPopularTags (WebIdent ident, int rows, AsyncCallback callback);
 }
