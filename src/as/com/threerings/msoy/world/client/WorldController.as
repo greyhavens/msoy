@@ -289,7 +289,7 @@ public class WorldController extends MsoyController
     public function handleViewItem (ident :ItemIdent) :void
     {
         // TODO: use a proper item info page
-        displayPage("inventory", ident.type + "_0_" + ident.itemId);
+        displayPage("stuff", ident.type + "_0_" + ident.itemId);
     }
 
     /**
@@ -297,7 +297,7 @@ public class WorldController extends MsoyController
      */
     public function handleViewMember (memberId :int) :void
     {
-        displayPage("profile", "" + memberId);
+        displayPage("people", "" + memberId);
     }
 
     /**
@@ -305,7 +305,7 @@ public class WorldController extends MsoyController
      */
     public function handleViewGroup (groupId :int) :void
     {
-        displayPage("group", "" + groupId);
+        displayPage("whirleds", "d_" + groupId);
     }
 
     /**
@@ -315,7 +315,7 @@ public class WorldController extends MsoyController
     {
         // when a player clicks a game in the whirled, we try to display that game's detail page,
         // but if we can't do that, then fall back to displaying the game lobby
-        if (!displayPage("game", "d_" + gameId)) {
+        if (!displayPage("games", "d_" + gameId)) {
             handleJoinGameLobby(gameId);
         }
     }
@@ -325,7 +325,7 @@ public class WorldController extends MsoyController
      */
     public function handleViewMyAvatars () :void
     {
-        displayPage("inventory", "" + Item.AVATAR);
+        displayPage("stuff", "" + Item.AVATAR);
     }
 
     /**
@@ -333,7 +333,7 @@ public class WorldController extends MsoyController
      */
     public function handleViewMyFurniture () :void
     {
-        displayPage("inventory", "" + Item.FURNITURE);
+        displayPage("stuff", "" + Item.FURNITURE);
     }
 
     /**
