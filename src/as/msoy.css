@@ -713,6 +713,13 @@ Window {
   disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_scale.png");
 }
 
+.roomEditResetRotation {
+  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_rotation.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_rotation.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_rotation.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_rotation.png");
+}
+
 .logonPanel {
   paddingRight: 2;
 }

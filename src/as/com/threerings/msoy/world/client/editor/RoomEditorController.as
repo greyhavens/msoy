@@ -288,17 +288,21 @@ public class RoomEditorController
     }
 
     /** Adjusts furni size from a panel button action. */
-    public function actionAdjustRotation (rotationDelta :Number) :void
+    public function actionAdjustRotation (
+        rotationDelta :Number, snap :Boolean = false, snapIncrement :Number = 0) :void
     {
         withFurniUpdate(function () :void {
                 if (rotationDelta != 0) {
                     
                     // rotate the furni
-                    var f :FurniData = _edit.target.getFurniData().clone() as FurniData;
+                    var f :FurniData = _edit.target.getFurniData();
                     var newrotation :Number = f.rotation + rotationDelta;
-                    if (Math.abs(newrotation) < 1) {
-                        newrotation = 0; // clean up floating point artifacts
+
+                    // snap to the specified increment
+                    if (snap) {
+                        newrotation = snapIncrement * Math.round(newrotation / snapIncrement);
                     }
+                    
                     _edit.updateTargetRotation(newrotation);
                 }
             });
@@ -317,7 +321,8 @@ public class RoomEditorController
     }        
     
     /** Resets the edited furni to the base location, or size, or both. */
-    public function actionResetTarget (resetLocation :Boolean, resetSize :Boolean) :void
+    public function actionResetTarget (
+        resetLocation :Boolean, resetSize :Boolean, resetRotation :Boolean) :void
     {
         withFurniUpdate(function () :void {
                 if (resetLocation) {
@@ -325,6 +330,9 @@ public class RoomEditorController
                 }
                 if (resetSize) {
                     _edit.updateTargetScale(1.0, 1.0);
+                }
+                if (resetRotation) {
+                    _edit.updateTargetRotation(0);
                 }
             });
     }

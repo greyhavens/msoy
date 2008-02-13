@@ -86,7 +86,6 @@ public class RotatingHotspot extends Hotspot
 
         var originalTheta :Number = findAngle(center, target.globalToLocal(_anchor));
         var currentTheta :Number = findAngle(center, target.globalToLocal(new Point(sx, sy)));
-        trace("ORIGINAL: " + originalTheta + ", CURRENT: " + currentTheta);
 
         var delta :Number = currentTheta - originalTheta;
         delta = delta * 180 / Math.PI;
@@ -97,7 +96,6 @@ public class RotatingHotspot extends Hotspot
     protected function findAngle (from :Point, to :Point) :Number
     {
         var v :Point = to.subtract(from);
-        trace("VECTOR: " + v);
         return Math.atan2(v.y, v.x);
     }       
 

@@ -47,6 +47,7 @@ public class DetailsPanel extends BasePanel
             _locz.text = trimmed(data.loc.z);
             _scalex.text = trimmed(data.scaleX);
             _scaley.text = trimmed(data.scaleY);
+            _rot.text = data.rotation.toFixed(0);
             _noscale.selected = data.isNoScale();
         }
     }
@@ -74,6 +75,7 @@ public class DetailsPanel extends BasePanel
         data.loc.z = maybeReplace(_locz, data.loc.z);
         data.scaleX = maybeReplace(_scalex, data.scaleX);
         data.scaleY = maybeReplace(_scaley, data.scaleY);
+        data.rotation = maybeReplace(_rot, data.rotation);
         data.setNoScale(_noscale.selected);
 
         if (! _furniData.equivalent(data)) {
@@ -100,31 +102,42 @@ public class DetailsPanel extends BasePanel
         _locs.push(_locz = new TextInput());
         _scales.push(_scalex = new TextInput());
         _scales.push(_scaley = new TextInput());
-        _all = _locs.concat(_scales);        
+        _rot = new TextInput();
+        
+        _all = _locs.concat(_scales);
+        _all.push(_rot);
 
         _all.forEach(function (input :TextInput, ... rest) :void {
                 input.text = "0.0";
                 input.restrict = "0123456789,.+\\-";
                 input.width = 40;
             });
-
+        
         var resetLocation :CommandButton =
-            new CommandButton("", _controller.actionResetTarget, [ true, false ]);
+            new CommandButton("", _controller.actionResetTarget, [ true, false, false ]);
         resetLocation.styleName = "roomEditResetLocation";
         resetLocation.toolTip = Msgs.EDITING.get("i.reset_location");
         resetLocation.height = 17;
         
         var resetScale :CommandButton =
-            new CommandButton("", _controller.actionResetTarget, [ false, true ]);
+            new CommandButton("", _controller.actionResetTarget, [ false, true, false ]);
         resetScale.styleName = "roomEditResetScale";
         resetScale.toolTip = Msgs.EDITING.get("i.reset_scale");
         resetScale.height = 17;
 
+        var resetRotation :CommandButton =
+            new CommandButton("", _controller.actionResetTarget, [ false, false, true ]);
+        resetRotation.styleName = "roomEditResetRotation";
+        resetRotation.toolTip = Msgs.EDITING.get("i.reset_rotation");
+        resetRotation.height = 17;
+
         GridUtil.addRow(grid, Msgs.EDITING.get("l.location"), [4, 1]);
         GridUtil.addRow(grid, _locx, _locy, _locz, resetLocation);
         GridUtil.addRow(grid, Msgs.EDITING.get("l.scale"), [4, 1]);
-        GridUtil.addRow(grid, _scalex, _scaley, "", resetScale);
-        GridUtil.addRow(grid, "", [3, 1]);
+        GridUtil.addRow(grid, _scalex, _scaley, [2, 1], resetScale);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.rotation"), [4, 1]);
+        GridUtil.addRow(grid, _rot, [3, 1], resetRotation);
+        GridUtil.addRow(grid, "", [4, 1]);
 
         // more options below the grid
         
@@ -153,6 +166,7 @@ public class DetailsPanel extends BasePanel
     protected var _locz :TextInput;
     protected var _scalex :TextInput;
     protected var _scaley :TextInput;
+    protected var _rot :TextInput;
     protected var _noscale :CheckBox;
     protected var _locs :Array;
     protected var _scales :Array;

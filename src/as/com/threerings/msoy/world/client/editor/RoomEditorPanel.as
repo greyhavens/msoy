@@ -262,8 +262,10 @@ public class RoomEditorPanel extends FloatingPanel
             return function () :void { _controller.actionAdjustScale(x, y); };
         };
             
-        var makeRotateFn :Function = function (rotation :Number) :Function {
-            return function () :void { _controller.actionAdjustRotation(rotation); };
+        var makeRotateFn :Function = function (rotation :Number, snapangle :Number) :Function {
+            return function () :void {
+                _controller.actionAdjustRotation(rotation, true, snapangle);
+            };
         };
 
         
@@ -281,10 +283,10 @@ public class RoomEditorPanel extends FloatingPanel
                             makeYFn(Y_DELTA), "roomEditMoveUp", "b.move_up", _targetButtons));
         GridUtil.addRow(leftgrid,
                         makeActionButton(
-                            makeRotateFn(- ROTATE_DELTA),
+                            makeRotateFn(- ROTATE_DELTA, ROTATE_DELTA),
                             "roomEditRotateLeft", "b.rotate_left", _targetButtons),
                         makeActionButton(
-                            makeRotateFn(ROTATE_DELTA),
+                            makeRotateFn(ROTATE_DELTA, ROTATE_DELTA),
                             "roomEditRotateRight", "b.rotate_right", _targetButtons));
         GridUtil.addRow(leftgrid,
                         makeActionButton(
