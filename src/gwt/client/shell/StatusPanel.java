@@ -50,13 +50,18 @@ public class StatusPanel extends SmartTable
                     if (oldLevel != 0 && oldLevel != newLevel) {
                         _levels.showLevelUpPopup();
                     }
+                    // keep our global level tracker up to date
+                    CShell.level = newLevel;
                     break;
+
                 case StatusChangeEvent.FLOW:
                     _levels.setFlow(event.getValue());
                     break;
+
                 case StatusChangeEvent.GOLD:
                     _levels.setGold(event.getValue());
                     break;
+
                 case StatusChangeEvent.MAIL:
                     _mail.setCount(event.getValue());
                     break;
@@ -86,6 +91,9 @@ public class StatusPanel extends SmartTable
         FlashEvents.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.FLOW, data.flow, 0));
         FlashEvents.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.GOLD, data.gold, 0));
         FlashEvents.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level, 0));
+
+        // initialize our global level tracker
+        CShell.level = data.level;
 
         // configure our 'new mail' indicator
         setWidget(0, idx++, _mail);
@@ -117,6 +125,7 @@ public class StatusPanel extends SmartTable
     {
         _creds = null;
         clearCookie("creds");
+        CShell.level = 0;
     }
 
     protected void setCookie (String name, String value)

@@ -14,12 +14,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.group.data.Group;
@@ -44,8 +43,11 @@ public class GalaxyPanel extends SmartTable
     {
         super("galaxy", 0, 5);
 
-        int row = 0;
-        setText(row++, 0, CWhirleds.msgs.listIntro(), 1, "Intro");
+        // add our intro first; the featured Whirled will go next to this
+        addText(CWhirleds.msgs.galaxyIntro(), 1, "Intro");
+
+        // now add a UI for browsing and searching Whirleds
+        addText(CWhirleds.msgs.galaxyBrowseTitle(), 2, "Title");
 
         SmartTable filter = new SmartTable(0, 0);
         filter.setWidth("100%");
@@ -60,10 +62,10 @@ public class GalaxyPanel extends SmartTable
         };
         _searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
         search.add(_searchInput);
-        search.add(new Button(CWhirleds.msgs.listSearch(), doSearch), HasAlignment.ALIGN_MIDDLE);
+        search.add(new Button(CWhirleds.msgs.galaxySearch(), doSearch), HasAlignment.ALIGN_MIDDLE);
         filter.setWidget(0, 1, search);
         filter.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
-        setWidget(row++, 0, filter, 2, null);
+        addWidget(filter, 2, null);
 
         _groupGrid = new PagedGrid(GRID_ROWS, GRID_COLUMNS) {
             protected void displayPageFromClick (int page) {
@@ -73,23 +75,29 @@ public class GalaxyPanel extends SmartTable
                 return new GroupWidget((Group)item);
             }
             protected String getEmptyMessage () {
-                return CWhirleds.msgs.listNoGroups();
+                return CWhirleds.msgs.galaxyNoGroups();
             }
         };
         _groupGrid.setWidth("100%");
-        setWidget(row++, 0, _groupGrid, 2, null);
+        addWidget(_groupGrid, 2, null);
 
-        if (CWhirleds.getMemberId() > 0) {
-            setWidget(row++, 0, new Button(CWhirleds.msgs.listNewGroup(), new ClickListener() {
+        // if they're high level, add info on creating a Whirled
+        if (CWhirleds.level >= MIN_WHIRLED_CREATE_LEVEL) {
+            addText(CWhirleds.msgs.galaxyCreateTitle(), 2, "Title");
+            SmartTable create = new SmartTable(0, 0);
+            create.setText(0, 0, CWhirleds.msgs.galaxyCreateBlurb());
+            create.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
+            create.setWidget(0, 2, new Button(CWhirleds.msgs.galaxyCreate(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WHIRLEDS, "edit");
                 }
-            }), 2, null);
+            }));
+            addWidget(create, 2, null);
         }
 
         _currentTag = new FlowPanel();
         _popularTags.clear();
-        InlineLabel popularTagsLabel = new InlineLabel(CWhirleds.msgs.listPopularTags() + " ");
+        InlineLabel popularTagsLabel = new InlineLabel(CWhirleds.msgs.galaxyPopularTags() + " ");
         popularTagsLabel.addStyleName("Label");
         _popularTags.add(popularTagsLabel);
 
@@ -135,7 +143,7 @@ public class GalaxyPanel extends SmartTable
 
         // set up our popular tags
         if (data.popularTags.size() == 0) {
-            _popularTags.add(new InlineLabel(CWhirleds.msgs.listNoPopularTags()));
+            _popularTags.add(new InlineLabel(CWhirleds.msgs.galaxyNoPopularTags()));
         } else {
             for (int ii = 0; ii < data.popularTags.size(); ii++) {
                 if (ii > 0) {
@@ -157,11 +165,11 @@ public class GalaxyPanel extends SmartTable
             return false;
         }
 
-        InlineLabel tagLabel = new InlineLabel(CWhirleds.msgs.listCurrentTag() + " " + tag + " ");
+        InlineLabel tagLabel = new InlineLabel(CWhirleds.msgs.galaxyCurrentTag() + " " + tag + " ");
         tagLabel.addStyleName("Label");
         _currentTag.add(tagLabel);
         _currentTag.add(new InlineLabel("("));
-        Widget clear = Application.createLink(CWhirleds.msgs.listTagClear(), Page.WHIRLEDS, "");
+        Widget clear = Application.createLink(CWhirleds.msgs.galaxyTagClear(), Page.WHIRLEDS, "");
         clear.addStyleName("inline");
         _currentTag.add(clear);
         _currentTag.add(new InlineLabel(")"));
@@ -226,14 +234,7 @@ public class GalaxyPanel extends SmartTable
                                                    Args.compose("d", group.groupId)));
 
             setText(1, 0, group.blurb);
-
-            FlowPanel info = new FlowPanel();
-            InlineLabel estab = new InlineLabel(
-                CWhirleds.msgs.groupEst(EST_FMT.format(group.creationDate) + ", "));
-            estab.addStyleName("EstablishedDate");
-            info.add(estab);
-            info.add(new InlineLabel(CWhirleds.msgs.listMemberCount("" + group.memberCount)));
-            setWidget(2, 0, info);
+            setText(2, 0, CWhirleds.msgs.galaxyMemberCount("" + group.memberCount));
         }
     }
 
@@ -247,5 +248,5 @@ public class GalaxyPanel extends SmartTable
     protected static final int GRID_ROWS = 4;
     protected static final int GRID_COLUMNS = 2;
 
-    protected static final SimpleDateFormat EST_FMT = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final int MIN_WHIRLED_CREATE_LEVEL = 10;
 }

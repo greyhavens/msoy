@@ -31,6 +31,9 @@ public class CShell
     /** Use this to make service calls. */
     public static WebIdent ident;
 
+    /** This member's current level. */
+    public static int level;
+
     /** Provides user-related services. */
     public static WebUserServiceAsync usersvc;
 

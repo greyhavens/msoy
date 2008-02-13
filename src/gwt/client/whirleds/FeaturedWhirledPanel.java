@@ -13,12 +13,9 @@ import com.google.gwt.user.client.ui.Widget;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.group.data.Group;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
-import client.util.MediaUtil;
 import client.util.MsoyUI;
 
 import client.shell.Application;
@@ -52,28 +49,6 @@ public class FeaturedWhirledPanel extends VerticalPanel
         }));
         info.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
         add(info);
-
-//         Widget link = Application.createLink(
-//             CWhirleds.msgs.featuredMoreInfo(), Page.WHIRLEDS, Args.compose("d", group.groupId));
-//         info.setWidget(2, 0, link, 1, "MoreInfo");
-
-//         // display the game info in column 2
-//         contents.setText(0, 1, CWhirleds.msgs.featuredOnline("0" /*TODO*/), 1, "Online");
-//         SmartTable info = new SmartTable(0, 0);
-//         info.addWidget(WidgetUtil.makeShim(5, 5), 2, null);
-//         int row = info.getRowCount();
-//         info.setText(row, 0, "Founded:", 1, "BitLabel");
-//         info.setText(row++, 1, EST_FMT.format(group.creationDate));
-//         info.setText(row, 0, "Members:", 1, "BitLabel");
-//         info.setText(row++, 1, ""+group.memberCount);
-//         contents.setWidget(1, 1, info, 1, "Info");
-//         contents.getFlexCellFormatter().setRowSpan(1, 1, 2);
-
-//         // display enter and info buttons in column 3
-//         contents.setText(0, 2, "Go:", 1, "Go");
-//         VerticalPanel buttons = new VerticalPanel();
-//         buttons.add();
-//         contents.setWidget(1, 2, buttons, 1, "Buttons");
     }
 
     protected static String truncate (String descrip)

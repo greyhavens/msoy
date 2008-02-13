@@ -87,6 +87,12 @@
     vertical-align: top;
 }
 
+.galaxy .Title {
+    font-size: 16px;
+    font-weight: bold;
+    padding-top: 10px;
+}
+
 .galaxy .PopularTags {
     vertical-align: top;
     padding-right: 10px;
