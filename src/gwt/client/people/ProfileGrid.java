@@ -119,9 +119,15 @@ public class ProfileGrid extends PagedGrid
                 if (card.headline != null && card.headline.length() > 0) {
                     setText(1, 0, card.headline);
                 }
-                if (card.lastLogon > 0) {
-                    Date last = new Date(card.lastLogon);
-                    setText(2, 0, CPeople.msgs.friendsLastOnline(_lfmt.format(last)));
+                if (card.status instanceof MemberCard.NotOnline) {
+                    long lastLogon = ((MemberCard.NotOnline)card.status).lastLogon;
+                    setText(2, 0, CPeople.msgs.friendsLastOnline(_lfmt.format(new Date(lastLogon))));
+                } else if (card.status instanceof MemberCard.InGame) {
+                    MemberCard.InGame status = (MemberCard.InGame)card.status;
+                    setText(2, 0, "Online now, playing " + status.gameName + "!");
+                } else if (card.status instanceof MemberCard.InScene) {
+                    MemberCard.InScene status = (MemberCard.InScene)card.status;
+                    setText(2, 0, "Online now in " + status.sceneName + "!");
                 }
             }
         }

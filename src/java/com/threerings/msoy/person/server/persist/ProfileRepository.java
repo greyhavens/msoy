@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -68,23 +69,25 @@ public class ProfileRepository extends DepotRepository
     }
 
     /**
-     * Finds the member name records for the members who's first and last names match the search
-     * parameter.  This currently assumes the first word in <code>search</code> is the first name,
-     * and the last word is the last name.
+     * Finds the ids of members who's real names match the search parameter.
      */
-    public List<MemberNameRecord> findMemberNames (String search, int maxRecords)
+    public List<Integer> findMembersByRealName (String search, int limit)
         throws PersistenceException
     {
-        if (search == null) {
-            return Collections.emptyList();
+        Where where = new Where(
+            new FullTextMatch(ProfileRecord.class, ProfileRecord.FTS_REAL_NAME, search));
+        List<Integer> ids = Lists.newArrayList();
+
+        // TODO: turn this into a findAllKeys query
+//         for (Key<ProfileRecord> key :
+//                  findAllKeys(ProfileRecord.class, where, new Limit(0, limit))) {
+//             ids.add((Integer)key.condition.getValues().get(0));
+//         }
+        for (ProfileRecord prec : findAll(ProfileRecord.class, where, new Limit(0, limit))) {
+            ids.add(prec.memberId);
         }
 
-        return findAll(MemberNameRecord.class,
-                       new FromOverride(MemberRecord.class),
-                       new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C),
-                       new Where(new FullTextMatch(
-                           ProfileRecord.class, ProfileRecord.FTS_REAL_NAME, search)),
-                       new Limit(0, maxRecords));
+        return ids;
     }
 
     @Override // from DepotRepository

@@ -35,21 +35,8 @@ public class SearchControls extends SmartTable
 
         int col = 0;
         setText(0, col++, CPeople.msgs.searchTitle(), 1, "rightLabel");
-        for (int ii = 0; ii < _types.length; ii++) {
-            setWidget(0, col++, _types[ii] = new RadioButton("searchType", TYPE_NAMES[ii]));
-        }
-        _types[0].setChecked(true);
 
-        FlowPanel invite = new FlowPanel();
-        invite.add(MsoyUI.createLabel(CPeople.msgs.searchInvite(), "nowrapLabel"));
-        invite.add(Application.createLink(CPeople.msgs.searchInviteGo(), Page.PEOPLE, "invites"));
-        col += 1; // skip over the search button column
-        getFlexCellFormatter().setRowSpan(0, col, 2);
-        setWidget(0, col++, WidgetUtil.makeShim(20, 1));
-        getFlexCellFormatter().setRowSpan(0, col, 2);
-        setWidget(0, col++, invite);
-
-        setWidget(1, 1, _search = MsoyUI.createTextBox("", -1, 40), _types.length, null);
+        setWidget(0, col++, _search = MsoyUI.createTextBox("", -1, 40), 1, null);
         _search.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char charCode, int modifiers) {
                 DeferredCommand.add(new Command() {
@@ -60,32 +47,30 @@ public class SearchControls extends SmartTable
             }
         });
         _search.addKeyboardListener(new EnterClickAdapter(this));
-        setWidget(1, 2, _go = new Button(CPeople.msgs.searchGo(), this));
+        setWidget(0, col++, _go = new Button(CPeople.msgs.searchGo(), this));
         _go.setEnabled(false);
+
+        setText(1, 1, CPeople.msgs.searchTip(), 2, "tipLabel");
+
+        setWidget(0, col++, WidgetUtil.makeShim(20, 1));
+
+        FlowPanel invite = new FlowPanel();
+        invite.add(MsoyUI.createLabel(CPeople.msgs.searchInvite(), "nowrapLabel"));
+        invite.add(Application.createLink(CPeople.msgs.searchInviteGo(), Page.PEOPLE, "invites"));
+        getFlexCellFormatter().setRowSpan(0, col, 2);
+        setWidget(0, col++, invite);
     }
 
-    public void setSearch (String type, String query)
+    public void setSearch (String query)
     {
-        for (int ii = 0; ii < TYPES.length; ii++) {
-            if (TYPES[ii].equals(type)) {
-                _types[ii].setChecked(true);
-            }
-        }
         _search.setText(query);
     }
 
     // from interface ClickListener
     public void onClick (Widget sender)
     {
-        String[] args =  { "search", null, "0", getQuery() };
-        for (int ii = 0; ii < _types.length; ii++) {
-            if (_types[ii].isChecked()) {
-                args[1] = TYPES[ii];
-                break;
-            }
-        }
         FlashClients.tutorialEvent("friendsSought");
-        Application.go(Page.PEOPLE, Args.compose(args));
+        Application.go(Page.PEOPLE, Args.compose("search", "0", getQuery()));
     }
 
     // @Override // from Widget
@@ -100,12 +85,6 @@ public class SearchControls extends SmartTable
         return _search.getText().trim();
     }
 
-    protected RadioButton[] _types = new RadioButton[TYPES.length];
     protected TextBox _search;
     protected Button _go;
-
-    protected static final String[] TYPES = { "name", "display", "email" };
-    protected static final String[] TYPE_NAMES = {
-        CPeople.msgs.searchName(), CPeople.msgs.searchDisplayName(), CPeople.msgs.searchEmail()
-    };
 }

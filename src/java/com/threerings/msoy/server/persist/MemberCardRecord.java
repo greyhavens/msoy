@@ -94,20 +94,15 @@ public class MemberCardRecord extends PersistentRecord
      */
     public MemberCard toMemberCard ()
     {
-        return toMemberCard(new MemberCard());
-    }
-
-    /**
-     * Populates the supplied runtime record with data from this persistent record.
-     */
-    public MemberCard toMemberCard (MemberCard card)
-    {
+        MemberCard card = new MemberCard();
         card.name = new MemberName(name, memberId);
         if (photoHash != null) {
             card.photo = new MediaDesc(photoHash, photoMimeType, photoConstraint);
         }
         card.headline = headline;
-        card.lastLogon = (lastSession == null) ? 0L : lastSession.getTime();
+        MemberCard.NotOnline status = new MemberCard.NotOnline();
+        status.lastLogon = (lastSession == null) ? 0L : lastSession.getTime();
+        card.status = status;
         return card;
     }
 

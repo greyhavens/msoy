@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -12,12 +11,13 @@ import java.util.logging.Level;
 import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.HashIntMap;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Predicate;
-import com.samskivert.util.Tuple;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 
@@ -167,42 +167,27 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public List<MemberCard> findProfiles (String type, String search)
+    public List<MemberCard> findProfiles (String search)
         throws ServiceException
     {
         try {
             // locate the members that match the supplied search
-            IntMap<MemberCard> cards = new HashIntMap<MemberCard>();
-            if ("email".equals(type)) {
-                MemberRecord memrec = MsoyServer.memberRepo.loadMember(search);
-                if (memrec != null) {
-                    MemberCard card = new MemberCard();
-                    card.name = new MemberName(memrec.name, memrec.memberId);
-                    cards.put(memrec.memberId, card);
-                }
+            IntSet mids = new ArrayIntSet();
 
-            } else {
-                List<MemberNameRecord> names = null;
-                if ("display".equals(type)) {
-                    names = MsoyServer.memberRepo.findMemberNames(search, MAX_PROFILE_MATCHES);
-                } else if ("name".equals(type)) {
-                    names = MsoyServer.profileRepo.findMemberNames(search, MAX_PROFILE_MATCHES);
-                }
-                if (names != null) {
-                    for (MemberNameRecord mname : names) {
-                        MemberCard card = new MemberCard();
-                        card.name = mname.toMemberName();
-                        cards.put(mname.memberId, card);
-                    }
-                }
+            // first check for an email mathc
+            MemberRecord memrec = MsoyServer.memberRepo.loadMember(search);
+            if (memrec != null) {
+                mids.add(memrec.memberId);
             }
 
-            // load up their profile data
-            resolveCardData(cards);
+            // next look for a real name match
+            mids.addAll(MsoyServer.memberRepo.findMembersByDisplayName(search, MAX_PROFILE_MATCHES));
 
-            ArrayList<MemberCard> results = new ArrayList<MemberCard>();
-            results.addAll(cards.values());
-            return results;
+            // last look for a display name match
+            mids.addAll(MsoyServer.profileRepo.findMembersByRealName(search, MAX_PROFILE_MATCHES));
+
+            // finally resolve cards for these members
+            return ServletUtil.resolveMemberCards(mids, false);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure finding profiles [search=" + search + "].", pe);
@@ -228,15 +213,14 @@ public class ProfileServlet extends MsoyServiceServlet
             for (MemberCardRecord mcr : MsoyServer.memberRepo.loadFriendCards(memberId)) {
                 list.add(mcr.toMemberCard());
             }
+
             Collections.sort(list, new Comparator<MemberCard>() {
                 public int compare (MemberCard c1, MemberCard c2) {
-                    if (c1.lastLogon < c2.lastLogon) {
-                        return 1;
-                    } else if (c1.lastLogon > c2.lastLogon) {
-                        return -1;
-                    } else {
-                        return MemberName.compareNames(c1.name, c2.name);
+                    int rv = MemberCard.compare(c1.status, c2.status);
+                    if (rv != 0) {
+                        return rv;
                     }
+                    return MemberName.compareNames(c1.name, c2.name);
                 }
             });
             result.friends = list;
@@ -255,7 +239,7 @@ public class ProfileServlet extends MsoyServiceServlet
         ProfileLayout layout = new ProfileLayout();
         layout.layout = ProfileLayout.TWO_COLUMN_LAYOUT;
 
-        ArrayList<BlurbData> blurbs = new ArrayList<BlurbData>();
+        List<BlurbData> blurbs = Lists.newArrayList();
         BlurbData blurb = new BlurbData();
         blurb.type = BlurbData.PROFILE;
         blurb.blurbId = 0;
@@ -300,7 +284,7 @@ public class ProfileServlet extends MsoyServiceServlet
     protected List<MemberCard> resolveFriendsData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
-        IntMap<MemberCard> cards = new HashIntMap<MemberCard>();
+        IntMap<MemberCard> cards = IntMaps.newHashIntMap();
         for (FriendEntry entry :
                  MsoyServer.memberRepo.loadFriends(tgtrec.memberId, MAX_PROFILE_FRIENDS)) {
             MemberCard card = new MemberCard();
@@ -309,7 +293,7 @@ public class ProfileServlet extends MsoyServiceServlet
         }
         resolveCardData(cards);
 
-        ArrayList<MemberCard> results = new ArrayList<MemberCard>();
+        List<MemberCard> results = Lists.newArrayList();
         results.addAll(cards.values());
         return results;
     }
@@ -336,8 +320,8 @@ public class ProfileServlet extends MsoyServiceServlet
         });
 
         // create GameRating records for all the games we know about
-        List<GameRating> result = new ArrayList<GameRating>();
-        IntMap<GameRating> map = new HashIntMap<GameRating>();
+        List<GameRating> result = Lists.newArrayList();
+        IntMap<GameRating> map = IntMaps.newHashIntMap();
         for (RatingRecord record : ratings) {
             GameRating rrec = map.get(Math.abs(record.gameId));
             if (rrec == null) {
@@ -379,7 +363,7 @@ public class ProfileServlet extends MsoyServiceServlet
     protected List<Trophy> resolveTrophyData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
-        ArrayList<Trophy> list = new ArrayList<Trophy>();
+        List<Trophy> list = Lists.newArrayList();
         for (TrophyRecord record :
                  MsoyServer.trophyRepo.loadRecentTrophies(tgtrec.memberId, MAX_PROFILE_TROPHIES)) {
             list.add(record.toTrophy());

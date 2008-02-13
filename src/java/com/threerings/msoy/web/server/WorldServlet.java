@@ -22,8 +22,8 @@ import com.google.common.collect.Sets;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ExpiringReference;
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
@@ -80,7 +80,6 @@ import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -177,46 +176,12 @@ public class WorldServlet extends MsoyServiceServlet
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
-        // hop over to the dobj thread and figure out which of our friends are online
-        final HashIntMap<OnlineMemberCard> onlineFriends = new HashIntMap<OnlineMemberCard>();
-        invokePeerOperation("getMyWhirled(" + mrec.memberId + ")", new PeerManager.Operation() {
-            public void apply (NodeObject nodeobj) {
-                MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
-                for (int friendId : friendIds) {
-                    OnlineMemberCard card = mnobj.getMemberCard(friendId);
-                    if (card != null) {
-                        onlineFriends.put(friendId, card);
-                    }
-                }
-            }
-        });
-
-        // flesh out profile data for the online friends
-        PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
-        try {
-            for (MemberCardRecord mcr :
-                     MsoyServer.memberRepo.loadMemberCards(onlineFriends.keySet())) {
-                OnlineMemberCard card = onlineFriends.get(mcr.memberId);
-                mcr.toMemberCard(card);
-                // game names are not filled in by MsoyNodeObject.getMemberCard so we have to get
-                // those from the popular places snapshot
-                if (card.placeType == OnlineMemberCard.GAME_PLACE) {
-                    PopularPlacesSnapshot.Place place = pps.getGame(card.placeId);
-                    if (place != null) {
-                        card.placeName = place.name;
-                    }
-                }
-            }
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to populate member cards.", pe);
-        }
-
         MyWhirledData data = new MyWhirledData();
         if (profile != null) {
             data.photo = (profile.photoHash == null) ? null : profile.getPhoto();
         }
         data.homeSceneId = mrec.homeSceneId;
-        data.friends = Lists.newArrayList(onlineFriends.values());
+        data.friends = ServletUtil.resolveMemberCards(friendIds, true);
         data.feed = feed;
         data.rooms = ownedRooms;
         return data;
@@ -254,7 +219,7 @@ public class WorldServlet extends MsoyServiceServlet
 
         List<MemberCard> whirledPeople = Lists.newArrayList();
         final List<MemberCard> people = Lists.newArrayList();
-        invokePeerOperation("getWhirledwide", new PeerManager.Operation() {
+        ServletUtil.invokePeerOperation("getWhirledwide", new PeerManager.Operation() {
             public void apply (NodeObject nodeobj) {
                 MsoyNodeObject mnobj = (MsoyNodeObject) nodeobj;
                 for (MemberLocation memberLoc : mnobj.memberLocs) {
@@ -476,18 +441,18 @@ public class WorldServlet extends MsoyServiceServlet
         }
 
         // generate a lookup for the member names
-        HashIntMap<MemberName> memberLookup = null;
+        IntMap<MemberName> memberLookup = null;
         if (!feedFriendIds.isEmpty()) {
-            memberLookup = new HashIntMap<MemberName>();
+            memberLookup = IntMaps.newHashIntMap();
             for (MemberNameRecord name : MsoyServer.memberRepo.loadMemberNames(feedFriendIds)) {
                 memberLookup.put(name.memberId, name.toMemberName());
             }
         }
 
         // generate a lookup for the group names
-        HashIntMap<GroupName> groupLookup = null;
+        IntMap<GroupName> groupLookup = null;
         if (!feedGroupIds.isEmpty()) {
-            groupLookup = new HashIntMap<GroupName>();
+            groupLookup = IntMaps.newHashIntMap();
             for (GroupRecord group : MsoyServer.groupRepo.loadGroups(feedGroupIds)) {
                 groupLookup.put(group.groupId, group.toGroupName());
             }
@@ -512,18 +477,18 @@ public class WorldServlet extends MsoyServiceServlet
     /**
      * fills an array list of SceneCards, using the map to fill up the SceneCard's friends list.
      */
-    protected List<SceneCard> getRoomSceneCards (HashIntMap<List<Integer>> map,
+    protected List<SceneCard> getRoomSceneCards (IntMap<List<Integer>> map,
                                                  PopularPlacesSnapshot pps)
         throws ServiceException
     {
-        HashIntMap<SceneCard> cards = new HashIntMap<SceneCard>();
+        IntMap<SceneCard> cards = IntMaps.newHashIntMap();
         List<SceneCard> returnCards = Lists.newArrayList();
 
         try {
             // maps group id to the scene(s) that are owned by it
-            IntMap<IntSet> groupIds = new HashIntMap<IntSet>();
+            IntMap<IntSet> groupIds = IntMaps.newHashIntMap();
             // maps member id to the scene(s) that are owned by them
-            IntMap<IntSet> memIds = new HashIntMap<IntSet>();
+            IntMap<IntSet> memIds = IntMaps.newHashIntMap();
             for (SceneRecord sceneRec : MsoyServer.sceneRepo.loadScenes(map.keySet())) {
                 SceneCard card = new SceneCard();
                 card.sceneId = sceneRec.sceneId;
@@ -611,7 +576,7 @@ public class WorldServlet extends MsoyServiceServlet
     /**
      * Fills an array list of SceneCards, using the map to fill up the SceneCard's friends list.
      */
-    protected List<SceneCard> getGameSceneCards (HashIntMap<List<Integer>> map,
+    protected List<SceneCard> getGameSceneCards (IntMap<List<Integer>> map,
                                                  PopularPlacesSnapshot pps)
         throws ServiceException
     {
@@ -693,8 +658,8 @@ public class WorldServlet extends MsoyServiceServlet
         MemberRecord mrec, MemberName name, final List<FriendEntry> friends, JSONObject result)
         throws JSONException
     {
-        final HashIntMap<PlaceDetail> scenes = new HashIntMap<PlaceDetail>();
-        final HashIntMap<PlaceDetail> games = new HashIntMap<PlaceDetail>();
+        final IntMap<PlaceDetail> scenes = IntMaps.newHashIntMap();
+        final IntMap<PlaceDetail> games = IntMaps.newHashIntMap();
         final PopularPlacesSnapshot snap = MsoyServer.memberMan.getPPSnapshot();
 
         // locate all of our online friends
@@ -718,7 +683,7 @@ public class WorldServlet extends MsoyServiceServlet
                 }
             }
 
-            protected void noteFriend (HashIntMap<PlaceDetail> dplaces, FriendEntry entry,
+            protected void noteFriend (IntMap<PlaceDetail> dplaces, FriendEntry entry,
                                        PopularPlacesSnapshot.Place place) {
                 if (place == null) {
                     return;
@@ -771,8 +736,8 @@ public class WorldServlet extends MsoyServiceServlet
         result.put("totpop", snap.getPopulationCount());
     }
 
-    protected void addTopPopularPlaces (
-        Iterable<PopularPlacesSnapshot.Place> top, HashIntMap<PlaceDetail> map)
+    protected void addTopPopularPlaces (Iterable<PopularPlacesSnapshot.Place> top,
+                                        IntMap<PlaceDetail> map)
     {
         int n = 3; // TODO: totally ad-hoc
         for (PopularPlacesSnapshot.Place place : top) {

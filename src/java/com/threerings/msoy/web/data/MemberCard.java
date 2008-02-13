@@ -15,6 +15,78 @@ import com.threerings.msoy.person.data.Profile;
 public class MemberCard
     implements IsSerializable
 {
+    /** A base class for all types of member status. */
+    public static abstract class Status
+        implements IsSerializable
+    {
+        /** Used by {@link MemberCard#compare}. */
+        public abstract int getSortOrder ();
+    }
+
+    /** The status of a member who is currently in a scene. */
+    public static class InScene extends Status
+    {
+        /** The id of the scene occupied by this member. */
+        public int sceneId;
+
+        /** The name of the scene occupied by this member. */
+        public String sceneName;
+
+        public int getSortOrder () {
+            return 2;
+        }
+    }
+
+    /** The status of a member who is currently playing a game. */
+    public static class InGame extends Status
+    {
+        /** The id of the game being played by this member. */
+        public int gameId;
+
+        /** The name of the game being played by this member. */
+        public String gameName;
+
+        public int getSortOrder () {
+            return 1;
+        }
+    }
+
+    /** The status of a member who is not online. */
+    public static class NotOnline extends Status
+    {
+        /** The date on which this member was last logged onto Whirled. */
+        public long lastLogon;
+
+        public int getSortOrder () {
+            return 0;
+        }
+    }
+
+    /**
+     * Compares two status records based on potential user interset. People in rooms are first (and
+     * compare equally to other people in rooms to allow for a secondary sort key), people in games
+     * are second and people not online sort in order of most recently logged on.
+     */
+    public static int compare (Status one, Status two)
+    {
+        int oso = one.getSortOrder(), tso = two.getSortOrder();
+        if (oso == tso) {
+            if (one instanceof NotOnline) {
+                long lastLogon1 = ((NotOnline)one).lastLogon;
+                long lastLogon2 = ((NotOnline)two).lastLogon;
+                if (lastLogon1 < lastLogon2) {
+                    return 1;
+                } else if (lastLogon1 > lastLogon2) {
+                    return -1;
+                }
+            }
+            return 0;
+
+        } else {
+            return oso - tso;
+        }
+    }
+
     /** The member's display name and id. */
     public MemberName name;
 
@@ -24,6 +96,6 @@ public class MemberCard
     /** The member's headline, status, whatever you want to call it. */
     public String headline;
 
-    /** The date on which this member was last logged onto Whirled. */
-    public long lastLogon;
+    /** This member's current status. */
+    public Status status;
 }

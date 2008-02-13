@@ -32,19 +32,18 @@ public class SearchPanel extends VerticalPanel
 
     public void setArgs (Args args)
     {
-        final String type = args.get(1, "name");
-        final int page = args.get(2, 0);
-        final String query = args.get(3, "");
+        final int page = args.get(1, 0);
+        final String query = args.get(2, "");
 
-        _ctrls.setSearch(type, query);
+        _ctrls.setSearch(query);
 
         if (query.length() == 0) {
             clearResults();
 
-        } else if (!showingResultsFor(type, query)) {
-            CPeople.profilesvc.findProfiles(type, query, new MsoyCallback() {
+        } else if (!showingResultsFor(query)) {
+            CPeople.profilesvc.findProfiles(query, new MsoyCallback() {
                 public void onSuccess (Object result) {
-                    setResults((List) result, page, type, query);
+                    setResults((List) result, page, query);
                 }
             });
 
@@ -59,13 +58,11 @@ public class SearchPanel extends VerticalPanel
             remove(_profiles);
             _profiles = null;
             _searchString = null;
-            _searchType = null;
         }
     }
 
-    public void setResults (List cards, int page, String type, String search)
+    public void setResults (List cards, int page, String search)
     {
-        _searchType = type;
         _searchString = search;
         clearResults();
         add(_profiles = new ProfileGrid(ROWS, COLUMNS, ProfileGrid.NAV_ON_TOP,
@@ -80,13 +77,12 @@ public class SearchPanel extends VerticalPanel
         }
     }
 
-    public boolean showingResultsFor (String type, String search)
+    public boolean showingResultsFor (String search)
     {
-        return _searchType != null && _searchString != null && _searchType.equals(type) &&
-            _searchString.equals(search);
+        return _searchString != null && _searchString.equals(search);
     }
 
     protected SearchControls _ctrls;
     protected ProfileGrid _profiles;
-    protected String _searchType, _searchString;
+    protected String _searchString;
 }

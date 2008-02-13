@@ -27,7 +27,7 @@ public interface ProfileServiceAsync
     /**
      * The asynchronous version of {@link ProfileService#findProfiles}.
      */
-    public void findProfiles (String type, String search, AsyncCallback callback);
+    public void findProfiles (String search, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link ProfileService#loadFriends}.

@@ -115,27 +115,6 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     }
 
     /**
-     * Invokes the supplied operation on all peer nodes (on the distributed object manager thread)
-     * and blocks the current thread until the execution has completed.
-     */
-    protected void invokePeerOperation (String name, final PeerManager.Operation op)
-        throws ServiceException
-    {
-        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(name);
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                try {
-                    MsoyServer.peerMan.applyToNodes(op);
-                    waiter.requestCompleted(null);
-                } catch (Exception e) {
-                    waiter.requestFailed(e);
-                }
-            }
-        });
-        waiter.waitForResult();
-    }
-
-    /**
      * Called when a user logs on or refreshes their credentials to map the user's record by their
      * session token.
      */

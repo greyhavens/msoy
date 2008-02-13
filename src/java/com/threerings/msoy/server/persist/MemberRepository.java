@@ -7,11 +7,12 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -203,17 +204,25 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Returns name information for all members that match the supplied search string.
-     * Display names are searched for exact matches.
+     * Returns ids for all members who's display name matches the supplied search string.
      */
-    public List<MemberNameRecord> findMemberNames (String search, int limit)
+    public List<Integer> findMembersByDisplayName (String search, int limit)
         throws PersistenceException
     {
-        return findAll(MemberNameRecord.class,
-                       new FromOverride(MemberRecord.class),
-                       new Where(new Equals(new FunctionExp("LOWER", MemberRecord.NAME_C),
-                                            search.toLowerCase())),
-                       new Limit(0, limit));
+        Where where = new Where(
+            new Equals(new FunctionExp("LOWER", MemberRecord.NAME_C), search.toLowerCase()));
+        List<Integer> ids = Lists.newArrayList();
+
+        // TODO: turn this into a findAllKeys query
+//         for (Key<MemberRecord> key :
+//                  findAllKeys(MemberRecord.class, where, new Limit(0, limit))) {
+//             ids.add((Integer)key.condition.getValues().get(0));
+//         }
+        for (MemberRecord mrec : findAll(MemberRecord.class, where, new Limit(0, limit))) {
+            ids.add(mrec.memberId);
+        }
+
+        return ids;
     }
 
     /**
@@ -759,7 +768,7 @@ public class MemberRepository extends DepotRepository
     public List<FriendEntry> loadFriends (int memberId, int limit)
         throws PersistenceException
     {
-        ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
+        List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(FriendRecord.class));
         SQLExpression condition = new And(
             new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
@@ -772,7 +781,7 @@ public class MemberRepository extends DepotRepository
             clauses.add(new Limit(0, limit));
         }
         List<MemberCardRecord> records = findAll(MemberCardRecord.class, clauses);
-        List<FriendEntry> list = new ArrayList<FriendEntry>();
+        List<FriendEntry> list = Lists.newArrayList();
         for (MemberCardRecord record : records) {
             MemberCard card = record.toMemberCard();
             list.add(new FriendEntry(card.name, false, card.photo));
@@ -786,7 +795,7 @@ public class MemberRepository extends DepotRepository
     public List<MemberCardRecord> loadFriendCards (int memberId)
         throws PersistenceException
     {
-        ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
+        List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(FriendRecord.class));
         SQLExpression condition = new And(
             new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
@@ -820,7 +829,7 @@ public class MemberRepository extends DepotRepository
         }
 
         // see if there is already a connection, either way
-        ArrayList<FriendRecord> existing = new ArrayList<FriendRecord>();
+        List<FriendRecord> existing = Lists.newArrayList();
         existing.addAll(findAll(FriendRecord.class,
                                 new Where(FriendRecord.INVITER_ID_C, memberId,
                                           FriendRecord.INVITEE_ID_C, otherId)));
