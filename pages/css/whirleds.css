@@ -78,18 +78,19 @@
 /* GroupList specific formattting */
 .galaxy {
     padding: 0px 5px;
-    font-size: 12px;
     width: 680px;
 }
 
 .galaxy .Intro {
-    padding-bottom: 10px;
+    font-size: 16px;
+    padding: 10px;
     vertical-align: top;
 }
 
 .galaxy .PopularTags {
     vertical-align: top;
     padding-right: 10px;
+    font-size: 12px;
 }
 
 .galaxy .PopularTags a {

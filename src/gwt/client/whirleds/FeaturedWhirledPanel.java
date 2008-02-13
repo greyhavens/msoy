@@ -45,7 +45,7 @@ public class FeaturedWhirledPanel extends VerticalPanel
         info.setText(0, 0, group.name, 1, "Name");
         Widget link = Application.groupViewLink(CWhirleds.msgs.featuredMoreInfo(), group.groupId);
         info.setWidget(0, 1, link, 1, "MoreInfo");
-        info.setWidget(0, 2, new Button("Enter!", new ClickListener() {
+        info.setWidget(0, 2, new Button(CWhirleds.msgs.featuredEnter(), new ClickListener() {
             public void onClick (Widget sender) {
                 Application.go(Page.WORLD, "g" + group.groupId);
             }

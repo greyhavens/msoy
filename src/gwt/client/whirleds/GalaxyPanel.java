@@ -225,15 +225,15 @@ public class GalaxyPanel extends SmartTable
             setWidget(0, 1, Application.createLink(group.name, Page.WHIRLEDS,
                                                    Args.compose("d", group.groupId)));
 
+            setText(1, 0, group.blurb);
+
             FlowPanel info = new FlowPanel();
             InlineLabel estab = new InlineLabel(
                 CWhirleds.msgs.groupEst(EST_FMT.format(group.creationDate) + ", "));
             estab.addStyleName("EstablishedDate");
             info.add(estab);
             info.add(new InlineLabel(CWhirleds.msgs.listMemberCount("" + group.memberCount)));
-            setWidget(1, 0, info);
-
-            setText(2, 0, group.blurb);
+            setWidget(2, 0, info);
         }
     }
 
