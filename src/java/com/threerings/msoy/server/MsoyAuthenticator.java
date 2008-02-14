@@ -196,6 +196,10 @@ public class MsoyAuthenticator extends Authenticator
                 log.log(Level.WARNING, "Invalid creds " + req.getCredentials() + ".", cce);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
+            if (creds == null) {
+                log.info("No credentials provided with auth request " + req + ".");
+                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+            }
 
             MemberRecord member = null;
             String accountName;
