@@ -15,6 +15,7 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.InvocationCodes;
 
@@ -253,8 +254,9 @@ public class CatalogServlet extends MsoyServiceServlet
                 ((SubItemRecord)listItem).suiteId = -suiteMaster.catalogId;
             }
 
-            // use the updated description
-            listItem.description = descrip;
+            // use the updated description (the client should prevent this from being too long, but
+            // we'll trim the description rather than fail the insert if something is haywire)
+            listItem.description = StringUtil.truncate(descrip, Item.MAX_DESCRIPTION_LENGTH);
 
             // create our new immutable catalog prototype item
             repo.insertOriginalItem(listItem, true);
@@ -370,8 +372,9 @@ public class CatalogServlet extends MsoyServiceServlet
             final ItemRecord listItem = originalItem;
             listItem.prepareForListing(oldListItem);
 
-            // use the updated description
-            listItem.description = descrip;
+            // use the updated description (the client should prevent this from being too long, but
+            // we'll trim the description rather than fail the insert if something is haywire)
+            listItem.description = StringUtil.truncate(descrip, Item.MAX_DESCRIPTION_LENGTH);
 
             // update our catalog prototype item
             repo.updateOriginalItem(listItem);
