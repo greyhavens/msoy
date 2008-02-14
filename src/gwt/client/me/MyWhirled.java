@@ -117,7 +117,7 @@ public class MyWhirled extends SmartTable
             people.setStyleName("Friends");
             for (int ii = 0; ii < data.friends.size(); ii++) {
                 MemberCard card = (MemberCard)data.friends.get(ii);
-                people.setWidget(ii % PEOPLE_COLUMNS, ii % PEOPLE_COLUMNS, new PersonWidget(card));
+                people.setWidget(ii / PEOPLE_COLUMNS, ii % PEOPLE_COLUMNS, new PersonWidget(card));
             }
             FlowPanel ppanel = new FlowPanel();
             ppanel.addStyleName("rightLabel");
