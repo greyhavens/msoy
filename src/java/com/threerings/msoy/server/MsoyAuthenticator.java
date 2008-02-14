@@ -503,8 +503,9 @@ public class MsoyAuthenticator extends Authenticator
             }
         }
 
-        // start the new member up with the tutorial
-        mrec.avrGameId = Game.TUTORIAL_GAME_ID;
+// TODO: this is disabled until the tutorial is no longer horribly broken
+//         // start the new member up with the tutorial
+//         mrec.avrGameId = Game.TUTORIAL_GAME_ID;
 
         // store their member record in the repository making them a real Whirled citizen
         MsoyServer.memberRepo.insertMember(mrec);
