@@ -4,8 +4,11 @@
 package com.threerings.msoy.server.persist;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.sql.Statement;
+import java.sql.SQLException;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -15,6 +18,9 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.DatabaseLiaison;
+import com.samskivert.jdbc.JDBCUtil;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntSet;
@@ -98,6 +104,42 @@ public class MemberRepository extends DepotRepository
                 return "MemberRecord -> MemberNameRecord";
             }
         });
+
+        // TEMP added 2008.2.13
+        _ctx.registerMigration(MemberRecord.class, new EntityMigration(12) {
+            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                String tName = liaison.tableSQL("MemberRecord");
+                String cName = liaison.columnSQL("accountName");
+
+                Statement stmt = conn.createStatement();
+                try {
+                    int rows = stmt.executeUpdate(
+                        "UPDATE " + tName + " set " + cName + " = LOWER(" + cName + ")");
+                    log.info("Lowercased " + rows + " accountName rows in MemberRecord");
+                    return rows;
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+            }
+        });
+
+        _ctx.registerMigration(OptOutRecord.class, new EntityMigration(2) {
+            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                String tName = liaison.tableSQL("OptOutRecord");
+                String cName = liaison.columnSQL("email");
+
+                Statement stmt = conn.createStatement();
+                try {
+                    int rows = stmt.executeUpdate(
+                        "UPDATE " + tName + " set " + cName + " = LOWER(" + cName + ")");
+                    log.info("Lowercased " + rows + " email rows in OptOutRecord");
+                    return rows;
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+            }
+        });
+        // END TEMP
     }
 
     /**
@@ -115,7 +157,12 @@ public class MemberRepository extends DepotRepository
     public MemberRecord loadMember (String accountName)
         throws PersistenceException
     {
-        return load(MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, accountName));
+        if (accountName == null) {
+            throw new PersistenceException("Attempted to load MemberRecord for null accountName");
+        }
+
+        return load(MemberRecord.class, 
+                    new Where(MemberRecord.ACCOUNT_NAME_C, accountName.toLowerCase()));
     }
 
     /**
@@ -312,6 +359,13 @@ public class MemberRepository extends DepotRepository
     public void insertMember (MemberRecord member)
         throws PersistenceException
     {
+        if (member.accountName == null) {
+            throw new PersistenceException(
+                "Attempted to insert MemberRecord with null accountName [" + member + "]");
+        }
+
+        // flatten account name (email address) on insertion
+        member.accountName = member.accountName.toLowerCase();
         if (member.created == null) {
             long now = System.currentTimeMillis();
             member.created = new Date(now);
@@ -328,7 +382,12 @@ public class MemberRepository extends DepotRepository
     public void configureAccountName (int memberId, String accountName)
         throws PersistenceException
     {
-        updatePartial(MemberRecord.class, memberId, MemberRecord.ACCOUNT_NAME, accountName);
+        if (accountName == null) {
+            throw new PersistenceException(
+                "Attempted to set account name to null [" + memberId + "]");
+        }
+        updatePartial(MemberRecord.class, memberId, MemberRecord.ACCOUNT_NAME, 
+            accountName.toLowerCase());
     }
 
     /**
@@ -420,10 +479,15 @@ public class MemberRepository extends DepotRepository
     public void disableMember (String accountName, String disabledName)
         throws PersistenceException
     {
+        if (accountName == null) {
+            throw new PersistenceException("Attempted to disable member with null accountName [" + 
+                disabledName + "]");
+        }
+
         // TODO: Cache Invalidation
         int mods = updatePartial(
-            MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, accountName), null,
-            MemberRecord.ACCOUNT_NAME, disabledName);
+            MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, accountName.toLowerCase()), 
+            null, MemberRecord.ACCOUNT_NAME, disabledName);
         switch (mods) {
         case 0:
             // they never played our game, no problem
@@ -681,7 +745,10 @@ public class MemberRepository extends DepotRepository
     public void addOptOutEmail (String email)
         throws PersistenceException
     {
-        insert(new OptOutRecord(email));
+        if (email == null) {
+            throw new PersistenceException("Attempted to add null email address to opt-out list");
+        }
+        insert(new OptOutRecord(email.toLowerCase()));
     }
 
     /**
@@ -690,7 +757,11 @@ public class MemberRepository extends DepotRepository
     public boolean hasOptedOut (String email)
         throws PersistenceException
     {
-        return load(OptOutRecord.class, email) != null;
+        if (email == null) {
+            throw new PersistenceException(
+                "Attempted to check on opt-out status for null email address");
+        }
+        return load(OptOutRecord.class, email.toLowerCase()) != null;
     }
 
     /**
