@@ -25,7 +25,7 @@ public class MyWhirledData
     /** 
      * This member's online friends.
      *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.OnlineMemberCard>
+     * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
      */
     public List friends;
 

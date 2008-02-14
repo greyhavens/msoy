@@ -790,24 +790,6 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads a {@link MemberCardRecord} record for all confirmed friends of the specified member.
-     */
-    public List<MemberCardRecord> loadFriendCards (int memberId)
-        throws PersistenceException
-    {
-        List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new FromOverride(FriendRecord.class));
-        SQLExpression condition = new And(
-            new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
-                           new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITEE_ID_C)),
-                   new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
-                           new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITER_ID_C))));
-        clauses.add(new Join(MemberRecord.class, condition));
-        clauses.add(new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C));
-        return findAll(MemberCardRecord.class, clauses);
-    }
-
-    /**
      * Makes the specified members friends. If they are already friends, this method will still
      * return succesfully.
      *

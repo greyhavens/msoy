@@ -23,7 +23,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.person.data.Profile;
-import com.threerings.msoy.web.data.OnlineMemberCard;
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MyWhirledData;
 
 import client.shell.Application;
@@ -105,25 +105,18 @@ public class MyWhirled extends SmartTable
 
         // display our online friends if we have any
         if (data.friends.size() > 0) {
-            // sort our friends list alphabetically and map them by id
+            // sort our friends list alphabetically (hopefully this sort is stable...)
             Collections.sort(data.friends, new Comparator() {
                 public int compare (Object o1, Object o2) {
-                    if (!(o1 instanceof OnlineMemberCard) || !(o2 instanceof OnlineMemberCard)) {
-                        return 0;
-                    }
-                    OnlineMemberCard m1 = (OnlineMemberCard) o1;
-                    OnlineMemberCard m2 = (OnlineMemberCard) o2;
+                    MemberCard m1 = (MemberCard) o1, m2 = (MemberCard) o2;
                     return ("" + m1.name).compareTo("" + m2.name);
-                }
-                public boolean equals (Object obj) {
-                    return obj == this;
                 }
             });
 
             SmartTable people = new SmartTable();
             people.setStyleName("Friends");
             for (int ii = 0; ii < data.friends.size(); ii++) {
-                OnlineMemberCard card = (OnlineMemberCard)data.friends.get(ii);
+                MemberCard card = (MemberCard)data.friends.get(ii);
                 people.setWidget(ii % PEOPLE_COLUMNS, ii % PEOPLE_COLUMNS, new PersonWidget(card));
             }
             FlowPanel ppanel = new FlowPanel();
@@ -194,43 +187,41 @@ public class MyWhirled extends SmartTable
 
     protected static class PersonWidget extends VerticalPanel
     {
-        public PersonWidget (final OnlineMemberCard card)
+        public PersonWidget (final MemberCard card)
         {
             setStyleName("PersonWidget");
             setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
 
             ClickListener onClick;
             String where = null;
-            switch (card.placeType) {
-            case OnlineMemberCard.ROOM_PLACE:
+            if (card.status instanceof MemberCard.InScene) {
+                final MemberCard.InScene status = (MemberCard.InScene)card.status;
                 onClick = new ClickListener() {
                     public void onClick (Widget sender) {
-                        Application.go(Page.WORLD, "s" + card.placeId);
+                        Application.go(Page.WORLD, "s" + status.sceneId);
                     }
                 };
-                if (card.placeName != null) {
-                    where = CMe.msgs.friendIn(card.placeName);
+                if (status.sceneName != null) {
+                    where = CMe.msgs.friendIn(status.sceneName);
                 }
-                break;
 
-            case OnlineMemberCard.GAME_PLACE:
+            } else if (card.status instanceof MemberCard.InGame) {
+                final MemberCard.InGame status = (MemberCard.InGame)card.status;
                 onClick = new ClickListener() {
                     public void onClick (Widget sender) {
-                        Application.go(Page.WORLD, Args.compose("game", card.placeId));
+                        Application.go(Page.WORLD, Args.compose("game", status.gameId));
                     }
                 };
-                if (card.placeName != null) {
-                    where = CMe.msgs.friendPlaying(card.placeName);
+                if (status.gameName != null) {
+                    where = CMe.msgs.friendIn(status.gameName);
                 }
-                break;
 
-            default:
+            } else {
                 onClick = new ClickListener() {
                     public void onClick (Widget sender) {
                         Application.go(Page.WORLD, "m" + card.name.getMemberId());
                     }
                 };
-                break;
             }
 
             add(MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE, onClick));

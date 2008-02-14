@@ -87,7 +87,6 @@ import com.threerings.msoy.web.client.WorldService;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MyWhirledData;
-import com.threerings.msoy.web.data.OnlineMemberCard;
 import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
