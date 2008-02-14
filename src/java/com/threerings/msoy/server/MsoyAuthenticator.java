@@ -224,7 +224,7 @@ public class MsoyAuthenticator extends Authenticator
 
             } else {
                 // we're doing standard password login
-                accountName = creds.getUsername().toString();
+                accountName = creds.getUsername().toString().toLowerCase();
                 password = creds.getPassword();
             }
 
@@ -367,7 +367,7 @@ public class MsoyAuthenticator extends Authenticator
         }
 
         try {
-            // make sure we're dealing with a lower case'd email
+            // make sure we're dealing with a lower cased email
             email = email.toLowerCase();
             // create and validate the new account
             Domain domain = getDomain(email);
@@ -393,7 +393,7 @@ public class MsoyAuthenticator extends Authenticator
         throws ServiceException
     {
         try {
-            // make sure we're dealing with a lower case'd email
+            // make sure we're dealing with a lower cased email
             email = email.toLowerCase();
             getDomain(email).updateAccount(email, newAccountName, newPermaName, newPassword);
         } catch (PersistenceException pe) {
@@ -414,7 +414,7 @@ public class MsoyAuthenticator extends Authenticator
     public String generatePasswordResetCode (String email)
         throws ServiceException, PersistenceException
     {
-        // make sure we're dealing with a lower case'd email
+        // make sure we're dealing with a lower cased email
         email = email.toLowerCase();
         return getDomain(email).generatePasswordResetCode(email);
     }
@@ -428,7 +428,7 @@ public class MsoyAuthenticator extends Authenticator
     public boolean validatePasswordResetCode (String email, String code)
         throws ServiceException, PersistenceException
     {
-        // make sure we're dealing with a lower case'd email
+        // make sure we're dealing with a lower cased email
         email = email.toLowerCase();
         return getDomain(email).validatePasswordResetCode(email, code);
     }
@@ -446,7 +446,7 @@ public class MsoyAuthenticator extends Authenticator
         throws ServiceException
     {
         try {
-            // make sure we're dealing with a lower case'd email
+            // make sure we're dealing with a lower cased email
             email = email.toLowerCase();
             // validate their account credentials; make sure they're not banned
             Domain domain = getDomain(email);
