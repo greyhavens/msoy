@@ -298,9 +298,11 @@ public class RoomEditorController
                     var f :FurniData = _edit.target.getFurniData();
                     var newrotation :Number = f.rotation + rotationDelta;
 
-                    // snap to the specified increment
-                    if (snap) {
-                        newrotation = snapIncrement * Math.round(newrotation / snapIncrement);
+                    // only do this calculation if we're not already snapped
+                    if (snap && (f.rotation % snapIncrement != 0)) {
+                        // use delta to snap to the specified increment
+                        var snapfn :Function = (rotationDelta > 0) ? Math.ceil : Math.floor;
+                        newrotation = snapIncrement * snapfn(f.rotation / snapIncrement);
                     }
                     
                     _edit.updateTargetRotation(newrotation);
