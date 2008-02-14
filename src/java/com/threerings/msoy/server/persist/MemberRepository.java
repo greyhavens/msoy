@@ -157,10 +157,6 @@ public class MemberRepository extends DepotRepository
     public MemberRecord loadMember (String accountName)
         throws PersistenceException
     {
-        if (accountName == null) {
-            throw new PersistenceException("Attempted to load MemberRecord for null accountName");
-        }
-
         return load(MemberRecord.class, 
                     new Where(MemberRecord.ACCOUNT_NAME_C, accountName.toLowerCase()));
     }
@@ -359,11 +355,6 @@ public class MemberRepository extends DepotRepository
     public void insertMember (MemberRecord member)
         throws PersistenceException
     {
-        if (member.accountName == null) {
-            throw new PersistenceException(
-                "Attempted to insert MemberRecord with null accountName [" + member + "]");
-        }
-
         // flatten account name (email address) on insertion
         member.accountName = member.accountName.toLowerCase();
         if (member.created == null) {
@@ -382,12 +373,8 @@ public class MemberRepository extends DepotRepository
     public void configureAccountName (int memberId, String accountName)
         throws PersistenceException
     {
-        if (accountName == null) {
-            throw new PersistenceException(
-                "Attempted to set account name to null [" + memberId + "]");
-        }
-        updatePartial(MemberRecord.class, memberId, MemberRecord.ACCOUNT_NAME, 
-            accountName.toLowerCase());
+        updatePartial(MemberRecord.class, memberId,
+                      MemberRecord.ACCOUNT_NAME, accountName.toLowerCase());
     }
 
     /**
@@ -479,11 +466,6 @@ public class MemberRepository extends DepotRepository
     public void disableMember (String accountName, String disabledName)
         throws PersistenceException
     {
-        if (accountName == null) {
-            throw new PersistenceException("Attempted to disable member with null accountName [" + 
-                disabledName + "]");
-        }
-
         // TODO: Cache Invalidation
         int mods = updatePartial(
             MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, accountName.toLowerCase()), 
@@ -745,9 +727,6 @@ public class MemberRepository extends DepotRepository
     public void addOptOutEmail (String email)
         throws PersistenceException
     {
-        if (email == null) {
-            throw new PersistenceException("Attempted to add null email address to opt-out list");
-        }
         insert(new OptOutRecord(email.toLowerCase()));
     }
 
@@ -757,10 +736,6 @@ public class MemberRepository extends DepotRepository
     public boolean hasOptedOut (String email)
         throws PersistenceException
     {
-        if (email == null) {
-            throw new PersistenceException(
-                "Attempted to check on opt-out status for null email address");
-        }
         return load(OptOutRecord.class, email.toLowerCase()) != null;
     }
 
