@@ -43,7 +43,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
  contains methods that understand the interfaces in this package.
  So, for example, removeFirst() understands Equalable and will remove
  an element that is equals() to the specified element, rather than just
- ===.
+ === (strictly equals) to the specified element.
  <p></p>
 <br>
 <hr>
@@ -59,7 +59,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#contains()">contains</a>(arr:Array, element:Object):Boolean</div>
-<div class="summaryTableDescription">[static]</div>
+<div class="summaryTableDescription">[static]
+     </div>
 </td><td class="summaryTableOwnerCol">ArrayUtil</td>
 </tr>
 <tr class="">
@@ -84,7 +85,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#indexOf()">indexOf</a>(arr:Array, element:Object):int</div>
-<div class="summaryTableDescription">[static]</div>
+<div class="summaryTableDescription">[static]
+     Returns the first index of the supplied element in the array.</div>
 </td><td class="summaryTableOwnerCol">ArrayUtil</td>
 </tr>
 <tr class="">
@@ -144,7 +146,8 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function contains(arr:Array, element:Object):Boolean</code><span class="label">Parameters</span>
+<code>public static function contains(arr:Array, element:Object):Boolean</code><p>
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
@@ -160,7 +163,9 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Boolean</code></td>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the specified element, or one that is Equalable.equals() to it, is
+     contained in the array.
+     </td>
 </tr>
 </table>
 </div>
@@ -204,7 +209,7 @@ showHideInherited();
      Returns the index of the first item in the array for which the predicate function
      returns true, or -1 if no such item was found. The predicate function should be of type:
        function (element : :Boolean { }
-     </p><span class="label">Parameters</span>
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
@@ -220,7 +225,8 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>int</code></td>
+<td width="20"></td><td><code>int</code> &mdash; the zero-based index of the matching element, or -1 if none found.
+     </td>
 </tr>
 </table>
 </div>
@@ -231,7 +237,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function indexOf(arr:Array, element:Object):int</code><span class="label">Parameters</span>
+<code>public static function indexOf(arr:Array, element:Object):int</code><p>
+     Returns the first index of the supplied element in the array. Note that if the element
+     implements Equalable, an element that is equals() will have its index returned, instead
+     of requiring the search element to be === (strictly equal) to an element in the array
+     like Array.indexOf().
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
@@ -247,7 +258,8 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>int</code></td>
+<td width="20"></td><td><code>int</code> &mdash; the zero-based index of the matching element, or -1 if none found.
+     </td>
 </tr>
 </table>
 </div>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Vector3,com.threerings.flash.Vector3,INFINITE,x,y,z,clone,length,normalize,dot,cross,add,subtract,intersection,multiply,clampToUnitBox,interpolate,toString" name="keywords">
+<meta content="Vector3,com.threerings.flash.Vector3,INFINITE,x,y,z,length,set,clone,dot,normalize,normalizeLocal,cross,crossLocal,add,addLocal,subtract,subtractLocal,intersection,scale,scaleLocal,clampToUnitBox,interpolate,toString" name="keywords">
 <title>com.threerings.flash.Vector3</title>
 </head>
 <body>
@@ -52,6 +52,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#length">length</a> : Number<div class="summaryTableDescription">[read-only] Returns this vector's length.</div>
+</td><td class="summaryTableOwnerCol">Vector3</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#x">x</a> : Number = 0<div class="summaryTableDescription"> Vector components.</div>
 </td><td class="summaryTableOwnerCol">Vector3</td>
 </tr>
@@ -90,6 +94,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#addLocal()">addLocal</a>(v:<a href="Vector3.html">Vector3</a>):<a href="../flash/Vector3.html">Vector3</a>
+</div>
+<div class="summaryTableDescription">
+     Sets this vector to the result of summation with v, such that <code>this = this + v</code>.</div>
+</td><td class="summaryTableOwnerCol">Vector3</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#clampToUnitBox()">clampToUnitBox</a>():<a href="../flash/Vector3.html">Vector3</a>
 </div>
 <div class="summaryTableDescription">
@@ -110,7 +123,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#cross()">cross</a>(v:<a href="Vector3.html">Vector3</a>):<a href="../flash/Vector3.html">Vector3</a>
 </div>
-<div class="summaryTableDescription"> Returns a new vector that is the cross product of this vector with vector v.</div>
+<div class="summaryTableDescription">
+     Returns a new vector that is the cross product of this vector with vector v,
+     such that <code>result = this &#8855; v</code>.</div>
+</td><td class="summaryTableOwnerCol">Vector3</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#crossLocal()">crossLocal</a>(v:<a href="Vector3.html">Vector3</a>):<a href="../flash/Vector3.html">Vector3</a>
+</div>
+<div class="summaryTableDescription">
+     Sets this vector to the result of a cross product with vector v, such that
+     <code>this = this &#8855; v</code>.</div>
 </td><td class="summaryTableOwnerCol">Vector3</td>
 </tr>
 <tr class="">
@@ -144,14 +169,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#length()">length</a>():Number</div>
-<div class="summaryTableDescription"> Returns this vector's length.</div>
+<a class="signatureLink" href="#normalize()">normalize</a>():<a href="../flash/Vector3.html">Vector3</a>
+</div>
+<div class="summaryTableDescription"> Returns a new vector that is a normalized version of this vector.</div>
 </td><td class="summaryTableOwnerCol">Vector3</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#multiply()">multiply</a>(value:Number):<a href="../flash/Vector3.html">Vector3</a>
+<a class="signatureLink" href="#normalizeLocal()">normalizeLocal</a>():<a href="../flash/Vector3.html">Vector3</a>
+</div>
+<div class="summaryTableDescription"> Destructively normalizes this vector.</div>
+</td><td class="summaryTableOwnerCol">Vector3</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#scale()">scale</a>(value:Number):<a href="../flash/Vector3.html">Vector3</a>
 </div>
 <div class="summaryTableDescription">
      Returns a new vector that is the result of multiplying the current vector
@@ -161,9 +195,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#normalize()">normalize</a>():<a href="../flash/Vector3.html">Vector3</a>
+<a class="signatureLink" href="#scaleLocal()">scaleLocal</a>(value:Number):<a href="../flash/Vector3.html">Vector3</a>
 </div>
-<div class="summaryTableDescription"> Returns a new vector that is a normalized version of this vector.</div>
+<div class="summaryTableDescription">
+     Destructively multiplies this vector by the specified scalar.</div>
+</td><td class="summaryTableOwnerCol">Vector3</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#set()">set</a>(x:Number, y:Number, z:Number):void</div>
+<div class="summaryTableDescription"> Assigns values to the three parameters of this vector.</div>
 </td><td class="summaryTableOwnerCol">Vector3</td>
 </tr>
 <tr class="">
@@ -172,6 +214,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#subtract()">subtract</a>(v:<a href="Vector3.html">Vector3</a>):<a href="../flash/Vector3.html">Vector3</a>
 </div>
 <div class="summaryTableDescription"> Returns a new vector that is the subtraction of vector v from this vector.</div>
+</td><td class="summaryTableOwnerCol">Vector3</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#subtractLocal()">subtractLocal</a>(v:<a href="Vector3.html">Vector3</a>):<a href="../flash/Vector3.html">Vector3</a>
+</div>
+<div class="summaryTableDescription">
+     Sets the vector to the result of subtraction of v, such that <code>this = this - v</code>.</div>
 </td><td class="summaryTableOwnerCol">Vector3</td>
 </tr>
 <tr class="">
@@ -206,10 +257,22 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
+<a name="length"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">length</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>length:Number</code>&nbsp;&nbsp;[read-only]<p> Returns this vector's length. </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get length():Number</code>
+<br>
+</div>
 <a name="x"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">x</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">x</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -283,6 +346,30 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="addLocal()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addLocal</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function addLocal(v:<a href="Vector3.html">Vector3</a>):<a href="../flash/Vector3.html">Vector3</a></code><p>
+     Sets this vector to the result of summation with v, such that <code>this = this + v</code>.
+     Returns a reference to the modified self.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">v</span>:<a href="Vector3.html">Vector3</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../flash/Vector3.html">Vector3</a></code></td>
+</tr>
+</table>
+</div>
 <a name="clampToUnitBox()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -324,7 +411,34 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function cross(v:<a href="Vector3.html">Vector3</a>):<a href="../flash/Vector3.html">Vector3</a></code><p> Returns a new vector that is the cross product of this vector with vector v. </p><span class="label">Parameters</span>
+<code>public function cross(v:<a href="Vector3.html">Vector3</a>):<a href="../flash/Vector3.html">Vector3</a></code><p>
+     Returns a new vector that is the cross product of this vector with vector v,
+     such that <code>result = this &#8855; v</code>.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">v</span>:<a href="Vector3.html">Vector3</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../flash/Vector3.html">Vector3</a></code></td>
+</tr>
+</table>
+</div>
+<a name="crossLocal()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">crossLocal</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function crossLocal(v:<a href="Vector3.html">Vector3</a>):<a href="../flash/Vector3.html">Vector3</a></code><p>
+     Sets this vector to the result of a cross product with vector v, such that
+     <code>this = this &#8855; v</code>. Returns a reference to the modified self.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">v</span>:<a href="Vector3.html">Vector3</a></code></td>
@@ -433,29 +547,44 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="length()"></a>
+<a name="normalize()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">length</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">normalize</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function length():Number</code><p> Returns this vector's length. </p><p></p>
+<code>public function normalize():<a href="../flash/Vector3.html">Vector3</a></code><p> Returns a new vector that is a normalized version of this vector. </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Number</code></td>
+<td width="20"></td><td><code><a href="../flash/Vector3.html">Vector3</a></code></td>
 </tr>
 </table>
 </div>
-<a name="multiply()"></a>
+<a name="normalizeLocal()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">multiply</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">normalizeLocal</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function multiply(value:Number):<a href="../flash/Vector3.html">Vector3</a></code><p>
+<code>public function normalizeLocal():<a href="../flash/Vector3.html">Vector3</a></code><p> Destructively normalizes this vector. Returns a reference to the modified self. </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../flash/Vector3.html">Vector3</a></code></td>
+</tr>
+</table>
+</div>
+<a name="scale()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">scale</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function scale(value:Number):<a href="../flash/Vector3.html">Vector3</a></code><p>
      Returns a new vector that is the result of multiplying the current vector
      by the specified scalar.
      </p><span class="label">Parameters</span>
@@ -472,18 +601,53 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="normalize()"></a>
+<a name="scaleLocal()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">normalize</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">scaleLocal</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function normalize():<a href="../flash/Vector3.html">Vector3</a></code><p> Returns a new vector that is a normalized version of this vector. </p><p></p>
+<code>public function scaleLocal(value:Number):<a href="../flash/Vector3.html">Vector3</a></code><p>
+     Destructively multiplies this vector by the specified scalar.
+     Returns a reference to the modified self.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Number</code></td>
+</tr>
+</table>
+<p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code><a href="../flash/Vector3.html">Vector3</a></code></td>
+</tr>
+</table>
+</div>
+<a name="set()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">set</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function set(x:Number, y:Number, z:Number):void</code><p> Assigns values to the three parameters of this vector. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">x</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">y</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">z</span>:Number</code></td>
 </tr>
 </table>
 </div>
@@ -495,6 +659,30 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function subtract(v:<a href="Vector3.html">Vector3</a>):<a href="../flash/Vector3.html">Vector3</a></code><p> Returns a new vector that is the subtraction of vector v from this vector.</p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">v</span>:<a href="Vector3.html">Vector3</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../flash/Vector3.html">Vector3</a></code></td>
+</tr>
+</table>
+</div>
+<a name="subtractLocal()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">subtractLocal</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function subtractLocal(v:<a href="Vector3.html">Vector3</a>):<a href="../flash/Vector3.html">Vector3</a></code><p>
+     Sets the vector to the result of subtraction of v, such that <code>this = this - v</code>.
+     Returns a reference to the modified self.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">v</span>:<a href="Vector3.html">Vector3</a></code></td>

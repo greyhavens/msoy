@@ -41,12 +41,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("NÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/MessageReceivedEvent.html#_name">_name</a> &mdash; Property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/MessageReceivedEvent.html">MessageReceivedEvent</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/MessageReceivedEvent.html#name">name</a> &mdash; Property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/MessageReceivedEvent.html">MessageReceivedEvent</a></td>
 </tr>
 <tr>
@@ -202,6 +196,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("NÂ
      Get the property's new value.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Util.html#newXML()">newXML</a>(value, settings) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Util.html">Util</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Parse the 'value' object into XML safely.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ArrayIterator.html#next()">next</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ArrayIterator.html">ArrayIterator</a></td>
 </tr>
 <tr>
@@ -317,6 +318,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("NÂ
 <td width="20"></td><td> The normalized name text.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector2.html#normalize()">normalize</a>() &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector2.html">Vector2</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> 
+     Returns a normalized copy of the vector.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector3.html#normalize()">normalize</a>() &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector3.html">Vector3</a></td>
 </tr>
 <tr>
@@ -329,10 +337,38 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("NÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/Vector2.html#normalize()">normalize</a>() &mdash; Method in class com.whirled.contrib.core.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/Vector2.html">Vector2</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MathUtil.html#normalizeDegrees()">normalizeDegrees</a>(degrees) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MathUtil.html">MathUtil</a></td>
 </tr>
 <tr>
-<td width="20"></td><td> Normalizes the vector.</td>
+<td width="20"></td><td>
+     Normalizes an angle in degrees to occupy the [0, 360) range.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector2.html#normalizeLocal()">normalizeLocal</a>() &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector2.html">Vector2</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> 
+     Normalizes this vector in place.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector3.html#normalizeLocal()">normalizeLocal</a>() &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector3.html">Vector3</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> Destructively normalizes this vector.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector2.html#normalizeLocalAndGetLength()">normalizeLocalAndGetLength</a>() &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector2.html">Vector2</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> 
+     Normalizes the vector in place and returns its original length.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MathUtil.html#normalizeRadians()">normalizeRadians</a>(radians) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MathUtil.html">MathUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Normalizes an angle in radians to occupy the [0, 2pi) range.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ObserverList.html#_notifyPolicy">_notifyPolicy</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ObserverList.html">ObserverList</a></td>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="ResourceManager,com.whirled.contrib.core.resource.ResourceManager,_loading,_resources,_pendingResources,_resourceFactories,g_instance,instance,isLoading,addResourceFactory,pendResourceLoad,load,cancelLoad,getResource,unload,unloadAll,isResourceLoaded,subscribeToResourceLoaderEvents,unsubscribeFromResourceLoaderEvents,onSingleResourceLoaded,onSingleResourceError,cleanupPendingResource" name="keywords">
+<meta content="ResourceManager,com.whirled.contrib.core.resource.ResourceManager,_loading,_resources,_pendingResources,isLoading,pendResourceLoad,load,cancelLoad,getResource,unload,unloadAll,isResourceLoaded,subscribeToResourceLoaderEvents,unsubscribeFromResourceLoaderEvents,onSingleResourceLoaded,onSingleResourceError,cleanupPendingResource" name="keywords">
 <title>com.whirled.contrib.core.resource.ResourceManager</title>
 </head>
 <body>
@@ -54,11 +54,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#instance">instance</a> : <a href="../resource/ResourceManager.html">ResourceManager</a>
-<div class="summaryTableDescription">[static][read-only]</div>
-</td><td class="summaryTableOwnerCol">ResourceManager</td>
-</tr>
-<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#isLoading">isLoading</a> : Boolean<div class="summaryTableDescription">[read-only]</div>
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
@@ -72,21 +67,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#g_instance">g_instance</a> : <a href="../resource/ResourceManager.html">ResourceManager</a>
-<div class="summaryTableDescription">[static]</div>
-</td><td class="summaryTableOwnerCol">ResourceManager</td>
-</tr>
-<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_loading">_loading</a> : Boolean<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_pendingResources">_pendingResources</a> : <a href="../../../../threerings/util/HashMap.html">HashMap</a>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">ResourceManager</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_resourceFactories">_resourceFactories</a> : <a href="../../../../threerings/util/HashMap.html">HashMap</a>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
@@ -103,20 +88,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#ResourceManager()">ResourceManager</a>()</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">ResourceManager</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#addResourceFactory()">addResourceFactory</a>(resourceType:String, factory:<a href="ResourceFactory.html">ResourceFactory</a>):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -222,31 +193,10 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="g_instance"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">g_instance</td><td class="detailHeaderType">property</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected static var g_instance:<a href="../resource/ResourceManager.html">ResourceManager</a></code>
-</div>
-<a name="instance"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">instance</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>instance:<a href="../resource/ResourceManager.html">ResourceManager</a></code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
-<br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;public static function get instance():<a href="../resource/ResourceManager.html">ResourceManager</a></code>
-<br>
-</div>
 <a name="isLoading"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">isLoading</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">isLoading</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -273,15 +223,6 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _pendingResources:<a href="../../../../threerings/util/HashMap.html">HashMap</a></code>
 </div>
-<a name="_resourceFactories"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_resourceFactories</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _resourceFactories:<a href="../../../../threerings/util/HashMap.html">HashMap</a></code>
-</div>
 <a name="_resources"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -291,43 +232,12 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _resources:<a href="../../../../threerings/util/HashMap.html">HashMap</a></code>
 </div>
-<a name="constructorDetail"></a>
-<div class="detailSectionHeader">Constructor detail</div>
-<a name="ResourceManager()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">ResourceManager</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function ResourceManager()</code>
-</div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="addResourceFactory()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">addResourceFactory</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function addResourceFactory(resourceType:String, factory:<a href="ResourceFactory.html">ResourceFactory</a>):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">resourceType</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">factory</span>:<a href="ResourceFactory.html">ResourceFactory</a></code></td>
-</tr>
-</table>
-</div>
 <a name="cancelLoad()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">cancelLoad</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">cancelLoad</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">

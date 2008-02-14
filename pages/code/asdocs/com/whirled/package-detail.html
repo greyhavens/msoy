@@ -30,6 +30,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Pa
 --></script>
 <div class="MainContent">
 <br>
+<p>Primary classes used for developing games, avatars, toys and other whirled creations.</p>
 <br>
 <hr>
 <a name="classSummary"></a>
@@ -58,64 +59,66 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Pa
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="AVRGameControlEvent.html">AVRGameControlEvent</a></td><td class="summaryTableLastCol">&nbsp;</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="ControlEvent.html">ControlEvent</a></td><td class="summaryTableLastCol">&nbsp;</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="ControlEvent.html">ControlEvent</a></td><td class="summaryTableLastCol">
+ An Event dispatched on controls (AvatarControl, PetControl...) to indicate
+ that something has happened.</td>
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="DataPack.html">DataPack</a></td><td class="summaryTableLastCol">
  Handles downloading and extracting goodies from a DataPack.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="EffectControl.html">EffectControl</a></td><td class="summaryTableLastCol">
- This file should be included by effects.</td>
-</tr>
-<tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="EntityControl.html">EntityControl</a></td><td class="summaryTableLastCol">
  Handles services that are available to all entities in a room.</td>
 </tr>
-<tr class="prow0">
+<tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="FlowAwardedEvent.html">FlowAwardedEvent</a></td><td class="summaryTableLastCol">
  Dispatched to let a game know when the player has been awarded flow.</td>
 </tr>
-<tr class="prow1">
+<tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="FurniControl.html">FurniControl</a></td><td class="summaryTableLastCol">
  This file should be included by furniture, so that it can communicate
  with the whirled.</td>
 </tr>
-<tr class="prow0">
+<tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="GameSubControl.html">GameSubControl</a></td><td class="summaryTableLastCol">
  Provides access to the 'game' game services.</td>
 </tr>
-<tr class="prow1">
+<tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="LocalSubControl.html">LocalSubControl</a></td><td class="summaryTableLastCol">
  Provides access to the 'local' game services.</td>
 </tr>
-<tr class="prow0">
+<tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="MiniGameControl.html">MiniGameControl</a></td><td class="summaryTableLastCol">
  Control for a minigame- tiny, simple, non-networked games which are
  used inside some larger games.</td>
 </tr>
-<tr class="prow1">
+<tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="MobControl.html">MobControl</a></td><td class="summaryTableLastCol">
  Defines actions, accessors and callbacks available to all MOBs.</td>
 </tr>
-<tr class="prow0">
+<tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="PetControl.html">PetControl</a></td><td class="summaryTableLastCol">
  Defines actions, accessors and callbacks available to all Pets.</td>
 </tr>
-<tr class="prow1">
+<tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="PlayerSubControl.html">PlayerSubControl</a></td><td class="summaryTableLastCol">
  Access the 'player' game services.</td>
 </tr>
-<tr class="prow0">
+<tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="PropControl.html">PropControl</a></td><td class="summaryTableLastCol">
  Defines actions, accessors and callbacks available to all Props.</td>
 </tr>
-<tr class="prow1">
+<tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="QuestControl.html">QuestControl</a></td><td class="summaryTableLastCol">
  Defines actions, accessors and callbacks available to all Quests.</td>
 </tr>
-<tr class="prow0">
+<tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="StateControl.html">StateControl</a></td><td class="summaryTableLastCol">&nbsp;</td>
+</tr>
+<tr class="prow0">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="ToyControl.html">ToyControl</a></td><td class="summaryTableLastCol">
+ Used to create Toys: interactive furniture, usually with some shared state.</td>
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="WhirledControl.html">WhirledControl</a></td><td class="summaryTableLastCol">
@@ -123,11 +126,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Pa
 </tr>
 <tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td><td class="summaryTableLastCol">
- The primary class used to coordinate game state and control your multiplayer game.</td>
-</tr>
-<tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="WhirledSubControl.html">WhirledSubControl</a></td><td class="summaryTableLastCol">
- Abstract base class.</td>
+ Used to coordinate game state and control your multiplayer game.</td>
 </tr>
 </table>
 <p></p>

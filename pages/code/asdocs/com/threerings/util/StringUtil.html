@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="StringUtil,com.threerings.util.StringUtil,HEX,URL_REGEXP,hashCode,isBlank,endsWith,startsWith,isLowerCase,isUpperCase,parseInteger,parseUnsignedInteger,pad,prepad,substitute,trim,toString,fieldsToString,simpleToString,truncate,parseURLs,fromBytes,toBytes,hexlate,unhexlate,parseInt0" name="keywords">
+<meta content="StringUtil,com.threerings.util.StringUtil,HEX,URL_REGEXP,hashCode,isBlank,endsWith,startsWith,isLowerCase,isUpperCase,parseInteger,parseUnsignedInteger,pad,prepad,substitute,trim,isWhitespace,toString,fieldsToString,simpleToString,truncate,parseURLs,fromBytes,toBytes,hexlate,unhexlate,parseInt0" name="keywords">
 <title>com.threerings.util.StringUtil</title>
 </head>
 <body>
@@ -96,7 +96,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#isBlank()">isBlank</a>(str:String):Boolean</div>
-<div class="summaryTableDescription">[static]</div>
+<div class="summaryTableDescription">[static]
+     Is the specified string null or does it contain only whitespace?
+     </div>
 </td><td class="summaryTableOwnerCol">StringUtil</td>
 </tr>
 <tr class="">
@@ -113,6 +115,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#isUpperCase()">isUpperCase</a>(str:String):Boolean</div>
 <div class="summaryTableDescription">[static]
      Return true iff the first character is an upper-case character.</div>
+</td><td class="summaryTableOwnerCol">StringUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#isWhitespace()">isWhitespace</a>(character:String):Boolean</div>
+<div class="summaryTableDescription">[static]
+     </div>
 </td><td class="summaryTableOwnerCol">StringUtil</td>
 </tr>
 <tr class="">
@@ -196,7 +206,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#toString()">toString</a>(obj:*):String</div>
-<div class="summaryTableDescription">[static]</div>
+<div class="summaryTableDescription">[static]
+     Nicely format the specified object into a String.</div>
 </td><td class="summaryTableOwnerCol">StringUtil</td>
 </tr>
 <tr class="">
@@ -395,7 +406,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function isBlank(str:String):Boolean</code><span class="label">Parameters</span>
+<code>public static function isBlank(str:String):Boolean</code><p>
+     Is the specified string null or does it contain only whitespace?
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">str</span>:String</code></td>
@@ -452,6 +465,29 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="isWhitespace()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isWhitespace</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function isWhitespace(character:String):Boolean</code><p>
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">character</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the specified String is == to a single whitespace character.
+     </td>
 </tr>
 </table>
 </div>
@@ -768,7 +804,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function toString(obj:*):String</code><span class="label">Parameters</span>
+<code>public static function toString(obj:*):String</code><p>
+     Nicely format the specified object into a String.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">obj</span>:*</code></td>

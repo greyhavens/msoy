@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="AVRGameControlEvent,com.whirled.AVRGameControlEvent,PROPERTY_CHANGED,PLAYER_PROPERTY_CHANGED,MESSAGE_RECEIVED,QUEST_STATE_CHANGED,PLAYER_ENTERED,PLAYER_LEFT,PLAYER_MOVED,ENTERED_ROOM,LEFT_ROOM,SIZE_CHANGED,AVATAR_CHANGED,toString,clone" name="keywords">
+<meta content="AVRGameControlEvent,com.whirled.AVRGameControlEvent,GOT_CONTROL,PROPERTY_CHANGED,PLAYER_PROPERTY_CHANGED,MESSAGE_RECEIVED,QUEST_STATE_CHANGED,PLAYER_ENTERED,PLAYER_LEFT,PLAYER_MOVED,ENTERED_ROOM,LEFT_ROOM,SIZE_CHANGED,AVATAR_CHANGED,toString,clone" name="keywords">
 <title>com.whirled.AVRGameControlEvent</title>
 </head>
 <body>
@@ -173,9 +173,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ENTERED_ROOM">ENTERED_ROOM</a> : String = "enteredRoom"<div class="summaryTableDescription">[static] An event type dispatched when we've entered a new room.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControlEvent</td>
 </tr>
-<tr class="hideInheritedConstant">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ControlEvent.html#GOT_CONTROL">GOT_CONTROL</a> : String = "gotControl"<div class="summaryTableDescription">[static] An event type dispatched when this client-side instance of the item
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#GOT_CONTROL">GOT_CONTROL</a> : String = "gotControl"<div class="summaryTableDescription">[static] An event type dispatched when this client-side instance of the AVRG
      has gained "control" over the other client-side instances.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControlEvent</td>
+</tr>
+<tr class="hideInheritedConstant">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ControlEvent.html#HOVER_OUT">HOVER_OUT</a> : String = "hoverOut"<div class="summaryTableDescription">[static] An event type dispatched to Furniture and Toys when the mouse is leaves them.</div>
+</td><td class="summaryTableOwnerCol"><a href="ControlEvent.html">ControlEvent</a></td>
+</tr>
+<tr class="hideInheritedConstant">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ControlEvent.html#HOVER_OVER">HOVER_OVER</a> : String = "hoverOver"<div class="summaryTableDescription">[static] An event type dispatched to Furniture and Toys when the mouse is over them.</div>
 </td><td class="summaryTableOwnerCol"><a href="ControlEvent.html">ControlEvent</a></td>
 </tr>
 <tr class="">
@@ -332,6 +340,18 @@ showHideInherited();
 <code>public static const ENTERED_ROOM:String = "enteredRoom"</code><p> An event type dispatched when we've entered a new room.
      key: N/A
      value: the id of the scene we entered
+          </p></div>
+<a name="GOT_CONTROL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">GOT_CONTROL</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const GOT_CONTROL:String = "gotControl"</code><p> An event type dispatched when this client-side instance of the AVRG
+     has gained "control" over the other client-side instances.
+     name: unused
+     value: unused
           </p></div>
 <a name="LEFT_ROOM"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

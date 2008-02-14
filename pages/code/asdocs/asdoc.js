@@ -190,15 +190,15 @@ function toggleMXMLOnly()
 
 function showHideInherited()
 {	
-	setInheritedVisible(getCookie("showInheritedConstant") == "true", "Constant");
+	setInheritedVisible(getCookie("showInheritedConstant") != "false", "Constant");
 	setInheritedVisible(getCookie("showInheritedProtectedConstant") == "true", "ProtectedConstant");
-	setInheritedVisible(getCookie("showInheritedProperty") == "true", "Property");
+	setInheritedVisible(getCookie("showInheritedProperty") != "false", "Property");
 	setInheritedVisible(getCookie("showInheritedProtectedProperty") == "true", "ProtectedProperty");
-	setInheritedVisible(getCookie("showInheritedMethod") == "true", "Method");
+	setInheritedVisible(getCookie("showInheritedMethod") != "false", "Method");
 	setInheritedVisible(getCookie("showInheritedProtectedMethod") == "true", "ProtectedMethod");
-	setInheritedVisible(getCookie("showInheritedEvent") == "true", "Event");
-	setInheritedVisible(getCookie("showInheritedStyle") == "true", "Style");
-	setInheritedVisible(getCookie("showInheritedEffect") == "true", "Effect");
+	setInheritedVisible(getCookie("showInheritedEvent") != "false", "Event");
+	setInheritedVisible(getCookie("showInheritedStyle") != "false", "Style");
+	setInheritedVisible(getCookie("showInheritedEffect") != "false", "Effect");
 }
 function setInheritedVisible(show, selectorText)
 {
