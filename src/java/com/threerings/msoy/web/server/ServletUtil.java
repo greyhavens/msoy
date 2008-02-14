@@ -83,6 +83,7 @@ public class ServletUtil
             Set<Integer> keys = onlineOnly ? statuses.keySet() : memberIds;
             for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(keys)) {
                 MemberCard card = mcr.toMemberCard();
+                cards.add(card);
 
                 // if this member is online, fill in their online status
                 MemberCard.Status status = statuses.get(mcr.memberId);
@@ -98,9 +99,8 @@ public class ServletUtil
                     }
                     card.status = status;
                 }
-
-                cards.add(card);
             }
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to populate member cards.", pe);
         }

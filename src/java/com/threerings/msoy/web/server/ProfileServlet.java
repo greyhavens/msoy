@@ -209,11 +209,8 @@ public class ProfileServlet extends MsoyServiceServlet
 
             FriendsResult result = new FriendsResult();
             result.name = tgtrec.getName();
-            List<MemberCard> list = Lists.newArrayList();
-            for (MemberCardRecord mcr : MsoyServer.memberRepo.loadFriendCards(memberId)) {
-                list.add(mcr.toMemberCard());
-            }
-
+            List<MemberCard> list = ServletUtil.resolveMemberCards(
+                MsoyServer.memberRepo.loadFriendIds(memberId), false);
             Collections.sort(list, new Comparator<MemberCard>() {
                 public int compare (MemberCard c1, MemberCard c2) {
                     int rv = MemberCard.compare(c1.status, c2.status);

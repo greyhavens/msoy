@@ -83,7 +83,7 @@ public class MemberCard
             return 0;
 
         } else {
-            return oso - tso;
+            return tso - oso;
         }
     }
 
