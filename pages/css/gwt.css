@@ -4,6 +4,10 @@
  * CSS styles shared by all GWT stuff.
  */
 
+body {
+  background: #222222;
+}
+
 img, embed, applet, object { 
   display: block; /* no descender padding thanks */
 }
