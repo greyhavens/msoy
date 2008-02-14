@@ -98,12 +98,12 @@ public class RoomMetrics
         var skew :Vector3     = Vector3.interpolate(downSkew, upSkew, sceneHorizon).normalize();
 
         // make the skew vector stretch from near to far wall, and remember its y-value
-        var nskew :Vector3 = skew.multiply(1 / skew.z);
+        var nskew :Vector3 = skew.scale(1 / skew.z);
         this.vSkewOffset = nskew.y;
 
         // save its normals: one of the skewed floor pointing up, the other pointing down
         var nfloor :Vector3 = new Vector3(nskew.x, nskew.z, -nskew.y).normalize();
-        var nceiling :Vector3 = nfloor.multiply(-1);
+        var nceiling :Vector3 = nfloor.scale(-1);
 
         // left and right walls:
 
@@ -174,9 +174,9 @@ public class RoomMetrics
                 var pos :WorldVector = lineOfSightToPlaneProjection(
                     l, def.worldpoint, def.worldnormal);
 
-                if (pos != null && pos.v.length() < mindistance) {
+                if (pos != null && pos.v.length < mindistance) {
                     minpoint = pos;
-                    mindistance = pos.v.length();
+                    mindistance = pos.v.length;
                     minwall = def.type;
                 }
             }
@@ -430,7 +430,7 @@ public class RoomMetrics
         // to get a vector to the back wall in room coords
         var rx :Number = x / sceneWidth;
         var ry :Number = (sceneHeight - y) / sceneHeight;
-        var v :Vector3 = new Vector3(rx - camera.x, ry - camera.y, 0 - camera.z).multiply(scale);
+        var v :Vector3 = new Vector3(rx - camera.x, ry - camera.y, 0 - camera.z).scale(scale);
 
         return new WorldVector(v);
     }
