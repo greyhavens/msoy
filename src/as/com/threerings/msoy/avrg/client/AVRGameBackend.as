@@ -370,6 +370,16 @@ public class AVRGameBackend extends ControlBackend
         return null;
     }
 
+    protected function playAvatarAction_v1 (action :String) :Boolean
+    {
+        var sprite :MemberSprite = getMySprite();
+        if (sprite != null) {
+            sprite.sendMessage(action, null, true);
+            return true;
+        }
+        return false;
+    }
+
     protected function setAvatarState_v1 (state :String) :Boolean
     {
         var sprite :MemberSprite = getMySprite();

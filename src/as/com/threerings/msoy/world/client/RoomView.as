@@ -681,7 +681,7 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
-     * Called when control of an entity is assigned to us.
+     * Called when control of an AVRG is assigned to us.
      */
     protected function dispatchAVRGameGotControl (gameId :int) :void
     {
