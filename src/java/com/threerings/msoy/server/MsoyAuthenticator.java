@@ -367,6 +367,8 @@ public class MsoyAuthenticator extends Authenticator
         }
 
         try {
+            // make sure we're dealing with a lower case'd email
+            email = email.toLowerCase();
             // create and validate the new account
             Domain domain = getDomain(email);
             Account account = domain.createAccount(email, password);
@@ -391,6 +393,8 @@ public class MsoyAuthenticator extends Authenticator
         throws ServiceException
     {
         try {
+            // make sure we're dealing with a lower case'd email
+            email = email.toLowerCase();
             getDomain(email).updateAccount(email, newAccountName, newPermaName, newPassword);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Error updating account [for=" + email +
@@ -410,6 +414,8 @@ public class MsoyAuthenticator extends Authenticator
     public String generatePasswordResetCode (String email)
         throws ServiceException, PersistenceException
     {
+        // make sure we're dealing with a lower case'd email
+        email = email.toLowerCase();
         return getDomain(email).generatePasswordResetCode(email);
     }
 
@@ -422,6 +428,8 @@ public class MsoyAuthenticator extends Authenticator
     public boolean validatePasswordResetCode (String email, String code)
         throws ServiceException, PersistenceException
     {
+        // make sure we're dealing with a lower case'd email
+        email = email.toLowerCase();
         return getDomain(email).validatePasswordResetCode(email, code);
     }
 
@@ -438,6 +446,8 @@ public class MsoyAuthenticator extends Authenticator
         throws ServiceException
     {
         try {
+            // make sure we're dealing with a lower case'd email
+            email = email.toLowerCase();
             // validate their account credentials; make sure they're not banned
             Domain domain = getDomain(email);
             Account account = domain.authenticateAccount(email, password);

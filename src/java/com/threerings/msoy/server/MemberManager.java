@@ -123,7 +123,8 @@ public class MemberManager
     /**
      * Fetch the home ID for a member and return it.
      */
-    public void getHomeId (final byte ownerType, final int ownerId, ResultListener<Integer> listener)
+    public void getHomeId (final byte ownerType, final int ownerId, 
+                           ResultListener<Integer> listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Integer>(listener) {
             public Integer invokePersistResult () throws PersistenceException {
