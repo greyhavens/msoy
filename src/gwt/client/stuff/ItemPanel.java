@@ -67,7 +67,7 @@ public class ItemPanel extends VerticalPanel
         if (isCatalogItem(type)) {
             String slabel = CStuff.msgs.ipShopFor(CStuff.dmsgs.getString("pItemType" + _type));
             _filters.setHTML(0, col++, "&nbsp;");
-            _filters.setText(0, col++, slabel, 0, "Shop");
+            _filters.setText(0, col++, slabel, 1, "Shop");
             _filters.setWidget(0, col++, new Button(CStuff.msgs.ipToCatalog(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.SHOP, ""+_type);
