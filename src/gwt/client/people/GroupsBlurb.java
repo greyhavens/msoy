@@ -10,10 +10,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -133,37 +129,21 @@ public class GroupsBlurb extends Blurb
         }
     }
 
-    protected class GroupWidget extends FlexTable
+    protected class GroupWidget extends FlowPanel
     {
         public GroupWidget (final GroupCard card) {
-            setStyleName("profileWidget");
-            setCellPadding(0);
-            setCellSpacing(0);
+            setStyleName("Group");
+            if (card == null) {
+                return;
+            }
 
-            ClickListener profileClick = new ClickListener() {
+            ClickListener groupClick = new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WHIRLEDS, Args.compose("d", card.name.getGroupId()));
                 }
             };
-
-            // avoid forcing this table column to 80 pixels
-            SimplePanel photoPanel = new SimplePanel();
-            photoPanel.setStyleName("Photo");
-            if (card != null) {
-                photoPanel.add(MediaUtil.createMediaView(
-                                   card.logo, MediaDesc.THUMBNAIL_SIZE, profileClick));
-            }
-            setWidget(0, 0, photoPanel);
-            getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-
-            Label nameLabel =  new Label(card == null ? "" : card.name.toString());
-            nameLabel.setStyleName("Name");
-            if (card != null) {
-                nameLabel.addStyleName("actionLabel");
-                nameLabel.addClickListener(profileClick);
-            }
-            setWidget(1, 0, nameLabel);
-            getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
+            add(MediaUtil.createMediaView(card.logo, MediaDesc.THUMBNAIL_SIZE, groupClick));
+            add(MsoyUI.createActionLabel(card.name.toString(), groupClick));
         }
     }
 

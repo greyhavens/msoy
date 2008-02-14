@@ -6,23 +6,26 @@ package client.people;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.SimpleDataModel;
+import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.msgs.FriendInvite;
 import client.msgs.MailComposition;
-import client.util.ContentFooterPanel;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.ContentFooterPanel;
+import client.util.MediaUtil;
+import client.util.MsoyUI;
 
 /**
  * Displays a person's friends list.
@@ -40,8 +43,24 @@ public class FriendsBlurb extends Blurb
     {
         setHeader(CPeople.msgs.friendsTitle());
 
-        FriendsGrid grid = new FriendsGrid();
-        grid.setModel(new SimpleDataModel(pdata.friends), 0);
+        Widget body;
+        if (pdata.friends.size() == 0) {
+            if (CPeople.getMemberId() != _name.getMemberId()) {
+                body = new Label(CPeople.msgs.noFriendsOther());
+            } else {
+                body = GroupsBlurb.createEmptyTable(
+                    CPeople.msgs.noFriendsSelf(), CPeople.msgs.noFriendsFindEm(),
+                    Page.PEOPLE, "search");
+            }
+        } else {
+            SmartTable grid = new SmartTable();
+            grid.setWidth("100%");
+            for (int ii = 0; ii < pdata.friends.size(); ii++) {
+                int row = ii / FRIEND_COLUMNS, col = ii % FRIEND_COLUMNS;
+                grid.setWidget(row, col, new FriendWidget((MemberCard)pdata.friends.get(ii)));
+            }
+            body = grid;
+        }
 
         FlexTable footer = new FlexTable();
         footer.setCellPadding(0);
@@ -82,30 +101,23 @@ public class FriendsBlurb extends Blurb
             }));
         }
 
-        ContentFooterPanel content = new ContentFooterPanel(grid, footer);
+        ContentFooterPanel content = new ContentFooterPanel(body, footer);
         content.addStyleName("friendsBlurb");
-        content.getFlexCellFormatter().setStyleName(0, 0, ""); // avoid double dottage
         setContent(content);
     }
 
-    protected class FriendsGrid extends ProfileGrid
+    protected class FriendWidget extends FlowPanel
     {
-        public FriendsGrid () {
-            super(FRIEND_ROWS, FRIEND_COLUMNS, NAV_ON_BOTTOM, CPeople.msgs.noFriendsOther());
-            addStyleName("dottedGrid");
-            setVerticalOrienation(true);
-            setWidth("100%");
-        }
-
-        // @Override // from PagedGrid
-        protected Widget createEmptyContents ()
+        public FriendWidget (final MemberCard card) 
         {
-            if (CPeople.getMemberId() != _name.getMemberId()) {
-                return super.createEmptyContents();
-            }
-            return GroupsBlurb.createEmptyTable(
-                CPeople.msgs.noFriendsSelf(), CPeople.msgs.noFriendsFindEm(),
-                Page.PEOPLE, "search");
+            setStyleName("Friend");
+            ClickListener profileClick = new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.PEOPLE, "" + card.name.getMemberId());
+                }
+            };
+            add(MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE, profileClick));
+            add(MsoyUI.createActionLabel(card.name.toString(), profileClick));
         }
     }
 

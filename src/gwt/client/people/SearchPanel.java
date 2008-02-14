@@ -12,6 +12,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 import client.shell.Args;
 import client.shell.Frame;
 import client.util.MsoyCallback;
+import client.util.MsoyUI;
 
 public class SearchPanel extends VerticalPanel
 {
@@ -54,9 +55,9 @@ public class SearchPanel extends VerticalPanel
 
     public void clearResults ()
     {
-        if (_profiles != null) {
-            remove(_profiles);
-            _profiles = null;
+        if (_members != null) {
+            remove(_members);
+            _members = null;
             _searchString = null;
         }
     }
@@ -65,15 +66,15 @@ public class SearchPanel extends VerticalPanel
     {
         _searchString = search;
         clearResults();
-        add(_profiles = new ProfileGrid(ROWS, COLUMNS, ProfileGrid.NAV_ON_TOP,
-                                        CPeople.msgs.gridNoProfiles()));
-        _profiles.setModel(new SimpleDataModel(cards), page);
+        _members = new MemberList(CPeople.msgs.searchResultsNoMatch(search));
+        add(MsoyUI.createBox("people", CPeople.msgs.searchResultsTitle(search), _members));
+        _members.setModel(new SimpleDataModel(cards), page);
     }
 
     public void displayPage (int page)
     {
-        if (_profiles != null) {
-            _profiles.displayPage(page, false);
+        if (_members != null) {
+            _members.displayPage(page, false);
         }
     }
 
@@ -83,6 +84,6 @@ public class SearchPanel extends VerticalPanel
     }
 
     protected SearchControls _ctrls;
-    protected ProfileGrid _profiles;
+    protected MemberList _members;
     protected String _searchString;
 }
