@@ -13,10 +13,10 @@ import com.whirled.remix.data.EditableDataPack;
 
 public class FileEditor extends FieldEditor
 {
-    public function FileEditor (pack :EditableDataPack, name :String, serverURL :String)
+    public function FileEditor (ctx :RemixContext, name :String, serverURL :String)
     {
-        var entry :Object = pack.getFileEntry(name);
-        super(pack, name, entry);
+        var entry :Object = ctx.pack.getFileEntry(name);
+        super(ctx, name, entry);
         _serverURL = serverURL;
 
         addUsedCheckBox(entry);
@@ -56,7 +56,7 @@ public class FileEditor extends FieldEditor
         _bytes = bytes;
         updateEntry();
 
-        _pack.replaceFile(_name, filename, bytes);
+        _ctx.pack.replaceFile(_name, filename, bytes);
         setChanged();
     }
 
@@ -74,14 +74,14 @@ public class FileEditor extends FieldEditor
     override protected function updateEntry () :void
     {
         if (_bytes != null) {
-            _pack.replaceFile(_name, _used.selected ? _label.text : null, _bytes);
+            _ctx.pack.replaceFile(_name, _used.selected ? _label.text : null, _bytes);
             setChanged();
         }
     }
 
     protected function showFile () :void
     {
-        new PopupFilePreview(this, _name, _pack, _serverURL);
+        new PopupFilePreview(this, _name, _ctx, _serverURL);
     }
 
     protected var _label :Label;

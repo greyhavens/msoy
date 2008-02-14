@@ -117,9 +117,9 @@ public class RemixControls extends HBox
         _params = params;
         var media :String = params["media"] as String;
 
-        _pack = new EditableDataPack(media);
-        _pack.addEventListener(Event.COMPLETE, handlePackComplete);
-        _pack.addEventListener(ErrorEvent.ERROR, handlePackError);
+        _ctx = new RemixContext(new EditableDataPack(media));
+        _ctx.pack.addEventListener(Event.COMPLETE, handlePackComplete);
+        _ctx.pack.addEventListener(ErrorEvent.ERROR, handlePackError);
     }
 
     protected function handlePreviewerEvent (event :Event) :void
@@ -143,17 +143,17 @@ public class RemixControls extends HBox
         addRule();
 
         var name :String;
-        var datas :Array = _pack.getDataFields();
+        var datas :Array = _ctx.pack.getDataFields();
         if (datas.length > 0) {
             for each (name in datas) {
-                _controls.addChild(new DataEditor(_pack, name));
+                _controls.addChild(new DataEditor(_ctx, name));
             }
         }
 
-        var files :Array = _pack.getFileFields();
+        var files :Array = _ctx.pack.getFileFields();
         if (files.length > 0) {
             for each (name in files) {
-                _controls.addChild(new FileEditor(_pack, name, _params["server"]));
+                _controls.addChild(new FileEditor(_ctx, name, _params["server"]));
             }
         }
     }
@@ -178,7 +178,7 @@ public class RemixControls extends HBox
 
     protected function updatePreview () :void
     {
-        _bytes = _pack.serialize();
+        _bytes = _ctx.pack.serialize();
         sendPreview();
     }
 
@@ -213,7 +213,7 @@ public class RemixControls extends HBox
         uploader.addEventListener(ProgressEvent.PROGRESS, handleUploadProgress);
         uploader.addEventListener(IOErrorEvent.IO_ERROR, handleUploadError);
         uploader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleUploadError);
-        uploader.upload(_params["mediaId"], "datapack.zip", _pack.serialize());
+        uploader.upload(_params["mediaId"], "datapack.zip", _ctx.pack.serialize());
     }
 
     protected function handleUploadProgress (event :ProgressEvent) :void
@@ -250,7 +250,7 @@ public class RemixControls extends HBox
 
     protected var _saveBtn :CommandButton;
 
-    protected var _pack :EditableDataPack;
+    protected var _ctx :RemixContext;
 
     protected var _snapper :CameraSnapshotter;
 

@@ -24,17 +24,17 @@ import com.whirled.remix.data.EditableDataPack;
 
 public class DataEditor extends FieldEditor
 {
-    public function DataEditor (pack :EditableDataPack, name :String)
+    public function DataEditor (ctx :RemixContext, name :String)
     {
-        var entry :Object = pack.getDataEntry(name);
-        super(pack, name, entry);
+        var entry :Object = ctx.pack.getDataEntry(name);
+        super(ctx, name, entry);
 
         _value = entry.value;
 
         addUsedCheckBox(entry);
 
         try {
-            Object(this)["setup" + entry.type](entry, pack);
+            Object(this)["setup" + entry.type](entry, ctx);
 
         } catch (err :Error) {
             setupUnknown(entry);
@@ -47,7 +47,7 @@ public class DataEditor extends FieldEditor
         }
     }
 
-    protected function setupBoolean (entry :Object, pack :EditableDataPack) :void
+    protected function setupBoolean (entry :Object, ctx :RemixContext) :void
     {
         var tog :CheckBox = new CheckBox();
         tog.selected = Boolean(entry.value);
@@ -61,33 +61,33 @@ public class DataEditor extends FieldEditor
     }
 
     protected function setupString (
-        entry :Object, pack :EditableDataPack, validator :Validator = null) :void
+        entry :Object, ctx :RemixContext, validator :Validator = null) :void
     {
         var label :Label = new Label();
         updateLabel(label, entry);
-        pack.addEventListener(EditableDataPack.DATA_CHANGED, function (event :ValueEvent) :void {
+        ctx.pack.addEventListener(EditableDataPack.DATA_CHANGED, function (event :ValueEvent) :void {
             if (event.value === entry.name) {
-                updateLabel(label, pack.getDataEntry(entry.name));
+                updateLabel(label, ctx.pack.getDataEntry(entry.name));
             }
         });
         addComp(label);
 
         var dataEditor :DataEditor = this;
         var change :CommandButton = new CommandButton("View/Change", function () :void {
-            new PopupEditor(dataEditor, pack.getDataEntry(entry.name), validator);
+            new PopupEditor(dataEditor, ctx.pack.getDataEntry(entry.name), validator);
         });
         _component = change;
         addComp(change);
         addDescriptionLabel(entry);
     }
 
-    protected function setupNumber (entry :Object, pack :EditableDataPack) :void
+    protected function setupNumber (entry :Object, ctx :RemixContext) :void
     {
         var min :Number = Number(entry.min);
         var max :Number = Number(entry.max);
 
         // TODO: allow min/max either way, but allow a hint to specify to use the slider
-        if (false && !isNaN(max) && !isNaN(min)) {
+        if (!isNaN(max) && !isNaN(min)) {
             var hslider :HSlider = new HSlider();
             hslider.minimum = min;
             hslider.maximum = max;
@@ -103,11 +103,11 @@ public class DataEditor extends FieldEditor
             var val :NumberValidator = new NumberValidator();
             val.minValue = min;
             val.maxValue = max;
-            setupString(entry, pack, val);
+            setupString(entry, ctx, val);
         }
     }
 
-    protected function setupColor (entry :Object, pack :EditableDataPack) :void
+    protected function setupColor (entry :Object, ctx :RemixContext) :void
     {
         var picker :ColorPicker = new ColorPicker();
         picker.selectedColor = uint(entry.value);
@@ -144,7 +144,7 @@ public class DataEditor extends FieldEditor
 
     override protected function updateEntry () :void
     {
-        _pack.setData(_name, _used.selected ? _value : null);
+        _ctx.pack.setData(_name, _used.selected ? _value : null);
         setChanged();
     }
 

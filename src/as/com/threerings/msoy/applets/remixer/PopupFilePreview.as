@@ -41,13 +41,13 @@ import com.threerings.msoy.applets.upload.Uploader;
 public class PopupFilePreview extends TitleWindow
 {
     public function PopupFilePreview (
-        parent :FileEditor, name :String, pack :EditableDataPack, serverURL :String)
+        parent :FileEditor, name :String, ctx :RemixContext, serverURL :String)
     {
         _parent = parent;
         _name = name;
-        _pack = pack;
+        _ctx = ctx;
         _serverURL = serverURL;
-        var entry :Object = pack.getFileEntry(name);
+        var entry :Object = ctx.pack.getFileEntry(name);
         _type = entry.type;
 
         this.title = name;
@@ -68,9 +68,9 @@ public class PopupFilePreview extends TitleWindow
             new CommandLinkButton("Upload a new file...", handleChooseFile)));
         if ((_type == "Image" || _type == "DisplayObject") && CameraSnapshotter.hasCamera()) {
             controlBox.addChild(makeBullet(
-            new CommandLinkButton("Take a snapshot with my webcam...", handleChooseCamera)));
+                new CommandLinkButton("Take a snapshot with my webcam...", handleChooseCamera)));
         }
-        var filenames :Array = pack.getFilenames();
+        var filenames :Array = ctx.pack.getFilenames();
         if (filenames.length > 0) {
             // we need to wrap the array commandbutton arg in another array...
             controlBox.addChild(makeBullet(
@@ -100,7 +100,7 @@ public class PopupFilePreview extends TitleWindow
         buttonBar.addChild(new CommandButton("Cancel", close, false));
         box.addChild(buttonBar);
 
-        setImage(entry.value, pack.getFile(name));
+        setImage(entry.value, ctx.pack.getFile(name));
 
         PopUpManager.addPopUp(this, parent, true);
         PopUpManager.centerPopUp(this);
@@ -108,7 +108,7 @@ public class PopupFilePreview extends TitleWindow
 
     public function setImage (filename :String, bytes :ByteArray) :void
     {
-        setFilename(filename);
+        setFilename(filename, bytes);
         _image.setImage(bytes);
         _ok.enabled = (bytes != null);
     }
@@ -150,7 +150,7 @@ public class PopupFilePreview extends TitleWindow
 
     protected function handleChooseExistingFile (filenames :Array) :void
     {
-        var efc :ExistingFileChooser = new ExistingFileChooser(_pack, filenames);
+        var efc :ExistingFileChooser = new ExistingFileChooser(_ctx.pack, filenames);
         efc.addEventListener(Event.COMPLETE, handleFileChosen);
     }
 
@@ -200,10 +200,16 @@ public class PopupFilePreview extends TitleWindow
         return box;
     }
 
-    protected function setFilename (filename :String) :void
+    protected function setFilename (filename :String, bytes :ByteArray = null) :void
     {
-        _filename = filename;
-        _label.text = (filename == null) ? "<no file>" : filename;
+        if (filename == null) {
+            _filename = null;
+            _label.text = "<no file>";
+
+        } else {
+            _filename = _ctx.createFilename(filename, bytes);
+            _label.text = _filename;
+        }
     }
 
     protected function getFilters () :Array
@@ -227,7 +233,7 @@ public class PopupFilePreview extends TitleWindow
 
     protected var _name :String;
 
-    protected var _pack :EditableDataPack;
+    protected var _ctx :RemixContext;
 
     protected var _type :String;
 

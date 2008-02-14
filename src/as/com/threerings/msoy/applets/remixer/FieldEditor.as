@@ -25,9 +25,9 @@ public class FieldEditor extends GridRow
      */
     public static const FIELD_CHANGED :String = "remixFieldChanged";
 
-    public function FieldEditor (pack :EditableDataPack, name :String, entry :Object)
+    public function FieldEditor (ctx :RemixContext, name :String, entry :Object)
     {
-        _pack = pack;
+        _ctx = ctx;
         _name = name;
 
         var lbl :Label = new Label();
@@ -89,6 +89,6 @@ public class FieldEditor extends GridRow
 
     protected var _used :CommandCheckBox;
 
-    protected var _pack :EditableDataPack;
+    protected var _ctx :RemixContext;
 }
 }
