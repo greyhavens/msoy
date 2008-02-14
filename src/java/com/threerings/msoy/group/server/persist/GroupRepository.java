@@ -29,6 +29,7 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.SelectClause;
 import com.samskivert.jdbc.depot.clause.Where;
@@ -92,12 +93,17 @@ public class GroupRepository extends DepotRepository
 
     /**
      * Returns a list of all public and inv-only groups, sorted by size, then by creation time.
+     *
+     * @param offset an offset into the collection of groups at which to start.
+     * @param limit a limit to the number of groups to load or Integer.MAX_VALUE for all of them.
      */
-    public List<GroupRecord> getGroupsList ()
+    public List<GroupRecord> getGroupsList (int offset, int limit)
         throws PersistenceException
     {
-        return findAll(GroupRecord.class,
+        return findAll(
+            GroupRecord.class,
             new Where(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE))),
+            new Limit(offset, limit),
             new OrderBy(
                 new SQLExpression[] { GroupRecord.MEMBER_COUNT_C, GroupRecord.CREATION_DATE_C },
                 new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.ASC }));

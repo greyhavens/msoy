@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.util.Predicate;
+import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.server.MsoyServer;
@@ -59,9 +60,12 @@ public class GroupServlet extends MsoyServiceServlet
         try {
             GalaxyData data = new GalaxyData();
 
-            // TODO: determine our featured whirled
-            GroupRecord group = MsoyServer.groupRepo.loadGroup(2);
-            data.featuredWhirled = group.toGroupObject();
+            // TODO: determine our featured whirled based on who's online now
+            List<GroupRecord> groups = MsoyServer.groupRepo.getGroupsList(0, 5);
+            if (groups.size() > 0) {
+                GroupRecord group = RandomUtil.pickRandom(groups);
+                data.featuredWhirled = group.toGroupObject();
+            }
 
             // load up our popular tags
             List<String> popularTags = Lists.newArrayList();
@@ -85,7 +89,7 @@ public class GroupServlet extends MsoyServiceServlet
     {
         try {
             List<Group> groups = new ArrayList<Group>();
-            for (GroupRecord gRec : MsoyServer.groupRepo.getGroupsList()) {
+            for (GroupRecord gRec : MsoyServer.groupRepo.getGroupsList(0, Integer.MAX_VALUE)) {
                 groups.add(gRec.toGroupObject());
             }
             return groups;
