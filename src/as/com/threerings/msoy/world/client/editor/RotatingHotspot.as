@@ -8,6 +8,7 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import com.threerings.flash.MathUtil;
+import com.threerings.flash.Vector2;
 import com.threerings.util.Log;
 
 import com.threerings.msoy.client.Msgs;
@@ -41,6 +42,8 @@ public class RotatingHotspot extends Hotspot
     {
         super.startAction(event);
         _originalRotation = _editor.target.getMediaRotation();
+        _anchorAngle = Vector2.fromPoints(
+            _editor.target.getMediaCentroid(), _editor.target.globalToLocal(_anchor)).angle;
     }
 
     // @Override from Hotspot
@@ -55,6 +58,7 @@ public class RotatingHotspot extends Hotspot
     {
         super.endAction(event);
         _originalRotation = 0;
+        _anchorAngle = 0;
     }
 
     // @Override from Hotspot
@@ -81,23 +85,13 @@ public class RotatingHotspot extends Hotspot
         if (target == null) {
             return;
         }
-        
-        var center :Point = target.getMediaCentroid();
 
-        var originalTheta :Number = findAngle(center, target.globalToLocal(_anchor));
-        var currentTheta :Number = findAngle(center, target.globalToLocal(new Point(sx, sy)));
+        var mouseAngle :Number = Vector2.fromPoints(
+            target.getMediaCentroid(), target.globalToLocal(new Point(sx, sy))).angle;
+        var delta :Number = MathUtil.toDegrees(mouseAngle - _anchorAngle);
 
-        var delta :Number = currentTheta - originalTheta;
-        delta = delta * 180 / Math.PI;
-
-        _editor.updateTargetRotation(_originalRotation + delta);
+        _editor.updateTargetRotation(MathUtil.normalizeDegrees(_originalRotation + delta));
     }
-
-    protected function findAngle (from :Point, to :Point) :Number
-    {
-        var v :Point = to.subtract(from);
-        return Math.atan2(v.y, v.x);
-    }       
 
     /** Specifies which corner of the furni we occupy. */
     protected var _corner :Point;
@@ -105,6 +99,9 @@ public class RotatingHotspot extends Hotspot
     /** Sprite rotation at the beginning of modifications. Only valid during action. */
     protected var _originalRotation :Number;
 
+    /** Angle to the original mouse anchor (in trig radians). */
+    protected var _anchorAngle :Number;
+    
     // Bitmaps galore!
     [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_rotate.png")]
     public static const HOTSPOT :Class;
