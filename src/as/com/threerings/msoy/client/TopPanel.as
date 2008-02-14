@@ -593,12 +593,12 @@ public class TopPanel extends Canvas
 
         var left :int = getLeftPanelWidth();
         if (_chat != null) {
-            left += _chatBounds.width;
-            w -= _chatBounds.width;
+            left += _chatBounds.width - SLIDE_CHAT_OVERLAP;
+            w -= _chatBounds.width - SLIDE_CHAT_OVERLAP;
             _chat.setStyle("top", top);
             _chat.setStyle("bottom", bottom);
             _chat.setStyle("left", getLeftPanelWidth());
-            _chat.setStyle("right", getRightPanelWidth() + w);
+            _chat.setStyle("right", getRightPanelWidth() + w - SLIDE_CHAT_OVERLAP);
         }
         _placeBox.setStyle("top", top);
         _placeBox.setStyle("bottom", bottom);
@@ -613,6 +613,8 @@ public class TopPanel extends Canvas
     }
 
     private static const log :Log = Log.getLog(TopPanel);
+
+    protected static const SLIDE_CHAT_OVERLAP :int = 47;
 
     /** The giver of life. */
     protected var _ctx :MsoyContext;

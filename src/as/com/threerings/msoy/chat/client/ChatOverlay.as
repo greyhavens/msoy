@@ -474,10 +474,8 @@ public class ChatOverlay
         _occupantList.x = 0;
         _occupantList.y = 0;
         if (_chatContainer != null) {
-            _occupantList.setRightSideScrollbar(true);
             _chatContainer.addOccupantList(_occupantList);
         } else if (_target != null) {
-            _occupantList.setRightSideScrollbar(false);
             _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
         }
     }
@@ -1332,7 +1330,7 @@ public class ChatOverlay
             _historyBar.height = _targetBounds.height - 
                 ((_occupantList != null && _includeOccList && Prefs.getShowingOccupantList()) ?
                   _occupantList.height + _occupantList.y : 0);
-            if (_scrollBarSide == SCROLL_BAR_LEFT && _chatContainer == null) {
+            if (_scrollBarSide == SCROLL_BAR_LEFT || _chatContainer != null) {
                 _historyBar.move(_targetBounds.x, getMinHistY());
             } else {
                 _historyBar.move(
@@ -1405,7 +1403,7 @@ public class ChatOverlay
 
                 // position it
                 glyph.x = _targetBounds.x + PAD + 
-                    (_scrollBarSide == SCROLL_BAR_LEFT && _chatContainer == null ? 
+                    (_scrollBarSide == SCROLL_BAR_LEFT || _chatContainer != null ? 
                      ScrollBar.THICKNESS : 0);
                 glyph.y = ypos;
                 ypos -= getHistorySubtitleSpacing(ii);
@@ -1663,6 +1661,7 @@ import flash.display.Sprite;
 import mx.controls.scrollClasses.ScrollBar;
 
 import mx.core.Container;
+import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
 import com.threerings.flex.FlexWrapper;
@@ -1677,6 +1676,7 @@ class ChatContainer extends Container
     {
         styleName = "chatContainer";
         autoLayout = false;
+        horizontalScrollPolicy = ScrollPolicy.OFF
         addChild(scrollBar);
         addChild(new FlexWrapper(chat));
     }

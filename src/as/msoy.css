@@ -1139,10 +1139,9 @@ Tree {
 }
 
 .chatContainer {
-  backgroundColor: white;
   borderThickness: 0;
   borderStyle: "solid";
-  borderColor: white;
+  borderColor: #222222;
 }
 
 .lobbyPanel {
