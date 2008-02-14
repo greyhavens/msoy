@@ -122,6 +122,7 @@ public class PopupFilePreview extends TitleWindow
 
     protected function handleSizeKnown (event :ValueEvent) :void
     {
+        // append the size to the name label
         _label.text += " (" + event.value[0] + "x" + event.value[1] + ")";
     }
 

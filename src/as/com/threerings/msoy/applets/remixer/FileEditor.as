@@ -28,6 +28,7 @@ public class FileEditor extends FieldEditor
         // TODO, this'll change
         var change :CommandButton = new CommandButton("View/Change", showFile);
         _component = change;
+        _component.toolTip = entry.info;
         addComp(change);
         change.enabled = (entry.value != null);
         addDescriptionLabel(entry);

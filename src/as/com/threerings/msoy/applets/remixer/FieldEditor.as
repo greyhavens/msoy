@@ -38,12 +38,12 @@ public class FieldEditor extends GridRow
 
     protected function addDescriptionLabel (entry :Object) :void
     {
-        var lbl :Label = new Label();
-        var tip :String = entry.info;
-        if (tip != null) {
-            lbl.text = "[ " + tip + " ]";
-        }
-        addComp(lbl);
+//        var lbl :Label = new Label();
+//        var tip :String = entry.info;
+//        if (tip != null) {
+//            lbl.text = "[ " + tip + " ]";
+//        }
+//        addComp(lbl);
     }
 
     protected function addUsedCheckBox (entry :Object) :void

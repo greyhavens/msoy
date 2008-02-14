@@ -19,12 +19,15 @@ import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
 import mx.containers.Grid;
+import mx.containers.GridRow;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
 import mx.controls.HRule;
 import mx.controls.Label;
+import mx.controls.Spacer;
 import mx.controls.SWFLoader;
+import mx.controls.Text;
 
 import com.adobe.images.JPGEncoder;
 
@@ -58,15 +61,17 @@ public class RemixControls extends HBox
         var vbox :VBox = new VBox();
         vbox.horizontalScrollPolicy = ScrollPolicy.OFF;
         vbox.width = CONTROLS_WIDTH;
+        vbox.maxHeight = 550;
         addChild(vbox);
 
         _controls = new Grid();
         _controls.setStyle("top", 0);
         _controls.setStyle("left", 0);
         _controls.setStyle("right", 0);
+        _controls.setStyle("verticalGap", 0);
         _controls.percentWidth = 100;
         _controls.percentHeight = 100;
-        //_controls.width = CONTROLS_WIDTH;
+        //_controls.maxWidth = CONTROLS_WIDTH;
         vbox.addChild(_controls);
 
         var butBox :HBox = new HBox();
@@ -144,17 +149,51 @@ public class RemixControls extends HBox
 
         var name :String;
         var datas :Array = _ctx.pack.getDataFields();
+        var rowCount :int = 0;
         if (datas.length > 0) {
             for each (name in datas) {
-                _controls.addChild(new DataEditor(_ctx, name));
+                colorRow(addSpacer(), rowCount);
+                var de :DataEditor = new DataEditor(_ctx, name);
+                colorRow(de, rowCount);
+                _controls.addChild(de);
+                colorRow(addDescription(_ctx.pack.getDataEntry(name)), rowCount);
+                rowCount++;
             }
         }
 
         var files :Array = _ctx.pack.getFileFields();
         if (files.length > 0) {
             for each (name in files) {
-                _controls.addChild(new FileEditor(_ctx, name, _params["server"]));
+                colorRow(addSpacer(), rowCount);
+                var fe :FileEditor = new FileEditor(_ctx, name, _params["server"]);
+                colorRow(fe, rowCount);
+                _controls.addChild(fe);
+                colorRow(addDescription(_ctx.pack.getFileEntry(name)), rowCount);
+                rowCount++;
             }
+        }
+    }
+
+    protected function addDescription (entry :Object) :GridRow
+    {
+        var lbl :Text = new Text();
+        lbl.width = 300;
+        lbl.text = entry.info;
+
+        return GridUtil.addRow(_controls, "", lbl, [3, 1]);
+    }
+
+    protected function addSpacer () :GridRow
+    {
+        var spacer :Spacer = new Spacer();
+        spacer.height = 5;
+        return GridUtil.addRow(_controls, spacer, [4, 1]);
+    }
+
+    protected function colorRow (row :GridRow, rowCount :int) :void
+    {
+        if (rowCount % 2 == 1) {
+            row.setStyle("backgroundColor", 0xFFFFCC);
         }
     }
 
