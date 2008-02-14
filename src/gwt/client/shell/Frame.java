@@ -499,7 +499,7 @@ public class Frame
         public MemberHeader () {
             int col = 1;
             setWidget(0, col++, new NaviButton(CShell.cmsgs.menuMe(), _images.me(), _images.ome(),
-                                               Page.ME, "mywhirled"));
+                                               Page.ME, ""));
             String arg = Args.compose("f", CShell.getMemberId());
             setWidget(0, col++, new NaviButton(CShell.cmsgs.menuFriends(), _images.friends(),
                                                _images.ofriends(), Page.PEOPLE, arg));

@@ -154,7 +154,12 @@ public abstract class Page
      */
     protected void didLogoff ()
     {
-        History.newItem(""); // go to the landing page
+        // go to the landing page by hook or crook
+        if (History.getToken().equals("")) {
+            CShell.app.onHistoryChanged("");
+        } else {
+            History.newItem("");
+        }
     }
 
     protected static class Content extends FlexTable

@@ -42,11 +42,7 @@ public class index extends MsgsEntryPoint
     {
         String action = args.get(0, "");
 
-        if (action.equals("whirledwide")) {
-            Frame.setTitle(CMe.msgs.titleWhirledwide());
-            setContent(new Whirledwide(createPopulationDisplay()));
-
-        } else if (action.equals("help")) {
+        if (action.equals("help")) {
             setContent(new HelpPanel());
 
         } else if (action.equals("account")) {
@@ -68,8 +64,6 @@ public class index extends MsgsEntryPoint
             }
 
         } else if (CMe.getMemberId() != 0) {
-            // if we are logged in, we always display mywhirled instead of the landing page
-            Frame.setTitle(CMe.msgs.titleMyWhirled());
             setContent(new MyWhirled(createPopulationDisplay()));
             FlashClients.tutorialEvent("myWhirledVisited");
 
