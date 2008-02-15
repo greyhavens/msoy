@@ -42,7 +42,7 @@ public class SearchPanel extends VerticalPanel
             clearResults();
 
         } else if (!showingResultsFor(query)) {
-            CPeople.profilesvc.findProfiles(query, new MsoyCallback() {
+            CPeople.profilesvc.findProfiles(CPeople.ident, query, new MsoyCallback() {
                 public void onSuccess (Object result) {
                     setResults((List) result, page, query);
                 }

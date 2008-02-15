@@ -57,8 +57,14 @@ public class ServletUtil
     /**
      * Resolves a set of member ids into populated {@link MemberCard} instances with additional
      * online status information.
+     *
+     * @param memberIds the ids of the members for whom to resolve cards.
+     * @param onlineOnly if true, all non-online members will be filtered from the results.
+     * @param friendIds if non-null, indicates the ids of the friends of the caller and will be
+     * used to fill in {@link MemberCard#isFriend}, otherwise isFriend will be left false.
      */
-    public static List<MemberCard> resolveMemberCards (final IntSet memberIds, boolean onlineOnly)
+    public static List<MemberCard> resolveMemberCards (
+        final IntSet memberIds, boolean onlineOnly, IntSet friendIds)
         throws ServiceException
     {
         List<MemberCard> cards = Lists.newArrayList();
@@ -103,6 +109,12 @@ public class ServletUtil
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to populate member cards.", pe);
+        }
+
+        if (friendIds != null) {
+            for (MemberCard card : cards) {
+                card.isFriend = friendIds.contains(card.name.getMemberId());
+            }
         }
 
         return cards;

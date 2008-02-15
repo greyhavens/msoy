@@ -103,7 +103,7 @@ public interface ProfileService extends RemoteService
      *
      * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
      */
-    public List findProfiles (String search)
+    public List findProfiles (WebIdent ident, String search)
         throws ServiceException;
 
     /**

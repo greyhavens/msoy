@@ -18,6 +18,7 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.MemberCard;
 
+import client.msgs.FriendInvite;
 import client.msgs.MailComposition;
 import client.shell.Application;
 import client.shell.Args;
@@ -120,44 +121,54 @@ public class MemberList extends PagedGrid
                                                  Page.WORLD, "s" + status.sceneId));
             }
 
-            SmartTable extras = new SmartTable(0, 5);
+            SmartTable extras = new SmartTable("Extras", 0, 5);
             int row = 0;
             ClickListener onClick;
 
-// TODO: include whether this member is our friend or not in MemberCard; if they are, add a "remove
-// friend" link, if they're not, add an "add friend" link
+            if (card.isFriend) {
+                onClick = new ClickListener() {
+                    public void onClick (Widget widget) {
+                        removeFriend(card, false);
+                    }
+                };
+                extras.setWidget(row, 0, MsoyUI.createActionImage(
+                                     "/images/profile/remove.png", onClick));
+                extras.setWidget(row++, 1, MsoyUI.createActionLabel(
+                                     CPeople.msgs.mlRemoveFriend(), onClick));
 
-//             if (CPeople.getMemberId() == card.name.getMemberId()) {
-//                 onClick = new ClickListener() {
-//                     public void onClick (Widget widget) {
-//                         removeFriend(card, false);
-//                     }
-//                 };
-//                 extras.setWidget(
-//                     row, 0, MsoyUI.createActionImage("/images/profile/remove.png", onClick));
-//                 extras.setWidget(
-//                     row++, 1, MsoyUI.createActionLabel(CPeople.msgs.mlRemove(), onClick));
-//             }
+            } else if (CPeople.getMemberId() != 0) {
+                onClick = new ClickListener() {
+                    public void onClick (Widget sender) {
+                        new MailComposition(card.name, CPeople.msgs.inviteTitle(),
+                                            new FriendInvite.Composer(),
+                                            CPeople.msgs.inviteBody()).show();
+                    }
+                };
+                extras.setWidget(row, 0, MsoyUI.createActionImage(
+                                     "/images/profile/addfriend.png", onClick));
+                extras.setWidget(row++, 1, MsoyUI.createActionLabel(
+                                     CPeople.msgs.mlAddFriend(), onClick));
+            }
 
             onClick = new ClickListener() {
                 public void onClick (Widget widget) {
                     new MailComposition(card.name, null, null, null).show();
                 }
             };
-            extras.setWidget(
-                row, 0, MsoyUI.createActionImage("/images/profile/sendmail.png", onClick));
-            extras.setWidget(
-                row++, 1, MsoyUI.createActionLabel("Send mail", onClick));
+            extras.setWidget(row, 0, MsoyUI.createActionImage(
+                                 "/images/profile/sendmail.png", onClick));
+            extras.setWidget(row++, 1, MsoyUI.createActionLabel(
+                                 CPeople.msgs.mlSendMail(), onClick));
 
             onClick = new ClickListener() {
                 public void onClick (Widget widget) {
                     Application.go(Page.WORLD, "m" + card.name.getMemberId());
                 }
             };
-            extras.setWidget(
-                row, 0, MsoyUI.createActionImage("/images/profile/visithome.png", onClick));
-            extras.setWidget(
-                row++, 1, MsoyUI.createActionLabel("Visit home", onClick));
+            extras.setWidget(row, 0, MsoyUI.createActionImage(
+                                 "/images/profile/visithome.png", onClick));
+            extras.setWidget(row++, 1, MsoyUI.createActionLabel(
+                                 CPeople.msgs.mlVisitHome(), onClick));
 
             setWidget(0, 2, extras);
             getFlexCellFormatter().setRowSpan(0, 2, getRowCount());

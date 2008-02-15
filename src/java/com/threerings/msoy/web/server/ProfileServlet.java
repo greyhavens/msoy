@@ -167,9 +167,11 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public List<MemberCard> findProfiles (String search)
+    public List<MemberCard> findProfiles (WebIdent ident, String search)
         throws ServiceException
     {
+        MemberRecord mrec = getAuthedUser(ident);
+
         try {
             // locate the members that match the supplied search
             IntSet mids = new ArrayIntSet();
@@ -186,8 +188,12 @@ public class ProfileServlet extends MsoyServiceServlet
             // last look for a display name match
             mids.addAll(MsoyServer.profileRepo.findMembersByRealName(search, MAX_PROFILE_MATCHES));
 
+            // if the caller is a member, load up their friends set
+            IntSet callerFriendIds = (mrec == null) ? null :
+                MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
+
             // finally resolve cards for these members
-            return ServletUtil.resolveMemberCards(mids, false);
+            return ServletUtil.resolveMemberCards(mids, false, callerFriendIds);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure finding profiles [search=" + search + "].", pe);
@@ -209,8 +215,17 @@ public class ProfileServlet extends MsoyServiceServlet
 
             FriendsResult result = new FriendsResult();
             result.name = tgtrec.getName();
-            List<MemberCard> list = ServletUtil.resolveMemberCards(
-                MsoyServer.memberRepo.loadFriendIds(memberId), false);
+            IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(memberId);
+            IntSet callerFriendIds = null;
+            if (mrec != null) {
+                if (mrec.memberId == memberId) {
+                    callerFriendIds = friendIds;
+                } else {
+                    callerFriendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
+                }
+            }
+            List<MemberCard> list =
+                ServletUtil.resolveMemberCards(friendIds, false, callerFriendIds);
             Collections.sort(list, new Comparator<MemberCard>() {
                 public int compare (MemberCard c1, MemberCard c2) {
                     int rv = MemberCard.compare(c1.status, c2.status);
