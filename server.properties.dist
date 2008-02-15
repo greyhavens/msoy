@@ -128,10 +128,18 @@ oooauth.access_denied_url = /register/access_denied.wm
 #
 # Facebook Application configuration
 
-# facebook.api_key = 
-# facebook.secret = 
+# facebook.api_key =
+# facebook.secret =
 
 #
 # Hostname and port of the event log server.
 
 # event_log_url = http://logdb.metasoy.com
+
+#
+# Jabber component configuration
+#
+# jabber.host = localhost
+# jabber.port = 5275
+# jabber.secret = secret
+# jabber.gateways = aim,msn,yahoo,icq

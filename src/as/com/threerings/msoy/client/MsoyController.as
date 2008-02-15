@@ -228,7 +228,7 @@ public class MsoyController extends Controller
         Prefs.setShowingChatHistory(!Prefs.getShowingChatHistory());
     }
 
-    /** 
+    /**
      * Handles the TOGGLE_CHAT_SLIDE command.
      */
     public function handleToggleChatSlide () :void
@@ -265,7 +265,7 @@ public class MsoyController extends Controller
     {
         new ChatPrefsDialog(_mctx);
     }
-    
+
     /**
      * Handle the POP_VOLUME command.
      */

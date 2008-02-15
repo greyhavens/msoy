@@ -18,7 +18,9 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
 
+import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -80,6 +82,12 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>friends</code> field. */
     public static const FRIENDS :String = "friends";
+
+    /** The field name of the <code>gateways</code> field. */
+    public static const GATEWAYS :String = "gateways";
+
+    /** The field name of the <code>aimContacts</code> field. */
+    public static const IM_CONTACTS :String = "imContacts";
 
     /** The field name of the <code>groups</code> field. */
     public static const GROUPS :String = "groups";
@@ -154,6 +162,12 @@ public class MemberObject extends MsoyBodyObject
     /** The buddies of this player. */
     public var friends :DSet;
 
+    /** The IM gateways available to this player. */
+    public var gateways :DSet;
+
+    /** The IM contacts of this player. */
+    public var imContacts :DSet;
+
     /** The groups of this player. */
     public var groups :DSet;
 
@@ -209,6 +223,36 @@ public class MemberObject extends MsoyBodyObject
                 return MemberName.BY_DISPLAY_NAME(fe1.name, fe2.name);
             });
         return friends;
+    }
+
+    /**
+     * Get a sorted list of gateways.
+     */
+    public function getSortedGateways () :Array
+    {
+        var gateways :Array = this.gateways.toArray();
+        gateways = gateways.sort(
+            function (g1 :GatewayEntry, g2 :GatewayEntry) :int {
+                return g1.compareTo(g2);
+            });
+        return gateways;
+    }
+
+    /**
+     * Get a sorted list of aim contacts for a specified gateway.
+     */
+    public function getSortedImContacts (gateway :String) :Array
+    {
+        var contacts :Array = this.imContacts.toArray();
+        contacts = contacts.filter(
+            function (ce :ContactEntry, index :int, array :Array) :Boolean {
+                return ce.getGateway() == gateway;
+            });
+        contacts = contacts.sort(
+            function (ce1 :ContactEntry, ce2 :ContactEntry) :int {
+                return ce1.compareTo(ce2);
+            });
+        return contacts;
     }
 
     /**
@@ -290,6 +334,8 @@ public class MemberObject extends MsoyBodyObject
         avatar = (ins.readObject() as Avatar);
         avatarCache = (ins.readObject() as DSet);
         friends = (ins.readObject() as DSet);
+        gateways = (ins.readObject() as DSet);
+        imContacts = (ins.readObject() as DSet);
         groups = (ins.readObject() as DSet);
         newMailCount = ins.readInt();
         game = (ins.readObject() as GameSummary);

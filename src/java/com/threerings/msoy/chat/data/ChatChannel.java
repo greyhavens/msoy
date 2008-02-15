@@ -6,9 +6,10 @@ package com.threerings.msoy.chat.data;
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.util.Name;
 
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.ChannelName;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.JabberName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
 
 /**
@@ -27,6 +28,9 @@ public class ChatChannel extends SimpleStreamableObject
 
     /** A chat channel for room chat. */
     public static final int ROOM_CHANNEL = 4;
+
+    /** A chat channel between a member and the jabber gateway. */
+    public static final int JABBER_CHANNEL = 5;
 
     /** The type of this chat channel. */
     public int type;
@@ -65,6 +69,14 @@ public class ChatChannel extends SimpleStreamableObject
     public static ChatChannel makeRoomChannel (RoomName room)
     {
         return new ChatChannel(ROOM_CHANNEL, room);
+    }
+
+    /**
+     * Creates a channel identifier for the specified named jabber channel.
+     */
+    public static ChatChannel makeJabberChannel (JabberName channel)
+    {
+        return new ChatChannel(JABBER_CHANNEL, channel);
     }
 
     /** Used for unserialization. */

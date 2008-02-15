@@ -6,6 +6,8 @@ package com.threerings.msoy.chat.client {
 import mx.core.UIComponent;
 
 import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.client.InvocationAdapter;
+import com.threerings.presents.client.ResultWrapper;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashMap;
@@ -29,6 +31,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
 
@@ -37,6 +40,8 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelMarshaller;
 import com.threerings.msoy.chat.data.ChatChannelObject;
+import com.threerings.msoy.chat.data.JabberMarshaller;
+import com.threerings.msoy.chat.client.JabberService;
 
 import com.threerings.msoy.notify.data.NotifyMessage;
 
@@ -57,6 +62,7 @@ public class MsoyChatDirector extends ChatDirector
 
         // let the compiler know that these must be compiled into the client
         var c :Class = ChatChannelMarshaller;
+        c = JabberMarshaller;
 
         var msg :MessageBundle = _msgmgr.getBundle(_bundle);
         registerCommandHandler(msg, "away", new AwayHandler());
@@ -91,6 +97,7 @@ public class MsoyChatDirector extends ChatDirector
 
         // if this is a member or already open channel, open/select the UI immediately
         if (channel.type == ChatChannel.MEMBER_CHANNEL ||
+            channel.type == ChatChannel.JABBER_CHANNEL ||
                 _chandlers.containsKey(channel.toLocalType())) {
             _chatTabs.displayChat(channel, getHistory(channel), inFront);
             return;
@@ -151,6 +158,49 @@ public class MsoyChatDirector extends ChatDirector
             gameChat.shutdown();
             _wctx.getTopPanel().clearRightPanel();
         }
+    }
+
+    /**
+     * Registers a user with an IM gateway and logs them in for chatting.
+     */
+    public function registerIM (gateway :String, username :String, password :String) :void
+    {
+        var svc :JabberService = (_wctx.getClient().requireService(JabberService) as JabberService);
+        svc.registerIM(_wctx.getClient(), gateway, username, password, new InvocationAdapter(
+            function (cause :String) :void {
+                var msg :String = MessageBundle.compose(
+                    "e.im_register_failed", "m." + gateway, cause);
+                _wctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
+            }));
+    }
+
+    /**
+     * Unregisters a user with an IM gateway, effectively logging them off.
+     */
+    public function unregisterIM (gateway :String) :void
+    {
+        var svc :JabberService = (_wctx.getClient().requireService(JabberService) as JabberService);
+        svc.unregisterIM(_wctx.getClient(), gateway, new InvocationAdapter(
+            function (cause :String) :void {
+                var msg :String = MessageBundle.compose(
+                    "e.im_unregister_failed", "m." + gateway, MessageBundle.taint(cause));
+                _wctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
+            }));
+    }
+
+
+    /**
+     * Requests that a tell message be delivered to the specified jabber user.
+     */
+    public function requestJabber (target :JabberName, msg :String) :void
+    {
+        var svc :JabberService = (_wctx.getClient().requireService(JabberService) as JabberService);
+        svc.sendMessage(_wctx.getClient(), target, msg, new ResultWrapper(
+            function (cause :String) :void {
+            },
+            function (result :Object) :void {
+                dispatchMessage(new TellFeedbackMessage(target, msg), ChatCodes.PLACE_CHAT_TYPE);
+            }));
     }
 
     // from parent superclass BasicDirector
@@ -266,7 +316,7 @@ public class MsoyChatDirector extends ChatDirector
             // pass it off to the chat tabs
             var displayed :Boolean = false;
             _displays.apply(function (overlay :Object) :void {
-                if (overlay is ComicOverlay && 
+                if (overlay is ComicOverlay &&
                     (overlay as ComicOverlay).displayMessage(msg, displayed)) {
                     displayed = true;
                 }
@@ -321,7 +371,9 @@ public class MsoyChatDirector extends ChatDirector
         } else if (name is ChannelName) {
             return ChatChannel.makePrivateChannel(name as ChannelName);
         } else if (name is RoomName) {
-            return ChatChannel.makeRoomChannel(name as RoomName);    
+            return ChatChannel.makeRoomChannel(name as RoomName);
+        } else if (name is JabberName) {
+            return ChatChannel.makeJabberChannel(name as JabberName);
         } else {
             log.warning("Requested to open unknown type of channel [name=" + name +
                         ", type=" + ClassUtil.getClassName(name) + "].");
@@ -338,6 +390,9 @@ public class MsoyChatDirector extends ChatDirector
         if ((msg.localtype == ChatCodes.USER_CHAT_TYPE && msg is UserMessage) ||
             msg is TellFeedbackMessage) {
             var umsg :UserMessage = (msg as UserMessage);
+            if (umsg.getSpeakerDisplayName() is JabberName) {
+                return ChatChannel.makeJabberChannel(umsg.getSpeakerDisplayName() as JabberName);
+            }
             return ChatChannel.makeMemberChannel(umsg.getSpeakerDisplayName() as MemberName);
         }
         var handler :ChannelHandler = _chandlers.get(msg.localtype) as ChannelHandler;
@@ -470,7 +525,7 @@ class ChannelHandler implements Subscriber
         var msg :String = MessageBundle.compose("m.join_channel_failed", cause);
         _ctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
     }
-    
+
     private static const log :Log = Log.getLog(ChannelHandler);
 
     protected var _ctx :MsoyContext;

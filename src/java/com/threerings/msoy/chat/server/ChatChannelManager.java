@@ -143,7 +143,7 @@ public class ChatChannelManager
                 // we can just pull the scene out of the scene manager and ask it about
                 // permissions
                 if (!((MsoyScene) scmgr.getScene()).canEnter(member)) {
-                    log.warning("Unable to join channel due to access restrictions [member=" + 
+                    log.warning("Unable to join channel due to access restrictions [member=" +
                         member + ", channel=" + channel + "]");
                     listener.requestFailed(E_ACCESS_DENIED);
                     return;
@@ -153,7 +153,7 @@ public class ChatChannelManager
                 // scene isn't resolved here, need to load up the MsoySceneModel and ask it
                 MsoyServer.invoker.postUnit(new PersistingUnit("joinChannel", listener) {
                     public void invokePersistent () throws Exception {
-                        MsoySceneModel model = 
+                        MsoySceneModel model =
                             (MsoySceneModel) MsoyServer.sceneRepo.loadSceneModel(sceneId);
                         if (model != null) {
                             _hasRights = member.canEnterScene(model.ownerId, model.ownerType, 

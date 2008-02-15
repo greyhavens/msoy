@@ -43,6 +43,7 @@ import com.threerings.whirled.spot.server.SpotProvider;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.chat.server.ChatChannelManager;
+import com.threerings.msoy.chat.server.JabberManager;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.item.server.ItemManager;
@@ -104,6 +105,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Our runtime chat channel manager. */
     public static ChatChannelManager channelMan = new ChatChannelManager();
+
+    /** Our runtime jabber manager. */
+    public static JabberManager jabberMan = new JabberManager();
 
     /** Contains information on our groups. */
     public static GroupRepository groupRepo;
@@ -361,6 +365,7 @@ public class MsoyServer extends MsoyBaseServer
         groupMan.init(groupRepo, memberRepo);
         mailMan.init(perCtx, memberRepo, _eventLog);
         channelMan.init(invmgr);
+        jabberMan.init(invmgr);
         itemMan.init(perCtx, _eventLog);
         swiftlyMan.init(invmgr);
         petMan.init(invmgr);

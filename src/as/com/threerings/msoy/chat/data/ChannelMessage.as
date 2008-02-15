@@ -25,18 +25,6 @@ public class ChannelMessage extends UserMessage
         super(speaker, null, message, mode);
     }
 
-    override public function getFormat () :String
-    {
-        switch (mode) {
-        case ChatCodes.THINK_MODE: return "m.channel_think_format";
-        case ChatCodes.EMOTE_MODE: return "m.channel_emote_format";
-        case ChatCodes.SHOUT_MODE: return "m.channel_shout_format";
-        case ChatCodes.BROADCAST_MODE: return "m.channel_broadcast_format";
-        }
-
-        return "m.channel_speak_format";
-    }
-
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
@@ -49,6 +37,18 @@ public class ChannelMessage extends UserMessage
     {
         super.writeObject(out);
         out.writeField(creationTime);
+    }
+
+    override public function getFormat () :String
+    {
+        switch (mode) {
+        case ChatCodes.THINK_MODE: return "m.channel_think_format";
+        case ChatCodes.EMOTE_MODE: return "m.channel_emote_format";
+        case ChatCodes.SHOUT_MODE: return "m.channel_shout_format";
+        case ChatCodes.BROADCAST_MODE: return "m.channel_broadcast_format";
+        }
+
+        return "m.channel_speak_format";
     }
 }
 }

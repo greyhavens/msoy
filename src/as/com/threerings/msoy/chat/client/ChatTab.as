@@ -39,15 +39,15 @@ public class ChatTab extends HBox
     public static const SELECTED :int = 1;
     public static const UNSELECTED :int = 2;
     public static const ATTENTION :int = 3;
-    
-    public function ChatTab (ctx :MsoyContext, bar :ChatTabBar, channel :ChatChannel, 
+
+    public function ChatTab (ctx :MsoyContext, bar :ChatTabBar, channel :ChatChannel,
         history :HistoryList, roomName :String = null)
     {
         _ctx = ctx;
         _bar = bar;
         if (channel != null) {
             _controller = new ChatChannelController(ctx, channel, history);
-            if (roomName == null) { 
+            if (roomName == null) {
                 roomName = "" + channel.ident;
             }
         }
@@ -138,23 +138,23 @@ public class ChatTab extends HBox
     {
         var style :String;
         switch (state) {
-        case SELECTED: 
-            style = "selected"; 
+        case SELECTED:
+            style = "selected";
             displayShine(false);
             displayCloseBox(_bar.chatTabIndex(this) != 0);
             displayCheckBox(_bar.chatTabIndex(this) == 0 && _controller != null &&
                             _controller.channel.type == ChatChannel.ROOM_CHANNEL);
             break;
 
-        case UNSELECTED: 
-            style = "unselected"; 
+        case UNSELECTED:
+            style = "unselected";
             displayShine(false);
             displayCloseBox(false);
             displayCheckBox(false);
             break;
 
-        case ATTENTION: 
-            style = "attention"; 
+        case ATTENTION:
+            style = "attention";
             displayShine(true);
             displayCloseBox(false);
             displayCheckBox(false);
@@ -175,7 +175,8 @@ public class ChatTab extends HBox
             if (state == SELECTED) {
                 _ctx.getTopPanel().getControlBar().setChatColor(COLOR_GROUP);
             }
-        } else if (_controller.channel.type == ChatChannel.MEMBER_CHANNEL) {
+        } else if (_controller.channel.type == ChatChannel.MEMBER_CHANNEL ||
+                _controller.channel.type == ChatChannel.JABBER_CHANNEL) {
             style += "TellTab";
             if (state == SELECTED) {
                 _ctx.getTopPanel().getControlBar().setChatColor(COLOR_TELL);
@@ -269,7 +270,7 @@ public class ChatTab extends HBox
             addChildAt(_shine, 0);
         } else if (!show && _shine.parent == this) {
             removeChild(_shine);
-        } 
+        }
 
     }
 
@@ -290,7 +291,7 @@ public class ChatTab extends HBox
         }
     }
 
-    protected function updateButtonSkin (uw :Number, uh :Number) :void 
+    protected function updateButtonSkin (uw :Number, uh :Number) :void
     {
         var newSkin :Class = getStyle(BUTTON_SKIN) as Class;
         if (newSkin == _buttonSkinClass) {
@@ -333,7 +334,7 @@ public class ChatTab extends HBox
 
         if (_closeSkin != null) {
             _closeButton.rawChildren.addChild(_closeSkin);
-            (_closeSkin as IFlexDisplayObject).setActualSize(_closeButton.width, 
+            (_closeSkin as IFlexDisplayObject).setActualSize(_closeButton.width,
                                                              _closeButton.height);
         }
     }
@@ -403,7 +404,7 @@ public class ChatTab extends HBox
     }
 
     private static const log :Log = Log.getLog(ChatTab);
-    
+
     protected static const BUTTON_SKIN :String = "buttonSkin";
     protected static const CLOSE_SKIN :String = "closeSkin";
     protected static const CHECK_UP_SKIN :String = "checkboxUpSkin";
@@ -443,7 +444,7 @@ import mx.containers.Canvas;
 
 class Shine extends Canvas
 {
-    public function Shine () 
+    public function Shine ()
     {
         _shine = new ATTENTION_SHINE() as DisplayObject;
         _naturalWidth = _shine.width;

@@ -26,6 +26,7 @@ import com.threerings.presents.net.Credentials;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
 
+import com.threerings.msoy.chat.client.IMRegisterDialog;
 import com.threerings.msoy.chat.client.ChatChannelController;
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.group.data.GroupMembership;
@@ -36,6 +37,7 @@ import com.threerings.msoy.avrg.client.AVRGamePanel;
 import com.threerings.msoy.game.client.MsoyGamePanel;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
+import com.threerings.msoy.client.ChatPrefsDialog;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.MemberService;
@@ -56,6 +58,8 @@ import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.data.all.ContactEntry;
+import com.threerings.msoy.data.all.GatewayEntry;
 
 /**
  * Extends the MsoyController with World specific bits.
@@ -100,6 +104,12 @@ public class WorldController extends MsoyController
 
     /** Command to open the chat interface for a particular chat channel. */
     public static const OPEN_CHANNEL :String = "OpenChannel";
+
+    /** Command to logon to an im account. */
+    public static const REGISTER_IM :String = "RegisterIM";
+
+    /** Command to logoff an im account. */
+    public static const UNREGISTER_IM :String = "UnregisterIM";
 
     /** Command to view a member's profile, arg is [ memberId ] */
     public static const VIEW_MEMBER :String = "ViewMember";
@@ -163,6 +173,22 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the REGISTER_IM command.
+     */
+    public function handleRegisterIM (gateway :String) :void
+    {
+        _topPanel.callLater(function () :void { new IMRegisterDialog(_wctx, gateway); });
+    }
+
+    /**
+     * Handles the UNREGISTER_IM command;
+     */
+    public function handleUnregisterIM (gateway :String) :void
+    {
+        _wctx.getMsoyChatDirector().unregisterIM(gateway);
+    }
+
+    /**
      * Handles the POP_CHANNEL_MENU command.
      */
     public function handlePopChannelMenu (trigger :Button) :void
@@ -175,7 +201,7 @@ public class WorldController extends MsoyController
                 var toggleHide :Object = { label: toggleHideLabel, command: TOGGLE_CHAT_HIDE };
                 menuData.push(toggleHide);
             }
-            var toggleSlideLabel :String = Prefs.getSlidingChatHistory() ? 
+            var toggleSlideLabel :String = Prefs.getSlidingChatHistory() ?
                 Msgs.GENERAL.get("m.overlay_chat") : Msgs.GENERAL.get("m.slide_chat");
             var toggleSlide :Object = { label: toggleSlideLabel, command: TOGGLE_CHAT_SLIDE };
             menuData.push(toggleSlide);
@@ -214,6 +240,33 @@ public class WorldController extends MsoyController
                           enabled : false });
         }
         menuData = menuData.concat(groups);
+
+        var gateways :Array = me.getSortedGateways();
+        if (gateways.length > 0) {
+            menuData.push({ type: "separator"});
+        }
+        for each (var ge :GatewayEntry in gateways) {
+            var subMenuData :Array = [];
+            if (!ge.online) {
+                subMenuData.push(
+                    { label: Msgs.CHAT.get("m.im_login"), command: REGISTER_IM, arg: ge.gateway });
+            } else {
+                var contacts :Array = me.getSortedImContacts(ge.gateway);
+                for each (var ce :ContactEntry in contacts) {
+                    var aitem :Object = {
+                        label: ce.name.toString(), command: OPEN_CHANNEL, arg: ce.name }
+                    checkChatChannelOpen(ce.name, aitem);
+                    subMenuData.push(aitem);
+                }
+                if (contacts.length == 0) {
+                    subMenuData.push({ label: Msgs.CHAT.get("m.no_im_contacts"), enabled: false});
+                }
+                subMenuData.push({ type: "separator"});
+                subMenuData.push({
+                    label:Msgs.CHAT.get("m.im_logout"), command: UNREGISTER_IM, arg: ge.gateway });
+            }
+            menuData.push({ label: Msgs.CHAT.get("m." + ge.gateway), children: subMenuData});
+        }
 
         CommandMenu.createMenu(menuData).popUp(trigger);
     }
@@ -388,7 +441,7 @@ public class WorldController extends MsoyController
      */
     public function handleJoinPlayerTable (memberId :int) :void
     {
-        var msvc :MemberService = 
+        var msvc :MemberService =
             (_wctx.getClient().requireService(MemberService) as MemberService);
         msvc.getCurrentMemberLocation(_wctx.getClient(), memberId, new ResultWrapper(
             function (cause :String) :void {
@@ -514,7 +567,7 @@ public class WorldController extends MsoyController
     {
         var msvc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
         msvc.followMember(_wctx.getClient(), memberId,
-                          new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS, null, 
+                          new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS, null,
                                                 "m.following"));
     }
 
@@ -773,7 +826,7 @@ public class WorldController extends MsoyController
         // get all the keys from a resource bundle...
         try {
             var numTips :int = StringUtil.parseInteger(Msgs.GENERAL.get("n.tip_count"));
-            _wctx.displayInfo(MsoyCodes.GENERAL_MSGS, 
+            _wctx.displayInfo(MsoyCodes.GENERAL_MSGS,
                               "m.tip_" + int(1 + (Math.random() * numTips)));
         } catch (err :Error) {
             // just omit the tip

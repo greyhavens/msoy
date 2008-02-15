@@ -98,7 +98,7 @@ public class ChatTabBar extends HBox
         _chatDirector = dir;
     }
 
-    public function displayChat (channel :ChatChannel, history :HistoryList = null, 
+    public function displayChat (channel :ChatChannel, history :HistoryList = null,
         inFront :Boolean = false) :void
     {
         var index :int = getControllerIndex(channel);
@@ -114,7 +114,7 @@ public class ChatTabBar extends HBox
 
         // this tab hasn't been created yet.
         if (history == null) {
-            log.warning("Cannot display chat for an unknown channel without a history [" + 
+            log.warning("Cannot display chat for an unknown channel without a history [" +
                 channel + "]");
             return;
         }
@@ -141,7 +141,7 @@ public class ChatTabBar extends HBox
                 (_tabs[index] as ChatTab).setVisualState(ChatTab.ATTENTION);
             }
             return;
-        } 
+        }
 
         if (channel == null) {
             if (getLocationHistory() != null) {
@@ -154,14 +154,15 @@ public class ChatTabBar extends HBox
         }
 
         // if this is a message from a member, we can pop up a new tab, and set it to ATTENTION
-        if (channel.type == ChatChannel.MEMBER_CHANNEL) {
+        if (channel.type == ChatChannel.MEMBER_CHANNEL ||
+                channel.type == ChatChannel.JABBER_CHANNEL) {
             var history :HistoryList = _ctx.getMsoyChatDirector().getHistory(channel);
             history.addMessage(msg);
             addTab(new ChatTab(_ctx, this, channel, history));
             (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
         } else {
             // else this arrived (most likely) after we already closed the channel tab.
-            log.info("Dropping late arriving channel chat message [msg=" + msg + "].");
+            log.info("Dropping late arriving channel chat message [msg=" + msg + ", localtype=" + msg.localtype + "].");
         }
     }
 
@@ -221,7 +222,7 @@ public class ChatTabBar extends HBox
     public function displayActiveChat (defaultList :HistoryList) :void
     {
         if (_selectedIndex < 0 || _tabs.length <= 0) {
-            _ctx.getTopPanel().getChatOverlay().setHistory(defaultList); 
+            _ctx.getTopPanel().getChatOverlay().setHistory(defaultList);
             return;
         }
 
@@ -376,7 +377,7 @@ public class ChatTabBar extends HBox
         }
         return -1;
     }
-    
+
     private static const log :Log = Log.getLog(ChatTabBar);
 
     protected var _tabs :Array = [];

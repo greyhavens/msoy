@@ -22,6 +22,7 @@ import com.threerings.crowd.chat.data.SystemMessage;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.VizMemberName;
+import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
@@ -34,13 +35,14 @@ import com.threerings.msoy.chat.data.ChatChannelObject;
 public class ChatChannelController
     implements SetListener, MessageListener
 {
-    public function ChatChannelController (ctx :MsoyContext, channel :ChatChannel, 
+    public function ChatChannelController (ctx :MsoyContext, channel :ChatChannel,
         history :HistoryList)
     {
         _ctx = ctx;
         _channel = channel;
         _history = history;
-        if (_channel.type != ChatChannel.MEMBER_CHANNEL) {
+        if (_channel.type != ChatChannel.MEMBER_CHANNEL &&
+            _channel.type != ChatChannel.JABBER_CHANNEL) {
             _occList = new ChannelOccupantList();
         }
 
@@ -69,7 +71,7 @@ public class ChatChannelController
                 for each (var chatter :VizMemberName in _ccobj.chatters.toArray()) {
                     _occList.addChatter(chatter);
                 }
-            }                 
+            }
         }
     }
 
@@ -140,6 +142,10 @@ public class ChatChannelController
         if (_channel.type == ChatChannel.MEMBER_CHANNEL) {
             _ctx.getChatDirector().requestTell(_channel.ident as Name, message, null);
 
+        } else if (_channel.type == ChatChannel.JABBER_CHANNEL) {
+            (_ctx.getChatDirector() as MsoyChatDirector).requestJabber(
+                _channel.ident as JabberName, message);
+
         } else {
             var result :String =
                 _ctx.getChatDirector().requestChat(_ccobj.speakService, message, false);
@@ -183,7 +189,7 @@ public class ChatChannelController
                 break;
             }
         }
-        
+
         // now try to find it in the server's recent history. looking backwards from newest to
         // olders, remember all messages up to the one we've already seen.
         for (var ii :int = _ccobj.recentMessages.length - 1; ii >= 0; ii--) {

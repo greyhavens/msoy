@@ -26,7 +26,9 @@ import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.notify.data.Notification;
 
+import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
@@ -85,6 +87,12 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>friends</code> field. */
     public static final String FRIENDS = "friends";
+
+    /** The field name of the <code>gateways</code> field. */
+    public static final String GATEWAYS = "gateways";
+
+    /** The field name of the <code>imContacts</code> field. */
+    public static final String IM_CONTACTS = "imContacts";
 
     /** The field name of the <code>groups</code> field. */
     public static final String GROUPS = "groups";
@@ -165,6 +173,12 @@ public class MemberObject extends MsoyBodyObject
 
     /** The friends of this player. */
     public DSet<FriendEntry> friends = new DSet<FriendEntry>();
+
+    /** The IM gateways available to this player. */
+    public DSet<GatewayEntry> gateways = new DSet<GatewayEntry>();
+
+    /** The IM contacts of this player. */
+    public DSet<ContactEntry> imContacts = new DSet<ContactEntry>();
 
     /** The groups of this player. */
     public DSet<GroupMembership> groups;
@@ -826,6 +840,102 @@ public class MemberObject extends MsoyBodyObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.FriendEntry> clone =
             (value == null) ? null : value.typedClone();
         this.friends = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>gateways</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToGateways (GatewayEntry elem)
+    {
+        requestEntryAdd(GATEWAYS, gateways, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>gateways</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromGateways (Comparable key)
+    {
+        requestEntryRemove(GATEWAYS, gateways, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>gateways</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateGateways (GatewayEntry elem)
+    {
+        requestEntryUpdate(GATEWAYS, gateways, elem);
+    }
+
+    /**
+     * Requests that the <code>gateways</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setGateways (DSet<com.threerings.msoy.data.all.GatewayEntry> value)
+    {
+        requestAttributeChange(GATEWAYS, value, this.gateways);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.GatewayEntry> clone =
+            (value == null) ? null : value.typedClone();
+        this.gateways = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>imContacts</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToImContacts (ContactEntry elem)
+    {
+        requestEntryAdd(IM_CONTACTS, imContacts, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>imContacts</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromImContacts (Comparable key)
+    {
+        requestEntryRemove(IM_CONTACTS, imContacts, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>imContacts</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateImContacts (ContactEntry elem)
+    {
+        requestEntryUpdate(IM_CONTACTS, imContacts, elem);
+    }
+
+    /**
+     * Requests that the <code>imContacts</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setImContacts (DSet<com.threerings.msoy.data.all.ContactEntry> value)
+    {
+        requestAttributeChange(IM_CONTACTS, value, this.imContacts);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.ContactEntry> clone =
+            (value == null) ? null : value.typedClone();
+        this.imContacts = clone;
     }
 
     /**

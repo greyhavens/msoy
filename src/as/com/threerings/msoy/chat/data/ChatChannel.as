@@ -15,6 +15,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.RoomName;
+import com.threerings.msoy.data.all.JabberName;
 
 /**
  * Defines a particular chat channel.
@@ -31,9 +32,11 @@ public class ChatChannel extends SimpleStreamableObject
     /** A chat channel created by a player into whom they invite other players. */
     public static const PRIVATE_CHANNEL :int = 3;
 
-    /** A chat channel carrying room chat.  GROUP_CHANNEL is a more specific subtype of 
-     * ROOM_CHANNEL */
+    /** A chat channel for room chat. */
     public static const ROOM_CHANNEL :int = 4;
+
+    /** A chat channel between a member and the jabber gateway. */
+    public static const JABBER_CHANNEL :int = 5;
 
     /** The type of this chat channel. */
     public var type :int;
@@ -66,7 +69,7 @@ public class ChatChannel extends SimpleStreamableObject
         return new ChatChannel(PRIVATE_CHANNEL, channel);
     }
 
-    /** 
+    /**
      * Creates a channel identifier for the specified room.
      */
     public static function makeRoomChannel (room :RoomName) :ChatChannel
@@ -74,7 +77,15 @@ public class ChatChannel extends SimpleStreamableObject
         return new ChatChannel(ROOM_CHANNEL, room);
     }
 
-    /** 
+    /**
+     * Creates a channel identifier for the specified named jabber channel.
+     */
+    public static function makeJabberChannel (contact :JabberName) :ChatChannel
+    {
+        return new ChatChannel(JABBER_CHANNEL, contact);
+    }
+
+    /**
      * Returns the static type of the given localType.
      */
     public static function typeOf (localType :String) :int
@@ -95,14 +106,6 @@ public class ChatChannel extends SimpleStreamableObject
         this.ident = ident;
     }
 
-    /**
-     * Returns a string we can use to register this channel with the ChatDirector.
-     */
-    public function toLocalType () :String
-    {
-        return type + ":" + ident;
-    }
-
     // from Object
     public function hashCode () :int
     {
@@ -120,6 +123,14 @@ public class ChatChannel extends SimpleStreamableObject
     override public function toString () :String
     {
         return toLocalType();
+    }
+
+    /**
+     * Returns a string we can use to register this channel with the ChatDirector.
+     */
+    public function toLocalType () :String
+    {
+        return type + ":" + ident;
     }
 
     // from interface Streamable
