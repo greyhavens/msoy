@@ -374,6 +374,9 @@ public class JabberManager
     protected void logoffUser (Name name)
     {
         JabberUser juser = _users.get(name);
+        if (juser == null || juser.user == null) {
+            return;
+        }
         juser.user.startTransaction();
         try {
             GatewayEntry[] gents = juser.user.gateways.toArray(
