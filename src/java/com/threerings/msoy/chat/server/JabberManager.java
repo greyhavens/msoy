@@ -84,12 +84,14 @@ public class JabberManager
 
         String host = ServerConfig.config.getValue("jabber.host", "localhost");
         int port = ServerConfig.config.getValue("jabber.port", 5275);
+        String gatewayList = ServerConfig.config.getValue("jabber.gateways", "");
 
         ConnectionConfiguration config = new ConnectionConfiguration(host, port);
         _conn = new XMPPConnection(config, MsoyServer.omgr);
 
         // For now, only try and connect to the Jabber server if we're on a development server
-        if (!DeploymentConfig.devDeployment) {
+        // and have at least one gateway configured
+        if (!DeploymentConfig.devDeployment || StringUtil.isBlank(gatewayList)) {
             return;
         }
 
