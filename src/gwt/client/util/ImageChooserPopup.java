@@ -37,12 +37,16 @@ import client.shell.Frame;
  */
 public class ImageChooserPopup extends VerticalPanel
 {
-    public static void displayImageChooser (final AsyncCallback callback)
+    /**
+     * Displays an image chooser which will select either the main or thumbnail image of a photo
+     * from the user's inventory, or allow them to upload an image directly.
+     */
+    public static void displayImageChooser (final boolean thumbnail, final AsyncCallback callback)
     {
         CShell.membersvc.loadInventory(CShell.ident, Item.PHOTO, 0, new AsyncCallback() {
             public void onSuccess (Object result) {
-                Frame.showDialog(
-                    CShell.cmsgs.pickImage(), new ImageChooserPopup((List)result, callback));
+                Frame.showDialog(CShell.cmsgs.pickImage(),
+                                 new ImageChooserPopup((List)result, thumbnail, callback));
             }
             public void onFailure (Throwable caught) {
                 callback.onFailure(caught);
@@ -50,21 +54,12 @@ public class ImageChooserPopup extends VerticalPanel
         });
     }
 
-    /**
-     * Creates an image chooser popup with the supplied list of Photo items and a callback to be
-     * informed when one is selected.
-     */
-    public ImageChooserPopup (List images, AsyncCallback callback)
+    protected ImageChooserPopup (List images, boolean thumbnail, AsyncCallback callback)
     {
         _callback = callback;
+        _thumbnail = thumbnail;
         setStyleName("imageChooser");
         add(new PhotoGrid(images));
-    }
-
-    protected void photoSelected (Photo photo)
-    {
-        _callback.onSuccess(photo);
-        Frame.clearDialog(this);
     }
 
     protected class PhotoGrid extends PagedGrid
@@ -89,14 +84,16 @@ public class ImageChooserPopup extends VerticalPanel
 
         // @Override // from PagedGrid
         protected Widget createWidget (Object item) {
-            final Photo photo = (Photo)item;
+            Photo photo = (Photo)item;
             if (photo == null) {
                 return null;
             }
+            final MediaDesc media = _thumbnail ? photo.photoMedia : photo.getThumbnailMedia();
             Widget image = MediaUtil.createMediaView(
                 photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
                     public void onClick (Widget sender) {
-                        photoSelected(photo);
+                        _callback.onSuccess(media);
+                        Frame.clearDialog(ImageChooserPopup.this);
                     }
                 });
             image.addStyleName("Photo");
@@ -140,5 +137,6 @@ public class ImageChooserPopup extends VerticalPanel
 //         }
     }
 
+    protected boolean _thumbnail;
     protected AsyncCallback _callback;
 }

@@ -26,7 +26,6 @@ import com.threerings.gwt.ui.Anchor;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.ProfileService;
 
@@ -206,14 +205,11 @@ public class ProfileBlurb extends Blurb
 
         panel.add(new Button("Select New...", new ClickListener() {
             public void onClick (Widget source) {
-                ImageChooserPopup.displayImageChooser(new MsoyCallback() {
+                ImageChooserPopup.displayImageChooser(true, new MsoyCallback() {
                     public void onSuccess (Object result) {
-                        Photo photo = (Photo)result;
-                        if (photo != null) {
-                            _profile.photo = photo.getThumbnailMedia();
-                            _ephoto.setWidget(MediaUtil.createMediaView(
-                                                  _profile.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
-                        }
+                        _profile.photo = (MediaDesc)result;
+                        _ephoto.setWidget(MediaUtil.createMediaView(
+                                              _profile.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
                     }
                 });
             }

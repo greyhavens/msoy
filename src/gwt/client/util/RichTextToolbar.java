@@ -41,7 +41,7 @@ import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.data.all.Photo;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -459,9 +459,9 @@ public class RichTextToolbar extends Composite
             } else if (sender == justifyRight) {
                 basic.setJustification(RichTextArea.Justification.RIGHT);
             } else if (sender == insertImage) {
-                ImageChooserPopup.displayImageChooser(new AsyncCallback() {
+                ImageChooserPopup.displayImageChooser(false, new AsyncCallback() {
                     public void onSuccess (Object result) {
-                        extended.insertImage(((Photo)result).photoMedia.getMediaPath());
+                        extended.insertImage(((MediaDesc)result).getMediaPath());
                     }
                     public void onFailure (Throwable t) {
                         // not used

@@ -29,7 +29,6 @@ import client.shell.Page;
 import client.util.LimitedTextArea;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
-import client.util.PhotoChoiceBox;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.
@@ -72,7 +71,7 @@ public class GroupEdit extends FlexTable
         _policy.setSelectedIndex(_group.policy - Group.POLICY_PUBLIC);
         addRow(CWhirleds.msgs.editPolicy(), _policy);
 
-        addRow(CWhirleds.msgs.editLogo(), _logo = new PhotoChoiceBox(null));
+        addRow(CWhirleds.msgs.editLogo(), _logo = new PhotoChoiceBox(true, null));
         _logo.setMedia(_group.getLogo());
 
         _blurb = MsoyUI.createTextBox(_group.blurb, Group.MAX_BLURB_LENGTH, 40);
@@ -85,16 +84,7 @@ public class GroupEdit extends FlexTable
         _charter.setText(_extras.charter);
         addRow(CWhirleds.msgs.editCharter(), _charter);
 
-        addRow(CWhirleds.msgs.editBackground(), _background = new PhotoChoiceBox(null) {
-            protected MediaDesc toMedia (Photo photo) {
-                return (photo == null) ? null : new MediaDesc(
-                    photo.photoMedia.hash, photo.photoMedia.mimeType,
-                    // the background image constraint is computed on thumbnail size so that it
-                    // can be scaled properly in the edit dialog
-                    MediaDesc.computeConstraint(
-                        MediaDesc.THUMBNAIL_SIZE, photo.photoWidth, photo.photoHeight));
-            }
-        });
+        addRow(CWhirleds.msgs.editBackground(), _background = new PhotoChoiceBox(false, null));
         _background.setMedia(_extras.background);
 
         _bgmode = new ListBox();
