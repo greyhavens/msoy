@@ -238,8 +238,11 @@ public class WorldController extends MsoyController
         if (groups.length == 0) {
             groups.push({ label: Msgs.GENERAL.get("m.no_groups"),
                           enabled : false });
+        } else if (groups.length > 4) {
+            menuData.push({ label: Msgs.GENERAL.get("m.groups"), children: groups});
+        } else {
+            menuData = menuData.concat(groups);
         }
-        menuData = menuData.concat(groups);
 
         var gateways :Array = me.getSortedGateways();
         if (gateways.length > 0) {
