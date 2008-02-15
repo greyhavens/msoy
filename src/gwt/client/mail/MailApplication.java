@@ -740,12 +740,12 @@ public class MailApplication extends VerticalPanel
         Date now = new Date(nowTime);
         if (now.getYear() != date.getYear()) {
             // e.g. Oct 10, 2007
-            return _months[date.getMonth()] + " " + date.getDay() + ", " + (date.getYear() + 1900);
+            return _months[date.getMonth()] + " " + date.getDate() + ", " + (date.getYear()+1900);
         }
         long hourDiff = (nowTime - date.getTime()) / (3600 * 1000);
         if (hourDiff > 6*24) {
             // e.g. Oct 25
-            return _months[date.getMonth()] + " " + date.getDay();
+            return _months[date.getMonth()] + " " + date.getDate();
         }
         if (hourDiff > 23) {
             // e.g. Wed 15:10
