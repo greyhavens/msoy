@@ -9,15 +9,16 @@ import java.util.Iterator;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -27,6 +28,7 @@ import com.threerings.msoy.item.data.all.Photo;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
+import client.util.MediaUtil;
 import client.shell.CShell;
 import client.shell.Frame;
 
@@ -45,7 +47,7 @@ public class ImageChooserPopup extends VerticalPanel
     {
         CShell.membersvc.loadInventory(CShell.ident, Item.PHOTO, 0, new AsyncCallback() {
             public void onSuccess (Object result) {
-                Frame.showDialog(CShell.cmsgs.pickImage(),
+                Frame.showDialog(CShell.cmsgs.icTitle(),
                                  new ImageChooserPopup((List)result, thumbnail, callback));
             }
             public void onFailure (Throwable caught) {
@@ -59,7 +61,21 @@ public class ImageChooserPopup extends VerticalPanel
         _callback = callback;
         _thumbnail = thumbnail;
         setStyleName("imageChooser");
-        add(new PhotoGrid(images));
+
+        if (images.size() > 0) {
+            add(MsoyUI.createLabel(CShell.cmsgs.icPickPhoto(), "Title"));
+            add(new PhotoGrid(images));
+            add(MsoyUI.createLabel(CShell.cmsgs.icOr(), "Or"));
+        }
+
+        add(MsoyUI.createLabel(CShell.cmsgs.icUploadPhoto(), "Title"));
+        add(new PhotoUploader(_thumbnail));
+    }
+
+    protected void imageChosen (MediaDesc media)
+    {
+        _callback.onSuccess(media);
+        Frame.clearDialog(this);
     }
 
     protected class PhotoGrid extends PagedGrid
@@ -67,6 +83,7 @@ public class ImageChooserPopup extends VerticalPanel
     {
         public PhotoGrid (List images) {
             super(2, 7, NAV_ON_BOTTOM);
+            setWidth("100%");
             setCellAlignment(HasAlignment.ALIGN_CENTER, HasAlignment.ALIGN_MIDDLE);
             setModel(new SimpleDataModel(images), 0);
         }
@@ -85,15 +102,11 @@ public class ImageChooserPopup extends VerticalPanel
         // @Override // from PagedGrid
         protected Widget createWidget (Object item) {
             Photo photo = (Photo)item;
-            if (photo == null) {
-                return null;
-            }
             final MediaDesc media = _thumbnail ? photo.photoMedia : photo.getThumbnailMedia();
             Widget image = MediaUtil.createMediaView(
                 photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
                     public void onClick (Widget sender) {
-                        _callback.onSuccess(media);
-                        Frame.clearDialog(ImageChooserPopup.this);
+                        imageChosen(media);
                     }
                 });
             image.addStyleName("Photo");
@@ -102,7 +115,7 @@ public class ImageChooserPopup extends VerticalPanel
 
         // @Override // from PagedGrid
         protected String getEmptyMessage () {
-            return CShell.cmsgs.haveNoImages();
+            return ""; // not used
         }
 
         // @Override // from PagedGrid
@@ -113,28 +126,36 @@ public class ImageChooserPopup extends VerticalPanel
         }
 
         // @Override // from PagedGrid
-        protected boolean padToFullPage () {
-            return true;
-        }
-
-        // @Override // from PagedGrid
         protected boolean displayNavi (int items) {
             return true;
         }
+    }
 
-// TODO
-//         // @Override // from PagedGrid
-//         protected void addCustomControls (FlexTable controls) {
-//             super.addCustomControls(controls);
-//             Button upload = new Button(CShell.cmsgs.uploadImage(), new ClickListener() {
-//                 public void onClick (Widget sender) {
-//                     ItemEditor editor = ItemEditor.createItemEditor(Item.PHOTO, PhotoGrid.this);
-//                     editor.setItem(editor.createBlankItem());
-//                     editor.show();
-//                 }
-//             });
-//             controls.setWidget(0, 0, upload);
-//         }
+    protected class PhotoUploader extends SmartTable
+    {
+        public PhotoUploader (final boolean thumbnail)
+        {
+            String mediaId = thumbnail ? Item.THUMB_MEDIA : Item.MAIN_MEDIA;
+            setWidget(0, 0, _preview = new SimplePanel(), 2, "Preview");
+            setWidget(1, 0, new MediaUploader(mediaId, new MediaUploader.Listener() {
+                public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
+                    _media = desc;
+                    _upload.setEnabled(true);
+                    int size = thumbnail ? MediaDesc.THUMBNAIL_SIZE : MediaDesc.PREVIEW_SIZE;
+                    _preview.setWidget(MediaUtil.createMediaView(_media, size));
+                }
+            }));
+            setWidget(1, 1, _upload = new Button(CShell.cmsgs.icUploadGo(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    imageChosen(_media);
+                }
+            }));
+            _upload.setEnabled(false);
+        }
+
+        protected SimplePanel _preview;
+        protected Button _upload;
+        protected MediaDesc _media;
     }
 
     protected boolean _thumbnail;
