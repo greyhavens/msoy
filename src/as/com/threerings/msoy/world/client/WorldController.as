@@ -12,6 +12,7 @@ import flash.utils.Timer;
 import flash.net.navigateToURL; // function import
 
 import mx.controls.Button;
+import mx.core.Application;
 
 import com.threerings.flex.CommandMenu;
 import com.threerings.util.Log;
@@ -256,6 +257,9 @@ public class WorldController extends MsoyController
             } else {
                 var contacts :Array = me.getSortedImContacts(ge.gateway);
                 for each (var ce :ContactEntry in contacts) {
+                    if (!ce.online) {
+                        continue;
+                    }
                     var aitem :Object = {
                         label: ce.name.toString(), command: OPEN_CHANNEL, arg: ce.name }
                     checkChatChannelOpen(ce.name, aitem);
@@ -271,7 +275,7 @@ public class WorldController extends MsoyController
             menuData.push({ label: Msgs.CHAT.get("m." + ge.gateway), children: subMenuData});
         }
 
-        CommandMenu.createMenu(menuData).popUp(trigger);
+        CommandMenu.createMenu(menuData).popUpIn(Application.application.screen);
     }
 
     /**
