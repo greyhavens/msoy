@@ -11,7 +11,7 @@ import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableLobbyObject;
 import com.threerings.parlor.data.TableMarshaller;
 
-import com.threerings.ezgame.data.GameDefinition;
+import com.whirled.game.data.GameDefinition;
 
 import com.threerings.msoy.item.data.all.Game;
 

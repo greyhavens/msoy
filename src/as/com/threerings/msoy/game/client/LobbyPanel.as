@@ -30,7 +30,7 @@ import com.threerings.parlor.client.TableObserver;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
 
-import com.threerings.ezgame.data.GameDefinition;
+import com.whirled.game.data.GameDefinition;
 
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.SkinnableImage;

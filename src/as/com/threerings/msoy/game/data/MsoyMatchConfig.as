@@ -6,7 +6,7 @@ package com.threerings.msoy.game.data {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.ezgame.data.TableMatchConfig;
+import com.whirled.game.data.TableMatchConfig;
 
 /**
  * Class to encapsulate extended properties to table matches for Whirled.

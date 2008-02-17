@@ -8,7 +8,7 @@ import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.crowd.client.PlaceController;
 
-import com.threerings.ezgame.data.GameDefinition;
+import com.whirled.game.data.GameDefinition;
 
 import com.threerings.toybox.data.ToyBoxGameConfig;
 
@@ -52,7 +52,7 @@ public class MsoyGameConfig extends ToyBoxGameConfig
         out.writeField(name);
     }
 
-    // from EZGameConfig
+    // from WhirledGameConfig
     override protected function createDefaultController () :PlaceController
     {
         return new MsoyGameController();

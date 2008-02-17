@@ -24,9 +24,9 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorSender;
 
-import com.threerings.ezgame.data.GameDefinition;
-import com.threerings.ezgame.data.Parameter;
-import com.threerings.ezgame.data.TableMatchConfig;
+import com.whirled.game.data.GameDefinition;
+import com.whirled.game.data.Parameter;
+import com.whirled.game.data.TableMatchConfig;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
@@ -271,8 +271,8 @@ public class LobbyManager
         throws InstantiationException, InvocationException
     {
         List<PlaceManagerDelegate> delegates = Lists.newArrayList();
-        delegates.add(new WhirledGameManagerDelegate(_content));
-        return (GameManager)MsoyGameServer.plreg.createPlace(config, delegates);
+        delegates.add(new MsoyGameManagerDelegate(_content));
+        return (GameManager) MsoyGameServer.plreg.createPlace(config, delegates);
     }
 
     /**

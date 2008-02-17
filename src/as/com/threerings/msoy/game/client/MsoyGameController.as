@@ -9,9 +9,7 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.threerings.ezgame.client.EZGameController;
-
-import com.whirled.client.WhirledGameController;
+import com.whirled.game.client.WhirledGameController;
 
 import com.threerings.msoy.client.OccupantReporter;
 

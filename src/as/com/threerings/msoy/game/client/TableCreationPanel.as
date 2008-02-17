@@ -20,10 +20,10 @@ import com.threerings.parlor.client.TableConfigurator;
 import com.threerings.parlor.game.client.GameConfigurator;
 import com.threerings.parlor.game.data.GameConfig;
 
-import com.threerings.ezgame.client.EZGameConfigurator;
-import com.threerings.ezgame.data.GameDefinition;
-import com.threerings.ezgame.data.RangeParameter;
-import com.threerings.ezgame.data.ToggleParameter;
+import com.whirled.game.client.WhirledGameConfigurator;
+import com.whirled.game.data.GameDefinition;
+import com.whirled.game.data.RangeParameter;
+import com.whirled.game.data.ToggleParameter;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -88,7 +88,7 @@ public class TableCreationPanel extends HBox
         rparam.name = Msgs.GAME.get("l.rated");
         rparam.tip = Msgs.GAME.get("t.rated");
         rparam.start = true;
-        var gconf :EZGameConfigurator = new EZGameConfigurator(rparam);
+        var gconf :WhirledGameConfigurator = new WhirledGameConfigurator(rparam);
         gconf.setColumns(3);
         gconf.init(_ctx);
 

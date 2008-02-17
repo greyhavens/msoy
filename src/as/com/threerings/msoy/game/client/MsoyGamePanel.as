@@ -4,7 +4,7 @@
 package com.threerings.msoy.game.client {
 
 import com.threerings.crowd.data.PlaceObject;
-import com.threerings.ezgame.client.EZGameBackend;
+import com.whirled.game.client.GameBackend;
 
 import com.whirled.client.WhirledGamePanel;
 
@@ -54,7 +54,7 @@ public class MsoyGamePanel extends WhirledGamePanel
         // nada
     }
 
-    // from EZGamePanel
+    // from WhirledGamePanel
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
         super.willEnterPlace(plobj);
@@ -68,7 +68,7 @@ public class MsoyGamePanel extends WhirledGamePanel
         bar.addCustomComponent(_backToWhirled);
     }
 
-    // from EZGamePanel
+    // from WhirledGamePanel
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         super.didLeavePlace(plobj);
@@ -82,10 +82,10 @@ public class MsoyGamePanel extends WhirledGamePanel
         _backToWhirled.parent.removeChild(_backToWhirled);
     }
 
-    // from EZGamePanel
-    override protected function createBackend () :EZGameBackend
+    // from WhirledGamePanel
+    override protected function createBackend () :GameBackend
     {
-        return new MsoyGameBackend(_gctx, _ezObj as MsoyGameObject, _ctrl as MsoyGameController);
+        return new MsoyGameBackend(_gctx, _gameObj as MsoyGameObject, _ctrl as MsoyGameController);
     }
 
     // from WhirledGamePanel

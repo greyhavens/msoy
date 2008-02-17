@@ -10,7 +10,7 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.utils.Dictionary;
 
-import com.whirled.client.WhirledGameBackend;
+import com.whirled.game.client.GameBackend;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
@@ -19,7 +19,7 @@ import com.threerings.msoy.game.data.PlayerInfo;
 /**
  * Implements the various Msoy specific parts of the Whirled Game backend.
  */
-public class MsoyGameBackend extends WhirledGameBackend
+public class MsoyGameBackend extends GameBackend
 {
     public function MsoyGameBackend (
         ctx :GameContext, gameObj :MsoyGameObject, ctrl :MsoyGameController)
@@ -43,7 +43,7 @@ public class MsoyGameBackend extends WhirledGameBackend
     protected function getHeadShot_v1 (occupant :int, callback :Function) :void
     {
         validateConnected();
-        var info :PlayerInfo = _ezObj.occupantInfo.get(occupant) as PlayerInfo;
+        var info :PlayerInfo = _gameObj.occupantInfo.get(occupant) as PlayerInfo;
         if (info != null) {
             var headshot :Headshot = _headshots[occupant];
             if (headshot == null) {

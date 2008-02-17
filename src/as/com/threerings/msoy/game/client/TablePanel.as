@@ -23,9 +23,9 @@ import com.threerings.flex.CommandButton;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
 
-import com.threerings.ezgame.data.EZGameConfig;
-import com.threerings.ezgame.data.GameDefinition;
-import com.threerings.ezgame.data.Parameter;
+import com.whirled.game.data.WhirledGameConfig;
+import com.whirled.game.data.GameDefinition;
+import com.whirled.game.data.Parameter;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
@@ -144,16 +144,16 @@ public class TablePanel extends VBox
         var ratedKey :String = table.config.rated ? "l.is_rated" : "l.not_rated";
         _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get(ratedKey), Msgs.GAME.get("t.rated")));
 
-        if (table.config is EZGameConfig) {
-            var params :Array = (table.config as EZGameConfig).getGameDefinition().params;
+        if (table.config is WhirledGameConfig) {
+            var gconfig :WhirledGameConfig = (table.config as WhirledGameConfig);
+            var params :Array = gconfig.getGameDefinition().params;
             if (params != null) {
-                var ezconfig :EZGameConfig = (table.config as EZGameConfig);
                 for each (var param :Parameter in params) {
-                        var name :String = StringUtil.isBlank(param.name) ?
-                                 param.ident : param.name;
-                        var value :String = String(ezconfig.params.get(param.ident));
-                        _labelsBox.addChild(makeConfigLabel(name + ": "+ value, param.tip));
-                    }
+                    var name :String = StringUtil.isBlank(param.name) ?
+                             param.ident : param.name;
+                    var value :String = String(gconfig.params.get(param.ident));
+                    _labelsBox.addChild(makeConfigLabel(name + ": "+ value, param.tip));
+                }
             }
         }
     }

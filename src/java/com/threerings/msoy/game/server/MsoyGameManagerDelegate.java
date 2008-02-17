@@ -41,16 +41,14 @@ import com.threerings.parlor.rating.server.RatingManagerDelegate;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 
-import com.threerings.ezgame.server.EZGameManager;
-
-import com.whirled.data.GameData;
-import com.whirled.data.ItemData;
-import com.whirled.data.LevelData;
-import com.whirled.data.TrophyData;
-import com.whirled.data.WhirledGame;
-import com.whirled.data.WhirledGameMarshaller;
-import com.whirled.server.WhirledGameDispatcher;
-import com.whirled.server.WhirledGameProvider;
+import com.whirled.game.data.GameData;
+import com.whirled.game.data.ItemData;
+import com.whirled.game.data.LevelData;
+import com.whirled.game.data.TrophyData;
+import com.whirled.game.data.WhirledGameObject;
+import com.whirled.game.data.WhirledGameMarshaller;
+import com.whirled.game.server.WhirledGameDispatcher;
+import com.whirled.game.server.WhirledGameProvider;
 
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
@@ -79,19 +77,20 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles Whirled game services like awarding flow.
  */
-public class WhirledGameManagerDelegate extends RatingManagerDelegate
-    implements WhirledGameProvider
+public class MsoyGameManagerDelegate extends RatingManagerDelegate
 {
     /**
      * Creates a Whirled game manager delegate with the supplied game content.
      */
-    public WhirledGameManagerDelegate (GameContent content)
+    public MsoyGameManagerDelegate (GameContent content)
     {
         // keep our game content around for later
         _content = content;
     }
 
-    // from interface WhirledGameProvider
+    /**
+     * Handles WhirledGameService.awardTrophy, via MsoyGameManager
+     */
     public void awardTrophy (ClientObject caller, String ident,
                              final InvocationService.InvocationListener listener)
         throws InvocationException
@@ -312,17 +311,17 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
         awardFlow(players, payoutType);
 
         // tell the game manager about our winners which will be used to compute ratings, etc.
-        if (_gmgr instanceof EZGameManager) {
+        if (_gmgr instanceof WhirledGameManager) {
             ArrayIntSet winners = new ArrayIntSet();
             for (Player player : players.values()) {
                 if (player.score == 1) {
                     winners.add(player.playerOid);
                 }
             }
-            ((EZGameManager)_gmgr).setWinners(winners.toIntArray());
+            ((WhirledGameManager)_gmgr).setWinners(winners.toIntArray());
 
         } else {
-            log.warning("Unable to configure EZGameManager with winners [where=" + where() +
+            log.warning("Unable to configure WhirledGameManager with winners [where=" + where() +
                         ", isa=" + _gmgr.getClass().getName() + "].");
         }
 
@@ -567,7 +566,7 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
         }
 
         switch (payoutType) {
-        case WINNERS_TAKE_ALL: {
+        case WhirledGameObject.WINNERS_TAKE_ALL: {
             // map the players by score
             TreeMultimap<Integer,Player> rankings = Multimaps.newTreeMultimap();
             for (Player player : players.values()) {
@@ -594,7 +593,7 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
             break;
         }
 
-        case CASCADING_PAYOUT: {
+        case WhirledGameObject.CASCADING_PAYOUT: {
             // compute the average score
             int totalScores = 0;
             for (Player player : players.values()) {
@@ -630,7 +629,7 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
             break;
         }
 
-        case TO_EACH_THEIR_OWN:
+        case WhirledGameObject.TO_EACH_THEIR_OWN:
             for (Player player : players.values()) {
                 player.flowAward = player.availFlow;
             }
@@ -970,13 +969,4 @@ public class WhirledGameManagerDelegate extends RatingManagerDelegate
 
     /** If we lack a valid or sufficiently large score distribution, we use this performance. */
     protected static final int DEFAULT_PERCENTILE = 50;
-
-    /** From WhirledGameControl.as. */
-    protected static final int CASCADING_PAYOUT = 0;
-
-    /** From WhirledGameControl.as. */
-    protected static final int WINNERS_TAKE_ALL = 1;
-
-    /** From WhirledGameControl.as. */
-    protected static final int TO_EACH_THEIR_OWN = 2;
 }

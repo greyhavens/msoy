@@ -30,10 +30,10 @@ import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.whirled.server.SceneRegistry;
 
-import com.threerings.ezgame.server.DictionaryManager;
-
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorManager;
+
+import com.whirled.game.server.DictionaryManager;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyBaseServer;

@@ -11,9 +11,6 @@ import org.xml.sax.SAXException;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
-import com.threerings.ezgame.data.GameDefinition;
-import com.threerings.ezgame.data.TableMatchConfig;
-import com.threerings.ezgame.xml.GameParser;
 
 import com.threerings.msoy.item.data.all.Game;
 
@@ -22,10 +19,14 @@ import com.threerings.msoy.game.data.MsoyMatchConfig;
 
 import com.threerings.parlor.game.data.GameConfig;
 
+import com.whirled.game.data.GameDefinition;
+import com.whirled.game.data.TableMatchConfig;
+import com.whirled.game.xml.WhirledGameParser;
+
 /**
  * Parses game definitions into instances of {@link MsoyGameDefinition}.
  */
-public class MsoyGameParser extends GameParser
+public class MsoyGameParser extends WhirledGameParser
 {
     public MsoyGameParser ()
     {
