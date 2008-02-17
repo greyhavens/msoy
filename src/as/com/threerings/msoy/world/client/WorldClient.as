@@ -147,7 +147,7 @@ public class WorldClient extends MsoyClient
         [ResourceBundle("general")]
         [ResourceBundle("chat")]
         [ResourceBundle("game")]
-        [ResourceBundle("ezgame")]
+        [ResourceBundle("whirledgame")]
         [ResourceBundle("editing")]
         [ResourceBundle("item")]
         [ResourceBundle("notify")]
