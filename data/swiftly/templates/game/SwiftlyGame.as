@@ -9,7 +9,7 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl;
 
 [SWF(width="400", height="400")]
 public class SwiftlyGame extends Sprite
@@ -19,7 +19,7 @@ public class SwiftlyGame extends Sprite
         // listen for an unload event
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        _control = new WhirledGameControl(this);
+        _control = new GameControl(this);
     }
 
     /**
@@ -30,6 +30,6 @@ public class SwiftlyGame extends Sprite
         // stop any sounds, clean up any resources that need it
     }
 
-    protected var _control :WhirledGameControl;
+    protected var _control :GameControl;
 }
 }
