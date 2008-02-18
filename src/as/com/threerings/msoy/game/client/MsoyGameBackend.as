@@ -27,20 +27,7 @@ public class MsoyGameBackend extends GameBackend
         super(ctx, gameObj, ctrl);
     }
 
-    override protected function populateProperties (o :Object) :void
-    {
-        super.populateProperties(o);
-
-        var ctrl :MsoyGameController = (_ctrl as MsoyGameController);
-        o["getHeadShot_v1"] = getHeadShot_v1;
-
-        // backwards compatibility
-        o["getAvailableFlow_v1"] = getAvailableFlow_v1;
-        o["awardFlow_v1"] = awardFlow_v1;
-        o["awardFlow_v2"] = awardFlow_v2;
-    }
-
-    protected function getHeadShot_v1 (occupant :int, callback :Function) :void
+    override protected function getHeadShot_v1 (occupant :int, callback :Function) :void
     {
         validateConnected();
         var info :PlayerInfo = _gameObj.occupantInfo.get(occupant) as PlayerInfo;
@@ -68,26 +55,6 @@ public class MsoyGameBackend extends GameBackend
     {
         var cfg :MsoyGameConfig = (_ctrl.getPlaceConfig() as MsoyGameConfig);
         return (_ctx as GameContext).getPlayerObject().ownsGameContent(cfg.getGameId(), type, ident)
-    }
-
-    // ------ Compatibility methods, for operating with old games
-
-    /** A backwards compatible method. */
-    protected function getAvailableFlow_v1 () :int
-    {
-        return 0;
-    }
-
-    /** A backwards compatible method. */
-    protected function awardFlow_v1 (amount :int) :void
-    {
-        // NOOP!
-    }
-
-    /** A backwards compatible method. */
-    protected function awardFlow_v2 (perf :int) :int
-    {
-        return 0;
     }
 
     /** A cache of loaded avatar headshots, indexed by occupant id. */
