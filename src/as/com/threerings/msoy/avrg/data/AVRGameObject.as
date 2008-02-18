@@ -11,8 +11,6 @@ import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.OidList;
 
-import com.threerings.ezgame.data.EZGameObject;
-
 import com.threerings.util.Iterator;
 import com.threerings.util.Name;
 
