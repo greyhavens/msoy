@@ -18,7 +18,6 @@ import com.threerings.util.MessageManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.crowd.server.PlaceManager;
-import com.threerings.ezgame.server.persist.GameCookieRepository;
 
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.stats.server.persist.StatRepository;
@@ -26,6 +25,8 @@ import com.threerings.stats.server.persist.StatRepository;
 import com.threerings.admin.server.AdminProvider;
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.whirled.server.WhirledServer;
+
+import com.whirled.game.server.persist.GameCookieRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.person.server.persist.FeedRepository;

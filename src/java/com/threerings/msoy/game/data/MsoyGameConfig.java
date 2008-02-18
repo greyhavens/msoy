@@ -4,7 +4,8 @@
 package com.threerings.msoy.game.data;
 
 import com.threerings.util.ActionScript;
-import com.threerings.ezgame.data.GameDefinition;
+
+import com.whirled.game.data.GameDefinition;
 
 import com.threerings.toybox.data.ToyBoxGameConfig;
 
