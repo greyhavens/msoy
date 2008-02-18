@@ -22,7 +22,7 @@
   <property name="build_version" value="0"/>
 
   <!-- define our subprojects and include the standard build system -->
-  <property name="projects" value="whirled,facebook"/>
+  <property name="projects" value="facebook"/>
   <import file="build/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
     <include name="${src.dir}/**/*.java"/>
@@ -102,6 +102,10 @@
     <file name="${extlibs.dir}/xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/xmlrpc-common.jar"/>
 
+    <!-- The following are used for Panopticon -->
+    <file name="${extlibs.dir}/log4j.jar"/>
+    <file name="${extlibs.dir}/hessian.jar"/>
+
     <!-- The following are used for HTML sanitization -->
     <file name="${extlibs.dir}/antisamy/antisamy-bin.1.0.jar"/>
     <file name="${extlibs.dir}/antisamy/batik-css.jar"/>
@@ -141,9 +145,9 @@
     <file name="lib/aperture/sesame-2.0-alpha-3.jar"/>
     <file name="lib/aperture/winlaf-0.5.1.jar"/>
 
-    <!-- The following are used for Panopticon -->
-    <file name="${extlibs.dir}/log4j.jar"/>
-    <file name="${extlibs.dir}/hessian.jar"/>
+    <!-- The following are used by our Flash clients -->
+    <file name="lib/corelib.swc"/>
+    <file name="lib/flexlib.swc"/>
   </filelist>
 
   <!-- enumerate our translation files -->
@@ -216,15 +220,27 @@
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="narya-base" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="narya-distrib" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.narya" artifactId="naryalib" version="0.0-SNAPSHOT"
+                  type="swc"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenya-rsrc" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenya-media" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.nenya" artifactId="nenyalib" version="0.0-SNAPSHOT"
+                  type="swc"/>
       <dependency groupId="com.threerings.vilya" artifactId="vilya-parlor" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.vilya" artifactId="vilya-whirled" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.vilya" artifactId="vilya-stats" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.vilya" artifactId="vilya-micasa" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.vilya" artifactId="vilyalib" version="0.0-SNAPSHOT"
+                  type="swc"/>
+      <dependency groupId="com.threerings" artifactId="whirled-code" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="whirledlib" version="0.0-SNAPSHOT"
+                  type="swc"/>
       <dependency groupId="com.threerings" artifactId="threerings" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toybox" version="0.0-SNAPSHOT"/>
-      <dependency groupId="org.jivesoftware.smack" artifactId="smack-component" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="toyboxlib" version="0.0-SNAPSHOT"
+                  type="swc"/>
+      <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
+                  version="0.0-SNAPSHOT"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="dependency.fileset"/>
@@ -413,41 +429,9 @@
     </copy>
   </target>
 
-  <!-- checks whether our Flash library needs building -->
-  <target name="checkaslib">
-    <uptodate property="aslib_is_up_to_date" targetfile="${deploy.dir}/ooo.swc">
-      <srcfiles dir="projects/narya/src/as" includes="**/*.as"/>
-      <srcfiles dir="projects/nenya/src/as" includes="**/*.as"/>
-      <srcfiles dir="projects/vilya/src/as" includes="**/*.as"/>
-      <srcfiles dir="projects/toybox/src/as" includes="**/*.as"/>
-      <srcfiles dir="projects/whirled/src/as" includes="**/*.as"/>
-    </uptodate>
-  </target>
-
-  <!-- builds our Flash library -->
-  <target name="aslib" unless="aslib_is_up_to_date" depends="checkaslib">
-    <java jar="${flexsdk.dir}/lib/compc.jar" fork="true" failonerror="true">
-      <arg value="-load-config"/>
-      <arg value="etc/aslib-config.xml"/>
-      <arg value="-compiler.optimize"/>
-      <arg value="-compiler.source-path=projects/narya/src/as/"/>
-      <arg value="-compiler.source-path=projects/nenya/src/as/"/>
-      <arg value="-compiler.source-path=projects/vilya/src/as/"/>
-      <arg value="-compiler.source-path=projects/toybox/src/as/"/>
-      <arg value="-compiler.source-path=projects/whirled/src/as/"/>
-      <arg value="-include-sources=projects/narya/src/as/"/>
-      <arg value="-include-sources=projects/nenya/src/as/"/>
-      <arg value="-include-sources=projects/vilya/src/as/"/>
-      <arg value="-include-sources=projects/toybox/src/as/"/>
-      <arg value="-include-sources=projects/whirled/src/as/"/>
-      <arg value="-output"/>
-      <arg value="${deploy.dir}/ooo.swc"/>
-    </java>
-  </target>
-
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
   <property name="astype" value="world"/>
-  <target name="asquick">
+  <target name="ascompile">
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
@@ -468,17 +452,17 @@
   </target>
 
   <!-- builds our Flash world client -->
-  <target name="asclient" depends="asprepare,aslib" description="Rebuilds the Flash world client.">
-    <antcall target="asquick"><param name="astype" value="world"/></antcall>
+  <target name="asclient" depends="asprepare" description="Rebuilds the Flash world client.">
+    <antcall target="ascompile"><param name="astype" value="world"/></antcall>
   </target>
 
   <!-- builds our Flash game client -->
-  <target name="asgclient" depends="asprepare,aslib" description="Rebuilds the Flash game client.">
-    <antcall target="asquick"><param name="astype" value="game"/></antcall>
+  <target name="asgclient" depends="asprepare" description="Rebuilds the Flash game client.">
+    <antcall target="ascompile"><param name="astype" value="game"/></antcall>
   </target>
 
   <!-- builds our Flash debug client -->
-  <target name="asdebug" depends="asprepare,aslib">
+  <target name="asdebug" depends="asprepare">
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
@@ -508,12 +492,12 @@
     <copy file="${deploy.dir}/MediaStub.swf" todir="pages/media"/>
   </target>
 
-  <target name="remixer" depends="asprepare,aslib" description="Rebuilds the Flash game client.">
-    <antcall target="asquick"><param name="astype" value="remixer"/></antcall>
+  <target name="remixer" depends="asprepare" description="Rebuilds the Flash game client.">
+    <antcall target="ascompile"><param name="astype" value="remixer"/></antcall>
   </target>
 
   <!-- builds our avatar viewer thingy -->
-  <target name="avatarviewer" depends="asprepare,aslib">
+  <target name="avatarviewer" depends="asprepare">
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
@@ -532,7 +516,7 @@
   </target>
 
   <!-- builds our video viewer thingy -->
-  <target name="videoviewer" depends="asprepare,aslib">
+  <target name="videoviewer" depends="asprepare">
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
@@ -547,7 +531,7 @@
   </target>
 
   <!-- builds our awesome decor viewer -->
-  <target name="decorviewer" depends="asprepare,aslib">
+  <target name="decorviewer" depends="asprepare">
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
@@ -569,7 +553,7 @@
   </target>
 
   <!-- builds our tutorial game -->
-  <target name="tutorial" depends="prepare,whirled">
+  <target name="tutorial" depends="prepare">
     <ant dir="projects/games/tutorial" target="dist" inheritAll="false"/>
     <copy file="${deploy.dir}/tutorial.swf" todir="pages/media/static/game"/>
   </target>
@@ -854,9 +838,6 @@
   <target name="toybox">
     <antcall target="distprojects"><param name="projects" value="toybox"/></antcall>
   </target>
-  <target name="whirled">
-    <antcall target="distprojects"><param name="projects" value="whirled"/></antcall>
-  </target>
   <target name="facebook">
     <antcall target="distprojects"><param name="projects" value="facebook"/></antcall>
   </target>
@@ -884,10 +865,10 @@
   </target>
 
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,aslib,mediastub,tutorial,avatarviewer,
+  <target name="flashapps" depends="asprepare,mediastub,tutorial,avatarviewer,
                                     videoviewer,decorviewer,remixer,neighborhood">
-    <antcall target="asquick"><param name="astype" value="world"/></antcall>
-    <antcall target="asquick"><param name="astype" value="game"/></antcall>
+    <antcall target="ascompile"><param name="astype" value="world"/></antcall>
+    <antcall target="ascompile"><param name="astype" value="game"/></antcall>
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->

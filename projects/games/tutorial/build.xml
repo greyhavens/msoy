@@ -9,21 +9,8 @@
   <property name="app.source-suffix" value="as"/>
   <property name="app.package-dir" value="tutorial"/>
 
-  <!-- determines whether the top-level aslib has been built -->
-  <target name="checktop">
-    <condition property="aslib.built">
-      <available file="${build.root}/dist/whirled.swc"/>
-    </condition>
-  </target>
-
-  <!-- builds the top-level aslib if necessary -->
-  <target name="buildtop" depends="checktop" unless="aslib.built">
-    <echo>Building the Whirled shared Flash library...</echo>
-    <ant dir="${build.root}" target="aslib"/>
-  </target>
-
   <!-- builds our Flash app -->
-  <target name="compile" depends="buildtop">
+  <target name="compile">
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="${build.root}/etc/msoy-config.xml"/>

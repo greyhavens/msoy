@@ -19,7 +19,7 @@
 -injars ../dist/lib/vilya-whirled-0.0-SNAPSHOT.jar(
     **/ClusteredBodyObject.class,**/ScenedBodyObject.class)
 -injars ../dist/lib/toybox-0.0-SNAPSHOT.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
--injars ../dist/lib/whirled-code.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
+-injars ../dist/lib/whirled-code-0.0-SNAPSHOT.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class)
 -injars ../dist/msoy-code.jar(
     rsrc/i18n/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,**/msoy/item/data/all/**,

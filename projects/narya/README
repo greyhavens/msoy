@@ -1,3 +1,0 @@
-Narya is obtained via Maven. We only have the ActionScript source here because
-we do not build and export a narya.swc. Some day we will do that and this will
-go away entirely.

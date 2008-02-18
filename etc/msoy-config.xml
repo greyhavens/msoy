@@ -38,8 +38,7 @@
       -->
       <!-- List of SWC files or directories that contain SWC files. -->
       <library-path>
-         <path-element>../lib</path-element>
-         <path-element>../dist</path-element>
+         <path-element>../dist/lib</path-element>
          <path-element>../lib/flex_sdk/frameworks/libs</path-element>
          <path-element>../lib/flex_sdk/frameworks/locale/{locale}</path-element>
       </library-path>
