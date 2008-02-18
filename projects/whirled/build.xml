@@ -86,7 +86,6 @@
       <arg value="-include-sources=${projects.dir}/narya/src/as/"/>
       <arg value="-include-sources=${projects.dir}/nenya/src/as/com/threerings/flash/"/>
       <arg value="-include-sources=${projects.dir}/vilya/src/as/com/threerings/parlor/"/>
-      <arg value="-include-sources=${projects.dir}/vilya/src/as/com/threerings/ezgame/"/>
       <arg value="-include-sources=${asrc.dir}/"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/whirled.swc"/>
