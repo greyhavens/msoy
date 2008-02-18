@@ -6,7 +6,7 @@ package com.threerings.msoy.game.data;
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.presents.dobj.DSet;
 
-import com.whirled.data.GameData;
+import com.whirled.game.data.GameData;
 
 /**
  * Contains information on an item owned by a player for a game.

@@ -48,6 +48,7 @@ import com.whirled.game.data.TrophyData;
 import com.whirled.game.data.WhirledGameObject;
 import com.whirled.game.data.WhirledGameMarshaller;
 import com.whirled.game.server.WhirledGameDispatcher;
+import com.whirled.game.server.WhirledGameManager;
 import com.whirled.game.server.WhirledGameProvider;
 
 import com.threerings.msoy.data.UserAction;
@@ -339,10 +340,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         _flowPerMinute = Math.round(minuteRate * _content.detail.getAntiAbuseFactor());
 
         // wire up our WhirledGameService
-        if (plobj instanceof WhirledGame) {
-            WhirledGame gobj = (WhirledGame)plobj;
-            _invmarsh = MsoyGameServer.invmgr.registerDispatcher(new WhirledGameDispatcher(this));
-            gobj.setWhirledGameService((WhirledGameMarshaller)_invmarsh);
+        if (plobj instanceof WhirledGameObject) {
+            WhirledGameObject gobj = (WhirledGameObject)plobj;
 
             // let the client know what game content is available
             List<GameData> gdata = Lists.newArrayList();
@@ -376,9 +375,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     public void didShutdown ()
     {
         super.didShutdown();
-        if (_invmarsh != null) {
-            MsoyGameServer.invmgr.clearDispatcher(_invmarsh);
-        }
 
         stopTracking();
 
@@ -659,7 +655,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             // report to the game that this player earned some flow
             DObject user = MsoyGameServer.omgr.getObject(player.playerOid);
             if (user != null) {
-                user.postMessage(WhirledGame.FLOW_AWARDED_MESSAGE,
+                user.postMessage(WhirledGameObject.FLOW_AWARDED_MESSAGE,
                                  player.flowAward, player.percentile);
             }
         }
@@ -925,9 +921,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             return StringUtil.fieldsToString(this);
         }
     }
-
-    /** Keep our invocation service registration so that we can unload it at shutdown. */
-    protected InvocationMarshaller _invmarsh;
 
     /** The metadata for the game being played. */
     protected GameContent _content;

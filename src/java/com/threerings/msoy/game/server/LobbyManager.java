@@ -18,6 +18,7 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
+import com.threerings.parlor.data.Parameter;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.data.GameConfig;
@@ -25,7 +26,6 @@ import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorSender;
 
 import com.whirled.game.data.GameDefinition;
-import com.whirled.game.data.Parameter;
 import com.whirled.game.data.TableMatchConfig;
 
 import com.threerings.msoy.data.all.MemberName;

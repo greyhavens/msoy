@@ -33,13 +33,14 @@ import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
 
 import com.threerings.crowd.data.BodyObject;
-import com.threerings.ezgame.server.DictionaryManager;
 import com.threerings.parlor.game.server.GameManager;
 
 import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.spot.data.SpotCodes;
 import com.threerings.whirled.spot.server.SpotDispatcher;
 import com.threerings.whirled.spot.server.SpotProvider;
+
+import com.whirled.game.server.DictionaryManager;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.chat.server.ChatChannelManager;

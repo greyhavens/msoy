@@ -31,7 +31,7 @@ import com.threerings.parlor.data.Table;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 
-import com.whirled.data.GameData;
+import com.whirled.game.data.GameData;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.person.util.FeedMessageType;

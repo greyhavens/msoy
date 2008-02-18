@@ -7,6 +7,10 @@ import java.util.ArrayList;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.server.InvocationException;
+
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
@@ -66,7 +70,7 @@ public class MsoyGameManager extends WhirledGameManager
         InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        _awardDelegate.endGameWithWinnes(caller, winnerOids, loserOids, payoutType, listener);
+        _awardDelegate.endGameWithWinners(caller, winnerOids, loserOids, payoutType, listener);
     }
 
     @Override // from PlaceManager
