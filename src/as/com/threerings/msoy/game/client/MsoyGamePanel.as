@@ -6,14 +6,14 @@ package com.threerings.msoy.game.client {
 import com.threerings.crowd.data.PlaceObject;
 import com.whirled.game.client.GameBackend;
 
-import com.whirled.client.WhirledGamePanel;
+import com.whirled.game.client.WhirledGamePanel;
+import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.game.data.MsoyGameObject;
 
 public class MsoyGamePanel extends WhirledGamePanel
     implements MsoyPlaceView
@@ -85,13 +85,13 @@ public class MsoyGamePanel extends WhirledGamePanel
     // from WhirledGamePanel
     override protected function createBackend () :GameBackend
     {
-        return new MsoyGameBackend(_gctx, _gameObj as MsoyGameObject, _ctrl as MsoyGameController);
+        return new MsoyGameBackend(_gctx, _gameObj, _ctrl as MsoyGameController);
     }
 
     // from WhirledGamePanel
     override protected function getButtonLabels (plobj :PlaceObject) :Array
     {
-        var gameObj :MsoyGameObject = plobj as MsoyGameObject;
+        var gameObj :WhirledGameObject = plobj as WhirledGameObject;
         return [
             Msgs.GAME.get("b.backToWhirled"),
             Msgs.GAME.get("b.backToLobby", (_ctrl.getPlaceConfig() as MsoyGameConfig).name),

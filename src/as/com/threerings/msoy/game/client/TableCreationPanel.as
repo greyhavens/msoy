@@ -17,13 +17,13 @@ import com.threerings.util.Log;
 
 import com.threerings.parlor.client.DefaultFlexTableConfigurator;
 import com.threerings.parlor.client.TableConfigurator;
+import com.threerings.parlor.data.RangeParameter;
+import com.threerings.parlor.data.ToggleParameter;
 import com.threerings.parlor.game.client.GameConfigurator;
 import com.threerings.parlor.game.data.GameConfig;
 
 import com.whirled.game.client.WhirledGameConfigurator;
 import com.whirled.game.data.GameDefinition;
-import com.whirled.game.data.RangeParameter;
-import com.whirled.game.data.ToggleParameter;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.FriendEntry;

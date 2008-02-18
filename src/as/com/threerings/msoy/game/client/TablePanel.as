@@ -20,12 +20,12 @@ import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
 
+import com.threerings.parlor.data.Parameter;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
 
 import com.whirled.game.data.WhirledGameConfig;
 import com.whirled.game.data.GameDefinition;
-import com.whirled.game.data.Parameter;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;

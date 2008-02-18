@@ -11,7 +11,7 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
 
-import com.whirled.data.GameData;
+import com.whirled.game.data.GameData;
 
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.VizMemberName;

@@ -11,9 +11,9 @@ import flash.system.LoaderContext;
 import flash.utils.Dictionary;
 
 import com.whirled.game.client.GameBackend;
+import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.game.data.MsoyGameObject;
 import com.threerings.msoy.game.data.PlayerInfo;
 
 /**
@@ -22,7 +22,7 @@ import com.threerings.msoy.game.data.PlayerInfo;
 public class MsoyGameBackend extends GameBackend
 {
     public function MsoyGameBackend (
-        ctx :GameContext, gameObj :MsoyGameObject, ctrl :MsoyGameController)
+        ctx :GameContext, gameObj :WhirledGameObject, ctrl :MsoyGameController)
     {
         super(ctx, gameObj, ctrl);
     }

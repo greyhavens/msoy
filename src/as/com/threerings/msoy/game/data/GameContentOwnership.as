@@ -12,7 +12,7 @@ import com.threerings.util.Equalable;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.DSet_Entry;
 
-import com.whirled.data.GameData;
+import com.whirled.game.data.GameData;
 
 /**
  * Contains information on an item owned by a player for a game.
