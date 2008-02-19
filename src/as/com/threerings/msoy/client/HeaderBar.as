@@ -21,6 +21,7 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
 
 import com.threerings.util.CommandEvent;
+import com.threerings.util.Log;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
 
@@ -115,6 +116,7 @@ public class HeaderBar extends HBox
         _loc.validateNow();
         // allow text to center under the whirled logo if its not too long.
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
+        stretchSpacer(false);
         return _tabsContainer;
     }
 
@@ -130,6 +132,25 @@ public class HeaderBar extends HBox
         addChildAt(_tabsContainer, 1);
     }
 
+    public function stretchSpacer (stretch :Boolean) :void
+    {
+        var mini :Boolean = _ctx.getTopPanel().isMinimized();
+        var ownTabs :Boolean = _tabsContainer.parent == this;
+        var stretchTabs :Boolean = !(stretch && ownTabs && !mini);
+        var stretchSpacer :Boolean = (stretch || !ownTabs) && !mini;
+        if (stretchTabs == isNaN(_tabsContainer.percentWidth)) {
+            callLater(function () :void { 
+                _tabsContainer.percentWidth = stretchTabs ? 100 : NaN;
+            });
+        }
+
+        if (stretchSpacer == isNaN(_spacer.percentWidth)) {
+            callLater(function () :void {
+                _spacer.percentWidth = stretchSpacer ? 100 : NaN;
+            });
+        }
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -140,9 +161,8 @@ public class HeaderBar extends HBox
         _loc.visible = _loc.includeInLayout = false;
         addChild(_loc);
 
-        _tabsContainer = new HBox();
-        _tabsContainer.setStyle("horizontalGap", 0);
-        (_tabsContainer as HBox).horizontalScrollPolicy = ScrollPolicy.OFF;
+        _tabsContainer = new TabsContainer(this);
+        _tabsContainer.horizontalScrollPolicy = ScrollPolicy.OFF;
         addChild(_tabsContainer);
 
         var channelBtn :CommandButton = new CommandButton();
@@ -159,8 +179,7 @@ public class HeaderBar extends HBox
         addChild(_owner);
         _extras.push(_owner);
 
-        _spacer = new HBox();
-        _spacer.percentWidth = 100;
+        _spacer = new Spacer(this);
         addChild(_spacer);
 
         var controlBox :HBox = new HBox();
@@ -185,6 +204,8 @@ public class HeaderBar extends HBox
         closeBox.addChild(closeBtn);
     }
 
+    private static const log :Log = Log.getLog(HeaderBar);
+
     protected static const WHIRLED_LOGO_WIDTH :int = 124;
 
     protected var _ctx :MsoyContext;
@@ -201,6 +222,53 @@ public class HeaderBar extends HBox
 
     protected var _embedVisible :Boolean;
 
-    protected var _tabsContainer :UIComponent;
+    protected var _tabsContainer :TabsContainer;
 }
+}
+
+import mx.containers.HBox;
+
+import com.threerings.msoy.client.HeaderBar;
+
+class Spacer extends HBox
+{
+    public function Spacer (headerBar :HeaderBar) 
+    {
+        _headerBar = headerBar;
+
+        setStyle("borderThickness", 0);
+        setStyle("borderStyle", "none");
+        percentWidth = 100;
+    }
+
+    override public function setActualSize (w :Number, h :Number) :void
+    {
+        super.setActualSize(w, h);
+        _headerBar.stretchSpacer(w != 0);
+    }
+
+    protected var _headerBar :HeaderBar;
+}
+
+class TabsContainer extends HBox
+{
+    public function TabsContainer (headerBar :HeaderBar)
+    {
+        _headerBar = headerBar;
+
+        setStyle("borderThickness", 0);
+        setStyle("borderStyle", "none");
+        setStyle("horizontalGap", 0);
+        explicitMinWidth = 0;
+    }
+
+    override public function setActualSize (w :Number, h :Number) :void
+    {
+        super.setActualSize(w, h);
+        if (w > getExplicitOrMeasuredWidth()) {
+            _headerBar.stretchSpacer(true);
+        }
+    }
+
+    protected var _headerBar :HeaderBar;
 }

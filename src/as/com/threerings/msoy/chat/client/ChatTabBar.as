@@ -4,10 +4,16 @@
 package com.threerings.msoy.chat.client {
 
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
 
 import flash.events.Event;
 
+import mx.containers.Canvas;
 import mx.containers.HBox;
+
+import mx.core.ScrollPolicy;
+
+import com.threerings.flex.FlexWrapper;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
@@ -33,6 +39,23 @@ public class ChatTabBar extends HBox
         super();
         _ctx = ctx;
         setStyle("horizontalGap", 0);
+        explicitMinWidth = 0;
+        percentWidth = 100;
+        horizontalScrollPolicy = ScrollPolicy.OFF;
+    }
+
+    override public function setActualSize (w :Number, h :Number) :void
+    {
+        super.setActualSize(w, h);
+        rawChildren.setChildIndex(_scrollLayer, rawChildren.numChildren - 1);
+        _scrollLayer.setActualSize(w, h);
+        displayScrollTabs(w < getExplicitOrMeasuredWidth());
+    }
+
+    override public function addChildAt (dispObj :DisplayObject, index :int) :DisplayObject
+    {
+        var retVal :DisplayObject = super.addChildAt(dispObj, index);
+        return retVal;
     }
 
     public function get selectedIndex () :int
@@ -162,7 +185,7 @@ public class ChatTabBar extends HBox
             (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
         } else {
             // else this arrived (most likely) after we already closed the channel tab.
-            log.info("Dropping late arriving channel chat message [msg=" + msg + ", localtype=" + msg.localtype + "].");
+            log.info("Dropping late arriving channel chat message [msg=" + msg + ", localtype=" +                        msg.localtype + "].");
         }
     }
 
@@ -274,6 +297,42 @@ public class ChatTabBar extends HBox
         }
     }
 
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+
+        _scrollLayer = new Canvas();
+        rawChildren.addChild(_scrollLayer);
+
+        _leftScroll = new SCROLL_ARROW() as MovieClip;
+        _leftScroll.x = _leftScroll.width / 2;
+        _leftScroll.y = _leftScroll.height / 2;
+        _leftScroll.visible = false;
+        _leftScroll.gotoAndStop(1);
+        var wrapper :FlexWrapper = new FlexWrapper(_leftScroll);
+        wrapper.setStyle("left", 0);
+        wrapper.includeInLayout = false;
+        _scrollLayer.addChild(wrapper);
+
+        _rightScroll = new SCROLL_ARROW() as MovieClip;
+        _rightScroll.scaleX = -1;
+        _rightScroll.x = -_rightScroll.width / 2;
+        _rightScroll.y = _rightScroll.height / 2;
+        _rightScroll.visible = false;
+        _rightScroll.gotoAndStop(1);
+        wrapper = new FlexWrapper(_rightScroll);
+        wrapper.setStyle("right", 0);
+        wrapper.includeInLayout = false;
+        _scrollLayer.addChild(wrapper);
+    }
+
+    protected function displayScrollTabs (display :Boolean) :void
+    {
+        // temporarily disabled.
+//        _leftScroll.visible = display;
+//        _rightScroll.visible = display;
+    }
+
     protected function addTab (tab :ChatTab, index :int = -1) :void
     {
         tab.addEventListener(ChatTab.TAB_CLICK, selectTab);
@@ -380,9 +439,15 @@ public class ChatTabBar extends HBox
 
     private static const log :Log = Log.getLog(ChatTabBar);
 
+    [Embed(source="../../../../../../../rsrc/media/skins/tab/tab_scroll_arrow.swf#arrow")]
+    protected static const SCROLL_ARROW :Class;
+
     protected var _tabs :Array = [];
     protected var _selectedIndex :int = -1;
     protected var _ctx :MsoyContext;
     protected var _chatDirector :ChatDirector;
+    protected var _scrollLayer :Canvas;
+    protected var _leftScroll :MovieClip;
+    protected var _rightScroll :MovieClip;
 }
 }
