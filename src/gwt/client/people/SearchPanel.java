@@ -33,37 +33,37 @@ public class SearchPanel extends VerticalPanel
     {
         final int page = args.get(1, 0);
         final String query = args.get(2, "");
-
         _ctrls.setSearch(query);
 
-        if (query.length() == 0) {
-            clearResults();
+        // if we're already showing this search, page through it
+        if (showingResultsFor(query)) {
+            displayPage(page);
+            return;
+        }
 
-        } else if (!showingResultsFor(query)) {
+        clearResults();
+
+        if (query.length() > 0) {
             CPeople.profilesvc.findProfiles(CPeople.ident, query, new MsoyCallback() {
                 public void onSuccess (Object result) {
                     setResults((List) result, page, query);
                 }
             });
-
-        } else {
-            displayPage(page);
         }
     }
 
     public void clearResults ()
     {
-        if (_members != null) {
-            remove(_members);
-            _members = null;
-            _searchString = null;
+        while (getWidgetCount() > 1) {
+            remove(getWidget(1));
         }
+        _members = null;
+        _searchString = null;
     }
 
     public void setResults (List cards, int page, String search)
     {
         _searchString = search;
-        clearResults();
         _members = new MemberList(CPeople.msgs.searchResultsNoMatch(search));
         add(MsoyUI.createBox("people", CPeople.msgs.searchResultsTitle(search), _members));
         _members.setModel(new SimpleDataModel(cards), page);

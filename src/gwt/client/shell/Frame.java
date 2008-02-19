@@ -381,19 +381,28 @@ public class Frame
             subnavi.addLink(null, "Account", Page.ME, "account");
 
         } else if (pageId.equals(Page.PEOPLE)) {
-            title = "Friends";
-            subnavi.addLink(null, "My Friends", Page.PEOPLE, "");
-            subnavi.addLink(null, "Invite Friends", Page.PEOPLE, "invites");
+            if (CShell.getMemberId() == 0) {
+                title = "People";
+                subnavi.addLink(null, "Search", Page.PEOPLE, "");
+            } else {
+                title = "Friends";
+                subnavi.addLink(null, "My Friends", Page.PEOPLE, "");
+                subnavi.addLink(null, "Invite Friends", Page.PEOPLE, "invites");
+            }
 
         } else if (pageId.equals(Page.GAMES)) {
             title = "Games";
             subnavi.addLink(null, "Games", Page.GAMES, "");
-            subnavi.addLink(null, "My Trophies", Page.GAMES, Args.compose("t", myId));
+            if (CShell.getMemberId() != 0) {
+                subnavi.addLink(null, "My Trophies", Page.GAMES, Args.compose("t", myId));
+            }
 
         } else if (pageId.equals(Page.WHIRLEDS)) {
             title = "Whirleds";
             subnavi.addLink(null, "Whirleds", Page.WHIRLEDS, "");
-            subnavi.addLink(null, "My Discussions", Page.WHIRLEDS, "unread");
+            if (CShell.getMemberId() != 0) {
+                subnavi.addLink(null, "My Discussions", Page.WHIRLEDS, "unread");
+            }
 
         } else if (pageId.equals(Page.SHOP)) {
             title = "Shop";

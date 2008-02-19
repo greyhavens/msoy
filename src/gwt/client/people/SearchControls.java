@@ -52,13 +52,16 @@ public class SearchControls extends SmartTable
 
         setText(1, 1, CPeople.msgs.searchTip(), 2, "tipLabel");
 
-        setWidget(0, col++, WidgetUtil.makeShim(20, 1));
+        // only add the invite blurb for non-guests
+        if (CPeople.getMemberId() != 0) {
+            setWidget(0, col++, WidgetUtil.makeShim(20, 1));
 
-        FlowPanel invite = new FlowPanel();
-        invite.add(MsoyUI.createLabel(CPeople.msgs.searchInvite(), "nowrapLabel"));
-        invite.add(Application.createLink(CPeople.msgs.searchInviteGo(), Page.PEOPLE, "invites"));
-        getFlexCellFormatter().setRowSpan(0, col, 2);
-        setWidget(0, col++, invite);
+            FlowPanel inv = new FlowPanel();
+            inv.add(MsoyUI.createLabel(CPeople.msgs.searchInvite(), "nowrapLabel"));
+            inv.add(Application.createLink(CPeople.msgs.searchInviteGo(), Page.PEOPLE, "invites"));
+            getFlexCellFormatter().setRowSpan(0, col, 2);
+            setWidget(0, col++, inv);
+        }
     }
 
     public void setSearch (String query)
