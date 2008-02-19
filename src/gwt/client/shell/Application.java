@@ -187,7 +187,8 @@ public class Application
             args = new Args();
             args.setToken(token);
             page = Page.ACCOUNT;
-        } else if (Page.WORLD.equals(page) && args.get(0, "").equals("i")) {
+        } else if ((Page.WORLD.equals(page) || "whirled".equals(page)) &&
+                   args.get(0, "").equals("i")) {
             page = Page.ME;
         }
         // END TEMP
