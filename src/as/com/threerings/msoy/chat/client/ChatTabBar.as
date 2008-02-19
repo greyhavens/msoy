@@ -185,7 +185,8 @@ public class ChatTabBar extends HBox
             (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
         } else {
             // else this arrived (most likely) after we already closed the channel tab.
-            log.info("Dropping late arriving channel chat message [msg=" + msg + ", localtype=" +                        msg.localtype + "].");
+            log.info("Dropping late arriving channel chat message [msg=" + msg + ", localtype=" + 
+                      msg.localtype + "].");
         }
     }
 
