@@ -862,6 +862,10 @@
     <!-- and our flex compiler delegate all by itself -->
     <jar file="${deploy.dir}/flex-compiler-delegate.jar" basedir="${classes.dir}"
          includes="com/threerings/msoy/swiftly/server/build/FlexCompilerDelegate*"/>
+    <!-- copy some build results to where Swiftly wants them -->
+    <copy todir="data/swiftly/whirled_sdk/lib">
+      <fileset dir="${deploy.dir}/lib" includes="*.swc"/>
+    </copy>
   </target>
 
   <!-- builds top-level flash applications. -->
@@ -930,6 +934,7 @@
       <delete file="${gsrc.dir}/client/${file}Messages.java"/>
       <var name="file" unset="true"/>
     </sequential></for>
+    <delete><fileset dir="data/swiftly/whirled_sdk/lib" includes="*.swc"/></delete>
   </target>
 
   <!-- fully cleans out the application and all subprojects -->
