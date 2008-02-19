@@ -284,6 +284,7 @@ public class Frame
     protected static void showContent (String pageId, Widget pageContent)
     {
         RootPanel.get(CONTENT).clear();
+        _bar = null;
 
         // clear out any lingering dialogs
         clearDialog(Predicate.TRUE);
