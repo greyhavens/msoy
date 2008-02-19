@@ -285,6 +285,11 @@ img, embed, applet, object {
   color: white;
 }
 
+.pageTitle .SubNavi img {
+  display: inline;
+  vertical-align: bottom;
+}
+
 .pageTitle .Title {
   width: 282px;
   text-align: center;

@@ -11,9 +11,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-import client.item.ItemTypePanel;
-import client.shell.Page;
-
 /**
  * Displays a tabbed panel containing a player's inventory.
  */
@@ -23,12 +20,6 @@ public class InventoryPanel extends SimplePanel
     {
         setStyleName("inventoryPanel");
         _models = models;
-        _itemTabs = new ItemTypePanel(Page.STUFF);
-    }
-
-    public Widget getTabs ()
-    {
-        return _itemTabs;
     }
 
     public void display (byte itemType, int pageNo, int itemId)
@@ -43,7 +34,6 @@ public class InventoryPanel extends SimplePanel
                 getItemPanel(itemType).showDetail(item);
             }
         }
-        _itemTabs.selectTab(itemType);
         setWidget(getItemPanel(itemType));
     }
 
@@ -59,6 +49,5 @@ public class InventoryPanel extends SimplePanel
     }
 
     protected InventoryModels _models;
-    protected ItemTypePanel _itemTabs;
     protected HashMap _itemPanes = new HashMap();
 }

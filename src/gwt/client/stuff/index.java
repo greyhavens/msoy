@@ -124,7 +124,6 @@ public class index extends Page
     {
         String title = CStuff.msgs.stuffTitle(CStuff.dmsgs.getString("pItemType" + type));
         setContent(title, _inventory);
-        setPageTabs(_inventory.getTabs());
         _inventory.display(type, pageNo, itemId);
     }
 

@@ -22,6 +22,9 @@ public class MyWhirledData
     /** The scene id of our home scene. */
     public int homeSceneId;
 
+    /** The total number of people online. */
+    public int whirledPopulation;
+
     /** 
      * This member's online friends.
      *

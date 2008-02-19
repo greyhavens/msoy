@@ -6,10 +6,6 @@ package client.me;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
-import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WorldService;
@@ -23,7 +19,6 @@ import client.shell.Frame;
 import client.shell.Page;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 
 public class index extends MsgsEntryPoint
 {
@@ -66,7 +61,7 @@ public class index extends MsgsEntryPoint
             }
 
         } else if (CMe.getMemberId() != 0) {
-            setContent(new MyWhirled(createPopulationDisplay()));
+            setContent(new MyWhirled());
             FlashClients.tutorialEvent("myWhirledVisited");
 
         } else {
@@ -97,21 +92,5 @@ public class index extends MsgsEntryPoint
     {
         Frame.closeClient(false); // no client on the main guest landing page
         setContent(null, new WhatIsTheWhirled(), false);
-    }
-
-    protected PopulationDisplay createPopulationDisplay ()
-    {
-        return new PopulationDisplay() {
-            public void displayPopulation (int population) {
-                // This is a hack to get the population into the usual tabs spot...
-                VerticalPanel container = new VerticalPanel();
-                container.setVerticalAlignment(VerticalPanel.ALIGN_BOTTOM);
-                container.add(WidgetUtil.makeShim(5, 3));
-                Label popLabel = new Label(CMe.msgs.populationDisplay("" + population));
-                popLabel.setStyleName("PopulationDisplay");
-                container.add(popLabel);
-                setPageTabs(container);
-            }
-        };
     }
 }

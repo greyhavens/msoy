@@ -146,11 +146,6 @@ public abstract class Page
         Frame.setTitle(title);
     }
 
-    protected void setPageTabs (Widget tabs)
-    {
-//         _content.setPageTabs(tabs);
-    }
-
     /**
      * Called when we the player logs on while viewing this page. The default implementation
      * redisplays the current page with the current args (by calling {@link #onHistoryChanged}.

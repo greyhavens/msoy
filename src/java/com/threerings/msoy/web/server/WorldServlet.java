@@ -180,6 +180,7 @@ public class WorldServlet extends MsoyServiceServlet
             data.photo = (profile.photoHash == null) ? null : profile.getPhoto();
         }
         data.homeSceneId = mrec.homeSceneId;
+        data.whirledPopulation = MsoyServer.memberMan.getPPSnapshot().getPopulationCount();
         data.friends = ServletUtil.resolveMemberCards(friendIds, true, friendIds);
         data.feed = feed;
         data.rooms = ownedRooms;

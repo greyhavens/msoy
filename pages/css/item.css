@@ -24,57 +24,6 @@
   background-image: none;
 }
 
-.itemTypePanel .Left {
-  background-image: url(/images/ui/tabs/tab_left.png);
-  width: 3px;
-  height: 20px;
-}
-
-.itemTypePanel .Tab {
-  background-image: url(/images/ui/tabs/tab_tile.png);
-  background-repeat: repeat-x;
-  height: 20px;
-}
-
-.itemTypePanel a {
-  text-decoration: none;
-  font-family: Arial, Verdana, Helvetica, sans-serif;
-  font-size: 12px;
-  padding: 0px 5px;
-}
-
-.itemTypePanel .Tab .Button a {
-  color: #CFDCE1;
-}
-
-.itemTypePanel .Right {
-  background-image: url(/images/ui/tabs/tab_right.png);
-  width: 3px;
-  height: 20px;
-}
-
-.itemTypePanel .SelLeft {
-  background-image: url(/images/ui/tabs/tab_selected_left.png);
-  width: 3px;
-  height: 20px;
-}
-
-.itemTypePanel .SelTab {
-  border-top: 1px solid black;
-  background: white;
-  height: 20px;
-}
-
-.itemTypePanel .SelTab .Button a {
-  color: black;
-}
-
-.itemTypePanel .SelRight {
-  background-image: url(/images/ui/tabs/tab_selected_right.png);
-  width: 3px;
-  height: 20px;
-}
-
 .itemDetailPanel { 
   width: 650px;
 }

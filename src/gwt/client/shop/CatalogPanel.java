@@ -31,7 +31,6 @@ import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.data.CatalogQuery;
 
 import client.item.ItemSearchSortPanel;
-import client.item.ItemTypePanel;
 import client.item.TagCloud;
 import client.shell.Application;
 import client.shell.Args;
@@ -57,12 +56,10 @@ public class CatalogPanel extends VerticalPanel
     /** An action constant passed to this page. */
     public static final String ONE_LISTING = "i";
 
-    public CatalogPanel (ItemTypePanel typeTabs)
+    public CatalogPanel ()
     {
         setStyleName("catalogPanel");
         setWidth("100%");
-
-        _typeTabs = typeTabs;
 
         int rows = Math.max(1, (Window.getClientHeight() - Frame.HEADER_HEIGHT -
                                 HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT);
@@ -112,8 +109,6 @@ public class CatalogPanel extends VerticalPanel
     public void display (Args args)
     {
         CatalogQuery argQuery = parseArgs(args);
-        _typeTabs.selectTab(argQuery.itemType);
-
         String mode = args.get(1, LISTING_PAGE);
         if (mode.equals(ONE_LISTING)) {
             int catalogId = args.get(2, 0);
@@ -195,6 +190,9 @@ public class CatalogPanel extends VerticalPanel
                 add(_header);
                 add(_items);
             }
+
+            // set up our page title
+            Frame.setTitle(CShop.dmsgs.getString("pItemType" + _query.itemType));
 
             // configure the appropriate tab cloud
             Byte tabKey = new Byte(_query.itemType);
@@ -394,7 +392,6 @@ public class CatalogPanel extends VerticalPanel
     protected Map _clouds = new HashMap(); /* Byte, TagCloud */
 
     protected FlexTable _header;
-    protected ItemTypePanel _typeTabs;
     protected ItemSearchSortPanel _searchSortPanel;
     protected PagedGrid _items;
 

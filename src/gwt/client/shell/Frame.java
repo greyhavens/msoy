@@ -379,7 +379,8 @@ public class Frame
 
         } else if (pageId.equals(Page.PEOPLE)) {
             title = "Friends";
-            subnavi.addLink(null, "Friends", Page.PEOPLE, "");
+            subnavi.addLink(null, "My Friends", Page.PEOPLE, "");
+            subnavi.addLink(null, "Invite Friends", Page.PEOPLE, "invites");
 
         } else if (pageId.equals(Page.GAMES)) {
             title = "Games";
@@ -394,6 +395,13 @@ public class Frame
         } else if (pageId.equals(Page.SHOP)) {
             title = "Shop";
             subnavi.addLink(null, "Shop", Page.SHOP, "");
+            for (int ii = 0; ii < Item.TYPES.length; ii++) {
+                byte type = Item.TYPES[ii];
+                String tpath = Item.getDefaultThumbnailMediaFor(type).getMediaPath();
+                String tname = CShell.dmsgs.getString("pItemType" + type);
+                Image icon = subnavi.addImageLink(tpath, tname, Page.SHOP, ""+type);
+                icon.setHeight("15px"); // shrinky!
+            }
 
         } else if (pageId.equals(Page.HELP)) {
             title = "Help";
@@ -466,15 +474,31 @@ public class Frame
     protected static class SubNaviPanel extends FlowPanel
     {
         public void addLink (Image icon, String label, String page, String args) {
+            addSeparator();
+            if (icon != null) {
+                add(icon);
+            }
+            add(Application.createLink(label, page, args));
+        }
+
+        public Image addImageLink (String path, String tip, final String page, final String args) {
+            addSeparator();
+            Image icon = MsoyUI.createActionImage(path, new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(page, args);
+                }
+            });
+            icon.setTitle(tip);
+            add(icon);
+            return icon;
+        }
+
+        protected void addSeparator () {
             if (getWidgetCount() > 0) {
                 HTML seppy = new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;");
                 seppy.addStyleName("inline");
                 add(seppy);
             }
-            if (icon != null) {
-                add(icon);
-            }
-            add(Application.createLink(label, page, args));
         }
     }
 

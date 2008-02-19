@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -35,14 +36,13 @@ import client.util.MsoyUI;
 
 public class MyWhirled extends SmartTable
 {
-    public MyWhirled (final PopulationDisplay popDisplay)
+    public MyWhirled ()
     {
         super("myWhirled", 0, 0);
 
         CMe.worldsvc.getMyWhirled(CMe.ident, new MsoyCallback() {
             public void onSuccess (Object result) {
                 MyWhirledData data = (MyWhirledData) result;
-//                 popDisplay.displayPopulation(data.whirledPopulation);
                 fillUI(data);
             }
         });
@@ -102,6 +102,9 @@ public class MyWhirled extends SmartTable
         contents.setSpacing(10);
         setWidget(0, 1, contents);
         getFlexCellFormatter().setVerticalAlignment(0, 1, VerticalPanel.ALIGN_TOP);
+
+        // display the Whirled population
+        contents.add(new Label(CMe.msgs.populationDisplay("" + data.whirledPopulation)));
 
         // display our online friends if we have any
         if (data.friends.size() > 0) {
