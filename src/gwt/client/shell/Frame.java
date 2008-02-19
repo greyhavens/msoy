@@ -176,7 +176,9 @@ public class Frame
         RootPanel.get(CLIENT).clear();
         RootPanel.get(CLIENT).setWidth(Math.max(Window.getClientWidth() - CONTENT_WIDTH, 0) + "px");
         RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
-        _bar.setCloseVisible(false);
+        if (_bar != null) {
+            _bar.setCloseVisible(false);
+        }
 
         // if we're on a "world" page, go to the landing page
         if (History.getToken().startsWith(Page.WORLD)) {
