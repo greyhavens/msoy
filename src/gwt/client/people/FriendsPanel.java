@@ -22,8 +22,6 @@ public class FriendsPanel extends SmartTable
     {
         super("friendsPanel", 0, 5);
 
-        Frame.setTitle(CPeople.msgs.friendsTitle());
-
         setWidget(0, 0, new SearchControls());
 
         if (memberId <= 0) {
@@ -45,9 +43,10 @@ public class FriendsPanel extends SmartTable
         if (data == null) {
             setText(1, 0, CPeople.msgs.friendsNoSuchMember());
         } else {
-            Frame.setTitle(CPeople.msgs.friendsTitle(), data.name.toString());
-            _friends = new MemberList((CPeople.getMemberId() == _memberId) ?
-                                      CPeople.msgs.noFriendsSelf() : CPeople.msgs.noFriendsOther());
+            boolean self = (CPeople.getMemberId() == _memberId);
+            Frame.setTitle(self ? CPeople.msgs.friendsSelfTitle() : data.name.toString());
+            _friends = new MemberList(
+                self ? CPeople.msgs.noFriendsSelf() : CPeople.msgs.noFriendsOther());
             String title = CPeople.msgs.friendsWhoseFriends(data.name.toString());
             setWidget(1, 0, MsoyUI.createBox("people", title, _friends));
             _friends.setModel(new SimpleDataModel(data.friends), 0);

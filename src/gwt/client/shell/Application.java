@@ -45,9 +45,6 @@ import client.item.ItemMessages;
 public class Application
     implements EntryPoint, HistoryListener
 {
-    /** The height of our header (including the black bar with location label) in pixels. */
-    public static final int HEADER_HEIGHT = 50 /* header */ + 20 /* location bar */;
-
     /** Our active invitation if we landed at Whirled from an invite, null otherwise. */
     public static Invitation activeInvite;
 

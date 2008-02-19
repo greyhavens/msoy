@@ -48,7 +48,7 @@ public class index extends MsgsEntryPoint
         String action = args.get(0, "");
 
         if (action.equals("account")) {
-            setContent(new EditAccountPanel());
+            setContent(CMe.msgs.titleAccount(), new EditAccountPanel());
 
         } else if (action.equals("i") && CMe.getMemberId() == 0) {
             // only load their invitation and redirect to the main page if they're not logged in
@@ -96,7 +96,7 @@ public class index extends MsgsEntryPoint
     protected void displayWhat ()
     {
         Frame.closeClient(false); // no client on the main guest landing page
-        setContent(new WhatIsTheWhirled(), false);
+        setContent(null, new WhatIsTheWhirled(), false);
     }
 
     protected PopulationDisplay createPopulationDisplay ()

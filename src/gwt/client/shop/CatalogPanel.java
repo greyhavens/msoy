@@ -35,6 +35,7 @@ import client.item.ItemTypePanel;
 import client.item.TagCloud;
 import client.shell.Application;
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
@@ -63,7 +64,7 @@ public class CatalogPanel extends VerticalPanel
 
         _typeTabs = typeTabs;
 
-        int rows = Math.max(1, (Window.getClientHeight() - Application.HEADER_HEIGHT -
+        int rows = Math.max(1, (Window.getClientHeight() - Frame.HEADER_HEIGHT -
                                 HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT);
         _items = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {

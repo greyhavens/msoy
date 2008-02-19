@@ -134,8 +134,7 @@ public class index extends Page
     {
         CWorld.worldsvc.serializePopularPlaces(CWorld.ident, 20, new MsoyCallback() {
             public void onSuccess (Object result) {
-                Frame.setTitle(CWorld.msgs.hotSpotsTitle());
-                setFlashContent(FlashClients.createPopularPlacesDefinition((String) result));
+                setFlashContent(null, FlashClients.createPopularPlacesDefinition((String) result));
             }
         });
     }
@@ -208,19 +207,16 @@ public class index extends Page
             break;
 
         case LaunchConfig.FLASH_SOLO:
-            Frame.setTitle(config.name);
-            setFlashContent(WidgetUtil.createFlashObjectDefinition(
+            setFlashContent(config.name, WidgetUtil.createFlashObjectDefinition(
                                 "game", config.gameMediaPath, 800, 600, null));
             break;
 
         case LaunchConfig.JAVA_SOLO:
-            Frame.setTitle(config.name);
-            setContent(new Label("Not yet supported"));
+            setContent(config.name, new Label("Not yet supported"));
             break;
 
         default:
-            Frame.setTitle(config.name);
-            setContent(new Label(CWorld.msgs.errUnknownGameType("" + config.type)));
+            setContent(config.name, new Label(CWorld.msgs.errUnknownGameType("" + config.type)));
             break;
         }
     }

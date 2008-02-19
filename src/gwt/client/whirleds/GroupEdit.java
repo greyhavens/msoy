@@ -52,9 +52,7 @@ public class GroupEdit extends FlexTable
         setCellSpacing(5);
         setCellPadding(0);
 
-        String title = _group.groupId == 0 ?
-            CWhirleds.msgs.editCreateTitle() : CWhirleds.msgs.editEditTitle();
-        Frame.setTitle(title, group.name);
+        Frame.setTitle(_group.groupId == 0 ? CWhirleds.msgs.editCreateTitle() : group.name);
 
         // set up our editor contents
         _name = MsoyUI.createTextBox(_group.name, GroupName.LENGTH_MAX, 20);

@@ -25,7 +25,6 @@ public class OptOutPanel extends FlexTable
     {
         setCellSpacing(10);
         setStyleName("invitation"); // mimic the styles on InvitationPanel
-        Frame.setTitle(CAccount.msgs.welcomeTitle());
         CAccount.membersvc.getInvitation(inviteId, false, new MsoyCallback () {
             public void onSuccess (Object result) {
                 init((Invitation)result);

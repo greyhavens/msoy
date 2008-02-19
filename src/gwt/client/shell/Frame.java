@@ -42,8 +42,8 @@ import client.util.MsoyUI;
  */
 public class Frame
 {
-    /** The height of our page header (just the menus and status stuff). */
-    public static final int HEADER_HEIGHT = 50;
+    /** The height of our frame header and page title bar. */
+    public static final int HEADER_HEIGHT = 50 /* header */ + 37 /* title bar */;
 
     /** The height of our Flash or Java client in pixels. */
     public static final int CLIENT_HEIGHT = 544;
@@ -101,20 +101,13 @@ public class Frame
     }
 
     /**
-     * Sets the title of the browser window and the page (displayed below the Whirled logo).
+     * Sets the title of the browser window and the page.
      */
     public static void setTitle (String title)
     {
-        setTitle(title, null);
-    }
-
-    /**
-     * Sets the title and subtitle of the browser window and the page. The subtitle is displayed to
-     * the right of the title in the page and tacked onto the title for the browser window.
-     */
-    public static void setTitle (String title, String subtitle)
-    {
-        title = (subtitle == null) ? title : (title + " - " + subtitle);
+        if (_bar != null) {
+            _bar.setTitle(title);
+        }
         Window.setTitle(CShell.cmsgs.windowTitle(title));
     }
 
@@ -180,9 +173,9 @@ public class Frame
         WorldClient.clientWillClose();
         _closeToken = null;
         RootPanel.get(SEPARATOR).clear();
-        RootPanel.get(Frame.CLIENT).clear();
-        RootPanel.get(Frame.CLIENT).setWidth("0px");
-        RootPanel.get(Frame.CONTENT).setWidth("100%");
+        RootPanel.get(CLIENT).clear();
+        RootPanel.get(CLIENT).setWidth(Math.max(Window.getClientWidth() - CONTENT_WIDTH, 0) + "px");
+        RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
         _bar.setCloseVisible(false);
 
         // if we're on a "world" page, go to the landing page
@@ -334,8 +327,13 @@ public class Frame
             RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
         }
 
+        int ccount = RootPanel.get(CLIENT).getWidgetCount();
+        if (ccount == 0) {
+            RootPanel.get(CLIENT).add(new HTML("&nbsp;"));
+        }
+
         if (_bar != null) {
-            _bar.setCloseVisible(RootPanel.get(CLIENT).getWidgetCount() > 0);
+            _bar.setCloseVisible(ccount > 0);
         }
     }
 
@@ -487,7 +485,7 @@ public class Frame
             addStyleName("pageTitle" + pageId.toUpperCase().substring(0, 1) + pageId.substring(1));
 
             setWidget(0, 0, subnavi, 1, "SubNavi");
-            setText(0, 1, title, 1, "Title");
+            setText(0, 1, _deftitle = title, 1, "Title");
 
             _closeBox = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
                 public void onClick (Widget sender) {
@@ -499,13 +497,14 @@ public class Frame
         }
 
         public void setTitle (String title) {
-            setText(0, 1, title);
+            setText(0, 1, title == null ? _deftitle : title);
         }
 
         public void setCloseVisible (boolean visible) {
             _closeBox.setVisible(visible);
         }
 
+        protected String _deftitle;
         protected Label _closeBox;
     }
 
@@ -590,6 +589,7 @@ public class Frame
         public NaviButton (String page, String text, AbstractImagePrototype up,
                            AbstractImagePrototype over, AbstractImagePrototype down) {
             setStyleName("Button");
+            addStyleName("actionLabel");
             pageId = page;
 
             _upImage = up.createImage();
@@ -605,13 +605,15 @@ public class Frame
                     setWidget(_upImage);
                 }
             });
-            _overImage.addClickListener(new ClickListener() {
+            ClickListener go = new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(pageId, "");
                 }
-            });
+            };
+            _overImage.addClickListener(go);
 
             _downImage = down.createImage();
+            _downImage.addClickListener(go);
 
             setWidget(_upImage);
         }

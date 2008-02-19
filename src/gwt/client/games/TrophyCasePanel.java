@@ -21,7 +21,6 @@ public class TrophyCasePanel extends SmartTable
     public TrophyCasePanel (int memberId)
     {
         super("trophyCase", 0, 5);
-        Frame.setTitle(CGames.msgs.caseTitle());
 
         if (memberId == 0) {
             setText(0, 0, CGames.msgs.noSuchPlayer());
@@ -46,7 +45,7 @@ public class TrophyCasePanel extends SmartTable
             return;
         }
 
-        Frame.setTitle(CGames.msgs.caseTitle(), tcase.owner.toString());
+        Frame.setTitle(tcase.owner.toString());
         if (tcase.shelves.length == 0) {
             setText(0, 0, (CGames.getMemberId() == tcase.owner.getMemberId()) ?
                     CGames.msgs.caseEmptyMe() : CGames.msgs.caseEmpty());

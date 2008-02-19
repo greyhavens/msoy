@@ -120,7 +120,7 @@ public class GroupView extends VerticalPanel
             return; // the forum list will have already reported no such group, so just bail
         }
 
-        Frame.setTitle(CWhirleds.msgs.groupTitle(), _detail.group.name);
+        Frame.setTitle(_detail.group.name);
         _group = _detail.group;
         _extras = _detail.extras;
 

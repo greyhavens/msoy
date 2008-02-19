@@ -13,7 +13,6 @@ import client.msgs.ForumPanel;
 import client.msgs.MsgsEntryPoint;
 import client.msgs.ThreadPanel;
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -32,8 +31,6 @@ public class index extends MsgsEntryPoint
     // @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        Frame.setTitle(CWhirleds.msgs.groupTitle());
-
         // if we're not a dev deployment, disallow guests
         if (!DeploymentConfig.devDeployment && CWhirleds.ident == null) {
             setContent(MsoyUI.createLabel(CWhirleds.cmsgs.noGuests(), "infoLabel"));

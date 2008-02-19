@@ -42,8 +42,7 @@ public class index extends MsgsEntryPoint
         }
         // make sure we're displaying the application
         if (!_mainView.isAttached()) {
-            Frame.setTitle(CMail.msgs.mailTitle());
-            setContent(_mainView);
+            setContent(CMail.msgs.mailTitle(), _mainView);
         }
 
         // display the requested folder, header and/or message

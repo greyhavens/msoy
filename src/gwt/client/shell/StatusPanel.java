@@ -220,7 +220,4 @@ public class StatusPanel extends SmartTable
 
     protected LevelsDisplay _levels = new LevelsDisplay();
     protected MailDisplay _mail = new MailDisplay();
-
-    /** The height of the header UI in pixels. */
-    protected static final int HEADER_HEIGHT = 50;
 }

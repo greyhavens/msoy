@@ -7,8 +7,6 @@ import java.util.Date;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import client.shell.Frame;
-
 /**
  * Displays various help related information.
  */
@@ -17,7 +15,6 @@ public class HelpPanel extends SmartTable
     public HelpPanel ()
     {
         super("helpPanel", 0, 10);
-        Frame.setTitle(CHelp.msgs.helpTitle());
 
         int row = 0;
         setText(row++, 0, CHelp.msgs.helpIntro());

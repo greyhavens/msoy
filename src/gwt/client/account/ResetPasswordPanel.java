@@ -20,7 +20,6 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.Application;
-import client.shell.Frame;
 import client.shell.Page;
 import client.shell.Args;
 import client.util.MsoyUI;
@@ -32,7 +31,6 @@ public class ResetPasswordPanel extends FlexTable
 {
     public ResetPasswordPanel (Args args)
     {
-        Frame.setTitle(CAccount.msgs.accountTitle(), CAccount.msgs.resetTitle());
         setCellSpacing(10);
         setStyleName("formPanel");
 

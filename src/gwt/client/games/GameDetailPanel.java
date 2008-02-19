@@ -52,7 +52,6 @@ public class GameDetailPanel extends VerticalPanel
 
     public GameDetailPanel ()
     {
-        Frame.setTitle(CGames.msgs.gdpTitle());
         setStyleName("gameDetail");
     }
 
@@ -82,7 +81,7 @@ public class GameDetailPanel extends VerticalPanel
         clear();
 
         _gameId = gameId;
-        Frame.setTitle(CGames.msgs.gdpTitle(), detail.getGame().name);
+        Frame.setTitle(detail.getGame().name);
 
         int row = 0;
         SmartTable top = new SmartTable(0, 0);

@@ -107,7 +107,7 @@ public abstract class Page
      * Clears out any existing content, creates a new Flash object from the definition, and sets it
      * as the new main page content. Returns the newly-created content as a widget.
      */
-    protected HTML setFlashContent (String definition)
+    protected HTML setFlashContent (String title, String definition)
     {
         // Please note: the following is a work-around for an IE7 bug. If we create a Flash object
         // node *before* attaching it to the DOM tree, IE will silently fail to register the Flash
@@ -115,7 +115,7 @@ public abstract class Page
         // empty node first, add it to the DOM tree, and then initialize it with the Flash object
         // definition.  Also see: WidgetUtil.embedFlashObject()
         HTML control = new HTML();
-        setContent(control);
+        setContent(title, control);
         control.setHTML(definition);
         return control;
     }
@@ -125,16 +125,25 @@ public abstract class Page
      */
     protected void setContent (Widget content)
     {
-        setContent(content, true);
+        setContent(null, content, true);
     }
 
     /**
      * Clears out any existing content and sets the specified widget as the main page content.
      */
-    protected void setContent (Widget content, boolean withHeader)
+    protected void setContent (String title, Widget content)
+    {
+        setContent(title, content, true);
+    }
+
+    /**
+     * Clears out any existing content and sets the specified widget as the main page content.
+     */
+    protected void setContent (String title, Widget content, boolean withHeader)
     {
         Frame.setHeaderVisible(withHeader);
         Frame.showContent(withHeader ? getTabPageId() : null, _content = content);
+        Frame.setTitle(title);
     }
 
     protected void setPageTabs (Widget tabs)

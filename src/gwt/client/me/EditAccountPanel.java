@@ -22,7 +22,6 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.AccountInfo;
 
-import client.shell.Frame;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
@@ -36,8 +35,6 @@ public class EditAccountPanel extends FlexTable
     {
         setCellSpacing(10);
         setStyleName("editAccount");
-
-        Frame.setTitle(CMe.msgs.titleAccount(), CMe.msgs.editSubtitle());
 
         CMe.usersvc.getAccountInfo(CMe.ident, new MsoyCallback() {
             public void onSuccess (Object result) {

@@ -14,7 +14,6 @@ import client.editem.ItemEditor;
 import client.remix.ItemRemixer;
 import client.shell.Application;
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -38,7 +37,6 @@ public class index extends Page
     {
         if (CStuff.ident == null) {
             // if we have no creds, just display a message saying login
-            setTitle(null);
             setContent(MsoyUI.createLabel(CStuff.msgs.logon(), "infoLabel"));
             _inventory = null;
             return;
@@ -52,7 +50,6 @@ public class index extends Page
             ItemEditor editor = ItemEditor.createItemEditor(type, createEditorHost());
             if ("e".equals(arg0)) {
                 int itemId = args.get(2, 0);
-                setTitle(CStuff.msgs.editItemTitle());
                 Item item = _models.findItem(type, itemId);
                 if (item == null) {
                     editor.setItem(type, itemId);
@@ -60,7 +57,6 @@ public class index extends Page
                     editor.setItem(item);
                 }
             } else {
-                setTitle(CStuff.msgs.createItemTitle());
                 editor.setItem(editor.createBlankItem());
                 byte ptype = (byte)args.get(2, 0);
                 if (ptype != 0) {
@@ -81,7 +77,6 @@ public class index extends Page
             } else {
                 remixer.setItem(type, itemId);
             }
-            setTitle(CStuff.msgs.remixItemTitle());
             setContent(remixer);
             return;
         }
@@ -127,15 +122,10 @@ public class index extends Page
 
     protected void displayInventory (byte type, int pageNo, int itemId)
     {
-        setTitle(null);
-        setContent(_inventory);
+        String title = CStuff.msgs.stuffTitle(CStuff.dmsgs.getString("pItemType" + type));
+        setContent(title, _inventory);
         setPageTabs(_inventory.getTabs());
         _inventory.display(type, pageNo, itemId);
-    }
-
-    protected void setTitle (String subtitle)
-    {
-        Frame.setTitle(CStuff.msgs.inventoryTitle(), subtitle);
     }
 
     protected InventoryModels _models = new InventoryModels();

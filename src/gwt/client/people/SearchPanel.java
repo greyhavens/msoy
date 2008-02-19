@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import client.shell.Args;
-import client.shell.Frame;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
@@ -27,7 +26,6 @@ public class SearchPanel extends VerticalPanel
         setStyleName("searchPanel");
         setWidth("100%");
         setSpacing(5);
-        Frame.setTitle(CPeople.msgs.profileSearchTitle());
         add(_ctrls = new SearchControls());
     }
 

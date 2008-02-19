@@ -17,7 +17,6 @@ import com.threerings.msoy.web.client.ProfileService;
 import client.util.MsoyUI;
 import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
 
 /**
@@ -53,7 +52,7 @@ public class index extends MsgsEntryPoint
             setContent(new FriendsPanel(args.get(1, 0)));
 
         } else if (action.equals("invites")) {
-            setContent(new SendInvitesPanel());
+            setContent(CPeople.msgs.sendInvitesTitle(), new SendInvitesPanel());
 
         } else if (args.get(0, 0) != 0) {
             displayMemberPage(args.get(0, 0));
@@ -87,14 +86,15 @@ public class index extends MsgsEntryPoint
         CPeople.profilesvc.loadProfile(CPeople.ident, _memberId = memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 ProfileService.ProfileResult pdata = (ProfileService.ProfileResult)result;
-                Frame.setTitle(CPeople.msgs.profileTitle(), pdata.name.toString());
+                String title = (pdata.name.getMemberId() == CPeople.getMemberId()) ?
+                    CPeople.msgs.profileSelfTitle() : pdata.name.toString();
                 switch (pdata.layout.layout) {
                 default:
                 case ProfileLayout.ONE_COLUMN_LAYOUT:
-                    setContent(new OneColumnLayout(pdata));
+                    setContent(title, new OneColumnLayout(pdata));
                     break;
                 case ProfileLayout.TWO_COLUMN_LAYOUT:
-                    setContent(new TwoColumnLayout(pdata));
+                    setContent(title, new TwoColumnLayout(pdata));
                     break;
                 }
             }

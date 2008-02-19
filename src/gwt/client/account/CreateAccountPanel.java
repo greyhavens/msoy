@@ -28,7 +28,6 @@ import com.threerings.msoy.web.data.SessionData;
 
 import client.people.SendInvitesPanel;
 import client.shell.Application;
-import client.shell.Frame;
 import client.shell.Page;
 import client.util.DateFields;
 import client.util.MsoyCallback;
@@ -43,7 +42,6 @@ public class CreateAccountPanel extends FlexTable
     {
         setCellSpacing(10);
         setStyleName("formPanel");
-        Frame.setTitle(CAccount.msgs.welcomeTitle(), CAccount.msgs.createTitle());
 
         int row = 0;
         getFlexCellFormatter().setColSpan(row, 0, 3);

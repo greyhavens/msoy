@@ -27,6 +27,7 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 import client.editem.EditorHost;
 import client.shell.Application;
 import client.shell.Args;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -76,7 +77,7 @@ public class ItemPanel extends VerticalPanel
         }
 
         // determine if we should show the creation UI at the bottom
-        int used = Application.HEADER_HEIGHT + NAV_BAR_ETC;
+        int used = Frame.HEADER_HEIGHT + NAV_BAR_ETC;
         boolean showCreate = shouldShowCreate(type);
         if (showCreate) {
             used += BLURB_HEIGHT;

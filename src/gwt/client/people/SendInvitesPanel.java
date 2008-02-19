@@ -23,7 +23,6 @@ import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
 
-import client.shell.Frame;
 import client.util.BorderedPopup;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
@@ -43,7 +42,6 @@ public class SendInvitesPanel extends VerticalPanel
     {
         setSpacing(10);
         setStyleName("sendInvites");
-        Frame.setTitle(CPeople.msgs.sendInvitesTitle(), CPeople.msgs.sendInvitesSubtitle());
         reinit();
     }
 

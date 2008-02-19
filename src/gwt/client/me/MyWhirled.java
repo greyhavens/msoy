@@ -28,7 +28,6 @@ import com.threerings.msoy.web.data.MyWhirledData;
 
 import client.shell.Application;
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
@@ -39,7 +38,6 @@ public class MyWhirled extends SmartTable
     public MyWhirled (final PopulationDisplay popDisplay)
     {
         super("myWhirled", 0, 0);
-        Frame.setTitle(CMe.msgs.titleMyWhirled());
 
         CMe.worldsvc.getMyWhirled(CMe.ident, new MsoyCallback() {
             public void onSuccess (Object result) {
