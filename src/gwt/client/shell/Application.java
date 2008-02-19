@@ -103,7 +103,7 @@ public class Application
     {
         String token = createLinkToken(page, args);
         if (token.equals(History.getToken())) {
-            Frame.setContentMinimized(false, null);
+            Frame.setContentMinimized(false);
         } else {
             History.newItem(token);
         }
@@ -222,13 +222,8 @@ public class Application
             _page.onHistoryChanged(args);
 
         } else {
-            final Args fargs = args;
-            Frame.setContentMinimized(false, new Command() {
-                public void execute () {
-                    // now tell the page about its arguments
-                    _page.onHistoryChanged(fargs);
-                }
-            });
+            Frame.setContentMinimized(false);
+            _page.onHistoryChanged(args);
         }
     }
 

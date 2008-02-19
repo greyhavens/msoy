@@ -138,67 +138,67 @@ img, embed, applet, object {
 }
 
 /** Header styles. */
-.msoyHeader {
+.frameHeader {
   color: #EAEFF1;
   background: url(/images/header/header_tile.png);
   height: 50px;
 }
 
-.msoyHeader .Logo {
+.frameHeader .Logo {
   width: 124px;
   vertical-align: top;
   background: #222222;
 }
 
-.msoyHeader .Logo img {
+.frameHeader .Logo img {
   display: block;
 }
 
-.msoyHeader .Navi {
+.frameHeader .Navi {
   width: 195px;
 }
 
-.msoyHeader .Shim {
+.frameHeader .Shim {
   background: url(/images/header/header_shim.png) no-repeat;
   width: 156px;
 }
 
-.msoyHeader .Left {
+.frameHeader .Left {
   background: url(/images/header/header_left.png) no-repeat;
   vertical-align: bottom;
 }
 
-.msoyHeader .Right {
+.frameHeader .Right {
   background: url(/images/header/header_right.png) no-repeat right;
   width: 100%;
   vertical-align: bottom;
 }
 
-.msoyHeader .Signup {
+.frameHeader .Signup {
   width: 300px;
   text-align: center;
   background: #222222;
 }
 
-.msoyHeader .Signup table {
+.frameHeader .Signup table {
   margin-left: auto;
   margin-right: auto;
 }
 
-.msoyHeader .Signup a {
+.frameHeader .Signup a {
   color: #FFFFFF;
   font-size: 18px;
 }
 
-.msoyHeader .Logon {
+.frameHeader .Logon {
   background: #222222;
 }
 
-.msoyHeader .Logon table {
+.frameHeader .Logon table {
   margin-top: 5px;
 }
 
-.msoyHeader .Button {
+.frameHeader .Button {
   width: 78px;
   height: 32px;
   margin-left: 1px;
@@ -214,16 +214,16 @@ img, embed, applet, object {
   border: 1px solid #000000;
 }
 
-.msoyHeader .logonPanel {
+.frameHeader .logonPanel {
   font-size: 10px;
 }
 
-.msoyHeader .logonPanel td {
+.frameHeader .logonPanel td {
   vertical-align: middle;
 }
 
-.msoyHeader .logonPanel .gwt-TextBox,
-.msoyHeader .logonPanel .gwt-PasswordTextBox {
+.frameHeader .logonPanel .gwt-TextBox,
+.frameHeader .logonPanel .gwt-PasswordTextBox {
   font-size: 10px;
   width: 100px;
   border: 1px solid #CCCCCC;
@@ -251,61 +251,58 @@ img, embed, applet, object {
 }
 
 /** Page styles */
-.pageContent .Bar {
+.pageTitle {
   width: 700px;
   height: 37px;
 }
-.pageContent .MeBar {
+.pageTitleMe {
   background: url(/images/header/me_bar.png) #222222 no-repeat;
 }
-.pageContent .PeopleBar {
+.pageTitlePeople {
   background: url(/images/header/people_bar.png) #222222 no-repeat;
 }
-.pageContent .WhirledsBar {
+.pageTitleWhirleds {
   background: url(/images/header/whirleds_bar.png) #222222 no-repeat;
 }
-.pageContent .GamesBar {
+.pageTitleGames {
   background: url(/images/header/games_bar.png) #222222 no-repeat;
 }
-.pageContent .ShopBar {
+.pageTitleShop {
   background: url(/images/header/shop_bar.png) #222222 no-repeat;
 }
-.pageContent .HelpBar {
+.pageTitleHelp {
   background: url(/images/header/help_bar.png) #222222 no-repeat;
 }
 
-.pageHeader {
-  width: 100%;
-}
-
-.pageHeader .TitleCell {
-/*  background: #222222; */
+.pageTitle .SubNavi {
+  width: 400px;
   font-size: 14px;
-  font-weight: bold;
-  height: 20px;
   color: white;
   white-space: nowrap;
-  padding-left: 5px;
+  vertical-align: bottom;
+  padding: 0px 0px 5px 15px;
 }
 
-.pageHeader .TabsCell {
-/*  background: #222222; */
-  height: 20px;
-  text-align: left;
-  font-size: 14px;
-  font-weight: bold;
+.pageTitle .SubNavi a {
   color: white;
 }
 
-.pageHeader .CloseCell {
-/*  background: #222222; */
-  width: 13px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-  padding-right: 2px;
+.pageTitle .Title {
+  width: 282px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  padding-top: 5px;
 }
 
-.pageHeader .CloseCell .CloseBox {
+.pageTitle .Close {
+  width: 13px;
+  padding: 5px 5px 0px 0px;
+  vertical-align: top;
+}
+
+.pageTitle .Close .CloseBox {
   background-image: url(/images/ui/close.png);
   width: 13px;
   height: 13px;

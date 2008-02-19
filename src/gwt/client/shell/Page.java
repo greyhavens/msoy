@@ -58,8 +58,6 @@ public abstract class Page
      */
     public void onPageLoad ()
     {
-        // let the frame know about our content table
-        Frame.initContent(_content);
     }
 
     /**
@@ -102,7 +100,7 @@ public abstract class Page
      */
     protected Widget getContent ()
     {
-        return (_content != null && _content.isCellPresent(1, 0)) ? _content.getWidget(1, 0) : null;
+        return _content;
     }
 
     /**
@@ -136,17 +134,12 @@ public abstract class Page
     protected void setContent (Widget content, boolean withHeader)
     {
         Frame.setHeaderVisible(withHeader);
-        if (withHeader) {
-            Frame.showContent(getTabPageId(), _content);
-            _content.setContent(content);
-        } else {
-            Frame.showContent(getTabPageId(), content);
-        }
+        Frame.showContent(withHeader ? getTabPageId() : null, _content = content);
     }
 
     protected void setPageTabs (Widget tabs)
     {
-        _content.setPageTabs(tabs);
+//         _content.setPageTabs(tabs);
     }
 
     /**
@@ -172,58 +165,5 @@ public abstract class Page
         }
     }
 
-    protected static class Content extends SmartTable
-    {
-        public Content (String pageId) {
-            super("pageContent", 0, 0);
-            setWidth("100%");
-            setHeight("100%");
-
-            // a separate table for the header, so that we can set individual cell widths correctly
-            _tabs = new SmartTable("pageHeader", 0, 0);
-            _tabs.getFlexCellFormatter().setStyleName(0, 0, "TitleCell");
-            _tabs.getFlexCellFormatter().setWidth(0, 0, "118px");
-            _tabs.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-            _tabs.getFlexCellFormatter().setStyleName(0, 1, "TabsCell");
-
-            _closeBox = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
-                public void onClick (Widget sender) {
-                    Frame.closeContent();
-                }
-            });
-            _tabs.setWidget(0, 2, _closeBox);
-            _tabs.getFlexCellFormatter().setStyleName(0, 2, "CloseCell");
-            setCloseVisible(false);
-
-            setWidget(0, 0, _tabs, 1, "Bar");
-            getFlexCellFormatter().addStyleName(
-                0, 0, pageId.toUpperCase().substring(0, 1) + pageId.substring(1) + "Bar");
-
-            getFlexCellFormatter().setHeight(1, 0, "100%");
-            getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
-        }
-
-        public void setPageTabs (Widget tabs) {
-//             _tabs.setWidget(0, 1, tabs);
-        }
-
-        public void setCloseVisible (boolean visible) {
-            _closeBox.setVisible(visible);
-        }
-
-        public void setContent (Widget content) {
-            setWidget(1, 0, content);
-
-            // if there isn't anything in the tabs/subtitle area, we need something there to cause
-            // IE to properly use up the space
-            if (_tabs.getWidget(0, 1) == null && _tabs.getText(0, 1).length() == 0) {
-                _tabs.setHTML(0, 1, "&nbsp;");
-            }
-        }
-
-        protected SmartTable _tabs;
-        protected Label _closeBox;
-    }
-
-    protected Content _content = new Content(getTabPageId());
+    protected Widget _content;
 }

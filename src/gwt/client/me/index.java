@@ -38,6 +38,11 @@ public class index extends MsgsEntryPoint
     }
 
     // @Override // from Page
+    public void onPageLoad ()
+    {
+    }
+
+    // @Override // from Page
     public void onHistoryChanged (Args args)
     {
         String action = args.get(0, "");

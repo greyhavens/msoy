@@ -11,7 +11,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
 
@@ -19,6 +18,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.gwt.util.Predicate;
 
 import client.shell.images.NaviImages;
@@ -37,7 +38,7 @@ import client.util.MsoyUI;
 
 /**
  * The frame wraps the top-level page HTML and handles displaying the navigation, the page content,
- * the client and sliding things around.
+ * and the various clients.
  */
 public class Frame
 {
@@ -63,12 +64,12 @@ public class Frame
     {
         _minimizeContent = MsoyUI.createActionLabel("", "Minimize", new ClickListener() {
             public void onClick (Widget sender) {
-                setContentMinimized(true, null);
+                setContentMinimized(true);
             }
         });
         _maximizeContent = MsoyUI.createActionLabel("", "Maximize", new ClickListener() {
             public void onClick (Widget sender) {
-                setContentMinimized(false, null);
+                setContentMinimized(false);
             }
         });
 
@@ -121,21 +122,16 @@ public class Frame
      * Minimizes or maximizes the page content. NOOP if the content min/max interface is not being
      * displayed.
      */
-    public static void setContentMinimized (boolean minimized, Command onComplete)
+    public static void setContentMinimized (boolean minimized)
     {
         if (minimized && _minimizeContent.isAttached()) {
             RootPanel.get(SEPARATOR).remove(_minimizeContent);
             RootPanel.get(SEPARATOR).add(_maximizeContent);
-            new SlideContentOff().start(onComplete);
-
+            slideContentOff();
         } else if (!minimized && _maximizeContent.isAttached()) {
             RootPanel.get(SEPARATOR).remove(_maximizeContent);
             RootPanel.get(SEPARATOR).add(_minimizeContent);
-            new SlideContentOn().start(onComplete);
-
-        } else if (onComplete != null) {
-            // no action needed, just run the onComplete
-            onComplete.execute();
+            slideContentOn();
         }
     }
 
@@ -162,6 +158,9 @@ public class Frame
 
         // make sure the header is showing as we always want the header above the client
         setHeaderVisible(true);
+        if (_mheader != null) {
+            _mheader.selectTab(null);
+        }
     }
 
     /**
@@ -184,7 +183,7 @@ public class Frame
         RootPanel.get(Frame.CLIENT).clear();
         RootPanel.get(Frame.CLIENT).setWidth("0px");
         RootPanel.get(Frame.CONTENT).setWidth("100%");
-        _content.setCloseVisible(false);
+        _bar.setCloseVisible(false);
 
         // if we're on a "world" page, go to the landing page
         if (History.getToken().startsWith(Page.WORLD)) {
@@ -208,17 +207,14 @@ public class Frame
             History.newItem(_closeToken);
 
         } else {
-            new SlideContentOff().start(new Command() {
-                public void execute () {
-                    RootPanel.get(SEPARATOR).remove(_minimizeContent);
-                    History.newItem(_closeToken);
-                }
-            });
+            slideContentOff();
+            RootPanel.get(SEPARATOR).remove(_minimizeContent);
+            History.newItem(_closeToken);
         }
 
-        _content = null;
         _contlist = null;
         _scroller = null;
+        _bar = null;
         return true;
     }
 
@@ -288,16 +284,7 @@ public class Frame
     }
 
     /**
-     * Configures the frame with our page's content table.
-     */
-    protected static void initContent (Page.Content content)
-    {
-        _content = content;
-    }
-
-    /**
-     * Displays the supplied page content (which is generally the same as the table previously
-     * configured via {@link #initContent}). Will animate the content sliding on if appropriate.
+     * Displays the supplied page content.
      */
     protected static void showContent (String pageId, Widget pageContent)
     {
@@ -311,15 +298,19 @@ public class Frame
         _contlist.setWidth("100%");
         _contlist.add(pageContent);
 
-        // select the appropriate header tab
-        if (_mheader != null) {
-            _mheader.selectTab(pageId);
+        if (pageId != null) {
+            // select the appropriate header tab
+            if (_mheader != null) {
+                _mheader.selectTab(pageId);
+            }
+            // create our page title bar
+            _bar = createTitleBar(pageId);
         }
 
         Widget content;
         // if we're not showing a Page.Content page or the browser is too short; don't try to do
         // our own custom scrolling, just let everything scroll
-        if (windowTooShort() || pageContent != _content) {
+        if (windowTooShort() || pageId == null) {
             content = _contlist;
             Window.enableScrolling(true);
         } else {
@@ -333,14 +324,19 @@ public class Frame
             (_closeToken != null && !_minimizeContent.isAttached())) {
             RootPanel.get(SEPARATOR).clear();
             RootPanel.get(SEPARATOR).add(_minimizeContent);
-            new SlideContentOn().start(null);
+            slideContentOn();
 
         } else {
+            if (_bar != null) {
+                RootPanel.get(CONTENT).add(_bar);
+            }
             RootPanel.get(CONTENT).add(content);
             RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
         }
 
-        _content.setCloseVisible(RootPanel.get(CLIENT).getWidgetCount() > 0);
+        if (_bar != null) {
+            _bar.setCloseVisible(RootPanel.get(CLIENT).getWidgetCount() > 0);
+        }
     }
 
     protected static boolean windowTooShort ()
@@ -350,7 +346,7 @@ public class Frame
 
     protected static void restoreClient ()
     {
-        setContentMinimized(true, null);
+        setContentMinimized(true);
     }
 
     protected static int clearDialog (ComplexPanel panel, Predicate pred)
@@ -369,6 +365,46 @@ public class Frame
         return removed;
     }
 
+    protected static TitleBar createTitleBar (String pageId)
+    {
+        String title = "";
+        SubNaviPanel subnavi = new SubNaviPanel();
+        int myId = CShell.getMemberId();
+
+        if (pageId.equals(Page.ME)) {
+            title = "Me";
+            subnavi.addLink(null, "Me", Page.ME, "");
+            subnavi.addLink(null, "My Home", Page.WORLD, "h");
+            subnavi.addLink(null, "Mail", Page.MAIL, "");
+            subnavi.addLink(null, "Profile", Page.PEOPLE, ""+myId);
+            subnavi.addLink(null, "Account", Page.ME, "account");
+
+        } else if (pageId.equals(Page.PEOPLE)) {
+            title = "Friends";
+            subnavi.addLink(null, "Friends", Page.PEOPLE, "");
+
+        } else if (pageId.equals(Page.GAMES)) {
+            title = "Games";
+            subnavi.addLink(null, "Games", Page.GAMES, "");
+            subnavi.addLink(null, "My Trophies", Page.GAMES, Args.compose("t", myId));
+
+        } else if (pageId.equals(Page.WHIRLEDS)) {
+            title = "Whirleds";
+            subnavi.addLink(null, "Whirleds", Page.WHIRLEDS, "");
+            subnavi.addLink(null, "My Discussions", Page.WHIRLEDS, "unread");
+
+        } else if (pageId.equals(Page.SHOP)) {
+            title = "Shop";
+            subnavi.addLink(null, "Shop", Page.SHOP, "");
+
+        } else if (pageId.equals(Page.HELP)) {
+            title = "Help";
+            subnavi.addLink(null, "Help", Page.HELP, "");
+        }
+
+        return new TitleBar(pageId, title, subnavi);
+    }
+
     /**
      * Configures top-level functions that can be called by Flash.
      */
@@ -385,78 +421,29 @@ public class Frame
         return (navigator.userAgent.toLowerCase().indexOf("linux") != -1);
     }-*/;
 
-    protected static abstract class Slider extends Timer
+    protected static void slideContentOff ()
     {
-        public void start (Command onComplete) {
-            _onComplete = onComplete;
-//             scheduleRepeating(25);
-            run();
-        }
-
-        protected void done () {
-            cancel();
-            if (_onComplete != null) {
-                _onComplete.execute();
-            }
-        }
-
-        protected Command _onComplete;
-        protected static final int FRAMES = 6;
+        RootPanel.get(CONTENT).clear();
+        WorldClient.setMinimized(false);
+        _bar.setCloseVisible(false);
+        RootPanel.get(CONTENT).setWidth("0px");
+        RootPanel.get(CLIENT).setWidth((Window.getClientWidth() - SEPARATOR_WIDTH) + "px");
     }
 
-    protected static class SlideContentOff extends Slider
+    protected static void slideContentOn ()
     {
-        public SlideContentOff () {
-            RootPanel.get(CONTENT).clear();
-            WorldClient.setMinimized(false);
-            _content.setCloseVisible(false);
+        RootPanel.get(CONTENT).clear();
+        RootPanel.get(CONTENT).add(_bar);
+        if (_scroller == null) {
+            RootPanel.get(CONTENT).add(_contlist);
+        } else {
+            RootPanel.get(CONTENT).add(_scroller);
         }
-
-        public void run () {
-//             if (_startWidth >= _endWidth) {
-                RootPanel.get(CONTENT).setWidth("0px");
-                RootPanel.get(CLIENT).setWidth(_endWidth + "px");
-                done();
-
-//             } else {
-//                 RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
-//                 RootPanel.get(CLIENT).setWidth(_startWidth + "px");
-//                 _startWidth += _deltaWidth;
-//             }
-        }
-
-        protected int _availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
-        protected int _startWidth = Math.max(_availWidth - CONTENT_WIDTH, 0);
-        protected int _endWidth = _availWidth;
-        protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
-    }
-
-    protected static class SlideContentOn extends Slider
-    {
-        public void run () {
-//             if (_startWidth <= _endWidth) {
-                if (_scroller == null) {
-                    RootPanel.get(CONTENT).add(_contlist);
-                } else {
-                    RootPanel.get(CONTENT).add(_scroller);
-                }
-                RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
-                RootPanel.get(CLIENT).setWidth(_endWidth + "px");
-                WorldClient.setMinimized(true);
-                _content.setCloseVisible(true);
-                done();
-
-//             } else {
-//                 RootPanel.get(CONTENT).setWidth((_availWidth - _startWidth) + "px");
-//                 RootPanel.get(CLIENT).setWidth(_startWidth + "px");
-//                 _startWidth += _deltaWidth;
-//             }
-        }
-
-        protected int _availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
-        protected int _endWidth = Math.max(_availWidth - CONTENT_WIDTH, 0);
-        protected int _startWidth = _availWidth;
-        protected int _deltaWidth = (_endWidth - _startWidth) / FRAMES;
+        RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
+        int availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
+        RootPanel.get(CLIENT).setWidth(Math.max(availWidth - CONTENT_WIDTH, 0) + "px");
+        WorldClient.setMinimized(true);
+        _bar.setCloseVisible(true);
     }
 
     protected static class Dialog extends SmartTable
@@ -478,11 +465,55 @@ public class Frame
         }
     }
 
+    protected static class SubNaviPanel extends FlowPanel
+    {
+        public void addLink (Image icon, String label, String page, String args) {
+            if (getWidgetCount() > 0) {
+                HTML seppy = new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;");
+                seppy.addStyleName("inline");
+                add(seppy);
+            }
+            if (icon != null) {
+                add(icon);
+            }
+            add(Application.createLink(label, page, args));
+        }
+    }
+
+    protected static class TitleBar extends SmartTable
+    {
+        public TitleBar (String pageId, String title, Widget subnavi) {
+            super("pageTitle", 0, 0);
+            addStyleName("pageTitle" + pageId.toUpperCase().substring(0, 1) + pageId.substring(1));
+
+            setWidget(0, 0, subnavi, 1, "SubNavi");
+            setText(0, 1, title, 1, "Title");
+
+            _closeBox = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
+                public void onClick (Widget sender) {
+                    closeContent();
+                }
+            });
+            setWidget(0, 2, _closeBox, 1, "Close");
+            setCloseVisible(false);
+        }
+
+        public void setTitle (String title) {
+            setText(0, 1, title);
+        }
+
+        public void setCloseVisible (boolean visible) {
+            _closeBox.setVisible(visible);
+        }
+
+        protected Label _closeBox;
+    }
+
     protected static abstract class Header extends SmartTable
         implements ClickListener
     {
         public Header () {
-            super("msoyHeader", 0, 0);
+            super("frameHeader", 0, 0);
             setWidth("100%");
             String lpath = "/images/header/header_logo.png";
             setWidget(0, 0, MsoyUI.createActionImage(lpath, this), 1, "Logo");
@@ -605,7 +636,8 @@ public class Frame
     protected static GuestHeader _gheader;
     protected static String _closeToken;
 
-    protected static Page.Content _content;
+    protected static TitleBar _bar;
+
     protected static FlowPanel _contlist;
     protected static ScrollPanel _scroller;
     protected static Label _minimizeContent, _maximizeContent;
