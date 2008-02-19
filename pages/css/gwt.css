@@ -163,11 +163,6 @@ img, embed, applet, object {
   width: 156px;
 }
 
-.frameHeader .Left {
-  background: url(/images/header/header_left.png) no-repeat;
-  vertical-align: bottom;
-}
-
 .frameHeader .Right {
   background: url(/images/header/header_right.png) no-repeat right;
   width: 100%;

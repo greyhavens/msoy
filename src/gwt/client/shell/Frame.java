@@ -578,7 +578,6 @@ public class Frame
             addButton(col++, Page.HELP, CShell.cmsgs.menuHelp(), _images.help(), _images.ohelp(),
                       _images.shelp());
 
-            setWidget(0, col++, WidgetUtil.makeShim(156, 10), 1, "Left");
             getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
             setWidget(0, col++, CShell.app.getStatusPanel(), 1, "Right");
         }
