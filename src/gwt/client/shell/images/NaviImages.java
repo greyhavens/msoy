@@ -12,19 +12,19 @@ import com.google.gwt.user.client.ui.ImageBundle;
 public interface NaviImages extends ImageBundle
 {
     /**
-     * @gwt.resource shop_over.png
-     */
-    AbstractImagePrototype oshop ();
-
-    /**
      * @gwt.resource shop.png
      */
     AbstractImagePrototype shop ();
 
     /**
-     * @gwt.resource games_over.png
+     * @gwt.resource shop_over.png
      */
-    AbstractImagePrototype ogames ();
+    AbstractImagePrototype oshop ();
+
+    /**
+     * @gwt.resource shop_selected.png
+     */
+    AbstractImagePrototype sshop ();
 
     /**
      * @gwt.resource games.png
@@ -32,9 +32,14 @@ public interface NaviImages extends ImageBundle
     AbstractImagePrototype games ();
 
     /**
-     * @gwt.resource help_over.png
+     * @gwt.resource games_over.png
      */
-    AbstractImagePrototype ohelp ();
+    AbstractImagePrototype ogames ();
+
+    /**
+     * @gwt.resource games_selected.png
+     */
+    AbstractImagePrototype sgames ();
 
     /**
      * @gwt.resource help.png
@@ -42,9 +47,14 @@ public interface NaviImages extends ImageBundle
     AbstractImagePrototype help ();
 
     /**
-     * @gwt.resource me_over.png
+     * @gwt.resource help_over.png
      */
-    AbstractImagePrototype ome ();
+    AbstractImagePrototype ohelp ();
+
+    /**
+     * @gwt.resource help_selected.png
+     */
+    AbstractImagePrototype shelp ();
 
     /**
      * @gwt.resource me.png
@@ -52,9 +62,14 @@ public interface NaviImages extends ImageBundle
     AbstractImagePrototype me ();
 
     /**
-     * @gwt.resource friends_over.png
+     * @gwt.resource me_over.png
      */
-    AbstractImagePrototype ofriends ();
+    AbstractImagePrototype ome ();
+
+    /**
+     * @gwt.resource me_selected.png
+     */
+    AbstractImagePrototype sme ();
 
     /**
      * @gwt.resource friends.png
@@ -62,12 +77,27 @@ public interface NaviImages extends ImageBundle
     AbstractImagePrototype friends ();
 
     /**
-     * @gwt.resource worlds_over.png
+     * @gwt.resource friends_over.png
      */
-    AbstractImagePrototype oworlds ();
+    AbstractImagePrototype ofriends ();
+
+    /**
+     * @gwt.resource friends_selected.png
+     */
+    AbstractImagePrototype sfriends ();
 
     /**
      * @gwt.resource worlds.png
      */
     AbstractImagePrototype worlds ();
+
+    /**
+     * @gwt.resource worlds_over.png
+     */
+    AbstractImagePrototype oworlds ();
+
+    /**
+     * @gwt.resource worlds_selected.png
+     */
+    AbstractImagePrototype sworlds ();
 }

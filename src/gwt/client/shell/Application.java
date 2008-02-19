@@ -345,6 +345,7 @@ public class Application
         _creators.put(Page.ACCOUNT, client.account.index.getCreator());
         _creators.put(Page.ADMIN, client.admin.index.getCreator());
         _creators.put(Page.GAMES, client.games.index.getCreator());
+        _creators.put(Page.HELP, client.help.index.getCreator());
         _creators.put(Page.MAIL, client.mail.index.getCreator());
         _creators.put(Page.ME, client.me.index.getCreator());
         _creators.put(Page.PEOPLE, client.people.index.getCreator());

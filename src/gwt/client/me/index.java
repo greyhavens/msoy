@@ -42,10 +42,7 @@ public class index extends MsgsEntryPoint
     {
         String action = args.get(0, "");
 
-        if (action.equals("help")) {
-            setContent(new HelpPanel());
-
-        } else if (action.equals("account")) {
+        if (action.equals("account")) {
             setContent(new EditAccountPanel());
 
         } else if (action.equals("i") && CMe.getMemberId() == 0) {

@@ -3,6 +3,8 @@
 
 package client.shell;
 
+import java.util.ArrayList;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -20,8 +22,10 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -109,9 +113,6 @@ public class Frame
      */
     public static void setTitle (String title, String subtitle)
     {
-        if (_content != null) {
-            _content.setPageTitle(title, subtitle);
-        }
         title = (subtitle == null) ? title : (title + " - " + subtitle);
         Window.setTitle(CShell.cmsgs.windowTitle(title));
     }
@@ -229,7 +230,11 @@ public class Frame
         RootPanel.get(HEADER).remove(_gheader);
         RootPanel.get(HEADER).remove(_mheader);
         if (visible) {
-            RootPanel.get(HEADER).add((CShell.getMemberId() == 0) ? _gheader : _mheader);
+            if (CShell.getMemberId() == 0) {
+                RootPanel.get(HEADER).add(_gheader);
+            } else {
+                RootPanel.get(HEADER).add(_mheader);
+            }
         }
     }
 
@@ -294,7 +299,7 @@ public class Frame
      * Displays the supplied page content (which is generally the same as the table previously
      * configured via {@link #initContent}). Will animate the content sliding on if appropriate.
      */
-    protected static void showContent (Widget page)
+    protected static void showContent (String pageId, Widget pageContent)
     {
         RootPanel.get(CONTENT).clear();
 
@@ -304,12 +309,17 @@ public class Frame
         // note that this is our current content
         _contlist = new FlowPanel();
         _contlist.setWidth("100%");
-        _contlist.add(page);
+        _contlist.add(pageContent);
+
+        // select the appropriate header tab
+        if (_mheader != null) {
+            _mheader.selectTab(pageId);
+        }
 
         Widget content;
         // if we're not showing a Page.Content page or the browser is too short; don't try to do
         // our own custom scrolling, just let everything scroll
-        if (windowTooShort() || page != _content) {
+        if (windowTooShort() || pageContent != _content) {
             content = _contlist;
             Window.enableScrolling(true);
         } else {
@@ -489,6 +499,7 @@ public class Frame
             setWidget(0, 2, new LogonPanel(true), 1, "Logon");
         }
 
+        // from Header
         public void onClick (Widget sender) {
             History.newItem(""); // go to the main page
         }
@@ -498,58 +509,88 @@ public class Frame
     {
         public MemberHeader () {
             int col = 1;
-            setWidget(0, col++, new NaviButton(CShell.cmsgs.menuMe(), _images.me(), _images.ome(),
-                                               Page.ME, ""));
-            String arg = Args.compose("f", CShell.getMemberId());
-            setWidget(0, col++, new NaviButton(CShell.cmsgs.menuFriends(), _images.friends(),
-                                               _images.ofriends(), Page.PEOPLE, arg));
-            setWidget(0, col++, new NaviButton(CShell.cmsgs.menuWorlds(), _images.worlds(),
-                                               _images.oworlds(), Page.WHIRLEDS, ""));
-            setWidget(0, col++, new NaviButton(CShell.cmsgs.menuGames(), _images.games(),
-                                               _images.ogames(), Page.GAMES, ""));
-            setWidget(0, col++, new NaviButton(CShell.cmsgs.menuShop(), _images.shop(),
-                                               _images.oshop(), Page.SHOP, ""));
-            setWidget(0, col++, new NaviButton(CShell.cmsgs.menuHelp(), _images.help(),
-                                               _images.ohelp(), Page.ME, "help"));
+            addButton(col++, Page.ME, CShell.cmsgs.menuMe(), _images.me(), _images.ome(),
+                      _images.sme());
+            addButton(col++, Page.PEOPLE, CShell.cmsgs.menuFriends(), _images.friends(),
+                      _images.ofriends(), _images.sfriends());
+            addButton(col++, Page.GAMES, CShell.cmsgs.menuGames(), _images.games(), _images.ogames(),
+                      _images.sgames());
+            addButton(col++, Page.WHIRLEDS, CShell.cmsgs.menuWorlds(), _images.worlds(),
+                      _images.oworlds(), _images.sworlds());
+            addButton(col++, Page.SHOP, CShell.cmsgs.menuShop(), _images.shop(), _images.oshop(),
+                      _images.sshop());
+            addButton(col++, Page.HELP, CShell.cmsgs.menuHelp(), _images.help(), _images.ohelp(),
+                      _images.shelp());
 
             setWidget(0, col++, WidgetUtil.makeShim(156, 10), 1, "Left");
             getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
             setWidget(0, col++, CShell.app.getStatusPanel(), 1, "Right");
         }
 
+        public void selectTab (String pageId) {
+            for (int ii = 0; ii < _buttons.size(); ii++) {
+                NaviButton button = (NaviButton)_buttons.get(ii);
+                button.setSelected(button.pageId.equals(pageId));
+            }
+        }
+
+        // from Header
         public void onClick (Widget sender) {
             // if the world is open, close the content, otherwise go home
             if (!Frame.closeContent()) {
                 Application.go(Page.WORLD, "h");
             }
         }
+
+        protected void addButton (int col, String pageId, String text, AbstractImagePrototype up,
+                                  AbstractImagePrototype over, AbstractImagePrototype down) {
+            NaviButton button = new NaviButton(pageId, text, up, over, down);
+            setWidget(0, col, button);
+            _buttons.add(button);
+        }
+
+        protected ArrayList _buttons = new ArrayList();
     }
 
-    protected static class NaviButton extends Label
+    protected static class NaviButton extends SimplePanel
     {
-        public NaviButton (String text, AbstractImagePrototype upImage,
-                           AbstractImagePrototype overImage, final String page, final String args) {
+        public final String pageId;
+
+        public NaviButton (String page, String text, AbstractImagePrototype up,
+                           AbstractImagePrototype over, AbstractImagePrototype down) {
             setStyleName("Button");
+            pageId = page;
 
-            _upImage = upImage.createImage();
-            _overImage = overImage.createImage();
-
-            addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(page, args);
+            _upImage = up.createImage();
+            _upImage.addMouseListener(new MouseListenerAdapter() {
+                public void onMouseEnter (Widget sender) {
+                    setWidget(_overImage);
                 }
             });
-            setText(text);
-            setBackgroundImage(_upImage);
+
+            _overImage = over.createImage();
+            _overImage.addMouseListener(new MouseListenerAdapter() {
+                public void onMouseLeave (Widget sender) {
+                    setWidget(_upImage);
+                }
+            });
+            _overImage.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(pageId, "");
+                }
+            });
+
+            _downImage = down.createImage();
+
+            setWidget(_upImage);
         }
 
-        protected void setBackgroundImage (Image image) {
-            int left = -image.getOriginLeft(), top = -image.getOriginTop();
-            String bgstr = "url('" + image.getUrl() + "') " + left + "px " + top + "px";
-            DOM.setStyleAttribute(getElement(), "background", bgstr);
+        public void setSelected (boolean selected)
+        {
+            setWidget(selected ? _downImage : _upImage);
         }
 
-        protected Image _upImage, _overImage;
+        protected Image _upImage, _overImage, _downImage;
     }
 
     protected static WindowResizeListener _resizer = new WindowResizeListener() {
@@ -560,7 +601,8 @@ public class Frame
         }
     };
 
-    protected static Header _mheader, _gheader;
+    protected static MemberHeader _mheader;
+    protected static GuestHeader _gheader;
     protected static String _closeToken;
 
     protected static Page.Content _content;

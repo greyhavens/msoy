@@ -7,11 +7,12 @@ import java.util.ArrayList;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -31,6 +32,7 @@ public abstract class Page
     public static final String ACCOUNT = "account";
     public static final String ADMIN = "admin";
     public static final String GAMES = "games";
+    public static final String HELP = "help";
     public static final String MAIL = "mail";
     public static final String ME = "me";
     public static final String PEOPLE = "people";
@@ -88,6 +90,14 @@ public abstract class Page
     protected abstract String getPageId ();
 
     /**
+     * Returns the identifier the page whose tab should be showing when this page is showing.
+     */
+    protected String getTabPageId ()
+    {
+        return getPageId();
+    }
+
+    /**
      * Returns the content widget last configured with {@link #setContent}.
      */
     protected Widget getContent ()
@@ -127,10 +137,10 @@ public abstract class Page
     {
         Frame.setHeaderVisible(withHeader);
         if (withHeader) {
-            Frame.showContent(_content);
+            Frame.showContent(getTabPageId(), _content);
             _content.setContent(content);
         } else {
-            Frame.showContent(content);
+            Frame.showContent(getTabPageId(), content);
         }
     }
 
@@ -162,19 +172,15 @@ public abstract class Page
         }
     }
 
-    protected static class Content extends FlexTable
+    protected static class Content extends SmartTable
     {
-        public Content () {
-            setCellPadding(0);
-            setCellSpacing(0);
+        public Content (String pageId) {
+            super("pageContent", 0, 0);
             setWidth("100%");
             setHeight("100%");
 
             // a separate table for the header, so that we can set individual cell widths correctly
-            _tabs = new FlexTable();
-            _tabs.setStyleName("pageHeader");
-            _tabs.setCellPadding(0);
-            _tabs.setCellSpacing(0);
+            _tabs = new SmartTable("pageHeader", 0, 0);
             _tabs.getFlexCellFormatter().setStyleName(0, 0, "TitleCell");
             _tabs.getFlexCellFormatter().setWidth(0, 0, "118px");
             _tabs.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
@@ -189,23 +195,16 @@ public abstract class Page
             _tabs.getFlexCellFormatter().setStyleName(0, 2, "CloseCell");
             setCloseVisible(false);
 
-            setWidget(0, 0, _tabs);
+            setWidget(0, 0, _tabs, 1, "Bar");
+            getFlexCellFormatter().addStyleName(
+                0, 0, pageId.toUpperCase().substring(0, 1) + pageId.substring(1) + "Bar");
 
             getFlexCellFormatter().setHeight(1, 0, "100%");
             getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
         }
 
-        public void setPageTitle (String title, String subtitle) {
-            _tabs.setText(0, 0, title);
-            if (subtitle != null) {
-                _tabs.setText(0, 1, subtitle);
-            } else {
-                _tabs.setHTML(0, 1, "&nbsp;");
-            }
-        }
-
         public void setPageTabs (Widget tabs) {
-            _tabs.setWidget(0, 1, tabs);
+//             _tabs.setWidget(0, 1, tabs);
         }
 
         public void setCloseVisible (boolean visible) {
@@ -222,9 +221,9 @@ public abstract class Page
             }
         }
 
-        protected FlexTable _tabs;
+        protected SmartTable _tabs;
         protected Label _closeBox;
     }
 
-    protected Content _content = new Content();
+    protected Content _content = new Content(getTabPageId());
 }
