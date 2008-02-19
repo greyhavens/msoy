@@ -467,13 +467,13 @@ public class Frame
     protected static class Dialog extends SmartTable
     {
         public Dialog (String title, Widget content) {
-            super("pageHeader", 0, 0);
-            setText(0, 0, title, 1, "TitleCell");
+            super("pageDialog", 0, 0);
+            setText(0, 0, title, 1, "DialogTitle");
             setWidget(0, 1, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
                 public void onClick (Widget sender) {
                     Frame.clearDialog(getContent());
                 }
-            }), 1, "CloseCell");
+            }), 1, "Close");
             setWidget(1, 0, content, 2, null);
             setWidget(2, 0, WidgetUtil.makeShim(5, 5), 2, null);
         }

@@ -287,21 +287,24 @@ img, embed, applet, object {
 
 .pageTitle .Title {
   width: 282px;
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
   color: white;
   padding-top: 5px;
   opacity: 0.6;
 }
 
-.pageTitle .Close {
+.pageTitle .Title, .pageDialog .DialogTitle {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.pageTitle .Close, .pageDialog .Close {
   width: 13px;
   padding: 5px 5px 0px 0px;
   vertical-align: top;
 }
 
-.pageTitle .Close .CloseBox {
+.pageTitle .Close .CloseBox, .pageDialog .Close .CloseBox {
   background-image: url(/images/ui/close.png);
   width: 13px;
   height: 13px;
@@ -325,14 +328,6 @@ img, embed, applet, object {
   border-top: #222222 solid 19px;
   width: 8px;
   height: 525px;
-}
-
-.SeparatorFromFlash {
-  position: absolute;
-  background: black;
-  width: 1px;
-  height: 20px;
-  top: 30px;
 }
 
 /** Starry boxes */
