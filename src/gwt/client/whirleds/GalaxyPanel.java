@@ -21,17 +21,16 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.web.data.GalaxyData;
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.web.data.GroupCard;
 
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
-import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
+import client.util.ThumbBox;
 
 /**
  * Display the public groups in a sensical manner, including a sorted list of characters that
@@ -72,7 +71,7 @@ public class GalaxyPanel extends SmartTable
                 Application.go(Page.WHIRLEDS, Args.compose(_action, ""+page, _arg));
             }
             protected Widget createWidget (Object item) {
-                return new GroupWidget((Group)item);
+                return new GroupWidget((GroupCard)item);
             }
             protected String getEmptyMessage () {
                 return CWhirleds.msgs.galaxyNoGroups();
@@ -219,22 +218,22 @@ public class GalaxyPanel extends SmartTable
 
     protected class GroupWidget extends SmartTable
     {
-        public GroupWidget (final Group group) {
+        public GroupWidget (GroupCard group) {
             super("GroupWidget", 2, 2);
 
-            setWidget(0, 0, MediaUtil.createMediaView(
-                          group.getLogo(), MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
+            final int groupId = group.name.getGroupId();
+            setWidget(0, 0, new ThumbBox(group.logo, new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.WHIRLEDS, Args.compose("d", group.groupId));
+                    Application.go(Page.WHIRLEDS, Args.compose("d", groupId));
                 }
             }), 1, "Logo");
             getFlexCellFormatter().setRowSpan(0, 0, 3);
 
-            setWidget(0, 1, Application.createLink(group.name, Page.WHIRLEDS,
-                                                   Args.compose("d", group.groupId)));
+            setWidget(0, 1, Application.createLink(group.name.toString(), Page.WHIRLEDS,
+                                                   Args.compose("d", groupId)));
 
             setText(1, 0, group.blurb);
-            setText(2, 0, CWhirleds.msgs.galaxyMemberCount("" + group.memberCount));
+            setText(2, 0, CWhirleds.msgs.galaxyMemberCount("" + group.population));
         }
     }
 
