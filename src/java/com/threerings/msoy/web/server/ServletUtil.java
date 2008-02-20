@@ -24,6 +24,7 @@ import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 
 import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceException;
 
 import static com.threerings.msoy.Log.log;
@@ -98,7 +99,7 @@ public class ServletUtil
                     // get those from the popular places snapshot
                     if (status instanceof MemberCard.InGame) {
                         MemberCard.InGame gstatus = (MemberCard.InGame)status;
-                        PopularPlacesSnapshot.Place place = pps.getGame(gstatus.gameId);
+                        PlaceCard place = pps.getGame(gstatus.gameId);
                         if (place != null) {
                             gstatus.gameName = place.name;
                         }

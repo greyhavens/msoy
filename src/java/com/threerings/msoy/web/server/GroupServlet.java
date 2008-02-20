@@ -3,11 +3,11 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.Collection;
 
 import java.util.logging.Level;
 
@@ -15,13 +15,14 @@ import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Predicate;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
 
-import com.threerings.msoy.server.MsoyServer;
-
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
@@ -40,6 +41,8 @@ import com.threerings.msoy.group.server.persist.GroupRecord;
 
 import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.data.GalaxyData;
+import com.threerings.msoy.web.data.GroupCard;
+import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
@@ -48,7 +51,7 @@ import com.threerings.msoy.web.data.WebIdent;
 import static com.threerings.msoy.Log.log;
 
 /**
- * Provides the server implementation of {@link ItemService}.
+ * Provides the server implementation of {@link GroupService}.
  */
 public class GroupServlet extends MsoyServiceServlet
     implements GroupService
@@ -60,12 +63,28 @@ public class GroupServlet extends MsoyServiceServlet
         try {
             GalaxyData data = new GalaxyData();
 
-            // TODO: determine our featured whirled based on who's online now
-            List<GroupRecord> groups = MsoyServer.groupRepo.getGroupsList(0, 5);
-            if (groups.size() > 0) {
-                GroupRecord group = RandomUtil.pickRandom(groups);
-                data.featuredWhirled = group.toGroupObject();
+            // determine our featured whirled based on who's online now
+            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            List<GroupCard> popWhirleds = Lists.newArrayList();
+            for (PlaceCard card : pps.getTopWhirleds()) {
+                GroupRecord group = MsoyServer.groupRepo.loadGroup(card.placeId);
+                if (group != null) {
+                    GroupCard gcard = group.toGroupCard();
+                    gcard.population = card.population;
+                    popWhirleds.add(gcard);
+                    if (popWhirleds.size() == GalaxyData.POPULAR_WHIRLED_COUNT) {
+                        break;
+                    }
+                }
             }
+            // if we don't have enough people online, supplement with other groups
+            if (popWhirleds.size() < GalaxyData.POPULAR_WHIRLED_COUNT) {
+                int count = GalaxyData.POPULAR_WHIRLED_COUNT - popWhirleds.size();
+                for (GroupRecord group : MsoyServer.groupRepo.getGroupsList(0, count)) {
+                    popWhirleds.add(group.toGroupCard());
+                }
+            }
+            data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
 
             // load up our popular tags
             List<String> popularTags = Lists.newArrayList();
@@ -84,15 +103,26 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from GroupService
-    public List<Group> getGroupsList (WebIdent ident)
+    public List<GroupCard> getGroupsList (WebIdent ident)
         throws ServiceException
     {
         try {
-            List<Group> groups = new ArrayList<Group>();
+            List<GroupCard> groups = Lists.newArrayList();
             for (GroupRecord gRec : MsoyServer.groupRepo.getGroupsList(0, Integer.MAX_VALUE)) {
-                groups.add(gRec.toGroupObject());
+                groups.add(gRec.toGroupCard());
             }
+
+            // fill in the current population of these groups
+            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            for (GroupCard group : groups) {
+                PlaceCard card = pps.getWhirled(group.name.getGroupId());
+                if (card != null) {
+                    group.population = card.population;
+                }
+            }
+
             return groups;
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getGroupsList failed", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -127,7 +157,7 @@ public class GroupServlet extends MsoyServiceServlet
             detail.creator = mRec.getName();
             detail.group = gRec.toGroupObject();
             detail.extras = gRec.toExtrasObject();
-            ArrayList<GroupMembership> members = new ArrayList<GroupMembership>();
+            List<GroupMembership> members = Lists.newArrayList();
             detail.members = members;
             for (GroupMembershipRecord gmRec : MsoyServer.groupRepo.getMembers(groupId)) {
                 mRec = MsoyServer.memberRepo.loadMember(gmRec.memberId);
@@ -170,7 +200,7 @@ public class GroupServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            List<Group> groups = new ArrayList<Group>();
+            List<Group> groups = Lists.newArrayList();
             for (GroupRecord gRec : MsoyServer.groupRepo.searchGroups(searchString)) {
                 groups.add(gRec.toGroupObject());
             }
@@ -187,7 +217,7 @@ public class GroupServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            List<Group> groups = new ArrayList<Group>();
+            List<Group> groups = Lists.newArrayList();
             for (GroupRecord gRec : MsoyServer.groupRepo.searchForTag(tag)) {
                 groups.add(gRec.toGroupObject());
             }
@@ -210,7 +240,7 @@ public class GroupServlet extends MsoyServiceServlet
             MemberRecord mRec = MsoyServer.memberRepo.loadMember(memberId);
             if (mRec == null) {
                 log.warning("Requested group membership for unknown member [id=" + memberId + "].");
-                return new ArrayList<GroupMembership>();
+                return Collections.emptyList();
             }
 
             return MsoyServer.groupRepo.resolveGroupMemberships(
@@ -438,7 +468,7 @@ public class GroupServlet extends MsoyServiceServlet
         try {
             MemberName memName = mrec.getName();
             TagRepository tagRepo = MsoyServer.groupRepo.getTagRepository();
-            ArrayList<TagHistory> list = new ArrayList<TagHistory>();
+            List<TagHistory> list = Lists.newArrayList();
             for (TagHistoryRecord record : tagRepo.getTagHistoryByMember(mrec.memberId)) {
                 TagNameRecord tag = record.tagId == -1 ? null :
                     tagRepo.getTag(record.tagId);
@@ -461,7 +491,7 @@ public class GroupServlet extends MsoyServiceServlet
     public Collection<String> getTags (WebIdent ident, int groupId) throws ServiceException
     {
         try {
-            ArrayList<String> result = new ArrayList<String>();
+            List<String> result = Lists.newArrayList();
             for (TagNameRecord tagName : MsoyServer.groupRepo.getTagRepository().
                     getTags(groupId)) {
                 result.add(tagName.tag);

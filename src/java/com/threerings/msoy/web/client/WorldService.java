@@ -12,7 +12,6 @@ import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.WhatIsWhirledData;
-import com.threerings.msoy.web.data.WhirledwideData;
 
 /**
  * Provides information related to the world (and the whirled).
@@ -32,19 +31,13 @@ public interface WorldService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads the data for the Whirledwide page.
-     */
-    public WhirledwideData getWhirledwide ()
-        throws ServiceException;
-
-    /**
      * Loads the data for the WhatIsWhirled page.
      */
     public WhatIsWhirledData getWhatIsWhirled ()
         throws ServiceException;
 
     /**
-     * Updates the Whirledwide news HTML. Caller must be an admin.
+     * Updates the Whirled news HTML. Caller must be an admin.
      */
     public void updateWhirledNews (WebIdent ident, String newsHtml)
         throws ServiceException;

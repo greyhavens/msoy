@@ -23,17 +23,12 @@ public interface WorldServiceAsync
     public void getMyWhirled (WebIdent ident, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link WorldService#getWhirledwide}.
-     */
-    public void getWhirledwide (AsyncCallback callback);
-
-    /**
      * The asynchronous version of {@link WorldService#getWhatIsWhirled}.
      */
     public void getWhatIsWhirled (AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link WorldService#getWhirledwide}.
+     * The asynchronous version of {@link WorldService#updateWhirledNews}.
      */
     public void updateWhirledNews (WebIdent ident, String newsHtml, AsyncCallback callback);
 

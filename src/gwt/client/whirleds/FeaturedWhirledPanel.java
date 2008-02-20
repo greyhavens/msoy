@@ -14,7 +14,7 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.web.data.GroupCard;
 
 import client.util.MsoyUI;
 
@@ -28,23 +28,26 @@ import client.shell.WorldClient;
  */
 public class FeaturedWhirledPanel extends VerticalPanel
 {
-    public FeaturedWhirledPanel (final Group group)
+    public FeaturedWhirledPanel (GroupCard[] whirleds)
     {
         setStyleName("featuredWhirled");
         MsoyUI.makeBox(this, "people", CWhirleds.msgs.featuredTitle());
 
+        // TODO: next, prev
+        final GroupCard group = whirleds[0];
         SimplePanel panel = new SimplePanel();
         add(panel);
         WorldClient.displayFeaturedPlace(group.homeSceneId, panel);
 
         SmartTable info = new SmartTable(0, 5);
         info.setWidth("100%");
-        info.setText(0, 0, group.name, 1, "Name");
-        Widget link = Application.groupViewLink(CWhirleds.msgs.featuredMoreInfo(), group.groupId);
+        info.setText(0, 0, group.name.toString(), 1, "Name");
+        Widget link = Application.groupViewLink(
+            CWhirleds.msgs.featuredMoreInfo(), group.name.getGroupId());
         info.setWidget(0, 1, link, 1, "MoreInfo");
         info.setWidget(0, 2, new Button(CWhirleds.msgs.featuredEnter(), new ClickListener() {
             public void onClick (Widget sender) {
-                Application.go(Page.WORLD, "g" + group.groupId);
+                Application.go(Page.WORLD, "g" + group.name.getGroupId());
             }
         }));
         info.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);

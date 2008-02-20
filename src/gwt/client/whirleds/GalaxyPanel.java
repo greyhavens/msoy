@@ -139,7 +139,7 @@ public class GalaxyPanel extends SmartTable
     protected void init (GalaxyData data)
     {
         // set up our featured whirled
-        setWidget(0, 1, new FeaturedWhirledPanel(data.featuredWhirled));
+        setWidget(0, 1, new FeaturedWhirledPanel(data.featuredWhirleds));
 
         // set up our popular tags
         if (data.popularTags.size() == 0) {

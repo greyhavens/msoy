@@ -87,16 +87,15 @@ import com.threerings.msoy.web.client.WorldService;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MyWhirledData;
-import com.threerings.msoy.web.data.SceneCard;
+import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.WhatIsWhirledData;
-import com.threerings.msoy.web.data.WhirledwideData;
 
 import static com.threerings.msoy.Log.log;
 
 /**
- * Does something extraordinary.
+ * Implements the {@link WorldService}.
  */
 public class WorldServlet extends MsoyServiceServlet
     implements WorldService
@@ -185,97 +184,6 @@ public class WorldServlet extends MsoyServiceServlet
         data.feed = feed;
         data.rooms = ownedRooms;
         return data;
-    }
-
-    // from WorldService
-    public WhirledwideData getWhirledwide ()
-        throws ServiceException
-    {
-        final WhirledwideData whirledwide = new WhirledwideData();
-
-        // get the top 9 rated Game SceneCards.  We sort them by rating here on the server, and
-        // avoid fill in info that is unneeded, like population
-        try {
-            List<SceneCard> games = Lists.newArrayList();
-            // fetch catalog records and loop over them
-            for (CatalogRecord record : MsoyServer.itemMan.getGameRepository().loadCatalog(
-                    CatalogListing.SORT_BY_RATING, false, null, 0, 0, 0, 9)) {
-                GameRecord gameRec = (GameRecord) record.item;
-                SceneCard game = new SceneCard();
-                game.sceneId = gameRec.gameId;
-                game.name = gameRec.name;
-                game.logo = gameRec.thumbMediaHash == null ? null :
-                    new MediaDesc(gameRec.thumbMediaHash, gameRec.thumbMimeType,
-                                  gameRec.thumbConstraint);
-                game.sceneType = SceneCard.GAME;
-                games.add(game);
-            }
-            whirledwide.games = games;
-
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to get popular games info", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-
-        List<MemberCard> whirledPeople = Lists.newArrayList();
-        final List<MemberCard> people = Lists.newArrayList();
-        ServletUtil.invokePeerOperation("getWhirledwide", new PeerManager.Operation() {
-            public void apply (NodeObject nodeobj) {
-                MsoyNodeObject mnobj = (MsoyNodeObject) nodeobj;
-                for (MemberLocation memberLoc : mnobj.memberLocs) {
-                    if (memberLoc.memberId == MemberName.GUEST_ID) {
-                        // don't include guests.
-                        continue;
-                    }
-                    MemberCard member = new MemberCard();
-                    // card details get filled in back on the servlet thread
-                    member.name = new MemberName("", memberLoc.memberId);
-                    people.add(member);
-                }
-            }
-        });
-        for (int ii = 0; ii < 5 && people.size() > 0; ii++) {
-            int randomPerson = (int) (Math.random() * people.size());
-            whirledPeople.add(people.remove(randomPerson));
-        }
-
-        // Member cards
-        try {
-            for (MemberCard card : whirledPeople) {
-                MemberNameRecord name =
-                    MsoyServer.memberRepo.loadMemberName(card.name.getMemberId());
-                card.name = name.toMemberName();
-                ProfileRecord profile =
-                    MsoyServer.profileRepo.loadProfile(card.name.getMemberId());
-                if (profile == null) {
-                    log.warning("Missing profile for card [who=" + card.name + "].");
-                } else if (profile.photoHash != null) {
-                    card.photo = new MediaDesc(profile.photoHash, profile.photoMimeType,
-                                               profile.photoConstraint);
-                }
-            }
-            whirledwide.people = whirledPeople;
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to flesh out MemberCards", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-
-        // Scene cards
-        PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
-        whirledwide.whirledPopulation = pps.getPopulationCount();
-        List<SceneCard> cards = Lists.newArrayList();
-        for (PopularPlacesSnapshot.Place scene : pps.getTopScenes()) {
-            SceneCard card = new SceneCard();
-            card.sceneType = SceneCard.ROOM;
-            card.sceneId = scene.placeId;
-            card.name = scene.name;
-            card.population = scene.population;
-            cards.add(card);
-        }
-        whirledwide.places = cards;
-
-        whirledwide.newsHtml = RuntimeConfig.server.whirledwideNewsHtml;
-        return whirledwide;
     }
 
     // from interface WorldService
@@ -475,143 +383,6 @@ public class WorldServlet extends MsoyServiceServlet
     }
 
     /**
-     * fills an array list of SceneCards, using the map to fill up the SceneCard's friends list.
-     */
-    protected List<SceneCard> getRoomSceneCards (IntMap<List<Integer>> map,
-                                                 PopularPlacesSnapshot pps)
-        throws ServiceException
-    {
-        IntMap<SceneCard> cards = IntMaps.newHashIntMap();
-        List<SceneCard> returnCards = Lists.newArrayList();
-
-        try {
-            // maps group id to the scene(s) that are owned by it
-            IntMap<IntSet> groupIds = IntMaps.newHashIntMap();
-            // maps member id to the scene(s) that are owned by them
-            IntMap<IntSet> memIds = IntMaps.newHashIntMap();
-            for (SceneRecord sceneRec : MsoyServer.sceneRepo.loadScenes(map.keySet())) {
-                SceneCard card = new SceneCard();
-                card.sceneId = sceneRec.sceneId;
-                card.name = sceneRec.name;
-                card.sceneType = SceneCard.ROOM;
-                card.friends = map.get(card.sceneId);
-                PopularPlacesSnapshot.Place snap = pps.getScene(sceneRec.sceneId);
-                // if the snapshot is out of date, the display will be made sane in GWT.
-                card.population = snap == null ? 0 : snap.population;
-                cards.put(card.sceneId, card);
-                if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                    IntSet groupScenes = groupIds.get(sceneRec.ownerId);
-                    if (groupScenes == null) {
-                        groupScenes = new ArrayIntSet();
-                        groupIds.put(sceneRec.ownerId, groupScenes);
-                    }
-                    groupScenes.add(sceneRec.sceneId);
-                } else if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                    IntSet memberScenes = memIds.get(sceneRec.ownerId);
-                    if (memberScenes == null) {
-                        memberScenes = new ArrayIntSet();
-                        memIds.put(sceneRec.ownerId, memberScenes);
-                    }
-                    memberScenes.add(sceneRec.sceneId);
-                }
-            }
-
-            // fill in logos for group-owned scenes
-            for (GroupRecord groupRec : MsoyServer.groupRepo.loadGroups(groupIds.keySet())) {
-                for (int sceneId : groupIds.remove(groupRec.groupId)) {
-                    SceneCard card = cards.remove(sceneId);
-                    if (card != null) {
-                        card.logo = groupRec.logoMediaHash == null ?
-                            Group.getDefaultGroupLogoMedia() :
-                            new MediaDesc(groupRec.logoMediaHash, groupRec.logoMimeType,
-                                          groupRec.logoMediaConstraint);
-                        returnCards.add(card);
-                    }
-                }
-            }
-
-            // fill in default logos for scenes whose group has been removed
-            for (int groupId : groupIds.keySet()) {
-                for (int sceneId : groupIds.remove(groupId)) {
-                    SceneCard card = cards.remove(sceneId);
-                    if (card != null) {
-                        card.logo = Group.getDefaultGroupLogoMedia();
-                        returnCards.add(card);
-                    }
-                }
-            }
-
-            // fill in logos for member-owned scenes
-            for (ProfileRecord profileRec : MsoyServer.profileRepo.loadProfiles(memIds.keySet())) {
-                for (int sceneId : memIds.remove(profileRec.memberId)) {
-                    SceneCard card = cards.remove(sceneId);
-                    if (card != null) {
-                        card.logo = profileRec.photoHash == null ? Profile.DEFAULT_PHOTO :
-                            new MediaDesc(profileRec.photoHash, profileRec.photoMimeType,
-                                        profileRec.photoConstraint);
-                        returnCards.add(card);
-                    }
-                }
-            }
-
-            // fill in default logo for scenes whose owner has no profile
-            for (int memberId : memIds.keySet()) {
-                for (int sceneId : memIds.remove(memberId)) {
-                    SceneCard card = cards.remove(sceneId);
-                    if (card != null) {
-                        card.logo = Profile.DEFAULT_PHOTO;
-                        returnCards.add(card);
-                    }
-                }
-            }
-
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "failed to fill in SceneCards for rooms...", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-
-        return returnCards;
-    }
-
-    /**
-     * Fills an array list of SceneCards, using the map to fill up the SceneCard's friends list.
-     */
-    protected List<SceneCard> getGameSceneCards (IntMap<List<Integer>> map,
-                                                 PopularPlacesSnapshot pps)
-        throws ServiceException
-    {
-        List<SceneCard> cards = Lists.newArrayList();
-
-        try {
-            for (int gameId : map.intKeySet()) {
-                GameRecord gameRec =
-                    MsoyServer.itemMan.getGameRepository().loadGameRecord(gameId);
-                if (gameRec == null) {
-                    log.warning("Missing game record for game [id=" + gameId + "]");
-                    continue;
-                }
-                SceneCard card = new SceneCard();
-                card.sceneId = gameId;
-                card.name = gameRec.name;
-                card.sceneType = SceneCard.GAME;
-                card.friends = map.get(gameId);
-                card.logo = gameRec.thumbMediaHash == null ? null :
-                    new MediaDesc(gameRec.thumbMediaHash, gameRec.thumbMimeType,
-                                  gameRec.thumbConstraint);
-                PopularPlacesSnapshot.Place snap = pps.getGame(gameId);
-                // if the snapshot is out of date, the display will be made sane in GWT.
-                card.population = (snap == null) ? 0 : snap.population;
-                cards.add(card);
-            }
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "failed to fill in SceneCards for games...", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-
-        return cards;
-    }
-
-    /**
      * Adds popular chat channel information to the supplied "My Whirled" result.
      */
     protected void addPopularChannels (MemberName name, Set<GroupName> groups, JSONObject result)
@@ -684,7 +455,7 @@ public class WorldServlet extends MsoyServiceServlet
             }
 
             protected void noteFriend (IntMap<PlaceDetail> dplaces, FriendEntry entry,
-                                       PopularPlacesSnapshot.Place place) {
+                                       PlaceCard place) {
                 if (place == null) {
                     return;
                 }
@@ -710,7 +481,7 @@ public class WorldServlet extends MsoyServiceServlet
                 home = new PlaceDetail();
                 home.place = snap.getScene(mrec.homeSceneId);
                 if (home.place == null) {
-                    home.place = new PopularPlacesSnapshot.Place();
+                    home.place = new PlaceCard();
                     home.place.placeId = mrec.homeSceneId;
                 }
             }
@@ -736,11 +507,10 @@ public class WorldServlet extends MsoyServiceServlet
         result.put("totpop", snap.getPopulationCount());
     }
 
-    protected void addTopPopularPlaces (Iterable<PopularPlacesSnapshot.Place> top,
-                                        IntMap<PlaceDetail> map)
+    protected void addTopPopularPlaces (Iterable<PlaceCard> top, IntMap<PlaceDetail> map)
     {
         int n = 3; // TODO: totally ad-hoc
-        for (PopularPlacesSnapshot.Place place : top) {
+        for (PlaceCard place : top) {
             if (map.containsKey(place.placeId)) {
                 continue;
             }
@@ -772,7 +542,7 @@ public class WorldServlet extends MsoyServiceServlet
 
     protected static class PlaceDetail
     {
-        public PopularPlacesSnapshot.Place place;
+        public PlaceCard place;
         public List<MemberName> friends = Lists.newArrayList();
     }
 

@@ -21,6 +21,12 @@ public class GroupCard
     /** The groups's logo (or the default). */
     public MediaDesc logo = Group.getDefaultGroupLogoMedia();
 
+    /** This group's brief description. */
+    public String blurb;
+
     /** The scene id of this group's hall. */
     public int homeSceneId;
+
+    /** The number of people online in this group's scenes (as of the last snapshot). */
+    public int population;
 }

@@ -282,6 +282,7 @@ public class GroupRecord extends PersistentRecord
         if (logoMediaHash != null) {
             card.logo = new MediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
         }
+        card.blurb = blurb;
         card.homeSceneId = homeSceneId;
         return card;
     }

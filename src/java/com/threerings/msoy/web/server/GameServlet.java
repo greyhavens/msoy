@@ -57,6 +57,7 @@ import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameGenreData;
 import com.threerings.msoy.web.data.GameInfo;
 import com.threerings.msoy.web.data.GameMetrics;
+import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.PlayerRating;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
@@ -402,7 +403,7 @@ public class GameServlet extends MsoyServiceServlet
                 int[] players = getMinMaxPlayers((Game)frec.toItem());
                 data.featuredGame.minPlayers = players[0];
                 data.featuredGame.maxPlayers = players[1];
-                PopularPlacesSnapshot.Place ppg = pps.getGame(frec.gameId);
+                PlaceCard ppg = pps.getGame(frec.gameId);
                 if (ppg != null) {
                     data.featuredGame.playersOnline = ppg.population;
                 }
@@ -422,7 +423,7 @@ public class GameServlet extends MsoyServiceServlet
                 genre.games = new GameInfo[fcount];
                 for (int ii = 0; ii < fcount; ii++) {
                     genre.games[ii] = games.get(ii).toGameInfo();
-                    PopularPlacesSnapshot.Place ppg = pps.getGame(genre.games[ii].gameId);
+                    PlaceCard ppg = pps.getGame(genre.games[ii].gameId);
                     if (ppg != null) {
                         genre.games[ii].playersOnline = ppg.population;
                     }

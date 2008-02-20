@@ -31,7 +31,7 @@ public interface GroupService extends RemoteService
     /** 
      * Get the list of all groups.
      *
-     * @gwt.typeArgs <com.threerings.msoy.group.data.Group>
+     * @gwt.typeArgs <com.threerings.msoy.web.data.GroupCard>
      */
     public List getGroupsList (WebIdent ident)
         throws ServiceException;

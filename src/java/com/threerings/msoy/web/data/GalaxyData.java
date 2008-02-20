@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.web.data.GroupCard;
 
 /**
  * Contains information displayed on the Galaxy page.
@@ -15,11 +15,14 @@ import com.threerings.msoy.group.data.Group;
 public class GalaxyData
     implements IsSerializable
 {
-    /** The number of popular tags we show on the galaxy page. */
+    /** The number of popular tags we show on the Galaxy page. */
     public static final int POPULAR_TAG_COUNT = 9;
 
-    /** The featured Whirled for display at the top of the page. */
-    public Group featuredWhirled;
+    /** The number of popular Whirleds we show on the Galaxy page. */
+    public static final int POPULAR_WHIRLED_COUNT = 5;
+
+    /** The featured Whirleds for display at the top of the page. */
+    public GroupCard[] featuredWhirleds;
 
     /**
      * Popular Whirled tags.
