@@ -5,7 +5,6 @@ package com.threerings.msoy.world.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -93,10 +92,8 @@ public class RoomManager extends SpotSceneManager
         try {
             handleChangeLoc(body, loc);
             return null;
-
         } catch (InvocationException ie) {
-            // return the error string
-            return ie.getMessage();
+            return ie.getMessage(); // return the error string
         }
     }
 
@@ -179,6 +176,18 @@ public class RoomManager extends SpotSceneManager
         updateOccupantInfo(winfo);
     }
 
+    /**
+     * Checks whether or not the calling user can bring pets into this room. Returns normally if
+     * so, throws an {@link InvocationException} if not.
+     */
+    public void checkCanAddPet (MemberObject caller)
+        throws InvocationException
+    {
+        if (!((MsoyScene)_scene).canEdit(caller)) {
+            throw new InvocationException(RoomCodes.E_CANNOT_ADD_PET);
+        }
+    }
+
     @Override // from SpotSceneManager
     public void willTraversePortal (BodyObject body, Portal portal)
     {
@@ -210,6 +219,7 @@ public class RoomManager extends SpotSceneManager
         boolean gotControl = ensureAVRGameControl((MemberObject) caller, gameId);
         // TODO: throw invocationexception on failure?
     }
+
     // documentation inherited from RoomProvider
     public void sendSpriteMessage (ClientObject caller, ItemIdent item, String name, byte[] arg,
                                    boolean isAction)

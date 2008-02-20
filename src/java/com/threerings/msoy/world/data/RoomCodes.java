@@ -26,6 +26,9 @@ public interface RoomCodes extends InvocationCodes
     /** Error reported when the entity is denied entrance to a scene. */
     public static final String E_ENTRANCE_DENIED = "e.entrance_denied";
 
+    /** Error reported when a pet owner calls a pet into a room they cannot. */
+    public static final String E_CANNOT_ADD_PET = "e.cannot_add_pet";
+
     /** A room layer that is in front of normal furniture and such. */
     public static final byte FOREGROUND_EFFECT_LAYER = 0;
 

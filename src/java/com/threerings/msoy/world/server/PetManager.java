@@ -3,12 +3,15 @@
 
 package com.threerings.msoy.world.server;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
+
+import com.google.common.collect.Lists;
 
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -73,9 +76,9 @@ public class PetManager
                 // next load up their memories
                 if (mids.size() > 0) {
                     for (MemoryRecord memrec : MsoyServer.memoryRepo.loadMemories(Pet.PET, mids)) {
-                        ArrayList<EntityMemoryEntry> mems = _memories.get(memrec.itemId);
+                        List<EntityMemoryEntry> mems = _memories.get(memrec.itemId);
                         if (mems == null) {
-                            _memories.put(memrec.itemId, mems = new ArrayList<EntityMemoryEntry>());
+                            _memories.put(memrec.itemId, mems = Lists.newArrayList());
                         }
                         mems.add(memrec.toEntry());
                     }
@@ -89,9 +92,8 @@ public class PetManager
                 log.log(Level.WARNING, "Failed to load pets [scene=" + sceneId + "].", e);
             }
 
-            protected ArrayList<Pet> _pets = new ArrayList<Pet>();
-            protected HashIntMap<ArrayList<EntityMemoryEntry>> _memories =
-                new HashIntMap<ArrayList<EntityMemoryEntry>>();
+            protected List<Pet> _pets = Lists.newArrayList();
+            protected IntMap<List<EntityMemoryEntry>> _memories = IntMaps.newHashIntMap();
         });
     }
 
@@ -119,6 +121,14 @@ public class PetManager
         throws InvocationException
     {
         final MemberObject user = (MemberObject)caller;
+
+        // make sure the requester is in a room that they own
+        PlaceManager plmgr = MsoyServer.plreg.getPlaceManager(user.getPlaceOid());
+        if (!(plmgr instanceof RoomManager)) {
+            log.info("Owner no longer in a room? [who=" + user.who() + ", in=" + plmgr + "].");
+            throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
+        }
+        ((RoomManager)plmgr).checkCanAddPet(user);
 
         // now check to see if the pet is already loaded
         PetHandler handler = _handlers.get(petId);
@@ -158,7 +168,7 @@ public class PetManager
             }
 
             protected Pet _pet;
-            protected ArrayList<EntityMemoryEntry> _memory = new ArrayList<EntityMemoryEntry>();
+            protected List<EntityMemoryEntry> _memory = Lists.newArrayList();
         });
     }
 
@@ -234,8 +244,8 @@ public class PetManager
      * Called after {@link #loadRoomPets} has loaded our persistent pet data to finish the job of
      * pet resolution.
      */
-    protected void resolveRoomPets (int sceneId, RoomObject roomObj, ArrayList<Pet> pets,
-                                    HashIntMap<ArrayList<EntityMemoryEntry>> memories)
+    protected void resolveRoomPets (int sceneId, RoomObject roomObj, List<Pet> pets,
+                                    IntMap<List<EntityMemoryEntry>> memories)
     {
         for (Pet pet : pets) {
             // if this pet is already resolved (is wandering around with its owner), skip it (TODO:
@@ -253,7 +263,7 @@ public class PetManager
     /**
      * Finishes the resolution of a pet initiated by {@link #callPet}.
      */
-    protected void resolvePet (MemberObject owner, Pet pet, ArrayList<EntityMemoryEntry> memory)
+    protected void resolvePet (MemberObject owner, Pet pet, List<EntityMemoryEntry> memory)
     {
         // instead of doing a bunch of complicated prevention to avoid multiply resolving pets,
         // we'll just get this far and abandon ship; it's not going to happen that often
@@ -286,5 +296,5 @@ public class PetManager
     }
 
     /** Maintains a mapping of all pet handlers by item id. */
-    protected HashIntMap<PetHandler> _handlers = new HashIntMap<PetHandler>();
+    protected IntMap<PetHandler> _handlers = IntMaps.newHashIntMap();
 }
