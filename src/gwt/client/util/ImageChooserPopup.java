@@ -102,7 +102,7 @@ public class ImageChooserPopup extends VerticalPanel
         // @Override // from PagedGrid
         protected Widget createWidget (Object item) {
             Photo photo = (Photo)item;
-            final MediaDesc media = _thumbnail ? photo.photoMedia : photo.getThumbnailMedia();
+            final MediaDesc media = _thumbnail ? photo.getThumbnailMedia() : photo.photoMedia;
             Widget image = MediaUtil.createMediaView(
                 photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
                     public void onClick (Widget sender) {
