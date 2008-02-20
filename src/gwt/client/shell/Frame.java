@@ -453,6 +453,9 @@ public class Frame
 
     protected static void slideContentOn ()
     {
+        // the flash client needs to be notified that the size change it is about to receive is a 
+        // minimization, not a browser size change before it actually gets resized.
+        WorldClient.setMinimized(true);
         RootPanel.get(CONTENT).clear();
         RootPanel.get(CONTENT).add(_bar);
         if (_scroller == null) {
@@ -463,7 +466,6 @@ public class Frame
         RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
         int availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
         RootPanel.get(CLIENT).setWidth(Math.max(availWidth - CONTENT_WIDTH, 0) + "px");
-        WorldClient.setMinimized(true);
         _bar.setCloseVisible(true);
     }
 
