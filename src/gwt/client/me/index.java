@@ -45,6 +45,9 @@ public class index extends MsgsEntryPoint
         if (action.equals("account")) {
             setContent(CMe.msgs.titleAccount(), new EditAccountPanel());
 
+        } else if (action.equals("rooms")) {
+            setContent(CMe.msgs.titleRooms(), new MyRoomsPanel());
+
         } else if (action.equals("i") && CMe.getMemberId() == 0) {
             // only load their invitation and redirect to the main page if they're not logged in
             String inviteId = args.get(1, "");

@@ -7,7 +7,6 @@ import java.net.URLEncoder;
 import java.sql.Timestamp;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -16,7 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.samskivert.io.PersistenceException;
@@ -61,11 +59,9 @@ import com.threerings.msoy.world.server.persist.SceneRecord;
 import com.threerings.msoy.person.data.FeedMessage;
 import com.threerings.msoy.person.data.FriendFeedMessage;
 import com.threerings.msoy.person.data.GroupFeedMessage;
-import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
-import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
@@ -151,39 +147,25 @@ public class WorldServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser(ident);
 
-        final IntSet friendIds;
-        ProfileRecord profile;
-        Map<Integer, String> ownedRooms = Maps.newHashMap();
-        final IntSet groupMemberships = new ArrayIntSet();
-        List<FeedMessage> feed;
-
         try {
-            friendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
-            profile = MsoyServer.profileRepo.loadProfile(mrec.memberId);
-            for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(mrec.memberId)) {
-                ownedRooms.put(scene.sceneId, scene.sceneName);
-            }
+            MyWhirledData data = new MyWhirledData();
+            data.whirledPopulation = MsoyServer.memberMan.getPPSnapshot().getPopulationCount();
+
+            IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
+            data.friends = ServletUtil.resolveMemberCards(friendIds, true, friendIds);
+
+            IntSet groupMemberships = new ArrayIntSet();
             for (GroupMembershipRecord gmr : MsoyServer.groupRepo.getMemberships(mrec.memberId)) {
                 groupMemberships.add(gmr.groupId);
             }
-            // load up our feed information before we start fiddling with groupMemberships
-            feed = loadFeed(mrec, groupMemberships, DEFAULT_FEED_DAYS);
+            data.feed = loadFeed(mrec, groupMemberships, DEFAULT_FEED_DAYS);
+
+            return data;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getMyWhirled failed [for=" + mrec.memberId + "]", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
-
-        MyWhirledData data = new MyWhirledData();
-        if (profile != null) {
-            data.photo = (profile.photoHash == null) ? null : profile.getPhoto();
-        }
-        data.homeSceneId = mrec.homeSceneId;
-        data.whirledPopulation = MsoyServer.memberMan.getPPSnapshot().getPopulationCount();
-        data.friends = ServletUtil.resolveMemberCards(friendIds, true, friendIds);
-        data.feed = feed;
-        data.rooms = ownedRooms;
-        return data;
     }
 
     // from interface WorldService
@@ -221,6 +203,29 @@ public class WorldServlet extends MsoyServiceServlet
                 RuntimeConfig.server.setWhirledwideNewsHtml(newsHtml);
             }
         });
+    }
+
+    // from interface WorldService
+    public List loadMyRooms (WebIdent ident)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        try {
+            List<WorldService.Room> rooms = Lists.newArrayList();
+            for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(mrec.memberId)) {
+                WorldService.Room room = new WorldService.Room();
+                room.sceneId = scene.sceneId;
+                room.name = scene.sceneName;
+                // TODO: load decor thumbnail
+                rooms.add(room);
+            }
+            return rooms;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Load rooms failed [memberId=" + mrec.memberId + "]", pe);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface WorldService

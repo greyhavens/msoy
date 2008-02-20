@@ -84,6 +84,18 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /**
+     * Returns the number of rooms owned by the specified member.
+     */
+    public int getRoomCount (int memberId)
+        throws PersistenceException
+    {
+        Where where = new Where(
+            new Logic.And(new Equals(SceneRecord.OWNER_TYPE_C, MsoySceneModel.OWNER_TYPE_MEMBER),
+                          new Equals(SceneRecord.OWNER_ID_C, memberId)));
+        return load(CountRecord.class, new FromOverride(SceneRecord.class), where).count;
+    }
+
+    /**
      * Retrieve a list of all the scenes that the user directly owns.
      */
     public List<SceneBookmarkEntry> getOwnedScenes (byte ownerType, int memberId)

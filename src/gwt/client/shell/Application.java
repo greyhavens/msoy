@@ -13,8 +13,10 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.util.CookieUtil;
 import com.threerings.msoy.data.all.MemberName;
@@ -94,19 +96,6 @@ public class Application
     }
 
     /**
-     * Move to the page in question.
-     */
-    public static void go (String page, String args)
-    {
-        String token = createLinkToken(page, args);
-        if (token.equals(History.getToken())) {
-            Frame.setContentMinimized(false);
-        } else {
-            History.newItem(token);
-        }
-    }
-
-    /**
      * Returns a string that can be appended to '#' to link to the specified page with the
      * specified arguments.
      */
@@ -117,6 +106,31 @@ public class Application
             token = token + "-" + args;
         }
         return token;
+    }
+
+    /**
+     * Creates a click listener that navigates to the supplied page when activated.
+     */
+    public static ClickListener createLinkListener (final String page, final String args)
+    {
+        return new ClickListener() {
+            public void onClick (Widget sender) {
+                go(page, args);
+            }
+        };
+    }
+
+    /**
+     * Move to the page in question.
+     */
+    public static void go (String page, String args)
+    {
+        String token = createLinkToken(page, args);
+        if (token.equals(History.getToken())) {
+            Frame.setContentMinimized(false);
+        } else {
+            History.newItem(token);
+        }
     }
 
     /**

@@ -34,6 +34,9 @@ public class CShell
     /** This member's current level. */
     public static int level;
 
+    /** This member's room count at logon. */
+    public static int roomCount;
+
     /** Provides user-related services. */
     public static WebUserServiceAsync usersvc;
 

@@ -375,7 +375,11 @@ public class Frame
         if (pageId.equals(Page.ME)) {
             title = "Me";
             subnavi.addLink(null, "Me", Page.ME, "");
-            subnavi.addLink(null, "My Home", Page.WORLD, "h");
+            if (CShell.roomCount > 1) {
+                subnavi.addLink(null, "My Rooms", Page.ME, "rooms");
+            } else {
+                subnavi.addLink(null, "My Home", Page.WORLD, "h");
+            }
             subnavi.addLink(null, "Mail", Page.MAIL, "");
             subnavi.addLink(null, "Profile", Page.PEOPLE, ""+myId);
             subnavi.addLink(null, "Account", Page.ME, "account");

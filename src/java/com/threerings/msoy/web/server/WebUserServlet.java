@@ -439,26 +439,11 @@ public class WebUserServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Failed to load new mail count [id=" + mrec.memberId + "].", pe);
         }
 
-        // load up their friends list
+        // load up their room count
         try {
-            data.friends = MsoyServer.memberRepo.loadFriends(mrec.memberId, -1);
+            data.roomCount = MsoyServer.sceneRepo.getRoomCount(mrec.memberId);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load friends list [id=" + mrec.memberId + "].", pe);
-            data.friends = new ArrayList<Object>();
-        }
-
-        // load up their scenes list
-        try {
-            List<SceneBookmarkEntry> scenes = MsoyServer.sceneRepo.getOwnedScenes(mrec.memberId);
-            Collections.sort(scenes, new Comparator<SceneBookmarkEntry>() {
-                public int compare (SceneBookmarkEntry one, SceneBookmarkEntry two) {
-                    return one.sceneName.compareTo(two.sceneName);
-                }
-            });
-            data.scenes = scenes;
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load scene list [id=" + mrec.memberId + "].", pe);
-            data.scenes = new ArrayList<Object>();
+            log.log(Level.WARNING, "Failed to load room count [id=" + mrec.memberId + "].", pe);
         }
 
         return data;

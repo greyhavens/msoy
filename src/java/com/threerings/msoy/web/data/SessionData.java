@@ -26,17 +26,6 @@ public class SessionData implements IsSerializable
     /** This member's new mail message count at the time of session start. */
     public int newMailCount;
 
-    /**
-     * This members friend list at the time of logon.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.data.all.FriendEntry>
-     */
-    public List friends;
-
-    /**
-     * This member's owned scenes at the time of logon.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.data.all.SceneBookmarkEntry>
-     */
-    public List scenes;
+    /** The number of rooms owned by this player. */
+    public int roomCount;
 }

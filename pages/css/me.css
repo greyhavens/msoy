@@ -379,3 +379,13 @@
 .editAccount .Error {
   color: red;
 }
+
+/** MyRooms */
+.myRooms {
+  width: 100%;
+}
+
+.myRooms .Room {
+  font-size: 12px;
+  text-align: center;
+}

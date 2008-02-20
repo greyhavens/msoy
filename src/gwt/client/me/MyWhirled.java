@@ -39,15 +39,13 @@ public class MyWhirled extends VerticalPanel
 
         CMe.worldsvc.getMyWhirled(CMe.ident, new MsoyCallback() {
             public void onSuccess (Object result) {
-                MyWhirledData data = (MyWhirledData) result;
-                fillUI(data);
+                init((MyWhirledData)result);
             }
         });
     }
 
-    protected void fillUI (MyWhirledData data)
+    protected void init (MyWhirledData data)
     {
-
         // display the Whirled population
         add(MsoyUI.createLabel(CMe.msgs.populationDisplay("" + data.whirledPopulation), "Pop"));
 
@@ -95,26 +93,6 @@ public class MyWhirled extends VerticalPanel
         FeedPanel feed = new FeedPanel();
         feed.setFeed(data.feed, false);
         add(feed);
-
-        // add all of our rooms (TODO)
-//         sidebar.add(createHeader(CMe.msgs.headerRooms()));
-//         sidebar.add(box = createListBox("ListBox"));
-
-//         // first add our home room
-//         Integer homeId = new Integer(data.homeSceneId);
-//         box.add(createIconLink("/images/whirled/my_home.png", (String)data.rooms.get(homeId),
-//                                Page.WORLD, "s" + homeId));
-
-//         // next add the remainder of our rooms in purchased order (lowest scene id first)
-//         Object[] sceneIds = data.rooms.keySet().toArray();
-//         Arrays.sort(sceneIds);
-//         for (int ii = 0; ii < sceneIds.length; ii++) {
-//             if (homeId.equals(sceneIds[ii])) {
-//                 continue;
-//             }
-//             String sname = (String)data.rooms.get(sceneIds[ii]);
-//             box.add(Application.createLink(sname, Page.WORLD, "s" + sceneIds[ii]));
-//         }
     }
 
     protected static class PersonWidget extends VerticalPanel
