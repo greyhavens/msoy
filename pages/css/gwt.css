@@ -406,7 +406,7 @@ img, embed, applet, object {
 }
 
 .tongueBox .Content {
-  padding: 10px;
+  border: white solid 10px;
 }
 
 .tongueBox .Footer {
