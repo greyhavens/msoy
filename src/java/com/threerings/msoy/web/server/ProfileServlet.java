@@ -124,40 +124,23 @@ public class ProfileServlet extends MsoyServiceServlet
 
             ProfileResult result = new ProfileResult();
             result.name = tgtrec.getName();
-            result.layout = loadLayout(tgtrec);
 
-            // resolve the data for whichever blurbs are active on this player's profile page
-            for (Object bdata : result.layout.blurbs) {
-                BlurbData blurb = (BlurbData)bdata;
-                switch (blurb.type) {
-                case BlurbData.PROFILE:
-                    result.profile = resolveProfileData(memrec, tgtrec);
-                    break;
+            // load profile info
+            result.profile = resolveProfileData(memrec, tgtrec);
 
-                case BlurbData.FRIENDS:
-                    result.friends = resolveFriendsData(memrec, tgtrec);
-                    IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(tgtrec.memberId);
-                    result.isOurFriend = (memrec != null) && friendIds.contains(memrec.memberId);
-                    result.totalFriendCount = friendIds.size();
-                    break;
+            // load friend info
+            result.friends = resolveFriendsData(memrec, tgtrec);
+            IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(tgtrec.memberId);
+            result.isOurFriend = (memrec != null) && friendIds.contains(memrec.memberId);
+            result.totalFriendCount = friendIds.size();
 
-                case BlurbData.GROUPS:
-                    result.groups = resolveGroupsData(memrec, tgtrec);
-                    break;
+            // load rating and trophy info
+            result.trophies = resolveTrophyData(memrec, tgtrec);
+            result.ratings = resolveRatingsData(memrec, tgtrec);
 
-                case BlurbData.RATINGS:
-                    result.ratings = resolveRatingsData(memrec, tgtrec);
-                    break;
+            // load group info
+            result.groups = resolveGroupsData(memrec, tgtrec);
 
-                case BlurbData.TROPHIES:
-                    result.trophies = resolveTrophyData(memrec, tgtrec);
-                    break;
-
-                default:
-                    log.log(Level.WARNING, "Requested to resolve unknown blurb " + bdata + ".");
-                    break;
-                }
-            }
             return result;
 
         } catch (PersistenceException pe) {
@@ -242,43 +225,6 @@ public class ProfileServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Failure loading friends [memId=" + memberId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-    }
-
-    protected ProfileLayout loadLayout (MemberRecord memrec)
-        throws PersistenceException
-    {
-        // TODO: store this metadata in a database, allow it to be modified
-        ProfileLayout layout = new ProfileLayout();
-        layout.layout = ProfileLayout.TWO_COLUMN_LAYOUT;
-
-        List<BlurbData> blurbs = Lists.newArrayList();
-        BlurbData blurb = new BlurbData();
-        blurb.type = BlurbData.PROFILE;
-        blurb.blurbId = 0;
-        blurbs.add(blurb);
-
-        blurb = new BlurbData();
-        blurb.type = BlurbData.FRIENDS;
-        blurb.blurbId = 1;
-        blurbs.add(blurb);
-
-        blurb = new BlurbData();
-        blurb.type = BlurbData.RATINGS;
-        blurb.blurbId = 2;
-        blurbs.add(blurb);
-
-        blurb = new BlurbData();
-        blurb.type = BlurbData.TROPHIES;
-        blurb.blurbId = 3;
-        blurbs.add(blurb);
-
-        blurb = new BlurbData();
-        blurb.type = BlurbData.GROUPS;
-        blurb.blurbId = 4;
-        blurbs.add(blurb);
-
-        layout.blurbs = blurbs;
-        return layout;
     }
 
     protected Profile resolveProfileData (MemberRecord reqrec, MemberRecord tgtrec)

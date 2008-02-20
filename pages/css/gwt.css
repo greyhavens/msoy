@@ -381,6 +381,26 @@ img, embed, applet, object {
 }
 
 /** Misc styles. */
+.tongue {
+  width: 100%;
+}
+
+.tongue .Base {
+  background: url(/images/ui/tongue_base.png) #49A1E7 no-repeat left;
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  white-space: nowrap;
+  color: white;
+  padding-left: 10px;
+  height: 28px;
+}
+
+.tongue .Line {
+  background: url(/images/ui/tongue_tip.png) no-repeat left;
+  width: 100%;
+  padding-left: 10px;
+}
+
 .formPanel td {
   vertical-align: top;
 }

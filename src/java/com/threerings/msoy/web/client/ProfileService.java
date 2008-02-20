@@ -28,17 +28,14 @@ public interface ProfileService extends RemoteService
         /** This user's name and member id. */
         public MemberName name;
 
-        /** The layout of the profile in question. */
-        public ProfileLayout layout;
-
-        /** This user's basic profile information. */
-        public Profile profile;
-
         /** This user's total friend count. */
         public int totalFriendCount;
 
         /** Whether or not the requesting member is a friend of this member. */
         public boolean isOurFriend;
+
+        /** This user's basic profile information. */
+        public Profile profile;
 
         /**
          * This user's featured friends.
@@ -90,9 +87,7 @@ public interface ProfileService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads the blurbs for the specified member's profile page. The first entry in the list will
-     * be information on the page layout and subsequent entries will be data for each of the blurbs
-     * on the page.
+     * Loads the specified member's profile information.
      */
     public ProfileResult loadProfile (WebIdent ident, int memberId)
         throws ServiceException;

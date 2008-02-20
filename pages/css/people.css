@@ -4,89 +4,67 @@
  * CSS styles for the Profile interfaces.
  */
 
-.blurb {
-  height: 227px;
-}
-
-.blurb .contentFooterPanel {
+.profile {
   width: 100%;
 }
 
-.profileBlurb {
+.profile .Blurb {
   width: 100%;
 }
 
-.profileBlurb .Photo {
+.profile .Blurb .BlurbContent {
+  padding: 10px;
+}
+
+.profile .Blurb .BlurbFooter {
+  font-size: 12px;
+  padding: 0px 10px 10px 0px;
+  text-align: right;
+}
+
+.profile .Profile {
+  width: 100%;
+}
+
+.profile .Profile .Photo {
   width: 100px;
-  vertical-align: top;
 }
 
-.profileBlurb .Name {
+.profile .Profile .Name {
   font-weight: bold;
   font-size: 16px;
 }
 
-.profileBlurb .Headline {
+.profile .Profile .Headline {
   font-style: italic;
-  vertical-align: top;
 }
 
-.profileBlurb .Detail {
+.profile .Profile .Detail {
   font-size: 14px;
 }
 
-.profileBlurb .EditLabel {
-  font-size: 10px;
-}
-
-.profileBlurb .ControlButton {
+.profile .Profile .ControlButton {
   width: 21px;
   height: 15px;
   border: none;
 }
 
-.profileBlurb .VisitHome {
+.profile .Profile .VisitHome {
   background-image: url(/images/profile/visithome.png);
 }
 
-.profileBlurb .SendMail {
+.profile .Profile .SendMail {
   background-image: url(/images/profile/sendmail.png);
 }
 
-.profileBlurb .AdminInfo {
+.profile .Profile .AdminInfo {
   background-image: url(/images/profile/admininfo.png);
 }
 
-.friendsBlurb {
-  width: 100%;
-}
-
-.friendsBlurb .Friend, .groupsBlurb .Group {
+.profile .Friend, .profile .Group {
   text-align: center;
   font-size: 12px;
   padding: 5px;
-}
-
-.friendsBlurb .Footer {
-  padding-left: 5px;
-}
-
-.friendsBlurb .Empty {
-  vertical-align: top;
-  height: 170px;
-}
-
-.groupsBlurb .Empty {
-  vertical-align: top;
-  height: 170px;
-}
-
-.groupsBlurb {
-  width: 100%;
-}
-
-.ratingsBlurb {
-  width: 100%;
 }
 
 .ratingWidget {

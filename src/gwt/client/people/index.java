@@ -55,7 +55,7 @@ public class index extends MsgsEntryPoint
             setContent(CPeople.msgs.sendInvitesTitle(), new SendInvitesPanel());
 
         } else if (args.get(0, 0) != 0) {
-            displayMemberPage(args.get(0, 0));
+            setContent(CPeople.msgs.profileTitle(), new ProfilePanel(args.get(0, 0)));
 
         } else if (CPeople.getMemberId() != 0) {
             setContent(new FriendsPanel(CPeople.getMemberId()));
@@ -78,32 +78,6 @@ public class index extends MsgsEntryPoint
 
         // load up our translation dictionaries
         CPeople.msgs = (PeopleMessages)GWT.create(PeopleMessages.class);
-    }
-
-    protected void displayMemberPage (int memberId)
-    {
-        // issue a request for this member's profile page data
-        CPeople.profilesvc.loadProfile(CPeople.ident, _memberId = memberId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                ProfileService.ProfileResult pdata = (ProfileService.ProfileResult)result;
-                String title = (pdata.name.getMemberId() == CPeople.getMemberId()) ?
-                    CPeople.msgs.profileSelfTitle() : pdata.name.toString();
-                switch (pdata.layout.layout) {
-                default:
-                case ProfileLayout.ONE_COLUMN_LAYOUT:
-                    setContent(title, new OneColumnLayout(pdata));
-                    break;
-                case ProfileLayout.TWO_COLUMN_LAYOUT:
-                    setContent(title, new TwoColumnLayout(pdata));
-                    break;
-                }
-            }
-
-            public void onFailure (Throwable cause) {
-                setContent(new Label(CPeople.serverError(cause)));
-                CPeople.log("Failed to load blurbs", cause);
-            }
-        });
     }
 
     protected void displaySearch (Args args) 

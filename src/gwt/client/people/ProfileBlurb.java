@@ -8,8 +8,6 @@ import java.util.Date;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -23,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.Anchor;
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -33,7 +32,6 @@ import client.msgs.MailComposition;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
-import client.util.ContentFooterPanel;
 import client.util.DateFields;
 import client.util.FlashClients;
 import client.util.ImageChooserPopup;
@@ -48,33 +46,25 @@ import client.util.RowPanel;
 public class ProfileBlurb extends Blurb
 {
     // @Override // from Blurb
-    protected void didInit (ProfileService.ProfileResult pdata)
+    public void init (ProfileService.ProfileResult pdata)
     {
-        if (pdata.profile != null) {
-            setHeader(CPeople.msgs.profileTitle());
+        super.init(pdata);
+        if (pdata.profile == null) {
+            setText(0, 0, CPeople.msgs.profileLoadFailed());
+        } else {
             _profile = pdata.profile;
             displayProfile();
-
-        } else {
-            setHeader(CPeople.msgs.errorTitle());
-            setText(0, 0, CPeople.msgs.profileLoadFailed());
         }
     }
 
     protected void displayProfile ()
     {
-        FlexTable content = new FlexTable();
-        content.setStyleName("profileBlurb");
-
         VerticalPanel bits = new VerticalPanel();
         bits.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         bits.add(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE));
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.setSpacing(5);
         bits.add(buttons);
-        content.setWidget(0, 0, bits);
-        content.getFlexCellFormatter().setStyleName(0, 0, "Photo");
-        content.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
 
         // add our various buttons: homepage, send mail, visit, admin info
         if (!isBlank(_profile.homePageURL)) {
@@ -104,14 +94,23 @@ public class ProfileBlurb extends Blurb
             }));
         }
 
-        // add their name in big happy font
-        content.setText(0, 1, _name.toString());
-        content.getFlexCellFormatter().setStyleName(0, 1, "Name");
-        content.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
+// TODO: add "invite to be friend" button if they're not our friend
+//         footer.setWidget(0, 1, new Button(CPeople.msgs.inviteFriend(), new ClickListener() {
+//             public void onClick (Widget sender) {
+//                 new MailComposition(_name, CPeople.msgs.inviteTitle(),
+//                                     new FriendInvite.Composer(),
+//                                     CPeople.msgs.inviteBody()).show();
+//             }
+//         }));
+
+        // create the info table with their name, a/s/l, etc.
+        SmartTable info = new SmartTable(0, 5);
+        info.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        info.addText(_name.toString(), 1, "Name");
 
         // add our informational bits (headline, A/S/L)
         if (!isBlank(_profile.headline)) {
-            addInfo(content, _profile.headline, "Headline");
+            info.addText(_profile.headline, 1, "Headline");
         }
         String ageSex = "";
         switch (_profile.sex) {
@@ -129,58 +128,52 @@ public class ProfileBlurb extends Blurb
             ageSex += CPeople.msgs.age("" + _profile.age);
         }
         if (ageSex.length() > 0) {
-            addInfo(content, ageSex, null);
+            info.addText(ageSex, 1, null);
         }
         if (!isBlank(_profile.location)) {
-            addInfo(content, _profile.location, null);
+            info.addText(_profile.location, 1, null);
         }
 
-        // make the left column span all the info
-        content.getFlexCellFormatter().setRowSpan(0, 0, content.getRowCount());
+        // create our detail bits
+        SmartTable details = new SmartTable(0, 5);
 
         // add our various detail bits (level, permaname, first/last logon dates)
-        addDetail(content, CPeople.msgs.level(), "" + _profile.level);
+        addDetail(details, CPeople.msgs.level(), "" + _profile.level);
         if (!isBlank(_profile.permaName)) {
-            addDetail(content, CPeople.msgs.permaName(), _profile.permaName);
+            addDetail(details, CPeople.msgs.permaName(), _profile.permaName);
         }
         if (_profile.memberSince > 0L) {
-            addDetail(content, CPeople.msgs.memberSince(),
+            addDetail(details, CPeople.msgs.memberSince(),
                       _sfmt.format(new Date(_profile.memberSince)));
         }
         if (_profile.lastLogon > 0L) {
-            addDetail(content, CPeople.msgs.lastOnline(),
+            addDetail(details, CPeople.msgs.lastOnline(),
                       _lfmt.format(new Date(_profile.lastLogon)));
         }
 
-        FlowPanel footer = new FlowPanel();
+        SmartTable content = new SmartTable("Profile", 0, 0);
+        content.setWidget(0, 0, bits, 1, "Photo");
+        content.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
+        content.setWidget(0, 1, info);
+        content.setWidget(0, 2, details);
+        setContent(content);
+
         // display the edit button if this is our profile
         if (_name.getMemberId() == CPeople.getMemberId()) {
-            footer.add(new Button("Edit", new ClickListener() {
+            setFooterLabel("Edit Profile", new ClickListener() {
                 public void onClick (Widget source) {
                     startEdit();
                 }
-            }));
-        }
-        setContent(new ContentFooterPanel(content, footer));
-    }
-
-    protected void addInfo (FlexTable content, String text, String style)
-    {
-        int row = content.getRowCount();
-        content.setText(row, 0, text);
-        if (style != null) {
-            content.getFlexCellFormatter().setStyleName(row, 0, style);
+            });
         }
     }
 
-    protected void addDetail (FlexTable content, String label, String text)
+    protected void addDetail (SmartTable detail, String label, String text)
     {
-        int row = content.getRowCount();
-        content.setText(row, 0, label);
-        content.getFlexCellFormatter().setStyleName(row, 0, "Detail");
-        content.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-        content.setText(row, 1, text);
-        content.getFlexCellFormatter().setStyleName(row, 1, "Detail");
+        int row = detail.getRowCount();
+        detail.setText(row, 0, label, 1, "Detail");
+        // detail.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
+        detail.setText(row, 1, text, 1, "Detail");
     }
 
     protected void startEdit ()
@@ -189,8 +182,7 @@ public class ProfileBlurb extends Blurb
             return; // nothing doing
         }
 
-        FlexTable econtent = new FlexTable();
-        econtent.setStyleName("profileEditor");
+        SmartTable econtent = new SmartTable("profileEditor", 0, 5);
 
         int row = 0;
         econtent.setText(row, 0, CPeople.msgs.displayName());
@@ -246,13 +238,25 @@ public class ProfileBlurb extends Blurb
         _elocation.setVisibleLength(30);
         _elocation.setText(unBlank(_profile.location));
 
-        FlowPanel footer = new FlowPanel();
-        footer.add(new Button("Done", new ClickListener() {
+        HorizontalPanel buttons = new HorizontalPanel();
+        buttons.setSpacing(5);
+        econtent.getFlexCellFormatter().setColSpan(row, 0, 2);
+        econtent.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
+        econtent.setWidget(row++, 0, buttons);
+
+        buttons.add(new Button(CPeople.cmsgs.cancel(), new ClickListener() {
+            public void onClick (Widget source) {
+                displayProfile();
+            }
+        }));
+        buttons.add(new Button(CPeople.cmsgs.update(), new ClickListener() {
             public void onClick (Widget source) {
                 commitEdit();
             }
         }));
-        setContent(new ContentFooterPanel(econtent, footer));
+
+        setContent(econtent);
+        setFooter(null);
     }
 
     protected void commitEdit ()
@@ -299,15 +303,6 @@ public class ProfileBlurb extends Blurb
         button.addStyleName("ControlButton");
         button.setTitle(title);
         return button;
-    }
-
-    protected VerticalPanel wrapEditor (String label, Widget editor)
-    {
-        VerticalPanel panel = new VerticalPanel();
-        panel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
-        panel.add(MsoyUI.createLabel(label, "EditLabel"));
-        panel.add(editor);
-        return panel;
     }
 
     protected boolean isBlank (String text)

@@ -18,7 +18,6 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import client.games.GameDetailPanel;
-import client.games.RatingLabel;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
@@ -37,9 +36,10 @@ public class RatingsBlurb extends Blurb
     }
 
     // @Override // from Blurb
-    protected void didInit (ProfileService.ProfileResult pdata)
+    public void init (ProfileService.ProfileResult pdata)
     {
-        setHeader(CPeople.msgs.ratingsTitle());
+        super.init(pdata);
+        setBlurbTitle(CPeople.msgs.ratingsTitle());
         setContent(new RatingGrid(pdata.ratings));
     }
 
@@ -47,9 +47,7 @@ public class RatingsBlurb extends Blurb
     {
         public RatingGrid (List ratings)
         {
-            super(RATING_ROWS, 1, NAV_ON_BOTTOM);
-            addStyleName("dottedGrid");
-            addStyleName("ratingsBlurb");
+            super(RATING_ROWS, 2, NAV_ON_BOTTOM);
             setModel(new SimpleDataModel(ratings), 0);
         }
 
@@ -62,19 +60,13 @@ public class RatingsBlurb extends Blurb
         // @Override // from PagedGrid
         protected boolean displayNavi (int items)
         {
-            return true;
+            return (items > _rows * _cols);
         }
 
         // @Override // from PagedGrid
         protected Widget createWidget (Object item)
         {
             return new RatingWidget((GameRating)item);
-        }
-
-        // @Override // from PagedGrid
-        protected boolean padToFullPage ()
-        {
-            return true;
         }
     }
 
@@ -87,10 +79,6 @@ public class RatingsBlurb extends Blurb
             setStyleName("ratingWidget");
             getFlexCellFormatter().setStyleName(0, 0, "GameThumb");
             getFlexCellFormatter().setStyleName(0, 1, "GameName");
-
-            if (entry == null) {
-                return; // we're a padding entry
-            }
 
             ClickListener gameClick = new ClickListener() {
                 public void onClick (Widget sender) {
@@ -120,5 +108,5 @@ public class RatingsBlurb extends Blurb
         }
     }
 
-    protected static final int RATING_ROWS = 4;
+    protected static final int RATING_ROWS = 2;
 }
