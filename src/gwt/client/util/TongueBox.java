@@ -5,6 +5,7 @@ package client.util;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -18,7 +19,18 @@ public class TongueBox extends SmartTable
 {
     public TongueBox ()
     {
+        this(null, null);
+    }
+
+    public TongueBox (String title, Widget content)
+    {
         super("tongueBox", 0, 0);
+        if (title != null) {
+            setHeader(title);
+        }
+        if (content != null) {
+            setContent(content);
+        }
     }
 
     public void setHeader (String title)
@@ -37,14 +49,16 @@ public class TongueBox extends SmartTable
         setWidget(1, 0, content, 1, "Content");
     }
 
-    public void setFooterLink (String label, String page, String args)
+    public void setFooterLink (String text, String page, String args)
     {
-        setFooter(Application.createLink(label, page, args));
+        setFooter(Application.createLink(text, page, args));
     }
 
-    public void setFooterLabel (String label, ClickListener onClick)
+    public Label setFooterLabel (String text, ClickListener onClick)
     {
-        setFooter(MsoyUI.createActionLabel(label, onClick));
+        Label label = MsoyUI.createActionLabel(text, onClick);
+        setFooter(label);
+        return label;
     }
 
     public void setFooter (Widget widget)

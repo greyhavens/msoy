@@ -6,24 +6,12 @@
 
 /**********  My Whirled ************/
 
-.myWhirled .peopleBox, .auxBox {
-  width: 560px;
-}
-
-.myWhirled .auxBox a {
-  color: #355B6E;
-  text-decoration: none;
-}
-
-.myWhirled .auxBox a:hover {
-  text-decoration: underline;
-}
-
-.myWhirled .Stuff, .myWhirled .Friends {
-  border-left: 1px dotted;
-  border-right: 1px dotted;
-  border-bottom: 1px dotted;
+.myWhirled, .myWhirled .Stuff {
   width: 100%;
+}
+
+.myWhirled .Pop {
+  padding: 15px;
 }
 
 .myWhirled .Stuff .Item {
@@ -31,160 +19,29 @@
   text-align: center;
 }
 
-.myWhirled .Stuff .Item img {
-  width: 50px;
-}
-
-.mePanel {
-  width: 118px;
-  border-bottom: 1px dotted;
-}
-
-.mePanel .Description {
-  width: 119px;
-  background-color: #B5C9D4;
-  border-bottom: 1px dotted;
-  font-size: 10px;
-  text-align: center;
-  padding: 5px 15px 5px 15px;
-}
-
-.mePanel .borderedBox {
-  width: 119px;
-  border-left: 1px dotted;
-  border-right: 1px dotted;
-  border-color: black;
-  /** We can't scale background images, so here we're tiling it across the top, then filling in
-   * the rest with the gradient's end color. */
-  background-image: url(/images/whirled/bg_gradient.png);
-  background-repeat: repeat-x;
-  background-color: #F4F3F4;
-}
-
-.mePanel .SectionHeaderContainer {
-  background-image: url(/images/whirled/default_tile.png);
-  height: 20px;
-  width: 119px;
-  border-left: 1px solid;
-  border-right: 1px solid;
-  border-color: #1D6393;
-}
-
-.mePanel .SectionHeader {
-  width: 100%;
-  font-size: 12px;
-  font-weight: bold;
-  text-align: center;
-  color: white;
-}
-
-.mePanel .PictureBox {
-  width: 100%;
-  height: 88px;
-}
-
-.mePanel .PictureBox img {
-  display: block;
-}
-
-.mePanel .ListBox {
-  font-size: 12px;
-  color: #A9A8AD;
-}
-
-.mePanel .borderedBox a {
-  color: #A9A8AD;
-}
-
-.PersonWidget {
+.myWhirled .PersonWidget {
   width: 85px;
 }
 
-.PersonWidget img {
+.myWhirled .PersonWidget img {
   cursor: pointer;
 }
 
-.PersonWidget .NameLabel {
+.myWhirled .PersonWidget .NameLabel {
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;
 }
 
-.PersonWidget .Room {
+.myWhirled .PersonWidget .Room {
   color: #355B6E;
 }
 
-.PersonWidget .Game {
+.myWhirled .PersonWidget .Game {
   color: #E98932;
 }
 
-.SceneList {
-  border-left: 1px dotted;
-  border-right: 1px dotted;
-  border-bottom: 1px dotted;
-  width: 264px;
-  height: 183px;
-}
-
-.SceneListContainer {
-  width: 100%;
-}
-
-.SceneWidget {
-  width: 100%;
-  height: 60px;
-  background-image: url(/images/whirled/bg_gradient.png);
-  background-repeat: repeat-x;
-  background-color: #F4F3F4;
-  border-bottom: 1px solid #DADADA;
-}
-
-.SceneWidget .LogoContainer {
-  width: 80px;
-  height: 60px;
-}
-
-.SceneWidget .LogoContainer img {
-  display: block;
-  cursor: pointer;
-}
-
-.SceneWidget .Text {
-  width: 183px;
-  padding: 3px 22px 2px 12px;
-  text-align: left;
-  font-size: 10px;
-}
-
-.Fake {
-  font-size: 12px;
-  padding: 5px;
-}
-
-.SceneWidget .SceneName {
-  font-size: 12px;
-  font-weight: bold;
-  margin-bottom: 2px;
-}
-
-.SceneWidget .GrayName {
-  font-size: 10px;
-  color: #A9A8AD;
-}
-
-.SceneWidget .Underline {
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.SceneWidget .PopulationLabel {
-  padding-right: 5px;
-}
-
 .FeedList {
-  border-color: black;
-  border-style: dotted;
-  border-width: 0px 1px 1px 1px;
   width: 100%;
 }
 
@@ -203,8 +60,6 @@
   font-size: 12px;
   font-weight: bold;
   text-align: center;
-  padding: 6px 3px 6px 3px;
-  background-color: #F4F3F4;
   border-bottom: 1px solid #AAAAAA;
 }
 

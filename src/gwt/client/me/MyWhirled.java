@@ -10,10 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -33,12 +29,13 @@ import client.shell.Page;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.TongueBox;
 
-public class MyWhirled extends SmartTable
+public class MyWhirled extends VerticalPanel
 {
     public MyWhirled ()
     {
-        super("myWhirled", 0, 0);
+        setStyleName("myWhirled");
 
         CMe.worldsvc.getMyWhirled(CMe.ident, new MsoyCallback() {
             public void onSuccess (Object result) {
@@ -50,61 +47,9 @@ public class MyWhirled extends SmartTable
 
     protected void fillUI (MyWhirledData data)
     {
-        // set up our sidebar
-        VerticalPanel sidebar = new VerticalPanel(), box;
-        sidebar.setStyleName("mePanel");
-        setWidget(0, 0, sidebar);
-        getFlexCellFormatter().setVerticalAlignment(0, 0, VerticalPanel.ALIGN_TOP);
-
-        // add our own profile picture to the left column
-        sidebar.add(createHeader(CMe.msgs.headerProfile()));
-        sidebar.add(box = createListBox("PictureBox"));
-        box.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        MediaDesc photo = (data.photo == null) ? Profile.DEFAULT_PHOTO : data.photo;
-        box.add(MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(Page.PEOPLE, "" + CMe.getMemberId());
-            }
-        }));
-
-        // add a list of tools
-        sidebar.add(createHeader(CMe.msgs.headerTools()));
-        sidebar.add(box = createListBox("ListBox"));
-        box.add(Application.createLink("My Discussions", Page.WHIRLEDS, "unread"));
-        box.add(Application.createLink("My Mail", Page.MAIL, ""));
-        box.add(Application.createLink("My Account", Page.ME, "account"));
-        if (CMe.isSupport()) {
-            box.add(Application.createLink("Admin Console", Page.ADMIN, ""));
-        }
-
-        // add all of our rooms
-        sidebar.add(createHeader(CMe.msgs.headerRooms()));
-        sidebar.add(box = createListBox("ListBox"));
-
-        // first add our home room
-        Integer homeId = new Integer(data.homeSceneId);
-        box.add(createIconLink("/images/whirled/my_home.png", (String)data.rooms.get(homeId),
-                               Page.WORLD, "s" + homeId));
-
-        // next add the remainder of our rooms in purchased order (lowest scene id first)
-        Object[] sceneIds = data.rooms.keySet().toArray();
-        Arrays.sort(sceneIds);
-        for (int ii = 0; ii < sceneIds.length; ii++) {
-            if (homeId.equals(sceneIds[ii])) {
-                continue;
-            }
-            String sname = (String)data.rooms.get(sceneIds[ii]);
-            box.add(Application.createLink(sname, Page.WORLD, "s" + sceneIds[ii]));
-        }
-
-        // set up the main page contents
-        VerticalPanel contents = new VerticalPanel();
-        contents.setSpacing(10);
-        setWidget(0, 1, contents);
-        getFlexCellFormatter().setVerticalAlignment(0, 1, VerticalPanel.ALIGN_TOP);
 
         // display the Whirled population
-        contents.add(new Label(CMe.msgs.populationDisplay("" + data.whirledPopulation)));
+        add(MsoyUI.createLabel(CMe.msgs.populationDisplay("" + data.whirledPopulation), "Pop"));
 
         // display our online friends if we have any
         if (data.friends.size() > 0) {
@@ -122,14 +67,11 @@ public class MyWhirled extends SmartTable
                 MemberCard card = (MemberCard)data.friends.get(ii);
                 people.setWidget(ii / PEOPLE_COLUMNS, ii % PEOPLE_COLUMNS, new PersonWidget(card));
             }
-            FlowPanel ppanel = new FlowPanel();
-            ppanel.addStyleName("rightLabel");
-            ppanel.add(people);
-            Hyperlink link = Application.createLink(
-                "All your friends...", Page.PEOPLE, Args.compose("f", CMe.getMemberId()));
-            link.addStyleName("tipLabel");
-            ppanel.add(link);
-            contents.add(MsoyUI.createBox("people", CMe.msgs.headerPeople(), ppanel));
+
+            TongueBox fbox = new TongueBox(CMe.msgs.headerPeople(), people);
+            fbox.setFooterLink("All your friends...", Page.PEOPLE,
+                               Args.compose("f", CMe.getMemberId()));
+            add(fbox);
         }
 
         // add links to our stuff
@@ -147,45 +89,32 @@ public class MyWhirled extends SmartTable
             String ilabel = CMe.dmsgs.getString("pItemType" + type);
             stuff.setWidget(1, ii, MsoyUI.createActionLabel(ilabel, onClick), 1, "Item");
         }
-        contents.add(MsoyUI.createBox("aux", CMe.msgs.headerStuff(), stuff));
+        add(new TongueBox(CMe.msgs.headerStuff(), stuff));
 
         // add our news feed
         FeedPanel feed = new FeedPanel();
         feed.setFeed(data.feed, false);
-        contents.add(feed);
-    }
+        add(feed);
 
-    protected Widget createHeader (String title)
-    {
-        HorizontalPanel header = new HorizontalPanel();
-        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        header.setStyleName("SectionHeaderContainer");
-        header.add(MsoyUI.createLabel(title, "SectionHeader"));
-        return header;
-    }
+        // add all of our rooms (TODO)
+//         sidebar.add(createHeader(CMe.msgs.headerRooms()));
+//         sidebar.add(box = createListBox("ListBox"));
 
-    protected VerticalPanel createListBox (String styleName)
-    {
-        VerticalPanel box = new VerticalPanel();
-        box.setStyleName(styleName);
-        box.addStyleName("borderedBox");
-        box.setSpacing(3);
-        return box;
-    }
+//         // first add our home room
+//         Integer homeId = new Integer(data.homeSceneId);
+//         box.add(createIconLink("/images/whirled/my_home.png", (String)data.rooms.get(homeId),
+//                                Page.WORLD, "s" + homeId));
 
-    protected Widget createIconLink (String icon, String label, final String page, final String args)
-    {
-        HorizontalPanel row = new HorizontalPanel();
-        Widget image = MsoyUI.createActionImage(icon, new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(page, args);
-            }
-        });
-        image.setWidth("18px");
-        row.add(image);
-        row.add(WidgetUtil.makeShim(2, 2));
-        row.add(Application.createLink(label, page, args));
-        return row;
+//         // next add the remainder of our rooms in purchased order (lowest scene id first)
+//         Object[] sceneIds = data.rooms.keySet().toArray();
+//         Arrays.sort(sceneIds);
+//         for (int ii = 0; ii < sceneIds.length; ii++) {
+//             if (homeId.equals(sceneIds[ii])) {
+//                 continue;
+//             }
+//             String sname = (String)data.rooms.get(sceneIds[ii]);
+//             box.add(Application.createLink(sname, Page.WORLD, "s" + sceneIds[ii]));
+//         }
     }
 
     protected static class PersonWidget extends VerticalPanel

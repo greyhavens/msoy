@@ -38,12 +38,19 @@ import client.shell.CShell;
 import client.shell.Page;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
+import client.util.TongueBox;
 
-public class FeedPanel extends VerticalPanel
+public class FeedPanel extends TongueBox
 {
     public FeedPanel ()
     {
-        buildUI();
+        setHeader(CMe.msgs.headerFeed());
+        setContent(_feeds = new FeedList());
+        _moreLabel = setFooterLabel("", new ClickListener() {
+            public void onClick (Widget sender) {
+                loadFeed(!_fullPage);
+            }
+        });
     }
 
     public void setFeed (List feed, boolean fullPage)
@@ -65,34 +72,6 @@ public class FeedPanel extends VerticalPanel
                 MsoyUI.error(CMe.serverError(caught));
             }
         });
-    }
-
-    protected void buildUI ()
-    {
-        setStyleName("auxBox");
-
-        HorizontalPanel header = new HorizontalPanel();
-        header.setStyleName("Header");
-        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        Label star = new Label();
-        star.setStyleName("HeaderLeft");
-        header.add(star);
-        Label title = new Label(CMe.msgs.headerFeed());
-        title.setStyleName("HeaderCenter");
-        header.add(title);
-        header.setCellWidth(title, "100%");
-        star = new Label();
-        star.setStyleName("HeaderRight");
-        header.add(star);
-        add(header);
-
-        add(_feeds = new FeedList());
-        setHorizontalAlignment(ALIGN_RIGHT);
-        add(_moreLabel = MsoyUI.createActionLabel("", "tipLabel", new ClickListener() {
-            public void onClick (Widget sender) {
-                loadFeed(!_fullPage);
-            }
-        }));
     }
 
     /**
