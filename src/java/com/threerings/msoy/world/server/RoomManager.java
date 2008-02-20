@@ -186,7 +186,7 @@ public class RoomManager extends SpotSceneManager
         // We need to set the body's orientation to match the approach to the portal.
         // Look up their current location and move them from there. This could be a little
         // "off" if their sprite has not yet walked to this location, but oh well.
-        SceneLocation sloc = (SceneLocation) _roomObj.occupantLocs.get(body.getOid());
+        SceneLocation sloc = _roomObj.occupantLocs.get(body.getOid());
         if (sloc != null) {
             MsoyLocation origin = (MsoyLocation) sloc.loc;
             double radians = Math.atan2(loc.z - origin.z, loc.x - origin.x);

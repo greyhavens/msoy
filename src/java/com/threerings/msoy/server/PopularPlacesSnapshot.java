@@ -47,6 +47,18 @@ public class PopularPlacesSnapshot
     public static final int MAX_TRACKED_PLACES = 50;
 
     /**
+     * Iterates over all the games, lobbies and the scenes in the world, finds out the N most
+     * populated ones and sorts all scenes by owner, caching the values.
+     *
+     * This must be called on the dobj thread.
+     */
+    public static PopularPlacesSnapshot takeSnapshot ()
+    {
+        MsoyServer.requireDObjThread();
+        return new PopularPlacesSnapshot();
+    }
+
+    /**
      * Returns a list of the {@link #MAX_TRACKED_PLACES} most popular scenes in the world, sorted
      * in descending order of population.
      */
@@ -56,12 +68,29 @@ public class PopularPlacesSnapshot
     }
 
     /**
+     * Returns a list of the {@link #MAX_TRACKED_PLACES} most popular whirleds in the world, sorted
+     * in descending order of population.
+     */
+    public Iterable<Place> getTopWhirleds ()
+    {
+        return _whlist;
+    }
+
+    /**
      * Returns a list of the {@link #MAX_TRACKED_PLACES} most popular games in the world, sorted in
      * descending order of population.
      */
     public Iterable<Place> getTopGames ()
     {
         return _glist;
+    }
+
+    /**
+     * Returns the place summary information for the specified whirled.
+     */
+    public Place getWhirled (int whirledId)
+    {
+        return _whirleds.get(whirledId);
     }
 
     /**
@@ -88,12 +117,6 @@ public class PopularPlacesSnapshot
         return _totalPopulation;
     }
 
-    /**
-     * Iterates over all the games, lobbies and the scenes in the world, finds out the N most
-     * populated ones and sorts all scenes by owner, caching the values.
-     *
-     * This must be called on the dobj thread.
-     */
     protected PopularPlacesSnapshot ()
     {
         // count up the population in all scenes and games
@@ -103,28 +126,35 @@ public class PopularPlacesSnapshot
                 for (MemberLocation memloc : mnobj.memberLocs) {
                     _totalPopulation++;
                     if (memloc.sceneId > 0) {
-                        increment(_scenes, _sclist, mnobj.hostedScenes.get(memloc.sceneId));
+                        HostedRoom room = mnobj.hostedScenes.get(memloc.sceneId);
+                        if (room == null || room.accessControl != MsoySceneModel.ACCESS_EVERYONE) {
+                            // missing or private room, skip it
+                        } else if (room.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                            // map whirled rooms by whirled id
+                            increment(_whirleds, _whlist, room.ownerId, room);
+                        } else {
+                            // map non-whirled rooms by scene id
+                            increment(_scenes, _sclist, room.placeId, room);
+                        }
                     }
                     if (memloc.gameId > 0) {
-                        increment(_games, _glist, mnobj.hostedGames.get(memloc.gameId));
+                        HostedPlace game = mnobj.hostedGames.get(memloc.gameId);
+                        if (game != null) {
+                            // map games by game id
+                            increment(_games, _glist, game.placeId, game);
+                        }
                     }
                 }
             }
 
-            protected void increment (HashIntMap<Place> places, List<Place> plist, HostedPlace hp) {
-                if (hp == null) {
-                    return;
-                }
-                if (hp instanceof HostedRoom && 
-                    ((HostedRoom) hp).accessControl != MsoySceneModel.ACCESS_EVERYONE) {
-                    return;
-                } 
-                Place place = places.get(hp.placeId);
+            protected void increment (HashIntMap<Place> places, List<Place> plist,
+                                      int placeId, HostedPlace hp) {
+                Place place = places.get(placeId);
                 if (place == null) {
                     place = new Place();
-                    place.placeId = hp.placeId;
+                    place.placeId = placeId;
                     place.name = hp.name;
-                    places.put(hp.placeId, place);
+                    places.put(placeId, place);
                     plist.add(place);
                 }
                 place.population++;
@@ -133,24 +163,28 @@ public class PopularPlacesSnapshot
 
         // sort and prune our top places list.  Use reverse sorting so the largest populations 
         // appear first.
-        _sclist.rsort();
-        while (_sclist.size() > MAX_TRACKED_PLACES) {
-            _sclist.remove(_sclist.size()-1);
-        }
-        _glist.rsort();
-        while (_glist.size() > MAX_TRACKED_PLACES) {
-            _glist.remove(_glist.size()-1);
+        for (ComparableArrayList list : new ComparableArrayList[] { _whlist, _sclist, _glist }) {
+            list.rsort();
+            while (list.size() > MAX_TRACKED_PLACES) {
+                list.remove(list.size()-1);
+            }
         }
     }
 
-    /** The total number of people in the whirled. */
+    /** The total number of people in the Whirled. */
     protected int _totalPopulation;
+
+    /** A mapping of all resolved whirleds in the whole wide Whirled. */
+    protected HashIntMap<Place> _whirleds = new HashIntMap<Place>();
 
     /** A mapping of all resolved scenes in the whole wide Whirled. */
     protected HashIntMap<Place> _scenes = new HashIntMap<Place>();
 
     /** A mapping of all resolved games in the whole wide Whirled. */
     protected HashIntMap<Place> _games = new HashIntMap<Place>();
+
+    /** The most popular whirleds, sorted. */
+    protected ComparableArrayList<Place> _whlist = new ComparableArrayList<Place>();
 
     /** The most popular scenes, sorted. */
     protected ComparableArrayList<Place> _sclist = new ComparableArrayList<Place>();

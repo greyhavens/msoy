@@ -86,11 +86,10 @@ public class MemberManager
 
         MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.MEMBER_GROUP);
 
-        _ppSnapshot = new PopularPlacesSnapshot();
+        _ppSnapshot = PopularPlacesSnapshot.takeSnapshot();
         _ppInvalidator = new Interval(MsoyServer.omgr) {
             public void expired() {
-                // the constructor computes a current popular places snapshot
-                PopularPlacesSnapshot newSnapshot = new PopularPlacesSnapshot();
+                PopularPlacesSnapshot newSnapshot = PopularPlacesSnapshot.takeSnapshot();
                 synchronized(this) {
                     _ppSnapshot = newSnapshot;
                 }
