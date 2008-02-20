@@ -380,7 +380,7 @@ public class Frame
             subnavi.addLink(null, "Profile", Page.PEOPLE, ""+myId);
             subnavi.addLink(null, "Account", Page.ME, "account");
             if (CShell.isSupport()) {
-                subnavi.addLink(null, "Admin Console", Page.ADMIN, "");
+                subnavi.addLink(null, "Admin", Page.ADMIN, "");
             }
 
         } else if (pageId.equals(Page.PEOPLE)) {
@@ -415,6 +415,7 @@ public class Frame
                 String tpath = Item.getDefaultThumbnailMediaFor(type).getMediaPath();
                 String tname = CShell.dmsgs.getString("pItemType" + type);
                 Image icon = subnavi.addImageLink(tpath, tname, Page.SHOP, ""+type);
+                icon.setWidth("15px"); // shrinky!
                 icon.setHeight("15px"); // shrinky!
             }
 
