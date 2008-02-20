@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.msoy.web.data.TrophyCase;
 
 import client.shell.Frame;
-import client.util.MsoyUI;
 import client.util.TongueBox;
 
 /**
@@ -61,6 +60,6 @@ public class TrophyCasePanel extends VerticalPanel
     protected void setHeader (String title)
     {
         clear();
-        add(MsoyUI.createLabel(title, "Title"));
+        add(new TongueBox(null, title, false));
     }
 }

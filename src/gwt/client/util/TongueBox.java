@@ -19,17 +19,28 @@ public class TongueBox extends SmartTable
 {
     public TongueBox ()
     {
-        this(null, null);
+        super("tongueBox", 0, 0);
     }
 
     public TongueBox (String title, Widget content)
     {
-        super("tongueBox", 0, 0);
+        this(); // not sure if zero argument constructor is automatically called
         if (title != null) {
             setHeader(title);
         }
         if (content != null) {
             setContent(content);
+        }
+    }
+
+    public TongueBox (String title, String content, boolean isHTML)
+    {
+        this(); // not sure if zero argument constructor is automatically called
+        if (title != null) {
+            setHeader(title);
+        }
+        if (content != null) {
+            setContent(content, isHTML);
         }
     }
 
@@ -47,6 +58,16 @@ public class TongueBox extends SmartTable
     public void setContent (Widget content)
     {
         setWidget(1, 0, content, 1, "Content");
+    }
+
+    public void setContent (String content, boolean isHTML)
+    {
+        if (isHTML) {
+            setHTML(1, 0, content);
+            getFlexCellFormatter().setStyleName(1, 0, "Content");
+        } else {
+            setText(1, 0, content, 1, "Content");
+        }
     }
 
     public void setFooterLink (String text, String page, String args)

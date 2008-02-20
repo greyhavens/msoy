@@ -5,37 +5,38 @@ package client.help;
 
 import java.util.Date;
 
+import com.google.gwt.user.client.ui.VerticalPanel;
+
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
+
+import client.util.TongueBox;
 
 /**
  * Displays various help related information.
  */
-public class HelpPanel extends SmartTable
+public class HelpPanel extends VerticalPanel
 {
     public HelpPanel ()
     {
-        super("helpPanel", 0, 10);
-
-        int row = 0;
-        setText(row++, 0, CHelp.msgs.helpIntro());
-
-        setText(row++, 0, CHelp.msgs.helpQuestionsTitle(), 1, "Title");
-        setHTML(row++, 0, CHelp.msgs.helpQuestions());
-
-        setText(row++, 0, CHelp.msgs.helpBugsTitle(), 1, "Title");
-        setHTML(row++, 0, CHelp.msgs.helpBugs());
-
-        setText(row++, 0, CHelp.msgs.helpWikiTitle(), 1, "Title");
-        setHTML(row++, 0, CHelp.msgs.helpWiki());
+        add(new TongueBox(null, CHelp.msgs.helpIntro(), false));
+        add(new TongueBox(CHelp.msgs.helpQuestionsTitle(), CHelp.msgs.helpQuestions(), true));
+        add(new TongueBox(CHelp.msgs.helpBugsTitle(), CHelp.msgs.helpBugs(), true));
+        add(new TongueBox(CHelp.msgs.helpWikiTitle(), CHelp.msgs.helpWiki(), true));
 
         // TODO: add a way to restart the tutorial
 
-        setText(row++, 0, CHelp.msgs.helpTeamTitle(), 1, "Title");
-        setHTML(row++, 0, CHelp.msgs.helpTeamEngineers());
-        setHTML(row++, 0, CHelp.msgs.helpTeamArtists());
-        setHTML(row++, 0, CHelp.msgs.helpTeamDPW());
-        setHTML(row++, 0, CHelp.msgs.helpTeamWaving());
-
-        setHTML(row++, 0, CHelp.msgs.helpCopyright("" + (1900 + new Date().getYear())));
+        SmartTable credits = new SmartTable(0, 0);
+        int row = 0;
+        credits.setHTML(row++, 0, CHelp.msgs.helpTeamEngineers());
+        credits.setWidget(row++, 0, WidgetUtil.makeShim(5, 10));
+        credits.setHTML(row++, 0, CHelp.msgs.helpTeamArtists());
+        credits.setWidget(row++, 0, WidgetUtil.makeShim(5, 10));
+        credits.setHTML(row++, 0, CHelp.msgs.helpTeamDPW());
+        credits.setWidget(row++, 0, WidgetUtil.makeShim(5, 10));
+        credits.setHTML(row++, 0, CHelp.msgs.helpTeamWaving());
+        credits.setWidget(row++, 0, WidgetUtil.makeShim(5, 10));
+        credits.setHTML(row++, 0, CHelp.msgs.helpCopyright("" + (1900 + new Date().getYear())));
+        add(new TongueBox(CHelp.msgs.helpTeamTitle(), credits));
     }
 }
