@@ -10,7 +10,11 @@ import com.samskivert.util.Interval;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.util.MessageBundle;
+import com.threerings.util.MessageManager;
 import com.threerings.util.Name;
+
+import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.crowd.chat.data.UserMessage;
 
@@ -247,7 +251,12 @@ public class JabberManager
         final MemberObject user = (MemberObject)caller;
         Chat chat = getChat(user, name);
         chat.sendMessage(message);
-        listener.requestProcessed(null);
+        String result = null;
+        ContactEntry ce = user.imContacts.get(name);
+        if (ce == null || !ce.online) {
+            result = "m.im_offline";
+        }
+        listener.requestProcessed(result);
     }
 
     /**
@@ -572,7 +581,13 @@ public class JabberManager
         // from MessageListener
         public void processMessage (Chat chat, Message message)
         {
-            JabberName jname = new JabberName(chat.getParticipant());
+            String from = chat.getParticipant();
+            if (StringUtil.isBlank(StringUtils.parseName(from))) {
+                SpeakUtil.sendFeedback(_user, MessageManager.GLOBAL_BUNDLE,
+                        MessageBundle.taint(message.getBody()));
+                return;
+            }
+            JabberName jname = new JabberName(from);
             ContactEntry entry = _user.imContacts.get(jname);
             if (entry != null) {
                 jname = entry.name;

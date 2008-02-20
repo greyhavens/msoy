@@ -197,8 +197,14 @@ public class MsoyChatDirector extends ChatDirector
         var svc :JabberService = (_wctx.getClient().requireService(JabberService) as JabberService);
         svc.sendMessage(_wctx.getClient(), target, msg, new ResultWrapper(
             function (cause :String) :void {
+                var msg :String = MessageBundle.compose(
+                    "e.im_tell_failed", MessageBundle.taint(cause));
+                _wctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
             },
             function (result :Object) :void {
+                if (result != null && result is String) {
+                    _wctx.displayFeedback(MsoyCodes.CHAT_MSGS, (result as String));
+                }
                 dispatchMessage(new TellFeedbackMessage(target, msg), ChatCodes.PLACE_CHAT_TYPE);
             }));
     }
