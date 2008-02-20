@@ -82,7 +82,7 @@ public class MessagesPanel extends PagedGrid
         // add a button for starting a new message that will optionally be enabled later
         _postReply = new Button(CMsgs.mmsgs.postReply(), new ClickListener() {
             public void onClick (Widget sender) {
-                _parent.postReply(null);
+                _parent.postReply(null, false);
             }
         });
         _postReply.setEnabled(false);
@@ -191,12 +191,12 @@ public class MessagesPanel extends PagedGrid
             if (_postReply.isEnabled()) {
                 info.add(makeInfoLabel(CMsgs.mmsgs.inlineReply(), new ClickListener() {
                     public void onClick (Widget sender) {
-                        _parent.postReply(null);
+                        _parent.postReply(_message, false);
                     }
                 }));
                 info.add(makeInfoLabel(CMsgs.mmsgs.inlineQReply(), new ClickListener() {
                     public void onClick (Widget sender) {
-                        _parent.postReply(_message);
+                        _parent.postReply(_message, true);
                     }
                 }));
             }

@@ -23,6 +23,7 @@ import com.threerings.msoy.fora.data.ForumThread;
 
 import client.shell.Application;
 import client.shell.Frame;
+import client.shell.MessagePanel;
 import client.shell.Page;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
@@ -72,9 +73,10 @@ public class ThreadPanel extends TitledListPanel
         new ThreadFlagsEditorPanel().show();
     }
 
-    public void postReply (ForumMessage inReplyTo)
+    public void postReply (ForumMessage inReplyTo, boolean quote)
     {
-        Frame.showDialog(CMsgs.mmsgs.threadReplyHeader(_thread.subject), new ReplyPanel(inReplyTo));
+        setContents(CMsgs.mmsgs.threadReplyHeader(_thread.subject),
+                    new ReplyPanel(inReplyTo, quote));
     }
 
     public void editPost (ForumMessage message, AsyncCallback callback)
@@ -115,24 +117,40 @@ public class ThreadPanel extends TitledListPanel
 
     protected class ReplyPanel extends TableFooterPanel
     {
-        public ReplyPanel (ForumMessage inReplyTo)
+        public ReplyPanel (ForumMessage inReplyTo, boolean quote)
         {
             _content.setWidget(0, 0, _editor = new MessageEditor());
 
-            // set the quote text if available
             if (inReplyTo != null) {
-                _editor.setHTML(
-                    CMsgs.mmsgs.replyQuote(inReplyTo.poster.name.toString(), inReplyTo.message));
-                DeferredCommand.addCommand(new Command() {
-                    public void execute () {
-                        _editor.getTextArea().getBasicFormatter().selectAll();
+                // set the quote text if available
+                if (quote) {
+                    _editor.setHTML(
+                        CMsgs.mmsgs.replyQuote(inReplyTo.poster.name.toString(), inReplyTo.message));
+                    DeferredCommand.addCommand(new Command() {
+                        public void execute () {
+                            _editor.getTextArea().getBasicFormatter().selectAll();
+                        }
+                    });
+                }
+
+                // display the message to which we are replying below everything
+                MessagePanel reply = new MessagePanel() {
+                    public boolean textIsHTML () {
+                        return true;
                     }
-                });
+                };
+                reply.setMessage(inReplyTo.poster, inReplyTo.created, inReplyTo.message);
+
+                int row = getRowCount();
+                setWidget(row++, 0, WidgetUtil.makeShim(10, 10));
+                getFlexCellFormatter().setStyleName(row, 0, "Header");
+                setWidget(row++, 0, MsoyUI.createLabel(CMsgs.mmsgs.replyInReplyTo(), "Title"));
+                setWidget(row++, 0, reply);
             }
 
             _footer.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    Frame.clearDialog(ReplyPanel.this);
+                    showMessages();
                 }
             }));
             Button submit = new Button(CMsgs.cmsgs.submit());
@@ -147,7 +165,6 @@ public class ThreadPanel extends TitledListPanel
                     return true;
                 }
                 public boolean gotResult (Object result) {
-                    Frame.clearDialog(ReplyPanel.this);
                     replyPosted((ForumMessage)result);
                     return false;
                 }
