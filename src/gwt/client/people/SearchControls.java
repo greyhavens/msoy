@@ -36,7 +36,8 @@ public class SearchControls extends SmartTable
         int col = 0;
         setText(0, col++, CPeople.msgs.searchTitle(), 1, "rightLabel");
 
-        setWidget(0, col++, _search = MsoyUI.createTextBox("", -1, 40), 1, null);
+        setWidget(0, col++, _search = MsoyUI.createTextBox("", -1, -1), 1, null);
+        _search.setWidth("250px");
         _search.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char charCode, int modifiers) {
                 DeferredCommand.add(new Command() {
