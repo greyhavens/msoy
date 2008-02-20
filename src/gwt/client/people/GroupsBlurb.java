@@ -38,7 +38,7 @@ public class GroupsBlurb extends Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
-        setBlurbTitle(CPeople.msgs.groupsTitle());
+        setHeader(CPeople.msgs.groupsTitle());
         setContent(new GroupsGrid(pdata.groups));
     }
 

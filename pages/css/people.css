@@ -8,20 +8,6 @@
   width: 100%;
 }
 
-.profile .Blurb {
-  width: 100%;
-}
-
-.profile .Blurb .BlurbContent {
-  padding: 10px;
-}
-
-.profile .Blurb .BlurbFooter {
-  font-size: 12px;
-  padding: 0px 10px 10px 0px;
-  text-align: right;
-}
-
 .profile .Profile {
   width: 100%;
 }

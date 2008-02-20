@@ -28,7 +28,7 @@ public class TrophiesBlurb extends Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
-        setBlurbTitle(CPeople.msgs.trophiesTitle());
+        setHeader(CPeople.msgs.trophiesTitle());
 
         // display our trophies in a nice grid
         SmartTable grid = new SmartTable(0, 4);

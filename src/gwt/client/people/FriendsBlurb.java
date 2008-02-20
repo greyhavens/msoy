@@ -34,7 +34,7 @@ public class FriendsBlurb extends Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
-        setBlurbTitle(CPeople.msgs.friendsTitle());
+        setHeader(CPeople.msgs.friendsTitle());
 
         if (pdata.friends.size() == 0) {
             if (CPeople.getMemberId() != _name.getMemberId()) {

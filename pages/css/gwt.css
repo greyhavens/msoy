@@ -381,11 +381,15 @@ img, embed, applet, object {
 }
 
 /** Misc styles. */
-.tongue {
+.tongueBox {
   width: 100%;
 }
 
-.tongue .Base {
+.tongueBox .Header {
+  width: 100%;
+}
+
+.tongueBox .Header .Base {
   background: url(/images/ui/tongue_base.png) #49A1E7 no-repeat left;
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
   font-size: 18px;
@@ -395,10 +399,20 @@ img, embed, applet, object {
   height: 28px;
 }
 
-.tongue .Line {
+.tongueBox .Header .Line {
   background: url(/images/ui/tongue_tip.png) no-repeat left;
   width: 100%;
   padding-left: 10px;
+}
+
+.tongueBox .Content {
+  padding: 10px;
+}
+
+.tongueBox .Footer {
+  font-size: 12px;
+  padding: 0px 10px 10px 0px;
+  text-align: right;
 }
 
 .formPanel td {

@@ -39,7 +39,7 @@ public class RatingsBlurb extends Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
-        setBlurbTitle(CPeople.msgs.ratingsTitle());
+        setHeader(CPeople.msgs.ratingsTitle());
         setContent(new RatingGrid(pdata.ratings));
     }
 
