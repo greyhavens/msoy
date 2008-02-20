@@ -44,7 +44,8 @@ public class FriendsPanel extends SmartTable
             setText(1, 0, CPeople.msgs.friendsNoSuchMember());
         } else {
             boolean self = (CPeople.getMemberId() == _memberId);
-            Frame.setTitle(self ? CPeople.msgs.friendsSelfTitle() : data.name.toString());
+            Frame.setTitle(self ? CPeople.msgs.friendsSelfTitle() :
+                           CPeople.msgs.friendsOtherTitle(data.name.toString()));
             _friends = new MemberList(
                 self ? CPeople.msgs.noFriendsSelf() : CPeople.msgs.noFriendsOther());
             String title = CPeople.msgs.friendsWhoseFriends(data.name.toString());

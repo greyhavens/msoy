@@ -34,8 +34,8 @@ public class ProfilePanel extends VerticalPanel
 
     protected void init (ProfileService.ProfileResult pdata)
     {
-        Frame.setTitle((_memberId == CPeople.getMemberId()) ?
-                       CPeople.msgs.profileSelfTitle() : pdata.name.toString());
+        Frame.setTitle((_memberId == CPeople.getMemberId()) ? CPeople.msgs.profileSelfTitle() :
+                       CPeople.msgs.profileOtherTitle(pdata.name.toString()));
 
         for (int ii = 0; ii < _blurbs.length; ii++) {
             if (_blurbs[ii].shouldDisplay(pdata)) {

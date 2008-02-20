@@ -21,7 +21,7 @@ import client.util.MsoyUI;
  */
 public class TrophyGrid extends FlexTable
 {
-    public static final int COLUMNS = 3;
+    public static final int COLUMNS = 6;
 
     public static void populateTrophyGrid (FlexTable grid, Trophy[] trophies)
     {

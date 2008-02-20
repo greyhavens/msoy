@@ -4,36 +4,35 @@
 package client.games;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HasAlignment;
-
-import com.threerings.gwt.ui.SmartTable;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.web.data.TrophyCase;
 
 import client.shell.Frame;
-import client.util.HeaderBox;
+import client.util.MsoyUI;
+import client.util.TongueBox;
 
 /**
  * Displays all trophies owned by the specified player.
  */
-public class TrophyCasePanel extends SmartTable
+public class TrophyCasePanel extends VerticalPanel
 {
     public TrophyCasePanel (int memberId)
     {
-        super("trophyCase", 0, 5);
+        setStyleName("trophyCase");
 
         if (memberId == 0) {
-            setText(0, 0, CGames.msgs.noSuchPlayer());
+            setHeader(CGames.msgs.noSuchPlayer());
             return;
         }
 
-        setText(0, 0, CGames.msgs.caseLoading());
+        setHeader(CGames.msgs.caseLoading());
         CGames.gamesvc.loadTrophyCase(CGames.ident, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 setTrophyCase((TrophyCase)result);
             }
             public void onFailure (Throwable cause) {
-                setText(0, 0, CGames.serverError(cause));
+                setHeader(CGames.serverError(cause));
             }
         });
     }
@@ -41,27 +40,27 @@ public class TrophyCasePanel extends SmartTable
     protected void setTrophyCase (TrophyCase tcase)
     {
         if (tcase == null) {
-            setText(0, 0, CGames.msgs.noSuchPlayer());
+            setHeader(CGames.msgs.noSuchPlayer());
             return;
         }
 
-        Frame.setTitle(tcase.owner.toString());
+        Frame.setTitle(CGames.msgs.caseTitle(tcase.owner.toString()));
         if (tcase.shelves.length == 0) {
-            setText(0, 0, (CGames.getMemberId() == tcase.owner.getMemberId()) ?
-                    CGames.msgs.caseEmptyMe() : CGames.msgs.caseEmpty());
+            setHeader((CGames.getMemberId() == tcase.owner.getMemberId()) ?
+                     CGames.msgs.caseEmptyMe() : CGames.msgs.caseEmpty());
             return;
         }
 
-        setText(0, 0, CGames.msgs.caseBlurb(), 2, null);
-
+        setHeader(CGames.msgs.caseBlurb());
         for (int ii = 0; ii < tcase.shelves.length; ii++) {
             TrophyCase.Shelf shelf = tcase.shelves[ii];
-            HeaderBox box = new HeaderBox();
-            int row = ii/2+1, col = ii%2;
-            setWidget(row, col, box);
-            getFlexCellFormatter().setVerticalAlignment(row, col, HasAlignment.ALIGN_TOP);
-            box.setTitle(shelf.name);
-            box.setContent(new TrophyGrid(shelf.trophies));
+            add(new TongueBox(shelf.name, new TrophyGrid(shelf.trophies)));
         }
+    }
+
+    protected void setHeader (String title)
+    {
+        clear();
+        add(MsoyUI.createLabel(title, "Title"));
     }
 }
