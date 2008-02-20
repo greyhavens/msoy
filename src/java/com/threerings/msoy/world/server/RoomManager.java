@@ -624,7 +624,7 @@ public class RoomManager extends SpotSceneManager
 
         // register ourselves in our peer object
         MsoyScene mscene = (MsoyScene) _scene;
-        MsoyServer.peerMan.roomDidStartup(mscene.getId(), mscene.getName(), mscene.getId(), 
+        MsoyServer.peerMan.roomDidStartup(mscene.getId(), mscene.getName(), mscene.getOwnerId(), 
                                           mscene.getOwnerType(), mscene.getAccessControl());
 
         // determine which (if any) items in this room have memories and load them up
