@@ -269,7 +269,6 @@ img, embed, applet, object {
 }
 
 .pageTitle .SubNavi {
-  width: 400px;
   font-size: 12px;
   color: white;
   white-space: nowrap;
@@ -291,9 +290,9 @@ img, embed, applet, object {
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
   font-size: 24px;
   font-weight: bold;
-  width: 282px;
   color: white;
   padding: 3px 0px 0px 15px;
+  white-space: nowrap;
   opacity: 0.6;
 }
 
